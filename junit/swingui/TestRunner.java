@@ -29,7 +29,7 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 	protected JFrame fFrame;
 	private Thread fRunner;
 	private TestResult fTestResult;
-	
+
 	private JComboBox fSuiteCombo;
 	private ProgressBar fProgressIndicator;
 	private DefaultListModel fFailures;
@@ -50,19 +50,19 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 
 	private static final String TESTCOLLECTOR_KEY= "TestCollectorClass";
 	private static final String FAILUREDETAILVIEW_KEY= "FailureViewClass";
-		
+
 	public TestRunner() {
-	} 
-	
+	}
+
 	public static void main(String[] args) {
 		new TestRunner().start(args);
 	}
-	 
+
 	public static void run(Class test) {
 		String args[]= { test.getName() };
 		main(args);
 	}
-	
+
 	public void testFailed(final int status, final Test test, final Throwable t) {
 		SwingUtilities.invokeLater(
 			new Runnable() {
@@ -81,11 +81,11 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 			}
 		);
 	}
-	
+
 	public void testStarted(String testName) {
 		postInfo("Running: "+testName);
 	}
-	
+
 	public void testEnded(String stringName) {
 		synchUI();
 		SwingUtilities.invokeLater(
@@ -99,7 +99,7 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 			}
 		);
 	}
-	
+
 	public void setSuite(String suiteName) {
 		fSuiteCombo.getEditor().setItem(suiteName);
 	}
@@ -117,35 +117,35 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		fSuiteCombo.setSelectedIndex(0);
 		pruneHistory();
 	}
-	
+
 	private void pruneHistory() {
 		int historyLength= getPreference("maxhistory", HISTORY_LENGTH);
 		if (historyLength < 1)
 			historyLength= 1;
-		for (int i= fSuiteCombo.getItemCount()-1; i > historyLength-1; i--) 
+		for (int i= fSuiteCombo.getItemCount()-1; i > historyLength-1; i--)
 			fSuiteCombo.removeItemAt(i);
 	}
-	
+
 	private void appendFailure(String kind, Test test, Throwable t) {
 		fFailures.addElement(new TestFailure(test, t));
-		if (fFailures.size() == 1) 
+		if (fFailures.size() == 1)
 			revealFailure(test);
 	}
-	
+
 	private void revealFailure(Test test) {
 		for (Enumeration e= fTestRunViews.elements(); e.hasMoreElements(); ) {
 			TestRunView v= (TestRunView) e.nextElement();
 			v.revealFailure(test);
 		}
 	}
-		
+
 	protected void aboutToStart(final Test testSuite) {
 		for (Enumeration e= fTestRunViews.elements(); e.hasMoreElements(); ) {
 			TestRunView v= (TestRunView) e.nextElement();
 			v.aboutToStart(testSuite, fTestResult);
 		}
 	}
-	
+
 	protected void runFinished(final Test testSuite) {
 		SwingUtilities.invokeLater(
 			new Runnable() {
@@ -162,7 +162,7 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 	protected CounterPanel createCounterPanel() {
 		return new CounterPanel();
 	}
-	
+
 	protected JPanel createFailedPanel() {
 		JPanel failedPanel= new JPanel(new GridLayout(0, 1, 0, 2));
 		fRerunButton= new JButton("Run");
@@ -177,10 +177,10 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		failedPanel.add(fRerunButton);
 		return failedPanel;
 	}
-			
+
 	protected FailureDetailView createFailureDetailView() {
 		String className= BaseTestRunner.getPreference(FAILUREDETAILVIEW_KEY);
-		if (className != null) {			
+		if (className != null) {
 			Class viewClass= null;
 			try {
 				viewClass= Class.forName(className);
@@ -209,7 +209,7 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		);
 		mi1.setMnemonic('A');
 		menu.add(mi1);
-		
+
 		menu.addSeparator();
 		JMenuItem mi2= new JMenuItem(" Exit ");
 		mi2.addActionListener(
@@ -224,14 +224,14 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 
 		return menu;
 	}
-	
+
 	protected JFrame createFrame(String title) {
 		JFrame frame= new JFrame("JUnit");
-		Image icon= loadFrameIcon();	
+		Image icon= loadFrameIcon();
 		if (icon != null)
 			frame.setIconImage(icon);
 		frame.getContentPane().setLayout(new BorderLayout(0, 0));
-		
+
 		frame.addWindowListener(
 			new WindowAdapter() {
 				public void windowClosing(WindowEvent e) {
@@ -241,22 +241,22 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		);
 		return frame;
 	}
-	
+
 	protected JLabel createLogo() {
 		JLabel label;
 		Icon icon= getIconResource(BaseTestRunner.class, "logo.gif");
-		if (icon != null) 
+		if (icon != null)
 			label= new JLabel(icon);
 		else
 			label= new JLabel("JV");
 		label.setToolTipText("JUnit Version "+Version.id());
 		return label;
 	}
-	
+
 	protected void createMenus(JMenuBar mb) {
 		mb.add(createJUnitMenu());
 	}
-		
+
 	protected JCheckBox createUseLoaderCheckBox() {
 		boolean useLoader= useReloadingTestSuiteLoader();
 		JCheckBox box= new JCheckBox("Reload classes every run", useLoader);
@@ -265,11 +265,11 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 			box.setVisible(false);
 		return box;
 	}
-	
+
 	protected JButton createQuitButton() {
 		 // spaces required to avoid layout flicker
 		 // Exit is shorter than Stop that shows in the same column
-		JButton quit= new JButton(" Exit "); 
+		JButton quit= new JButton(" Exit ");
 		quit.addActionListener(
 			new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -279,7 +279,7 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		);
 		return quit;
 	}
-	
+
 	protected JButton createRunButton() {
 		JButton run= new JButton("Run");
 		run.setEnabled(true);
@@ -292,7 +292,7 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		);
 		return run;
 	}
-	
+
 	protected Component createBrowseButton() {
 		JButton browse= new JButton("...");
 		browse.setToolTipText("Select a Test class");
@@ -303,18 +303,18 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 				}
 			}
 		);
-		return browse;		
+		return browse;
 	}
-	
+
 	protected StatusLine createStatusLine() {
 		return new StatusLine(420);
 	}
-	
+
 	protected JComboBox createSuiteCombo() {
 		JComboBox combo= new JComboBox();
 		combo.setEditable(true);
 		combo.setLightWeightPopupEnabled(false);
-		
+
 		combo.getEditor().getEditorComponent().addKeyListener(
 			new KeyAdapter() {
 				public void keyTyped(KeyEvent e) {
@@ -340,18 +340,18 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		);
 		return combo;
 	}
-	
+
 	protected JTabbedPane createTestRunViews() {
 		JTabbedPane pane= new JTabbedPane(JTabbedPane.BOTTOM);
 
 		FailureRunView lv= new FailureRunView(this);
 		fTestRunViews.addElement(lv);
 		lv.addTab(pane);
-		
+
 		TestHierarchyRunView tv= new TestHierarchyRunView(this);
 		fTestRunViews.addElement(tv);
 		tv.addTab(pane);
-		
+
 		pane.addChangeListener(
 			new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
@@ -361,47 +361,47 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		);
 		return pane;
 	}
-	
+
 	public void testViewChanged() {
 		TestRunView view= (TestRunView)fTestRunViews.elementAt(fTestViewTab.getSelectedIndex());
 		view.activate();
 	}
-	
+
 	protected TestResult createTestResult() {
 		return new TestResult();
 	}
-	
-	protected JFrame createUI(String suiteName) {	
-		JFrame frame= createFrame("JUnit");	
+
+	protected JFrame createUI(String suiteName) {
+		JFrame frame= createFrame("JUnit");
 		JMenuBar mb= new JMenuBar();
 		createMenus(mb);
 		frame.setJMenuBar(mb);
-	
+
 		JLabel suiteLabel= new JLabel("Test class name:");
 		fSuiteCombo= createSuiteCombo();
 		fRun= createRunButton();
 		frame.getRootPane().setDefaultButton(fRun);
 		Component browseButton= createBrowseButton();
-		
+
 		fUseLoadingRunner= createUseLoaderCheckBox();
 		fProgressIndicator= new ProgressBar();
 		fCounterPanel= createCounterPanel();
-		
+
 		JLabel failureLabel= new JLabel("Errors and Failures:");
 		fFailures= new DefaultListModel();
-		
-		fTestViewTab= createTestRunViews();	
+
+		fTestViewTab= createTestRunViews();
 		JPanel failedPanel= createFailedPanel();
-		
+
 		fFailureView= createFailureDetailView();
 		JScrollPane tracePane= new JScrollPane(fFailureView.getComponent(), JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 
 		fStatusLine= createStatusLine();
 		fQuitButton= createQuitButton();
 		fLogo= createLogo();
-					
+
 		JPanel panel= new JPanel(new GridBagLayout());
-	
+
 		addGrid(panel, suiteLabel,	0, 0, 2, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.WEST);
 		addGrid(panel, fSuiteCombo, 	0, 1, 1, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.WEST);
 		addGrid(panel, browseButton, 	1, 1, 1, GridBagConstraints.NONE, 			0.0, GridBagConstraints.WEST);
@@ -410,20 +410,20 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		addGrid(panel, fUseLoadingRunner,  	0, 2, 3, GridBagConstraints.NONE, 1.0, GridBagConstraints.WEST);
 		addGrid(panel, new JSeparator(), 	0, 3, 3, GridBagConstraints.HORIZONTAL, 1.0, GridBagConstraints.WEST);
 
-		
+
 		addGrid(panel, fProgressIndicator, 	0, 4, 2, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.WEST);
 		addGrid(panel, fLogo, 			2, 4, 1, GridBagConstraints.NONE, 			0.0, GridBagConstraints.NORTH);
 
 		addGrid(panel, fCounterPanel,	 0, 5, 2, GridBagConstraints.NONE, 			0.0, GridBagConstraints.CENTER);
 
 		JSplitPane splitter= new JSplitPane(JSplitPane.VERTICAL_SPLIT, fTestViewTab, tracePane);
-		addGrid(panel, splitter, 	 0, 6, 2, GridBagConstraints.BOTH, 			1.0, GridBagConstraints.WEST);				
+		addGrid(panel, splitter, 	 0, 6, 2, GridBagConstraints.BOTH, 			1.0, GridBagConstraints.WEST);
 
 		addGrid(panel, failedPanel, 	 2, 6, 1, GridBagConstraints.HORIZONTAL, 	0.0, GridBagConstraints.NORTH/*CENTER*/);
-		
+
 		addGrid(panel, fStatusLine, 	 0, 8, 2, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.CENTER);
 		addGrid(panel, fQuitButton, 	 2, 8, 1, GridBagConstraints.HORIZONTAL, 	0.0, GridBagConstraints.CENTER);
-		
+
 		frame.setContentPane(panel);
 		frame.pack();
 		frame.setLocation(200, 200);
@@ -448,17 +448,17 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 			return "";
 		return (String)fSuiteCombo.getEditor().getItem();
 	}
-	
+
 	public ListModel getFailures() {
 		return fFailures;
 	}
-	
+
 	public void insertUpdate(DocumentEvent event) {
 		textChanged();
 	}
-		
+
 	public void browseTestClasses() {
-		TestCollector collector= createTestCollector();		
+		TestCollector collector= createTestCollector();
 		TestSelector selector= new TestSelector(fFrame, collector);
 		if (selector.isEmpty()) {
 			JOptionPane.showMessageDialog(fFrame, "No Test Cases found.\nCheck that the configured \'TestCollector\' is supported on this platform.");
@@ -472,7 +472,7 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 
 	TestCollector createTestCollector() {
 		String className= BaseTestRunner.getPreference(TESTCOLLECTOR_KEY);
-		if (className != null) {			
+		if (className != null) {
 			Class collectorClass= null;
 			try {
 				collectorClass= Class.forName(className);
@@ -483,14 +483,14 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		}
 		return new SimpleTestCollector();
 	}
-	
+
 	private Image loadFrameIcon() {
 		ImageIcon icon= (ImageIcon)getIconResource(BaseTestRunner.class, "smalllogo.gif");
 		if (icon != null)
 			return icon.getImage();
 		return null;
 	}
-	
+
 	private void loadHistory(JComboBox combo) throws IOException {
 		BufferedReader br= new BufferedReader(new FileReader(getSettingsFile()));
 		int itemCount= 0;
@@ -507,12 +507,12 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 			br.close();
 		}
 	}
-	
+
 	private File getSettingsFile() {
 	 	String home= System.getProperty("user.home");
  		return new File(home,".junitsession");
  	}
-	
+
 	private void postInfo(final String message) {
 		SwingUtilities.invokeLater(
 			new Runnable() {
@@ -522,7 +522,7 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 			}
 		);
 	}
-	
+
 	private void postStatus(final String status) {
 		SwingUtilities.invokeLater(
 			new Runnable() {
@@ -532,18 +532,18 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 			}
 		);
 	}
-	
+
 	public void removeUpdate(DocumentEvent event) {
 		textChanged();
 	}
-	
+
 	private void rerun() {
 		TestRunView view= (TestRunView)fTestRunViews.elementAt(fTestViewTab.getSelectedIndex());
 		Test rerunTest= view.getSelectedTest();
 		if (rerunTest != null)
 			rerunTest(rerunTest);
 	}
-	
+
 	private void rerunTest(Test test) {
 		if (!(test instanceof TestCase)) {
 			showInfo("Could not reload "+ test.toString());
@@ -553,22 +553,22 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		try {
 			Class reloadedTestClass= getLoader().reload(test.getClass());
 			Class[] classArgs= { String.class };
-			Object[] args= new Object[]{((TestCase)test).getName()};
 			Constructor constructor= reloadedTestClass.getConstructor(classArgs);
-			reloadedTest=(Test)constructor.newInstance(args);
+			Object[] args= new Object[]{((TestCase)test).getName()};
+			reloadedTest= (Test)constructor.newInstance(args);
 		} catch(Exception e) {
 			showInfo("Could not reload "+ test.toString());
 			return;
 		}
 		TestResult result= new TestResult();
 		reloadedTest.run(result);
-		
+
 		String message= reloadedTest.toString();
 		if(result.wasSuccessful())
 			showInfo(message+" was successful");
-		else if (result.errorCount() == 1) 
-			showStatus(message+" had an error"); 
-		else 
+		else if (result.errorCount() == 1)
+			showStatus(message+" had an error");
+		else
 			showStatus(message+" had a failure");
 	}
 
@@ -579,7 +579,7 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		fFailureView.clear();
 		fFailures.clear();
 	}
-	
+
 	/**
 	 * runs a suite.
 	 * @deprecated use runSuite() instead
@@ -587,13 +587,13 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 	public void run() {
 		runSuite();
 	}
-	
+
 	protected void runFailed(String message) {
 		showStatus(message);
 		fRun.setText("Run");
 		fRunner= null;
 	}
-	
+
 	synchronized public void runSuite() {
 		if (fRunner != null) {
 			fTestResult.stop();
@@ -602,40 +602,40 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 			reset();
 			showInfo("Load Test Case...");
 			final String suiteName= getSuiteText();
-			final Test testSuite= getTest(suiteName);		
+			final Test testSuite= getTest(suiteName);
 			if (testSuite != null) {
 				addToHistory(suiteName);
 				doRunTest(testSuite);
 			}
 		}
 	}
-	
+
 	private boolean shouldReload() {
 		return !inVAJava() && fUseLoadingRunner.isSelected();
 	}
-	
+
 
 	synchronized protected void runTest(final Test testSuite) {
 		if (fRunner != null) {
 			fTestResult.stop();
 		} else {
-			reset();	
+			reset();
 			if (testSuite != null) {
 				doRunTest(testSuite);
 			}
 		}
 	}
-	
+
 	private void doRunTest(final Test testSuite) {
 		setButtonLabel(fRun, "Stop");
 		fRunner= new Thread("TestRunner-Thread") {
 			public void run() {
-				TestRunner.this.start(testSuite); 
+				TestRunner.this.start(testSuite);
 				postInfo("Running...");
-				
+
 				long startTime= System.currentTimeMillis();
 				testSuite.run(fTestResult);
-					
+
 				if (fTestResult.shouldStop()) {
 					postStatus("Stopped");
 				} else {
@@ -670,7 +670,7 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 			bw.close();
 		}
 	}
-	
+
 	private void setButtonLabel(final JButton button, final String label) {
 		SwingUtilities.invokeLater(
 			new Runnable() {
@@ -680,7 +680,7 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 			}
 		);
 	}
-	
+
 	private void setLabelValue(final JTextField label, final int value) {
 		SwingUtilities.invokeLater(
 			new Runnable() {
@@ -690,7 +690,7 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 			}
 		);
 	}
-		
+
 	public void handleTestSelected(Test test) {
 		fRerunButton.setEnabled(test != null && (test instanceof TestCase));
 		showFailureDetail(test);
@@ -709,22 +709,22 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		}
 		fFailureView.clear();
 	}
-		
+
 	private void showInfo(String message) {
 		fStatusLine.showInfo(message);
 	}
-	
+
 	private void showStatus(String status) {
 		fStatusLine.showError(status);
 	}
-	
+
 	/**
 	 * Starts the TestRunner
 	 */
-	public void start(String[] args) {		
+	public void start(String[] args) {
 		String suiteName= processArguments(args);
 		fFrame= createUI(suiteName);
-		fFrame.pack(); 
+		fFrame.pack();
 		fFrame.setVisible(true);
 
 		if (suiteName != null) {
@@ -732,7 +732,7 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 			runSuite();
 		}
 	}
-		
+
 	private void start(final Test test) {
 		SwingUtilities.invokeLater(
 			new Runnable() {
@@ -744,7 +744,7 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 			}
 		);
 	}
-	
+
 	/**
 	 * Wait until all the events are processed in the event thread
 	 */
@@ -753,13 +753,13 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 			SwingUtilities.invokeAndWait(
 				new Runnable() {
 					public void run() {}
-				}		
+				}
 			);
 		}
 		catch (Exception e) {
 		}
 	}
-	
+
 	/**
 	 * Terminates the TestRunner
 	 */
@@ -772,27 +772,27 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		}
 		System.exit(0);
 	}
-	
+
 	public void textChanged() {
 		fRun.setEnabled(getSuiteText().length() > 0);
 		clearStatus();
 	}
-	
+
 	protected void clearStatus() {
 		fStatusLine.clear();
 	}
-	
+
 	public static Icon getIconResource(Class clazz, String name) {
 		URL url= clazz.getResource(name);
 		if (url == null) {
 			System.err.println("Warning: could not load \""+name+"\" icon");
 			return null;
-		} 
+		}
 		return new ImageIcon(url);
 	}
-	
+
 	private void about() {
-		AboutDialog about= new AboutDialog(fFrame); 
+		AboutDialog about= new AboutDialog(fFrame);
 		about.show();
 	}
 }
