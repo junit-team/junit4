@@ -31,6 +31,7 @@ public class TextRunnerTest extends TestCase {
 		while((b= i.read()) != -1) 
 			; //System.out.write(b); 
 		assertTrue((p.waitFor() == 0) == success);
+		assertEquals(success, p.exitValue() == 0);
 	}
 		
 
