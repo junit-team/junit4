@@ -11,6 +11,9 @@
 <h1>
 <font color="#33FF33">J</font><font color="#CC0000">U</font>nit Cookbook</h1>
 
+<p>
+Kent Beck, Erich Gamma</p>
+
 <hr WIDTH="100%">
 <br>Here is a short cookbook showing you the steps you can follow in writing
 and organizing your own tests using JUnit.
@@ -33,10 +36,13 @@ here is what you do:
 Create an instance of <a href="../../javadoc/junit/framework/TestCase.html">TestCase</a>:</li>
 
 <li>
+Create a constructor which accepts a String as a parameter and passes it to the superclass.</li>
+
+<li>
 Override the method <tt>runTest</tt>()</li>
 
 <li>
-When you want to check a value, call <tt>assert</tt>() and pass a boolean
+When you want to check a value, call <tt>assertTrue</tt>() and pass a boolean
 that is true if the test succeeds</li>
 </ol>
 For example, to test that the sum of two Moneys with the same currency
@@ -46,7 +52,7 @@ contains a value which is the sum of the values of the two Moneys, write:
 &nbsp;&nbsp;&nbsp; Money m14CHF= new Money(14, "CHF");&nbsp;
 &nbsp;&nbsp;&nbsp; Money expected= new Money(26, "CHF");&nbsp;
 &nbsp;&nbsp;&nbsp; Money result= m12CHF.add(m14CHF);&nbsp;
-&nbsp;&nbsp;&nbsp; assert(expected.equals(result));
+&nbsp;&nbsp;&nbsp; assertTrue(expected.equals(result));
 }</tt></pre>
 If you want to write a test similar to one you have already written, write
 a Fixture instead. When you want to run more than one test, create a Suite.
@@ -68,6 +74,9 @@ results.
 <ol>
 <li>
 Create a subclass of TestCase</li>
+
+<li>
+Create a constructor which accepts a String as a parameter and passes it to the superclass.</li>
 
 <li>
 Add an instance variable for each part of the fixture</li>
