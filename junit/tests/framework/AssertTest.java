@@ -178,7 +178,7 @@ public class AssertTest extends TestCase {
 
 	public void testComparisonErrorMessage() {
 		ComparisonFailure failure= new ComparisonFailure("a", "b", "c");
-		assertEquals("a: expected:<b> but was:<c>", failure.getMessage());
+		assertEquals("a expected:<b> but was:<c>", failure.getMessage());
 	}
 
 	public void testComparisonErrorStartSame() {
