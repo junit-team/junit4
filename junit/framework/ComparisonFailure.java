@@ -1,7 +1,7 @@
 package junit.framework;
 
 /**
- * Thrown when an assert equals failed.
+ * Thrown when an assert equals for Strings failed.
  * 
  * Inspired by a patch from Alex Chaffee mailto:alex@purpletech.com
  */
@@ -9,9 +9,6 @@ public class ComparisonFailure extends AssertionFailedError {
 	private String fExpected;
 	private String fActual;
 
-	public ComparisonFailure () {
-	}
-	
 	/**
 	 * Constructs a comparison failure.
 	 * @param message the identifying message or null

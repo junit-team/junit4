@@ -71,6 +71,19 @@ public class AssertTest extends TestCase {
 	public void testAssertNull() {
 		assertNull(null);
 	}
+
+	public void testAssertStringEquals() {
+		assertEquals("a", "a");
+	}
+		
+	public void testAssertStringNotEqualsNull() {
+ 		try {
+			assertEquals(null, "foo");
+		} catch (ComparisonFailure e) {
+			return;
+		}
+		fail();
+	}
 	
 	public void testAssertNullNotEqualsNull() {
  		try {

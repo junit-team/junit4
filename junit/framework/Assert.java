@@ -71,6 +71,22 @@ public class Assert {
 	    assertEquals(null, expected, actual);
 	}
 	/**
+	 * Asserts that two Strings are equal. 
+	 */
+	static public void assertEquals(String message, String expected, String actual) {
+		if (expected == null && actual == null)
+			return;
+		if (expected != null && expected.equals(actual))
+			return;
+		throw new ComparisonFailure(message, expected, actual);
+	}
+	/**
+	 * Asserts that two Strings are equal. 
+	 */
+	static public void assertEquals(String expected, String actual) {
+	    assertEquals(null, expected, actual);
+	}
+	/**
 	 * Asserts that two doubles are equal concerning a delta.  If they are not
 	 * an AssertionFailedError is thrown with the given message.  If the expected
 	 * value is infinity then the delta value is ignored.
@@ -263,6 +279,9 @@ public class Assert {
 	}
 
 	static private void failNotEquals(String message, Object expected, Object actual) {
-		throw new ComparisonFailure(message, expected.toString(), actual.toString());
+		String formatted= "";
+		if (message != null)
+			formatted= message+" ";
+		fail(formatted+"expected:<"+expected+"> but was:<"+actual+">");
 	}
 }
