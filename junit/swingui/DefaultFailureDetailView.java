@@ -68,7 +68,6 @@ public class DefaultFailureDetailView implements FailureDetailView {
 		if (fList == null) {
 			fList= new JList(new StackTraceListModel());
 			fList.setFont(new Font("Dialog", Font.PLAIN, 12));
-			fList.setPrototypeCellValue("A Stack Trace Entry Line");
 			fList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			fList.setVisibleRowCount(5);
 			fList.setCellRenderer(new StackEntryRenderer());

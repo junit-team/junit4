@@ -61,12 +61,6 @@ public class FailureRunView implements TestRunView {
 		fFailureList= new JList(fRunContext.getFailures());
 		fFailureList.setFont(new Font("Dialog", Font.PLAIN, 12));
  
-		fFailureList.setPrototypeCellValue(
-			new TestFailure(new TestCase() {
-				protected void runTest() {}
-			}, 
-			new AssertionFailedError("message"))
-		);	
 		fFailureList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		fFailureList.setCellRenderer(new FailureListCellRenderer());
 		fFailureList.setVisibleRowCount(5);
