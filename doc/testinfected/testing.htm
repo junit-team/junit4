@@ -170,14 +170,14 @@ to check its type before we cast it as a Money. As an aside, it is a recommended
 practice to also override the method hashCode whenever you override method
 equals. However, we want to get back to our test case.
 <p>With an equals method in hand we can verify the outcome of testSimpleAdd.
-In JUnit you do so by a calling 
+In JUnit you do so by a calling
 <A HREF="../../javadoc/junit/framework/Assert.html#assertTrue(boolean)">Assert.assertTrue</a>,
-which triggers a failure that is logged by JUnit when the argument isn't
+which triggers a failure that is recorded by JUnit when the argument isn't
 true. Since assertions for equality are very common, there is also
 an Assert.assertEquals convenience method. In addition to testing for equality
-with equals, it logs the printed value of the two objects in the case they
+with equals, it reports the printed value of the two objects in the case they
 differ. This lets us immediately see why a test failed in a JUnit test
-result report. The value is logged as a string representation created by
+result report. The value a string representation created by
 the toString converter method.
 There are <a href="../../javadoc/junit/framework/Assert.html">
 other asertXXXX variants</a> not discussed here.
@@ -185,8 +185,8 @@ other asertXXXX variants</a> not discussed here.
 for setting-up the tests. It would be nice to reuse some of this test set-up
 code. In other words, we would like to have a common fixture for running
 the tests. With JUnit you can do so by storing the fixture's objects in
-instance variables of your 
-<a href="../../javadoc/junit/framework/TestCase.html">TestCase</a> 
+instance variables of your
+<a href="../../javadoc/junit/framework/TestCase.html">TestCase</a>
 subclass and initialize them by overridding
 the setUp method. The symmetric operation to setUp is tearDown which you
 can override to clean up the test fixture at the end of a test. Each test
@@ -253,7 +253,7 @@ decided to leave the choice of which to use up to you.
 <p>As the last step to getting both test cases to run together, we have
 to define a test suite. In JUnit this requires the definition of a static
 method called suite. The suite method is like a main method that is specialized
-to run tests. Inside suite you add the tests to be run to a 
+to run tests. Inside suite you add the tests to be run to a
 <a href="../../javadoc/junit/framework/TestSuite.html">TestSuite</a> object
 and return it. A TestSuite can run a collection of tests. TestSuite and
 TestCase both implement an interface called Test which defines the methods
