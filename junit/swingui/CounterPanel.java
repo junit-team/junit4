@@ -1,7 +1,6 @@
 package junit.swingui;
 
 import java.awt.*;
-import java.awt.GridLayout;
 
 import javax.swing.*;
 
@@ -16,13 +15,13 @@ public class CounterPanel extends JPanel {
 	private Icon fErrorIcon= TestRunner.getIconResource(getClass(), "icons/error.gif");
 
 	private int fTotal;
-	
+
 	public CounterPanel() {
-		super(new GridBagLayout()); 	
+		super(new GridBagLayout());
 		fNumberOfErrors= createOutputField(5);
 		fNumberOfFailures= createOutputField(5);
-		fNumberOfRuns= createOutputField(9); 
-		
+		fNumberOfRuns= createOutputField(9);
+
       addToGrid(new JLabel("Runs:", JLabel.CENTER),
           0, 0, 1, 1, 0.0, 0.0,
           GridBagConstraints.CENTER, GridBagConstraints.NONE,
@@ -31,7 +30,7 @@ public class CounterPanel extends JPanel {
           1, 0, 1, 1, 0.33, 0.0,
           GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
           new Insets(0, 8, 0, 0));
-          
+
      addToGrid(new JLabel("Errors:", fErrorIcon, SwingConstants.LEFT),
           2, 0, 1, 1, 0.0, 0.0,
           GridBagConstraints.CENTER, GridBagConstraints.NONE,
@@ -40,7 +39,7 @@ public class CounterPanel extends JPanel {
           3, 0, 1, 1, 0.33, 0.0,
           GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
           new Insets(0, 8, 0, 0));
-          
+
       addToGrid(new JLabel("Failures:", fFailureIcon, SwingConstants.LEFT),
           4, 0, 1, 1, 0.0, 0.0,
           GridBagConstraints.CENTER, GridBagConstraints.NONE,
@@ -49,8 +48,8 @@ public class CounterPanel extends JPanel {
           5, 0, 1, 1, 0.33, 0.0,
           GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
           new Insets(0, 8, 0, 0));
-	} 
-	
+	}
+
 	private JTextField createOutputField(int width) {
 		JTextField field= new JTextField("0", width);
 		field.setHorizontalAlignment(JTextField.LEFT);
@@ -65,7 +64,7 @@ public class CounterPanel extends JPanel {
 			double weightx, double weighty,
 			int anchor, int fill,
 			Insets insets) {
-		
+
 		GridBagConstraints constraints= new GridBagConstraints();
 		constraints.gridx= gridx;
 		constraints.gridy= gridy;
@@ -78,34 +77,34 @@ public class CounterPanel extends JPanel {
 		constraints.insets= insets;
 		add(comp, constraints);
 	}
-	
+
 	public void reset() {
 		setLabelValue(fNumberOfErrors, 0);
 		setLabelValue(fNumberOfFailures, 0);
 		setLabelValue(fNumberOfRuns, 0);
 		fTotal= 0;
 	}
-	
+
 	public void setTotal(int value) {
 		fTotal= value;
 	}
-	
+
 	public void setRunValue(int value) {
 		fNumberOfRuns.setText(Integer.toString(value) + "/" + fTotal);
 	}
-	
+
 	public void setErrorValue(int value) {
 		setLabelValue(fNumberOfErrors, value);
 	}
-	
+
 	public void setFailureValue(int value) {
 		setLabelValue(fNumberOfFailures, value);
 	}
-	
+
 	private String asString(int value) {
 		return Integer.toString(value);
 	}
-	
+
 	private void setLabelValue(JTextField label, int value) {
 		label.setText(Integer.toString(value));
 	}
