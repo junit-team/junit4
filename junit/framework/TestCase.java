@@ -29,11 +29,11 @@ import java.lang.reflect.*;
  *
  * For each test implement a method which interacts
  * with the fixture. Verify the expected results with assertions specified
- * by calling <code>assert</code> with a boolean.
+ * by calling <code>assertTrue</code> with a boolean.
  * <pre>
  *    protected void testAdd() {
  *        double result= fValue1 + fValue2;
- *        assert(result == 5.0);
+ *        assertTrue(result == 5.0);
  *    }
  * </pre>
  * Once the methods are defined you can run them. The framework supports
