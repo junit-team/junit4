@@ -175,7 +175,7 @@ public class TestRunner extends BaseTestRunner {
 		if (result.wasSuccessful()) {
 			getWriter().println();
 			getWriter().print("OK");
-			getWriter().println (" (" + result.runCount() + " tests)");
+			getWriter().println (" (" + result.runCount() + " test" + (result.runCount() == 1 ? "": "s") + ")");
 
 		} else {
 			getWriter().println();
