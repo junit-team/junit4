@@ -89,10 +89,7 @@ public class TestRunner extends BaseTestRunner {
 	}
 
 	public void testFailed(int status, Test test, Throwable t) {
-		switch (status) {
-			case TestRunListener.STATUS_ERROR: getWriter().print("E"); break;
-			case TestRunListener.STATUS_FAILURE: getWriter().print("F"); break;
-		}
+		fPrinter.testFailed(status, test, t);
 	}
 	
 	public void testStarted(String testName) {
@@ -120,24 +117,20 @@ public class TestRunner extends BaseTestRunner {
 		suite.run(result);
 		long endTime= System.currentTimeMillis();
 		long runTime= endTime-startTime;
-		getWriter().println();
-		getWriter().println("Time: "+elapsedTimeAsString(runTime));
-		print(result);
+		fPrinter.print(result, runTime);
 
-		getWriter().println();
 
 		pause(wait);
 		return result;
 	}
 
 	protected void pause(boolean wait) {
-		if (wait) {
-			getWriter().println("<RETURN> to continue");
-			try {
-				System.in.read();
-			}
-			catch(Exception e) {
-			}
+		if (!wait) return;
+		fPrinter.printWaitPrompt();
+		try {
+			System.in.read();
+		}
+		catch(Exception e) {
 		}
 	}
 	
@@ -153,66 +146,7 @@ public class TestRunner extends BaseTestRunner {
 			System.exit(EXCEPTION_EXIT);
 		}
 	}
-	/**
-	 * Prints failures to the standard output
-	 */
-	public synchronized void print(TestResult result) {
-	    printErrors(result);
-	    printFailures(result);
-	    printHeader(result);
-	}
-	/**
-	 * Prints the errors to the standard output
-	 */
-	public void printErrors(TestResult result) {
-	    if (result.errorCount() != 0) {
-	        if (result.errorCount() == 1)
-		        getWriter().println("There was "+result.errorCount()+" error:");
-	        else
-		        getWriter().println("There were "+result.errorCount()+" errors:");
 
-			int i= 1;
-			for (Enumeration e= result.errors(); e.hasMoreElements(); i++) {
-			    TestFailure failure= (TestFailure)e.nextElement();
-				getWriter().println(i+") "+failure.failedTest());
-				getWriter().print(getFilteredTrace(failure.trace()));
-		    }
-		}
-	}
-	/**
-	 * Prints failures to the standard output
-	 */
-	public void printFailures(TestResult result) {
-		if (result.failureCount() != 0) {
-			if (result.failureCount() == 1)
-				getWriter().println("There was " + result.failureCount() + " failure:");
-			else
-				getWriter().println("There were " + result.failureCount() + " failures:");
-			int i = 1;
-			for (Enumeration e= result.failures(); e.hasMoreElements(); i++) {
-				TestFailure failure= (TestFailure) e.nextElement();
-				getWriter().print(i + ") " + failure.failedTest());
-				getWriter().print(getFilteredTrace(failure.trace()));
-			}
-		}
-	}
-	/**
-	 * Prints the header of the report
-	 */
-	public void printHeader(TestResult result) {
-		if (result.wasSuccessful()) {
-			getWriter().println();
-			getWriter().print("OK");
-			getWriter().println (" (" + result.runCount() + " test" + (result.runCount() == 1 ? "": "s") + ")");
-
-		} else {
-			getWriter().println();
-			getWriter().println("FAILURES!!!");
-			getWriter().println("Tests run: "+result.runCount()+ 
-				         ",  Failures: "+result.failureCount()+
-				         ",  Errors: "+result.errorCount());
-		}
-	}
 	/**
 	 * Starts a test run. Analyzes the command line arguments
 	 * and runs the given test suite.
