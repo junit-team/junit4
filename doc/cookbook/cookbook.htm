@@ -45,8 +45,8 @@ that is true if the test succeeds</li>
 For example, to test that the sum of two Moneys with the same currency
 contains a value which is the sum of the values of the two Moneys, write:
 <blockquote>
-<pre><tt><font size=-2>public void testSimpleAdd() {
-</font>&nbsp;&nbsp;&nbsp; Money m12CHF= new Money(12, &quot;CHF&quot;);&nbsp;
+<pre><tt>public void testSimpleAdd() {
+&nbsp;&nbsp;&nbsp; Money m12CHF= new Money(12, &quot;CHF&quot;);&nbsp;
 &nbsp;&nbsp;&nbsp; Money m14CHF= new Money(14, &quot;CHF&quot;);&nbsp;
 &nbsp;&nbsp;&nbsp; Money expected= new Money(26, &quot;CHF&quot;);&nbsp;
 &nbsp;&nbsp;&nbsp; Money result= m12CHF.add(m14CHF);&nbsp;
@@ -202,8 +202,8 @@ Or, as a shortcut:
 <p>If a TestCase class doesn't define a suite method a TestRunner will extract
 a suite and fill it with all the methods starting with "test".</p>
 <p>JUnit provides both a graphical and a textual version of a TestRunner
-tool. Start it by typing <tt>java</tt> <tt><a href="../../javadoc/junit/awtui/TestRunner.html">junit.awtui.TestRunner</a>
-or <a href="../../javadoc/junit/swingui/TestRunner.html">junit.swingui.TestRunner</a></tt>.
+tool. Start it by typing <tt>java</tt> <tt><a href="http://www.junit.org/junit/javadoc/3.8/junit/awtui/TestRunner.html">junit.awtui.TestRunner</a>
+or <a href="http://www.junit.org/junit/javadoc/3.8/junit/swingui/TestRunner.html">junit.swingui.TestRunner</a></tt>.
 The graphical user interface presents a window with:
 <ul>
 <li>
@@ -229,14 +229,14 @@ shows an example of a failed test.
 <p><br>
 <p>You have to restart the graphical interface each time you change the code. This
 is tedious and time consuming. As an alternative JUnit's AWT and Swing UIs use
-<a href="../../javadoc/junit/runner/LoadingTestCollector.html">junit.runner.LoadingTestCollector
+<a href="http://www.junit.org/junit/javadoc/3.8/junit/runner/LoadingTestCollector.html">junit.runner.LoadingTestCollector
 </a>.
 This LoadingTestCollector reloads all your classes for each test run. This feature can
 be disabled by unchecking the 'Reload classes every run' checkbox. The most
 common JUnit problem is that many packages want to use their own class loader.
 Include such packages in excluded.properties. See the <a href="../faq/faq.htm">FAQ</a>
 for details.
-<p>There is a batch interface to JUnit, also. To use it type<tt>java <a href="../../javadoc/junit/textui/TestRunner.html">junit.textui.TestRunner</a></tt>
+<p>There is a batch interface to JUnit, also. To use it type<tt>java <a href="http://www.junit.org/junit/javadoc/3.8/junit/textui/TestRunner.html">junit.textui.TestRunner</a></tt>
 followed by the name of the class with a suite method at an operating system
 prompt. The batch interface shows the result as text output. An alternative
 way to invoke the batch interface is to define a main method in your TestCase
