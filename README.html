@@ -1,603 +1,736 @@
-<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
 <html>
 <head>
-   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Microsoft FrontPage 4.0">
-   <meta name="Author" content="Erich Gamma & Kent Beck">
-   <title>JUnit 3.8</title>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+  <meta name="Author" content="Erich Gamma &amp; Kent Beck">
+  <title>JUnit 3.8</title>
 </head>
 <body>
-
 <h1>
-<b><font color="#00CC00">J</font><font color="#FF0000">U</font><font color="#000000">nit
-3.8.1</b></h1>
-
-<hr WIDTH="100%">
-<br>08/31/2002
-<p>JUnit is a simple framework to write repeatable tests. It is an instance
-of the xUnit architecture for unit testing frameworks.
+<b><font color="#00cc00">J</font><font color="#ff0000">U</font><font
+ color="#000000">nit
+3.8.2</font></b></h1>
+<hr width="100%">
+<font color="#000000"><br>
+11/11/2004<br>
+</font>
 <ul>
-<li>
-<a href="#Summary of">Summary of Changes</a></li>
-
-<li>
-<a href="#Contents">Contents</a></li>
-
-<li>
-<a href="#Installation">Installation</a></li>
-
-<li>
-<a href="#Getting">Getting Started</a></li>
-
-<li>
-<a href="#Documentation">Documentation</a></li>
+  <li><font color="#000000"><a href="#Summary%20of">Summary of Changes</a></font></li>
+  <li>
+    <font color="#000000"><a href="#Contents">Contents</a></font></li>
+  <li>
+    <font color="#000000"><a href="#Installation">Installation</a></font></li>
+  <li>
+    <font color="#000000"><a href="#Getting">Getting Started</a></font></li>
+  <li>
+    <font color="#000000"><a href="#Documentation">Documentation</a></font></li>
 </ul>
-
 <h2>
-<a NAME="Summary of"></a>Summary of Changes between 3.8 and 3.8.1</h2>
-
+<font><a name="Summary of"></a><font color="#000000">Summary of Changes
+between 3.8.1 and 3.8.2</font></font></h2>
+<font color="#000000">The changes between the versions are minimal and
+the focus was on fixing the accumulated bug reports. The most
+signifanct change is replacing the much-reviled string comparison
+format with something easier to read and use.<br>
+</font>
 <ul>
-  <li>Backed out setting the testing Thread's context class loader (see <a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=598200&amp;group_id=15278&amp;atid=115278">JUnit
-        not setting ClassLoader</a>). It has caused problems in tests that
-    worked OK before. See the bug report for more details.</li>
+  <li>ComparisonFailure shows context.&nbsp; <br>
+  </li>
+  <ul>
+    <li>assertEquals("Mary had a little lamb", "Mary had the little
+lamb") shows: expected:&lt;Mary had [a] little lamb&gt; but
+was:&lt;Mary had [the] little lamb&gt;<br>
+Longer prefixes and suffixes are truncated to a fixed size (currently
+20):</li>
+    <li>expected:&lt;...st of the emergency [broadcasting]
+system&gt; but was:&lt;...st of the emergency [locating] system&gt;<br>
+    </li>
+  </ul>
+  <li><font color="#000000">Running single tests.&nbsp;
+junit.ui.TestRunner can be invoked with "-m</font> ClassName.testName"
+to run a single test.</li>
+  <li>TestSuite(Class[]).&nbsp;
+There is a new TestSuite constructor that takes an array of classes as
+a parameter and returns a suite of suites, each of which is constructed
+from a single class.</li>
+</ul>
+<h3><font><font color="#000000">Closed Bugs/Patches and Enhancment
+Requests<br>
+</font></font></h3>
+<ul>
+  <li><a
+ href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=698067&amp;group_id=15278&amp;atid=115278">assertEquals(float,float,delta)
+fails on negative delta</a></li>
+  <li><a
+ href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=609972&amp;group_id=15278&amp;atid=115278">'...'
+in ComparisonFailure</a></li>
+  <li><a
+ href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=461535&amp;group_id=15278&amp;atid=115278">Trouble
+in teardown hides orig. probl.</a></li>
+  <li><a
+ href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=609819&amp;group_id=15278&amp;atid=115278">NaN's
+in assertEquals</a></li>
+  <li><a
+ href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=620039&amp;group_id=15278&amp;atid=115278">BaseTestRunner.setPreference
+static</a></li>
+  <li><a
+ href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=658044&amp;group_id=15278&amp;atid=115278">failNotEquals()
+should be protected</a></li>
+  <li><a
+ href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=777097&amp;group_id=15278&amp;atid=115278">RFE:
+make private methods protected</a></li>
+  <li><a
+ href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=654507&amp;group_id=15278&amp;atid=365278">Printing
+version number</a></li>
+  <li><a
+ href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=993150&amp;group_id=15278&amp;atid=315278">Patch
+to quell warnings in tiger</a></li>
+  <li><a
+ href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=657593&amp;group_id=15278&amp;atid=315278">Enhanced
+ComparisonFailure output</a></li>
+  <li><a
+ href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=625016&amp;group_id=15278&amp;atid=315278">addt'l
+TestSuite constructrs for Class[]</a></li>
+  <li><a
+ href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=908467&amp;group_id=15278&amp;atid=315278">Run
+one test method for junit</a></li>
+  <li><a
+ href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=756480&amp;group_id=15278&amp;atid=315278">excluded.properties:
+Add commons logging</a></li>
+</ul>
+<h2><font color="#000000">Summary of Changes between 3.8 and 3.8.1</font></h2>
+<ul>
+  <font color="#000000"> <li>Backed out setting the testing Thread's
+context class loader (see <a
+ href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=598200&amp;group_id=15278&amp;atid=115278">JUnit
+not setting ClassLoader</a>). It has caused problems in tests that
+worked OK before. See the bug report for more details.</li>
   <li>Fixes:&nbsp;
     <ul>
-      <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=601326&amp;group_id=15278&amp;atid=115278">NPE
-        in ComparisonFailure</a></li>
-      <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=602948&amp;group_id=15278&amp;atid=115278">Swing
-        UI: NoSuchMethodError on JDK 1.3</a></li>
+      <li><a
+ href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=601326&amp;group_id=15278&amp;atid=115278">NPE
+in ComparisonFailure</a></li>
+      <li><a
+ href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=602948&amp;group_id=15278&amp;atid=115278">Swing
+UI: NoSuchMethodError on JDK 1.3</a></li>
     </ul>
   </li>
+  </font>
 </ul>
-
 <h2>
-Summary of Changes between 3.7 and 3.8</h2>
-
+<font color="#000000">Summary of Changes between 3.7 and 3.8</font></h2>
 <h3>
-Framework</h3>
-
+<font color="#000000">Framework</font></h3>
 <ul>
-<li>
-Made the string argument TestCase constructor optional. You can now delete
-constructors of the form &quot;FooTestCase(String name) { super(name); }&quot;.</li>
-
-<li>
-Deleted deprecated assert(boolean) in favor of assertTrue(boolean) and
-assertFalse(boolean). To migrate to JUnit 3.8, rename calls to assert(boolean)
-to call assertTrue(boolean).</li>
-
-<li>
-Added assertFalse() to avoid the difficult of reading the assertTrue(!
-condition).</li>
-
-<li>
-Added assertNotSame(Object, Object).</li>
-
-<li>
-Deleted deprecated TestCase.name() in favor of TestCase.getName().</li>
-
-<li>
-Deleted deprecated package junit.ui in favor of junit.awtui.</li>
-
+  <li>
+    <font color="#000000">Made the string argument TestCase constructor
+optional. You can now delete
+constructors of the form "FooTestCase(String name) { super(name); }".</font></li>
+  <li>
+    <font color="#000000">Deleted deprecated assert(boolean) in favor
+of assertTrue(boolean) and
+assertFalse(boolean). To migrate to JUnit 3.8, rename calls to
+assert(boolean)
+to call assertTrue(boolean).</font></li>
+  <li>
+    <font color="#000000">Added assertFalse() to avoid the difficult of
+reading the assertTrue(!
+condition).</font></li>
+  <li>
+    <font color="#000000">Added assertNotSame(Object, Object).</font></li>
+  <li>
+    <font color="#000000">Deleted deprecated TestCase.name() in favor
+of TestCase.getName().</font></li>
+  <li>
+    <font color="#000000">Deleted deprecated package junit.ui in favor
+of junit.awtui.</font></li>
 </ul>
-
 <h3>
-Test Runner</h3>
-
+<font color="#000000">Test Runner</font></h3>
 <ul>
-<li>
-When you compare two long strings with a small delta embedded in the middle, it
-is hard to spot the difference. In 3.8, when you call assertEquals(String,
-String), only the differences between the strings are displayed. The common
-prefix and suffix are replaced with &quot;...&quot;.</li>
-<li>
-Added initial version of a TestRunListener attached to TestRunners which
-eventually will replace TestListeners attached to the TestResult.</li>
-<li>
-Filled in ActiveTestSuite constructors.</li>
-<li>
-Added these packages to the excluded.properties:<font SIZE="2">
+  <li>
+    <font color="#000000">When you compare two long strings with a
+small delta embedded in the middle, it
+is hard to spot the difference. In 3.8, when you call
+assertEquals(String,
+String), only the differences between the strings are displayed. The
+common
+prefix and suffix are replaced with "...".</font></li>
+  <li>
+    <font color="#000000">Added initial version of a TestRunListener
+attached to TestRunners which
+eventually will replace TestListeners attached to the TestResult.</font></li>
+  <li>
+    <font color="#000000">Filled in ActiveTestSuite constructors.</font></li>
+  <li>
+    <font color="#000000">Added these packages to the
+excluded.properties:<font size="2">
+    <ul>
+      <li>org.w3c.dom.*</li>
+      <li>org.xml.sax.*</li>
+      <li>net.jini.*</li>
+    </ul>
+    </font></font></li>
+  <li><font color="#000000">Extracted textual formatting of a
+TestResult from junit.textui.TestRunner into ResultPrinter.</font></li>
+</ul>
+<h3><font color="#000000">Documentation</font></h3>
 <ul>
-  <li>org.w3c.dom.*</li>
-  <li>org.xml.sax.*</li>
-  <li>net.jini.*</li>
+  <font color="#000000"> <li>Much improved <a href="doc/faq/faq.htm">FAQ</a>
+thanks to Mike Clark.</li>
+  </font>
 </ul>
-</font></li>
-<li>Extracted textual formatting of a TestResult from junit.textui.TestRunner
-  into ResultPrinter.</li>
-</ul>
-
-<h3>Documentation</h3>
+<h3><font color="#000000">Closed Bugs</font></h3>
 <ul>
-  <li>Much improved <a href="doc/faq/faq.htm">FAQ</a> thanks to Mike Clark.</li>
+  <font color="#000000"> <li><a
+ href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=583346&amp;group_id=15278&amp;atid=115278">Class
+loader problem</a></li>
+  <li><a
+ href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=551239&amp;group_id=15278&amp;atid=115278">Cookbook
+Simple Test Case problems</a></li>
+  <li><a
+ href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=539015&amp;group_id=15278&amp;atid=115278">License
+not included in source</a></li>
+  <li><a
+ href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=560081&amp;group_id=15278&amp;atid=115278">assert
+is a keyword</a></li>
+  <li><a
+ href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=572444&amp;group_id=15278&amp;atid=115278">javadoc
+returns mysterious message</a></li>
+  <li><a
+ href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=581251&amp;group_id=15278&amp;atid=115278">swingui
+CounterPanel values disappear</a></li>
+  <li><a
+ href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=574641&amp;group_id=15278&amp;atid=115278">TestCase
+javadoc incorrect example</a></li>
+  <li><a
+ href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=582784&amp;group_id=15278&amp;atid=115278">silly
+cookbook error</a></li>
+  <li><a
+ href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=583328&amp;group_id=15278&amp;atid=115278">junit
+properties missfunction</a></li>
+  <li><a
+ href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=595957&amp;group_id=15278&amp;atid=115278">Test.java
+is not Serializable</a></li>
+  <li><a
+ href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=598200&amp;group_id=15278&amp;atid=115278">JUnit
+not setting ClassLoader`</a></li>
+  <li><a
+ href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=592713&amp;group_id=15278&amp;atid=115278">NullPointerException
+when loading suite</a></li>
+  <li><a
+ href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=544683&amp;group_id=15278&amp;atid=115278">labels
+for bug counts too small in Swing</a></li>
+  <li><a
+ href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=537502&amp;group_id=15278&amp;atid=115278">Swing
+TestRunner layout shifts</a></li>
+  <li><a
+ href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=528868&amp;group_id=15278&amp;atid=115278">Exit
+code problem for cygwin/w2k</a></li>
+  <li><a
+ href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=529953&amp;group_id=15278&amp;atid=115278">Automatic
+reload causes strange errors</a></li>
+  <li><a
+ href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=532952&amp;group_id=15278&amp;atid=115278">TestRunner
+fails with swing/awtui</a></li>
+  <li><a
+ href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=533411&amp;group_id=15278&amp;atid=115278">CVS
+version doesn't build on NetBSD</a></li>
+  <li><a
+ href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=520210&amp;group_id=15278&amp;atid=115278">NullPointerException
+JUnit sample w/ Ant</a></li>
+  <li><a
+ href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=527511&amp;group_id=15278&amp;atid=115278">money
+sample bug</a></li>
+  <li><a
+ href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=491981&amp;group_id=15278&amp;atid=115278">incomplete
+message from failNotSame()</a></li>
+  <li><a
+ href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=471577&amp;group_id=15278&amp;atid=115278">Icons
+on systems with 64 colors exceptio</a></li>
+  <li><a
+ href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=470324&amp;group_id=15278&amp;atid=115278">1000+
+tests, swing gui doesn't display</a></li>
+  <li><a
+ href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=442752&amp;group_id=15278&amp;atid=115278">test
+selector included incorrect classes</a></li>
+  <li><a
+ href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=430974&amp;group_id=15278&amp;atid=115278">No
+UI update when re-run methods fail</a></li>
+  </font>
 </ul>
-
-<h3>Closed Bugs</h3>
-<ul>
-  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=583346&amp;group_id=15278&amp;atid=115278">Class
-        loader problem</a></li>
-  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=551239&amp;group_id=15278&amp;atid=115278">Cookbook
-        Simple Test Case problems</a></li>
-  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=539015&amp;group_id=15278&amp;atid=115278">License
-        not included in source</a></li>
-  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=560081&amp;group_id=15278&amp;atid=115278">assert
-        is a keyword</a></li>
-  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=572444&amp;group_id=15278&amp;atid=115278">javadoc
-        returns mysterious message</a></li>
-  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=581251&amp;group_id=15278&amp;atid=115278">swingui
-        CounterPanel values disappear</a></li>
-  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=574641&amp;group_id=15278&amp;atid=115278">TestCase
-        javadoc incorrect example</a></li>
-  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=582784&amp;group_id=15278&amp;atid=115278">silly
-        cookbook error</a></li>
-  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=583328&amp;group_id=15278&amp;atid=115278">junit
-        properties missfunction</a></li>
-  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=595957&amp;group_id=15278&amp;atid=115278">Test.java
-        is not Serializable</a></li>
-  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=598200&amp;group_id=15278&amp;atid=115278">JUnit
-        not setting ClassLoader`</a></li>
-  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=592713&amp;group_id=15278&amp;atid=115278">NullPointerException
-        when loading suite</a></li>
-  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=544683&amp;group_id=15278&amp;atid=115278">labels
-        for bug counts too small in Swing</a></li>
-  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=537502&amp;group_id=15278&amp;atid=115278">Swing
-        TestRunner layout shifts</a></li>
-  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=528868&amp;group_id=15278&amp;atid=115278">Exit
-        code problem for cygwin/w2k</a></li>
-  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=529953&amp;group_id=15278&amp;atid=115278">Automatic
-        reload causes strange errors</a></li>
-  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=532952&amp;group_id=15278&amp;atid=115278">TestRunner
-        fails with swing/awtui</a></li>
-  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=533411&amp;group_id=15278&amp;atid=115278">CVS
-        version doesn't build on NetBSD</a></li>
-  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=520210&amp;group_id=15278&amp;atid=115278">NullPointerException
-        JUnit sample w/ Ant</a></li>
-  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=527511&amp;group_id=15278&amp;atid=115278">money
-        sample bug</a></li>
-  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=491981&amp;group_id=15278&amp;atid=115278">incomplete
-        message from failNotSame()</a></li>
-  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=471577&amp;group_id=15278&amp;atid=115278">Icons
-        on systems with 64 colors exceptio</a></li>
-  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=470324&amp;group_id=15278&amp;atid=115278">1000+
-        tests, swing gui doesn't display</a></li>
-  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=442752&amp;group_id=15278&amp;atid=115278">test
-        selector included incorrect classes</a></li>
-  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=430974&amp;group_id=15278&amp;atid=115278">No
-        UI update when re-run methods fail</a></li>
-</ul>
-
 <h2>
-Summary of Changes between 3.6 and 3.7</h2>
-
+<font color="#000000">Summary of Changes between 3.6 and 3.7</font></h2>
 <h3>
-GUI</h3>
-
+<font color="#000000">GUI</font></h3>
 <ul>
-<li>
-Eliminated warning when re-running tests when class loading checkbox is
-unchecked. There are legitimate reasons for doing this, so a warning didn't
-make much sense, and it was too obtrusive.</li>
-
-<li>
-Stopped reloading classes when running in VisualAge for Java.</li>
-
-<li>
-Print total number of tests as well as number of tests run so far (Swing
-only).</li>
+  <li>
+    <font color="#000000">Eliminated warning when re-running tests when
+class loading checkbox is
+unchecked. There are legitimate reasons for doing this, so a warning
+didn't
+make much sense, and it was too obtrusive.</font></li>
+  <li>
+    <font color="#000000">Stopped reloading classes when running in
+VisualAge for Java.</font></li>
+  <li>
+    <font color="#000000">Print total number of tests as well as number
+of tests run so far (Swing
+only).</font></li>
 </ul>
-
 <h3>
-Framework</h3>
-
+<font color="#000000">Framework</font></h3>
 <ul>
-<li>
-Introduced Assert.assertTrue(boolean) and assertTrue(String, boolean) deprecated
-assert(boolean) and assert(String, boolean) in preparation for the assert
+  <li>
+    <font color="#000000">Introduced Assert.assertTrue(boolean) and
+assertTrue(String, boolean) deprecated
+assert(boolean) and assert(String, boolean) in preparation for the
+assert
 keyword in Java 1.4. We plan to support native assertions when they are
 publicly available. You can either move to assertTrue() or wait for 1.4
-and delete parentheses as the syntax is e.g. "assert 2 == 3".</li>
-
-<li>
-Added accessors for TestCase.fName and TestSuite.fName.</li>
-
-<li>
-Added a no argument TestCase constructor to support serialization.</li>
-
-<li>
-Improved warnings when constructing TestSuites.</li>
+and delete parentheses as the syntax is e.g. "assert 2 == 3".</font></li>
+  <li>
+    <font color="#000000">Added accessors for TestCase.fName and
+TestSuite.fName.</font></li>
+  <li>
+    <font color="#000000">Added a no argument TestCase constructor to
+support serialization.</font></li>
+  <li>
+    <font color="#000000">Improved warnings when constructing
+TestSuites.</font></li>
 </ul>
-
 <h3>
-Text Runner</h3>
-
+<font color="#000000">Text Runner</font></h3>
 <ul>
-<li>
-Made doRun() public so clients can create a text runner with a specified
-output stream and then run tests.</li>
+  <li>
+    <font color="#000000">Made doRun() public so clients can create a
+text runner with a specified
+output stream and then run tests.</font></li>
 </ul>
-
 <h3>
-Fixed Bugs (SourceForge Bug Tracker Ids)</h3>
-&nbsp;&nbsp;&nbsp; [420315] No trace when fail with message...
-<br>&nbsp;&nbsp;&nbsp; [419375] reload warning lags
-<br>&nbsp;&nbsp;&nbsp; [418849] Classloader warning too obtrusive
-<br>&nbsp;&nbsp;&nbsp; [417978] constructor stack trace, please
-<br>&nbsp;&nbsp;&nbsp; [415103] Reload checkbox should be ignored in VAJ
-<br>&nbsp;&nbsp;&nbsp; [414954] error reporting when invoking suite()
-<br>&nbsp;&nbsp;&nbsp; [407296] Make doRun() public
-<br>&nbsp;&nbsp;&nbsp; [227578] rmi callbacks fail since TestCase has no
+<font color="#000000">Fixed Bugs (SourceForge Bug Tracker Ids)</font></h3>
+<font color="#000000">&nbsp;&nbsp;&nbsp; [420315] No trace when fail
+with message...
+<br>
+&nbsp;&nbsp;&nbsp; [419375] reload warning lags
+<br>
+&nbsp;&nbsp;&nbsp; [418849] Classloader warning too obtrusive
+<br>
+&nbsp;&nbsp;&nbsp; [417978] constructor stack trace, please
+<br>
+&nbsp;&nbsp;&nbsp; [415103] Reload checkbox should be ignored in VAJ
+<br>
+&nbsp;&nbsp;&nbsp; [414954] error reporting when invoking suite()
+<br>
+&nbsp;&nbsp;&nbsp; [407296] Make doRun() public
+<br>
+&nbsp;&nbsp;&nbsp; [227578] rmi callbacks fail since TestCase has no
 noArg constructor
-<br>&nbsp;&nbsp;&nbsp; [422603] Decorated decorators bug
-<h2>
-Summary of Changes between 3.5 and 3.6</h2>
-
+<br>
+&nbsp;&nbsp;&nbsp; [422603] Decorated decorators bug
+</font>
+<h2><font color="#000000">Summary of Changes between 3.5 and 3.6</font></h2>
 <h3>
-TestRunner</h3>
-
+<font color="#000000">TestRunner</font></h3>
 <ul>
-<li>
-The UI test runners provide a check box to enable/disable the custom class
-loader. The user is warned when running a second test with the non loading
-class loader.</li>
-
-<li>
-Renames to address file name length limitation on MacOS:</li>
-
-<ul>
-<li>
-LoadingClassPathTestCollector -> LoadingTestCollector</li>
-
-<li>
-SimpleClassPathTestCollector -> SimpleTestCollector</li>
+  <li>
+    <font color="#000000">The UI test runners provide a check box to
+enable/disable the custom class
+loader. The user is warned when running a second test with the non
+loading
+class loader.</font></li>
+  <li>
+    <font color="#000000">Renames to address file name length
+limitation on MacOS:</font></li>
+  <ul>
+    <li>
+      <font color="#000000">LoadingClassPathTestCollector -&gt;
+LoadingTestCollector</font></li>
+    <li>
+      <font color="#000000">SimpleClassPathTestCollector -&gt;
+SimpleTestCollector</font></li>
+  </ul>
 </ul>
-</ul>
-
 <h3>
-Framework</h3>
-
+<font color="#000000">Framework</font></h3>
 <ul>
-<li>
-Added TestSuite.getName()</li>
+  <li>
+    <font color="#000000">Added TestSuite.getName()</font></li>
 </ul>
-
 <h3>
-Builds</h3>
-
+<font color="#000000">Builds</font></h3>
 <ul>
-<li>
-Updated the build script for Ant 1.3.</li>
+  <li>
+    <font color="#000000">Updated the build script for Ant 1.3.</font></li>
 </ul>
-
 <h3>
-Fixed Bugs (SourceForge Bug Tracker Ids)</h3>
-
-<blockquote>[ #229753 ] assertEquals on NaN and Infinity does not work
+<font color="#000000">Fixed Bugs (SourceForge Bug Tracker Ids)</font></h3>
+<blockquote><font color="#000000">[ #229753 ] assertEquals on NaN and
+Infinity does not work
 correctly
-<br>[ #229287 ] Class Name too long "SimpleClassPathTestCollector"
-<br>[ #229609 ] Stack Filtering missing in textui.TesRunner
-<br>[ #229870 ] Clicking on ... after tests failed gives NPE
-<br>[ #229974 ] Incorrect icon shown for first element in Swing GUI
-<br>[ #230581 ] swingui.TestTreeModel: results of decorated testcases...
-<br>[ #230971 ] Make junit.extensions.TestDecorator.getTest() public
-<br>[ #231569 ] DocBug: JUnit Test Infected: Programmers Love Writing Tests
-<br>[ #232645 ] BaseTestRunner.getTest loses exception information
-<br>[ #233094 ] TestSuite masks exceptions
-<br>[ #410967 ] No icon provided for first test
-<br>[ #230745 ] ClassPathTestCollector sometimes lists classes in duplicate</blockquote>
-
+  <br>
+[ #229287 ] Class Name too long "SimpleClassPathTestCollector"
+  <br>
+[ #229609 ] Stack Filtering missing in textui.TesRunner
+  <br>
+[ #229870 ] Clicking on ... after tests failed gives NPE
+  <br>
+[ #229974 ] Incorrect icon shown for first element in Swing GUI
+  <br>
+[ #230581 ] swingui.TestTreeModel: results of decorated testcases...
+  <br>
+[ #230971 ] Make junit.extensions.TestDecorator.getTest() public
+  <br>
+[ #231569 ] DocBug: JUnit Test Infected: Programmers Love Writing Tests
+  <br>
+[ #232645 ] BaseTestRunner.getTest loses exception information
+  <br>
+[ #233094 ] TestSuite masks exceptions
+  <br>
+[ #410967 ] No icon provided for first test
+  <br>
+[ #230745 ] ClassPathTestCollector sometimes lists classes in duplicate</font></blockquote>
 <h3>
-Documentation</h3>
-
+<font color="#000000">Documentation</font></h3>
 <ul>
-<li>
-Added documentation about the <a href="doc/JUnitProperties.html">properties</a>
-supported by TestRunners.</li>
-
-<li>
-Updated the FAQ</li>
+  <li>
+    <font color="#000000">Added documentation about the <a
+ href="doc/JUnitProperties.html">properties</a>
+supported by TestRunners.</font></li>
+  <li>
+    <font color="#000000">Updated the FAQ</font></li>
 </ul>
-
 <h2>
-Summary of Changes between 3.4 and 3.5</h2>
-
+<font color="#000000">Summary of Changes between 3.4 and 3.5</font></h2>
 <h3>
-Framework</h3>
-
+<font color="#000000">Framework</font></h3>
 <ul>
-<li>
-Added TestSuite.addTestSuite(Class testClass)</li>
-
-<br>This method allows to create a TestSuite with a class containing test
+  <li>
+    <font color="#000000">Added TestSuite.addTestSuite(Class testClass)</font></li>
+  <font color="#000000"><br>
+This method allows to create a TestSuite with a class containing test
 cases directly.
-<br>Instead of writing <b>suite.addTest(new TestSuite(AssertTest.class))
-</b>you
+  <br>
+Instead of writing <b>suite.addTest(new TestSuite(AssertTest.class))
+  </b>you
 can now write <b>suite.addTestSuite(AssertTest.class)</b>;
-<li>
-Added assertEquals methods for all primitive types: float, boolean, byte,
+  <li>Added assertEquals methods for all primitive types: float,
+boolean, byte,
 char, int, short</li>
-
-<li>
+  <li>
 The signature of&nbsp; TestListeners.addFailure(Test test, Throwable t)</li>
-
-<br>was changed to addFailure(Test test, AssertionFailedError t)</ul>
-
-<h3>
-TestRunner</h3>
-
-<ul>
-<li>
-The Swing TestRunner provides an experimental feature to browse test classes.
-There is an additional browse ("...") button besides the suite combo. It
-shows a simple dialog to select a test class from a list. Different strategies
-to locate Test classes are supported and you can plug-in your own strategy.
-This allows to leverage functionality provided by an extension API of an
-integrated development environment (IDE). To define a custom test collector
-you 1) implement the <b>junit.runner.TestCollector </b>interface and 2)
-add an entry to the <b>junit.properties</b> file with the key <b>TestCollectorClass</b>
-and the name of your TestCollector implementation class as the key:</li>
-
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; TestCollectorClass=junit.swingui.LoadingClassPathTestCollector
-<br>This class has to be installed on the class path.
-<br>JUnit provides two different TestCollector implementations:
-<ul>
-<li>
-simple (junit.runner.SimpleClassPathTestCollector) - considers all classes
-on the class path on the file system that contain "Test" in their name.
-Classes in JARs are not considered.</li>
-
-<li>
-loading (junit.runner.LoadingClassPathTestCollector) - loads all classes
-on the class path and tests whether the class is assignable from Test or
-has a static <b>suite</b> method.</li>
+  <br>
+was changed to addFailure(Test test, AssertionFailedError t)</font>
 </ul>
-By default the simple the test collector is used. The loading collector
-is more precise but much slower than the simple one. The loading collector
+<h3>
+<font color="#000000">TestRunner</font></h3>
+<ul>
+  <li>
+    <font color="#000000">The Swing TestRunner provides an experimental
+feature to browse test classes.
+There is an additional browse ("...") button besides the suite combo.
+It
+shows a simple dialog to select a test class from a list. Different
+strategies
+to locate Test classes are supported and you can plug-in your own
+strategy.
+This allows to leverage functionality provided by an extension API of
+an
+integrated development environment (IDE). To define a custom test
+collector
+you 1) implement the <b>junit.runner.TestCollector </b>interface and
+2)
+add an entry to the <b>junit.properties</b> file with the key <b>TestCollectorClass</b>
+and the name of your TestCollector implementation class as the key:</font></li>
+  <font color="#000000"><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TestCollectorClass=junit.swingui.LoadingClassPathTestCollector
+  <br>
+This class has to be installed on the class path.
+  <br>
+JUnit provides two different TestCollector implementations:
+  </font>
+  <ul>
+    <li>
+      <font color="#000000">simple
+(junit.runner.SimpleClassPathTestCollector) - considers all classes
+on the class path on the file system that contain "Test" in their name.
+Classes in JARs are not considered.</font></li>
+    <li>
+      <font color="#000000">loading
+(junit.runner.LoadingClassPathTestCollector) - loads all classes
+on the class path and tests whether the class is assignable from Test
+or
+has a static <b>suite</b> method.</font></li>
+  </ul>
+  <font color="#000000">By default the simple the test collector is
+used. The loading collector
+is more precise but much slower than the simple one. The loading
+collector
 doesn't scale up when many classes are available on the class path.
-<br><b><font color="#FF0000">Notice</font></b>: that both TestCollectors
-assume that the class files reside are kept in the file system. This isn't
+  <br>
+  <b><font color="#ff0000">Notice</font></b>: that both TestCollectors
+assume that the class files reside are kept in the file system. This
+isn't
 case in VA/Java and they will not work there. A custom TestCollector is
 required for VA/Java.
-<li>
-The Swing TestRunner now provides an additional test result view that shows
-all tests of the executed test suite as a tree. The view shows the success
-status for each test. The view is shown as an additional tab in the TestRunner
+  <li>The Swing TestRunner now provides an additional test result view
+that shows
+all tests of the executed test suite as a tree. The view shows the
+success
+status for each test. The view is shown as an additional tab in the
+TestRunner
 window. In previous versions of JUnit this view was shown in a separate
 window.</li>
-
-<li>
-The failure panels in the Swing and AWT TestRunners filter the exception
+  <li>
+The failure panels in the Swing and AWT TestRunners filter the
+exception
 stack trace so that only non-framework stack frames are shown.</li>
-
-<li>
-There is support to plug-in a custom failure panel that provides additional
-functionality like navigating from a failure to the source. To do so you
-implement the <b>junit.runner.FailureDetailView</b> interface and register
+  <li>
+There is support to plug-in a custom failure panel that provides
+additional
+functionality like navigating from a failure to the source. To do so
+you
+implement the <b>junit.runner.FailureDetailView</b> interface and
+register
 the implementation class in the junit.properties file under the key <b>FailureViewClass</b>,
 for example</li>
-
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; FailureViewClass=MyFailureViewClassName.
-<li>
-The Swing and AWT TestRunners now understand an additional command line
-argument "-noloading". When this argument is set then the standard system
+  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+FailureViewClass=MyFailureViewClassName.
+  <li>The Swing and AWT TestRunners now understand an additional
+command line
+argument "-noloading". When this argument is set then the standard
+system
 class loader is used to load classes. This is an alternative to setting
 the <b>loading</b> property to false in the junit.properties file.</li>
-
-<li>
-Swing TestRunner - the maximum test history length shown in the suite combo
+  <li>
+Swing TestRunner - the maximum test history length shown in the suite
+combo
 can be defined in the junit.properties file with the key <b>maxhistory</b>.</li>
-
-<li>
+  <li>
 BaseTestRunner.<b>getLoader</b>() is no longer a static method and can
 now be overridden in subclasses.</li>
-
-<li>
+  <li>
 BaseTestRunner removed dependency on JDK 1.2.</li>
-
-<li>
-Swing TestRunner - fixed the problem that a suite name was sometimes duplicated
+  <li>
+Swing TestRunner - fixed the problem that a suite name was sometimes
+duplicated
 in the history combo.</li>
-
-<li>
+  <li>
 Swing TestRunner - the Run button is now the default button.</li>
-
-<li>
+  <li>
 Output string truncation can now be controlled by adding the <b>maxmessage</b>
-key with the desired maximum length to the junit.properties file. Setting
+key with the desired maximum length to the junit.properties file.
+Setting
 maxmessage to -1 means no output truncation.</li>
-
-<li>
-The Text TestRunner now shows the summary at the very end so that you don't
+  <li>
+The Text TestRunner now shows the summary at the very end so that you
+don't
 have to scroll back.</li>
+  </font>
 </ul>
-
 <h3>
-Tests</h3>
-
+<font color="#000000">Tests</font></h3>
 <ul>
-<li>
-TextRunnerTest now only depends on a nonzero status to indicate abnormal
-termination.</li>
-
-<li>
-TextRunnerTest now also passes on JDK 1.1.*. It uses the -classpath command
-line argument instead of -cp.</li>
+  <li>
+    <font color="#000000">TextRunnerTest now only depends on a nonzero
+status to indicate abnormal
+termination.</font></li>
+  <li>
+    <font color="#000000">TextRunnerTest now also passes on JDK 1.1.*.
+It uses the -classpath command
+line argument instead of -cp.</font></li>
 </ul>
-
 <h3>
-Documentation</h3>
-
+<font color="#000000">Documentation</font></h3>
 <ul>
-<li>
-Add an FAQ entry about what to do when the junit tests provided with the
-distribution can't be found.</li>
+  <li>
+    <font color="#000000">Add an FAQ entry about what to do when the
+junit tests provided with the
+distribution can't be found.</font></li>
 </ul>
-
 <h2>
-Older Change Notes</h2>
-
+<font color="#000000">Older Change Notes</font></h2>
 <blockquote>
-<li>
-Changes between <a href="doc/changes34.html">2.1 and 3.4</a></li>
-
-<li>
-Changes between <a href="doc/changes21.html">1.0 and 2.1</a></li>
+  <li><font color="#000000">Changes between <a
+ href="doc/changes34.html">2.1 and 3.4</a></font></li>
+  <li>
+    <font color="#000000">Changes between <a href="doc/changes21.html">1.0
+and 2.1</a></font></li>
 </blockquote>
-
 <h2>
-<a NAME="Contents"></a>Contents of the Release</h2>
-
-<table CELLSPACING=0 CELLPADDING=0 >
-<tr>
-<td><tt>README.html&nbsp;</tt></td>
-
-<td>this file</td>
-</tr>
-
-<tr>
-<td><tt>junit.jar</tt></td>
-
-<td>a jar file with the JUnit framework and&nbsp; tools&nbsp;</td>
-</tr>
-
-<tr>
-<td>src.jar</td>
-
-<td>a jar file with the source code of the junit framework</td>
-</tr>
-
-<tr>
-<td><tt>junit</tt></td>
-
-<td>the source code of the JUnit samples</td>
-</tr>
-
-<tr>
-<td><tt>&nbsp;&nbsp;&nbsp; samples</tt></td>
-
-<td>sample test cases</td>
-</tr>
-
-<tr>
-<td><tt>&nbsp;&nbsp;&nbsp; tests</tt></td>
-
-<td>test cases for JUnit itself</td>
-</tr>
-
-<tr>
-<td><tt>javadoc</tt></td>
-
-<td>javadoc generated documentation</td>
-</tr>
-
-<tr>
-<td><tt>doc</tt></td>
-
-<td>documentation and articles</td>
-</tr>
+<font color="#000000"><a name="Contents"></a>Contents of the Release</font></h2>
+<table cellspacing="0" cellpadding="0">
+  <tbody>
+    <tr>
+      <td><tt>README.html&nbsp;</tt></td>
+      <td>this file</td>
+    </tr>
+    <tr>
+      <td><tt>junit.jar</tt></td>
+      <td>a jar file with the JUnit framework and&nbsp; tools&nbsp;</td>
+    </tr>
+    <tr>
+      <td>src.jar</td>
+      <td>a jar file with the source code of the junit framework</td>
+    </tr>
+    <tr>
+      <td><tt>junit</tt></td>
+      <td>the source code of the JUnit samples</td>
+    </tr>
+    <tr>
+      <td><tt>&nbsp;&nbsp;&nbsp; samples</tt></td>
+      <td>sample test cases</td>
+    </tr>
+    <tr>
+      <td><tt>&nbsp;&nbsp;&nbsp; tests</tt></td>
+      <td>test cases for JUnit itself</td>
+    </tr>
+    <tr>
+      <td><tt>javadoc</tt></td>
+      <td>javadoc generated documentation</td>
+    </tr>
+    <tr>
+      <td><tt>doc</tt></td>
+      <td>documentation and articles</td>
+    </tr>
+  </tbody>
 </table>
-
 <h2>
-<a NAME="Installation"></a>Installation</h2>
-Below are the installation steps for installing JUnit:
+<font color="#000000"><a name="Installation"></a>Installation</font></h2>
+<font color="#000000">Below are the installation steps for installing
+JUnit:
+</font>
 <ol>
-<li>
-unzip the junit.zip file</li>
-
-<li>
-add<i> </i><b>junit.jar</b> to the CLASSPATH. For example: <tt>set classpath=%classpath%;INSTALL_DIR\junit3\junit.jar</tt></li>
-
-<li>
-test the installation by using either the batch or the graphical TestRunner
+  <li>
+    <font color="#000000">unzip the junit.zip file</font></li>
+  <li>
+    <font color="#000000">add<i> </i><b>junit.jar</b> to the
+CLASSPATH. For example: <tt>set
+classpath=%classpath%;INSTALL_DIR\junit3\junit.jar</tt></font></li>
+  <li>
+    <font color="#000000">test the installation by using either the
+batch or the graphical TestRunner
 tool to run the tests that come with this release. All the tests should
-pass OK.</li>
-
-<br><b><font color="#FF0000">Notice</font></b>: that the tests are not
+pass OK.</font></li>
+  <font color="#000000"><br>
+  <b><font color="#ff0000">Notice</font></b>: that the tests are not
 contained in the junit.jar but in the installation directory directly.
-Therefore make sure that the installation directory is on the class path
-<ul>
-<li>
-for the batch TestRunner type:</li>
-
-<br><tt>&nbsp;&nbsp;&nbsp; java junit.textui.TestRunner junit.samples.AllTests</tt>
-<li>
-for the graphical TestRunner type:</li>
-
-<br><tt>&nbsp;&nbsp;&nbsp; java junit.awtui.TestRunner junit.samples.AllTests</tt>
-<li>
-for the Swing based graphical TestRunner type:</li>
-
-<br><tt>&nbsp;&nbsp;&nbsp; java junit.swingui.TestRunner junit.samples.AllTests</tt></ul>
+Therefore make sure that the installation directory is on the class
+path
+  </font>
+  <ul>
+    <li>
+      <font color="#000000">for the batch TestRunner type:</font></li>
+    <font color="#000000"><br>
+    <tt>&nbsp;&nbsp;&nbsp; java junit.textui.TestRunner
+junit.samples.AllTests</tt>
+    <li>for the graphical TestRunner type:</li>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; java junit.awtui.TestRunner
+junit.samples.AllTests</tt>
+    <li>for the Swing based graphical TestRunner type:</li>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp; java junit.swingui.TestRunner
+junit.samples.AllTests</tt></font>
+  </ul>
 </ol>
-<b><font color="#FF0000">Important</font></b>: don't install the junit.jar
+<font color="#000000"><b><font color="#ff0000">Important</font></b>:
+don't install the junit.jar
 into the extension directory of your JDK installation. If you do so the
 test class on the files system will not be found.
-<h2>
-<a NAME="Getting"></a>Getting Started</h2>
-To get started with unit testing and JUnit read the Java Report article:
+</font>
+<h2><font color="#000000"><a name="Getting"></a>Getting Started</font></h2>
+<font color="#000000">To get started with unit testing and JUnit read
+the Java Report article:
 <a href="doc/testinfected/testing.htm">Test
 Infected - Programmers Love Writing Tests</a>.
-<br>This article demonstrates the development process with JUnit in the
+<br>
+This article demonstrates the development process with JUnit in the
 context of multiple currency arithmetic. The corresponding source code
 is in junit\samples\money.
-<p>You find additional samples in the junit.samples package:
+</font>
+<p><font color="#000000">You find additional samples in the
+junit.samples package:
+</font></p>
 <ul>
-<li>
-SimpleTest.java - some simple test cases</li>
-
-<li>
-VectorTest.java - test cases for java.util.Vector</li>
+  <li>
+    <font color="#000000">SimpleTest.java - some simple test cases</font></li>
+  <li>
+    <font color="#000000">VectorTest.java - test cases for
+java.util.Vector</font></li>
 </ul>
-
 <h2>
-<a NAME="Documentation"></a>Documentation</h2>
-
-<blockquote><a href="doc/cookbook/cookbook.htm">JUnit Cookbook</a>
-<br>&nbsp;&nbsp;&nbsp; A cookbook for implementing tests with JUnit.
-<br><a href="doc/testinfected/testing.htm">Test Infected - Programmers
+<font color="#000000"><a name="Documentation"></a>Documentation</font></h2>
+<blockquote><font color="#000000"><a href="doc/cookbook/cookbook.htm">JUnit
+Cookbook</a>
+  <br>
+&nbsp;&nbsp;&nbsp; A cookbook for implementing tests with JUnit.
+  <br>
+  <a href="doc/testinfected/testing.htm">Test Infected - Programmers
 Love Writing Tests</a>
-<br>&nbsp;&nbsp;&nbsp; An article demonstrating the development process
+  <br>
+&nbsp;&nbsp;&nbsp; An article demonstrating the development process
 with JUnit.
-<br><a href="doc/cookstour/cookstour.htm">JUnit - A cooks tour</a>
-<br><a href="javadoc/index.html">Javadoc</a>
-<br>&nbsp;&nbsp;&nbsp; API documentation generated with javadoc.
-<br><a href="doc/faq/faq.htm">Frequently asked questions</a>
-<br>&nbsp;&nbsp;&nbsp; Some frequently asked questions about using JUnit.
-<br><a href="doc/JUnitProperties.html">TestRunner Preference settings</a>
-<br>&nbsp;&nbsp;&nbsp; Describes the preferences settings that can be configured
+  <br>
+  <a href="doc/cookstour/cookstour.htm">JUnit - A cooks tour</a>
+  <br>
+  <a href="javadoc/index.html">Javadoc</a>
+  <br>
+&nbsp;&nbsp;&nbsp; API documentation generated with javadoc.
+  <br>
+  <a href="doc/faq/faq.htm">Frequently asked questions</a>
+  <br>
+&nbsp;&nbsp;&nbsp; Some frequently asked questions about using JUnit.
+  <br>
+  <a href="doc/JUnitProperties.html">TestRunner Preference settings</a>
+  <br>
+&nbsp;&nbsp;&nbsp; Describes the preferences settings that can be
+configured
 for the JUnit TestRunners.<br>
   <a href="cpl-v10.html">License</a>
-<br>&nbsp;&nbsp;&nbsp; The terms of the common public license used for JUnit.</blockquote>
-
+  <br>
+&nbsp;&nbsp;&nbsp; The terms of the common public license used for
+JUnit.</font></blockquote>
 <h2>
-<a NAME="Extending"></a>Extending JUnit</h2>
-Examples of possible JUnit extensions can be found in the <tt>junit.extensions</tt>
+<font color="#000000"><a name="Extending"></a>Extending JUnit</font></h2>
+<font color="#000000">Examples of possible JUnit extensions can be
+found in the <tt>junit.extensions</tt>
 package:
+</font>
 <ul>
-<li>
-<a href="javadoc/junit/extensions/TestDecorator.html">TestDecorator</a>
-- A decorator for Test. You can use it as the base class for implementing
-decorators to extend test cases.</li>
-
-<li>
-<a href="javadoc/junit/extensions/ActiveTestSuite.html">ActiveTestSuite</a>
+  <li>
+    <font color="#000000"><a
+ href="javadoc/junit/extensions/TestDecorator.html">TestDecorator</a>
+- A decorator for Test. You can use it as the base class for
+implementing
+decorators to extend test cases.</font></li>
+  <li>
+    <font color="#000000"><a
+ href="javadoc/junit/extensions/ActiveTestSuite.html">ActiveTestSuite</a>
 - A TestSuite which runs each test in a separate thread and waits until
-they are all terminated.</li>
-
-<li>
-<a href="javadoc/junit/extensions/TestSetup.html">TestSetup</a> - A Decorator
-to set up and tear down additional fixture state. Subclass TestSetup and
+they are all terminated.</font></li>
+  <li>
+    <font color="#000000"><a
+ href="javadoc/junit/extensions/TestSetup.html">TestSetup</a> - A
+Decorator
+to set up and tear down additional fixture state. Subclass TestSetup
+and
 insert it into your tests when you want to set up additional state once
-before the tests are run.</li>
-
-<li>
-<a href="javadoc/junit/extensions/ExceptionTestCase.html">ExceptionTestCase</a>
-- A TestCase that expects a particular Exception to be thrown.</li>
+before the tests are run.</font></li>
+  <li>
+    <font color="#000000"><a
+ href="javadoc/junit/extensions/ExceptionTestCase.html">ExceptionTestCase</a>
+- A TestCase that expects a particular Exception to be thrown.</font></li>
 </ul>
-
-<hr WIDTH="100%">
-<!--webbot bot="HTMLMarkup" startspan --><a href="http://sourceforge.net"><IMG
-                  src="http://sourceforge.net/sflogo.php?group_id=15278"
-                  width="88" height="31" border="0" alt="SourceForge Logo"></a><!--webbot
-bot="HTMLMarkup" endspan -->
+<hr width="100%">
+<!--webbot bot="HTMLMarkup" startspan --><font color="#000000"><a
+ href="http://sourceforge.net"><img
+ src="http://sourceforge.net/sflogo.php?group_id=15278" width="88"
+ height="31" border="0" alt="SourceForge Logo"></a><!--webbot
+bot="HTMLMarkup" endspan --></font>
 </body>
 </html>
