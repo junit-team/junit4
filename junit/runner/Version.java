@@ -9,6 +9,6 @@ public class Version {
 	}
 
 	public static String id() {
-		return "3.7";
+		return "@version@";
 	}
 }
