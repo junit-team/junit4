@@ -1,61 +1,59 @@
+<!-- JUnit build script using ant 2.0 -->
 <project name="junit" default="dist" basedir=".">
 	<target name="init">
 		<tstamp/>
-		<property name="export" value="export" />
 		<property name="version" value="3.5" />
 		<property name="dist"  value="junit${version}" />
-		<property name="versionfile"  value="${export}/junit/runner/Version.java" />
+		<property name="versionfile"  value="junit/runner/Version.java" />
+		<property name="zipfile"  value="${dist}.zip" />
 	</target>
 
 	<target name="versiontag" depends="init">
 		<filter token="version" value="${version}" />
-		<copyfile 
-			src="${versionfile}" 
-			dest="${versionfile}tmp" 
+		<copy 
+			file="${versionfile}" 
+			tofile="${versionfile}tmp" 
 			filtering="on"
 		/>
-		<rename src="${versionfile}tmp" dest="${versionfile}" />
+		<move file="${versionfile}tmp" tofile="${versionfile}" />
 	</target>
 
 	<target name="build" depends="versiontag">
 		<javac 
-			srcdir="${export}"
-			destdir="${export}"
+			srcdir="."
+			destdir="."
 			debug="on"
   		/>	
 	</target>
 
 	<target name="dist" depends="build">
-		<deltree dir="${dist}" />
+		<delete dir="${dist}" />
 		<mkdir dir="${dist}" />
 		<jar 
-			jarfile="${dist}/junit.jar"
-			basedir="${export}"
-			manifest="${export}/jar-manifest.txt"
-			excludes="junit/tests/**, junit/samples/**, **/*.java, doc/**, README.html, jar-manifest.txt"
-		/>
-		<jar 
 			jarfile="${dist}/src.jar"
-			basedir="${export}"
+			basedir="."
 			excludes="junit/tests/**, junit/samples/**, **/*.class, doc/**, README.html, build.xml"
 		/>
-		<copydir 
-			src="export/junit/samples"
-			dest="${dist}/junit/samples"
+		<jar 
+			jarfile="${dist}/junit.jar"
+			basedir="."
+			excludes="junit/tests/**, junit/samples/**, **/*.java, doc/**, README.html, jar-manifest.txt"
 		/>
-		<copydir 
-			src="export/junit/tests"
-			dest="${dist}/junit/tests"
-		/>
+		<copy todir="${dist}/junit/samples">
+			<fileset dir="junit/samples" />
+		</copy>
+		<copy todir="${dist}/junit/tests">
+			<fileset dir="junit/tests" />
+		</copy>
 		<delete file="${dist}/junit/tests/test.jar"/>
 		<jar 
 			jarfile="${dist}/junit/tests/test.jar"
-			basedir="${export}/"
+			basedir="."
 			includes="junit/tests/LoadedFromJar.class"
 		/>
 		<mkdir dir="${dist}/javadoc" />
 		<javadoc 
-			sourcepath="${export}"
+			sourcepath="."
 			packagenames="junit.framework.*, junit.extensions.*"
 			destdir="${dist}/javadoc"
 			author="false"
@@ -63,46 +61,46 @@
 			use="false"
 			windowtitle="JUnit API"
 		/>
-		<copydir 
-			src="export/doc"
-			dest="${dist}/doc"
-		/>		
-		<copyfile src="export/README.html" dest="${dist}/README.html" />
+		<copy todir="${dist}/doc">
+			<fileset dir="doc"/>
+		</copy>		
+		<copy file="README.html" tofile="${dist}/README.html" />
 		
-		<java 
-			classname="junit.textui.TestRunner"
-			args="junit.samples.AllTests"
-			fork="yes"
-			jvmargs="-classpath ${dist};${dist}/junit.jar"
-		/>
+		<java classname="junit.textui.TestRunner" fork="yes">
+			<arg value="junit.samples.AllTests" />
+			<classpath>
+				<pathelement location="${dist}" />
+				<pathelement location="${dist}/junit.jar" />
+			</classpath>
+		</java>
 	</target>
 	
 	<target name="zip">
-		<delete file="${dist}.zip"/>
 		<zip 
-			zipfile="${dist}.zip"
+			<!-- !!! hard code names, variable substitution doesn't work !!! -->
+			zipfile="junit3.5"
 			basedir="."
-			includes="${dist}/**"
-		/>
-		<deltree dir="${export}"/>
-	</target>
-
-	<target name="awtui">
-		<java 
-			classname="junit.awtui.TestRunner"
-			args="junit.samples.AllTests"
-			fork="yes"
-			jvmargs="-classpath ${dist};${dist}/junit.jar"
+			includes="junit3.5/**"
 		/>
 	</target>
 	
-	<target name="swingui">
-		<java 
-			classname="junit.swingui.TestRunner"
-			args="junit.samples.AllTests"
-			fork="yes"
-			jvmargs="-classpath ${dist};${dist}/junit.jar"
-		/>
+	<target name="awtui" depends="dist">
+		<java classname="junit.awtui.TestRunner" fork="yes">
+			<arg value="junit.samples.AllTests" />
+			<classpath>
+				<pathelement location="${dist}" />
+				<pathelement location="${dist}/junit.jar" />
+			</classpath>
+		</java>
 	</target>
 	
+	<target name="swingui" depends="dist">
+		<java classname="junit.swingui.TestRunner" fork="yes">
+			<arg value="junit.samples.AllTests" />
+			<classpath>
+				<pathelement location="${dist}" />
+				<pathelement location="${dist}/junit.jar" />
+			</classpath>
+		</java>
+	</target>
 </project>
