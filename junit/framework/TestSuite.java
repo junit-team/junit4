@@ -112,6 +112,10 @@ public class TestSuite implements Test {
 		addTest(createTest(theClass, name));
 	}
 
+	/**
+	 * ...as the moon sets over the early morning Merlin, Oregon
+	 * mountains, our intrepid adventurers type...
+	 */
 	static public Test createTest(Class theClass, String name) {
 		Constructor constructor;
 		try {
