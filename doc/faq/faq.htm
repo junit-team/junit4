@@ -1,197 +1,155 @@
-<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
-<html>
-<head>
-   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.5 [en] (Win98; I) [Netscape]">
-   <meta name="Author" content="Erich Gamma">
-   <title>JUnit FAQ</title>
-</head>
-<body>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0044)http://junit.sourceforge.net/doc/faq/faq.htm -->
+<HTML><HEAD><TITLE>JUnit FAQ</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<META content="MSHTML 6.00.2712.300" name=GENERATOR>
+<META content="Erich Gamma" name=Author></HEAD>
+<BODY>
+<H1><FONT color=#33ff33>J</FONT><FONT color=#cc0000>U</FONT>nit Frequently Asked
+Questions</H1>
+<HR width="100%">
 
-<h1>
-<font color="#33FF33">J</font><font color="#CC0000">U</font>nit Frequently
-Asked Questions</h1>
-
-<hr WIDTH="100%">
-<li>
-<a href="#browsersupport">How do I implement a test case for a thrown exception?</a></li>
-
-<li>
-<a href="#browsersupport">How do I organize my test cases?</a></li>
-
-<li>
-<a href="#ClassNotFoundException">I get a ClassNotFoundException when I
-use the LoadingTestRunner</a></li>
-
-<li>
-<a href="#How do I run setup code only once">How do I run setup code once
-for all my TestCases?</a></li>
-
-<li>
-<a href="#I want to debug when a test">I want to debug when a test fails</a></li>
-
-<li>
-<a href="#ClassCastException">Why do I get a ClassCastException while calling EJB's from JUnit?</a></li>
-
-<li>
-<a href="#ClassLoader">Why do I get an error with the GUI TestRunners, but not with the textui.TestRunner?</a></li>
-
-<li>
-<a href="#assert">In Java 1.4, 'assert' is a keyword.  Won't this conflict with JUnit's assert() method?  If so, what can be done about it?</a></li>
-
-<br>
-<hr><a NAME="How do I implement a test case for thrown"></a>
-<h2>
-How do I implement a test case for a thrown exception?</h2>
-Catch the exception and if it isn't thrown call the <b>fail</b> method.
-Fail signals the failure of a test case. Here is an example:
-<blockquote><tt>public void testIndexOutOfBoundsException() {</tt>
-<br><tt>&nbsp;&nbsp;&nbsp; Vector v= new Vector(10)</tt>
-<br><tt>&nbsp;&nbsp;&nbsp; try {</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Object o= v.elementAt(v.size());</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; fail("Should raise
-an ArrayIndexOutOfBoundsException");</tt>
-<br><tt>&nbsp;&nbsp;&nbsp; } catch (ArrayIndexOutOfBoundsException e) {</tt>
-<br><tt>&nbsp;&nbsp;&nbsp; }</tt>
-<br><tt>}</tt></blockquote>
-or use the ExceptionTestCase as follows.
-<br>1) make your TestCase class a subclass of ExceptionTestCase.
-<br>2) write the test ignoring exceptions
-<blockquote><tt>public void testIndexOutOfBoundsException() {</tt>
-<br><tt>&nbsp;&nbsp;&nbsp; Vector v= new Vector(10);</tt>
-<br><tt>&nbsp;&nbsp;&nbsp; v.elementAt(v.size());</tt>
-<br><tt>}</tt></blockquote>
-3) create the TestCase:
-<br><tt>&nbsp;&nbsp;&nbsp; Test t= new ExceptionTestCase("testIndexOutOfBoundsException",
-ArrayIndexOutOfBoundsException.class)</tt>
-<p>Looking at this again, the first way is simpler. Sigh...
-<h2>
-<a NAME="How do I organize my Test"></a>How do I organize my Test Cases?</h2>
-Here is one way:
-<ol>
-<li>
-create a test package for each of your application packages. For example,
-for a package <b>myapp.util </b>define <b>myapp.utiltest</b>. Put all the
-fixtures for the util package into this package.</li>
-
-<li>
-in myapp.utiltest define a class which creates a suite with all the tests
-in this package. To do so define a class <b>AllTests</b> which includes
-a single static suite method. Here is an example:</li>
-
-<br><tt>&nbsp;public static Test suite() {</tt>
-<br><tt>&nbsp; TestSuite suite= new TestSuite();</tt>
-<br><tt>&nbsp; suite.addTest(Fixture1.suite());</tt>
-<br><tt>&nbsp; suite.addTest(Fixture2.suite());</tt>
-<br><tt>&nbsp; return suite;</tt>
-<br><tt>&nbsp;}</tt>
-<li>
-define similar AllTests classes that create higher level suites containing
-the suites from other test packages.</li>
-</ol>
-When the fixtures are in a separate test package&nbsp; the test cases don't
-have access to the methods and fields with default visibility ("package
-visible"). A variation of the above convention is to put all fixtures into
-the application package itself. This gives the fixtures access to all the
-package visible methods and fields. To separate the fixture classes from
-the production classes put them into a separate directory that you then
-add to the CLASSPATH. This makes it easy to ship the production classes
-independent of the fixtures. Here is an example for how to do this:
-<ol>
-<li>
-put the fixtures classes for myapp.util into a TESTDIR\<b>tests</b>\myapp\util
-directory,</li>
-
-<li>
-add the <b>tests</b> directory to your CLASSPATH.</li>
-
-<ul>
-<li>
-set CLASSPATH=%CLASSPATH%;TESTDIR\<b>tests</b></li>
-</ul>
-</ol>
-<a NAME="How do I run setup code only once"></a>
-<h2>
-How do I run setup code once for all my TestCases?</h2>
-Wrap the top level suite in a subclass of TestSetup. Here is a sample AllTests.suite()
-method:
-<blockquote><tt>public static Test suite() {</tt>
-<br><tt>&nbsp; TestSuite suite= new TestSuite();</tt>
-<br><tt>&nbsp; ...add your tests and suites here...</tt>
-<br><tt>&nbsp; TestSetup wrapper= new TestSetup(suite) {</tt>
-<br><tt>&nbsp;&nbsp; public void setUp() {</tt>
-<br><tt>&nbsp;&nbsp;&nbsp; oneTimeSetUp();</tt>
-<br><tt>&nbsp;&nbsp; }</tt>
-<br><tt>&nbsp; };</tt>
-<br><tt>&nbsp; return wrapper;</tt>
-<br><tt>}</tt></blockquote>
-
-<h2>
-<a NAME="ClassNotFoundException"></a>I get a ClassNotFoundException when
-I use the LoadingTestRunner</h2>
-The LoadingTestRunner uses a custom class loader to reload your code. This
-class loader doesn't attempt to load classes from jars or to load standard
-classes. Instead you can specify a list of excluded package prefixes that
-shouldn't be reloaded for each test run. The list of package prefixes is
-defined in the properties file <tt>junit.runner.excluded.properties</tt>.
-As we deliver it this file excludes the packages that come with jdk1.2
-from reloading:
-<blockquote><tt>#</tt>
-<br><tt># The list of excluded package paths for the TestCaseClassLoader</tt>
-<br><tt>#</tt>
-<br><tt>excluded.0=sun.*</tt>
-<br><tt>excluded.1=com.sun.*</tt>
-<br><tt>excluded.2=org.omg.*</tt>
-<br><tt>excluded.3=javax.*</tt>
-<br><tt>excluded.4=sunw.*</tt></blockquote>
-If you are using additional jars from 3rd party vendors you can either:
-<ul>
-<li>
-update this file in the junit.jar and add your package paths or,</li>
-
-<li>
-"patch" the junit.util.excluded.properties file with the CLASSPATH, that
-is, put your customized version of this file in the class path before the
-junit.jar. In this way your version will be loaded instead of the one that
-comes with JUnit.</li>
-</ul>
-
-<h2>
-<a NAME="I want to debug when a test"></a>I want to debug when a test fails</h2>
-Start the test runner under the debugger and configure the debugger so
+<LI><A href="http://junit.sourceforge.net/doc/faq/faq.htm#browsersupport">How do
+I implement a test case for a thrown exception?</A>
+<LI><A href="http://junit.sourceforge.net/doc/faq/faq.htm#browsersupport">How do
+I organize my test cases?</A>
+<LI><A
+href="http://junit.sourceforge.net/doc/faq/faq.htm#ClassNotFoundException">I get
+a ClassNotFoundException when I use the LoadingTestRunner</A>
+<LI><A
+href="http://junit.sourceforge.net/doc/faq/faq.htm#How do I run setup code only once">How
+do I run setup code once for all my TestCases?</A>
+<LI><A
+href="http://junit.sourceforge.net/doc/faq/faq.htm#I want to debug when a test">I
+want to debug when a test fails</A>
+<LI><A
+href="http://junit.sourceforge.net/doc/faq/faq.htm#ClassCastException">Why do I
+get a ClassCastException while calling EJB's from JUnit?</A>
+<LI><A href="http://junit.sourceforge.net/doc/faq/faq.htm#ClassLoader">Why do I
+get an error with the GUI TestRunners, but not with the textui.TestRunner?</A>
+<LI><A href="http://junit.sourceforge.net/doc/faq/faq.htm#assert">In Java 1.4,
+'assert' is a keyword. Won't this conflict with JUnit's assert() method? If so,
+what can be done about it?</A> <BR>
+<LI><A href="http://junit.sourceforge.net/doc/faq/faq.htm#private">How do I test
+private or protected methods?</A> <BR>
+<HR>
+<A name="How do I implement a test case for thrown"></A>
+<H2>How do I implement a test case for a thrown exception?</H2>Catch the
+exception and if it isn't thrown call the <B>fail</B> method. Fail signals the
+failure of a test case. Here is an example:
+<BLOCKQUOTE><TT>public void testIndexOutOfBoundsException() {</TT>
+  <BR><TT>&nbsp;&nbsp;&nbsp; Vector v= new Vector(10)</TT>
+  <BR><TT>&nbsp;&nbsp;&nbsp; try {</TT>
+  <BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Object o=
+  v.elementAt(v.size());</TT>
+  <BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; fail("Should raise an
+  ArrayIndexOutOfBoundsException");</TT> <BR><TT>&nbsp;&nbsp;&nbsp; } catch
+  (ArrayIndexOutOfBoundsException e) {</TT> <BR><TT>&nbsp;&nbsp;&nbsp; }</TT>
+  <BR><TT>}</TT></BLOCKQUOTE>or use the ExceptionTestCase as follows. <BR>1) make
+your TestCase class a subclass of ExceptionTestCase. <BR>2) write the test
+ignoring exceptions
+<BLOCKQUOTE><TT>public void testIndexOutOfBoundsException() {</TT>
+  <BR><TT>&nbsp;&nbsp;&nbsp; Vector v= new Vector(10);</TT>
+  <BR><TT>&nbsp;&nbsp;&nbsp; v.elementAt(v.size());</TT>
+<BR><TT>}</TT></BLOCKQUOTE>3) create the TestCase: <BR><TT>&nbsp;&nbsp;&nbsp;
+Test t= new ExceptionTestCase("testIndexOutOfBoundsException",
+ArrayIndexOutOfBoundsException.class)</TT>
+<P>Looking at this again, the first way is simpler. Sigh...
+<H2><A name="How do I organize my Test"></A>How do I organize my Test
+Cases?</H2>Here is one way:
+<OL>
+  <LI>create a test package for each of your application packages. For example,
+  for a package <B>myapp.util </B>define <B>myapp.utiltest</B>. Put all the
+  fixtures for the util package into this package.
+  <LI>in myapp.utiltest define a class which creates a suite with all the tests
+  in this package. To do so define a class <B>AllTests</B> which includes a
+  single static suite method. Here is an example: <BR><TT>&nbsp;public static
+  Test suite() {</TT> <BR><TT>&nbsp; TestSuite suite= new TestSuite();</TT>
+  <BR><TT>&nbsp; suite.addTest(Fixture1.suite());</TT> <BR><TT>&nbsp;
+  suite.addTest(Fixture2.suite());</TT> <BR><TT>&nbsp; return suite;</TT>
+  <BR><TT>&nbsp;}</TT>
+  <LI>define similar AllTests classes that create higher level suites containing
+  the suites from other test packages. </LI></OL>When the fixtures are in a
+separate test package&nbsp; the test cases don't have access to the methods and
+fields with default visibility ("package visible"). A variation of the above
+convention is to put all fixtures into the application package itself. This
+gives the fixtures access to all the package visible methods and fields. To
+separate the fixture classes from the production classes put them into a
+separate directory that you then add to the CLASSPATH. This makes it easy to
+ship the production classes independent of the fixtures. Here is an example for
+how to do this:
+<OL>
+  <LI>put the fixtures classes for myapp.util into a
+  TESTDIR\<B>tests</B>\myapp\util directory,
+  <LI>add the <B>tests</B> directory to your CLASSPATH.
+  <UL>
+    <LI>set CLASSPATH=%CLASSPATH%;TESTDIR\<B>tests</B> </LI></UL></LI></OL><A
+name="How do I run setup code only once"></A>
+<H2>How do I run setup code once for all my TestCases?</H2>Wrap the top level
+suite in a subclass of TestSetup. Here is a sample AllTests.suite() method:
+<BLOCKQUOTE><TT>public static Test suite() {</TT> <BR><TT>&nbsp; TestSuite
+  suite= new TestSuite();</TT> <BR><TT>&nbsp; ...add your tests and suites
+  here...</TT> <BR><TT>&nbsp; TestSetup wrapper= new TestSetup(suite) {</TT>
+  <BR><TT>&nbsp;&nbsp; public void setUp() {</TT> <BR><TT>&nbsp;&nbsp;&nbsp;
+  oneTimeSetUp();</TT> <BR><TT>&nbsp;&nbsp; }</TT> <BR><TT>&nbsp; };</TT>
+  <BR><TT>&nbsp; return wrapper;</TT> <BR><TT>}</TT></BLOCKQUOTE>
+<H2><A name=ClassNotFoundException></A>I get a ClassNotFoundException when I use
+the LoadingTestRunner</H2>The LoadingTestRunner uses a custom class loader to
+reload your code. This class loader doesn't attempt to load classes from jars or
+to load standard classes. Instead you can specify a list of excluded package
+prefixes that shouldn't be reloaded for each test run. The list of package
+prefixes is defined in the properties file
+<TT>junit.runner.excluded.properties</TT>. As we deliver it this file excludes
+the packages that come with jdk1.2 from reloading:
+<BLOCKQUOTE><TT>#</TT> <BR><TT># The list of excluded package paths for the
+  TestCaseClassLoader</TT> <BR><TT>#</TT> <BR><TT>excluded.0=sun.*</TT>
+  <BR><TT>excluded.1=com.sun.*</TT> <BR><TT>excluded.2=org.omg.*</TT>
+  <BR><TT>excluded.3=javax.*</TT> <BR><TT>excluded.4=sunw.*</TT></BLOCKQUOTE>If
+you are using additional jars from 3rd party vendors you can either:
+<UL>
+  <LI>update this file in the junit.jar and add your package paths or,
+  <LI>"patch" the junit.util.excluded.properties file with the CLASSPATH, that
+  is, put your customized version of this file in the class path before the
+  junit.jar. In this way your version will be loaded instead of the one that
+  comes with JUnit. </LI></UL>
+<H2><A name="I want to debug when a test"></A>I want to debug when a test
+fails</H2>Start the test runner under the debugger and configure the debugger so
 that it catches the junit.framework.AssertionFailedError. How you do this
-depends on the used IDE. Most Java debuggers support to stop the program
-when a specific exception is fired. Notice, that this will only break into
-the debugger when an "anticipated" assertion failed error occurs.
-<br>
-
-<h2>
-<a NAME="ClassCastException"></a>Why do I get a ClassCastException while
-calling EJB's from JUnit?</h2>
-<i>submitted by Jens Schumann</i><br>
-The custom class loader causes this exception.  Either use excluded.properties
-as described above in <a
-href="#ClassNotFoundException">ClassNotFoundException</a>
- or turn off reloading.
-
-<h2>
-<a NAME="ClassLoader"></a>Why do I get an error with the GUI TestRunners, but not with the textui.TestRunner?
-</h2>
-By default the GUI TestRunners use a custom class loader which reloads classes ever run so you don't have to
-shutdown the GUI for your changes to be loaded.  Since the junit.textui.TestRunner does shutdown after every
-run, it does not use the custom class loader.  Some classes cause errors when they are reloaded.  Either use excluded.properties
-as described above in <a href="#ClassNotFoundException">ClassNotFoundException</a> or turn off reloading.
-
-<h2>
-<a NAME="assert"></a>In Java 1.4, 'assert' is a keyword.  Won't this conflict with JUnit's assert() method?  If so, what can be done about it?
-</h2>
-<i>submitted by David Stagner</i><br>
-JUnit 3.7 deprecated assert() and replaced it with assertTrue(),
-which works exactly the same way.  Simply upgrade your JUnit to 3.7 or higher and
-change all assert() calls in your existing tests to assertTrue().
-(Preferably with a script or search and replace)
-
-
-<hr WIDTH="100%">
-</body>
-</html>
+depends on the used IDE. Most Java debuggers support to stop the program when a
+specific exception is fired. Notice, that this will only break into the debugger
+when an "anticipated" assertion failed error occurs. <BR>
+<H2><A name=ClassCastException></A>Why do I get a ClassCastException while
+calling EJB's from JUnit?</H2><I>submitted by Jens Schumann</I><BR>The custom
+class loader causes this exception. Either use excluded.properties as described
+above in <A
+href="http://junit.sourceforge.net/doc/faq/faq.htm#ClassNotFoundException">ClassNotFoundException</A>
+or turn off reloading.
+<H2><A name=ClassLoader></A>Why do I get an error with the GUI TestRunners, but
+not with the textui.TestRunner? </H2>By default the GUI TestRunners use a custom
+class loader which reloads classes ever run so you don't have to shutdown the
+GUI for your changes to be loaded. Since the junit.textui.TestRunner does
+shutdown after every run, it does not use the custom class loader. Some classes
+cause errors when they are reloaded. Either use excluded.properties as described
+above in <A
+href="http://junit.sourceforge.net/doc/faq/faq.htm#ClassNotFoundException">ClassNotFoundException</A>
+or turn off reloading.
+<H2><A name=assert></A>In Java 1.4, 'assert' is a keyword. Won't this conflict
+with JUnit's assert() method? If so, what can be done about it?
+</H2><I>submitted by David Stagner</I><BR>JUnit 3.7 deprecated assert() and
+replaced it with assertTrue(), which works exactly the same way. Simply upgrade
+your JUnit to 3.7 or higher and change all assert() calls in your existing tests
+to assertTrue(). (Preferably with a script or search and replace)
+<H2><A name=private></A>How do I test private or protected methods?<BR></H2>
+<UL>
+	<LI>To test protected methods you can place your tests in the same package.  If you feel this clutters your
+package, you can place your tests in the same package, but under a different top level directory (i.e. tests).  Other wist you can test them the same
+way you can test private methods.</LI>
+	<LI>To test private methods ,if you are using JDK 1.3 or higher, you can use the  class available at
+<A href="http://groups.yahoo.com/groups/junit/files/src/PriviledgedAccessor.java">PriviledgedAccessor</A> class.
+Examples of how to use PriviledgedAccessor are available in <A href="http://groups.yahoo.com/groups/junit/files/src/PriviledgedAccessorTest.java">
+PriviledgedAccessorTest.java</A>.</LI>
+</UL>
+Many people argue that a having to test
+private methods is an indication that those methods should be moved into another class.
+<HR width="100%">
+</LI></BODY></HTML>
