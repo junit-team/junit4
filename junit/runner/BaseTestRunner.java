@@ -258,6 +258,11 @@ public abstract class BaseTestRunner implements TestListener {
 		return true;
 	}
 
+	public static boolean inMac() {
+		return System.getProperty("mrj.version") != null;
+	}
+
+
 	/**
 	 * Returns a filtered stack trace
 	 */

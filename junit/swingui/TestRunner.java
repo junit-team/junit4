@@ -3,6 +3,7 @@ package junit.swingui;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.*;
 
@@ -378,6 +379,11 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		Component browseButton= createBrowseButton();
 
 		fUseLoadingRunner= createUseLoaderCheckBox();
+
+		fStatusLine= createStatusLine();
+		if (inMac()) 
+			fProgressIndicator= new MacProgressBar(fStatusLine); 
+		else                                                            
 		fProgressIndicator= new ProgressBar();
 		fCounterPanel= createCounterPanel();
 
@@ -389,7 +395,8 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		fFailureView= createFailureDetailView();
 		JScrollPane tracePane= new JScrollPane(fFailureView.getComponent(), JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 
-		fStatusLine= createStatusLine();
+		
+				
 		fQuitButton= createQuitButton();
 		fLogo= createLogo();
 
@@ -450,6 +457,23 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 
 	public void insertUpdate(DocumentEvent event) {
 		textChanged();
+	}
+
+	protected Object instanciateClass(String fullClassName, Object param) {
+		try {
+			Class clazz= Class.forName(fullClassName);                                               
+			if (param == null) {
+				return clazz.newInstance();
+			} else {
+				Class[] clazzParam= {param.getClass()};
+				Constructor clazzConstructor= clazz.getConstructor(clazzParam);
+				Object[] objectParam= {param};	
+				return clazzConstructor.newInstance(objectParam);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public void browseTestClasses() {

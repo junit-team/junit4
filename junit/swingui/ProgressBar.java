@@ -15,7 +15,7 @@ class ProgressBar extends JProgressBar {
 		setForeground(getStatusColor());
 	}
 	
-	private Color getStatusColor() {
+	protected Color getStatusColor() {
 		if (fError)
 			return Color.red;
 		return Color.green;
@@ -23,7 +23,7 @@ class ProgressBar extends JProgressBar {
 		
 	public void reset() {
 		fError= false;
-		setForeground(getStatusColor());
+		updateBarColor();
 		setValue(0);
 	}
 	
@@ -36,7 +36,11 @@ class ProgressBar extends JProgressBar {
 		setValue(value);
 		if (!fError && !successful) {
 			fError= true;
-			setForeground(getStatusColor());
+			updateBarColor();
 		}
+		}
+	
+	protected void updateBarColor() {
+		setForeground(getStatusColor());
 	}
 }
