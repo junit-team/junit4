@@ -26,8 +26,8 @@ import junit.runner.*;
  * summary at the end. 
  */
 public class TestRunner extends BaseTestRunner {
-	PrintStream fWriter= System.out;
-	int fColumn= 0;
+	PrintStream fWriter;
+	private ResultPrinter fPrinter;
 	
 	public static final int SUCCESS_EXIT= 0;
 	public static final int FAILURE_EXIT= 1;
@@ -37,17 +37,49 @@ public class TestRunner extends BaseTestRunner {
 	 * Constructs a TestRunner.
 	 */
 	public TestRunner() {
+		this(System.out);
 	}
 	/**
 	 * Constructs a TestRunner using the given stream for all the output
 	 */
 	public TestRunner(PrintStream writer) {
-		this();
 		if (writer == null)
 			throw new IllegalArgumentException("Writer can't be null");
 		fWriter= writer;
+		fPrinter= new ResultPrinter(fWriter);
 	}
 	
+	/**
+	 * Runs a suite extracted from a TestCase subclass.
+	 */
+	static public void run(Class testClass) {
+		run(new TestSuite(testClass));
+	}
+
+	/**
+	 * Runs a single test and collects its results.
+	 * This method can be used to start a test run
+	 * from your program.
+	 * <pre>
+	 * public static void main (String[] args) {
+	 *     test.textui.TestRunner.run(suite());
+	 * }
+	 * </pre>
+	 */
+	static public TestResult run(Test test) {
+		TestRunner runner= new TestRunner();
+		return runner.doRun(test);
+	}
+
+	/**
+	 * Runs a single test and waits until the user
+	 * types RETURN.
+	 */
+	static public void runAndWait(Test suite) {
+		TestRunner aTestRunner= new TestRunner();
+		aTestRunner.doRun(suite, true);
+	}
+
 	/**
 	 * Always use the StandardTestSuiteLoader. Overridden from
 	 * BaseTestRunner.
@@ -64,11 +96,7 @@ public class TestRunner extends BaseTestRunner {
 	}
 	
 	public void testStarted(String testName) {
-		getWriter().print(".");
-		if (fColumn++ >= 40) {
-			getWriter().println();
-			fColumn= 0;
-		}
+		fPrinter.testStarted(testName);
 	}
 	
 	public void testEnded(String testName) {
@@ -184,34 +212,6 @@ public class TestRunner extends BaseTestRunner {
 				         ",  Failures: "+result.failureCount()+
 				         ",  Errors: "+result.errorCount());
 		}
-	}
-	/**
-	 * Runs a suite extracted from a TestCase subclass.
-	 */
-	static public void run(Class testClass) {
-		run(new TestSuite(testClass));
-	}
-	/**
-	 * Runs a single test and collects its results.
-	 * This method can be used to start a test run
-	 * from your program.
-	 * <pre>
-	 * public static void main (String[] args) {
-	 *     test.textui.TestRunner.run(suite());
-	 * }
-	 * </pre>
-	 */
-	static public TestResult run(Test test) {
-		TestRunner runner= new TestRunner();
-		return runner.doRun(test);
-	}
-	/**
-	 * Runs a single test and waits until the user
-	 * types RETURN.
-	 */
-	static public void runAndWait(Test suite) {
-		TestRunner aTestRunner= new TestRunner();
-		aTestRunner.doRun(suite, true);
 	}
 	/**
 	 * Starts a test run. Analyzes the command line arguments
