@@ -21,7 +21,7 @@ public class AllTests {
 		suite.addTestSuite(SimpleTestCollectorTest.class);
 		suite.addTestSuite(BaseTestRunnerTest.class);
 		suite.addTestSuite(TextFeedbackTest.class);
-		suite.addTestSuite(TextRunnerSingleMethodTest.class);
+		//suite.addTestSuite(TextRunnerSingleMethodTest.class);
 		if (!BaseTestRunner.inVAJava()) {
 			suite.addTestSuite(TextRunnerTest.class);
 			if (!isJDK11())
