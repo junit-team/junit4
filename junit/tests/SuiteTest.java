@@ -26,6 +26,7 @@ public class SuiteTest extends TestCase {
 		suite.addTest(new SuiteTest("testNotExistingTestCase"));
 		suite.addTest(new SuiteTest("testInheritedTests"));
 		suite.addTest(new SuiteTest("testShadowedTests"));
+		suite.addTest(new SuiteTest("testAddTestSuite"));
 		
 		return suite;
 	}
@@ -74,6 +75,12 @@ public class SuiteTest extends TestCase {
 	}
 	public void testShadowedTests() {
 		TestSuite suite= new TestSuite(OverrideTestCase.class);
+		suite.run(fResult);
+		assertEquals(1, fResult.runCount());
+	}
+	public void testAddTestSuite() {
+		TestSuite suite= new TestSuite();
+		suite.addTestSuite(OneTestCase.class);
 		suite.run(fResult);
 		assertEquals(1, fResult.runCount());
 	}

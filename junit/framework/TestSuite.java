@@ -78,6 +78,14 @@ public class TestSuite implements Test {
 	public void addTest(Test test) {
 		fTests.addElement(test);
 	}
+	
+	/**
+	 * Adds the tests from the given class to the suite
+	 */
+	public void addTestSuite(Class testClass) {
+		addTest(new TestSuite(testClass));
+	}
+
 	private void addTestMethod(Method m, Vector names, Constructor constructor) {
 		String name= m.getName();
 		if (names.contains(name)) 
