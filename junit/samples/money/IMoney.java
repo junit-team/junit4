@@ -35,4 +35,8 @@ interface IMoney {
 	 * Subtracts a money from this money.
 	 */
 	public abstract IMoney subtract(IMoney m);
+	/**
+	 * Append this to a MoneyBag m.
+	 */
+	void appendTo(MoneyBag m);
 }

@@ -25,7 +25,7 @@ class Money implements IMoney {
 	public IMoney addMoney(Money m) {
 		if (m.currency().equals(currency()) )
 			return new Money(amount()+m.amount(), currency());
-		return new MoneyBag(this, m);
+		return MoneyBag.create(this, m);
 	}
 	public IMoney addMoneyBag(MoneyBag s) {
 		return s.addMoney(this);
@@ -66,5 +66,8 @@ class Money implements IMoney {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("["+amount()+" "+currency()+"]");
 		return buffer.toString();
+	}
+	public /*this makes no sense*/ void appendTo(MoneyBag m) {
+		m.appendMoney(this);
 	}
 }

@@ -16,40 +16,27 @@ import java.util.*;
 class MoneyBag implements IMoney {
 	private Vector fMonies= new Vector(5);
 
-	private MoneyBag() {
-	}
-	MoneyBag(Money bag[]) {
-		for (int i= 0; i < bag.length; i++) {
-			if (!bag[i].isZero())
-				appendMoney(bag[i]);
-		}
-	}
-	MoneyBag(Money m1, Money m2) {
-		appendMoney(m1);
-		appendMoney(m2);
-	}
-	MoneyBag(Money m, MoneyBag bag) {
-		appendMoney(m);
-		appendBag(bag);
-	}
-	MoneyBag(MoneyBag m1, MoneyBag m2) {
-		appendBag(m1);
-		appendBag(m2);
+	static IMoney create(IMoney m1, IMoney m2) {
+		MoneyBag result= new MoneyBag();
+		m1.appendTo(result);
+		m2.appendTo(result);
+		return result.simplify();
 	}
 	public IMoney add(IMoney m) {
 		return m.addMoneyBag(this);
 	}
-	public IMoney addMoney(Money m) {
-		return (new MoneyBag(m, this)).simplify();
+	public IMoney addMoney(Money m) { 
+		return MoneyBag.create(m, this);
 	}
 	public IMoney addMoneyBag(MoneyBag s) {
-		return (new MoneyBag(s, this)).simplify();
+		return MoneyBag.create(s, this);
 	}
-	private void appendBag(MoneyBag aBag) {
+	void appendBag(MoneyBag aBag) {
 		for (Enumeration e= aBag.fMonies.elements(); e.hasMoreElements(); )
 			appendMoney((Money)e.nextElement());
 	}
-	private void appendMoney(Money aMoney) {
+	void appendMoney(Money aMoney) {
+		if (aMoney.isZero()) return;
 		IMoney old= findMoney(aMoney.currency());
 		if (old == null) {
 			fMonies.addElement(aMoney);
@@ -60,10 +47,6 @@ class MoneyBag implements IMoney {
 		if (sum.isZero()) 
 			return;
 		fMonies.addElement(sum);
-	}
-	private boolean contains(Money aMoney) {
-		Money m= findMoney(aMoney.currency());
-		return m.amount() == aMoney.amount();
 	}
 	public boolean equals(Object anObject) {
 		if (isZero())
@@ -91,6 +74,11 @@ class MoneyBag implements IMoney {
 				return m;
 		}
 		return null;
+	}
+	private boolean contains(Money m) {
+		Money found= findMoney(m.currency());
+		if (found == null) return false;
+		return found.amount() == m.amount();
 	}
 	public int hashCode() {
 		int hash= 0;
@@ -136,5 +124,8 @@ class MoneyBag implements IMoney {
 		    buffer.append((Money) e.nextElement());
 		buffer.append("}");
 		return buffer.toString();
+	}
+	public void appendTo(MoneyBag m) {
+		m.appendBag(this);
 	}
 }
