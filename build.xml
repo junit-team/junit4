@@ -76,9 +76,9 @@
 	</target>
 	
 	<target name="zip">
+		<!-- !!! hard code names, variable substitution doesn't work !!! -->
 		<zip 
-			<!-- !!! hard code names, variable substitution doesn't work !!! -->
-			zipfile="junit3.5"
+			zipfile="junit3.5.zip"
 			basedir="."
 			includes="junit3.5/**"
 		/>
