@@ -279,9 +279,13 @@ public class Assert {
 	}
 
 	static private void failNotEquals(String message, Object expected, Object actual) {
+		fail(format(message, expected, actual));
+	}
+
+	static String format(String message, Object expected, Object actual) {
 		String formatted= "";
 		if (message != null)
 			formatted= message+" ";
-		fail(formatted+"expected:<"+expected+"> but was:<"+actual+">");
+		return formatted+"expected:<"+expected+"> but was:<"+actual+">";
 	}
 }

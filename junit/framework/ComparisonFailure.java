@@ -29,7 +29,7 @@ public class ComparisonFailure extends AssertionFailedError {
 	 */
 	public String getMessage() {
 		if (fExpected == null || fActual == null)
-			return format(fActual, fExpected);
+			return Assert.format(super.getMessage(), fExpected, fActual);
 			
 		int end= Math.min(fExpected.length(), fActual.length());
 		
@@ -63,14 +63,6 @@ public class ComparisonFailure extends AssertionFailedError {
 			if (k < fActual.length()-1)
 				actual= actual+"...";
 		}	
-		return format(actual, expected);
-	}
-
-	private String format(String actual, String expected) {
-		String message= super.getMessage();
-		String formatted= "";
-		if (message != null)
-			formatted= message+": ";	
-		return formatted+"expected:<"+expected+"> but was:<"+actual+">";
+		return Assert.format(super.getMessage(), expected, actual);
 	}
 }
