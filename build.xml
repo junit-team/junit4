@@ -2,7 +2,7 @@
 <project name="junit" default="dist" basedir=".">
 	<property file="${user.home}/.junit.properties" />
 	<property name="build.compiler" value="classic" />
-	<property name="version" value="3.8.1" />
+	<property name="version" value="3.8.2" />
 	<property name="dist"  value="junit${version}" />
 	<property name="versionfile"  value="junit/runner/Version.java" />
 	<property name="zipfile"  value="${dist}.zip" />
@@ -34,12 +34,12 @@
 		<jar 
 			jarfile="${dist}/src.jar"
 			basedir="."
-			excludes="**/*.jar, junit/tests/**, junit/samples/**, **/*.class, doc/**, README.html, .classpath, .project, cpl-v10.html"
+			excludes="**/*.jar, junit/tests/**, junit/samples/**, **/*.class, doc/**, README.html, stylesheet.css, build.xml, .classpath, .project, .settings/**, cpl-v10.html"
 		/>
 		<jar 
 			jarfile="${dist}/junit.jar"
 			basedir="."
-			excludes="**/*.jar, junit/tests/**, junit/samples/**, **/*.java, doc/**, README.html,  build.xml, jar-manifest.txt, .classpath, .project, cpl-v10.html"
+			excludes="**/*.jar, junit/tests/**, junit/samples/**, **/*.java, doc/**, README.html,  stylesheet.css, build.xml, jar-manifest.txt, .classpath, .project, .settings/**, cpl-v10.html"
 		/>
 		<copy todir="${dist}/junit/samples">
 			<fileset dir="junit/samples" />
