@@ -1,7 +1,9 @@
 package junit.swingui;
 
 import javax.swing.JTabbedPane;
-import junit.framework.*;
+
+import junit.framework.Test;
+import junit.framework.TestResult;
 
 /**
  * A TestRunView is shown as a page in a tabbed folder.

@@ -3,8 +3,13 @@ package junit.textui;
 
 import java.io.PrintStream;
 
-import junit.framework.*;
-import junit.runner.*;
+import junit.framework.Test;
+import junit.framework.TestResult;
+import junit.framework.TestSuite;
+import junit.runner.BaseTestRunner;
+import junit.runner.StandardTestSuiteLoader;
+import junit.runner.TestSuiteLoader;
+import junit.runner.Version;
 
 /**
  * A command line based tool to run tests.

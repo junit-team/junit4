@@ -1,7 +1,10 @@
 package junit.tests.extensions;
  
-import junit.framework.*;
-import junit.extensions.*;
+import junit.extensions.ActiveTestSuite;
+import junit.extensions.RepeatedTest;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestResult;
  
 /**
  * Testing the ActiveTest support

@@ -1,6 +1,8 @@
 package junit.extensions;
 
-import junit.framework.*;
+import junit.framework.Protectable;
+import junit.framework.Test;
+import junit.framework.TestResult;
 
 /**
  * A Decorator to set up and tear down additional fixture state.

@@ -2,7 +2,7 @@ package junit.tests.runner;
 
 import java.util.Vector;
 
-import junit.framework.*;
+import junit.framework.TestCase;
 import junit.runner.Sorter;
 
 public class SorterTest extends TestCase {

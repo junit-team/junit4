@@ -1,6 +1,7 @@
 package junit.tests;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * TestSuite that runs all the JUnit tests

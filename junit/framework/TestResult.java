@@ -1,7 +1,7 @@
 package junit.framework;
 
-import java.util.Vector;
 import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  * A <code>TestResult</code> collects the results of executing

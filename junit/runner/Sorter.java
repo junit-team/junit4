@@ -1,8 +1,6 @@
 package junit.runner;
 
-import java.util.*;
-
-import junit.runner.*;
+import java.util.Vector;
 
 /**
  * A custom quick sort with support to customize the swap behaviour.

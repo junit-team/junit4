@@ -2,10 +2,15 @@ package junit.swingui;
 
 import java.util.Vector;
 
-import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.Icon;
+import javax.swing.JTabbedPane;
+import javax.swing.JTree;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
-import junit.framework.*;
+
+import junit.framework.Test;
+import junit.framework.TestResult;
 
 /**
  * A hierarchical view of a test run.

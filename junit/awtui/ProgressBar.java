@@ -1,6 +1,10 @@
 package junit.awtui;
 
-import java.awt.*;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.awt.SystemColor;
 
 public class ProgressBar extends Canvas {
 	public boolean fError= false;

@@ -31,8 +31,7 @@ public class TextRunnerTest extends TestCase {
 		String [] cmd= { java, "-classpath", cp, "junit.textui.TestRunner", testClass}; 
 		Process p= Runtime.getRuntime().exec(cmd);
 		InputStream i= p.getInputStream();
-		int b;
-		while((b= i.read()) != -1) 
+		while((i.read()) != -1) 
 			; //System.out.write(b); 
 		assertTrue((p.waitFor() == 0) == success);
 		if (success)

@@ -1,8 +1,9 @@
 package junit.runner;
 
-import java.lang.reflect.*;
-import junit.runner.*;
-import junit.framework.*;
+import java.lang.reflect.Modifier;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * An implementation of a TestCollector that loads

@@ -1,7 +1,10 @@
 package junit.samples;
 
-import junit.framework.*;
 import java.util.Vector;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * A sample test case, testing <code>java.util.Vector</code>.

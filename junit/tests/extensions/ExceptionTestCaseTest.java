@@ -1,7 +1,7 @@
 package junit.tests.extensions;
 
-import junit.framework.*;
-import junit.extensions.*;
+import junit.extensions.ExceptionTestCase;
+import junit.framework.TestResult;
 
 public class ExceptionTestCaseTest extends junit.framework.TestCase {
 

@@ -1,9 +1,13 @@
 package junit.framework;
 
-import java.util.Vector;
-import java.util.Enumeration;
-import java.io.PrintWriter;import java.io.StringWriter;import java.lang.reflect.*;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  * A <code>TestSuite</code> is a <code>Composite</code> of Tests.

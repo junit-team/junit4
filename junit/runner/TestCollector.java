@@ -1,6 +1,6 @@
 package junit.runner;
 
-import java.util.*;
+import java.util.Enumeration;
 
 
 /**

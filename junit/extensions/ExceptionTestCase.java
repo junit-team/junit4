@@ -1,6 +1,6 @@
 package junit.extensions;
 
-import junit.framework.*;
+import junit.framework.TestCase;
 
 /**
  * A TestCase that expects an Exception of class fExpected to be thrown.

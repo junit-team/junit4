@@ -1,11 +1,18 @@
 package junit.swingui;
 
-import java.awt.*;
-import java.util.*;
+import java.awt.Component;
+import java.awt.Font;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
-import javax.swing.*;
+import javax.swing.AbstractListModel;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JList;
+import javax.swing.ListSelectionModel;
+
 import junit.framework.TestFailure;
-import junit.runner.*;
+import junit.runner.BaseTestRunner;
+import junit.runner.FailureDetailView;
 
 /**
  * A view that shows a stack trace of a failure

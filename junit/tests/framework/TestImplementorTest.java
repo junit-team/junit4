@@ -1,6 +1,9 @@
 package junit.tests.framework;
 
-import junit.framework.*;
+import junit.framework.Protectable;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestResult;
 
 /**
  * Test an implementor of junit.framework.Test other than TestCase or TestSuite

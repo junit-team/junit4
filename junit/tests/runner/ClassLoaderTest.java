@@ -3,7 +3,8 @@ package junit.tests.runner;
 /**
  * Test class used in TestTestCaseClassLoader
  */
-import junit.framework.*;
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
 public class ClassLoaderTest extends Assert {
 	public ClassLoaderTest() {

@@ -1,9 +1,17 @@
 package junit.runner;
 
-import java.util.*;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
-import java.util.zip.*;
+import java.util.Enumeration;
+import java.util.Properties;
+import java.util.StringTokenizer;
+import java.util.Vector;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * A custom class loader which enables the reloading

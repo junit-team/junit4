@@ -1,7 +1,10 @@
 package junit.runner;
 
-import java.util.*;
-import java.io.*;
+import java.io.File;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 /**
  * An implementation of a TestCollector that consults the

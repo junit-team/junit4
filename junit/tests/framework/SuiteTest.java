@@ -1,6 +1,9 @@
 package junit.tests.framework;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestResult;
+import junit.framework.TestSuite;
 
 /**
  * A fixture for testing the "auto" test suite feature.

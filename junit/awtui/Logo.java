@@ -1,7 +1,12 @@
 package junit.awtui;
 
-import java.awt.*;
-import java.awt.image.*;
+import java.awt.Canvas;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.MediaTracker;
+import java.awt.SystemColor;
+import java.awt.Toolkit;
+import java.awt.image.ImageProducer;
 import java.net.URL;
 
 import junit.runner.BaseTestRunner;

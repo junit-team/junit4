@@ -1,6 +1,7 @@
 package junit.tests.runner;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import junit.runner.BaseTestRunner;
 
 /**

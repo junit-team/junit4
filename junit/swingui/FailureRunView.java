@@ -1,10 +1,21 @@
 package junit.swingui;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Font;
 
-import javax.swing.*;
-import javax.swing.event.*;
-import junit.framework.*;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.Icon;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import junit.framework.Test;
+import junit.framework.TestFailure;
+import junit.framework.TestResult;
 import junit.runner.BaseTestRunner;
 
 

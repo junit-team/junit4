@@ -1,6 +1,8 @@
 package junit.samples;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * Some simple tests.
@@ -47,6 +49,7 @@ public class SimpleTest extends TestCase {
 	public void testDivideByZero() {
 		int zero= 0;
 		int result= 8/zero;
+		result++; // avoid warning for not using result
 	}
 	public void testEquals() {
 		assertEquals(12, 12);

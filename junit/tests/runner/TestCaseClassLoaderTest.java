@@ -1,9 +1,10 @@
 package junit.tests.runner;
 
-import java.lang.reflect.*;
-import junit.framework.*;
-import junit.runner.*;
+import java.lang.reflect.Method;
 import java.net.URL;
+
+import junit.framework.TestCase;
+import junit.runner.TestCaseClassLoader;
 
 /**
  * A TestCase for testing the TestCaseClassLoader

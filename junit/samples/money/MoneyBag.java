@@ -1,6 +1,7 @@
 package junit.samples.money;
 
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  * A MoneyBag defers exchange rate conversions. For example adding 

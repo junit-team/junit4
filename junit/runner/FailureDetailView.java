@@ -1,8 +1,8 @@
 package junit.runner;
 
-import java.awt.Component; 
+import java.awt.Component;
 
-import junit.framework.*;
+import junit.framework.TestFailure;
 
 /**
  * A view to show a details about a failure
