@@ -92,12 +92,9 @@ public class Assert {
 	 * value is infinity then the delta value is ignored.
 	 */
 	static public void assertEquals(String message, double expected, double actual, double delta) {
-		// handle infinity specially since subtracting to infinite values gives NaN and the
-		// the following test fails
-		if (Double.isInfinite(expected)) {
-			if (!(expected == actual))
-				failNotEquals(message, new Double(expected), new Double(actual));
-		} else if (!(Math.abs(expected-actual) <= delta)) // Because comparison with NaN always returns false
+		if (Double.compare(expected, actual) == 0)
+			return;
+		if (!(Math.abs(expected-actual) <= delta))
 			failNotEquals(message, new Double(expected), new Double(actual));
 	}
 	/**

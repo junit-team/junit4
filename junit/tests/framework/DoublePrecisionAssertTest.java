@@ -26,13 +26,8 @@ public class DoublePrecisionAssertTest extends TestCase {
 		fail();
 	}
 
-	public void testAssertNaNEqualsNaNFails() {
-		try {
-			assertEquals(Double.NaN, Double.NaN, 0.0);
-		} catch (AssertionFailedError e) {
-			return;
-		}
-		fail();
+	public void testAssertNaNEqualsNaN() {
+		assertEquals(Double.NaN, Double.NaN, 0.0);
 	}
 
 	public void testAssertPosInfinityNotEqualsNegInfinity() {
