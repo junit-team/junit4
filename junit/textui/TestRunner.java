@@ -39,8 +39,6 @@ public class TestRunner extends BaseTestRunner {
 	 */
 	public TestRunner(PrintStream writer) {
 		this();
-		if (writer == null)
-			throw new IllegalArgumentException("Writer can't be null");
 		fWriter= writer;
 	}
 	
@@ -175,10 +173,9 @@ public class TestRunner extends BaseTestRunner {
 		} else {
 			writer().println();
 			writer().println("FAILURES!!!");
-			writer().println("Test Result Summary:");
-			writer().println("Run: "+result.runCount()+ 
-				         " Failures: "+result.failureCount()+
-				         " Errors: "+result.errorCount());
+			writer().println("Tests run: "+result.runCount()+ 
+				         ",  Failures: "+result.failureCount()+
+				         ",  Errors: "+result.errorCount());
 		}
 	}
 	/**

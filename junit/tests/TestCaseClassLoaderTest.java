@@ -9,9 +9,9 @@ import java.net.URL;
  * A TestCase for testing the TestCaseClassLoader
  *
  */ 
-public class TestTestCaseClassLoader extends TestCase {
+public class TestCaseClassLoaderTest extends TestCase {
 
-	public TestTestCaseClassLoader(String name) {
+	public TestCaseClassLoaderTest(String name) {
 		super(name);
 	}
 	public void testClassLoading() throws Exception {

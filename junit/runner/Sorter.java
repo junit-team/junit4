@@ -1,10 +1,6 @@
 package junit.runner;
 
 import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.event.*;
 
 import junit.framework.*;
 import junit.runner.*;
@@ -26,7 +22,7 @@ public class Sorter {
 		do { 
 			while (((String)(values.elementAt(left))).compareTo(mid) < 0)  
 				left++; 
-			while (mid.compareTo(values.elementAt(right)) < 0)  
+			while (mid.compareTo((String)(values.elementAt(right))) < 0)  
 				right--; 
 			if (left <= right) {
 				swapper.swap(values, left, right); 

@@ -14,8 +14,8 @@ public abstract class BaseTestRunner implements TestListener {
 	public static final String SUITE_METHODNAME= "suite";
 	
 	static Properties fPreferences;
-	static int fMaxMessageLength= 200;
-	static boolean filterStack;
+	static int fgMaxMessageLength= 200;
+	static boolean fgFilterStack= true;
 	boolean fLoading= true;
 	
 	/**
@@ -74,6 +74,8 @@ public abstract class BaseTestRunner implements TestListener {
 		for (int i= 0; i < args.length; i++) {
 			if (args[i].equals("-noloading")) {
 				setLoading(false);
+			} else if (args[i].equals("-nofilterstack")) {
+				fgFilterStack= false;
 			} else if (args[i].equals("-c")) {
 				if (args.length > i+1)
 					suiteName= extractClassName(args[i+1]);
@@ -106,8 +108,8 @@ public abstract class BaseTestRunner implements TestListener {
 	 * Truncates a String to the maximum length.
 	 */
 	public static String truncate(String s) {
-		if (fMaxMessageLength != -1 && s.length() > fMaxMessageLength)
-			s= s.substring(0, fMaxMessageLength)+"...";
+		if (fgMaxMessageLength != -1 && s.length() > fgMaxMessageLength)
+			s= s.substring(0, fgMaxMessageLength)+"...";
 		return s;
 	}
 	
@@ -189,10 +191,10 @@ public abstract class BaseTestRunner implements TestListener {
 	 * Filters stack frames from internal JUnit classes
 	 */
 	public static String filterStack(String stack) {
-		if (!getPreference("stackfilter").equals("true"))
+		if (!getPreference("filterstack").equals("true") || fgFilterStack == false)
 			return stack;
 			
-		StringWriter sw= new StringWriter(500);
+		StringWriter sw= new StringWriter();
 		PrintWriter pw= new PrintWriter(sw);
 		StringReader sr= new StringReader(stack);
 		BufferedReader br= new BufferedReader(sr);
@@ -232,9 +234,9 @@ public abstract class BaseTestRunner implements TestListener {
  		//JDK 1.2 feature
  		//fPreferences.setProperty("loading", "true");
  		fPreferences.put("loading", "true");
- 		fPreferences.put("stackfilter", "true");
+ 		fPreferences.put("filterstack", "true");
   		readPreferences();
- 		fMaxMessageLength= getPreference("maxmessage", fMaxMessageLength);
+ 		fgMaxMessageLength= getPreference("maxmessage", fgMaxMessageLength);
  	}
  	
 }

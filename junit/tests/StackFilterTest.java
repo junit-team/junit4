@@ -13,7 +13,7 @@ public class StackFilterTest extends TestCase {
 	}
 	
 	protected void setUp() {
-		StringWriter swin= new StringWriter(500);
+		StringWriter swin= new StringWriter();
 		PrintWriter pwin= new PrintWriter(swin);
 		pwin.println("junit.framework.AssertionFailedError");
 		pwin.println("	at junit.framework.Assert.fail(Assert.java:144)");
@@ -33,7 +33,7 @@ public class StackFilterTest extends TestCase {
 		pwin.println("	at junit.swingui.TestRunner$17.run(TestRunner.java:669)");
 		fUnfiltered= swin.toString();
 
-		StringWriter swout= new StringWriter(500);
+		StringWriter swout= new StringWriter();
 		PrintWriter pwout= new PrintWriter(swout);
 		pwout.println("junit.framework.AssertionFailedError");
 		pwout.println("	at MyTest.f(MyTest.java:13)");

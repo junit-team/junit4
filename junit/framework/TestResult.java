@@ -150,8 +150,9 @@ public class TestResult extends Object {
 	 * Informs the result that a test will be started.
 	 */
 	public void startTest(Test test) {
+		final int count= test.countTestCases();
 		synchronized(this) {
-			fRunTests++;
+			fRunTests+= count;
 		}
 		for (Enumeration e= cloneListeners().elements(); e.hasMoreElements(); ) {
 			((TestListener)e.nextElement()).startTest(test);
