@@ -76,9 +76,18 @@ public class AssertTest extends TestCase {
 		assertEquals("a", "a");
 	}
 		
-	public void testAssertStringNotEqualsNull() {
+	public void testAssertNullNotEqualsString() {
  		try {
 			assertEquals(null, "foo");
+		} catch (ComparisonFailure e) {
+			return;
+		}
+		fail();
+	}
+	
+	public void testAssertStringNotEqualsNull() {
+ 		try {
+			assertEquals("foo", null);
 		} catch (ComparisonFailure e) {
 			return;
 		}
@@ -164,4 +173,50 @@ public class AssertTest extends TestCase {
 		}
 		fail();
 	}
+	
+	public void testComparisonErrorMessage() {
+		ComparisonFailure failure= new ComparisonFailure("a", "b", "c");
+		assertEquals("a: expected:<b> but was:<c>", failure.getMessage());
+	}
+	
+	public void testComparisonErrorStartSame() {
+		ComparisonFailure failure= new ComparisonFailure(null, "ba", "bc");
+		assertEquals("expected:<...a> but was:<...c>", failure.getMessage());
+	}
+		
+	public void testComparisonErrorEndSame() {
+		ComparisonFailure failure= new ComparisonFailure(null, "ab", "cb");
+		assertEquals("expected:<a...> but was:<c...>", failure.getMessage());
+	} 
+
+	public void testComparisonErrorSame() {
+		ComparisonFailure failure= new ComparisonFailure(null, "ab", "ab");
+		assertEquals("expected:<ab> but was:<ab>", failure.getMessage());
+	} 
+
+	public void testComparisonErrorStartAndEndSame() {
+		ComparisonFailure failure= new ComparisonFailure(null, "abc", "adc");
+		assertEquals("expected:<...b...> but was:<...d...>", failure.getMessage());
+	} 
+
+	public void testComparisonErrorStartSameComplete() {
+		ComparisonFailure failure= new ComparisonFailure(null, "ab", "abc");
+		assertEquals("expected:<...> but was:<...c>", failure.getMessage());
+	} 
+
+	public void testComparisonErrorEndSameComplete() {
+		ComparisonFailure failure= new ComparisonFailure(null, "bc", "abc");
+		assertEquals("expected:<...> but was:<a...>", failure.getMessage());
+	} 
+
+	public void testComparisonErrorOverlapingMatches() {
+		ComparisonFailure failure= new ComparisonFailure(null, "abc", "abbc");
+		assertEquals("expected:<......> but was:<...b...>", failure.getMessage());
+	} 
+
+	public void testComparisonErrorOverlapingMatches2() {
+		ComparisonFailure failure= new ComparisonFailure(null, "abcdde", "abcde");
+		assertEquals("expected:<...d...> but was:<......>", failure.getMessage());
+	} 
+
 }
