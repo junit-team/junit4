@@ -28,7 +28,7 @@ public abstract class BaseTestRunner implements TestListener {
 	public synchronized void endTest(Test test) {
 		testEnded(test.toString());
 	}
-
+	
 	public synchronized void addError(final Test test, final Throwable t) {
 		testFailed(TestRunListener.STATUS_ERROR, test, t);
 	}
@@ -36,6 +36,8 @@ public abstract class BaseTestRunner implements TestListener {
 	public synchronized void addFailure(final Test test, final AssertionFailedError t) {
 		testFailed(TestRunListener.STATUS_FAILURE, test, t);
 	}
+
+	// TestRunListener implementation
 
 	public abstract void testStarted(String testName);
 	

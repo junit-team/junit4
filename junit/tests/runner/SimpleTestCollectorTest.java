@@ -1,4 +1,4 @@
-package junit.tests;
+package junit.tests.runner;
 
 import junit.framework.TestCase;
 import junit.runner.SimpleTestCollector;

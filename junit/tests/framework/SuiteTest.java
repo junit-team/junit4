@@ -1,4 +1,4 @@
-package junit.tests;
+package junit.tests.framework;
 
 import java.util.Vector;
 import junit.framework.*;
@@ -28,7 +28,8 @@ public class SuiteTest extends TestCase {
 		suite.addTest(new SuiteTest("testInheritedTests"));
 		suite.addTest(new SuiteTest("testShadowedTests"));
 		suite.addTest(new SuiteTest("testAddTestSuite"));
-
+		suite.addTest(new SuiteTest("testDisplayName"));
+		
 		return suite;
 	}
 	public void testInheritedTests() {
@@ -53,7 +54,7 @@ public class SuiteTest extends TestCase {
 	public void testNotExistingTestCase() {
 		Test t= new SuiteTest("notExistingMethod");
 		t.run(fResult);
-		assertTrue(fResult.runCount() == 1);
+		assertTrue(fResult.runCount() == 1);  
 		assertTrue(fResult.failureCount() == 1);
 		assertTrue(fResult.errorCount() == 0);
 	}
@@ -69,7 +70,7 @@ public class SuiteTest extends TestCase {
 	public void testOneTestCase() {
 		Test t= new TestSuite(OneTestCase.class);
 		t.run(fResult);
-		assertTrue(fResult.runCount() == 1);
+		assertTrue(fResult.runCount() == 1);  
 		assertTrue(fResult.failureCount() == 0);
 		assertTrue(fResult.errorCount() == 0);
 		assertTrue(fResult.wasSuccessful());

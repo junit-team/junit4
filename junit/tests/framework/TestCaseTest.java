@@ -1,17 +1,18 @@
-package junit.tests;
+package junit.tests.framework;
 
 import java.util.Vector;
 import junit.framework.*;
+import junit.tests.WasRun;
 
 /**
  * A test case testing the testing framework.
  *
  */
 public class TestCaseTest extends TestCase {
-
+	
 	static class TornDown extends TestCase {
 		boolean fTornDown= false;
-
+		
 		TornDown(String name) {
 			super(name);
 		}
@@ -30,7 +31,7 @@ public class TestCaseTest extends TestCase {
 		// This test wins the award for twisted snake tail eating while
 		// writing self tests. And you thought those weird anonymous
 		// inner classes were bad...
-		assertEquals("testCaseToString(junit.tests.TestCaseTest)", toString());
+		assertEquals("testCaseToString(junit.tests.framework.TestCaseTest)", toString());
 	}
 	public void testError() {
 		TestCase error= new TestCase("error") {
@@ -84,7 +85,7 @@ public class TestCaseTest extends TestCase {
 		verifyError(fails);
 		assertTrue(fails.fTornDown);
 	}
-
+	
 	public void testTearDownFails() {
 		TestCase fails= new TestCase("success") {
 			protected void tearDown() {

@@ -1,4 +1,4 @@
-package junit.tests;
+package junit.tests.framework;
 
 /**
  * Test class used in SuiteTest

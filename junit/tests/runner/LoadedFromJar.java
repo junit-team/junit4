@@ -1,4 +1,4 @@
-package junit.tests;
+package junit.tests.runner;
 
 /**
  * Test class used in TestTestCaseClassLoader

@@ -1,4 +1,4 @@
-package junit.tests;
+package junit.tests.runner;
 
 import java.util.Vector;
 

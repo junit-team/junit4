@@ -1,4 +1,4 @@
-package junit.tests;
+package junit.tests.extensions;
 
 import junit.framework.*;
 import junit.extensions.*;

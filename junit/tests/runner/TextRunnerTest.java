@@ -1,4 +1,4 @@
-package junit.tests;
+package junit.tests.runner;
 
 import junit.framework.*;
 import java.io.*;
@@ -9,11 +9,11 @@ public class TextRunnerTest extends TestCase {
 	}
 	
 	public void testFailure() throws Exception {
-		execTest("junit.tests.Failure", false);
+		execTest("junit.tests.framework.Failure", false);
 	}
 
 	public void testSuccess() throws Exception {
-		execTest("junit.tests.Success", true);
+		execTest("junit.tests.framework.Success", true);
 	}
 
 	public void testError() throws Exception {

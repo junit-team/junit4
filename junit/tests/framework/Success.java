@@ -1,4 +1,4 @@
-package junit.tests;
+package junit.tests.framework;
 
 import java.util.Vector;
 import junit.framework.*;

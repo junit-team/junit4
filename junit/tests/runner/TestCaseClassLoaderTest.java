@@ -1,4 +1,4 @@
-package junit.tests;
+package junit.tests.runner;
 
 import java.lang.reflect.*;
 import junit.framework.*;
@@ -16,7 +16,7 @@ public class TestCaseClassLoaderTest extends TestCase {
 	}
 	public void testClassLoading() throws Exception {
 		TestCaseClassLoader loader= new TestCaseClassLoader();
-		Class loadedClass= loader.loadClass("junit.tests.ClassLoaderTest", true);
+		Class loadedClass= loader.loadClass("junit.tests.runner.ClassLoaderTest", true);
 		Object o= loadedClass.newInstance();			
 		//
 		// Invoke the assertClassLoaders method via reflection.
