@@ -263,9 +263,6 @@ public class Assert {
 	}
 
 	static private void failNotEquals(String message, Object expected, Object actual) {
-		String formatted= "";
-		if (message != null)
-			formatted= message+" ";
-		fail(formatted+"expected:<"+expected+"> but was:<"+actual+">");
+		throw new ComparisonFailure(message, expected.toString(), actual.toString());
 	}
 }

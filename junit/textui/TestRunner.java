@@ -1,9 +1,6 @@
 package junit.textui;
 
 
-import java.lang.reflect.*;
-import java.text.NumberFormat;
-import java.util.*;
 import java.io.PrintStream;
 
 import junit.framework.*;
@@ -93,11 +90,9 @@ public class TestRunner extends BaseTestRunner {
 	}
 
 	public void testFailed(int status, Test test, Throwable t) {
-		fPrinter.testFailed(status, test, t);
 	}
 	
 	public void testStarted(String testName) {
-		fPrinter.testStarted(testName);
 	}
 	
 	public void testEnded(String testName) {
@@ -116,13 +111,12 @@ public class TestRunner extends BaseTestRunner {
 	
 	public TestResult doRun(Test suite, boolean wait) {
 		TestResult result= createTestResult();
-		result.addListener(this);
+		result.addListener(fPrinter);
 		long startTime= System.currentTimeMillis();
 		suite.run(result);
 		long endTime= System.currentTimeMillis();
 		long runTime= endTime-startTime;
 		fPrinter.print(result, runTime);
-
 
 		pause(wait);
 		return result;

@@ -12,6 +12,7 @@ import java.io.StringWriter;
 public class TestFailure extends Object {
 	protected Test fFailedTest;
 	protected Throwable fThrownException;
+	
 
 	/**
 	 * Constructs a TestFailure with the given test and exception.
