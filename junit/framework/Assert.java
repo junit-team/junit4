@@ -265,21 +265,21 @@ public class Assert {
 		assertNotSame(null, expected, actual);
 	}
 
-	static private void failSame(String message) {
+	static public void failSame(String message) {
 		String formatted= "";
  		if (message != null)
  			formatted= message+" ";
  		fail(formatted+"expected not same");
 	}
 
-	static private void failNotSame(String message, Object expected, Object actual) {
+	static public void failNotSame(String message, Object expected, Object actual) {
 		String formatted= "";
 		if (message != null)
 			formatted= message+" ";
 		fail(formatted+"expected same:<"+expected+"> was not:<"+actual+">");
 	}
 
-	static private void failNotEquals(String message, Object expected, Object actual) {
+	static public void failNotEquals(String message, Object expected, Object actual) {
 		fail(format(message, expected, actual));
 	}
 
