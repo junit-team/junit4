@@ -30,13 +30,19 @@ class TestBrowser extends JFrame implements TestListener {
 		private ImageIcon fFailureIcon;
 		
 		TestTreeCellRenderer() {
-	    	super();
-	    	URL url= getClass().getResource("error.gif");
-	    	fErrorIcon= new ImageIcon(url);
-	    	url= getClass().getResource("ok.gif");
-	    	fOkIcon= new ImageIcon(url);
-	    	url= getClass().getResource("failure.gif");
-	    	fFailureIcon= new ImageIcon(url);
+	    		super();
+	    		fErrorIcon= loadIcon("error.gif");
+	    		fOkIcon= loadIcon("ok.gif");
+	    		fFailureIcon= loadIcon("failure.gif");
+		}
+		
+		ImageIcon loadIcon(String name) {
+			URL url= getClass().getResource(name);
+			if (url == null) {
+				System.err.println("Warning: could not load \""+name+"\" icon");
+				return null;
+			} 
+			return new ImageIcon(url);
 		}
 
 		public Component getTreeCellRendererComponent(JTree tree, Object value,
@@ -49,15 +55,18 @@ class TestBrowser extends JFrame implements TestListener {
 				Test t= (Test)value;
 				String s= "";
 	    		if (testModel.isFailure(t)) {
-	    			setIcon(fFailureIcon);
+	    			if (fFailureIcon != null)
+	    				setIcon(fFailureIcon);
 	    			s= " - Failed";
 	    		}
 	    		else if (testModel.isError(t)) {
-	    			setIcon(fErrorIcon);
+	    			if (fErrorIcon != null)
+	    				setIcon(fErrorIcon);
 	    			s= " - Error";
 	    		}
 	    		else if (testModel.wasRun(t)) {
-	    			setIcon(fOkIcon);
+	    			if (fOkIcon != null)
+	    				setIcon(fOkIcon);
 	    			s= " - Passed";
 	    		}
 	    		if (c instanceof JComponent)

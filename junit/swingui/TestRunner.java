@@ -60,27 +60,41 @@ public class TestRunner extends BaseTestRunner implements DocumentListener {
 		private ImageIcon fErrorIcon;
 		
 		FailureListCellRenderer() {
-	    	super();
-	    	URL url= getClass().getResource("failure.gif");
-			fFailureIcon= new ImageIcon(url);
-	    	url= getClass().getResource("error.gif");
-	    	fErrorIcon= new ImageIcon(url);
+	    		super();
+	    		loadIcons();
 		}
 
+		void loadIcons() {
+			fFailureIcon= loadIcon("failure.gif");
+			fErrorIcon= loadIcon("error.gif");			
+		}
+		
+		ImageIcon loadIcon(String name) {
+			URL url= getClass().getResource(name);
+			if (url == null) {
+				System.err.println("Warning: could not load \""+name+"\" icon");
+				return null;
+			} return new ImageIcon(url);
+		}
+			
 		public Component getListCellRendererComponent(
 			JList list, Object value, int modelIndex, 
 			boolean isSelected, boolean cellHasFocus) {
 
-	    	TestFailure failure= (TestFailure)value;
-	    	String text= failure.failedTest().toString();
+			TestFailure failure= (TestFailure)value;
+			String text= failure.failedTest().toString();
 			String msg= failure.thrownException().getMessage();
 			if (msg != null) 
 				text+= ":" + BaseTestRunner.truncate(msg); 
  
-			if (failure.thrownException() instanceof AssertionFailedError) 
-	    		setIcon(fFailureIcon);
-	    	else 
-	    		setIcon(fErrorIcon);
+			if (failure.thrownException() instanceof AssertionFailedError) { 
+				if (fFailureIcon != null)
+	    				setIcon(fFailureIcon);
+			}
+	    	else {
+	    		if (fErrorIcon != null)
+	    			setIcon(fErrorIcon);
+	    	}
 	    	return super.getListCellRendererComponent(list, text, modelIndex, isSelected, cellHasFocus);
 		}
 	}
