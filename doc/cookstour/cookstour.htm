@@ -292,11 +292,11 @@ tearDown();</font></font>
 <br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; }</font></font>
 <br><font face="Arial"><font size=-2>}</font></font></dir>
 </dir>
-<font size=-1>An AssertionFailedError is triggered by the assert method
+<font size=-1>An AssertionFailedError is triggered by the assert methods
 provided by TestCase. JUnit provides a set of assert methods for different
 purposes. Here is the simplest one:</font>
 <dir>
-<dir><font face="Arial"><font size=-2>protected void <b>assert</b>(boolean
+<dir><font face="Arial"><font size=-2>protected void <b>assertTrue</b>(boolean
 condition) {</font></font>
 <br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; if (!condition)</font></font>
 <br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -350,12 +350,12 @@ a testing method doesn’t have to know anything about a TestResult:</font>
 <dir>
 <dir><font face="Arial"><font size=-2>public void <b>testMoneyEquals</b>()
 {</font></font>
-<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; assert(!f12CHF.equals(null));</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; assertTrue(!f12CHF.equals(null));</font></font>
 <br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; assertEquals(f12CHF,
 f12CHF);</font></font>
 <br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; assertEquals(f12CHF,
 new Money(12, "CHF"));</font></font>
-<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; assert(!f12CHF.equals(f14CHF));</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; assertTrue(!f12CHF.equals(f14CHF));</font></font>
 <br><font face="Arial"><font size=-2>}</font></font></dir>
 </dir>
 <font size=-1>JUnit comes with different implementations of TestResult.
@@ -448,7 +448,7 @@ runMethod= getClass().getMethod(fName, new Class[0]);</font></font>
 <br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; } catch (NoSuchMethodException
 e) {</font></font>
 <br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-assert("Method \""+fName+"\" not found", false);</font></font>
+assertTrue("Method \""+fName+"\" not found", false);</font></font>
 <br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; }</font></font>
 <br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; try {</font></font>
 <br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
