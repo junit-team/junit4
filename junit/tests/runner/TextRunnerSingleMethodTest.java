@@ -27,13 +27,13 @@ public class TextRunnerSingleMethodTest extends TestCase {
 		}
 		synchronized void print(TestResult result, long runTime) {
 		}
-		public void printDefect(TestFailure booBoo, int count) {
+		public void printDefect(TestFailure failure, int count) {
 		}
-		protected void printDefectHeader(TestFailure booBoo, int count) {
+		protected void printDefectHeader(TestFailure failure, int count) {
 		}
-		protected void printDefects(Enumeration booBoos, int count, String type) {
+		protected void printDefects(Enumeration failure, int count, String type) {
 		}
-		protected void printDefectTrace(TestFailure booBoo) {
+		protected void printDefectTrace(TestFailure failure) {
 		}
 		protected void printErrors(TestResult result) {
 		}
