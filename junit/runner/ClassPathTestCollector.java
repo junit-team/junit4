@@ -20,16 +20,21 @@ public abstract class ClassPathTestCollector implements TestCollector {
 	
 	public Enumeration collectTests() {
 		String classPath= System.getProperty("java.class.path");
-		String separator= System.getProperty("path.separator");
-		Hashtable result= new Hashtable(100);
-		collectFilesInRoots(splitClassPath(classPath, separator), result);
+		Hashtable result = collectFilesInPath(classPath);
 		return result.elements();
 	}
+
+	public Hashtable collectFilesInPath(String classPath) {
+		Hashtable result= collectFilesInRoots(splitClassPath(classPath));
+		return result;
+	}
 	
-	void collectFilesInRoots(Vector roots, Hashtable result) {
+	Hashtable collectFilesInRoots(Vector roots) {
+		Hashtable result= new Hashtable(100);
 		Enumeration e= roots.elements();
 		while (e.hasMoreElements()) 
 			gatherFiles(new File((String)e.nextElement()), "", result);
+		return result;
 	}
 
 	void gatherFiles(File classRoot, String classFileName, Hashtable result) {
@@ -48,8 +53,9 @@ public abstract class ClassPathTestCollector implements TestCollector {
 		}
 	}
 	
-	Vector splitClassPath(String classPath, String separator) {
+	Vector splitClassPath(String classPath) {
 		Vector result= new Vector();
+		String separator= System.getProperty("path.separator");
 		StringTokenizer tokenizer= new StringTokenizer(classPath, separator);
 		while (tokenizer.hasMoreTokens()) 
 			result.addElement(tokenizer.nextToken());

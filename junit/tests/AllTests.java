@@ -13,7 +13,7 @@ public class AllTests {
 		junit.textui.TestRunner.run(suite());
 	}
 	
-	public static Test suite() {
+	public static Test suite() { // Collect tests manually because we have to test class collection code
 		TestSuite suite= new TestSuite("Framework Tests");
 		suite.addTestSuite(ExtensionTest.class);
 		suite.addTestSuite(TestCaseTest.class);
@@ -26,6 +26,7 @@ public class AllTests {
 		suite.addTestSuite(SorterTest.class);
 		suite.addTestSuite(RepeatedTestTest.class);
 		suite.addTestSuite(TestImplementorTest.class);
+		suite.addTestSuite(SimpleTestCollectorTest.class);
 		if (!BaseTestRunner.inVAJava()) {
 			suite.addTestSuite(TextRunnerTest.class);
 			if (!isJDK11())

@@ -45,6 +45,20 @@ public class Assert {
 		assertTrue(null, condition);
 	}
 	/**
+	 * Asserts that a condition is false. If it isn't it throws
+	 * an AssertionFailedError with the given message.
+	 */
+	static public void assertFalse(String message, boolean condition) {
+		assertTrue(message, !condition);
+	}
+	/**
+	 * Asserts that a condition is false. If it isn't it throws
+	 * an AssertionFailedError.
+	 */
+	static public void assertFalse(boolean condition) {
+		assertFalse(null, condition);
+	}
+	/**
 	 * Fails a test with the given message. 
 	 */
 	static public void fail(String message) {

@@ -120,4 +120,14 @@ public class AssertTest extends TestCase {
 	public void testSucceedAssertNotNull() {
 		assertNotNull(new Object());
 	}
+	
+	public void testAssertFalse() {
+		assertFalse(false);
+		try {
+			assertFalse(true);
+		} catch (AssertionFailedError e) {
+			return;
+		}
+		fail();
+	}
 }
