@@ -150,18 +150,30 @@ public class TestRunner extends BaseTestRunner implements DocumentListener, Test
 		textChanged();
 	}
 	
-	protected void aboutToStart(Test testSuite) {
-		for (Enumeration e= fTestRunViews.elements(); e.hasMoreElements(); ) {
-			TestRunView v= (TestRunView) e.nextElement();
-			v.aboutToStart(testSuite, fTestResult);
-		}
+	protected void aboutToStart(final Test testSuite) {
+		SwingUtilities.invokeLater(
+			new Runnable() {
+				public void run() {
+					for (Enumeration e= fTestRunViews.elements(); e.hasMoreElements(); ) {
+						TestRunView v= (TestRunView) e.nextElement();
+						v.aboutToStart(testSuite, fTestResult);
+					}
+				}
+			}
+		);
 	}
 	
-	protected void runFinished(Test testSuite) {
-		for (Enumeration e= fTestRunViews.elements(); e.hasMoreElements(); ) {
-			TestRunView v= (TestRunView) e.nextElement();
-			v.runFinished(testSuite, fTestResult);
-		}
+	protected void runFinished(final Test testSuite) {
+		SwingUtilities.invokeLater(
+			new Runnable() {
+				public void run() {
+					for (Enumeration e= fTestRunViews.elements(); e.hasMoreElements(); ) {
+						TestRunView v= (TestRunView) e.nextElement();
+						v.runFinished(testSuite, fTestResult);
+					}
+				}
+			}
+		);
 	}
 
 	protected CounterPanel createCounterPanel() {
@@ -470,7 +482,7 @@ public class TestRunner extends BaseTestRunner implements DocumentListener, Test
 				JOptionPane.showMessageDialog(fFrame, "Could not create TestCollector - using default collector");
 			}
 		}
-		return new LoadingClassPathTestCollector();
+		return new SimpleClassPathTestCollector();
 	}
 	
 	private Image loadFrameIcon() {
@@ -610,7 +622,7 @@ public class TestRunner extends BaseTestRunner implements DocumentListener, Test
 	
 	private void doRunTest(final Test testSuite, final boolean reload) {
 		setButtonLabel(fRun, "Stop");
-		fRunner= new Thread() {
+		fRunner= new Thread("TestRunner-Thread") {
 			public void run() {
 				fTestResult= createTestResult();
 				fTestResult.addListener(TestRunner.this);

@@ -39,6 +39,8 @@ public class TestRunner extends BaseTestRunner {
 	 */
 	public TestRunner(PrintStream writer) {
 		this();
+		if (writer == null)
+			throw new IllegalArgumentException("Writer can't be null");
 		fWriter= writer;
 	}
 	

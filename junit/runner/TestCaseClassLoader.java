@@ -26,7 +26,11 @@ public class TestCaseClassLoader extends ClassLoader {
 	/** scanned class path */
 	private Vector fPathItems;
 	/** default excluded paths */
-	private String[] defaultExclusions= {"junit.framework.", "junit.extensions.", "junit.runner."};
+	private String[] defaultExclusions= {
+		"junit.framework.", 
+		"junit.extensions.", 
+		"junit.runner."
+	};
 	/** name of excluded properties file */
 	static final String EXCLUDED_FILE= "excluded.properties";
 	/** excluded paths */
