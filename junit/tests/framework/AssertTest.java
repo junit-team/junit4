@@ -221,12 +221,12 @@ public class AssertTest extends TestCase {
 		assertEquals("expected:<...d...> but was:<......>", failure.getMessage());
 	}
 
-	public void testComparisonErrorWithNullArgument() {
+	public void testComparisonErrorWithActualNull() {
 		ComparisonFailure failure= new ComparisonFailure(null, "a", null);
 		assertEquals("expected:<a> but was:<null>", failure.getMessage());
 	}
 	
-	public void testComparisonErrorWithNullArgument2() {
+	public void testComparisonErrorWithExpectedNull() {
 		ComparisonFailure failure= new ComparisonFailure(null, null, "a");
 		assertEquals("expected:<null> but was:<a>", failure.getMessage());
 	}
