@@ -11,11 +11,12 @@ import java.util.*;
  * This class was born live on stage in Sardinia during XP2000.
  */
 public abstract class BaseTestRunner implements TestListener {
-	static final String SUITE_METHODNAME= "suite";
-	static Properties fPreferences;
-	static int fMaxMessage= 200;
+	public static final String SUITE_METHODNAME= "suite";
 	
-	protected TestSuiteLoader fTestLoader;
+	static Properties fPreferences;
+	static int fMaxMessageLength= 200;
+	static boolean filterStack;
+	boolean fLoading= true;
 	
 	/**
 	 * Returns the Test corresponding to the given suite. This is
@@ -64,6 +65,37 @@ public abstract class BaseTestRunner implements TestListener {
 		return NumberFormat.getInstance().format((double)runTime/1000);
 	}
 	
+	/**
+	 * Processes the command line arguments and
+	 * returns the name of the suite class to run or null
+	 */
+	protected String processArguments(String[] args) {
+		String suiteName= null;
+		for (int i= 0; i < args.length; i++) {
+			if (args[i].equals("-noloading")) {
+				setLoading(false);
+			} else if (args[i].equals("-c")) {
+				if (args.length > i+1)
+					suiteName= extractClassName(args[i+1]);
+				else
+					System.out.println("Missing Test class name");
+				i++;
+			} else {
+				suiteName= args[i];
+			}
+		}
+		return suiteName;		
+	}
+
+	/**
+	 * Sets the loading behaviour of the test runner
+	 */
+	protected void setLoading(boolean enable) {
+		fLoading= enable;
+	}
+	/**
+	 * Extract the class name from a String in VA/Java style
+	 */
 	public String extractClassName(String className) {
 		if(className.startsWith("Default package for")) 
 			return className.substring(className.lastIndexOf(".")+1);
@@ -74,8 +106,8 @@ public abstract class BaseTestRunner implements TestListener {
 	 * Truncates a String to the maximum length.
 	 */
 	public static String truncate(String s) {
-		if (s.length() > fMaxMessage)
-			s= s.substring(0, fMaxMessage)+"...";
+		if (fMaxMessageLength != -1 && s.length() > fMaxMessageLength)
+			s= s.substring(0, fMaxMessageLength)+"...";
 		return s;
 	}
 	
@@ -89,7 +121,7 @@ public abstract class BaseTestRunner implements TestListener {
 	 * Returns the loaded Class for a suite name. 
 	 */
 	protected Class loadSuiteClass(String suiteClassName) throws ClassNotFoundException {
-		return fTestLoader.load(suiteClassName);
+		return getLoader().load(suiteClassName);
 	}
 	
 	/**
@@ -101,8 +133,8 @@ public abstract class BaseTestRunner implements TestListener {
 	/**
 	 * Returns the loader to be used.
 	 */
-	public static TestSuiteLoader getLoader() {
-		if (getPreference("loading").equals("true") && !inVAJava())
+	public TestSuiteLoader getLoader() {
+		if (getPreference("loading").equals("true") && !inVAJava() && fLoading)
 			return new ReloadingTestSuiteLoader();
 		return new StandardTestSuiteLoader();
 	}
@@ -127,11 +159,11 @@ public abstract class BaseTestRunner implements TestListener {
 		}
  	}
  	
- 	private static String getPreference(String key) {
+ 	public static String getPreference(String key) {
  		return fPreferences.getProperty(key);
  	}
  	
- 	private static int getPreference(String key, int dflt) {
+ 	public static int getPreference(String key, int dflt) {
  		String value= getPreference(key);
  		int intValue= dflt;
  		if (value == null)
@@ -153,13 +185,56 @@ public abstract class BaseTestRunner implements TestListener {
 		return true;
 	}
 
+	/**
+	 * Filters stack frames from internal JUnit classes
+	 */
+	public static String filterStack(String stack) {
+		if (!getPreference("stackfilter").equals("true"))
+			return stack;
+			
+		StringWriter sw= new StringWriter(500);
+		PrintWriter pw= new PrintWriter(sw);
+		StringReader sr= new StringReader(stack);
+		BufferedReader br= new BufferedReader(sr);
+		
+		String line;
+		try {	
+			while ((line= br.readLine()) != null) {
+				if (!filterLine(line))
+					pw.println(line);
+			}
+		} catch (Exception IOException) {
+			return stack; // return the stack unfiltered
+		}
+		return sw.toString();
+	}
+	
+	static boolean filterLine(String line) {
+		String[] patterns= new String[] {
+			"junit.framework.TestCase",
+			"junit.framework.TestResult",
+			"junit.framework.TestSuite",
+			"junit.framework.Assert.", // don't filter AssertionFailure
+			"junit.swingui.TestRunner",
+			"junit.awtui.TestRunner",
+			"junit.textui.TestRunner",
+			"java.lang.reflect.Method.invoke("
+		};
+		for (int i= 0; i < patterns.length; i++) {
+			if (line.indexOf(patterns[i]) > 0)
+				return true;
+		}
+		return false;
+	}
+
  	{
  		fPreferences= new Properties();
- 		//JDK 1.2
+ 		//JDK 1.2 feature
  		//fPreferences.setProperty("loading", "true");
  		fPreferences.put("loading", "true");
+ 		fPreferences.put("stackfilter", "true");
   		readPreferences();
- 		fMaxMessage= getPreference("maxmessage", fMaxMessage);
+ 		fMaxMessageLength= getPreference("maxmessage", fMaxMessageLength);
  	}
  	
 }

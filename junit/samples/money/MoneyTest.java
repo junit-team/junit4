@@ -31,6 +31,7 @@ public class MoneyTest extends TestCase {
 		Money bag[]= { new Money(24, "CHF"), new Money(14, "USD") };
 		MoneyBag expected= new MoneyBag(bag);
 		assertEquals(expected, fMB1.multiply(2)); 
+		assertEquals(fMB1, fMB1.multiply(1));
 		assert(fMB1.multiply(0).isZero());
 	}
 	public void testBagNegate() {
@@ -57,8 +58,11 @@ public class MoneyTest extends TestCase {
 		MoneyBag expected= new MoneyBag(bag);
 		assertEquals(expected, fMB1.add(fMB2));
 	}
-	public void testIsNull() {
+	public void testIsZero() {
 		assert(fMB1.subtract(fMB1).isZero()); 
+
+    		Money bag[] = { new Money (0, "CHF"), new Money (0, "USD") };
+		assert(new MoneyBag(bag).isZero());
 	}
 	public void testMixedSimpleAdd() {
 		// [12 CHF] + [7 USD] == {[12 CHF][7 USD]}

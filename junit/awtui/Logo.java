@@ -2,6 +2,8 @@ package junit.awtui;
 
 import java.awt.*;
 import java.awt.image.*;
+import java.net.URL;
+
 import junit.runner.BaseTestRunner;
 
 public class Logo extends Canvas {
@@ -31,7 +33,7 @@ public class Logo extends Canvas {
 	public Image loadImage(String name) {
 		Toolkit toolkit= Toolkit.getDefaultToolkit();
 		try {
-			java.net.URL url= BaseTestRunner.class.getResource(name);
+			URL url= BaseTestRunner.class.getResource(name);
 			return toolkit.createImage((ImageProducer) url.getContent());
 		} catch (Exception ex) {
 		}

@@ -2,7 +2,7 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.5 [en] (Win98; I) [Netscape]">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Windows NT 5.0; U) [Netscape]">
    <meta name="Author" content="Erich Gamma">
    <title>JUnit FAQ</title>
 </head>
@@ -13,6 +13,10 @@
 Asked Questions</h1>
 
 <hr WIDTH="100%">
+<li>
+<a href="#Can't find">Can't find the test classes when running them with
+a TestRunner</a></li>
+
 <li>
 <a href="#browsersupport">How do I implement a test case for a thrown exception?</a></li>
 
@@ -31,7 +35,24 @@ for all my TestCases?</a></li>
 <a href="#I want to debug when a test">I want to debug when a test fails</a></li>
 
 <br>
-<hr><a NAME="How do I implement a test case for thrown"></a>
+<hr>
+<br><a NAME="Can't find"></a>
+<h2>
+Can't find my test class when using a TestRunner</h2>
+When you are getting a "Can't find 'TestClass'" error message when you
+try to run your test with a TestRunner make sure that:
+<ul>
+<li>
+the <b>junit.jar</b> isn't installed in the extension directory of your
+JDK installation. The junit.jar has to be on the class path.</li>
+
+<li>
+the Test class you are trying to run is on the class path.</li>
+</ul>
+Notice, that the tests that come with the JUnit distribution are not included
+inside the junit.jar but they reside in the installation directory. Therefore
+make sure that the JUnit installation directory is on the class path.
+<br><a NAME="How do I implement a test case for thrown"></a>
 <h2>
 How do I implement a test case for a thrown exception?</h2>
 Catch the exception and if it isn't thrown call the <b>fail</b> method.

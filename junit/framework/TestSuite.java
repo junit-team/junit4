@@ -66,7 +66,7 @@ public class TestSuite implements Test {
 		if (fTests.size() == 0)
 			addTest(warning("No tests found in "+theClass.getName()));
 	}
-   /**
+   	/**
 	 * Constructs an empty TestSuite.
 	 */
 	public TestSuite(String name) {

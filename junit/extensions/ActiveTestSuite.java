@@ -3,7 +3,7 @@ package junit.extensions;
 import junit.framework.*;
 
 /**
- * A TestSuite for active Tests. I waits until all
+ * A TestSuite for active Tests. It waits until all
  * active tests have terminated.
  * -- Aarhus Radisson Scandinavian Center 11th floor
  */ 
@@ -36,7 +36,7 @@ public class ActiveTestSuite extends TestSuite {
 			try {
 				wait();
 			} catch (InterruptedException e) {
-				return; // TBD
+				return; // ignore
 			}
 		}
 	}

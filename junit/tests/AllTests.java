@@ -14,17 +14,19 @@ public class AllTests {
 	}
 	public static Test suite ( ) {
 		TestSuite suite= new TestSuite("Framework Tests");
-		suite.addTest(new TestSuite(ExtensionTest.class));
-	    suite.addTest(new TestSuite(TestCaseTest.class));
-	    suite.addTest(SuiteTest.suite()); // Tests suite building, so can't use automatic test extraction 
-		suite.addTest(new TestSuite(ExceptionTestCaseTest.class));
-		suite.addTest(new TestSuite(TestListenerTest.class));
-		suite.addTest(new TestSuite(ActiveTestTest.class));
-		suite.addTest(new TestSuite(AssertTest.class));
-		suite.addTest(new TestSuite(TextRunnerTest.class));
-		
-		if (!BaseTestRunner.inVAJava())
+		suite.addTestSuite(ExtensionTest.class);
+		suite.addTestSuite(TestCaseTest.class);
+		suite.addTest(SuiteTest.suite()); // Tests suite building, so can't use automatic test extraction 
+		suite.addTestSuite(ExceptionTestCaseTest.class);
+		suite.addTestSuite(TestListenerTest.class);
+		suite.addTestSuite(ActiveTestTest.class);
+		suite.addTestSuite(AssertTest.class);
+		suite.addTestSuite(StackFilterTest.class);
+		suite.addTestSuite(SorterTest.class);
+		if (!BaseTestRunner.inVAJava()) {
+			suite.addTestSuite(TextRunnerTest.class);
 			suite.addTest(new TestSuite(TestTestCaseClassLoader.class));
-	    return suite;
+		}
+		return suite;
 	}
 }

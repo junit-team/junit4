@@ -11,7 +11,7 @@ class AboutDialog extends Dialog {
 		
 		setResizable(false);
 		setLayout(new GridBagLayout());
-		setSize(296, 138);
+		setSize(330, 138);
 		setTitle("About");
 		
 		Button button= new Button("Close");
@@ -35,24 +35,18 @@ class AboutDialog extends Dialog {
 		constraintsLabel1.gridx = 3; constraintsLabel1.gridy = 0;
 		constraintsLabel1.gridwidth = 1; constraintsLabel1.gridheight = 1;
 		constraintsLabel1.anchor = GridBagConstraints.CENTER;
-		constraintsLabel1.weightx = 0.0;
-		constraintsLabel1.weighty = 0.0;
 		add(label1, constraintsLabel1);
 
 		GridBagConstraints constraintsLabel2= new GridBagConstraints();
 		constraintsLabel2.gridx = 2; constraintsLabel2.gridy = 1;
 		constraintsLabel2.gridwidth = 2; constraintsLabel2.gridheight = 1;
 		constraintsLabel2.anchor = GridBagConstraints.CENTER;
-		constraintsLabel2.weightx = 0.0;
-		constraintsLabel2.weighty = 0.0;
 		add(label2, constraintsLabel2);
 
 		GridBagConstraints constraintsButton1= new GridBagConstraints();
 		constraintsButton1.gridx = 2; constraintsButton1.gridy = 2;
 		constraintsButton1.gridwidth = 2; constraintsButton1.gridheight = 1;
 		constraintsButton1.anchor = GridBagConstraints.CENTER;
-		constraintsButton1.weightx = 0.0;
-		constraintsButton1.weighty = 0.0;
 		constraintsButton1.insets= new Insets(8, 0, 8, 0);
 		add(button, constraintsButton1);
 
@@ -60,8 +54,6 @@ class AboutDialog extends Dialog {
 		constraintsLogo1.gridx = 2; constraintsLogo1.gridy = 0;
 		constraintsLogo1.gridwidth = 1; constraintsLogo1.gridheight = 1;
 		constraintsLogo1.anchor = GridBagConstraints.CENTER;
-		constraintsLogo1.weightx = 0.0;
-		constraintsLogo1.weighty = 0.0;
 		add(logo, constraintsLogo1);
 
 		addWindowListener(

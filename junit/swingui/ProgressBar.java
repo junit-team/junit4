@@ -4,11 +4,14 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 
+/**
+ * A simple progress bar showing the green/red status
+ */
 class ProgressBar extends JPanel {
-	public boolean fError= false;
-	public int fTotal= 0;
-	public int fProgress= 0;
-	public int fProgressX= 0;
+	boolean fError= false;
+	int fTotal= 0;
+	int fProgress= 0;
+	int fProgressX= 0;
 	
 	public ProgressBar() {
 		super();

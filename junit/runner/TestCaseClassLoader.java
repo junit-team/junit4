@@ -2,6 +2,7 @@ package junit.runner;
 
 import java.util.*;
 import java.io.*;
+import java.net.URL;
 import java.util.zip.*;
 
 /**
@@ -57,7 +58,7 @@ public class TestCaseClassLoader extends ClassLoader {
 		}
 	}
 	
-	public java.net.URL getResource(String name) {
+	public URL getResource(String name) {
 		return ClassLoader.getSystemResource(name);
 	}
 	
@@ -65,7 +66,7 @@ public class TestCaseClassLoader extends ClassLoader {
 		return ClassLoader.getSystemResourceAsStream(name);
 	} 
 	
-	protected boolean isExcluded(String name) {
+	public boolean isExcluded(String name) {
 		for (int i= 0; i < fExcluded.size(); i++) {
 			if (name.startsWith((String) fExcluded.elementAt(i))) {
 				return true;

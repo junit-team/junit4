@@ -53,6 +53,12 @@ public class TestResult extends Object {
 		fListeners.addElement(listener);
 	}
 	/**
+	 * Unregisters a TestListener
+	 */
+	public synchronized void removeListener(TestListener listener) {
+		fListeners.removeElement(listener);
+	}
+	/**
 	 * Returns a copy of the listeners.
 	 */
 	private synchronized Vector cloneListeners() {

@@ -3,6 +3,7 @@ package junit.swingui;
 import java.util.*;
 import javax.swing.event.*;
 import javax.swing.tree.*;
+
 import junit.framework.*;
 
 /**

@@ -3,7 +3,7 @@ package junit.swingui;
 import junit.framework.*;
 import junit.runner.*;
 
-import java.util.Vector;
+import java.util.*;
 import java.lang.reflect.*;
 import java.text.NumberFormat;
 import java.net.URL;
@@ -11,147 +11,106 @@ import java.io.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.border.*;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 
- 
 /**
- * A user interface to run tests.
- * Enter the name of a class with a suite method which should return
- * the tests to be run.
+ * A Swing based user interface to run tests.
+ * Enter the name of a class which either provides a static
+ * suite method or is a subclass of TestCase.
  * <pre>
- * Synopsis: java junit.swingui.TestRunner [TestCase]
+ * Synopsis: java junit.swingui.TestRunner [-noloading] [TestCase]
  * </pre>
  * TestRunner takes as an optional argument the name of the testcase class to be run.
  */
-public class TestRunner extends BaseTestRunner implements DocumentListener {
+public class TestRunner extends BaseTestRunner implements DocumentListener, TestRunContext {
 	protected JFrame fFrame;
 	private Thread fRunner;
 	private TestResult fTestResult;
 	
-	private TestBrowser fTestBrowser;
-	
 	private JComboBox fSuiteCombo;
-	private JButton fRun;
 	private ProgressBar fProgressIndicator;
-	private JList fFailureList;
 	private DefaultListModel fFailures;
 	private JLabel fLogo;
-	private JTextField fNumberOfErrors;
-	private JTextField fNumberOfFailures;
-	private JTextField fNumberOfRuns;
+	private CounterPanel fCounterPanel;
+	private JButton fRun;
 	private JButton fQuitButton;
 	private JButton fRerunButton;
-	private JTextField fStatusLine;
-	private JTextArea fTrace;
-	private JPanel fPanel;
+	private StatusLine fStatusLine;
+	private FailureDetailView fFailureView;
+	private JTabbedPane fTestViewTab;
+	private Vector fTestRunViews= new Vector(); // view associated with tab in tabbed pane
 	
-	private static Font PLAIN_FONT= new Font("dialog", Font.PLAIN, 12);
-	private static Font BOLD_FONT= new Font("dialog", Font.BOLD, 12);
+	private static Font PLAIN_FONT= StatusLine.PLAIN_FONT;
+	private static Font BOLD_FONT= StatusLine.BOLD_FONT;
 	private static final int GAP= 4;
-
 	private static final int HISTORY_LENGTH= 5;
-	
-	static class FailureListCellRenderer extends DefaultListCellRenderer {
-		private ImageIcon fFailureIcon;
-		private ImageIcon fErrorIcon;
-		
-		FailureListCellRenderer() {
-	    		super();
-	    		loadIcons();
-		}
 
-		void loadIcons() {
-			fFailureIcon= loadIcon("failure.gif");
-			fErrorIcon= loadIcon("error.gif");			
-		}
+	private static final String TESTCOLLECTOR_KEY= "TestCollectorClass";
+	private static final String FAILUREDETAILVIEW_KEY= "FailureViewClass";
 		
-		ImageIcon loadIcon(String name) {
-			URL url= getClass().getResource(name);
-			if (url == null) {
-				System.err.println("Warning: could not load \""+name+"\" icon");
-				return null;
-			} return new ImageIcon(url);
-		}
-			
-		public Component getListCellRendererComponent(
-			JList list, Object value, int modelIndex, 
-			boolean isSelected, boolean cellHasFocus) {
-
-			TestFailure failure= (TestFailure)value;
-			String text= failure.failedTest().toString();
-			String msg= failure.thrownException().getMessage();
-			if (msg != null) 
-				text+= ":" + BaseTestRunner.truncate(msg); 
- 
-			if (failure.thrownException() instanceof AssertionFailedError) { 
-				if (fFailureIcon != null)
-	    				setIcon(fFailureIcon);
-			}
-	    	else {
-	    		if (fErrorIcon != null)
-	    			setIcon(fErrorIcon);
-	    	}
-	    	return super.getListCellRendererComponent(list, text, modelIndex, isSelected, cellHasFocus);
-		}
-	}
-	
 	public TestRunner() {
 	} 
 	
-	private void about() {
-		AboutDialog about= new AboutDialog(fFrame); 
-		about.setModal(true);
-		about.setLocation(300, 300);
-		about.show();
+	public static void main(String[] args) {
+		new TestRunner().start(args);
+	}
+	 
+	public static void run(Class test) {
+		String args[]= { test.getName() };
+		main(args);
 	}
 	
-	public void addError(Test test, Throwable t) {
-		postError(test, t);
-	}
-	
-	private void postError(final Test test, final Throwable t) {
+	public void addError(final Test test, final Throwable t) {
 		SwingUtilities.invokeLater(
 			new Runnable() {
 				public void run() {
-					fNumberOfErrors.setText(Integer.toString(fTestResult.errorCount()));
+					fCounterPanel.setErrorValue(fTestResult.errorCount());
 					appendFailure("Error", test, t);
 				}
 			}
 		);
 	}
-
-	public void addFailure(final Test test, final Throwable t) {
-		postFailure(test, t);
-	}
 	
-	private void postFailure(final Test test, final Throwable t) {
+	public void addFailure(final Test test, final AssertionFailedError t) {
 		SwingUtilities.invokeLater(
 			new Runnable() {
 				public void run() {
-					fNumberOfFailures.setText(Integer.toString(fTestResult.failureCount()));
+					fCounterPanel.setFailureValue(fTestResult.failureCount());
 					appendFailure("Failure", test, t);
 				}
 			}		
 		);
 	}
-
-	private void addGrid(JPanel p, Component co, int x, int y, int w, int fill, double wx, int anchor) {
-		GridBagConstraints c= new GridBagConstraints();
-		c.gridx= x; c.gridy= y;
-		c.gridwidth= w;
-		c.anchor= anchor;
-		c.weightx= wx;
-		c.fill= fill;
-		if (fill == GridBagConstraints.BOTH || fill == GridBagConstraints.VERTICAL)
-			c.weighty= 1.0;
-		c.insets= new Insets(y == 0 ? GAP : 0, x == 0 ? GAP : 0, GAP, GAP);
-		p.add(co, c);
+	
+	public void startTest(Test test) {
+		postInfo("Running: "+test);
 	}
 	
+	public void endTest(Test test) {
+		postEndTest(test);
+	}
+
+	private void postEndTest(final Test test) {
+		synchUI();
+		SwingUtilities.invokeLater(
+			new Runnable() {
+				public void run() {
+					if (fTestResult != null) {
+						fCounterPanel.setRunValue(fTestResult.runCount());
+						fProgressIndicator.step(fTestResult.wasSuccessful());
+					}
+				}
+			}
+		);
+	}
+
+	public void setSuite(String suiteName) {
+		fSuiteCombo.getEditor().setItem(suiteName);
+	}
+
 	private void addToHistory(final String suite) {
 		for (int i= 0; i < fSuiteCombo.getItemCount(); i++) {
 			if (suite.equals(fSuiteCombo.getItemAt(i))) {
@@ -162,42 +121,51 @@ public class TestRunner extends BaseTestRunner implements DocumentListener {
 			}
 		}
 		fSuiteCombo.insertItemAt(suite, 0);
-		// prune the history
-		for (int i= fSuiteCombo.getItemCount()-1; i > HISTORY_LENGTH; i--) 
+		fSuiteCombo.setSelectedIndex(0);
+		pruneHistory();
+	}
+	
+	private void pruneHistory() {
+		int historyLength= getPreference("maxhistory", HISTORY_LENGTH);
+		if (historyLength < 1)
+			historyLength= 1;
+		for (int i= fSuiteCombo.getItemCount()-1; i > historyLength-1; i--) 
 			fSuiteCombo.removeItemAt(i);
 	}
 	
 	private void appendFailure(String kind, Test test, Throwable t) {
 		fFailures.addElement(new TestFailure(test, t));
 		if (fFailures.size() == 1) 
-			fFailureList.setSelectedIndex(0);
+			revealFailure(test);
+	}
+	
+	private void revealFailure(Test test) {
+		for (Enumeration e= fTestRunViews.elements(); e.hasMoreElements(); ) {
+			TestRunView v= (TestRunView) e.nextElement();
+			v.revealFailure(test);
+		}
 	}
 		
 	public void changedUpdate(DocumentEvent event) {
 		textChanged();
 	}
 	
-	protected void connectTestBrowser(Test testSuite, boolean reload) {
-		if(fTestBrowser != null && fTestBrowser.isVisible()) {
-			if (reload)
-				fTestBrowser.showTestTree(testSuite);
-			fTestResult.addListener(fTestBrowser.getTestListener());
+	protected void aboutToStart(Test testSuite) {
+		for (Enumeration e= fTestRunViews.elements(); e.hasMoreElements(); ) {
+			TestRunView v= (TestRunView) e.nextElement();
+			v.aboutToStart(testSuite, fTestResult);
 		}
 	}
 	
-	protected JPanel createCounterPanel() {
-		fNumberOfErrors= createOutputField();
-		fNumberOfFailures= createOutputField();
-		fNumberOfRuns= createOutputField();
-	
-		JPanel numbersPanel= new JPanel(new GridLayout(2, 3));
-		numbersPanel.add(new JLabel("Runs:"));		
-		numbersPanel.add(new JLabel("Errors:"));	
-		numbersPanel.add(new JLabel("Failures: "));	
-		numbersPanel.add(fNumberOfRuns);
-		numbersPanel.add(fNumberOfErrors);
-		numbersPanel.add(fNumberOfFailures);
-		return numbersPanel;
+	protected void runFinished(Test testSuite) {
+		for (Enumeration e= fTestRunViews.elements(); e.hasMoreElements(); ) {
+			TestRunView v= (TestRunView) e.nextElement();
+			v.runFinished(testSuite, fTestResult);
+		}
+	}
+
+	protected CounterPanel createCounterPanel() {
+		return new CounterPanel();
 	}
 	
 	protected JPanel createFailedPanel() {
@@ -214,42 +182,19 @@ public class TestRunner extends BaseTestRunner implements DocumentListener {
 		failedPanel.add(fRerunButton);
 		return failedPanel;
 	}
-	
-	protected JList createFailureList(ListModel model) {
-		JList list= new JList(model);
-		list.setFixedCellWidth(300);
-		list.setPrototypeCellValue(
-			new TestFailure(new TestCase("dummy") {
-				protected void runTest() {}
-			}, 
-			new AssertionFailedError("message"))
-		);	
-		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		list.setCellRenderer(new FailureListCellRenderer());
-		list.setToolTipText("Failure - grey X; Error - red X");
-		list.setVisibleRowCount(5);
-		
-		list.addListSelectionListener(
-			new ListSelectionListener() {
-				public void valueChanged(ListSelectionEvent e) {
-					failureSelected();
-				}
+			
+	protected FailureDetailView createFailureDetailView() {
+		String className= BaseTestRunner.getPreference(FAILUREDETAILVIEW_KEY);
+		if (className != null) {			
+			Class viewClass= null;
+			try {
+				viewClass= Class.forName(className);
+				return (FailureDetailView)viewClass.newInstance();
+			} catch(Exception e) {
+				JOptionPane.showMessageDialog(fFrame, "Could not create Failure DetailView - using default view");
 			}
-		);
-		return list;
-	}
-	
-	protected void failureSelected() {
-		fRerunButton.setEnabled(isErrorSelected());
-		showErrorTrace();
-	}
-	
-	protected JTextArea createTraceArea() {
-		JTextArea area= new JTextArea();
-		area.setRows(5);
-		area.setTabSize(0);
-		area.setEditable(false);
-		return area;
+		}
+		return new DefaultFailureDetailView();
 	}
 
 	/**
@@ -270,28 +215,17 @@ public class TestRunner extends BaseTestRunner implements DocumentListener {
 		mi1.setMnemonic('A');
 		menu.add(mi1);
 		
-		JMenuItem mi2= new JMenuItem("Show Test Browser");
-		mi2.addActionListener(
-		    new ActionListener() {
-		        public void actionPerformed(ActionEvent event) {
-		            showTestBrowser();
-		        }
-		    }
-		);
-		mi2.setMnemonic('S');
-		menu.add(mi2);
-
 		menu.addSeparator();
-		JMenuItem mi3= new JMenuItem("Exit");
-		mi3.addActionListener(
+		JMenuItem mi2= new JMenuItem("Exit");
+		mi2.addActionListener(
 		    new ActionListener() {
 		        public void actionPerformed(ActionEvent event) {
 		            terminate();
 		        }
 		    }
 		);
-		mi3.setMnemonic('x');
-		menu.add(mi3);
+		mi2.setMnemonic('x');
+		menu.add(mi2);
 
 		return menu;
 	}
@@ -301,9 +235,7 @@ public class TestRunner extends BaseTestRunner implements DocumentListener {
 		Image icon= loadFrameIcon();	
 		if (icon != null)
 			frame.setIconImage(icon);
-
 		frame.getContentPane().setLayout(new BorderLayout(0, 0));
-		frame.setBackground(SystemColor.control);
 		
 		frame.addWindowListener(
 			new WindowAdapter() {
@@ -316,23 +248,20 @@ public class TestRunner extends BaseTestRunner implements DocumentListener {
 	}
 	
 	protected JLabel createLogo() {
-		java.net.URL url= BaseTestRunner.class.getResource("logo.gif");
-		return new JLabel(new ImageIcon(url));
+		JLabel label;
+		Icon icon= getIconResource(BaseTestRunner.class, "logo.gif");
+		if (icon != null) 
+			label= new JLabel(icon);
+		else
+			label= new JLabel("JV");
+		label.setToolTipText("JUnit Version "+Version.id());
+		return label;
 	}
 	
 	protected void createMenus(JMenuBar mb) {
 		mb.add(createJUnitMenu());
 	}
-	
-	private JTextField createOutputField() {
-		JTextField field= new JTextField("0", 4);
-		field.setHorizontalAlignment(JTextField.LEFT);
-		field.setFont(BOLD_FONT);
-		field.setEditable(false);
-		field.setBorder(BorderFactory.createEmptyBorder());
-		return field;
-	}
-	
+		
 	protected JButton createQuitButton() {
 		JButton quit= new JButton(" Exit "); 
 		quit.addActionListener(
@@ -358,28 +287,28 @@ public class TestRunner extends BaseTestRunner implements DocumentListener {
 		return run;
 	}
 	
-	/**
-	 * Hook to plug in a UI component on the run line
-	 */
-	protected Component createRunExtension() {
-		return null;
+	protected Component createBrowseButton() {
+		JButton browse= new JButton("...");
+		browse.setToolTipText("Select a Test class");
+		browse.addActionListener(
+			new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					browseTestClasses();
+				}
+			}
+		);
+		return browse;		
 	}
 	
-	protected JTextField createStatusLine() {
-		JTextField status= new JTextField();
-		status.setFont(BOLD_FONT);
-		status.setEditable(false);
-		status.setForeground(Color.red);
-		status.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-		Dimension d= status.getPreferredSize();
-		d.width= 420;
-		status.setPreferredSize(d);
-		return status;
+	protected StatusLine createStatusLine() {
+		return new StatusLine(420);
 	}
 	
 	protected JComboBox createSuiteCombo() {
 		JComboBox combo= new JComboBox();
 		combo.setEditable(true);
+		combo.setLightWeightPopupEnabled(false);
+		
 		combo.getEditor().getEditorComponent().addKeyListener(
 			new KeyAdapter() {
 				public void keyTyped(KeyEvent e) {
@@ -403,8 +332,33 @@ public class TestRunner extends BaseTestRunner implements DocumentListener {
 				}
 			}
 		);
-
 		return combo;
+	}
+	
+	protected JTabbedPane createTestRunViews() {
+		JTabbedPane pane= new JTabbedPane(JTabbedPane.BOTTOM);
+
+		FailureRunView lv= new FailureRunView(this);
+		fTestRunViews.addElement(lv);
+		lv.addTab(pane);
+		
+		TestHierarchyRunView tv= new TestHierarchyRunView(this);
+		fTestRunViews.addElement(tv);
+		tv.addTab(pane);
+		
+		pane.addChangeListener(
+			new ChangeListener() {
+				public void stateChanged(ChangeEvent e) {
+					testViewChanged();
+				}
+			}
+		);
+		return pane;
+	}
+	
+	public void testViewChanged() {
+		TestRunView view= (TestRunView)fTestRunViews.elementAt(fTestViewTab.getSelectedIndex());
+		view.activate();
 	}
 	
 	protected TestResult createTestResult() {
@@ -417,102 +371,112 @@ public class TestRunner extends BaseTestRunner implements DocumentListener {
 		createMenus(mb);
 		frame.setJMenuBar(mb);
 	
-		JLabel suiteLabel= new JLabel("Enter the name of the Test class:");
+		JLabel suiteLabel= new JLabel("Test:");
 		fSuiteCombo= createSuiteCombo();
 		fRun= createRunButton();
-		Component runExtension= createRunExtension();
+		frame.getRootPane().setDefaultButton(fRun);
+		Component browseButton= createBrowseButton();
 		
 		fProgressIndicator= new ProgressBar();
-		JPanel numbersPanel= createCounterPanel();
+		fCounterPanel= createCounterPanel();
 		
 		JLabel failureLabel= new JLabel("Errors and Failures:");
 		fFailures= new DefaultListModel();
-		fFailureList= createFailureList(fFailures);
-
+		
+		fTestViewTab= createTestRunViews();	
 		JPanel failedPanel= createFailedPanel();
 		
-		fTrace= createTraceArea();
-		JScrollPane tracePane= new JScrollPane(fTrace, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		fFailureView= createFailureDetailView();
+		JScrollPane tracePane= new JScrollPane(fFailureView.getComponent(), JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 
 		fStatusLine= createStatusLine();
 		fQuitButton= createQuitButton();
-	
 		fLogo= createLogo();
-		fLogo.setToolTipText("JUnit Version "+Version.id());
-		
-		JScrollPane scrolledList= new JScrollPane(fFailureList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		
-		//---- overall layout
+					
 		JPanel panel= new JPanel(new GridBagLayout());
-		fPanel= panel;
 	
 		addGrid(panel, suiteLabel,		 0, 0, 2, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.WEST);
 		addGrid(panel, fSuiteCombo, 	 0, 1, 1, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.WEST);
-		if (runExtension != null)
-			addGrid(panel, runExtension, 1, 1, 1, GridBagConstraints.NONE, 			0.0, GridBagConstraints.WEST);
+		addGrid(panel, browseButton, 1, 1, 1, GridBagConstraints.NONE, 			0.0, GridBagConstraints.WEST);
 		addGrid(panel, fRun, 			 2, 1, 1, GridBagConstraints.HORIZONTAL, 	0.0, GridBagConstraints.CENTER);
 
 		addGrid(panel, fProgressIndicator, 0, 2, 2, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.WEST);
 		addGrid(panel, fLogo, 			 2, 2, 1, GridBagConstraints.NONE, 			0.0, GridBagConstraints.NORTH);
 
-		addGrid(panel, numbersPanel,	 0, 3, 2, GridBagConstraints.NONE, 			0.0, GridBagConstraints.CENTER);
+		addGrid(panel, fCounterPanel,	 0, 3, 2, GridBagConstraints.NONE, 			0.0, GridBagConstraints.CENTER);
 
-		addGrid(panel, failureLabel, 	 0, 4, 2, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.WEST);
-		addGrid(panel, scrolledList, 	 0, 5, 2, GridBagConstraints.BOTH, 			1.0, GridBagConstraints.WEST);
-		addGrid(panel, tracePane, 	     0, 6, 2, GridBagConstraints.BOTH, 	        1.0, GridBagConstraints.WEST);
-		addGrid(panel, failedPanel, 	 2, 5, 1, GridBagConstraints.HORIZONTAL, 	0.0, GridBagConstraints.CENTER);
+		addGrid(panel, fTestViewTab, 	 0, 4, 2, GridBagConstraints.BOTH, 			1.0, GridBagConstraints.WEST);
+
+		addGrid(panel, tracePane, 	     0, 5, 2, GridBagConstraints.BOTH, 	        1.0, GridBagConstraints.WEST);
+		addGrid(panel, failedPanel, 	 2, 4, 1, GridBagConstraints.HORIZONTAL, 	0.0, GridBagConstraints.CENTER);
 		
-		addGrid(panel, fStatusLine, 	 0, 7, 2, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.CENTER);
-		addGrid(panel, fQuitButton, 	 2, 7, 1, GridBagConstraints.HORIZONTAL, 	0.0, GridBagConstraints.CENTER);
+		addGrid(panel, fStatusLine, 	 0, 6, 2, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.CENTER);
+		addGrid(panel, fQuitButton, 	 2, 6, 1, GridBagConstraints.HORIZONTAL, 	0.0, GridBagConstraints.CENTER);
 		
 		frame.setContentPane(panel);
 		frame.pack();
 		frame.setLocation(200, 200);
-
 		return frame;
 	}
 
-	public void endTest(Test test) {
-		postEndTest(test);
-	}
-
-	private void postEndTest(final Test test) {
-		synchUI();
-		SwingUtilities.invokeLater(
-			new Runnable() {
-				public void run() {
-					if (fTestResult != null) {
-						setLabelValue(fNumberOfRuns, fTestResult.runCount());
-						fProgressIndicator.step(fTestResult.wasSuccessful());
-					}
-				}
-			}
-		);
+	private void addGrid(JPanel p, Component co, int x, int y, int w, int fill, double wx, int anchor) {
+		GridBagConstraints c= new GridBagConstraints();
+		c.gridx= x; c.gridy= y;
+		c.gridwidth= w;
+		c.anchor= anchor;
+		c.weightx= wx;
+		c.fill= fill;
+		if (fill == GridBagConstraints.BOTH || fill == GridBagConstraints.VERTICAL)
+			c.weighty= 1.0;
+		c.insets= new Insets(y == 0 ? GAP : 0, x == 0 ? GAP : 0, GAP, GAP);
+		p.add(co, c);
 	}
 
 	protected String getSuiteText() {
 		if (fSuiteCombo == null)
 			return "";
-		JTextField field= (JTextField)fSuiteCombo.getEditor().getEditorComponent();
-		return field.getText();
+		return (String)fSuiteCombo.getEditor().getItem();
 	}
-
+	
+	public ListModel getFailures() {
+		return fFailures;
+	}
 	
 	public void insertUpdate(DocumentEvent event) {
 		textChanged();
 	}
-	
-	private boolean isErrorSelected() {
-		return fFailureList.getSelectedIndex() != -1;
+		
+	public void browseTestClasses() {
+		TestCollector collector= createTestCollector();		
+		TestSelector selector= new TestSelector(fFrame, collector);
+		if (selector.isEmpty()) {
+			JOptionPane.showMessageDialog(fFrame, "No Test Cases found.\nCheck that the configured \'TestCollector\' is supported on this platform.");
+			return;
+		}
+		selector.show();
+		String className= selector.getSelectedItem();
+		if (className != null)
+			setSuite(className);
+	}
+
+	TestCollector createTestCollector() {
+		String className= BaseTestRunner.getPreference(TESTCOLLECTOR_KEY);
+		if (className != null) {			
+			Class collectorClass= null;
+			try {
+				collectorClass= Class.forName(className);
+				return (TestCollector)collectorClass.newInstance();
+			} catch(Exception e) {
+				JOptionPane.showMessageDialog(fFrame, "Could not create TestCollector - using default collector");
+			}
+		}
+		return new LoadingClassPathTestCollector();
 	}
 	
 	private Image loadFrameIcon() {
-		Toolkit toolkit= Toolkit.getDefaultToolkit();
-		try {
-			java.net.URL url= BaseTestRunner.class.getResource("smalllogo.gif");
-			return toolkit.createImage((ImageProducer) url.getContent());
-		} catch (Exception ex) {
-		}
+		ImageIcon icon= (ImageIcon)getIconResource(BaseTestRunner.class, "smalllogo.gif");
+		if (icon != null)
+			return icon.getImage();
 		return null;
 	}
 	
@@ -535,18 +499,8 @@ public class TestRunner extends BaseTestRunner implements DocumentListener {
 	
 	private File getSettingsFile() {
 	 	String home= System.getProperty("user.home");
-	 	Assert.assertNotNull(home); // spec says, this must exist
  		return new File(home,".junitsession");
  	}
-	
-	public static void main(String[] args) {
-		new TestRunner().start(args);
-	}
-	 
-	public static void run(Class test) {
-		String args[]= { test.getName() };
-		main(args);
-	}
 	
 	private void postInfo(final String message) {
 		SwingUtilities.invokeLater(
@@ -573,19 +527,20 @@ public class TestRunner extends BaseTestRunner implements DocumentListener {
 	}
 	
 	private void rerun() {
-		int index= fFailureList.getSelectedIndex();
-		if (index == -1)
-			return;
+		TestRunView view= (TestRunView)fTestRunViews.elementAt(fTestViewTab.getSelectedIndex());
+		Test rerunTest= view.getSelectedTest();
+		if (rerunTest != null)
+			rerunTest(rerunTest);
+	}
 	
-		TestFailure failure= (TestFailure)fFailures.elementAt(index);
-		Test test= failure.failedTest();
+	private void rerunTest(Test test) {
 		if (!(test instanceof TestCase)) {
 			showInfo("Could not reload "+ test.toString());
 			return;
 		}
 		Test reloadedTest= null;
 		try {
-			Class reloadedTestClass= fTestLoader.reload(test.getClass());
+			Class reloadedTestClass= getLoader().reload(test.getClass());
 			Class[] classArgs= { String.class };
 			Object[] args= new Object[]{((TestCase)test).name()};
 			Constructor constructor= reloadedTestClass.getConstructor(classArgs);
@@ -600,19 +555,17 @@ public class TestRunner extends BaseTestRunner implements DocumentListener {
 		String message= reloadedTest.toString();
 		if(result.wasSuccessful())
 			showInfo(message+" was successful");
-		else if (result.errorCount() == 1)
-			showStatus(message+" had an error");
-		else
+		else if (result.errorCount() == 1) 
+			showStatus(message+" had an error"); 
+		else 
 			showStatus(message+" had a failure");
 	}
-	
+
 	protected void reset() {
-		setLabelValue(fNumberOfErrors, 0);
-		setLabelValue(fNumberOfFailures, 0);
-		setLabelValue(fNumberOfRuns, 0);
+		fCounterPanel.reset();
 		fProgressIndicator.reset();
 		fRerunButton.setEnabled(false);
-		fTrace.setText("");
+		fFailureView.clear();
 		fFailures.clear();
 	}
 	
@@ -661,7 +614,7 @@ public class TestRunner extends BaseTestRunner implements DocumentListener {
 			public void run() {
 				fTestResult= createTestResult();
 				fTestResult.addListener(TestRunner.this);
-				connectTestBrowser(testSuite, reload);
+				aboutToStart(testSuite);
 				TestRunner.this.start(testSuite); 
 				postInfo("Running...");
 				
@@ -675,8 +628,10 @@ public class TestRunner extends BaseTestRunner implements DocumentListener {
 					long runTime= endTime-startTime;
 					postInfo("Finished: " + elapsedTimeAsString(runTime) + " seconds");
 				}
+				runFinished(testSuite);
 				setButtonLabel(fRun, "Run");
 				fRunner= null;
+				System.gc();
 			}
 		};
 		fRunner.start();
@@ -714,77 +669,49 @@ public class TestRunner extends BaseTestRunner implements DocumentListener {
 			}
 		);
 	}
-	
-	public void setSuiteName(String suite) {
-		fSuiteCombo.addItem(suite);
-		fSuiteCombo.setSelectedItem(suite);
-	}
-	
-	private void showErrorTrace() {
-		int index= fFailureList.getSelectedIndex();
-		if (index == -1)
-			return;
-
-		TestFailure failure= (TestFailure) fFailures.elementAt(index);
-		fTrace.setText(getTrace(failure.thrownException()));
-		fTrace.select(0, 0);
-	}
-	
-	private String getTrace(Throwable t) { 
-		StringWriter stringWriter= new StringWriter();
-		PrintWriter writer= new PrintWriter(stringWriter);
-		t.printStackTrace(writer);
-		StringBuffer buffer= stringWriter.getBuffer();
-		return buffer.toString();
+		
+	public void handleTestSelected(Test test) {
+		fRerunButton.setEnabled(test != null && (test instanceof TestCase));
+		showFailureDetail(test);
 	}
 
-	private void showInfo(final String message) {
-		fStatusLine.setFont(PLAIN_FONT);
-		fStatusLine.setForeground(Color.black);
-		fStatusLine.setText(message);
+	private void showFailureDetail(Test test) {
+		if (test != null) {
+			ListModel failures= getFailures();
+			for (int i= 0; i < failures.getSize(); i++) {
+				TestFailure failure= (TestFailure)failures.getElementAt(i);
+				if (failure.failedTest() == test) {
+					fFailureView.showFailure(failure);
+					return;
+				}
+			}
+		}
+		fFailureView.clear();
+	}
+		
+	private void showInfo(String message) {
+		fStatusLine.showInfo(message);
 	}
 	
 	private void showStatus(String status) {
-		fStatusLine.setFont(BOLD_FONT);
-		fStatusLine.setForeground(Color.red);
-		fStatusLine.setText(status);
-	}
-	
-	private void showTestBrowser() {
-		String suiteName= getSuiteText();
-		final Test testSuite= getTest(suiteName);
-		if (testSuite == null)
-			return;
-		if (fTestBrowser == null) {
-			fTestBrowser= new TestBrowser(this);
-			fTestBrowser.setLocation(350, 100);
-	   	}
-		fTestBrowser.showTestTree(testSuite);
-		fTestBrowser.setVisible(true);
+		fStatusLine.showError(status);
 	}
 	
 	/**
 	 * Starts the TestRunner
 	 */
-	public void start(String[] args) {
-		fTestLoader= BaseTestRunner.getLoader();
-		
-		String suiteName= null;
-		if (args.length == 1) 
-			suiteName= args[0];
-		else if (args.length == 2 && args[0].equals("-c")) 
-			suiteName= extractClassName(args[1]);
-
+	public void start(String[] args) {		
+		String suiteName= processArguments(args);
 		fFrame= createUI(suiteName);
 		fFrame.pack(); 
 		fFrame.setVisible(true);
 
 		if (suiteName != null) {
-			setSuiteName(suiteName);
+			setSuite(suiteName);
 			runSuite();
 		}
 	}
-	
+		
 	private void start(final Test test) {
 		SwingUtilities.invokeLater(
 			new Runnable() {
@@ -793,10 +720,6 @@ public class TestRunner extends BaseTestRunner implements DocumentListener {
 				}
 			}
 		);
-	}
-	
-	public void startTest(Test test) {
-		postInfo("Running: "+test);
 	}
 	
 	/**
@@ -829,10 +752,26 @@ public class TestRunner extends BaseTestRunner implements DocumentListener {
 	
 	public void textChanged() {
 		fRun.setEnabled(getSuiteText().length() > 0);
-		fStatusLine.setText("");
+		clearStatus();
 	}
 	
 	protected void clearStatus() {
-		fStatusLine.setText("");
+		fStatusLine.clear();
 	}
+	
+	public static Icon getIconResource(Class clazz, String name) {
+		URL url= clazz.getResource(name);
+		if (url == null) {
+			System.err.println("Warning: could not load \""+name+"\" icon");
+			return null;
+		} 
+		return new ImageIcon(url);
+	}
+	
+	private void about() {
+		AboutDialog about= new AboutDialog(fFrame); 
+		about.show();
+	}
+	
+
 }

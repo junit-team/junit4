@@ -11,10 +11,11 @@ import java.awt.image.*;
 import java.io.*;
  
 /**
- * A simple user interface to run tests.
- * Enter the name of a test class.
+ * An AWT based user interface to run tests.
+ * Enter the name of a class which either provides a static
+ * suite method or is a subclass of TestCase.
  * <pre>
- * Synopsis: java junit.awtui.TestRunner [TestCase]
+ * Synopsis: java junit.awtui.TestRunner [-noloading] [TestCase]
  * </pre>
  * TestRunner takes as an optional argument the name of the testcase class to be run.
  */
@@ -57,7 +58,7 @@ import java.io.*;
 		appendFailure("Error", test, t);
 	}
 
-	public void addFailure(Test test, Throwable t) {
+	public void addFailure(Test test, AssertionFailedError t) {
 		fNumberOfFailures.setText(Integer.toString(fTestResult.failureCount()));
 		appendFailure("Failure", test, t);
 	}
@@ -326,7 +327,7 @@ import java.io.*;
 		}
 		Test reloadedTest= null;
 		try {
-			Class reloadedTestClass= fTestLoader.reload(test.getClass());
+			Class reloadedTestClass= getLoader().reload(test.getClass());
 			Class[] classArgs= { String.class };
 			Constructor constructor= reloadedTestClass.getConstructor(classArgs);
 			Object[] args= new Object[]{((TestCase)test).name()};
@@ -401,9 +402,10 @@ import java.io.*;
 							long runTime= endTime-startTime;
 							showInfo("Finished: " + elapsedTimeAsString(runTime) + " seconds");
 						}
-						//fTestResult= null;
+						fTestResult= null;
 						fRun.setLabel("Run");
 						fRunner= null;
+						System.gc();
 					}
 				};
 				fRunner.start();
@@ -425,7 +427,7 @@ import java.io.*;
 			return;
 	
 		Throwable t= (Throwable) fExceptions.elementAt(index);
-		fTraceArea.setText(getTrace(t));
+		fTraceArea.setText(filterStack(getTrace(t)));
 	}
 	
 	private String getTrace(Throwable t) { 
@@ -455,13 +457,7 @@ import java.io.*;
 	 * Starts the TestRunner
 	 */
 	public void start(String[] args) {
-		fTestLoader= BaseTestRunner.getLoader();
-		String suiteName= null;
-		if (args.length == 1) 
-			suiteName= args[0];
-		else if (args.length == 2 && args[0].equals("-c")) 
-			suiteName= extractClassName(args[1]);
-			
+		String suiteName= processArguments(args);			
 		fFrame= createUI(suiteName);
 		fFrame.setLocation(200, 200);
 		fFrame.setVisible(true);

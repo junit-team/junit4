@@ -1,0 +1,108 @@
+<project name="junit" default="dist" basedir=".">
+	<target name="init">
+		<tstamp/>
+		<property name="export" value="export" />
+		<property name="version" value="3.5" />
+		<property name="dist"  value="junit${version}" />
+		<property name="versionfile"  value="${export}/junit/runner/Version.java" />
+	</target>
+
+	<target name="versiontag" depends="init">
+		<filter token="version" value="${version}" />
+		<copyfile 
+			src="${versionfile}" 
+			dest="${versionfile}tmp" 
+			filtering="on"
+		/>
+		<rename src="${versionfile}tmp" dest="${versionfile}" />
+	</target>
+
+	<target name="build" depends="versiontag">
+		<javac 
+			srcdir="${export}"
+			destdir="${export}"
+			debug="on"
+  		/>	
+	</target>
+
+	<target name="dist" depends="build">
+		<deltree dir="${dist}" />
+		<mkdir dir="${dist}" />
+		<jar 
+			jarfile="${dist}/junit.jar"
+			basedir="${export}"
+			manifest="${export}/jar-manifest.txt"
+			excludes="junit/tests/**, junit/samples/**, **/*.java, doc/**, README.html, jar-manifest.txt"
+		/>
+		<jar 
+			jarfile="${dist}/src.jar"
+			basedir="${export}"
+			excludes="junit/tests/**, junit/samples/**, **/*.class, doc/**, README.html, build.xml"
+		/>
+		<copydir 
+			src="export/junit/samples"
+			dest="${dist}/junit/samples"
+		/>
+		<copydir 
+			src="export/junit/tests"
+			dest="${dist}/junit/tests"
+		/>
+		<delete file="${dist}/junit/tests/test.jar"/>
+		<jar 
+			jarfile="${dist}/junit/tests/test.jar"
+			basedir="${export}/"
+			includes="junit/tests/LoadedFromJar.class"
+		/>
+		<mkdir dir="${dist}/javadoc" />
+		<javadoc 
+			sourcepath="${export}"
+			packagenames="junit.framework.*, junit.extensions.*"
+			destdir="${dist}/javadoc"
+			author="false"
+			version="false"
+			use="false"
+			windowtitle="JUnit API"
+		/>
+		<copydir 
+			src="export/doc"
+			dest="${dist}/doc"
+		/>		
+		<copyfile src="export/README.html" dest="${dist}/README.html" />
+		
+		<java 
+			classname="junit.textui.TestRunner"
+			args="junit.samples.AllTests"
+			fork="yes"
+			jvmargs="-classpath ${dist};${dist}/junit.jar"
+		/>
+	</target>
+	
+	<target name="zip">
+		<delete file="${dist}.zip"/>
+		<zip 
+			zipfile="${dist}.zip"
+			basedir="."
+			includes="${dist}/**"
+		/>
+		<deltree dir="${export}"/>
+	</target>
+
+	<target name="awtui">
+		<java 
+			classname="junit.awtui.TestRunner"
+			args="junit.samples.AllTests"
+			fork="yes"
+			jvmargs="-classpath ${dist};${dist}/junit.jar"
+		/>
+	</target>
+	
+	<target name="swingui">
+		<java 
+			classname="junit.swingui.TestRunner"
+			args="junit.samples.AllTests"
+			fork="yes"
+			jvmargs="-classpath ${dist};${dist}/junit.jar"
+		/>
+	</target>
+	
+</project>

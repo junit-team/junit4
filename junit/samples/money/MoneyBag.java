@@ -19,8 +19,10 @@ class MoneyBag implements IMoney {
 	private MoneyBag() {
 	}
 	MoneyBag(Money bag[]) {
-		for (int i= 0; i < bag.length; i++)
-			appendMoney(bag[i]);
+		for (int i= 0; i < bag.length; i++) {
+			if (!bag[i].isZero())
+				appendMoney(bag[i]);
+		}
 	}
 	MoneyBag(Money m1, Money m2) {
 		appendMoney(m1);
@@ -104,9 +106,9 @@ class MoneyBag implements IMoney {
 	public IMoney multiply(int factor) {
 		MoneyBag result= new MoneyBag();
 		if (factor != 0) {
-		    for (Enumeration e= fMonies.elements(); e.hasMoreElements(); ) {
-		        Money m= (Money) e.nextElement();
-		        result.appendMoney((Money)m.multiply(factor));
+			for (Enumeration e= fMonies.elements(); e.hasMoreElements(); ) {
+				Money m= (Money) e.nextElement();
+				result.appendMoney((Money)m.multiply(factor));
 			}
 		}
 		return result;

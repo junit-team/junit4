@@ -30,26 +30,33 @@ public class TestRunner extends BaseTestRunner {
 	int fColumn= 0;
 
 	/**
-	 * This method was created in VisualAge.
-	 * @param writer java.io.PrintStream
+	 * Constructs a TestRunner.
 	 */
 	public TestRunner() {
-		fTestLoader= new StandardTestSuiteLoader(); 
 	}
 	/**
-	 * This method was created in VisualAge.
-	 * @param writer java.io.PrintStream
+	 * Constructs a TestRunner using the given stream for all the output
 	 */
 	public TestRunner(PrintStream writer) {
 		this();
+		if (writer == null)
+			throw new IllegalArgumentException("Writer can't be null");
 		fWriter= writer;
 	}
 	
+	/**
+	 * Always use the StandardTestSuiteLoader. Overridden from
+	 * BaseTestRunner.
+	 */
+	public TestSuiteLoader getLoader() {
+		return new StandardTestSuiteLoader();
+	}
+
 	public synchronized void addError(Test test, Throwable t) {
 		writer().print("E");
 	}
 	
-	public synchronized void addFailure(Test test, Throwable t) {
+	public synchronized void addFailure(Test test, AssertionFailedError t) {
 		writer().print("F");
 	}
 			
@@ -85,9 +92,9 @@ public class TestRunner extends BaseTestRunner {
 	}
 	
 	public synchronized void startTest(Test test) {
-		System.out.print(".");
+		writer().print(".");
 		if (fColumn++ >= 40) {
-			System.out.println();
+			writer().println();
 			fColumn= 0;
 		}
 	}
@@ -103,7 +110,7 @@ public class TestRunner extends BaseTestRunner {
 				System.exit(-1);
 			System.exit(0);
 		} catch(Exception e) {
-			System.out.println(e.getMessage());
+			System.err.println(e.getMessage());
 			System.exit(-2);
 		}
 	}
@@ -216,7 +223,7 @@ public class TestRunner extends BaseTestRunner {
 			else if (args[i].equals("-c")) 
 				testCase= extractClassName(args[++i]);
 			else if (args[i].equals("-v"))
-				System.out.println("JUnit "+Version.id()+" by Kent Beck and Erich Gamma");
+				System.err.println("JUnit "+Version.id()+" by Kent Beck and Erich Gamma");
 			else
 				testCase= args[i];
 		}
@@ -234,7 +241,7 @@ public class TestRunner extends BaseTestRunner {
 	}
 		
 	protected void runFailed(String message) {
-		System.out.println(message);
+		System.err.println(message);
 		System.exit(-1);
 	}
 		

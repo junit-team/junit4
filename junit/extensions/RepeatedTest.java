@@ -11,6 +11,8 @@ public class RepeatedTest extends  TestDecorator {
 
 	public RepeatedTest(Test test, int repeat) {
 		super(test);
+		if (repeat < 0)
+			throw new IllegalArgumentException("Repetition count must be > 0");
 		fTimesRepeat= repeat;
 	}
 	public int countTestCases() {

@@ -2,20 +2,22 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.5 [en] (Win98; I) [Netscape]">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Windows NT 5.0; U) [Netscape]">
    <meta name="Author" content="Erich Gamma">
    <title>JUnit 3.4</title>
 </head>
 <body>
 
 <h1>
-<b><font color="#00CC00">J</font><font color="#FF0000">U</font><font color="#000000">nit</font></b>
-3.4</h1>
+<b><font color="#00CC00">J</font><font color="#FF0000">U</font><font color="#000000">nit
+3.5
+</font><font color="#808080">@</font><font color="#000000">&nbsp;</font></b><!--webbot bot="HTMLMarkup" startspan --><a href="http://sourceforge.net"><img SRC="sflogo.php" ALT="SourceForge Logo" BORDER=0 height=31 width=88></a><!--webbot
+bot="HTMLMarkup" endspan --></h1>
 
 <hr WIDTH="100%">
-<br>11/02/2000 Kent Beck and Erich Gamma
-<p>JUnit is a simple framework to write repeatable tests. JUnit can be
-used with JDK 1.1.* and JDK 1.2.*.
+<br>01/03/2001
+<p>JUnit is a simple framework to write repeatable tests. It is an instance
+of the xUnit architecture for unit testing frameworks.
 <ul>
 <li>
 <a href="#Summary of">Summary of Changes</a></li>
@@ -31,12 +33,143 @@ used with JDK 1.1.* and JDK 1.2.*.
 
 <li>
 <a href="#Documentation">Documentation</a></li>
+</ul>
+
+<h2>
+<a NAME="Summary of"></a>Summary of Changes between 3.4 and 3.5</h2>
+
+<h3>
+Framework</h3>
+
+<ul>
+<li>
+Added TestSuite.addTestSuite(Class testClass)</li>
+
+<br>This method allows to create a TestSuite with a class containing test
+cases directly.
+<br>Instead of writing <b>suite.addTest(new TestSuite(AssertTest.class))
+</b>you can now write <b>suite.addTestSuite(AssertTest.class)</b>;
+<li>
+Added assertEquals methods for all primitive types: float, boolean, byte,
+char, int, short</li>
 
 <li>
-<a href="#Extending">Extending JUnit</a></li>
+The signature of&nbsp; TestListeners.addFailure(Test test, Throwable t)</li>
+
+<br>was changed to addFailure(Test test, AssertionFailedError t)</ul>
+
+<h3>
+TestRunner</h3>
+
+<ul>
+<li>
+The Swing TestRunner provides an experimental feature to browse test classes.
+There is an additional browse ("...") button besides the suite combo. It
+shows a simple dialog to select a test class from a list. Different strategies
+to locate Test classes are supported and you can plug-in your own strategy.
+This allows to leverage functionality provided by an extension API of an
+integrated development environment (IDE). To define a custom test collector
+you 1) implement the <b>junit.runner.TestCollector </b>interface and 2)
+add an entry to the <b>junit.properties</b> file with the key <b>TestCollectorClass</b>
+and the name of your TestCollector implementation class as the key:</li>
+
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; TestCollectorClass=junit.swingui.LoadingClassPathTestCollector
+<br>This class has to be installed on the class path.
+<br>JUnit provides two different TestCollector implementations:
+<ul>
+<li>
+simple (junit.runner.SimpleClassPathTestCollector) - considers all classes
+on the class path on the file system that contain "Test" in their name.
+Classes in JARs are not considered.</li>
 
 <li>
-<a href="doc/license.htm">License</a></li>
+loading (junit.runner.LoadingClassPathTestCollector) - loads all classes
+on the class path and tests whether the class is assignable from Test or
+has a static <b>suite</b> method.</li>
+</ul>
+By default the loading the test collector is used it is more expensive
+but provides more precise results than the simple test collector.
+<br><b><font color="#FF0000">Notice</font></b>: that both TestCollectors
+assume that the class files reside are kept in the file system. This isn't
+case in VA/Java and they will not work there. A custom TestCollector is
+required for VA/Java.
+<li>
+The Swing TestRunner now provides an additional test result view that shows
+all tests of the executed test suite as a tree. The view shows the success
+status for each test. The view is shown as an additional tab in the TestRunner
+window. In previous versions of JUnit this view was shown in a separate
+window.</li>
+
+<li>
+The failure panels in the Swing and AWT TestRunners filter the exception
+stack trace so that only non-framework stack frames are shown.</li>
+
+<li>
+There is support to plug-in a custom failure panel that provides additional
+functionality like navigating from a failure to the source. To do so you
+implement the <b>junit.runner.FailureDetailView</b> interface and register
+the implementation class in the junit.properties file under the key <b>FailureViewClass</b>,
+for example</li>
+
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; FailureViewClass=MyFailureViewClassName.
+<li>
+The Swing and AWT TestRunners now understand an additional command line
+argument "-noloading". When this argument is set then the standard system
+class loader is used to load classes. This is an alternative to setting
+the <b>loading</b> property to false in the junit.properties file.</li>
+
+<li>
+Swing TestRunner - the maximum test history length shown in the suite combo
+can be defined in the junit.properties file with the key <b>maxhistory</b>.</li>
+
+<li>
+BaseTestRunner.<b>getLoader</b>() is no longer a static method and can
+now be overridden in subclasses.</li>
+
+<li>
+BaseTestRunner removed dependency on JDK 1.2.</li>
+
+<li>
+Swing TestRunner - fixed the problem that a suite name was sometimes duplicated
+in the history combo.</li>
+
+<li>
+Swing TestRunner - the Run button is now the default button.</li>
+
+<li>
+Output string truncation can now be controlled by adding the <b>maxmessage</b>
+key with the desired maximum length to the junit.properties file. Setting
+maxmessage to -1 means no output truncation.</li>
+
+<li>
+The Text TestRunner now shows the summary at the very end so that you don't
+have to scroll back.</li>
+</ul>
+
+<h3>
+Tests</h3>
+
+<ul>
+<li>
+TextRunnerTest now only depends on a nonzero status to indicate abnormal
+termination.</li>
+
+<li>
+TextRunnerTest now also passes on JDK 1.1.*. It uses the -classpath command
+line argument instead of -cp.</li>
+</ul>
+
+<h3>
+Documentation</h3>
+
+<ul>
+<li>
+Added a page that describes the properties available in the junit.properties
+file</li>
+
+<li>
+Add an FAQ entry about what to do when the junit tests provided with the
+distribution can't be found.</li>
 </ul>
 
 <h2>
@@ -318,7 +451,10 @@ add<i> </i><b>junit.jar</b> to the CLASSPATH. For example: <tt>set classpath=%cl
 <li>
 test the installation by using either the batch or the graphical TestRunner
 tool to run the tests that come with this release. All the tests should
-pass OK.</li>
+pass OK.<br>
+<b><font color="#FF0000">Notice</font></b>: that the tests are not contained
+in the junit.jar but in the installation directory directly. Therefore
+make sure that the installation directory is on the class path</li>
 
 <ul>
 <li>
@@ -334,7 +470,9 @@ for the Swing based graphical TestRunner type:</li>
 
 <br><tt>&nbsp;&nbsp;&nbsp; java junit.swingui.TestRunner junit.samples.AllTests</tt></ul>
 </ol>
-
+<b><font color="#FF0000">Important</font></b>: don't install the junit.jar
+into the extension directory of your JDK installation. If you do so the
+test class on the files system will not be found.
 <h2>
 <a NAME="Getting"></a>Getting Started</h2>
 To get started with unit testing and JUnit read the Java Report article:

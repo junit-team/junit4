@@ -9,28 +9,28 @@ public class TextRunnerTest extends TestCase {
 	}
 	
 	public void testFailure() throws Exception {
-		execTest("junit.tests.Failure", -1);
+		execTest("junit.tests.Failure", false);
 	}
 
 	public void testSuccess() throws Exception {
-		execTest("junit.tests.Success", 0);
+		execTest("junit.tests.Success", true);
 	}
 
 	public void testError() throws Exception {
-		execTest("junit.tests.BogusDude", -1);
+		execTest("junit.tests.BogusDude", false);
 	}
 	
-	void execTest(String testClass, int expected) throws Exception {
+	void execTest(String testClass, boolean success) throws Exception {
 		String java= System.getProperty("java.home")+File.separator+"bin"+File.separator+"java";
 		String cp= System.getProperty("java.class.path");
-		String [] cmd= { java, "-cp", cp, "junit.textui.TestRunner", testClass}; 
+		//use -classpath for JDK 1.1.7 compatibility
+		String [] cmd= { java, "-classpath", cp, "junit.textui.TestRunner", testClass}; 
 		Process p= Runtime.getRuntime().exec(cmd);
 		InputStream i= p.getInputStream();
 		int b;
 		while((b= i.read()) != -1) 
 			; //System.out.write(b); 
-		int rc= p.waitFor();
-		assertEquals(expected, rc);
+		assert((p.waitFor() == 0) == success);
 	}
 		
 

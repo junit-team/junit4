@@ -16,7 +16,7 @@ public class ActiveTestTest extends TestCase {
 		
 		public void success() {
 		}
-	};
+	}
 	
 	public ActiveTestTest(String name) {
 		super(name);

@@ -17,7 +17,7 @@ public class TestListenerTest extends TestCase implements TestListener {
 	public void addError(Test test, Throwable t) {
 		fErrorCount++;
 	}
-	public void addFailure(Test test, Throwable t) {
+	public void addFailure(Test test, AssertionFailedError t) {
 		fFailureCount++;
 	}
 	public void endTest(Test test) {
