@@ -79,7 +79,7 @@ public class TextFeedbackTest extends TestCase {
 	
 	public void testError() {
 		String expected= expected(new String[]{".E", "Time: 0", "Errors here", "", "FAILURES!!!", "Tests run: 1,  Failures: 0,  Errors: 1", ""});
-		ResultPrinter printer= new ResultPrinter(new PrintStream(output)) {
+		ResultPrinter printer= new TestResultPrinter(new PrintStream(output)) {
 			public void printErrors(TestResult result) {
 				getWriter().println("Errors here");
 			}
