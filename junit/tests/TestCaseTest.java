@@ -32,6 +32,9 @@ public class TestCaseTest extends TestCase {
 		// inner classes were bad...
 		assertEquals("testCaseToString(junit.tests.TestCaseTest)", toString());
 	}
+	public void testDisplayName() {
+		assertEquals("testDisplayName(junit.tests.TestCaseTest)",getDisplayName());
+	}
 	public void testError() {
 		TestCase error= new TestCase("error") {
 			protected void runTest() {

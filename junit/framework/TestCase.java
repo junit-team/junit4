@@ -183,6 +183,12 @@ public abstract class TestCase extends Assert implements Test {
 	 * Returns a string representation of the test case
 	 */
 	public String toString() {
+	    return getDisplayName();
+	}
+	/**
+	 * Return a string suitable for displaying to a user
+	 */
+	public String getDisplayName() {
 	    return getName()+"("+getClass().getName()+")";
 	}
 	/**

@@ -88,4 +88,7 @@ public class ExtensionTest extends TestCase {
 		assertTrue(!test.fWasRun);
 		assertTrue(!result.wasSuccessful());
 	}
+	public void testDisplayName() {
+		assertEquals("junit.extensions.TestDecorator(foobar(junit.tests.ExtensionTest))", (new TestDecorator(new ExtensionTest("foobar"))).getDisplayName());
+	}
 }

@@ -35,4 +35,8 @@ public class TestDecorator extends Assert implements Test {
 	public Test getTest() {
 		return fTest;
 	}
+	
+	public String getDisplayName() {
+		return getClass().getName() + "(" + fTest.getDisplayName() + ")";
+	}
 }

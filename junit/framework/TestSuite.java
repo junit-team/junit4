@@ -196,6 +196,15 @@ public class TestSuite implements Test {
 			return getName();
 		return super.toString();
 	 }
+	 /**
+	  * Return a String suitable for displaying to a user
+	  */
+	 public String getDisplayName() {
+	 	if (getName() == null)
+	 		return "Anonymous suite";
+	 	else
+	 		return getName();
+	 }
 		 
 	/**
 	 * Sets the name of the suite.

@@ -17,7 +17,8 @@ public class SuiteTest extends TestCase {
 	}
 	public static Test suite() {
 		TestSuite suite= new TestSuite("Suite Tests");
-		// build the suite manually
+		// build the suite manually, because some of the suites are testing
+		// the functionality that automatically builds suites
 		suite.addTest(new SuiteTest("testNoTestCaseClass"));
 		suite.addTest(new SuiteTest("testNoTestCases"));
 		suite.addTest(new SuiteTest("testOneTestCase"));
@@ -27,6 +28,7 @@ public class SuiteTest extends TestCase {
 		suite.addTest(new SuiteTest("testInheritedTests"));
 		suite.addTest(new SuiteTest("testShadowedTests"));
 		suite.addTest(new SuiteTest("testAddTestSuite"));
+		suite.addTest(new SuiteTest("testDisplayName"));
 		
 		return suite;
 	}
@@ -83,5 +85,9 @@ public class SuiteTest extends TestCase {
 		suite.addTestSuite(OneTestCase.class);
 		suite.run(fResult);
 		assertEquals(1, fResult.runCount());
+	}
+	public void testDisplayName() {
+		assertEquals("Anonymous suite", (new TestSuite()).getDisplayName());
+		assertEquals("Named suite", (new TestSuite("Named suite")).getDisplayName());
 	}
 }

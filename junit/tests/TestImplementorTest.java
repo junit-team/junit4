@@ -28,6 +28,10 @@ public class TestImplementorTest extends TestCase {
 			result.runProtected(this, p);
 			result.endTest(this);
 		}
+		
+		public String getDisplayName() {
+			return "";
+		}
 	}
 	
 	private DoubleTestCase fTest;

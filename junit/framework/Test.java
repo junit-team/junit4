@@ -14,4 +14,8 @@ public interface Test {
 	 * Runs a test and collects its result in a TestResult instance.
 	 */
 	public abstract void run(TestResult result);
+	/**
+	 * Return a String suitable for display to a user
+	 */
+	public abstract String getDisplayName();
 }
