@@ -10,24 +10,6 @@ public class Assert {
 	 */
 	protected Assert() {
 	}
-	/**
-	 * Asserts that a condition is true. If it isn't it throws
-	 * an AssertionFailedError with the given message.
-	 * @deprecated use assertTrue
-	 */
-	static public void assert(String message, boolean condition) {
-		if (!condition)
-			fail(message);
-	}
-	/**
-	 * Asserts that a condition is true. If it isn't it throws
-	 * an AssertionFailedError.
-	 * @deprecated use assertTrue
-	 *
-	 */
-	static public void assert(boolean condition) {
-		assert(null, condition);
-	}
 
 	/**
 	 * Asserts that a condition is true. If it isn't it throws

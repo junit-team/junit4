@@ -249,10 +249,4 @@ public class TestRunner extends BaseTestRunner {
 		return fWriter;
 	}
 	
-	/**
-	 * @deprecated Use getWriter()
-	 */
-	protected PrintStream writer() {
-		return getWriter();
-	}
 }

@@ -577,14 +577,6 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		fFailures.clear();
 	}
 
-	/**
-	 * runs a suite.
-	 * @deprecated use runSuite() instead
-	 */
-	public void run() {
-		runSuite();
-	}
-
 	protected void runFailed(String message) {
 		showStatus(message);
 		fRun.setText("Run");

@@ -435,13 +435,6 @@ import junit.runner.*;
 		fTraceArea.setText("");
 
 	}
-	/**
-	 * runs a suite.
-	 * @deprecated use runSuite() instead
-	 */
-	public void run() {
-		runSuite();
-	}
 
 	protected void runFailed(String message) {
 		showStatus(message);

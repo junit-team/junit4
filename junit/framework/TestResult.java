@@ -134,13 +134,6 @@ public class TestResult extends Object {
 		}
 	}
 	/**
-	 * Gets the number of run tests.
-	 * @deprecated use <code>runCount</code> instead
-	 */
-	public synchronized int runTests() {
-		return runCount();
-	}
-	/**
 	 * Checks whether the test run should stop
 	 */
 	public synchronized boolean shouldStop() {
@@ -165,23 +158,9 @@ public class TestResult extends Object {
 		fStop= true;
 	}
 	/**
-	 * Gets the number of detected errors.
-	 * @deprecated use <code>errorCount</code> instead
-	 */
-	public synchronized int testErrors() {
-		return errorCount();
-	}
-	/**
-	 * Gets the number of detected failures.
-	 * @deprecated use <code>failureCount</code> instead
-	 */
-	public synchronized int testFailures() {
-		return failureCount();
-	}
-	/**
 	 * Returns whether the entire test was successful or not.
 	 */
 	public synchronized boolean wasSuccessful() {
-		return testFailures() == 0 && testErrors() == 0;
+		return failureCount() == 0 && errorCount() == 0;
 	}
 }
