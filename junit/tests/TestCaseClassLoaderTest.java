@@ -30,6 +30,7 @@ public class TestCaseClassLoaderTest extends TestCase {
 
 	public void testJarClassLoading() throws Exception {
 		URL url= getClass().getResource("test.jar");
+		assertNotNull("Cannot find test.jar", url);
 		String path= url.getFile();
 		TestCaseClassLoader loader= new TestCaseClassLoader(path);
 		Class loadedClass= loader.loadClass("junit.tests.LoadedFromJar", true);
