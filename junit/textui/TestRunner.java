@@ -2,7 +2,6 @@ package junit.textui;
 
 
 import java.io.PrintStream;
-import java.lang.reflect.Constructor;
 
 import junit.framework.Test;
 import junit.framework.TestResult;

@@ -6,6 +6,7 @@ package junit.framework;
  * Inspired by a patch from Alex Chaffee mailto:alex@purpletech.com
  */
 public class ComparisonFailure extends AssertionFailedError {
+	private static final int MAX_CONTEXT_LENGTH= 20;
 	private static final long serialVersionUID= 1L;
 	
 	private String fExpected;
@@ -30,41 +31,21 @@ public class ComparisonFailure extends AssertionFailedError {
 	 * @see java.lang.Throwable#getMessage()
 	 */
 	public String getMessage() {
-		if (fExpected == null || fActual == null)
-			return Assert.format(super.getMessage(), fExpected, fActual);
-			
-		int end= Math.min(fExpected.length(), fActual.length());
-		
-		int i= 0;
-		for(; i < end; i++) {
-			if (fExpected.charAt(i) != fActual.charAt(i))
-				break;
-		}
-		int j= fExpected.length()-1;
-		int k= fActual.length()-1;
-		for (; k >= i && j >= i; k--,j--) {
-			if (fExpected.charAt(j) != fActual.charAt(k))
-				break;
-		}
-		String actual, expected;
-		
-		// equal strings
-		if (j < i && k < i) {
-			expected= fExpected;
-			actual= fActual;
-		} else {
-			expected= fExpected.substring(i, j+1);
-			actual= fActual.substring(i, k+1);
-			if (i <= end && i > 0) {
-				expected= "..."+expected;
-				actual= "..."+actual;
-			}
-			
-			if (j < fExpected.length()-1)
-				expected= expected+"...";
-			if (k < fActual.length()-1)
-				actual= actual+"...";
-		}	
-		return Assert.format(super.getMessage(), expected, actual);
+		return new ComparisonCompactor(MAX_CONTEXT_LENGTH, fExpected, fActual).compact(super.getMessage());
+	}
+	
+	/**
+	 * Gets the actual string value
+	 * @return the actual string value
+	 */
+	public String getActual() {
+		return fActual;
+	}
+	/**
+	 * Gets the expected string value
+	 * @return the expected string value
+	 */
+	public String getExpected() {
+		return fExpected;
 	}
 }

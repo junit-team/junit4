@@ -21,6 +21,7 @@ public class AllTests {
 		suite.addTestSuite(AssertTest.class);
 		suite.addTestSuite(TestImplementorTest.class);
 		suite.addTestSuite(NoArgTestCaseTest.class);
+		suite.addTestSuite(ComparisonCompactorTest.class);
 		suite.addTestSuite(ComparisonFailureTest.class);
 		suite.addTestSuite(DoublePrecisionAssertTest.class);
 		return suite;

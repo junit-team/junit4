@@ -4,59 +4,20 @@ import junit.framework.ComparisonFailure;
 import junit.framework.TestCase;
 
 public class ComparisonFailureTest extends TestCase {
-
-	public void testComparisonErrorMessage() {
-		ComparisonFailure failure= new ComparisonFailure("a", "b", "c");
-		assertEquals("a expected:<b> but was:<c>", failure.getMessage());
-	}
-
-	public void testComparisonErrorStartSame() {
-		ComparisonFailure failure= new ComparisonFailure(null, "ba", "bc");
-		assertEquals("expected:<...a> but was:<...c>", failure.getMessage());
-	}
-
-	public void testComparisonErrorEndSame() {
-		ComparisonFailure failure= new ComparisonFailure(null, "ab", "cb");
-		assertEquals("expected:<a...> but was:<c...>", failure.getMessage());
-	}
-
-	public void testComparisonErrorSame() {
-		ComparisonFailure failure= new ComparisonFailure(null, "ab", "ab");
-		assertEquals("expected:<ab> but was:<ab>", failure.getMessage());
-	}
-
-	public void testComparisonErrorStartAndEndSame() {
-		ComparisonFailure failure= new ComparisonFailure(null, "abc", "adc");
-		assertEquals("expected:<...b...> but was:<...d...>", failure.getMessage());
-	}
-
-	public void testComparisonErrorStartSameComplete() {
-		ComparisonFailure failure= new ComparisonFailure(null, "ab", "abc");
-		assertEquals("expected:<...> but was:<...c>", failure.getMessage());
-	}
-
-	public void testComparisonErrorEndSameComplete() {
-		ComparisonFailure failure= new ComparisonFailure(null, "bc", "abc");
-		assertEquals("expected:<...> but was:<a...>", failure.getMessage());
-	}
-
-	public void testComparisonErrorOverlapingMatches() {
-		ComparisonFailure failure= new ComparisonFailure(null, "abc", "abbc");
-		assertEquals("expected:<......> but was:<...b...>", failure.getMessage());
-	}
-
-	public void testComparisonErrorOverlapingMatches2() {
-		ComparisonFailure failure= new ComparisonFailure(null, "abcdde", "abcde");
-		assertEquals("expected:<...d...> but was:<......>", failure.getMessage());
-	}
-
-	public void testComparisonErrorWithActualNull() {
-		ComparisonFailure failure= new ComparisonFailure(null, "a", null);
-		assertEquals("expected:<a> but was:<null>", failure.getMessage());
+	
+	// Most of the tests are in ComparisonCompactorTest
+	public void testConnection() {
+		ComparisonFailure failure= new ComparisonFailure("warning", "Mary had a little lamb", "Mary had the little lamb");
+		assertEquals("warning expected:<Mary had [a] little lamb> but was:<Mary had [the] little lamb>", failure.getMessage());
 	}
 	
-	public void testComparisonErrorWithExpectedNull() {
-		ComparisonFailure failure= new ComparisonFailure(null, null, "a");
-		assertEquals("expected:<null> but was:<a>", failure.getMessage());
+	// This is like an instanceof test.
+	public void testThrowing() {
+		try {
+			assertEquals("a", "b");
+		} catch (ComparisonFailure e) {
+			return;
+		}
+		fail();
 	}
 }
