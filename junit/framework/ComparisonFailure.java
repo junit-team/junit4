@@ -43,24 +43,17 @@ public class ComparisonFailure extends AssertionFailedError {
 		}
 		int j= fExpected.length()-1;
 		int k= fActual.length()-1;
-		for (; k >= 0 && j >= 0; k--,j--) {
+		for (; k >= i && j >= i; k--,j--) {
 			if (fExpected.charAt(j) != fActual.charAt(k))
 				break;
 		}
 		String actual, expected;
 		
 		// equal strings
-		if (j == -1 && k == -1) {
+		if (j < i && k < i) {
 			expected= fExpected;
 			actual= fActual;
-		} 
-		// handle overlapping matches
-		else if (j+1 < i || k+1 < i) {
-			expected= "..."+fExpected.substring(i, j+2)+"...";
-			actual= "..."+fActual.substring(i, k+2)+"...";
-		} 
-		// otherwise replace common prefix and suffix
-		else {
+		} else {
 			expected= fExpected.substring(i, j+1);
 			actual= fActual.substring(i, k+1);
 			if (i <= end && i > 0) {
@@ -74,8 +67,7 @@ public class ComparisonFailure extends AssertionFailedError {
 				actual= actual+"...";
 		}	
 		if (message != null)
-			formatted= message+": ";
-				
+			formatted= message+": ";	
 		return formatted+"expected:<"+expected+"> but was:<"+actual+">";
 	}
 
