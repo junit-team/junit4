@@ -18,6 +18,9 @@ public class ResultPrinter {
 	public ResultPrinter(PrintStream writer) {
 		fWriter= writer;
 	}
+	
+	/* API for use by textui.TestRunner
+	 */
 
 	void testStarted(String testName) {
 		getWriter().print(".");
@@ -27,62 +30,58 @@ public class ResultPrinter {
 		}
 	}
 	
-	public void testFailed(int status, Test test, Throwable t) {
+	void testFailed(int status, Test test, Throwable t) {
 		switch (status) {
 			case TestRunListener.STATUS_ERROR: getWriter().print("E"); break;
 			case TestRunListener.STATUS_FAILURE: getWriter().print("F"); break;
 		}
 	}
 
-	/**
-	 * Prints failures to the standard output
-	 */
-	public synchronized void print(TestResult result, long runTime) {
-		printTime(runTime);
+	synchronized void print(TestResult result, long runTime) {
+		printHeader(runTime);
 	    printErrors(result);
 	    printFailures(result);
-	    printHeader(result);
-	    getWriter().println();
+	    printFooter(result);
 	}
-	/**
-	 * Prints the errors to the standard output
-	 */
-	public void printErrors(TestResult result) {
-	    if (result.errorCount() != 0) {
-	        if (result.errorCount() == 1)
-		        getWriter().println("There was "+result.errorCount()+" error:");
-	        else
-		        getWriter().println("There were "+result.errorCount()+" errors:");
 
-			int i= 1;
-			for (Enumeration e= result.errors(); e.hasMoreElements(); i++) {
-			    TestFailure failure= (TestFailure)e.nextElement();
-				getWriter().println(i+") "+failure.failedTest());
-				getWriter().print(BaseTestRunner.getFilteredTrace(failure.trace()));
-		    }
+	void printWaitPrompt() {
+		getWriter().println();
+		getWriter().println("<RETURN> to continue");
+	}
+	
+	/* Internal methods 
+	 */
+
+	protected void printHeader(long runTime) {
+		getWriter().println();
+		getWriter().println("Time: "+elapsedTimeAsString(runTime));
+	}
+	
+	protected void printErrors(TestResult result) {
+		printBooBoos(result.errors(), result.errorCount(), "error");
+	}
+	
+	protected void printFailures(TestResult result) {
+		printBooBoos(result.failures(), result.failureCount(), "failure");
+	}
+	
+	protected void printBooBoos(Enumeration booBoos, int count, String type) {
+		if (count == 0) return;
+		if (count == 1)
+			getWriter().println("There was " + count + " " + type + ":");
+		else
+			getWriter().println("There were " + count + " " + type + "s:");
+		for (int i= 1; booBoos.hasMoreElements(); i++) {
+			printBooBoo((TestFailure) booBoos.nextElement(), i);
 		}
 	}
-	/**
-	 * Prints failures to the standard output
-	 */
-	public void printFailures(TestResult result) {
-		if (result.failureCount() != 0) {
-			if (result.failureCount() == 1)
-				getWriter().println("There was " + result.failureCount() + " failure:");
-			else
-				getWriter().println("There were " + result.failureCount() + " failures:");
-			int i = 1;
-			for (Enumeration e= result.failures(); e.hasMoreElements(); i++) {
-				TestFailure failure= (TestFailure) e.nextElement();
-				getWriter().print(i + ") " + failure.failedTest());
-				getWriter().print(BaseTestRunner.getFilteredTrace(failure.trace()));
-			}
-		}
+	
+	protected void printBooBoo(TestFailure booBoo,int count) {
+		getWriter().print(count + ") " + booBoo.failedTest());
+		getWriter().print(BaseTestRunner.getFilteredTrace(booBoo.trace()));
 	}
-	/**
-	 * Prints the header of the report
-	 */
-	public void printHeader(TestResult result) {
+
+	protected void printFooter(TestResult result) {
 		if (result.wasSuccessful()) {
 			getWriter().println();
 			getWriter().print("OK");
@@ -95,16 +94,7 @@ public class ResultPrinter {
 				         ",  Failures: "+result.failureCount()+
 				         ",  Errors: "+result.errorCount());
 		}
-	}
-
-	void printTime(long runTime) {
-		getWriter().println();
-		getWriter().println("Time: "+elapsedTimeAsString(runTime));
-	}
-	
-	void printWaitPrompt() {
-		getWriter().println();
-		getWriter().println("<RETURN> to continue");
+	    getWriter().println();
 	}
 
 
@@ -112,11 +102,11 @@ public class ResultPrinter {
 	 * Returns the formatted string of the elapsed time.
 	 * Duplicated from BaseTestRunner. Fix it.
 	 */
-	public String elapsedTimeAsString(long runTime) {
+	protected String elapsedTimeAsString(long runTime) {
 		return NumberFormat.getInstance().format((double)runTime/1000);
 	}
 
-	protected PrintStream getWriter() {
+	public PrintStream getWriter() {
 		return fWriter;
 	}
 }

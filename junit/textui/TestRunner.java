@@ -26,7 +26,6 @@ import junit.runner.*;
  * summary at the end. 
  */
 public class TestRunner extends BaseTestRunner {
-	PrintStream fWriter;
 	private ResultPrinter fPrinter;
 	
 	public static final int SUCCESS_EXIT= 0;
@@ -45,8 +44,7 @@ public class TestRunner extends BaseTestRunner {
 	public TestRunner(PrintStream writer) {
 		if (writer == null)
 			throw new IllegalArgumentException("Writer can't be null");
-		fWriter= writer;
-		fPrinter= new ResultPrinter(fWriter);
+		fPrinter= new ResultPrinter(writer);
 	}
 	
 	/**
@@ -182,9 +180,10 @@ public class TestRunner extends BaseTestRunner {
 		System.err.println(message);
 		System.exit(FAILURE_EXIT);
 	}
-		
-	protected PrintStream getWriter() {
-		return fWriter;
+	
+	public void setPrinter(ResultPrinter printer) {
+		fPrinter= printer;
 	}
+		
 	
 }
