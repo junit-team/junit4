@@ -58,26 +58,36 @@ public class ResultPrinter {
 	}
 	
 	protected void printErrors(TestResult result) {
-		printBooBoos(result.errors(), result.errorCount(), "error");
+		printDefects(result.errors(), result.errorCount(), "error");
 	}
 	
 	protected void printFailures(TestResult result) {
-		printBooBoos(result.failures(), result.failureCount(), "failure");
+		printDefects(result.failures(), result.failureCount(), "failure");
 	}
 	
-	protected void printBooBoos(Enumeration booBoos, int count, String type) {
+	protected void printDefects(Enumeration booBoos, int count, String type) {
 		if (count == 0) return;
 		if (count == 1)
 			getWriter().println("There was " + count + " " + type + ":");
 		else
 			getWriter().println("There were " + count + " " + type + "s:");
 		for (int i= 1; booBoos.hasMoreElements(); i++) {
-			printBooBoo((TestFailure) booBoos.nextElement(), i);
+			printDefect((TestFailure) booBoos.nextElement(), i);
 		}
 	}
 	
-	protected void printBooBoo(TestFailure booBoo,int count) {
+	public void printDefect(TestFailure booBoo, int count) { // only public for testing purposes
+		printDefectHeader(booBoo, count);
+		printDefectTrace(booBoo);
+	}
+
+	protected void printDefectHeader(TestFailure booBoo, int count) {
+		// I feel like making this a println, then adding a line giving the throwable a chance to print something
+		// before we get to the stack trace.
 		getWriter().print(count + ") " + booBoo.failedTest());
+	}
+
+	protected void printDefectTrace(TestFailure booBoo) {
 		getWriter().print(BaseTestRunner.getFilteredTrace(booBoo.trace()));
 	}
 
