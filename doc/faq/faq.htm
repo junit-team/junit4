@@ -31,7 +31,10 @@ for all my TestCases?</a></li>
 <a href="#I want to debug when a test">I want to debug when a test fails</a></li>
 
 <li>
-<a href="#ClassCastException">Why do I get a ClassCastException while calling EJB's from junit?</a></li>
+<a href="#ClassCastException">Why do I get a ClassCastException while calling EJB's from JUnit?</a></li>
+
+<li>
+<a href="#ClassLoader">Why do I get an error with the GUI TestRunners, but not with the textui.TestRunner?</a></li>
 
 <li>
 <a href="#assert">In Java 1.4, 'assert' is a keyword.  Won't this conflict with JUnit's assert() method?  If so, what can be done about it?</a></li>
@@ -150,7 +153,7 @@ update this file in the junit.jar and add your package paths or,</li>
 "patch" the junit.util.excluded.properties file with the CLASSPATH, that
 is, put your customized version of this file in the class path before the
 junit.jar. In this way your version will be loaded instead of the one that
-comes with junit.</li>
+comes with JUnit.</li>
 </ul>
 
 <h2>
@@ -164,12 +167,20 @@ the debugger when an "anticipated" assertion failed error occurs.
 
 <h2>
 <a NAME="ClassCastException"></a>Why do I get a ClassCastException while
-calling EJB's from junit?</h2>
+calling EJB's from JUnit?</h2>
 <i>submitted by Jens Schumann</i><br>
-The custom classloader causes this exception.  Either use excluded.properties
+The custom class loader causes this exception.  Either use excluded.properties
 as described above in <a
 href="#ClassNotFoundException">ClassNotFoundException</a>
  or turn off reloading.
+
+<h2>
+<a NAME="ClassLoader"></a>Why do I get an error with the GUI TestRunners, but not with the textui.TestRunner?
+</h2>
+By default the GUI TestRunners use a custom class loader which reloads classes ever run so you don't have to
+shutdown the GUI for your changes to be loaded.  Since the junit.textui.TestRunner does shutdown after every
+run, it does not use the custom class loader.  Some classes cause errors when they are reloaded.  Either use excluded.properties
+as described above in <a href="#ClassNotFoundException">ClassNotFoundException</a> or turn off reloading.
 
 <h2>
 <a NAME="assert"></a>In Java 1.4, 'assert' is a keyword.  Won't this conflict with JUnit's assert() method?  If so, what can be done about it?
