@@ -62,7 +62,7 @@ public abstract class BaseTestRunner implements TestListener {
 		}
 	}
 
-	public void setPreference(String key, String value) {
+	public static void setPreference(String key, String value) {
 		getPreferences().setProperty(key, value);
 	}
 
