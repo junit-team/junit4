@@ -50,9 +50,9 @@
 <body>
 
 <h1>
-  <font color=#33ff33>J</font><font color=#cc0000>U</font>nit FAQ
+  <font color="#33ff33">J</font><font color="#cc0000">U</font>nit FAQ
 </h1>
-<hr size="1">
+<hr size="1"/>
 
 
 <!--
@@ -60,18 +60,19 @@
     Summary
 
 -->
-
-<i>
 <p>
+<i>
 JUnit is an open source Java testing framework used to write and run
-automated test.  It is an instance of the xUnit architecture for unit
+automated test.  
+<br/>
+It is an instance of the xUnit architecture for unit
 testing frameworks.
-</p>
 </i>
-<hr size="1">
+</p>
+<hr size="1"/>
 <p>
 Editor: <a href="mailto:mike@clarkware.com">Mike Clark</a>,
-<a href="http://www.clarkware.com">Clarkware Consulting, Inc.</a>
+<a href="http://www.clarkware.com">Clarkware Consulting</a>
 </p>
 <p>
 Last modified on December 28, 2004
@@ -489,9 +490,10 @@ Table of Contents
 	</p>
 	<p>
 	  Best Java Performance Monitoring/Testing Tool
-	</li>
-      </ul>
-    </li>
+	</p>
+      </li>
+    </ul>
+  </li>
 </ol>
 
 
@@ -517,113 +519,112 @@ Table of Contents
     <p>
       <b><a name="started_2">How do I install JUnit?</a></b>
     </p>
-    <p>
-      <ol>
-	<li>
-	  <p>
-	    First, <a
-	    href="http://sourceforge.net/project/showfiles.php?group_id=15278">download</a>
-	    the
+    <ol>
+      <li>
+	<p>
+	  First, <a
+		    href="http://sourceforge.net/project/showfiles.php?group_id=15278">download</a>
+	  the
 	  latest version of JUnit, referred to below
 	  as <code>junit.zip</code>. 
-	  </p>
-	</li>
-	<li>
-	  <p>
-	    Then install JUnit on your platform of choice:
-	  </p>
-	  <p>
-	    <u>Windows</u>
-	  </p>
-	  <p>
-	    To install JUnit on Windows, follow these steps:
-	  </p>
-	  <ol>
-	    <li>
-	      <p>
-		Unzip the <code>junit.zip</code> distribution file to
-		a directory referred to as <code>%JUNIT_HOME%</code>.
-		</p>
-	    </li>
-	    <li>Add JUnit to the classpath:
-	      <p>
-		<code>set CLASSPATH=%CLASSPATH%;%JUNIT_HOME%\junit.jar</code>
-	      </p>
-	    </li>
-	  </ol>
-	  <p>
-	    <u>Unix (bash)</u>
-	  </p>
-	  <p>
-	    To install JUnit on Unix, follow these steps:
-	  </p>
-	  <ol>
-	    <li>
-	      <p>
-		Unzip the <code>junit.zip</code> distribution file to
-		a directory referred to as <code>$JUNIT_HOME</code>.
-	      </p>	
-	    </li>
-	    <li>
-	      <p>
-		Add JUnit to the classpath:
-	      </p>
-	      <p>
-		<code>export CLASSPATH=$CLASSPATH:$JUNIT_HOME/junit.jar</code>
-	      </p>
-	    </li>
-	  </ol>
-	</li>
-	<li>
-	  <p>
-	    <i>(Optional)</i> Unzip
-	    the <code>$JUNIT_HOME/src.jar</code> file.
-	  </p>
-	</li>
-	<li>
-	  <p>
-	    Test the installation by using either the textual or
-	    graphical test runner to run the sample tests distributed
-	    with JUnit.
-	  </p> 
-	  <p>
-	    <i>Note: The sample tests are not contained in
-	      the <code>junit.jar</code>, but in the installation
-	      directory directly. Therefore, make sure that the JUnit
-	      installation directory is in the CLASSPATH.</i>
-	  </p>
-	  <p>
-	    For the textual TestRunner, type:
-	  </p>
-	  <div>
-	    <blockquote><code>
+	</p>
+      </li>
+      <li>
+	<p>
+	  Then install JUnit on your platform of choice:
+	</p>
+	<p>
+	  <u>Windows</u>
+	</p>
+	<p>
+	  To install JUnit on Windows, follow these steps:
+	</p>
+	<ol>
+	  <li>
+	    <p>
+	      Unzip the <code>junit.zip</code> distribution file to
+	      a directory referred to as <code>%JUNIT_HOME%</code>.
+	    </p>
+	  </li>
+	  <li>Add JUnit to the classpath:
+	    <p>
+	      <code>set CLASSPATH=%CLASSPATH%;%JUNIT_HOME%\junit.jar</code>
+	    </p>
+	  </li>
+	</ol>
+	<p>
+	  <u>Unix (bash)</u>
+	</p>
+	<p>
+	  To install JUnit on Unix, follow these steps:
+	</p>
+	<ol>
+	  <li>
+	    <p>
+	      Unzip the <code>junit.zip</code> distribution file to
+	      a directory referred to as <code>$JUNIT_HOME</code>.
+	    </p>	
+	  </li>
+	  <li>
+	    <p>
+	      Add JUnit to the classpath:
+	    </p>
+	    <p>
+	      <code>export CLASSPATH=$CLASSPATH:$JUNIT_HOME/junit.jar</code>
+	    </p>
+	  </li>
+	</ol>
+      </li>
+      <li>
+	<p>
+	  <i>(Optional)</i> Unzip
+	  the <code>$JUNIT_HOME/src.jar</code> file.
+	</p>
+      </li>
+      <li>
+	<p>
+	  Test the installation by using either the textual or
+	  graphical test runner to run the sample tests distributed
+	  with JUnit.
+	</p> 
+	<p>
+	  <i>Note: The sample tests are not contained in
+	    the <code>junit.jar</code>, but in the installation
+	    directory directly. Therefore, make sure that the JUnit
+	    installation directory is in the CLASSPATH.</i>
+	</p>
+	<p>
+	  For the textual TestRunner, type:
+	</p>
+	<div>
+	  <blockquote><code>
 	      java junit.textui.TestRunner junit.samples.AllTests 
-	    </code></blockquote>
-	  </div>
-	  <p>
-	    For the graphical TestRunner, type:
-	  </p>
-	  <div>
-	    <blockquote><code>
-		java junit.swingui.TestRunner junit.samples.AllTests 
-	    </code></blockquote>
-	  </div>
-	  <p>
-	    All the tests should pass with an "OK" (textual) or a
-	    green bar (graphical).
-	  </p>
-	  <p>
-	    If the tests don't pass, verify
-	    that <code>junit.jar</code> is in the CLASSPATH.
-	  </p>
-	</li>
-	<li>
-	  <p>
-	    Finally, <a href="#overview_4">read</a> the documentation.
-	  </p>
-	</li>
-      </ol>
-    </li>
+	  </code></blockquote>
+	</div>
+	<p>
+	  For the graphical TestRunner, type:
+	</p>
+	<div>
+	  <blockquote><code>
+	      java junit.swingui.TestRunner junit.samples.AllTests 
+	  </code></blockquote>
+	</div>
+	<p>
+	  All the tests should pass with an "OK" (textual) or a
+	  green bar (graphical).
+	</p>
+	<p>
+	  If the tests don't pass, verify
+	  that <code>junit.jar</code> is in the CLASSPATH.
+	</p>
+      </li>
+      <li>
+	<p>
+	  Finally, <a href="#overview_4">read</a> the documentation.
+	</p>
+      </li>
+    </ol>
+  </li>
   <li>
     <p>
       <b><a name="started_3">How do I uninstall JUnit?</a></b>
@@ -715,110 +716,114 @@ Table of Contents
     <p>
       <b><a name="tests_1"></a>How do I write and run a simple test?</b>
     </p>
-    <p>
-      <ol>
-	<li>
-	  <p>
-	    Create a subclass of <code>TestCase</code>:
-	  </p>
-	  <div class="code">
-	    <pre>
-    package junitfaq;
+    <ol>
+      <li>
+	<p>
+	  Create a subclass of <code>TestCase</code>:
+	</p>
+	<div class="code">
+	  <pre><code>
 	      
-    import java.util.*;
-    import junit.framework.*;
-    
-    public class SimpleTest extends TestCase {
-	    </pre>
-	  </div>      
-	</li>
-	<li>
-	  <p>
-	    Write a test method to assert expected results on the
-	    object under test:
-	  </p>
-	  <div class="code">
-	    <pre>
-        public void testEmptyCollection() {
-            Collection collection = new ArrayList();
-            assertTrue(collection.isEmpty());
-        }
-	  </pre>
-	  </div>
-	</li>
-	<li>
-	  <p>
-	    Write a <code>suite()</code> method that uses reflection
-	    to dynamically create a test suite containing all
-	    the <code>testXXX()</code> methods:
-	  </p>
-	  <div class="code">
-	    <pre>
-        public static Test suite() {
-            return new TestSuite(SimpleTest.class);
-        }
-	    </pre>
-	  </div>
-	</li>
-	<li>
-	  <p>
-	    Write a <code>main()</code> method to conveniently run the
-	    test with the textual test runner:
-	  </p>
-	  <div class="code">
-	    <pre>
+  package junitfaq;
+	      
+  import java.util.*;
+  import junit.framework.*;
+  
+  public class SimpleTest extends TestCase {
+	  </code></pre>
+	</div>      
+      </li>
+      <li>
+	<p>
+	  Write a test method to assert expected results on the
+	  object under test:
+	</p>
+	<div class="code">
+	  <pre><code>
+
+    public void testEmptyCollection() {
+        Collection collection = new ArrayList();
+        assertTrue(collection.isEmpty());
+    }
+	  </code></pre>
+	</div>
+      </li>
+      <li>
+	<p>
+	  Write a <code>suite()</code> method that uses reflection
+	  to dynamically create a test suite containing all
+	  the <code>testXXX()</code> methods:
+	</p>
+	<div class="code">
+	  <pre><code>
+
+    public static Test suite() {
+        return new TestSuite(SimpleTest.class);
+    }
+	  </code></pre>
+	</div>
+      </li>
+      <li>
+	<p>
+	  Write a <code>main()</code> method to conveniently run the
+	  test with the textual test runner:
+	</p>
+	<div class="code">
+	  <pre><code>
+
         public static void main(String args[]) {
             junit.textui.TestRunner.run(suite());
         }
-	}
-	    </pre>
-	  </div>
-	</li>
-	<li>
-	  <p>
-	    Run the test:
-	  </p>
-	  <ul>
-	    <li>
-	      <p>
-		To run the test with the textual test runner used
-		in <code>main()</code>, type:
-	      </p>
-	      <div>
-		<blockquote><pre>
+    }
+	  </code></pre>
+	</div>
+      </li>
+      <li>
+	<p>
+	  Run the test:
+	</p>
+	<ul>
+	  <li>
+	    <p>
+	      To run the test with the textual test runner used
+	      in <code>main()</code>, type:
+	    </p>
+	    <div>
+	      <blockquote><code>
 java junitfaq.SimpleTest 
-		</pre></blockquote>
-	      </div>
-	      <p>
-		The passing test results in the following textual output:
-	      </p>
-	      <div>
-		<blockquote><pre>
+	      </code></blockquote>
+	    </div>
+	    <p>
+	      The passing test results in the following textual output:
+	    </p>
+	    <div>
+	      <blockquote>
+		<pre><code>
 .
 Time: 0
 
 OK (1 tests)
-		</pre></blockquote>
-	      </div>
-	    </li>
-	    <li>
-	      <p>
-		To run the test with the graphical test runner, type:
-	      </p>
-	      <div>
-		<blockquote><pre>
+		</code></pre>
+	      </blockquote>
+	    </div>
+	  </li>
+	  <li>
+	    <p>
+	      To run the test with the graphical test runner, type:
+	    </p>
+	    <div>
+	      <blockquote><code>
 java junit.swingui.TestRunner junitfaq.SimpleTest 
-		</pre></blockquote>
-	      </div>
-	      <p>
-		The passing test results in a green bar displayed in
-		the graphical UI.
-	      </p>
-	    </li>
-	  </ul>
-	</li>
-      </ol>
-    </li>
+	      </code></blockquote>
+	    </div>
+	    <p>
+	      The passing test results in a green bar displayed in
+	      the graphical UI.
+	    </p>
+	  </li>
+	</ul>
+      </li>
+    </ol>
   </li>
   <li>
     <p>
@@ -853,7 +858,8 @@ java junit.swingui.TestRunner junitfaq.SimpleTest
       isolated from changes made by the other:
     </p>
     <div class="code">
-      <pre>
+      <pre><code>
+
     package junitfaq;
 
     import junit.framework.*;
@@ -880,21 +886,23 @@ java junit.swingui.TestRunner junitfaq.SimpleTest
             assertEquals(1, collection.size());
         }
     }
-      </pre>
+      </code></pre>
     </div>
     <p>
       Given this test, the methods might execute in the following
       order:
     </p>
     <div>
-      <pre><code>
-  setUp()
-  testOneItemCollection()
-  tearDown()
-  setUp()
-  testEmptyCollection()
-  tearDown()
-      </code></pre>
+      <blockquote>
+	<pre><code>
+setUp()
+testOneItemCollection()
+tearDown()
+setUp()
+testEmptyCollection()
+tearDown()
+	</code></pre>
+      </blockquote>
     </div>
     <p>
       The ordering of test-method invocations is not guaranteed,
@@ -948,7 +956,8 @@ protected void tearDown() {
       what is expected:
     </p>
     <div class="code">
-      <pre>
+      <pre><code>
+
     public void testCollectionAdd() {
         Collection collection = new ArrayList();
         assertEquals(0, collection.size());
@@ -957,7 +966,7 @@ protected void tearDown() {
         collection.add("itemB");
         assertEquals(2, collection.size());
     }
-      </pre>
+      </code></pre>
     </div>
     <p>
       Another approach is to make use of <a
@@ -1079,7 +1088,8 @@ testCreate() {
       expected <code>IndexOutOfBoundsException</code> is raised:
     </p>
     <div class="code">
-      <pre>
+      <pre><code>
+
     public void testIndexOutOfBoundsException() {
 		
         ArrayList emptyList = new ArrayList();
@@ -1094,7 +1104,7 @@ testCreate() {
             assertTrue(true);
         }
     }
-      </pre>
+      </code></pre>
     </div>
   </li>
   <li>
@@ -1113,14 +1123,15 @@ testCreate() {
       the <code>IndexOutOfBoundsException</code> is raised:
     </p>
     <div class="code-red">
-      <pre>
+      <pre><code>
+
     public void testIndexOutOfBoundsExceptionNotRaised() 
         throws IndexOutOfBoundsException {
     
         ArrayList emptyList = new ArrayList();
         Object o = emptyList.get(0);
     }
-      </pre>
+      </code></pre>
     </div>
   </li>
   <li>
@@ -1143,7 +1154,8 @@ testCreate() {
       framework catches the exception and signals an error.
     </p>
     <div class="code">
-      <pre>
+      <pre><code>
+
     public void testNonexistentFileRead() throws IOException {
         try {
 
@@ -1157,7 +1169,7 @@ testCreate() {
             assertTrue(true);
         }
     } 
-      </pre>
+      </code></pre>
     </div>
     <p>
       In the following example, an <code>IOException</code> is not
@@ -1166,9 +1178,9 @@ testCreate() {
       (e.g. <code>FileNotFoundException</code>) or any unchecked
       exception (e.g. <code>NullPointerException</code>) is raised.
     </p>
-    <p>
-      <div class="code">
-	<pre>
+    <div class="code">
+      <pre><code>
+
     public void testExistingFileRead() throws IOException {
 
         // exists.txt created in setup(), perhaps
@@ -1178,8 +1190,8 @@ testCreate() {
 			
         assertEquals('a', (char)reader.read());
     } 
-	</pre>
-      </div>
+      </code></pre>
+    </div>
     <p>
       Both failures and errors will cause the test to fail.  However,
       it is useful to differentiate between failures and errors
@@ -1198,7 +1210,7 @@ testCreate() {
       exception.  Since we don't expect this exception to be raised, a
       complete stack trace is useful in debugging why it was raised.
     </p>
-    </li>
+  </li>
   <li>
     <p>
       <b><a name="tests_10"></a>How do I test protected methods?</b>
@@ -1270,7 +1282,7 @@ testCreate() {
       One test method, three assertions:
     </p>
     <div>
-      <blockquote><pre>
+      <blockquote><pre><code>
 public class MyTestCase extends TestCase {
     public void testSomething() {
         // Set up for the test, manipulating local variables
@@ -1279,13 +1291,13 @@ public class MyTestCase extends TestCase {
         assertTrue(condition3);
     }
 }
-      </pre></blockquote>
+      </code></pre></blockquote>
     </div>
     <p>
       Three test methods, one assertion each:
     </p>
     <div>
-      <blockquote><pre>
+      <blockquote><pre><code>
 public class MyTestCase extends TestCase {
     // Locale variables become instance variables
 
@@ -1305,7 +1317,7 @@ public class MyTestCase extends TestCase {
         assertTrue(condition3);
     }
 }
-      </pre></blockquote>
+      </code></pre></blockquote>
     </div>
     <p>
       The resulting tests use JUnit's natural execution and reporting
@@ -1406,8 +1418,9 @@ public class MyTestCase extends TestCase {
     </p>
     <p>
       SampleTest is a basic test template:
-      <div>
-	<blockquote><pre>
+    </p>
+    <div>
+      <blockquote><pre><code>
 import junit.framework.TestCase;
 
 public class SampleTest extends TestCase {
@@ -1450,13 +1463,13 @@ public class SampleTest extends TestCase {
         junit.textui.TestRunner.run(SampleTest.class);
     }
 }
-	</pre></blockquote>
-      </div>
+      </code></pre></blockquote>
+    </div>
     <p>
       SampleTestSuite is a template for a suite of tests:
     </p>
     <div>
-      <blockquote><pre>
+      <blockquote><pre><code>
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -1485,9 +1498,9 @@ public class SampleTestSuite {
         junit.textui.TestRunner.run(suite());
     }
 }
-      </pre></blockquote>
+      </code></pre></blockquote>
     </div>
-    </li>
+  </li>
   <li>
     <p>
       <b><a name="tests_17"></a>How do I write a test for an abstract
@@ -1604,7 +1617,8 @@ test
       For example:
     </p>
     <div class="code">
-      <pre>
+      <pre><code>
+
     import junit.framework.*;
 
     public class AllTests {
@@ -1623,7 +1637,7 @@ test
             junit.textui.TestRunner.run(suite());
         }
     }
-      </pre>
+      </code></pre>
     </div> 
     <p>
       Running <code>AllTests</code> will automatically run all of its
@@ -1666,7 +1680,8 @@ test
       cleanup:
     </p>
     <div class="code">
-      <pre>
+      <pre><code>
+
     import junit.framework.*;
     import junit.extensions.TestSetup;
 
@@ -1701,7 +1716,7 @@ test
             // one-time cleanup code
         } 
     }
-      </pre>
+      </code></pre>
     </div>
   </li>
 </ol>
@@ -1843,12 +1858,12 @@ test
 	  Define any necessary Ant properties:
 	</p>
 	<div>
-	  <blockquote><pre>
+	  <pre><code>
 &lt;property name="src" value="./src" /&gt;
 &lt;property name="lib" value="./lib" /&gt;
 &lt;property name="classes" value="./classes" /&gt;
 &lt;property name="test.class.name" value="com.xyz.MyTestSuite" /&gt;
-	  </pre></blockquote>
+	  </code></pre>
 	</div>
       </li>
       <li>
@@ -1856,7 +1871,7 @@ test
 	  Set up the CLASSPATH to be used by JUnit:
 	</p>
 	<div>
-	  <blockquote><pre>
+	  <pre><code>
 &lt;path id="test.classpath"&gt;
   &lt;pathelement location="${classes}" /&gt;
   &lt;pathelement location="/path/to/junit.jar" /&gt;
@@ -1864,7 +1879,7 @@ test
     &lt;include name="**/*.jar"/&gt;
   &lt;/fileset&gt;
 &lt;/path&gt;
-	  </pre></blockquote>
+	  </code></pre>
         </div>
       </li>
       <li>
@@ -1872,7 +1887,7 @@ test
 	  Define the Ant task for running JUnit:
 	</p>
 	<div>
-	  <blockquote><pre>
+	  <pre><code>
 &lt;target name="test"&gt;
   &lt;junit fork="yes" haltonfailure="yes"&gt;
     &lt;test name="${test.class.name}" /&gt;
@@ -1880,7 +1895,7 @@ test
     &lt;classpath refid="test.classpath" /&gt;
   &lt;/junit&gt;
 &lt;/target&gt;
-	  </pre></blockquote>
+	  </code></pre>
 	</div>
       </li>
       <li>
@@ -1888,9 +1903,9 @@ test
 	  Run the test:
 	</p>
 	<div>
-	  <blockquote><pre>
-ant test
-	  </pre></blockquote>
+	  <code>
+	      ant test
+	  </code>
 	</div>
       </li>
     </ol>
@@ -1921,9 +1936,9 @@ ant test
 	  Add an ANT property for the directory containing the HTML reports:
 	</p>
 	<div>
-	  <blockquote><pre>
+	  <code>
 &lt;property name="test.reports" value="./reports" /&gt;
-	  </pre></blockquote>
+	  </code>
 	</div>
       </li>
       <li>
@@ -1931,7 +1946,7 @@ ant test
 	  Define the Ant task for running JUnit and generating reports:
 	</p>
 	<div>
-	  <blockquote><pre>
+	  <pre><code>
 &lt;target name="test-html"&gt;
   &lt;junit fork="yes" printsummary="no" haltonfailure="no"&gt;
     &lt;batchtest fork="yes" todir="${test.reports}" &gt;
@@ -1950,7 +1965,7 @@ ant test
     &lt;report todir="${test.reports}" /&gt;
   &lt;/junitreport&gt;
 &lt;/target&gt;
-	  </pre></blockquote>
+	  </code></pre>
 	</div>
       </li>
       <li>
@@ -1958,9 +1973,9 @@ ant test
 	  Run the test:
 	</p>
 	<div>
-	  <blockquote><pre>
-ant test-html
-	  </pre></blockquote>
+	  <code>
+	    ant test-html
+	  </code>
 	</div>
       </li>
     </ol>
@@ -1979,9 +1994,9 @@ ant test-html
       Use the <tt>-D</tt> JVM command-line options, as in:
     </p>
     <div>
-      <blockquote><pre>
+      <blockquote><code>
 -DparameterName=parameterValue
-      </pre></blockquote>
+      </code></blockquote>
     </div>
     <p>
       If the number of parameters on the command line gets unweildy,
@@ -2175,9 +2190,7 @@ excluded.8=net.jini.*
       classloader will end up violating the constraints whatever you
       do.
     </p>
-
   </li>
-
   <li>
     <p>
       <b><a name="running_10"></a>Why do I get
@@ -2229,7 +2242,7 @@ pointHome = (PointHome)PortableRemoteObject.
       Recall that in Java 2 an object's class (a.k.a. "runtime type")
       is identified in the JVM as the pair of
       &lt;fully-qualified-classname;definingClassLoaderInstance&gt; or
-      (in shorter form) &lt;C;L&gt;. That is, the defining loaders
+      (in shorter form) &lt;C;L&gt;. That is, the defining loader's
       identity is part of the runtime name identifying that class in
       the JVM. Also recall that the JVM will expect a class's defining
       loader to load all unloaded classes referenced by the classes it
@@ -2260,7 +2273,7 @@ System.out.println(PointEJBHome.class.getClassLoader());
       and you have this problem, you can work around it by
       setting <code>fork="true"</code>
       on <code>&lt;batchtest&gt;</code>, which causes it to run each
-      test in its own Java Virtual Machine separate from Ants
+      test in its own Java Virtual Machine separate from Ant's
       launching JVM.
     </p>
     <p>
@@ -2271,9 +2284,6 @@ System.out.println(PointEJBHome.class.getClassLoader());
       in the Java Virtual Machine</i></a>, OOPSLA 1998.
     </p>
   </li>
-
-
-
   <li>
     <p>
       <b><a name="running_11"></a>Why do I get the warning
@@ -2299,11 +2309,8 @@ public void testSomething() {
       hiearchy of test suites. For more information, see <a
       href="#running_14">"How do I get one test suite to invoke
       another?"</a>.
-    </p>
-    
+    </p>    
   </li>
-
-
   <li>
     <p>
       <b><a name="running_12"></a>Why do I see "Unknown Source" in the
@@ -2324,9 +2331,9 @@ a test failure, rather than the source file's line number?</b>
       <code>debug="on"</code> attribute.  For example:
     </p>
     <div>
-      <blockquote><pre>
-	  &lt;javac srcdir="${src}" destdir="${build}" debug="on" /&gt;
-      </pre></blockquote>
+      <blockquote><code>
+&lt;javac srcdir="${src}" destdir="${build}" debug="on" /&gt;
+      </code></blockquote>
     </div>
     <p>
       When using older JVMs pre-Hotspot (JDK 1.1 and most/all 1.2),
@@ -2340,10 +2347,7 @@ a test failure, rather than the source file's line number?</b>
       debug enabled will show the line where an exception was raised
       in the class under test.
     </p>
-
-</li>
-
-
+  </li>
   <li>
     <p>
       <b><a name="running_13"></a>Why does the "excluded.properties"
@@ -2361,10 +2365,7 @@ a test failure, rather than the source file's line number?</b>
       custom <code>excluded.properties</code> and your bar will once
       again be green.
     </p>
-
   </li>
-
-
   <li>
     <p>
       <b><a name="running_14"></a>How do I get one test suite to
@@ -2377,14 +2378,11 @@ a test failure, rather than the source file's line number?</b>
       To add a suite to a suite, use:     
     </p>
     <div>
-      <blockquote><pre>
-  suite.addTest(someOtherSuite.suite());
-      </pre></blockquote>
+      <blockquote><code>
+suite.addTest(someOtherSuite.suite());
+      </code></blockquote>
     </div>
-
   </li>
-
-
   <li>
     <p>
       <b><a name="running_15"></a>How do I organize all test classes
@@ -2404,7 +2402,7 @@ a test failure, rather than the source file's line number?</b>
 	  the <code>batchtest</code> element:
 	</p>
 	<div>
-	<blockquote><pre>
+	  <pre><code>
 &lt;junit printsummary="yes" haltonfailure="yes"&gt;
   ...
   &lt;batchtest fork="yes"&gt;
@@ -2413,63 +2411,59 @@ a test failure, rather than the source file's line number?</b>
        &lt;include name="**/Test*.java" /&gt;
     &lt;/fileset&gt;
   &lt;/batchtest&gt;
-&lt;/junit> 
-	   </pre></blockquote>
+&lt;/junit&gt; 
+	  </code></pre>
 	</div>
 	<p>
 	  Idiomatic naming patterns for unit tests
 	  are <code>Test*.java</code> and <code>*Test.java</code>.
 	  Documentation and examples are at <a
-	  href="http://ant.apache.org/manual/OptionalTasks/junit.html">http://ant.apache.org/manual/OptionalTasks/junit.html</a>.
+					       href="http://ant.apache.org/manual/OptionalTasks/junit.html">http://ant.apache.org/manual/OptionalTasks/junit.html</a>.
 	</p>
-    </li>
-    <li>
-      <p>
-	Use the <code>DirectorySuiteBuilder</code>
-	and <code>ArchiveSuiteBuilder</code> (for jar/zip files)
-	classes provided by JUnit-addons project:
-      </p>
-      <div>
-	<blockquote><pre>
+      </li>
+      <li>
+	<p>
+	  Use the <code>DirectorySuiteBuilder</code>
+	  and <code>ArchiveSuiteBuilder</code> (for jar/zip files)
+	  classes provided by JUnit-addons project:
+	</p>
+	<div>
+	  <blockquote><pre>
 DirectorySuiteBuilder builder = new DirectorySuiteBuilder();
 builder.setSuffix("Test");
 Test suite = builer.suite("/home/project/myproject/tests"); 
-	</pre></blockquote>
-      </div>
-      <p>
-	Documentation and examples are at <a
-	href="http://junit-addons.sourceforge.net/">http://junit-addons.sourceforge.net</a>.
-      </p>
-    </li>
-    <li>
-      <p>
-	Write your own custom suite builder. 
-      </p>
-      <p>
-	Have your test classes implement an interface and write a
-	treewalker to load each class in a directory, inspect the
-	class, and add any classes that implement the interface to a
-	TestSuite.
-      </p>
-      <p>
-	You might only want to do this if you are <b>very</b>
-	uncomfortable with using a naming convention for test
-	classes. Aside from being slow for larger suites, ultimately
-	it's arguable whether it's more effort to follow a naming
-	convention that have test classes implement an interface!
-      </p>
-      <p>
-	An example of this approach is at 
-	<a href="http://www.javaworld.com/javaworld/jw-12-2000/jw-1221-junit_p.html">http://www.javaworld.com/javaworld/jw-12-2000/jw-1221-junit_p.html</a>.  
-      </p>
-    </li>
-  </ol>
-    
-
+	  </pre></blockquote>
+	</div>
+	<p>
+	  Documentation and examples are at <a
+					       href="http://junit-addons.sourceforge.net/">http://junit-addons.sourceforge.net</a>.
+	</p>
+      </li>
+      <li>
+	<p>
+	  Write your own custom suite builder. 
+	</p>
+	<p>
+	  Have your test classes implement an interface and write a
+	  treewalker to load each class in a directory, inspect the
+	  class, and add any classes that implement the interface to a
+	  TestSuite.
+	</p>
+	<p>
+	  You might only want to do this if you are <b>very</b>
+	  uncomfortable with using a naming convention for test
+	  classes. Aside from being slow for larger suites, ultimately
+	  it's arguable whether it's more effort to follow a naming
+	  convention that have test classes implement an interface!
+	</p>
+	<p>
+	  An example of this approach is at 
+	  <a href="http://www.javaworld.com/javaworld/jw-12-2000/jw-1221-junit_p.html">http://www.javaworld.com/javaworld/jw-12-2000/jw-1221-junit_p.html</a>.  
+	</p>
+      </li>
+    </ol>
   </li>
-
 </ol>
-
 
 <!--
 
@@ -2828,6 +2822,14 @@ end
     </p>
   </li>
 </ol>
+
+<br/>
+
+<div align="right">
+  <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-xhtml10"
+         alt="Valid XHTML 1.0!" height="31" width="88" /></a>
+</div>
 
 </body>
 </html>
