@@ -17,7 +17,32 @@ public abstract class BaseTestRunner implements TestListener {
 	static int fgMaxMessageLength= 500;
 	static boolean fgFilterStack= true;
 	boolean fLoading= true;
+
+    /*
+    * Implementation of TestListener
+    */
+	public synchronized void startTest(Test test) {
+		testStarted(test.toString());
+	}
 	
+	public synchronized void endTest(Test test) {
+		testEnded(test.toString());
+	}
+
+	public synchronized void addError(final Test test, final Throwable t) {
+		testFailed(TestRunListener.STATUS_ERROR, test, t);
+	}
+
+	public synchronized void addFailure(final Test test, final AssertionFailedError t) {
+		testFailed(TestRunListener.STATUS_FAILURE, test, t);
+	}
+
+	public abstract void testStarted(String testName);
+	
+	public abstract void testEnded(String testName);
+
+	public abstract void testFailed(int status, Test test, Throwable t);
+		
 	/**
 	 * Returns the Test corresponding to the given suite. This is
 	 * a template method, subclasses override runFailed(), clearStatus().

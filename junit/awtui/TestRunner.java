@@ -54,16 +54,30 @@ import java.io.*;
 		about.setVisible(true);
 	}
 	
-	public void addError(Test test, Throwable t) {
-		fNumberOfErrors.setText(Integer.toString(fTestResult.errorCount()));
-		appendFailure("Error", test, t);
+	public void testStarted(String testName) {
+		showInfo("Running: "+testName);
 	}
 
-	public void addFailure(Test test, AssertionFailedError t) {
-		fNumberOfFailures.setText(Integer.toString(fTestResult.failureCount()));
-		appendFailure("Failure", test, t);
+	public void testEnded(String testName) {
+		setLabelValue(fNumberOfRuns, fTestResult.runCount());
+		synchronized(this) {
+			fProgressIndicator.step(fTestResult.wasSuccessful());
+		}
 	}
-	
+
+	public void testFailed(int status, Test test, Throwable t) {
+		switch (status) {
+			case TestRunListener.STATUS_ERROR:
+				fNumberOfErrors.setText(Integer.toString(fTestResult.errorCount()));
+				appendFailure("Error", test, t);
+				break;
+			case TestRunListener.STATUS_FAILURE:
+				fNumberOfFailures.setText(Integer.toString(fTestResult.failureCount()));
+				appendFailure("Failure", test, t);
+				break;
+		}
+	}
+		
 	protected void addGrid(Panel p, Component co, int x, int y, int w, int fill, double wx, int anchor) {
 		GridBagConstraints c= new GridBagConstraints();
 		c.gridx= x; c.gridy= y;
@@ -286,13 +300,6 @@ import java.io.*;
 		showErrorTrace();
 	}
 
-	public void endTest(Test test) {
-		setLabelValue(fNumberOfRuns, fTestResult.runCount());
-		synchronized(this) {
-			fProgressIndicator.step(fTestResult.wasSuccessful());
-		}
-	}
-		
 	private boolean isErrorSelected() {
 		return fFailureList.getSelectedIndex() != -1;
 	}
@@ -473,9 +480,5 @@ import java.io.*;
 			setSuiteName(suiteName);
 			runSuite();
 		}
-	}
-	
-	public void startTest(Test test) {
-		showInfo("Running: "+test);
 	}
 }

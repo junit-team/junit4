@@ -28,6 +28,10 @@ import junit.runner.*;
 public class TestRunner extends BaseTestRunner {
 	PrintStream fWriter= System.out;
 	int fColumn= 0;
+	
+	public static final int SUCCESS_EXIT= 0;
+	public static final int FAILURE_EXIT= -1;
+	public static final int EXCEPTION_EXIT= -2;
 
 	/**
 	 * Constructs a TestRunner.
@@ -52,14 +56,24 @@ public class TestRunner extends BaseTestRunner {
 		return new StandardTestSuiteLoader();
 	}
 
-	public synchronized void addError(Test test, Throwable t) {
-		writer().print("E");
+	public void testFailed(int status, Test test, Throwable t) {
+		switch (status) {
+			case TestRunListener.STATUS_ERROR: writer().print("E"); break;
+			case TestRunListener.STATUS_FAILURE: writer().print("F"); break;
+		}
 	}
 	
-	public synchronized void addFailure(Test test, AssertionFailedError t) {
-		writer().print("F");
+	public void testStarted(String testName) {
+		writer().print(".");
+		if (fColumn++ >= 40) {
+			writer().println();
+			fColumn= 0;
+		}
 	}
-			
+	
+	public void testEnded(String testName) {
+	}
+
 	/**
 	 * Creates the TestResult to be used for the test run.
 	 */
@@ -95,27 +109,16 @@ public class TestRunner extends BaseTestRunner {
 		}
 	}
 	
-	public synchronized void startTest(Test test) {
-		writer().print(".");
-		if (fColumn++ >= 40) {
-			writer().println();
-			fColumn= 0;
-		}
-	}
-
-	public void endTest(Test test) {
-	}
-	
 	public static void main(String args[]) {
 		TestRunner aTestRunner= new TestRunner();
 		try {
 			TestResult r= aTestRunner.start(args);
 			if (!r.wasSuccessful()) 
-				System.exit(-1);
-			System.exit(0);
+				System.exit(FAILURE_EXIT);
+			System.exit(SUCCESS_EXIT);
 		} catch(Exception e) {
 			System.err.println(e.getMessage());
-			System.exit(-2);
+			System.exit(EXCEPTION_EXIT);
 		}
 	}
 	/**
@@ -240,7 +243,7 @@ public class TestRunner extends BaseTestRunner {
 		
 	protected void runFailed(String message) {
 		System.err.println(message);
-		System.exit(-1);
+		System.exit(FAILURE_EXIT);
 	}
 		
 	protected PrintStream writer() {

@@ -63,37 +63,30 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		main(args);
 	}
 	
-	public void addError(final Test test, final Throwable t) {
+	public void testFailed(final int status, final Test test, final Throwable t) {
 		SwingUtilities.invokeLater(
 			new Runnable() {
 				public void run() {
-					fCounterPanel.setErrorValue(fTestResult.errorCount());
-					appendFailure("Error", test, t);
+					switch (status) {
+						case TestRunListener.STATUS_ERROR:
+							fCounterPanel.setErrorValue(fTestResult.errorCount());
+							appendFailure("Error", test, t);
+							break;
+						case TestRunListener.STATUS_FAILURE:
+							fCounterPanel.setFailureValue(fTestResult.failureCount());
+							appendFailure("Failure", test, t);
+							break;
+					}
 				}
 			}
 		);
 	}
 	
-	public void addFailure(final Test test, final AssertionFailedError t) {
-		SwingUtilities.invokeLater(
-			new Runnable() {
-				public void run() {
-					fCounterPanel.setFailureValue(fTestResult.failureCount());
-					appendFailure("Failure", test, t);
-				}
-			}		
-		);
+	public void testStarted(String testName) {
+		postInfo("Running: "+testName);
 	}
 	
-	public void startTest(Test test) {
-		postInfo("Running: "+test);
-	}
-	
-	public void endTest(Test test) {
-		postEndTest(test);
-	}
-
-	private void postEndTest(final Test test) {
+	public void testEnded(String stringName) {
 		synchUI();
 		SwingUtilities.invokeLater(
 			new Runnable() {
@@ -106,7 +99,7 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 			}
 		);
 	}
-
+	
 	public void setSuite(String suiteName) {
 		fSuiteCombo.getEditor().setItem(suiteName);
 	}
