@@ -4,7 +4,7 @@ package junit.samples.money;
  * The common interface for simple Monies and MoneyBags
  *
  */
-interface IMoney {
+public interface IMoney {
 	/**
 	 * Adds a money to this money.
 	 */

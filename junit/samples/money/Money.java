@@ -4,7 +4,7 @@ package junit.samples.money;
  * A simple Money.
  *
  */
-class Money implements IMoney {
+public class Money implements IMoney {
 
 	private int fAmount;
 	private String fCurrency;
