@@ -45,12 +45,21 @@
 		<copy todir="${dist}/junit/tests">
 			<fileset dir="junit/tests" />
 		</copy>
+
+
+<delete file="${dist}/junit/tests/runner/test.jar"/> 
+<jar jarfile="${dist}/junit/tests/runner/test.jar" 
+basedir="." 
+
+includes="junit/tests/runner/LoadedFromJar.class"/> 
+<!--
 		<delete file="${dist}/junit/tests/test.jar"/>
 		<jar 
 			jarfile="${dist}/junit/tests/test.jar"
 			basedir="."
 			includes="junit/tests/LoadedFromJar.class"
 		/>
+-->
 		<mkdir dir="${dist}/javadoc" />
 		<javadoc 
 			sourcepath="."
@@ -75,12 +84,11 @@
 		</java>
 	</target>
 	
-	<target name="zip">
-		<!-- !!! hard code names, variable substitution doesn't work !!! -->
+	<target name="zip" depends="init">
 		<zip 
-			zipfile="junit3.6.zip"
+			zipfile="${zipfile}"
 			basedir="."
-			includes="junit3.6/**"
+			includes="${dist}/**"
 		/>
 	</target>
 	
@@ -102,5 +110,13 @@
 				<pathelement location="${dist}/junit.jar" />
 			</classpath>
 		</java>
+	</target>
+
+	<target name="clean" depends="init">
+		<delete dir="${dist}" quiet="true"/>			
+		<delete file="${zipfile}" quiet="true"/> 
+		<delete>
+			<fileset dir="${basedir}" includes="**/*.class" /> 
+		</delete>
 	</target>
 </project>
