@@ -227,7 +227,6 @@ public abstract class BaseTestRunner implements TestListener {
 		return true;
 	}
 
-
 	/**
 	 * Returns a filtered stack trace
 	 */
@@ -237,14 +236,14 @@ public abstract class BaseTestRunner implements TestListener {
 		t.printStackTrace(writer);
 		StringBuffer buffer= stringWriter.getBuffer();
 		String trace= buffer.toString();
-		return BaseTestRunner.filterStack(trace);
+		return BaseTestRunner.getFilteredTrace(trace);
 	}
 
 	/**
 	 * Filters stack frames from internal JUnit classes
 	 */
-	public static String filterStack(String stack) {
-		if (!getPreference("filterstack").equals("true") || fgFilterStack == false)
+	public static String getFilteredTrace(String stack) {
+		if (showStackRaw())
 			return stack;
 			
 		StringWriter sw= new StringWriter();
@@ -262,6 +261,10 @@ public abstract class BaseTestRunner implements TestListener {
 			return stack; // return the stack unfiltered
 		}
 		return sw.toString();
+	}
+
+	protected static boolean showStackRaw() {
+		return !getPreference("filterstack").equals("true") || fgFilterStack == false;
 	}
 	
 	static boolean filterLine(String line) {

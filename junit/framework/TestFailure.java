@@ -1,5 +1,9 @@
 package junit.framework;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+
 /**
  * A <code>TestFailure</code> collects a failed test together with
  * the caught exception.
@@ -35,5 +39,18 @@ public class TestFailure extends Object {
 	    StringBuffer buffer= new StringBuffer();
 	    buffer.append(fFailedTest+": "+fThrownException.getMessage());
 	    return buffer.toString();
+	}
+	public String trace() {
+		StringWriter stringWriter= new StringWriter();
+		PrintWriter writer= new PrintWriter(stringWriter);
+		thrownException().printStackTrace(writer);
+		StringBuffer buffer= stringWriter.getBuffer();
+		return buffer.toString();
+	}
+	public String exceptionMessage() {
+		return thrownException().getMessage();
+	}
+	public boolean isFailure() {
+		return thrownException() instanceof AssertionFailedError;
 	}
 }

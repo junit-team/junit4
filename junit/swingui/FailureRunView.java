@@ -37,11 +37,11 @@ class FailureRunView implements TestRunView {
 	
 			TestFailure failure= (TestFailure)value;
 			String text= failure.failedTest().toString();
-			String msg= failure.thrownException().getMessage();
+			String msg= failure.exceptionMessage();
 			if (msg != null) 
 				text+= ":" + BaseTestRunner.truncate(msg); 
 	 
-			if (failure.thrownException() instanceof AssertionFailedError) { 
+			if (failure.isFailure()) { 
 				if (fFailureIcon != null)
 		    			setIcon(fFailureIcon);
 			} else {

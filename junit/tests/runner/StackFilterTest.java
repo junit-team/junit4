@@ -42,6 +42,6 @@ public class StackFilterTest extends TestCase {
 	}
 		
 	public void testFilter() {
-		assertEquals(fFiltered, BaseTestRunner.filterStack(fUnfiltered));
+		assertEquals(fFiltered, BaseTestRunner.getFilteredTrace(fUnfiltered));
 	}
 }

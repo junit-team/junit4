@@ -28,7 +28,6 @@ public class SuiteTest extends TestCase {
 		suite.addTest(new SuiteTest("testInheritedTests"));
 		suite.addTest(new SuiteTest("testShadowedTests"));
 		suite.addTest(new SuiteTest("testAddTestSuite"));
-		suite.addTest(new SuiteTest("testDisplayName"));
 		
 		return suite;
 	}

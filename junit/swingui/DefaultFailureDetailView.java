@@ -30,7 +30,7 @@ class DefaultFailureDetailView implements FailureDetailView {
 	 * Shows a TestFailure
 	 */
 	public void showFailure(TestFailure failure) {
-		fTextArea.setText(BaseTestRunner.getFilteredTrace(failure.thrownException()));
+		fTextArea.setText(BaseTestRunner.getFilteredTrace(failure.trace()));
 		fTextArea.select(0, 0);	
 	}
 	
