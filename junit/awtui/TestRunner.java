@@ -289,7 +289,7 @@ import junit.runner.*;
 		return frame;
 	}
 
-	protected Panel createCounterPanel() throws HeadlessException {
+	protected Panel createCounterPanel() {
 		Panel numbersPanel= new Panel(new GridBagLayout());
 		addToCounterPanel(
 			numbersPanel,
