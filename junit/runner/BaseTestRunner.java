@@ -12,7 +12,7 @@ import java.util.*;
  */
 public abstract class BaseTestRunner implements TestListener {
 	public static final String SUITE_METHODNAME= "suite";
-	
+
 	private static Properties fPreferences;
 	static int fgMaxMessageLength= 500;
 	static boolean fgFilterStack= true;
@@ -26,7 +26,7 @@ public abstract class BaseTestRunner implements TestListener {
 	}
 
 	protected static void setPreferences(Properties preferences) {
-		fPreferences = preferences;
+		fPreferences= preferences;
 	}
 
 	protected static Properties getPreferences() {
@@ -38,7 +38,7 @@ public abstract class BaseTestRunner implements TestListener {
 		}
 		return fPreferences;
 	}
-	
+
 	public static void savePreferences() throws IOException {
 		FileOutputStream fos= new FileOutputStream(getPreferencesFile());
 		try {
@@ -47,7 +47,7 @@ public abstract class BaseTestRunner implements TestListener {
 			fos.close();
 		}
 	}
-	
+
 	public void setPreference(String key, String value) {
 		getPreferences().setProperty(key, value);
 	}
@@ -55,7 +55,7 @@ public abstract class BaseTestRunner implements TestListener {
 	public synchronized void endTest(Test test) {
 		testEnded(test.toString());
 	}
-	
+
 	public synchronized void addError(final Test test, final Throwable t) {
 		testFailed(TestRunListener.STATUS_ERROR, test, t);
 	}
@@ -67,11 +67,11 @@ public abstract class BaseTestRunner implements TestListener {
 	// TestRunListener implementation
 
 	public abstract void testStarted(String testName);
-	
+
 	public abstract void testEnded(String testName);
 
 	public abstract void testFailed(int status, Test test, Throwable t);
-		
+
 	/**
 	 * Returns the Test corresponding to the given suite. This is
 	 * a template method, subclasses override runFailed(), clearStatus().
@@ -86,7 +86,7 @@ public abstract class BaseTestRunner implements TestListener {
 			testClass= loadSuiteClass(suiteClassName);
 		} catch (ClassNotFoundException e) {
 			String clazz= e.getMessage();
-			if (clazz == null) 
+			if (clazz == null)
 				clazz= suiteClassName;
 			runFailed("Class not found \""+clazz+"\"");
 			return null;
@@ -99,7 +99,7 @@ public abstract class BaseTestRunner implements TestListener {
 			suiteMethod= testClass.getMethod(SUITE_METHODNAME, new Class[0]);
 	 	} catch(Exception e) {
 	 		// try to extract a test suite automatically
-			clearStatus();			
+			clearStatus();
 			return new TestSuite(testClass);
 		}
 		if (! Modifier.isStatic(suiteMethod.getModifiers())) {
@@ -111,7 +111,7 @@ public abstract class BaseTestRunner implements TestListener {
 			test= (Test)suiteMethod.invoke(null, new Class[0]); // static method
 			if (test == null)
 				return test;
-		} 
+		}
 		catch (InvocationTargetException e) {
 			runFailed("Failed to invoke suite():" + e.getTargetException().toString());
 			return null;
@@ -120,18 +120,18 @@ public abstract class BaseTestRunner implements TestListener {
 			runFailed("Failed to invoke suite():" + e.toString());
 			return null;
 		}
-		
+
 		clearStatus();
 		return test;
 	}
-	
+
 	/**
 	 * Returns the formatted string of the elapsed time.
 	 */
 	public String elapsedTimeAsString(long runTime) {
 		return NumberFormat.getInstance().format((double)runTime/1000);
 	}
-	
+
 	/**
 	 * Processes the command line arguments and
 	 * returns the name of the suite class to run or null
@@ -153,7 +153,7 @@ public abstract class BaseTestRunner implements TestListener {
 				suiteName= args[i];
 			}
 		}
-		return suiteName;		
+		return suiteName;
 	}
 
 	/**
@@ -166,11 +166,11 @@ public abstract class BaseTestRunner implements TestListener {
 	 * Extract the class name from a String in VA/Java style
 	 */
 	public String extractClassName(String className) {
-		if(className.startsWith("Default package for")) 
+		if(className.startsWith("Default package for"))
 			return className.substring(className.lastIndexOf(".")+1);
 		return className;
 	}
-	
+
 	/**
 	 * Truncates a String to the maximum length.
 	 */
@@ -179,26 +179,26 @@ public abstract class BaseTestRunner implements TestListener {
 			s= s.substring(0, fgMaxMessageLength)+"...";
 		return s;
 	}
-	
+
 	/**
 	 * Override to define how to handle a failed loading of
 	 * a test suite.
 	 */
 	protected abstract void runFailed(String message);
-	
+
 	/**
-	 * Returns the loaded Class for a suite name. 
+	 * Returns the loaded Class for a suite name.
 	 */
 	protected Class loadSuiteClass(String suiteClassName) throws ClassNotFoundException {
 		return getLoader().load(suiteClassName);
 	}
-	
+
 	/**
 	 * Clears the status message.
 	 */
 	protected void clearStatus() { // Belongs in the GUI TestRunner class
 	}
-	
+
 	/**
 	 * Returns the loader to be used.
 	 */
@@ -207,16 +207,16 @@ public abstract class BaseTestRunner implements TestListener {
 			return new ReloadingTestSuiteLoader();
 		return new StandardTestSuiteLoader();
 	}
-	
+
 	protected boolean useReloadingTestSuiteLoader() {
 		return getPreference("loading").equals("true") && !inVAJava() && fLoading;
 	}
-	
+
 	private static File getPreferencesFile() {
 	 	String home= System.getProperty("user.home");
  		return new File(home, "junit.properties");
  	}
- 	
+
  	private static void readPreferences() {
  		InputStream is= null;
  		try {
@@ -231,11 +231,11 @@ public abstract class BaseTestRunner implements TestListener {
 			}
 		}
  	}
- 	
+
  	public static String getPreference(String key) {
  		return getPreferences().getProperty(key);
  	}
- 	
+
  	public static int getPreference(String key, int dflt) {
  		String value= getPreference(key);
  		int intValue= dflt;
@@ -261,7 +261,7 @@ public abstract class BaseTestRunner implements TestListener {
 	/**
 	 * Returns a filtered stack trace
 	 */
-	public static String getFilteredTrace(Throwable t) { 
+	public static String getFilteredTrace(Throwable t) {
 		StringWriter stringWriter= new StringWriter();
 		PrintWriter writer= new PrintWriter(stringWriter);
 		t.printStackTrace(writer);
@@ -276,14 +276,14 @@ public abstract class BaseTestRunner implements TestListener {
 	public static String getFilteredTrace(String stack) {
 		if (showStackRaw())
 			return stack;
-			
+
 		StringWriter sw= new StringWriter();
 		PrintWriter pw= new PrintWriter(sw);
 		StringReader sr= new StringReader(stack);
 		BufferedReader br= new BufferedReader(sr);
-		
+
 		String line;
-		try {	
+		try {
 			while ((line= br.readLine()) != null) {
 				if (!filterLine(line))
 					pw.println(line);
@@ -297,7 +297,7 @@ public abstract class BaseTestRunner implements TestListener {
 	protected static boolean showStackRaw() {
 		return !getPreference("filterstack").equals("true") || fgFilterStack == false;
 	}
-	
+
 	static boolean filterLine(String line) {
 		String[] patterns= new String[] {
 			"junit.framework.TestCase",
@@ -319,5 +319,5 @@ public abstract class BaseTestRunner implements TestListener {
  	static {
  		fgMaxMessageLength= getPreference("maxmessage", fgMaxMessageLength);
  	}
- 	
+
 }
