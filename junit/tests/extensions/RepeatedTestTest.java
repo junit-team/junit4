@@ -49,7 +49,7 @@ public class RepeatedTestTest extends TestCase {
 
  	public void testRepeatedNegative() {
  		try {
-			Test test= new RepeatedTest(fSuite, -1);
+			new RepeatedTest(fSuite, -1);
  		} catch (IllegalArgumentException e) {
  			return;
  		}

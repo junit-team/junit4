@@ -1,6 +1,5 @@
 package junit.tests.framework;
 
-import java.util.Vector;
 import junit.framework.*;
 import junit.tests.WasRun;
 

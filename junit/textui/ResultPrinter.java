@@ -11,7 +11,6 @@ import junit.framework.TestFailure;
 import junit.framework.TestListener;
 import junit.framework.TestResult;
 import junit.runner.BaseTestRunner;
-import junit.runner.TestRunListener;
 
 public class ResultPrinter implements TestListener {
 	PrintStream fWriter;

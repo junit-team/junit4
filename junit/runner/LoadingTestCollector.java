@@ -51,7 +51,7 @@ public class LoadingTestCollector extends ClassPathTestCollector {
 	
 	boolean hasSuiteMethod(Class testClass) {
 		try {
-			Method suiteMethod= testClass.getMethod(BaseTestRunner.SUITE_METHODNAME, new Class[0]);
+			testClass.getMethod(BaseTestRunner.SUITE_METHODNAME, new Class[0]);
 	 	} catch(Exception e) {
 	 		return false;
 		}

@@ -1,7 +1,6 @@
 package junit.tests;
 
 import junit.framework.*;
-import junit.runner.BaseTestRunner;
 
 /**
  * TestSuite that runs all the JUnit tests

@@ -4,7 +4,6 @@ package junit.tests.runner;
  * Test class used in TestTestCaseClassLoader
  */
 import junit.framework.*;
-import junit.runner.*;
 
 public class LoadedFromJar extends Assert {
 	public void verify() {

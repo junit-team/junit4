@@ -7,7 +7,6 @@ import java.io.PrintStream;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
-import junit.framework.TestFailure;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
 import junit.textui.ResultPrinter;

@@ -2,7 +2,6 @@ package junit.samples;
 
 import junit.framework.*;
 import java.util.Vector;
-import junit.extensions.*;
 
 /**
  * A sample test case, testing <code>java.util.Vector</code>.
@@ -45,7 +44,7 @@ public class VectorTest extends TestCase {
 		assertTrue(i.intValue() == 1);
 
 		try { 
-			Integer j= (Integer)fFull.elementAt(fFull.size());
+			fFull.elementAt(fFull.size());
 		} catch (ArrayIndexOutOfBoundsException e) {
 			return;
 		}

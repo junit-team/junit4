@@ -383,7 +383,6 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		fProgressIndicator= new ProgressBar();
 		fCounterPanel= createCounterPanel();
 
-		JLabel failureLabel= new JLabel("Errors and Failures:");
 		fFailures= new DefaultListModel();
 
 		fTestViewTab= createTestRunViews();

@@ -2,7 +2,6 @@ package junit.runner;
 
 import java.util.*;
 
-import junit.framework.*;
 
 /**
  * Collects Test class names to be presented
