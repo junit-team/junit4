@@ -11,19 +11,16 @@ public class RepeatedTestTest extends TestCase {
 	private TestSuite fSuite;
 
 	public static class SuccessTest extends TestCase {
-		public SuccessTest(String name) {
-			super(name);
-		}
 
-		public void success() {
+		public void runTest() {
 		}
 	}
 
 	public RepeatedTestTest(String name) {
 		super(name);
 		fSuite= new TestSuite();
-		fSuite.addTest(new SuccessTest("success"));
-		fSuite.addTest(new SuccessTest("success"));
+		fSuite.addTest(new SuccessTest());
+		fSuite.addTest(new SuccessTest());
 	}
 
 	public void testRepeatedOnce() {

@@ -7,9 +7,6 @@ import java.io.*;
 import java.io.IOException;
 
 public class TextRunnerTest extends TestCase {
-	public TextRunnerTest(String name) {
-		super(name);
-	}
 	
 	public void testFailure() throws Exception {
 		execTest("junit.tests.framework.Failure", false);

@@ -15,10 +15,6 @@ public class SorterTest extends TestCase {
 		}
 	}
 	
-	public SorterTest(String name) {
-		super(name);
-	}
-	
 	public void testSort() throws Exception {
 		Vector v= new Vector();
 		v.addElement("c");

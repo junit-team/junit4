@@ -6,9 +6,6 @@ package junit.tests.framework;
 import junit.framework.TestCase;
 
 public class NotVoidTestCase extends TestCase {
-	public NotVoidTestCase(String name) {
-		super(name);
-	}
 	public int testNotVoid() {
 		return 1;
 	}

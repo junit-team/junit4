@@ -1,20 +1,15 @@
 package junit.swingui;
 
-import junit.framework.*;
-import junit.runner.*;
-
-import java.util.*;
-import java.lang.reflect.*;
-import java.text.NumberFormat;
-import java.net.URL;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.*;
+import java.net.URL;
+import java.util.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.text.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.*;
+import junit.framework.*;
+import junit.runner.*;
 
 /**
  * A Swing based user interface to run tests.
@@ -26,6 +21,11 @@ import java.awt.image.*;
  * TestRunner takes as an optional argument the name of the testcase class to be run.
  */
 public class TestRunner extends BaseTestRunner implements TestRunContext {
+	private static Font PLAIN_FONT= StatusLine.PLAIN_FONT;
+	private static Font BOLD_FONT= StatusLine.BOLD_FONT;
+	private static final int GAP= 4;
+	private static final int HISTORY_LENGTH= 5;
+
 	protected JFrame fFrame;
 	private Thread fRunner;
 	private TestResult fTestResult;
@@ -43,10 +43,6 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 	private JTabbedPane fTestViewTab;
 	private JCheckBox fUseLoadingRunner;
 	private Vector fTestRunViews= new Vector(); // view associated with tab in tabbed pane
-	private static Font PLAIN_FONT= StatusLine.PLAIN_FONT;
-	private static Font BOLD_FONT= StatusLine.BOLD_FONT;
-	private static final int GAP= 4;
-	private static final int HISTORY_LENGTH= 5;
 
 	private static final String TESTCOLLECTOR_KEY= "TestCollectorClass";
 	private static final String FAILUREDETAILVIEW_KEY= "FailureViewClass";
@@ -93,7 +89,7 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 				public void run() {
 					if (fTestResult != null) {
 						fCounterPanel.setRunValue(fTestResult.runCount());
-						fProgressIndicator.step(fTestResult.wasSuccessful());
+						fProgressIndicator.step(fTestResult.runCount(), fTestResult.wasSuccessful());
 					}
 				}
 			}
@@ -307,7 +303,7 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 	}
 
 	protected StatusLine createStatusLine() {
-		return new StatusLine(420);
+		return new StatusLine(380);
 	}
 
 	protected JComboBox createSuiteCombo() {
@@ -408,21 +404,23 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		addGrid(panel, fRun, 		2, 1, 1, GridBagConstraints.HORIZONTAL, 	0.0, GridBagConstraints.CENTER);
 
 		addGrid(panel, fUseLoadingRunner,  	0, 2, 3, GridBagConstraints.NONE, 1.0, GridBagConstraints.WEST);
-		addGrid(panel, new JSeparator(), 	0, 3, 3, GridBagConstraints.HORIZONTAL, 1.0, GridBagConstraints.WEST);
+		//addGrid(panel, new JSeparator(), 	0, 3, 3, GridBagConstraints.HORIZONTAL, 1.0, GridBagConstraints.WEST);
 
 
-		addGrid(panel, fProgressIndicator, 	0, 4, 2, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.WEST);
-		addGrid(panel, fLogo, 			2, 4, 1, GridBagConstraints.NONE, 			0.0, GridBagConstraints.NORTH);
+		addGrid(panel, fProgressIndicator, 	0, 3, 2, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.WEST);
+		addGrid(panel, fLogo, 			2, 3, 1, GridBagConstraints.NONE, 			0.0, GridBagConstraints.NORTH);
 
-		addGrid(panel, fCounterPanel,	 0, 5, 2, GridBagConstraints.NONE, 			0.0, GridBagConstraints.CENTER);
+		addGrid(panel, fCounterPanel,	 0, 4, 2, GridBagConstraints.NONE, 			0.0, GridBagConstraints.WEST);
+		addGrid(panel, new JSeparator(), 	0, 5, 2, GridBagConstraints.HORIZONTAL, 1.0, GridBagConstraints.WEST);
+		addGrid(panel, new JLabel("Results:"),	0, 6, 2, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.WEST);
 
 		JSplitPane splitter= new JSplitPane(JSplitPane.VERTICAL_SPLIT, fTestViewTab, tracePane);
-		addGrid(panel, splitter, 	 0, 6, 2, GridBagConstraints.BOTH, 			1.0, GridBagConstraints.WEST);
+		addGrid(panel, splitter, 	 0, 7, 2, GridBagConstraints.BOTH, 			1.0, GridBagConstraints.WEST);
 
-		addGrid(panel, failedPanel, 	 2, 6, 1, GridBagConstraints.HORIZONTAL, 	0.0, GridBagConstraints.NORTH/*CENTER*/);
+		addGrid(panel, failedPanel, 	 2, 7, 1, GridBagConstraints.HORIZONTAL, 	0.0, GridBagConstraints.NORTH/*CENTER*/);
 
-		addGrid(panel, fStatusLine, 	 0, 8, 2, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.CENTER);
-		addGrid(panel, fQuitButton, 	 2, 8, 1, GridBagConstraints.HORIZONTAL, 	0.0, GridBagConstraints.CENTER);
+		addGrid(panel, fStatusLine, 	 0, 9, 2, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.CENTER);
+		addGrid(panel, fQuitButton, 	 2, 9, 1, GridBagConstraints.HORIZONTAL, 	0.0, GridBagConstraints.CENTER);
 
 		frame.setContentPane(panel);
 		frame.pack();
@@ -550,12 +548,11 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 			return;
 		}
 		Test reloadedTest= null;
+		TestCase rerunTest= (TestCase)test;
+
 		try {
-			Class reloadedTestClass= getLoader().reload(test.getClass());
-			Class[] classArgs= { String.class };
-			Constructor constructor= reloadedTestClass.getConstructor(classArgs);
-			Object[] args= new Object[]{((TestCase)test).getName()};
-			reloadedTest= (Test)constructor.newInstance(args);
+			Class reloadedTestClass= getLoader().reload(test.getClass()); 
+			reloadedTest= TestSuite.createTest(reloadedTestClass, rerunTest.getName());
 		} catch(Exception e) {
 			showInfo("Could not reload "+ test.toString());
 			return;

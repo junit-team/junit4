@@ -19,10 +19,6 @@ public class BaseTestRunnerTest extends TestCase {
 		public void testStarted(String testName) {
 		}
 	}
-
-	public BaseTestRunnerTest(String name) {
-		super(name);
-	}
 	
 	public static class NonStatic {
 		public Test suite() {

@@ -13,7 +13,7 @@ public class SuiteTest extends TestCase {
 		super(name);
 	}
 	protected void setUp() {
-		fResult= new TestResult();
+		fResult= new TestResult(); 
 	}
 	public static Test suite() {
 		TestSuite suite= new TestSuite("Suite Tests");

@@ -1,14 +1,14 @@
-package junit.runner;
+package junit.runner;   
+    
+/**   
+ * This class defines the current version of JUnit   
+ */   
+public class Version {   
+	private Version() {   
+		// don't instantiate   
+	}   
 
-/**
- * This class defines the current version of JUnit
- */
-public class Version {
-	private Version() {
-		// don't instantiate
-	}
-
-	public static String id() {
-		return "@version@";
-	}
-}
+	public static String id() {   
+		return "3.7";   
+	}   
+} 

@@ -1,14 +1,12 @@
 package junit.awtui;
 
-import junit.framework.*;
-import junit.runner.*;
-
-import java.util.Vector;
-import java.lang.reflect.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.*;
-import java.io.*;
+import java.awt.image.ImageProducer;
+import java.util.Vector;
+
+import junit.framework.*;
+import junit.runner.*;
 
 /**
  * An AWT based user interface to run tests.
@@ -342,12 +340,10 @@ import java.io.*;
 			return;
 		}
 		Test reloadedTest= null;
+		TestCase rerunTest= (TestCase)test;
 		try {
-			Class reloadedTestClass= getLoader().reload(test.getClass());
-			Class[] classArgs= { String.class };
-			Constructor constructor= reloadedTestClass.getConstructor(classArgs);
-			Object[] args= new Object[]{((TestCase)test).getName()};
-			reloadedTest= (Test)constructor.newInstance(args);
+			Class reloadedTestClass= getLoader().reload(test.getClass()); 
+			reloadedTest= TestSuite.createTest(reloadedTestClass, rerunTest.getName());
 		} catch(Exception e) {
 			showInfo("Could not reload "+ test.toString());
 			return;

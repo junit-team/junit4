@@ -2,11 +2,7 @@ package junit.tests.framework;
 
 import junit.framework.*;
 
-public class AssertTest extends TestCase {
-	public AssertTest(String name) {
-		super(name);
-	}
-	
+public class AssertTest extends TestCase {	
 	/**
   	 * Test for the special Double.NaN value.
   	 */

@@ -9,9 +9,9 @@ import junit.framework.*;
  */
 public class Success extends TestCase {
 	
-	public Success(String name) {
-		super(name);
+	public void runTest() {
 	}
-	public void test() {
+	
+	public void testSuccess() {
 	}
 }

@@ -11,9 +11,6 @@ import java.net.URL;
  */
 public class TestCaseClassLoaderTest extends TestCase {
 
-	public TestCaseClassLoaderTest(String name) {
-		super(name);
-	}
 	public void testClassLoading() throws Exception {
 		TestCaseClassLoader loader= new TestCaseClassLoader();
 		Class loadedClass= loader.loadClass("junit.tests.runner.ClassLoaderTest", true);

@@ -13,12 +13,12 @@ interface IMoney {
 	 * Adds a simple Money to this money. This is a helper method for
 	 * implementing double dispatch
 	 */
-	IMoney addMoney(Money m);
+	public abstract IMoney addMoney(Money m);
 	/**
 	 * Adds a MoneyBag to this money. This is a helper method for
 	 * implementing double dispatch
 	 */
-	IMoney addMoneyBag(MoneyBag s);
+	public abstract IMoney addMoneyBag(MoneyBag s);
 	/**
 	 * Tests whether this money is zero
 	 */
@@ -38,5 +38,5 @@ interface IMoney {
 	/**
 	 * Append this to a MoneyBag m.
 	 */
-	void appendTo(MoneyBag m);
+	public abstract void appendTo(MoneyBag m);
 }

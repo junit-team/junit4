@@ -11,9 +11,7 @@ public class TestListenerTest extends TestCase implements TestListener {
 	private int fEndCount;
 	private int fFailureCount;
 	private int fErrorCount;
-	public TestListenerTest(String name) {
-		super(name);
-	}
+
 	public void addError(Test test, Throwable t) {
 		fErrorCount++;
 	}

@@ -9,9 +9,7 @@ import junit.framework.*;
 public class SimpleTest extends TestCase {
 	protected int fValue1;
 	protected int fValue2;
-	public SimpleTest(String name) {
-		super(name);
-	}
+
 	protected void setUp() {
 		fValue1= 2;
 		fValue2= 3;

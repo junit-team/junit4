@@ -12,9 +12,6 @@ public class VectorTest extends TestCase {
 	protected Vector fEmpty;
 	protected Vector fFull;
 
-	public VectorTest(String name) {
-		super(name);
-	}
 	public static void main (String[] args) {
 		junit.textui.TestRunner.run (suite());
 	}

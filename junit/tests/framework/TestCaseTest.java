@@ -13,9 +13,6 @@ public class TestCaseTest extends TestCase {
 	static class TornDown extends TestCase {
 		boolean fTornDown= false;
 		
-		TornDown(String name) {
-			super(name);
-		}
 		protected void tearDown() {
 			fTornDown= true;
 		}
@@ -24,9 +21,6 @@ public class TestCaseTest extends TestCase {
 		}
 	}
 
-	public TestCaseTest(String name) {
-		super(name);
-	}
 	public void testCaseToString() {
 		// This test wins the award for twisted snake tail eating while
 		// writing self tests. And you thought those weird anonymous
@@ -42,7 +36,7 @@ public class TestCaseTest extends TestCase {
 		verifyError(error);
 	}
 	public void testRunAndTearDownFails() {
-		TornDown fails= new TornDown("fails") {
+		TornDown fails= new TornDown() {
 			protected void tearDown() {
 				super.tearDown();
 				throw new Error();
@@ -81,7 +75,7 @@ public class TestCaseTest extends TestCase {
 	}
 
 	public void testTearDownAfterError() {
-		TornDown fails= new TornDown("fails");
+		TornDown fails= new TornDown();
 		verifyError(fails);
 		assertTrue(fails.fTornDown);
 	}
@@ -97,7 +91,7 @@ public class TestCaseTest extends TestCase {
 		verifyError(fails);
 	}
 	public void testTearDownSetupFails() {
-		TornDown fails= new TornDown("fails") {
+		TornDown fails= new TornDown() {
 			protected void setUp() {
 				throw new Error();
 			}
@@ -106,7 +100,7 @@ public class TestCaseTest extends TestCase {
 		assertTrue(!fails.fTornDown);
 	}
 	public void testWasRun() {
-		WasRun test= new WasRun("");
+		WasRun test= new WasRun(); 
 		test.run();
 		assertTrue(test.fWasRun);
 	}
@@ -114,7 +108,7 @@ public class TestCaseTest extends TestCase {
 		// This test documents the current behavior. With 1.4, we should
 		// wrap the exception thrown while running with the exception thrown
 		// while tearing down
-		Test t= new TornDown("") {
+		Test t= new TornDown() {
 			public void tearDown() {
 				throw new Error("tearDown");
 			}

@@ -54,7 +54,7 @@ public class TestSuite implements Test {
 	 public TestSuite(final Class theClass) {
 		fName= theClass.getName();
 		try {
-			getConstructor(theClass); // Avoid generating multiple error messages
+			getTestConstructor(theClass); // Avoid generating multiple error messages
 		} catch (NoSuchMethodException e) {
 			addTest(warning("Class "+theClass.getName()+" has no public constructor TestCase(String name) or TestCase()"));
 			return;
@@ -108,27 +108,25 @@ public class TestSuite implements Test {
 				addTest(warning("Test method isn't public: "+m.getName()));
 			return;
 		}
-			
 		names.addElement(name);
-		
 		addTest(createTest(theClass, name));
 	}
 
-	public Test createTest(Class theClass, String name) throws IllegalArgumentException {
-		Constructor c;
+	static public Test createTest(Class theClass, String name) {
+		Constructor constructor;
 		try {
-			c= getConstructor(theClass);
+			constructor= getTestConstructor(theClass);
 		} catch (NoSuchMethodException e) {
 			return warning("Class "+theClass.getName()+" has no public constructor TestCase(String name) or TestCase()");
 		}
 		Object test;
 		try {
-			if (c.getParameterTypes().length == 0) {
-				test= c.newInstance(new Object[0]);
+			if (constructor.getParameterTypes().length == 0) {
+				test= constructor.newInstance(new Object[0]);
 				if (test instanceof TestCase)
 					((TestCase) test).setName(name);
 			} else {
-				test= c.newInstance(new Object[]{name});
+				test= constructor.newInstance(new Object[]{name});
 			}
 		} catch (InstantiationException e) {
 			return(warning("Cannot instantiate test case: "+name+" ("+exceptionToString(e)+")"));
@@ -143,7 +141,7 @@ public class TestSuite implements Test {
 	/**
 	 * Converts the stack trace into a string
 	 */
-	private String exceptionToString(Throwable t) {
+	private static String exceptionToString(Throwable t) {
 		StringWriter stringWriter= new StringWriter();
 		PrintWriter writer= new PrintWriter(stringWriter);
 		t.printStackTrace(writer);
@@ -167,7 +165,7 @@ public class TestSuite implements Test {
 	 * Gets a constructor which takes a single String as
 	 * its argument or a no arg constructor.
 	 */
-	private Constructor getConstructor(Class theClass) throws NoSuchMethodException {
+	public static Constructor getTestConstructor(Class theClass) throws NoSuchMethodException {
 		Class[] args= { String.class };
 		try {
 			return theClass.getConstructor(args);	
@@ -253,7 +251,7 @@ public class TestSuite implements Test {
 	/**
 	 * Returns a test which will fail and log a warning message.
 	 */
-	private Test warning(final String message) {
+	private static Test warning(final String message) {
 		return new TestCase("warning") {
 			protected void runTest() {
 				fail(message);

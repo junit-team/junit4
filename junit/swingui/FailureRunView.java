@@ -1,11 +1,12 @@
 package junit.swingui;
 
+import java.awt.*;
+
 import javax.swing.*;
 import javax.swing.event.*;
-import java.awt.Component;
-
 import junit.framework.*;
 import junit.runner.BaseTestRunner;
+
 
 /**
  * A view presenting the test failures as a list.
@@ -35,6 +36,7 @@ class FailureRunView implements TestRunView {
 			JList list, Object value, int modelIndex, 
 			boolean isSelected, boolean cellHasFocus) {
 	
+		    Component c= super.getListCellRendererComponent(list, value, modelIndex, isSelected, cellHasFocus);
 			TestFailure failure= (TestFailure)value;
 			String text= failure.failedTest().toString();
 			String msg= failure.exceptionMessage();
@@ -43,12 +45,11 @@ class FailureRunView implements TestRunView {
 	 
 			if (failure.isFailure()) { 
 				if (fFailureIcon != null)
-		    			setIcon(fFailureIcon);
+		    		setIcon(fFailureIcon);
 			} else {
-		    		if (fErrorIcon != null)
-		    			setIcon(fErrorIcon);
-		    	}
-		    	Component c= super.getListCellRendererComponent(list, text, modelIndex, isSelected, cellHasFocus);
+		    	if (fErrorIcon != null)
+		    		setIcon(fErrorIcon);
+		    }
 			setText(text);
 			setToolTipText(text);
 			return c;
@@ -58,15 +59,16 @@ class FailureRunView implements TestRunView {
 	public FailureRunView(TestRunContext context) {
 		fRunContext= context;
 		fFailureList= new JList(fRunContext.getFailures());
+		fFailureList.setFont(new Font("Dialog", Font.PLAIN, 12));
+ 
 		fFailureList.setPrototypeCellValue(
-			new TestFailure(new TestCase("dummy") {
+			new TestFailure(new TestCase() {
 				protected void runTest() {}
 			}, 
 			new AssertionFailedError("message"))
 		);	
 		fFailureList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		fFailureList.setCellRenderer(new FailureListCellRenderer());
-		fFailureList.setToolTipText("Failure - grey X; Error - red X");
 		fFailureList.setVisibleRowCount(5);
 
 		fFailureList.addListSelectionListener(
@@ -93,9 +95,9 @@ class FailureRunView implements TestRunView {
 	}
 	
 	public void addTab(JTabbedPane pane) {
-		JScrollPane sl= new JScrollPane(fFailureList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		JScrollPane scrollPane= new JScrollPane(fFailureList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		Icon errorIcon= TestRunner.getIconResource(getClass(), "icons/error.gif");
-		pane.addTab("Failures", errorIcon, sl, "The list of failed tests");
+		pane.addTab("Failures", errorIcon, scrollPane, "The list of failed tests");
 	}
 		
 	public void revealFailure(Test failure) {
@@ -112,5 +114,3 @@ class FailureRunView implements TestRunView {
 		fRunContext.handleTestSelected(getSelectedTest());
 	}
 }
-
-

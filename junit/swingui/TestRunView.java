@@ -1,7 +1,6 @@
 package junit.swingui;
 
-import javax.swing.*;
-
+import javax.swing.JTabbedPane;
 import junit.framework.*;
 
 /**

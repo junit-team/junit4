@@ -9,7 +9,7 @@ import junit.tests.WasRun;
  *
  */
 public class ExtensionTest extends TestCase {
-	static class TornDown extends TestSetup {
+	static class TornDown extends TestSetup { 
 		boolean fTornDown= false;
 		
 		TornDown(Test test) {
@@ -18,9 +18,6 @@ public class ExtensionTest extends TestCase {
 		protected void tearDown() {
 			fTornDown= true;
 		}
-	}
-	public ExtensionTest(String name) {
-		super(name);
 	}
 	public void testRunningErrorInTestSetup() {
 		TestCase test= new TestCase("failure") {
@@ -61,7 +58,7 @@ public class ExtensionTest extends TestCase {
 		assertEquals(1, result.errorCount());
 	}
 	public void testSetupErrorDontTearDown() {
-		WasRun test= new WasRun("");
+		WasRun test= new WasRun();
 
 		TornDown wrapper= new TornDown(test) {
 			public void setUp() {
@@ -75,7 +72,7 @@ public class ExtensionTest extends TestCase {
 		assertTrue(!wrapper.fTornDown);
 	}
 	public void testSetupErrorInTestSetup() {
-		WasRun test= new WasRun("");
+		WasRun test= new WasRun();
 
 		TestSetup wrapper= new TestSetup(test) {
 			public void setUp() {

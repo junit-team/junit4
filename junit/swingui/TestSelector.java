@@ -1,12 +1,11 @@
 package junit.swingui;
 
-import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
+
 import javax.swing.*;
 import javax.swing.event.*;
-
-import junit.framework.*;
 import junit.runner.*;
 
 /**

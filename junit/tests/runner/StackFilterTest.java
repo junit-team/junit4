@@ -8,10 +8,6 @@ public class StackFilterTest extends TestCase {
 	String fFiltered;
 	String fUnfiltered;
 	
-	public StackFilterTest(String name) {
-		super(name);
-	}
-	
 	protected void setUp() {
 		StringWriter swin= new StringWriter();
 		PrintWriter pwin= new PrintWriter(swin);

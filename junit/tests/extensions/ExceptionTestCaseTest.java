@@ -31,9 +31,6 @@ public class ExceptionTestCaseTest extends junit.framework.TestCase {
 		}
 	}
 
-	public ExceptionTestCaseTest(String name) {
-		super(name);
-	}
 	public void testExceptionSubclass() {
 		ExceptionTestCase test= new ThrowExceptionTestCase("test", IndexOutOfBoundsException.class);
 		TestResult result= test.run();

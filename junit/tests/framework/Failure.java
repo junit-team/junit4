@@ -8,11 +8,7 @@ import junit.framework.*;
  *
  */
 public class Failure extends TestCase {
-	
-	public Failure(String name) {
-		super(name);
-	}
-	public void test() {
+	public void runTest() {
 		fail();
 	}
 }

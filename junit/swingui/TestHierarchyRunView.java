@@ -1,10 +1,10 @@
 package junit.swingui;
 
+import java.util.Vector;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.tree.TreePath;
-import java.util.Vector;
-
 import junit.framework.*;
 
 /**
@@ -69,5 +69,4 @@ class TestHierarchyRunView implements TestRunView {
 	protected void testSelected() {
 		fTestContext.handleTestSelected(getSelectedTest());
 	}
-	
 }

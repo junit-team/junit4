@@ -9,19 +9,11 @@ import junit.extensions.*;
 
 public class ActiveTestTest extends TestCase {
 
-	public static class SuccessTest extends TestCase {
-		public SuccessTest(String name) {
-			super(name);
+	public static class SuccessTest extends TestCase {		
+		public void runTest() {
 		}
+	}
 		
-		public void success() {
-		}
-	}
-	
-	public ActiveTestTest(String name) {
-		super(name);
-	}
-	
 	public void testActiveTest() {		
 		Test test= createActiveTestSuite(); 
 		TestResult result= new TestResult();
@@ -61,7 +53,7 @@ public class ActiveTestTest extends TestCase {
 	ActiveTestSuite createActiveTestSuite() {
 		ActiveTestSuite suite= new ActiveTestSuite();
 		for (int i= 0; i < 100; i++) 
-			suite.addTest(new SuccessTest("success"));
+			suite.addTest(new SuccessTest());
 		return suite;
 	}
 

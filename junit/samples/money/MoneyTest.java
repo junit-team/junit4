@@ -11,9 +11,6 @@ public class MoneyTest extends TestCase {
 	private IMoney fMB1;
 	private IMoney fMB2;
 
-	public MoneyTest(String name) {
-		super(name);
-	}
 	public static void main(String args[]) {
 		junit.textui.TestRunner.run(MoneyTest.class);
 	}

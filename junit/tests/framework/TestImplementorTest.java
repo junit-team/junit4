@@ -28,17 +28,12 @@ public class TestImplementorTest extends TestCase {
 			result.runProtected(this, p);
 			result.endTest(this);
 		}
-		
-		public String getDisplayName() {
-			return "";
-		}
 	}
 	
 	private DoubleTestCase fTest;
 	
-	public TestImplementorTest(String name) {
-		super(name);
-		TestCase testCase= new TestCase("noop") {
+	public TestImplementorTest() {
+		TestCase testCase= new TestCase() {
 			public void runTest() {
 			}
 		};

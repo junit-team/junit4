@@ -8,9 +8,6 @@ import junit.framework.*;
  */
 public class WasRun extends TestCase {
 	public boolean fWasRun= false;
-		public WasRun(String name) {
-			super(name);
-		}
 		protected void runTest() {
 			fWasRun= true;
 		}

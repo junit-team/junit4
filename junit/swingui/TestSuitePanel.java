@@ -1,12 +1,11 @@
 package junit.swingui;
 
-import java.util.Vector;
 import java.awt.*;
+import java.util.Vector;
+
 import javax.swing.*;
 import javax.swing.tree.*;
-
 import junit.framework.*;
-import junit.runner.*;
 
 /**
  * A Panel showing a test suite as a tree. 
