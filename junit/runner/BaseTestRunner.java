@@ -255,7 +255,7 @@ public abstract class BaseTestRunner implements TestListener {
 		return false;
 	}
 
- 	{
+ 	static {
  		fPreferences= new Properties();
  		//JDK 1.2 feature
  		//fPreferences.setProperty("loading", "true");
