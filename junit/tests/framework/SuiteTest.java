@@ -30,6 +30,7 @@ public class SuiteTest extends TestCase {
 		suite.addTest(new SuiteTest("testInheritedTests"));
 		suite.addTest(new SuiteTest("testShadowedTests"));
 		suite.addTest(new SuiteTest("testAddTestSuite"));
+		suite.addTest(new SuiteTest("testCreateSuiteFromArray"));
 		
 		return suite;
 	}
@@ -86,5 +87,12 @@ public class SuiteTest extends TestCase {
 		suite.addTestSuite(OneTestCase.class);
 		suite.run(fResult);
 		assertEquals(1, fResult.runCount());
+	}
+	public void testCreateSuiteFromArray() {
+		Class[] testClassArray = { OneTestCase.class, DoublePrecisionAssertTest.class };
+		TestSuite suite = new TestSuite(testClassArray);
+		assertEquals(2, suite.testCount());
+		assertEquals("junit.tests.framework.DoublePrecisionAssertTest" , ((TestSuite)suite.testAt(1)).getName());
+		assertEquals("junit.tests.framework.OneTestCase" , ((TestSuite)suite.testAt(0)).getName());
 	}
 }
