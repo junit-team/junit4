@@ -155,7 +155,9 @@ public abstract class BaseTestRunner implements TestListener {
 
  	{
  		fPreferences= new Properties();
- 		fPreferences.setProperty("loading", "true");
+ 		//JDK 1.2
+ 		//fPreferences.setProperty("loading", "true");
+ 		fPreferences.put("loading", "true");
   		readPreferences();
  		fMaxMessage= getPreference("maxmessage", fMaxMessage);
  	}
