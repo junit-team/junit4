@@ -1,5 +1,7 @@
 <!-- JUnit build script using ant 1.4 -->
 <project name="junit" default="dist" basedir=".">
+	<property file="${user.home}/.junit.properties" />
+	<property name="build.compiler" value="classic" />
 	<property name="version" value="3.7" />
 	<property name="dist"  value="junit${version}" />
 	<property name="versionfile"  value="junit/runner/Version.java" />
