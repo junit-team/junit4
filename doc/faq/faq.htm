@@ -32,6 +32,8 @@ get an error with the GUI TestRunners, but not with the textui.TestRunner?</A>
 what can be done about it?</A> <BR>
 <LI><A href="http://junit.sourceforge.net/doc/faq/faq.htm#private">How do I test
 private or protected methods?</A> <BR>
+<LI><A href="http://junit.sourceforge.net/doc/faq/faq.htm#container">How do I test
+things that have to run in a container (Servlet, EJBs)?</A> <BR>
 <HR>
 <A name="How do I implement a test case for thrown"></A>
 <H2>How do I implement a test case for a thrown exception?</H2>Catch the
@@ -151,5 +153,9 @@ PrivilegedAccessorTest.java</A>.</LI>
 </UL>
 Many people argue that a having to test
 private methods is an indication that those methods should be moved into another class.
+<H2><A name="container"></A>How do I test things that have to run in a container (Servlets, EJBs)?</H2><BR>
+	Don't.  Have your Servlets, EJBs, etc, delegate functionality to objects which don't have to be run in a container to be tested
+	or take a look at the <a href="http://www.junit.org/news/extension/j2ee/index.htm">J2EE extensions</a>,
+	<a href="http://httpunit.sourceforge.net/">HttpUnit</a>, or <a href="http://www.junit.org/news/extension/mock_objects/index.htm">Mock Objects</a>.
 <HR width="100%">
 </LI></BODY></HTML>
