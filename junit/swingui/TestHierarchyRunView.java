@@ -12,7 +12,7 @@ import junit.framework.*;
  * The contents of a test suite is shown
  * as a tree.
  */
-class TestHierarchyRunView implements TestRunView {
+public class TestHierarchyRunView implements TestRunView {
 	TestSuitePanel fTreeBrowser;
 	TestRunContext fTestContext;
 	

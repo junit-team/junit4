@@ -437,7 +437,7 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		c.fill= fill;
 		if (fill == GridBagConstraints.BOTH || fill == GridBagConstraints.VERTICAL)
 			c.weighty= 1.0;
-		c.insets= new Insets(y == 0 ? GAP : 0, x == 0 ? GAP : 0, GAP, GAP);
+		c.insets= new Insets(y == 0 ? 10 : 0, x == 0 ? 10 : GAP, GAP, GAP); 
 		p.add(co, c);
 	}
 

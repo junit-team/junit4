@@ -1,5 +1,6 @@
 package junit.swingui;
 
+import java.awt.*;
 import java.awt.GridLayout;
 
 import javax.swing.*;
@@ -17,16 +18,37 @@ public class CounterPanel extends JPanel {
 	private int fTotal;
 	
 	public CounterPanel() {
-		super(new GridLayout(1, 6)); 	
-		fNumberOfErrors= createOutputField(8);
+		super(new GridBagLayout()); 	
+		fNumberOfErrors= createOutputField(5);
 		fNumberOfFailures= createOutputField(5);
-		fNumberOfRuns= createOutputField(5); 
-		add(new JLabel("Runs:"));		
-		add(fNumberOfRuns);
-		add(new JLabel("Errors:", fErrorIcon, SwingConstants.LEFT));	
-		add(fNumberOfErrors);
-		add(new JLabel("Failures: ", fFailureIcon, SwingConstants.LEFT));	
-		add(fNumberOfFailures);
+		fNumberOfRuns= createOutputField(9); 
+		
+      addToGrid(new JLabel("Runs:", JLabel.CENTER),
+          0, 0, 1, 1, 0.0, 0.0,
+          GridBagConstraints.CENTER, GridBagConstraints.NONE,
+          new Insets(0, 0, 0, 0));
+     addToGrid(fNumberOfRuns,
+          1, 0, 1, 1, 0.33, 0.0,
+          GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+          new Insets(0, 8, 0, 0));
+          
+     addToGrid(new JLabel("Errors:", fErrorIcon, SwingConstants.LEFT),
+          2, 0, 1, 1, 0.0, 0.0,
+          GridBagConstraints.CENTER, GridBagConstraints.NONE,
+          new Insets(0, 8, 0, 0));
+      addToGrid(fNumberOfErrors,
+          3, 0, 1, 1, 0.33, 0.0,
+          GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+          new Insets(0, 8, 0, 0));
+          
+      addToGrid(new JLabel("Failures:", fFailureIcon, SwingConstants.LEFT),
+          4, 0, 1, 1, 0.0, 0.0,
+          GridBagConstraints.CENTER, GridBagConstraints.NONE,
+          new Insets(0, 8, 0, 0));
+      addToGrid(fNumberOfFailures,
+          5, 0, 1, 1, 0.33, 0.0,
+          GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+          new Insets(0, 8, 0, 0));
 	} 
 	
 	private JTextField createOutputField(int width) {
@@ -36,6 +58,25 @@ public class CounterPanel extends JPanel {
 		field.setEditable(false);
 		field.setBorder(BorderFactory.createEmptyBorder());
 		return field;
+	}
+
+	public void addToGrid(Component comp,
+	    	int gridx, int gridy, int gridwidth, int gridheight,
+			double weightx, double weighty,
+			int anchor, int fill,
+			Insets insets) {
+		
+		GridBagConstraints constraints= new GridBagConstraints();
+		constraints.gridx= gridx;
+		constraints.gridy= gridy;
+		constraints.gridwidth= gridwidth;
+		constraints.gridheight= gridheight;
+		constraints.weightx= weightx;
+		constraints.weighty= weighty;
+		constraints.anchor= anchor;
+		constraints.fill= fill;
+		constraints.insets= insets;
+		add(comp, constraints);
 	}
 	
 	public void reset() {

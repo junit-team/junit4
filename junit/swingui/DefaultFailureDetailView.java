@@ -10,8 +10,8 @@ import junit.runner.*;
 /**
  * A view that shows a stack trace of a failure
  */
-class DefaultFailureDetailView implements FailureDetailView {
-	JList fList; 
+public class DefaultFailureDetailView implements FailureDetailView {
+	JList fList;  
 	
 	/**
 	 * A ListModel representing the scanned failure stack trace.

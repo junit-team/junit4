@@ -11,7 +11,7 @@ import junit.runner.BaseTestRunner;
 /**
  * A view presenting the test failures as a list.
  */
-class FailureRunView implements TestRunView {
+public class FailureRunView implements TestRunView {
 	JList fFailureList;
 	TestRunContext fRunContext;
 	
