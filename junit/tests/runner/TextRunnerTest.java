@@ -1,7 +1,10 @@
 package junit.tests.runner;
 
 import junit.framework.*;
+import junit.framework.TestResult;
+
 import java.io.*;
+import java.io.IOException;
 
 public class TextRunnerTest extends TestCase {
 	public TextRunnerTest(String name) {
@@ -35,6 +38,22 @@ public class TextRunnerTest extends TestCase {
 			assertEquals(junit.textui.TestRunner.SUCCESS_EXIT, p.exitValue());
 		else
 			assertEquals(junit.textui.TestRunner.FAILURE_EXIT, p.exitValue());
+	}
+	
+	public void testRunReturnsResult() {
+		PrintStream oldOut= System.out;
+		System.setOut(new PrintStream (
+			new OutputStream() {
+				public void write(int arg0) throws IOException {
+				}
+			}
+		));
+		try {
+			TestResult result= junit.textui.TestRunner.run(new TestSuite());
+			assertTrue(result.wasSuccessful());
+		} finally {
+			System.setOut(oldOut);
+		}
 	}
 		
 

@@ -20,6 +20,7 @@ public class AllTests {
 		suite.addTestSuite(TestListenerTest.class);
 		suite.addTestSuite(AssertTest.class);
 		suite.addTestSuite(TestImplementorTest.class);
+		suite.addTestSuite(NoArgTestCaseTest.class);
 		return suite;
 	}
 	

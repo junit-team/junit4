@@ -79,9 +79,9 @@ public abstract class TestCase extends Assert implements Test {
 
 	/**
 	 * No-arg constructor to enable serialization. This method
-	 * is not intended to be used by mere mortals.
+	 * is not intended to be used by mere mortals without calling setName().
 	 */
-	TestCase() {
+	public TestCase() {
 		fName= null;
 	}
 	/**
@@ -139,6 +139,7 @@ public abstract class TestCase extends Assert implements Test {
 	 * @exception Throwable if any exception is thrown
 	 */
 	protected void runTest() throws Throwable {
+		assertNotNull(fName);
 		Method runMethod= null;
 		try {
 			// use getMethod to get all public inherited

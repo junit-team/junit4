@@ -18,6 +18,7 @@ public class AllTests {
 		suite.addTestSuite(StackFilterTest.class);
 		suite.addTestSuite(SorterTest.class);
 		suite.addTestSuite(SimpleTestCollectorTest.class);
+		suite.addTestSuite(BaseTestRunnerTest.class);
 		if (!BaseTestRunner.inVAJava()) {
 			suite.addTestSuite(TextRunnerTest.class);
 			if (!isJDK11())

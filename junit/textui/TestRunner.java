@@ -30,8 +30,8 @@ public class TestRunner extends BaseTestRunner {
 	int fColumn= 0;
 	
 	public static final int SUCCESS_EXIT= 0;
-	public static final int FAILURE_EXIT= -1;
-	public static final int EXCEPTION_EXIT= -2;
+	public static final int FAILURE_EXIT= 1;
+	public static final int EXCEPTION_EXIT= 2;
 
 	/**
 	 * Constructs a TestRunner.
@@ -58,15 +58,15 @@ public class TestRunner extends BaseTestRunner {
 
 	public void testFailed(int status, Test test, Throwable t) {
 		switch (status) {
-			case TestRunListener.STATUS_ERROR: writer().print("E"); break;
-			case TestRunListener.STATUS_FAILURE: writer().print("F"); break;
+			case TestRunListener.STATUS_ERROR: getWriter().print("E"); break;
+			case TestRunListener.STATUS_FAILURE: getWriter().print("F"); break;
 		}
 	}
 	
 	public void testStarted(String testName) {
-		writer().print(".");
+		getWriter().print(".");
 		if (fColumn++ >= 40) {
-			writer().println();
+			getWriter().println();
 			fColumn= 0;
 		}
 	}
@@ -88,11 +88,11 @@ public class TestRunner extends BaseTestRunner {
 		suite.run(result);
 		long endTime= System.currentTimeMillis();
 		long runTime= endTime-startTime;
-		writer().println();
-		writer().println("Time: "+elapsedTimeAsString(runTime));
+		getWriter().println();
+		getWriter().println("Time: "+elapsedTimeAsString(runTime));
 		print(result);
 
-		writer().println();
+		getWriter().println();
 
 		pause(wait);
 		return result;
@@ -100,7 +100,7 @@ public class TestRunner extends BaseTestRunner {
 
 	protected void pause(boolean wait) {
 		if (wait) {
-			writer().println("<RETURN> to continue");
+			getWriter().println("<RETURN> to continue");
 			try {
 				System.in.read();
 			}
@@ -135,15 +135,15 @@ public class TestRunner extends BaseTestRunner {
 	public void printErrors(TestResult result) {
 	    if (result.errorCount() != 0) {
 	        if (result.errorCount() == 1)
-		        writer().println("There was "+result.errorCount()+" error:");
+		        getWriter().println("There was "+result.errorCount()+" error:");
 	        else
-		        writer().println("There were "+result.errorCount()+" errors:");
+		        getWriter().println("There were "+result.errorCount()+" errors:");
 
 			int i= 1;
 			for (Enumeration e= result.errors(); e.hasMoreElements(); i++) {
 			    TestFailure failure= (TestFailure)e.nextElement();
-				writer().println(i+") "+failure.failedTest());
-				writer().print(getFilteredTrace(failure.trace()));
+				getWriter().println(i+") "+failure.failedTest());
+				getWriter().print(getFilteredTrace(failure.trace()));
 		    }
 		}
 	}
@@ -153,14 +153,14 @@ public class TestRunner extends BaseTestRunner {
 	public void printFailures(TestResult result) {
 		if (result.failureCount() != 0) {
 			if (result.failureCount() == 1)
-				writer().println("There was " + result.failureCount() + " failure:");
+				getWriter().println("There was " + result.failureCount() + " failure:");
 			else
-				writer().println("There were " + result.failureCount() + " failures:");
+				getWriter().println("There were " + result.failureCount() + " failures:");
 			int i = 1;
 			for (Enumeration e= result.failures(); e.hasMoreElements(); i++) {
 				TestFailure failure= (TestFailure) e.nextElement();
-				writer().print(i + ") " + failure.failedTest());
-				writer().print(getFilteredTrace(failure.trace()));
+				getWriter().print(i + ") " + failure.failedTest());
+				getWriter().print(getFilteredTrace(failure.trace()));
 			}
 		}
 	}
@@ -169,14 +169,14 @@ public class TestRunner extends BaseTestRunner {
 	 */
 	public void printHeader(TestResult result) {
 		if (result.wasSuccessful()) {
-			writer().println();
-			writer().print("OK");
-			writer().println (" (" + result.runCount() + " tests)");
+			getWriter().println();
+			getWriter().print("OK");
+			getWriter().println (" (" + result.runCount() + " tests)");
 
 		} else {
-			writer().println();
-			writer().println("FAILURES!!!");
-			writer().println("Tests run: "+result.runCount()+ 
+			getWriter().println();
+			getWriter().println("FAILURES!!!");
+			getWriter().println("Tests run: "+result.runCount()+ 
 				         ",  Failures: "+result.failureCount()+
 				         ",  Errors: "+result.errorCount());
 		}
@@ -197,9 +197,9 @@ public class TestRunner extends BaseTestRunner {
 	 * }
 	 * </pre>
 	 */
-	static public void run(Test suite) {
+	static public TestResult run(Test suite) {
 		TestRunner aTestRunner= new TestRunner();
-		aTestRunner.doRun(suite, false);
+		return aTestRunner.doRun(suite, false);
 	}
 	/**
 	 * Runs a single test and waits until the user
@@ -245,7 +245,14 @@ public class TestRunner extends BaseTestRunner {
 		System.exit(FAILURE_EXIT);
 	}
 		
-	protected PrintStream writer() {
+	protected PrintStream getWriter() {
 		return fWriter;
+	}
+	
+	/**
+	 * @deprecated Use getWriter()
+	 */
+	protected PrintStream writer() {
+		return getWriter();
 	}
 }

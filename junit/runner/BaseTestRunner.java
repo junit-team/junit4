@@ -13,7 +13,7 @@ import java.util.*;
 public abstract class BaseTestRunner implements TestListener {
 	public static final String SUITE_METHODNAME= "suite";
 	
-	static Properties fPreferences;
+	private static Properties fPreferences;
 	static int fgMaxMessageLength= 500;
 	static boolean fgFilterStack= true;
 	boolean fLoading= true;
@@ -24,7 +24,34 @@ public abstract class BaseTestRunner implements TestListener {
 	public synchronized void startTest(Test test) {
 		testStarted(test.toString());
 	}
+
+	protected static void setPreferences(Properties preferences) {
+		fPreferences = preferences;
+	}
+
+	protected static Properties getPreferences() {
+		if (fPreferences == null) {
+			fPreferences= new Properties();
+	 		fPreferences.put("loading", "true");
+ 			fPreferences.put("filterstack", "true");
+  			readPreferences();
+		}
+		return fPreferences;
+	}
 	
+	public static void savePreferences() throws IOException {
+		FileOutputStream fos= new FileOutputStream(getPreferencesFile());
+		try {
+			getPreferences().store(fos, "");
+		} finally {
+			fos.close();
+		}
+	}
+	
+	public void setPreference(String key, String value) {
+		getPreferences().setProperty(key, value);
+	}
+
 	public synchronized void endTest(Test test) {
 		testEnded(test.toString());
 	}
@@ -74,6 +101,10 @@ public abstract class BaseTestRunner implements TestListener {
 	 		// try to extract a test suite automatically
 			clearStatus();			
 			return new TestSuite(testClass);
+		}
+		if (! Modifier.isStatic(suiteMethod.getModifiers())) {
+			runFailed("Suite() method must be static");
+			return null;
 		}
 		Test test= null;
 		try {
@@ -190,8 +221,8 @@ public abstract class BaseTestRunner implements TestListener {
  		InputStream is= null;
  		try {
  			is= new FileInputStream(getPreferencesFile());
- 			fPreferences= new Properties(fPreferences);
-			fPreferences.load(is);
+ 			setPreferences(new Properties(getPreferences()));
+			getPreferences().load(is);
 		} catch (IOException e) {
 			try {
 				if (is != null)
@@ -202,7 +233,7 @@ public abstract class BaseTestRunner implements TestListener {
  	}
  	
  	public static String getPreference(String key) {
- 		return fPreferences.getProperty(key);
+ 		return getPreferences().getProperty(key);
  	}
  	
  	public static int getPreference(String key, int dflt) {
@@ -286,12 +317,6 @@ public abstract class BaseTestRunner implements TestListener {
 	}
 
  	static {
- 		fPreferences= new Properties();
- 		//JDK 1.2 feature
- 		//fPreferences.setProperty("loading", "true");
- 		fPreferences.put("loading", "true");
- 		fPreferences.put("filterstack", "true");
-  		readPreferences();
  		fgMaxMessageLength= getPreference("maxmessage", fgMaxMessageLength);
  	}
  	

@@ -8,7 +8,7 @@ import java.awt.*;
 /**
  * A panel with test run counters
  */
-public class CounterPanel extends Panel {
+public class CounterPanel extends JPanel {
 	private JTextField fNumberOfErrors;
 	private JTextField fNumberOfFailures;
 	private JTextField fNumberOfRuns;
@@ -28,7 +28,7 @@ public class CounterPanel extends Panel {
 	} 
 	
 	private JTextField createOutputField() {
-		JTextField field= new JTextField("0", 4);
+		JTextField field= new JTextField("0", 10);
 		field.setHorizontalAlignment(JTextField.LEFT);
 		field.setFont(StatusLine.BOLD_FONT);
 		field.setEditable(false);

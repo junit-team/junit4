@@ -110,6 +110,39 @@ public class TestCaseTest extends TestCase {
 		test.run();
 		assertTrue(test.fWasRun);
 	}
+	public void testExceptionRunningAndTearDown() {
+		// This test documents the current behavior. With 1.4, we should
+		// wrap the exception thrown while running with the exception thrown
+		// while tearing down
+		Test t= new TornDown("") {
+			public void tearDown() {
+				throw new Error("tearDown");
+			}
+		};
+		TestResult result= new TestResult();
+		t.run(result);
+		TestFailure failure= (TestFailure) result.errors().nextElement();
+		assertEquals("tearDown", failure.thrownException().getMessage());
+	}
+	
+	public void testNoArgTestCasePasses() {
+		Test t= new TestSuite(NoArgTestCaseTest.class);
+		TestResult result= new TestResult();
+		t.run(result);
+		assertTrue(result.runCount() == 1);
+		assertTrue(result.failureCount() == 0);
+		assertTrue(result.errorCount() == 0);
+	}
+	
+	public void testNamelessTestCase() {
+		TestCase t= new TestCase() {};
+		try {
+			t.run();
+			fail();
+		} catch (AssertionFailedError e) {
+		}
+	}
+	
 	void verifyError(TestCase test) {
 		TestResult result= test.run();
 		assertTrue(result.runCount() == 1);
@@ -128,6 +161,4 @@ public class TestCaseTest extends TestCase {
 		assertTrue(result.failureCount() == 0);
 		assertTrue(result.errorCount() == 0);
 	}
-
-
 }

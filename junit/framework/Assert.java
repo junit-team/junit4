@@ -277,7 +277,7 @@ public class Assert {
 		String formatted= "";
 		if (message != null)
 			formatted= message+" ";
-		fail(formatted+"expected same");
+		fail(formatted+"expected same:<"+expected+"> was not:<"+actual+">");
 	}
 
 	static private void failNotEquals(String message, Object expected, Object actual) {

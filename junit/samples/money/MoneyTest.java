@@ -62,6 +62,10 @@ public class MoneyTest extends TestCase {
 		IMoney expected= MoneyBag.create(f12CHF, f7USD);
 		assertEquals(expected, f12CHF.add(f7USD));
 	}
+	public void testBagNotEquals() {
+		IMoney bag= MoneyBag.create(f12CHF, f7USD);
+		assertFalse(bag.equals(new Money(12, "DEM").add(f7USD)));
+	}
 	public void testMoneyBagEquals() {
 		assertTrue(!fMB1.equals(null)); 
 
