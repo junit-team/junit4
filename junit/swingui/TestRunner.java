@@ -407,7 +407,7 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		addGrid(panel, browseButton, 	1, 1, 1, GridBagConstraints.NONE, 			0.0, GridBagConstraints.WEST);
 		addGrid(panel, fRun, 		2, 1, 1, GridBagConstraints.HORIZONTAL, 	0.0, GridBagConstraints.CENTER);
 
-		addGrid(panel, fUseLoadingRunner,  	0, 2, 3, GridBagConstraints.HORIZONTAL, 1.0, GridBagConstraints.WEST);
+		addGrid(panel, fUseLoadingRunner,  	0, 2, 3, GridBagConstraints.NONE, 1.0, GridBagConstraints.WEST);
 		addGrid(panel, new JSeparator(), 	0, 3, 3, GridBagConstraints.HORIZONTAL, 1.0, GridBagConstraints.WEST);
 
 		
@@ -795,6 +795,4 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		AboutDialog about= new AboutDialog(fFrame); 
 		about.show();
 	}
-	
-
 }
