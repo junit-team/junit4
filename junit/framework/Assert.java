@@ -245,18 +245,18 @@ public class Assert {
 	static public void assertSame(Object expected, Object actual) {
 	    assertSame(null, expected, actual);
 	}
- 	/**
- 	 * Asserts that two objects do not refer to the same object. If they do
-         * refer to the same object an AssertionFailedError is thrown with the
-         * given message.
- 	 */
+	/**
+	 * Asserts that two objects do not refer to the same object. If they do
+	 * refer to the same object an AssertionFailedError is thrown with the
+	 * given message.
+	 */
 	static public void assertNotSame(String message, Object expected, Object actual) {
 		if (expected == actual)
 			failSame(message);
 	}
 	/**
- 	 * Asserts that two objects do not refer to the same object. If they do
-         * refer to the same object an AssertionFailedError is thrown.
+	 * Asserts that two objects do not refer to the same object. If they do
+	 * refer to the same object an AssertionFailedError is thrown.
 	 */
 	static public void assertNotSame(Object expected, Object actual) {
 		assertNotSame(null, expected, actual);
