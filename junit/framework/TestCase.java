@@ -41,8 +41,8 @@ import java.lang.reflect.*;
  * In the static way you override the runTest method and define the method to
  * be invoked. A convenient way to do so is with an anonymous inner class.
  * <pre>
- * Test test= new MathTest("add") {
- *        public void runTest() {
+ * TestCase test= new MathTest("add") {
+ *        protected void runTest() {
  *            testAdd();
  *        }
  * };
@@ -53,7 +53,7 @@ import java.lang.reflect.*;
  * In this case the name of the test case has to correspond to the test method
  * to be run.
  * <pre>
- * Test= new MathTest("testAdd");
+ * TestCase= new MathTest("testAdd");
  * test.run();
  * </pre>
  * The tests to be run can be collected into a TestSuite. JUnit provides
