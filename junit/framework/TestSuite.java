@@ -48,7 +48,7 @@ public class TestSuite implements Test {
 	/**
 	 * Constructs a TestSuite from the given class. Adds all the methods
 	 * starting with "test" as test cases to the suite.
-	 * Parts of this method was written at 2337 meters in the Hüffihütte,
+	 * Parts of this method was written at 2337 meters in the Hueffihuette,
 	 * Kanton Uri
 	 */
 	 public TestSuite(final Class theClass) {
