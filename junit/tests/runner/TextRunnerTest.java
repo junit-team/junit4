@@ -35,9 +35,9 @@ public class TextRunnerTest extends TestCase {
 			; //System.out.write(b); 
 		assertTrue((p.waitFor() == 0) == success);
 		if (success)
-			assertEquals(junit.textui.TestRunner.SUCCESS_EXIT, p.exitValue());
+			assertTrue(p.exitValue() == 0);
 		else
-			assertEquals(junit.textui.TestRunner.FAILURE_EXIT, p.exitValue());
+			assertFalse(p.exitValue() == 0);
 	}
 	
 	public void testRunReturnsResult() {

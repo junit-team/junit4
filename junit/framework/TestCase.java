@@ -121,7 +121,9 @@ public abstract class TestCase extends Assert implements Test {
 	}
 	/**
 	 * Runs the bare test sequence.
-	 * @exception Throwable if any exception is thrown
+	 * 
+	 * @exception Throwable
+	 *                       if any exception is thrown
 	 */
 	public void runBare() throws Throwable {
 		Throwable exception= null;
@@ -130,19 +132,22 @@ public abstract class TestCase extends Assert implements Test {
 			runTest();
 		} catch (Throwable running) {
 			exception= running;
-		}
-		finally {
+		} finally {
 			try {
 				tearDown();
 			} catch (Throwable tearingDown) {
-				if (exception == null) exception= tearingDown;
+				if (exception == null)
+					exception= tearingDown;
 			}
 		}
-		if (exception != null) throw exception;
+		if (exception != null)
+			throw exception;
 	}
 	/**
 	 * Override to run the test and assert its state.
-	 * @exception Throwable if any exception is thrown
+	 * 
+	 * @exception Throwable
+	 *                       if any exception is thrown
 	 */
 	protected void runTest() throws Throwable {
 		assertNotNull(fName); // Some VMs crash when calling getMethod(null,null);
