@@ -41,4 +41,9 @@ public class TestCaseClassLoaderTest extends TestCase {
 		Method method= loadedClass.getDeclaredMethod("verify", new Class[0]);
 		method.invoke(o, new Class[0]);
 	}
+	
+	public void testContextClassLoader() {
+		assertEquals(Thread.currentThread().getContextClassLoader(), getClass().getClassLoader());
+	}
+
 }

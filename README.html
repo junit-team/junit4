@@ -2,20 +2,18 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Windows NT 5.0; U) [Netscape]">
+   <meta name="GENERATOR" content="Microsoft FrontPage 4.0">
    <meta name="Author" content="Erich Gamma & Kent Beck">
-   <title>JUnit 3.7</title>
+   <title>JUnit 3.8</title>
 </head>
 <body>
 
 <h1>
 <b><font color="#00CC00">J</font><font color="#FF0000">U</font><font color="#000000">nit
-3.7
-</font><font color="#808080">@</font><font color="#000000">&nbsp;</font></b><!--webbot bot="HTMLMarkup" startspan --><a href="http://sourceforge.net"><img SRC="sflogo.php" ALT="SourceForge Logo" BORDER=0 height=31 width=88></a><!--webbot
-bot="HTMLMarkup" endspan --></h1>
+3.8</b></h1>
 
 <hr WIDTH="100%">
-<br>05/18/2001
+<br>08/23/2002
 <p>JUnit is a simple framework to write repeatable tests. It is an instance
 of the xUnit architecture for unit testing frameworks.
 <ul>
@@ -36,7 +34,123 @@ of the xUnit architecture for unit testing frameworks.
 </ul>
 
 <h2>
-<a NAME="Summary of"></a>Summary of Changes between 3.6 and 3.7</h2>
+<a NAME="Summary of"></a>Summary of Changes between 3.7 and 3.8</h2>
+
+<h3>
+Framework</h3>
+
+<ul>
+<li>
+Made the string argument TestCase constructor optional. You can now delete
+constructors of the form &quot;FooTestCase(String name) { super(name); }&quot;.</li>
+
+<li>
+Deleted deprecated assert(boolean) in favor of assertTrue(boolean) and
+assertFalse(boolean). To migrate to JUnit 3.8, rename calls to assert(boolean)
+to call assertTrue(boolean).</li>
+
+<li>
+Added assertFalse() to avoid the difficult of reading the assertTrue(!
+condition).</li>
+
+<li>
+Added assertNotSame(Object, Object).</li>
+
+<li>
+Deleted deprecated TestCase.name() in favor of TestCase.getName().</li>
+
+<li>
+Deleted deprecated package junit.ui in favor of junit.awtui.</li>
+
+</ul>
+
+<h3>
+Test Runner</h3>
+
+<ul>
+<li>
+When you compare two long strings with a small delta embedded in the middle, it
+is hard to spot the difference. In 3.8, when you call assertEquals(String,
+String), only the differences between the strings are displayed. The common
+prefix and suffix are replaced with &quot;...&quot;.</li>
+<li>
+Added initial version of a TestRunListener attached to TestRunners which
+eventually will replace TestListeners attached to the TestResult.</li>
+<li>
+Filled in ActiveTestSuite constructors.</li>
+<li>
+Added these packages to the excluded.properties:<font SIZE="2">
+<ul>
+  <li>org.w3c.dom.*</li>
+  <li>org.xml.sax.*</li>
+  <li>net.jini.*</li>
+</ul>
+</font></li>
+<li>Extracted textual formatting of a TestResult from junit.textui.TestRunner
+  into ResultPrinter.</li>
+</ul>
+
+<h3>Documentation</h3>
+<ul>
+  <li>Much improved <a href="doc/faq/faq.htm">FAQ</a> thanks to Mike Clark.</li>
+</ul>
+
+<h3>Closed Bugs</h3>
+<ul>
+  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=583346&amp;group_id=15278&amp;atid=115278">Class
+        loader problem</a></li>
+  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=551239&amp;group_id=15278&amp;atid=115278">Cookbook
+        Simple Test Case problems</a></li>
+  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=539015&amp;group_id=15278&amp;atid=115278">License
+        not included in source</a></li>
+  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=560081&amp;group_id=15278&amp;atid=115278">assert
+        is a keyword</a></li>
+  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=572444&amp;group_id=15278&amp;atid=115278">javadoc
+        returns mysterious message</a></li>
+  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=581251&amp;group_id=15278&amp;atid=115278">swingui
+        CounterPanel values disappear</a></li>
+  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=574641&amp;group_id=15278&amp;atid=115278">TestCase
+        javadoc incorrect example</a></li>
+  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=582784&amp;group_id=15278&amp;atid=115278">silly
+        cookbook error</a></li>
+  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=583328&amp;group_id=15278&amp;atid=115278">junit
+        properties missfunction</a></li>
+  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=595957&amp;group_id=15278&amp;atid=115278">Test.java
+        is not Serializable</a></li>
+  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=598200&amp;group_id=15278&amp;atid=115278">JUnit
+        not setting ClassLoader`</a></li>
+  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=592713&amp;group_id=15278&amp;atid=115278">NullPointerException
+        when loading suite</a></li>
+  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=544683&amp;group_id=15278&amp;atid=115278">labels
+        for bug counts too small in Swing</a></li>
+  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=537502&amp;group_id=15278&amp;atid=115278">Swing
+        TestRunner layout shifts</a></li>
+  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=528868&amp;group_id=15278&amp;atid=115278">Exit
+        code problem for cygwin/w2k</a></li>
+  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=529953&amp;group_id=15278&amp;atid=115278">Automatic
+        reload causes strange errors</a></li>
+  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=532952&amp;group_id=15278&amp;atid=115278">TestRunner
+        fails with swing/awtui</a></li>
+  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=533411&amp;group_id=15278&amp;atid=115278">CVS
+        version doesn't build on NetBSD</a></li>
+  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=520210&amp;group_id=15278&amp;atid=115278">NullPointerException
+        JUnit sample w/ Ant</a></li>
+  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=527511&amp;group_id=15278&amp;atid=115278">money
+        sample bug</a></li>
+  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=491981&amp;group_id=15278&amp;atid=115278">incomplete
+        message from failNotSame()</a></li>
+  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=471577&amp;group_id=15278&amp;atid=115278">Icons
+        on systems with 64 colors exceptio</a></li>
+  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=470324&amp;group_id=15278&amp;atid=115278">1000+
+        tests, swing gui doesn't display</a></li>
+  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=442752&amp;group_id=15278&amp;atid=115278">test
+        selector included incorrect classes</a></li>
+  <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=430974&amp;group_id=15278&amp;atid=115278">No
+        UI update when re-run methods fail</a></li>
+</ul>
+
+<h2>
+Summary of Changes between 3.6 and 3.7</h2>
 
 <h3>
 GUI</h3>
@@ -433,7 +547,9 @@ with JUnit.
 <br>&nbsp;&nbsp;&nbsp; Some frequently asked questions about using JUnit.
 <br><a href="doc/JUnitProperties.html">TestRunner Preference settings</a>
 <br>&nbsp;&nbsp;&nbsp; Describes the preferences settings that can be configured
-for the JUnit TestRunners.</blockquote>
+for the JUnit TestRunners.<br>
+  <a href="cpl-v10.html">License</a>
+<br>&nbsp;&nbsp;&nbsp; The terms of the common public license used for JUnit.</blockquote>
 
 <h2>
 <a NAME="Extending"></a>Extending JUnit</h2>
@@ -462,5 +578,9 @@ before the tests are run.</li>
 </ul>
 
 <hr WIDTH="100%">
+<!--webbot bot="HTMLMarkup" startspan --><a href="http://sourceforge.net"><IMG
+                  src="http://sourceforge.net/sflogo.php?group_id=15278"
+                  width="88" height="31" border="0" alt="SourceForge Logo"></a><!--webbot
+bot="HTMLMarkup" endspan -->
 </body>
 </html>

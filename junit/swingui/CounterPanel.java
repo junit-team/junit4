@@ -52,6 +52,9 @@ public class CounterPanel extends JPanel {
 
 	private JTextField createOutputField(int width) {
 		JTextField field= new JTextField("0", width);
+		// force a fixed layout to avoid accidental hiding on relayout
+		field.setMinimumSize(field.getPreferredSize());
+		field.setMaximumSize(field.getPreferredSize());
 		field.setHorizontalAlignment(JTextField.LEFT);
 		field.setFont(StatusLine.BOLD_FONT);
 		field.setEditable(false);

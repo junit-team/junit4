@@ -16,10 +16,6 @@ import java.lang.reflect.*;
  *     protected double fValue1;
  *     protected double fValue2;
  *
- *     public MathTest(String name) {
- *         super(name);
- *     }
- *
  *    protected void setUp() {
  *         fValue1= 2.0;
  *         fValue2= 3.0;
@@ -31,7 +27,7 @@ import java.lang.reflect.*;
  * with the fixture. Verify the expected results with assertions specified
  * by calling <code>assertTrue</code> with a boolean.
  * <pre>
- *    protected void testAdd() {
+ *    public void testAdd() {
  *        double result= fValue1 + fValue2;
  *        assertTrue(result == 5.0);
  *    }
@@ -42,7 +38,7 @@ import java.lang.reflect.*;
  * be invoked. A convenient way to do so is with an anonymous inner class.
  * <pre>
  * TestCase test= new MathTest("add") {
- *        protected void runTest() {
+ *        public void runTest() {
  *            testAdd();
  *        }
  * };

@@ -2,7 +2,7 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.5 [en] (Win98; I) [Netscape]">
+   <meta name="GENERATOR" content="Microsoft FrontPage 4.0">
    <meta name="Author" content="Erich Gamma">
    <title>JUnit Cookbook</title>
 </head>
@@ -33,10 +33,7 @@ to run many of them at the same time. When you need to test something,
 here is what you do:
 <ol>
 <li>
-Create an instance of <a href="../../javadoc/junit/framework/TestCase.html">TestCase</a>:</li>
-
-<li>
-Create a constructor which accepts a String as a parameter and passes it to the superclass.</li>
+Create a subclass of <a href="../../javadoc/junit/framework/TestCase.html">TestCase</a>.</li>
 
 <li>
 Override the method <tt>runTest</tt>()</li>
@@ -47,13 +44,15 @@ that is true if the test succeeds</li>
 </ol>
 For example, to test that the sum of two Moneys with the same currency
 contains a value which is the sum of the values of the two Moneys, write:
-<pre><tt><font face="Courier"><font size=-2>public void testSimpleAdd() {
-</font></font>&nbsp;&nbsp;&nbsp; Money m12CHF= new Money(12, "CHF");&nbsp;
-&nbsp;&nbsp;&nbsp; Money m14CHF= new Money(14, "CHF");&nbsp;
-&nbsp;&nbsp;&nbsp; Money expected= new Money(26, "CHF");&nbsp;
+<blockquote>
+<pre><tt><font size=-2>public void testSimpleAdd() {
+</font>&nbsp;&nbsp;&nbsp; Money m12CHF= new Money(12, &quot;CHF&quot;);&nbsp;
+&nbsp;&nbsp;&nbsp; Money m14CHF= new Money(14, &quot;CHF&quot;);&nbsp;
+&nbsp;&nbsp;&nbsp; Money expected= new Money(26, &quot;CHF&quot;);&nbsp;
 &nbsp;&nbsp;&nbsp; Money result= m12CHF.add(m14CHF);&nbsp;
 &nbsp;&nbsp;&nbsp; assertTrue(expected.equals(result));
 }</tt></pre>
+</blockquote>
 If you want to write a test similar to one you have already written, write
 a Fixture instead. When you want to run more than one test, create a Suite.
 <h2>
@@ -76,9 +75,6 @@ results.
 Create a subclass of TestCase</li>
 
 <li>
-Create a constructor which accepts a String as a parameter and passes it to the superclass.</li>
-
-<li>
 Add an instance variable for each part of the fixture</li>
 
 <li>
@@ -98,9 +94,9 @@ create a fixture:
 &nbsp;&nbsp;&nbsp; private Money f28USD;&nbsp;
 &nbsp;&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp; protected void setUp() {&nbsp;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; f12CHF= new Money(12, "CHF");&nbsp;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; f14CHF= new Money(14, "CHF");&nbsp;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; f28USD= new Money(28, "USD");&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; f12CHF= new Money(12, &quot;CHF&quot;);&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; f14CHF= new Money(14, &quot;CHF&quot;);&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; f28USD= new Money(28, &quot;USD&quot;);&nbsp;
 &nbsp;&nbsp;&nbsp; }
 }</tt></pre>
 Once you have the Fixture in place, you can write as many Test Cases as
@@ -118,22 +114,23 @@ lines of code are sacrificed to syntax.
 Here is what you do:
 <ol>
 <li>
-Write the test case method in the fixture class. Be sure to make it public,
-or it can't be invoked through reflection.</li>
+Write a public void method in the fixture class. By convention, the name of the
+method begins with &quot;test&quot;.</li>
 
-<li>
-Create an instance of the TestCase class and pass the name of the test
-case method to the constructor.</li>
 </ol>
 For example, to test the addition of a Money and a MoneyBag, write:
+<blockquote>
 <pre><tt>public void testMoneyMoneyBag() {&nbsp;
 &nbsp;&nbsp;&nbsp; // [12 CHF] + [14 CHF] + [28 USD] == {[26 CHF][28 USD]}&nbsp;
 &nbsp;&nbsp;&nbsp; Money bag[]= { f26CHF, f28USD };&nbsp;
 &nbsp;&nbsp;&nbsp; MoneyBag expected= new MoneyBag(bag);&nbsp;
 &nbsp;&nbsp;&nbsp; assertEquals(expected, f12CHF.add(f28USD.add(f14CHF)));
 }</tt></pre>
+</blockquote>
 Create an instance of of MoneyTest that will run this test case like this:
-<pre><tt>new MoneyTest("testMoneyMoneyBag")</tt></pre>
+<blockquote>
+<pre><tt>new MoneyTest(&quot;testMoneyMoneyBag&quot;)</tt></pre>
+</blockquote>
 When the test is run, the name of the test is used to look up the method
 to run.
 <p>Once you have several tests, organize them into a Suite.
@@ -145,17 +142,23 @@ could run the tests one at a time yourself, but you would quickly grow
 tired of that. Instead, JUnit provides an object, <a href="../../javadoc/junit/framework/TestSuite.html">TestSuite</a>
 which runs any number of test cases together.
 <p>For example, to run a single test case, you execute:
-<pre><tt>TestResult result= (new MoneyTest("testMoneyMoneyBag")).run();</tt></pre>
+<blockquote>
+<pre><tt>TestResult result= (new MoneyTest(&quot;testMoneyMoneyBag&quot;)).run();</tt></pre>
+</blockquote>
 To create a suite of two test cases and run them together, execute:
+<blockquote>
 <pre><tt>TestSuite suite= new TestSuite();
-suite.addTest(new MoneyTest("testMoneyEquals"));
-suite.addTest(new MoneyTest("testSimpleAdd"));
+suite.addTest(new MoneyTest(&quot;testMoneyEquals&quot;));
+suite.addTest(new MoneyTest(&quot;testSimpleAdd&quot;));
 TestResult result= suite.run();</tt></pre>
+</blockquote>
 Another way is to let JUnit extract a suite from a TestCase. To do so you
 pass the class of your TestCase to the
 <br>TestSuite constructor.
-<p><tt>TestSuite suite= new TestSuite(MoneyTest.class);</tt>
-<br><tt>TestResult result= suite.run();</tt>
+<blockquote>
+<pre><tt>TestSuite suite= new TestSuite(MoneyTest.class);</tt>
+<tt>TestResult result= suite.run();</tt></pre>
+</blockquote>
 <p>Use the manual way when you want a suite to only contain a subset of
 the test cases. Otherwise the automatic suite extraction is the preferred
 way. It avoids you having to update the suite creation code when you add
@@ -165,10 +168,13 @@ that implements the <a href="../../javadoc/junit/framework/Test.html">Test</a>
 interface. For example, you can create a TestSuite in your code and I can
 create one in mine, and we can run them together by creating a TestSuite
 that contains both:
-<pre><tt><font face="Courier">TestSuite suite= new TestSuite();
-</font></tt>suite.addTest(Kent.suite());
+<blockquote>
+<pre><tt>TestSuite suite= new TestSuite();
+</tt>suite.addTest(Kent.suite());
 suite.addTest(Erich.suite());
 TestResult result= suite.run();</pre>
+
+</blockquote>
 
 <h2>
 TestRunner</h2>
@@ -179,14 +185,22 @@ suite accessible to a TestRunner tool with a static method <i>suite</i>
 that returns a test suite.
 <br>For example, to make a MoneyTest suite available to a TestRunner, add
 the following code to MoneyTest:
+<blockquote>
 <pre><tt>public static Test suite() {&nbsp;
 &nbsp;&nbsp;&nbsp; TestSuite suite= new TestSuite();&nbsp;
-&nbsp;&nbsp;&nbsp; suite.addTest(new MoneyTest("testMoneyEquals"));&nbsp;
-&nbsp;&nbsp;&nbsp; suite.addTest(new MoneyTest("testSimpleAdd"));&nbsp;
+&nbsp;&nbsp;&nbsp; suite.addTest(new MoneyTest(&quot;testMoneyEquals&quot;));&nbsp;
+&nbsp;&nbsp;&nbsp; suite.addTest(new MoneyTest(&quot;testSimpleAdd&quot;));&nbsp;
 &nbsp;&nbsp;&nbsp; return suite;
 }</tt></pre>
-If a TestCase class doesn't define a suite method a TestRunner will extract
-a suite and fill it with all the methods starting with "test".
+</blockquote>
+Or, as a shortcut:
+<blockquote>
+<pre><tt>public static Test suite() {&nbsp;
+&nbsp;&nbsp;&nbsp; return new TestSuite(MoneyTest.class);&nbsp;
+}</tt></pre>
+</blockquote>
+<p>If a TestCase class doesn't define a suite method a TestRunner will extract
+a suite and fill it with all the methods starting with "test".</p>
 <p>JUnit provides both a graphical and a textual version of a TestRunner
 tool. Start it by typing <tt>java</tt> <tt><a href="../../javadoc/junit/awtui/TestRunner.html">junit.awtui.TestRunner</a>
 or <a href="../../javadoc/junit/swingui/TestRunner.html">junit.swingui.TestRunner</a></tt>.
@@ -199,7 +213,7 @@ a field to type in the name of a class with a suite method,</li>
 a Run button to start the test,</li>
 
 <li>
-a progress indicator that turns from red to green in the case of a failed
+a progress indicator that turns from green to red in the case of a failed
 test,</li>
 
 <li>
@@ -213,24 +227,26 @@ shows an example of a failed test.
 <center><img SRC="IMG00001.GIF" ></center>
 
 <p><br>
-<p>In a dynamic programming environment like VisualAge for Java which supports
-<i>hot
-code update </i>you can leave the JUnit window up all the time. In other
-environments you have to restart the graphical version for each run. This
+<p>You have to restart the graphical interface each time you change the code. This
 is tedious and time consuming. As an alternative JUnit's AWT and Swing UIs use
 <a href="../../javadoc/junit/runner/LoadingTestCollector.html">junit.runner.LoadingTestCollector
 </a>.
-This LoadingTestCollector reloads all your classes for each test run.This feature can
-be disabled by unchecking the 'Reload classes every run' checkbox.
+This LoadingTestCollector reloads all your classes for each test run. This feature can
+be disabled by unchecking the 'Reload classes every run' checkbox. The most
+common JUnit problem is that many packages want to use their own class loader.
+Include such packages in excluded.properties. See the <a href="../faq/faq.htm">FAQ</a>
+for details.
 <p>There is a batch interface to JUnit, also. To use it type<tt>java <a href="../../javadoc/junit/textui/TestRunner.html">junit.textui.TestRunner</a></tt>
 followed by the name of the class with a suite method at an operating system
 prompt. The batch interface shows the result as text output. An alternative
 way to invoke the batch interface is to define a main method in your TestCase
 class.
 <p>For example, to start the batch TestRunner for MoneyTest, write:
+<blockquote>
 <pre><tt>public static void main(String args[]) {&nbsp;
 &nbsp;&nbsp;&nbsp; junit.textui.TestRunner.run(suite());
 }</tt></pre>
+</blockquote>
 With this definition of main you can run your tests by simply typing <tt>java
 MoneyTest at an operating system prompt.</tt>
 <p>For using either the graphical or the textual version make sure that
