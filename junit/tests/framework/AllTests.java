@@ -25,8 +25,4 @@ public class AllTests {
 		return suite;
 	}
 	
-	static boolean isJDK11() {
-		String version= System.getProperty("java.version");
-		return version.startsWith("1.1");
-	}
 }

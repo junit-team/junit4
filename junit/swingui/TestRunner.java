@@ -219,7 +219,7 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		return menu;
 	}
 
-	protected JFrame createFrame(String title) {
+	protected JFrame createFrame() {
 		JFrame frame= new JFrame("JUnit");
 		Image icon= loadFrameIcon();
 		if (icon != null)
@@ -366,7 +366,7 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 	}
 
 	protected JFrame createUI(String suiteName) {
-		JFrame frame= createFrame("JUnit");
+		JFrame frame= createFrame();
 		JMenuBar mb= new JMenuBar();
 		createMenus(mb);
 		frame.setJMenuBar(mb);
@@ -662,16 +662,6 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 			new Runnable() {
 				public void run() {
 					button.setText(label);
-				}
-			}
-		);
-	}
-
-	private void setLabelValue(final JTextField label, final int value) {
-		SwingUtilities.invokeLater(
-			new Runnable() {
-				public void run() {
-					label.setText(Integer.toString(value));
 				}
 			}
 		);

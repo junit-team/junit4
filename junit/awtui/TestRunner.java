@@ -38,7 +38,7 @@ import junit.runner.*;
 	protected TextField fStatusLine;
 	protected Checkbox fUseLoadingRunner;
 
-	protected static Font PLAIN_FONT= new Font("dialog", Font.PLAIN, 12);
+	protected static final Font PLAIN_FONT= new Font("dialog", Font.PLAIN, 12);
 	private static final int GAP= 4;
 
 	public TestRunner() {

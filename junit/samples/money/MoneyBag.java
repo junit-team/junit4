@@ -121,7 +121,7 @@ class MoneyBag implements IMoney {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("{");
 		for (Enumeration e= fMonies.elements(); e.hasMoreElements(); )
-		    buffer.append((Money) e.nextElement());
+		    buffer.append(e.nextElement());
 		buffer.append("}");
 		return buffer.toString();
 	}
