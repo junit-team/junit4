@@ -30,19 +30,10 @@ class DefaultFailureDetailView implements FailureDetailView {
 	 * Shows a TestFailure
 	 */
 	public void showFailure(TestFailure failure) {
-		fTextArea.setText(getTrace(failure.thrownException()));
+		fTextArea.setText(BaseTestRunner.getFilteredTrace(failure.thrownException()));
 		fTextArea.select(0, 0);	
 	}
 	
-	private String getTrace(Throwable t) { 
-		StringWriter stringWriter= new StringWriter();
-		PrintWriter writer= new PrintWriter(stringWriter);
-		t.printStackTrace(writer);
-		StringBuffer buffer= stringWriter.getBuffer();
-		String trace= buffer.toString();
-		return BaseTestRunner.filterStack(trace);
-	}
-
 	public void clear() {
 		fTextArea.setText("");
 	}

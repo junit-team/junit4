@@ -4,6 +4,7 @@ import java.util.*;
 import javax.swing.event.*;
 import javax.swing.tree.*;
 
+import junit.extensions.*;
 import junit.framework.*;
 
 /**
@@ -122,6 +123,11 @@ class TestTreeModel implements TreeModel {
 	protected TestSuite isTestSuite(Object node) {
 		if (node instanceof TestSuite) 
 			return (TestSuite)node;
+		if (node instanceof TestDecorator) { 
+			Object baseTest= ((TestDecorator)node).getTest(); 
+			if (baseTest instanceof TestSuite) 
+				return (TestSuite)baseTest; 
+		} 
 		return null;
 	}
 	/**

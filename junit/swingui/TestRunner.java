@@ -25,7 +25,7 @@ import java.awt.image.*;
  * </pre>
  * TestRunner takes as an optional argument the name of the testcase class to be run.
  */
-public class TestRunner extends BaseTestRunner implements DocumentListener, TestRunContext {
+public class TestRunner extends BaseTestRunner implements TestRunContext {
 	protected JFrame fFrame;
 	private Thread fRunner;
 	private TestResult fTestResult;
@@ -41,8 +41,9 @@ public class TestRunner extends BaseTestRunner implements DocumentListener, Test
 	private StatusLine fStatusLine;
 	private FailureDetailView fFailureView;
 	private JTabbedPane fTestViewTab;
+	private JCheckBox fUseLoadingRunner;
 	private Vector fTestRunViews= new Vector(); // view associated with tab in tabbed pane
-	
+	private int fNonLoadingRuns= 0;
 	private static Font PLAIN_FONT= StatusLine.PLAIN_FONT;
 	private static Font BOLD_FONT= StatusLine.BOLD_FONT;
 	private static final int GAP= 4;
@@ -151,16 +152,10 @@ public class TestRunner extends BaseTestRunner implements DocumentListener, Test
 	}
 	
 	protected void aboutToStart(final Test testSuite) {
-		SwingUtilities.invokeLater(
-			new Runnable() {
-				public void run() {
-					for (Enumeration e= fTestRunViews.elements(); e.hasMoreElements(); ) {
-						TestRunView v= (TestRunView) e.nextElement();
-						v.aboutToStart(testSuite, fTestResult);
-					}
-				}
-			}
-		);
+		for (Enumeration e= fTestRunViews.elements(); e.hasMoreElements(); ) {
+			TestRunView v= (TestRunView) e.nextElement();
+			v.aboutToStart(testSuite, fTestResult);
+		}
 	}
 	
 	protected void runFinished(final Test testSuite) {
@@ -274,6 +269,11 @@ public class TestRunner extends BaseTestRunner implements DocumentListener, Test
 		mb.add(createJUnitMenu());
 	}
 		
+	protected JCheckBox createUseLoaderCheckBox() {
+		boolean useLoader= useReoadingTestSuiteLoader();
+		return new JCheckBox("Use custom class loader for loading tests", useLoader);
+	}
+	
 	protected JButton createQuitButton() {
 		JButton quit= new JButton(" Exit "); 
 		quit.addActionListener(
@@ -389,6 +389,8 @@ public class TestRunner extends BaseTestRunner implements DocumentListener, Test
 		frame.getRootPane().setDefaultButton(fRun);
 		Component browseButton= createBrowseButton();
 		
+		fUseLoadingRunner= createUseLoaderCheckBox();
+		
 		fProgressIndicator= new ProgressBar();
 		fCounterPanel= createCounterPanel();
 		
@@ -407,23 +409,27 @@ public class TestRunner extends BaseTestRunner implements DocumentListener, Test
 					
 		JPanel panel= new JPanel(new GridBagLayout());
 	
-		addGrid(panel, suiteLabel,		 0, 0, 2, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.WEST);
-		addGrid(panel, fSuiteCombo, 	 0, 1, 1, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.WEST);
-		addGrid(panel, browseButton, 1, 1, 1, GridBagConstraints.NONE, 			0.0, GridBagConstraints.WEST);
-		addGrid(panel, fRun, 			 2, 1, 1, GridBagConstraints.HORIZONTAL, 	0.0, GridBagConstraints.CENTER);
+		addGrid(panel, suiteLabel,	0, 0, 2, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.WEST);
+		addGrid(panel, fSuiteCombo, 	0, 1, 1, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.WEST);
+		addGrid(panel, browseButton, 	1, 1, 1, GridBagConstraints.NONE, 			0.0, GridBagConstraints.WEST);
+		addGrid(panel, fRun, 		2, 1, 1, GridBagConstraints.HORIZONTAL, 	0.0, GridBagConstraints.CENTER);
 
-		addGrid(panel, fProgressIndicator, 0, 2, 2, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.WEST);
-		addGrid(panel, fLogo, 			 2, 2, 1, GridBagConstraints.NONE, 			0.0, GridBagConstraints.NORTH);
+		addGrid(panel, fUseLoadingRunner,  	0, 2, 3, GridBagConstraints.HORIZONTAL, 1.0, GridBagConstraints.WEST);
+		addGrid(panel, new JSeparator(), 	0, 3, 3, GridBagConstraints.HORIZONTAL, 1.0, GridBagConstraints.WEST);
 
-		addGrid(panel, fCounterPanel,	 0, 3, 2, GridBagConstraints.NONE, 			0.0, GridBagConstraints.CENTER);
-
-		addGrid(panel, fTestViewTab, 	 0, 4, 2, GridBagConstraints.BOTH, 			1.0, GridBagConstraints.WEST);
-
-		addGrid(panel, tracePane, 	     0, 5, 2, GridBagConstraints.BOTH, 	        1.0, GridBagConstraints.WEST);
-		addGrid(panel, failedPanel, 	 2, 4, 1, GridBagConstraints.HORIZONTAL, 	0.0, GridBagConstraints.CENTER);
 		
-		addGrid(panel, fStatusLine, 	 0, 6, 2, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.CENTER);
-		addGrid(panel, fQuitButton, 	 2, 6, 1, GridBagConstraints.HORIZONTAL, 	0.0, GridBagConstraints.CENTER);
+		addGrid(panel, fProgressIndicator, 	0, 4, 2, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.WEST);
+		addGrid(panel, fLogo, 			2, 4, 1, GridBagConstraints.NONE, 			0.0, GridBagConstraints.NORTH);
+
+		addGrid(panel, fCounterPanel,	 0, 5, 2, GridBagConstraints.NONE, 			0.0, GridBagConstraints.CENTER);
+
+		addGrid(panel, fTestViewTab, 	 0, 6, 2, GridBagConstraints.BOTH, 			1.0, GridBagConstraints.WEST);
+
+		addGrid(panel, tracePane, 	 0, 7, 2, GridBagConstraints.BOTH, 	        1.0, GridBagConstraints.WEST);
+		addGrid(panel, failedPanel, 	 2, 6, 1, GridBagConstraints.HORIZONTAL, 	0.0, GridBagConstraints.CENTER);
+		
+		addGrid(panel, fStatusLine, 	 0, 8, 2, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.CENTER);
+		addGrid(panel, fQuitButton, 	 2, 8, 1, GridBagConstraints.HORIZONTAL, 	0.0, GridBagConstraints.CENTER);
 		
 		frame.setContentPane(panel);
 		frame.pack();
@@ -482,7 +488,7 @@ public class TestRunner extends BaseTestRunner implements DocumentListener, Test
 				JOptionPane.showMessageDialog(fFrame, "Could not create TestCollector - using default collector");
 			}
 		}
-		return new SimpleClassPathTestCollector();
+		return new SimpleTestCollector();
 	}
 	
 	private Image loadFrameIcon() {
@@ -599,34 +605,48 @@ public class TestRunner extends BaseTestRunner implements DocumentListener, Test
 		if (fRunner != null) {
 			fTestResult.stop();
 		} else {
+			if (!setUseLoadingRunner())
+				return;
 			reset();
 			showInfo("Load Test Case...");
 			final String suiteName= getSuiteText();
 			final Test testSuite= getTest(suiteName);		
 			if (testSuite != null) {
 				addToHistory(suiteName);
-				doRunTest(testSuite, true);
+				doRunTest(testSuite);
 			}
 		}
 	}
 	
+	private boolean setUseLoadingRunner() {
+		setLoading(fUseLoadingRunner.isSelected());
+		if (!fUseLoadingRunner.isSelected())
+			fNonLoadingRuns++;
+		if (fNonLoadingRuns > 1) {
+			String message= "You are running the tests more than once with the standard class loader.\n"+
+					    "Code modifications you made since the last run will be ignored.\n"+
+					    "It is recommended to restart the TestRunner.\nDo you still want to continue?";
+			int returnCode= JOptionPane.showConfirmDialog(fFrame, message, "Warning", JOptionPane.YES_NO_OPTION);
+			return returnCode == JOptionPane.YES_OPTION;
+		}
+		return true;
+	}
+
 	synchronized protected void runTest(final Test testSuite) {
 		if (fRunner != null) {
 			fTestResult.stop();
 		} else {
 			reset();	
-			if (testSuite != null) 
-				doRunTest(testSuite, false);
+			if (testSuite != null) {
+				doRunTest(testSuite);
+			}
 		}
 	}
 	
-	private void doRunTest(final Test testSuite, final boolean reload) {
+	private void doRunTest(final Test testSuite) {
 		setButtonLabel(fRun, "Stop");
 		fRunner= new Thread("TestRunner-Thread") {
 			public void run() {
-				fTestResult= createTestResult();
-				fTestResult.addListener(TestRunner.this);
-				aboutToStart(testSuite);
 				TestRunner.this.start(testSuite); 
 				postInfo("Running...");
 				
@@ -646,6 +666,12 @@ public class TestRunner extends BaseTestRunner implements DocumentListener, Test
 				System.gc();
 			}
 		};
+		// make sure that the test result is created before we start the
+		// test runner thread so that listeners can register for it.
+		fTestResult= createTestResult();
+		fTestResult.addListener(TestRunner.this);
+		aboutToStart(testSuite);
+
 		fRunner.start();
 	}
 

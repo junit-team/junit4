@@ -42,15 +42,17 @@ public class TestSuite implements Test {
 	 */
 
 	 public TestSuite(final Class theClass) {
-		fName= theClass.getName();	
-		Constructor constructor= getConstructor(theClass);
+		fName= theClass.getName();
+		Constructor constructor= null;
+		try {	
+			constructor= getConstructor(theClass);
+		} catch (NoSuchMethodException e) {
+			addTest(warning("Class "+theClass.getName()+" has no public constructor TestCase(String name)"));
+			return;
+		}
+
 		if (!Modifier.isPublic(theClass.getModifiers())) {
 			addTest(warning("Class "+theClass.getName()+" is not public"));
-			return;
-
-		}
-		if (constructor == null) {
-			addTest(warning("Class "+theClass.getName()+" has no public constructor TestCase(String name)"));
 			return;
 		}
 
@@ -96,9 +98,14 @@ public class TestSuite implements Test {
 			Object[] args= new Object[]{name};
 			try {
 				addTest((Test)constructor.newInstance(args));
-			} catch (Exception t) {
-				addTest(warning("Cannot instantiate test case: "+name));
+			} catch (InstantiationException e) {
+				addTest(warning("Cannot instantiate test case: "+name+" ("+e.toString()+")"));
+			} catch (InvocationTargetException e) {
+				addTest(warning("Exception in constructor: "+name+" ("+e.getTargetException().toString()+")"));
+			} catch (IllegalAccessException e) {
+				addTest(warning("Cannot access test case: "+name+" ("+e.toString()+")"));
 			}
+
 		} else { // almost a test method
 			if (isTestMethod(m)) 
 				addTest(warning("Test method isn't public: "+m.getName()));
@@ -119,15 +126,11 @@ public class TestSuite implements Test {
 	 * Gets a constructor which takes a single String as
 	 * its argument.
 	 */
-	private Constructor getConstructor(Class theClass) {
+	private Constructor getConstructor(Class theClass) throws NoSuchMethodException {
 		Class[] args= { String.class };
-		Constructor c= null;
-		try {
-			c= theClass.getConstructor(args);
-		} catch(Exception e) {
-		}
-		return c;
+		return theClass.getConstructor(args);
 	}
+	
 	/**
 	 */
 	private boolean isPublicTestMethod(Method m) {

@@ -144,11 +144,11 @@ public abstract class TestCase extends Assert implements Test {
 			// methods. getDeclaredMethods returns all
 			// methods of this class but excludes the
 			// inherited ones.
-			runMethod= getClass().getMethod(fName, new Class[0]);
+			runMethod= getClass().getMethod(fName, null);
 		} catch (NoSuchMethodException e) {
 			fail("Method \""+fName+"\" not found");
 		}
-		if (runMethod != null && !Modifier.isPublic(runMethod.getModifiers())) {
+		if (!Modifier.isPublic(runMethod.getModifiers())) {
 			fail("Method \""+fName+"\" should be public");
 		}
 

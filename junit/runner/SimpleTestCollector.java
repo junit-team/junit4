@@ -6,9 +6,9 @@ package junit.runner;
  * pattern "Test" in its name
  * @see TestCollector
  */
-public class SimpleClassPathTestCollector extends ClassPathTestCollector {
+public class SimpleTestCollector extends ClassPathTestCollector {
 	
-	public SimpleClassPathTestCollector() {
+	public SimpleTestCollector() {
 	}
 	
 	protected boolean isTestClass(String classFileName) {

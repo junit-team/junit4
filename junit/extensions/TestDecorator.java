@@ -32,7 +32,7 @@ public class TestDecorator extends Assert implements Test {
 		return fTest.toString();
 	}
 	
-	protected Test getTest() {
+	public Test getTest() {
 		return fTest;
 	}
 }

@@ -31,9 +31,11 @@ public class StatusLine extends JTextField {
 		setFont(BOLD_FONT);
 		setForeground(Color.red);
 		setText(status);
+		setToolTipText(status);
 	}
 	
 	public void clear() {
 		setText("");
+		setToolTipText(null);
 	}
 }

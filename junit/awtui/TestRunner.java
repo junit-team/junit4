@@ -38,6 +38,8 @@ import java.io.*;
 	protected Button fQuitButton;
 	protected Button fRerunButton;
 	protected TextField fStatusLine;
+	protected Checkbox fUseLoadingRunner;
+	protected int fNonLoadingRuns= 0;
 	
 	protected static Font PLAIN_FONT= new Font("dialog", Font.PLAIN, 12);
 	private static final int GAP= 4;
@@ -181,11 +183,13 @@ import java.io.*;
 				}
 			}
 		);
-	
+		boolean useLoader= useReoadingTestSuiteLoader();
+		fUseLoadingRunner= new Checkbox("Use custom class loader for loading tests", useLoader);
+		
 		//---- second section
 		fProgressIndicator= new ProgressBar();	
 
-		//---- third section
+		//---- third section 
 		fNumberOfErrors= new Label("0000", Label.RIGHT);
 		fNumberOfErrors.setText("0");
 		fNumberOfErrors.setFont(PLAIN_FONT);
@@ -257,7 +261,7 @@ import java.io.*;
 		
 		addGrid(panel, fSuiteField, 	 0, 1, 2, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.WEST);
 		addGrid(panel, fRun, 			 2, 1, 1, GridBagConstraints.HORIZONTAL, 	0.0, GridBagConstraints.CENTER);
-
+		addGrid(panel, fUseLoadingRunner, 0, 2, 2, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.WEST);
 		addGrid(panel, fProgressIndicator, 0, 3, 2, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.WEST);
 		addGrid(panel, fLogo, 			 2, 3, 1, GridBagConstraints.NONE, 			0.0, GridBagConstraints.NORTH);
 
@@ -378,11 +382,14 @@ import java.io.*;
 		if (fRunner != null) {
 			fTestResult.stop();
 		} else {
+			if (!setUseLoadingRunner())
+				return;
 			fRun.setLabel("Stop");
 			showInfo("Initializing...");
 			reset();
 			
 			showInfo("Load Test Case...");
+
 			final Test testSuite= getTest(fSuiteField.getText());
 			if (testSuite != null) {
 				fRunner= new Thread() {
@@ -413,8 +420,25 @@ import java.io.*;
 		}
 	}
 	
+	private boolean setUseLoadingRunner() {
+		setLoading(fUseLoadingRunner.getState());
+		if (!fUseLoadingRunner.getState())
+			fNonLoadingRuns++;
+		if (fNonLoadingRuns > 1) {
+			String message1= "Code modifications you made since the last run will be ignored.";
+			String message2= "It is recommended to restart the TestRunner. Do you still want to continue?";
+			WarningDialog dialog= new WarningDialog(fFrame, message1, message2);
+			dialog.show();
+			return dialog.getChoice();
+		}
+		return true;
+	}
+
 	private void setLabelValue(Label label, int value) {
 		label.setText(Integer.toString(value));
+		label.invalidate();
+		label.getParent().validate();
+
 	}
 	
 	public void setSuiteName(String suite) {
@@ -427,16 +451,9 @@ import java.io.*;
 			return;
 	
 		Throwable t= (Throwable) fExceptions.elementAt(index);
-		fTraceArea.setText(filterStack(getTrace(t)));
+		fTraceArea.setText(getFilteredTrace(t));
 	}
 	
-	private String getTrace(Throwable t) { 
-		StringWriter stringWriter= new StringWriter();
-		PrintWriter writer= new PrintWriter(stringWriter);
-		t.printStackTrace(writer);
-		StringBuffer buffer= stringWriter.getBuffer();
-		return buffer.toString();
-	}
 
 	private void showInfo(String message) {
 		fStatusLine.setFont(PLAIN_FONT);

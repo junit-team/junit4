@@ -56,27 +56,41 @@ public class Assert {
 	    assertEquals(null, expected, actual);
 	}
 	/**
-	 * Asserts that two doubles are equal.
+	 * Asserts that two doubles are equal concerning a delta. If the expected
+	 * value is infinity then the delta value is ignored.
 	 */
 	static public void assertEquals(String message, double expected, double actual, double delta) {
-		if (!(Math.abs(expected-actual) <= delta)) // Because comparison with NaN always returns false
+		// handle infinity specially since subtracting to infinite values gives NaN and the
+		// the following test fails
+		if (Double.isInfinite(expected)) {
+			if (!Double.isInfinite(actual))
+				failNotEquals(message, new Double(expected), new Double(actual));
+		} else if (!(Math.abs(expected-actual) <= delta)) // Because comparison with NaN always returns false
 			failNotEquals(message, new Double(expected), new Double(actual));
 	}
 	/**
-	 * Asserts that two doubles are equal.
+	 * Asserts that two doubles are equal concerning a delta. If the expected
+	 * value is infinity then the delta value is ignored.
 	 */
 	static public void assertEquals(double expected, double actual, double delta) {
 	    assertEquals(null, expected, actual, delta);
 	}
 	/**
-	 * Asserts that two floats are equal concerning a delta
+	 * Asserts that two floats are equal concerning a delta. If the expected
+	 * value is infinity then the delta value is ignored.
 	 */
 	static public void assertEquals(String message, float expected, float actual, float delta) {
-    		if (!(Math.abs(expected-actual) <= delta))
+ 		// handle infinity specially since subtracting to infinite values gives NaN and the
+		// the following test fails
+		if (Float.isInfinite(expected)) {
+			if (!Float.isInfinite(actual))
+				failNotEquals(message, new Float(expected), new Float(actual));
+		} else if (!(Math.abs(expected-actual) <= delta))
       		failNotEquals(message, new Float(expected), new Float(actual));
 	}
 	/**
-	 * Asserts that two floats are equal concerning a delta
+	 * Asserts that two floats are equal concerning a delta. If the expected
+	 * value is infinity then the delta value is ignored.
 	 */
 	static public void assertEquals(float expected, float actual, float delta) {
 		assertEquals(null, expected, actual, delta);

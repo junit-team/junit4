@@ -1,8 +1,8 @@
-<!-- JUnit build script using ant 2.0 -->
+<!-- JUnit build script using ant 1.3 -->
 <project name="junit" default="dist" basedir=".">
 	<target name="init">
 		<tstamp/>
-		<property name="version" value="3.5" />
+		<property name="version" value="3.6" />
 		<property name="dist"  value="junit${version}" />
 		<property name="versionfile"  value="junit/runner/Version.java" />
 		<property name="zipfile"  value="${dist}.zip" />
@@ -32,12 +32,12 @@
 		<jar 
 			jarfile="${dist}/src.jar"
 			basedir="."
-			excludes="junit/tests/**, junit/samples/**, **/*.class, doc/**, README.html, build.xml"
+			excludes="${dist}/src.jar, junit/tests/**, junit/samples/**, **/*.class, doc/**, README.html, build.xml"
 		/>
 		<jar 
 			jarfile="${dist}/junit.jar"
 			basedir="."
-			excludes="junit/tests/**, junit/samples/**, **/*.java, doc/**, README.html, jar-manifest.txt"
+			excludes="${dist}/junit.jar, junit/tests/**, junit/samples/**, **/*.java, doc/**, README.html, jar-manifest.txt"
 		/>
 		<copy todir="${dist}/junit/samples">
 			<fileset dir="junit/samples" />
@@ -78,9 +78,9 @@
 	<target name="zip">
 		<!-- !!! hard code names, variable substitution doesn't work !!! -->
 		<zip 
-			zipfile="junit3.5.zip"
+			zipfile="junit3.6.zip"
 			basedir="."
-			includes="junit3.5/**"
+			includes="junit3.6/**"
 		/>
 	</target>
 	

@@ -136,7 +136,7 @@ public class TestRunner extends BaseTestRunner {
 			for (Enumeration e= result.errors(); e.hasMoreElements(); i++) {
 			    TestFailure failure= (TestFailure)e.nextElement();
 				writer().println(i+") "+failure.failedTest());
-				failure.thrownException().printStackTrace(writer());
+				writer().print(getFilteredTrace(failure.thrownException()));
 		    }
 		}
 	}
@@ -158,7 +158,7 @@ public class TestRunner extends BaseTestRunner {
 					writer().println(" \"" + truncate(t.getMessage()) + "\"");
 				else {
 					writer().println();
-					failure.thrownException().printStackTrace(writer());
+					writer().print(getFilteredTrace(failure.thrownException()));
 				}
 			}
 		}

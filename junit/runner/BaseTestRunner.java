@@ -30,11 +30,14 @@ public abstract class BaseTestRunner implements TestListener {
 		Class testClass= null;
 		try {
 			testClass= loadSuiteClass(suiteClassName);
-		} catch (NoClassDefFoundError e) {
-			runFailed("Class definition \""+suiteClassName+"\" not found");
+		} catch (ClassNotFoundException e) {
+			String clazz= e.getMessage();
+			if (clazz == null) 
+				clazz= suiteClassName;
+			runFailed("Class not found \""+clazz+"\"");
 			return null;
 		} catch(Exception e) {
-			runFailed("Class \""+suiteClassName+"\" not found");
+			runFailed("Error: "+e.toString());
 			return null;
 		}
 		Method suiteMethod= null;
@@ -136,9 +139,13 @@ public abstract class BaseTestRunner implements TestListener {
 	 * Returns the loader to be used.
 	 */
 	public TestSuiteLoader getLoader() {
-		if (getPreference("loading").equals("true") && !inVAJava() && fLoading)
+		if (useReoadingTestSuiteLoader())
 			return new ReloadingTestSuiteLoader();
 		return new StandardTestSuiteLoader();
+	}
+	
+	protected boolean useReoadingTestSuiteLoader() {
+		return getPreference("loading").equals("true") && !inVAJava() && fLoading;
 	}
 	
 	private static File getPreferencesFile() {
@@ -185,6 +192,19 @@ public abstract class BaseTestRunner implements TestListener {
 			return false;
 		}
 		return true;
+	}
+
+
+	/**
+	 * Returns a filtered stack trace
+	 */
+	public static String getFilteredTrace(Throwable t) { 
+		StringWriter stringWriter= new StringWriter();
+		PrintWriter writer= new PrintWriter(stringWriter);
+		t.printStackTrace(writer);
+		StringBuffer buffer= stringWriter.getBuffer();
+		String trace= buffer.toString();
+		return BaseTestRunner.filterStack(trace);
 	}
 
 	/**

@@ -10,11 +10,11 @@ import junit.framework.*;
  * it is assignable from Test or provides a static suite method.
  * @see TestCollector
  */
-public class LoadingClassPathTestCollector extends ClassPathTestCollector {
+public class LoadingTestCollector extends ClassPathTestCollector {
 	
 	TestCaseClassLoader fLoader;
 	
-	public LoadingClassPathTestCollector() {
+	public LoadingTestCollector() {
 		fLoader= new TestCaseClassLoader();
 	}
 	

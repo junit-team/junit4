@@ -7,7 +7,7 @@ import java.io.*;
  * An implementation of a TestCollector that consults the
  * class path. It considers all classes on the class path
  * excluding classes in JARs. It leaves it up to subclasses
- * to decide whether a class is runnable Test.
+ * to decide whether a class is a runnable Test.
  *
  * @see TestCollector
  */
@@ -21,27 +21,31 @@ public abstract class ClassPathTestCollector implements TestCollector {
 	public Enumeration collectTests() {
 		String classPath= System.getProperty("java.class.path");
 		String separator= System.getProperty("path.separator");
-		Vector result= new Vector(100);
+		Hashtable result= new Hashtable(100);
 		collectFilesInRoots(splitClassPath(classPath, separator), result);
 		return result.elements();
 	}
 	
-	void collectFilesInRoots(Vector roots, Vector result) {
+	void collectFilesInRoots(Vector roots, Hashtable result) {
 		Enumeration e= roots.elements();
 		while (e.hasMoreElements()) 
 			gatherFiles(new File((String)e.nextElement()), "", result);
 	}
 
-	void gatherFiles(File classRoot, String classFileName, Vector result) {
+	void gatherFiles(File classRoot, String classFileName, Hashtable result) {
 		File thisRoot= new File(classRoot, classFileName);
 		if (thisRoot.isFile()) {
-			if (isTestClass(classFileName)) 
-				result.addElement(classNameFromFile(classFileName));
+			if (isTestClass(classFileName)) {
+				String className= classNameFromFile(classFileName);
+				result.put(className, className);
+			}
 			return;
 		}		
-		String[] contents= thisRoot.list(); 
-		for (int i= 0; i < contents.length; i++) 
-			gatherFiles(classRoot, classFileName+File.separatorChar+contents[i], result);		
+		String[] contents= thisRoot.list();
+		if (contents != null) { 
+			for (int i= 0; i < contents.length; i++) 
+				gatherFiles(classRoot, classFileName+File.separatorChar+contents[i], result);		
+		}
 	}
 	
 	Vector splitClassPath(String classPath, String separator) {

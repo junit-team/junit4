@@ -4,18 +4,18 @@
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <meta name="GENERATOR" content="Mozilla/4.75 [en] (Windows NT 5.0; U) [Netscape]">
    <meta name="Author" content="Erich Gamma">
-   <title>JUnit 3.4</title>
+   <title>JUnit 3.6</title>
 </head>
 <body>
 
 <h1>
 <b><font color="#00CC00">J</font><font color="#FF0000">U</font><font color="#000000">nit
-3.5
+3.6
 </font><font color="#808080">@</font><font color="#000000">&nbsp;</font></b><!--webbot bot="HTMLMarkup" startspan --><a href="http://sourceforge.net"><img SRC="sflogo.php" ALT="SourceForge Logo" BORDER=0 height=31 width=88></a><!--webbot
 bot="HTMLMarkup" endspan --></h1>
 
 <hr WIDTH="100%">
-<br>01/03/2001
+<br>03/27/2001
 <p>JUnit is a simple framework to write repeatable tests. It is an instance
 of the xUnit architecture for unit testing frameworks.
 <ul>
@@ -36,7 +36,21 @@ of the xUnit architecture for unit testing frameworks.
 </ul>
 
 <h2>
-<a NAME="Summary of"></a>Summary of Changes between 3.4 and 3.5</h2>
+<a NAME="Summary of"></a>Summary of Changes between 3.5 and 3.6</h2>
+
+<ul>
+<li>
+The UI TestRunners no longer use the loading class loader by default. To
+enable the loading class loader can either use the <b>-loading </b>command
+line option or set loading option in the&nbsp; <b>junit.properties</b>
+to true.</li>
+
+<li>
+</li>
+</ul>
+
+<h2>
+Summary of Changes between 3.4 and 3.5</h2>
 
 <h3>
 Framework</h3>
@@ -89,8 +103,8 @@ on the class path and tests whether the class is assignable from Test or
 has a static <b>suite</b> method.</li>
 </ul>
 By default the simple the test collector is used. The loading collector
-is more precise but much slower than the simple one. The loading collector doesn't scale
-up when many classes are available on the class path.
+is more precise but much slower than the simple one. The loading collector
+doesn't scale up when many classes are available on the class path.
 <br><b><font color="#FF0000">Notice</font></b>: that both TestCollectors
 assume that the class files reside are kept in the file system. This isn't
 case in VA/Java and they will not work there. A custom TestCollector is
