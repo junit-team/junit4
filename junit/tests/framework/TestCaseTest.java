@@ -21,7 +21,7 @@ public class TestCaseTest extends TestCase {
 			fTornDown= true;
 		}
 		protected void runTest() {
-			throw new Error();
+			throw new Error("running");
 		}
 	}
 
@@ -109,34 +109,34 @@ public class TestCaseTest extends TestCase {
 		assertTrue(test.fWasRun);
 	}
 	public void testExceptionRunningAndTearDown() {
-		// This test documents the current behavior. With 1.4, we should
+		// With 1.4, we should
 		// wrap the exception thrown while running with the exception thrown
 		// while tearing down
 		Test t= new TornDown() {
 			public void tearDown() {
-				throw new Error("tearDown");
+				throw new Error("tearingDown");
 			}
 		};
 		TestResult result= new TestResult();
 		t.run(result);
 		TestFailure failure= (TestFailure) result.errors().nextElement();
-		assertEquals("tearDown", failure.thrownException().getMessage());
+		assertEquals("running", failure.thrownException().getMessage());
 	}
 	
 	public void testErrorTearingDownDoesntMaskErrorRunning() {
-		final Exception running= new Exception();
+		final Exception running= new Exception("Running");
 		TestCase t= new TestCase() {
 			protected void runTest() throws Throwable {
 				throw running;
 			}
 			protected void tearDown() throws Exception {
-				throw new Exception();
+				throw new Error("Tearing down");
 			}
 		};
 		try {
 			t.runBare();
 		} catch (Throwable thrown) {
-			assertEquals(thrown, running);
+			assertSame(running, thrown);
 		}
 	}
 	

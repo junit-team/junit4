@@ -10,10 +10,15 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
+		<buildCommand>
+			<name>com.agitar.eclipse.project.agitatorbuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.team.cvs.core.cvsnature</nature>
+		<nature>com.agitar.eclipse.project.agitatornature</nature>
 	</natures>
-</projectDescription> 
-
+</projectDescription>

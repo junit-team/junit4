@@ -124,27 +124,28 @@ public abstract class TestCase extends Assert implements Test {
 	 * @exception Throwable if any exception is thrown
 	 */
 	public void runBare() throws Throwable {
-		Throwable running= null;
+		Throwable exception= null;
 		setUp();
 		try {
 			runTest();
-		} catch (Throwable e) {
-			running= e;
+		} catch (Throwable running) {
+			exception= running;
 		}
 		finally {
 			try {
 				tearDown();
-			} catch (Exception e) {
-				throw (running != null) ? running : e;
+			} catch (Throwable tearingDown) {
+				if (exception == null) exception= tearingDown;
 			}
 		}
+		if (exception != null) throw exception;
 	}
 	/**
 	 * Override to run the test and assert its state.
 	 * @exception Throwable if any exception is thrown
 	 */
 	protected void runTest() throws Throwable {
-		assertNotNull(fName);
+		assertNotNull(fName); // Some VMs crash when calling getMethod(null,null);
 		Method runMethod= null;
 		try {
 			// use getMethod to get all public inherited
