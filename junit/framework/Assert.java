@@ -240,18 +240,40 @@ public class Assert {
 	static public void assertSame(Object expected, Object actual) {
 	    assertSame(null, expected, actual);
 	}
-	
-	static private void failNotEquals(String message, Object expected, Object actual) {
-		String formatted= "";
-		if (message != null)
-			formatted= message+" ";
-		fail(formatted+"expected:<"+expected+"> but was:<"+actual+">");
+ 	/**
+ 	 * Asserts that two objects refer to the same object. If they are not
+ 	 * an AssertionFailedError is thrown.
+ 	 */
+	static public void assertNotSame(String message, Object expected, Object actual) {
+		if (expected == actual)
+			failSame(message, expected, actual);
 	}
-	
+	/**
+	 * Asserts that two objects refer to the same object. If they are not
+	 * the same an AssertionFailedError is thrown.
+	 */
+	static public void assertNotSame(Object expected, Object actual) {
+		assertNotSame(null, expected, actual);
+	}
+ 	
+	static private void failSame(String message, Object expected, Object actual) {
+		String formatted= "";
+ 		if (message != null)
+ 			formatted= message+" ";
+ 		fail(formatted+"expected not same");
+	}
+
 	static private void failNotSame(String message, Object expected, Object actual) {
 		String formatted= "";
 		if (message != null)
 			formatted= message+" ";
 		fail(formatted+"expected same");
+	}
+
+	static private void failNotEquals(String message, Object expected, Object actual) {
+		String formatted= "";
+		if (message != null)
+			formatted= message+" ";
+		fail(formatted+"expected:<"+expected+"> but was:<"+actual+">");
 	}
 }

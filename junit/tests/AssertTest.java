@@ -130,4 +130,29 @@ public class AssertTest extends TestCase {
 		}
 		fail();
 	}
+ 
+	public void testAssertNotSame() {
+		assertNotSame(new Integer(1), null);
+		assertNotSame(null, new Integer(1));
+		assertNotSame(new Integer(1), new Integer(1));
+	}
+
+	public void testAssertNotSameFails() {
+		try {
+			Integer obj = new Integer(1);
+			assertNotSame(obj, obj);
+		} catch (AssertionFailedError e) {
+ 			return;
+		}
+		fail();
+	}
+
+	public void testAssertNotSameFailsNull() {
+		try {
+			assertNotSame(null, null);
+		} catch (AssertionFailedError e) {
+			return;
+		}
+		fail();
+	}
 }

@@ -107,13 +107,6 @@ public abstract class TestCase extends Assert implements Test {
 	    return new TestResult();
 	}
 	/**
-	 * Gets the name of the test case.
-	 * @deprecated use getName()
-	 */
-	public String name() {
-		return fName;
-	}
-	/**
 	 * A convenience method to run this test, collecting the results with a
 	 * default TestResult object.
 	 *
@@ -190,7 +183,7 @@ public abstract class TestCase extends Assert implements Test {
 	 * Returns a string representation of the test case
 	 */
 	public String toString() {
-	    return name()+"("+getClass().getName()+")";
+	    return getName()+"("+getClass().getName()+")";
 	}
 	/**
 	 * Gets the name of a TestCase
