@@ -28,9 +28,9 @@ public class ComparisonFailure extends AssertionFailedError {
 	 * @see java.lang.Throwable#getMessage()
 	 */
 	public String getMessage() {
-		String formatted= "";
-		String message= super.getMessage();
-		
+		if (fExpected == null || fActual == null)
+			return format(fActual, fExpected);
+			
 		int end= Math.min(fExpected.length(), fActual.length());
 		
 		int i= 0;
@@ -63,9 +63,14 @@ public class ComparisonFailure extends AssertionFailedError {
 			if (k < fActual.length()-1)
 				actual= actual+"...";
 		}	
+		return format(actual, expected);
+	}
+
+	private String format(String actual, String expected) {
+		String message= super.getMessage();
+		String formatted= "";
 		if (message != null)
 			formatted= message+": ";	
 		return formatted+"expected:<"+expected+"> but was:<"+actual+">";
 	}
-
 }
