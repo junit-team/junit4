@@ -37,6 +37,15 @@ public class AssertTest extends TestCase {
 		fail();
 	}
 
+	public void testAssertPosInfinityNotEqualsNegInfinity() {
+		try {
+			assertEquals(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 0.0);
+		} catch (AssertionFailedError e) {
+			return;
+		}
+		fail();
+	}
+
 	public void testAssertPosInfinityNotEquals() {
 		try {
 			assertEquals(Double.POSITIVE_INFINITY, 1.23, 0.0);

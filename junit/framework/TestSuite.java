@@ -181,10 +181,21 @@ public class TestSuite implements Test {
 	/**
 	 */
 	public String toString() {
-		if (fName != null)
-			return fName;
+		if (getName() != null)
+			return getName();
 		return super.toString();
 	 }
+	 
+	 
+	/**
+	 * Returns the name of the suite. Not all
+	 * test suites have a name and this method
+	 * can return null.
+	 */
+	public String getName() {
+		return fName;
+	}
+	 
 	/**
 	 * Returns a test which will fail and log a warning message.
 	 */

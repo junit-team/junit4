@@ -1,0 +1,226 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Windows NT 5.0; U) [Netscape]">
+   <meta name="Author" content="Erich Gamma">
+   <title>JUnit 3</title>
+</head>
+<body>
+
+<ul>
+<h2>
+<a NAME="Summary of"></a>Summary of Changes between 3.3 and 3.4</h2>
+
+<ul>
+<li>
+Eliminated code in ActiveTestSuite that could not compile in VA/Java.</li>
+
+<li>
+Fixed bug related to incorrect error progress feedback when running a single
+test.</li>
+</ul>
+
+<h2>
+Summary of Changes between 3.2 and 3.3</h2>
+
+<h3>
+Framework</h3>
+
+<ul>
+<li>
+Fixed Assert.assertEquals(double,double,double) when the actual value is
+a Double.NaN.</li>
+</ul>
+
+<h3>
+Extensions</h3>
+
+<ul>
+<li>
+Fixed ActiveTest support. Replaced ActiveTest with an ActiveTestSuite,
+the ActiveTestSuite waits until the tests running in separate threads have
+finished.</li>
+
+<li>
+Added an example that illustrates how to launch a new VM for running a
+Test - see TextRunnerTest.java.</li>
+</ul>
+
+<h3>
+TestRunner</h3>
+
+<ul>
+<li>
+Refactored the TestRunner classes, they now all descend from junit.runner.BaseTestRunner.</li>
+
+<li>
+Eliminated the non-loading/loading TestRunner flavors. All TestRunners
+are now loading by default except when the TestRunners detect that they
+run inside VA/Java (BaseTestRunner.getLoader()).</li>
+
+<li>
+Added a <b>junit.properties</b> file for preference settings. It is stored
+in the folder referred to by the "user.home" property. The supported setting
+is <b>loading, </b>it can be set to true or false to enable or disable
+the loading behavior.</li>
+
+<li>
+Renamed junit.ui to junit.awtui (with backward compatibility).</li>
+
+<li>
+Renamed junit.utils to junit.runner.</li>
+
+<li>
+You can now put test cases that should be reloaded into a JAR file. The
+TestCaseClassLoader now supports a simple version of class loading from
+a JAR file.</li>
+
+<li>
+Simplified&nbsp; invoking the TestRunners programmatically. They now all
+support a static method <b>run(Class test)</b>.</li>
+
+<li>
+Clarified the exit behavior of junit.textui.TestRunner:</li>
+
+<ul>
+<li>
+TestRunner only exits the VM when it is invoked by main, when the TestRunner
+is invoked by <b>run()</b> it will not explicitly exit and terminate the
+VM.</li>
+
+<li>
+TestRunner exits with 0 when the tests passed.</li>
+</ul>
+</ul>
+
+<h3>
+Release</h3>
+
+<ul>
+<li>
+Removed VA/Java specific installation support</li>
+</ul>
+
+<h2>
+Summary of Changes between 3.1 and 3.2</h2>
+
+<ul>
+<li>
+Fixed bug in the handling of inherited test methods.</li>
+
+<li>
+The junit.swing.TestRunner support selective test execution. A Test Browser
+shows the contents of the entered test suite as a tree and you can select
+the test case to be run. The Test Browser can be launched from JUnit menu.</li>
+
+<li>
+The history file of junit.swingui.TestRunner is stored in .junit on non
+Windows platforms.</li>
+
+<li>
+Support for rerunning a failed test was previously only available inside
+VisualAge for Java. It is now generally available when using the LoadingTestRunners.</li>
+
+<li>
+The junit.textui.TestRunner exits with -1 when the test run fails.</li>
+</ul>
+
+<h2>
+Summary of Changes between 2.1 and 3.1</h2>
+
+<h3>
+JUnit Framework</h3>
+
+<ul>
+<li>
+TestSuite now extracts inherited test methods. The test extraction stops
+at the first class that doesn't implement Test.</li>
+
+<li>
+Added support for TestListeners. A TestListeners observes changes to the
+TestResult. It enables to have multiple observers on the same result and
+allowed us to delete the TestResult subclasses (parallel class hierarchy)
+as the TestRunners now implement TestListener. It also allows clients to
+generate additional kinds of test run feedback.</li>
+
+<li>
+Added an <a href="javadoc/junit/extensions/ExceptionTestCase.html">ExceptionTestCase</a>
+class. A TestCase that expects a particular exception to be thrown.</li>
+
+<li>
+Fixed TestSetup so that errors in setUp are caught and reported correctly.</li>
+
+<li>
+Assertion checks where moved from TestCase into a separate <a href="javadoc/junit/framework/Assert.html">Assert</a>
+class. This enables programming by contract.</li>
+
+<li>
+Added support for protected blocks. A protected block has to implement
+the <a href="javadoc/junit/framework/Protectable.html">Protectable</a>
+interface. We used it to factor out a common template method to run tests.
+To implement your own protected block that logs thrown exceptions, pass
+a Protectable to TestResult.runProtected().</li>
+
+<li>
+Clarified and deprecated method names in TestResult: testErrors, testFailures
+and runTests are now called errorCount, failureCount and runCount.</li>
+
+<li>
+TestCase.getResult got removed you can add access to the current TestResult
+in your own TestCase subclasses.</li>
+
+<li>
+TestCase.setUp() and tearDown() now throw a Throwable, so you can allow
+exceptions in setUp() to propagate.</li>
+</ul>
+
+<h3>
+TestRunner</h3>
+
+<ul>
+<li>
+There is a new version of a Swing based graphical TestRunner. It supports
+a combo box with a persistent history of ran test suites. You can start
+it with:</li>
+
+<br><tt>&nbsp;&nbsp;&nbsp; java junit.swingui.TestRunner</tt>
+<br>There is also a LoadingTestRunner for Swing. The Swing TestRunner requires
+Swing 1.1 (javax.swing package structure) or jdk 1.2.
+<li>
+Some common code among the TestRunners was moved into the package junit.util.</li>
+
+<li>
+The batch TestRunner unit.textui.TestRunner can now be given a PrintStream
+to output the results to.</li>
+
+<li>
+The batch TestRunner can be given a class to run directly. To start the
+batch runner from your main you can write:</li>
+
+<br><tt>public static void main(String args[]) {</tt>
+<br><tt>&nbsp; junit.textui.TestRunner.run(MoneyTest.class);</tt>
+<br><tt>}</tt></ul>
+
+<h3>
+Documentation</h3>
+
+<ul>
+<li>
+There is a new article: <i>JUnit a cook's tour </i>included.</li>
+</ul>
+
+<h3>
+Release</h3>
+
+<ul>
+<li>
+We no longer provide a .dat file for VAJ users. You install JUnit into
+VAJ by importing the resources from the junit.jar and the sources from
+the src.zip files.</li>
+</ul>
+</ul>
+
+<hr WIDTH="100%">
+</body>
+</html>

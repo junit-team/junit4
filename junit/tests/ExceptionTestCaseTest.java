@@ -12,7 +12,7 @@ public class ExceptionTestCaseTest extends junit.framework.TestCase {
 		public void test() {
 			throw new IndexOutOfBoundsException();
 		}
-	};
+	}
 
 	static public class ThrowRuntimeExceptionTestCase extends ExceptionTestCase {
 		public ThrowRuntimeExceptionTestCase(String name, Class exception) {
@@ -21,7 +21,7 @@ public class ExceptionTestCaseTest extends junit.framework.TestCase {
 		public void test() {
 			throw new RuntimeException();
 		}
-	};
+	}
 
 	static public class ThrowNoExceptionTestCase extends ExceptionTestCase {
 		public ThrowNoExceptionTestCase(String name, Class exception) {
@@ -29,7 +29,7 @@ public class ExceptionTestCaseTest extends junit.framework.TestCase {
 		}
 		public void test() {
 		}
-	};
+	}
 
 	public ExceptionTestCaseTest(String name) {
 		super(name);

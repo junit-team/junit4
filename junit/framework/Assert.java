@@ -63,7 +63,7 @@ public class Assert {
 		// handle infinity specially since subtracting to infinite values gives NaN and the
 		// the following test fails
 		if (Double.isInfinite(expected)) {
-			if (!Double.isInfinite(actual))
+			if (!(expected == actual))
 				failNotEquals(message, new Double(expected), new Double(actual));
 		} else if (!(Math.abs(expected-actual) <= delta)) // Because comparison with NaN always returns false
 			failNotEquals(message, new Double(expected), new Double(actual));
@@ -83,7 +83,7 @@ public class Assert {
  		// handle infinity specially since subtracting to infinite values gives NaN and the
 		// the following test fails
 		if (Float.isInfinite(expected)) {
-			if (!Float.isInfinite(actual))
+			if (!(expected == actual))
 				failNotEquals(message, new Float(expected), new Float(actual));
 		} else if (!(Math.abs(expected-actual) <= delta))
       		failNotEquals(message, new Float(expected), new Float(actual));

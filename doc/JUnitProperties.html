@@ -1,0 +1,74 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Windows NT 5.0; U) [Netscape]">
+   <meta name="Author" content="Erich Gamma">
+   <title>JUnit 2</title>
+</head>
+<body>
+
+<h2>
+JUnit TestRunner Properties</h2>
+The TestRunners use a properties file for preference settings. This file
+is stored in the folder referred to by the "user.home" system property.
+The following properties are supported:
+<br>&nbsp;
+<table BORDER CELLSPACING=0 >
+<tr>
+<td><b>loading</b></td>
+
+<td>Use a custom class loader to load classes for each run. Default value=true.</td>
+</tr>
+
+<tr>
+<td><b>filterstack</b></td>
+
+<td>Filter JUnit internal methods in failure or error stack traces. Default
+value=true.&nbsp;</td>
+</tr>
+
+<tr>
+<td><b>maxmessage</b></td>
+
+<td>The maximum output length. Default value=500. Set maxmessage to -1
+to disable output truncation. Disabling the output truncation will result
+in long test runs when an assertEquals method fails and the toString()
+method results in massive output.&nbsp;</td>
+</tr>
+
+<tr>
+<td><b>TestCollectorClass</b>
+<br><i>Swing UI TestRunner only</i></td>
+
+<td>The Swing TestRunner supports to browse test classes. There is an additional
+browse ("...") button besides the suite combo. It shows a simple dialog
+to select a test class from a list. Different strategies to locate Test
+classes are supported and you can plug-in your own strategy. This allows
+to leverage functionality provided by an extension API of an integrated
+development environment (IDE). To define a custom test collector you 1)
+implement the junit.runner.TestCollector interface and 2) add an entry
+to the junit.properties file with the key TestCollectorClass and the name
+of your TestCollector implementation class as the key:&nbsp;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+TestCollectorClass=junit.swingui.LoadingTestCollector&nbsp;
+<br>This class has to be installed on the class path.&nbsp;</td>
+</tr>
+
+<tr>
+<td><b>FailureViewClass</b>
+<br><i>Swing UI TestRunner only</i></td>
+
+<td>Plug-in a custom failure panel that provides additional functionality
+like navigating from a failure to the source. To do so you implement the
+junit.runner.FailureDetailView interface and register the implementation
+class in the junit.properties file under the key FailureViewClass, for
+example.&nbsp;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+FailureViewClass=somepackage.MyFailureViewClassName.&nbsp;
+<br>This class has to be installed on the class path.&nbsp;</td>
+</tr>
+</table>
+
+</body>
+</html>

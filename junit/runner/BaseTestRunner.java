@@ -14,7 +14,7 @@ public abstract class BaseTestRunner implements TestListener {
 	public static final String SUITE_METHODNAME= "suite";
 	
 	static Properties fPreferences;
-	static int fgMaxMessageLength= 200;
+	static int fgMaxMessageLength= 500;
 	static boolean fgFilterStack= true;
 	boolean fLoading= true;
 	
@@ -139,12 +139,12 @@ public abstract class BaseTestRunner implements TestListener {
 	 * Returns the loader to be used.
 	 */
 	public TestSuiteLoader getLoader() {
-		if (useReoadingTestSuiteLoader())
+		if (useReloadingTestSuiteLoader())
 			return new ReloadingTestSuiteLoader();
 		return new StandardTestSuiteLoader();
 	}
 	
-	protected boolean useReoadingTestSuiteLoader() {
+	protected boolean useReloadingTestSuiteLoader() {
 		return getPreference("loading").equals("true") && !inVAJava() && fLoading;
 	}
 	

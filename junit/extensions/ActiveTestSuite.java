@@ -3,8 +3,9 @@ package junit.extensions;
 import junit.framework.*;
 
 /**
- * A TestSuite for active Tests. It waits until all
- * active tests have terminated.
+ * A TestSuite for active Tests. It runs each
+ * test in a separate thread and waits until all
+ * threads have terminated.
  * -- Aarhus Radisson Scandinavian Center 11th floor
  */ 
 public class ActiveTestSuite extends TestSuite {

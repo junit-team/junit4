@@ -223,7 +223,7 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		menu.add(mi1);
 		
 		menu.addSeparator();
-		JMenuItem mi2= new JMenuItem("Exit");
+		JMenuItem mi2= new JMenuItem(" Exit ");
 		mi2.addActionListener(
 		    new ActionListener() {
 		        public void actionPerformed(ActionEvent event) {
@@ -270,11 +270,15 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 	}
 		
 	protected JCheckBox createUseLoaderCheckBox() {
-		boolean useLoader= useReoadingTestSuiteLoader();
-		return new JCheckBox("Use custom class loader for loading tests", useLoader);
+		boolean useLoader= useReloadingTestSuiteLoader();
+		JCheckBox box= new JCheckBox("Reload classes every run", useLoader);
+		box.setToolTipText("Use a custom class loader to reload the classes for every run");
+		return box;
 	}
 	
 	protected JButton createQuitButton() {
+		 // spaces required to avoid layout flicker
+		 // Exit is shorter than Stop that shows in the same column
 		JButton quit= new JButton(" Exit "); 
 		quit.addActionListener(
 			new ActionListener() {
@@ -383,7 +387,7 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		createMenus(mb);
 		frame.setJMenuBar(mb);
 	
-		JLabel suiteLabel= new JLabel("Test:");
+		JLabel suiteLabel= new JLabel("Test class name:");
 		fSuiteCombo= createSuiteCombo();
 		fRun= createRunButton();
 		frame.getRootPane().setDefaultButton(fRun);
@@ -423,10 +427,10 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 
 		addGrid(panel, fCounterPanel,	 0, 5, 2, GridBagConstraints.NONE, 			0.0, GridBagConstraints.CENTER);
 
-		addGrid(panel, fTestViewTab, 	 0, 6, 2, GridBagConstraints.BOTH, 			1.0, GridBagConstraints.WEST);
+		JSplitPane splitter= new JSplitPane(JSplitPane.VERTICAL_SPLIT, fTestViewTab, tracePane);
+		addGrid(panel, splitter, 	 0, 6, 2, GridBagConstraints.BOTH, 			1.0, GridBagConstraints.WEST);				
 
-		addGrid(panel, tracePane, 	 0, 7, 2, GridBagConstraints.BOTH, 	        1.0, GridBagConstraints.WEST);
-		addGrid(panel, failedPanel, 	 2, 6, 1, GridBagConstraints.HORIZONTAL, 	0.0, GridBagConstraints.CENTER);
+		addGrid(panel, failedPanel, 	 2, 6, 1, GridBagConstraints.HORIZONTAL, 	0.0, GridBagConstraints.NORTH/*CENTER*/);
 		
 		addGrid(panel, fStatusLine, 	 0, 8, 2, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.CENTER);
 		addGrid(panel, fQuitButton, 	 2, 8, 1, GridBagConstraints.HORIZONTAL, 	0.0, GridBagConstraints.CENTER);

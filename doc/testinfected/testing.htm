@@ -2,14 +2,14 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.5 [en] (Win95; I) [Netscape]">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Windows NT 5.0; U) [Netscape]">
    <title>Test Infected: </title>
 </head>
 <body>
 
 <h1>
-<b><font color="#00CC00">J</font><font color="#FF0000">U</font><font color="#000000">nit</font></b>
-<b><font size=+3>Test Infected: Programmers Love Writing Tests</font></b></h1>
+<b><font color="#00CC00">J</font><font color="#FF0000">U</font><font color="#000000">nit</font><font size=+3>Test
+Infected: Programmers Love Writing Tests</font></b></h1>
 
 <hr WIDTH="100%">
 <p>Testing is not closely integrated with development. This prevents you
@@ -103,7 +103,7 @@ resulting Money has as its amount the sum of the other two amounts.
 Now, instead of just coding on, we want to get immediate feedback and practice
 "code a little, test a little, code a little, test a little". To implement
 our tests we use the JUnit framework. To write tests you need to get the
-<a href="http://members.pingnet.ch/gamma/junit-10.zip">latest
+<a href="http://sourceforge.net/projects/junit/">latest
 copy</a> JUnit (or write your own equivalent- it's not so much work).
 <p>JUnit defines how to structure your test cases and provides the tools
 to run them. You implement a test in a subclass of TestCase. To test our
@@ -147,7 +147,7 @@ equals let's a write a test for equals in MoneyTest.
 &nbsp;&nbsp;&nbsp; Money m14CHF= new Money(14, "CHF");
 
 &nbsp;&nbsp;&nbsp; assert(!m12CHF.equals(null));
-&nbsp;&nbsp;&nbsp; assert(m12CHF, m12CHF);
+&nbsp;&nbsp;&nbsp; assertEquals(m12CHF, m12CHF);
 &nbsp;&nbsp;&nbsp; assertEquals(m12CHF, new Money(12, "CHF")); //&nbsp;<a NAME="TestEquals1"></a>(1)
 &nbsp;&nbsp;&nbsp; assert(!m12CHF.equals(m14CHF));
 }</tt></pre>
@@ -158,11 +158,12 @@ added a test <a href="#TestEquals1">(1)</a> to verify that Monies are equal
 when they have the same value but are not the same object.
 <p>Next let's write the equals method in Money:
 <pre><tt>public boolean equals(Object anObject) {
-&nbsp;&nbsp;&nbsp; if (! anObject instanceof Money)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return false;
-&nbsp;&nbsp;&nbsp; Money aMoney= (Money)anObject;
-&nbsp;&nbsp;&nbsp; return aMoney.currency().equals(currency())
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &amp;&amp; amount() == aMoney.amount();
+&nbsp;&nbsp;&nbsp; if (anObject instanceof Money) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Money aMoney= (Money)anObject;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return aMoney.currency().equals(currency())
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &amp;&amp; amount() == aMoney.amount();
+&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp; return false;
 }</tt></pre>
 Since equals can receive any kind of object as its argument we first have
 to check its type before we cast it as a Money. As an aside, it is a recommended
@@ -199,7 +200,7 @@ We can rewrite the two test case methods, removing the common setup code:
 <pre><tt>public void testEquals() {
 &nbsp;&nbsp;&nbsp; assert(!f12CHF.equals(null));
 &nbsp;&nbsp;&nbsp; assertEquals(f12CHF, f12CHF);
-&nbsp;&nbsp;&nbsp; assertEquals(m12CHF, new Money(12, "CHF"));
+&nbsp;&nbsp;&nbsp; assertEquals(f12CHF, new Money(12, "CHF"));
 &nbsp;&nbsp;&nbsp; assert(!f12CHF.equals(f14CHF));
 }
 
@@ -256,16 +257,21 @@ The code below illustrates the creation of a test suite with the dynamic
 way to run a test.
 <pre><tt>public static Test suite() {
 &nbsp;&nbsp;&nbsp; TestSuite suite= new TestSuite();
-&nbsp;&nbsp;&nbsp; suite.addTest(new MoneyTest("testMoneyEquals"));
+&nbsp;&nbsp;&nbsp; suite.addTest(new MoneyTest("testEquals"));
 &nbsp;&nbsp;&nbsp; suite.addTest(new MoneyTest("testSimpleAdd"));
 &nbsp;&nbsp;&nbsp; return suite;
 }</tt></pre>
-Here is the corresponding code using the static way.
+Since JUnit 2.0 there is an even simpler dynamic way. You only pass the
+class with the tests to a TestSuite and it extracts the test methods automatically.
+<p><tt>public static Test suite() {<br>
+&nbsp;&nbsp;&nbsp; return new TestSuite(MoneyTest.class);<br>
+}</tt><tt></tt>
+<p>Here is the corresponding code using the static way.
 <pre><tt>public static Test suite() {
 &nbsp;&nbsp;&nbsp; TestSuite suite= new TestSuite();
 &nbsp;&nbsp;&nbsp; suite.addTest(
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; new MoneyTest("money equals") {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; protected void runTest() { testMoneyEquals(); }
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; protected void runTest() { testEquals(); }
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
 &nbsp;&nbsp;&nbsp; );
 &nbsp;&nbsp;&nbsp;&nbsp;

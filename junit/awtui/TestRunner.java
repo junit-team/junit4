@@ -152,7 +152,7 @@ import java.io.*;
 		frame.setMenuBar(mb);
 		
 		//---- first section
-		Label suiteLabel= new Label("Enter the name of the Test class:");
+		Label suiteLabel= new Label("Test class name:");
 
 		fSuiteField= new TextField(suiteName != null ? suiteName : "");
 		fSuiteField.selectAll();
@@ -183,8 +183,8 @@ import java.io.*;
 				}
 			}
 		);
-		boolean useLoader= useReoadingTestSuiteLoader();
-		fUseLoadingRunner= new Checkbox("Use custom class loader for loading tests", useLoader);
+		boolean useLoader= useReloadingTestSuiteLoader();
+		fUseLoadingRunner= new Checkbox("Reload classes every run", useLoader);
 		
 		//---- second section
 		fProgressIndicator= new ProgressBar();	

@@ -13,7 +13,7 @@ public class SorterTest extends TestCase {
 			values.setElementAt(values.elementAt(right), left); 
 			values.setElementAt(tmp, right);
 		}
-	};
+	}
 	
 	public SorterTest(String name) {
 		super(name);
