@@ -40,8 +40,14 @@ of the xUnit architecture for unit testing frameworks.
   <li>Backed out setting the testing Thread's context class loader (see <a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=598200&amp;group_id=15278&amp;atid=115278">JUnit
         not setting ClassLoader</a>). It has caused problems in tests that
     worked OK before. See the bug report for more details.</li>
-  <li>Fixed: <a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=601326&amp;group_id=15278&amp;atid=115278">NPE
-    in ComparisonFailure.</a></li>
+  <li>Fixes:&nbsp;
+    <ul>
+      <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=601326&amp;group_id=15278&amp;atid=115278">NPE
+        in ComparisonFailure</a></li>
+      <li><a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=602948&amp;group_id=15278&amp;atid=115278">Swing
+        UI: NoSuchMethodError on JDK 1.3</a></li>
+    </ul>
+  </li>
 </ul>
 
 <h2>

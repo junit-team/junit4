@@ -84,7 +84,12 @@ class TestSelector extends JDialog {
 		super(parent, true);
 		setSize(350, 300);
 		setResizable(false);
-		setLocationRelativeTo(parent);
+		// setLocationRelativeTo only exists in 1.4
+		try {
+			setLocationRelativeTo(parent);
+		} catch (NoSuchMethodError e) {
+			centerWindow(this);
+		}
 		setTitle("Test Selector");
 		
 		Vector list= null;
@@ -107,6 +112,12 @@ class TestSelector extends JDialog {
 		
 		defineLayout();
 		addListeners();
+	}
+
+	public static void centerWindow(Component c) {
+		Dimension paneSize= c.getSize();
+		Dimension screenSize= c.getToolkit().getScreenSize();
+		c.setLocation((screenSize.width-paneSize.width)/2, (screenSize.height-paneSize.height)/2);
 	}
 	
 	private void addListeners() {

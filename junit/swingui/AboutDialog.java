@@ -17,7 +17,12 @@ class AboutDialog extends JDialog {
 		getContentPane().setLayout(new GridBagLayout());
 		setSize(330, 138);
 		setTitle("About");
-		setLocationRelativeTo(parent);
+		// setLocationRelativeTo is only available in JDK 1.4
+		try {
+			setLocationRelativeTo(parent);
+		} catch (NoSuchMethodError e) {
+			TestSelector.centerWindow(this);
+		}
 
 		JButton close= new JButton("Close");
 		close.addActionListener(
