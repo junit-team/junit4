@@ -11,4 +11,8 @@ public class Version {
 	public static String id() {
 		return "@version@";
 	}
+	
+	public static void main(String[] args) {
+		System.out.println(id());
+	}
 }
