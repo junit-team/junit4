@@ -44,7 +44,7 @@ public class SimpleTest extends TestCase {
 	public void testAdd() {
 		double result= fValue1 + fValue2;
 		// forced failure result == 5
-		assert(result == 6);
+		assertTrue(result == 6);
 	}
 	public void testDivideByZero() {
 		int zero= 0;

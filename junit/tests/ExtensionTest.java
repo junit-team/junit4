@@ -32,7 +32,7 @@ public class ExtensionTest extends TestCase {
 
 		TestResult result= new TestResult();
 		wrapper.run(result);
-		assert(!result.wasSuccessful());
+		assertTrue(!result.wasSuccessful());
 	}
 	public void testRunningErrorsInTestSetup() {
 		TestCase failure= new TestCase("failure") {
@@ -71,7 +71,7 @@ public class ExtensionTest extends TestCase {
 		TestResult result= new TestResult();
 		wrapper.run(result);
 
-		assert(!wrapper.fTornDown);
+		assertTrue(!wrapper.fTornDown);
 	}
 	public void testSetupErrorInTestSetup() {
 		WasRun test= new WasRun("");
@@ -85,7 +85,7 @@ public class ExtensionTest extends TestCase {
 		TestResult result= new TestResult();
 		wrapper.run(result);
 
-		assert(!test.fWasRun);
-		assert(!result.wasSuccessful());
+		assertTrue(!test.fWasRun);
+		assertTrue(!result.wasSuccessful());
 	}
 }

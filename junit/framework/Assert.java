@@ -13,6 +13,7 @@ public class Assert {
 	/**
 	 * Asserts that a condition is true. If it isn't it throws
 	 * an AssertionFailedError with the given message.
+	 * @deprecated use assertTrue
 	 */
 	static public void assert(String message, boolean condition) {
 		if (!condition)
@@ -21,9 +22,27 @@ public class Assert {
 	/**
 	 * Asserts that a condition is true. If it isn't it throws
 	 * an AssertionFailedError.
+	 * @deprecated use assertTrue
+	 *
 	 */
 	static public void assert(boolean condition) {
 		assert(null, condition);
+	}
+
+	/**
+	 * Asserts that a condition is true. If it isn't it throws
+	 * an AssertionFailedError with the given message.
+	 */
+	static public void assertTrue(String message, boolean condition) {
+		if (!condition)
+			fail(message);
+	}
+	/**
+	 * Asserts that a condition is true. If it isn't it throws
+	 * an AssertionFailedError.
+	 */
+	static public void assertTrue(boolean condition) {
+		assertTrue(null, condition);
 	}
 	/**
 	 * Fails a test with the given message. 
@@ -177,7 +196,7 @@ public class Assert {
 	 * Asserts that an object isn't null.
 	 */
 	static public void assertNotNull(String message, Object object) {
-		assert(message, object != null); 
+		assertTrue(message, object != null); 
 	}
 	/**
 	 * Asserts that an object is null.
@@ -189,7 +208,7 @@ public class Assert {
 	 * Asserts that an object is null.
 	 */
 	static public void assertNull(String message, Object object) {
-		assert(message, object == null); 
+		assertTrue(message, object == null); 
 	}
 	/**
 	 * Asserts that two objects refer to the same object. If they are not

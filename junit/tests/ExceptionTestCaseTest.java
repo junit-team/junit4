@@ -38,13 +38,13 @@ public class ExceptionTestCaseTest extends junit.framework.TestCase {
 		ExceptionTestCase test= new ThrowExceptionTestCase("test", IndexOutOfBoundsException.class);
 		TestResult result= test.run();
 		assertEquals(1, result.runCount());
-		assert(result.wasSuccessful());
+		assertTrue(result.wasSuccessful());
 	}
 	public void testExceptionTest() {
 		ExceptionTestCase test= new ThrowExceptionTestCase("test", IndexOutOfBoundsException.class);
 		TestResult result= test.run();
 		assertEquals(1, result.runCount());
-		assert(result.wasSuccessful());
+		assertTrue(result.wasSuccessful());
 	}
 	public void testFailure() {
 		ExceptionTestCase test= new ThrowRuntimeExceptionTestCase("test", IndexOutOfBoundsException.class);

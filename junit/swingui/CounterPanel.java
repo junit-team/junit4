@@ -12,6 +12,7 @@ public class CounterPanel extends Panel {
 	private JTextField fNumberOfErrors;
 	private JTextField fNumberOfFailures;
 	private JTextField fNumberOfRuns;
+	private int fTotal;
 	
 	public CounterPanel() {
 		super(new GridLayout(2, 3));	
@@ -39,10 +40,15 @@ public class CounterPanel extends Panel {
 		setLabelValue(fNumberOfErrors, 0);
 		setLabelValue(fNumberOfFailures, 0);
 		setLabelValue(fNumberOfRuns, 0);
+		fTotal= 0;
+	}
+	
+	public void setTotal(int value) {
+		fTotal= value;
 	}
 	
 	public void setRunValue(int value) {
-		setLabelValue(fNumberOfRuns, value);
+		fNumberOfRuns.setText(Integer.toString(value) + "/" + fTotal);
 	}
 	
 	public void setErrorValue(int value) {

@@ -14,6 +14,6 @@ public class LoadedFromJar extends Assert {
 		return (cl != null && cl.getClass().getName().equals(junit.runner.TestCaseClassLoader.class.getName()));
 	}
 	private void verifyApplicationClassLoadedByTestLoader() {
-		assert(isTestCaseClassLoader(getClass().getClassLoader()));
+		assertTrue(isTestCaseClassLoader(getClass().getClassLoader()));
 	} 
 }

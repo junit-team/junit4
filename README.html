@@ -3,19 +3,19 @@
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <meta name="GENERATOR" content="Mozilla/4.75 [en] (Windows NT 5.0; U) [Netscape]">
-   <meta name="Author" content="Erich Gamma">
-   <title>JUnit 3.6</title>
+   <meta name="Author" content="Erich Gamma & Kent Beck">
+   <title>JUnit 3.7</title>
 </head>
 <body>
 
 <h1>
 <b><font color="#00CC00">J</font><font color="#FF0000">U</font><font color="#000000">nit
-3.6
+3.7
 </font><font color="#808080">@</font><font color="#000000">&nbsp;</font></b><!--webbot bot="HTMLMarkup" startspan --><a href="http://sourceforge.net"><img SRC="sflogo.php" ALT="SourceForge Logo" BORDER=0 height=31 width=88></a><!--webbot
 bot="HTMLMarkup" endspan --></h1>
 
 <hr WIDTH="100%">
-<br>03/27/2001
+<br>05/18/2001
 <p>JUnit is a simple framework to write repeatable tests. It is an instance
 of the xUnit architecture for unit testing frameworks.
 <ul>
@@ -36,7 +36,69 @@ of the xUnit architecture for unit testing frameworks.
 </ul>
 
 <h2>
-<a NAME="Summary of"></a>Summary of Changes between 3.5 and 3.6</h2>
+<a NAME="Summary of"></a>Summary of Changes between 3.6 and 3.7</h2>
+
+<h3>
+GUI</h3>
+
+<ul>
+<li>
+Eliminated warning when re-running tests when class loading checkbox is
+unchecked. There are legitimate reasons for doing this, so a warning didn't
+make much sense, and it was too obtrusive.</li>
+
+<li>
+Stopped reloading classes when running in VisualAge for Java.</li>
+
+<li>
+Print total number of tests as well as number of tests run so far (Swing
+only).</li>
+</ul>
+
+<h3>
+Framework</h3>
+
+<ul>
+<li>
+Introduced Assert.assertTrue(boolean) and assertTrue(String, boolean) deprecated
+assert(boolean) and assert(String, boolean) in preparation for the assert
+keyword in Java 1.4. We plan to support native assertions when they are
+publicly available. You can either move to assertTrue() or wait for 1.4
+and delete parentheses as the syntax is e.g. "assert 2 == 3".</li>
+
+<li>
+Added accessors for TestCase.fName and TestSuite.fName.</li>
+
+<li>
+Added a no argument TestCase constructor to support serialization.</li>
+
+<li>
+Improved warnings when constructing TestSuites.</li>
+</ul>
+
+<h3>
+Text Runner</h3>
+
+<ul>
+<li>
+Made doRun() public so clients can create a text runner with a specified
+output stream and then run tests.</li>
+</ul>
+
+<h3>
+Fixed Bugs (SourceForge Bug Tracker Ids)</h3>
+&nbsp;&nbsp;&nbsp; [420315] No trace when fail with message...
+<br>&nbsp;&nbsp;&nbsp; [419375] reload warning lags
+<br>&nbsp;&nbsp;&nbsp; [418849] Classloader warning too obtrusive
+<br>&nbsp;&nbsp;&nbsp; [417978] constructor stack trace, please
+<br>&nbsp;&nbsp;&nbsp; [415103] Reload checkbox should be ignored in VAJ
+<br>&nbsp;&nbsp;&nbsp; [414954] error reporting when invoking suite()
+<br>&nbsp;&nbsp;&nbsp; [407296] Make doRun() public
+<br>&nbsp;&nbsp;&nbsp; [227578] rmi callbacks fail since TestCase has no
+noArg constructor
+<br>&nbsp;&nbsp;&nbsp; [422603] Decorated decorators bug
+<h2>
+Summary of Changes between 3.5 and 3.6</h2>
 
 <h3>
 TestRunner</h3>

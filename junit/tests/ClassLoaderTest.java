@@ -17,10 +17,10 @@ public class ClassLoaderTest extends Assert {
 		return (cl != null && cl.getClass().getName().equals(junit.runner.TestCaseClassLoader.class.getName()));
 	}
 	private void verifyApplicationClassLoadedByTestLoader() {
-		assert(isTestCaseClassLoader(getClass().getClassLoader()));
+		assertTrue(isTestCaseClassLoader(getClass().getClassLoader()));
 	} 
 	private void verifySystemClassNotLoadedByTestLoader() {
-		assert(!isTestCaseClassLoader(Object.class.getClassLoader()));
-		assert(!isTestCaseClassLoader(TestCase.class.getClassLoader()));
+		assertTrue(!isTestCaseClassLoader(Object.class.getClassLoader()));
+		assertTrue(!isTestCaseClassLoader(TestCase.class.getClassLoader()));
 	}
 }

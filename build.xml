@@ -2,7 +2,7 @@
 <project name="junit" default="dist" basedir=".">
 	<target name="init">
 		<tstamp/>
-		<property name="version" value="3.6" />
+		<property name="version" value="3.7" />
 		<property name="dist"  value="junit${version}" />
 		<property name="versionfile"  value="junit/runner/Version.java" />
 		<property name="zipfile"  value="${dist}.zip" />

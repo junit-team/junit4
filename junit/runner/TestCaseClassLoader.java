@@ -121,7 +121,7 @@ public class TestCaseClassLoader extends ClassLoader {
 			if (data != null)
 				return data;
 		}
-		throw new ClassNotFoundException();
+		throw new ClassNotFoundException(className);
 	}
 		
 	boolean isJar(String pathEntry) {

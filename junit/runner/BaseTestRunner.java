@@ -53,10 +53,16 @@ public abstract class BaseTestRunner implements TestListener {
 			test= (Test)suiteMethod.invoke(null, new Class[0]); // static method
 			if (test == null)
 				return test;
-		} catch(Exception e) {
-			runFailed("Could not invoke the suite() method");
+		} 
+		catch (InvocationTargetException e) {
+			runFailed("Failed to invoke suite():" + e.getTargetException().toString());
 			return null;
 		}
+		catch (IllegalAccessException e) {
+			runFailed("Failed to invoke suite():" + e.toString());
+			return null;
+		}
+		
 		clearStatus();
 		return test;
 	}
@@ -95,7 +101,7 @@ public abstract class BaseTestRunner implements TestListener {
 	/**
 	 * Sets the loading behaviour of the test runner
 	 */
-	protected void setLoading(boolean enable) {
+	public void setLoading(boolean enable) {
 		fLoading= enable;
 	}
 	/**

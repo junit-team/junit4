@@ -51,7 +51,7 @@ public class TestCaseTest extends TestCase {
 			}
 		};
 		verifyError(fails);
-		assert(fails.fTornDown);
+		assertTrue(fails.fTornDown);
 	}
 	public void testSetupFails() {
 		TestCase fails= new TestCase("success") {
@@ -82,7 +82,7 @@ public class TestCaseTest extends TestCase {
 	public void testTearDownAfterError() {
 		TornDown fails= new TornDown("fails");
 		verifyError(fails);
-		assert(fails.fTornDown);
+		assertTrue(fails.fTornDown);
 	}
 	
 	public void testTearDownFails() {
@@ -102,30 +102,30 @@ public class TestCaseTest extends TestCase {
 			}
 		};
 		verifyError(fails);
-		assert(!fails.fTornDown);
+		assertTrue(!fails.fTornDown);
 	}
 	public void testWasRun() {
 		WasRun test= new WasRun("");
 		test.run();
-		assert(test.fWasRun);
+		assertTrue(test.fWasRun);
 	}
 	void verifyError(TestCase test) {
 		TestResult result= test.run();
-		assert(result.runCount() == 1);
-		assert(result.failureCount() == 0);
-		assert(result.errorCount() == 1);
+		assertTrue(result.runCount() == 1);
+		assertTrue(result.failureCount() == 0);
+		assertTrue(result.errorCount() == 1);
 	}
 	void verifyFailure(TestCase test) {
 		TestResult result= test.run();
-		assert(result.runCount() == 1);
-		assert(result.failureCount() == 1);
-		assert(result.errorCount() == 0);
+		assertTrue(result.runCount() == 1);
+		assertTrue(result.failureCount() == 1);
+		assertTrue(result.errorCount() == 0);
 	}
 	void verifySuccess(TestCase test) {
 		TestResult result= test.run();
-		assert(result.runCount() == 1);
-		assert(result.failureCount() == 0);
-		assert(result.errorCount() == 0);
+		assertTrue(result.runCount() == 1);
+		assertTrue(result.failureCount() == 0);
+		assertTrue(result.errorCount() == 0);
 	}
 
 

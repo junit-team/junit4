@@ -2,7 +2,7 @@ package junit.framework;
 
 import java.util.Vector;
 import java.util.Enumeration;
-import java.lang.reflect.*;
+import java.io.PrintWriter;import java.io.StringWriter;import java.lang.reflect.*;
 
 /**
  * A <code>TestSuite</code> is a <code>Composite</code> of Tests.
@@ -99,17 +99,28 @@ public class TestSuite implements Test {
 			try {
 				addTest((Test)constructor.newInstance(args));
 			} catch (InstantiationException e) {
-				addTest(warning("Cannot instantiate test case: "+name+" ("+e.toString()+")"));
+				addTest(warning("Cannot instantiate test case: "+name+" ("+exceptionToString(e)+")"));
 			} catch (InvocationTargetException e) {
-				addTest(warning("Exception in constructor: "+name+" ("+e.getTargetException().toString()+")"));
+				addTest(warning("Exception in constructor: "+name+" ("+exceptionToString(e.getTargetException())+")"));
 			} catch (IllegalAccessException e) {
-				addTest(warning("Cannot access test case: "+name+" ("+e.toString()+")"));
+				addTest(warning("Cannot access test case: "+name+" ("+exceptionToString(e)+")"));
 			}
 
 		} else { // almost a test method
 			if (isTestMethod(m)) 
 				addTest(warning("Test method isn't public: "+m.getName()));
 		}
+	}
+	
+	/**
+	 * Converts the stack trace into a string
+	 */
+	private String exceptionToString(Throwable t) {
+		StringWriter stringWriter= new StringWriter();
+		PrintWriter writer= new PrintWriter(stringWriter);
+		t.printStackTrace(writer);
+		return stringWriter.toString();
+		
 	}
 	/**
 	 * Counts the number of test cases that will be run by this test.
@@ -185,8 +196,15 @@ public class TestSuite implements Test {
 			return getName();
 		return super.toString();
 	 }
-	 
-	 
+		 
+	/**
+	 * Sets the name of the suite.
+	 * @param name The name to set
+	 */
+	public void setName(String name) {
+		fName= name;
+	}
+
 	/**
 	 * Returns the name of the suite. Not all
 	 * test suites have a name and this method

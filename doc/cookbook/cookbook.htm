@@ -160,14 +160,6 @@ that contains both:
 </font></tt>suite.addTest(Kent.suite());
 suite.addTest(Erich.suite());
 TestResult result= suite.run();</pre>
-TestSuites don't only have to contain TestCases. They contain any object
-that implements the Test interface. For example, you can create a TestSuite
-in your code and I can create one in mine, and we can run them together
-by creating a TestSuite that contains both:
-<pre><tt><font face="Courier">TestSuite suite= new TestSuite();
-</font></tt>suite.addTest(Kent.suite());
-suite.addTest(Erich.suite());
-TestResult result= suite.run();</pre>
 
 <h2>
 TestRunner</h2>

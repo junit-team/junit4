@@ -39,7 +39,6 @@ import java.io.*;
 	protected Button fRerunButton;
 	protected TextField fStatusLine;
 	protected Checkbox fUseLoadingRunner;
-	protected int fNonLoadingRuns= 0;
 	
 	protected static Font PLAIN_FONT= new Font("dialog", Font.PLAIN, 12);
 	private static final int GAP= 4;
@@ -185,7 +184,9 @@ import java.io.*;
 		);
 		boolean useLoader= useReloadingTestSuiteLoader();
 		fUseLoadingRunner= new Checkbox("Reload classes every run", useLoader);
-		
+		if (inVAJava())
+			fUseLoadingRunner.setVisible(false);
+			
 		//---- second section
 		fProgressIndicator= new ProgressBar();	
 
@@ -334,7 +335,7 @@ import java.io.*;
 			Class reloadedTestClass= getLoader().reload(test.getClass());
 			Class[] classArgs= { String.class };
 			Constructor constructor= reloadedTestClass.getConstructor(classArgs);
-			Object[] args= new Object[]{((TestCase)test).name()};
+			Object[] args= new Object[]{((TestCase)test).getName()};
 			reloadedTest=(Test)constructor.newInstance(args);
 		} catch(Exception e) {
 			showInfo("Could not reload "+ test.toString());
@@ -382,8 +383,7 @@ import java.io.*;
 		if (fRunner != null) {
 			fTestResult.stop();
 		} else {
-			if (!setUseLoadingRunner())
-				return;
+			setLoading(shouldReload());
 			fRun.setLabel("Stop");
 			showInfo("Initializing...");
 			reset();
@@ -420,20 +420,10 @@ import java.io.*;
 		}
 	}
 	
-	private boolean setUseLoadingRunner() {
-		setLoading(fUseLoadingRunner.getState());
-		if (!fUseLoadingRunner.getState())
-			fNonLoadingRuns++;
-		if (fNonLoadingRuns > 1) {
-			String message1= "Code modifications you made since the last run will be ignored.";
-			String message2= "It is recommended to restart the TestRunner. Do you still want to continue?";
-			WarningDialog dialog= new WarningDialog(fFrame, message1, message2);
-			dialog.show();
-			return dialog.getChoice();
-		}
-		return true;
+	private boolean shouldReload() {
+		return !inVAJava() && fUseLoadingRunner.getState();
 	}
-
+	
 	private void setLabelValue(Label label, int value) {
 		label.setText(Integer.toString(value));
 		label.invalidate();

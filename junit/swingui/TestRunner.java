@@ -43,7 +43,6 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 	private JTabbedPane fTestViewTab;
 	private JCheckBox fUseLoadingRunner;
 	private Vector fTestRunViews= new Vector(); // view associated with tab in tabbed pane
-	private int fNonLoadingRuns= 0;
 	private static Font PLAIN_FONT= StatusLine.PLAIN_FONT;
 	private static Font BOLD_FONT= StatusLine.BOLD_FONT;
 	private static final int GAP= 4;
@@ -147,10 +146,6 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		}
 	}
 		
-	public void changedUpdate(DocumentEvent event) {
-		textChanged();
-	}
-	
 	protected void aboutToStart(final Test testSuite) {
 		for (Enumeration e= fTestRunViews.elements(); e.hasMoreElements(); ) {
 			TestRunView v= (TestRunView) e.nextElement();
@@ -273,6 +268,8 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		boolean useLoader= useReloadingTestSuiteLoader();
 		JCheckBox box= new JCheckBox("Reload classes every run", useLoader);
 		box.setToolTipText("Use a custom class loader to reload the classes for every run");
+		if (inVAJava())
+			box.setVisible(false);
 		return box;
 	}
 	
@@ -394,7 +391,6 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		Component browseButton= createBrowseButton();
 		
 		fUseLoadingRunner= createUseLoaderCheckBox();
-		
 		fProgressIndicator= new ProgressBar();
 		fCounterPanel= createCounterPanel();
 		
@@ -564,7 +560,7 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		try {
 			Class reloadedTestClass= getLoader().reload(test.getClass());
 			Class[] classArgs= { String.class };
-			Object[] args= new Object[]{((TestCase)test).name()};
+			Object[] args= new Object[]{((TestCase)test).getName()};
 			Constructor constructor= reloadedTestClass.getConstructor(classArgs);
 			reloadedTest=(Test)constructor.newInstance(args);
 		} catch(Exception e) {
@@ -609,8 +605,7 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		if (fRunner != null) {
 			fTestResult.stop();
 		} else {
-			if (!setUseLoadingRunner())
-				return;
+			setLoading(shouldReload());
 			reset();
 			showInfo("Load Test Case...");
 			final String suiteName= getSuiteText();
@@ -622,19 +617,10 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		}
 	}
 	
-	private boolean setUseLoadingRunner() {
-		setLoading(fUseLoadingRunner.isSelected());
-		if (!fUseLoadingRunner.isSelected())
-			fNonLoadingRuns++;
-		if (fNonLoadingRuns > 1) {
-			String message= "You are running the tests more than once with the standard class loader.\n"+
-					    "Code modifications you made since the last run will be ignored.\n"+
-					    "It is recommended to restart the TestRunner.\nDo you still want to continue?";
-			int returnCode= JOptionPane.showConfirmDialog(fFrame, message, "Warning", JOptionPane.YES_NO_OPTION);
-			return returnCode == JOptionPane.YES_OPTION;
-		}
-		return true;
+	private boolean shouldReload() {
+		return !inVAJava() && fUseLoadingRunner.isSelected();
 	}
+	
 
 	synchronized protected void runTest(final Test testSuite) {
 		if (fRunner != null) {
@@ -758,7 +744,9 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 		SwingUtilities.invokeLater(
 			new Runnable() {
 				public void run() {
-					fProgressIndicator.start(test.countTestCases());
+					int total= test.countTestCases();
+					fProgressIndicator.start(total);
+					fCounterPanel.setTotal(total);
 				}
 			}
 		);

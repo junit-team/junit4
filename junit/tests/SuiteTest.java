@@ -33,28 +33,28 @@ public class SuiteTest extends TestCase {
 	public void testInheritedTests() {
 		TestSuite suite= new TestSuite(InheritedTestCase.class);
 		suite.run(fResult);
-		assert(fResult.wasSuccessful());
+		assertTrue(fResult.wasSuccessful());
 		assertEquals(2, fResult.runCount());
 	}
 	public void testNoTestCaseClass() {
 		Test t= new TestSuite(NoTestCaseClass.class);
 		t.run(fResult);
 		assertEquals(1, fResult.runCount());  // warning test
-		assert(! fResult.wasSuccessful());
+		assertTrue(! fResult.wasSuccessful());
 	}
 	public void testNoTestCases() {
 		Test t= new TestSuite(NoTestCases.class);
 		t.run(fResult);
-		assert(fResult.runCount() == 1);  // warning test
-		assert(fResult.failureCount() == 1);
-		assert(! fResult.wasSuccessful());
+		assertTrue(fResult.runCount() == 1);  // warning test
+		assertTrue(fResult.failureCount() == 1);
+		assertTrue(! fResult.wasSuccessful());
 	}
 	public void testNotExistingTestCase() {
 		Test t= new SuiteTest("notExistingMethod");
 		t.run(fResult);
-		assert(fResult.runCount() == 1);  
-		assert(fResult.failureCount() == 1);
-		assert(fResult.errorCount() == 0);
+		assertTrue(fResult.runCount() == 1);  
+		assertTrue(fResult.failureCount() == 1);
+		assertTrue(fResult.errorCount() == 0);
 	}
 	public void testNotPublicTestCase() {
 		TestSuite suite= new TestSuite(NotPublicTestCase.class);
@@ -63,15 +63,15 @@ public class SuiteTest extends TestCase {
 	}
 	public void testNotVoidTestCase() {
 		TestSuite suite= new TestSuite(NotVoidTestCase.class);
-		assert(suite.countTestCases() == 1);
+		assertTrue(suite.countTestCases() == 1);
 	}
 	public void testOneTestCase() {
 		Test t= new TestSuite(OneTestCase.class);
 		t.run(fResult);
-		assert(fResult.runCount() == 1);  
-		assert(fResult.failureCount() == 0);
-		assert(fResult.errorCount() == 0);
-		assert(fResult.wasSuccessful());
+		assertTrue(fResult.runCount() == 1);  
+		assertTrue(fResult.failureCount() == 0);
+		assertTrue(fResult.errorCount() == 0);
+		assertTrue(fResult.wasSuccessful());
 	}
 	public void testShadowedTests() {
 		TestSuite suite= new TestSuite(OverrideTestCase.class);

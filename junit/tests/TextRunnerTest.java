@@ -30,7 +30,7 @@ public class TextRunnerTest extends TestCase {
 		int b;
 		while((b= i.read()) != -1) 
 			; //System.out.write(b); 
-		assert((p.waitFor() == 0) == success);
+		assertTrue((p.waitFor() == 0) == success);
 	}
 		
 

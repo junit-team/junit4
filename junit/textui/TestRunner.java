@@ -67,7 +67,7 @@ public class TestRunner extends BaseTestRunner {
 		return new TestResult();
 	}
 	
-	protected TestResult doRun(Test suite, boolean wait) {
+	public TestResult doRun(Test suite, boolean wait) {
 		TestResult result= createTestResult();
 		result.addListener(this);
 		long startTime= System.currentTimeMillis();
@@ -80,6 +80,11 @@ public class TestRunner extends BaseTestRunner {
 
 		writer().println();
 
+		pause(wait);
+		return result;
+	}
+
+	protected void pause(boolean wait) {
 		if (wait) {
 			writer().println("<RETURN> to continue");
 			try {
@@ -88,7 +93,6 @@ public class TestRunner extends BaseTestRunner {
 			catch(Exception e) {
 			}
 		}
-		return result;
 	}
 	
 	public synchronized void startTest(Test test) {
@@ -154,12 +158,7 @@ public class TestRunner extends BaseTestRunner {
 				TestFailure failure= (TestFailure) e.nextElement();
 				writer().print(i + ") " + failure.failedTest());
 				Throwable t= failure.thrownException();
-				if (t.getMessage() != null)
-					writer().println(" \"" + truncate(t.getMessage()) + "\"");
-				else {
-					writer().println();
-					writer().print(getFilteredTrace(failure.thrownException()));
-				}
+				writer().print(getFilteredTrace(failure.thrownException()));
 			}
 		}
 	}
@@ -201,7 +200,7 @@ public class TestRunner extends BaseTestRunner {
 		aTestRunner.doRun(suite, false);
 	}
 	/**
-	 * Runs a single test and waits until the users
+	 * Runs a single test and waits until the user
 	 * types RETURN.
 	 */
 	static public void runAndWait(Test suite) {

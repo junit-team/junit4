@@ -32,7 +32,7 @@ public class MoneyTest extends TestCase {
 		MoneyBag expected= new MoneyBag(bag);
 		assertEquals(expected, fMB1.multiply(2)); 
 		assertEquals(fMB1, fMB1.multiply(1));
-		assert(fMB1.multiply(0).isZero());
+		assertTrue(fMB1.multiply(0).isZero());
 	}
 	public void testBagNegate() {
 		// {[12 CHF][7 USD]} negate == {[-12 CHF][-7 USD]}
@@ -59,10 +59,10 @@ public class MoneyTest extends TestCase {
 		assertEquals(expected, fMB1.add(fMB2));
 	}
 	public void testIsZero() {
-		assert(fMB1.subtract(fMB1).isZero()); 
+		assertTrue(fMB1.subtract(fMB1).isZero()); 
 
     		Money bag[] = { new Money (0, "CHF"), new Money (0, "USD") };
-		assert(new MoneyBag(bag).isZero());
+		assertTrue(new MoneyBag(bag).isZero());
 	}
 	public void testMixedSimpleAdd() {
 		// [12 CHF] + [7 USD] == {[12 CHF][7 USD]}
@@ -71,29 +71,29 @@ public class MoneyTest extends TestCase {
 		assertEquals(expected, f12CHF.add(f7USD));
 	}
 	public void testMoneyBagEquals() {
-		assert(!fMB1.equals(null)); 
+		assertTrue(!fMB1.equals(null)); 
 
 		assertEquals(fMB1, fMB1);
 		MoneyBag equal= new MoneyBag(new Money(12, "CHF"), new Money(7, "USD"));
-		assert(fMB1.equals(equal));
-		assert(!fMB1.equals(f12CHF));
-		assert(!f12CHF.equals(fMB1));
-		assert(!fMB1.equals(fMB2));
+		assertTrue(fMB1.equals(equal));
+		assertTrue(!fMB1.equals(f12CHF));
+		assertTrue(!f12CHF.equals(fMB1));
+		assertTrue(!fMB1.equals(fMB2));
 	}
 	public void testMoneyBagHash() {
 		MoneyBag equal= new MoneyBag(new Money(12, "CHF"), new Money(7, "USD"));
 		assertEquals(fMB1.hashCode(), equal.hashCode());
 	}
 	public void testMoneyEquals() {
-		assert(!f12CHF.equals(null)); 
+		assertTrue(!f12CHF.equals(null)); 
 		Money equalMoney= new Money(12, "CHF");
 		assertEquals(f12CHF, f12CHF);
 		assertEquals(f12CHF, equalMoney);
 		assertEquals(f12CHF.hashCode(), equalMoney.hashCode());
-		assert(!f12CHF.equals(f14CHF));
+		assertTrue(!f12CHF.equals(f14CHF));
 	}
 	public void testMoneyHash() {
-		assert(!f12CHF.equals(null)); 
+		assertTrue(!f12CHF.equals(null)); 
 		Money equal= new Money(12, "CHF");
 		assertEquals(f12CHF.hashCode(), equal.hashCode());
 	}

@@ -120,16 +120,16 @@ class TestTreeModel implements TreeModel {
 	/**
 	 * Tests if the node is a TestSuite.
 	 */
-	protected TestSuite isTestSuite(Object node) {
+	TestSuite isTestSuite(Object node) {
 		if (node instanceof TestSuite) 
 			return (TestSuite)node;
 		if (node instanceof TestDecorator) { 
-			Object baseTest= ((TestDecorator)node).getTest(); 
-			if (baseTest instanceof TestSuite) 
-				return (TestSuite)baseTest; 
+			Test baseTest= ((TestDecorator)node).getTest(); 
+			return isTestSuite(baseTest); 
 		} 
 		return null;
 	}
+	
 	/**
 	 * Called when the value of the model object was changed in the view
 	 */
