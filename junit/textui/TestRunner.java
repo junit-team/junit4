@@ -38,13 +38,19 @@ public class TestRunner extends BaseTestRunner {
 	public TestRunner() {
 		this(System.out);
 	}
+
 	/**
 	 * Constructs a TestRunner using the given stream for all the output
 	 */
 	public TestRunner(PrintStream writer) {
-		if (writer == null)
-			throw new IllegalArgumentException("Writer can't be null");
-		fPrinter= new ResultPrinter(writer);
+		this(new ResultPrinter(writer));
+	}
+	
+	/**
+	 * Constructs a TestRunner using the given ResultPrinter all the output
+	 */
+	public TestRunner(ResultPrinter printer) {
+		fPrinter= printer;
 	}
 	
 	/**

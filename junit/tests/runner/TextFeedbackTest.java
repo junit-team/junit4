@@ -34,8 +34,7 @@ public class TextFeedbackTest extends TestCase {
 	
 	public void setUp() {
 		output= new ByteArrayOutputStream();
-		runner= new TestRunner(new PrintStream(output));
-		runner.setPrinter(new TestResultPrinter(new PrintStream(output)));
+		runner= new TestRunner(new TestResultPrinter(new PrintStream(output)));
 	}
 	
 	public void testEmptySuite() {
