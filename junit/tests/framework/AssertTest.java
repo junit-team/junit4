@@ -5,13 +5,19 @@ import junit.framework.ComparisonFailure;
 import junit.framework.TestCase;
 
 public class AssertTest extends TestCase {
-	
+
+	/* In the tests that follow, we can't use standard formatting
+	 * for exception tests:
+	 *     try {
+	 *         somethingThatShouldThrow();
+	 *         fail();
+	 *     catch (AssertionFailedError e) {
+	 *     }
+	 * because fail() would never be reported.
+	 */
 	public void testFail() {
-		// We can't use the standard formatting of an exception test
-		// (i.e. throwing right after the call to fail()
-		// because we would catch the AssertionFailedError.
-		// Also, we are testing fail, so we have to throw the exception
-		// manually, we can't rely on fail() working.
+		// Also, we are testing fail, so we can't rely on fail() working.
+		// We have to throw the exception manually, .
 		try {
 			fail();
 		} catch (AssertionFailedError e) {
@@ -25,9 +31,10 @@ public class AssertTest extends TestCase {
 		assertEquals(o, o);
 		try {
 			assertEquals(new Object(), new Object());
-			fail();
 		} catch (AssertionFailedError e) {
+			return;
 		}
+		fail();
 	}
 
 	public void testAssertEqualsNull() {
@@ -58,46 +65,51 @@ public class AssertTest extends TestCase {
 	public void testAssertNullNotEqualsNull() {
 		try {
 			assertEquals(null, new Object());
-			fail();
 		} catch (AssertionFailedError e) {
 			e.getMessage(); // why no assertion?
+			return;
 		}
+		fail();
 	}
 
 	public void testAssertNull() {
 		assertNull(null);
 		try {
 			assertNull(new Object());
-			fail();
 		} catch (AssertionFailedError e) {
+			return;
 		}
+		fail();
 	}
 
 	public void testAssertNotNull() {
 		assertNotNull(new Object());
 		try {
 			assertNotNull(null);
-			fail();
 		} catch (AssertionFailedError e) {
+			return;
 		}
+		fail();
 	}
 
 	public void testAssertTrue() {
 		assertTrue(true);
 		try {
 			assertTrue(false);
-			fail();
 		} catch (AssertionFailedError e) {
+			return;
 		}
+		fail();
 	}
 
 	public void testAssertFalse() {
 		assertFalse(false);
 		try {
 			assertFalse(true);
-			fail();
 		} catch (AssertionFailedError e) {
+			return;
 		}
+		fail();
 	}
 
 	public void testAssertSame() {
@@ -105,9 +117,10 @@ public class AssertTest extends TestCase {
 		assertSame(o, o);
 		try {
 			assertSame(new Integer(1), new Integer(1));
-			fail();
 		} catch (AssertionFailedError e) {
+			return;
 		}
+		fail();
 	}
 
 	public void testAssertNotSame() {
@@ -117,16 +130,18 @@ public class AssertTest extends TestCase {
 		try {
 			Integer obj= new Integer(1);
 			assertNotSame(obj, obj);
-			fail();
 		} catch (AssertionFailedError e) {
+			return;
 		}
+		fail();
 	}
 
 	public void testAssertNotSameFailsNull() {
 		try {
 			assertNotSame(null, null);
-			fail();
 		} catch (AssertionFailedError e) {
+			return;
 		}
+		fail();
 	}
 }
