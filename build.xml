@@ -91,6 +91,7 @@
 	
 	<target name="awtui" depends="dist">
 		<java classname="junit.awtui.TestRunner" fork="yes">
+			<arg value="-noloading" />
 			<arg value="junit.samples.AllTests" />
 			<classpath>
 				<pathelement location="${dist}" />
@@ -101,6 +102,7 @@
 	
 	<target name="swingui" depends="dist">
 		<java classname="junit.swingui.TestRunner" fork="yes">
+			<arg value="-noloading" />
 			<arg value="junit.samples.AllTests" />
 			<classpath>
 				<pathelement location="${dist}" />
