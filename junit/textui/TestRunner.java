@@ -81,6 +81,10 @@ public class TestRunner extends BaseTestRunner {
 		return new TestResult();
 	}
 	
+	public TestResult doRun(Test test) {
+		return doRun(test, false);
+	}
+	
 	public TestResult doRun(Test suite, boolean wait) {
 		TestResult result= createTestResult();
 		result.addListener(this);
@@ -197,9 +201,9 @@ public class TestRunner extends BaseTestRunner {
 	 * }
 	 * </pre>
 	 */
-	static public TestResult run(Test suite) {
-		TestRunner aTestRunner= new TestRunner();
-		return aTestRunner.doRun(suite, false);
+	static public TestResult run(Test test) {
+		TestRunner runner= new TestRunner();
+		return runner.doRun(test);
 	}
 	/**
 	 * Runs a single test and waits until the user
