@@ -179,7 +179,7 @@ public class TestRunner extends BaseTestRunner {
 			throw new Exception("Usage: TestRunner [-wait] testCaseName, where name is the name of the TestCase class");
 
 		try {
-			if (method != null) 
+			if (!method.equals("")) 
 				return runSingleMethod(testCase, method, wait);
 			Test suite= getTest(testCase);
 			return doRun(suite, wait);
