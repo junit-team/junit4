@@ -64,6 +64,7 @@
 			version="false"
 			use="false"
 			windowtitle="JUnit API"
+			stylesheetfile="stylesheet.css"
 		/>
 		<copy todir="${dist}/doc">
 			<fileset dir="doc"/>
