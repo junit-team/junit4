@@ -14,8 +14,6 @@ public class ReloadingTestSuiteLoader implements TestSuiteLoader {
 	}
 	
 	protected TestCaseClassLoader createLoader() {
-		TestCaseClassLoader loader= new TestCaseClassLoader();
-		Thread.currentThread().setContextClassLoader(loader);
-		return loader;
+		return new TestCaseClassLoader();
 	}
 }

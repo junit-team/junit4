@@ -10,10 +10,10 @@
 
 <h1>
 <b><font color="#00CC00">J</font><font color="#FF0000">U</font><font color="#000000">nit
-3.8</b></h1>
+3.8.1</b></h1>
 
 <hr WIDTH="100%">
-<br>08/23/2002
+<br>08/31/2002
 <p>JUnit is a simple framework to write repeatable tests. It is an instance
 of the xUnit architecture for unit testing frameworks.
 <ul>
@@ -34,7 +34,18 @@ of the xUnit architecture for unit testing frameworks.
 </ul>
 
 <h2>
-<a NAME="Summary of"></a>Summary of Changes between 3.7 and 3.8</h2>
+<a NAME="Summary of"></a>Summary of Changes between 3.8 and 3.8.1</h2>
+
+<ul>
+  <li>Backed out setting the testing Thread's context class loader (see <a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=598200&amp;group_id=15278&amp;atid=115278">JUnit
+        not setting ClassLoader</a>). It has caused problems in tests that
+    worked OK before. See the bug report for more details.</li>
+  <li>Fixed: <a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=601326&amp;group_id=15278&amp;atid=115278">NPE
+    in ComparisonFailure.</a></li>
+</ul>
+
+<h2>
+Summary of Changes between 3.7 and 3.8</h2>
 
 <h3>
 Framework</h3>
