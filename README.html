@@ -48,7 +48,8 @@ Added TestSuite.addTestSuite(Class testClass)</li>
 <br>This method allows to create a TestSuite with a class containing test
 cases directly.
 <br>Instead of writing <b>suite.addTest(new TestSuite(AssertTest.class))
-</b>you can now write <b>suite.addTestSuite(AssertTest.class)</b>;
+</b>you
+can now write <b>suite.addTestSuite(AssertTest.class)</b>;
 <li>
 Added assertEquals methods for all primitive types: float, boolean, byte,
 char, int, short</li>
@@ -87,8 +88,9 @@ loading (junit.runner.LoadingClassPathTestCollector) - loads all classes
 on the class path and tests whether the class is assignable from Test or
 has a static <b>suite</b> method.</li>
 </ul>
-By default the loading the test collector is used it is more expensive
-but provides more precise results than the simple test collector.
+By default the simple the test collector is used. The loading collector
+is more precise but much slower than the simple one. The loading collector doesn't scale
+up when many classes are available on the class path.
 <br><b><font color="#FF0000">Notice</font></b>: that both TestCollectors
 assume that the class files reside are kept in the file system. This isn't
 case in VA/Java and they will not work there. A custom TestCollector is
@@ -451,11 +453,11 @@ add<i> </i><b>junit.jar</b> to the CLASSPATH. For example: <tt>set classpath=%cl
 <li>
 test the installation by using either the batch or the graphical TestRunner
 tool to run the tests that come with this release. All the tests should
-pass OK.<br>
-<b><font color="#FF0000">Notice</font></b>: that the tests are not contained
-in the junit.jar but in the installation directory directly. Therefore
-make sure that the installation directory is on the class path</li>
+pass OK.</li>
 
+<br><b><font color="#FF0000">Notice</font></b>: that the tests are not
+contained in the junit.jar but in the installation directory directly.
+Therefore make sure that the installation directory is on the class path
 <ul>
 <li>
 for the batch TestRunner type:</li>
