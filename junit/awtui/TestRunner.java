@@ -215,11 +215,7 @@ import junit.runner.*;
 		fNumberOfRuns.setText("0");
 		fNumberOfRuns.setFont(PLAIN_FONT);
 
-		Panel numbersPanel= new Panel(new FlowLayout());
-		numbersPanel.add(new Label("Runs:"));			numbersPanel.add(fNumberOfRuns);
-		numbersPanel.add(new Label("   Errors:"));		numbersPanel.add(fNumberOfErrors);
-		numbersPanel.add(new Label("   Failures:"));	numbersPanel.add(fNumberOfFailures);
-
+		Panel numbersPanel= createCounterPanel();
 
 		//---- fourth section
 		Label failureLabel= new Label("Errors and Failures:");
@@ -278,7 +274,7 @@ import junit.runner.*;
 		addGrid(panel, fProgressIndicator, 0, 3, 2, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.WEST);
 		addGrid(panel, fLogo, 			 2, 3, 1, GridBagConstraints.NONE, 			0.0, GridBagConstraints.NORTH);
 
-		addGrid(panel, numbersPanel,	 0, 4, 2, GridBagConstraints.NONE, 			0.0, GridBagConstraints.CENTER);
+		addGrid(panel, numbersPanel,	 0, 4, 2, GridBagConstraints.NONE, 			0.0, GridBagConstraints.WEST);
 
 		addGrid(panel, failureLabel, 	 0, 5, 2, GridBagConstraints.HORIZONTAL, 	1.0, GridBagConstraints.WEST);
 		addGrid(panel, fFailureList, 	 0, 6, 2, GridBagConstraints.BOTH, 			1.0, GridBagConstraints.WEST);
@@ -292,6 +288,73 @@ import junit.runner.*;
 		frame.pack();
 		return frame;
 	}
+
+	protected Panel createCounterPanel() throws HeadlessException {
+		Panel numbersPanel= new Panel(new GridBagLayout());
+		addToCounterPanel(
+			numbersPanel,
+			new Label("Runs:"),
+			0, 0, 1, 1, 0.0, 0.0,
+          	GridBagConstraints.CENTER, GridBagConstraints.NONE,
+          	new Insets(0, 0, 0, 0) 
+		);	
+		addToCounterPanel(
+			numbersPanel,
+			fNumberOfRuns, 
+          	1, 0, 1, 1, 0.33, 0.0,
+          	GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+          	new Insets(0, 8, 0, 40)
+		);
+		addToCounterPanel(
+			numbersPanel,
+			new Label("Errors:"),
+          	2, 0, 1, 1, 0.0, 0.0,
+          	GridBagConstraints.CENTER, GridBagConstraints.NONE,
+          	new Insets(0, 8, 0, 0)
+		);
+		addToCounterPanel(
+			numbersPanel,
+			fNumberOfErrors,
+          	3, 0, 1, 1, 0.33, 0.0,
+          	GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+          	new Insets(0, 8, 0, 40)
+		);
+		addToCounterPanel(
+			numbersPanel,
+			new Label("Failures:"),
+          	4, 0, 1, 1, 0.0, 0.0,
+          	GridBagConstraints.CENTER, GridBagConstraints.NONE,
+          	new Insets(0, 8, 0, 0)
+		);	
+		addToCounterPanel(
+			numbersPanel,
+			fNumberOfFailures,
+          	5, 0, 1, 1, 0.33, 0.0,
+          	GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+          	new Insets(0, 8, 0, 0) 
+		);
+		return numbersPanel;
+	}
+
+	private void addToCounterPanel(Panel counter, Component comp,
+	    	int gridx, int gridy, int gridwidth, int gridheight,
+			double weightx, double weighty,
+			int anchor, int fill,
+			Insets insets) {
+		
+		GridBagConstraints constraints= new GridBagConstraints();
+		constraints.gridx= gridx;
+		constraints.gridy= gridy;
+		constraints.gridwidth= gridwidth;
+		constraints.gridheight= gridheight;
+		constraints.weightx= weightx;
+		constraints.weighty= weighty;
+		constraints.anchor= anchor;
+		constraints.fill= fill;
+		constraints.insets= insets;
+		counter.add(comp, constraints);
+	}
+
 
 	public void failureSelected() {
 		fRerunButton.setEnabled(isErrorSelected());
@@ -387,7 +450,7 @@ import junit.runner.*;
 	}
 
 	synchronized public void runSuite() {
-		if (fRunner != null) {
+		if (fRunner != null && fTestResult != null) {
 			fTestResult.stop();
 		} else {
 			setLoading(shouldReload());
