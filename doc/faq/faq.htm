@@ -2,7 +2,7 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Windows NT 5.0; U) [Netscape]">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (Win98; I) [Netscape]">
    <meta name="Author" content="Erich Gamma">
    <title>JUnit FAQ</title>
 </head>
@@ -14,57 +14,26 @@ Asked Questions</h1>
 
 <hr WIDTH="100%">
 <li>
-<a href="#Can't find">Can't find the test classes when running them with
-a TestRunner</a></li>
-
-<li>
 <a href="#browsersupport">How do I implement a test case for a thrown exception?</a></li>
 
 <li>
-<a href="#How do I organize my Test">How do I organize my test cases?</a></li>
+<a href="#browsersupport">How do I organize my test cases?</a></li>
 
 <li>
 <a href="#ClassNotFoundException">I get a ClassNotFoundException when I
-use the Swing or AWT TestRunners</a></li>
-
-<li>
-<a href="#My tests pass in the textui runner but they fail in the UI">Different
-behavior in textui runner?</a></li>
-
-<li>
-<a href="#I get a ClassCastException">I get ClassCastException when I ran
-my EJB tests.</a></li>
-
-<li>
-<a href="#Where are the test runner properties documented">Where are the
-test runner properties documented?</a></li>
+use the LoadingTestRunner</a></li>
 
 <li>
 <a href="#How do I run setup code only once">How do I run setup code once
 for all my TestCases?</a></li>
 
+
 <li>
 <a href="#I want to debug when a test">I want to debug when a test fails</a></li>
-
+<li>
+<a href="#ClassCastException">Why do I get a ClassCastException while calling EJB's from junit?</a></li>
 <br>
-<hr>
-<br><a NAME="Can't find"></a>
-<h2>
-Can't find my test class when using a TestRunner</h2>
-When you are getting a "Can't find 'TestClass'" error message when you
-try to run your test with a TestRunner make sure that:
-<ul>
-<li>
-the <b>junit.jar</b> isn't installed in the extension directory of your
-JDK installation. The junit.jar has to be on the class path.</li>
-
-<li>
-the Test class you are trying to run is on the class path.</li>
-</ul>
-Notice, that the tests that come with the JUnit distribution are not included
-inside the junit.jar but they reside in the installation directory. Therefore
-make sure that the JUnit installation directory is on the class path.
-<br><a NAME="How do I implement a test case for thrown"></a>
+<hr><a NAME="How do I implement a test case for thrown"></a>
 <h2>
 How do I implement a test case for a thrown exception?</h2>
 Catch the exception and if it isn't thrown call the <b>fail</b> method.
@@ -153,13 +122,13 @@ method:
 <h2>
 <a NAME="ClassNotFoundException"></a>I get a ClassNotFoundException when
 I use the LoadingTestRunner</h2>
-The UI test runners use a custom class loader to reload your code by default.
-You can specify a list of excluded package prefixes that shouldn't be reloaded
-for each test run. The idea is that you typically have a working set of
-classes that you work with and that there is a set of classes that you
-don't change. The list of package prefixes is defined in the properties
-file <tt>junit/runner/excluded.properties</tt>. As we deliver it, this file
-excludes the packages that come with jdk1.2 from reloading:
+The LoadingTestRunner uses a custom class loader to reload your code. This
+class loader doesn't attempt to load classes from jars or to load standard
+classes. Instead you can specify a list of excluded package prefixes that
+shouldn't be reloaded for each test run. The list of package prefixes is
+defined in the properties file <tt>junit.runner.excluded.properties</tt>.
+As we deliver it this file excludes the packages that come with jdk1.2
+from reloading:
 <blockquote><tt>#</tt>
 <br><tt># The list of excluded package paths for the TestCaseClassLoader</tt>
 <br><tt>#</tt>
@@ -187,36 +156,15 @@ that it catches the junit.framework.AssertionFailedError. How you do this
 depends on the used IDE. Most Java debuggers support to stop the program
 when a specific exception is fired. Notice, that this will only break into
 the debugger when an "anticipated" assertion failed error occurs.
+<br>
 <h2>
-<a NAME="My tests pass in the textui runner but they fail in the UI"></a>My
-tests pass in the textui runner but they fail in the UI testrunners?</h2>
-The UI test runner use a custom class loader by default to reload classes
-for each run. The textui runner is using the system class loader. To disable
-the custom class loader uncheck the "Reload classes for each run" check
-box. The default setting can be changed in the junit.properties file.
-<h2>
-<a NAME="Where are the test runner properties documented"></a>Where are
-the test runner properties documented?</h2>
-See the <a href="../JUnitProperties.html">JUnit Properties</a> documentation.
-<br>&nbsp;
-<h2>
-<a NAME="I get a ClassCastException"></a>I get a ClassCastException in
-the Swing or AWT TestRunners</h2>
-When I use the textui.TestRunner my setup runs OK. I get a ClassCastException
-when I call PortableRemoteObject.narrow(SomeJndiObject,Some.class).
-<br>This is a consequence of the class reloading feature of the UI test
-runners. There are different way to avoid this problem:
-<ul>
-<li>
-disable the reloading feature by either unchecking the check box "Reload
-classes for each run" or by starting the TestRunner with the -reloading
-option.</li>
-
-<li>
-exclude some packages from reloading by adding them to the <a href="#ClassNotFoundException">excluded.properties</a>
-file. For example add javax.ejb to the list of excluded packages.</li>
-</ul>
-
+<a NAME="ClassCastException"></a>Why do I get a ClassCastException while
+calling EJB's from junit?</h2>
+<i>submitted by Jens Schumann</i><br>
+The custom classloader causes this exception.  Either use excluded.properties
+as described above in <a
+href="#ClassNotFoundException">ClassNotFoundException</a>
+ or turn off reloading.
 <hr WIDTH="100%">
 </body>
 </html>
