@@ -124,12 +124,19 @@ public abstract class TestCase extends Assert implements Test {
 	 * @exception Throwable if any exception is thrown
 	 */
 	public void runBare() throws Throwable {
+		Throwable running= null;
 		setUp();
 		try {
 			runTest();
+		} catch (Throwable e) {
+			running= e;
 		}
 		finally {
-			tearDown();
+			try {
+				tearDown();
+			} catch (Exception e) {
+				throw (running != null) ? running : e;
+			}
 		}
 	}
 	/**

@@ -123,6 +123,23 @@ public class TestCaseTest extends TestCase {
 		assertEquals("tearDown", failure.thrownException().getMessage());
 	}
 	
+	public void testErrorTearingDownDoesntMaskErrorRunning() {
+		final Exception running= new Exception();
+		TestCase t= new TestCase() {
+			protected void runTest() throws Throwable {
+				throw running;
+			}
+			protected void tearDown() throws Exception {
+				throw new Exception();
+			}
+		};
+		try {
+			t.runBare();
+		} catch (Throwable thrown) {
+			assertEquals(thrown, running);
+		}
+	}
+	
 	public void testNoArgTestCasePasses() {
 		Test t= new TestSuite(NoArgTestCaseTest.class);
 		TestResult result= new TestResult();
