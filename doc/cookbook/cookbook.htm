@@ -212,20 +212,16 @@ problems like an <i>ArrayIndexOutOfBoundsException</i>. The following figure
 shows an example of a failed test.
 <center><img SRC="IMG00001.GIF" ></center>
 
-<p>To find out more about a failure or an error select it in the list and
-press Show. This will show you a stack trace of the failure.
-<center><img SRC="IMG00002.GIF" ></center>
-
 <p><br>
 <p>In a dynamic programming environment like VisualAge for Java which supports
 <i>hot
 code update </i>you can leave the JUnit window up all the time. In other
 environments you have to restart the graphical version for each run. This
-is tedious and time consuming. As an alternative JUnit provides
-<a href="../../javadoc/junit/ui/LoadingTestRunner.html">junit.ui.LoadingTestRunner</a>.
-This TestRunner reloads all your classes for each test run. Refer to the
-documentation of the <a href="../../javadoc/junit/util/TestCaseClassLoader.html">TestCaseClassLoader</a>
-for how to customize it.
+is tedious and time consuming. As an alternative JUnit's AWT and Swing UIs use
+<a href="../../javadoc/junit/runner/LoadingTestCollector.html">junit.runner.LoadingTestCollector
+</a>.
+This LoadingTestCollector reloads all your classes for each test run.This feature can
+be disabled by unchecking the 'Reload classes every run' checkbox.
 <p>There is a batch interface to JUnit, also. To use it type<tt>java <a href="../../javadoc/junit/textui/TestRunner.html">junit.textui.TestRunner</a></tt>
 followed by the name of the class with a suite method at an operating system
 prompt. The batch interface shows the result as text output. An alternative
