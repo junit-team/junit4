@@ -27,6 +27,7 @@ import junit.runner.*;
  */
 public class TestRunner extends BaseTestRunner {
 	PrintStream fWriter= System.out;
+	int fColumn= 0;
 
 	/**
 	 * This method was created in VisualAge.
@@ -43,12 +44,15 @@ public class TestRunner extends BaseTestRunner {
 		this();
 		fWriter= writer;
 	}
+	
 	public synchronized void addError(Test test, Throwable t) {
 		writer().print("E");
 	}
+	
 	public synchronized void addFailure(Test test, Throwable t) {
 		writer().print("F");
 	}
+			
 	/**
 	 * Creates the TestResult to be used for the test run.
 	 */
@@ -80,6 +84,14 @@ public class TestRunner extends BaseTestRunner {
 		return result;
 	}
 	
+	public synchronized void startTest(Test test) {
+		System.out.print(".");
+		if (fColumn++ >= 40) {
+			System.out.println();
+			fColumn= 0;
+		}
+	}
+
 	public void endTest(Test test) {
 	}
 	
@@ -99,9 +111,9 @@ public class TestRunner extends BaseTestRunner {
 	 * Prints failures to the standard output
 	 */
 	public synchronized void print(TestResult result) {
-	    printHeader(result);
 	    printErrors(result);
 	    printFailures(result);
+	    printHeader(result);
 	}
 	/**
 	 * Prints the errors to the standard output
@@ -156,7 +168,7 @@ public class TestRunner extends BaseTestRunner {
 		} else {
 			writer().println();
 			writer().println("FAILURES!!!");
-			writer().println("Test Results:");
+			writer().println("Test Result Summary:");
 			writer().println("Run: "+result.runCount()+ 
 				         " Failures: "+result.failureCount()+
 				         " Errors: "+result.errorCount());
@@ -225,11 +237,7 @@ public class TestRunner extends BaseTestRunner {
 		System.out.println(message);
 		System.exit(-1);
 	}
-	
-	public synchronized void startTest(Test test) {
-		System.out.print(".");
-	}
-	
+		
 	protected PrintStream writer() {
 		return fWriter;
 	}
