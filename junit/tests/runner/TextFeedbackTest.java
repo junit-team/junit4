@@ -58,7 +58,7 @@ public class TextFeedbackTest extends TestCase {
 		suite.addTest(new TestCase() { public void runTest() {}});
 		suite.addTest(new TestCase() { public void runTest() {}});
 		runner.doRun(suite);
-		assertEquals(expected.toString(), output.toString());
+		assertEquals(expected, output.toString());
 	}
 
 	public void testFailure() {
