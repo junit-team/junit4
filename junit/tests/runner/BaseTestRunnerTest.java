@@ -7,7 +7,7 @@ import junit.runner.BaseTestRunner;
 
 public class BaseTestRunnerTest extends TestCase {
 	
-	public class MockRunner extends BaseTestRunner {
+	public static class MockRunner extends BaseTestRunner {
 		protected void runFailed(String message) {
 		}
 

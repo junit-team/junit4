@@ -137,8 +137,9 @@ public class TestCaseClassLoader extends ClassLoader {
 	}
 	
 	private byte[] getClassData(File f) {
+		FileInputStream stream= null;
 		try {
-			FileInputStream stream= new FileInputStream(f);
+			stream= new FileInputStream(f);
 			ByteArrayOutputStream out= new ByteArrayOutputStream(1000);
 			byte[] b= new byte[1000];
 			int n;
@@ -149,6 +150,13 @@ public class TestCaseClassLoader extends ClassLoader {
 			return out.toByteArray();
 
 		} catch (IOException e) {
+		}
+		finally {
+			if (stream != null)
+				try {
+					stream.close();
+				} catch (IOException e1) {
+				}
 		}
 		return null;
 	}

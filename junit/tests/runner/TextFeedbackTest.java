@@ -16,7 +16,7 @@ public class TextFeedbackTest extends TestCase {
 	OutputStream output;
 	TestRunner runner;
 	
-	class TestResultPrinter extends ResultPrinter {
+	static class TestResultPrinter extends ResultPrinter {
 		TestResultPrinter(PrintStream writer) {
 			super(writer);
 		}
@@ -40,7 +40,7 @@ public class TextFeedbackTest extends TestCase {
 	public void testEmptySuite() {
 		String expected= expected(new String[]{"", "Time: 0", "", "OK (0 tests)", ""});
 		runner.doRun(new TestSuite());
-		assertEquals(expected.toString(), output.toString());
+		assertEquals(expected, output.toString());
 	}
 
 	
@@ -49,7 +49,7 @@ public class TextFeedbackTest extends TestCase {
 		TestSuite suite = new TestSuite();
 		suite.addTest(new TestCase() { public void runTest() {}});
 		runner.doRun(suite);
-		assertEquals(expected.toString(), output.toString());
+		assertEquals(expected, output.toString());
 	}
 	
 	public void testTwoTests() {
@@ -72,7 +72,7 @@ public class TextFeedbackTest extends TestCase {
 		TestSuite suite = new TestSuite();
 		suite.addTest(new TestCase() { public void runTest() {throw new AssertionFailedError();}});
 		runner.doRun(suite);
-		assertEquals(expected.toString(), output.toString());
+		assertEquals(expected, output.toString());
 	}
 	
 	public void testError() {
@@ -86,7 +86,7 @@ public class TextFeedbackTest extends TestCase {
 		TestSuite suite = new TestSuite();
 		suite.addTest(new TestCase() { public void runTest() throws Exception {throw new Exception();}});
 		runner.doRun(suite);
-		assertEquals(expected.toString(), output.toString());
+		assertEquals(expected, output.toString());
 	}
 	
 	private String expected(String[] lines) {
