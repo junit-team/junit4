@@ -27,11 +27,15 @@ use the LoadingTestRunner</a></li>
 <a href="#How do I run setup code only once">How do I run setup code once
 for all my TestCases?</a></li>
 
-
 <li>
 <a href="#I want to debug when a test">I want to debug when a test fails</a></li>
+
 <li>
 <a href="#ClassCastException">Why do I get a ClassCastException while calling EJB's from junit?</a></li>
+
+<li>
+<a href="#assert">In Java 1.4, 'assert' is a keyword.  Won't this conflict with JUnit's assert() method?  If so, what can be done about it?</a></li>
+
 <br>
 <hr><a NAME="How do I implement a test case for thrown"></a>
 <h2>
@@ -157,6 +161,7 @@ depends on the used IDE. Most Java debuggers support to stop the program
 when a specific exception is fired. Notice, that this will only break into
 the debugger when an "anticipated" assertion failed error occurs.
 <br>
+
 <h2>
 <a NAME="ClassCastException"></a>Why do I get a ClassCastException while
 calling EJB's from junit?</h2>
@@ -165,6 +170,17 @@ The custom classloader causes this exception.  Either use excluded.properties
 as described above in <a
 href="#ClassNotFoundException">ClassNotFoundException</a>
  or turn off reloading.
+
+<h2>
+<a NAME="assert"></a>In Java 1.4, 'assert' is a keyword.  Won't this conflict with JUnit's assert() method?  If so, what can be done about it?
+</h2>
+<i>submitted by David Stagner</i><br>
+JUnit 3.7 deprecated assert() and replaced it with assertTrue(),
+which works exactly the same way.  Simply upgrade your JUnit to 3.7 or higher and
+change all assert() calls in your existing tests to assertTrue().
+(Preferably with a script or search and replace)
+
+
 <hr WIDTH="100%">
 </body>
 </html>
