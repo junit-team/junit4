@@ -40,7 +40,6 @@ import junit.runner.*;
 
 	protected static Font PLAIN_FONT= new Font("dialog", Font.PLAIN, 12);
 	private static final int GAP= 4;
-	private static final String SUITE_METHODNAME= "suite";
 
 	public TestRunner() {
 	}

@@ -21,8 +21,6 @@ import junit.runner.*;
  * TestRunner takes as an optional argument the name of the testcase class to be run.
  */
 public class TestRunner extends BaseTestRunner implements TestRunContext {
-	private static Font PLAIN_FONT= StatusLine.PLAIN_FONT;
-	private static Font BOLD_FONT= StatusLine.BOLD_FONT;
 	private static final int GAP= 4;
 	private static final int HISTORY_LENGTH= 5;
 
@@ -66,11 +64,11 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 					switch (status) {
 						case TestRunListener.STATUS_ERROR:
 							fCounterPanel.setErrorValue(fTestResult.errorCount());
-							appendFailure("Error", test, t);
+							appendFailure(test, t);
 							break;
 						case TestRunListener.STATUS_FAILURE:
 							fCounterPanel.setFailureValue(fTestResult.failureCount());
-							appendFailure("Failure", test, t);
+							appendFailure(test, t);
 							break;
 					}
 				}
@@ -122,7 +120,7 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 			fSuiteCombo.removeItemAt(i);
 	}
 
-	private void appendFailure(String kind, Test test, Throwable t) {
+	private void appendFailure(Test test, Throwable t) {
 		fFailures.addElement(new TestFailure(test, t));
 		if (fFailures.size() == 1)
 			revealFailure(test);

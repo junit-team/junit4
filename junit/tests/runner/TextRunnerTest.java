@@ -1,10 +1,14 @@
 package junit.tests.runner;
 
-import junit.framework.*;
-import junit.framework.TestResult;
-
-import java.io.*;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+
+import junit.framework.TestCase;
+import junit.framework.TestResult;
+import junit.framework.TestSuite;
 
 public class TextRunnerTest extends TestCase {
 	

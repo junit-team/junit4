@@ -254,7 +254,7 @@ public class Assert {
  	 */
 	static public void assertNotSame(String message, Object expected, Object actual) {
 		if (expected == actual)
-			failSame(message, expected, actual);
+			failSame(message);
 	}
 	/**
 	 * Asserts that two objects refer to the same object. If they are not
@@ -264,7 +264,7 @@ public class Assert {
 		assertNotSame(null, expected, actual);
 	}
 
-	static private void failSame(String message, Object expected, Object actual) {
+	static private void failSame(String message) {
 		String formatted= "";
  		if (message != null)
  			formatted= message+" ";

@@ -104,10 +104,6 @@ public class CounterPanel extends JPanel {
 		setLabelValue(fNumberOfFailures, value);
 	}
 
-	private String asString(int value) {
-		return Integer.toString(value);
-	}
-
 	private void setLabelValue(JTextField label, int value) {
 		label.setText(Integer.toString(value));
 	}
