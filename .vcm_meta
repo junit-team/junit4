@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-description>
+	<nature id="org.eclipse.jdt.core.javanature"/>
+	<builder name="org.eclipse.jdt.core.javabuilder">
+	</builder>
+</project-description>
