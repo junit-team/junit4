@@ -48,7 +48,7 @@ public class DefaultFailureDetailView implements FailureDetailView {
 			fLines.removeAllElements();
      		StringTokenizer st= new StringTokenizer(trace, "\n\r", false);
 	    	while (st.hasMoreTokens()) 
- 				fLines.add(st.nextToken());
+ 				fLines.addElement(st.nextToken());
 		}
 	}
 	

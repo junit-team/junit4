@@ -56,14 +56,15 @@ public abstract class BaseTestRunner implements TestListener {
 	public static void savePreferences() throws IOException {
 		FileOutputStream fos= new FileOutputStream(getPreferencesFile());
 		try {
-			getPreferences().store(fos, "");
+			// calling of the deprecated save method to enable compiling under 1.1.7
+			getPreferences().save(fos, "");
 		} finally {
 			fos.close();
 		}
 	}
 
 	public static void setPreference(String key, String value) {
-		getPreferences().setProperty(key, value);
+		getPreferences().put(key, value);
 	}
 
 	public synchronized void endTest(Test test) {
