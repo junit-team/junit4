@@ -263,6 +263,6 @@ public class Assert {
 	}
 
 	static private void failNotEquals(String message, Object expected, Object actual) {
-	    throw new ComparisonFailure(message, expected == null ? "null" : expected.toString(), actual == null ? "null" : actual.toString());
+		throw new ComparisonFailure(message, expected.toString(), actual.toString());
 	}
 }
