@@ -38,7 +38,7 @@ import junit.runner.TestCollector;
 /**
  * A test class selector. A simple dialog to pick the name of a test suite.
  */
-class TestSelector extends JDialog {
+public class TestSelector extends JDialog {
 	private JButton fCancel;
 	private JButton fOk;
 	private JList fList;

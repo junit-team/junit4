@@ -42,7 +42,7 @@ public class ActiveTestSuite extends TestSuite {
 					//ActiveTestSuite.super.runTest(test, result);
 					test.run(result);
 				} finally {
-					ActiveTestSuite.this.runFinished(test);
+					ActiveTestSuite.this.runFinished();
 				}
 			}
 		};
@@ -59,7 +59,7 @@ public class ActiveTestSuite extends TestSuite {
 		}
 	}
 	
-	synchronized public void runFinished(Test test) {
+	synchronized public void runFinished() {
 		fActiveTestDeathCount++;
 		notifyAll();
 	}

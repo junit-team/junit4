@@ -23,7 +23,7 @@ public class TestCaseClassLoaderTest extends TestCase {
 		// ClassLoaderTestCase.
 		//
 		Method method= loadedClass.getDeclaredMethod("verify", new Class[0]);
-		method.invoke(o, new Class[0]);
+		method.invoke(o, (Object[])new Class[0]);
 	}
 
 	public void testJarClassLoading() throws Exception {
@@ -41,6 +41,6 @@ public class TestCaseClassLoaderTest extends TestCase {
 		// ClassLoaderTestCase.
 		//
 		Method method= loadedClass.getDeclaredMethod("verify", new Class[0]);
-		method.invoke(o, new Class[0]);
+		method.invoke(o, (Object[])new Class[0]);
 	}
 }

@@ -45,6 +45,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.ListModel;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -387,7 +388,7 @@ public class TestRunner extends BaseTestRunner implements TestRunContext {
 	}
 
 	protected JTabbedPane createTestRunViews() {
-		JTabbedPane pane= new JTabbedPane(JTabbedPane.BOTTOM);
+		JTabbedPane pane= new JTabbedPane(SwingConstants.BOTTOM);
 
 		FailureRunView lv= new FailureRunView(this);
 		fTestRunViews.addElement(lv);

@@ -123,7 +123,7 @@ public abstract class BaseTestRunner implements TestListener {
 		}
 		Test test= null;
 		try {
-			test= (Test)suiteMethod.invoke(null, new Class[0]); // static method
+			test= (Test)suiteMethod.invoke(null, (Object[])new Class[0]); // static method
 			if (test == null)
 				return test;
 		}

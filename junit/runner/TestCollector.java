@@ -1,6 +1,7 @@
 package junit.runner;
 
 import java.util.Enumeration;
+import junit.swingui.TestSelector;
 
 
 /**
