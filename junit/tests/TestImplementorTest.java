@@ -8,15 +8,15 @@ import junit.framework.*;
 public class TestImplementorTest extends TestCase {
 	public static class DoubleTestCase implements Test {
 		private TestCase fTestCase;
-		
+
 		public DoubleTestCase(TestCase testCase) {
 			fTestCase= testCase;
 		}
-		
+
 		public int countTestCases() {
 			return 2;
 		}
-		
+
 		public void run(TestResult result) {
 			result.startTest(this);
 			Protectable p= new Protectable() {
@@ -28,14 +28,10 @@ public class TestImplementorTest extends TestCase {
 			result.runProtected(this, p);
 			result.endTest(this);
 		}
-		
-		public String getDisplayName() {
-			return "";
-		}
 	}
-	
+
 	private DoubleTestCase fTest;
-	
+
 	public TestImplementorTest(String name) {
 		super(name);
 		TestCase testCase= new TestCase("noop") {
@@ -44,7 +40,7 @@ public class TestImplementorTest extends TestCase {
 		};
 		fTest= new DoubleTestCase(testCase);
 	}
-	
+
 	public void testSuccessfulRun() {
 		TestResult result= new TestResult();
 		fTest.run(result);
