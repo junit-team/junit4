@@ -30,7 +30,7 @@ public class CounterPanel extends JPanel {
 		fNumberOfFailures= createOutputField(5);
 		fNumberOfRuns= createOutputField(9);
 
-      addToGrid(new JLabel("Runs:", JLabel.CENTER),
+      addToGrid(new JLabel("Runs:", SwingConstants.CENTER),
           0, 0, 1, 1, 0.0, 0.0,
           GridBagConstraints.CENTER, GridBagConstraints.NONE,
           new Insets(0, 0, 0, 0));
@@ -63,7 +63,7 @@ public class CounterPanel extends JPanel {
 		// force a fixed layout to avoid accidental hiding on relayout
 		field.setMinimumSize(field.getPreferredSize());
 		field.setMaximumSize(field.getPreferredSize());
-		field.setHorizontalAlignment(JTextField.LEFT);
+		field.setHorizontalAlignment(SwingConstants.LEFT);
 		field.setFont(StatusLine.BOLD_FONT);
 		field.setEditable(false);
 		field.setBorder(BorderFactory.createEmptyBorder());

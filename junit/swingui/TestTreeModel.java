@@ -105,7 +105,7 @@ class TestTreeModel implements TreeModel {
 		if (suite != null) {
 			int i= 0;
 			for (Enumeration e= suite.tests(); e.hasMoreElements(); i++) {
-				if (child.equals((Test)e.nextElement()))
+				if (child.equals(e.nextElement()))
 					return i;
 			}
 		}

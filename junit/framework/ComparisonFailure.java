@@ -6,6 +6,8 @@ package junit.framework;
  * Inspired by a patch from Alex Chaffee mailto:alex@purpletech.com
  */
 public class ComparisonFailure extends AssertionFailedError {
+	private static final long serialVersionUID= 1L;
+	
 	private String fExpected;
 	private String fActual;
 

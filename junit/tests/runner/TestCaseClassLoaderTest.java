@@ -19,7 +19,7 @@ public class TestCaseClassLoaderTest extends TestCase {
 		//
 		// Invoke the assertClassLoaders method via reflection.
 		// We use reflection since the class is loaded by
-		// another class loader and we can't do a successfull downcast to
+		// another class loader and we can't do a successful downcast to
 		// ClassLoaderTestCase.
 		//
 		Method method= loadedClass.getDeclaredMethod("verify", new Class[0]);

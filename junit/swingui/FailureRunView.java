@@ -10,6 +10,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -100,7 +101,7 @@ public class FailureRunView implements TestRunView {
 	}
 	
 	public void addTab(JTabbedPane pane) {
-		JScrollPane scrollPane= new JScrollPane(fFailureList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		JScrollPane scrollPane= new JScrollPane(fFailureList, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		Icon errorIcon= TestRunner.getIconResource(getClass(), "icons/error.gif");
 		pane.addTab("Failures", errorIcon, scrollPane, "The list of failed tests");
 	}
