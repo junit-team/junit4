@@ -76,7 +76,7 @@ public abstract class TestCase extends Assert implements Test {
 	 * the name of the test case
 	 */
 	private String fName;
-	
+
 	/**
 	 * No-arg constructor to enable serialization. This method
 	 * is not intended to be used by mere mortals.
@@ -84,14 +84,12 @@ public abstract class TestCase extends Assert implements Test {
 	TestCase() {
 		fName= null;
 	}
-	
 	/**
 	 * Constructs a test case with the given name.
 	 */
 	public TestCase(String name) {
 		fName= name;
 	}
-	
 	/**
 	 * Counts the number of test cases executed by run(TestResult result).
 	 */
@@ -183,12 +181,6 @@ public abstract class TestCase extends Assert implements Test {
 	 * Returns a string representation of the test case
 	 */
 	public String toString() {
-	    return getDisplayName();
-	}
-	/**
-	 * Return a string suitable for displaying to a user
-	 */
-	public String getDisplayName() {
 	    return getName()+"("+getClass().getName()+")";
 	}
 	/**
@@ -198,7 +190,6 @@ public abstract class TestCase extends Assert implements Test {
 	public String getName() {
 		return fName;
 	}
-
 	/**
 	 * Sets the name of a TestCase
 	 * @param name The name to set
@@ -206,5 +197,4 @@ public abstract class TestCase extends Assert implements Test {
 	public void setName(String name) {
 		fName= name;
 	}
-
 }

@@ -8,10 +8,10 @@ import junit.framework.*;
  *
  */
 public class TestCaseTest extends TestCase {
-	
+
 	static class TornDown extends TestCase {
 		boolean fTornDown= false;
-		
+
 		TornDown(String name) {
 			super(name);
 		}
@@ -31,9 +31,6 @@ public class TestCaseTest extends TestCase {
 		// writing self tests. And you thought those weird anonymous
 		// inner classes were bad...
 		assertEquals("testCaseToString(junit.tests.TestCaseTest)", toString());
-	}
-	public void testDisplayName() {
-		assertEquals("testDisplayName(junit.tests.TestCaseTest)",getDisplayName());
 	}
 	public void testError() {
 		TestCase error= new TestCase("error") {
@@ -87,7 +84,7 @@ public class TestCaseTest extends TestCase {
 		verifyError(fails);
 		assertTrue(fails.fTornDown);
 	}
-	
+
 	public void testTearDownFails() {
 		TestCase fails= new TestCase("success") {
 			protected void tearDown() {

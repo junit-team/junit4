@@ -10,7 +10,7 @@ import junit.extensions.*;
 public class ExtensionTest extends TestCase {
 	static class TornDown extends TestSetup {
 		boolean fTornDown= false;
-		
+
 		TornDown(Test test) {
 			super(test);
 		}
@@ -50,7 +50,7 @@ public class ExtensionTest extends TestCase {
 		TestSuite suite= new TestSuite();
 		suite.addTest(failure);
 		suite.addTest(error);
-		
+
 		TestSetup wrapper= new TestSetup(suite);
 
 		TestResult result= new TestResult();
@@ -87,8 +87,5 @@ public class ExtensionTest extends TestCase {
 
 		assertTrue(!test.fWasRun);
 		assertTrue(!result.wasSuccessful());
-	}
-	public void testDisplayName() {
-		assertEquals("junit.extensions.TestDecorator(foobar(junit.tests.ExtensionTest))", (new TestDecorator(new ExtensionTest("foobar"))).getDisplayName());
 	}
 }

@@ -44,7 +44,7 @@ public class TestSuite implements Test {
 	 public TestSuite(final Class theClass) {
 		fName= theClass.getName();
 		Constructor constructor= null;
-		try {	
+		try {
 			constructor= getConstructor(theClass);
 		} catch (NoSuchMethodException e) {
 			addTest(warning("Class "+theClass.getName()+" has no public constructor TestCase(String name)"));
@@ -80,7 +80,7 @@ public class TestSuite implements Test {
 	public void addTest(Test test) {
 		fTests.addElement(test);
 	}
-	
+
 	/**
 	 * Adds the tests from the given class to the suite
 	 */
@@ -90,7 +90,7 @@ public class TestSuite implements Test {
 
 	private void addTestMethod(Method m, Vector names, Constructor constructor) {
 		String name= m.getName();
-		if (names.contains(name)) 
+		if (names.contains(name))
 			return;
 		if (isPublicTestMethod(m)) {
 			names.addElement(name);
@@ -107,11 +107,11 @@ public class TestSuite implements Test {
 			}
 
 		} else { // almost a test method
-			if (isTestMethod(m)) 
+			if (isTestMethod(m))
 				addTest(warning("Test method isn't public: "+m.getName()));
 		}
 	}
-	
+
 	/**
 	 * Converts the stack trace into a string
 	 */
@@ -120,7 +120,7 @@ public class TestSuite implements Test {
 		PrintWriter writer= new PrintWriter(stringWriter);
 		t.printStackTrace(writer);
 		return stringWriter.toString();
-		
+
 	}
 	/**
 	 * Counts the number of test cases that will be run by this test.
@@ -141,7 +141,7 @@ public class TestSuite implements Test {
 		Class[] args= { String.class };
 		return theClass.getConstructor(args);
 	}
-	
+
 	/**
 	 */
 	private boolean isPublicTestMethod(Method m) {
@@ -166,19 +166,19 @@ public class TestSuite implements Test {
 			runTest(test, result);
 		}
 	}
-	
+
 	public void runTest(Test test, TestResult result) {
 		test.run(result);
 	}
-	
+
 	/**
-	 * Returns the test at the given index 
+	 * Returns the test at the given index
 	 */
 	public Test testAt(int index) {
 		return (Test)fTests.elementAt(index);
 	}
 	/**
-	 * Returns the number of tests in this suite 
+	 * Returns the number of tests in this suite
 	 */
 	public int testCount() {
 		return fTests.size();
@@ -196,16 +196,6 @@ public class TestSuite implements Test {
 			return getName();
 		return super.toString();
 	 }
-	 /**
-	  * Return a String suitable for displaying to a user
-	  */
-	 public String getDisplayName() {
-	 	if (getName() == null)
-	 		return "Anonymous suite";
-	 	else
-	 		return getName();
-	 }
-		 
 	/**
 	 * Sets the name of the suite.
 	 * @param name The name to set
@@ -222,7 +212,7 @@ public class TestSuite implements Test {
 	public String getName() {
 		return fName;
 	}
-	 
+
 	/**
 	 * Returns a test which will fail and log a warning message.
 	 */
@@ -231,6 +221,6 @@ public class TestSuite implements Test {
 			protected void runTest() {
 				fail(message);
 			}
-		};		
+		};
 	}
 }
