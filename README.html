@@ -1,0 +1,424 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (Win98; I) [Netscape]">
+   <meta name="Author" content="Erich Gamma">
+   <title>JUnit 3.4</title>
+</head>
+<body>
+
+<h1>
+<b><font color="#00CC00">J</font><font color="#FF0000">U</font><font color="#000000">nit</font></b>
+3.4</h1>
+
+<hr WIDTH="100%">
+<br>11/02/2000 Kent Beck and Erich Gamma
+<p>JUnit is a simple framework to write repeatable tests. JUnit can be
+used with JDK 1.1.* and JDK 1.2.*.
+<ul>
+<li>
+<a href="#Summary of">Summary of Changes</a></li>
+
+<li>
+<a href="#Contents">Contents</a></li>
+
+<li>
+<a href="#Installation">Installation</a></li>
+
+<li>
+<a href="#Getting">Getting Started</a></li>
+
+<li>
+<a href="#Documentation">Documentation</a></li>
+
+<li>
+<a href="#Extending">Extending JUnit</a></li>
+
+<li>
+<a href="doc/license.htm">License</a></li>
+</ul>
+
+<h2>
+<a NAME="Summary of"></a>Summary of Changes between 3.3 and 3.4</h2>
+
+<ul>
+<li>
+Eliminated code in ActiveTestSuite that could not compile in VA/Java.</li>
+
+<li>
+Fixed bug related to incorrect error progress feedback when running a single
+test.</li>
+</ul>
+
+<h2>
+Summary of Changes between 3.2 and 3.3</h2>
+
+<h3>
+Framework</h3>
+
+<ul>
+<li>
+Fixed Assert.assertEquals(double,double,double) when the actual value is
+a Double.NaN.</li>
+</ul>
+
+<h3>
+Extensions</h3>
+
+<ul>
+<li>
+Fixed ActiveTest support. Replaced ActiveTest with an ActiveTestSuite,
+the ActiveTestSuite waits until the tests running in separate threads have
+finished.</li>
+
+<li>
+Added an example that illustrates how to launch a new VM for running a
+Test - see TextRunnerTest.java.</li>
+</ul>
+
+<h3>
+TestRunner</h3>
+
+<ul>
+<li>
+Refactored the TestRunner classes, they now all descend from junit.runner.BaseTestRunner.</li>
+
+<li>
+Eliminated the non-loading/loading TestRunner flavors. All TestRunners
+are now loading by default except when the TestRunners detect that they
+run inside VA/Java (BaseTestRunner.getLoader()).</li>
+
+<li>
+Added a <b>junit.properties</b> file for preference settings. It is stored
+in the folder referred to by the "user.home" property. The supported setting
+is <b>loading, </b>it can be set to true or false to enable or disable
+the loading behavior.</li>
+
+<li>
+Renamed junit.ui to junit.awtui (with backward compatibility).</li>
+
+<li>
+Renamed junit.utils to junit.runner.</li>
+
+<li>
+You can now put test cases that should be reloaded into a JAR file. The
+TestCaseClassLoader now supports a simple version of class loading from
+a JAR file.</li>
+
+<li>
+Simplified&nbsp; invoking the TestRunners programmatically. They now all
+support a static method <b>run(Class test)</b>.</li>
+
+<li>
+Clarified the exit behavior of junit.textui.TestRunner:</li>
+
+<ul>
+<li>
+TestRunner only exits the VM when it is invoked by main, when the TestRunner
+is invoked by <b>run()</b> it will not explicitly exit and terminate the
+VM.</li>
+
+<li>
+TestRunner exits with 0 when the tests passed.</li>
+</ul>
+</ul>
+
+<h3>
+Release</h3>
+
+<ul>
+<li>
+Removed VA/Java specific installation support</li>
+</ul>
+
+<h2>
+Summary of Changes between 3.1 and 3.2</h2>
+
+<ul>
+<li>
+Fixed bug in the handling of inherited test methods.</li>
+
+<li>
+The junit.swing.TestRunner support selective test execution. A Test Browser
+shows the contents of the entered test suite as a tree and you can select
+the test case to be run. The Test Browser can be launched from JUnit menu.</li>
+
+<li>
+The history file of junit.swingui.TestRunner is stored in .junit on non
+Windows platforms.</li>
+
+<li>
+Support for rerunning a failed test was previously only available inside
+VisualAge for Java. It is now generally available when using the LoadingTestRunners.</li>
+
+<li>
+The junit.textui.TestRunner exits with -1 when the test run fails.</li>
+</ul>
+
+<h2>
+Summary of Changes between 2.1 and 3.1</h2>
+
+<h3>
+JUnit Framework</h3>
+
+<ul>
+<li>
+TestSuite now extracts inherited test methods. The test extraction stops
+at the first class that doesn't implement Test.</li>
+
+<li>
+Added support for TestListeners. A TestListeners observes changes to the
+TestResult. It enables to have multiple observers on the same result and
+allowed us to delete the TestResult subclasses (parallel class hierarchy)
+as the TestRunners now implement TestListener. It also allows clients to
+generate additional kinds of test run feedback.</li>
+
+<li>
+Added an <a href="javadoc/junit/extensions/ExceptionTestCase.html">ExceptionTestCase</a>
+class. A TestCase that expects a particular exception to be thrown.</li>
+
+<li>
+Fixed TestSetup so that errors in setUp are caught and reported correctly.</li>
+
+<li>
+Assertion checks where moved from TestCase into a separate <a href="javadoc/junit/framework/Assert.html">Assert</a>
+class. This enables programming by contract.</li>
+
+<li>
+Added support for protected blocks. A protected block has to implement
+the <a href="javadoc/junit/framework/Protectable.html">Protectable</a>
+interface. We used it to factor out a common template method to run tests.
+To implement your own protected block that logs thrown exceptions, pass
+a Protectable to TestResult.runProtected().</li>
+
+<li>
+Clarified and deprecated method names in TestResult: testErrors, testFailures
+and runTests are now called errorCount, failureCount and runCount.</li>
+
+<li>
+TestCase.getResult got removed you can add access to the current TestResult
+in your own TestCase subclasses.</li>
+
+<li>
+TestCase.setUp() and tearDown() now throw a Throwable, so you can allow
+exceptions in setUp() to propagate.</li>
+</ul>
+
+<h3>
+TestRunner</h3>
+
+<ul>
+<li>
+There is a new version of a Swing based graphical TestRunner. It supports
+a combo box with a persistent history of ran test suites. You can start
+it with:</li>
+
+<br><tt>&nbsp;&nbsp;&nbsp; java junit.swingui.TestRunner</tt>
+<br>There is also a LoadingTestRunner for Swing. The Swing TestRunner requires
+Swing 1.1 (javax.swing package structure) or jdk 1.2.
+<li>
+Some common code among the TestRunners was moved into the package junit.util.</li>
+
+<li>
+The batch TestRunner unit.textui.TestRunner can now be given a PrintStream
+to output the results to.</li>
+
+<li>
+The batch TestRunner can be given a class to run directly. To start the
+batch runner from your main you can write:</li>
+
+<br><tt>public static void main(String args[]) {</tt>
+<br><tt>&nbsp; junit.textui.TestRunner.run(MoneyTest.class);</tt>
+<br><tt>}</tt></ul>
+
+<h3>
+Documentation</h3>
+
+<ul>
+<li>
+There is a new article: <i>JUnit a cook's tour </i>included.</li>
+</ul>
+
+<h3>
+Release</h3>
+
+<ul>
+<li>
+We no longer provide a .dat file for VAJ users. You install JUnit into
+VAJ by importing the resources from the junit.jar and the sources from
+the src.zip files.</li>
+</ul>
+
+<p><br>Summary of changes between <a href="doc/changes21.html">1.0 and
+2.1</a>
+<h2>
+<a NAME="Contents"></a>Contents of the Release</h2>
+
+<table CELLSPACING=0 CELLPADDING=0 >
+<tr>
+<td><tt>README.html&nbsp;</tt></td>
+
+<td>this file</td>
+</tr>
+
+<tr>
+<td><tt>junit.jar</tt></td>
+
+<td>a jar file with the JUnit framework and&nbsp; tools&nbsp;</td>
+</tr>
+
+<tr>
+<td>src.zip</td>
+
+<td>a zip file with the source code of the junit framework</td>
+</tr>
+
+<tr>
+<td><tt>junit</tt></td>
+
+<td>the source code of the JUnit samples</td>
+</tr>
+
+<tr>
+<td><tt>&nbsp;&nbsp;&nbsp; samples</tt></td>
+
+<td>sample test cases</td>
+</tr>
+
+<tr>
+<td><tt>&nbsp;&nbsp;&nbsp; tests</tt></td>
+
+<td>test cases for JUnit itself</td>
+</tr>
+
+<tr>
+<td><tt>javadoc</tt></td>
+
+<td>javadoc generated documentation</td>
+</tr>
+
+<tr>
+<td><tt>doc</tt></td>
+
+<td>documentation and articles</td>
+</tr>
+</table>
+
+<h2>
+<a NAME="Installation"></a>Installation</h2>
+Below are the installation steps for installing JUnit:
+<ol>
+<li>
+unzip the junit.zip file</li>
+
+<li>
+add<i> </i><b>junit.jar</b> to the CLASSPATH. For example: <tt>set classpath=%classpath%;INSTALL_DIR\junit3\junit.jar</tt></li>
+
+<li>
+test the installation by using either the batch or the graphical TestRunner
+tool to run the tests that come with this release. All the tests should
+pass OK.</li>
+
+<ul>
+<li>
+for the batch TestRunner type:</li>
+
+<br><tt>&nbsp;&nbsp;&nbsp; java junit.textui.TestRunner junit.samples.AllTests</tt>
+<li>
+for the graphical TestRunner type:</li>
+
+<br><tt>&nbsp;&nbsp;&nbsp; java junit.awtui.TestRunner junit.samples.AllTests</tt>
+<li>
+for the Swing based graphical TestRunner type:</li>
+
+<br><tt>&nbsp;&nbsp;&nbsp; java junit.swingui.TestRunner junit.samples.AllTests</tt></ul>
+</ol>
+
+<h2>
+<a NAME="Getting"></a>Getting Started</h2>
+To get started with unit testing and JUnit read the Java Report article:
+<a href="doc/testinfected/testing.htm">Test
+Infected - Programmers Love Writing Tests</a>.
+<br>This article demonstrates the development process with JUnit in the
+context of multiple currency arithmetic. The corresponding source code
+is in junit\samples\money.
+<p>You find additional samples in the junit.samples package:
+<ul>
+<li>
+SimpleTest.java - some simple test cases</li>
+
+<li>
+VectorTest.java - test cases for java.util.Vector</li>
+</ul>
+
+<h3>
+Which TestRunner to use?</h3>
+JUnit comes with different TestRunners:
+<ul>
+<li>
+a textual TestRunner - it is the fastest to launch and can be used when
+you don't need a red green success indication.</li>
+
+<li>
+graphical TestRunners - they show a simple graphical dialog to enter the
+test and provide some graphical progress indication. The graphical TestRunners
+come in two flavors:</li>
+
+<ul>
+<li>
+the classical TestRunner - it needs to be restarted after every change
+to your classes. Otherwise you will run your tests with the old code. The
+exception is when running JUnit from inside VisualAge for Java. In this
+case the integrated development environment takes care of updating the
+environment so that you don't have to restart the TestRunner.</li>
+
+<li>
+the so called LoadingTestRunner, it can reload your classes from the class
+path for each run and therefore doesn't have to be restarted.</li>
+</ul>
+</ul>
+
+<h2>
+<a NAME="Documentation"></a>Documentation</h2>
+
+<blockquote><a href="doc/cookbook/cookbook.htm">JUnit Cookbook</a>
+<br>&nbsp;&nbsp;&nbsp; A cookbook for implementing tests with JUnit.
+<br><a href="doc/testinfected/testing.htm">Test Infected - Programmers
+Love Writing Tests</a>
+<br>&nbsp;&nbsp;&nbsp; An article demonstrating the development process
+with JUnit.
+<br><a href="doc/cookstour/cookstour.htm">JUnit - A cooks tour</a>
+<br><a href="javadoc/index.html">Javadoc</a>
+<br>&nbsp;&nbsp;&nbsp; API documentation generated with javadoc.
+<br><a href="doc/faq/faq.htm">Frequently asked questions</a>
+<br>&nbsp;&nbsp;&nbsp; Some frequently asked questions about using JUnit.</blockquote>
+
+<h2>
+<a NAME="Extending"></a>Extending JUnit</h2>
+Examples of possible JUnit extensions can be found in the <tt>junit.extensions</tt>
+package:
+<ul>
+<li>
+<a href="javadoc/junit/extensions/TestDecorator.html">TestDecorator</a>
+- A decorator for Test. You can use it as the base class for implementing
+decorators to extend test cases.</li>
+
+<li>
+<a href="javadoc/junit/extensions/ActiveTest.html">ActiveTest</a> - A Decorator
+which runs each test in a separate thread.</li>
+
+<li>
+<a href="javadoc/junit/extensions/TestSetup.html">TestSetup</a> - A Decorator
+to set up and tear down additional fixture state. Subclass TestSetup and
+insert it into your tests when you want to set up additional state once
+before the tests are run.</li>
+
+<li>
+<a href="javadoc/junit/extensions/ExceptionTestCase.html">ExceptionTestCase</a>
+- A TestCase that expects a particular Exception to be thrown.</li>
+</ul>
+
+<hr WIDTH="100%">
+</body>
+</html>

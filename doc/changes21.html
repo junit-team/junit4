@@ -1,0 +1,108 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (Win95; I) [Netscape]">
+   <meta name="Author" content="Erich Gamma">
+   <title>JUnit 2</title>
+</head>
+<body>
+
+<h2>
+Summary of Changes between 1.0 and 2.1</h2>
+The focus of this release was to refactor parts of the framework and to
+make it more consistent. In addition, we have simplified the writing and
+running of tests.
+<ul>
+<li>
+We renamed the package prefix for all junit classes from "test" to "junit."</li>
+
+<li>
+<a NAME="Support to extract TestSuites"></a>This version extracts test
+suites automatically. TestSuite now provides a constructor <tt><b>TestSuite(Class</b>
+theClass)</tt>. This constructor adds all the methods from the given class
+starting with "test" as test cases to the suite. This avoids you having
+to update the suite method manually when adding a new test. For example,
+the <b>suite</b>() method of the VectorTest can now be written as:</li>
+
+<ul>publ<tt>ic static Test suite() {</tt>
+<br><tt>&nbsp; return new <b>TestSuite(VectorTest.class);</b></tt>
+<br><tt>}</tt></ul>
+
+<li>
+Several new assert methods were added:</li>
+
+<ul>
+<li>
+<tt>assertNotNull(Object object)</tt></li>
+
+<li>
+<tt>assertNotNull(String message, Object object)</tt></li>
+
+<li>
+<tt>assertNull(Object object)</tt></li>
+
+<li>
+<tt>assertNull(String message, Object object)</tt></li>
+
+<li>
+<tt>assertSame(Object actual, Object expected)</tt></li>
+
+<li>
+<tt>assertSame(String message, Object actual, Object expected)</tt></li>
+
+<li>
+<tt>fail()</tt></li>
+
+<li>
+<tt>fail(String message)</tt>.</li>
+</ul>
+
+<li>
+Exceptions during setUp() and tearDown() are now caught and reported.</li>
+
+<li>
+A warning is now given when a TestCase class isn't public or has no test
+methods.</li>
+
+<li>
+All the assert methods are now public.</li>
+</ul>
+
+<ul>
+<li>
+Both the batch and the interactive TestRunner no longer require that the
+Test class provides a static suite() method. If there is no suite method
+all the public void methods starting with "test" and no arguments are run
+(see above). There is a new variation of the graphical TestRunner (junit.ui.TestRunner)
+the LoadingTestRunner. The LoadingTestRunner uses a custom class loader
+to reload user classes for each test run. This avoids that the TestRunner
+tool needs to be restarted for each run. The old TestRunner attempted to
+address this by making assumptions about the garbage collection of classes
+which were not portable.&nbsp; In particular, the old scheme would not
+work at Notice, in an environment with dynamic object migration support
+or hot code updating like VisualAge for Java this isn't an issue.</li>
+
+<br>There, the environment takes care of updating the code and objects
+run by the TestRunner. When using JUnit with VisualAge for Java, just use
+the standard junit.ui.TestRunner.
+<li>
+When the graphical TestRunner is run under Visual Age for Java there is
+an additional run button to rerun a failed test. This is typically used
+to set a breakpoint in the test method and to rerun it under the debugger.</li>
+
+<li>
+The TestRunners support the command line option -c TestClassName. This
+allows you to run them&nbsp; as VisualAge for Java tools.</li>
+
+<br>Once you have JUnit installed as a VAJ tool you can select the Test
+class and run its tests from a VAJ menu (see how to run JUnit as a VisualAge
+for Java tool).
+<li>
+The batch TestRunner supports a runAndWait method to run a suite and wait
+until the user types RETURN.</li>
+</ul>
+
+<hr WIDTH="100%">
+</body>
+</html>

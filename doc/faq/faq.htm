@@ -1,0 +1,160 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (Win98; I) [Netscape]">
+   <meta name="Author" content="Erich Gamma">
+   <title>JUnit FAQ</title>
+</head>
+<body>
+
+<h1>
+<font color="#33FF33">J</font><font color="#CC0000">U</font>nit Frequently
+Asked Questions</h1>
+
+<hr WIDTH="100%">
+<li>
+<a href="#browsersupport">How do I implement a test case for a thrown exception?</a></li>
+
+<li>
+<a href="#browsersupport">How do I organize my test cases?</a></li>
+
+<li>
+<a href="#ClassNotFoundException">I get a ClassNotFoundException when I
+use the LoadingTestRunner</a></li>
+
+<li>
+<a href="#How do I run setup code only once">How do I run setup code once
+for all my TestCases?</a></li>
+
+<li>
+<a href="#I want to debug when a test">I want to debug when a test fails</a></li>
+
+<br>
+<hr><a NAME="How do I implement a test case for thrown"></a>
+<h2>
+How do I implement a test case for a thrown exception?</h2>
+Catch the exception and if it isn't thrown call the <b>fail</b> method.
+Fail signals the failure of a test case. Here is an example:
+<blockquote><tt>public void testIndexOutOfBoundsException() {</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; Vector v= new Vector(10)</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; try {</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Object o= v.elementAt(v.size());</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; fail("Should raise
+an ArrayIndexOutOfBoundsException");</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; } catch (ArrayIndexOutOfBoundsException e) {</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; }</tt>
+<br><tt>}</tt></blockquote>
+or use the ExceptionTestCase as follows.
+<br>1) make your TestCase class a subclass of ExceptionTestCase.
+<br>2) write the test ignoring exceptions
+<blockquote><tt>public void testIndexOutOfBoundsException() {</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; Vector v= new Vector(10);</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; v.elementAt(v.size());</tt>
+<br><tt>}</tt></blockquote>
+3) create the TestCase:
+<br><tt>&nbsp;&nbsp;&nbsp; Test t= new ExceptionTestCase("testIndexOutOfBoundsException",
+ArrayIndexOutOfBoundsException.class)</tt>
+<p>Looking at this again, the first way is simpler. Sigh...
+<h2>
+<a NAME="How do I organize my Test"></a>How do I organize my Test Cases?</h2>
+Here is one way:
+<ol>
+<li>
+create a test package for each of your application packages. For example,
+for a package <b>myapp.util </b>define <b>myapp.utiltest</b>. Put all the
+fixtures for the util package into this package.</li>
+
+<li>
+in myapp.utiltest define a class which creates a suite with all the tests
+in this package. To do so define a class <b>AllTests</b> which includes
+a single static suite method. Here is an example:</li>
+
+<br><tt>&nbsp;public static Test suite() {</tt>
+<br><tt>&nbsp; TestSuite suite= new TestSuite();</tt>
+<br><tt>&nbsp; suite.addTest(Fixture1.suite());</tt>
+<br><tt>&nbsp; suite.addTest(Fixture2.suite());</tt>
+<br><tt>&nbsp; return suite;</tt>
+<br><tt>&nbsp;}</tt>
+<li>
+define similar AllTests classes that create higher level suites containing
+the suites from other test packages.</li>
+</ol>
+When the fixtures are in a separate test package&nbsp; the test cases don't
+have access to the methods and fields with default visibility ("package
+visible"). A variation of the above convention is to put all fixtures into
+the application package itself. This gives the fixtures access to all the
+package visible methods and fields. To separate the fixture classes from
+the production classes put them into a separate directory that you then
+add to the CLASSPATH. This makes it easy to ship the production classes
+independent of the fixtures. Here is an example for how to do this:
+<ol>
+<li>
+put the fixtures classes for myapp.util into a TESTDIR\<b>tests</b>\myapp\util
+directory,</li>
+
+<li>
+add the <b>tests</b> directory to your CLASSPATH.</li>
+
+<ul>
+<li>
+set CLASSPATH=%CLASSPATH%;TESTDIR\<b>tests</b></li>
+</ul>
+</ol>
+<a NAME="How do I run setup code only once"></a>
+<h2>
+How do I run setup code once for all my TestCases?</h2>
+Wrap the top level suite in a subclass of TestSetup. Here is a sample AllTests.suite()
+method:
+<blockquote><tt>public static Test suite() {</tt>
+<br><tt>&nbsp; TestSuite suite= new TestSuite();</tt>
+<br><tt>&nbsp; ...add your tests and suites here...</tt>
+<br><tt>&nbsp; TestSetup wrapper= new TestSetup(suite) {</tt>
+<br><tt>&nbsp;&nbsp; public void setUp() {</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; oneTimeSetUp();</tt>
+<br><tt>&nbsp;&nbsp; }</tt>
+<br><tt>&nbsp; };</tt>
+<br><tt>&nbsp; return wrapper;</tt>
+<br><tt>}</tt></blockquote>
+
+<h2>
+<a NAME="ClassNotFoundException"></a>I get a ClassNotFoundException when
+I use the LoadingTestRunner</h2>
+The LoadingTestRunner uses a custom class loader to reload your code. This
+class loader doesn't attempt to load classes from jars or to load standard
+classes. Instead you can specify a list of excluded package prefixes that
+shouldn't be reloaded for each test run. The list of package prefixes is
+defined in the properties file <tt>junit.util.excluded.properties</tt>.
+As we deliver it this file excludes the packages that come with jdk1.2
+from reloading:
+<blockquote><tt>#</tt>
+<br><tt># The list of excluded package paths for the TestCaseClassLoader</tt>
+<br><tt>#</tt>
+<br><tt>excluded.0=sun.*</tt>
+<br><tt>excluded.1=com.sun.*</tt>
+<br><tt>excluded.2=org.omg.*</tt>
+<br><tt>excluded.3=javax.*</tt>
+<br><tt>excluded.4=sunw.*</tt></blockquote>
+If you are using additional jars from 3rd party vendors you can either:
+<ul>
+<li>
+update this file in the junit.jar and add your package paths or,</li>
+
+<li>
+"patch" the junit.util.excluded.properties file with the CLASSPATH, that
+is, put your customized version of this file in the class path before the
+junit.jar. In this way your version will be loaded instead of the one that
+comes with junit.</li>
+</ul>
+
+<h2>
+<a NAME="I want to debug when a test"></a>I want to debug when a test fails</h2>
+Start the test runner under the debugger and configure the debugger so
+that it catches the junit.framework.AssertionFailedError. How you do this
+depends on the used IDE. Most Java debuggers support to stop the program
+when a specific exception is fired. Notice, that this will only break into
+the debugger when an "anticipated" assertion failed error occurs.
+<br>
+<hr WIDTH="100%">
+</body>
+</html>
