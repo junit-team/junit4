@@ -1,11 +1,12 @@
-<!-- JUnit build script using ant 1.4 -->
 <project name="junit" default="dist" basedir=".">
 	<property file="${user.home}/.junit.properties" />
-	<property name="build.compiler" value="classic" />
-	<property name="version" value="3.8.2" />
+	<property name="version" value="4.0" />
 	<property name="dist"  value="junit${version}" />
 	<property name="versionfile"  value="junit/runner/Version.java" />
 	<property name="zipfile"  value="${dist}.zip" />
+	<property name="unjarred" value="**/*.jar, **/junit/tests/**, **/junit/samples/**, doc/**, README.html, .classpath, .project, cpl-v10.html" />
+	<property name="jarfile" value="junit-${version}.jar" />
+	
 	<target name="init">
 		<tstamp/>
 	</target>
@@ -28,37 +29,36 @@
   		/>	
 	</target>
 
+        <target name="distributeTestsAndExamples">
+        	<copy todir="${dist}/${dir}">
+                	<fileset dir="${dir}" includes="junit/samples/**, junit/tests/**" />
+                </copy>
+        </target>
+
 	<target name="dist" depends="build">
 		<delete dir="${dist}" />
 		<mkdir dir="${dist}" />
 		<jar 
-			jarfile="${dist}/src.jar"
+			jarfile="${dist}/junit-${version}-src.jar"
 			basedir="."
-			excludes="**/*.jar, junit/tests/**, junit/samples/**, **/*.class, doc/**, README.html, stylesheet.css, build.xml, .classpath, .project, .settings/**, cpl-v10.html"
+			excludes="${unjarred}, **/*.class"
 		/>
 		<jar 
-			jarfile="${dist}/junit.jar"
+			jarfile="${dist}/${jarfile}"
 			basedir="."
-			excludes="**/*.jar, junit/tests/**, junit/samples/**, **/*.java, doc/**, README.html,  stylesheet.css, build.xml, jar-manifest.txt, .classpath, .project, .settings/**, cpl-v10.html"
+			excludes="${unjarred}, **/*.java, build.xml"
 		/>
-		<copy todir="${dist}/junit/samples">
-			<fileset dir="junit/samples" />
-		</copy>
-		<copy todir="${dist}/junit/tests">
-			<fileset dir="junit/tests" />
-		</copy>
-
-
-		<delete file="${dist}/junit/tests/runner/test.jar"/> 
-		<jar jarfile="${dist}/junit/tests/runner/test.jar" 
-	 	     basedir="." 
-		     includes="junit/tests/runner/LoadedFromJar.class"
-		 /> 
+                <antcall target="distributeTestsAndExamples">
+                  <param name="dir" value="." />
+                </antcall>
+                <antcall target="distributeTestsAndExamples">
+                  <param name="dir" value="org" />
+                </antcall>
 
 		<mkdir dir="${dist}/javadoc" />
 		<javadoc 
 			sourcepath="."
-			packagenames="junit.framework.*, junit.extensions.*"
+			packagenames="org.junit, org.junit.runner, org.junit.runner.description, org.junit.runner.manipulation, org.junit.runner.notification, org.junit.runners"
 			destdir="${dist}/javadoc"
 			author="false"
 			version="false"
@@ -72,11 +72,11 @@
 		<copy file="README.html" tofile="${dist}/README.html" />
 		<copy file="cpl-v10.html" tofile="${dist}/cpl-v10.html" />
 		
-		<java classname="junit.textui.TestRunner" fork="yes">
-			<arg value="junit.samples.AllTests" />
+		<java classname="org.junit.runner.JUnitCore" fork="yes">
+			<arg value="org.junit.tests.AllTests"/>
 			<classpath>
 				<pathelement location="${dist}" />
-				<pathelement location="${dist}/junit.jar" />
+				<pathelement location="${dist}/${jarfile}" />
 			</classpath>
 		</java>
 	</target>
@@ -89,28 +89,6 @@
 		/>
 	</target>
 	
-	<target name="awtui" depends="dist">
-		<java classname="junit.awtui.TestRunner" fork="yes">
-			<arg value="-noloading" />
-			<arg value="junit.samples.AllTests" />
-			<classpath>
-				<pathelement location="${dist}" />
-				<pathelement location="${dist}/junit.jar" />
-			</classpath>
-		</java>
-	</target>
-	
-	<target name="swingui" depends="dist">
-		<java classname="junit.swingui.TestRunner" fork="yes">
-			<arg value="-noloading" />
-			<arg value="junit.samples.AllTests" />
-			<classpath>
-				<pathelement location="${dist}" />
-				<pathelement location="${dist}/junit.jar" />
-			</classpath>
-		</java>
-	</target>
-
 	<target name="clean">
 		<delete dir="${dist}" quiet="true"/>			
 		<delete file="${zipfile}" quiet="true"/> 

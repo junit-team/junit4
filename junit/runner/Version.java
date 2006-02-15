@@ -9,7 +9,8 @@ public class Version {
 	}
 
 	public static String id() {
-		return "@version@";
+		// TODO: auto-replace this
+		return "4.0";
 	}
 	
 	public static void main(String[] args) {

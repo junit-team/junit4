@@ -1,0 +1,26 @@
+Before first public release:
+* update documentation
+	* new cook's tour
+	* update Test Infected
+	* README.html
+* add  javadoc to API interfaces and Annotations
+	http://java.sun.com/j2se/javadoc/writingapispecs/index.html
+* review Ant scripts
+* Merge branch back into head
+* ClassRequest should search up the hierarchy for the requested Class to look for @RunWith
+* Should there be a "prefix" annotation for Suites?
+  * This would allow two Suites with different BeforeClass/AfterClass behaviors,
+    but the same component tests, to co-exist
+
+Before next JUnit 4 release:
+* update the build process
+    * automatically upload a new JAR
+    * update site for plug-in version?
+* make suites simpler for both the IDE providers and the users
+* class level test annotations?
+* Ant
+	* Basic task
+* support testing run once initialization code e.g. class Foo {{...}}
+* Automatically add failing tests to the Known Defects section of the README.html
+
+

@@ -145,7 +145,7 @@ public abstract class TestCase extends Assert implements Test {
 	 * @exception Throwable if any exception is thrown
 	 */
 	protected void runTest() throws Throwable {
-		assertNotNull(fName); // Some VMs crash when calling getMethod(null,null);
+		assertNotNull("TestCase.fName cannot be null", fName); // Some VMs crash when calling getMethod(null,null);
 		Method runMethod= null;
 		try {
 			// use getMethod to get all public inherited
@@ -161,7 +161,7 @@ public abstract class TestCase extends Assert implements Test {
 		}
 
 		try {
-			runMethod.invoke(this, (Object[])new Class[0]);
+			runMethod.invoke(this);
 		}
 		catch (InvocationTargetException e) {
 			e.fillInStackTrace();
@@ -187,6 +187,7 @@ public abstract class TestCase extends Assert implements Test {
 	/**
 	 * Returns a string representation of the test case
 	 */
+	@Override
 	public String toString() {
 	    return getName() + "(" + getClass().getName() + ")";
 	}

@@ -6,7 +6,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -41,8 +43,8 @@ public class TestSuite implements Test {
 	 * ...as the moon sets over the early morning Merlin, Oregon
 	 * mountains, our intrepid adventurers type...
 	 */
-	static public Test createTest(Class theClass, String name) {
-		Constructor constructor;
+	static public Test createTest(Class<? extends TestCase> theClass, String name) {
+		Constructor<? extends TestCase> constructor;
 		try {
 			constructor= getTestConstructor(theClass);
 		} catch (NoSuchMethodException e) {
@@ -71,7 +73,7 @@ public class TestSuite implements Test {
 	 * Gets a constructor which takes a single String as
 	 * its argument or a no arg constructor.
 	 */
-	public static Constructor getTestConstructor(Class theClass) throws NoSuchMethodException {
+	public static Constructor<? extends TestCase> getTestConstructor(Class<? extends TestCase> theClass) throws NoSuchMethodException {
 		Class[] args= { String.class };
 		try {
 			return theClass.getConstructor(args);	
@@ -86,6 +88,7 @@ public class TestSuite implements Test {
 	 */
 	public static Test warning(final String message) {
 		return new TestCase("warning") {
+			@Override
 			protected void runTest() {
 				fail(message);
 			}
@@ -100,11 +103,11 @@ public class TestSuite implements Test {
 		PrintWriter writer= new PrintWriter(stringWriter);
 		t.printStackTrace(writer);
 		return stringWriter.toString();
-
 	}
+	
 	private String fName;
 
-	private Vector fTests= new Vector(10);
+	private Vector<Test> fTests= new Vector<Test>(10); // Cannot convert this to List because it is used directly by some test runners
 
     /**
 	 * Constructs an empty TestSuite.
@@ -115,10 +118,10 @@ public class TestSuite implements Test {
 	/**
 	 * Constructs a TestSuite from the given class. Adds all the methods
 	 * starting with "test" as test cases to the suite.
-	 * Parts of this method was written at 2337 meters in the Hueffihuette,
+	 * Parts of this method were written at 2337 meters in the Hueffihuette,
 	 * Kanton Uri
 	 */
-	 public TestSuite(final Class theClass) {
+	 public TestSuite(final Class<? extends TestCase> theClass) {
 		fName= theClass.getName();
 		try {
 			getTestConstructor(theClass); // Avoid generating multiple error messages
@@ -133,12 +136,10 @@ public class TestSuite implements Test {
 		}
 
 		Class superClass= theClass;
-		Vector names= new Vector();
+		List<String> names= new ArrayList<String>();
 		while (Test.class.isAssignableFrom(superClass)) {
-			Method[] methods= superClass.getDeclaredMethods();
-			for (int i= 0; i < methods.length; i++) {
-				addTestMethod(methods[i], names, theClass);
-			}
+			for (Method each : superClass.getDeclaredMethods())
+				addTestMethod(each, names, theClass);
 			superClass= superClass.getSuperclass();
 		}
 		if (fTests.size() == 0)
@@ -149,7 +150,7 @@ public class TestSuite implements Test {
 	 * Constructs a TestSuite from the given class with the given name.
 	 * @see TestSuite#TestSuite(Class)
 	 */
-	public TestSuite(Class theClass, String name) {
+	public TestSuite(Class<? extends TestCase>  theClass, String name) {
 		this(theClass);
 		setName(name);
 	}
@@ -165,16 +166,16 @@ public class TestSuite implements Test {
 	 * Constructs a TestSuite from the given array of classes.  
 	 * @param classes
 	 */
-	public TestSuite (Class[] classes) {
-		for (int i= 0; i < classes.length; i++)
-			addTest(new TestSuite(classes[i]));
+	public TestSuite (Class<? extends TestCase>... classes) {
+		for (Class<? extends TestCase> each : classes)
+			addTest(new TestSuite(each));
 	}
 	
 	/**
 	 * Constructs a TestSuite from the given array of classes with the given name.
 	 * @see TestSuite#TestSuite(Class[])
 	 */
-	public TestSuite(Class[] classes, String name) {
+	public TestSuite(Class<? extends TestCase>[] classes, String name) {
 		this(classes);
 		setName(name);
 	}
@@ -183,13 +184,13 @@ public class TestSuite implements Test {
 	 * Adds a test to the suite.
 	 */
 	public void addTest(Test test) {
-		fTests.addElement(test);
+		fTests.add(test);
 	}
 
 	/**
 	 * Adds the tests from the given class to the suite
 	 */
-	public void addTestSuite(Class testClass) {
+	public void addTestSuite(Class<? extends TestCase> testClass) {
 		addTest(new TestSuite(testClass));
 	}
 	
@@ -198,10 +199,8 @@ public class TestSuite implements Test {
 	 */
 	public int countTestCases() {
 		int count= 0;
-		for (Enumeration e= tests(); e.hasMoreElements(); ) {
-			Test test= (Test)e.nextElement();
-			count= count + test.countTestCases();
-		}
+		for (Test each : fTests)
+			count+=  each.countTestCases();
 		return count;
 	}
 
@@ -218,11 +217,10 @@ public class TestSuite implements Test {
 	 * Runs the tests and collects their result in a TestResult.
 	 */
 	public void run(TestResult result) {
-		for (Enumeration e= tests(); e.hasMoreElements(); ) {
+		for (Test each : fTests) {
 	  		if (result.shouldStop() )
 	  			break;
-			Test test= (Test)e.nextElement();
-			runTest(test, result);
+			runTest(each, result);
 		}
 	}
 
@@ -242,7 +240,7 @@ public class TestSuite implements Test {
 	 * Returns the test at the given index
 	 */
 	public Test testAt(int index) {
-		return (Test)fTests.elementAt(index);
+		return fTests.get(index);
 	}
 	
 	/**
@@ -255,19 +253,20 @@ public class TestSuite implements Test {
 	/**
 	 * Returns the tests as an enumeration
 	 */
-	public Enumeration tests() {
+	public Enumeration<Test> tests() {
 		return fTests.elements();
 	}
 	
 	/**
 	 */
+	@Override
 	public String toString() {
 		if (getName() != null)
 			return getName();
 		return super.toString();
 	 }
 
-	private void addTestMethod(Method m, Vector names, Class theClass) {
+	private void addTestMethod(Method m, List<String> names, Class<? extends TestCase> theClass) {
 		String name= m.getName();
 		if (names.contains(name))
 			return;
@@ -276,7 +275,7 @@ public class TestSuite implements Test {
 				addTest(warning("Test method isn't public: "+m.getName()));
 			return;
 		}
-		names.addElement(name);
+		names.add(name);
 		addTest(createTest(theClass, name));
 	}
 

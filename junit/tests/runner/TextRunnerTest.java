@@ -44,6 +44,7 @@ public class TextRunnerTest extends TestCase {
 		PrintStream oldOut= System.out;
 		System.setOut(new PrintStream (
 			new OutputStream() {
+				@Override
 				public void write(int arg0) throws IOException {
 				}
 			}

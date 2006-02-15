@@ -105,18 +105,15 @@ public class Assert {
 	    assertEquals(null, expected, actual, delta);
 	}
 	/**
-	 * Asserts that two floats are equal concerning a delta. If they are not
-	 * an AssertionFailedError is thrown with the given message.  If the expected
-	 * value is infinity then the delta value is ignored.
+	 * Asserts that two floats are equal concerning a positive delta. If they
+	 * are not an AssertionFailedError is thrown with the given message. If the
+	 * expected value is infinity then the delta value is ignored.
 	 */
 	static public void assertEquals(String message, float expected, float actual, float delta) {
- 		// handle infinity specially since subtracting to infinite values gives NaN and the
-		// the following test fails
-		if (Float.isInfinite(expected)) {
-			if (!(expected == actual))
+		if (Float.compare(expected, actual) == 0)
+			return;
+		if (!(Math.abs(expected - actual) <= delta))
 				failNotEquals(message, new Float(expected), new Float(actual));
-		} else if (!(Math.abs(expected-actual) <= delta))
-      		failNotEquals(message, new Float(expected), new Float(actual));
 	}
 	/**
 	 * Asserts that two floats are equal concerning a delta. If the expected
@@ -280,7 +277,7 @@ public class Assert {
 		fail(format(message, expected, actual));
 	}
 
-	static String format(String message, Object expected, Object actual) {
+	public static String format(String message, Object expected, Object actual) {
 		String formatted= "";
 		if (message != null)
 			formatted= message+" ";

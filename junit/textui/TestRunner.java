@@ -4,11 +4,10 @@ package junit.textui;
 import java.io.PrintStream;
 
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
 import junit.runner.BaseTestRunner;
-import junit.runner.StandardTestSuiteLoader;
-import junit.runner.TestSuiteLoader;
 import junit.runner.Version;
 
 /**
@@ -58,7 +57,7 @@ public class TestRunner extends BaseTestRunner {
 	/**
 	 * Runs a suite extracted from a TestCase subclass.
 	 */
-	static public void run(Class testClass) {
+	static public void run(Class<? extends TestCase> testClass) {
 		run(new TestSuite(testClass));
 	}
 
@@ -86,20 +85,15 @@ public class TestRunner extends BaseTestRunner {
 		aTestRunner.doRun(suite, true);
 	}
 
-	/**
-	 * Always use the StandardTestSuiteLoader. Overridden from
-	 * BaseTestRunner.
-	 */
-	public TestSuiteLoader getLoader() {
-		return new StandardTestSuiteLoader();
-	}
-
+	@Override
 	public void testFailed(int status, Test test, Throwable t) {
 	}
 	
+	@Override
 	public void testStarted(String testName) {
 	}
 	
+	@Override
 	public void testEnded(String testName) {
 	}
 
@@ -189,11 +183,12 @@ public class TestRunner extends BaseTestRunner {
 	}
 
 	protected TestResult runSingleMethod(String testCase, String method, boolean wait) throws Exception {
-		Class testClass= loadSuiteClass(testCase);
+		Class<? extends TestCase> testClass= loadSuiteClass(testCase);
 		Test test= TestSuite.createTest(testClass, method);
 		return doRun(test, wait);
 	}
 
+	@Override
 	protected void runFailed(String message) {
 		System.err.println(message);
 		System.exit(FAILURE_EXIT);

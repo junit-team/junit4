@@ -36,6 +36,7 @@ public class TestFailure extends Object {
 	/**
 	 * Returns a short description of the failure.
 	 */
+	@Override
 	public String toString() {
 	    StringBuffer buffer= new StringBuffer();
 	    buffer.append(fFailedTest+": "+fThrownException.getMessage());

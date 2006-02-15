@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Agitator type="j2ee">
+<AgitarDirectory>agitar</AgitarDirectory>
+<ResultDirectory>agitar\.results</ResultDirectory>
+<ConfigDirectory>agitar\config</ConfigDirectory>
+<SourcePath>.</SourcePath>
+<ClassPath>.</ClassPath>
+<LibraryPath>..\..\..\..\..\Program Files\jdk1.4.1\jre\lib\rt.jar</LibraryPath>
+<Version>2</Version>
+<JavaArgs>-Xms128m -Xmx256m</JavaArgs>
+</Agitator>
+

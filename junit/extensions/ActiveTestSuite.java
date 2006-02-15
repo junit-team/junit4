@@ -1,6 +1,7 @@
 package junit.extensions;
 
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
@@ -16,7 +17,7 @@ public class ActiveTestSuite extends TestSuite {
 	public ActiveTestSuite() {
 	}
 		
-	public ActiveTestSuite(Class theClass) {
+	public ActiveTestSuite(Class<? extends TestCase> theClass) {
 		super(theClass);
 	}
 	
@@ -24,18 +25,21 @@ public class ActiveTestSuite extends TestSuite {
 		super (name);
 	}
 	
-	public ActiveTestSuite(Class theClass, String name) {
+	public ActiveTestSuite(Class<? extends TestCase> theClass, String name) {
 		super(theClass, name);
 	}
 	
+	@Override
 	public void run(TestResult result) {
 		fActiveTestDeathCount= 0;
 		super.run(result);
 		waitUntilFinished();
 	}
 	
+	@Override
 	public void runTest(final Test test, final TestResult result) {
 		Thread t= new Thread() {
+			@Override
 			public void run() {
 				try {
 					// inlined due to limitation in VA/Java 
