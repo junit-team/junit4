@@ -1,6 +1,8 @@
 package org.junit.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.fail;
 import junit.framework.JUnit4TestAdapter;
 import org.junit.Assert;
@@ -190,6 +192,60 @@ public class AssertionTest {
 		assertEquals(Double.NaN, Double.NaN, Double.POSITIVE_INFINITY);
 	}
 	
+	@Test public void same() {
+		Object o1= new Object();
+		assertSame(o1, o1);
+	}
+
+	@Test public void notSame() {
+		Object o1= new Object();
+		Object o2= new Object();
+		assertNotSame(o1, o2);
+	}
+
+	@Test(expected= AssertionError.class) public void objectsNotSame() {
+		assertSame(new Object(), new Object());
+	}
+
+	@Test(expected= AssertionError.class) public void objectsAreSame() {
+		Object o= new Object();
+		assertNotSame(o, o);
+	}
+
+	@Test public void sameWithMessage() {
+		try {
+			assertSame("not same", "hello", "good-bye");
+		} catch (AssertionError exception) {
+			assertEquals("not same expected same:<hello> was not:<good-bye>",
+					exception.getMessage());
+		}
+	}
+
+	@Test public void sameNullMessage() {
+		try {
+			assertSame("hello", "good-bye");
+		} catch (AssertionError exception) {
+			assertEquals("expected same:<hello> was not:<good-bye>", exception
+					.getMessage());
+		}
+	}
+
+	@Test public void notSameWithMessage() {
+		try {
+			assertNotSame("not same", "hello", "good-bye");
+		} catch (AssertionError exception) {
+			assertEquals("not same expected not same", exception.getMessage());
+		}
+	}
+
+	@Test public void notSameNullMessage() {
+		try {
+			assertNotSame("hello", "good-bye");
+		} catch (AssertionError exception) {
+			assertEquals("expected not same", exception.getMessage());
+		}
+	}
+
 	static public junit.framework.Test suite() {
 		return new JUnit4TestAdapter(AssertionTest.class);
 	}

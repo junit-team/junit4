@@ -13,12 +13,44 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.junit.internal.runners.CompositeRunner;
 import org.junit.internal.runners.MethodValidator;
 import org.junit.internal.runners.TestClassMethodsRunner;
 import org.junit.internal.runners.TestClassRunner;
 
+/** The custom runner <code>Parameterized</code> implements parameterized
+ * tests. When running a parameterized test class, instances are created for the
+ * cross-product of the test methods and the test data elements.<br>
+ * <p>
+ * For example, to test a Fibonacci function, write:
+ * <code>
+ * &nbsp;<br>@RunWith(Parameterized.class)<br>
+ * public class FibonacciTest {<br>
+ * &nbsp;&nbsp;@Parameters<br>
+ * &nbsp;&nbsp;public static Collection<Object[]> data() {<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });<br>
+ * &nbsp;&nbsp;}<br>
+ *<br>
+ * &nbsp;&nbsp;private int fInput;<br>
+ * &nbsp;&nbsp;private int fExpected;<br>
+ *<br>
+ * &nbsp;&nbsp;public FibonacciTest(int input, int expected) {<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;fInput= input;<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;fExpected= expected;<br>
+ * &nbsp;&nbsp;}<br>
+ *<br>
+ * &nbsp;&nbsp;@Test public void test() {<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;assertEquals(fExpected, Fibonacci.compute(fInput));<br>
+ * &nbsp;&nbsp;}<br>
+ * }<br>
+ * </code>
+ * <p>
+ * Each instance of <code>FibonacciTest</code> will be constructed using the two-argument
+ * constructor and the data values in the <code>@Parameters</code> method.
+ */
 public class Parameterized extends TestClassRunner {
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.METHOD)
@@ -26,11 +58,10 @@ public class Parameterized extends TestClassRunner {
 	}
 
 	public static Collection<Object[]> eachOne(Object... params) {
-		ArrayList<Object[]> returnThis= new ArrayList<Object[]>();
-		for (Object param : params) {
-			returnThis.add(new Object[] { param });
-		}
-		return returnThis;
+		List<Object[]> results= new ArrayList<Object[]>();
+		for (Object param : params)
+			results.add(new Object[] { param });
+		return results;
 	}
 
 	// TODO: single-class this extension

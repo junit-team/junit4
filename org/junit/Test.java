@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The <code>Test</code> annotation tells JUnit that the method
+ * The <code>Test</code> annotation tells JUnit that the <code>public void</code> method
  * to which it is attached can be run as a test case. To run the method,
  * JUnit first constructs a fresh instance of the class then invokes the
  * annotated method. Any exceptions thrown by the test will be reported

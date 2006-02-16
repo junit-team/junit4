@@ -10,7 +10,6 @@ import org.junit.runner.manipulation.NoTestsRemainException;
 
 public final class FilterRequest extends Request {
 	private final Request fRequest;
-
 	private final Filter fFilter;
 
 	public FilterRequest(Request classRequest, Filter filter) {
@@ -21,7 +20,9 @@ public final class FilterRequest extends Request {
 	@Override
 	public Runner getRunner() {
 		try {
-			return fFilter.apply(fRequest.getRunner());
+			Runner runner= fRequest.getRunner();
+			fFilter.apply(runner);
+			return runner;
 		} catch (NoTestsRemainException e) {
 			return Request.errorReport(Filter.class, new Exception(String
 					.format("No tests found matching %s from %s", fFilter

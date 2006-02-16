@@ -24,22 +24,18 @@ public class SingleMethodTest {
 	public static int count;
 
 	static public class OneTimeSetup {
-		@BeforeClass
-		public static void once() {
+		@BeforeClass public static void once() {
 			count++;
 		}
 
-		@Test
-		public void one() {
+		@Test public void one() {
 		}
 
-		@Test
-		public void two() {
+		@Test public void two() {
 		}
 	}
 
-	@Test
-	public void oneTimeSetup() throws Exception {
+	@Test public void oneTimeSetup() throws Exception {
 		count = 0;
 		Runner runner = Request.method(OneTimeSetup.class, "one").getRunner();
 		Result result = new JUnitCore().run(runner);
@@ -56,21 +52,17 @@ public class SingleMethodTest {
 		}
 
 		public ParameterizedOneTimeSetup(int x) {
-
 		}
 
-		@BeforeClass
-		public static void once() {
+		@BeforeClass public static void once() {
 			count++;
 		}
 
-		@Test
-		public void one() {
+		@Test public void one() {
 		}
 	}
 
-	@Test
-	public void parameterizedOneTimeSetup() throws Exception {
+	@Test public void parameterizedOneTimeSetup() throws Exception {
 		count = 0;
 		Runner runner = Request.method(ParameterizedOneTimeSetup.class,
 				"one[0]").getRunner();
@@ -80,14 +72,12 @@ public class SingleMethodTest {
 		assertEquals(1, result.getRunCount());
 	}
 
-	@Test
-	public void filteringAffectsPlan() throws Exception {
+	@Test public void filteringAffectsPlan() throws Exception {
 		Runner runner = Request.method(OneTimeSetup.class, "one").getRunner();
 		assertEquals(1, runner.testCount());
 	}
 
-	@Test
-	public void nonexistentMethodCreatesFailure() throws Exception {
+	@Test public void nonexistentMethodCreatesFailure() throws Exception {
 		assertEquals(1, new JUnitCore().run(
 				Request.method(OneTimeSetup.class, "thisMethodDontExist"))
 				.getFailureCount());
@@ -110,22 +100,18 @@ public class SingleMethodTest {
 	}
 
 	public static class TestOne {
-		@Test
-		public void a() {
+		@Test public void a() {
 		}
 
-		@Test
-		public void b() {
+		@Test public void b() {
 		}
 	}
 
 	public static class TestTwo {
-		@Test
-		public void a() {
+		@Test public void a() {
 		}
 
-		@Test
-		public void b() {
+		@Test public void b() {
 		}
 	}
 
@@ -134,8 +120,7 @@ public class SingleMethodTest {
 	public static class OneTwoSuite {
 	}
 
-	@Test
-	public void eliminateUnnecessaryTreeBranches() throws Exception {
+	@Test public void eliminateUnnecessaryTreeBranches() throws Exception {
 		Runner runner = Request.aClass(OneTwoSuite.class).filterWith(
 				Description.createTestDescription(TestOne.class, "a"))
 				.getRunner();

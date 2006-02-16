@@ -7,6 +7,18 @@ import java.lang.reflect.Modifier;
 import junit.framework.Test;
 import org.junit.internal.runners.OldTestClassRunner;
 
+/** Runner for use with JUnit 3.8.x-style AllTests classes
+ * (those that only implement a static <code>suite()</code>
+ * method). For example: <br>
+ * <code>
+ * &nbsp;@RunWith(AllTests.class)
+ * public class ProductTests {
+ * &nbsp;&nbsp;public static junit.framework.Test suite() {
+ * &nbsp;&nbsp;&nbsp;&nbsp;...
+ * &nbsp;&nbsp;}
+ * }
+ * </code>
+ */
 public class AllTests extends OldTestClassRunner {
 	private static Test suite(Class<?> klass) throws Throwable {
 		Method suiteMethod= null;
