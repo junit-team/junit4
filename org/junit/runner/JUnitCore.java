@@ -115,7 +115,7 @@ public class JUnitCore {
 	public Result run(Runner runner) {
 		Result result= new Result();
 		RunListener listener= result.createListener();
-		addListener(listener);
+		addFirstListener(listener);
 		try {
 			fNotifier.fireTestRunStarted(runner.getDescription());
 			runner.run(fNotifier);
@@ -126,6 +126,11 @@ public class JUnitCore {
 		return result;
 	}
 	
+	private void addFirstListener(RunListener listener) {
+		fNotifier.addFirstListener(listener);
+	}
+	
+
 	/**
 	 * Add a listener to be notified as the tests run.
 	 * @param listener the listener

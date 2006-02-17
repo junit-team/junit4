@@ -8,6 +8,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
+	ListenerTest.class,
 	FailedConstructionTest.class,
 	CustomRunnerTest.class,
 	TestDescriptionTest.class,

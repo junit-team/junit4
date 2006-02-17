@@ -45,6 +45,17 @@ public class TextListenerTest extends TestCase {
 		assertTrue(results.toString().indexOf(convert("\nThere was 1 failure:\n1) error(org.junit.tests.TextListenerTest$ErrorTest)\njava.lang.Exception")) != -1);
 	}
 	
+	public static class Slow {
+		@Test public void pause() throws InterruptedException {
+			Thread.sleep(1000);
+		}
+	}
+	
+	public void testTime() {
+		runner.run(Slow.class);
+		assertFalse(results.toString().contains("Time: 0"));
+	}
+	
 	private String convert(String string) {
 		OutputStream resultsStream= new ByteArrayOutputStream();
 		PrintStream writer= new PrintStream(resultsStream);

@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Sometimes you want to temporarily disable a test. Methods annotated with <code>@Test</code>
+ * Sometimes you want to temporarily disable a test. Methods annotated with {@link org.junit.Test}
  * that are also annotated with <code>@Ignore</code> will not be executed as tests. Native JUnit 4 test runners
  * should report the number of ignored tests along with the number of tests that ran and the
  * number of tests that failed.
