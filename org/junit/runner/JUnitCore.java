@@ -11,7 +11,7 @@ import org.junit.runner.notification.RunNotifier;
 
 /**
  * <code>JUnitCore</code> is a facade for running tests. It supports running JUnit 4 tests, 
- * JUnit 3.8.2 tests, and mixtures. To run tests from the command line, run <code>java org.junit.runner.JUnitCore TestClass1 TestClass2 ...</code>.
+ * JUnit 3.8.x tests, and mixtures. To run tests from the command line, run <code>java org.junit.runner.JUnitCore TestClass1 TestClass2 ...</code>.
  * For one-shot test runs, use the static method <code>runClasses(Class... classes)</code>
  * . If you want to add special listeners,
  * create an instance of <code>JUnitCore</code> first and use it to run the tests.
