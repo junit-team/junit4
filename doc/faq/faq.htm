@@ -822,11 +822,11 @@ OK (1 tests)
 
     public class SimpleTest {
 
-        private Collection collection;
+        private Collection&lt;Object&gt; collection;
 
         @Before
         public void setUp() {
-            collection = new ArrayList();
+            collection = new ArrayList&lt;Object&gt;();
         }
 
         @Test
