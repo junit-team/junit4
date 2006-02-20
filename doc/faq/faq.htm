@@ -73,7 +73,7 @@ Edited by <a href="mailto:mike@clarkware.com">Mike Clark</a>
 (<a href="http://www.clarkware.com">http://clarkware.com</a>)
 </p>
 <p>
-Last modified on November 23, 2005
+Last modified on February 20, 2006
 </p>
 
 <hr/>
@@ -784,63 +784,57 @@ OK (1 tests)
       <b><a name="tests_2"></a>How do I use a test fixture?</b>
     </p>
     <p>
+      <i>(Submitted by: Jeff Nielsen)</i>
+    </p>
+    <p>
       A test fixture is useful if you have two or more tests for a
       common set of objects.  Using a test fixture avoids duplicating
-      the test code necessary to initialize and cleanup those common
-      objects for each test.
+      the code necessary to initialize (and cleanup) the common
+      objects.
     </p>
     <p>
       Tests can use the objects (variables) in a test fixture, with
       each test invoking different methods on objects in the fixture
-      and asserting different expected results. Each test runs in its
+      and asserting different expected results.  Each test runs in its
       own test fixture to isolate tests from the changes made by other
-      tests.  That is, tests don't share the state of objects in the
-      test fixture.  Because the tests are isolated, they can be run
-      in any order.
+      tests.  That is, <em>tests don't share the state of objects in
+      the test fixture</em>.  Because the tests are isolated, they can
+      be run in any order.
     </p>
     <p>
-      To create a test fixture, annotate a method
-      with <code>@Before</code> to initialize common objects. Annotate
-      a method with <code>@After</code> to run a method after a test
-      has run to clean up external resources allocated in the method
-      annotated with <code>@Before</code>.  The JUnit framework
-      automatically invokes the <code>@Before</code> method before
-      each test is run and the <code>@After</code> method after each
-      test is run.
+      To create a test fixture, declare instance variables for the
+      common objects.  Initialize these objects in a <code>public
+      void</code> method annotated with <code>@Before</code>.  The
+      JUnit framework automatically invokes any <code>@Before</code>
+      methods before each test is run.
     </p>
     <p>
-      The following test uses a test fixture to initialize and cleanup
-      a common <code>Collection</code> object such that both tests are
-      isolated from changes made by the other:
+      The following example shows a test fixture with a common
+      <code>Collection</code> object.
     </p>
     <div class="code">
       <pre><code>
-
     package junitfaq;
 
     import org.junit.*;
     import static org.junit.Assert.*;
     import java.util.*;
-    
+
     public class SimpleTest {
-    
+
         private Collection collection;
-	
+
         @Before
         public void setUp() {
             collection = new ArrayList();
-        }
-	
-        @After
-        public void tearDown() {
-            collection.clear();
         }
 
         @Test
         public void testEmptyCollection() {
             assertTrue(collection.isEmpty());
         }
-	
+
+
         @Test
         public void testOneItemCollection() {
             collection.add("itemA");
@@ -849,31 +843,77 @@ OK (1 tests)
     }
       </code></pre>
     </div>
+
     <p>
       Given this test, the methods might execute in the following
       order:
     </p>
-    <div>
       <blockquote>
-	<pre><code>
-setUp()
+        <pre><code>setUp()
 testEmptyCollection()
-tearDown()
 setUp()
-testOneItemCollection()
-tearDown()
-	</code></pre>
+testOneItemCollection()</code></pre>
       </blockquote>
+    <p>
+      The ordering of test-method invocations is not guaranteed, so
+      <code>testOneItemCollection()</code> might be executed before
+      <code>testEmptyCollection()</code>.  But it doesn't matter,
+      because each method gets its own instance of the
+      <code>collection</code>.
+    </p>
+
+    <p>
+      Although JUnit provides a new instance of the fixture objects
+      for each test method, if you allocate any <em>external</em>
+      resources in a <code>@Before</code> method, you should release
+      them after the test runs by annotating a method with
+      <code>@After</code>.  The JUnit framework automatically invokes
+      any <code>@After</code> methods after each test is run.  For
+      example:
+    </p>
+
+    <div class="code">
+      <pre><code>
+    package junitfaq;
+
+    import org.junit.*;
+    import static org.junit.Assert.*;
+    import java.io.*;
+
+    public class OutputTest {
+
+        private File output;
+
+        @Before
+        public void createOutputFile() {
+            output = new File(...);
+        }
+
+        @After
+        public void deleteOutputFile() {
+            output.delete();
+        }
+
+        @Test
+        public void testSomethingWithFile() {
+            ...
+        }
+    }
+      </code></pre>
     </div>
     <p>
-      The ordering of test-method invocations is not guaranteed,
-      so <code>testEmptyCollection()</code> might be executed
-      before <code>testOneItemCollection()</code>.  This is why the
-      test methods themselves must be written to be independent of one
-      another.  What is guaranteed is that <code>setUp()</code> will
-      execute before each test method and <code>tearDown()</code> will
-      execute after each test method.
+      With this test, the methods will execute in the following order:
     </p>
+    <div>
+      <blockquote>
+        <pre><code>
+createOutputFile()
+testSomethingWithFile()
+deleteOutputFile()
+        </code></pre>
+      </blockquote>
+    </div>
+    
   </li>
   <li>
     <p>
