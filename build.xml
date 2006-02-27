@@ -14,11 +14,11 @@
 	<target name="versiontag" depends="init">
 		<filter token="version" value="${version}" />
 		<copy 
-			file="${versionfile}" 
-			tofile="${versionfile}tmp" 
+			file="${versionfile}.template" 
+			tofile="${versionfile}" 
 			filtering="on"
+                        overwrite="true"
 		/>
-		<move file="${versionfile}tmp" tofile="${versionfile}" />
 	</target>
 
 	<target name="build" depends="versiontag">
@@ -72,7 +72,7 @@
 		<copy file="README.html" tofile="${dist}/README.html" />
 		<copy file="cpl-v10.html" tofile="${dist}/cpl-v10.html" />
 		
-		<java classname="org.junit.runner.JUnitCore" fork="yes">
+		<java classname="org.junit.runner.JUnitCore" fork="yes" failonerror="true">
 			<arg value="org.junit.tests.AllTests"/>
 			<classpath>
 				<pathelement location="${dist}" />
