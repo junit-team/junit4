@@ -1,0 +1,2 @@
+2006 March 9
+	Matthias Schmidt: improved org.junit package javadoc

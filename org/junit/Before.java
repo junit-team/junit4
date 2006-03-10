@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * When writing tests, it is common to find that several tests need similar 
  * objects created before they can run. Annotating a <code>public void</code> method
- * with <code>@Before</code> causes that method to be run before the <code>@Test</code> method.
+ * with <code>@Before</code> causes that method to be run before the {@link org.junit.Test} method.
  * The <code>@Before</code> methods of superclasses will be run before those of the current class.
  * <p>
  * Here is a simple example:

@@ -6,10 +6,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * If you allocate external resources in a <code>@Before</code> method you need to release them
+ * If you allocate external resources in a {@link org.junit.Before} method you need to release them
  * after the test runs. Annotating a <code>public void</code> method
- * with <code>@After</code> causes that method to be run after the <code>@Test</code> method. All <code>@After</code>
- * methods are guaranteed to run even if a <code>@Before</code> or <code>@Test</code> method throws an 
+ * with <code>@After</code> causes that method to be run after the {@link org.junit.Test} method. All <code>@After</code>
+ * methods are guaranteed to run even if a {@link org.junit.Before} or {@link org.junit.Test} method throws an 
  * exception. The <code>@After</code> methods declared in superclasses will be run after those of the current
  * class.
  * <p>
@@ -30,6 +30,7 @@ import java.lang.annotation.Target;
  * </code>
  * 
  * @see org.junit.Before
+ * @see org.junit.Test
  */
 
 @Retention(RetentionPolicy.RUNTIME)

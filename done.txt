@@ -39,5 +39,12 @@
 * make sure TestListener is symmetric and meets needs of runner developers
 	* TestRunEvent
 * Decide how we ship JUnit-- 1.5 only or hybrid
-	
+	* README.html
+* add  javadoc to API interfaces and Annotations
+	http://java.sun.com/j2se/javadoc/writingapispecs/index.html
+* Merge branch back into head
+* review Ant scripts
+* make suites simpler for both the IDE providers and the users
+* ClassRequest should search up the hierarchy for the requested Class to look for @RunWith
+
 	

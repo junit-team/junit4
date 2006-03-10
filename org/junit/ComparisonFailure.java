@@ -1,7 +1,7 @@
 package org.junit;
 
 /**
- * Thrown when an assertEquals(String, String) fails. Create and throw
+ * Thrown when an {@link org.junit.Assert#assertEquals(Object, Object) assertEquals(String, String)} fails. Create and throw
  * a <code>ComparisonFailure</code> manually if you want to show users the difference between two complex 
  * strings.
  * 
@@ -38,14 +38,14 @@ public class ComparisonFailure extends AssertionError {
 	}
 	
 	/**
-	 * Returns the actual value
+	 * Returns the actual string value
 	 * @return the actual string value
 	 */
 	public String getActual() {
 		return fActual;
 	}
 	/**
-	 * Returns the expected value
+	 * Returns the expected string value
 	 * @return the expected string value
 	 */
 	public String getExpected() {

@@ -48,6 +48,17 @@ public class RunWithTest {
 		assertTrue(log.contains("initialize"));
 		assertTrue(log.contains("run"));
 	}
+
+	public static class SubExampleTest extends ExampleTest {
+	}
+	
+	@Test public void runWithExtendsToSubclasses() {
+		log= "";
+
+		JUnitCore.runClasses(SubExampleTest.class);
+		assertTrue(log.contains("run"));
+	}
+
 	
 	public static junit.framework.Test suite() {
 		return new JUnit4TestAdapter(RunWithTest.class);
