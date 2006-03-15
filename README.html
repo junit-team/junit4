@@ -4,13 +4,13 @@
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <meta name="GENERATOR" content="Microsoft FrontPage 4.0">
    <meta name="Author" content="Erich Gamma, Kent Beck, and David Saff">
-   <title>JUnit 4.0</title>
+   <title>JUnit 4.1</title>
 </head>
 <body>
 
 <h1>
 <b><font color="#00CC00">J</font><font color="#FF0000">U</font><font color="#000000">nit
-4.0</b></h1> 
+4.1</b></h1> 
 <br>Brought to you by <a href="http://www.threeriversinstitute.org">Kent Beck</a>, Erich 
 
 Gamma, and <a href="http://pag.csail.mit.edu/continuoustesting">David Saff</a>. 
@@ -20,7 +20,7 @@ Meade.
 <br>(see also <a href="http://www.junit.org">JUnit.org</a>)
 
 <hr WIDTH="100%">
-<br>2/15/06
+<br>09 Mar 2006
 <p>JUnit is a simple framework to write repeatable tests. It is an instance
 of the xUnit architecture for unit testing frameworks.
 <ul>
@@ -42,10 +42,21 @@ of the xUnit architecture for unit testing frameworks.
 <a href="#Known Defects">Known Defects</a></li>
 </ul>
 
-
-
 <h2>
-<a NAME="Summary of"></a>Summary of Changes with version 4.0</h2>
+<a NAME="Summary of"></a>Summary of Changes with version 4.1</h2>
+<p>
+<ul>
+<li>Bug fix: listeners now get a correct test running time, rather than always being told 0 secs.
+<li>The @RunWith annotation is now inherited by subclasses: 
+all subclasses of an abstract test class will be run by the same runner.
+<li>The build script fails if the JUnit unit tests fail
+<li>The faq has been updated
+<li>Javadoc has been improved, with more internal links, and package descriptions added (Thanks, Matthias Schmidt!)
+<li>An acknowledgements.txt file has been created to credit outside contributions
+</ul>
+</p>
+
+<h2>Summary of Changes with version 4.0</h2>
 <p>
 The architecture of JUnit 4.0 is a substantial departure from that of earlier releases. 
 Instead of 
@@ -65,13 +76,13 @@ starting their name with "test", you now tag test methods with the @Test annotat
 </tr>
 
 <tr>
-<td><tt>junit-4.0.jar</tt></td>
+<td><tt>junit-4.1.jar</tt></td>
 
 <td>a jar file with the JUnit framework</td>
 </tr>
 
 <tr>
-<td><tt>junit-4.0-src.jar</tt></td>
+<td><tt>junit-4.1-src.jar</tt></td>
 
 <td>a jar file with the source code of the JUnit framework</td>
 </tr>
@@ -112,20 +123,20 @@ starting their name with "test", you now tag test methods with the @Test annotat
 Below are the installation steps for installing JUnit:
 <ol>
 <li>
-unzip the junit4.0.zip file</li>
+unzip the junit4.1.zip file</li>
 
 <li>
-add<i> </i><b>junit-4.0.jar</b> to the CLASSPATH. For example: 
-<tt> set classpath=%classpath%;INSTALL_DIR\junit-4.0.jar;INSTALL_DIR</tt></li>
+add<i> </i><b>junit-4.1.jar</b> to the CLASSPATH. For example: 
+<tt> set classpath=%classpath%;INSTALL_DIR\junit-4.1.jar;INSTALL_DIR</tt></li>
 
 <li>
 test the installation by running <tt>java org.junit.runner.JUnitCore org.junit.tests.AllTests.</tt></li>
 
 <br><b><font color="#FF0000">Notice</font></b>: that the tests are not
-contained in the junit-4.0.jar but in the installation directory directly.
+contained in the junit-4.1.jar but in the installation directory directly.
 Therefore make sure that the installation directory is on the class path
 </ol>
-<b><font color="#FF0000">Important</font></b>: don't install the junit-4.0.jar
+<b><font color="#FF0000">Important</font></b>: don't install junit-4.1.jar
 into the extension directory of your JDK installation. If you do so the
 test class on the files system will not be found.
 <h2>
@@ -133,7 +144,7 @@ test class on the files system will not be found.
 To get started with unit testing and JUnit read the article:
 <a href="doc/cookbook/cookbook.htm">JUnit Cookbook</a>.
 <br>This article describes basic test writing using JUnit 4.
-<p>You find additional samples in the junit.samples package:
+<p>You find additional samples in the org.junit.samples package:
 <ul>
 <li>
 SimpleTest.java - some simple test cases</li>
@@ -166,7 +177,6 @@ with JUnit.
 <h2><a NAME="Known Defects"></a>Known Defects</h2>
 <ul>
 <li>Multi-dimensional arrays are not processed correctly by assertEquals.</li>
-<li>The time printed by JUnitCore after running tests is always 0.</li>
 </ul>
 
 <hr WIDTH="100%">
