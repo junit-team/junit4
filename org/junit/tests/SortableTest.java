@@ -15,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.Enclosed;
 
 @RunWith(Enclosed.class)
 public class SortableTest {
