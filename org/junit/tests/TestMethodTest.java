@@ -15,6 +15,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.internal.runners.InitializationError;
+import org.junit.internal.runners.MethodValidator;
 import org.junit.internal.runners.TestClassRunner;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -108,6 +109,20 @@ public class TestMethodTest {
 		TestResult result= new TestResult();
 		new JUnit4TestAdapter(IgnoredTest.class).run(result);
 		assertEquals(1, result.runCount());
+	}
+	
+	public static class Confused {
+		@Test public void a(Object b) {
+		}
+		
+		@Test public void a() {
+		}
+	}
+	
+	@Test public void overloaded() {
+		MethodValidator validator= new MethodValidator(Confused.class);
+		List<Throwable> errors= validator.validateAllMethods();
+		assertEquals(1, errors.size());
 	}
 	
 	public static junit.framework.Test suite() {

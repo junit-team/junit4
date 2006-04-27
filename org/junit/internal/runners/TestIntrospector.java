@@ -45,10 +45,22 @@ public class TestIntrospector {
 	
 	private boolean isShadowed(Method method, List<Method> results) {
 		for (Method each : results) {
-			if (each.getName().equals(method.getName()))
+			if (isShadowed(method, each))
 				return true;
 		}
 		return false;
+	}
+
+	private boolean isShadowed(Method current, Method previous) {
+		if (! previous.getName().equals(current.getName()))
+			return false;
+		if (previous.getParameterTypes().length != current.getParameterTypes().length)
+			return false;
+		for (int i= 0; i < previous.getParameterTypes().length; i++) {
+			if (! previous.getParameterTypes()[i].equals(current.getParameterTypes()[i]))
+				return false;
+		}
+		return true;
 	}
 
 	private List<Class> getSuperClasses(Class< ?> testClass) {
