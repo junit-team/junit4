@@ -1,5 +1,7 @@
 package org.junit;
 
+import org.junit.internal.ArrayComparisonFailure;
+
 /**
  * A set of assertion methods useful for writing tests. Only failed assertions are recorded.
  * These methods can be used directly: <code>Assert.assertEquals(...)</code>, however, they
@@ -128,9 +130,18 @@ public class Assert {
 			if (o1.getClass().isArray() && o2.getClass().isArray()) {
 				Object[] expected= (Object[]) o1;
 				Object[] actual= (Object[]) o2;
-				assertEquals(header + "arrays first differed at element " + i + ";", expected, actual);
+				try {
+					assertEquals(message, expected, actual);
+				} catch (ArrayComparisonFailure e) {
+					e.addDimension(i);
+					throw e;
+				}
 			} else
-				assertEquals(header + "arrays first differed at element [" + i + "];", o1, o2);
+				try {
+					assertEquals(o1, o2);
+				} catch (AssertionError e) {
+					throw new ArrayComparisonFailure(header, e, i);
+				}
 		}
 	}
 

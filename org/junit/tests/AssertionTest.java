@@ -1,14 +1,14 @@
 package org.junit.tests;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 import junit.framework.JUnit4TestAdapter;
 import org.junit.Assert;
 import org.junit.ComparisonFailure;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.internal.ArrayComparisonFailure;
 
 public class AssertionTest {
 // If you want to use 1.4 assertions, they will be reported correctly.
@@ -54,7 +54,7 @@ public class AssertionTest {
 		}
 	}
 	
-	@Test(expected=ComparisonFailure.class) public void arraysElementsDiffer() {
+	@Test(expected=ArrayComparisonFailure.class) public void arraysElementsDiffer() {
 		assertEquals("not equal", new Object[] {"this is a very long string in the middle of an array"} , new Object[] {"this is another very long string in the middle of an array"});
 	}
 
@@ -99,13 +99,12 @@ public class AssertionTest {
 		assertEquals(new Object[][]{{true, true}, {false, false}}, new Object[][]{{true, true}, {false, false}});
 	}
 	
-	@Ignore("Too much to do to get this working for 4.0 release")
 	@Test public void multiDimensionalArraysAreNotEqual() {
 		try {
-			assertEquals("message", new Object[][]{{true, true}, {false, false}}, new Object[][]{{true, true}, {false, true}});
+			assertEquals("message", new Object[][]{{true, true}, {false, false}}, new Object[][]{{true, true}, {true, false}});
 			fail();
 		} catch (AssertionError exception) {
-			assertEquals("message: arrays first differed at element [1][1]; expected:<false> but was:<true>", exception.getMessage());
+			assertEquals("message: arrays first differed at element [1][0]; expected:<false> but was:<true>", exception.getMessage());
 		}
 			
 	}
