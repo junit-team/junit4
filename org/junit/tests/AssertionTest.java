@@ -106,7 +106,15 @@ public class AssertionTest {
 		} catch (AssertionError exception) {
 			assertEquals("message: arrays first differed at element [1][0]; expected:<false> but was:<true>", exception.getMessage());
 		}
-			
+	}
+	
+	@Test public void multiDimensionalArraysAreNotEqualNoMessage() {
+		try {
+			assertEquals(new Object[][]{{true, true}, {false, false}}, new Object[][]{{true, true}, {true, false}});
+			fail();
+		} catch (AssertionError exception) {
+			assertEquals("arrays first differed at element [1][0]; expected:<false> but was:<true>", exception.getMessage());
+		}
 	}
 	
 	@Test public void stringsDifferWithUserMessage() {
@@ -243,6 +251,14 @@ public class AssertionTest {
 		} catch (AssertionError exception) {
 			assertEquals("expected not same", exception.getMessage());
 		}
+	}
+	
+	@Test public void nullMessage() {
+		try {
+			fail(null);
+		} catch (AssertionError exception) {
+			assertEquals("", exception.getMessage());
+		}		
 	}
 
 	static public junit.framework.Test suite() {

@@ -68,7 +68,7 @@ public class Assert {
 	 * @see AssertionError
 	 */
 	static public void fail(String message) {
-		throw new AssertionError(message);
+		throw new AssertionError(message == null ? "" : message);
 	}
 
 	/**
