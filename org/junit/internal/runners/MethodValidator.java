@@ -35,6 +35,7 @@ public class MethodValidator {
 		validateTestMethods(AfterClass.class, true);
 	}
 	
+	// TODO Ugly API--one method should do both
 	public List<Throwable> validateAllMethods() {
 		validateNoArgConstructor();
 		validateStaticMethods();
@@ -64,6 +65,9 @@ public class MethodValidator {
 				fErrors.add(new Exception("Method " + each.getName() + "() "
 						+ state + " be static"));
 			}
+			if (!Modifier.isPublic(each.getDeclaringClass().getModifiers()))
+				fErrors.add(new Exception("Class " + each.getDeclaringClass().getName()
+						+ " should be public"));
 			if (!Modifier.isPublic(each.getModifiers()))
 				fErrors.add(new Exception("Method " + each.getName()
 						+ " should be public"));
