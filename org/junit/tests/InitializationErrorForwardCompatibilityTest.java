@@ -9,6 +9,7 @@ import junit.framework.TestListener;
 import junit.framework.TestResult;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.internal.runners.EmptyDescription;
 import org.junit.internal.runners.TestClassRunner;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
@@ -25,7 +26,7 @@ public class InitializationErrorForwardCompatibilityTest {
 
 		@Override
 		public Description getDescription() {
-			return null;
+			return new EmptyDescription();
 		}
 
 		@Override

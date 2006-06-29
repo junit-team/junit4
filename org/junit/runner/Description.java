@@ -54,7 +54,7 @@ public class Description {
 	private final String fDisplayName;
 
 	//TODO we seem to be using the static factories exclusively
-	private Description(final String displayName) {
+	protected Description(final String displayName) {
 		fDisplayName= displayName;
 	}
 

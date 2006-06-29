@@ -6,6 +6,7 @@ import java.util.Comparator;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.internal.runners.EmptyDescription;
 import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.TestClassRunner;
 import org.junit.runner.Description;
@@ -99,7 +100,7 @@ public class SortableTest {
 			
 			@Override
 			public Description getDescription() {
-				return null;
+				return new EmptyDescription();
 			}
 			
 			@Override

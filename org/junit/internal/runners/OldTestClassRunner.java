@@ -86,7 +86,8 @@ public class OldTestClassRunner extends Runner {
 			return Description.createTestDescription(tc.getClass(), tc.getName());
 		} else if (test instanceof TestSuite) {
 			TestSuite ts= (TestSuite) test;
-			Description description= Description.createSuiteDescription(ts.getName());
+			String name= ts.getName() == null ? "" : ts.getName();
+			Description description= Description.createSuiteDescription(name);
 			int n= ts.testCount();
 			for (int i= 0; i < n; i++)
 				description.addChild(makeDescription(ts.testAt(i)));

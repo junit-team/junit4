@@ -1,15 +1,15 @@
 package org.junit.tests;
 
+import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.internal.runners.EmptyDescription;
 import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.TestClassRunner;
 import org.junit.runner.Description;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
-
-import static org.junit.Assert.assertEquals;
 
 public class ValidationTest {
 	public static class WrongBeforeClass {
@@ -24,7 +24,7 @@ public class ValidationTest {
 		new TestClassRunner(WrongBeforeClass.class, new Runner() {
 			@Override
 			public Description getDescription() {
-				return null;
+				return new EmptyDescription();
 			}
 
 			@Override

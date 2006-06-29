@@ -11,6 +11,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.internal.runners.EmptyDescription;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
@@ -198,7 +199,7 @@ public class ForwardCompatibilityTest extends TestCase {
 
 		@Override
 		public Description getDescription() {
-			return null;
+			return new EmptyDescription();
 		}
 	}
 
