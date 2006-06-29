@@ -38,7 +38,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	SortableTest.class,
 	OldTestClassRunnerTest.class,
 	JUnitCoreTest.class,
-	InaccessibleBaseClassTest.class,
+	InaccessibleBaseClassTest.class
 })
 public class AllTests {	
 //	public static class Compatibility {
