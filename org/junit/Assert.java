@@ -90,8 +90,10 @@ public class Assert {
 			return;
 		if (expected != null && expected.equals(actual))
 			return;
-		if (expected instanceof String && actual instanceof String)
-			throw new ComparisonFailure(message, (String)expected, (String)actual);
+		if (expected instanceof String && actual instanceof String) {
+			String cleanMessage= message == null ? "" : message;
+			throw new ComparisonFailure(cleanMessage, (String)expected, (String)actual);
+		}
 		else
 			failNotEquals(message, expected, actual);
 	}
@@ -327,7 +329,7 @@ public class Assert {
 
 	static String format(String message, Object expected, Object actual) {
 		String formatted= "";
-		if (message != null)
+		if (message != null && ! message.equals(""))
 			formatted= message + " ";
 		return formatted + "expected:<" + expected + "> but was:<" + actual + ">";
 	}

@@ -22,6 +22,10 @@ public class JUnitCoreTest {
 		runClass("org.junit.tests.JUnitCoreTest$Fail", 1);
 	}
 
+	@Test public void missingClassCausesExitCodeOf1() throws Exception {
+		runClass("Foo", 1);
+	}
+
 	static public class Succeed {
 		@Test public void peacefulSilence() {
 		}

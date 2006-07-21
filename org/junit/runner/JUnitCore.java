@@ -6,6 +6,7 @@ import java.util.List;
 import junit.runner.Version;
 import org.junit.internal.runners.OldTestClassRunner;
 import org.junit.internal.runners.TextListener;
+import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 
@@ -64,15 +65,22 @@ public class JUnitCore {
 	public Result runMain(String... args) {
 		System.out.println("JUnit version " + Version.id());
 		List<Class> classes= new ArrayList<Class>();
+		List<Failure> missingClasses= new ArrayList<Failure>();
 		for (String each : args)
 			try {
 				classes.add(Class.forName(each));
 			} catch (ClassNotFoundException e) {
 				System.out.println("Could not find class: " + each);
+				Description description= Description.createSuiteDescription(each);
+				Failure failure= new Failure(description, e);
+				missingClasses.add(failure);
 			}
 		RunListener listener= new TextListener();
 		addListener(listener);
-		return run(classes.toArray(new Class[0]));
+		Result result= run(classes.toArray(new Class[0]));
+		for (Failure each : missingClasses)
+			result.getFailures().add(each);
+		return result;
 	}
 
 	/**

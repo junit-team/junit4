@@ -124,8 +124,7 @@ public class AssertionTest {
 			assertEquals("not equal expected:<[one]> but was:<[two]>", exception.getMessage());
 		}
 	}
-	
-	
+
 	@Test public void arraysEqual() {
 		Object element= new Object();
 		Object[] objects1= new Object[] {element};
@@ -232,8 +231,7 @@ public class AssertionTest {
 		try {
 			assertSame("hello", "good-bye");
 		} catch (AssertionError exception) {
-			assertEquals("expected same:<hello> was not:<good-bye>", exception
-					.getMessage());
+			assertEquals("expected same:<hello> was not:<good-bye>", exception.getMessage());
 		}
 	}
 
@@ -259,6 +257,22 @@ public class AssertionTest {
 		} catch (AssertionError exception) {
 			assertEquals("", exception.getMessage());
 		}		
+	}
+	
+	@Test public void nullMessageDisappearsWithStringAssertEquals() {
+		try {
+			assertEquals(null, "a", "b");
+		} catch (ComparisonFailure e) {
+			assertEquals("expected:<[a]> but was:<[b]>", e.getMessage());
+		}
+	}
+
+	@Test public void nullMessageDisappearsWithAssertEquals() {
+		try {
+			assertEquals(null, 1, 2);
+		} catch (AssertionError e) {
+			assertEquals("expected:<1> but was:<2>", e.getMessage());
+		}
 	}
 
 	static public junit.framework.Test suite() {
