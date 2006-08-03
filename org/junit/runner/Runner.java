@@ -9,6 +9,11 @@ import org.junit.runner.notification.RunNotifier;
  * a custom runner, in addition to implementing the abstract methods here you must
  * also provide a constructor that takes as an argument the <code>Class</code> containing
  * the tests.
+ * <p/>
+ * The default runner implementation guarantees that the instances of the test case
+ * class will be constructed immediately before running the test and that the runner
+ * will retain no reference to the test case instances, generally making them 
+ * available for garbage collection.
  * 
  * @see org.junit.runner.Description
  * @see org.junit.runner.RunWith

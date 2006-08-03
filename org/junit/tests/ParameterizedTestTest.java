@@ -150,13 +150,26 @@ public class ParameterizedTestTest {
 	@Test
 	public void meaningfulFailureWhenParametersNotPublic() throws Exception {
 		Result result= JUnitCore.runClasses(ProtectedParametersTest.class);
-		assertEquals(1, result.getFailureCount());
 		String expected= String.format(
 				"No public static parameters method on class %s",
 				ProtectedParametersTest.class.getName());
 		assertEquals(expected, result.getFailures().get(0).getMessage());
 	}
 
+	@RunWith(Parameterized.class)
+	static public class WrongElementType {
+		@Parameters
+		public static Collection<String> data() {
+			return Arrays.asList("a", "b", "c");
+		}
+	}
+	
+	@Test public void meaningfulFailureWhenParameterListsAreNotArrays() {
+		Result result= JUnitCore.runClasses(WrongElementType.class);
+		String expected= String.format("%s.data() must return a Collection of arrays.", WrongElementType.class.getName());
+		assertEquals(expected, result.getFailures().get(0).getMessage());
+	}
+	
 	static public junit.framework.Test suite() {
 		return new JUnit4TestAdapter(ParameterizedTestTest.class);
 	}

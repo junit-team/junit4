@@ -1,2 +1,6 @@
 2006 March 9
 	Matthias Schmidt: improved org.junit package javadoc
+	
+2006 August 3
+	giovanni: better test for TestCase without a name.
+	Matthias Pfau: better error message when test case constructor fails

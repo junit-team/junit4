@@ -111,13 +111,15 @@ public class Parameterized extends TestClassRunner {
 			super(klass.getName());
 			fKlass= klass;
 			int i= 0;
-			for (final Object[] parameters : getParametersList()) {
-				super.add(new TestClassRunnerForParameters(klass, parameters, i++));
+			for (final Object each : getParametersList()) {
+				if (each instanceof Object[])
+					super.add(new TestClassRunnerForParameters(klass, (Object[])each, i++));
+				else
+					throw new Exception(String.format("%s.%s() must return a Collection of arrays.", fKlass.getName(), getParametersMethod().getName()));
 			}
 		}
 
-		@SuppressWarnings("unchecked")
-		private Collection<Object[]> getParametersList() throws IllegalAccessException, InvocationTargetException, Exception {
+		private Collection getParametersList() throws IllegalAccessException, InvocationTargetException, Exception {
 			return (Collection) getParametersMethod().invoke(null);
 		}
 		

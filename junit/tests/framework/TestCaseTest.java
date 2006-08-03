@@ -1,6 +1,5 @@
 package junit.tests.framework;
 
-import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestFailure;
@@ -166,11 +165,8 @@ public class TestCaseTest extends TestCase {
 	
 	public void testNamelessTestCase() {
 		TestCase t= new TestCase() {};
-		try {
-			t.run();
-			fail();
-		} catch (AssertionFailedError e) {
-		}
+		TestResult result = t.run();
+		assertEquals(1, result.failureCount());
 	}
 	
 	void verifyError(TestCase test) {
