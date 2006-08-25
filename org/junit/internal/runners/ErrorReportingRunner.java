@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.junit.internal.runners;
 
 import org.junit.runner.Description;
