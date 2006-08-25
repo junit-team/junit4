@@ -77,8 +77,9 @@ public class Assert {
 	}
 	
 	/**
-	 * Asserts that two objects are equal. If they are not, an
-	 * {@link AssertionError} is thrown with the given message.
+	 * Asserts that two objects are equal. If they are not, an {@link AssertionError} 
+	 * is thrown with the given message. If <code>expected</code> and <code>actual</code>
+	 * are <code>null</code>, they are considered equal.
 	 * @param message the identifying message or <code>null</code> for the {@link AssertionError}
 	 * @param expected expected value
 	 * @param actual actual value
@@ -97,8 +98,9 @@ public class Assert {
 	}
 
 	/**
-	 * Asserts that two objects are equal. If they are not, an
-	 * {@link AssertionError} without a message is thrown.
+	 * Asserts that two objects are equal. If they are not, an {@link AssertionError} 
+	 * without a message is thrown. If <code>expected</code> and <code>actual</code>
+	 * are <code>null</code>, they are considered equal.
 	 * @param expected expected value
 	 * @param actual the value to check against <code>expected</code>
 	 */
@@ -108,9 +110,10 @@ public class Assert {
 
 	/**
 	 * Asserts that two object arrays are equal. If they are not, an
-	 * {@link AssertionError} is thrown with the given message.
+	 * {@link AssertionError} is thrown with the given message. If <code>expecteds</code> and
+	 *  <code>actuals</code> are <code>null</code>, they are considered equal.
 	 * @param message the identifying message or <code>null</code> for the {@link AssertionError}
-	 * @param expecteds Object array or array of arrays (multi-dimensional array) with expected values
+	 * @param expecteds Object array or array of arrays (multi-dimensional array) with expected values.
 	 * @param actuals Object array or array of arrays (multi-dimensional array) with actual values
 	 */
 	public static void assertEquals(String message, Object[] expecteds, Object[] actuals) {
@@ -146,8 +149,9 @@ public class Assert {
 	}
 
 	/**
-	 * Asserts that two object arrays are equal. If they are not, an
-	 * {@link AssertionError} is thrown.
+	 * Asserts that two object arrays are equal. If they are not, an {@link AssertionError} 
+	 * is thrown.  If <code>expected</code> and <code>actual</code> are <code>null</code>, 
+	 * they are considered equal.
 	 * @param expecteds Object array or array of arrays (multi-dimensional array) with expected values
 	 * @param actuals Object array or array of arrays (multi-dimensional array) with actual values
 	 */
