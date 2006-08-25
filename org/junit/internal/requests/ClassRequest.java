@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.junit.internal.requests;
 
 import java.lang.reflect.Constructor;
