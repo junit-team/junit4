@@ -3,11 +3,11 @@ package org.junit.runner;
 import org.junit.runner.notification.RunNotifier;
 
 /**
- * A <code>Runner</code> runs tests and notifies a <code>RunNotifier</code>
+ * A <code>Runner</code> runs tests and notifies a {@link org.junit.runner.notification.RunNotifier}
  * of significant events as it does so. You will need to subclass <code>Runner</code>
- * when using <code>@RunWith</code> to invoke a custom runner. When creating
+ * when using {@link org.junit.runner.RunWith} to invoke a custom runner. When creating
  * a custom runner, in addition to implementing the abstract methods here you must
- * also provide a constructor that takes as an argument the <code>Class</code> containing
+ * also provide a constructor that takes as an argument the {@link Class} containing
  * the tests.
  * <p/>
  * The default runner implementation guarantees that the instances of the test case
@@ -20,13 +20,14 @@ import org.junit.runner.notification.RunNotifier;
  */
 public abstract class Runner {
 	/**
-	 * @return a <code>Description</code> showing the tests to be run by the receiver
+	 * @return a {@link Description} showing the tests to be run by the receiver
 	 */
 	public abstract Description getDescription();
 
 	/**
 	 * Run the tests for this runner.
-	 * @param notifier will be notified of events while tests are being run--tests being started, finishing, and failing
+	 * @param notifier will be notified of events while tests are being run--tests being 
+	 * started, finishing, and failing
 	 */
 	public abstract void run(RunNotifier notifier);
 	

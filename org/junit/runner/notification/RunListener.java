@@ -4,29 +4,30 @@ import org.junit.runner.Description;
 import org.junit.runner.Result;
 
 /**
- * If you need to respond to the events during a test run, extend <code>RunListener</code>
+ * <p>If you need to respond to the events during a test run, extend <code>RunListener</code>
  * and override the appropriate methods. If a listener throws an exception while processing a 
- * test event, it will be removed for the remainder of the test run.
- * <p>
- * For example, suppose you have a <code>Cowbell</code>
- * class that you want to make a noise whenever a test fails. You could write:<br>
- * <code>
+ * test event, it will be removed for the remainder of the test run.</p>
+ * 
+ * <p>For example, suppose you have a <code>Cowbell</code>
+ * class that you want to make a noise whenever a test fails. You could write:
+ * <pre>
  * public class RingingListener extends RunListener {
- * %nbsp;%nbsp;public void testFailure(Failure failure) {
- * %nbsp;%nbsp;%nbsp;%nbsp;Cowbell.ring();
- * %nbsp;%nbsp;}
+ *    public void testFailure(Failure failure) {
+ *       Cowbell.ring();
+ *    }
  * }
- * </code>
- * <p>
- * To invoke your listener, you need to run your tests through <code>JUnitCore</code>. <br>
- * <code>
+ * </pre>
+ * </p>
+ * 
+ * <p>To invoke your listener, you need to run your tests through <code>JUnitCore</code>.
+ * <pre>
  * public void main(String... args) {
- * %nbsp;%nbsp;JUnitCore core= new JUnitCore();
- * %nbsp;%nbsp;core.addListener(new RingingListener());
- * %nbsp;%nbsp;
- * core.run(MyTestClass.class);
+ *    JUnitCore core= new JUnitCore();
+ *    core.addListener(new RingingListener());
+ *    core.run(MyTestClass.class);
  * }
- * </code>
+ * </pre>
+ * </p>
  * @see org.junit.runner.JUnitCore
  */
 public class RunListener {
@@ -47,7 +48,8 @@ public class RunListener {
 	
 	/**
 	 * Called when an atomic test is about to be started.
-	 * @param description the description of the test that is about to be run (generally a class and method name)
+	 * @param description the description of the test that is about to be run 
+	 * (generally a class and method name)
 	 */
 	public void testStarted(Description description) throws Exception {
 	}
@@ -67,7 +69,8 @@ public class RunListener {
 	}
 
 	/**
-	 * Called when a test will not be run, generally because a test method is annotated with <code>@Ignored</code>.
+	 * Called when a test will not be run, generally because a test method is annotated 
+	 * with {@link org.junit.tests.TestMethodTest.IgnoredTest}.
 	 * @param description describes the test that will not be run
 	 */
 	public void testIgnored(Description description) throws Exception {

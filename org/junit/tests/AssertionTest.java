@@ -10,15 +10,18 @@ import org.junit.ComparisonFailure;
 import org.junit.Test;
 import org.junit.internal.ArrayComparisonFailure;
 
+/**
+ * Tests for {@link org.junit.Assert}
+ */
 public class AssertionTest {
 // If you want to use 1.4 assertions, they will be reported correctly.
 // However, you need to add the -ea VM argument when running.
 	
-//	@Test @Expected(AssertionError.class) public void error() {
+//	@Test (expected=AssertionError.class) public void error() {
 //		assert false;
 //	}
 	
-	@Test(expected= AssertionError.class) public void fails() {
+	@Test(expected=AssertionError.class) public void fails() {
 		Assert.fail();
 	}
 	
@@ -107,14 +110,14 @@ public class AssertionTest {
 			assertEquals("message: arrays first differed at element [1][0]; expected:<false> but was:<true>", exception.getMessage());
 		}
 	}
-	
+			
 	@Test public void multiDimensionalArraysAreNotEqualNoMessage() {
 		try {
 			assertEquals(new Object[][]{{true, true}, {false, false}}, new Object[][]{{true, true}, {true, false}});
 			fail();
 		} catch (AssertionError exception) {
 			assertEquals("arrays first differed at element [1][0]; expected:<false> but was:<true>", exception.getMessage());
-		}
+	}
 	}
 	
 	@Test public void stringsDifferWithUserMessage() {
@@ -124,7 +127,7 @@ public class AssertionTest {
 			assertEquals("not equal expected:<[one]> but was:<[two]>", exception.getMessage());
 		}
 	}
-
+	
 	@Test public void arraysEqual() {
 		Object element= new Object();
 		Object[] objects1= new Object[] {element};

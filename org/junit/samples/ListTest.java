@@ -12,7 +12,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * A sample test case, testing <code>java.util.Vector</code>.
+ * A sample test case, testing {@link java.util.Vector}.
  *
  */
 public class ListTest {

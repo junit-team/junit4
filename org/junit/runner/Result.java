@@ -40,7 +40,7 @@ public class Result {
 	}
 
 	/**
-	 * @return the <code>Failures</code> describing tests that failed and the problems they encountered
+	 * @return the {@link Failure}s describing tests that failed and the problems they encountered
 	 */
 	public List<Failure> getFailures() {
 		return fFailures;
@@ -54,7 +54,7 @@ public class Result {
 	}
 
 	/**
-	 * @return true if all tests succeeded
+	 * @return <code>true</code> if all tests succeeded
 	 */
 	public boolean wasSuccessful() {
 		return getFailureCount() == 0;

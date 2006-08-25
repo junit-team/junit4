@@ -10,15 +10,16 @@ import org.junit.internal.requests.SortingRequest;
 import org.junit.runner.manipulation.Filter;
 
 /**
- * A <code>Request</code> is an abstract description of tests to be run. Older versions of 
+ * <p>A <code>Request</code> is an abstract description of tests to be run. Older versions of 
  * JUnit did not need such a concept--tests to be run were described either by classes containing
- * tests or a tree of <code>Tests</code>. However, we want to support filtering and sorting,
+ * tests or a tree of {@link  org.junit.Test}s. However, we want to support filtering and sorting,
  * so we need a more abstract specification than the tests themselves and a richer
- * specification than just the classes.
- * <p>
- * The flow when JUnit runs tests is that a <code>Request</code> specifies some tests to be run ->
- * a <code>Runner</code> is created for each class implied by the <code>Request</code> -> the <code>Runner</code>
- * returns a detailed <code>Description</code> which is a tree structure of the tests to be run.
+ * specification than just the classes.</p>
+ * 
+ * <p>The flow when JUnit runs tests is that a <code>Request</code> specifies some tests to be run ->
+ * a {@link org.junit.runner.Runner} is created for each class implied by the <code>Request</code> -> 
+ * the {@link org.junit.runner.Runner} returns a detailed {@link org.junit.runner.Description} 
+ * which is a tree structure of the tests to be run.</p>
  */
 public abstract class Request {
 	/**
@@ -59,12 +60,28 @@ public abstract class Request {
 		return new ErrorReportingRequest(klass, cause);
 	}
 
+	/**
+	 * Returns a {@link Runner} for this Request
+	 * @return corresponding {@link Runner} for this Request
+	 */
 	public abstract Runner getRunner();
 
+	/**
+	 * Returns a Request that only contains those tests that should run when
+	 * <code>filter</code> is applied
+	 * @param filter The {@link Filter} to apply to this Request
+	 * @return the filtered Request
+	 */
 	public Request filterWith(Filter filter) {
 		return new FilterRequest(this, filter);
 	}
 
+	/**
+	 * Returns a Request that only runs contains tests whose {@link Description}
+	 * equals <code>desiredDescription</code>
+	 * @param desiredDescription {@link Description} of those tests that should be run
+	 * @return the filtered Request
+	 */
 	public Request filterWith(final Description desiredDescription) {
 		return filterWith(new Filter() {
 			@Override
@@ -85,6 +102,12 @@ public abstract class Request {
 		});
 	}
 
+	/**
+	 * Returns a Request whose Tests can be run in a certain order, defined by 
+	 * <code>comparator</code>
+	 * @param comparator definition of the order of the tests in this Request
+	 * @return a Request with ordered Tests
+	 */
 	public Request sortWith(Comparator<Description> comparator) {
 		return new SortingRequest(this, comparator);
 	}

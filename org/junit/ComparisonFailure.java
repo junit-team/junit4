@@ -8,6 +8,10 @@ package org.junit;
  * Inspired by a patch from Alex Chaffee (alex@purpletech.com)
  */
 public class ComparisonFailure extends AssertionError {	
+	/** 
+	 * The maximum length for fExpected and fActual. If it is exceeded, the strings should be shortened. 
+	 * @see ComparisonCompactor
+	 */
 	private static final int MAX_CONTEXT_LENGTH= 20;
 	private static final long serialVersionUID= 1L;
 	
@@ -30,7 +34,7 @@ public class ComparisonFailure extends AssertionError {
 	 * Returns "..." in place of common prefix and "..." in
 	 * place of common suffix between expected and actual.
 	 * 
-	 * @see java.lang.Throwable#getMessage()
+	 * @see Throwable#getMessage()
 	 */
 	@Override
 	public String getMessage() {
@@ -57,12 +61,22 @@ public class ComparisonFailure extends AssertionError {
 		private static final String DELTA_END= "]";
 		private static final String DELTA_START= "[";
 		
+		/**
+		 * The maximum length for <code>expected</code> and <code>actual</code>. When <code>contextLength</code> 
+		 * is exceeded, the Strings are shortened
+		 */
 		private int fContextLength;
 		private String fExpected;
 		private String fActual;
 		private int fPrefix;
 		private int fSuffix;
 
+		/**
+		 * @param contextLength the maximum length for <code>expected</code> and <code>actual</code>. When contextLength 
+		 * is exceeded, the Strings are shortened
+		 * @param expected the expected string value
+		 * @param actual the actual string value
+		 */
 		public ComparisonCompactor(int contextLength, String expected, String actual) {
 			fContextLength= contextLength;
 			fExpected= expected;

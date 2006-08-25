@@ -10,7 +10,7 @@ import java.util.List;
  * a test case. It is an instance of the Collecting Parameter pattern.
  * The test framework distinguishes between <i>failures</i> and <i>errors</i>.
  * A failure is anticipated and checked for with assertions. Errors are
- * unanticipated problems like an <code>ArrayIndexOutOfBoundsException</code>.
+ * unanticipated problems like an {@link ArrayIndexOutOfBoundsException}.
  *
  * @see Test
  */

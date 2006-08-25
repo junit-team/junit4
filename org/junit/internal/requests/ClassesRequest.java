@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.junit.internal.requests;
 
 import org.junit.internal.runners.CompositeRunner;
@@ -16,7 +13,8 @@ public class ClassesRequest extends Request {
 		fName= name;
 	}
 
-	@Override
+	/** @inheritDoc */
+	@Override 
 	public Runner getRunner() {
 		CompositeRunner runner= new CompositeRunner(fName);
 		for (Class<?> each : fClasses) {

@@ -10,8 +10,8 @@ import org.junit.runner.Result;
 /**
  * If you write custom runners, you may need to notify JUnit of your progress running tests.
  * Do this by invoking the <code>RunNotifier</code> passed to your implementation of
- * <code>Runner.run(RunNotifier notifier)</code>. Future evolution of this class is likely to 
- * move <code>fireTestRunStarted()</code> and <code>fireTestRunFinished()</code>
+ * {@link org.junit.runner.Runner#run(RunNotifier)}. Future evolution of this class is likely to 
+ * move {@link #fireTestRunStarted(Description)} and {@link #fireTestRunFinished(Result)}
  * to a separate class since they should only be called once per run.
  */
 public class RunNotifier {
@@ -112,8 +112,9 @@ public class RunNotifier {
 	}
 
 	/**
-	 * Invoke to tell listeners that an atomic test finished. Always invoke <code>fireTestFinished()</code>
-	 * if you invoke <code>fireTestStarted()</code> as listeners are likely to expect them to come in pairs.
+	 * Invoke to tell listeners that an atomic test finished. Always invoke 
+	 * {@link #fireTestFinished(Description)} if you invoke {@link #fireTestStarted(Description)} 
+	 * as listeners are likely to expect them to come in pairs.
 	 * @param description the description of the test that finished
 	 */
 	public void fireTestFinished(final Description description) {

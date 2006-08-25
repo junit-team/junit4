@@ -12,10 +12,11 @@ import org.junit.runner.notification.RunNotifier;
 
 /**
  * <code>JUnitCore</code> is a facade for running tests. It supports running JUnit 4 tests, 
- * JUnit 3.8.x tests, and mixtures. To run tests from the command line, run <code>java org.junit.runner.JUnitCore TestClass1 TestClass2 ...</code>.
- * For one-shot test runs, use the static method <code>runClasses(Class... classes)</code>
- * . If you want to add special listeners,
- * create an instance of <code>JUnitCore</code> first and use it to run the tests.
+ * JUnit 3.8.x tests, and mixtures. To run tests from the command line, run 
+ * <code>java org.junit.runner.JUnitCore TestClass1 TestClass2 ...</code>.
+ * For one-shot test runs, use the static method {@link #runClasses(Class[])}. 
+ * If you want to add special listeners,
+ * create an instance of {@link org.junit.tests.JUnitCoreTest} first and use it to run the tests.
  * 
  * @see org.junit.runner.Result
  * @see org.junit.runner.notification.RunListener
@@ -51,9 +52,9 @@ public class JUnitCore {
 	/**
 	 * Run the tests contained in <code>classes</code>. Write feedback while the tests
 	 * are running and write stack traces for all failed tests after all tests complete. This is
-	 * similar to <code>main()</code>, but intended to be used programmatically.
+	 * similar to {@link #main(String[])}, but intended to be used programmatically.
 	 * @param classes Classes in which to find tests
-	 * @return a <code>Result</code> describing the details of the test run and the failed tests.
+	 * @return a {@link Result} describing the details of the test run and the failed tests.
 	 */
 	public static Result runClasses(Class... classes) {
 		return new JUnitCore().run(classes);
@@ -93,7 +94,7 @@ public class JUnitCore {
 	/**
 	 * Run all the tests in <code>classes</code>.
 	 * @param classes the classes containing tests
-	 * @return a <code>Result</code> describing the details of the test run and the failed tests.
+	 * @return a {@link Result} describing the details of the test run and the failed tests.
 	 */
 	public Result run(Class... classes) {
 		return run(Request.classes("All", classes));
@@ -102,7 +103,7 @@ public class JUnitCore {
 	/**
 	 * Run all the tests contained in <code>request</code>.
 	 * @param request the request describing tests
-	 * @return a <code>Result</code> describing the details of the test run and the failed tests.
+	 * @return a {@link Result} describing the details of the test run and the failed tests.
 	 */
 	public Result run(Request request) {
 		return run(request.getRunner());
@@ -111,7 +112,7 @@ public class JUnitCore {
 	/**
 	 * Run all the tests contained in JUnit 3.8.x <code>test</code>. Here for backward compatibility.
 	 * @param test the old-style test
-	 * @return a <code>Result</code> describing the details of the test run and the failed tests.
+	 * @return a {@link Result} describing the details of the test run and the failed tests.
 	 */
 	public Result run(junit.framework.Test test) { 
 		return run(new OldTestClassRunner(test));
@@ -141,7 +142,7 @@ public class JUnitCore {
 
 	/**
 	 * Add a listener to be notified as the tests run.
-	 * @param listener the listener
+	 * @param listener the listener to add
 	 * @see org.junit.runner.notification.RunListener
 	 */
 	public void addListener(RunListener listener) {

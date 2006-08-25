@@ -9,15 +9,15 @@ import org.junit.internal.runners.OldTestClassRunner;
 
 /** Runner for use with JUnit 3.8.x-style AllTests classes
  * (those that only implement a static <code>suite()</code>
- * method). For example: <br>
- * <code>
- * &nbsp;@RunWith(AllTests.class)
+ * method). For example:
+ * <pre>
+ * &#064;RunWith(AllTests.class)
  * public class ProductTests {
- * &nbsp;&nbsp;public static junit.framework.Test suite() {
- * &nbsp;&nbsp;&nbsp;&nbsp;...
- * &nbsp;&nbsp;}
+ *    public static junit.framework.Test suite() {
+ *       ...
+ *    }
  * }
- * </code>
+ * </pre>
  */
 public class AllTests extends OldTestClassRunner {
 	private static Test suite(Class<?> klass) throws Throwable {

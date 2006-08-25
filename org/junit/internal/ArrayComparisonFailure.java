@@ -17,6 +17,13 @@ public class ArrayComparisonFailure extends AssertionError {
 	private final String fMessage;
 	private final AssertionError fCause;
 
+	/**
+	 * Construct a new <code>ArrayComparisonFailure</code> with an error text and the array's
+	 * dimension that was not equal
+	 * @param cause the exception that caused the array's content to fail the assertion test 
+	 * @param index the array position of the objects that are not equal.
+	 * @see Assert#assertEquals(String, Object[], Object[])
+	 */
 	public ArrayComparisonFailure(String message, AssertionError cause, int index) {
 		fMessage= message;
 		fCause= cause;
@@ -41,5 +48,12 @@ public class ArrayComparisonFailure extends AssertionError {
 		builder.append("; ");
 		builder.append(fCause.getMessage());
 		return builder.toString();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override public String toString() {
+		return getMessage();
 	}
 }

@@ -5,14 +5,14 @@ import org.junit.internal.ArrayComparisonFailure;
 /**
  * A set of assertion methods useful for writing tests. Only failed assertions are recorded.
  * These methods can be used directly: <code>Assert.assertEquals(...)</code>, however, they
- * read better if they are referenced through static import:<br>
- * <code>
- *   import static org.junit.Assert.*;<br>
- *   ...<br>
- *   &nbsp;&nbsp;assertEquals(...);<br>
- *   </code>
+ * read better if they are referenced through static import:<br/>
+ * <pre>
+ * import static org.junit.Assert.*;
+ *    ...
+ *    assertEquals(...);
+ * </pre>
  *   
- *   @see java.lang.AssertionError
+ * @see AssertionError
  */
 public class Assert {
 	/**
@@ -21,8 +21,6 @@ public class Assert {
 	protected Assert() {
 	}
 	
-	// TODO: param comments should start with lower case letters
-
 	/**
 	 * Asserts that a condition is true. If it isn't it throws an
 	 * {@link AssertionError} with the given message.
@@ -194,7 +192,7 @@ public class Assert {
 	/**
 	 * Asserts that two floats are equal to within a positive delta. If they
 	 * are not, an {@link AssertionError} is thrown with the given message. If the
-	 * expected value is infinity then the delta value is ignored.NaNs are
+	 * expected value is infinity then the delta value is ignored. NaNs are
 	 * considered equal:
 	 * <code>assertEquals(Float.NaN, Float.NaN, *)</code> passes
 	 * @param message the identifying message or <code>null</code> for the {@link AssertionError}

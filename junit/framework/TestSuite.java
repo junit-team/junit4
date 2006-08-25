@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Vector;
 
 /**
- * A <code>TestSuite</code> is a <code>Composite</code> of Tests.
+ * <p>A <code>TestSuite</code> is a <code>Composite</code> of Tests.
  * It runs a collection of test cases. Here is an example using
  * the dynamic test definition.
  * <pre>
@@ -20,20 +20,25 @@ import java.util.Vector;
  * suite.addTest(new MathTest("testAdd"));
  * suite.addTest(new MathTest("testDivideByZero"));
  * </pre>
- * Alternatively, a TestSuite can extract the tests to be run automatically.
+ * </p>
+ * 
+ * <p>Alternatively, a TestSuite can extract the tests to be run automatically.
  * To do so you pass the class of your TestCase class to the
  * TestSuite constructor.
  * <pre>
  * TestSuite suite= new TestSuite(MathTest.class);
  * </pre>
- * This constructor creates a suite with all the methods
- * starting with "test" that take no arguments.
- * <p>
- * A final option is to do the same for a large array of test classes.
+ * </p>
+ * 
+ * <p>This constructor creates a suite with all the methods
+ * starting with "test" that take no arguments.</p>
+ * 
+ * <p>A final option is to do the same for a large array of test classes.
  * <pre>
  * Class[] testClasses = { MathTest.class, AnotherTest.class }
  * TestSuite suite= new TestSuite(testClasses);
  * </pre>
+ * </p>
  *
  * @see Test
  */
@@ -164,7 +169,7 @@ public class TestSuite implements Test {
 	
 	/**
 	 * Constructs a TestSuite from the given array of classes.  
-	 * @param classes
+	 * @param classes {@link TestCase}s
 	 */
 	public TestSuite (Class<? extends TestCase>... classes) {
 		for (Class<? extends TestCase> each : classes)
@@ -230,7 +235,7 @@ public class TestSuite implements Test {
 	 
 	/**
 	 * Sets the name of the suite.
-	 * @param name The name to set
+	 * @param name the name to set
 	 */
 	public void setName(String name) {
 		fName= name;

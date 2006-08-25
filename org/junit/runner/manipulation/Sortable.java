@@ -8,6 +8,10 @@ package org.junit.runner.manipulation;
  */
 public interface Sortable {
 
+	/**
+	 * Sorts the tests using <code>sorter</code>
+	 * @param sorter the {@link Sorter} to use for sorting the tests
+	 */
 	public void sort(Sorter sorter);
 
 }

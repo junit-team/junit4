@@ -8,7 +8,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * A sample test case, testing <code>java.util.Vector</code>.
+ * A sample test case, testing {@link java.util.Vector}.
  *
  */
 public class ListTest extends TestCase {

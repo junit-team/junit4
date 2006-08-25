@@ -3,15 +3,18 @@ package org.junit.runner;
 import java.util.ArrayList;
 
 /**
- * A <code>Description</code> describes a test which is to be run or has been run. <code>Descriptions</code> can
- * be atomic (a single test) or compound (containing children tests). <code>Descriptions</code> are used
+ * <p>A <code>Description</code> describes a test which is to be run or has been run. <code>Descriptions</code> 
+ * can be atomic (a single test) or compound (containing children tests). <code>Descriptions</code> are used
  * to provide feedback about the tests that are about to run (for example, the tree view
- * visible in many IDEs) or tests that have been run (for example, the failures view). <p>
- * <code>Descriptions</code> are implemented as a single class rather than a Composite because
- * they are entirely informational. They contain no logic aside from counting their tests. <p>
- * In the past, we used the raw <code>junit.framework.TestCase</code>s and <code>junit.framework.TestSuite</code>s
- * to display the tree of tests. This was no longer viable in JUnit 4 because atomic tests no longer have a superclass below <code>Object</code>.
- * We needed a way to pass a class and name together. Description emerged from this.
+ * visible in many IDEs) or tests that have been run (for example, the failures view).</p>
+ * 
+ * <p><code>Descriptions</code> are implemented as a single class rather than a Composite because
+ * they are entirely informational. They contain no logic aside from counting their tests.</p>
+ * 
+ * <p>In the past, we used the raw {@link junit.framework.TestCase}s and {@link junit.framework.TestSuite}s
+ * to display the tree of tests. This was no longer viable in JUnit 4 because atomic tests no longer have 
+ * a superclass below {@link Object}. We needed a way to pass a class and name together. Description 
+ * emerged from this.</p>
  * 
  * @see org.junit.runner.Request
  * @see org.junit.runner.Runner
@@ -21,8 +24,8 @@ public class Description {
 	/**
 	 * Create a <code>Description</code> named <code>name</code>.
 	 * Generally, you will add children to this <code>Description</code>.
-	 * @param name The name of the <code>Description</code> 
-	 * @return A <code>Description</code> named <code>name</code>
+	 * @param name the name of the <code>Description</code> 
+	 * @return a <code>Description</code> named <code>name</code>
 	 */
 	public static Description createSuiteDescription(String name) {
 		return new Description(name);
@@ -31,9 +34,9 @@ public class Description {
 	/**
 	 * Create a <code>Description</code> of a single test named <code>name</code> in the class <code>clazz</code>.
 	 * Generally, this will be a leaf <code>Description</code>.
-	 * @param clazz The class of the test
-	 * @param name The name of the test (a method name for test annotated with <code>@Test</code>)
-	 * @return A <code>Description</code> named <code>name</code>
+	 * @param clazz the class of the test
+	 * @param name the name of the test (a method name for test annotated with {@link org.junit.Test})
+	 * @return a <code>Description</code> named <code>name</code>
 	 */
 	public static Description createTestDescription(Class clazz, String name) {
 		return new Description(String.format("%s(%s)", name, clazz.getName()));
@@ -42,8 +45,8 @@ public class Description {
 	/**
 	 * Create a generic <code>Description</code> that says there are tests in <code>testClass</code>.
 	 * This is used as a last resort when you cannot precisely describe the individual tests in the class.
-	 * @param testClass A <code>Class</code> containing tests 
-	 * @return A <code>Description</code> of <code>testClass</code>
+	 * @param testClass A {@link Class} containing tests 
+	 * @return a <code>Description</code> of <code>testClass</code>
 	 */
 	public static Description createSuiteDescription(Class<?> testClass) {
 		return new Description(testClass.getName());
@@ -66,8 +69,8 @@ public class Description {
 	}
 
 	/**
-	 * Add <code>description</code> as a child of the receiver.
-	 * @param description The soon-to-be child.
+	 * Add <code>Description</code> as a child of the receiver.
+	 * @param description the soon-to-be child.
 	 */
 	public void addChild(Description description) {
 		getChildren().add(description);
@@ -81,14 +84,14 @@ public class Description {
 	}
 
 	/**
-	 * @return true if the receiver is a suite
+	 * @return <code>true</code> if the receiver is a suite
 	 */
 	public boolean isSuite() {
 		return !isTest();
 	}
 
 	/**
-	 * @return true if the receiver is an atomic test
+	 * @return <code>true</code> if the receiver is an atomic test
 	 */
 	public boolean isTest() {
 		return getChildren().isEmpty();

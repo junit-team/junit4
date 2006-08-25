@@ -15,4 +15,3 @@
 
 * Create test target in ant
 * Organize org.junit.tests
-* Use <pre></pre> for javadoc code examples

@@ -7,9 +7,9 @@ import org.junit.runner.Description;
 
 /**
  * A <code>Failure</code> holds a description of the failed test and the 
- * exception that was thrown while running it. In most cases the <code>Description</code>
+ * exception that was thrown while running it. In most cases the {@link org.junit.runner.Description}
  * will be of a single test. However, if problems are encountered while constructing the
- * test (for example, if a <code>@BeforeClass</code> method is not static), it may describe
+ * test (for example, if a {@link org.junit.BeforeClass} method is not static), it may describe
  * something other than a single test.
  */
 public class Failure {
@@ -18,7 +18,7 @@ public class Failure {
 
 	/**
 	 * Constructs a <code>Failure</code> with the given description and exception.
-	 * @param description a <code>Description</code> of the test that failed
+	 * @param description a {@link org.junit.runner.Description} of the test that failed
 	 * @param thrownException the exception that was thrown while running the test
 	 */
 	public Failure(Description description, Throwable thrownException) {
