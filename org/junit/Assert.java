@@ -89,7 +89,11 @@ public class Assert {
 			return;
 		if (expected != null && expected.equals(actual))
 			return;
-		if (expected instanceof String && actual instanceof String) {
+		if (expected.getClass().isArray() && actual.getClass().isArray()) {
+			Object[] expectedArray= (Object[]) expected;
+			Object[] actualArray= (Object[]) actual;
+			assertEquals(message, expectedArray, actualArray);
+		} else if (expected instanceof String && actual instanceof String) {
 			String cleanMessage= message == null ? "" : message;
 			throw new ComparisonFailure(cleanMessage, (String)expected, (String)actual);
 		}

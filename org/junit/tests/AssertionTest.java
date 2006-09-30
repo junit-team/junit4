@@ -277,6 +277,12 @@ public class AssertionTest {
 			assertEquals("expected:<1> but was:<2>", e.getMessage());
 		}
 	}
+	
+	@Test public void arraysDeclaredAsObjectAreComparedAsArrays() {
+		Object a1= new Object[] {"abc"};
+		Object a2= new Object[] {"abc"};
+		assertEquals(a1, a2);
+	}
 
 	static public junit.framework.Test suite() {
 		return new JUnit4TestAdapter(AssertionTest.class);
