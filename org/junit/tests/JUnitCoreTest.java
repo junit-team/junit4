@@ -37,7 +37,7 @@ public class JUnitCoreTest {
 
 	private void runClass(String className, int returnCode) throws IOException, InterruptedException {
 		String java= System.getProperty("java.home")+File.separator+"bin"+File.separator+"java";
-		String classPath= getClass().getClassLoader().getResource(".").getFile() + ";" + System.getProperty("java.class.path");
+		String classPath= getClass().getClassLoader().getResource(".").getFile() + File.pathSeparator + System.getProperty("java.class.path");
 		String [] cmd= { java, "-cp", classPath, "org.junit.runner.JUnitCore", className}; 
 		Process process= Runtime.getRuntime().exec(cmd);
 		InputStream input= process.getInputStream();
