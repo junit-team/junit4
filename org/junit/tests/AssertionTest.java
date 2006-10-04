@@ -224,6 +224,7 @@ public class AssertionTest {
 	@Test public void sameWithMessage() {
 		try {
 			assertSame("not same", "hello", "good-bye");
+			fail();
 		} catch (AssertionError exception) {
 			assertEquals("not same expected same:<hello> was not:<good-bye>",
 					exception.getMessage());
@@ -233,22 +234,27 @@ public class AssertionTest {
 	@Test public void sameNullMessage() {
 		try {
 			assertSame("hello", "good-bye");
+			fail();
 		} catch (AssertionError exception) {
 			assertEquals("expected same:<hello> was not:<good-bye>", exception.getMessage());
 		}
 	}
 
 	@Test public void notSameWithMessage() {
+		Object o= new Object();
 		try {
-			assertNotSame("not same", "hello", "good-bye");
+			assertNotSame("message", o, o);
+			fail();
 		} catch (AssertionError exception) {
-			assertEquals("not same expected not same", exception.getMessage());
+			assertEquals("message expected not same", exception.getMessage());
 		}
 	}
 
 	@Test public void notSameNullMessage() {
+		Object o= new Object();
 		try {
-			assertNotSame("hello", "good-bye");
+			assertNotSame(o, o);
+			fail();
 		} catch (AssertionError exception) {
 			assertEquals("expected not same", exception.getMessage());
 		}
@@ -265,6 +271,7 @@ public class AssertionTest {
 	@Test public void nullMessageDisappearsWithStringAssertEquals() {
 		try {
 			assertEquals(null, "a", "b");
+			fail();
 		} catch (ComparisonFailure e) {
 			assertEquals("expected:<[a]> but was:<[b]>", e.getMessage());
 		}
@@ -273,6 +280,7 @@ public class AssertionTest {
 	@Test public void nullMessageDisappearsWithAssertEquals() {
 		try {
 			assertEquals(null, 1, 2);
+			fail();
 		} catch (AssertionError e) {
 			assertEquals("expected:<1> but was:<2>", e.getMessage());
 		}
