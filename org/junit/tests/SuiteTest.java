@@ -93,6 +93,41 @@ public class SuiteTest {
 		assertEquals(expected, result.getFailures().get(0).getMessage());		
 	}
 	
+	@RunWith(Suite.class)
+	@SuiteClasses(InfiniteLoop.class)
+	static public class InfiniteLoop { }
+	
+	@Test public void whatHappensWhenASuiteHasACycle() {
+		Result result= JUnitCore.runClasses(InfiniteLoop.class);
+		assertEquals(1, result.getFailureCount());
+	}
+	
+	@RunWith(Suite.class)
+	@SuiteClasses({BiInfiniteLoop.class, BiInfiniteLoop.class})
+	static public class BiInfiniteLoop { }
+	
+	@Test public void whatHappensWhenASuiteHasAForkingCycle() {
+		Result result= JUnitCore.runClasses(BiInfiniteLoop.class);
+		assertEquals(2, result.getFailureCount());
+	}
+	
+	// The interesting case here is that Hydra indirectly contains two copies of
+	// itself (if it only contains one, Java's StackOverflowError eventually
+	// bails us out)
+	
+	@RunWith(Suite.class)
+	@SuiteClasses({Hercules.class})
+	static public class Hydra { }
+	
+	@RunWith(Suite.class)
+	@SuiteClasses({Hydra.class, Hydra.class})
+	static public class Hercules { }
+	
+	@Test public void whatHappensWhenASuiteContainsItselfIndirectly() {
+		Result result= JUnitCore.runClasses(Hydra.class);
+		assertEquals(2, result.getFailureCount());
+	}
+	
 	public static junit.framework.Test suite() {
 		return new JUnit4TestAdapter(SuiteTest.class);
 	}

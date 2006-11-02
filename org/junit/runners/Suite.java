@@ -4,6 +4,8 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.TestClassRunner;
@@ -34,17 +36,26 @@ public class Suite extends TestClassRunner {
 		this(klass, getAnnotatedClasses(klass));
 	}
 
-	/**
-	 * Internal use only.
-	 */
-	public Suite(Class<?> klass, Class[] annotatedClasses) throws InitializationError {
-		super(klass, Request.classes(klass.getName(), annotatedClasses).getRunner());
+	// This won't work correctly in the face of concurrency. For that we need to
+	// add parameters to getRunner(), which would be much more complicated.
+	private static Set<Class> parents = new HashSet<Class>();
+	
+	private static Class addParent(Class parent) throws InitializationError {
+		if (!parents.add(parent))
+			throw new InitializationError(String.format("class '%s' (possibly indirectly) contains itself as a SuiteClass", parent.getName()));
+		return parent;
+	}
+	
+	protected Suite(Class<?> klass, Class[] annotatedClasses) throws InitializationError {
+		super(addParent(klass), Request.classes(klass.getName(), annotatedClasses).getRunner());
+		parents.remove(klass);
 	}
 
 	private static Class[] getAnnotatedClasses(Class<?> klass) throws InitializationError {
 		SuiteClasses annotation= klass.getAnnotation(SuiteClasses.class);
 		if (annotation == null)
 			throw new InitializationError(String.format("class '%s' must have a SuiteClasses annotation", klass.getName()));
-		return annotation.value();
+		Class[] classes= annotation.value();
+		return classes;
 	}
 }

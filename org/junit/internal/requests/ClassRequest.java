@@ -23,9 +23,11 @@ public class ClassRequest extends Request {
 			Runner runner= (Runner) constructor
 					.newInstance(new Object[] { fTestClass });
 			return runner;
+		} catch (StackOverflowError e) {
+			throw new RuntimeException();
 		} catch (Exception e) {
 			return Request.errorReport(fTestClass, e).getRunner();
-		}
+		} 
 	}
 
 	Class getRunnerClass(Class<?> testClass) {
