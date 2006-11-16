@@ -1,6 +1,6 @@
 <project name="junit" default="dist" basedir=".">
 	<property file="${user.home}/.junit.properties" />
-	<property name="version" value="4.1" />
+	<property name="version" value="4.2" />
 	<property name="dist"  value="junit${version}" />
 	<property name="versionfile"  value="junit/runner/Version.java" />
 	<property name="zipfile"  value="${dist}.zip" />
@@ -37,7 +37,7 @@
                 </copy>
         </target>
 
-	<target name="dist" depends="build">
+	<target name="dist" depends="clean, build">
 		<delete dir="${dist}" />
 		<mkdir dir="${dist}" />
 		<jar 

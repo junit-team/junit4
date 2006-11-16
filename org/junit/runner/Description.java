@@ -38,7 +38,7 @@ public class Description {
 	 * @param name the name of the test (a method name for test annotated with {@link org.junit.Test})
 	 * @return a <code>Description</code> named <code>name</code>
 	 */
-	public static Description createTestDescription(Class clazz, String name) {
+	public static Description createTestDescription(Class<?> clazz, String name) {
 		return new Description(String.format("%s(%s)", name, clazz.getName()));
 	}
 	

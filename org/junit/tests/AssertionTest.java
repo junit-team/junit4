@@ -102,6 +102,10 @@ public class AssertionTest {
 		assertEquals(new Object[][]{{true, true}, {false, false}}, new Object[][]{{true, true}, {false, false}});
 	}
 	
+	@Test public void multiDimensionalArraysDeclaredAsOneDimensionalAreEqual() {
+		assertEquals(new Object[]{new Object[] {true, true}, new Object[] {false, false}}, new Object[]{new Object[] {true, true}, new Object[] {false, false}});
+	}
+	
 	@Test public void multiDimensionalArraysAreNotEqual() {
 		try {
 			assertEquals("message", new Object[][]{{true, true}, {false, false}}, new Object[][]{{true, true}, {true, false}});
@@ -286,7 +290,8 @@ public class AssertionTest {
 		}
 	}
 	
-	@Test public void arraysDeclaredAsObjectAreComparedAsArrays() {
+	@Test(expected=AssertionError.class) 
+	public void arraysDeclaredAsObjectAreComparedAsObjects() {
 		Object a1= new Object[] {"abc"};
 		Object a2= new Object[] {"abc"};
 		assertEquals(a1, a2);

@@ -71,7 +71,7 @@ public class Parameterized extends TestClassRunner {
 
 		private final int fParameterSetNumber;
 
-		private final Constructor fConstructor;
+		private final Constructor<?> fConstructor;
 
 		private TestClassRunnerForParameters(Class<?> klass, Object[] parameters, int i) {
 			super(klass);
@@ -95,8 +95,8 @@ public class Parameterized extends TestClassRunner {
 			return String.format("%s[%s]", method.getName(), fParameterSetNumber);
 		}
 
-		private Constructor getOnlyConstructor() {
-			Constructor[] constructors= getTestClass().getConstructors();
+		private Constructor<?> getOnlyConstructor() {
+			Constructor<?>[] constructors= getTestClass().getConstructors();
 			assertEquals(1, constructors.length);
 			return constructors[0];
 		}
@@ -119,7 +119,7 @@ public class Parameterized extends TestClassRunner {
 			}
 		}
 
-		private Collection getParametersList() throws IllegalAccessException, InvocationTargetException, Exception {
+		private Collection<?> getParametersList() throws IllegalAccessException, InvocationTargetException, Exception {
 			return (Collection) getParametersMethod().invoke(null);
 		}
 		

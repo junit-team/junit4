@@ -38,7 +38,7 @@ public class JUnit4TestAdapter implements Test {
 	}
 
 	// reflective interface for Eclipse
-	public Class getTestClass() {
+	public Class<?> getTestClass() {
 		return fNewTestClass;
 	}
 	

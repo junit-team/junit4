@@ -205,9 +205,7 @@ public abstract class BaseTestRunner implements TestListener {
 	 * Returns the loaded Class for a suite name.
 	 */
 	protected Class<? extends TestCase> loadSuiteClass(String suiteClassName) throws ClassNotFoundException {
-		@SuppressWarnings("unchecked") 
-		Class<? extends TestCase> testClass = (Class<? extends TestCase>) Class.forName(suiteClassName);
-		return testClass;
+		return Class.forName(suiteClassName).asSubclass(TestCase.class);
 	}
 
 	/**

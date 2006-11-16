@@ -26,7 +26,7 @@ public class Suite extends TestClassRunner {
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.TYPE)
 	public @interface SuiteClasses {
-		public Class[] value();
+		public Class<?>[] value();
 	}
 
 	/**
@@ -38,24 +38,23 @@ public class Suite extends TestClassRunner {
 
 	// This won't work correctly in the face of concurrency. For that we need to
 	// add parameters to getRunner(), which would be much more complicated.
-	private static Set<Class> parents = new HashSet<Class>();
+	private static Set<Class<?>> parents = new HashSet<Class<?>>();
 	
-	private static Class addParent(Class parent) throws InitializationError {
+	private static Class<?> addParent(Class<?> parent) throws InitializationError {
 		if (!parents.add(parent))
 			throw new InitializationError(String.format("class '%s' (possibly indirectly) contains itself as a SuiteClass", parent.getName()));
 		return parent;
 	}
 	
-	protected Suite(Class<?> klass, Class[] annotatedClasses) throws InitializationError {
+	protected Suite(Class<?> klass, Class<?>[] annotatedClasses) throws InitializationError {
 		super(addParent(klass), Request.classes(klass.getName(), annotatedClasses).getRunner());
 		parents.remove(klass);
 	}
 
-	private static Class[] getAnnotatedClasses(Class<?> klass) throws InitializationError {
+	private static Class<?>[] getAnnotatedClasses(Class<?> klass) throws InitializationError {
 		SuiteClasses annotation= klass.getAnnotation(SuiteClasses.class);
 		if (annotation == null)
 			throw new InitializationError(String.format("class '%s' must have a SuiteClasses annotation", klass.getName()));
-		Class[] classes= annotation.value();
-		return classes;
+		return annotation.value();
 	}
 }

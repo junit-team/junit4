@@ -52,7 +52,7 @@ public abstract class Request {
 	 * @param classes the classes containing the tests
 	 * @return a <code>Request</code> that will cause all tests in the classes to be run
 	 */
-	public static Request classes(String collectionName, Class... classes) {
+	public static Request classes(String collectionName, Class<?>... classes) {
 		return new ClassesRequest(collectionName, classes);
 	}
 

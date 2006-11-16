@@ -59,7 +59,7 @@ public class TimeoutTest {
 
 	static public class TimeoutFailureTest {
 		@Test(timeout= 100) public void success() throws InterruptedException {			
-			Thread.sleep(200);
+			Thread.sleep(40000);
 		}
 	}
 	

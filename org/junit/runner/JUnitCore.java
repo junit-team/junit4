@@ -16,7 +16,7 @@ import org.junit.runner.notification.RunNotifier;
  * <code>java org.junit.runner.JUnitCore TestClass1 TestClass2 ...</code>.
  * For one-shot test runs, use the static method {@link #runClasses(Class[])}. 
  * If you want to add special listeners,
- * create an instance of {@link org.junit.tests.JUnitCoreTest} first and use it to run the tests.
+ * create an instance of {@link org.junit.runner.JUnitCore} first and use it to run the tests.
  * 
  * @see org.junit.runner.Result
  * @see org.junit.runner.notification.RunListener
@@ -56,7 +56,7 @@ public class JUnitCore {
 	 * @param classes Classes in which to find tests
 	 * @return a {@link Result} describing the details of the test run and the failed tests.
 	 */
-	public static Result runClasses(Class... classes) {
+	public static Result runClasses(Class<?>... classes) {
 		return new JUnitCore().run(classes);
 	}
 	
@@ -65,7 +65,7 @@ public class JUnitCore {
 	 */
 	public Result runMain(String... args) {
 		System.out.println("JUnit version " + Version.id());
-		List<Class> classes= new ArrayList<Class>();
+		List<Class<?>> classes= new ArrayList<Class<?>>();
 		List<Failure> missingClasses= new ArrayList<Failure>();
 		for (String each : args)
 			try {
@@ -96,7 +96,7 @@ public class JUnitCore {
 	 * @param classes the classes containing tests
 	 * @return a {@link Result} describing the details of the test run and the failed tests.
 	 */
-	public Result run(Class... classes) {
+	public Result run(Class<?>... classes) {
 		return run(Request.classes("All", classes));
 	}
 

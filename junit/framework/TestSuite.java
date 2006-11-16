@@ -79,9 +79,8 @@ public class TestSuite implements Test {
 	 * its argument or a no arg constructor.
 	 */
 	public static Constructor<? extends TestCase> getTestConstructor(Class<? extends TestCase> theClass) throws NoSuchMethodException {
-		Class[] args= { String.class };
 		try {
-			return theClass.getConstructor(args);	
+			return theClass.getConstructor(String.class);	
 		} catch (NoSuchMethodException e) {
 			// fall through
 		}
@@ -140,7 +139,7 @@ public class TestSuite implements Test {
 			return;
 		}
 
-		Class superClass= theClass;
+		Class<?> superClass= theClass;
 		List<String> names= new ArrayList<String>();
 		while (Test.class.isAssignableFrom(superClass)) {
 			for (Method each : superClass.getDeclaredMethods())
@@ -171,9 +170,9 @@ public class TestSuite implements Test {
 	 * Constructs a TestSuite from the given array of classes.  
 	 * @param classes {@link TestCase}s
 	 */
-	public TestSuite (Class<? extends TestCase>... classes) {
-		for (Class<? extends TestCase> each : classes)
-			addTest(new TestSuite(each));
+	public TestSuite (Class<?>... classes) {
+		for (Class<?> each : classes)
+			addTest(new TestSuite(each.asSubclass(TestCase.class)));
 	}
 	
 	/**
@@ -289,9 +288,9 @@ public class TestSuite implements Test {
 	 }
 	 
 	private boolean isTestMethod(Method m) {
-		String name= m.getName();
-		Class[] parameters= m.getParameterTypes();
-		Class returnType= m.getReturnType();
-		return parameters.length == 0 && name.startsWith("test") && returnType.equals(Void.TYPE);
+		return 
+			m.getParameterTypes().length == 0 && 
+			m.getName().startsWith("test") && 
+			m.getReturnType().equals(Void.TYPE);
 	 }
 }

@@ -22,7 +22,7 @@ public class TestIntrospector {
 
 	public List<Method> getTestMethods(Class<? extends Annotation> annotationClass) {
 		List<Method> results= new ArrayList<Method>();
-		for (Class eachClass : getSuperClasses(fTestClass)) {
+		for (Class<?> eachClass : getSuperClasses(fTestClass)) {
 			Method[] methods= eachClass.getDeclaredMethods();
 			for (Method eachMethod : methods) {
 				Annotation annotation= eachMethod.getAnnotation(annotationClass);
@@ -63,8 +63,8 @@ public class TestIntrospector {
 		return true;
 	}
 
-	private List<Class> getSuperClasses(Class< ?> testClass) {
-		ArrayList<Class> results= new ArrayList<Class>();
+	private List<Class<?>> getSuperClasses(Class< ?> testClass) {
+		ArrayList<Class<?>> results= new ArrayList<Class<?>>();
 		Class<?> current= testClass;
 		while (current != null) {
 			results.add(current);

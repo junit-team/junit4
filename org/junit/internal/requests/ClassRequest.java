@@ -17,12 +17,10 @@ public class ClassRequest extends Request {
 	
 	@Override
 	public Runner getRunner() {
-		Class runnerClass= getRunnerClass(fTestClass);
+		Class<? extends Runner> runnerClass= getRunnerClass(fTestClass);
 		try {
-			Constructor constructor= runnerClass.getConstructor(Class.class); // TODO good error message if no such constructor
-			Runner runner= (Runner) constructor
-					.newInstance(new Object[] { fTestClass });
-			return runner;
+			Constructor<? extends Runner> constructor= runnerClass.getConstructor(Class.class); // TODO good error message if no such constructor
+			return constructor.newInstance(new Object[] { fTestClass });
 		} catch (StackOverflowError e) {
 			throw new RuntimeException();
 		} catch (Exception e) {
@@ -30,7 +28,7 @@ public class ClassRequest extends Request {
 		} 
 	}
 
-	Class getRunnerClass(Class<?> testClass) {
+	Class<? extends Runner> getRunnerClass(Class<?> testClass) {
 		RunWith annotation= testClass.getAnnotation(RunWith.class);
 		if (annotation != null) {
 			return annotation.value();
