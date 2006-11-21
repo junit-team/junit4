@@ -1,6 +1,6 @@
 package org.junit.tests;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.List;
 
@@ -126,6 +126,20 @@ public class SuiteTest {
 	@Test public void whatHappensWhenASuiteContainsItselfIndirectly() {
 		Result result= JUnitCore.runClasses(Hydra.class);
 		assertEquals(2, result.getFailureCount());
+	}
+	
+	@RunWith(Suite.class)
+	@SuiteClasses( {})
+	public class WithoutDefaultConstructor {
+		public WithoutDefaultConstructor(int i) {
+
+		}
+	}
+	
+	@Test
+	public void suiteShouldBeOKwithNonDefaultConstructor() throws Exception {
+		Result result= JUnitCore.runClasses(WithoutDefaultConstructor.class);
+		assertTrue(result.wasSuccessful());
 	}
 	
 	public static junit.framework.Test suite() {

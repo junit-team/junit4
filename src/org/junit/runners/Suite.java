@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.internal.runners.InitializationError;
+import org.junit.internal.runners.MethodValidator;
 import org.junit.internal.runners.TestClassRunner;
 import org.junit.runner.Request;
 
@@ -56,5 +57,11 @@ public class Suite extends TestClassRunner {
 		if (annotation == null)
 			throw new InitializationError(String.format("class '%s' must have a SuiteClasses annotation", klass.getName()));
 		return annotation.value();
+	}
+	
+	@Override
+	protected void validate(MethodValidator methodValidator) {
+		methodValidator.validateStaticMethods();
+		methodValidator.validateInstanceMethods();
 	}
 }

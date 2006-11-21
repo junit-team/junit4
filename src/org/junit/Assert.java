@@ -160,6 +160,81 @@ public class Assert {
 	}
 
 	/**
+	 * Asserts that two longs are equal. If they are not
+	 * an {@link AssertionError} is thrown with the given message.
+	 */
+	static public void assertEquals(String message, long expected, long actual) {
+	    assertEquals(message, Long.valueOf(expected), Long.valueOf(actual));
+	}
+	
+	/**
+	 * Asserts that two longs are equal.
+	 */
+	static public void assertEquals(long expected, long actual) {
+	    assertEquals(null, expected, actual);
+	}
+	
+	/**
+	 * Asserts that two bytes are equal. If they are not
+	 * an {@link AssertionError} is thrown with the given message.
+	 */
+  	static public void assertEquals(String message, byte expected, byte actual) {
+		assertEquals(message, Byte.valueOf(expected), Byte.valueOf(actual));
+	}
+  	
+	/**
+   	 * Asserts that two bytes are equal.
+	 */
+	static public void assertEquals(byte expected, byte actual) {
+		assertEquals(null, expected, actual);
+	}
+	
+	/**
+	 * Asserts that two chars are equal. If they are not
+	 * an {@link AssertionError} is thrown with the given message.
+	 */
+  	static public void assertEquals(String message, char expected, char actual) {
+    		assertEquals(message, Character.valueOf(expected), Character.valueOf(actual));
+  	}
+  	
+	/**
+	 * Asserts that two chars are equal.
+	 */
+  	static public void assertEquals(char expected, char actual) {
+		assertEquals(null, expected, actual);
+	}
+  	
+	/**
+	 * Asserts that two shorts are equal. If they are not
+	 * an {@link AssertionError} is thrown with the given message.
+	 */
+	static public void assertEquals(String message, short expected, short actual) {
+    		assertEquals(message, Short.valueOf(expected), Short.valueOf(actual));
+	}
+	
+  	/**
+	 * Asserts that two shorts are equal.
+	 */
+	static public void assertEquals(short expected, short actual) {
+		assertEquals(null, expected, actual);
+	}
+	
+	/**
+	 * Asserts that two ints are equal. If they are not
+	 * an {@link AssertionError} is thrown with the given message.
+	 */
+  	static public void assertEquals(String message, int expected, int actual) {
+		assertEquals(message, Integer.valueOf(expected), Integer.valueOf(actual));
+  	}
+  	
+  	/**
+   	 * Asserts that two ints are equal.
+	 */
+  	static public void assertEquals(int expected, int actual) {
+  		assertEquals(null, expected, actual);
+	}
+	
+	/**
 	 * Asserts that two doubles are equal to within a positive delta. If they
 	 * are not, an {@link AssertionError} is thrown with the given message. If the
 	 * expected value is infinity then the delta value is ignored. NaNs are

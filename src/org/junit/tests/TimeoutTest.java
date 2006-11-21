@@ -89,6 +89,32 @@ public class TimeoutTest {
 		Throwable exception= result.getFailures().get(0).getException();
 		assertTrue(exception.getMessage().contains("test timed out after 100 milliseconds"));
 	}
+	
+	static public class ImpatientLoopTest {
+		@Test(timeout= 1) public void failure() {
+			infiniteLoop();
+		}
+
+		private void infiniteLoop() {
+			for(;;);
+		}
+	}
+	
+	
+	@Test public void infiniteLoopRunsForApproximatelyLengthOfTimeout() throws Exception {
+		long longTime= runAndTime(InfiniteLoopTest.class);
+		long shortTime= runAndTime(ImpatientLoopTest.class);
+		long difference= longTime - shortTime;
+		assertTrue(String.format("Difference was %sms", difference), difference < 200);
+	}
+
+	private long runAndTime(Class<?> clazz) {
+		JUnitCore core= new JUnitCore();
+		long startTime= System.currentTimeMillis();
+		core.run(clazz);
+		long totalTime = System.currentTimeMillis() - startTime;
+		return totalTime;
+	}
 
 	@Ignore("We would like this behavior to work but it may not be possible")
 	@Test public void stalledThreadAppearsInStackTrace() throws Exception {

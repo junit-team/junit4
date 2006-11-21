@@ -4,3 +4,7 @@
 2006 August 3
 	giovanni: better test for TestCase without a name.
 	Matthias Pfau: better error message when test case constructor fails
+	
+2006 November 21
+	dakcalouro: Found bug with comparing ints and longs (1555161)
+	Ben Maurer: Found bug with timeouts taking twice as long as specified (1536198)

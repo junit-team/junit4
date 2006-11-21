@@ -297,6 +297,23 @@ public class AssertionTest {
 		assertEquals(a1, a2);
 	}
 
+    @Test public void implicitTypecastEquality() {
+    	byte b = 1;
+    	short s = 1;
+    	int i = 1;
+    	long l = 1L;
+    	float f = 1.0f;
+    	double d = 1.0;
+    	
+        assertEquals(b, s);
+        assertEquals(b, i);
+        assertEquals(b, l);
+        assertEquals(s, i);
+        assertEquals(s, l);
+        assertEquals(i, l);
+        assertEquals(f, d, 0);
+    }
+	
 	static public junit.framework.Test suite() {
 		return new JUnit4TestAdapter(AssertionTest.class);
 	}

@@ -63,7 +63,7 @@ public class TestMethodRunner extends BeforeAndAfterRunner {
 					TimeUnit.MILLISECONDS);
 			if (!terminated)
 				service.shutdownNow();
-			result.get(timeout, TimeUnit.MILLISECONDS); // throws the exception if one occurred during the invocation
+			result.get(0, TimeUnit.MILLISECONDS); // throws the exception if one occurred during the invocation
 		} catch (TimeoutException e) {
 			addFailure(new Exception(String.format("test timed out after %d milliseconds", timeout)));
 		} catch (Exception e) {
