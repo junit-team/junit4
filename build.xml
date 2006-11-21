@@ -1,10 +1,13 @@
 <project name="junit" default="dist" basedir=".">
 	<property file="${user.home}/.junit.properties" />
+	<property name="src" value="src" />
+	<property name="bin" value="bin" />
 	<property name="version" value="4.2" />
 	<property name="dist"  value="junit${version}" />
-	<property name="versionfile"  value="junit/runner/Version.java" />
+	<property name="versionfile"  value="${src}/junit/runner/Version.java" />
 	<property name="zipfile"  value="${dist}.zip" />
-	<property name="unjarred" value="**/*.jar, **/junit/tests/**, **/junit/samples/**, doc/**, README.html, .classpath, .project, cpl-v10.html" />
+	<property name="testfiles" value="junit/samples/**, junit/tests/**" />
+	<property name="unjarred" value="**/*.jar, ${testfiles}, doc/**, README.html, .classpath, .project, cpl-v10.html" />
 	<property name="jarfile" value="junit-${version}.jar" />
 	
 	<target name="init">
@@ -23,8 +26,8 @@
 
 	<target name="build" depends="versiontag">
 		<javac 
-			srcdir="."
-			destdir="."
+			srcdir="${src}"
+			destdir="${bin}"
 			debug="on"
   		>	
                   <compilerarg value="-Xlint:unchecked" />
@@ -33,7 +36,8 @@
 
         <target name="distributeTestsAndExamples">
         	<copy todir="${dist}/${dir}">
-                	<fileset dir="${dir}" includes="junit/samples/**, junit/tests/**" />
+                	<fileset dir="${bin}/${dir}" includes="${testfiles}" />
+                	<fileset dir="${src}/${dir}" includes="${testfiles}" />
                 </copy>
         </target>
 
@@ -42,12 +46,12 @@
 		<mkdir dir="${dist}" />
 		<jar 
 			jarfile="${dist}/junit-${version}-src.jar"
-			basedir="."
+			basedir="${src}"
 			excludes="${unjarred}, **/*.class"
 		/>
 		<jar 
 			jarfile="${dist}/${jarfile}"
-			basedir="."
+			basedir="${bin}"
 			excludes="${unjarred}, **/*.java, build.xml"
 		/>
                 <antcall target="distributeTestsAndExamples">
@@ -59,7 +63,7 @@
 
 		<mkdir dir="${dist}/javadoc" />
 		<javadoc 
-			sourcepath="."
+			sourcepath="${src}"
 			packagenames="org.junit, org.junit.runner, org.junit.runner.description, org.junit.runner.manipulation, org.junit.runner.notification, org.junit.runners"
 			destdir="${dist}/javadoc"
 			author="false"
