@@ -25,6 +25,7 @@
 	</target>
 
 	<target name="build" depends="versiontag">
+		<mkdir dir="${bin}"/>
 		<javac 
 			srcdir="${src}"
 			destdir="${bin}"
