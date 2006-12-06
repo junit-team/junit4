@@ -59,9 +59,4 @@ public class AllTestsTest {
 		AllTests tests= new AllTests(AllJUnit4.class);
 		assertEquals(1, tests.testCount());
 	}
-
-	static public junit.framework.Test suite() {
-		return new JUnit4TestAdapter(AllTestsTest.class);
-	}
-
 }

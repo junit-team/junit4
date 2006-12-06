@@ -3,7 +3,6 @@ package org.junit.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import junit.framework.JUnit4TestAdapter;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -55,10 +54,5 @@ public class ExpectedTest {
 	}
 	@Test public void expectsSuperclass() {
 		assertTrue(new JUnitCore().run(ExpectSuperclass.class).wasSuccessful());
-	}
-	
-	
-	public static junit.framework.Test suite() {
-		return new JUnit4TestAdapter(ExpectedTest.class);
 	}
 }

@@ -1,14 +1,13 @@
 package org.junit.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class JUnitCoreTest {
 	
@@ -44,9 +43,4 @@ public class JUnitCoreTest {
 		while((input.read()) != -1); 
 		assertEquals(returnCode, process.waitFor());
 	}
-
-	public static junit.framework.Test suite() {
-		return new JUnit4TestAdapter(JUnitCoreTest.class);
-	}
-
 }

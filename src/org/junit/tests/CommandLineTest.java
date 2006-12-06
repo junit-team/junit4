@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import junit.framework.JUnit4TestAdapter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,9 +63,4 @@ public class CommandLineTest {
 		JUnitCore.runClasses(Count.class, Count.class);
 		assertEquals(2, fCount);		
 	}
-
-	static public junit.framework.Test suite() {
-		return new JUnit4TestAdapter(CommandLineTest.class);
-	}
-
 }

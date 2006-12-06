@@ -39,6 +39,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	OldTestClassRunnerTest.class,
 	JUnitCoreTest.class,
 	InaccessibleBaseClassTest.class,
+//	SuiteMethodTest.class,
 	TestClassMethodsRunnerTest.class
 })
 public class AllTests {	

@@ -2,7 +2,6 @@ package org.junit.tests;
 
 
 import static org.junit.Assert.assertEquals;
-import junit.framework.JUnit4TestAdapter;
 import junit.framework.TestCase;
 import org.junit.Test;
 import org.junit.runner.Description;
@@ -35,9 +34,5 @@ public class PreJUnit4TestCaseRunnerTest {
 		Result result= runner.run(OneTest.class);
 		assertEquals(1, count);
 		assertEquals(1, result.getRunCount());
-	}
-	
-	public static junit.framework.Test suite() {
-		return (new JUnit4TestAdapter(PreJUnit4TestCaseRunnerTest.class));
 	}
 }

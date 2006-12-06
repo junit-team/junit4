@@ -2,13 +2,12 @@ package org.junit.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
-import junit.framework.JUnit4TestAdapter;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
-import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.RunListener;
 
 public class TestListenerTest {
 	
@@ -61,9 +60,4 @@ public class TestListenerTest {
 		Result second= core.run(OneTest.class);
 		assertNotSame(first, second);
 	}
-	
-	public static junit.framework.Test suite() {
-		return new JUnit4TestAdapter(TestListenerTest.class);
-	}
-
 }

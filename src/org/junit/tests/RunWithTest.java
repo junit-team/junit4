@@ -1,7 +1,6 @@
 package org.junit.tests;
 
 import static org.junit.Assert.assertTrue;
-import junit.framework.JUnit4TestAdapter;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
@@ -57,10 +56,5 @@ public class RunWithTest {
 
 		JUnitCore.runClasses(SubExampleTest.class);
 		assertTrue(log.contains("run"));
-	}
-
-	
-	public static junit.framework.Test suite() {
-		return new JUnit4TestAdapter(RunWithTest.class);
 	}
 }

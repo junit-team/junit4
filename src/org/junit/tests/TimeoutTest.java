@@ -134,8 +134,4 @@ public class TimeoutTest {
 		new JUnit4TestAdapter(InfiniteLoopTest.class).run(result);
 		assertEquals(1, result.errorCount());
 	}
-	
-	static public junit.framework.Test suite() {
-		return new JUnit4TestAdapter(TimeoutTest.class);
-	}
 }

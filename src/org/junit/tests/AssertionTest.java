@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
-import junit.framework.JUnit4TestAdapter;
 import org.junit.Assert;
 import org.junit.ComparisonFailure;
 import org.junit.Test;
@@ -313,8 +312,4 @@ public class AssertionTest {
         assertEquals(i, l);
         assertEquals(f, d, 0);
     }
-	
-	static public junit.framework.Test suite() {
-		return new JUnit4TestAdapter(AssertionTest.class);
-	}
 }

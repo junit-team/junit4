@@ -2,7 +2,6 @@ package org.junit.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import junit.framework.JUnit4TestAdapter;
 import junit.framework.TestCase;
 import org.junit.Test;
 import org.junit.runner.Description;
@@ -66,9 +65,5 @@ public class RunnerTest {
 		runner.addListener(listener);
 		runner.run(NewExample.class);
 		assertTrue(wasRun);
-	}
-	
-	public static junit.framework.Test suite() {
-		return new JUnit4TestAdapter(RunnerTest.class);
 	}
 }

@@ -1,6 +1,7 @@
 package org.junit.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -140,9 +141,5 @@ public class SuiteTest {
 	public void suiteShouldBeOKwithNonDefaultConstructor() throws Exception {
 		Result result= JUnitCore.runClasses(WithoutDefaultConstructor.class);
 		assertTrue(result.wasSuccessful());
-	}
-	
-	public static junit.framework.Test suite() {
-		return new JUnit4TestAdapter(SuiteTest.class);
 	}
 }

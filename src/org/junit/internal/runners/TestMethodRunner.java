@@ -12,8 +12,8 @@ import java.util.concurrent.TimeoutException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.Description;
-import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.RunNotifier;
 
 public class TestMethodRunner extends BeforeAndAfterRunner {
 	private final Object fTest;

@@ -9,8 +9,8 @@ import org.junit.runner.manipulation.Filterable;
 import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
-import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.RunNotifier;
 
 public class TestClassRunner extends Runner implements Filterable, Sortable {
 	protected final Runner fEnclosedRunner;

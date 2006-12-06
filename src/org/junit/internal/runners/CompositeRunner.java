@@ -32,9 +32,8 @@ public class CompositeRunner extends Runner implements Filterable, Sortable {
 	@Override
 	public Description getDescription() {
 		Description spec= Description.createSuiteDescription(fName);
-		for (Runner runner : fRunners) {
+		for (Runner runner : fRunners)
 			spec.addChild(runner.getDescription());
-		}
 		return spec;
 	}
 
@@ -53,11 +52,10 @@ public class CompositeRunner extends Runner implements Filterable, Sortable {
 	public void filter(Filter filter) throws NoTestsRemainException {
 		for (Iterator<Runner> iter= fRunners.iterator(); iter.hasNext();) {
 			Runner runner= iter.next();
-			if (filter.shouldRun(runner.getDescription())) {
+			if (filter.shouldRun(runner.getDescription()))
 				filter.apply(runner);
-			} else {
+			else
 				iter.remove();
-			}
 		}
 	}
 
@@ -71,8 +69,7 @@ public class CompositeRunner extends Runner implements Filterable, Sortable {
 				return sorter.compare(o1.getDescription(), o2.getDescription());
 			}
 		});
-		for (Runner each : fRunners) {
+		for (Runner each : fRunners)
 			sorter.apply(each);
-		}
 	}
 }

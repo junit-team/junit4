@@ -4,6 +4,7 @@ package junit.textui;
 import java.io.PrintStream;
 import java.text.NumberFormat;
 import java.util.Enumeration;
+
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestFailure;

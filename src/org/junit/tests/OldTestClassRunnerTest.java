@@ -1,7 +1,6 @@
 package org.junit.tests;
 
 import static org.junit.Assert.assertEquals;
-
 import junit.extensions.TestDecorator;
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.TestCase;

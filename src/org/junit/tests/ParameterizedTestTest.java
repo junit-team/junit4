@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
-import junit.framework.JUnit4TestAdapter;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -168,9 +167,5 @@ public class ParameterizedTestTest {
 		Result result= JUnitCore.runClasses(WrongElementType.class);
 		String expected= String.format("%s.data() must return a Collection of arrays.", WrongElementType.class.getName());
 		assertEquals(expected, result.getFailures().get(0).getMessage());
-	}
-	
-	static public junit.framework.Test suite() {
-		return new JUnit4TestAdapter(ParameterizedTestTest.class);
 	}
 }

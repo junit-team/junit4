@@ -1,5 +1,7 @@
 package org.junit.tests;
 
+import static org.junit.Assert.assertEquals;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -12,8 +14,6 @@ import org.junit.internal.runners.TestMethodRunner;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunNotifier;
-
-import static org.junit.Assert.*;
 
 // TODO: better factoring here
 public class CustomRunnerTest {

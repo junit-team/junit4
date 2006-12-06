@@ -2,8 +2,8 @@ package org.junit.internal.runners;
 
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
-import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.RunNotifier;
 
 public class ErrorReportingRunner extends Runner {
 	private final Description fDescription;

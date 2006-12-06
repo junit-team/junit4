@@ -9,9 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.junit.runner.Description;
+import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
-import org.junit.runner.notification.Failure;
 
 public class JUnit4TestAdapterCache extends HashMap<Description, Test> {
 	private static final long serialVersionUID = 1L;

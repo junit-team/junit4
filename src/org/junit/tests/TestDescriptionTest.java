@@ -1,8 +1,8 @@
 package org.junit.tests;
 
+import static org.junit.Assert.assertFalse;
 import org.junit.Test;
 import org.junit.runner.Description;
-import static org.junit.Assert.assertFalse;
 
 public class TestDescriptionTest {
 	@Test public void equalsIsFalseForNonTestDescription() {

@@ -124,8 +124,4 @@ public class TestMethodTest {
 		List<Throwable> errors= validator.validateAllMethods();
 		assertEquals(1, errors.size());
 	}
-	
-	public static junit.framework.Test suite() {
-		return new JUnit4TestAdapter(TestMethodTest.class);
-	}
 }

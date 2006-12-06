@@ -55,6 +55,7 @@ public class RepeatedTestTest extends TestCase {
  		try {
 			new RepeatedTest(fSuite, -1);
  		} catch (IllegalArgumentException e) {
+ 			assertTrue(e.getMessage().contains(">="));
  			return;
  		}
  		fail("Should throw an IllegalArgumentException");
