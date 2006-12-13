@@ -21,7 +21,7 @@ public class JUnit4TestAdapter implements Test {
 			JUnit4TestAdapterCache cache) {
 		fCache = cache;
 		fNewTestClass = newTestClass;
-		fRunner = Request.aClass(newTestClass).getRunner();
+		fRunner = Request.classWithoutSuiteMethod(newTestClass).getRunner();
 	}
 
 	public int countTestCases() {

@@ -111,4 +111,8 @@ public abstract class Request {
 	public Request sortWith(Comparator<Description> comparator) {
 		return new SortingRequest(this, comparator);
 	}
+
+	public static Request classWithoutSuiteMethod(Class<?> newTestClass) {
+		return new ClassRequest(newTestClass, false);
+	}
 }
