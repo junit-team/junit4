@@ -10,7 +10,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
 	ListenerTest.class,
 	FailedConstructionTest.class,
-	CustomRunnerTest.class,
+	MixInTest.class,
 	TestDescriptionTest.class,
 	SuiteDescriptionTest.class,
 	AllTestsTest.class,

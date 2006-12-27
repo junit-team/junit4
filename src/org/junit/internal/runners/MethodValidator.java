@@ -57,14 +57,15 @@ public class MethodValidator {
 	}
 
 	private void validateTestMethods(Class<? extends Annotation> annotation,
-			boolean isStatic) {
+			boolean shouldBeStatic) {
 		List<Method> methods= fIntrospector.getTestMethods(annotation);
 		for (Method each : methods) {
-			if (Modifier.isStatic(each.getModifiers()) != isStatic) {
-				String state= isStatic ? "should" : "should not";
+			if (shouldBeStatic && !isStatic(each))
 				fErrors.add(new Exception("Method " + each.getName() + "() "
-						+ state + " be static"));
-			}
+						+ "should be static"));
+			if (!shouldBeStatic && runsAsStatic(each))
+				fErrors.add(new Exception("Method " + each.getName() + "() "
+						+ "should not be static"));
 			if (!Modifier.isPublic(each.getDeclaringClass().getModifiers()))
 				fErrors.add(new Exception("Class " + each.getDeclaringClass().getName()
 						+ " should be public"));
@@ -74,9 +75,24 @@ public class MethodValidator {
 			if (each.getReturnType() != Void.TYPE)
 				fErrors.add(new Exception("Method " + each.getName()
 						+ " should be void"));
-			if (each.getParameterTypes().length != 0)
+			if (effectiveParameterCount(each, shouldBeStatic) != 0)
 				fErrors.add(new Exception("Method " + each.getName()
 						+ " should have no parameters"));
 		}
+	}
+
+	private int effectiveParameterCount(Method method, boolean shouldBeStatic) {
+		int rawLength= method.getParameterTypes().length;
+		if (!shouldBeStatic && isStatic(method) && rawLength > 0)
+			return rawLength - 1;
+		return rawLength;
+	}
+
+	private boolean runsAsStatic(Method method) {
+		return isStatic(method) && !(method.getParameterTypes().length == 1);
+	}
+
+	private boolean isStatic(Method method) {
+		return Modifier.isStatic(method.getModifiers());
 	}
 }

@@ -120,7 +120,7 @@ public class Parameterized extends TestClassRunner {
 		}
 
 		private Collection<?> getParametersList() throws IllegalAccessException, InvocationTargetException, Exception {
-			return (Collection) getParametersMethod().invoke(null);
+			return (Collection<?>) getParametersMethod().invoke(null);
 		}
 		
 		private Method getParametersMethod() throws Exception {
