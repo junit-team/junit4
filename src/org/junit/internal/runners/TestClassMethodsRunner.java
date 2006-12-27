@@ -17,28 +17,33 @@ import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.MethodRunner;
 
-public class TestClassMethodsRunner extends Runner implements Filterable, Sortable {
+public class TestClassMethodsRunner extends Runner implements Filterable,
+		Sortable {
 	private final List<Method> fTestMethods;
+
 	private final Class<?> fTestClass;
 
-	// This assumes that some containing runner will perform validation of the test methods	
+	// This assumes that some containing runner will perform validation of the
+	// test methods
 	public TestClassMethodsRunner(Class<?> klass) {
 		fTestClass= klass;
-		fTestMethods= new TestIntrospector(getTestClass()).getTestMethods(Test.class);
+		fTestMethods= new TestIntrospector(getTestClass())
+				.getTestMethods(Test.class);
 	}
-	
+
 	@Override
 	public void run(RunNotifier notifier) {
 		if (fTestMethods.isEmpty())
-			testAborted(notifier, getDescription(), new Exception("No runnable methods"));
+			testAborted(notifier, getDescription(), new Exception(
+					"No runnable methods"));
 		for (Method method : fTestMethods)
 			invokeTestMethod(method, notifier);
 	}
 
-	private void testAborted(RunNotifier notifier, Description description, Throwable cause) {
-		// TODO: duped!
-		// TODO: envious
+	private void testAborted(RunNotifier notifier, Description description,
+			Throwable cause) {
 		notifier.fireTestStarted(description);
 		notifier.fireTestFailure(new Failure(description, cause));
 		notifier.fireTestFinished(description);
@@ -49,14 +54,14 @@ public class TestClassMethodsRunner extends Runner implements Filterable, Sortab
 		Description spec= Description.createSuiteDescription(getName());
 		List<Method> testMethods= fTestMethods;
 		for (Method method : testMethods)
-				spec.addChild(methodDescription(method));
+			spec.addChild(methodDescription(method));
 		return spec;
 	}
 
 	protected String getName() {
 		return getTestClass().getName();
 	}
-	
+
 	protected Object createTest() throws Exception {
 		return getTestClass().getConstructor().newInstance();
 	}
@@ -66,17 +71,38 @@ public class TestClassMethodsRunner extends Runner implements Filterable, Sortab
 		try {
 			test= createTest();
 		} catch (InvocationTargetException e) {
-			testAborted(notifier, methodDescription(method), e.getCause());
-			return;			
-		} catch (Exception e) {
-			testAborted(notifier, methodDescription(method), e);
+			testAborted(notifier, method, e.getCause());
+			return;
+		} catch (Throwable e) {
+			testAborted(notifier, method, e);
 			return;
 		}
-		createMethodRunner(test, method, notifier).run();
+
+		TestMethod testMethod= new TestMethod(test, method,
+				methodDescription(method));
+		try {
+			MethodRunner runner= testMethod.findCustomRunner(this);
+			if (runner == null)
+				createMethodRunner(test, method, notifier).run();
+			else {
+				runner.run(testMethod, notifier);
+			}
+		} catch (Exception e) {
+			Throwable exception= new RuntimeException(
+					"Exception creating custom method runner", e);
+			testAborted(notifier, method, exception);
+		}
 	}
 
-	protected TestMethodRunner createMethodRunner(Object test, Method method, RunNotifier notifier) {
-		return new TestMethodRunner(test, method, notifier, methodDescription(method));
+	private void testAborted(RunNotifier notifier, Method method,
+			Throwable cause) {
+		testAborted(notifier, methodDescription(method), cause);
+	}
+
+	protected TestMethodRunner createMethodRunner(Object test, Method method,
+			RunNotifier notifier) {
+		return new TestMethodRunner(test, method, notifier,
+				methodDescription(method));
 	}
 
 	protected String testName(Method method) {
@@ -84,7 +110,8 @@ public class TestClassMethodsRunner extends Runner implements Filterable, Sortab
 	}
 
 	protected Description methodDescription(Method method) {
-		return Description.createTestDescription(getTestClass(), testName(method));
+		return Description.createTestDescription(getTestClass(),
+				testName(method));
 	}
 
 	public void filter(Filter filter) throws NoTestsRemainException {
@@ -100,7 +127,8 @@ public class TestClassMethodsRunner extends Runner implements Filterable, Sortab
 	public void sort(final Sorter sorter) {
 		Collections.sort(fTestMethods, new Comparator<Method>() {
 			public int compare(Method o1, Method o2) {
-				return sorter.compare(methodDescription(o1), methodDescription(o2));
+				return sorter.compare(methodDescription(o1),
+						methodDescription(o2));
 			}
 		});
 	}

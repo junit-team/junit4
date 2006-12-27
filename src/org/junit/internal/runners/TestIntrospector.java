@@ -11,6 +11,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.Test.None;
+import org.junit.runners.Replaces;
 
 public class TestIntrospector {
 	private static class MethodCollector {
@@ -24,21 +25,36 @@ public class TestIntrospector {
 
 		public MethodCollector addMethods(Class<?> testClass) {
 			for (Method eachMethod : testClass.getDeclaredMethods()) {
-				Annotation annotation= eachMethod
-						.getAnnotation(annotationClass);
-				if (annotation != null && !isShadowed(eachMethod))
+				if (hasAnnotation(eachMethod) && !isShadowed(eachMethod))
 					methods.add(eachMethod);
 			}
-			
-			addSuperclasses(testClass);			
+
+			addSuperclasses(testClass);
 			addMixins(testClass);
 			return this;
+		}
+
+		private boolean hasAnnotation(Method method) {
+			return method.getAnnotation(annotationClass) != null
+					|| hasReplacementAnnotation(method);
+		}
+
+		private boolean hasReplacementAnnotation(Method method) {
+			Annotation[] annotations= method.getAnnotations();
+			for (Annotation annotation : annotations) {
+				Replaces replaces= annotation.annotationType().getAnnotation(
+						Replaces.class);
+				if (replaces != null
+						&& replaces.value().equals(annotationClass))
+					return true;
+			}
+			return false;
 		}
 
 		private void addMixins(Class<?> testClass) {
 			MixIn mixins= testClass.getAnnotation(MixIn.class);
 			if (mixins != null)
-				for (Class<?> type : mixins.value())					
+				for (Class<?> type : mixins.value())
 					addMethods(type);
 		}
 
@@ -90,8 +106,8 @@ public class TestIntrospector {
 		return results;
 	}
 
-	public boolean isIgnored(Method eachMethod) {
-		return eachMethod.getAnnotation(Ignore.class) != null;
+	public boolean isIgnored(Method method) {
+		return method.getAnnotation(Ignore.class) != null;
 	}
 
 	private boolean runsTopToBottom(Class<? extends Annotation> annotation) {
@@ -101,12 +117,15 @@ public class TestIntrospector {
 
 	long getTimeout(Method method) {
 		Test annotation= method.getAnnotation(Test.class);
-		long timeout= annotation.timeout();
-		return timeout;
+		if (annotation == null)
+			return 0;
+		return annotation.timeout();
 	}
 
 	Class<? extends Throwable> expectedException(Method method) {
 		Test annotation= method.getAnnotation(Test.class);
+		if (annotation == null)
+			return null;
 		if (annotation.expected() == None.class)
 			return null;
 		else
