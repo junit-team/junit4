@@ -3,7 +3,6 @@ package org.junit.internal.runners;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.List;
 
 public abstract class BeforeAndAfterRunner {
@@ -72,12 +71,6 @@ public abstract class BeforeAndAfterRunner {
 	}
 	
 	private void invokeMethod(Method method) throws Exception {
-		if (Modifier.isStatic(method.getModifiers()))
-			if (method.getParameterTypes().length > 0)
-				method.invoke(null, fTest);
-			else
-				method.invoke(null);
-		else
-			method.invoke(fTest);
+		method.invoke(fTest);
 	}
 }

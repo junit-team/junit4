@@ -2,6 +2,7 @@ package org.junit.internal.requests;
 
 import java.lang.reflect.Constructor;
 
+import org.junit.Ignore;
 import org.junit.internal.runners.OldTestClassRunner;
 import org.junit.internal.runners.TestClassRunner;
 import org.junit.runner.Request;
@@ -35,7 +36,9 @@ public class ClassRequest extends Request {
 		} 
 	}
 
-	Class<? extends Runner> getRunnerClass(Class<?> testClass) {
+	Class<? extends Runner> getRunnerClass(final Class<?> testClass) {
+		if (testClass.getAnnotation(Ignore.class) != null)
+			return new IgnoredClassRunner(testClass).getClass();
 		RunWith annotation= testClass.getAnnotation(RunWith.class);
 		if (annotation != null) {
 			return annotation.value();

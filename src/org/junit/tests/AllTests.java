@@ -8,10 +8,9 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	CustomMethodRunnerTest.class,
 	ListenerTest.class,
 	FailedConstructionTest.class,
-	MixInTest.class,
+	// TODO: What did CVS do with this?  CustomRunnerTest.class,
 	TestDescriptionTest.class,
 	SuiteDescriptionTest.class,
 	AllTestsTest.class,
@@ -41,7 +40,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	JUnitCoreTest.class,
 	InaccessibleBaseClassTest.class,
 	SuiteMethodTest.class,
-	TestClassMethodsRunnerTest.class
+	TestClassMethodsRunnerTest.class,
+	IgnoreClassTest.class,
 })
 public class AllTests {	
 //	public static class Compatibility {

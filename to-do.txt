@@ -1,3 +1,6 @@
+* What happened to CustomRunnerTest?
+* assertArrayEquals(double[], double[], double) and assertArrayEquals(float[], float[], float)
+
 * update documentation
 	* new cook's tour
 	* update Test Infected

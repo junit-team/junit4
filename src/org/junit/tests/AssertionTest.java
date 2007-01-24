@@ -1,6 +1,7 @@
 package org.junit.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
@@ -25,16 +26,16 @@ public class AssertionTest {
 	}
 	
 	@Test(expected= AssertionError.class) public void arraysNotEqual() {
-		assertEquals(new Object[] {new Object()}, new Object[] {new Object()});
+		assertArrayEquals((new Object[] {new Object()}), (new Object[] {new Object()}));
 	}
 	
 	@Test(expected= AssertionError.class) public void arraysNotEqualWithMessage() {
-		assertEquals("not equal", new Object[] {new Object()}, new Object[] {new Object()});
+		assertArrayEquals("not equal", (new Object[] {new Object()}), (new Object[] {new Object()}));
 	}
 	
 	@Test public void arraysExpectedNullMessage() {
 		try {
-			assertEquals("not equal", null, new Object[] {new Object()});
+			assertArrayEquals("not equal", null, (new Object[] {new Object()}));
 		} catch (AssertionError exception) {
 			assertEquals("not equal: expected array was null", exception.getMessage());
 		}
@@ -42,7 +43,7 @@ public class AssertionTest {
 	
 	@Test public void arraysActualNullMessage() {
 		try {
-			assertEquals("not equal", new Object[] {new Object()}, null);
+			assertArrayEquals("not equal", (new Object[] {new Object()}), null);
 		} catch (AssertionError exception) {
 			assertEquals("not equal: actual array was null", exception.getMessage());
 		}
@@ -50,19 +51,19 @@ public class AssertionTest {
 	
 	@Test public void arraysDifferentLengthMessage() {
 		try {
-			assertEquals("not equal", new Object[0] , new Object[1]);
+			assertArrayEquals("not equal", (new Object[0]), (new Object[1]));
 		} catch (AssertionError exception) {
 			assertEquals("not equal: array lengths differed, expected.length=0 actual.length=1", exception.getMessage());
 		}
 	}
 	
 	@Test(expected=ArrayComparisonFailure.class) public void arraysElementsDiffer() {
-		assertEquals("not equal", new Object[] {"this is a very long string in the middle of an array"} , new Object[] {"this is another very long string in the middle of an array"});
+		assertArrayEquals("not equal", (new Object[] {"this is a very long string in the middle of an array"}), (new Object[] {"this is another very long string in the middle of an array"}));
 	}
 
     @Test public void arraysDifferAtElement0nullMessage() {
 		try {
-			assertEquals(new Object[] { true }, new Object[] { false });
+			assertArrayEquals((new Object[] { true }), (new Object[] { false }));
 		} catch (AssertionError exception) {
 			assertEquals("arrays first differed at element [0]; expected:<true> but was:<false>", exception
 					.getMessage());
@@ -71,8 +72,8 @@ public class AssertionTest {
 
 	@Test public void arraysDifferAtElement1nullMessage() {
 		try {
-			assertEquals(new Object[] { true, true }, new Object[] { true,
-					false });
+			assertArrayEquals((new Object[] { true, true }), (new Object[] { true,
+			false }));
 		} catch (AssertionError exception) {
 			assertEquals("arrays first differed at element [1]; expected:<true> but was:<false>", exception
 					.getMessage());
@@ -81,7 +82,7 @@ public class AssertionTest {
 	
     @Test public void arraysDifferAtElement0withMessage() {
 		try {
-			assertEquals("message", new Object[] { true }, new Object[] { false });
+			assertArrayEquals("message", (new Object[] { true }), (new Object[] { false }));
 		} catch (AssertionError exception) {
 			assertEquals("message: arrays first differed at element [0]; expected:<true> but was:<false>", exception
 					.getMessage());
@@ -90,7 +91,7 @@ public class AssertionTest {
 
 	@Test public void arraysDifferAtElement1withMessage() {
 		try {
-			assertEquals("message", new Object[] {true, true}, new Object[] {true, false});
+			assertArrayEquals("message", (new Object[] {true, true}), (new Object[] {true, false}));
 			fail();
 		} catch (AssertionError exception) {
 			assertEquals("message: arrays first differed at element [1]; expected:<true> but was:<false>", exception.getMessage());
@@ -98,16 +99,43 @@ public class AssertionTest {
 	}
 	
 	@Test public void multiDimensionalArraysAreEqual() {
-		assertEquals(new Object[][]{{true, true}, {false, false}}, new Object[][]{{true, true}, {false, false}});
+		assertArrayEquals((new Object[][]{{true, true}, {false, false}}), (new Object[][]{{true, true}, {false, false}}));
+	}
+
+	@Test
+	public void multiDimensionalIntArraysAreEqual() {
+		int[][] int1= { { 1, 2, 3 }, { 4, 5, 6 } };
+		int[][] int2= { { 1, 2, 3 }, { 4, 5, 6 } };
+		assertArrayEquals(int1, int2);
+	}
+
+	@Test
+	public void oneDimensionalPrimitiveArraysAreEqual() {
+		assertArrayEquals(new byte[] {1}, new byte[] {1});
+		assertArrayEquals(new char[] {1}, new char[] {1});
+		assertArrayEquals(new short[] {1}, new short[] {1});
+		assertArrayEquals(new int[] {1}, new int[] {1});
+		assertArrayEquals(new long[] {1}, new long[] {1});
+	}
+	
+	@Test
+	public void arraysContainingIntsAreEqualToArraysContainingLongs() {
+		Object[] int1= { 1, 2, 3 };
+		Object[] int2= { 1L, 2L, 3L };
+		assertArrayEquals(int1, int2);
+	}
+	
+	@Test public void intsEqualLongs() {
+		assertEquals(1, 1L);
 	}
 	
 	@Test public void multiDimensionalArraysDeclaredAsOneDimensionalAreEqual() {
-		assertEquals(new Object[]{new Object[] {true, true}, new Object[] {false, false}}, new Object[]{new Object[] {true, true}, new Object[] {false, false}});
+		assertArrayEquals((new Object[]{new Object[] {true, true}, new Object[] {false, false}}), (new Object[]{new Object[] {true, true}, new Object[] {false, false}}));
 	}
 	
 	@Test public void multiDimensionalArraysAreNotEqual() {
 		try {
-			assertEquals("message", new Object[][]{{true, true}, {false, false}}, new Object[][]{{true, true}, {true, false}});
+			assertArrayEquals("message", (new Object[][]{{true, true}, {false, false}}), (new Object[][]{{true, true}, {true, false}}));
 			fail();
 		} catch (AssertionError exception) {
 			assertEquals("message: arrays first differed at element [1][0]; expected:<false> but was:<true>", exception.getMessage());
@@ -116,7 +144,7 @@ public class AssertionTest {
 			
 	@Test public void multiDimensionalArraysAreNotEqualNoMessage() {
 		try {
-			assertEquals(new Object[][]{{true, true}, {false, false}}, new Object[][]{{true, true}, {true, false}});
+			assertArrayEquals((new Object[][]{{true, true}, {false, false}}), (new Object[][]{{true, true}, {true, false}}));
 			fail();
 		} catch (AssertionError exception) {
 			assertEquals("arrays first differed at element [1][0]; expected:<false> but was:<true>", exception.getMessage());
@@ -135,14 +163,14 @@ public class AssertionTest {
 		Object element= new Object();
 		Object[] objects1= new Object[] {element};
 		Object[] objects2= new Object[] {element};
-		assertEquals(objects1, objects2);
+		assertArrayEquals(objects1, objects2);
 	}
 	
 	@Test public void arraysEqualWithMessage() {
 		Object element= new Object();
 		Object[] objects1= new Object[] {element};
 		Object[] objects2= new Object[] {element};
-		assertEquals("equal", objects1, objects2);
+		assertArrayEquals("equal", objects1, objects2);
 	}
 	
 	@Test public void equals() {
