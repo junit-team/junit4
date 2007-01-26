@@ -41,12 +41,10 @@ import org.junit.runners.Suite.SuiteClasses;
 	InaccessibleBaseClassTest.class,
 	SuiteMethodTest.class,
 	TestClassMethodsRunnerTest.class,
-	IgnoreClassTest.class,
+	IgnoreClassTest.class
 })
-public class AllTests {	
-//	public static class Compatibility {
-		public static Test suite() {
-			return new JUnit4TestAdapter(AllTests.class);
-		}
-//	}
+public class AllTests {
+	public static Test suite() {
+		return new JUnit4TestAdapter(AllTests.class);
+	}
 }
