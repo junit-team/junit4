@@ -20,6 +20,11 @@ import org.junit.internal.runners.OldTestClassRunner;
  * </pre>
  */
 public class AllTests extends OldTestClassRunner {
+	@SuppressWarnings("unchecked")
+	public AllTests(Class<?> klass) throws Throwable {
+		super(suite(klass));
+	}
+
 	private static Test suite(Class<?> klass) throws Throwable {
 		Method suiteMethod= null;
 		Test suite= null;
@@ -33,10 +38,5 @@ public class AllTests extends OldTestClassRunner {
 			throw e.getCause();
 		}
 		return suite;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public AllTests(Class<?> klass) throws Throwable {
-		super(suite(klass));
 	}
 }

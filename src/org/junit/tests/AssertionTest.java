@@ -340,4 +340,12 @@ public class AssertionTest {
         assertEquals(i, l);
         assertEquals(f, d, 0);
     }
+    
+    @Test public void errorMessageDistinguishesDifferentValuesWithSameToString() {
+    	try {
+    		assertEquals("4", new Integer(4));
+    	} catch (AssertionError e) {
+    		assertEquals("expected: java.lang.String<4> but was: java.lang.Integer<4>", e.getMessage());
+    	}
+    }
 }

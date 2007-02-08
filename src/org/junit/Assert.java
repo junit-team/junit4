@@ -451,7 +451,12 @@ public class Assert {
 		String formatted= "";
 		if (message != null && ! message.equals(""))
 			formatted= message + " ";
-		return formatted + "expected:<" + expected + "> but was:<" + actual + ">";
+		String expectedString= expected.toString();
+		String actualString= actual.toString();
+		if (expectedString.equals(actualString))
+			return formatted + "expected: " + expected.getClass().getName() + "<" + expectedString + "> but was: " + actual.getClass().getName() + "<" + actualString + ">";
+		else
+			return formatted + "expected:<" + expectedString + "> but was:<" + actualString + ">";
 	}
 
 	/**
