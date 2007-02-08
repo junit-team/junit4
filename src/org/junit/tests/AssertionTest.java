@@ -1,7 +1,7 @@
 package org.junit.tests;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
@@ -148,7 +148,13 @@ public class AssertionTest {
 			fail();
 		} catch (AssertionError exception) {
 			assertEquals("arrays first differed at element [1][0]; expected:<false> but was:<true>", exception.getMessage());
+		}
 	}
+	
+	@Test public void arraysWithNullElementEqual() {
+		Object[] objects1 = new Object[] {null};
+		Object[] objects2 = new Object[] {null};
+		assertArrayEquals(objects1, objects2);
 	}
 	
 	@Test public void stringsDifferWithUserMessage() {

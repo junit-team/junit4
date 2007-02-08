@@ -295,7 +295,7 @@ public class Assert {
 		for (int i= 0; i < expectedsLength; i++) {
 			Object expected= Array.get(expecteds, i);
 			Object actual= Array.get(actuals, i);
-			if (expected.getClass().isArray() && actual.getClass().isArray()) {
+			if (isArray(expected) && isArray(actual)) {
 				try {
 					internalArrayEquals(message, expected, actual);
 				} catch (ArrayComparisonFailure e) {
@@ -309,6 +309,10 @@ public class Assert {
 					throw new ArrayComparisonFailure(header, e, i);
 				}
 		}
+	}
+
+	private static boolean isArray(Object expected) {
+		return expected != null && expected.getClass().isArray();
 	}
 
 	/**

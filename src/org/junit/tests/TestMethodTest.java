@@ -124,4 +124,14 @@ public class TestMethodTest {
 		List<Throwable> errors= validator.validateAllMethods();
 		assertEquals(1, errors.size());
 	}
+	
+	public static class OnlyTestIsIgnored {
+		@Ignore @Test public void ignored() {}
+	}
+	
+	@Test public void onlyIgnoredMethodsIsStillFineTestClass() {
+		Result result= JUnitCore.runClasses(OnlyTestIsIgnored.class);
+		assertEquals(0, result.getFailureCount());
+		assertEquals(1, result.getIgnoreCount());
+	}
 }
