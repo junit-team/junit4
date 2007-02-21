@@ -6,7 +6,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-// TODO (Feb 21, 2007 10:05:41 AM):  organize these tests
+// These test files need to be cleaned.  See
+// https://sourceforge.net/pm/task.php?func=detailtask&project_task_id=136507&group_id=15278&group_project_id=51407
 
 @RunWith(Suite.class)
 @SuiteClasses({

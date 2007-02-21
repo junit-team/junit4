@@ -1,6 +1,6 @@
 package org.junit.tests;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
@@ -56,5 +56,29 @@ public class RunWithTest {
 
 		JUnitCore.runClasses(SubExampleTest.class);
 		assertTrue(log.contains("run"));
+	}
+	
+	public static class BadRunner extends Runner {
+		@Override
+		public Description getDescription() {
+			return null;
+		}
+
+		@Override
+		public void run(RunNotifier notifier) {
+			// do nothing
+		}
+	}
+	
+	@RunWith(BadRunner.class)
+	public static class Empty {		
+	}
+	
+	@Test
+	public void characterizeErrorMessageFromBadRunner() {
+		assertEquals(
+				"Custom runner class BadRunner should have a public constructor with signature BadRunner(Class testClass)",
+				JUnitCore.runClasses(Empty.class).getFailures().get(0)
+						.getMessage());
 	}
 }

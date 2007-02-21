@@ -1,8 +1,7 @@
 package org.junit.internal.requests;
 
-import java.lang.reflect.Constructor;
-
 import org.junit.Ignore;
+import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.OldTestClassRunner;
 import org.junit.internal.runners.TestClassRunner;
 import org.junit.runner.Request;
@@ -11,6 +10,7 @@ import org.junit.runner.Runner;
 import org.junit.runners.AllTests;
 
 public class ClassRequest extends Request {
+	private static final String CONSTRUCTOR_ERROR_FORMAT= "Custom runner class %s should have a public constructor with signature %s(Class testClass)";
 	private final Class<?> fTestClass;
 	private boolean fCanUseSuiteMethod;
 
@@ -25,15 +25,20 @@ public class ClassRequest extends Request {
 	
 	@Override
 	public Runner getRunner() {
-		Class<? extends Runner> runnerClass= getRunnerClass(fTestClass);
+		return buildRunner(getRunnerClass(fTestClass)); 
+	}
+
+	public Runner buildRunner(Class<? extends Runner> runnerClass) {
 		try {
-			Constructor<? extends Runner> constructor= runnerClass.getConstructor(Class.class); // TODO good error message if no such constructor
-			return constructor.newInstance(new Object[] { fTestClass });
-		} catch (StackOverflowError e) {
-			throw new RuntimeException();
+			return runnerClass.getConstructor(Class.class).newInstance(new Object[] { fTestClass });
+		} catch (NoSuchMethodException e) {
+			String simpleName= runnerClass.getSimpleName();
+			InitializationError error= new InitializationError(String.format(
+					CONSTRUCTOR_ERROR_FORMAT, simpleName, simpleName));
+			return Request.errorReport(fTestClass, error).getRunner();
 		} catch (Exception e) {
 			return Request.errorReport(fTestClass, e).getRunner();
-		} 
+		}
 	}
 
 	Class<? extends Runner> getRunnerClass(final Class<?> testClass) {
