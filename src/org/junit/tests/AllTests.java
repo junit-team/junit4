@@ -11,6 +11,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
+	ClassRequestTest.class,
 	ListenerTest.class,
 	FailedConstructionTest.class,
 	// TODO: What did CVS do with this?  CustomRunnerTest.class,

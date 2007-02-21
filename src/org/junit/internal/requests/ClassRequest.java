@@ -56,7 +56,7 @@ public class ClassRequest extends Request {
 		}
 	}
 	
-	private boolean hasSuiteMethod() {
+	public boolean hasSuiteMethod() {
 		// TODO: check all attributes
 		try {
 			fTestClass.getMethod("suite");
