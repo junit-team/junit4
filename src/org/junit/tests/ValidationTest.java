@@ -1,9 +1,8 @@
 package org.junit.tests;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.internal.runners.EmptyDescription;
 import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.TestClassRunner;
 import org.junit.runner.Description;
@@ -24,7 +23,7 @@ public class ValidationTest {
 		new TestClassRunner(WrongBeforeClass.class, new Runner() {
 			@Override
 			public Description getDescription() {
-				return new EmptyDescription();
+				return Description.EMPTY;
 			}
 
 			@Override

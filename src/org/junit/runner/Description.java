@@ -41,10 +41,9 @@ public class Description {
 	public static Description createTestDescription(Class<?> clazz, String name) {
 		return new Description(String.format("%s(%s)", name, clazz.getName()));
 	}
-	
+
 	/**
-	 * Create a generic <code>Description</code> that says there are tests in <code>testClass</code>.
-	 * This is used as a last resort when you cannot precisely describe the individual tests in the class.
+	 * Create a <code>Description</code> named after <code>testClass</code>
 	 * @param testClass A {@link Class} containing tests 
 	 * @return a <code>Description</code> of <code>testClass</code>
 	 */
@@ -52,11 +51,16 @@ public class Description {
 		return new Description(testClass.getName());
 	}
 	
-	public static Description TEST_MECHANISM = new Description("Test mechanism");
+	public static final Description EMPTY= new Description("No Tests");
+	public static final Description TEST_MECHANISM= new Description("Test mechanism");
+	
 	private final ArrayList<Description> fChildren= new ArrayList<Description>();
 	private final String fDisplayName;
-
-	//TODO we seem to be using the static factories exclusively
+	
+	/**
+	 * @deprecated (since 4.3) use the static factories (createTestDescription, createSuiteDescription) instead
+	 */
+	@Deprecated
 	protected Description(final String displayName) {
 		fDisplayName= displayName;
 	}

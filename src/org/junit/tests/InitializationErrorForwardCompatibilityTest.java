@@ -1,15 +1,12 @@
 package org.junit.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import junit.framework.AssertionFailedError;
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.TestListener;
 import junit.framework.TestResult;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.internal.runners.EmptyDescription;
 import org.junit.internal.runners.TestClassRunner;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
@@ -26,7 +23,7 @@ public class InitializationErrorForwardCompatibilityTest {
 
 		@Override
 		public Description getDescription() {
-			return new EmptyDescription();
+			return Description.EMPTY;
 		}
 
 		@Override
