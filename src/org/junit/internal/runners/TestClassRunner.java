@@ -30,7 +30,7 @@ public class TestClassRunner extends Runner implements Filterable, Sortable {
 
 	// TODO: this is parallel to passed-in runner
 	protected void validate(MethodValidator methodValidator) {
-		methodValidator.validateAllMethods();
+		methodValidator.validateMethodsForDefaultRunner();
 	}
 
 	@Override

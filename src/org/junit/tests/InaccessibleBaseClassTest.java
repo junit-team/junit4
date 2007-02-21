@@ -9,7 +9,7 @@ public class InaccessibleBaseClassTest {
 	@Test(expected=InitializationError.class)
 	public void inaccessibleBaseClassIsCaughtAtValidation() throws InitializationError {
 		MethodValidator methodValidator= new MethodValidator(Sub.class);
-		methodValidator.validateAllMethods();
+		methodValidator.validateMethodsForDefaultRunner();
 		methodValidator.assertValid();
 	}
 }

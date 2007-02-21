@@ -121,7 +121,7 @@ public class TestMethodTest {
 	
 	@Test public void overloaded() {
 		MethodValidator validator= new MethodValidator(Confused.class);
-		List<Throwable> errors= validator.validateAllMethods();
+		List<Throwable> errors= validator.validateMethodsForDefaultRunner();
 		assertEquals(1, errors.size());
 	}
 	

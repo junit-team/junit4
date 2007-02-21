@@ -35,8 +35,7 @@ public class MethodValidator {
 		validateTestMethods(AfterClass.class, true);
 	}
 	
-	// TODO Ugly API--one method should do both
-	public List<Throwable> validateAllMethods() {
+	public List<Throwable> validateMethodsForDefaultRunner() {
 		validateNoArgConstructor();
 		validateStaticMethods();
 		validateInstanceMethods();
