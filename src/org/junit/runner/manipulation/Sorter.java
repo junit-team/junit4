@@ -5,10 +5,11 @@ import java.util.Comparator;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 
-//TODO add an example
 /**
  * A <code>Sorter</code> orders tests. In general you will not need
  * to use a <code>Sorter</code> directly. Instead, use {@link org.junit.runner.Request#sortWith(Comparator)}.
+ * 
+ * 
  */
 public class Sorter implements Comparator<Description> {
 	private final Comparator<Description> fComparator;

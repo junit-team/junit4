@@ -60,9 +60,6 @@ public class ClassRequest extends Request {
 		// TODO: check all attributes
 		try {
 			fTestClass.getMethod("suite");
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (NoSuchMethodException e) {
 			return false;
 		}

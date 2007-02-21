@@ -102,9 +102,27 @@ public abstract class Request {
 		});
 	}
 
+	//TODO add an example
 	/**
 	 * Returns a Request whose Tests can be run in a certain order, defined by 
 	 * <code>comparator</code>
+	 * 
+	 * For example, here is code to run a test suite in alphabetical order:
+	 * 
+	 * <pre>
+	private static Comparator<Description> forward() {
+		return new Comparator<Description>() {
+			public int compare(Description o1, Description o2) {
+				return o1.getDisplayName().compareTo(o2.getDisplayName());
+			}
+		};
+	}
+	
+	public static main() {
+		new JUnitCore().run(Request.aClass(AllTests.class).sortWith(forward()));
+	}
+	 * </pre>
+	 * 
 	 * @param comparator definition of the order of the tests in this Request
 	 * @return a Request with ordered Tests
 	 */

@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  * <pre>
  * public class Example {
  *    List empty;
- *    &#064;Before public static void initialize() {
+ *    &#064;Before public void initialize() {
  *       empty= new ArrayList();
  *    }
  *    &#064;Test public void size() {
