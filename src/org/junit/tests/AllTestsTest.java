@@ -59,4 +59,16 @@ public class AllTestsTest {
 		AllTests tests= new AllTests(AllJUnit4.class);
 		assertEquals(1, tests.testCount());
 	}
+	
+	@RunWith(AllTests.class)
+	public static class BadSuiteMethod {
+		public static junit.framework.Test suite() {
+			throw new RuntimeException("can't construct");
+		}
+	}
+
+	@org.junit.Test(expected= RuntimeException.class)
+	public void exceptionThrownWhenSuiteIsBad() throws Throwable {
+		new AllTests(BadSuiteMethod.class);
+	}
 }

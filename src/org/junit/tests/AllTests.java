@@ -6,6 +6,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+// TODO (Feb 21, 2007 10:05:41 AM):  organize these tests
+
 @RunWith(Suite.class)
 @SuiteClasses({
 	ListenerTest.class,
@@ -41,7 +43,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	InaccessibleBaseClassTest.class,
 	SuiteMethodTest.class,
 	TestClassMethodsRunnerTest.class,
-	IgnoreClassTest.class
+	IgnoreClassTest.class,
+	OldTestClassAdaptingListenerTest.class
 })
 public class AllTests {
 	public static Test suite() {

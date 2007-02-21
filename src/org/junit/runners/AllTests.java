@@ -22,10 +22,10 @@ import org.junit.internal.runners.OldTestClassRunner;
 public class AllTests extends OldTestClassRunner {
 	@SuppressWarnings("unchecked")
 	public AllTests(Class<?> klass) throws Throwable {
-		super(suite(klass));
+		super(testFromSuiteMethod(klass));
 	}
 
-	private static Test suite(Class<?> klass) throws Throwable {
+	public static Test testFromSuiteMethod(Class<?> klass) throws Throwable {
 		Method suiteMethod= null;
 		Test suite= null;
 		try {
@@ -34,7 +34,7 @@ public class AllTests extends OldTestClassRunner {
 				throw new Exception(klass.getName() + ".suite() must be static");
 			}
 			suite= (Test) suiteMethod.invoke(null); // static method
-		} catch (InvocationTargetException e) { // TODO need coverage
+		} catch (InvocationTargetException e) {
 			throw e.getCause();
 		}
 		return suite;

@@ -15,7 +15,49 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
 public class OldTestClassRunner extends Runner {
-	
+	private static final class OldTestClassAdaptingListener implements
+			TestListener {
+		private final RunNotifier fNotifier;
+
+		private OldTestClassAdaptingListener(RunNotifier notifier) {
+			fNotifier= notifier;
+		}
+
+		public void endTest(Test test) {
+			// TODO: uncovered
+			fNotifier.fireTestFinished(asDescription(test));
+		}
+
+		public void startTest(Test test) {
+			fNotifier.fireTestStarted(asDescription(test));
+		}
+
+		// Implement junit.framework.TestListener
+		public void addError(Test test, Throwable t) {
+			Failure failure= new Failure(asDescription(test), t);
+			fNotifier.fireTestFailure(failure);
+		}
+
+		private Description asDescription(Test test) {
+			if (test instanceof JUnit4TestCaseFacade) {
+				JUnit4TestCaseFacade facade= (JUnit4TestCaseFacade) test;
+				return facade.getDescription();
+			}
+			return Description.createTestDescription(test.getClass(), getName(test));
+		}
+
+		private String getName(Test test) {
+			if (test instanceof TestCase)
+				return ((TestCase) test).getName();
+			else
+				return test.toString();
+		}
+
+		public void addFailure(Test test, AssertionFailedError t) {
+			addError(test, t);
+		}
+	}
+
 	private Test fTest;
 	
 	@SuppressWarnings("unchecked")
@@ -31,48 +73,12 @@ public class OldTestClassRunner extends Runner {
 	@Override
 	public void run(RunNotifier notifier) {
 		TestResult result= new TestResult();
-		result.addListener(getListener(notifier));
+		result.addListener(createAdaptingListener(notifier));
 		fTest.run(result);
 	}
 
-	private TestListener getListener(final RunNotifier notifier) {
-		return new TestListener() {
-			public void endTest(Test test) {
-				// TODO: uncovered
-				notifier.fireTestFinished(asDescription(test));
-			}
-
-			public void startTest(Test test) {
-				notifier.fireTestStarted(asDescription(test));
-			}
-		
-			// Implement junit.framework.TestListener
-			//TODO method not covered
-			public void addError(Test test, Throwable t) {
-				Failure failure= new Failure(asDescription(test), t);
-				notifier.fireTestFailure(failure);
-			}
-			
-			private Description asDescription(Test test) {
-				if (test instanceof JUnit4TestCaseFacade) {
-					JUnit4TestCaseFacade facade= (JUnit4TestCaseFacade) test;
-					return facade.getDescription();
-				}
-				return Description.createTestDescription(test.getClass(), getName(test));
-			}
-
-			private String getName(Test test) {
-				if (test instanceof TestCase)
-					return ((TestCase) test).getName();
-				else
-					return test.toString();
-			}
-
-			//TODO method not covered
-			public void addFailure(Test test, AssertionFailedError t) {
-				addError(test, t);
-			}
-		};
+	public static TestListener createAdaptingListener(final RunNotifier notifier) {
+		return new OldTestClassAdaptingListener(notifier);
 	}
 	
 	@Override
