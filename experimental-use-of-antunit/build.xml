@@ -1,0 +1,10 @@
+<project xmlns:au="antlib:org.apache.ant.antunit">
+	<taskdef uri="antlib:org.apache.ant.antunit"
+	         resource="org/apache/ant/antunit/antlib.xml"
+	         classpath="lib/ant-antunit-1.0.jar"
+	/>
+	<au:antunit>
+		<fileset dir="." includes="touch.ant,junit.ant" />
+		<au:plainlistener />
+	</au:antunit>
+</project>

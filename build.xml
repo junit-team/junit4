@@ -9,6 +9,7 @@
 	<property name="testfiles" value="junit/samples/**, junit/tests/**" />
 	<property name="unjarred" value="**/*.jar, ${testfiles}, doc/**, README.html, .classpath, .project, cpl-v10.html" />
 	<property name="jarfile" value="junit-${version}.jar" />
+	<property name="javadocdir" value="${dist}/javadoc" />
 	
 	<target name="init">
 		<tstamp/>
@@ -62,11 +63,11 @@
                   <param name="dir" value="org" />
                 </antcall>
 
-		<mkdir dir="${dist}/javadoc" />
+		<mkdir dir="${javadocdir}" />
 		<javadoc 
 			sourcepath="${src}"
 			packagenames="org.junit, org.junit.runner, org.junit.runner.description, org.junit.runner.manipulation, org.junit.runner.notification, org.junit.runners"
-			destdir="${dist}/javadoc"
+			destdir="${javadocdir}"
 			author="false"
 			version="false"
 			use="false"

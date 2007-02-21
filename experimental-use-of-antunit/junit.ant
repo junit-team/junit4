@@ -1,0 +1,30 @@
+<project xmlns:au="antlib:org.apache.ant.antunit">
+	<property name="junitdir" value=".." />
+	<property name="antdist" value="temp-dist-directory-for-ant-unit"></property>
+	<property name="antdistdir" value="${junitdir}/${antdist}"/>
+
+	
+	<!-- is called prior to the test -->
+	<target name="setUp">
+	</target>
+
+	<!-- is called after the test, even if that caused an error -->
+	<target name="tearDown">
+		<delete dir="${antdistdir}" />
+	</target>
+
+	<target name="testTearDown">
+		<mkdir dir="${antdistdir}"/>
+		<antcall target="tearDown" />
+		<au:assertFileDoesntExist file="${antdistdir}" />
+	</target>
+
+	<target name="testCharacterize_DistGeneratesJavadoc">
+		<ant antfile="build.xml" target="dist" dir="${junitdir}">
+			<property name="dist" value="${antdist}" />
+			<property name="javadocdir" value="${antdist}/ant-unit-java-docs" />
+		</ant>
+
+		<au:assertFileExists file="${antdistdir}/ant-unit-java-docs" />
+	</target>
+</project>
