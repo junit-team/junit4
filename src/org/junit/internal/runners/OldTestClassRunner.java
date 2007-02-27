@@ -24,7 +24,6 @@ public class OldTestClassRunner extends Runner {
 		}
 
 		public void endTest(Test test) {
-			// TODO: uncovered
 			fNotifier.fireTestFinished(asDescription(test));
 		}
 

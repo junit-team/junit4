@@ -38,7 +38,6 @@ public class ErrorReportingRequest extends Request {
 			return getCauses(cause.getCause());
 		if (cause instanceof InitializationError)
 			return ((InitializationError) cause).getCauses();
-		// TODO: untested
 		return Arrays.asList(cause);	
 	}
 }

@@ -102,7 +102,6 @@ public abstract class Request {
 		});
 	}
 
-	//TODO add an example
 	/**
 	 * Returns a Request whose Tests can be run in a certain order, defined by 
 	 * <code>comparator</code>
