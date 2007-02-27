@@ -10,7 +10,8 @@
 	<property name="unjarred" value="**/*.jar, ${testfiles}, doc/**, README.html, .classpath, .project, cpl-v10.html" />
 	<property name="jarfile" value="junit-${version}.jar" />
 	<property name="javadocdir" value="${dist}/javadoc" />
-	
+	<property name="javadoczip" value="${dist}-javadoc.zip" />
+
 	<target name="init">
 		<tstamp/>
 	</target>
@@ -31,19 +32,19 @@
 			srcdir="${src}"
 			destdir="${bin}"
 			debug="on"
-  		>	
-                  <compilerarg value="-Xlint:unchecked" />
-                </javac>
+  		>
+			<compilerarg value="-Xlint:unchecked" />
+		</javac>
 	</target>
 
-        <target name="distributeTestsAndExamples">
-        	<copy todir="${dist}/${dir}">
-                	<fileset dir="${bin}/${dir}" includes="${testfiles}" />
-                	<fileset dir="${src}/${dir}" includes="${testfiles}" />
-                </copy>
-        </target>
+	<target name="distributeTestsAndExamples">
+		<copy todir="${dist}/${dir}">
+			<fileset dir="${bin}/${dir}" includes="${testfiles}" />
+			<fileset dir="${src}/${dir}" includes="${testfiles}" />
+		</copy>
+	</target>
 
-	<target name="dist" depends="clean, build">
+	<target name="populate-dist" depends="clean, build">
 		<delete dir="${dist}" />
 		<mkdir dir="${dist}" />
 		<jar 
@@ -56,30 +57,23 @@
 			basedir="${bin}"
 			excludes="${unjarred}, **/*.java, build.xml"
 		/>
-                <antcall target="distributeTestsAndExamples">
-                  <param name="dir" value="." />
-                </antcall>
-                <antcall target="distributeTestsAndExamples">
-                  <param name="dir" value="org" />
-                </antcall>
+		<antcall target="distributeTestsAndExamples">
+			<param name="dir" value="." />
+		</antcall>
+		<antcall target="distributeTestsAndExamples">
+			<param name="dir" value="org" />
+		</antcall>
 
-		<mkdir dir="${javadocdir}" />
-		<javadoc 
-			sourcepath="${src}"
-			packagenames="org.junit, org.junit.runner, org.junit.runner.description, org.junit.runner.manipulation, org.junit.runner.notification, org.junit.runners"
-			destdir="${javadocdir}"
-			author="false"
-			version="false"
-			use="false"
-			windowtitle="JUnit API"
-			stylesheetfile="stylesheet.css"
-		/>
+		<antcall target="javadoc" />
+			
 		<copy todir="${dist}/doc">
 			<fileset dir="doc"/>
-		</copy>		
+		</copy>
 		<copy file="README.html" tofile="${dist}/README.html" />
 		<copy file="cpl-v10.html" tofile="${dist}/cpl-v10.html" />
-		
+	</target>
+
+	<target name="dist" depends="populate-dist">
 		<java classname="org.junit.runner.JUnitCore" fork="yes" failonerror="true">
 			<arg value="org.junit.tests.AllTests"/>
 			<classpath>
@@ -88,20 +82,37 @@
 			</classpath>
 		</java>
 	</target>
-	
-	<target name="zip" depends="dist">
-		<zip 
-			zipfile="${zipfile}"
-			basedir="."
-			includes="${dist}/**"
+
+	<target name="javadoczip">
+		<delete file="${javadoczip}" />
+		<antcall target="javadoc" />
+		<zip basedir="${javadocdir}" file="${javadoczip}" />
+	</target>
+
+	<target name="javadoc">	
+		<mkdir dir="${javadocdir}" />
+		<javadoc sourcepath="${src}"
+		         packagenames="org.junit, org.junit.runner, org.junit.runner.description, org.junit.runner.manipulation, org.junit.runner.notification, org.junit.runners"
+		         destdir="${javadocdir}"
+		         author="false"
+		         version="false"
+		         use="false"
+		         windowtitle="JUnit API"
+		         stylesheetfile="stylesheet.css"
 		/>
 	</target>
-	
+
+	<target name="zip" depends="dist">
+		<zip zipfile="${zipfile}" basedir="." includes="${dist}/**" />
+	</target>
+
 	<target name="clean">
-		<delete dir="${dist}" quiet="true"/>			
-		<delete file="${zipfile}" quiet="true"/> 
+		<delete dir="${dist}" quiet="true" />
+		<delete file="${zipfile}" quiet="true"/>
 		<delete>
-			<fileset dir="${basedir}" includes="**/*.class" /> 
+			<fileset dir="${basedir}" includes="**/*.class" />
 		</delete>
+
+		<delete file="${javadoczip}" />
 	</target>
 </project>

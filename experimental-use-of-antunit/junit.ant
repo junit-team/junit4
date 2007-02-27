@@ -1,8 +1,11 @@
 <project xmlns:au="antlib:org.apache.ant.antunit">
 	<property name="junitdir" value=".." />
-	<property name="antdist" value="temp-dist-directory-for-ant-unit"></property>
-	<property name="antdistdir" value="${junitdir}/${antdist}"/>
-
+	<property name="antdist" value="temp-dist-directory-for-ant-unit">
+	</property>
+	<property name="antdistdir" value="${junitdir}/${antdist}" />
+	<property name="testjavadoczip" value="new-england-javadoc.zip" />
+	<property name="exttestjavadoczip" value="${junitdir}/${testjavadoczip}" />
+	<property name="tempdir" value="tempdir" />
 	
 	<!-- is called prior to the test -->
 	<target name="setUp">
@@ -11,20 +14,51 @@
 	<!-- is called after the test, even if that caused an error -->
 	<target name="tearDown">
 		<delete dir="${antdistdir}" />
+		<delete dir="${tempdir}" />
+		<delete file="${exttestjavadoczip}" />
 	</target>
+
+	<macrodef name="junitbuild">
+		<attribute name="target" />
+		<sequential>
+			<ant antfile="build.xml" target="@{target}" dir="${junitdir}">
+				<property name="dist" value="${antdist}" />
+				<property name="javadocdir"
+				          value="${antdist}/ant-unit-java-docs"
+				/>
+				<property name="javadoczip" value="${testjavadoczip}" />
+			</ant>
+		</sequential>
+	</macrodef>
 
 	<target name="testTearDown">
-		<mkdir dir="${antdistdir}"/>
+		<mkdir dir="${antdistdir}" />
+		<mkdir dir="${tempdir}" />
+		<touch file="${exttestjavadoczip}" />
+		
 		<antcall target="tearDown" />
+		
 		<au:assertFileDoesntExist file="${antdistdir}" />
+		<au:assertFileDoesntExist file="${tempdir}" />
+		<au:assertFileDoesntExist file="${exttestjavadoczip}" />
 	</target>
 
-	<target name="testCharacterize_DistGeneratesJavadoc">
-		<ant antfile="build.xml" target="dist" dir="${junitdir}">
-			<property name="dist" value="${antdist}" />
-			<property name="javadocdir" value="${antdist}/ant-unit-java-docs" />
-		</ant>
-
+	<target name="testCharacterize_PopulateDistGeneratesJavadoc">
+		<junitbuild target="populate-dist" />
 		<au:assertFileExists file="${antdistdir}/ant-unit-java-docs" />
+	</target>
+
+	<target name="testJavaDocZip">
+		<junitbuild target="javadoczip" />
+		<au:assertFileExists file="${exttestjavadoczip}" />
+
+		<unzip dest="tempjavadoc" src="${exttestjavadoczip}" />
+		<au:assertFileExists file="tempjavadoc/org" />
+	</target>
+
+	<target name="testJavaDocZipDeletedOnClean">
+		<touch file="${exttestjavadoczip}" />
+		<junitbuild target="clean" />
+		<au:assertFileDoesntExist file="${exttestjavadoczip}" />
 	</target>
 </project>
