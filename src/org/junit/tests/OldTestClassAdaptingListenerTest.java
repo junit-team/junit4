@@ -1,6 +1,6 @@
 package org.junit.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import junit.framework.TestListener;

@@ -142,4 +142,10 @@ public class RunNotifier {
 	public void addFirstListener(RunListener listener) {
 		fListeners.add(0, listener);
 	}
+
+	public void testAborted(Description description, Throwable cause) {
+		fireTestStarted(description);
+		fireTestFailure(new Failure(description, cause));
+		fireTestFinished(description);
+	}
 }

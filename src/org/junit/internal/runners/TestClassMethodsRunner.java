@@ -15,7 +15,6 @@ import org.junit.runner.manipulation.Filterable;
 import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
-import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
 public class TestClassMethodsRunner extends Runner implements Filterable, Sortable {
@@ -31,17 +30,9 @@ public class TestClassMethodsRunner extends Runner implements Filterable, Sortab
 	@Override
 	public void run(RunNotifier notifier) {
 		if (fTestMethods.isEmpty())
-			testAborted(notifier, getDescription(), new Exception("No runnable methods"));
+			notifier.testAborted(getDescription(), new Exception("No runnable methods"));
 		for (Method method : fTestMethods)
 			invokeTestMethod(method, notifier);
-	}
-
-	private void testAborted(RunNotifier notifier, Description description, Throwable cause) {
-		// TODO: duped!
-		// TODO: envious
-		notifier.fireTestStarted(description);
-		notifier.fireTestFailure(new Failure(description, cause));
-		notifier.fireTestFinished(description);
 	}
 
 	@Override
@@ -66,10 +57,10 @@ public class TestClassMethodsRunner extends Runner implements Filterable, Sortab
 		try {
 			test= createTest();
 		} catch (InvocationTargetException e) {
-			testAborted(notifier, methodDescription(method), e.getCause());
+			notifier.testAborted(methodDescription(method), e.getCause());
 			return;			
 		} catch (Exception e) {
-			testAborted(notifier, methodDescription(method), e);
+			notifier.testAborted(methodDescription(method), e);
 			return;
 		}
 		createMethodRunner(test, method, notifier).run();

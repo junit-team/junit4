@@ -1,6 +1,8 @@
 package org.junit.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import junit.framework.AssertionFailedError;
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.TestListener;

@@ -1,6 +1,6 @@
 package org.junit.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 import org.junit.Test;
 import org.junit.internal.requests.ClassRequest;
 
