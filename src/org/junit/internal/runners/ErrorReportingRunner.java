@@ -19,7 +19,6 @@ public class ErrorReportingRunner extends Runner {
 		return fDescription;
 	}
 
-	// TODO: this is duplicated in TestClassMethodsRunner
 	@Override
 	public void run(RunNotifier notifier) {
 		notifier.testAborted(fDescription, fCause);
