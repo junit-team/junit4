@@ -4,7 +4,7 @@
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <meta name="GENERATOR" content="Microsoft FrontPage 4.0">
    <meta name="Author" content="Erich Gamma, Kent Beck, and David Saff">
-   <title>JUnit 4.2</title>
+   <title>JUnit 4.3</title>
 </head>
 <body>
 
@@ -20,7 +20,7 @@ Meade.
 <br>(see also <a href="http://www.junit.org">JUnit.org</a>)
 
 <hr WIDTH="100%">
-<br>16 November 2006
+<br>7 March 2007
 <p>JUnit is a simple framework to write repeatable tests. It is an instance
 of the xUnit architecture for unit testing frameworks.
 <ul>
@@ -41,6 +41,32 @@ of the xUnit architecture for unit testing frameworks.
 <li>
 <a href="#Known Defects">Known Defects</a></li>
 </ul>
+
+<h2>
+<a NAME="Summary of"></a>Summary of Changes with version 4.3</h2>
+<p>
+<ul>
+<li>Changes in array equality.  Using <tt>assertEquals</tt> to compare array contents is now deprecated.
+In the future, <tt>assertEquals</tt> will revert to its pre-4.0 meaning of comparing objects based on
+Java's <tt>Object.equals</tt> semantics.  To compare array contents, use the new, more reliable 
+<tt>Assert.assertArrayEquals</tt> methods.
+<li>The <tt>@Ignore</tt> annotation can now be applied to classes, to ignore the entire class, instead of
+individual methods.
+<li>Originally, developers who wanted to use a static <tt>suite()</tt> method from JUnit 3.x with a JUnit 4.x
+runner had to annotate the class with <tt>@RunWith(AllTests.class)</tt>.  In the common case, this requirement
+has been removed.  However, when such a class is wrapped with a JUnit4TestAdapter (which we believe is rare), the
+results may not be as expected.
+<li>Improved error messages for array comparison("arrays first differed at element [1][0]")
+<li>Bug fix: Inaccessible base class is caught at test construction time.
+<li>Bug fix: Circular suites are caught at test construction time.
+<li>Bug fix: Test constructors that throw exceptions are reported correctly.
+<li><b>For committers and extenders</b>
+<ul>
+<li>Sources now are in a separate "src" directory (this means a big break in the CVS history)
+<li>Improved documentation in <tt>Request</tt>, <tt>RunWith</tt>
+</ul>
+</ul>
+</p>
 
 <h2>
 <a NAME="Summary of"></a>Summary of Changes with version 4.2</h2>
