@@ -3,12 +3,14 @@
 	         resource="org/apache/ant/antunit/antlib.xml"
 	         classpath="lib/ant-antunit-1.0.jar"
 	/>
+
 	<target name="fast">
 		<au:antunit>
 			<fileset dir="." includes="touch.ant,junit.ant" />
 			<au:plainlistener />
 		</au:antunit>
 	</target>
+
 	<target name="all">
 		<au:antunit>
 			<fileset dir="." includes="touch.ant,junit.ant,junit-slow.ant" />

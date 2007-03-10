@@ -11,7 +11,8 @@
 	<property name="jarfile" value="junit-${version}.jar" />
 	<property name="javadocdir" value="${dist}/javadoc" />
 	<property name="javadoczip" value="${dist}-javadoc.zip" />
-
+	<property name="javadocpackages" value="org.junit, org.junit.runner, org.junit.runner.description, org.junit.runner.manipulation, org.junit.runner.notification, org.junit.runners" />
+	
 	<target name="init">
 		<tstamp/>
 	</target>
@@ -65,7 +66,7 @@
 		</antcall>
 
 		<antcall target="javadoc" />
-			
+
 		<copy todir="${dist}/doc">
 			<fileset dir="doc"/>
 		</copy>
@@ -89,10 +90,10 @@
 		<zip basedir="${javadocdir}" file="${javadoczip}" />
 	</target>
 
-	<target name="javadoc">	
+	<target name="javadoc">
 		<mkdir dir="${javadocdir}" />
 		<javadoc sourcepath="${src}"
-		         packagenames="org.junit, org.junit.runner, org.junit.runner.description, org.junit.runner.manipulation, org.junit.runner.notification, org.junit.runners"
+		         packagenames="${javadocpackages}"
 		         destdir="${javadocdir}"
 		         author="false"
 		         version="false"
@@ -114,5 +115,16 @@
 		</delete>
 
 		<delete file="${javadoczip}" />
+	</target>
+
+	<target name="upload.to.sourceforge">
+		<ftp server="upload.sourceforge.net"
+		     userid="anonymous"
+		     password="saff@mit.edu"
+		     remotedir="incoming"
+		>
+			<fileset dir="${dist}" includes="*.jar" />
+			<fileset file="${zipfile}" />
+		</ftp>
 	</target>
 </project>
