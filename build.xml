@@ -117,7 +117,7 @@
 		<delete file="${javadoczip}" />
 	</target>
 
-	<target name="upload.to.sourceforge">
+	<target name="upload.to.sourceforge" depends="zip">
 		<ftp server="upload.sourceforge.net"
 		     userid="anonymous"
 		     password="saff@mit.edu"

@@ -1,14 +1,5 @@
 <project xmlns:au="antlib:org.apache.ant.antunit">
-	<property file="junit.properties" />
-
-	<!-- is called prior to the test -->
-	<target name="setUp">
-	</target>
-
-	<!-- is called after the test, even if that caused an error -->
-	<target name="tearDown">
-		<delete dir="${antdistdir}" />
-	</target>
+	<import file="macros.ant"/>
 
 	<target name="testTearDown">
 		<mkdir dir="${antdistdir}"/>
