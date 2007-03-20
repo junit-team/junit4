@@ -7,10 +7,14 @@ import java.lang.annotation.Target;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.junit.internal.runners.CompositeRunner;
 import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.MethodValidator;
-import org.junit.internal.runners.TestClassRunner;
+import org.junit.internal.runners.TestClass;
+import org.junit.internal.runners.ClassRoadie;
 import org.junit.runner.Request;
+import org.junit.runner.Runner;
+import org.junit.runner.notification.RunNotifier;
 
 /**
  * Using <code>Suite</code> as a runner allows you to manually
@@ -19,7 +23,7 @@ import org.junit.runner.Request;
  * with <code>@RunWith(Suite.class)</code> and <code>@SuiteClasses(TestClass1.class, ...)</code>.
  * When you run this class, it will run all the tests in all the suite classes.
  */
-public class Suite extends TestClassRunner {
+public class Suite extends CompositeRunner {
 	/**
 	 * The <code>SuiteClasses</code> annotation specifies the classes to be run when a class
 	 * annotated with <code>@RunWith(Suite.class)</code> is run.
@@ -40,15 +44,33 @@ public class Suite extends TestClassRunner {
 	// This won't work correctly in the face of concurrency. For that we need to
 	// add parameters to getRunner(), which would be much more complicated.
 	private static Set<Class<?>> parents = new HashSet<Class<?>>();
+	private TestClass fTestClass;
 	
-	private static Class<?> addParent(Class<?> parent) throws InitializationError {
+	protected Suite(Class<?> klass, Class<?>[] annotatedClasses) throws InitializationError {
+		// we need to add parent be
+		super(klass.getName());
+		
+		addParent(klass);
+		for (Class<?> each : annotatedClasses) {
+			Runner childRunner= Request.aClass(each).getRunner();
+			if (childRunner != null)
+				add(childRunner);
+		}
+		removeParent(klass);
+
+		fTestClass= new TestClass(klass);
+		MethodValidator methodValidator= new MethodValidator(fTestClass);
+		methodValidator.validateStaticMethods();
+		methodValidator.assertValid();
+	}
+
+	private Class<?> addParent(Class<?> parent) throws InitializationError {
 		if (!parents.add(parent))
 			throw new InitializationError(String.format("class '%s' (possibly indirectly) contains itself as a SuiteClass", parent.getName()));
 		return parent;
 	}
 	
-	protected Suite(Class<?> klass, Class<?>[] annotatedClasses) throws InitializationError {
-		super(addParent(klass), Request.classes(klass.getName(), annotatedClasses).getRunner());
+	private void removeParent(Class<?> klass) {
 		parents.remove(klass);
 	}
 
@@ -59,9 +81,17 @@ public class Suite extends TestClassRunner {
 		return annotation.value();
 	}
 	
-	@Override
 	protected void validate(MethodValidator methodValidator) {
 		methodValidator.validateStaticMethods();
 		methodValidator.validateInstanceMethods();
+	}
+	
+	@Override
+	public void run(final RunNotifier notifier) {
+		new ClassRoadie(notifier, fTestClass, getDescription(), new Runnable() {
+			public void run() {
+				runChildren(notifier);
+			}
+		}).runProtected();
 	}
 }

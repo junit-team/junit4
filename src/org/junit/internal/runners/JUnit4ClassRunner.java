@@ -7,7 +7,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
@@ -17,20 +16,32 @@ import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 
-public class TestClassMethodsRunner extends Runner implements Filterable, Sortable {
+public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 	private final List<Method> fTestMethods;
-	private final Class<?> fTestClass;
+	private TestClass fTestClass;
 
-	// This assumes that some containing runner will perform validation of the test methods	
-	public TestClassMethodsRunner(Class<?> klass) {
-		fTestClass= klass;
-		fTestMethods= new TestIntrospector(getTestClass()).getTestMethods(Test.class);
+	public JUnit4ClassRunner(Class<?> klass) throws InitializationError {
+		fTestClass= new TestClass(klass);
+		fTestMethods= fTestClass.getTestMethods();
+		validate();
 	}
 	
+	protected void validate() throws InitializationError {
+		MethodValidator methodValidator= new MethodValidator(fTestClass);
+		methodValidator.validateMethodsForDefaultRunner();
+		methodValidator.assertValid();
+	}
+
 	@Override
-	public void run(RunNotifier notifier) {
-		if (fTestMethods.isEmpty())
-			notifier.testAborted(getDescription(), new Exception("No runnable methods"));
+	public void run(final RunNotifier notifier) {
+		new ClassRoadie(notifier, fTestClass, getDescription(), new Runnable() {
+			public void run() {
+				runMethods(notifier);
+			}
+		}).runProtected();
+	}
+
+	protected void runMethods(final RunNotifier notifier) {
 		for (Method method : fTestMethods)
 			invokeTestMethod(method, notifier);
 	}
@@ -66,8 +77,8 @@ public class TestClassMethodsRunner extends Runner implements Filterable, Sortab
 		createMethodRunner(test, method, notifier).run();
 	}
 
-	protected TestMethodRunner createMethodRunner(Object test, Method method, RunNotifier notifier) {
-		return new TestMethodRunner(test, method, notifier, methodDescription(method));
+	protected MethodRoadie createMethodRunner(Object test, Method method, RunNotifier notifier) {
+		return new MethodRoadie(test, method, notifier, methodDescription(method), fTestClass);
 	}
 
 	protected String testName(Method method) {
@@ -75,7 +86,7 @@ public class TestClassMethodsRunner extends Runner implements Filterable, Sortab
 	}
 
 	protected Description methodDescription(Method method) {
-		return Description.createTestDescription(getTestClass(), testName(method));
+		return Description.createTestDescription(getTestClass().getJavaClass(), testName(method));
 	}
 
 	public void filter(Filter filter) throws NoTestsRemainException {
@@ -96,7 +107,7 @@ public class TestClassMethodsRunner extends Runner implements Filterable, Sortab
 		});
 	}
 
-	protected Class<?> getTestClass() {
+	protected TestClass getTestClass() {
 		return fTestClass;
 	}
 }

@@ -25,6 +25,10 @@ public class CompositeRunner extends Runner implements Filterable, Sortable {
 	
 	@Override
 	public void run(RunNotifier notifier) {
+		runChildren(notifier);
+	}
+
+	protected void runChildren(RunNotifier notifier) {
 		for (Runner each : fRunners)
 			each.run(notifier);
 	}

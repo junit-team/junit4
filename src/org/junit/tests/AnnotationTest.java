@@ -264,6 +264,9 @@ public class AnnotationTest extends TestCase {
 	static public class NonStaticOneTimeSetup {
 		@BeforeClass public void once() {
 		}
+		
+		@Test public void aTest() {
+		}
 	}
 	
 	public void testNonStaticOneTimeSetup() throws Exception {

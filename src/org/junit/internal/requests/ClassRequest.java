@@ -2,8 +2,8 @@ package org.junit.internal.requests;
 
 import org.junit.Ignore;
 import org.junit.internal.runners.InitializationError;
-import org.junit.internal.runners.OldTestClassRunner;
-import org.junit.internal.runners.TestClassRunner;
+import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.internal.runners.JUnit4ClassRunner;
 import org.junit.runner.Request;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
@@ -50,9 +50,9 @@ public class ClassRequest extends Request {
 		} else if (hasSuiteMethod() && fCanUseSuiteMethod) {
 			return AllTests.class;
 		} else if (isPre4Test(testClass)) {
-			return OldTestClassRunner.class; 
+			return JUnit38ClassRunner.class; 
 		} else {
-			return TestClassRunner.class;
+			return JUnit4ClassRunner.class;
 		}
 	}
 	

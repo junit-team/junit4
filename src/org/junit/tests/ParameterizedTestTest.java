@@ -91,6 +91,9 @@ public class ParameterizedTestTest {
 		public static Collection<Object[]> data() {
 			return Collections.emptyList();
 		}
+		
+		@Test public void aTest() {
+		}
 	}
 
 	@Test
@@ -144,6 +147,9 @@ public class ParameterizedTestTest {
 		protected static Collection<Object[]> data() {
 			return Collections.emptyList();
 		}
+		
+		@Test public void aTest() {
+		}
 	}
 
 	@Test
@@ -160,6 +166,9 @@ public class ParameterizedTestTest {
 		@Parameters
 		public static Collection<String> data() {
 			return Arrays.asList("a", "b", "c");
+		}
+		
+		@Test public void aTest() {
 		}
 	}
 	

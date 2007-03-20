@@ -5,7 +5,7 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import junit.framework.TestListener;
 import org.junit.Test;
-import org.junit.internal.runners.OldTestClassRunner;
+import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.runner.Result;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
@@ -17,7 +17,7 @@ public class OldTestClassAdaptingListenerTest {
 		RunListener listener= result.createListener();
 		RunNotifier notifier= new RunNotifier();
 		notifier.addFirstListener(listener);
-		TestListener adaptingListener= OldTestClassRunner
+		TestListener adaptingListener= JUnit38ClassRunner
 				.createAdaptingListener(notifier);
 		TestCase testCase= new TestCase() {
 		};

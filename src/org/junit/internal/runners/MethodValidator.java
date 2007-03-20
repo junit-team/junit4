@@ -13,21 +13,23 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class MethodValidator {
-	private final TestIntrospector fIntrospector;
 
 	private final List<Throwable> fErrors= new ArrayList<Throwable>();
 
-	private final Class<?> fTestClass;
+	private TestClass fTestClass;
 
-	public MethodValidator(Class<?> testClass) {
-		fTestClass= testClass;
-		fIntrospector= new TestIntrospector(testClass);
+	public MethodValidator(TestClass testClass) {
+		fTestClass = testClass;
 	}
 
 	public void validateInstanceMethods() {
 		validateTestMethods(After.class, false);
 		validateTestMethods(Before.class, false);
 		validateTestMethods(Test.class, false);
+		
+		List<Method> methods= fTestClass.getAnnotatedMethods(Test.class);
+		if (methods.size() == 0)
+			fErrors.add(new Exception("No runnable methods"));
 	}
 
 	public void validateStaticMethods() {
@@ -57,7 +59,8 @@ public class MethodValidator {
 
 	private void validateTestMethods(Class<? extends Annotation> annotation,
 			boolean isStatic) {
-		List<Method> methods= fIntrospector.getTestMethods(annotation);
+		List<Method> methods= fTestClass.getAnnotatedMethods(annotation);
+		
 		for (Method each : methods) {
 			if (Modifier.isStatic(each.getModifiers()) != isStatic) {
 				String state= isStatic ? "should" : "should not";

@@ -6,7 +6,7 @@ import java.io.PrintStream;
 
 import junit.framework.TestCase;
 import org.junit.Test;
-import org.junit.internal.runners.TextListener;
+import org.junit.internal.TextListener;
 import org.junit.runner.JUnitCore;
 
 public class TextListenerTest extends TestCase {

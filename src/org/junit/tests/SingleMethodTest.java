@@ -49,7 +49,7 @@ public class SingleMethodTest {
 		@Parameters
 		public static Collection<Object[]> params() {
 			return Parameterized.eachOne(1, 2);
-		}
+		} 
 
 		public ParameterizedOneTimeSetup(int x) {
 		}

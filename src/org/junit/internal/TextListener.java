@@ -1,4 +1,4 @@
-package org.junit.internal.runners;
+package org.junit.internal;
 
 import java.io.PrintStream;
 import java.text.NumberFormat;

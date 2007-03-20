@@ -1,8 +1,5 @@
 package org.junit.runners;
 
-import static org.junit.Assert.assertEquals;
-
-import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -15,10 +12,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.internal.runners.CompositeRunner;
+import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.MethodValidator;
-import org.junit.internal.runners.TestClassMethodsRunner;
-import org.junit.internal.runners.TestClassRunner;
+import org.junit.internal.runners.TestClass;
+import org.junit.internal.runners.JUnit4ClassRunner;
+import org.junit.internal.runners.ClassRoadie;
+import org.junit.runner.notification.RunNotifier;
 
 /** <p>The custom runner <code>Parameterized</code> implements parameterized
  * tests. When running a parameterized test class, instances are created for the
@@ -51,30 +52,16 @@ import org.junit.internal.runners.TestClassRunner;
  * <p>Each instance of <code>FibonacciTest</code> will be constructed using the two-argument
  * constructor and the data values in the <code>&#064;Parameters</code> method.</p>
  */
-public class Parameterized extends TestClassRunner {
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.METHOD)
-	public static @interface Parameters {
-	}
-
-	public static Collection<Object[]> eachOne(Object... params) {
-		List<Object[]> results= new ArrayList<Object[]>();
-		for (Object param : params)
-			results.add(new Object[] { param });
-		return results;
-	}
-
-	// TODO: single-class this extension
-	
-	private static class TestClassRunnerForParameters extends TestClassMethodsRunner {
+public class Parameterized extends CompositeRunner {
+	static class TestClassRunnerForParameters extends JUnit4ClassRunner {
 		private final Object[] fParameters;
 
 		private final int fParameterSetNumber;
 
 		private final Constructor<?> fConstructor;
 
-		private TestClassRunnerForParameters(Class<?> klass, Object[] parameters, int i) {
-			super(klass);
+		TestClassRunnerForParameters(TestClass testClass, Object[] parameters, int i) throws InitializationError {
+			super(testClass.getJavaClass()); //todo
 			fParameters= parameters;
 			fParameterSetNumber= i;
 			fConstructor= getOnlyConstructor();
@@ -96,55 +83,78 @@ public class Parameterized extends TestClassRunner {
 		}
 
 		private Constructor<?> getOnlyConstructor() {
-			Constructor<?>[] constructors= getTestClass().getConstructors();
-			assertEquals(1, constructors.length);
+			Constructor<?>[] constructors= getTestClass().getJavaClass().getConstructors();
+			Assert.assertEquals(1, constructors.length);
 			return constructors[0];
 		}
-	}
-	
-	// TODO: I think this now eagerly reads parameters, which was never the point.
-	
-	public static class RunAllParameterMethods extends CompositeRunner {
-		private final Class<?> fKlass;
-
-		public RunAllParameterMethods(Class<?> klass) throws Exception {
-			super(klass.getName());
-			fKlass= klass;
-			int i= 0;
-			for (final Object each : getParametersList()) {
-				if (each instanceof Object[])
-					super.add(new TestClassRunnerForParameters(klass, (Object[])each, i++));
-				else
-					throw new Exception(String.format("%s.%s() must return a Collection of arrays.", fKlass.getName(), getParametersMethod().getName()));
-			}
-		}
-
-		private Collection<?> getParametersList() throws IllegalAccessException, InvocationTargetException, Exception {
-			return (Collection<?>) getParametersMethod().invoke(null);
+		
+		@Override
+		protected void validate() throws InitializationError {
+			// do nothing: validated before.
 		}
 		
-		private Method getParametersMethod() throws Exception {
-			for (Method each : fKlass.getMethods()) {
-				if (Modifier.isStatic(each.getModifiers())) {
-					Annotation[] annotations= each.getAnnotations();
-					for (Annotation annotation : annotations) {
-						if (annotation.annotationType() == Parameters.class)
-							return each;
-					}
-				}
-			}
-			throw new Exception("No public static parameters method on class "
-					+ getName());
+		@Override
+		public void run(RunNotifier notifier) {
+			runMethods(notifier);
 		}
 	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.METHOD)
+	public static @interface Parameters {
+	}
 	
-	public Parameterized(final Class<?> klass) throws Exception {
-		super(klass, new RunAllParameterMethods(klass));
+	private final TestClass fTestClass;
+
+	public Parameterized(Class<?> klass) throws Exception {
+		super(klass.getName());
+		fTestClass= new TestClass(klass);
+		
+		MethodValidator methodValidator= new MethodValidator(fTestClass);
+		methodValidator.validateStaticMethods();
+		methodValidator.validateInstanceMethods();
+		methodValidator.assertValid();
+		
+		int i= 0;
+		for (final Object each : getParametersList()) {
+			if (each instanceof Object[])
+				add(new TestClassRunnerForParameters(fTestClass, (Object[])each, i++));
+			else
+				throw new Exception(String.format("%s.%s() must return a Collection of arrays.", fTestClass.getName(), getParametersMethod().getName()));
+		}
 	}
 	
 	@Override
-	protected void validate(MethodValidator methodValidator) {
-		methodValidator.validateStaticMethods();
-		methodValidator.validateInstanceMethods();
+	public void run(final RunNotifier notifier) {
+		new ClassRoadie(notifier, fTestClass, getDescription(), new Runnable() {
+			public void run() {
+				runChildren(notifier);
+			}
+		}).runProtected();
+	}
+	
+	private Collection<?> getParametersList() throws IllegalAccessException, InvocationTargetException, Exception {
+		return (Collection<?>) getParametersMethod().invoke(null);
+	}
+	
+	private Method getParametersMethod() throws Exception {
+		List<Method> methods= fTestClass.getAnnotatedMethods(Parameters.class);
+		for (Method each : methods) {
+			int modifiers= each.getModifiers();
+			if (Modifier.isStatic(modifiers) && Modifier.isPublic(modifiers))
+				return each;
+		}
+
+		throw new Exception("No public static parameters method on class " + getName());
+	}
+
+	public static Collection<Object[]> eachOne(Object... params) {
+		List<Object[]> results= new ArrayList<Object[]>();
+		for (Object param : params)
+			results.add(new Object[] { param });
+		return results;
 	}
 }
+
+// TODO: single-class this extension
+

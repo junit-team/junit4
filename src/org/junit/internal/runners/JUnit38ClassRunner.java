@@ -14,7 +14,7 @@ import org.junit.runner.Runner;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
-public class OldTestClassRunner extends Runner {
+public class JUnit38ClassRunner extends Runner {
 	private static final class OldTestClassAdaptingListener implements
 			TestListener {
 		private final RunNotifier fNotifier;
@@ -60,11 +60,11 @@ public class OldTestClassRunner extends Runner {
 	private Test fTest;
 	
 	@SuppressWarnings("unchecked")
-	public OldTestClassRunner(Class<?> klass) {
+	public JUnit38ClassRunner(Class<?> klass) {
 		this(new TestSuite(klass.asSubclass(TestCase.class)));
 	}
 
-	public OldTestClassRunner(Test test) {
+	public JUnit38ClassRunner(Test test) {
 		super();
 		fTest= test;
 	}

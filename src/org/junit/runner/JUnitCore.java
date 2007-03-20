@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import junit.runner.Version;
-import org.junit.internal.runners.OldTestClassRunner;
-import org.junit.internal.runners.TextListener;
+import org.junit.internal.TextListener;
+import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
@@ -115,7 +115,7 @@ public class JUnitCore {
 	 * @return a {@link Result} describing the details of the test run and the failed tests.
 	 */
 	public Result run(junit.framework.Test test) { 
-		return run(new OldTestClassRunner(test));
+		return run(new JUnit38ClassRunner(test));
 	}
 	
 	/**

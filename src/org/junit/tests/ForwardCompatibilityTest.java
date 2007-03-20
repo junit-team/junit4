@@ -169,6 +169,7 @@ public class ForwardCompatibilityTest extends TestCase {
 	
 	public static class InvalidMethodTest {
 		@BeforeClass public void shouldBeStatic() {}
+		@Test public void aTest() {}
 	}
 	
 	public void testInvalidMethod() {

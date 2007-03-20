@@ -6,14 +6,11 @@ import java.util.Comparator;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.internal.runners.InitializationError;
-import org.junit.internal.runners.TestClassRunner;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
-import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Enclosed;
 
@@ -115,11 +112,6 @@ public class SortableTest {
 		@Test public void unsortablesAreHandledWithoutCrashing() {
 			Request unsorted= Request.aClass(Unsortable.class).sortWith(forward());
 			new JUnitCore().run(unsorted);
-		}
-		
-		@Test public void testClassRunnerCanBeWrappedAroundUnsortable() throws InitializationError {
-			TestClassRunner runner= new TestClassRunner(Unsortable.class, new UnsortableRunner(Unsortable.class));
-			runner.sort(new Sorter(forward()));
 		}
 	}
 }

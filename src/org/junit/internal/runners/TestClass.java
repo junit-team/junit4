@@ -1,28 +1,39 @@
 package org.junit.internal.runners;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.Test.None;
 
-
-public class TestIntrospector {
-	private final Class< ?> fTestClass;
+public class TestClass {
+	private final Class<?> fClass;
 	
-	public TestIntrospector(Class<?> testClass) {
-		fTestClass= testClass;
+	public TestClass(Class<?> klass) {
+		fClass= klass;
 	}
 
-	public List<Method> getTestMethods(Class<? extends Annotation> annotationClass) {
+	List<Method> getTestMethods() {
+		return getAnnotatedMethods(Test.class);
+	}
+
+	public List<Method> getBefores() {
+		return getAnnotatedMethods(BeforeClass.class);
+	}
+
+	public List<Method> getAfters() {
+		return getAnnotatedMethods(AfterClass.class);
+	}
+	
+	public List<Method> getAnnotatedMethods(Class<? extends Annotation> annotationClass) {
 		List<Method> results= new ArrayList<Method>();
-		for (Class<?> eachClass : getSuperClasses(fTestClass)) {
+		for (Class<?> eachClass : getSuperClasses(fClass)) {
 			Method[] methods= eachClass.getDeclaredMethods();
 			for (Method eachMethod : methods) {
 				Annotation annotation= eachMethod.getAnnotation(annotationClass);
@@ -33,10 +44,6 @@ public class TestIntrospector {
 		if (runsTopToBottom(annotationClass))
 			Collections.reverse(results);
 		return results;
-	}
-
-	public boolean isIgnored(Method eachMethod) {
-		return eachMethod.getAnnotation(Ignore.class) != null;
 	}
 
 	private boolean runsTopToBottom(Class< ? extends Annotation> annotation) {
@@ -73,19 +80,16 @@ public class TestIntrospector {
 		return results;
 	}
 
-	long getTimeout(Method method) {
-		Test annotation= method.getAnnotation(Test.class);
-		long timeout= annotation.timeout();
-		return timeout;
+	public Constructor<?> getConstructor() throws SecurityException, NoSuchMethodException {
+		return fClass.getConstructor();
 	}
 
-	Class<? extends Throwable> expectedException(Method method) {
-		Test annotation= method.getAnnotation(Test.class);
-		if (annotation.expected() == None.class)
-			return null;
-		else
-			return annotation.expected();
+	public Class<?> getJavaClass() {
+		return fClass;
+	}
+
+	public String getName() {
+		return fClass.getName();
 	}
 
 }
-

@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 import junit.framework.Test;
-import org.junit.internal.runners.OldTestClassRunner;
+import org.junit.internal.runners.JUnit38ClassRunner;
 
 /** Runner for use with JUnit 3.8.x-style AllTests classes
  * (those that only implement a static <code>suite()</code>
@@ -19,7 +19,7 @@ import org.junit.internal.runners.OldTestClassRunner;
  * }
  * </pre>
  */
-public class AllTests extends OldTestClassRunner {
+public class AllTests extends JUnit38ClassRunner {
 	@SuppressWarnings("unchecked")
 	public AllTests(Class<?> klass) throws Throwable {
 		super(testFromSuiteMethod(klass));

@@ -7,7 +7,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.internal.runners.OldTestClassRunner;
+import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -21,7 +21,7 @@ public class OldTestClassRunnerTest {
 	}
 	
 	@Test public void plansDecoratorCorrectly() {
-		OldTestClassRunner runner= new OldTestClassRunner(new TestDecorator(new TestSuite(MyTest.class)));
+		JUnit38ClassRunner runner= new JUnit38ClassRunner(new TestDecorator(new TestSuite(MyTest.class)));
 		assertEquals(1, runner.testCount());
 	}
 	
@@ -32,7 +32,7 @@ public class OldTestClassRunnerTest {
 	}
 	
 	@Test public void canUnadaptAnAdapter() {
-		OldTestClassRunner runner= new OldTestClassRunner(new JUnit4TestAdapter(AnnotatedTest.class));
+		JUnit38ClassRunner runner= new JUnit38ClassRunner(new JUnit4TestAdapter(AnnotatedTest.class));
 		Result result= new JUnitCore().run(runner);
 		Failure failure= result.getFailures().get(0);
 		assertEquals(Description.createTestDescription(AnnotatedTest.class, "foo"), failure.getDescription());
