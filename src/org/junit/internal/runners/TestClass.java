@@ -23,11 +23,11 @@ public class TestClass {
 		return getAnnotatedMethods(Test.class);
 	}
 
-	public List<Method> getBefores() {
+	List<Method> getBefores() {
 		return getAnnotatedMethods(BeforeClass.class);
 	}
 
-	public List<Method> getAfters() {
+	List<Method> getAfters() {
 		return getAnnotatedMethods(AfterClass.class);
 	}
 	
