@@ -1,14 +1,10 @@
 <project xmlns:au="antlib:org.apache.ant.antunit">
-	<import file="macros.ant"/>
-	
+	<import file="macros.ant" />
+
 	<target name="testCharacterize_Upload">
-		<!-- TODO: DUP -->
-		<ant antfile="build.xml" target="clean" dir="${junitdir}">
-			<property name="dist" value="${antdist}" />
-		</ant>
-		<!-- Should work -->
-		<ant antfile="build.xml" target="upload.to.sourceforge" dir="${junitdir}">
-			<property name="dist" value="${antdist}" />
-		</ant>
+		<junitbuild target="clean" />
+	
+		<!-- Should work without error -->
+		<junitbuild target="upload.to.sourceforge" />
 	</target>
 </project>

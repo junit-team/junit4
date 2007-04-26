@@ -22,6 +22,8 @@
 				/>
 				<property name="javadoczip" value="${testjavadoczip}" />
 				<property name="javadocpackages" value="org.junit" />
+				<property name="binjar" value="${test.jarfile}" />
+				<property name="srcjar" value="${test.srcjarfile}" />
 			</ant>
 		</sequential>
 	</macrodef>
