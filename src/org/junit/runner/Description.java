@@ -1,6 +1,9 @@
 package org.junit.runner;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * <p>A <code>Description</code> describes a test which is to be run or has been run. <code>Descriptions</code> 
@@ -25,10 +28,11 @@ public class Description {
 	 * Create a <code>Description</code> named <code>name</code>.
 	 * Generally, you will add children to this <code>Description</code>.
 	 * @param name the name of the <code>Description</code> 
+	 * @param annotations 
 	 * @return a <code>Description</code> named <code>name</code>
 	 */
-	public static Description createSuiteDescription(String name) {
-		return new Description(name);
+	public static Description createSuiteDescription(String name, Annotation... annotations) {
+		return new Description(name, annotations);
 	}
 
 	/**
@@ -36,10 +40,11 @@ public class Description {
 	 * Generally, this will be a leaf <code>Description</code>.
 	 * @param clazz the class of the test
 	 * @param name the name of the test (a method name for test annotated with {@link org.junit.Test})
+	 * @param annotations meta-data about the test, for downstream interpreters
 	 * @return a <code>Description</code> named <code>name</code>
 	 */
-	public static Description createTestDescription(Class<?> clazz, String name) {
-		return new Description(String.format("%s(%s)", name, clazz.getName()));
+	public static Description createTestDescription(Class<?> clazz, String name, Annotation... annotations) {
+		return new Description(String.format("%s(%s)", name, clazz.getName()), annotations);
 	}
 
 	/**
@@ -48,7 +53,7 @@ public class Description {
 	 * @return a <code>Description</code> of <code>testClass</code>
 	 */
 	public static Description createSuiteDescription(Class<?> testClass) {
-		return new Description(testClass.getName());
+		return new Description(testClass.getName(), testClass.getAnnotations());
 	}
 	
 	public static final Description EMPTY= new Description("No Tests");
@@ -57,12 +62,11 @@ public class Description {
 	private final ArrayList<Description> fChildren= new ArrayList<Description>();
 	private final String fDisplayName;
 	
-	/**
-	 * @deprecated (since 4.3) use the static factories (createTestDescription, createSuiteDescription) instead
-	 */
-	@Deprecated
-	protected Description(final String displayName) {
+	private final Annotation[] fAnnotations;
+	
+	private Description(final String displayName, Annotation... annotations) {
 		fDisplayName= displayName;
+		fAnnotations= annotations;
 	}
 
 	/**
@@ -130,5 +134,24 @@ public class Description {
 	@Override
 	public String toString() {
 		return getDisplayName();
+	}
+
+	public boolean isEmpty() {
+		return equals(EMPTY);
+	}
+
+	public Description childlessCopy() {
+		return new Description(fDisplayName, fAnnotations);
+	}
+
+	public <T extends Annotation> T getAnnotation(Class<T> annotationType) {
+		for (Annotation each : fAnnotations)
+			if (each.annotationType().equals(annotationType))
+				return annotationType.cast(each);
+		return null;
+	}
+
+	public Collection<Annotation> getAnnotations() {
+		return Arrays.asList(fAnnotations);
 	}
 }

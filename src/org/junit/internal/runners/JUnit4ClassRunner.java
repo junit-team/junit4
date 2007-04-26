@@ -1,5 +1,6 @@
 package org.junit.internal.runners;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -48,11 +49,15 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 
 	@Override
 	public Description getDescription() {
-		Description spec= Description.createSuiteDescription(getName());
+		Description spec= Description.createSuiteDescription(getName(), classAnnotations());
 		List<Method> testMethods= fTestMethods;
 		for (Method method : testMethods)
-				spec.addChild(methodDescription(method));
+			spec.addChild(methodDescription(method));
 		return spec;
+	}
+
+	protected Annotation[] classAnnotations() {
+		return fTestClass.getJavaClass().getAnnotations();
 	}
 
 	protected String getName() {
@@ -86,7 +91,12 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 	}
 
 	protected Description methodDescription(Method method) {
-		return Description.createTestDescription(getTestClass().getJavaClass(), testName(method));
+		Description result= Description.createTestDescription(getTestClass().getJavaClass(), testName(method), testAnnotations(method));
+		return result;
+	}
+
+	protected Annotation[] testAnnotations(Method method) {
+		return method.getAnnotations();
 	}
 
 	public void filter(Filter filter) throws NoTestsRemainException {

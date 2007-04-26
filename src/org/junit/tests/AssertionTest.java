@@ -193,6 +193,36 @@ public class AssertionTest {
 		assertEquals(1.0d, 1.0d, 0.0d);
 	}
 	
+	@Test(expected= AssertionError.class) public void notEqualsObjectWithNull() {
+		assertEquals(new Object(), null);
+	}
+	
+	@Test(expected= AssertionError.class) public void notEqualsNullWithObject() {
+		assertEquals(null, new Object());
+	}
+	
+	@Test public void notEqualsObjectWithNullWithMessage() {
+		Object o = new Object();
+		try {
+			assertEquals("message", null, o);
+			fail();
+		}
+		catch(AssertionError e) { 
+			assertEquals("message expected:<null> but was:<" + o.toString() + ">", e.getMessage());
+		}
+	}
+	
+	@Test public void notEqualsNullWithObjectWithMessage() {
+		Object o = new Object();
+		try {
+			assertEquals("message", o, null);
+			fail();
+		}
+		catch(AssertionError e) { 
+			assertEquals("message expected:<"+ o.toString() + "> but was:<null>", e.getMessage());
+		}
+	}
+	
 	@Test(expected= AssertionError.class) public void objectsNotEquals() {
 		assertEquals(new Object(), new Object());
 	}

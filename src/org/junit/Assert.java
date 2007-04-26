@@ -455,8 +455,8 @@ public class Assert {
 		String formatted= "";
 		if (message != null && ! message.equals(""))
 			formatted= message + " ";
-		String expectedString= expected.toString();
-		String actualString= actual.toString();
+		String expectedString= String.valueOf(expected);
+		String actualString= String.valueOf(actual);
 		if (expectedString.equals(actualString))
 			return formatted + "expected: " + expected.getClass().getName() + "<" + expectedString + "> but was: " + actual.getClass().getName() + "<" + actualString + ">";
 		else

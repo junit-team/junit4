@@ -1,11 +1,15 @@
 package org.junit.tests;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
+import org.junit.runner.Request;
+import org.junit.runner.Result;
 
 public class SuiteMethodTest {
 	public static boolean wasRun;
@@ -46,5 +50,24 @@ public class SuiteMethodTest {
 		wasRun= false;
 		JUnitCore.runClasses(NewTest.class);
 		assertTrue(wasRun);
+	}
+	
+
+	public static class CompatibilityTest {
+		@Ignore	@Test
+		public void ignored() {
+		}
+		
+		public static junit.framework.Test suite() {
+			return new JUnit4TestAdapter(CompatibilityTest.class);
+		}
+	}
+	
+	@Test public void descriptionAndRunNotificationsAreConsistent() {
+		Result result= JUnitCore.runClasses(CompatibilityTest.class);
+		assertEquals(0, result.getIgnoreCount());
+		
+		Description description= Request.aClass(CompatibilityTest.class).getRunner().getDescription();
+		assertEquals(0, description.getChildren().size());
 	}
 }
