@@ -124,5 +124,6 @@
 			<fileset dir="${dist}" includes="*.jar" />
 			<fileset file="${zipfile}" />
 		</ftp>
+		<echo message="To upload docs, use build/upload_docs.sh" />
 	</target>
 </project>
