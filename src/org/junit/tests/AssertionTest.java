@@ -4,7 +4,12 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.equalTo;
+
+import java.math.BigDecimal;
+
 import org.junit.Assert;
 import org.junit.ComparisonFailure;
 import org.junit.Test;
@@ -118,11 +123,9 @@ public class AssertionTest {
 		assertArrayEquals(new long[] {1}, new long[] {1});
 	}
 	
-	@Test
-	public void arraysContainingIntsAreEqualToArraysContainingLongs() {
-		Object[] int1= { 1, 2, 3 };
-		Object[] int2= { 1L, 2L, 3L };
-		assertArrayEquals(int1, int2);
+	@Test(expected=AssertionError.class)
+	public void IntegerDoesNotEqualLong() {
+		assertEquals(new Integer(1), new Long(1));
 	}
 	
 	@Test public void intsEqualLongs() {
@@ -259,6 +262,15 @@ public class AssertionTest {
 		assertEquals(1.0, 2.0, 0.9);
 	}
 	
+	@Test(expected= AssertionError.class) public void floatsNotEqualWithoutDelta() {
+		assertEquals(1.0, 1.1);
+	}
+	
+	@Test(expected= AssertionError.class) public void bigDecimalsNotEqual() {
+		assertEquals(new BigDecimal("123.4"), new BigDecimal("123.0"));
+	}
+	
+	
 	@Test(expected= AssertionError.class) public void doublesNotEqual() {
 		assertEquals(1.0d, 2.0d, 0.9d);
 	}
@@ -383,5 +395,31 @@ public class AssertionTest {
     	} catch (AssertionError e) {
     		assertEquals("expected: java.lang.String<4> but was: java.lang.Integer<4>", e.getMessage());
     	}
+    }
+    
+    @Test public void assertThatIncludesDescriptionOfTestedValueInErrorMessage() {
+        String expected = "expected";
+        String actual = "actual";
+        
+        String expectedMessage = "identifier\nExpected: \"expected\"\n     got: \"actual\"\n";
+        
+        try {
+            assertThat("identifier", actual, equalTo(expected));
+        } catch (AssertionError e) {
+            assertEquals(expectedMessage, e.getMessage());
+        }
+    }
+
+    @Test public void assertThatDescriptionCanBeElided() {
+        String expected = "expected";
+        String actual = "actual";
+        
+        String expectedMessage = "\nExpected: \"expected\"\n     got: \"actual\"\n";
+        
+        try {
+            assertThat(actual, equalTo(expected));
+        } catch (AssertionError e) {
+            assertEquals(expectedMessage, e.getMessage());
+        }
     }
 }

@@ -75,7 +75,6 @@ public class RunListener {
 	 */
 	public void testIgnored(Description description) throws Exception {
 	}
-
 }
 
 

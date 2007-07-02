@@ -48,6 +48,18 @@ public class Description {
 	}
 
 	/**
+	 * Create a <code>Description</code> of a single test named <code>name</code> in the class <code>clazz</code>.
+	 * Generally, this will be a leaf <code>Description</code>.  
+	 * (This remains for binary compatibility with clients of JUnit 4.3)
+	 * @param clazz the class of the test
+	 * @param name the name of the test (a method name for test annotated with {@link org.junit.Test})
+	 * @return a <code>Description</code> named <code>name</code>
+	 */
+	public static Description createTestDescription(Class<?> clazz, String name) {
+		return createTestDescription(clazz, name, new Annotation[0]);
+	}
+
+	/**
 	 * Create a <code>Description</code> named after <code>testClass</code>
 	 * @param testClass A {@link Class} containing tests 
 	 * @return a <code>Description</code> of <code>testClass</code>

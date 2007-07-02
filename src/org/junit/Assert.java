@@ -2,6 +2,9 @@ package org.junit;
 
 import java.lang.reflect.Array;
 
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.StringDescription;
 import org.junit.internal.ArrayComparisonFailure;
 
 /**
@@ -100,8 +103,6 @@ public class Assert {
 	}
 
 	private static boolean isEquals(Object expected, Object actual) {
-		if (expected instanceof Number && actual instanceof Number)
-			return ((Number) expected).longValue() == ((Number) actual).longValue();
 		return expected.equals(actual);
 	}
 
@@ -141,13 +142,11 @@ public class Assert {
 	}
 
 	/**
-	 * TODO: fix javadoc
-	 * Asserts that two object arrays are equal. If they are not, an
-	 * {@link AssertionError} is thrown with the given message. If <code>expecteds</code> and
-	 *  <code>actuals</code> are <code>null</code>, they are considered equal.
+	 * Asserts that two byte arrays are equal. If they are not, an
+	 * {@link AssertionError} is thrown with the given message.
 	 * @param message the identifying message or <code>null</code> for the {@link AssertionError}
-	 * @param expecteds Object array or array of arrays (multi-dimensional array) with expected values.
-	 * @param actuals Object array or array of arrays (multi-dimensional array) with actual values
+	 * @param expecteds byte array with expected values.
+	 * @param actuals byte array with actual values
 	 */
 	public static void assertArrayEquals(String message, byte[] expecteds,
 			byte[] actuals) throws ArrayComparisonFailure {
@@ -155,25 +154,21 @@ public class Assert {
 	}
 
 	/**
-	 * TODO: fix javadoc
-	 * Asserts that two object arrays are equal. If they are not, an {@link AssertionError} 
-	 * is thrown.  If <code>expected</code> and <code>actual</code> are <code>null</code>, 
-	 * they are considered equal.
-	 * @param expecteds Object array or array of arrays (multi-dimensional array) with expected values
-	 * @param actuals Object array or array of arrays (multi-dimensional array) with actual values
+	 * Asserts that two byte arrays are equal. If they are not, an
+	 * {@link AssertionError} is thrown.
+	 * @param expecteds byte array with expected values.
+	 * @param actuals byte array with actual values
 	 */
 	public static void assertArrayEquals(byte[] expecteds, byte[] actuals) {
 		assertArrayEquals(null, expecteds, actuals);
 	}
 	
 	/**
-	 * TODO: fix javadoc
-	 * Asserts that two object arrays are equal. If they are not, an
-	 * {@link AssertionError} is thrown with the given message. If <code>expecteds</code> and
-	 *  <code>actuals</code> are <code>null</code>, they are considered equal.
+	 * Asserts that two char arrays are equal. If they are not, an
+	 * {@link AssertionError} is thrown with the given message.
 	 * @param message the identifying message or <code>null</code> for the {@link AssertionError}
-	 * @param expecteds Object array or array of arrays (multi-dimensional array) with expected values.
-	 * @param actuals Object array or array of arrays (multi-dimensional array) with actual values
+	 * @param expecteds char array with expected values.
+	 * @param actuals char array with actual values
 	 */
 	public static void assertArrayEquals(String message, char[] expecteds,
 			char[] actuals) throws ArrayComparisonFailure {
@@ -181,25 +176,21 @@ public class Assert {
 	}
 
 	/**
-	 * TODO: fix javadoc
-	 * Asserts that two object arrays are equal. If they are not, an {@link AssertionError} 
-	 * is thrown.  If <code>expected</code> and <code>actual</code> are <code>null</code>, 
-	 * they are considered equal.
-	 * @param expecteds Object array or array of arrays (multi-dimensional array) with expected values
-	 * @param actuals Object array or array of arrays (multi-dimensional array) with actual values
+	 * Asserts that two char arrays are equal. If they are not, an
+	 * {@link AssertionError} is thrown.
+	 * @param expecteds char array with expected values.
+	 * @param actuals char array with actual values
 	 */
 	public static void assertArrayEquals(char[] expecteds, char[] actuals) {
 		assertArrayEquals(null, expecteds, actuals);
 	}
 	
 	/**
-	 * TODO: fix javadoc
-	 * Asserts that two object arrays are equal. If they are not, an
-	 * {@link AssertionError} is thrown with the given message. If <code>expecteds</code> and
-	 *  <code>actuals</code> are <code>null</code>, they are considered equal.
+	 * Asserts that two short arrays are equal. If they are not, an
+	 * {@link AssertionError} is thrown with the given message.
 	 * @param message the identifying message or <code>null</code> for the {@link AssertionError}
-	 * @param expecteds Object array or array of arrays (multi-dimensional array) with expected values.
-	 * @param actuals Object array or array of arrays (multi-dimensional array) with actual values
+	 * @param expecteds short array with expected values.
+	 * @param actuals short array with actual values
 	 */
 	public static void assertArrayEquals(String message, short[] expecteds,
 			short[] actuals) throws ArrayComparisonFailure {
@@ -207,25 +198,21 @@ public class Assert {
 	}
 
 	/**
-	 * TODO: fix javadoc
-	 * Asserts that two object arrays are equal. If they are not, an {@link AssertionError} 
-	 * is thrown.  If <code>expected</code> and <code>actual</code> are <code>null</code>, 
-	 * they are considered equal.
-	 * @param expecteds Object array or array of arrays (multi-dimensional array) with expected values
-	 * @param actuals Object array or array of arrays (multi-dimensional array) with actual values
+	 * Asserts that two short arrays are equal. If they are not, an
+	 * {@link AssertionError} is thrown.
+	 * @param expecteds short array with expected values.
+	 * @param actuals short array with actual values
 	 */
 	public static void assertArrayEquals(short[] expecteds, short[] actuals) {
 		assertArrayEquals(null, expecteds, actuals);
 	}
 	
 	/**
-	 * TODO: fix javadoc
-	 * Asserts that two object arrays are equal. If they are not, an
-	 * {@link AssertionError} is thrown with the given message. If <code>expecteds</code> and
-	 *  <code>actuals</code> are <code>null</code>, they are considered equal.
+	 * Asserts that two int arrays are equal. If they are not, an
+	 * {@link AssertionError} is thrown with the given message.
 	 * @param message the identifying message or <code>null</code> for the {@link AssertionError}
-	 * @param expecteds Object array or array of arrays (multi-dimensional array) with expected values.
-	 * @param actuals Object array or array of arrays (multi-dimensional array) with actual values
+	 * @param expecteds int array with expected values.
+	 * @param actuals int array with actual values
 	 */
 	public static void assertArrayEquals(String message, int[] expecteds,
 			int[] actuals) throws ArrayComparisonFailure {
@@ -233,41 +220,35 @@ public class Assert {
 	}
 
 	/**
-	 * TODO: fix javadoc
-	 * Asserts that two object arrays are equal. If they are not, an {@link AssertionError} 
-	 * is thrown.  If <code>expected</code> and <code>actual</code> are <code>null</code>, 
-	 * they are considered equal.
-	 * @param expecteds Object array or array of arrays (multi-dimensional array) with expected values
-	 * @param actuals Object array or array of arrays (multi-dimensional array) with actual values
+	 * Asserts that two int arrays are equal. If they are not, an
+	 * {@link AssertionError} is thrown.
+	 * @param expecteds int array with expected values.
+	 * @param actuals int array with actual values
 	 */
 	public static void assertArrayEquals(int[] expecteds, int[] actuals) {
 		assertArrayEquals(null, expecteds, actuals);
 	}
 
 	/**
-	 * TODO: fix javadoc
-	 * Asserts that two object arrays are equal. If they are not, an {@link AssertionError} 
-	 * is thrown.  If <code>expected</code> and <code>actual</code> are <code>null</code>, 
-	 * they are considered equal.
-	 * @param expecteds Object array or array of arrays (multi-dimensional array) with expected values
-	 * @param actuals Object array or array of arrays (multi-dimensional array) with actual values
-	 */
-	public static void assertArrayEquals(long[] expecteds, long[] actuals) {
-		assertArrayEquals(null, expecteds, actuals);
-	}
-	
-	/**
-	 * TODO: fix javadoc
-	 * Asserts that two object arrays are equal. If they are not, an
-	 * {@link AssertionError} is thrown with the given message. If <code>expecteds</code> and
-	 *  <code>actuals</code> are <code>null</code>, they are considered equal.
+	 * Asserts that two long arrays are equal. If they are not, an
+	 * {@link AssertionError} is thrown with the given message.
 	 * @param message the identifying message or <code>null</code> for the {@link AssertionError}
-	 * @param expecteds Object array or array of arrays (multi-dimensional array) with expected values.
-	 * @param actuals Object array or array of arrays (multi-dimensional array) with actual values
+	 * @param expecteds long array with expected values.
+	 * @param actuals long array with actual values
 	 */
 	public static void assertArrayEquals(String message, long[] expecteds,
 			long[] actuals) throws ArrayComparisonFailure {
 		internalArrayEquals(message, expecteds, actuals);
+	}
+
+	/**
+	 * Asserts that two long arrays are equal. If they are not, an
+	 * {@link AssertionError} is thrown.
+	 * @param expecteds long array with expected values.
+	 * @param actuals long array with actual values
+	 */
+	public static void assertArrayEquals(long[] expecteds, long[] actuals) {
+		assertArrayEquals(null, expecteds, actuals);
 	}
 	
 	/**
@@ -333,7 +314,23 @@ public class Assert {
 		if (!(Math.abs(expected - actual) <= delta))
 			failNotEquals(message, new Double(expected), new Double(actual));
 	}
+	
+	static public void assertEquals(long expected, long actual) {
+		assertEquals(null, expected, actual);
+	}
+	
+	static public void assertEquals(String message, long expected, long actual) {
+		assertEquals(message, (Long)expected, (Long)actual);
+	}
 
+	static public void assertEquals(double expected, double actual) {
+		assertEquals(null, expected, actual);
+	}
+
+	static public void assertEquals(String message, double expected, double actual) {
+		fail("Use assertEquals(expected, actual, delta) to compare floating-point numbers");
+	}
+	
 	/**
 	 * Asserts that two doubles or floats are equal to within a positive delta. If they
 	 * are not, an {@link AssertionError} is thrown. If the
@@ -490,4 +487,19 @@ public class Assert {
 		assertArrayEquals(expecteds, actuals);
 	}
 
+
+    public static <T> void assertThat(T actual, Matcher<T> matcher) {
+        assertThat("", actual, matcher);
+    }
+    
+    public static <T> void assertThat(String reason, T actual, Matcher<T> matcher) {
+        if (!matcher.matches(actual)) {
+            Description description = new StringDescription();
+            description.appendText(reason);
+            description.appendText("\nExpected: ");
+            matcher.describeTo(description);
+            description.appendText("\n     got: ").appendValue(actual).appendText("\n");
+            throw new java.lang.AssertionError(description.toString());
+        }
+    }
 }

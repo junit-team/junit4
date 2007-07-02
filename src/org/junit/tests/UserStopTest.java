@@ -17,13 +17,6 @@ public class UserStopTest {
 	@Test(expected=StoppedByUserException.class) public void userStop() {
 		fNotifier.fireTestStarted(null);
 	}
-
-
-	// TODO: API is changing
-//	@Test(expected=StoppedByUserException.class) public void stopMethodRunner() throws Exception {
-//		new TestMethodRunner(this, OneTest.class.getMethod("foo"), fNotifier,
-//				Description.createTestDescription(OneTest.class, "foo")).run();
-//	}
 	
 	public static class OneTest {
 		@Test public void foo() {}

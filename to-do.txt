@@ -1,4 +1,3 @@
-* What happened to CustomRunnerTest?
 * assertArrayEquals(double[], double[], double) and assertArrayEquals(float[], float[], float)
 
 * update documentation
@@ -18,3 +17,11 @@
 
 * Create test target in ant
 * Organize org.junit.tests
+* Create assume(that()) and assert(that()) 
+  (what is a better name for the second one?)
+  
+* Simplify implementation of equality, and organize AssertionTest
+
+* Theories class validation should be much better
+
+* assumePasses doesn't have desired effect within a Theory

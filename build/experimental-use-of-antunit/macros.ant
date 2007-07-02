@@ -14,6 +14,7 @@
 
 	<macrodef name="junitbuild">
 		<attribute name="target" />
+		<attribute name="javadocpackages" default="org.junit"/>
 		<sequential>
 			<ant antfile="build.xml" target="@{target}" dir="${junitdir}">
 				<property name="dist" value="${antdist}" />
@@ -21,9 +22,10 @@
 				          value="${antdist}/ant-unit-java-docs"
 				/>
 				<property name="javadoczip" value="${testjavadoczip}" />
-				<property name="javadocpackages" value="org.junit" />
+				<property name="javadocpackages" value="@{javadocpackages}" />
 				<property name="binjar" value="${test.jarfile}" />
 				<property name="srcjar" value="${test.srcjarfile}" />
+				<property name="hamcrestsrc" value="${test.hamcrestsrc}" />
 			</ant>
 		</sequential>
 	</macrodef>

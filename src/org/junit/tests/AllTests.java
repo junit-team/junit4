@@ -11,10 +11,10 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
+	AssumptionTest.class,
 	ClassRequestTest.class,
 	ListenerTest.class,
 	FailedConstructionTest.class,
-	// TODO: What did CVS do with this?  CustomRunnerTest.class,
 	TestDescriptionTest.class,
 	SuiteDescriptionTest.class,
 	AllTestsTest.class,

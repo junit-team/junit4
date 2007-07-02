@@ -86,7 +86,6 @@ public abstract class Request {
 		return filterWith(new Filter() {
 			@Override
 			public boolean shouldRun(Description description) {
-				// TODO: test for equality even if we have children?
 				if (description.isTest())
 					return desiredDescription.equals(description);
 				for (Description each : description.getChildren())

@@ -82,11 +82,6 @@
 		<au:assertFileExists file="${binjarfile}" />
 	</target>
 
-	<target name="testCharacterize_PopulateGeneratesSrcJar">
-		<junitbuild target="populate-dist" />
-		<au:assertFileExists file="${srcjarfile}" />
-	</target>
-
 	<target name="testCharacterize_PopulateCopiesSamplesAndTests">
 		<junitbuild target="samples-and-tests" />
 		<au:assertFileExists file="${antdistdir}/junit/samples" />
@@ -94,16 +89,39 @@
 		<au:assertFileExists file="${antdistdir}/org/junit/samples" />
 		<au:assertFileExists file="${antdistdir}/org/junit/tests" />
 	</target>
+
+	<!-- TODO: shotgun to pass in hamcrestsrc -->
+	<target name="testCharacterize_UnjarHamcrestGeneratesSource">
+		<junitbuild target="unjar.hamcrest" />
+		
+		<!-- TODO: confused about where this directory is -->
+		<au:assertFileExists file="${junitdir}/${test.hamcrestsrc}/org/hamcrest" />
+	</target>
 	
 	<!-- DRIVING TESTS -->
 
-	<target name="testJavaDocZip">
+	<target name="testJavaDocZipCreatesOrgDir">
 		<junitbuild target="javadoczip" />
 		<au:assertFileExists file="${exttestjavadoczip}" />
 		<unzip.exttestjavadoczip />
 		<au:assertFileExists file="${tempdir}/org" />
 	</target>
+	
+	<!-- TODO: what hamcrest packages do I need? -->
 
+	<!-- TODO DUP above -->
+	<target name="testJavaDocZipCreatesHamcrestDir">
+		<junitbuild target="javadoczip" javadocpackages="org.junit, org.hamcrest.core" />
+		<au:assertFileExists file="${exttestjavadoczip}" />
+		<unzip.exttestjavadoczip />
+		<au:assertFileExists file="${tempdir}/org/hamcrest" />
+	</target>
+
+	<target name="testJavaDocHasNoErrors">
+		<junitbuild target="javadoc" />
+		<au:assertLogDoesntContain text="does not exist" />
+	</target>
+	
 	<target name="testJavaDocZipDeletedOnClean">
 		<touch file="${exttestjavadoczip}" />
 		<junitbuild target="clean" />

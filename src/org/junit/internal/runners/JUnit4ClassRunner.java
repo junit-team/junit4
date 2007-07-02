@@ -23,8 +23,12 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 
 	public JUnit4ClassRunner(Class<?> klass) throws InitializationError {
 		fTestClass= new TestClass(klass);
-		fTestMethods= fTestClass.getTestMethods();
+		fTestMethods= getTestMethods();
 		validate();
+	}
+	
+	protected List<Method> getTestMethods() {
+		return fTestClass.getTestMethods();
 	}
 	
 	protected void validate() throws InitializationError {
@@ -69,21 +73,23 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 	}
 
 	protected void invokeTestMethod(Method method, RunNotifier notifier) {
+		Description description= methodDescription(method);
 		Object test;
 		try {
 			test= createTest();
 		} catch (InvocationTargetException e) {
-			notifier.testAborted(methodDescription(method), e.getCause());
+			notifier.testAborted(description, e.getCause());
 			return;			
 		} catch (Exception e) {
-			notifier.testAborted(methodDescription(method), e);
+			notifier.testAborted(description, e);
 			return;
 		}
-		createMethodRunner(test, method, notifier).run();
+		TestMethod testMethod= wrapMethod(method);
+		new MethodRoadie(test, testMethod, notifier, description).run();
 	}
 
-	protected MethodRoadie createMethodRunner(Object test, Method method, RunNotifier notifier) {
-		return new MethodRoadie(test, method, notifier, methodDescription(method), fTestClass);
+	protected TestMethod wrapMethod(Method method) {
+		return new TestMethod(method, fTestClass);
 	}
 
 	protected String testName(Method method) {
@@ -91,8 +97,7 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 	}
 
 	protected Description methodDescription(Method method) {
-		Description result= Description.createTestDescription(getTestClass().getJavaClass(), testName(method), testAnnotations(method));
-		return result;
+		return Description.createTestDescription(getTestClass().getJavaClass(), testName(method), testAnnotations(method));
 	}
 
 	protected Annotation[] testAnnotations(Method method) {

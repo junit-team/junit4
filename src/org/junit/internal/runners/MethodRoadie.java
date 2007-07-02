@@ -10,23 +10,22 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.junit.Assume.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
 public class MethodRoadie {
 	private final Object fTest;
-	private final Method fMethod;
 	private final RunNotifier fNotifier;
 	private final Description fDescription;
 	private TestMethod fTestMethod;
 
-	public MethodRoadie(Object test, Method method, RunNotifier notifier, Description description, TestClass testClass) {
+	public MethodRoadie(Object test, TestMethod method, RunNotifier notifier, Description description) {
 		fTest= test;
-		fMethod= method;
 		fNotifier= notifier;
 		fDescription= description;
-		fTestMethod= new TestMethod(method, testClass);
+		fTestMethod= method;
 	}
 
 	public void run() {
@@ -81,12 +80,14 @@ public class MethodRoadie {
 
 	protected void runTestMethod() {
 		try {
-			fMethod.invoke(fTest);
+			fTestMethod.invoke(fTest);
 			if (fTestMethod.expectsException())
 				addFailure(new AssertionError("Expected exception: " + fTestMethod.getExpectedException().getName()));
 		} catch (InvocationTargetException e) {
 			Throwable actual= e.getTargetException();
-			if (!fTestMethod.expectsException())
+			if (actual instanceof AssumptionViolatedException)
+				return;
+			else if (!fTestMethod.expectsException())
 				addFailure(actual);
 			else if (fTestMethod.isUnexpected(actual)) {
 				String message= "Unexpected exception, expected<" + fTestMethod.getExpectedException().getName() + "> but was<"

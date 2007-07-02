@@ -28,6 +28,11 @@
 		<au:assertFileExists file="${antdistdir}/org/junit/tests" />
 	</target>
 
+	<target name="testCharacterize_PopulateGeneratesSrcJar">
+		<junitbuild target="populate-dist" />
+		<au:assertFileExists file="${srcjarfile}" />
+	</target>
+
 	<!-- DRIVING TESTS -->
 	
 	<target name="testPopulateDoesntRecursivelyInclude">
