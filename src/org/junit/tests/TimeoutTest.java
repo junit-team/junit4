@@ -1,6 +1,8 @@
 package org.junit.tests;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -10,6 +12,7 @@ import java.io.Writer;
 
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.TestResult;
+import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
@@ -137,5 +140,22 @@ public class TimeoutTest {
 		TestResult result= new TestResult();
 		new JUnit4TestAdapter(InfiniteLoopTest.class).run(result);
 		assertEquals(1, result.errorCount());
+	}
+	
+	public static class WillTimeOut {
+		static boolean afterWasCalled= false;
+		
+		@Test(timeout=1) public void test() {
+			for(;;);
+		}
+		
+		@After public void after() {
+			afterWasCalled= true;
+		}
+	}
+	
+	@Test public void makeSureAfterIsCalledAfterATimeout() {
+		JUnitCore.runClasses(WillTimeOut.class);
+		assertThat(WillTimeOut.afterWasCalled, is(true));
 	}
 }

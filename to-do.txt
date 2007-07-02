@@ -25,3 +25,5 @@
 * Theories class validation should be much better
 
 * assumePasses doesn't have desired effect within a Theory
+
+* Find a way to make Parameterized a single-class extension

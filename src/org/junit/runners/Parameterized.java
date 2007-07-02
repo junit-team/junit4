@@ -156,5 +156,3 @@ public class Parameterized extends CompositeRunner {
 	}
 }
 
-// TODO: (Before June 2007) single-class this extension
-

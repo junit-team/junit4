@@ -46,29 +46,37 @@ public class MethodRoadie {
 	}
 
 	private void runWithTimeout(long timeout) {
-		ExecutorService service= Executors.newSingleThreadExecutor();
-		Callable<Object> callable= new Callable<Object>() {
-			public Object call() throws Exception {
-				runTest();
-				return null;
-			}
-		};
-		Future<Object> result= service.submit(callable);
-		service.shutdown();
 		try {
-			boolean terminated= service.awaitTermination(timeout,
-					TimeUnit.MILLISECONDS);
-			if (!terminated)
-				service.shutdownNow();
-			result.get(0, TimeUnit.MILLISECONDS); // throws the exception if one occurred during the invocation
-		} catch (TimeoutException e) {
-			addFailure(new Exception(String.format("test timed out after %d milliseconds", timeout)));
-		} catch (Exception e) {
-			addFailure(e);
-		}		
+			runBefores();
+			ExecutorService service= Executors.newSingleThreadExecutor();
+			Callable<Object> callable= new Callable<Object>() {
+				public Object call() throws Exception {
+					runTestMethod();
+					return null;
+				}
+			};
+			Future<Object> result= service.submit(callable);
+			service.shutdown();
+			try {
+				boolean terminated= service.awaitTermination(timeout,
+						TimeUnit.MILLISECONDS);
+				if (!terminated)
+					service.shutdownNow();
+				result.get(0, TimeUnit.MILLISECONDS); // throws the exception if one occurred during the invocation
+			} catch (TimeoutException e) {
+				addFailure(new Exception(String.format("test timed out after %d milliseconds", timeout)));
+			} catch (Exception e) {
+				addFailure(e);
+			}		
+		} catch (FailedBefore e) {
+		} finally {
+			runAfters();
+		}
 	}
 	
 	public void runTest() {
+		// TODO (Jul 2, 2007 4:54:13 PM):  duplicated in timeout branch?
+
 		try {
 			runBefores();
 			runTestMethod();
