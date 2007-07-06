@@ -1,14 +1,12 @@
 package org.junit.tests;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.junit.Assume.assumeNoException;
 import static org.junit.Assume.assumeNotNull;
 import static org.junit.Assume.assumeThat;
+import static org.junit.experimental.theories.matchers.api.StringContains.containsString;
 
-
-import org.hamcrest.Matchers;
 import org.junit.Assume;
 import org.junit.Test;
 import org.junit.Assume.AssumptionViolatedException;
@@ -86,12 +84,11 @@ public class AssumptionTest {
 			Object[] objects= { 1, 2, null };
 			assumeNotNull(objects);
 		} catch (AssumptionViolatedException e) {
-			assertThat(e.getMessage(), Matchers.containsString("1, 2, null"));
+			assertThat(e.getMessage(), containsString("1, 2, null"));
 		} catch (Exception e) {
 			fail("Should have thrown AssumptionViolatedException");
 		}
 	}
-
 	@Test
 	public void assumeNoExceptionThrows() {
 		final Throwable exception= new NullPointerException();

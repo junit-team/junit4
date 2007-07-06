@@ -1,10 +1,10 @@
 package org.junit.experimental.theories.matchers.api;
 
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.hasItem;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import static org.junit.experimental.theories.matchers.api.IsCollectionContaining.hasItem;
 
 public class Each {
 	public static <T> Matcher<Iterable<T>> each(final Matcher<T> individual) {
