@@ -2,8 +2,6 @@ package org.junit.tests;
 
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.core.AllOf;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;

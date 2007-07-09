@@ -1,11 +1,10 @@
 package org.junit.experimental.theories.test.javamodel;
 
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasToString;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
+import static org.junit.experimental.theories.matchers.api.StringContains.containsString;
 
 import java.lang.reflect.Method;
 
@@ -71,8 +70,8 @@ public class ConcreteFunctionTest {
 		try {
 			new ConcreteFunction(this, TO_STRING).invoke(string);
 		} catch (Exception e) {
-			assertThat(e, allOf(hasToString(containsString(string)),
-					hasToString(containsString(TO_STRING.toString()))));
+			assertThat(e.toString(), allOf(containsString(string),
+					containsString(TO_STRING.toString())));
 		}
 	}
 }

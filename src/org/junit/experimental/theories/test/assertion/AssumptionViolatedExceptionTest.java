@@ -1,10 +1,9 @@
 package org.junit.experimental.theories.test.assertion;
 
+import static org.junit.experimental.theories.matchers.api.StringContains.containsString;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.hasToString;
 import static org.junit.Assert.assertThat;
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import org.hamcrest.StringDescription;
 import org.junit.Test;
 import org.junit.Assume.AssumptionViolatedException;
@@ -21,7 +20,7 @@ public class AssumptionViolatedExceptionTest {
 	@Theory
 	public void toStringIsUseful(Object actual, Matcher<?> matcher) {
 		assertThat(new AssumptionViolatedException(actual, matcher).toString(),
-				hasToString(Matchers.containsString(matcher.toString())));
+				containsString(matcher.toString()));
 	}
 
 	@Test

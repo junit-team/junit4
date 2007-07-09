@@ -15,7 +15,7 @@
 	<property name="javadocdir" value="${dist}/javadoc" />
 	<property name="javadoczip" value="${dist}-javadoc.zip" />
 	<property name="javadocpackages" value="org.junit, org.junit.runner, org.junit.runner.description, org.junit.runner.manipulation, org.junit.runner.notification, org.junit.runners, org.hamcrest.core" />
-	<property name="hamcrestlib" value="lib/hamcrest-core-SNAPSHOT.jar" />
+	<property name="hamcrestlib" value="lib/hamcrest-core-1.1.jar" />
 	<property name="hamcrestsrc" value="${dist}/temp.hamcrest.source" />
 	
 	<target name="init">

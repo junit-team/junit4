@@ -1,12 +1,12 @@
 package org.junit.experimental.theories.test.results;
 
 import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.junit.Assert.assertThat;
+import static org.junit.experimental.theories.matchers.api.StringContains.containsString;
 
 import java.util.Arrays;
 
-import org.hamcrest.Matchers;
 import org.junit.experimental.results.PrintableResult;
 import org.junit.experimental.theories.methods.api.Theory;
 import org.junit.experimental.theories.runner.api.Theories;
@@ -32,8 +32,7 @@ public class PrintableResultTest {
 		});
 
 		assertThat(new PrintableResult(asList(failure)).toString(), allOf(
-				Matchers.containsString(descriptionName), Matchers
-						.containsString(stackTraceClassName)));
+				containsString(descriptionName), containsString(stackTraceClassName)));
 	}
 
 	public static String SHELL_POINT= "Shell Point";
@@ -45,7 +44,6 @@ public class PrintableResultTest {
 						new RuntimeException("firstException")), new Failure(
 						Description.createSuiteDescription("secondName"),
 						new RuntimeException(secondExceptionName))));
-		assertThat(backtrace.toString(), Matchers
-				.containsString(secondExceptionName));
+		assertThat(backtrace.toString(), containsString(secondExceptionName));
 	}
 }

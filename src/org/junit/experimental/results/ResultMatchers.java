@@ -1,8 +1,5 @@
 package org.junit.experimental.results;
 
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasToString;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -25,7 +22,15 @@ public class ResultMatchers {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static Matcher<Object> hasSingleFailureContaining(String string) {
-		return allOf(hasToString(containsString(string)), failureCountIs(1));
+	public static Matcher<Object> hasSingleFailureContaining(final String string) {
+		return new BaseMatcher<Object>() {
+			public boolean matches(Object item) {
+				return item.toString().contains(string) && failureCountIs(1).matches(item);
+			}
+
+			public void describeTo(Description description) {
+				description.appendText("has single failure containing " + string);
+			}
+		};
 	}
 }

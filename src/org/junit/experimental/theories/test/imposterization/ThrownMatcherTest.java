@@ -1,9 +1,9 @@
 package org.junit.experimental.theories.test.imposterization;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.junit.experimental.theories.matchers.api.StringContains.containsString;
 
 import java.util.ArrayList;
 

@@ -3,8 +3,8 @@
  */
 package org.junit.experimental.imposterization;
 
+import static org.hamcrest.CoreMatchers.is;
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import org.jmock.api.Invocation;
 import org.jmock.api.Invokable;
 import org.junit.Assert;
@@ -47,7 +47,7 @@ public class ThrownMatcher {
 	}
 
 	public static ThrownMatcher assertReturnsNormally() {
-		return assertThrownException(Matchers.is(((Object) null)));
+		return assertThrownException(is(((Object) null)));
 	}
 
 	public static ThrownMatcher assertThrownException(Matcher<?> theMatcher) {

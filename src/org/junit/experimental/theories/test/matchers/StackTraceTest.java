@@ -1,9 +1,9 @@
 package org.junit.experimental.theories.test.matchers;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasToString;
-import static org.hamcrest.Matchers.is;
+
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.experimental.theories.matchers.api.StringContains.containsString;
 import org.junit.Test;
 import org.junit.experimental.theories.matchers.api.StackTrace;
 
@@ -32,6 +32,6 @@ public class StackTraceTest {
 			methodNames += element.getMethodName() + ":";
 		}
 
-		assertThat(methodNames, hasToString(containsString(":<init>:")));
+		assertThat(methodNames.toString(), containsString(":<init>:"));
 	}
 }

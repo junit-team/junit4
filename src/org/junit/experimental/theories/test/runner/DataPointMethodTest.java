@@ -1,13 +1,13 @@
 package org.junit.experimental.theories.test.runner;
 
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.experimental.theories.matchers.api.Each.each;
 
 import java.util.List;
 
 import org.hamcrest.Matcher;
 import org.junit.Test;
-import org.junit.experimental.theories.matchers.api.Each;
 import org.junit.experimental.theories.methods.api.DataPoint;
 import org.junit.experimental.theories.methods.api.Theory;
 import org.junit.experimental.theories.runner.api.Theories;
@@ -16,7 +16,6 @@ import org.junit.runner.RunWith;
 import org.junit.runner.notification.Failure;
 
 public class DataPointMethodTest {
-	
 	@RunWith(Theories.class)
 	public static class HasDataPointMethod {
 		@DataPoint
@@ -64,6 +63,6 @@ public class DataPointMethodTest {
 
 	private Matcher<Iterable<Failure>> empty() {
 		Matcher<Failure> nullValue= nullValue();
-		return Each.each(nullValue);
+		return each(nullValue);
 	}
 }

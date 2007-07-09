@@ -1,14 +1,12 @@
 package org.junit.experimental.theories.test.runner;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasToString;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 
 import java.util.Date;
 import java.util.List;
 
-import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.experimental.imposterization.FunctionPointer;
 import org.junit.experimental.theories.methods.api.DataPoint;
@@ -17,6 +15,7 @@ import org.junit.experimental.theories.methods.api.Theory;
 import org.junit.experimental.theories.runner.TheoryContainerReference;
 import org.junit.experimental.theories.runner.api.Theories;
 import org.junit.runner.RunWith;
+import static org.junit.experimental.theories.matchers.api.StringContains.containsString;
 
 public class TheoryContainerReferenceTest {
 	private FunctionPointer method = new FunctionPointer();
@@ -48,15 +47,14 @@ public class TheoryContainerReferenceTest {
 	@Test public void pickUpDataPointMethods() throws SecurityException,
 			InstantiationException, IllegalAccessException {
 		method.calls(test).allIntsOk(0);
-		assertThat(potentialValues(), hasToString(containsString("100")));
+		assertThat(potentialValues().toString(), containsString("100"));
 	}
 
 	@Test public void ignoreDataPointMethodsWithWrongTypes()
 			throws SecurityException, InstantiationException,
 			IllegalAccessException {
 		method.calls(test).onlyStringsOk(null);
-		assertThat(potentialValues().toString(), Matchers
-		.not(hasToString(containsString("100"))));
+		assertThat(potentialValues().toString(), not(containsString("100")));
 	}
 
 	@Test public void ignoreDataPointMethodsWithoutAnnotation()

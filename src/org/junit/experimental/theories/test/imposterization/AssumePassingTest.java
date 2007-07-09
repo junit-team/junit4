@@ -7,7 +7,6 @@ import static org.junit.experimental.imposterization.AssumePassing.assumePasses;
 
 import java.util.List;
 
-import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.Assume.AssumptionViolatedException;
 import org.junit.experimental.imposterization.AssumePassing;
@@ -41,8 +40,7 @@ public class AssumePassingTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void removedParameterizedFailureWhenZeroParams() {
-		assertThat(onlyIfPassingFailures().get(0).getException(), Matchers
-				.is(AssertionError.class));
+		assertThat(onlyIfPassingFailures().get(0).getException(), is(AssertionError.class));
 	}
 
 	private List<Failure> onlyIfPassingFailures() {

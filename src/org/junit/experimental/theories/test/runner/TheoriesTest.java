@@ -1,11 +1,12 @@
 package org.junit.experimental.theories.test.runner;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
+import static org.junit.experimental.results.ResultMatchers.failureCountIs;
 import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
+import static org.junit.experimental.theories.matchers.api.StringContains.containsString;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.junit.experimental.results.PrintableResult;
@@ -160,8 +161,7 @@ public class TheoriesTest {
 	
 	@Test
 	public void honorTimeout() throws Exception {
-		assertThat(PrintableResult.testResult(HonorTimeout.class)
-				.getFailures().size(), is(1));
+		assertThat(PrintableResult.testResult(HonorTimeout.class), failureCountIs(1));
 	}
 	
 	@RunWith(Theories.class)

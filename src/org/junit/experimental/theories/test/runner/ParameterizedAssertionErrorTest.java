@@ -1,10 +1,10 @@
 package org.junit.experimental.theories.test.runner;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static org.junit.experimental.theories.matchers.api.StringContains.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
-import org.hamcrest.Matchers;
 import org.junit.experimental.theories.methods.api.Theory;
 import org.junit.experimental.theories.runner.ParameterizedAssertionError;
 import org.junit.experimental.theories.runner.api.Theories;
@@ -54,7 +54,6 @@ public class ParameterizedAssertionErrorTest {
 	@Theory(nullsAccepted= false)
 	public void buildParameterizedAssertionError(String methodName, String param) {
 		assertThat(new ParameterizedAssertionError(new RuntimeException(),
-				methodName, param).toString(), Matchers
-				.containsString(methodName));
+				methodName, param).toString(), containsString(methodName));
 	}
 }
