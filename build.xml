@@ -49,9 +49,10 @@
 			destdir="${bin}"
 			debug="on"
 			classpath="${hamcrestlib}"
+			includeantruntime="false"
+			excludes="**/imposterization/**,**/theories/test/**"
   		>
 			<compilerarg value="-Xlint:unchecked" />
-			<classpath />
 		</javac>
 
 		<unjar src="${hamcrestlib}" dest="${bin}" />
