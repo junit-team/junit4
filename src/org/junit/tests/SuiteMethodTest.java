@@ -70,4 +70,49 @@ public class SuiteMethodTest {
 		Description description= Request.aClass(CompatibilityTest.class).getRunner().getDescription();
 		assertEquals(0, description.getChildren().size());
 	}
+	
+	static public class NewTestSuiteFails {
+		@Test public void sample() {
+			wasRun= true;
+		}
+		
+		public static junit.framework.Test suite() {
+			fail("should not be called with JUnit 4 runner");
+			return null;
+		}
+	}
+	
+	@Test public void makeSureSuiteNotUsedWithJUnit4Classes() {
+		wasRun= false;
+		Result res= JUnitCore.runClasses(NewTestSuiteFails.class);
+		assertEquals(1, res.getFailureCount());
+		assertFalse(wasRun);
+	}
+	
+	static public class NewTestSuiteNotUsed {
+		private static boolean wasIgnoredRun;
+		
+		@Test public void sample() {
+			wasRun= true;
+		}
+		
+		@Ignore @Test public void ignore() {
+			wasIgnoredRun= true;
+		}
+		
+		public static junit.framework.Test suite() {
+			return new JUnit4TestAdapter(NewTestSuiteNotUsed.class);
+		}
+	}
+	
+	@Test public void makeSureSuiteNotUsedWithJUnit4Classes2() {
+		wasRun= false;
+		NewTestSuiteNotUsed.wasIgnoredRun= false;
+		Result res= JUnitCore.runClasses(NewTestSuiteNotUsed.class);
+		assertTrue(wasRun);
+		assertFalse(NewTestSuiteNotUsed.wasIgnoredRun);
+		assertEquals(0, res.getFailureCount());
+		assertEquals(1, res.getRunCount());
+		assertEquals(0, res.getIgnoreCount());
+	}
 }

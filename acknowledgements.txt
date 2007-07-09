@@ -11,3 +11,6 @@
 	
 2007 February 08
 	Kazimierz Pogoda: Found bug with null array elements (1438163)
+	
+2007 July 09
+	wangqq: Found bug with @After not running after a timeout (1745048)
