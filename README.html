@@ -42,6 +42,63 @@ of the xUnit architecture for unit testing frameworks.
 </ul>
 
 <h2>
+<a NAME="Summary of"></a>Summary of Changes in version 4.4beta1</h2>
+<p>
+Our goal is for JUnit to continue to be an excellent tool for capturing developers'
+intentions about how their code should work, and quickly making sure their code 
+matches those intentions.  Over the last year, we've been talking about what things 
+developers would like to say about their code that have been difficult in the past, 
+and how we can make them easier.  
+
+<ul>
+<li><b>assertThat</b>:
+
+Two years ago, Joe Walnes built a new assertion mechanism on top of what was 
+then JMock 1 (http://joe.truemesh.com/blog//000511.html).  
+The keyword was assertThat, and the syntax looked like this:
+
+<pre>
+assertThat(x, is(3));
+assertThat(x, is(not(4)));
+assertThat(responseString, anyOf(containsString("color"), containsString("colour")));
+assertThat(myList, hasItem("3"));
+</pre>
+
+Joe does a great job describing the advantages of this new syntax at the link above, 
+so I won't belabor them here.  We have decided to include this API directly in JUnit,
+because we believe it's a more extensible and readable syntax, and because it enables
+both of the below new features.
+
+<p>
+Some notes:
+
+<ul>
+<li>The old assert methods are never, ever, going away.  Developers may continue using the old assertEquals, assertTrue, and
+so on.
+<li>The second parameter of an assertThat statement is a <tt>Matcher</tt>.  We include the Matchers we want as static imports,
+like this:
+<pre>
+import static org.hamcrest.CoreMatchers.is;
+</pre>
+or:
+<pre>
+import static org.hamcrest.CoreMatchers.*;
+</pre>
+<li>Manually importing Matcher methods can be frustrating.  Eclipse 3.3 includes the ability to define
+"Favorite" classes to import static methods from, which makes it easier (Search for "Favorites" in the Preferences dialog).
+We expect that support for static imports will improve in all Java IDEs in the future.
+<li>To allow compatibility with a wide variety of possible matchers, we have decided to include the classes from hamcrest-core,
+from the Hamcrest project, authored by Joe Walnes, Neil Dunn, and the authors of JMock.  This is the first time that
+third-party classes have been included in JUnit.  We don't intend to do it again any time soon, but the goals of Hamcrest were
+so close to our own that it made sense.
+<li>JUnit currently ships with a few matchers, defined in <tt>org.hamcrest.CoreMatchers</tt> and the package 
+<tt>org.junit.matchers</tt>.  To use many, many more, consider downloading the full hamcrest package.
+</ul>
+</li>
+<li><b>assumeThat</b>: Ideally, all of the 
+</p>
+
+<h2>
 <a NAME="Summary of"></a>Summary of Changes in version 4.3.1</h2>
 <p>
 <ul>
