@@ -8,7 +8,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.SelfDescribing;
 import org.hamcrest.StringDescription;
-import org.junit.experimental.theories.matchers.api.Each;
+import org.junit.matchers.Each;
 
 public class Assume {
 	public static class AssumptionViolatedException extends RuntimeException implements SelfDescribing {

@@ -11,10 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assume.AssumptionViolatedException;
-import org.junit.experimental.theories.javamodel.api.ConcreteFunction;
 import org.junit.experimental.theories.methods.api.ParameterSignature;
 import org.junit.experimental.theories.methods.api.ParameterSupplier;
-import org.junit.experimental.theories.runner.api.Theories.TheoryMethod;
 
 public class TheoryContainerReference {
 	private final Object container;

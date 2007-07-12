@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 
 import org.jmock.api.Invocation;
 import org.jmock.api.Invokable;
-import org.junit.experimental.theories.javamodel.api.Function;
+import org.junit.experimental.theories.runner.Function;
 
 public class FunctionPointer extends Function {
 	public static FunctionPointer pointer() {
