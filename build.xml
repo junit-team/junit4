@@ -50,7 +50,7 @@
 			debug="on"
 			classpath="${hamcrestlib}"
 			includeantruntime="false"
-			excludes="**/imposterization/**,**/theories/test/**"
+			excludes="**/imposterization/**,**/experimental/test/**"
   		>
 			<compilerarg value="-Xlint:unchecked" />
 		</javac>
