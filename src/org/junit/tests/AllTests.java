@@ -47,7 +47,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	TestClassMethodsRunnerTest.class,
 	IgnoreClassTest.class,
 	OldTestClassAdaptingListenerTest.class,
-	AnnotatedDescriptionTest.class
+	AnnotatedDescriptionTest.class,
+	BothTest.class
 })
 public class AllTests {
 	public static Test suite() {

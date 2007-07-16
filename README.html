@@ -95,7 +95,26 @@ so close to our own that it made sense.
 <tt>org.junit.matchers</tt>.  To use many, many more, consider downloading the full hamcrest package.
 </ul>
 </li>
-<li><b>assumeThat</b>: Ideally, all of the 
+<li><b>assumeThat</b>: Ideally, the developer writing a test has control of all of the forces that might cause a test to fail.
+Even when this isn't immediately possible, it can often improve a design to make dependencies explicit.  For example, a test
+that fails when run in a different locale than the developer intended can be fixed by explicitly passing a locale to the domain 
+code.
+<p>
+However, sometimes this is not desirable or possible.  
+It's good to be able to run a test against the code as it is currently written, or to write a test that exposes a known bug.
+For these situations, JUnit now includes the ability to express "assumptions":
+
+<pre>
+@Test public void filenameIncludesUsername() {
+   assumeThat(File.separatorChar, is('/'));
+   assertThat(new User("david").configFileName(), is("configfiles/david.cfg"));
+}
+
+@Test public void correctBehaviorWhenFilenameIsNull() {
+   assumeTrue(bugFixed("13356"));  // bugFixed is not included in JUnit
+   assertThat(parse(null), is(new NullDocument()));
+}
+</pre>
 </p>
 
 <h2>
