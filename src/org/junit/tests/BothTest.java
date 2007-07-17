@@ -30,8 +30,6 @@ public class BothTest {
 		assertThat(3, both(is(Integer.class)).and(is(3)));
 	}
 
-	// TODO: (Jul 16, 2007 10:45:46 AM) Allow "expected" on Theories.
-
 	@Theory
 	public void bothFails(int value, Matcher<Integer> first,
 			Matcher<Integer> second) {

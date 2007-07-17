@@ -45,47 +45,54 @@ public class MethodRoadie {
 		}
 	}
 
-	private void runWithTimeout(long timeout) {
-		try {
-			runBefores();
-			ExecutorService service= Executors.newSingleThreadExecutor();
-			Callable<Object> callable= new Callable<Object>() {
-				public Object call() throws Exception {
-					runTestMethod();
-					return null;
-				}
-			};
-			Future<Object> result= service.submit(callable);
-			service.shutdown();
-			try {
-				boolean terminated= service.awaitTermination(timeout,
-						TimeUnit.MILLISECONDS);
-				if (!terminated)
-					service.shutdownNow();
-				result.get(0, TimeUnit.MILLISECONDS); // throws the exception if one occurred during the invocation
-			} catch (TimeoutException e) {
-				addFailure(new Exception(String.format("test timed out after %d milliseconds", timeout)));
-			} catch (Exception e) {
-				addFailure(e);
-			}		
-		} catch (FailedBefore e) {
-		} finally {
-			runAfters();
-		}
+	private void runWithTimeout(final long timeout) {
+		runBeforesThenTestThenAfters(new Runnable() {
+		
+			public void run() {
+				ExecutorService service= Executors.newSingleThreadExecutor();
+				Callable<Object> callable= new Callable<Object>() {
+					public Object call() throws Exception {
+						runTestMethod();
+						return null;
+					}
+				};
+				Future<Object> result= service.submit(callable);
+				service.shutdown();
+				try {
+					boolean terminated= service.awaitTermination(timeout,
+							TimeUnit.MILLISECONDS);
+					if (!terminated)
+						service.shutdownNow();
+					result.get(0, TimeUnit.MILLISECONDS); // throws the exception if one occurred during the invocation
+				} catch (TimeoutException e) {
+					addFailure(new Exception(String.format("test timed out after %d milliseconds", timeout)));
+				} catch (Exception e) {
+					addFailure(e);
+				}				
+			}
+		});
 	}
 	
 	public void runTest() {
-		// TODO (Jul 2, 2007 4:54:13 PM):  duplicated in timeout branch?
-
-		try {
-			runBefores();
-			runTestMethod();
-		} catch (FailedBefore e) {
-		} finally {
-			runAfters();
-		}
+		runBeforesThenTestThenAfters(new Runnable() {
+			public void run() {
+				runTestMethod();
+			}
+		});
 	}
 
+	public void runBeforesThenTestThenAfters(Runnable test) {
+		try {
+			runBefores();
+			test.run();
+		} catch (FailedBefore e) {
+		} catch (Exception e) {
+			throw new RuntimeException("test should never throw an exception to this level");
+		} finally {
+			runAfters();
+		}		
+	}
+	
 	protected void runTestMethod() {
 		try {
 			fTestMethod.invoke(fTest);

@@ -57,7 +57,6 @@ public class ClassRequest extends Request {
 	}
 	
 	public boolean hasSuiteMethod() {
-		// TODO: (Before June 2007) check all attributes
 		try {
 			fTestClass.getMethod("suite");
 		} catch (NoSuchMethodException e) {
