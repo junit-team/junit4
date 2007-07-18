@@ -1,8 +1,12 @@
 package org.junit.tests;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import java.util.Collection;
+
+import junit.framework.JUnit4TestAdapter;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -126,5 +130,19 @@ public class SingleMethodTest {
 				.getRunner();
 		Description description = runner.getDescription();
 		assertEquals(1, description.getChildren().size());
+	}
+	
+	public static class HasSuiteMethod {
+		@Test public void a() {}
+		@Test public void b() {}
+		
+		public static junit.framework.Test suite() {
+			return new JUnit4TestAdapter(HasSuiteMethod.class);
+		}
+	}
+	
+	@Test public void classesWithSuiteMethodsAreFiltered() {
+		int testCount= Request.method(HasSuiteMethod.class, "a").getRunner().getDescription().testCount();
+		assertThat(testCount, is(1));
 	}
 }

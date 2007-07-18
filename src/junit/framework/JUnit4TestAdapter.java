@@ -6,6 +6,9 @@ import org.junit.Ignore;
 import org.junit.runner.Description;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
+import org.junit.runner.manipulation.Filter;
+import org.junit.runner.manipulation.NoTestsRemainException;
+import org.junit.runner.manipulation.Sorter;
 
 public class JUnit4TestAdapter implements Test {
 	private final Class<?> fNewTestClass;
@@ -67,5 +70,13 @@ public class JUnit4TestAdapter implements Test {
 	@Override
 	public String toString() {
 		return fNewTestClass.getName();
+	}
+
+	public void filter(Filter filter) throws NoTestsRemainException {
+		filter.apply(fRunner);
+	}
+
+	public void sort(Sorter sorter) {
+		sorter.apply(fRunner);
 	}
 }

@@ -11,10 +11,15 @@ import junit.framework.TestResult;
 import junit.framework.TestSuite;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
+import org.junit.runner.manipulation.Filter;
+import org.junit.runner.manipulation.Filterable;
+import org.junit.runner.manipulation.NoTestsRemainException;
+import org.junit.runner.manipulation.Sortable;
+import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
-public class JUnit38ClassRunner extends Runner {
+public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
 	private static final class OldTestClassAdaptingListener implements
 			TestListener {
 		private final RunNotifier fNotifier;
@@ -106,6 +111,20 @@ public class JUnit38ClassRunner extends Runner {
 		} else {
 			// This is the best we can do in this case
 			return Description.createSuiteDescription(test.getClass());
+		}
+	}
+
+	public void filter(Filter filter) throws NoTestsRemainException {
+		if (fTest instanceof JUnit4TestAdapter) {
+			JUnit4TestAdapter adapter= (JUnit4TestAdapter) fTest;
+			adapter.filter(filter);
+		}
+	}
+
+	public void sort(Sorter sorter) {
+		if (fTest instanceof JUnit4TestAdapter) {
+			JUnit4TestAdapter adapter= (JUnit4TestAdapter) fTest;
+			adapter.sort(sorter);
 		}
 	}
 }

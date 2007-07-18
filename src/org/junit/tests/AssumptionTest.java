@@ -24,7 +24,7 @@ public class AssumptionTest {
 	}
 
 	@Test
-	public void failedAssumptionsMeanIgnore() {
+	public void failedAssumptionsMeanPassing() {
 		Result result= JUnitCore.runClasses(HasFailingAssumption.class);
 		assertThat(result.getRunCount(), is(1));
 		assertThat(result.getIgnoreCount(), is(0));

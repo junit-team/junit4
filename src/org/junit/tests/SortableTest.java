@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Comparator;
 
+import junit.framework.JUnit4TestAdapter;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Description;
@@ -86,7 +88,40 @@ public class SortableTest {
 			new JUnitCore().run(backward);
 			assertEquals("BcBbBaAcAbAa", log);
 		}
+	}
+	
+	// TODO: (Jul 18, 2007 3:29:42 PM) Anything better to do with the duplication here?
 
+	public static class TestClassRunnerIsSortableWithSuiteMethod {
+		private static String log= "";
+		
+		public static class SortMe {
+			@Test public void a() { log+= "a"; }
+			@Test public void b() { log+= "b"; }
+			@Test public void c() { log+= "c"; }
+			
+			public static junit.framework.Test suite() {
+				return new JUnit4TestAdapter(SortMe.class);
+			}
+		}
+		
+		@Before public void resetLog() {
+			log= "";
+		}
+		
+		@Test public void sortingForwardWorksOnTestClassRunner() {
+			Request forward= Request.aClass(SortMe.class).sortWith(forward());
+			
+			new JUnitCore().run(forward);
+			assertEquals("abc", log);
+		}
+
+		@Test public void sortingBackwardWorksOnTestClassRunner() {
+			Request backward= Request.aClass(SortMe.class).sortWith(backward());
+			
+			new JUnitCore().run(backward);
+			assertEquals("cba", log);
+		}
 	}
 	
 	public static class UnsortableRunnersAreHandledWithoutCrashing {

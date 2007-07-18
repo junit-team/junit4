@@ -77,15 +77,15 @@ public class SuiteMethodTest {
 		}
 		
 		public static junit.framework.Test suite() {
-			fail("should not be called with JUnit 4 runner");
+			fail("called with JUnit 4 runner");
 			return null;
 		}
 	}
 	
-	@Test public void makeSureSuiteNotUsedWithJUnit4Classes() {
+	@Test public void suiteIsUsedWithJUnit4Classes() {
 		wasRun= false;
-		Result res= JUnitCore.runClasses(NewTestSuiteFails.class);
-		assertEquals(1, res.getFailureCount());
+		Result result= JUnitCore.runClasses(NewTestSuiteFails.class);
+		assertEquals(1, result.getFailureCount());
 		assertFalse(wasRun);
 	}
 	
