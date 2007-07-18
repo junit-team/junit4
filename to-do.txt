@@ -27,3 +27,8 @@
 * assumePasses doesn't have desired effect within a Theory
 
 * Find a way to make Parameterized a single-class extension
+
+* If a suite() returns a JUnit4TestAdapter, allow Filters and Sorters to operate on 
+  the adapted Runner.
+  
+* Every time I add a Filter feature, I have to add an equivalent Sorter feature.  Suspicious.

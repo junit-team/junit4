@@ -14,3 +14,7 @@
 	
 2007 July 09
 	wangqq: Found bug with @After not running after a timeout (1745048)
+
+2007 July 18
+     	Andrew Dick: Found bug with assertEquals comparing non-Integer Numbers (1715326)
+	Michael Schechter: Found bug with Filters and suite() methods (1739095)
