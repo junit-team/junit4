@@ -1,4 +1,4 @@
-## Summary of Changes in version 4.4beta1 ##
+## Summary of Changes in version 4.4 ##
 
 JUnit is designed to efficiently capture developers' intentions about
 their code, and quickly check their code matches those intentions.
@@ -12,6 +12,7 @@ Two years ago, Joe Walnes built a [new assertion mechanism][walnes] on top of wh
 then [JMock 1][].  The method name was `assertThat`, and the syntax looked like this:
 
 [walnes]: http://joe.truemesh.com/blog/000511.html
+[JMock 1]: http://www.jmock.org/download.html
 
     assertThat(x, is(3));
     assertThat(x, is(not(4)));
@@ -25,7 +26,7 @@ More generally:
 Advantages of this assertion syntax include:
 
 - More readable and typeable: this syntax allows you to think in terms of subject, verb, object
-  (assert "x is 3") rathern than `assertEquals`, which uses verb, object, subject (assert "equals 3 x")
+  (assert "x is 3") rather than `assertEquals`, which uses verb, object, subject (assert "equals 3 x")
 
 - Combinations: any matcher statement `s` can be negated (`not(s)`), combined (`either(s).or(t)`),
   mapped to a collection (`each(s)`), or used in custom combinations (`afterFiveSeconds(s)`)
@@ -46,17 +47,19 @@ Advantages of this assertion syntax include:
   above benefits for your own custom assertions.
 
 - For a more thorough description of these points, see [Joe Walnes's
-  original post][walnes].:
+  original post][walnes].
 
 We have decided to include this API directly in JUnit.
-It's an extensible and readable syntax, and because it enables
+It's an extensible and readable syntax, and it enables
 new features, like [assumptions][] and [theories][].
+
+[assumptions]: #assumptions
+[theories]: #theories
 
 Some notes:
 
-- The old assert methods are never, ever, going away.  
-  Developers may continue using the old `assertEquals`, `assertTrue`, and
-  so on.
+- The old assert methods are never, ever, going away.  Developers may 
+  continue using the old `assertEquals`, `assertTrue`, and so on.
 - The second parameter of an `assertThat` statement is a `Matcher`.
   We include the Matchers we want as static imports, like this:
 
@@ -66,25 +69,34 @@ Some notes:
 
         import static org.hamcrest.CoreMatchers.*;
 
-- Manually importing `Matcher` methods can be frustrating.  [Eclipse 3.3][] includes the ability to define
+- Manually importing `Matcher` methods can be frustrating.  [Eclipse 3.3][] includes the ability to 
+  define
   "Favorite" classes to import static methods from, which makes it easier 
   (Search for "Favorites" in the Preferences dialog).
   We expect that support for static imports will improve in all Java IDEs in the future.
+
+[Eclipse 3.3]: http://www.eclipse.org/downloads/
 
 - To allow compatibility with a wide variety of possible matchers, 
   we have decided to include the classes from hamcrest-core,
   from the [Hamcrest][] project.  This is the first time that
   third-party classes have been included in JUnit.  
 
+[Hamcrest]: http://code.google.com/p/hamcrest/
+
 - JUnit currently ships with a few matchers, defined in 
   `org.hamcrest.CoreMatchers` and `org.junit.matchers.JUnitMatchers`.  
   To use many, many more, consider downloading the [full hamcrest package][].
 
+[full hamcrest package]: http://hamcrest.googlecode.com/files/hamcrest-all-1.1.jar
+
 - JUnit contains special support for comparing string and array
   values, giving specific information on how they differ.  This is not
-  yet available using the `assertThat` syntax
+  yet available using the `assertThat` syntax, but we hope to bring
+  the two assert methods into closer alignment in future releases.
 
-### assumeThat ###
+<a name="assumptions" />
+### Assumptions ###
 
 Ideally, the developer writing a test has control of all of the forces that might cause a test to fail.
 If this isn't immediately possible, making dependencies explicit can often improve a design.  
@@ -108,7 +120,7 @@ For these situations, JUnit now includes the ability to express "assumptions":
        assertThat(parse(null), is(new NullDocument()));
     }
 
-With this beta release, a failed assumption will lead to the test being marked as passing,
+With this release, a failed assumption will lead to the test being marked as passing,
 regardless of what the code below the assumption may assert.
 In the future, this may change, and a failed assumption may lead to the test being ignored:
 however, third-party runners do not currently allow this option.
@@ -116,17 +128,18 @@ however, third-party runners do not currently allow this option.
 We have included `assumeTrue` for convenience, but thanks to the
 inclusion of Hamcrest, we do not need to create `assumeEquals`,
 `assumeSame`, and other analogues to the `assert*` methods.  All of
-those functionalities are subsumed in assumeThat, with the appropriate
+those functionalities are subsumed in `assumeThat`, with the appropriate
 matcher.
 
+<a name="theories" />
 ### Theories ###
 
 More flexible and expressive assertions, combined with the ability to
 state assumptions clearly, lead to a new kind of statement of intent, 
 which we call a "Theory".  A test captures the intended behavior in
-one particular scenario.  A theory allows a developer to be
-as precise as desired about the behavior of the code in possibly
-infinite numbers of possible scenarios.  For example:
+one particular scenario.  A theory captures some aspect of the
+intended behavior in possibly
+infinite numbers of potential scenarios.  For example:
 
     @RunWith(Theories.class)
     public class UserTest {
@@ -152,10 +165,16 @@ The support for Theories has been absorbed from the [Popper][]
 project, and [more complete documentation][popper-docs] can be found
 there.
 
+[Popper]: http://popper.tigris.org
+[popper-docs]: http://popper.tigris.org/tutorial.html
+
 Defining general statements in this way can jog the developer's memory
 about other potential data points and tests, also allows [automated
 tools][junit-factory] to [search][my-blog] for new, unexpected data
 points that expose bugs.
+
+[junit-factory]: http://www.junitfactory.org
+[my-blog]: http://shareandenjoy.saff.net/2007/04/popper-and-junitfactory.html
 
 ### Other changes ###
 
@@ -173,7 +192,7 @@ This release contains other bug fixes and new features.  Among them:
   native implementation of `equals`.  This assertion, which passed in
   4.3, will now fail:
 
-    assertEquals(new Integer(1), new Long(1));
+        assertEquals(new Integer(1), new Long(1));
 
   Non-integer Numbers (Floats, Doubles, BigDecimals, etc),
   which were compared incorrectly in 4.3, are now fixed.
@@ -182,7 +201,7 @@ This release contains other bug fixes and new features.  Among them:
   been re-introduced to the `Assert` class, to take advantage of
   Java's native widening conversions.  Therefore, this still passes:
 
-    assertEquals(1, 1L);
+        assertEquals(1, 1L);
 
 - The default runner for JUnit 4 test classes has been refactored.
   The old version was named `TestClassRunner`, and the new is named
@@ -214,9 +233,9 @@ This release contains other bug fixes and new features.  Among them:
 - Bug fix (1739095): Filters and Sorters work correctly on test
   classes that contain a `suite` method like:
 
-    public static junit.framework.Test suite() {
-      return new JUnit4TestAdapter(MyTest.class);
-    }
+        public static junit.framework.Test suite() {
+          return new JUnit4TestAdapter(MyTest.class);
+        }
 
 - Bug fix (1745048): @After methods are now correctly called 
   after a test method times out.
