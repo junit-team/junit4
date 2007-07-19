@@ -5,7 +5,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.matchers.StringContains.containsString;
 import org.junit.Test;
 import org.junit.experimental.results.ResultMatchers;
-import org.junit.experimental.theories.methods.api.Theory;
+import org.junit.experimental.theories.Theory;
 public class ResultMatchersTest {
 	@Test
 	public void hasFailuresHasGoodDescription() {

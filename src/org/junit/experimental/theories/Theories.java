@@ -1,13 +1,12 @@
 /**
  * 
  */
-package org.junit.experimental.theories.runner.api;
+package org.junit.experimental.theories;
 
 import java.lang.reflect.Method;
 import java.util.List;
 
-import org.junit.experimental.theories.methods.api.Theory;
-import org.junit.experimental.theories.runner.TheoryMethod;
+import org.junit.experimental.theories.internal.TheoryMethod;
 import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.JUnit4ClassRunner;
 import org.junit.internal.runners.TestMethod;

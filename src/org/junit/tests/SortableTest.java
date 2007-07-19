@@ -90,8 +90,6 @@ public class SortableTest {
 		}
 	}
 	
-	// TODO: (Jul 18, 2007 3:29:42 PM) Anything better to do with the duplication here?
-
 	public static class TestClassRunnerIsSortableWithSuiteMethod {
 		private static String log= "";
 		

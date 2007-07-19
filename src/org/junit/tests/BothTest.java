@@ -9,9 +9,9 @@ import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.junit.matchers.JUnitMatchers.either;
 import org.hamcrest.Matcher;
 import org.junit.Test;
-import org.junit.experimental.theories.methods.api.DataPoint;
-import org.junit.experimental.theories.methods.api.Theory;
-import org.junit.experimental.theories.runner.api.Theories;
+import org.junit.experimental.theories.DataPoint;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
 @RunWith(Theories.class)

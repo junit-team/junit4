@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.junit.experimental.theories.runner;
+package org.junit.experimental.theories.internal;
 
 import java.util.Arrays;
 import java.util.Collection;

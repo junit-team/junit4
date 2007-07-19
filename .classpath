@@ -3,8 +3,5 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="lib/hamcrest-core-1.1.jar"/>
-	<classpathentry kind="lib" path="testlib/jmock-2.2.0-RC1.jar"/>
-	<classpathentry kind="lib" path="testlib/cglib-nodep-2.2_beta1.jar"/>
-	<classpathentry kind="lib" path="testlib/objenesis-1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

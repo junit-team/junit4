@@ -1,19 +1,22 @@
-package org.junit.experimental.test.runner;
+package org.junit.experimental.test.theories;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
+import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.failureCountIs;
 import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
+import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 import static org.junit.matchers.StringContains.containsString;
 import org.hamcrest.Matcher;
 import org.junit.Test;
-import org.junit.experimental.results.PrintableResult;
 import org.junit.experimental.results.ResultMatchers;
-import org.junit.experimental.theories.methods.api.TestedOn;
-import org.junit.experimental.theories.methods.api.Theory;
-import org.junit.experimental.theories.runner.api.Theories;
+import org.junit.experimental.theories.DataPoint;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
+import org.junit.experimental.theories.suppliers.TestedOn;
 import org.junit.internal.runners.TestClass;
 import org.junit.runner.RunWith;
 
@@ -34,12 +37,11 @@ public class TheoriesTest {
 
 	public static int FIVE= 5;
 
-	public static int INDEPENDENCE = 1776;
-	
+	public static int INDEPENDENCE= 1776;
+
 	public static Matcher<Integer> NOT_ZERO= not(0);
 
 	public static Matcher<Integer> IS_ONE= is(1);
-
 
 	@RunWith(Theories.class)
 	public static class HasATheory {
@@ -65,10 +67,10 @@ public class TheoriesTest {
 
 	@Test
 	public void canRunTheories() throws Exception {
-		assertThat(PrintableResult.testResult(HasATheory.class),
+		assertThat(testResult(HasATheory.class),
 				hasSingleFailureContaining("Expected"));
 	}
-	
+
 	@RunWith(Theories.class)
 	public static class HasATwoParameterTheory {
 		public static int ONE= 1;
@@ -81,10 +83,10 @@ public class TheoriesTest {
 
 	@Test
 	public void canRunTwoParameterTheories() throws Exception {
-		assertThat(PrintableResult.testResult(HasATwoParameterTheory.class),
-				ResultMatchers.isSuccessful());
+		assertThat(testResult(HasATwoParameterTheory.class), ResultMatchers
+				.isSuccessful());
 	}
-	
+
 	@RunWith(Theories.class)
 	public static class DoesntUseParams {
 		public static int ONE= 1;
@@ -97,7 +99,7 @@ public class TheoriesTest {
 
 	@Test
 	public void reportBadParams() throws Exception {
-		assertThat(PrintableResult.testResult(DoesntUseParams.class),
+		assertThat(testResult(DoesntUseParams.class),
 				hasSingleFailureContaining("everythingIsZero(1, 1)"));
 	}
 
@@ -115,7 +117,7 @@ public class TheoriesTest {
 
 	@Test
 	public void nullsUsedUnlessProhibited() throws Exception {
-		assertThat(PrintableResult.testResult(NullsOK.class),
+		assertThat(testResult(NullsOK.class),
 				hasSingleFailureContaining("null"));
 	}
 
@@ -130,8 +132,8 @@ public class TheoriesTest {
 
 	@Test
 	public void testedOnLimitsParameters() throws Exception {
-		assertThat(PrintableResult.testResult(ParameterAnnotations.class),
-				ResultMatchers.isSuccessful());
+		assertThat(testResult(ParameterAnnotations.class), ResultMatchers
+				.isSuccessful());
 	}
 
 	@RunWith(Theories.class)
@@ -141,29 +143,32 @@ public class TheoriesTest {
 
 		}
 	}
-	
+
 	@Test
 	public void honorExpected() throws Exception {
-		assertThat(PrintableResult.testResult(HonorExpectedException.class)
-				.getFailures().size(), is(1));
+		assertThat(testResult(HonorExpectedException.class).getFailures()
+				.size(), is(1));
 	}
-
 
 	@RunWith(Theories.class)
 	public static class HonorTimeout {
-		@Test(timeout = 5)
-		public void shouldStop() throws InterruptedException {
-			while(true) {
-				Thread.sleep(1000);
+		@Test(timeout= 5)
+		public void shouldStop() {
+			while (true) {
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+
+				}
 			}
 		}
 	}
-	
+
 	@Test
 	public void honorTimeout() throws Exception {
-		assertThat(PrintableResult.testResult(HonorTimeout.class), failureCountIs(1));
+		assertThat(testResult(HonorTimeout.class), failureCountIs(1));
 	}
-	
+
 	@RunWith(Theories.class)
 	public static class AssumptionsFail {
 		public static int DATA= 0;
@@ -183,9 +188,27 @@ public class TheoriesTest {
 		AssumptionsFail.DATA= data;
 		AssumptionsFail.MATCHER= matcher;
 
-		String result= PrintableResult.testResult(AssumptionsFail.class)
-				.toString();
+		String result= testResult(AssumptionsFail.class).toString();
 		assertThat(result, containsString(matcher.toString()));
 		assertThat(result, containsString("" + data));
+	}
+
+	@RunWith(Theories.class)
+	public static class ShouldFilterNull {
+		@DataPoint
+		public static String NULL= null;
+
+		@DataPoint
+		public static String A= "a";
+
+		@Theory(nullsAccepted= false)
+		public void allStringsAreNonNull(String s) {
+			assertThat(s, notNullValue());
+		}
+	}
+
+	@Test
+	public void shouldFilterNull() {
+		assertThat(testResult(ShouldFilterNull.class), isSuccessful());
 	}
 }

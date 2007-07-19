@@ -1,13 +1,13 @@
-package org.junit.experimental.test.runner;
+package org.junit.experimental.test.theories;
 
 import static org.junit.matchers.StringContains.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
-import org.junit.experimental.theories.methods.api.Theory;
-import org.junit.experimental.theories.runner.ParameterizedAssertionError;
-import org.junit.experimental.theories.runner.api.Theories;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
+import org.junit.experimental.theories.internal.ParameterizedAssertionError;
 import org.junit.runner.RunWith;
 
 

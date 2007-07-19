@@ -1,7 +1,9 @@
-package org.junit.experimental.theories.methods.api;
+package org.junit.experimental.theories.suppliers;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
+import org.junit.experimental.theories.ParametersSuppliedBy;
 
 
 @ParametersSuppliedBy(TestedOnSupplier.class)

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.junit.experimental.theories.methods.api;
+package org.junit.experimental.theories;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

@@ -8,8 +8,8 @@ import static org.junit.matchers.StringContains.containsString;
 import java.util.Arrays;
 
 import org.junit.experimental.results.PrintableResult;
-import org.junit.experimental.theories.methods.api.Theory;
-import org.junit.experimental.theories.runner.api.Theories;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.Failure;
