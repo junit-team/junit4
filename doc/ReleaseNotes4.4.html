@@ -123,6 +123,9 @@ inclusion of Hamcrest, we do not need to create <code>assumeEquals</code>,
 those functionalities are subsumed in <code>assumeThat</code>, with the appropriate
 matcher.</p>
 
+<p>A failing assumption in a <code>@Before</code> or <code>@BeforeClass</code> method will have the same effect
+as a failing assumption in each <code>@Test</code> method of the class.</p>
+
 <p><a name="theories" /></p>
 
 <h3>Theories</h3>
@@ -197,7 +200,7 @@ The old version was named <code>TestClassRunner</code>, and the new is named
 <code>JUnit3ClassRunner</code>.  The new design allows variations in running
 individual test classes to be expressed with fewer custom classes.
 For a good example, see the source to
-<code>org.junit.experimental.theories.runner.api.Theories</code>.</p></li>
+<code>org.junit.experimental.theories.Theories</code>.</p></li>
 <li><p>The rules for determining which runner is applied by default to a
 test class have been simplified:</p>
 

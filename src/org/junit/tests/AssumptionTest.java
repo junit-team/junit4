@@ -5,9 +5,14 @@ import static org.junit.Assert.*;
 import static org.junit.Assume.assumeNoException;
 import static org.junit.Assume.assumeNotNull;
 import static org.junit.Assume.assumeThat;
+import static org.junit.Assume.assumeTrue;
+import static org.junit.experimental.results.PrintableResult.testResult;
+import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 import static org.junit.matchers.StringContains.containsString;
 
 import org.junit.Assume;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.Assume.AssumptionViolatedException;
 import org.junit.runner.JUnitCore;
@@ -105,5 +110,33 @@ public class AssumptionTest {
 
 	@Test(expected=AssumptionViolatedException.class) public void assumeTrueWorks() {
 		Assume.assumeTrue(false);
+	}
+	
+	public static class HasFailingAssumeInBefore {
+		@Before public void checkForSomethingThatIsntThere() {
+			assumeTrue(false);
+		}
+		
+		@Test public void failing() {
+			fail();
+		}
+	}
+	
+	@Test public void failingAssumptionInBeforePreventsTestRun() {
+		assertThat(testResult(HasFailingAssumeInBefore.class), isSuccessful());
+	}
+	
+	public static class HasFailingAssumeInBeforeClass {
+		@BeforeClass public static void checkForSomethingThatIsntThere() {
+			assumeTrue(false);
+		}
+		
+		@Test public void failing() {
+			fail();
+		}
+	}
+	
+	@Test public void failingAssumptionInBeforeClassPreventsTestRun() {
+		assertThat(testResult(HasFailingAssumeInBeforeClass.class), isSuccessful());
 	}
 }

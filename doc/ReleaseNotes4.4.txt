@@ -131,6 +131,9 @@ inclusion of Hamcrest, we do not need to create `assumeEquals`,
 those functionalities are subsumed in `assumeThat`, with the appropriate
 matcher.
 
+A failing assumption in a `@Before` or `@BeforeClass` method will have the same effect
+as a failing assumption in each `@Test` method of the class.
+
 <a name="theories" />
 ### Theories ###
 
@@ -209,7 +212,7 @@ This release contains other bug fixes and new features.  Among them:
   `JUnit3ClassRunner`.  The new design allows variations in running
   individual test classes to be expressed with fewer custom classes.
   For a good example, see the source to
-  `org.junit.experimental.theories.runner.api.Theories`.
+  `org.junit.experimental.theories.Theories`.
 
 - The rules for determining which runner is applied by default to a
   test class have been simplified:

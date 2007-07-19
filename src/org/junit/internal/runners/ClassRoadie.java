@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import org.junit.Assume.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
@@ -42,11 +43,14 @@ public class ClassRoadie {
 
 	private void runBefores() throws FailedBefore {
 		try {
-			List<Method> befores= fTestClass.getBefores();
-			for (Method before : befores)
-				before.invoke(null);
-		} catch (InvocationTargetException e) {
-			addFailure(e.getTargetException());
+			try {
+				List<Method> befores= fTestClass.getBefores();
+				for (Method before : befores)
+					before.invoke(null);
+			} catch (InvocationTargetException e) {
+				throw e.getTargetException();
+			}
+		} catch (AssumptionViolatedException e) {
 			throw new FailedBefore();
 		} catch (Throwable e) {
 			addFailure(e);
