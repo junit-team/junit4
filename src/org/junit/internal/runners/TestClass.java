@@ -11,8 +11,10 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.Description;
+import org.junit.runner.notification.RunNotifier;
 
-public class TestClass {
+public class TestClass extends JavaElement {
 	private final Class<?> fClass;
 	
 	public TestClass(Class<?> klass) {
@@ -23,11 +25,13 @@ public class TestClass {
 		return getAnnotatedMethods(Test.class);
 	}
 
-	List<Method> getBefores() {
+	@Override
+	protected List<Method> getBefores() {
 		return getAnnotatedMethods(BeforeClass.class);
 	}
 
-	List<Method> getAfters() {
+	@Override
+	protected List<Method> getAfters() {
 		return getAnnotatedMethods(AfterClass.class);
 	}
 	
@@ -92,4 +96,7 @@ public class TestClass {
 		return fClass.getName();
 	}
 
+	public void runProtected(RunNotifier notifier, Description description, Runnable runnable) {
+		new Roadie(notifier, description, null).runProtected(this, runnable);
+	}
 }

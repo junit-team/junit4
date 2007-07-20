@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 package org.junit.internal.runners;
 
 import java.lang.reflect.InvocationTargetException;
@@ -9,44 +12,46 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
-public class ClassRoadie {
-	private RunNotifier fNotifier;
-	private TestClass fTestClass;
-	private Description fDescription;
-	private final Runnable fRunnable;
-	
-	public ClassRoadie(RunNotifier notifier, TestClass testClass,
-			Description description, Runnable runnable) {
-		fNotifier= notifier;
-		fTestClass= testClass;
-		fDescription= description;
-		fRunnable= runnable;
-	}
+public class Roadie {
+	private Object fTarget;
 
-	protected void runUnprotected() {
-		fRunnable.run();
-	};
+	private RunNotifier fNotifier;
+
+	private Description fDescription;
+
+	public Roadie(RunNotifier notifier, Description description,
+			Object target) {
+		fTarget= target;
+		fNotifier= notifier;
+		fDescription= description;
+	}
 
 	protected void addFailure(Throwable targetException) {
 		fNotifier.fireTestFailure(new Failure(fDescription, targetException));
 	}
 
-	public void runProtected() {
-		try {
-			runBefores();
-			runUnprotected();
-		} catch (FailedBefore e) {
-		} finally {
-			runAfters();
-		}
+	protected void fireTestFinished() {
+		fNotifier.fireTestFinished(fDescription);
 	}
 
-	private void runBefores() throws FailedBefore {
+	protected void fireTestStarted() {
+		fNotifier.fireTestStarted(fDescription);
+	}
+
+	protected void fireTestIgnored() {
+		fNotifier.fireTestIgnored(fDescription);
+	}
+
+	public Object getTarget() {
+		return fTarget;
+	}
+
+	void runBefores(JavaElement javaElement) throws FailedBefore {
 		try {
 			try {
-				List<Method> befores= fTestClass.getBefores();
+				List<Method> befores= javaElement.getBefores();
 				for (Method before : befores)
-					before.invoke(null);
+					before.invoke(getTarget());
 			} catch (InvocationTargetException e) {
 				throw e.getTargetException();
 			}
@@ -58,15 +63,25 @@ public class ClassRoadie {
 		}
 	}
 
-	private void runAfters() {
-		List<Method> afters= fTestClass.getAfters();
+	void runAfters(JavaElement javaElement) {
+		List<Method> afters= javaElement.getAfters();
 		for (Method after : afters)
 			try {
-				after.invoke(null);
+				after.invoke(getTarget());
 			} catch (InvocationTargetException e) {
 				addFailure(e.getTargetException());
 			} catch (Throwable e) {
 				addFailure(e); // Untested, but seems impossible
 			}
+	}
+
+	public void runProtected(JavaElement javaElement, Runnable runnable) {
+		try {
+			runBefores(javaElement);
+			runnable.run();
+		} catch (FailedBefore e) {
+		} finally {
+			runAfters(javaElement);
+		}
 	}
 }

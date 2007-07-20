@@ -1,3 +1,10 @@
+## Summary of Changes in version 4.5 ##
+
+- `@Before` and `@After` methods are run before and after each set of attempted parameters
+  on a Theory
+  
+- Refactoring removed duplication that used to exist in classes MethodRoadie and ClassRoadie
+
 ## Summary of Changes in version 4.4 ##
 
 JUnit is designed to efficiently capture developers' intentions about

@@ -23,6 +23,8 @@ public class Theories extends JUnit4ClassRunner {
 
 	@Override
 	protected List<Method> getTestMethods() {
+		// TODO: (Jul 20, 2007 2:02:44 PM) Only get methods once
+
 		List<Method> testMethods= super.getTestMethods();
 		testMethods.addAll(getTestClass().getAnnotatedMethods(Theory.class));
 		return testMethods;

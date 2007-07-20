@@ -14,6 +14,7 @@ import org.junit.experimental.theories.ParameterSignature;
 import org.junit.experimental.theories.PotentialParameterValue;
 import org.junit.experimental.theories.Theory;
 import org.junit.experimental.theories.PotentialParameterValue.CouldNotGenerateValueException;
+import org.junit.internal.runners.Roadie;
 import org.junit.internal.runners.TestClass;
 import org.junit.internal.runners.TestMethod;
 
@@ -29,7 +30,8 @@ public class TheoryMethod extends TestMethod {
 			fSources= concat;
 		}
 
-		Object[] getValues(boolean nullsOk) throws CouldNotGenerateValueException {
+		Object[] getValues(boolean nullsOk)
+				throws CouldNotGenerateValueException {
 			Object[] values= new Object[fSources.size()];
 			for (int i= 0; i < values.length; i++) {
 				values[i]= fSources.get(i).getValue();
@@ -51,23 +53,31 @@ public class TheoryMethod extends TestMethod {
 
 	private List<AssumptionViolatedException> fInvalidParameters= new ArrayList<AssumptionViolatedException>();
 
+	private int successes= 0;
+
+	protected Throwable thrown = null;
+
 	public TheoryMethod(Method method, TestClass testClass) {
 		super(method, testClass);
 		fMethod= method;
 	}
 
 	@Override
-	public void invoke(Object test) throws IllegalArgumentException,
-			IllegalAccessException, InvocationTargetException {
-		int runCount= 0;
+	protected void runTestProtected(Roadie context) {
+		runTestUnprotected(context);
+	}
+
+	@Override
+	public void invoke(Roadie context)
+			throws IllegalArgumentException, IllegalAccessException,
+			InvocationTargetException {
 		try {
-			runCount+= runWithDiscoveredParameterValues(test,
-					new PotentialMethodValues(), ParameterSignature
-							.signatures(fMethod));
+			runWithDiscoveredParameterValues(context, new PotentialMethodValues(),
+					ParameterSignature.signatures(fMethod));
 		} catch (Throwable e) {
 			throw new InvocationTargetException(e);
 		}
-		if (runCount == 0)
+		if (successes == 0)
 			Assert
 					.fail("Never found parameters that satisfied method.  Violated assumptions: "
 							+ fInvalidParameters);
@@ -80,45 +90,48 @@ public class TheoryMethod extends TestMethod {
 		return annotation.nullsAccepted();
 	}
 
-	int invokeWithActualParameters(Object target, Object[] params)
+	void invokeWithActualParameters(Object target, Object[] params)
 			throws Throwable {
 		try {
 			try {
 				fMethod.invoke(target, params);
+				successes++;
 			} catch (InvocationTargetException e) {
 				throw e.getTargetException();
 			}
 		} catch (AssumptionViolatedException e) {
 			fInvalidParameters.add(e);
-			return 0;
 		} catch (Throwable e) {
 			if (params.length == 0)
 				throw e;
 			throw new ParameterizedAssertionError(e, fMethod.getName(), params);
 		}
-		return 1;
 	}
 
-	int runWithDiscoveredParameterValues(Object target,
-			PotentialMethodValues valueSources, List<ParameterSignature> sigs)
-			throws Throwable {
+	void runWithDiscoveredParameterValues(final Roadie context,
+			PotentialMethodValues valueSources, List<ParameterSignature> sigs) throws Throwable {
 		if (sigs.size() == 0) {
 			try {
-				return invokeWithActualParameters(target, valueSources
-						.getValues(nullsOk()));
+				final Object[] values= valueSources.getValues(nullsOk());
+				context.runProtected(this, new Runnable() {
+					public void run() {
+						try {
+							invokeWithActualParameters(context.getTarget(), values);
+						} catch (Throwable e) {
+							thrown = e;
+						}
+					}
+				});
+				if (thrown != null)
+					throw thrown;
 			} catch (CouldNotGenerateValueException e) {
-				return 0;
+			}
+		} else {
+			for (PotentialParameterValue source : sigs.get(0)
+					.getPotentialValues(context.getTarget())) {
+				runWithDiscoveredParameterValues(context, valueSources
+						.concat(source), sigs.subList(1, sigs.size()));
 			}
 		}
-
-		int count= 0;
-
-		for (PotentialParameterValue source : sigs.get(0).getPotentialValues(
-				target)) {
-			count+= runWithDiscoveredParameterValues(target, valueSources
-					.concat(source), sigs.subList(1, sigs.size()));
-		}
-
-		return count;
 	}
 }

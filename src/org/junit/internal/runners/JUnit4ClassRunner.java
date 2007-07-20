@@ -39,11 +39,11 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 
 	@Override
 	public void run(final RunNotifier notifier) {
-		new ClassRoadie(notifier, fTestClass, getDescription(), new Runnable() {
+		fTestClass.runProtected(notifier, getDescription(), new Runnable() {
 			public void run() {
 				runMethods(notifier);
 			}
-		}).runProtected();
+		});
 	}
 
 	protected void runMethods(final RunNotifier notifier) {
@@ -85,7 +85,7 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 			return;
 		}
 		TestMethod testMethod= wrapMethod(method);
-		new MethodRoadie(test, testMethod, notifier, description).run();
+		testMethod.run(new Roadie(notifier, description, test));
 	}
 
 	protected TestMethod wrapMethod(Method method) {

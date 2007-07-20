@@ -11,7 +11,6 @@ import org.junit.internal.runners.CompositeRunner;
 import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.MethodValidator;
 import org.junit.internal.runners.TestClass;
-import org.junit.internal.runners.ClassRoadie;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
@@ -88,10 +87,10 @@ public class Suite extends CompositeRunner {
 	
 	@Override
 	public void run(final RunNotifier notifier) {
-		new ClassRoadie(notifier, fTestClass, getDescription(), new Runnable() {
+		fTestClass.runProtected(notifier, getDescription(), new Runnable() {
 			public void run() {
 				runChildren(notifier);
 			}
-		}).runProtected();
+		});
 	}
 }

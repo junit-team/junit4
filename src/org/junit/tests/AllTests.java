@@ -2,6 +2,7 @@ package org.junit.tests;
 
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
+import org.junit.experimental.test.ExperimentalTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -50,7 +51,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	AnnotatedDescriptionTest.class,
 	BothTest.class,
 	AssumptionViolatedExceptionTest.class,
-	EachTest.class
+	EachTest.class,
+	ExperimentalTests.class
 })
 public class AllTests {
 	public static Test suite() {

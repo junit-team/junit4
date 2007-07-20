@@ -11,6 +11,7 @@ import static org.junit.experimental.results.ResultMatchers.hasSingleFailureCont
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 import static org.junit.matchers.StringContains.containsString;
 import org.hamcrest.Matcher;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.results.ResultMatchers;
 import org.junit.experimental.theories.DataPoint;
@@ -18,6 +19,7 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.experimental.theories.suppliers.TestedOn;
 import org.junit.internal.runners.TestClass;
+import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
 
 @SuppressWarnings("restriction")
@@ -211,4 +213,28 @@ public class TheoriesTest {
 	public void shouldFilterNull() {
 		assertThat(testResult(ShouldFilterNull.class), isSuccessful());
 	}
+	
+	// TODO: (Jul 20, 2007 1:58:18 PM) too complex
+	
+	@RunWith(Theories.class)
+	public static class BeforeAndAfterEachTime {
+		public static int befores = 0;
+		
+		@DataPoint public static String A = "A";
+		@DataPoint public static String B = "B";
+		
+		@Before public void incrementBefore() {
+			befores++;
+		}
+		
+		@Theory public void stringsAreOK(String string) {
+		}
+	}
+	
+	@Test public void beforeIsCalledOnEachParameterSet() {
+		BeforeAndAfterEachTime.befores = 0;
+		JUnitCore.runClasses(BeforeAndAfterEachTime.class);
+		assertThat(BeforeAndAfterEachTime.befores, is(2));
+	}
+
 }

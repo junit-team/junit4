@@ -4,7 +4,7 @@
 	<property file="${user.home}/.junit.properties" />
 	<property name="src" value="src" />
 	<property name="bin" value="bin" />
-	<property name="version" value="4.4" />
+	<property name="version" value="4.5-SNAPSHOT-${timestamp}" />
 	<property name="dist"  value="junit${version}" />
 	<property name="versionfile"  value="${src}/junit/runner/Version.java" />
 	<property name="zipfile"  value="${dist}.zip" />
