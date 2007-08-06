@@ -67,7 +67,12 @@ public class TestMethod extends JavaElement {
 
 	protected void invoke(Roadie context) throws IllegalArgumentException,
 			IllegalAccessException, InvocationTargetException {
-		fMethod.invoke(context.getTarget());
+		invoke(context.getTarget());
+	}
+
+	protected void invoke(Object target) throws IllegalAccessException,
+			InvocationTargetException {
+		fMethod.invoke(target);
 	}
 
 	protected void runTestUnprotected(final Roadie context) {
