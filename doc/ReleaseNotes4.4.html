@@ -1,3 +1,41 @@
+<h2>Summary of Changes in version 4.5</h2>
+
+<h3>Categories</h3>
+
+<p>Each test method and test class can be annotated as belonging to a <em>category</em>:</p>
+
+<pre><code>public static class SomeUITests {
+    @Category(UserAvailable.class)
+    @Test
+    public void askUserToPressAKey() { }
+
+    @Test
+    public void simulatePressingKey() { }
+}
+
+@Category(InternetConnected.class)
+public static class InternetTests {
+    @Test
+    public void pingServer() { }
+}
+</code></pre>
+
+<p>To run all of the tests in a particular category, you must currently explicitly create a custom request:</p>
+
+<pre><code>new JUnitCore().run(Request.aClass(SomeUITests.class).inCategories(UserAvailable.class));
+</code></pre>
+
+<p>This feature will very likely be improved before the final release of JUnit 4.5</p>
+
+<h3>Miscellaneous</h3>
+
+<ul>
+<li><p><code>@Before</code> and <code>@After</code> methods are run before and after each set of attempted parameters
+on a Theory</p></li>
+<li><p>Refactoring removed duplication that used to exist in classes MethodRoadie and ClassRoadie</p></li>
+<li><p>Exposed API <code>ParameterSignature.getType()</code></p></li>
+</ul>
+
 <h2>Summary of Changes in version 4.4</h2>
 
 <p>JUnit is designed to efficiently capture developers' intentions about
@@ -5,6 +43,8 @@ their code, and quickly check their code matches those intentions.
 Over the last year, we've been talking about what things developers
 would like to say about their code that have been difficult in the
 past, and how we can make them easier.</p>
+
+<p><a href="http://sourceforge.net/project/showfiles.php?group_id=15278">Download</a></p>
 
 <h3>assertThat</h3>
 

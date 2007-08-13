@@ -117,4 +117,8 @@ public class ParameterSignature {
 			}
 		};
 	}
+
+	public Class<?> getType() {
+		return type;
+	}
 }
