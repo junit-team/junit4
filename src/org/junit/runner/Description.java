@@ -32,7 +32,7 @@ public class Description {
 	 * @return a <code>Description</code> named <code>name</code>
 	 */
 	public static Description createSuiteDescription(String name, Annotation... annotations) {
-		return new Description(name, annotations);
+		return new Description(name, null, annotations);
 	}
 
 	/**
@@ -44,7 +44,7 @@ public class Description {
 	 * @return a <code>Description</code> named <code>name</code>
 	 */
 	public static Description createTestDescription(Class<?> clazz, String name, Annotation... annotations) {
-		return new Description(String.format("%s(%s)", name, clazz.getName()), annotations);
+		return new Description(String.format("%s(%s)", name, clazz.getName()), clazz.getAnnotations(), annotations);
 	}
 
 	/**
@@ -65,19 +65,21 @@ public class Description {
 	 * @return a <code>Description</code> of <code>testClass</code>
 	 */
 	public static Description createSuiteDescription(Class<?> testClass) {
-		return new Description(testClass.getName(), testClass.getAnnotations());
+		return new Description(testClass.getName(), null, testClass.getAnnotations());
 	}
 	
-	public static final Description EMPTY= new Description("No Tests");
-	public static final Description TEST_MECHANISM= new Description("Test mechanism");
+	public static final Description EMPTY= new Description("No Tests", null);
+	public static final Description TEST_MECHANISM= new Description("Test mechanism", null);
 	
 	private final ArrayList<Description> fChildren= new ArrayList<Description>();
 	private final String fDisplayName;
 	
 	private final Annotation[] fAnnotations;
+	private final Annotation[] fParentAnnotations;
 	
-	private Description(final String displayName, Annotation... annotations) {
+	private Description(final String displayName, Annotation[] parentAnnotations, Annotation... annotations) {
 		fDisplayName= displayName;
+		fParentAnnotations= parentAnnotations != null ? parentAnnotations : new Annotation[0];
 		fAnnotations= annotations;
 	}
 
@@ -158,6 +160,14 @@ public class Description {
 
 	public <T extends Annotation> T getAnnotation(Class<T> annotationType) {
 		for (Annotation each : fAnnotations)
+			if (each.annotationType().equals(annotationType))
+				return annotationType.cast(each);
+		return null;
+	}
+
+	// TODO: (Aug 6, 2007 5:10:13 PM) DUP
+	public <T extends Annotation> T getParentAnnotation(Class<T> annotationType) {
+		for (Annotation each : fParentAnnotations)
 			if (each.annotationType().equals(annotationType))
 				return annotationType.cast(each);
 		return null;

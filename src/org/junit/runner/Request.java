@@ -88,6 +88,8 @@ public abstract class Request {
 			public boolean shouldRun(Description description) {
 				if (description.isTest())
 					return desiredDescription.equals(description);
+				
+				// explicitly check if any children want to run
 				for (Description each : description.getChildren())
 					if (shouldRun(each))
 						return true;
@@ -130,5 +132,13 @@ public abstract class Request {
 
 	public static Request classWithoutSuiteMethod(Class<?> newTestClass) {
 		return new ClassRequest(newTestClass, false);
+	}
+
+	// TODO: (Aug 6, 2007 4:09:09 PM) take varargs
+	// TODO: (Aug 6, 2007 4:09:23 PM) Does the filter work on classes?
+
+
+	public Request inCategories(Class<?> category) {
+		return filterWith(new CategoryFilter(category));
 	}
 }

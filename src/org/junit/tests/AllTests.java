@@ -52,7 +52,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	BothTest.class,
 	AssumptionViolatedExceptionTest.class,
 	EachTest.class,
-	ExperimentalTests.class
+	ExperimentalTests.class,
+	CategoryTest.class
 })
 public class AllTests {
 	public static Test suite() {

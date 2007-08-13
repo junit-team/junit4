@@ -69,6 +69,8 @@ public class TestMethod extends JavaElement {
 			IllegalAccessException, InvocationTargetException {
 		invoke(context.getTarget());
 	}
+	
+	// TODO: (Aug 6, 2007 3:01:35 PM) This should not go away.  Write a test for overriding it.
 
 	protected void invoke(Object target) throws IllegalAccessException,
 			InvocationTargetException {

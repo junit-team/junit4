@@ -1,6 +1,6 @@
 ## Summary of Changes in version 4.5 ##
 
-- `@Before` and `@After` methods are run before and after each set of attempted parameters
+ - `@Before` and `@After` methods are run before and after each set of attempted parameters
   on a Theory
   
 - Refactoring removed duplication that used to exist in classes MethodRoadie and ClassRoadie
@@ -12,6 +12,10 @@ their code, and quickly check their code matches those intentions.
 Over the last year, we've been talking about what things developers
 would like to say about their code that have been difficult in the
 past, and how we can make them easier.
+
+[Download][]
+
+[Download]: http://sourceforge.net/project/showfiles.php?group_id=15278
 
 ### assertThat ###
 
@@ -249,3 +253,4 @@ This release contains other bug fixes and new features.  Among them:
 
 - Bug fix (1745048): @After methods are now correctly called 
   after a test method times out.
+
