@@ -7,6 +7,7 @@ import org.junit.internal.requests.ClassesRequest;
 import org.junit.internal.requests.ErrorReportingRequest;
 import org.junit.internal.requests.FilterRequest;
 import org.junit.internal.requests.SortingRequest;
+import org.junit.runner.manipulation.CategoryFilter;
 import org.junit.runner.manipulation.Filter;
 
 /**

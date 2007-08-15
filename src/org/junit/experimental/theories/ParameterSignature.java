@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ParameterSignature {
@@ -120,5 +121,9 @@ public class ParameterSignature {
 
 	public Class<?> getType() {
 		return type;
+	}
+
+	public List<Annotation> getAnnotations() {
+		return Arrays.asList(annotations);
 	}
 }

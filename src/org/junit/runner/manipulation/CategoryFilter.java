@@ -1,6 +1,7 @@
-package org.junit.runner;
+package org.junit.runner.manipulation;
 
-import org.junit.runner.manipulation.Filter;
+import org.junit.runner.Category;
+import org.junit.runner.Description;
 
 public class CategoryFilter extends Filter {
 

@@ -4,10 +4,10 @@ import org.junit.Ignore;
 import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.internal.runners.JUnit4ClassRunner;
+import org.junit.internal.runners.SuiteMethod;
 import org.junit.runner.Request;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
-import org.junit.runners.AllTests;
 
 public class ClassRequest extends Request {
 	private static final String CONSTRUCTOR_ERROR_FORMAT= "Custom runner class %s should have a public constructor with signature %s(Class testClass)";
@@ -48,7 +48,7 @@ public class ClassRequest extends Request {
 		if (annotation != null) {
 			return annotation.value();
 		} else if (hasSuiteMethod() && fCanUseSuiteMethod) {
-			return AllTests.class;
+			return SuiteMethod.class;
 		} else if (isPre4Test(testClass)) {
 			return JUnit38ClassRunner.class; 
 		} else {

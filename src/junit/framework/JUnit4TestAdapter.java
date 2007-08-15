@@ -3,14 +3,17 @@ package junit.framework;
 import java.util.List;
 
 import org.junit.Ignore;
+import org.junit.runner.Describable;
 import org.junit.runner.Description;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
+import org.junit.runner.manipulation.Filterable;
 import org.junit.runner.manipulation.NoTestsRemainException;
+import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 
-public class JUnit4TestAdapter implements Test {
+public class JUnit4TestAdapter implements Test, Filterable, Sortable, Describable {
 	private final Class<?> fNewTestClass;
 
 	private Runner fRunner;

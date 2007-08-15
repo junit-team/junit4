@@ -2,13 +2,12 @@ package org.junit.internal.runners;
 
 import junit.extensions.TestDecorator;
 import junit.framework.AssertionFailedError;
-import junit.framework.JUnit4TestAdapter;
-import junit.framework.JUnit4TestCaseFacade;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestListener;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
+import org.junit.runner.Describable;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
@@ -43,8 +42,8 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
 		}
 
 		private Description asDescription(Test test) {
-			if (test instanceof JUnit4TestCaseFacade) {
-				JUnit4TestCaseFacade facade= (JUnit4TestCaseFacade) test;
+			if (test instanceof Describable) {
+				Describable facade= (Describable) test;
 				return facade.getDescription();
 			}
 			return Description.createTestDescription(test.getClass(), getName(test));
@@ -102,8 +101,8 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
 			for (int i= 0; i < n; i++)
 				description.addChild(makeDescription(ts.testAt(i)));
 			return description;
-		} else if (test instanceof JUnit4TestAdapter) {
-			JUnit4TestAdapter adapter= (JUnit4TestAdapter) test;
+		} else if (test instanceof Describable) {
+			Describable adapter= (Describable) test;
 			return adapter.getDescription();
 		} else if (test instanceof TestDecorator) {
 			TestDecorator decorator= (TestDecorator) test;
@@ -115,15 +114,15 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
 	}
 
 	public void filter(Filter filter) throws NoTestsRemainException {
-		if (fTest instanceof JUnit4TestAdapter) {
-			JUnit4TestAdapter adapter= (JUnit4TestAdapter) fTest;
+		if (fTest instanceof Filterable) {
+			Filterable adapter= (Filterable) fTest;
 			adapter.filter(filter);
 		}
 	}
 
 	public void sort(Sorter sorter) {
-		if (fTest instanceof JUnit4TestAdapter) {
-			JUnit4TestAdapter adapter= (JUnit4TestAdapter) fTest;
+		if (fTest instanceof Sortable) {
+			Sortable adapter= (Sortable) fTest;
 			adapter.sort(sorter);
 		}
 	}

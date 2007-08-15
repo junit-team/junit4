@@ -8,11 +8,11 @@ import java.lang.annotation.Annotation;
 
 import org.junit.Test;
 import org.junit.runner.Category;
-import org.junit.runner.CategoryFilter;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.Result;
+import org.junit.runner.manipulation.CategoryFilter;
 
 public class CategoryTest {
 	// TODO: (Aug 6, 2007 3:59:37 PM) Common base class?

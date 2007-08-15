@@ -31,7 +31,9 @@ This feature will very likely be improved before the final release of JUnit 4.5
   
 - Refactoring removed duplication that used to exist in classes MethodRoadie and ClassRoadie
 
-- Exposed API `ParameterSignature.getType()`
+- Exposed API's `ParameterSignature.getType()` and `ParameterSignature.getAnnotations()`
+
+- Extracted new interface `Describable`, for any object that can return a Description
 
 ## Summary of Changes in version 4.4 ##
 

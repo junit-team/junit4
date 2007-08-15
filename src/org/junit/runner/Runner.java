@@ -18,9 +18,9 @@ import org.junit.runner.notification.RunNotifier;
  * @see org.junit.runner.Description
  * @see org.junit.runner.RunWith
  */
-public abstract class Runner {
-	/**
-	 * @return a {@link Description} showing the tests to be run by the receiver
+public abstract class Runner implements Describable {
+	/* (non-Javadoc)
+	 * @see org.junit.runner.Describable#getDescription()
 	 */
 	public abstract Description getDescription();
 
