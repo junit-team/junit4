@@ -31,7 +31,7 @@ public class JUnitCoreTest {
 	}
 	
 	@Test public void successCausesExitCodeOf0() throws Exception {
-		runClass("org.junit.tests.JUnitCoreTest$Succeed", 0);
+		runClass("org.junit.tests.running.core.JUnitCoreTest$Succeed", 0);
 	}
 
 	private void runClass(String className, int returnCode) throws IOException, InterruptedException {

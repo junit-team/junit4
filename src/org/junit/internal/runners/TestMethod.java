@@ -56,12 +56,12 @@ public class TestMethod extends JavaElement {
 	}
 
 	@Override
-	protected List<Method> getBefores() {
+	public List<Method> getBefores() {
 		return fTestClass.getAnnotatedMethods(Before.class);
 	}
 
 	@Override
-	protected List<Method> getAfters() {
+	public List<Method> getAfters() {
 		return fTestClass.getAnnotatedMethods(After.class);
 	}
 

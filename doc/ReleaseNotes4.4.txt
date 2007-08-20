@@ -35,6 +35,8 @@ This feature will very likely be improved before the final release of JUnit 4.5
 
 - Extracted new interface `Describable`, for any object that can return a Description
 
+- Exposed API's `TestMethod.getBefores` and `TestMethod.getAfters`
+
 ## Summary of Changes in version 4.4 ##
 
 JUnit is designed to efficiently capture developers' intentions about

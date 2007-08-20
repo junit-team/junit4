@@ -34,7 +34,7 @@ public class CommandLineTest {
 
 	@Test public void runATest() {
 		testWasRun= false;
-		new JUnitCore().runMain(new String[]{"org.junit.tests.CommandLineTest$Example"});
+		new JUnitCore().runMain(new String[]{"org.junit.tests.running.core.CommandLineTest$Example"});
 		assertTrue(testWasRun);
 	}
 	
