@@ -26,7 +26,6 @@ public class TestMethodInterfaceTest {
 	@Test
 	public void getBeforesIsPublic() throws SecurityException,
 			NoSuchMethodException {
-		// TODO: (Aug 20, 2007 9:37:38 AM) constructor for single methods
 		TestMethod testMethod= new TestMethod(BeforesAndAfters.class
 				.getMethod("test"), new TestClass(BeforesAndAfters.class));
 		assertThat(testMethod.getBefores().size(), is(1));

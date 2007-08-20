@@ -9,7 +9,7 @@ public class Version {
 	}
 
 	public static String id() {
-		return "4.5-SNAPSHOT-20070720-1711";
+		return "4.5-SNAPSHOT-20070816-1619";
 	}
 	
 	public static void main(String[] args) {
