@@ -39,6 +39,7 @@ import org.junit.tests.running.core.CommandLineTest;
 import org.junit.tests.running.core.JUnitCoreTest;
 import org.junit.tests.running.methods.AnnotationTest;
 import org.junit.tests.running.methods.ExpectedTest;
+import org.junit.tests.running.methods.InheritedTestTest;
 import org.junit.tests.running.methods.ParameterizedTestMethodTest;
 import org.junit.tests.running.methods.TestMethodTest;
 import org.junit.tests.running.methods.TimeoutTest;
@@ -92,7 +93,8 @@ import org.junit.tests.validation.ValidationTest;
 	AssumptionViolatedExceptionTest.class,
 	EachTest.class,
 	ExperimentalTests.class,
-	CategoryTest.class
+	CategoryTest.class,
+	InheritedTestTest.class
 })
 public class AllTests {
 	public static Test suite() {

@@ -43,7 +43,7 @@ import java.lang.annotation.Target;
  * </pre></p>
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target({ElementType.METHOD})
 public @interface Test {
 	
 	/**
