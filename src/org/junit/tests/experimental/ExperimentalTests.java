@@ -8,12 +8,17 @@ import org.junit.tests.experimental.results.ResultMatchersTest;
 import org.junit.tests.experimental.theories.DataPointMethodTest;
 import org.junit.tests.experimental.theories.ParameterSignatureTest;
 import org.junit.tests.experimental.theories.ParameterizedAssertionErrorTest;
-import org.junit.tests.experimental.theories.TheoriesTest;
+import org.junit.tests.experimental.theories.extendingwithstubs.StubbedTheoriesTest;
+import org.junit.tests.experimental.theories.runner.WithDataPointFields;
+import org.junit.tests.experimental.theories.runner.WhenNoParametersMatch;
+import org.junit.tests.experimental.theories.runner.WithExtendedParameterSources;
 
 @RunWith(Suite.class)
 @SuiteClasses( { ParameterizedAssertionErrorTest.class,
-		TheoriesTest.class, PrintableResultTest.class,
-		ResultMatchersTest.class, DataPointMethodTest.class, ParameterSignatureTest.class })
+		WithDataPointFields.class, PrintableResultTest.class,
+		ResultMatchersTest.class, DataPointMethodTest.class,
+		ParameterSignatureTest.class, WhenNoParametersMatch.class,
+		WithExtendedParameterSources.class, StubbedTheoriesTest.class })
 public class ExperimentalTests {
 
 }

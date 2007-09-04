@@ -28,11 +28,11 @@ public class TestMethod extends JavaElement {
 	}
 
 	public boolean isIgnored() {
-		return fMethod.getAnnotation(Ignore.class) != null;
+		return getMethod().getAnnotation(Ignore.class) != null;
 	}
 
 	public long getTimeout() {
-		Test annotation= fMethod.getAnnotation(Test.class);
+		Test annotation= getMethod().getAnnotation(Test.class);
 		if (annotation == null)
 			return 0;
 		long timeout= annotation.timeout();
@@ -40,7 +40,7 @@ public class TestMethod extends JavaElement {
 	}
 
 	protected Class<? extends Throwable> getExpectedException() {
-		Test annotation= fMethod.getAnnotation(Test.class);
+		Test annotation= getMethod().getAnnotation(Test.class);
 		if (annotation == null || annotation.expected() == None.class)
 			return null;
 		else
@@ -74,7 +74,7 @@ public class TestMethod extends JavaElement {
 
 	protected void invoke(Object target) throws IllegalAccessException,
 			InvocationTargetException {
-		fMethod.invoke(target);
+		getMethod().invoke(target);
 	}
 
 	protected void runTestUnprotected(final Roadie context) {
@@ -155,5 +155,9 @@ public class TestMethod extends JavaElement {
 				runTestUnprotected(context);
 			}
 		});
+	}
+
+	public Method getMethod() {
+		return fMethod;
 	}
 }

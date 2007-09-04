@@ -84,4 +84,8 @@ public class Roadie {
 			runAfters(javaElement);
 		}
 	}
+
+	public Roadie withNewInstance(Object freshInstance) {
+		return new Roadie(fNotifier, fDescription, freshInstance);
+	}
 }

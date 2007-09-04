@@ -24,14 +24,20 @@ To run all of the tests in a particular category, you must currently explicitly 
   
 This feature will very likely be improved before the final release of JUnit 4.5
 
-### Miscellaneous ###
+### Theories ###
 
 - `@Before` and `@After` methods are run before and after each set of attempted parameters
-  on a Theory
+  on a Theory, and each set of parameters is run on a new instance of the test class.
   
-- Refactoring removed duplication that used to exist in classes MethodRoadie and ClassRoadie
-
 - Exposed API's `ParameterSignature.getType()` and `ParameterSignature.getAnnotations()`
+
+- An array of data points can be introduced by a field or method marked with the new annotation `@DataPoints`
+
+- The Theories custom runner has been refactored to make it easier to extend
+
+### JUnit 4 Runner API ###
+
+- Refactoring removed duplication that used to exist in classes MethodRoadie and ClassRoadie
 
 - Extracted new interface `Describable`, for any object that can return a Description
 

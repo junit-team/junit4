@@ -5,17 +5,17 @@ import java.util.List;
 
 import org.junit.experimental.theories.ParameterSignature;
 import org.junit.experimental.theories.ParameterSupplier;
-import org.junit.experimental.theories.PotentialParameterValue;
+import org.junit.experimental.theories.PotentialAssignment;
 
 
 
 public class TestedOnSupplier extends ParameterSupplier {
-	@Override public List<PotentialParameterValue> getValueSources(Object test, ParameterSignature sig) {
-		List<PotentialParameterValue> list = new ArrayList<PotentialParameterValue>();
-		TestedOn testedOn = (TestedOn) sig.getSupplierAnnotation();
+	@Override public List<PotentialAssignment> getValueSources(Object test, ParameterSignature sig) {
+		List<PotentialAssignment> list = new ArrayList<PotentialAssignment>();
+		TestedOn testedOn = sig.getAnnotation(TestedOn.class);
 		int[] ints = testedOn.ints();
 		for (final int i : ints) {
-			list.add(PotentialParameterValue.forValue(i));
+			list.add(PotentialAssignment.forValue(i));
 		}
 		return list;
 	}

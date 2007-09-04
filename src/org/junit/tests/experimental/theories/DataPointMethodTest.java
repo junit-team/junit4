@@ -16,9 +16,10 @@ import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.ParameterSignature;
-import org.junit.experimental.theories.PotentialParameterValue;
+import org.junit.experimental.theories.PotentialAssignment;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
+import org.junit.experimental.theories.internal.AssignmentRequest;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.Failure;
@@ -129,10 +130,10 @@ public class DataPointMethodTest {
 				.size(), is(0));
 	}
 
-	private List<PotentialParameterValue> potentialValues(Method method)
+	private List<PotentialAssignment> potentialValues(Method method)
 			throws Exception {
-		return ParameterSignature.signatures(method).get(0).getPotentialValues(
-				new HasDateMethod());
+		return new AssignmentRequest(new HasDateMethod(), ParameterSignature
+				.signatures(method).get(0)).getPotentialAssignments();
 	}
 
 	private List<Failure> failures(Class<?> type) {
