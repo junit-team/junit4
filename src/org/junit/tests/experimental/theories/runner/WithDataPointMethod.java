@@ -1,4 +1,4 @@
-package org.junit.tests.experimental.theories;
+package org.junit.tests.experimental.theories.runner;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -24,7 +24,7 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.Failure;
 
-public class DataPointMethodTest {
+public class WithDataPointMethod {
 	@RunWith(Theories.class)
 	public static class HasDataPointMethod {
 		@DataPoint

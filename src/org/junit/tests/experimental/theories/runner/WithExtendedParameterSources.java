@@ -123,5 +123,24 @@ public class WithExtendedParameterSources {
 		JUnitCore.runClasses(DataPointArrayMethod.class);
 		assertThat(DataPointArrayMethod.log, is("AB"));
 	}
+	
+	@RunWith(Theories.class)
+	public static class DataPointArrayToBeUsedForWholeParameter {
+		public static String log= "";
 
+		@DataPoint
+		public static String[] STRINGS= new String[] { "A", "B" };
+
+		@Theory
+		public void addToLog(String[] strings) {
+			log+= strings[0];
+		}
+	}
+
+	@Test
+	public void dataPointCanBeArray() {
+		DataPointArrayToBeUsedForWholeParameter.log= "";
+		JUnitCore.runClasses(DataPointArrayToBeUsedForWholeParameter.class);
+		assertThat(DataPointArrayToBeUsedForWholeParameter.log, is("A"));
+	}
 }
