@@ -6,10 +6,10 @@ package org.junit.experimental.theories;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import org.junit.experimental.theories.internal.TheoryMethod;
+import org.junit.experimental.theories.internal.TheoryMethodRunner;
 import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.JUnit4ClassRunner;
-import org.junit.internal.runners.TestMethod;
+import org.junit.internal.runners.JUnit4MethodRunner;
 
 @SuppressWarnings("restriction")
 public class Theories extends JUnit4ClassRunner {
@@ -31,7 +31,7 @@ public class Theories extends JUnit4ClassRunner {
 	}
 
 	@Override
-	protected TestMethod wrapMethod(final Method method) {
-		return new TheoryMethod(method, getTestClass());
+	protected JUnit4MethodRunner wrapMethod(final Method method) {
+		return new TheoryMethodRunner(method, getTestClass());
 	}
 }

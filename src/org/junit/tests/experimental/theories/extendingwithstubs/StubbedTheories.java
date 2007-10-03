@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 
 import org.junit.experimental.theories.Theories;
 import org.junit.internal.runners.InitializationError;
-import org.junit.internal.runners.TestMethod;
+import org.junit.internal.runners.JUnit4MethodRunner;
 
 public class StubbedTheories extends Theories {
 	public StubbedTheories(Class<?> klass) throws InitializationError {
@@ -13,7 +13,7 @@ public class StubbedTheories extends Theories {
 	}
 
 	@Override
-	protected TestMethod wrapMethod(Method method) {
+	protected JUnit4MethodRunner wrapMethod(Method method) {
 		return new StubbedTheoryMethod(method, getTestClass());
 	}
 }

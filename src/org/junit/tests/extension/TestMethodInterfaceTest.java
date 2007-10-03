@@ -6,7 +6,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.internal.runners.TestClass;
-import org.junit.internal.runners.TestMethod;
+import org.junit.internal.runners.JUnit4MethodRunner;
 
 public class TestMethodInterfaceTest {
 	public static class BeforesAndAfters {
@@ -26,7 +26,7 @@ public class TestMethodInterfaceTest {
 	@Test
 	public void getBeforesIsPublic() throws SecurityException,
 			NoSuchMethodException {
-		TestMethod testMethod= new TestMethod(BeforesAndAfters.class
+		JUnit4MethodRunner testMethod= new JUnit4MethodRunner(BeforesAndAfters.class
 				.getMethod("test"), new TestClass(BeforesAndAfters.class));
 		assertThat(testMethod.getBefores().size(), is(1));
 		assertThat(testMethod.getAfters().size(), is(1));

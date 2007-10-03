@@ -84,12 +84,16 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 			notifier.testAborted(description, e);
 			return;
 		}
-		TestMethod testMethod= wrapMethod(method);
+		JUnit4MethodRunner testMethod= wrapMethod(method);
 		testMethod.run(new Roadie(notifier, description, test));
 	}
 
-	protected TestMethod wrapMethod(Method method) {
-		return new TestMethod(method, fTestClass);
+	protected JUnit4MethodRunner wrapMethod(Method method) {
+		return getMethodRunner(method);
+	}
+
+	protected JUnit4MethodRunner getMethodRunner(Method method) {
+		return new JUnit4MethodRunner(method, fTestClass);
 	}
 
 	protected String testName(Method method) {

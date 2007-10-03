@@ -10,10 +10,10 @@ import java.util.List;
 import org.junit.Assume.AssumptionViolatedException;
 import org.junit.experimental.theories.ParameterSignature;
 import org.junit.experimental.theories.internal.Assignments;
-import org.junit.experimental.theories.internal.TheoryMethod;
+import org.junit.experimental.theories.internal.TheoryMethodRunner;
 import org.junit.internal.runners.TestClass;
 
-public class StubbedTheoryMethod extends TheoryMethod {
+public class StubbedTheoryMethod extends TheoryMethodRunner {
 	private List<GuesserQueue> queues= new ArrayList<GuesserQueue>();
 
 	public StubbedTheoryMethod(Method method, TestClass testClass) {

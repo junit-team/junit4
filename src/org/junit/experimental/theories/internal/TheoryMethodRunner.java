@@ -16,29 +16,30 @@ import org.junit.experimental.theories.PotentialAssignment.CouldNotGenerateValue
 import org.junit.internal.runners.ExplosiveMethod;
 import org.junit.internal.runners.Roadie;
 import org.junit.internal.runners.TestClass;
-import org.junit.internal.runners.TestMethod;
+import org.junit.internal.runners.JUnit4MethodRunner;
 
-public class TheoryMethod extends TestMethod {
+public class TheoryMethodRunner extends JUnit4MethodRunner {
 	private List<AssumptionViolatedException> fInvalidParameters= new ArrayList<AssumptionViolatedException>();
 
 	private int successes= 0;
 
 	protected Throwable thrown= null;
 
-	public TheoryMethod(Method method, TestClass testClass) {
+	public TheoryMethodRunner(Method method, TestClass testClass) {
 		super(method, testClass);
 	}
 
 	@Override
-	protected void runTestProtected(Roadie context) {
-		runTestUnprotected(context);
+	protected void runInsideNotification(Roadie context) {
+		runWithExpectedExceptionCheck(context);
 	}
 
+	// TODO: (Oct 3, 2007 10:12:34 AM) This is behavior-preserving, but what I want?
 	@Override
-	public void invoke(Roadie context) throws IllegalArgumentException,
+	public void runInsideExpectedExceptionCheck(Roadie context) throws IllegalArgumentException,
 			IllegalAccessException, InvocationTargetException {
 		try {
-			runWithAssignment(Assignments.allUnassigned(context, getMethod()));
+			runWithAssignment(Assignments.allUnassigned(context, fTestMethod.getMethod()));
 		} catch (Throwable e) {
 			throw new InvocationTargetException(e);
 		}
@@ -90,30 +91,16 @@ public class TheoryMethod extends TestMethod {
 		}
 	}
 
-	private boolean nullsOk() {
-		Theory annotation= getMethod().getAnnotation(Theory.class);
-		if (annotation == null)
-			return false;
-		return annotation.nullsAccepted();
-	}
-
 	private void invokeWithActualParameters(Object target, Object... params)
 			throws Throwable {
 		try {
-			invokeAndThrow(target, params);
+			ExplosiveMethod.from(fTestMethod.getMethod()).invoke(target, params);
+			successes++;
 		} catch (AssumptionViolatedException e) {
 			handleAssumptionViolation(e);
 		} catch (Throwable e) {
 			reportParameterizedError(e, params);
 		}
-	}
-
-	// TODO: (Oct 3, 2007 9:52:42 AM) Still needed?
-
-	protected void invokeAndThrow(Object target, Object... params)
-			throws IllegalAccessException, Throwable {
-		ExplosiveMethod.from(getMethod()).invoke(target, params);
-		successes++;
 	}
 
 	protected void handleAssumptionViolation(AssumptionViolatedException e) {
@@ -124,6 +111,13 @@ public class TheoryMethod extends TestMethod {
 			throws Throwable {
 		if (params.length == 0)
 			throw e;
-		throw new ParameterizedAssertionError(e, getMethod().getName(), params);
+		throw new ParameterizedAssertionError(e, fTestMethod.getMethod().getName(), params);
+	}
+
+	private boolean nullsOk() {
+		Theory annotation= fTestMethod.getMethod().getAnnotation(Theory.class);
+		if (annotation == null)
+			return false;
+		return annotation.nullsAccepted();
 	}
 }
