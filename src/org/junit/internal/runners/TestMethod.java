@@ -1,6 +1,5 @@
 package org.junit.internal.runners;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -65,16 +64,14 @@ public class TestMethod extends JavaElement {
 		return fTestClass.getAnnotatedMethods(After.class);
 	}
 
-	protected void invoke(Roadie context) throws IllegalArgumentException,
-			IllegalAccessException, InvocationTargetException {
+	protected void invoke(Roadie context) throws Throwable {
 		invoke(context.getTarget());
 	}
 	
 	// TODO: (Aug 6, 2007 3:01:35 PM) This should not go away.  Write a test for overriding it.
 
-	protected void invoke(Object target) throws IllegalAccessException,
-			InvocationTargetException {
-		getMethod().invoke(target);
+	protected void invoke(Object target) throws Throwable {
+		ExplosiveMethod.from(getMethod()).invoke(target);
 	}
 
 	protected void runTestUnprotected(final Roadie context) {
@@ -84,20 +81,17 @@ public class TestMethod extends JavaElement {
 			if (expectsException())
 				context.addFailure(new AssertionError("Expected exception: "
 						+ getExpectedException().getName()));
-		} catch (InvocationTargetException e) {
-			Throwable actual= e.getTargetException();
-			if (actual instanceof AssumptionViolatedException) {
+		} catch (Throwable e) {
+			if (e instanceof AssumptionViolatedException) {
 				// do nothing
 			} else if (!expectsException())
-				context.addFailure(actual);
-			else if (isUnexpected(actual)) {
+				context.addFailure(e);
+			else if (isUnexpected(e)) {
 				String message= "Unexpected exception, expected<"
 						+ getExpectedException().getName() + "> but was<"
-						+ actual.getClass().getName() + ">";
-				context.addFailure(new Exception(message, actual));
+						+ e.getClass().getName() + ">";
+				context.addFailure(new Exception(message, e));
 			}
-		} catch (Throwable e) {
-			context.addFailure(e);
 		}
 	}
 

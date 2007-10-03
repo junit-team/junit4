@@ -13,6 +13,7 @@ import org.junit.Assume.AssumptionViolatedException;
 import org.junit.experimental.theories.PotentialAssignment;
 import org.junit.experimental.theories.Theory;
 import org.junit.experimental.theories.PotentialAssignment.CouldNotGenerateValueException;
+import org.junit.internal.runners.ExplosiveMethod;
 import org.junit.internal.runners.Roadie;
 import org.junit.internal.runners.TestClass;
 import org.junit.internal.runners.TestMethod;
@@ -37,8 +38,7 @@ public class TheoryMethod extends TestMethod {
 	public void invoke(Roadie context) throws IllegalArgumentException,
 			IllegalAccessException, InvocationTargetException {
 		try {
-			runWithAssignment(Assignments.allUnassigned(context,
-					getMethod()));
+			runWithAssignment(Assignments.allUnassigned(context, getMethod()));
 		} catch (Throwable e) {
 			throw new InvocationTargetException(e);
 		}
@@ -108,14 +108,12 @@ public class TheoryMethod extends TestMethod {
 		}
 	}
 
+	// TODO: (Oct 3, 2007 9:52:42 AM) Still needed?
+
 	protected void invokeAndThrow(Object target, Object... params)
 			throws IllegalAccessException, Throwable {
-		try {
-			getMethod().invoke(target, params);
-			successes++;
-		} catch (InvocationTargetException e) {
-			throw e.getTargetException();
-		}
+		ExplosiveMethod.from(getMethod()).invoke(target, params);
+		successes++;
 	}
 
 	protected void handleAssumptionViolation(AssumptionViolatedException e) {

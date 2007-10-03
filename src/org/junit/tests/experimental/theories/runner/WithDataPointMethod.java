@@ -132,7 +132,7 @@ public class WithDataPointMethod {
 
 	private List<PotentialAssignment> potentialValues(Method method)
 			throws Exception {
-		return new AssignmentRequest(new HasDateMethod(), ParameterSignature
+		return new AssignmentRequest(HasDateMethod.class, ParameterSignature
 				.signatures(method).get(0)).getPotentialAssignments();
 	}
 

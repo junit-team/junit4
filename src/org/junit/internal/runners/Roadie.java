@@ -3,7 +3,6 @@
  */
 package org.junit.internal.runners;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -46,20 +45,17 @@ public class Roadie {
 		return fTarget;
 	}
 
-	void runBefores(JavaElement javaElement) throws FailedBefore {
+	boolean runBefores(JavaElement javaElement) {
 		try {
-			try {
-				List<Method> befores= javaElement.getBefores();
-				for (Method before : befores)
-					before.invoke(getTarget());
-			} catch (InvocationTargetException e) {
-				throw e.getTargetException();
-			}
+			List<Method> befores= javaElement.getBefores();
+			for (Method before : befores)
+				ExplosiveMethod.from(before).invoke(fTarget);
+			return true;
 		} catch (AssumptionViolatedException e) {
-			throw new FailedBefore();
+			return false;
 		} catch (Throwable e) {
 			addFailure(e);
-			throw new FailedBefore();
+			return false;
 		}
 	}
 
@@ -67,24 +63,21 @@ public class Roadie {
 		List<Method> afters= javaElement.getAfters();
 		for (Method after : afters)
 			try {
-				after.invoke(getTarget());
-			} catch (InvocationTargetException e) {
-				addFailure(e.getTargetException());
+				ExplosiveMethod.from(after).invoke(fTarget);
 			} catch (Throwable e) {
-				addFailure(e); // Untested, but seems impossible
+				addFailure(e);
 			}
 	}
 
 	public void runProtected(JavaElement javaElement, Runnable runnable) {
 		try {
-			runBefores(javaElement);
-			runnable.run();
-		} catch (FailedBefore e) {
+			if (runBefores(javaElement))
+				runnable.run();
 		} finally {
 			runAfters(javaElement);
 		}
 	}
-
+	
 	public Roadie withNewInstance(Object freshInstance) {
 		return new Roadie(fNotifier, fDescription, freshInstance);
 	}

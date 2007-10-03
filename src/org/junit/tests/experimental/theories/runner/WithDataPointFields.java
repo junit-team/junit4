@@ -2,8 +2,9 @@ package org.junit.tests.experimental.theories.runner;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 import static org.junit.experimental.results.PrintableResult.testResult;
-import static org.junit.experimental.results.ResultMatchers.failureCountIs;
 import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.results.PrintableResult;
 import org.junit.experimental.results.ResultMatchers;
@@ -101,41 +103,6 @@ public class WithDataPointFields {
 	}
 
 	@RunWith(Theories.class)
-	public static class HonorExpectedException {
-		@Test(expected= NullPointerException.class)
-		public void shouldThrow() {
-
-		}
-	}
-
-	@Test
-	public void honorExpected() throws Exception {
-		assertThat(testResult(HonorExpectedException.class).getFailures()
-				.size(), is(1));
-	}
-
-	@RunWith(Theories.class)
-	public static class HonorTimeout {
-		@Test(timeout= 5)
-		public void shouldStop() {
-			while (true) {
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-
-				}
-			}
-		}
-	}
-
-	@Test
-	public void honorTimeout() throws Exception {
-		assertThat(testResult(HonorTimeout.class), failureCountIs(1));
-	}
-
-	// TODO: (Jul 20, 2007 1:58:18 PM) too complex
-
-	@RunWith(Theories.class)
 	public static class BeforeAndAfterEachTime {
 		public static int befores= 0;
 
@@ -163,6 +130,30 @@ public class WithDataPointFields {
 	}
 
 	@RunWith(Theories.class)
+	public static class BeforeAndAfterOnSameInstance {
+		@DataPoint
+		public static String A= "A";
+
+		private int befores= 0;
+
+		@Before
+		public void incrementBefore() {
+			befores++;
+		}
+
+		@Theory
+		public void stringsAreOK(String string) {
+			assertTrue(befores == 1);
+		}
+	}
+
+	@Test
+	public void beforeIsCalledOnSameInstance() {
+		assertThat(testResult(BeforeAndAfterOnSameInstance.class),
+				isSuccessful());
+	}
+
+	@RunWith(Theories.class)
 	public static class NewObjectEachTime {
 		@DataPoint
 		public static String A= "A";
@@ -183,5 +174,29 @@ public class WithDataPointFields {
 	public void newObjectEachTime() {
 		PrintableResult result= testResult(NewObjectEachTime.class);
 		assertThat(result, isSuccessful());
+	}
+
+	@RunWith(Theories.class)
+	public static class PositiveInts {
+		@DataPoint
+		public static final int ONE= 1;
+
+		private int x;
+
+		public PositiveInts(int x) {
+			assumeTrue(x > 0);
+			this.x= x;
+		}
+
+		@Theory
+		public void haveAPostiveSquare() {
+			assertTrue(x * x > 0);
+		}
+	}
+
+	@Ignore("until construction is handled in TestMethod")
+	@Test
+	public void honorConstructorParameters() {
+		assertThat(testResult(PositiveInts.class), isSuccessful());
 	}
 }
