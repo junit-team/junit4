@@ -28,10 +28,15 @@ public class TheoryMethodRunner extends JUnit4MethodRunner {
 	public TheoryMethodRunner(Method method, TestClass testClass) {
 		super(method, testClass);
 	}
-
+	
 	@Override
-	protected void runInsideNotification(Roadie context) {
-		runWithExpectedExceptionCheck(context);
+	protected void run(Roadie context) {
+		new Notifier(new Link() {
+			@Override
+			public void run(Roadie context) {
+				runWithExpectedExceptionCheck(context);
+			}			
+		}).run(context);
 	}
 
 	// TODO: (Oct 3, 2007 10:12:34 AM) This is behavior-preserving, but what I want?

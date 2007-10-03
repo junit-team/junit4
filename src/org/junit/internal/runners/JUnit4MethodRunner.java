@@ -19,51 +19,86 @@ public class JUnit4MethodRunner extends JavaElement {
 	private final TestClass fTestClass;
 
 	public JUnit4MethodRunner(Method method, TestClass testClass) {
-		fTestMethod = new TestMethod(method);
+		fTestMethod= new TestMethod(method);
 		fTestClass= testClass;
 	}
 
-	protected void run(Roadie context) {
-		runWithNotification(context);
+	public abstract class Link {
+		public abstract void run(Roadie context);
 	}
 
-	protected void runWithNotification(Roadie context) {
-		if (fTestMethod.isIgnored()) {
-			context.fireTestIgnored();
-			return;
+	public class Notifier extends Link {
+		private final Link fNext;
+
+		public Notifier(Link next) {
+			fNext= next;
 		}
-		context.fireTestStarted();
-		try {
-			runInsideNotification(context);
-		} finally {
-			context.fireTestFinished();
-		}
-	}
 
-	protected void runInsideNotification(Roadie context) {
-		runWithBeforeAndAfter(context);
-	}
-
-	protected void runWithBeforeAndAfter(final Roadie context) {
-		context.runProtected(this, new Runnable() {
-			public void run() {
-				runInsideBeforeAndAfter(context);
+		@Override
+		public void run(Roadie context) {
+			if (fTestMethod.isIgnored()) {
+				context.fireTestIgnored();
+				return;
 			}
-		});
+			context.fireTestStarted();
+			try {
+				fNext.run(context);
+			} finally {
+				context.fireTestFinished();
+			}
+		}
 	}
 
-	protected void runInsideBeforeAndAfter(final Roadie context) {
-		runWithPotentialTimeout(context);
+	class BeforeAndAfter extends Link {
+		private final Link fNext;
+
+		public BeforeAndAfter(Link next) {
+			fNext= next;
+		}
+
+		@Override
+		public void run(final Roadie context) {
+			context.runProtected(JUnit4MethodRunner.this, new Runnable() {
+				public void run() {
+					fNext.run(context);
+				}
+			});
+		}
 	}
-	
-	protected void runWithPotentialTimeout(Roadie context) {
-		long timeout= fTestMethod.getTimeout();
-		if (timeout > 0)
-			runWithActualTimeout(context, timeout);
-		else
-			runInsidePotentialTimeout(context);
+
+	class Timeout extends Link {
+		private Link fNext;
+
+		Timeout(Link next) {
+			fNext= next;
+		}
+
+		@Override
+		public void run(Roadie context) {
+			long timeout= fTestMethod.getTimeout();
+			if (timeout > 0)
+				runWithActualTimeout(context, timeout, fNext);
+			else
+				fNext.run(context);
+		}
 	}
-	
+
+	protected void run(Roadie context) {
+		chain().run(context);
+	}
+
+	private Link chain() {
+		Link expectedException= new Link() {
+			@Override
+			public void run(Roadie context) {
+				runWithExpectedExceptionCheck(context);
+			}		
+		};
+		
+		Timeout timeout= new Timeout(expectedException);
+		return new Notifier(new BeforeAndAfter(timeout));
+	}
+
 	protected void runInsidePotentialTimeout(final Roadie context) {
 		runWithExpectedExceptionCheck(context);
 	}
@@ -76,21 +111,22 @@ public class JUnit4MethodRunner extends JavaElement {
 		} catch (Throwable e) {
 			if (e instanceof AssumptionViolatedException) {
 				// do nothing
-			} else 
+			} else
 				fTestMethod.assertExceptionExpected(context, e);
 		}
 	}
 
 	protected void runInsideExpectedExceptionCheck(final Roadie context)
 			throws Throwable {
-		ExplosiveMethod.from(fTestMethod.getMethod()).invoke(context.getTarget());
+		ExplosiveMethod.from(fTestMethod.getMethod()).invoke(
+				context.getTarget());
 	}
 
-	protected void runWithActualTimeout(final Roadie context, final long timeout) {
+	protected void runWithActualTimeout(final Roadie context, final long timeout, final Link next) {
 		ExecutorService service= Executors.newSingleThreadExecutor();
 		Callable<Object> callable= new Callable<Object>() {
 			public Object call() throws Exception {
-				runInsidePotentialTimeout(context);
+				next.run(context);
 				return null;
 			}
 		};
