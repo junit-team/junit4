@@ -3,6 +3,7 @@ package org.junit.internal.runners;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -42,8 +43,8 @@ public class JUnit4MethodRunner extends JavaElement {
 	public class Notifier extends Link {
 		private final Link fNext;
 
-		public Notifier(Link next) {
-			fNext= next;
+		public Notifier(Link link) {
+			fNext= link;
 		}
 
 		@Override
@@ -61,10 +62,10 @@ public class JUnit4MethodRunner extends JavaElement {
 		}
 	}
 
-	class BeforeAndAfter extends Link {
-		private final Link fNext;
-
-		public BeforeAndAfter(Link next) {
+	public class BeforeAndAfter extends Link {
+		private final Anchor fNext;
+		
+		public BeforeAndAfter(Anchor next) {
 			fNext= next;
 		}
 
@@ -72,22 +73,28 @@ public class JUnit4MethodRunner extends JavaElement {
 		public void run(final Roadie context) {
 			context.runProtected(JUnit4MethodRunner.this, new Runnable() {
 				public void run() {
-					fNext.run(context);
-				}
+					// TODO: (Oct 5, 2007 11:56:12 AM) DUP with Theory
+
+					try {
+						fNext.run(context);
+					} catch (Throwable e) {
+						context.addFailure(e);
+					}
+				}			
 			});
 		}
 	}
 	
-	public Link timeout(Link next) {
+	public Anchor timeout(Anchor next) {
 		return fTestMethod.getTimeout() > 0
 			? new Timeout(next)
 			: next;
 	}
 
-	class Timeout extends Link {
-		private Link fNext;
+	class Timeout extends Anchor {
+		private Anchor fNext;
 
-		Timeout(Link next) {
+		Timeout(Anchor next) {
 			fNext= next;
 		}
 
@@ -97,7 +104,15 @@ public class JUnit4MethodRunner extends JavaElement {
 			ExecutorService service= Executors.newSingleThreadExecutor();
 			Callable<Object> callable= new Callable<Object>() {
 				public Object call() throws Exception {
-					fNext.run(context);
+					try {
+						fNext.run(context);
+					} catch (Exception e) {
+						throw e;
+					} catch (Error e) {
+						throw e;
+					} catch (Throwable e) {
+						// TODO: (Oct 5, 2007 11:27:11 AM) Now what?
+					}
 					return null;
 				}
 			};
@@ -112,19 +127,21 @@ public class JUnit4MethodRunner extends JavaElement {
 			} catch (TimeoutException e) {
 				context.addFailure(new Exception(String.format(
 						"test timed out after %d milliseconds", timeout)));
+			} catch (ExecutionException e) {
+				context.addFailure(e.getCause());
 			} catch (Exception e) {
 				context.addFailure(e);
 			}
 		}
 	}
 
-	public Link handleExceptions(Anchor next) {
+	public Anchor handleExceptions(Anchor next) {
 		return fTestMethod.expectsException()
 			? new ExpectedException(next)
 			: new NoExpectedException(next);
 	}
 	
-	public class ExpectedException extends Link {
+	public class ExpectedException extends Anchor {
 		Anchor fNext;
 		public ExpectedException(Anchor next) {
 			fNext= next;
@@ -149,33 +166,36 @@ public class JUnit4MethodRunner extends JavaElement {
 		}
 	}
 
-	public class NoExpectedException extends Link {
+	public class NoExpectedException extends Anchor {
 		Anchor fNext;
 		public NoExpectedException(Anchor next) {
 			fNext= next;
 		}
 		
 		@Override
-		public void run(Roadie context) {
+		public void run(Roadie context) throws Throwable {
 			try {
 				fNext.run(context);
 			} catch (AssumptionViolatedException e) {
 				// Do nothing
-			} catch (Throwable e) {
-				context.addFailure(e);
 			}
 		}
 	}
 
+	// TODO: (Oct 5, 2007 11:41:41 AM) rename method, extract class
+
 	protected Anchor anchor() {
-		return new Anchor();
+		return new Anchor(){
+			@Override
+			public void run(Roadie context) throws Throwable {
+				ExplosiveMethod.from(fTestMethod.getMethod()).invoke(
+						context.getTarget());
+			}
+		};
 	}
 	
-	public class Anchor {
-		public void run(Roadie context) throws Throwable {
-			ExplosiveMethod.from(fTestMethod.getMethod()).invoke(
-					context.getTarget());
-		}
+	public static abstract class Anchor {
+		public abstract void run(Roadie context) throws Throwable;
 	}
 	
 	protected void run(Roadie context) {
@@ -183,11 +203,13 @@ public class JUnit4MethodRunner extends JavaElement {
 	}
 
 	protected Link chain() {
+		// TODO: (Oct 5, 2007 11:09:00 AM) Rename Anchor and Link
+
 		Anchor anchor= anchor();
-		Link next= handleExceptions(anchor);
+		Anchor next= handleExceptions(anchor);
 		next= timeout(next);
-		next= new BeforeAndAfter(next);
-		return new Notifier(next);
+		Link link= new BeforeAndAfter(next);
+		return new Notifier(link);
 	}
 
 	@Override

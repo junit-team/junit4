@@ -31,7 +31,21 @@ public class TheoryMethodRunner extends JUnit4MethodRunner {
 
 	@Override
 	protected Link chain() {
-		return new Notifier(handleExceptions(anchor()));
+		return new Notifier(new Link() {
+		
+			@Override
+			public void run(Roadie context) {
+				// TODO: (Oct 5, 2007 11:23:04 AM) handle more gracefully
+
+				try {
+					handleExceptions(anchor()).run(context);
+				} catch (Throwable e) {
+					// TODO: (Oct 5, 2007 11:23:47 AM) Don't make addFailure be public
+					context.addFailure(e);
+				}
+			}
+		
+		});
 	}
 
 	@Override
@@ -42,12 +56,8 @@ public class TheoryMethodRunner extends JUnit4MethodRunner {
 	public class TheoryAnchor extends Anchor {
 		@Override
 		public void run(Roadie context) throws Throwable {
-			try {
-				runWithAssignment(Assignments.allUnassigned(context,
-						fTestMethod.getMethod()));
-			} catch (Throwable e) {
-				throw new InvocationTargetException(e);
-			}
+			runWithAssignment(Assignments.allUnassigned(context, fTestMethod
+					.getMethod()));
 
 			if (successes == 0)
 				Assert
@@ -82,15 +92,16 @@ public class TheoryMethodRunner extends JUnit4MethodRunner {
 						.getConstructor().newInstance();
 				final Roadie thisContext= complete.getContext()
 						.withNewInstance(freshInstance);
-				thisContext.runProtected(TheoryMethodRunner.this, new Runnable() { // TODO Ugly...
-					public void run() {
+				new BeforeAndAfter(new Anchor() {
+					@Override
+					public void run(Roadie context) throws Throwable {
 						try {
 							invokeWithActualParameters(freshInstance, values);
 						} catch (Throwable e) {
 							thrown= e;
 						}
 					}
-				});
+				}).run(thisContext); 
 				if (thrown != null)
 					throw thrown;
 			} catch (CouldNotGenerateValueException e) {

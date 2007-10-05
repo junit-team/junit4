@@ -25,7 +25,7 @@ public class Roadie {
 		fDescription= description;
 	}
 
-	protected void addFailure(Throwable targetException) {
+	public void addFailure(Throwable targetException) {
 		fNotifier.fireTestFailure(new Failure(fDescription, targetException));
 	}
 
@@ -46,6 +46,8 @@ public class Roadie {
 	}
 
 	boolean runBefores(JavaElement javaElement) {
+		// TODO: (Oct 5, 2007 11:29:38 AM) just throw the exception!
+
 		try {
 			List<Method> befores= javaElement.getBefores();
 			for (Method before : befores)
