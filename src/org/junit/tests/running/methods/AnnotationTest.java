@@ -124,8 +124,9 @@ public class AnnotationTest extends TestCase {
 		Result runner= core.run(TestAndTeardownFailureTest.class);
 		assertEquals(1, runner.getRunCount());
 		assertEquals(2, runner.getFailureCount());
-		assertEquals(Exception.class, runner.getFailures().get(0).getException().getClass());
-		assertEquals(Error.class, runner.getFailures().get(1).getException().getClass());
+		// TODO is order important?
+		assertEquals(Exception.class, runner.getFailures().get(1).getException().getClass());
+		assertEquals(Error.class, runner.getFailures().get(0).getException().getClass());
 	}
 	
 	static public class TeardownAfterFailureTest {

@@ -13,6 +13,7 @@ import java.util.concurrent.TimeoutException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Assume.AssumptionViolatedException;
+import org.junit.runner.notification.StoppedByUserException;
 
 public class JUnit4MethodRunner extends JavaElement {
 	protected final TestMethod fTestMethod;
@@ -36,26 +37,42 @@ public class JUnit4MethodRunner extends JavaElement {
 	 * create specialized behavior by inserting their own links into the chain, reusing existing links
 	 * or not as appropriate..
 	 */
-	public abstract class Link {
-		public abstract void run(Roadie context);
+	public static abstract class Link {
+		public abstract void run(Roadie context) throws Throwable;
+	}
+	
+	public class Ignored extends Link {
+		private final Link fNext;
+
+		public Ignored(Link next) {
+			fNext= next;
+		}
+		
+		@Override
+		public void run(Roadie context) throws Throwable {
+			if (fTestMethod.isIgnored()) {
+				context.fireTestIgnored();
+				return;
+			}
+			fNext.run(context);
+		}
+
 	}
 
 	public class Notifier extends Link {
 		private final Link fNext;
 
-		public Notifier(Link link) {
-			fNext= link;
+		public Notifier(Link next) {
+			fNext= next;
 		}
 
 		@Override
 		public void run(Roadie context) {
-			if (fTestMethod.isIgnored()) {
-				context.fireTestIgnored();
-				return;
-			}
 			context.fireTestStarted();
 			try {
 				fNext.run(context);
+			} catch (Throwable e) {
+				context.addFailure(e);
 			} finally {
 				context.fireTestFinished();
 			}
@@ -63,43 +80,38 @@ public class JUnit4MethodRunner extends JavaElement {
 	}
 
 	public class BeforeAndAfter extends Link {
-		private final Anchor fNext;
+		private final Link fNext;
 		
-		public BeforeAndAfter(Anchor next) {
+		public BeforeAndAfter(Link next) {
 			fNext= next;
 		}
 
 		@Override
-		public void run(final Roadie context) {
-			context.runProtected(JUnit4MethodRunner.this, new Runnable() {
-				public void run() {
-					// TODO: (Oct 5, 2007 11:56:12 AM) DUP with Theory
-
-					try {
-						fNext.run(context);
-					} catch (Throwable e) {
-						context.addFailure(e);
-					}
-				}			
-			});
+		public void run(final Roadie context) throws Throwable {
+			try {
+				if (context.runBefores(JUnit4MethodRunner.this)) // TODO get rid of the dependency on the enclosing instance
+					fNext.run(context);
+			} finally {
+				context.runAfters(JUnit4MethodRunner.this);
+			}
 		}
 	}
 	
-	public Anchor timeout(Anchor next) {
+	public Link timeout(Link next) {
 		return fTestMethod.getTimeout() > 0
 			? new Timeout(next)
 			: next;
 	}
 
-	class Timeout extends Anchor {
-		private Anchor fNext;
+	class Timeout extends Link {
+		private Link fNext;
 
-		Timeout(Anchor next) {
+		Timeout(Link next) {
 			fNext= next;
 		}
 
 		@Override
-		public void run(final Roadie context) {
+		public void run(final Roadie context) throws Throwable {
 			long timeout= fTestMethod.getTimeout();
 			ExecutorService service= Executors.newSingleThreadExecutor();
 			Callable<Object> callable= new Callable<Object>() {
@@ -125,25 +137,23 @@ public class JUnit4MethodRunner extends JavaElement {
 					service.shutdownNow();
 				result.get(0, TimeUnit.MILLISECONDS); // throws the exception if one occurred during the invocation
 			} catch (TimeoutException e) {
-				context.addFailure(new Exception(String.format(
-						"test timed out after %d milliseconds", timeout)));
+				throw new Exception(String.format(
+						"test timed out after %d milliseconds", timeout));
 			} catch (ExecutionException e) {
-				context.addFailure(e.getCause());
-			} catch (Exception e) {
-				context.addFailure(e);
+				throw e.getCause();
 			}
 		}
 	}
 
-	public Anchor handleExceptions(Anchor next) {
+	public Link handleExceptions(Link next) {
 		return fTestMethod.expectsException()
 			? new ExpectedException(next)
 			: new NoExpectedException(next);
 	}
 	
-	public class ExpectedException extends Anchor {
-		Anchor fNext;
-		public ExpectedException(Anchor next) {
+	public class ExpectedException extends Link {
+		Link fNext;
+		public ExpectedException(Link next) {
 			fNext= next;
 		}
 		
@@ -166,9 +176,9 @@ public class JUnit4MethodRunner extends JavaElement {
 		}
 	}
 
-	public class NoExpectedException extends Anchor {
-		Anchor fNext;
-		public NoExpectedException(Anchor next) {
+	public class NoExpectedException extends Link {
+		Link fNext;
+		public NoExpectedException(Link next) {
 			fNext= next;
 		}
 		
@@ -182,34 +192,37 @@ public class JUnit4MethodRunner extends JavaElement {
 		}
 	}
 
-	// TODO: (Oct 5, 2007 11:41:41 AM) rename method, extract class
-
-	protected Anchor anchor() {
-		return new Anchor(){
-			@Override
-			public void run(Roadie context) throws Throwable {
-				ExplosiveMethod.from(fTestMethod.getMethod()).invoke(
-						context.getTarget());
-			}
-		};
+	public class MethodRunner extends Link {
+		@Override
+		public void run(Roadie context) throws Throwable {
+			ExplosiveMethod.from(fTestMethod.getMethod()).invoke(
+					context.getTarget());
+		}
 	}
-	
-	public static abstract class Anchor {
-		public abstract void run(Roadie context) throws Throwable;
+
+	protected Link anchor() {
+		return new MethodRunner();
 	}
 	
 	protected void run(Roadie context) {
-		chain().run(context);
+		try {
+			chain().run(context);
+		} catch (StoppedByUserException e) {
+			throw e;
+		} catch (Throwable e) {
+			throw new RuntimeException("Unexpected error running tests", e);
+		}
 	}
 
 	protected Link chain() {
-		// TODO: (Oct 5, 2007 11:09:00 AM) Rename Anchor and Link
+		// TODO: (Oct 5, 2007 11:09:00 AM) Rename Link
 
-		Anchor anchor= anchor();
-		Anchor next= handleExceptions(anchor);
-		next= timeout(next);
-		Link link= new BeforeAndAfter(next);
-		return new Notifier(link);
+		Link link= anchor();
+		link= handleExceptions(link);
+		link= timeout(link);
+		link= new BeforeAndAfter(link);
+		link= new Notifier(link);
+		return new Ignored(link);
 	}
 
 	@Override

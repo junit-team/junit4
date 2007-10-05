@@ -77,7 +77,7 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 		Object test;
 		try {
 			test= createTest();
-		} catch (InvocationTargetException e) {
+		} catch (InvocationTargetException e) { //TODO looks like this could use ExplosiveMethod
 			notifier.testAborted(description, e.getCause());
 			return;			
 		} catch (Exception e) {

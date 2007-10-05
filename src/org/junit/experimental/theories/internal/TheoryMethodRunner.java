@@ -31,7 +31,7 @@ public class TheoryMethodRunner extends JUnit4MethodRunner {
 
 	@Override
 	protected Link chain() {
-		return new Notifier(new Link() {
+		Link link= new Link() {
 		
 			@Override
 			public void run(Roadie context) {
@@ -45,7 +45,9 @@ public class TheoryMethodRunner extends JUnit4MethodRunner {
 				}
 			}
 		
-		});
+		};
+		link= new Notifier(link);
+		return new Ignored(link);
 	}
 
 	@Override
@@ -53,7 +55,7 @@ public class TheoryMethodRunner extends JUnit4MethodRunner {
 		return new TheoryAnchor();
 	}
 
-	public class TheoryAnchor extends Anchor {
+	public class TheoryAnchor extends Link {
 		@Override
 		public void run(Roadie context) throws Throwable {
 			runWithAssignment(Assignments.allUnassigned(context, fTestMethod
@@ -92,7 +94,7 @@ public class TheoryMethodRunner extends JUnit4MethodRunner {
 						.getConstructor().newInstance();
 				final Roadie thisContext= complete.getContext()
 						.withNewInstance(freshInstance);
-				new BeforeAndAfter(new Anchor() {
+				new BeforeAndAfter(new Link() {
 					@Override
 					public void run(Roadie context) throws Throwable {
 						try {
