@@ -44,21 +44,4 @@ public class TestMethod {
 	public boolean isIgnored() {
 		return getMethod().getAnnotation(Ignore.class) != null;
 	}
-
-	void assertNoExceptionExpected(final Roadie context) {
-		if (expectsException())
-			context.addFailure(new AssertionError("Expected exception: "
-					+ getExpectedException().getName()));
-	}
-
-	void assertExceptionExpected(final Roadie context, Throwable e) {
-		if (!expectsException())
-			context.addFailure(e);
-		else if (isUnexpected(e)) {
-			String message= "Unexpected exception, expected<"
-					+ getExpectedException().getName() + "> but was<"
-					+ e.getClass().getName() + ">";
-			context.addFailure(new Exception(message, e));
-		}
-	}
 }

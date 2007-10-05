@@ -14,6 +14,6 @@ public class StubbedTheories extends Theories {
 
 	@Override
 	protected JUnit4MethodRunner wrapMethod(Method method) {
-		return new StubbedTheoryMethod(method, getTestClass());
+		return new StubbedTheoryMethodRunner(method, getTestClass());
 	}
 }
