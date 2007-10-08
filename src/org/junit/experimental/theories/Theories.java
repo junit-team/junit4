@@ -42,15 +42,8 @@ public class Theories extends JUnit4ClassRunner {
 	protected Link chain(final TestMethod method) {
 		return notifying(method, new Link() {
 			@Override
-			public void run(Roadie context) {
-				// TODO: (Oct 5, 2007 11:23:04 AM) handle more gracefully
-
-				try {
-					possiblyExpectingExceptions(method, invoke(method)).run(context);
-				} catch (Throwable e) {
-					// TODO: (Oct 5, 2007 11:23:47 AM) Don't make addFailure be public
-					context.addFailure(e);
-				}
+			public void run(Roadie context) throws Throwable {
+				possiblyExpectingExceptions(method, invoke(method)).run(context);
 			}
 		});
 	}

@@ -73,8 +73,6 @@ public class TestMethod extends TestElement {
 	}
 
 	public Class<?>[] getParameterTypes() {
-		// TODO: (Oct 8, 2007 10:31:33 AM) push out
-	
 		return fMethod.getParameterTypes();
 	}
 
