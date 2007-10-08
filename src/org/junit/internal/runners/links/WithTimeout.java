@@ -13,11 +13,11 @@ import java.util.concurrent.TimeoutException;
 
 import org.junit.internal.runners.model.Roadie;
 
-public class Timeout extends Link {
+public class WithTimeout extends Link {
 	private Link fNext;
 	private final long fTimeout;
 
-	public Timeout(Link next, long timeout) {
+	public WithTimeout(Link next, long timeout) {
 		fNext= next;
 		fTimeout= timeout;
 	}

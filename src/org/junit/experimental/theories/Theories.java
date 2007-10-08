@@ -14,7 +14,7 @@ import org.junit.experimental.theories.internal.Assignments;
 import org.junit.experimental.theories.internal.ParameterizedAssertionError;
 import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.JUnit4ClassRunner;
-import org.junit.internal.runners.links.BeforeAndAfter;
+import org.junit.internal.runners.links.WithBeforeAndAfter;
 import org.junit.internal.runners.links.Link;
 import org.junit.internal.runners.model.Roadie;
 import org.junit.internal.runners.model.TestMethod;
@@ -40,25 +40,23 @@ public class Theories extends JUnit4ClassRunner {
 
 	@Override
 	protected Link chain(final TestMethod method) {
-		// TODO: (Oct 8, 2007 10:46:52 AM) verbs for classes?
-
-		return notifier(new Link() {
+		return notifying(method, new Link() {
 			@Override
 			public void run(Roadie context) {
 				// TODO: (Oct 5, 2007 11:23:04 AM) handle more gracefully
 
 				try {
-					handleExceptions(anchor(method), method).run(context);
+					possiblyExpectingExceptions(method, invoke(method)).run(context);
 				} catch (Throwable e) {
 					// TODO: (Oct 5, 2007 11:23:47 AM) Don't make addFailure be public
 					context.addFailure(e);
 				}
 			}
-		}, method);
+		});
 	}
 
 	@Override
-	protected TheoryAnchor anchor(TestMethod method) {
+	protected TheoryAnchor invoke(TestMethod method) {
 		return new TheoryAnchor(method);
 	}
 
@@ -107,9 +105,7 @@ public class Theories extends JUnit4ClassRunner {
 						.getConstructor().newInstance();
 				final Roadie thisContext= complete.getContext()
 						.withNewInstance(freshInstance);
-				// TODO: (Oct 8, 2007 10:42:56 AM) MethodRunner should not be a JavaElement
-
-				new BeforeAndAfter(new Link() {
+				new WithBeforeAndAfter(new Link() {
 					@Override
 					public void run(Roadie context) throws Throwable {
 							invokeWithActualParameters(freshInstance, complete);

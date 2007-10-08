@@ -43,7 +43,7 @@ public class TestClass extends TestElement {
 			for (Method eachMethod : methods) {
 				Annotation annotation= eachMethod.getAnnotation(annotationClass);
 				TestMethod testMethod= new TestMethod(eachMethod, this);
-				if (annotation != null && ! isShadowed(testMethod, results))
+				if (annotation != null && ! testMethod.isShadowedBy(results))
 					results.add(testMethod);
 			}
 		}
@@ -56,16 +56,6 @@ public class TestClass extends TestElement {
 		return annotation.equals(Before.class) || annotation.equals(BeforeClass.class);
 	}
 	
-	private boolean isShadowed(TestMethod method, List<TestMethod> results) {
-		// TODO: (Oct 8, 2007 3:18:15 PM) push to InvokedMethod
-
-		for (TestMethod each : results) {
-			if (method.isShadowedBy(each))
-				return true;
-		}
-		return false;
-	}
-
 	private List<Class<?>> getSuperClasses(Class< ?> testClass) {
 		ArrayList<Class<?>> results= new ArrayList<Class<?>>();
 		Class<?> current= testClass;

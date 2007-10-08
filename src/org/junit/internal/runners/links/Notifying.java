@@ -5,10 +5,10 @@ package org.junit.internal.runners.links;
 
 import org.junit.internal.runners.model.Roadie;
 
-public class Notifier extends Link {
+public class Notifying extends Link {
 	private final Link fNext;
 
-	public Notifier(Link next) {
+	public Notifying(Link next) {
 		fNext= next;
 	}
 

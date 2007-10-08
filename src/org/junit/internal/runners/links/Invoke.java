@@ -6,10 +6,10 @@ package org.junit.internal.runners.links;
 import org.junit.internal.runners.model.Roadie;
 import org.junit.internal.runners.model.TestMethod;
 
-public class InvokeMethod extends Link {
+public class Invoke extends Link {
 	private final TestMethod fTestMethod;
 	
-	public InvokeMethod(TestMethod testMethod) {
+	public Invoke(TestMethod testMethod) {
 		fTestMethod= testMethod;
 	}
 	

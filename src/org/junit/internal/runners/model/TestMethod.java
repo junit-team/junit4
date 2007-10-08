@@ -1,6 +1,5 @@
 package org.junit.internal.runners.model;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
@@ -28,10 +27,6 @@ public class TestMethod extends TestElement {
 			return null;
 		else
 			return annotation.expected();
-	}
-
-	boolean isUnexpected(Throwable exception) {
-		return !getExpectedException().isAssignableFrom(exception.getClass());
 	}
 
 	public boolean expectsException() {
@@ -83,12 +78,6 @@ public class TestMethod extends TestElement {
 		return fMethod.getParameterTypes();
 	}
 
-	public Annotation[][] getParameterAnnotations() {
-		// TODO: (Oct 8, 2007 10:59:57 AM) can I push this out without futzing structure?
-	
-		return fMethod.getParameterAnnotations();
-	}
-
 	public void validate(boolean isStatic, List<Throwable> errors) {
 		if (Modifier.isStatic(fMethod.getModifiers()) != isStatic) {
 			String state= isStatic ? "should" : "should not";
@@ -119,5 +108,13 @@ public class TestMethod extends TestElement {
 				return false;
 		}
 		return true;
+	}
+
+	boolean isShadowedBy(List<TestMethod> results) {
+		for (TestMethod each : results) {
+			if (isShadowedBy(each))
+				return true;
+		}
+		return false;
 	}
 }

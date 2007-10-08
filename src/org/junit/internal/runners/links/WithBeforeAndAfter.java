@@ -7,11 +7,11 @@ import org.junit.internal.runners.model.TestElement;
 import org.junit.internal.runners.model.Roadie;
 
 
-public class BeforeAndAfter extends Link {
+public class WithBeforeAndAfter extends Link {
 	private final Link fNext;
 	private final TestElement fElement;
 	
-	public BeforeAndAfter(Link next, TestElement element) {
+	public WithBeforeAndAfter(Link next, TestElement element) {
 		fNext= next;
 		fElement = element;
 	}
