@@ -10,7 +10,7 @@ import java.util.List;
 import org.junit.experimental.theories.ParameterSignature;
 import org.junit.experimental.theories.PotentialAssignment;
 import org.junit.experimental.theories.PotentialAssignment.CouldNotGenerateValueException;
-import org.junit.internal.runners.Roadie;
+import org.junit.internal.runners.model.Roadie;
 
 public class Assignments {
 	private final Roadie fContext;
@@ -33,12 +33,12 @@ public class Assignments {
 	}
 
 	public static Assignments allUnassigned(Roadie context,
-			Method method) {
+			Method testMethod) {
 		return new Assignments(context, ParameterSignature
-				.signatures(method));
+				.signatures(testMethod));
 	}
 
-	boolean isComplete() {
+	public boolean isComplete() {
 		return fUnassigned.size() == 0;
 	}
 

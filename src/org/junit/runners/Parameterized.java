@@ -5,8 +5,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,7 +15,8 @@ import org.junit.internal.runners.CompositeRunner;
 import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.JUnit4ClassRunner;
 import org.junit.internal.runners.MethodValidator;
-import org.junit.internal.runners.TestClass;
+import org.junit.internal.runners.model.TestClass;
+import org.junit.internal.runners.model.TestMethod;
 import org.junit.runner.notification.RunNotifier;
 
 /** <p>The custom runner <code>Parameterized</code> implements parameterized
@@ -60,7 +59,7 @@ public class Parameterized extends CompositeRunner {
 		private final Constructor<?> fConstructor;
 
 		TestClassRunnerForParameters(TestClass testClass, Object[] parameters, int i) throws InitializationError {
-			super(testClass.getJavaClass()); //todo
+			super(testClass.getJavaClass()); // TODO
 			fParameters= parameters;
 			fParameterSetNumber= i;
 			fConstructor= getOnlyConstructor();
@@ -77,7 +76,7 @@ public class Parameterized extends CompositeRunner {
 		}
 		
 		@Override
-		protected String testName(final Method method) {
+		protected String testName(final TestMethod method) {
 			return String.format("%s[%s]", method.getName(), fParameterSetNumber);
 		}
 
@@ -88,7 +87,7 @@ public class Parameterized extends CompositeRunner {
 		}
 		
 		@Override
-		protected void validate() throws InitializationError {
+		protected void collectInitializationErrors(List<Throwable> errors) {
 			// do nothing: validated before.
 		}
 		
@@ -105,13 +104,13 @@ public class Parameterized extends CompositeRunner {
 	
 	private final TestClass fTestClass;
 
-	public Parameterized(Class<?> klass) throws Exception {
+	public Parameterized(Class<?> klass) throws Throwable {
 		super(klass.getName());
 		fTestClass= new TestClass(klass);
 		
 		MethodValidator methodValidator= new MethodValidator(fTestClass);
-		methodValidator.validateStaticMethods();
-		methodValidator.validateInstanceMethods();
+		methodValidator.fTestClass.validateStaticMethods(methodValidator.fErrors);
+		methodValidator.fTestClass.validateInstanceMethods(methodValidator.fErrors);
 		methodValidator.assertValid();
 		
 		int i= 0;
@@ -132,14 +131,14 @@ public class Parameterized extends CompositeRunner {
 		});
 	}
 	
-	private Collection<?> getParametersList() throws IllegalAccessException, InvocationTargetException, Exception {
-		return (Collection<?>) getParametersMethod().invoke(null);
+	private Collection<?> getParametersList() throws Throwable {
+		return (Collection<?>) getParametersMethod().invokeExplosively(null);
 	}
 	
-	private Method getParametersMethod() throws Exception {
-		List<Method> methods= fTestClass.getAnnotatedMethods(Parameters.class);
-		for (Method each : methods) {
-			int modifiers= each.getModifiers();
+	private TestMethod getParametersMethod() throws Exception {
+		List<TestMethod> methods= fTestClass.getAnnotatedMethods(Parameters.class);
+		for (TestMethod each : methods) {
+			int modifiers= each.getMethod().getModifiers();
 			if (Modifier.isStatic(modifiers) && Modifier.isPublic(modifiers))
 				return each;
 		}

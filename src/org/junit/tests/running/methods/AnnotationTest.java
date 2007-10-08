@@ -1,5 +1,9 @@
 package org.junit.tests.running.methods;
 
+import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.both;
+import static org.junit.matchers.JUnitMatchers.containsString;
+
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -112,10 +116,10 @@ public class AnnotationTest extends TestCase {
 	
 	static public class TestAndTeardownFailureTest {
 		@After public void after() {
-			throw new Error();
+			throw new Error("hereAfter");
 		}
 		@Test public void test() throws Exception {
-			throw new Exception();
+			throw new Exception("inTest");
 		}
 	}
 	
@@ -124,9 +128,7 @@ public class AnnotationTest extends TestCase {
 		Result runner= core.run(TestAndTeardownFailureTest.class);
 		assertEquals(1, runner.getRunCount());
 		assertEquals(2, runner.getFailureCount());
-		// TODO is order important?
-		assertEquals(Exception.class, runner.getFailures().get(1).getException().getClass());
-		assertEquals(Error.class, runner.getFailures().get(0).getException().getClass());
+		assertThat(runner.getFailures().toString(), both(containsString("hereAfter")).and(containsString("inTest")));
 	}
 	
 	static public class TeardownAfterFailureTest {

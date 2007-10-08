@@ -19,7 +19,7 @@ import org.junit.experimental.results.ResultMatchers;
 import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
-import org.junit.internal.runners.TestClass;
+import org.junit.internal.runners.model.TestClass;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
 

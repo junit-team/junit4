@@ -16,8 +16,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.MethodValidator;
-import org.junit.internal.runners.TestClass;
 import org.junit.internal.runners.JUnit4ClassRunner;
+import org.junit.internal.runners.model.TestClass;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 
@@ -122,7 +122,8 @@ public class TestMethodTest {
 	
 	@Test public void overloaded() {
 		MethodValidator validator= new MethodValidator(new TestClass(Confused.class));
-		List<Throwable> errors= validator.validateMethodsForDefaultRunner();
+		validator.fTestClass.validateMethodsForDefaultRunner(validator.fErrors);
+		List<Throwable> errors= validator.fErrors;
 		assertEquals(1, errors.size());
 	}
 	

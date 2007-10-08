@@ -10,7 +10,7 @@ import java.util.Set;
 import org.junit.internal.runners.CompositeRunner;
 import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.MethodValidator;
-import org.junit.internal.runners.TestClass;
+import org.junit.internal.runners.model.TestClass;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
@@ -59,7 +59,7 @@ public class Suite extends CompositeRunner {
 
 		fTestClass= new TestClass(klass);
 		MethodValidator methodValidator= new MethodValidator(fTestClass);
-		methodValidator.validateStaticMethods();
+		methodValidator.fTestClass.validateStaticMethods(methodValidator.fErrors);
 		methodValidator.assertValid();
 	}
 
@@ -81,8 +81,8 @@ public class Suite extends CompositeRunner {
 	}
 	
 	protected void validate(MethodValidator methodValidator) {
-		methodValidator.validateStaticMethods();
-		methodValidator.validateInstanceMethods();
+		methodValidator.fTestClass.validateStaticMethods(methodValidator.fErrors);
+		methodValidator.fTestClass.validateInstanceMethods(methodValidator.fErrors);
 	}
 	
 	@Override
