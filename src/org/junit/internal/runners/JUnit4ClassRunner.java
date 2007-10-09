@@ -12,7 +12,7 @@ import org.junit.internal.runners.links.ExpectingException;
 import org.junit.internal.runners.links.IgnoreTest;
 import org.junit.internal.runners.links.Invoke;
 import org.junit.internal.runners.links.Link;
-import org.junit.internal.runners.links.ExpectingNoException;
+import org.junit.internal.runners.links.IgnoreViolatedAssumptions;
 import org.junit.internal.runners.links.Notifying;
 import org.junit.internal.runners.links.WithTimeout;
 import org.junit.internal.runners.model.ReflectiveCallable;
@@ -114,6 +114,7 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 
 		Link link= invoke(method);
 		link= possiblyExpectingExceptions(method, link);
+		link= ignoreViolatedAssumptions(link);
 		link= withPotentialTimeout(method, link);
 		link= withBeforeAndAfter(method, link);
 		return notifying(method, link);
@@ -122,11 +123,15 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 	protected Link invoke(TestMethod method) {
 		return new Invoke(method);
 	}
+	
+	protected Link ignoreViolatedAssumptions(Link next) {
+		return new IgnoreViolatedAssumptions(next);
+	}
 
 	protected Link possiblyExpectingExceptions(TestMethod method, Link next) {
 		return method.expectsException()
 			? new ExpectingException(next, method.getExpectedException())
-			: new ExpectingNoException(next);
+			: next;
 	}
 
 	protected Link withPotentialTimeout(TestMethod method, Link next) {
@@ -142,9 +147,9 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 	}
 
 	protected Link notifying(TestMethod method, Link link) {
-		if (method.isIgnored())
-			return new IgnoreTest();
-		return new Notifying(link);
+		return method.isIgnored()
+			? new IgnoreTest()
+			: new Notifying(link);
 	}
 
 	@Override

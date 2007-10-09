@@ -6,9 +6,9 @@ package org.junit.internal.runners.links;
 import org.junit.Assume.AssumptionViolatedException;
 import org.junit.internal.runners.model.Roadie;
 
-public class ExpectingNoException extends Link {
+public class IgnoreViolatedAssumptions extends Link {
 	Link fNext;
-	public ExpectingNoException(Link next) {
+	public IgnoreViolatedAssumptions(Link next) {
 		fNext= next;
 	}
 	

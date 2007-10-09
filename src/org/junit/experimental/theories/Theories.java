@@ -40,12 +40,10 @@ public class Theories extends JUnit4ClassRunner {
 
 	@Override
 	protected Link chain(final TestMethod method) {
-		return notifying(method, new Link() {
-			@Override
-			public void run(Roadie context) throws Throwable {
-				possiblyExpectingExceptions(method, invoke(method)).run(context);
-			}
-		});
+		Link next= invoke(method);
+		next= ignoreViolatedAssumptions(next);
+		next= possiblyExpectingExceptions(method, next);
+		return notifying(method, next);
 	}
 
 	@Override
