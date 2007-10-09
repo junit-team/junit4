@@ -1,6 +1,7 @@
 package org.junit.tests.running.methods;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
@@ -14,9 +15,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.internal.runners.InitializationError;
-import org.junit.internal.runners.MethodValidator;
 import org.junit.internal.runners.JUnit4ClassRunner;
+import org.junit.internal.runners.model.ErrorList;
+import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.TestClass;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -121,10 +122,10 @@ public class TestMethodTest {
 	}
 	
 	@Test public void overloaded() {
-		MethodValidator validator= new MethodValidator(new TestClass(Confused.class));
-		validator.fTestClass.validateMethodsForDefaultRunner(validator.fErrors);
-		List<Throwable> errors= validator.fErrors;
-		assertEquals(1, errors.size());
+		TestClass testClass= new TestClass(Confused.class);
+		ErrorList errors= new ErrorList();
+		testClass.validateMethodsForDefaultRunner(errors);
+		assertFalse(errors.isEmpty());
 	}
 	
 	public static class OnlyTestIsIgnored {

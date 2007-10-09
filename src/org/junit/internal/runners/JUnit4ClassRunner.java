@@ -1,22 +1,23 @@
 package org.junit.internal.runners;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.internal.runners.links.WithBeforeAndAfter;
 import org.junit.internal.runners.links.ExpectingException;
 import org.junit.internal.runners.links.IgnoreTest;
+import org.junit.internal.runners.links.IgnoreViolatedAssumptions;
 import org.junit.internal.runners.links.Invoke;
 import org.junit.internal.runners.links.Link;
-import org.junit.internal.runners.links.IgnoreViolatedAssumptions;
 import org.junit.internal.runners.links.Notifying;
+import org.junit.internal.runners.links.WithBeforeAndAfter;
 import org.junit.internal.runners.links.WithTimeout;
-import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.internal.runners.model.EachTestNotifier;
+import org.junit.internal.runners.model.ErrorList;
+import org.junit.internal.runners.model.InitializationError;
+import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.internal.runners.model.TestClass;
 import org.junit.internal.runners.model.TestMethod;
 import org.junit.runner.Description;
@@ -45,13 +46,12 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 	}
 
 	private void validate() throws InitializationError {
-		List<Throwable> errors= new ArrayList<Throwable>();
+		ErrorList errors= new ErrorList();
 		collectInitializationErrors(errors);
-		if (!errors.isEmpty())
-			throw new InitializationError(errors);
+		errors.assertEmpty();
 	}
 
-	protected void collectInitializationErrors(List<Throwable> errors) {
+	protected void collectInitializationErrors(ErrorList errors) {
 		fTestClass.validateMethodsForDefaultRunner(errors);
 	}
 

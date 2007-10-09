@@ -12,9 +12,9 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.internal.runners.CompositeRunner;
-import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.JUnit4ClassRunner;
-import org.junit.internal.runners.MethodValidator;
+import org.junit.internal.runners.model.ErrorList;
+import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.TestClass;
 import org.junit.internal.runners.model.TestMethod;
 import org.junit.runner.notification.RunNotifier;
@@ -87,7 +87,7 @@ public class Parameterized extends CompositeRunner {
 		}
 		
 		@Override
-		protected void collectInitializationErrors(List<Throwable> errors) {
+		protected void collectInitializationErrors(ErrorList errors) {
 			// do nothing: validated before.
 		}
 		
@@ -108,12 +108,10 @@ public class Parameterized extends CompositeRunner {
 		super(klass.getName());
 		fTestClass= new TestClass(klass);
 		
-		// TODO: (Oct 9, 2007 2:18:54 PM) Destroy MethodValidator (I thought I already had)
-
-		MethodValidator methodValidator= new MethodValidator(fTestClass);
-		methodValidator.fTestClass.validateStaticMethods(methodValidator.fErrors);
-		methodValidator.fTestClass.validateInstanceMethods(methodValidator.fErrors);
-		methodValidator.assertValid();
+		ErrorList errors = new ErrorList();
+		fTestClass.validateStaticMethods(errors);
+		fTestClass.validateInstanceMethods(errors);
+		errors.assertEmpty();
 		
 		int i= 0;
 		for (final Object each : getParametersList()) {

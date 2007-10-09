@@ -8,8 +8,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.internal.runners.CompositeRunner;
-import org.junit.internal.runners.InitializationError;
-import org.junit.internal.runners.MethodValidator;
+import org.junit.internal.runners.model.ErrorList;
+import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.TestClass;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
@@ -58,9 +58,9 @@ public class Suite extends CompositeRunner {
 		removeParent(klass);
 
 		fTestClass= new TestClass(klass);
-		MethodValidator methodValidator= new MethodValidator(fTestClass);
-		methodValidator.fTestClass.validateStaticMethods(methodValidator.fErrors);
-		methodValidator.assertValid();
+		ErrorList errors= new ErrorList();
+		fTestClass.validateStaticMethods(errors);
+		errors.assertEmpty();
 	}
 
 	private Class<?> addParent(Class<?> parent) throws InitializationError {
@@ -80,9 +80,9 @@ public class Suite extends CompositeRunner {
 		return annotation.value();
 	}
 	
-	protected void validate(MethodValidator methodValidator) {
-		methodValidator.fTestClass.validateStaticMethods(methodValidator.fErrors);
-		methodValidator.fTestClass.validateInstanceMethods(methodValidator.fErrors);
+	protected void validate(ErrorList errors) {
+		fTestClass.validateStaticMethods(errors);
+		fTestClass.validateInstanceMethods(errors);
 	}
 	
 	@Override

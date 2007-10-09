@@ -77,7 +77,7 @@ public class TestMethod extends TestElement {
 		return fMethod.getParameterTypes();
 	}
 
-	public void validate(boolean isStatic, List<Throwable> errors) {
+	public void validate(boolean isStatic, ErrorList errors) {
 		if (Modifier.isStatic(fMethod.getModifiers()) != isStatic) {
 			String state= isStatic ? "should" : "should not";
 			errors.add(new Exception("Method " + fMethod.getName() + "() "

@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.junit.internal.runners.CompositeRunner;
 import org.junit.internal.runners.ErrorReportingRunner;
-import org.junit.internal.runners.InitializationError;
+import org.junit.internal.runners.model.InitializationError;
 import org.junit.runner.Description;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;

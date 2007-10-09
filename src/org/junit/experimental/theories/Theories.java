@@ -12,11 +12,12 @@ import org.junit.Assume.AssumptionViolatedException;
 import org.junit.experimental.theories.PotentialAssignment.CouldNotGenerateValueException;
 import org.junit.experimental.theories.internal.Assignments;
 import org.junit.experimental.theories.internal.ParameterizedAssertionError;
-import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.JUnit4ClassRunner;
 import org.junit.internal.runners.links.WithBeforeAndAfter;
 import org.junit.internal.runners.links.Link;
 import org.junit.internal.runners.model.EachTestNotifier;
+import org.junit.internal.runners.model.ErrorList;
+import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.TestMethod;
 
 @SuppressWarnings("restriction")
@@ -26,7 +27,7 @@ public class Theories extends JUnit4ClassRunner {
 	}
 
 	@Override
-	protected void collectInitializationErrors(List<Throwable> errors) {
+	protected void collectInitializationErrors(ErrorList errors) {
 	}
 
 	@Override
