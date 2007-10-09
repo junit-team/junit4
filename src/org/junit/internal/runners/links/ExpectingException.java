@@ -3,7 +3,7 @@
  */
 package org.junit.internal.runners.links;
 
-import org.junit.internal.runners.model.Roadie;
+import org.junit.internal.runners.model.EachTestNotifier;
 
 public class ExpectingException extends Link {
 	private Link fNext;
@@ -15,7 +15,7 @@ public class ExpectingException extends Link {
 	}
 	
 	@Override
-	public void run(Roadie context) {
+	public void run(EachTestNotifier context) {
 		try {
 			fNext.run(context);
 			context.addFailure(new AssertionError("Expected exception: "

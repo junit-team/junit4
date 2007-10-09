@@ -66,7 +66,6 @@ public class BothTest {
 	}
 	
 	@Test public void subclassesAreOkInSecondPositionOnly() {
-		// TODO: (Jul 16, 2007 11:09:25 AM) I'd love to have subclasses first, but will Java typing allow it?
 		assertThat(3, both(is(Integer.class)).and(is(3)));
 	}
 }

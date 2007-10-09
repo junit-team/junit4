@@ -58,15 +58,15 @@ public class Parameterized extends CompositeRunner {
 
 		private final Constructor<?> fConstructor;
 
-		TestClassRunnerForParameters(TestClass testClass, Object[] parameters, int i) throws InitializationError {
-			super(testClass.getJavaClass()); // TODO
+		TestClassRunnerForParameters(Class<?> type, Object[] parameters, int i) throws InitializationError {
+			super(type);
 			fParameters= parameters;
 			fParameterSetNumber= i;
 			fConstructor= getOnlyConstructor();
 		}
 
 		@Override
-		protected Object createTest() throws Exception {
+		public Object createTest() throws Exception {
 			return fConstructor.newInstance(fParameters);
 		}
 		
@@ -108,6 +108,8 @@ public class Parameterized extends CompositeRunner {
 		super(klass.getName());
 		fTestClass= new TestClass(klass);
 		
+		// TODO: (Oct 9, 2007 2:18:54 PM) Destroy MethodValidator (I thought I already had)
+
 		MethodValidator methodValidator= new MethodValidator(fTestClass);
 		methodValidator.fTestClass.validateStaticMethods(methodValidator.fErrors);
 		methodValidator.fTestClass.validateInstanceMethods(methodValidator.fErrors);
@@ -116,7 +118,7 @@ public class Parameterized extends CompositeRunner {
 		int i= 0;
 		for (final Object each : getParametersList()) {
 			if (each instanceof Object[])
-				add(new TestClassRunnerForParameters(fTestClass, (Object[])each, i++));
+				add(new TestClassRunnerForParameters(klass, (Object[])each, i++));
 			else
 				throw new Exception(String.format("%s.%s() must return a Collection of arrays.", fTestClass.getName(), getParametersMethod().getName()));
 		}

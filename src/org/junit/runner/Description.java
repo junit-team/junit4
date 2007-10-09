@@ -165,7 +165,7 @@ public class Description {
 		return null;
 	}
 
-	// TODO: (Aug 6, 2007 5:10:13 PM) DUP
+	// TODO: (Aug 6, 2007 5:10:13 PM) DUP with getAnnotation
 	public <T extends Annotation> T getParentAnnotation(Class<T> annotationType) {
 		for (Annotation each : fParentAnnotations)
 			if (each.annotationType().equals(annotationType))

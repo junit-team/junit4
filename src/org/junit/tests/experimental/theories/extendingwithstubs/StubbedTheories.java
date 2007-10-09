@@ -17,7 +17,7 @@ public class StubbedTheories extends Theories {
 	}
 
 	@Override
-	protected TheoryAnchor invoke(TestMethod method) {
+	protected TheoryAnchor invoke(TestMethod method, Object test) {
 		return new StubbedTheoryAnchor(method);
 	}
 	

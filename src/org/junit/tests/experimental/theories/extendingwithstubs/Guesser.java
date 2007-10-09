@@ -100,7 +100,7 @@ public class Guesser<T> extends ReguessableValue {
 		return returnThis;
 	}
 
-	@Override public Object getValue() throws CouldNotGenerateValueException {
+	@Override public Object getValue(Object test) throws CouldNotGenerateValueException {
 		return getProxy();
 	}
 

@@ -10,7 +10,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.Test.None;
 
-// TODO: (Oct 8, 2007 1:58:24 PM) extract InvokedMethod
+// TODO: (Oct 8, 2007 1:58:24 PM) extract InvokedMethod (which can be Befores, Afters, Tests, etc.)
+//   This should be just @Test methods (and @Theory)
 
 public class TestMethod extends TestElement {
 	private final TestClass fTestClass;

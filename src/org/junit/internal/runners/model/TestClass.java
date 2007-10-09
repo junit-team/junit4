@@ -79,8 +79,8 @@ public class TestClass extends TestElement {
 	}
 
 	public void runProtected(RunNotifier notifier, Description description, Runnable runnable) {
-		// TODO: (Oct 8, 2007 1:02:02 PM) passthrough
-		runProtected(new Roadie(notifier, description, null), runnable);
+		// TODO: (Oct 8, 2007 1:02:02 PM) instead of this, have a runChildren overridable method in JUnit4ClassRunner
+		runProtected(new EachTestNotifier(notifier, description), runnable, null);
 	}
 
 	public void validateMethods(Class<? extends Annotation> annotation, boolean isStatic, List<Throwable> errors) {

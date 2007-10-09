@@ -16,7 +16,7 @@ import org.junit.internal.runners.links.IgnoreViolatedAssumptions;
 import org.junit.internal.runners.links.Notifying;
 import org.junit.internal.runners.links.WithTimeout;
 import org.junit.internal.runners.model.ReflectiveCallable;
-import org.junit.internal.runners.model.Roadie;
+import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.model.TestClass;
 import org.junit.internal.runners.model.TestMethod;
 import org.junit.runner.Description;
@@ -83,10 +83,11 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 			notifier.testAborted(description, e);
 			return;
 		}
-		run(new Roadie(notifier, description, test), method);
+		EachTestNotifier roadie= new EachTestNotifier(notifier, description);
+		run(roadie, method, test);
 	}
 
-	protected Object createTest() throws Exception {
+	public Object createTest() throws Exception {
 		return fTestClass.getConstructor().newInstance();
 	}
 
@@ -99,9 +100,9 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 		return method.getName();
 	}
 	
-	public void run(Roadie context, TestMethod method) {
+	public void run(EachTestNotifier context, TestMethod method, Object test) {
 		try {
-			chain(method).run(context);
+			chain(method, test).run(context);
 		} catch (StoppedByUserException e) {
 			throw e;
 		} catch (Throwable e) {
@@ -109,19 +110,21 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 		}
 	}
 
-	protected Link chain(TestMethod method) {
-		// TODO: (Oct 5, 2007 11:09:00 AM) Rename Link
+	protected Link chain(TestMethod method, Object test) {
+		// TODO: (Oct 5, 2007 11:09:00 AM) Rename Link?
 
-		Link link= invoke(method);
+		// TODO: (Oct 9, 2007 2:12:24 PM) method + test is parameter object?
+
+		Link link= invoke(method, test);
 		link= possiblyExpectingExceptions(method, link);
 		link= ignoreViolatedAssumptions(link);
 		link= withPotentialTimeout(method, link);
-		link= withBeforeAndAfter(method, link);
+		link= withBeforeAndAfter(method, link, test);
 		return notifying(method, link);
 	}
 	
-	protected Link invoke(TestMethod method) {
-		return new Invoke(method);
+	protected Link invoke(TestMethod method, Object test) {
+		return new Invoke(method, test);
 	}
 	
 	protected Link ignoreViolatedAssumptions(Link next) {
@@ -141,9 +144,8 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 			: next;
 	}
 
-	protected Link withBeforeAndAfter(TestMethod method, Link link) {
-		link= new WithBeforeAndAfter(link, method);
-		return link;
+	protected Link withBeforeAndAfter(TestMethod method, Link link, Object target) {
+		return new WithBeforeAndAfter(link, method, target);
 	}
 
 	protected Link notifying(TestMethod method, Link link) {
@@ -157,8 +159,6 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 		Description spec= Description.createSuiteDescription(getName(),
 				classAnnotations());
 		List<TestMethod> testMethods= fTestMethods;
-		// TODO: (Oct 8, 2007 10:32:57 AM) Why doesn't Eclipse quickfix types in
-		// new-style for loops?
 
 		for (TestMethod method : testMethods)
 			spec.addChild(methodDescription(method));

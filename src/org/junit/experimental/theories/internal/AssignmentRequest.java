@@ -21,17 +21,14 @@ public class AssignmentRequest {
 	private static class MethodParameterValue extends PotentialAssignment {
 		private final Method fMethod;
 
-		private final Object fTest;
-
-		private MethodParameterValue(Method method, Object test) {
+		private MethodParameterValue(Method method) {
 			fMethod= method;
-			fTest= test;
 		}
 
 		@Override
-		public Object getValue() throws CouldNotGenerateValueException {
+		public Object getValue(Object test) throws CouldNotGenerateValueException {
 			try {
-				return fMethod.invoke(fTest);
+				return fMethod.invoke(test);
 			} catch (IllegalArgumentException e) {
 				throw new RuntimeException(
 						"unexpected: argument length is checked");
@@ -96,7 +93,7 @@ public class AssignmentRequest {
 					if ((method.getParameterTypes().length == 0 && sig.getType()
 							.isAssignableFrom(method.getReturnType()))
 							&& method.isAnnotationPresent(DataPoint.class)) {
-						list.add(new MethodParameterValue(method, test));
+						list.add(new MethodParameterValue(method));
 					} else if (method.isAnnotationPresent(DataPoints.class)) {
 						try {
 							addArrayValues(list, method.invoke(test));

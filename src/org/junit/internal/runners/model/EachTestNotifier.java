@@ -8,16 +8,12 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
-public class Roadie {
-	Object fTarget;
-
+public class EachTestNotifier {
 	private RunNotifier fNotifier;
 
 	private Description fDescription;
 
-	public Roadie(RunNotifier notifier, Description description,
-			Object target) {
-		fTarget= target;
+	public EachTestNotifier(RunNotifier notifier, Description description) {
 		fNotifier= notifier;
 		fDescription= description;
 	}
@@ -38,11 +34,7 @@ public class Roadie {
 		fNotifier.fireTestIgnored(fDescription);
 	}
 
-	public Object getTarget() {
-		return fTarget;
-	}
-
-	public Roadie withNewInstance(Object freshInstance) {
-		return new Roadie(fNotifier, fDescription, freshInstance);
+	public EachTestNotifier withNewInstance(Object freshInstance) {
+		return new EachTestNotifier(fNotifier, fDescription);
 	}
 }

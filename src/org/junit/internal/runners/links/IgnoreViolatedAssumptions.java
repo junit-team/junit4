@@ -4,7 +4,7 @@
 package org.junit.internal.runners.links;
 
 import org.junit.Assume.AssumptionViolatedException;
-import org.junit.internal.runners.model.Roadie;
+import org.junit.internal.runners.model.EachTestNotifier;
 
 public class IgnoreViolatedAssumptions extends Link {
 	Link fNext;
@@ -13,7 +13,7 @@ public class IgnoreViolatedAssumptions extends Link {
 	}
 	
 	@Override
-	public void run(Roadie context) throws Throwable {
+	public void run(EachTestNotifier context) throws Throwable {
 		try {
 			fNext.run(context);
 		} catch (AssumptionViolatedException e) {

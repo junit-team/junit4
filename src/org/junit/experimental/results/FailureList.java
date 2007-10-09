@@ -12,9 +12,6 @@ import org.junit.runner.notification.RunListener;
 public class FailureList {
 	private final List<Failure> failures;
 
-	// TODO: (Jul 23, 2007 10:50:50 AM) This is a broad type. Can we take in
-	// something that we're sure is not null, or containing null items?
-
 	public FailureList(List<Failure> failures) {
 		this.failures= failures;
 	}

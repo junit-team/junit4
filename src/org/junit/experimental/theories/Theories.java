@@ -16,7 +16,7 @@ import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.JUnit4ClassRunner;
 import org.junit.internal.runners.links.WithBeforeAndAfter;
 import org.junit.internal.runners.links.Link;
-import org.junit.internal.runners.model.Roadie;
+import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.model.TestMethod;
 
 @SuppressWarnings("restriction")
@@ -31,7 +31,7 @@ public class Theories extends JUnit4ClassRunner {
 
 	@Override
 	protected List<TestMethod> getTestMethods() {
-		// TODO: (Jul 20, 2007 2:02:44 PM) Only get methods once
+		// TODO: (Jul 20, 2007 2:02:44 PM) Only get methods once, even if they have both @Test and @Theory
 
 		List<TestMethod> testMethods= super.getTestMethods();
 		testMethods.addAll(getTestClass().getAnnotatedMethods(Theory.class));
@@ -39,19 +39,19 @@ public class Theories extends JUnit4ClassRunner {
 	}
 
 	@Override
-	protected Link chain(final TestMethod method) {
-		Link next= invoke(method);
+	protected Link chain(final TestMethod method, Object test) {
+		Link next= invoke(method, test);
 		next= ignoreViolatedAssumptions(next);
 		next= possiblyExpectingExceptions(method, next);
 		return notifying(method, next);
 	}
 
 	@Override
-	protected TheoryAnchor invoke(TestMethod method) {
+	protected TheoryAnchor invoke(TestMethod method, Object test) {
 		return new TheoryAnchor(method);
 	}
 
-	public static class TheoryAnchor extends Link {
+	public class TheoryAnchor extends Link {
 		private int successes = 0;
 		private TestMethod fTestMethod;
 		private List<AssumptionViolatedException> fInvalidParameters= new ArrayList<AssumptionViolatedException>();
@@ -61,8 +61,9 @@ public class Theories extends JUnit4ClassRunner {
 		}
 		
 		@Override
-		public void run(Roadie context) throws Throwable {
-			runWithAssignment(Assignments.allUnassigned(context, fTestMethod.getMethod()));
+		public void run(EachTestNotifier context) throws Throwable {
+			runWithAssignment(Assignments.allUnassigned(context, fTestMethod
+					.getMethod(), createTest()));
 			
 			if (successes  == 0)
 				Assert
@@ -94,14 +95,14 @@ public class Theories extends JUnit4ClassRunner {
 			try {
 				final Object freshInstance= complete.getTarget().getClass()
 						.getConstructor().newInstance();
-				final Roadie thisContext= complete.getContext()
+				final EachTestNotifier thisContext= complete.getContext()
 						.withNewInstance(freshInstance);
 				new WithBeforeAndAfter(new Link() {
 					@Override
-					public void run(Roadie context) throws Throwable {
+					public void run(EachTestNotifier context) throws Throwable {
 							invokeWithActualParameters(freshInstance, complete);
 					}
-				}, fTestMethod).run(thisContext); 
+				}, fTestMethod, freshInstance).run(thisContext); 
 			} catch (CouldNotGenerateValueException e) {
 				// Do nothing
 			}

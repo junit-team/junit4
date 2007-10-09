@@ -8,7 +8,7 @@ public abstract class PotentialAssignment {
 	public static PotentialAssignment forValue(final Object value) {
 		return new PotentialAssignment() {		
 			@Override
-			public Object getValue() throws CouldNotGenerateValueException {
+			public Object getValue(Object test) throws CouldNotGenerateValueException {
 				return value;
 			}
 			
@@ -19,5 +19,5 @@ public abstract class PotentialAssignment {
 		};
 	}
 	
-	public abstract Object getValue() throws CouldNotGenerateValueException;
+	public abstract Object getValue(Object test) throws CouldNotGenerateValueException;
 }

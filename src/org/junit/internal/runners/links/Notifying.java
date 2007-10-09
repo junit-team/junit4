@@ -3,7 +3,7 @@
  */
 package org.junit.internal.runners.links;
 
-import org.junit.internal.runners.model.Roadie;
+import org.junit.internal.runners.model.EachTestNotifier;
 
 public class Notifying extends Link {
 	private final Link fNext;
@@ -13,7 +13,7 @@ public class Notifying extends Link {
 	}
 
 	@Override
-	public void run(Roadie context) {
+	public void run(EachTestNotifier context) {
 		context.fireTestStarted();
 		try {
 			fNext.run(context);

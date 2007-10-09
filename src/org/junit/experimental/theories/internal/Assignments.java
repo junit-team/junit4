@@ -10,32 +10,35 @@ import java.util.List;
 import org.junit.experimental.theories.ParameterSignature;
 import org.junit.experimental.theories.PotentialAssignment;
 import org.junit.experimental.theories.PotentialAssignment.CouldNotGenerateValueException;
-import org.junit.internal.runners.model.Roadie;
+import org.junit.internal.runners.model.EachTestNotifier;
 
 public class Assignments {
-	private final Roadie fContext;
+	private final EachTestNotifier fContext;
 
 	private List<PotentialAssignment> fAssigned;
 
 	private final List<ParameterSignature> fUnassigned;
 
-	public Assignments(Roadie context,
-			List<ParameterSignature> unassigned) {
-		this(context, new ArrayList<PotentialAssignment>(), unassigned);
+	private Object fTarget;
+
+	public Assignments(EachTestNotifier context,
+			List<ParameterSignature> unassigned, Object target) {
+		this(context, new ArrayList<PotentialAssignment>(), unassigned, target);
 	}
 
-	public Assignments(Roadie context,
+	public Assignments(EachTestNotifier context,
 			List<PotentialAssignment> assigned,
-			List<ParameterSignature> unassigned) {
+			List<ParameterSignature> unassigned, Object target) {
 		fContext= context;
 		fUnassigned= unassigned;
 		fAssigned= assigned;
+		fTarget= target;
 	}
 
-	public static Assignments allUnassigned(Roadie context,
-			Method testMethod) {
+	public static Assignments allUnassigned(EachTestNotifier context,
+			Method testMethod, Object target) {
 		return new Assignments(context, ParameterSignature
-				.signatures(testMethod));
+				.signatures(testMethod), target);
 	}
 
 	public boolean isComplete() {
@@ -51,14 +54,14 @@ public class Assignments {
 				fAssigned);
 		assigned.add(source);
 		return new Assignments(fContext, assigned, fUnassigned.subList(
-				1, fUnassigned.size()));
+				1, fUnassigned.size()), fTarget);
 	}
 
 	public Object getTarget() {
-		return fContext.getTarget();
+		return fTarget;
 	}
 
-	public Roadie getContext() {
+	public EachTestNotifier getContext() {
 		return fContext;
 	}
 
@@ -66,7 +69,7 @@ public class Assignments {
 			throws CouldNotGenerateValueException {
 		Object[] values= new Object[fAssigned.size()];
 		for (int i= 0; i < values.length; i++) {
-			values[i]= fAssigned.get(i).getValue();
+			values[i]= fAssigned.get(i).getValue(getTarget());
 			if (values[i] == null && !nullsOk)
 				throw new CouldNotGenerateValueException();
 		}
