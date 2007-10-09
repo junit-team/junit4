@@ -96,14 +96,15 @@ public class Theories extends JUnit4ClassRunner {
 			try {
 				final Object freshInstance= complete.getTarget().getClass()
 						.getConstructor().newInstance();
-				final EachTestNotifier thisContext= complete.getContext()
-						.withNewInstance(freshInstance);
+				//TODO since the context no longer carries an instance, I think (and the tests agree) that this is redundant
+				/* final EachTestNotifier thisContext= complete.getContext()
+						.withNewInstance(freshInstance); */
 				new WithBeforeAndAfter(new Link() {
 					@Override
 					public void run(EachTestNotifier context) throws Throwable {
 							invokeWithActualParameters(freshInstance, complete);
 					}
-				}, fTestMethod, freshInstance).run(thisContext); 
+				}, fTestMethod, freshInstance).run(complete.getContext()); 
 			} catch (CouldNotGenerateValueException e) {
 				// Do nothing
 			}

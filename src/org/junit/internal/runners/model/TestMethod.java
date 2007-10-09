@@ -110,10 +110,9 @@ public class TestMethod extends TestElement {
 	}
 
 	boolean isShadowedBy(List<TestMethod> results) {
-		for (TestMethod each : results) {
+		for (TestMethod each : results)
 			if (isShadowedBy(each))
 				return true;
-		}
 		return false;
 	}
 }
