@@ -63,8 +63,8 @@ public class Theories extends JUnit4ClassRunner {
 		
 		@Override
 		public void run(EachTestNotifier context) throws Throwable {
-			runWithAssignment(Assignments.allUnassigned(context, fTestMethod
-					.getMethod(), createTest()));
+			runWithAssignment(Assignments.allUnassigned(fTestMethod
+					.getMethod(), fTestMethod.getTestClass().getJavaClass()), context);
 			
 			if (successes  == 0)
 				Assert
@@ -72,39 +72,37 @@ public class Theories extends JUnit4ClassRunner {
 								+ fInvalidParameters);
 		}
 
-		protected void runWithAssignment(Assignments parameterAssignment)
+		protected void runWithAssignment(Assignments parameterAssignment, EachTestNotifier notifier)
 				throws Throwable {
+			// TODO: (Oct 9, 2007 8:56:54 PM) Should this be moved to Assignments?
+
 			if (!parameterAssignment.isComplete()) {
-				runWithIncompleteAssignment(parameterAssignment);
+				runWithIncompleteAssignment(parameterAssignment, notifier);
 			} else {
-				runWithCompleteAssignment(parameterAssignment);
+				runWithCompleteAssignment(parameterAssignment, notifier);
 			}
 		}
 
-		protected void runWithIncompleteAssignment(Assignments incomplete)
+		protected void runWithIncompleteAssignment(Assignments incomplete, EachTestNotifier notifier)
 				throws InstantiationException, IllegalAccessException,
 				Throwable {
 			for (PotentialAssignment source : incomplete
 					.potentialsForNextUnassigned()) {
-				runWithAssignment(incomplete.assignNext(source));
+				runWithAssignment(incomplete.assignNext(source), notifier);
 			}
 		}
 
-		protected void runWithCompleteAssignment(final Assignments complete)
+		protected void runWithCompleteAssignment(final Assignments complete, EachTestNotifier notifier)
 				throws InstantiationException, IllegalAccessException,
 				InvocationTargetException, NoSuchMethodException, Throwable {
 			try {
-				final Object freshInstance= complete.getTarget().getClass()
-						.getConstructor().newInstance();
-				//TODO since the context no longer carries an instance, I think (and the tests agree) that this is redundant
-				/* final EachTestNotifier thisContext= complete.getContext()
-						.withNewInstance(freshInstance); */
+				final Object freshInstance= createTest();
 				new WithBeforeAndAfter(new Link() {
 					@Override
 					public void run(EachTestNotifier context) throws Throwable {
 							invokeWithActualParameters(freshInstance, complete);
 					}
-				}, fTestMethod, freshInstance).run(complete.getContext()); 
+				}, fTestMethod, freshInstance).run(notifier); 
 			} catch (CouldNotGenerateValueException e) {
 				// Do nothing
 			}
@@ -112,7 +110,7 @@ public class Theories extends JUnit4ClassRunner {
 
 		private void invokeWithActualParameters(Object target, Assignments complete)
 				throws Throwable {
-			final Object[] values= complete.getActualValues(nullsOk());
+			final Object[] values= complete.getActualValues(nullsOk(), target);
 			try {
 				fTestMethod.invokeExplosively(target, values);
 				successes++;

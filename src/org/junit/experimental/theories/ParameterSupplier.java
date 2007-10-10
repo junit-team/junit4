@@ -4,6 +4,5 @@ import java.util.List;
 
 
 public abstract class ParameterSupplier {
-	public abstract List<PotentialAssignment> getValueSources(Object test,
-			ParameterSignature sig);
+	public abstract List<PotentialAssignment> getValueSources(ParameterSignature sig);
 }

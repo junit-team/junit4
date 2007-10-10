@@ -115,4 +115,8 @@ public class TestMethod extends TestElement {
 				return true;
 		return false;
 	}
+
+	public TestClass getTestClass() {
+		return fTestClass;
+	}
 }

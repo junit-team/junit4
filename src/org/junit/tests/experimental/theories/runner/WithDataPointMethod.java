@@ -15,11 +15,10 @@ import java.util.List;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoint;
-import org.junit.experimental.theories.ParameterSignature;
 import org.junit.experimental.theories.PotentialAssignment;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
-import org.junit.experimental.theories.internal.AssignmentRequest;
+import org.junit.experimental.theories.internal.Assignments;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.Failure;
@@ -132,8 +131,8 @@ public class WithDataPointMethod {
 
 	private List<PotentialAssignment> potentialValues(Method method)
 			throws Exception {
-		return new AssignmentRequest(HasDateMethod.class, ParameterSignature
-				.signatures(method).get(0)).getPotentialAssignments();
+		return Assignments.allUnassigned(method, HasDateMethod.class)
+				.potentialsForNextUnassigned();
 	}
 
 	private List<Failure> failures(Class<?> type) {

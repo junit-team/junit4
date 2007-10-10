@@ -33,8 +33,4 @@ public class EachTestNotifier {
 	public void fireTestIgnored() {
 		fNotifier.fireTestIgnored(fDescription);
 	}
-
-	public EachTestNotifier withNewInstance(Object freshInstance) {
-		return new EachTestNotifier(fNotifier, fDescription);
-	}
 }

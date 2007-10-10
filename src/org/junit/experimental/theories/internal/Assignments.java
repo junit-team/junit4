@@ -8,37 +8,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.experimental.theories.ParameterSignature;
+import org.junit.experimental.theories.ParameterSupplier;
+import org.junit.experimental.theories.ParametersSuppliedBy;
 import org.junit.experimental.theories.PotentialAssignment;
 import org.junit.experimental.theories.PotentialAssignment.CouldNotGenerateValueException;
-import org.junit.internal.runners.model.EachTestNotifier;
 
 public class Assignments {
-	private final EachTestNotifier fContext;
-
 	private List<PotentialAssignment> fAssigned;
 
 	private final List<ParameterSignature> fUnassigned;
 
-	private Object fTarget;
+	private final Class<?> fClass;
 
-	public Assignments(EachTestNotifier context,
-			List<ParameterSignature> unassigned, Object target) {
-		this(context, new ArrayList<PotentialAssignment>(), unassigned, target);
+	public Assignments(List<ParameterSignature> unassigned, Class<?> testClass) {
+		this(new ArrayList<PotentialAssignment>(), unassigned, testClass);
 	}
 
-	public Assignments(EachTestNotifier context,
-			List<PotentialAssignment> assigned,
-			List<ParameterSignature> unassigned, Object target) {
-		fContext= context;
+	public Assignments(List<PotentialAssignment> assigned,
+			List<ParameterSignature> unassigned, Class<?> type) {
 		fUnassigned= unassigned;
 		fAssigned= assigned;
-		fTarget= target;
+		fClass= type;
 	}
 
-	public static Assignments allUnassigned(EachTestNotifier context,
-			Method testMethod, Object target) {
-		return new Assignments(context, ParameterSignature
-				.signatures(testMethod), target);
+	// TODO: (Oct 9, 2007 8:30:53 PM) Do I need all these constructors?
+
+	public static Assignments allUnassigned(Method testMethod,
+			Class<?> testClass) {
+		return new Assignments(ParameterSignature.signatures(testMethod),
+				testClass);
 	}
 
 	public boolean isComplete() {
@@ -53,23 +51,15 @@ public class Assignments {
 		List<PotentialAssignment> assigned= new ArrayList<PotentialAssignment>(
 				fAssigned);
 		assigned.add(source);
-		return new Assignments(fContext, assigned, fUnassigned.subList(
-				1, fUnassigned.size()), fTarget);
+		return new Assignments(assigned, fUnassigned.subList(1, fUnassigned
+				.size()), fClass);
 	}
 
-	public Object getTarget() {
-		return fTarget;
-	}
-
-	public EachTestNotifier getContext() {
-		return fContext;
-	}
-
-	public Object[] getActualValues(boolean nullsOk)
+	public Object[] getActualValues(boolean nullsOk, Object target)
 			throws CouldNotGenerateValueException {
 		Object[] values= new Object[fAssigned.size()];
 		for (int i= 0; i < values.length; i++) {
-			values[i]= fAssigned.get(i).getValue(getTarget());
+			values[i]= fAssigned.get(i).getValue(target);
 			if (values[i] == null && !nullsOk)
 				throw new CouldNotGenerateValueException();
 		}
@@ -78,7 +68,25 @@ public class Assignments {
 
 	public List<PotentialAssignment> potentialsForNextUnassigned()
 			throws InstantiationException, IllegalAccessException {
-		return new AssignmentRequest(getTarget(), nextUnassigned())
-				.getPotentialAssignments();
+		ParameterSignature unassigned= nextUnassigned();
+		return getSupplier(unassigned).getValueSources(unassigned);
+	}
+
+	public ParameterSupplier getSupplier(ParameterSignature unassigned)
+			throws InstantiationException, IllegalAccessException {
+		ParameterSupplier supplier= getAnnotatedSupplier(unassigned);
+		if (supplier != null)
+			return supplier;
+
+		return new AllMembersSupplier(fClass);
+	}
+
+	public ParameterSupplier getAnnotatedSupplier(ParameterSignature unassigned)
+			throws InstantiationException, IllegalAccessException {
+		ParametersSuppliedBy annotation= unassigned
+				.findDeepAnnotation(ParametersSuppliedBy.class);
+		if (annotation == null)
+			return null;
+		return annotation.value().newInstance();
 	}
 }
