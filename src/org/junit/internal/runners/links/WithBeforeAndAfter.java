@@ -3,7 +3,7 @@
  */
 package org.junit.internal.runners.links;
 
-import org.junit.internal.runners.model.EachTestNotifier;
+import org.junit.experimental.theories.FailureListener;
 import org.junit.internal.runners.model.TestElement;
 
 
@@ -19,12 +19,11 @@ public class WithBeforeAndAfter extends Link {
 	}
 
 	@Override
-	public void run(final EachTestNotifier context) throws Throwable {
-		try {
-			if (fElement.runBefores(context, fTarget))
-				fNext.run(context);
-		} finally {
-			fElement.runAfters(context, fTarget);
-		}
+	public void run(final FailureListener listener) {
+		fElement.runProtected(listener, new Runnable() {
+			public void run() {
+				fNext.run(listener);
+			}		
+		}, fTarget);
 	}
 }

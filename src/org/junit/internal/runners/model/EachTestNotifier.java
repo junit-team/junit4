@@ -4,11 +4,12 @@
 package org.junit.internal.runners.model;
 
 
+import org.junit.experimental.theories.FailureListener;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
-public class EachTestNotifier {
+public class EachTestNotifier extends FailureListener {
 	private RunNotifier fNotifier;
 
 	private Description fDescription;
@@ -18,7 +19,10 @@ public class EachTestNotifier {
 		fDescription= description;
 	}
 
-	public void addFailure(Throwable targetException) {
+	// TODO: (Oct 10, 2007 10:46:19 AM) use failureListener for construction-time validation errors?
+
+	@Override
+	protected void handleFailure(Throwable targetException) {
 		fNotifier.fireTestFailure(new Failure(fDescription, targetException));
 	}
 

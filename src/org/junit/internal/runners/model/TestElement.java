@@ -3,15 +3,14 @@ package org.junit.internal.runners.model;
 import java.util.List;
 
 import org.junit.Assume.AssumptionViolatedException;
+import org.junit.experimental.theories.FailureListener;
 
 public abstract class TestElement {
 	public abstract List<TestMethod> getAfters();
 
 	public abstract List<TestMethod> getBefores();
 
-	public boolean runBefores(EachTestNotifier roadie, Object target) {
-		// TODO: (Oct 5, 2007 11:29:38 AM) just throw the exception!  Should work the same way
-	
+	public boolean runBefores(FailureListener listener, Object target) {
 		try {
 			List<TestMethod> befores= getBefores();
 			for (TestMethod before : befores)
@@ -20,12 +19,12 @@ public abstract class TestElement {
 		} catch (AssumptionViolatedException e) {
 			return false;
 		} catch (Throwable e) {
-			roadie.addFailure(e);
+			listener.addFailure(e);
 			return false;
 		}
 	}
 
-	public void runAfters(EachTestNotifier roadie, Object target) {
+	public void runAfters(FailureListener roadie, Object target) {
 		List<TestMethod> afters= getAfters();
 		for (TestMethod after : afters)
 			try {
@@ -35,7 +34,7 @@ public abstract class TestElement {
 			}
 	}
 
-	public void runProtected(EachTestNotifier roadie, Runnable runnable, Object target) {
+	public void runProtected(FailureListener roadie, Runnable runnable, Object target) {
 		try {
 			if (runBefores(roadie, target))
 				runnable.run();

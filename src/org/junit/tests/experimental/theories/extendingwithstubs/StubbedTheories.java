@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assume.AssumptionViolatedException;
+import org.junit.experimental.theories.FailureListener;
 import org.junit.experimental.theories.ParameterSignature;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.internal.Assignments;
-import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.TestMethod;
 
@@ -37,13 +37,13 @@ public class StubbedTheories extends Theories {
 		}
 
 		@Override
-		protected void runWithIncompleteAssignment(Assignments incomplete, EachTestNotifier notifier)
+		protected void runWithIncompleteAssignment(Assignments incomplete, FailureListener listener)
 				throws InstantiationException, IllegalAccessException,
 				Throwable {
 			GuesserQueue guessers= createGuesserQueue(incomplete);
 			queues.add(guessers);
 			while (!guessers.isEmpty())
-				runWithAssignment(incomplete.assignNext(guessers.remove(0)), notifier);
+				runWithAssignment(incomplete.assignNext(guessers.remove(0)), listener);
 			queues.remove(guessers);
 		}
 

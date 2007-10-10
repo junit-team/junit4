@@ -3,30 +3,36 @@
  */
 package org.junit.internal.runners.links;
 
-import org.junit.internal.runners.model.EachTestNotifier;
+import org.junit.experimental.theories.FailureListener;
 
 public class ExpectingException extends Link {
 	private Link fNext;
+
 	private final Class<? extends Throwable> fExpected;
-	
+
 	public ExpectingException(Link next, Class<? extends Throwable> expected) {
 		fNext= next;
 		fExpected= expected;
 	}
-	
+
 	@Override
-	public void run(EachTestNotifier context) {
-		try {
-			fNext.run(context);
-			context.addFailure(new AssertionError("Expected exception: "
-					+ fExpected.getName()));
-		} catch (Throwable e) {
-			if (!fExpected.isAssignableFrom(e.getClass())) {
-				String message= "Unexpected exception, expected<"
+	public void run(final FailureListener listener) {
+		FailureListener expectingListener= new FailureListener() {
+			@Override
+			public void handleFailure(Throwable error) {
+				if (!fExpected.isAssignableFrom(error.getClass())) {
+					String message= "Unexpected exception, expected<"
 							+ fExpected.getName() + "> but was<"
-							+ e.getClass().getName() + ">";
-				context.addFailure(new Exception(message, e));
+							+ error.getClass().getName() + ">";
+					listener.addFailure(new Exception(message, error));
+				}
 			}
-		}
+		};
+		
+		fNext.run(expectingListener);
+		
+		if (!expectingListener.failureSeen())
+			listener.addFailure(new AssertionError("Expected exception: "
+					+ fExpected.getName()));
 	}
 }

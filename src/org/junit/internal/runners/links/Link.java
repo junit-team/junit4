@@ -3,8 +3,9 @@
  */
 package org.junit.internal.runners.links;
 
-import org.junit.internal.runners.model.EachTestNotifier;
+import org.junit.experimental.theories.FailureListener;
+
 
 public abstract class Link {
-	public abstract void run(EachTestNotifier context) throws Throwable;
+	public abstract void run(FailureListener listener);
 }

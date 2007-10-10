@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.junit.internal.runners.links.ExpectingException;
 import org.junit.internal.runners.links.IgnoreTest;
-import org.junit.internal.runners.links.IgnoreViolatedAssumptions;
+import org.junit.internal.runners.links.IgnoringViolatedAssumptions;
 import org.junit.internal.runners.links.Invoke;
 import org.junit.internal.runners.links.Link;
 import org.junit.internal.runners.links.Notifying;
@@ -28,7 +28,6 @@ import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
-import org.junit.runner.notification.StoppedByUserException;
 
 public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 	private final List<TestMethod> fTestMethods;
@@ -71,6 +70,9 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 
 	protected void runMethod(TestMethod method, RunNotifier notifier) {
 		Description description= methodDescription(method);
+		
+		// TODO: (Oct 10, 2007 10:57:17 AM) Still seems messy doing this here
+
 		Object test;
 		try {
 			test= new ReflectiveCallable() {
@@ -83,8 +85,11 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 			notifier.testAborted(description, e);
 			return;
 		}
+		
+		// TODO: (Oct 10, 2007 11:36:43 AM) EachTestNotifier has bad name throughout
+
 		EachTestNotifier roadie= new EachTestNotifier(notifier, description);
-		run(roadie, method, test);
+		chain(method, test, roadie).run(roadie);
 	}
 
 	public Object createTest() throws Exception {
@@ -100,17 +105,7 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 		return method.getName();
 	}
 	
-	public void run(EachTestNotifier context, TestMethod method, Object test) {
-		try {
-			chain(method, test).run(context);
-		} catch (StoppedByUserException e) {
-			throw e;
-		} catch (Throwable e) {
-			throw new RuntimeException("Unexpected error running tests", e);
-		}
-	}
-
-	protected Link chain(TestMethod method, Object test) {
+	protected Link chain(TestMethod method, Object test, EachTestNotifier notifier) {
 		// TODO: (Oct 5, 2007 11:09:00 AM) Rename Link?
 
 		// TODO: (Oct 9, 2007 2:12:24 PM) method + test is parameter object?
@@ -120,7 +115,7 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 		link= ignoreViolatedAssumptions(link);
 		link= withPotentialTimeout(method, link);
 		link= withBeforeAndAfter(method, link, test);
-		return notifying(method, link);
+		return notifying(method, link, notifier);
 	}
 	
 	protected Link invoke(TestMethod method, Object test) {
@@ -128,7 +123,7 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 	}
 	
 	protected Link ignoreViolatedAssumptions(Link next) {
-		return new IgnoreViolatedAssumptions(next);
+		return new IgnoringViolatedAssumptions(next);
 	}
 
 	protected Link possiblyExpectingExceptions(TestMethod method, Link next) {
@@ -148,10 +143,10 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 		return new WithBeforeAndAfter(link, method, target);
 	}
 
-	protected Link notifying(TestMethod method, Link link) {
+	protected Link notifying(TestMethod method, Link link, EachTestNotifier notifier) {
 		return method.isIgnored()
-			? new IgnoreTest()
-			: new Notifying(link);
+			? new IgnoreTest(notifier)
+			: new Notifying(notifier, link);
 	}
 
 	@Override

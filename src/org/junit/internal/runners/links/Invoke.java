@@ -3,7 +3,7 @@
  */
 package org.junit.internal.runners.links;
 
-import org.junit.internal.runners.model.EachTestNotifier;
+import org.junit.experimental.theories.FailureListener;
 import org.junit.internal.runners.model.TestMethod;
 
 public class Invoke extends Link {
@@ -16,7 +16,11 @@ public class Invoke extends Link {
 	}
 	
 	@Override
-	public void run(EachTestNotifier context) throws Throwable {
-		fTestMethod.invokeExplosively(fTarget);
+	public void run(FailureListener listener) {
+		try {
+			fTestMethod.invokeExplosively(fTarget);
+		} catch (Throwable e) {
+			listener.addFailure(e);
+		}
 	}
 }

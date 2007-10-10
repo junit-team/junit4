@@ -3,11 +3,9 @@
  */
 package org.junit.experimental.theories;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.Assume.AssumptionViolatedException;
 import org.junit.experimental.theories.PotentialAssignment.CouldNotGenerateValueException;
 import org.junit.experimental.theories.internal.Assignments;
@@ -39,11 +37,11 @@ public class Theories extends JUnit4ClassRunner {
 	}
 
 	@Override
-	protected Link chain(final TestMethod method, Object test) {
+	protected Link chain(final TestMethod method, Object test, EachTestNotifier notifier) {
 		Link next= invoke(method, test);
 		next= ignoreViolatedAssumptions(next);
 		next= possiblyExpectingExceptions(method, next);
-		return notifying(method, next);
+		return notifying(method, next, notifier);
 	}
 
 	@Override
@@ -61,50 +59,60 @@ public class Theories extends JUnit4ClassRunner {
 		}
 		
 		@Override
-		public void run(EachTestNotifier context) throws Throwable {
-			runWithAssignment(Assignments.allUnassigned(fTestMethod
-					.getMethod(), fTestMethod.getTestClass().getJavaClass()), context);
+		public void run(FailureListener listener) {
+			try {
+				runWithAssignment(Assignments.allUnassigned(fTestMethod
+						.getMethod(), fTestMethod.getTestClass().getJavaClass()), listener);
+			} catch (Throwable e) {
+				listener.addFailure(e);
+			}
 			
-			if (successes  == 0)
-				Assert
-						.fail("Never found parameters that satisfied method.  Violated assumptions: "
-								+ fInvalidParameters);
+			if (!listener.failureSeen() && successes == 0)
+				listener.addFailure(new AssertionError(
+						"Never found parameters that satisfied method.  Violated assumptions: "
+								+ fInvalidParameters));
 		}
 
-		protected void runWithAssignment(Assignments parameterAssignment, EachTestNotifier notifier)
+		protected void runWithAssignment(Assignments parameterAssignment, FailureListener listener)
 				throws Throwable {
 			// TODO: (Oct 9, 2007 8:56:54 PM) Should this be moved to Assignments?
 
 			if (!parameterAssignment.isComplete()) {
-				runWithIncompleteAssignment(parameterAssignment, notifier);
+				runWithIncompleteAssignment(parameterAssignment, listener);
 			} else {
-				runWithCompleteAssignment(parameterAssignment, notifier);
+				runWithCompleteAssignment(parameterAssignment, listener);
 			}
 		}
 
-		protected void runWithIncompleteAssignment(Assignments incomplete, EachTestNotifier notifier)
+		protected void runWithIncompleteAssignment(Assignments incomplete, FailureListener listener)
 				throws InstantiationException, IllegalAccessException,
 				Throwable {
-			for (PotentialAssignment source : incomplete
-					.potentialsForNextUnassigned()) {
-				runWithAssignment(incomplete.assignNext(source), notifier);
+			List<PotentialAssignment> potentialsForNextUnassigned= incomplete
+							.potentialsForNextUnassigned();
+			for (PotentialAssignment source : potentialsForNextUnassigned) {
+				runWithAssignment(incomplete.assignNext(source), listener);
 			}
 		}
 
-		protected void runWithCompleteAssignment(final Assignments complete, EachTestNotifier notifier)
-				throws InstantiationException, IllegalAccessException,
-				InvocationTargetException, NoSuchMethodException, Throwable {
-			try {
-				final Object freshInstance= createTest();
-				new WithBeforeAndAfter(new Link() {
-					@Override
-					public void run(EachTestNotifier context) throws Throwable {
-							invokeWithActualParameters(freshInstance, complete);
+		protected void runWithCompleteAssignment(final Assignments complete, final FailureListener listener)
+				throws Throwable {
+			final Object freshInstance= createTest();
+			new WithBeforeAndAfter(new Link() {
+				@Override
+				public void run(FailureListener listener) {
+					try {
+						invokeWithActualParameters(freshInstance, complete);
+					} catch (Throwable e) {
+						listener.addFailure(e);
 					}
-				}, fTestMethod, freshInstance).run(notifier); 
-			} catch (CouldNotGenerateValueException e) {
-				// Do nothing
-			}
+				}
+			}, fTestMethod, freshInstance).run(new FailureListener() {
+				@Override
+				protected void handleFailure(Throwable error) {
+					if (!(error instanceof CouldNotGenerateValueException))
+						listener.addFailure(error);
+				}
+			}); 
 		}
 
 		private void invokeWithActualParameters(Object target, Assignments complete)
