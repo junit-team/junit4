@@ -13,6 +13,7 @@ import org.junit.internal.runners.links.IgnoringViolatedAssumptions;
 import org.junit.internal.runners.links.Invoke;
 import org.junit.internal.runners.links.Link;
 import org.junit.internal.runners.links.Notifying;
+import org.junit.internal.runners.links.ThrowException;
 import org.junit.internal.runners.links.WithBeforeAndAfter;
 import org.junit.internal.runners.links.WithTimeout;
 import org.junit.internal.runners.model.EachTestNotifier;
@@ -70,28 +71,16 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 
 	protected void runMethod(TestMethod method, RunNotifier notifier) {
 		Description description= methodDescription(method);
-		
-		// TODO: (Oct 10, 2007 10:57:17 AM) Still seems messy doing this here
 
-		Object test;
-		try {
-			test= new ReflectiveCallable() {
-				@Override
-				protected Object runReflectiveCall() throws Throwable {
-					return createTest();
-				}
-			}.run();
-		} catch (Throwable e) {
-			notifier.testAborted(description, e);
-			return;
-		}
-		
 		// TODO: (Oct 10, 2007 11:36:43 AM) EachTestNotifier has bad name throughout
 
 		EachTestNotifier roadie= new EachTestNotifier(notifier, description);
-		chain(method, test, roadie).run(roadie);
+		notifying(method, chain(method), roadie).run(roadie);
 	}
 
+	// TODO: (Oct 10, 2007 12:29:22 PM) sort methods
+
+	
 	public Object createTest() throws Exception {
 		return fTestClass.getConstructor().newInstance();
 	}
@@ -105,19 +94,33 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 		return method.getName();
 	}
 	
-	protected Link chain(TestMethod method, Object test, EachTestNotifier notifier) {
+	protected Link chain(TestMethod method) {
 		// TODO: (Oct 5, 2007 11:09:00 AM) Rename Link?
-
-		// TODO: (Oct 9, 2007 2:12:24 PM) method + test is parameter object?
-
+		Object test;
+		try {
+			test= new ReflectiveCallable() {
+				@Override
+				protected Object runReflectiveCall() throws Throwable {
+					return createTest();
+				}
+			}.run();
+		} catch (Throwable e) {
+			return throwException(e);
+		}
+		
 		Link link= invoke(method, test);
 		link= possiblyExpectingExceptions(method, link);
 		link= ignoreViolatedAssumptions(link);
 		link= withPotentialTimeout(method, link);
 		link= withBeforeAndAfter(method, link, test);
-		return notifying(method, link, notifier);
+		return link;
 	}
 	
+	protected Link throwException(Throwable e) {
+		// TODO Auto-generated method stub
+		return new ThrowException(e);
+	}
+
 	protected Link invoke(TestMethod method, Object test) {
 		return new Invoke(method, test);
 	}

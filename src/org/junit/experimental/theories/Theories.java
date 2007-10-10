@@ -13,7 +13,6 @@ import org.junit.experimental.theories.internal.ParameterizedAssertionError;
 import org.junit.internal.runners.JUnit4ClassRunner;
 import org.junit.internal.runners.links.Link;
 import org.junit.internal.runners.links.WithBeforeAndAfter;
-import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.TestMethod;
 
@@ -37,15 +36,7 @@ public class Theories extends JUnit4ClassRunner {
 	}
 
 	@Override
-	protected Link chain(final TestMethod method, Object test, EachTestNotifier notifier) {
-		Link next= invoke(method, test);
-		next= ignoreViolatedAssumptions(next);
-		next= possiblyExpectingExceptions(method, next);
-		return notifying(method, next, notifier);
-	}
-
-	@Override
-	protected TheoryAnchor invoke(TestMethod method, Object test) {
+	protected Link chain(final TestMethod method) {
 		return new TheoryAnchor(method);
 	}
 
@@ -97,6 +88,8 @@ public class Theories extends JUnit4ClassRunner {
 		protected void runWithCompleteAssignment(final Assignments complete, final FailureListener listener)
 				throws Throwable {
 			final Object freshInstance= createTest();
+			// TODO: (Oct 10, 2007 12:30:46 PM) reuse chain method from above
+
 			new WithBeforeAndAfter(new Link() {
 				@Override
 				public void run(FailureListener listener) {

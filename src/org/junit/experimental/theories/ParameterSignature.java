@@ -51,16 +51,18 @@ public class ParameterSignature {
 
 	public <T extends Annotation> T findDeepAnnotation(
 			Class<T> annotationType) {
-		Annotation[] annotations2= annotations;
-		return findDeepAnnotation(annotations2, annotationType);
+		return findDeepAnnotation(annotations, annotationType, 3);
 	}
 
 	private <T extends Annotation> T findDeepAnnotation(Annotation[] annotations,
-			Class<T> annotationType) {
+			Class<T> annotationType, int remainingDepth) {
+		if (remainingDepth == 0)
+			return null;
+		
 		for (Annotation each : annotations) {
 			if (annotationType.isInstance(each))
 				return annotationType.cast(each);
-			Annotation candidate = findDeepAnnotation(each.annotationType().getAnnotations(), annotationType);
+			Annotation candidate = findDeepAnnotation(each.annotationType().getAnnotations(), annotationType, remainingDepth - 1);
 			if (candidate != null)
 				return annotationType.cast(candidate);
 		}
