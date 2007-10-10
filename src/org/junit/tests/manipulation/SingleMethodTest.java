@@ -7,7 +7,6 @@ import static org.junit.Assert.assertThat;
 import java.util.Collection;
 
 import junit.framework.JUnit4TestAdapter;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.Description;

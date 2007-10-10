@@ -8,9 +8,9 @@ import org.junit.tests.experimental.results.ResultMatchersTest;
 import org.junit.tests.experimental.theories.ParameterSignatureTest;
 import org.junit.tests.experimental.theories.ParameterizedAssertionErrorTest;
 import org.junit.tests.experimental.theories.extendingwithstubs.StubbedTheoriesTest;
-import org.junit.tests.experimental.theories.runner.WithDataPointMethod;
-import org.junit.tests.experimental.theories.runner.WithDataPointFields;
 import org.junit.tests.experimental.theories.runner.WhenNoParametersMatch;
+import org.junit.tests.experimental.theories.runner.WithDataPointFields;
+import org.junit.tests.experimental.theories.runner.WithDataPointMethod;
 import org.junit.tests.experimental.theories.runner.WithExtendedParameterSources;
 
 @RunWith(Suite.class)

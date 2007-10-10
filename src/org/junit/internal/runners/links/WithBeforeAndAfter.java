@@ -3,8 +3,8 @@
  */
 package org.junit.internal.runners.links;
 
-import org.junit.internal.runners.model.TestElement;
 import org.junit.internal.runners.model.EachTestNotifier;
+import org.junit.internal.runners.model.TestElement;
 
 
 public class WithBeforeAndAfter extends Link {

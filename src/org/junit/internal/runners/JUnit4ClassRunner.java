@@ -1,6 +1,7 @@
 package org.junit.internal.runners;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -15,7 +16,6 @@ import org.junit.internal.runners.links.Notifying;
 import org.junit.internal.runners.links.WithBeforeAndAfter;
 import org.junit.internal.runners.links.WithTimeout;
 import org.junit.internal.runners.model.EachTestNotifier;
-import org.junit.internal.runners.model.ErrorList;
 import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.internal.runners.model.TestClass;
@@ -46,12 +46,12 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 	}
 
 	private void validate() throws InitializationError {
-		ErrorList errors= new ErrorList();
+		List<Throwable> errors= new ArrayList<Throwable>();
 		collectInitializationErrors(errors);
-		errors.assertEmpty();
+		assertValid(errors);
 	}
 
-	protected void collectInitializationErrors(ErrorList errors) {
+	protected void collectInitializationErrors(List<Throwable> errors) {
 		fTestClass.validateMethodsForDefaultRunner(errors);
 	}
 

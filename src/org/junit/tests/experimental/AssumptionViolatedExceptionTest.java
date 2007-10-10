@@ -1,8 +1,8 @@
 package org.junit.tests.experimental;
 
-import static org.junit.matchers.StringContains.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.matchers.StringContains.containsString;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.junit.Test;

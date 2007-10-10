@@ -4,11 +4,12 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.internal.runners.CompositeRunner;
-import org.junit.internal.runners.model.ErrorList;
 import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.TestClass;
 import org.junit.runner.Request;
@@ -58,9 +59,10 @@ public class Suite extends CompositeRunner {
 		removeParent(klass);
 
 		fTestClass= new TestClass(klass);
-		ErrorList errors= new ErrorList();
+		List<Throwable> errors= new ArrayList<Throwable>();
 		fTestClass.validateStaticMethods(errors);
-		errors.assertEmpty();
+		assertValid(errors);
+
 	}
 
 	private Class<?> addParent(Class<?> parent) throws InitializationError {
@@ -80,7 +82,7 @@ public class Suite extends CompositeRunner {
 		return annotation.value();
 	}
 	
-	protected void validate(ErrorList errors) {
+	protected void validate(List<Throwable> errors) {
 		fTestClass.validateStaticMethods(errors);
 		fTestClass.validateInstanceMethods(errors);
 	}

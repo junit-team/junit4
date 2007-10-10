@@ -13,7 +13,6 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.internal.runners.CompositeRunner;
 import org.junit.internal.runners.JUnit4ClassRunner;
-import org.junit.internal.runners.model.ErrorList;
 import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.TestClass;
 import org.junit.internal.runners.model.TestMethod;
@@ -87,7 +86,7 @@ public class Parameterized extends CompositeRunner {
 		}
 		
 		@Override
-		protected void collectInitializationErrors(ErrorList errors) {
+		protected void collectInitializationErrors(List<Throwable> errors) {
 			// do nothing: validated before.
 		}
 		
@@ -108,10 +107,11 @@ public class Parameterized extends CompositeRunner {
 		super(klass.getName());
 		fTestClass= new TestClass(klass);
 		
-		ErrorList errors = new ErrorList();
+		List<Throwable> errors = new ArrayList<Throwable>();
 		fTestClass.validateStaticMethods(errors);
 		fTestClass.validateInstanceMethods(errors);
-		errors.assertEmpty();
+		assertValid(errors);
+
 		
 		int i= 0;
 		for (final Object each : getParametersList()) {
@@ -121,7 +121,7 @@ public class Parameterized extends CompositeRunner {
 				throw new Exception(String.format("%s.%s() must return a Collection of arrays.", fTestClass.getName(), getParametersMethod().getName()));
 		}
 	}
-	
+
 	@Override
 	public void run(final RunNotifier notifier) {
 		fTestClass.runProtected(notifier, getDescription(), new Runnable() {

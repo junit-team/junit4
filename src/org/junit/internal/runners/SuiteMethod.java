@@ -5,7 +5,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 import junit.framework.Test;
-import org.junit.internal.runners.JUnit38ClassRunner;
 
 /** Runner for use with JUnit 3.8.x-style AllTests classes
  * (those that only implement a static <code>suite()</code>

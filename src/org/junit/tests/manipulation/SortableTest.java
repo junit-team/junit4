@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.util.Comparator;
 
 import junit.framework.JUnit4TestAdapter;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Description;

@@ -13,10 +13,9 @@ import org.junit.experimental.theories.PotentialAssignment.CouldNotGenerateValue
 import org.junit.experimental.theories.internal.Assignments;
 import org.junit.experimental.theories.internal.ParameterizedAssertionError;
 import org.junit.internal.runners.JUnit4ClassRunner;
-import org.junit.internal.runners.links.WithBeforeAndAfter;
 import org.junit.internal.runners.links.Link;
+import org.junit.internal.runners.links.WithBeforeAndAfter;
 import org.junit.internal.runners.model.EachTestNotifier;
-import org.junit.internal.runners.model.ErrorList;
 import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.TestMethod;
 
@@ -27,7 +26,7 @@ public class Theories extends JUnit4ClassRunner {
 	}
 
 	@Override
-	protected void collectInitializationErrors(ErrorList errors) {
+	protected void collectInitializationErrors(List<Throwable> errors) {
 	}
 
 	@Override

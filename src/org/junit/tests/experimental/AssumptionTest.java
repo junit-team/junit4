@@ -1,7 +1,8 @@
 package org.junit.tests.experimental;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeNoException;
 import static org.junit.Assume.assumeNotNull;
 import static org.junit.Assume.assumeThat;
@@ -9,7 +10,6 @@ import static org.junit.Assume.assumeTrue;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 import static org.junit.matchers.StringContains.containsString;
-
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -16,7 +17,6 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.internal.runners.JUnit4ClassRunner;
-import org.junit.internal.runners.model.ErrorList;
 import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.TestClass;
 import org.junit.runner.JUnitCore;
@@ -123,7 +123,7 @@ public class TestMethodTest {
 	
 	@Test public void overloaded() {
 		TestClass testClass= new TestClass(Confused.class);
-		ErrorList errors= new ErrorList();
+		List<Throwable> errors= new ArrayList<Throwable>();
 		testClass.validateMethodsForDefaultRunner(errors);
 		assertFalse(errors.isEmpty());
 	}

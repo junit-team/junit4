@@ -83,7 +83,7 @@ public class TestClass extends TestElement {
 		runProtected(new EachTestNotifier(notifier, description), runnable, null);
 	}
 
-	public void validateMethods(Class<? extends Annotation> annotation, boolean isStatic, ErrorList errors) {
+	public void validateMethods(Class<? extends Annotation> annotation, boolean isStatic, List<Throwable> errors) {
 		List<TestMethod> methods= getAnnotatedMethods(annotation);
 		
 		for (TestMethod eachTestMethod : methods) {
@@ -91,12 +91,12 @@ public class TestClass extends TestElement {
 		}
 	}
 
-	public void validateStaticMethods(ErrorList errors) {
+	public void validateStaticMethods(List<Throwable> errors) {
 		validateMethods(BeforeClass.class, true, errors);
 		validateMethods(AfterClass.class, true, errors);
 	}
 
-	public void validateNoArgConstructor(ErrorList errors) {
+	public void validateNoArgConstructor(List<Throwable> errors) {
 		try {
 			getConstructor();
 		} catch (Exception e) {
@@ -104,7 +104,7 @@ public class TestClass extends TestElement {
 		}
 	}
 
-	public void validateInstanceMethods(ErrorList errors) {
+	public void validateInstanceMethods(List<Throwable> errors) {
 		validateMethods(After.class, false, errors);
 		validateMethods(Before.class, false, errors);
 		validateMethods(Test.class, false, errors);
@@ -114,7 +114,7 @@ public class TestClass extends TestElement {
 			errors.add(new Exception("No runnable methods"));
 	}
 
-	public void validateMethodsForDefaultRunner(ErrorList errors) {
+	public void validateMethodsForDefaultRunner(List<Throwable> errors) {
 		validateNoArgConstructor(errors);
 		validateStaticMethods(errors);
 		validateInstanceMethods(errors);
