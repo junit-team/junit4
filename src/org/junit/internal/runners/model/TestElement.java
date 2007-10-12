@@ -26,17 +26,4 @@ public abstract class TestElement {
 			
 		errors.assertEmpty();
 	}
-
-	public void runProtected(EachTestNotifier roadie, Runnable runnable, Object target) throws Throwable {
-		// TODO: (Oct 12, 2007 10:18:36 AM) DUP with WithBefores and WithAfters
-		// TODO: (Oct 12, 2007 10:19:09 AM) Don't need roadie
-
-		
-		try {
-			runBefores(target);
-			runnable.run();
-		} finally {
-			runAfters(target);
-		}
-	}
 }

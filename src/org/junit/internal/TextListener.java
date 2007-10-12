@@ -12,8 +12,8 @@ public class TextListener extends RunListener {
 
 	private final PrintStream fWriter;
 
-	public TextListener() {
-		this(System.out);
+	public TextListener(JUnitSystem system) {
+		this(system.out());
 	}
 
 	public TextListener(PrintStream writer) {

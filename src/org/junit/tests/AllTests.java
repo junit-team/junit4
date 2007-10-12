@@ -36,7 +36,8 @@ import org.junit.tests.running.classes.ParameterizedTestTest;
 import org.junit.tests.running.classes.RunWithTest;
 import org.junit.tests.running.classes.SuiteTest;
 import org.junit.tests.running.core.CommandLineTest;
-import org.junit.tests.running.core.JUnitCoreTest;
+import org.junit.tests.running.core.JUnitCoreReturnsCorrectExitCodeTest;
+import org.junit.tests.running.core.SystemExitTest;
 import org.junit.tests.running.methods.AnnotationTest;
 import org.junit.tests.running.methods.ExpectedTest;
 import org.junit.tests.running.methods.InheritedTestTest;
@@ -82,7 +83,8 @@ import org.junit.tests.validation.ValidationTest;
 	UserStopTest.class,
 	SortableTest.class,
 	JUnit38ClassRunnerTest.class,
-	JUnitCoreTest.class,
+	SystemExitTest.class,
+	JUnitCoreReturnsCorrectExitCodeTest.class,
 	InaccessibleBaseClassTest.class,
 	SuiteMethodTest.class,
 	BadlyFormedClassesTest.class,

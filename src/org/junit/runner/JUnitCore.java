@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import junit.runner.Version;
+import org.junit.internal.JUnitSystem;
+import org.junit.internal.RealSystem;
 import org.junit.internal.TextListener;
 import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.runner.notification.Failure;
@@ -41,14 +43,18 @@ public class JUnitCore {
 	 * @param args names of classes in which to find tests to run
 	 */
 	public static void main(String... args) {
-		Result result= new JUnitCore().runMain(args);
-		killAllThreads(result);
+		runMainAndExit(new RealSystem(), args);
 	}
 
-	private static void killAllThreads(Result result) {
-		System.exit(result.wasSuccessful() ? 0 : 1);
+	/**
+	 * Do not use. Testing purposes only.
+	 * @param system 
+	 */
+	public static void runMainAndExit(JUnitSystem system, String... args) {
+		Result result= new JUnitCore().runMain(system, args);
+		system.exit(result.wasSuccessful() ? 0 : 1);
 	}
-	
+
 	/**
 	 * Run the tests contained in <code>classes</code>. Write feedback while the tests
 	 * are running and write stack traces for all failed tests after all tests complete. This is
@@ -62,21 +68,22 @@ public class JUnitCore {
 	
 	/**
 	 * Do not use. Testing purposes only.
+	 * @param system 
 	 */
-	public Result runMain(String... args) {
-		System.out.println("JUnit version " + Version.id());
+	public Result runMain(JUnitSystem system, String... args) {
+		system.out().println("JUnit version " + Version.id());
 		List<Class<?>> classes= new ArrayList<Class<?>>();
 		List<Failure> missingClasses= new ArrayList<Failure>();
 		for (String each : args)
 			try {
 				classes.add(Class.forName(each));
 			} catch (ClassNotFoundException e) {
-				System.out.println("Could not find class: " + each);
+				system.out().println("Could not find class: " + each);
 				Description description= Description.createSuiteDescription(each);
 				Failure failure= new Failure(description, e);
 				missingClasses.add(failure);
 			}
-		RunListener listener= new TextListener();
+		RunListener listener= new TextListener(system);
 		addListener(listener);
 		Result result= run(classes.toArray(new Class[0]));
 		for (Failure each : missingClasses)

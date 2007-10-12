@@ -12,14 +12,17 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.Assume.AssumptionViolatedException;
+import org.junit.internal.runners.links.IgnoreViolatedAssumptions;
+import org.junit.internal.runners.links.RunAfters;
+import org.junit.internal.runners.links.RunBefores;
+import org.junit.internal.runners.links.Statement;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
 
 public class TestClass extends TestElement {
 	private final Class<?> fClass;
-	
+
 	public TestClass(Class<?> klass) {
 		fClass= klass;
 	}
@@ -37,15 +40,17 @@ public class TestClass extends TestElement {
 	public List<TestMethod> getAfters() {
 		return getAnnotatedMethods(AfterClass.class);
 	}
-	
-	public List<TestMethod> getAnnotatedMethods(Class<? extends Annotation> annotationClass) {
+
+	public List<TestMethod> getAnnotatedMethods(
+			Class<? extends Annotation> annotationClass) {
 		List<TestMethod> results= new ArrayList<TestMethod>();
 		for (Class<?> eachClass : getSuperClasses(fClass)) {
 			Method[] methods= eachClass.getDeclaredMethods();
 			for (Method eachMethod : methods) {
-				Annotation annotation= eachMethod.getAnnotation(annotationClass);
+				Annotation annotation= eachMethod
+						.getAnnotation(annotationClass);
 				TestMethod testMethod= new TestMethod(eachMethod, this);
-				if (annotation != null && ! testMethod.isShadowedBy(results))
+				if (annotation != null && !testMethod.isShadowedBy(results))
 					results.add(testMethod);
 			}
 		}
@@ -54,11 +59,12 @@ public class TestClass extends TestElement {
 		return results;
 	}
 
-	private boolean runsTopToBottom(Class< ? extends Annotation> annotation) {
-		return annotation.equals(Before.class) || annotation.equals(BeforeClass.class);
+	private boolean runsTopToBottom(Class<? extends Annotation> annotation) {
+		return annotation.equals(Before.class)
+				|| annotation.equals(BeforeClass.class);
 	}
-	
-	private List<Class<?>> getSuperClasses(Class< ?> testClass) {
+
+	private List<Class<?>> getSuperClasses(Class<?> testClass) {
 		ArrayList<Class<?>> results= new ArrayList<Class<?>>();
 		Class<?> current= testClass;
 		while (current != null) {
@@ -68,7 +74,8 @@ public class TestClass extends TestElement {
 		return results;
 	}
 
-	public Constructor<?> getConstructor() throws SecurityException, NoSuchMethodException {
+	public Constructor<?> getConstructor() throws SecurityException,
+			NoSuchMethodException {
 		return fClass.getConstructor();
 	}
 
@@ -80,25 +87,28 @@ public class TestClass extends TestElement {
 		return fClass.getName();
 	}
 
-	public void runProtected(RunNotifier notifier, Description description, Runnable runnable) {
-		// TODO: (Oct 8, 2007 1:02:02 PM) instead of this, have a runChildren overridable method in JUnit4ClassRunner
-		EachTestNotifier testNotifier= new EachTestNotifier(notifier, description);
+	public void runProtected(RunNotifier notifier, Description description,
+			Statement runnable) {
+		// TODO: (Oct 8, 2007 1:02:02 PM) instead of this, have a runChildren
+		// overridable method in JUnit4ClassRunner
+		EachTestNotifier testNotifier= new EachTestNotifier(notifier,
+				description);
 		try {
-			runProtected(testNotifier, runnable, null);
-		} catch (AssumptionViolatedException e) {
-			// TODO: (Oct 12, 2007 10:21:33 AM) DUP with other ignorings should use Statements
+			Statement statement= new RunBefores(runnable, this, null);
+			statement= new IgnoreViolatedAssumptions(statement);
+			statement= new RunAfters(statement, this, null);
+			statement.evaluate();
 		} catch (StoppedByUserException e) {
-			// TODO: (Oct 12, 2007 10:26:35 AM) DUP 
-
 			throw e;
 		} catch (Throwable e) {
 			testNotifier.addFailure(e);
 		}
 	}
 
-	public void validateMethods(Class<? extends Annotation> annotation, boolean isStatic, List<Throwable> errors) {
+	public void validateMethods(Class<? extends Annotation> annotation,
+			boolean isStatic, List<Throwable> errors) {
 		List<TestMethod> methods= getAnnotatedMethods(annotation);
-		
+
 		for (TestMethod eachTestMethod : methods) {
 			eachTestMethod.validate(isStatic, errors);
 		}
@@ -113,7 +123,9 @@ public class TestClass extends TestElement {
 		try {
 			getConstructor();
 		} catch (Exception e) {
-			errors.add(new Exception("Test class should have public zero-argument constructor", e));
+			errors.add(new Exception(
+					"Test class should have public zero-argument constructor",
+					e));
 		}
 	}
 
@@ -121,7 +133,7 @@ public class TestClass extends TestElement {
 		validateMethods(After.class, false, errors);
 		validateMethods(Before.class, false, errors);
 		validateMethods(Test.class, false, errors);
-		
+
 		List<TestMethod> methods= getAnnotatedMethods(Test.class);
 		if (methods.size() == 0)
 			errors.add(new Exception("No runnable methods"));

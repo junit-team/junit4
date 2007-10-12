@@ -8,6 +8,7 @@ import java.util.List;
 import org.junit.internal.runners.model.MultipleFailureException;
 import org.junit.internal.runners.model.TestElement;
 import org.junit.internal.runners.model.TestMethod;
+import org.junit.runner.notification.StoppedByUserException;
 
 public class RunAfters extends Statement {
 	private final Statement fNext;
@@ -27,6 +28,8 @@ public class RunAfters extends Statement {
 		MultipleFailureException errors= new MultipleFailureException();
 		try {
 			fNext.evaluate();
+		} catch (StoppedByUserException e) {
+			throw e; // TODO this is ugly. if we can eliminate pleaseStop(), we can remove it
 		} catch (Throwable e) {
 			errors.add(e);
 		} finally {

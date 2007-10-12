@@ -8,6 +8,7 @@ import junit.framework.TestCase;
 import org.junit.Test;
 import org.junit.internal.TextListener;
 import org.junit.runner.JUnitCore;
+import org.junit.tests.TestSystem;
 
 public class TextListenerTest extends TestCase {
 	
@@ -18,9 +19,9 @@ public class TextListenerTest extends TestCase {
 	@Override
 	public void setUp() {
 		runner= new JUnitCore();
-		results= new ByteArrayOutputStream();
-		PrintStream writer= new PrintStream(results);
-		listener= new TextListener(writer);
+		TestSystem system= new TestSystem();
+		results= system.outContents();
+		listener= new TextListener(system);
 		runner.addListener(listener);
 	}
 	

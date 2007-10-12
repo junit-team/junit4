@@ -13,6 +13,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.internal.runners.CompositeRunner;
 import org.junit.internal.runners.JUnit4ClassRunner;
+import org.junit.internal.runners.links.Statement;
 import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.TestClass;
 import org.junit.internal.runners.model.TestMethod;
@@ -124,8 +125,9 @@ public class Parameterized extends CompositeRunner {
 
 	@Override
 	public void run(final RunNotifier notifier) {
-		fTestClass.runProtected(notifier, getDescription(), new Runnable() {
-			public void run() {
+		fTestClass.runProtected(notifier, getDescription(), new Statement() {
+			@Override
+			public void evaluate() {
 				runChildren(notifier);
 			}
 		});
