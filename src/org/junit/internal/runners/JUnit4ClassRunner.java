@@ -9,12 +9,13 @@ import java.util.List;
 
 import org.junit.internal.runners.links.ExpectingException;
 import org.junit.internal.runners.links.IgnoreTest;
-import org.junit.internal.runners.links.IgnoringViolatedAssumptions;
+import org.junit.internal.runners.links.IgnoreViolatedAssumptions;
 import org.junit.internal.runners.links.Invoke;
 import org.junit.internal.runners.links.Link;
+import org.junit.internal.runners.links.NotificationStrategy;
 import org.junit.internal.runners.links.Notifying;
-import org.junit.internal.runners.links.ThrowException;
-import org.junit.internal.runners.links.WithBeforeAndAfter;
+import org.junit.internal.runners.links.WithAfters;
+import org.junit.internal.runners.links.WithBefores;
 import org.junit.internal.runners.links.WithTimeout;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.model.InitializationError;
@@ -29,6 +30,7 @@ import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runner.notification.StoppedByUserException;
 
 public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 	private final List<TestMethod> fTestMethods;
@@ -71,16 +73,22 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 
 	protected void runMethod(TestMethod method, RunNotifier notifier) {
 		Description description= methodDescription(method);
-
-		// TODO: (Oct 10, 2007 11:36:43 AM) EachTestNotifier has bad name throughout
-
+		Object test;
+		try {
+			test= new ReflectiveCallable() {
+				@Override
+				protected Object runReflectiveCall() throws Throwable {
+					return createTest();
+				}
+			}.run();
+		} catch (Throwable e) {
+			notifier.testAborted(description, e);
+			return;
+		}
 		EachTestNotifier roadie= new EachTestNotifier(notifier, description);
-		notifying(method, chain(method), roadie).run(roadie);
+		run(roadie, method, test);
 	}
 
-	// TODO: (Oct 10, 2007 12:29:22 PM) sort methods
-
-	
 	public Object createTest() throws Exception {
 		return fTestClass.getConstructor().newInstance();
 	}
@@ -94,39 +102,36 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 		return method.getName();
 	}
 	
-	protected Link chain(TestMethod method) {
-		// TODO: (Oct 5, 2007 11:09:00 AM) Rename Link?
-		Object test;
+	public void run(EachTestNotifier context, TestMethod method, Object test) {
 		try {
-			test= new ReflectiveCallable() {
-				@Override
-				protected Object runReflectiveCall() throws Throwable {
-					return createTest();
-				}
-			}.run();
+			chain(method, test).run(context);
+		} catch (StoppedByUserException e) {
+			throw e;
 		} catch (Throwable e) {
-			return throwException(e);
+			throw new RuntimeException("Unexpected error running tests", e);
 		}
-		
-		Link link= invoke(method, test);
-		link= possiblyExpectingExceptions(method, link);
-		link= ignoreViolatedAssumptions(link);
-		link= withPotentialTimeout(method, link);
-		link= withBeforeAndAfter(method, link, test);
-		return link;
-	}
-	
-	protected Link throwException(Throwable e) {
-		// TODO Auto-generated method stub
-		return new ThrowException(e);
 	}
 
+	protected NotificationStrategy chain(TestMethod method, Object test) {
+		// TODO: (Oct 5, 2007 11:09:00 AM) Rename Link?
+
+		// TODO: (Oct 9, 2007 2:12:24 PM) method + test is parameter object?
+
+		Link link= invoke(method, test);
+		link= possiblyExpectingExceptions(method, link);
+		link= withPotentialTimeout(method, link);
+		link= withBefores(method, test, link);
+		link= ignoreViolatedAssumptions(link);
+		link= withAfters(method, test, link);
+		return notifying(method, link);
+	}
+	
 	protected Link invoke(TestMethod method, Object test) {
 		return new Invoke(method, test);
 	}
 	
 	protected Link ignoreViolatedAssumptions(Link next) {
-		return new IgnoringViolatedAssumptions(next);
+		return new IgnoreViolatedAssumptions(next);
 	}
 
 	protected Link possiblyExpectingExceptions(TestMethod method, Link next) {
@@ -142,14 +147,20 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 			: next;
 	}
 
-	protected Link withBeforeAndAfter(TestMethod method, Link link, Object target) {
-		return new WithBeforeAndAfter(link, method, target);
+	protected Link withAfters(TestMethod method, Object target, Link link) {
+		// TODO: (Oct 12, 2007 10:23:59 AM) Check for DUP in callers
+
+		return new WithAfters(link, method, target);
 	}
 
-	protected Link notifying(TestMethod method, Link link, EachTestNotifier notifier) {
+	protected Link withBefores(TestMethod method, Object target, Link link) {
+		return new WithBefores(link, method, target);
+	}
+
+	protected NotificationStrategy notifying(TestMethod method, Link link) {
 		return method.isIgnored()
-			? new IgnoreTest(notifier)
-			: new Notifying(notifier, link);
+			? new IgnoreTest()
+			: new Notifying(link);
 	}
 
 	@Override
@@ -194,3 +205,5 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 		return fTestClass;
 	}
 }
+
+// TODO: (Oct 12, 2007 10:26:58 AM) Too complex?  There's a lot going on here now.

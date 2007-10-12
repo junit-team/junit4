@@ -12,8 +12,10 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.Assume.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runner.notification.StoppedByUserException;
 
 public class TestClass extends TestElement {
 	private final Class<?> fClass;
@@ -80,7 +82,18 @@ public class TestClass extends TestElement {
 
 	public void runProtected(RunNotifier notifier, Description description, Runnable runnable) {
 		// TODO: (Oct 8, 2007 1:02:02 PM) instead of this, have a runChildren overridable method in JUnit4ClassRunner
-		runProtected(new EachTestNotifier(notifier, description), runnable, null);
+		EachTestNotifier testNotifier= new EachTestNotifier(notifier, description);
+		try {
+			runProtected(testNotifier, runnable, null);
+		} catch (AssumptionViolatedException e) {
+			// TODO: (Oct 12, 2007 10:21:33 AM) DUP with other ignorings
+		} catch (StoppedByUserException e) {
+			// TODO: (Oct 12, 2007 10:26:35 AM) DUP
+
+			throw e;
+		} catch (Throwable e) {
+			testNotifier.addFailure(e);
+		}
 	}
 
 	public void validateMethods(Class<? extends Annotation> annotation, boolean isStatic, List<Throwable> errors) {

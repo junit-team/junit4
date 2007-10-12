@@ -3,16 +3,18 @@
  */
 package org.junit.experimental.theories;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Assume.AssumptionViolatedException;
 import org.junit.experimental.theories.PotentialAssignment.CouldNotGenerateValueException;
 import org.junit.experimental.theories.internal.Assignments;
 import org.junit.experimental.theories.internal.ParameterizedAssertionError;
 import org.junit.internal.runners.JUnit4ClassRunner;
 import org.junit.internal.runners.links.Link;
-import org.junit.internal.runners.links.WithBeforeAndAfter;
+import org.junit.internal.runners.links.NotificationStrategy;
 import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.TestMethod;
 
@@ -28,7 +30,8 @@ public class Theories extends JUnit4ClassRunner {
 
 	@Override
 	protected List<TestMethod> getTestMethods() {
-		// TODO: (Jul 20, 2007 2:02:44 PM) Only get methods once, even if they have both @Test and @Theory
+		// TODO: (Jul 20, 2007 2:02:44 PM) Only get methods once, even if they
+		// have both @Test and @Theory
 
 		List<TestMethod> testMethods= super.getTestMethods();
 		testMethods.addAll(getTestClass().getAnnotatedMethods(Theory.class));
@@ -36,80 +39,85 @@ public class Theories extends JUnit4ClassRunner {
 	}
 
 	@Override
-	protected Link chain(final TestMethod method) {
+	protected NotificationStrategy chain(final TestMethod method, Object test) {
+		Link next= invoke(method, test);
+		next= ignoreViolatedAssumptions(next);
+		next= possiblyExpectingExceptions(method, next);
+		return notifying(method, next);
+	}
+
+	@Override
+	protected TheoryAnchor invoke(TestMethod method, Object test) {
 		return new TheoryAnchor(method);
 	}
 
 	public class TheoryAnchor extends Link {
-		private int successes = 0;
+		private int successes= 0;
+
 		private TestMethod fTestMethod;
+
 		private List<AssumptionViolatedException> fInvalidParameters= new ArrayList<AssumptionViolatedException>();
 
 		public TheoryAnchor(TestMethod method) {
 			fTestMethod= method;
 		}
-		
+
 		@Override
-		public void run(FailureListener listener) {
-			try {
-				runWithAssignment(Assignments.allUnassigned(fTestMethod
-						.getMethod(), fTestMethod.getTestClass().getJavaClass()), listener);
-			} catch (Throwable e) {
-				listener.addFailure(e);
-			}
-			
-			if (!listener.failureSeen() && successes == 0)
-				listener.addFailure(new AssertionError(
-						"Never found parameters that satisfied method.  Violated assumptions: "
-								+ fInvalidParameters));
+		public void run() throws Throwable {
+			runWithAssignment(Assignments.allUnassigned(
+					fTestMethod.getMethod(), fTestMethod.getTestClass()
+							.getJavaClass()));
+
+			if (successes == 0)
+				Assert
+						.fail("Never found parameters that satisfied method.  Violated assumptions: "
+								+ fInvalidParameters);
 		}
 
-		protected void runWithAssignment(Assignments parameterAssignment, FailureListener listener)
-				throws Throwable {
-			// TODO: (Oct 9, 2007 8:56:54 PM) Should this be moved to Assignments?
-
+		protected void runWithAssignment(Assignments parameterAssignment) throws Throwable {
 			if (!parameterAssignment.isComplete()) {
-				runWithIncompleteAssignment(parameterAssignment, listener);
+				runWithIncompleteAssignment(parameterAssignment);
 			} else {
-				runWithCompleteAssignment(parameterAssignment, listener);
+				runWithCompleteAssignment(parameterAssignment);
 			}
 		}
 
-		protected void runWithIncompleteAssignment(Assignments incomplete, FailureListener listener)
-				throws InstantiationException, IllegalAccessException,
-				Throwable {
-			List<PotentialAssignment> potentialsForNextUnassigned= incomplete
-							.potentialsForNextUnassigned();
-			for (PotentialAssignment source : potentialsForNextUnassigned) {
-				runWithAssignment(incomplete.assignNext(source), listener);
+		protected void runWithIncompleteAssignment(Assignments incomplete) throws InstantiationException,
+				IllegalAccessException, Throwable {
+			for (PotentialAssignment source : incomplete
+					.potentialsForNextUnassigned()) {
+				runWithAssignment(incomplete.assignNext(source));
 			}
 		}
 
-		protected void runWithCompleteAssignment(final Assignments complete, final FailureListener listener)
-				throws Throwable {
-			final Object freshInstance= createTest();
-			// TODO: (Oct 10, 2007 12:30:46 PM) reuse chain method from above
+		protected void runWithCompleteAssignment(final Assignments complete) throws InstantiationException,
+				IllegalAccessException, InvocationTargetException,
+				NoSuchMethodException, Throwable {
+			try {
+				final Object freshInstance= createTest();
+				withAfters(fTestMethod, freshInstance, withBefores(fTestMethod, freshInstance, methodCompletesWithParameters(complete, freshInstance))).run();
+			} catch (CouldNotGenerateValueException e) {
+				// Do nothing
+			}
+		}
 
-			new WithBeforeAndAfter(new Link() {
+		private Link methodCompletesWithParameters(final Assignments complete,
+				final Object freshInstance) {
+			return new Link() {
 				@Override
-				public void run(FailureListener listener) {
+				public void run() throws Throwable {
 					try {
 						invokeWithActualParameters(freshInstance, complete);
-					} catch (Throwable e) {
-						listener.addFailure(e);
+					} catch (CouldNotGenerateValueException e) {
+						// ignore 
+						// TODO: (Oct 12, 2007 9:58:11 AM) Do I ignore this elsewhere?
 					}
 				}
-			}, fTestMethod, freshInstance).run(new FailureListener() {
-				@Override
-				protected void handleFailure(Throwable error) {
-					if (!(error instanceof CouldNotGenerateValueException))
-						listener.addFailure(error);
-				}
-			}); 
+			};
 		}
 
-		private void invokeWithActualParameters(Object target, Assignments complete)
-				throws Throwable {
+		private void invokeWithActualParameters(Object target,
+				Assignments complete) throws Throwable {
 			final Object[] values= complete.getActualValues(nullsOk(), target);
 			try {
 				fTestMethod.invokeExplosively(target, values);

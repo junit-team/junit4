@@ -3,7 +3,6 @@
  */
 package org.junit.internal.runners.links;
 
-import org.junit.experimental.theories.FailureListener;
 import org.junit.internal.runners.model.TestMethod;
 
 public class Invoke extends Link {
@@ -16,11 +15,7 @@ public class Invoke extends Link {
 	}
 	
 	@Override
-	public void run(FailureListener listener) {
-		try {
-			fTestMethod.invokeExplosively(fTarget);
-		} catch (Throwable e) {
-			listener.addFailure(e);
-		}
+	public void run() throws Throwable {
+		fTestMethod.invokeExplosively(fTarget);
 	}
 }

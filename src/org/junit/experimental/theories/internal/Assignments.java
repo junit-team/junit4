@@ -20,10 +20,6 @@ public class Assignments {
 
 	private final Class<?> fClass;
 
-	public Assignments(List<ParameterSignature> unassigned, Class<?> testClass) {
-		this(new ArrayList<PotentialAssignment>(), unassigned, testClass);
-	}
-
 	public Assignments(List<PotentialAssignment> assigned,
 			List<ParameterSignature> unassigned, Class<?> type) {
 		fUnassigned= unassigned;
@@ -31,12 +27,13 @@ public class Assignments {
 		fClass= type;
 	}
 
-	// TODO: (Oct 9, 2007 8:30:53 PM) Do I need all these constructors?
+	// TODO: (Oct 12, 2007 10:27:59 AM) Do I need testClass?
 
+	
 	public static Assignments allUnassigned(Method testMethod,
 			Class<?> testClass) {
-		return new Assignments(ParameterSignature.signatures(testMethod),
-				testClass);
+		return new Assignments(new ArrayList<PotentialAssignment>(),
+				ParameterSignature.signatures(testMethod), testClass);
 	}
 
 	public boolean isComplete() {

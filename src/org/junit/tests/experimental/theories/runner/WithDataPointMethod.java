@@ -4,6 +4,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.experimental.results.PrintableResult.testResult;
+import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 import static org.junit.matchers.Each.each;
 import static org.junit.matchers.StringContains.containsString;
 
@@ -62,7 +64,7 @@ public class WithDataPointMethod {
 
 	@Test
 	public void ignoreExceptionsFromDataPointMethods() {
-		assertThat(failures(HasUglyDataPointMethod.class), empty());
+		assertThat(testResult(HasUglyDataPointMethod.class), isSuccessful());
 	}
 
 	@RunWith(Theories.class)
