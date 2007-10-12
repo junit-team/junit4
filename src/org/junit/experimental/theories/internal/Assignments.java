@@ -3,6 +3,7 @@
  */
 package org.junit.experimental.theories.internal;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +30,12 @@ public class Assignments {
 
 	// TODO: (Oct 12, 2007 10:27:59 AM) Do I need testClass?
 
-	
 	public static Assignments allUnassigned(Method testMethod,
 			Class<?> testClass) {
+		ArrayList<ParameterSignature> signatures= ParameterSignature.signatures(testMethod);
+		signatures.addAll(ParameterSignature.signatures(testClass.getConstructors()[0]));
 		return new Assignments(new ArrayList<PotentialAssignment>(),
-				ParameterSignature.signatures(testMethod), testClass);
+				signatures, testClass);
 	}
 
 	public boolean isComplete() {
@@ -52,11 +54,10 @@ public class Assignments {
 				.size()), fClass);
 	}
 
-	public Object[] getActualValues(boolean nullsOk, Object target)
-			throws CouldNotGenerateValueException {
-		Object[] values= new Object[fAssigned.size()];
-		for (int i= 0; i < values.length; i++) {
-			values[i]= fAssigned.get(i).getValue(target);
+	public Object[] getActualValues(boolean nullsOk, int start, int stop) throws CouldNotGenerateValueException {
+		Object[] values= new Object[stop - start];
+		for (int i= start; i < stop; i++) {
+			values[i]= fAssigned.get(i).getValue();
 			if (values[i] == null && !nullsOk)
 				throw new CouldNotGenerateValueException();
 		}
@@ -85,5 +86,28 @@ public class Assignments {
 		if (annotation == null)
 			return null;
 		return annotation.value().newInstance();
+	}
+
+	public Object[] getConstructorArguments(boolean nullsOk) throws CouldNotGenerateValueException {
+		// TODO: (Oct 12, 2007 12:23:10 PM) pass-through
+		return getActualValues(nullsOk, 0, getOnlyConstructor()
+				.getParameterTypes().length);
+	}
+
+	private Constructor<?> getOnlyConstructor() {
+		try {
+			return fClass.getConstructors()[0];
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public Object[] getMethodArguments(boolean nullsOk, Object target) throws CouldNotGenerateValueException {
+		// TODO: (Oct 12, 2007 12:29:57 PM) DUP
+
+		return getActualValues(nullsOk, getOnlyConstructor()
+				.getParameterTypes().length, fAssigned.size());
 	}
 }

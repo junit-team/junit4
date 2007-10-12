@@ -29,7 +29,7 @@ public class WithDataPointMethod {
 	@RunWith(Theories.class)
 	public static class HasDataPointMethod {
 		@DataPoint
-		public int oneHundred() {
+		public static int oneHundred() {
 			return 100;
 		}
 
@@ -42,12 +42,12 @@ public class WithDataPointMethod {
 	@RunWith(Theories.class)
 	public static class HasUglyDataPointMethod {
 		@DataPoint
-		public int oneHundred() {
+		public static int oneHundred() {
 			return 100;
 		}
 
 		@DataPoint
-		public int oneUglyHundred() {
+		public static int oneUglyHundred() {
 			throw new RuntimeException();
 		}
 
@@ -59,7 +59,7 @@ public class WithDataPointMethod {
 
 	@Test
 	public void pickUpDataPointMethods() {
-		assertThat(failures(HasDataPointMethod.class), empty());
+		assertThat(testResult(HasDataPointMethod.class), isSuccessful());
 	}
 
 	@Test
@@ -70,7 +70,7 @@ public class WithDataPointMethod {
 	@RunWith(Theories.class)
 	public static class DataPointMethodReturnsMutableObject {
 		@DataPoint
-		public List<Object> empty() {
+		public static List<Object> empty() {
 			return new ArrayList<Object>();
 		}
 

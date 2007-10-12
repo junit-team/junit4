@@ -8,6 +8,7 @@ import org.junit.Assume.AssumptionViolatedException;
 import org.junit.experimental.theories.ParameterSignature;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.internal.Assignments;
+import org.junit.internal.runners.links.Statement;
 import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.TestMethod;
 
@@ -17,7 +18,7 @@ public class StubbedTheories extends Theories {
 	}
 
 	@Override
-	protected TheoryAnchor invoke(TestMethod method, Object test) {
+	public Statement chain(TestMethod method) {
 		return new StubbedTheoryAnchor(method);
 	}
 	

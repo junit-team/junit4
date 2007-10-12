@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.results.PrintableResult;
 import org.junit.experimental.results.ResultMatchers;
@@ -194,9 +193,33 @@ public class WithDataPointFields {
 		}
 	}
 
-	@Ignore("until construction is handled in TestMethod")
 	@Test
 	public void honorConstructorParameters() {
 		assertThat(testResult(PositiveInts.class), isSuccessful());
+	}
+
+	@RunWith(Theories.class)
+	public static class PositiveIntsWithNegativeField {
+		@DataPoint
+		public static final int ONE= 1;
+		@DataPoint
+		public static final int NEGONE= -1;
+
+		private int x;
+
+		public PositiveIntsWithNegativeField(int x) {
+			assumeTrue(x > 0);
+			this.x= x;
+		}
+
+		@Theory
+		public void haveAPostiveSquare() {
+			assertTrue(x > 0);
+		}
+	}
+
+	@Test
+	public void honorConstructorAssumptions() {
+		assertThat(testResult(PositiveIntsWithNegativeField.class), isSuccessful());
 	}
 }

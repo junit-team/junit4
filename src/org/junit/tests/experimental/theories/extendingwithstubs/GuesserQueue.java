@@ -21,8 +21,8 @@ public class GuesserQueue extends ArrayList<ReguessableValue> {
 		}
 	
 		@Override
-		public Object getValue(Object test) throws CouldNotGenerateValueException {
-			return delegate.getValue(test);
+		public Object getValue() throws CouldNotGenerateValueException {
+			return delegate.getValue();
 		}
 	}
 

@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.junit.internal.runners.links.ExpectException;
+import org.junit.internal.runners.links.Fail;
 import org.junit.internal.runners.links.FailOnTimeout;
 import org.junit.internal.runners.links.IgnoreTestNotifier;
 import org.junit.internal.runners.links.IgnoreViolatedAssumptions;
@@ -30,7 +31,6 @@ import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
-import org.junit.runner.notification.StoppedByUserException;
 
 public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 	private final List<TestMethod> fTestMethods;
@@ -73,20 +73,8 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 
 	protected void runMethod(TestMethod method, RunNotifier notifier) {
 		Description description= methodDescription(method);
-		Object test;
-		try {
-			test= new ReflectiveCallable() {
-				@Override
-				protected Object runReflectiveCall() throws Throwable {
-					return createTest();
-				}
-			}.run();
-		} catch (Throwable e) {
-			notifier.testAborted(description, e);
-			return;
-		}
-		EachTestNotifier roadie= new EachTestNotifier(notifier, description);
-		run(roadie, method, test);
+		EachTestNotifier eachNotifier= new EachTestNotifier(notifier, description);
+		notifying(method, chain(method)).run(eachNotifier);
 	}
 
 	public Object createTest() throws Exception {
@@ -102,28 +90,28 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 		return method.getName();
 	}
 	
-	public void run(EachTestNotifier context, TestMethod method, Object test) {
+	public Statement chain(TestMethod method) {
+		Object test;
 		try {
-			chain(method, test).run(context);
-		} catch (StoppedByUserException e) {
-			throw e;
+			// TODO: (Oct 12, 2007 11:49:18 AM) Can I ditch reflective callable?
+
+			test= new ReflectiveCallable() {
+				@Override
+				protected Object runReflectiveCall() throws Throwable {
+					return createTest();
+				}
+			}.run();
 		} catch (Throwable e) {
-			throw new RuntimeException("Unexpected error running tests", e);
+			return new Fail(e);
 		}
-	}
-
-	protected Notifier chain(TestMethod method, Object test) {
-		// TODO: (Oct 5, 2007 11:09:00 AM) Rename Link?
-
-		// TODO: (Oct 9, 2007 2:12:24 PM) method + test is parameter object?
-
+		
 		Statement link= invoke(method, test);
 		link= possiblyExpectingExceptions(method, link);
 		link= withPotentialTimeout(method, link);
 		link= withBefores(method, test, link);
 		link= ignoreViolatedAssumptions(link);
 		link= withAfters(method, test, link);
-		return notifying(method, link);
+		return link;
 	}
 	
 	protected Statement invoke(TestMethod method, Object test) {
@@ -205,5 +193,3 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 		return fTestClass;
 	}
 }
-
-// TODO: (Oct 12, 2007 10:26:58 AM) Too complex?  There's a lot going on here now.

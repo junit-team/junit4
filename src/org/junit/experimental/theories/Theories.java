@@ -13,7 +13,6 @@ import org.junit.experimental.theories.PotentialAssignment.CouldNotGenerateValue
 import org.junit.experimental.theories.internal.Assignments;
 import org.junit.experimental.theories.internal.ParameterizedAssertionError;
 import org.junit.internal.runners.JUnit4ClassRunner;
-import org.junit.internal.runners.links.Notifier;
 import org.junit.internal.runners.links.Statement;
 import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.TestMethod;
@@ -39,15 +38,7 @@ public class Theories extends JUnit4ClassRunner {
 	}
 
 	@Override
-	protected Notifier chain(final TestMethod method, Object test) {
-		Statement next= invoke(method, test);
-		next= ignoreViolatedAssumptions(next);
-		next= possiblyExpectingExceptions(method, next);
-		return notifying(method, next);
-	}
-
-	@Override
-	protected TheoryAnchor invoke(TestMethod method, Object test) {
+	public Statement chain(final TestMethod method) {
 		return new TheoryAnchor(method);
 	}
 
@@ -94,8 +85,30 @@ public class Theories extends JUnit4ClassRunner {
 				IllegalAccessException, InvocationTargetException,
 				NoSuchMethodException, Throwable {
 			try {
-				final Object freshInstance= createTest();
-				withAfters(fTestMethod, freshInstance, withBefores(fTestMethod, freshInstance, methodCompletesWithParameters(complete, freshInstance))).evaluate();
+				new JUnit4ClassRunner(getTestClass().getJavaClass()) {
+					@Override
+					protected void collectInitializationErrors(
+							List<Throwable> errors) {
+						// TODO: (Oct 12, 2007 12:08:03 PM) DUP
+						// do nothing
+					}
+					
+					@Override
+					protected Statement invoke(TestMethod method, Object test) {
+						// TODO: (Oct 12, 2007 12:07:28 PM) push method in
+						return methodCompletesWithParameters(complete, test);
+					}
+					
+					@Override
+					public Object createTest() throws Exception {
+						// TODO: (Oct 12, 2007 12:31:12 PM) DUP
+						// TODO: (Oct 12, 2007 12:40:33 PM) honor assumption violations in JUnit4ClassRunner constructor invocations
+
+						return getTestClass().getJavaClass().getConstructors()[0].newInstance(complete.getConstructorArguments(nullsOk()));
+					}
+				}.chain(fTestMethod).evaluate();
+			} catch (AssumptionViolatedException e) {
+				handleAssumptionViolation(e);
 			} catch (CouldNotGenerateValueException e) {
 				// Do nothing
 			}
@@ -118,7 +131,7 @@ public class Theories extends JUnit4ClassRunner {
 
 		private void invokeWithActualParameters(Object target,
 				Assignments complete) throws Throwable {
-			final Object[] values= complete.getActualValues(nullsOk(), target);
+			final Object[] values= complete.getMethodArguments(nullsOk(), target);
 			try {
 				fTestMethod.invokeExplosively(target, values);
 				successes++;
