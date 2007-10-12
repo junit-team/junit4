@@ -86,9 +86,9 @@ public class TestClass extends TestElement {
 		try {
 			runProtected(testNotifier, runnable, null);
 		} catch (AssumptionViolatedException e) {
-			// TODO: (Oct 12, 2007 10:21:33 AM) DUP with other ignorings
+			// TODO: (Oct 12, 2007 10:21:33 AM) DUP with other ignorings should use Statements
 		} catch (StoppedByUserException e) {
-			// TODO: (Oct 12, 2007 10:26:35 AM) DUP
+			// TODO: (Oct 12, 2007 10:26:35 AM) DUP 
 
 			throw e;
 		} catch (Throwable e) {

@@ -12,17 +12,17 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 
-public class WithTimeout extends Link {
-	private Link fNext;
+public class FailOnTimeout extends Statement {
+	private Statement fNext;
 	private final long fTimeout;
 
-	public WithTimeout(Link next, long timeout) {
+	public FailOnTimeout(Statement next, long timeout) {
 		fNext= next;
 		fTimeout= timeout;
 	}
 
 	@Override
-	public void run() throws Throwable {
+	public void evaluate() throws Throwable {
 		ExecutorService service= Executors.newSingleThreadExecutor();
 		Callable<Object> callable= new Callable<Object>() {
 			public Object call() throws Exception {
@@ -33,7 +33,7 @@ public class WithTimeout extends Link {
 
 
 				try {
-					fNext.run();
+					fNext.evaluate();
 				} catch (Exception e) {
 					throw e;
 				} catch (Error e) {

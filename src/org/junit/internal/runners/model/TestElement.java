@@ -24,7 +24,7 @@ public abstract class TestElement {
 				errors.add(e);
 			}
 			
-		errors.throwUnlessEmpty();
+		errors.assertEmpty();
 	}
 
 	public void runProtected(EachTestNotifier roadie, Runnable runnable, Object target) throws Throwable {

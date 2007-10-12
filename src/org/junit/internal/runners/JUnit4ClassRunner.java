@@ -7,16 +7,16 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.internal.runners.links.ExpectingException;
-import org.junit.internal.runners.links.IgnoreTest;
+import org.junit.internal.runners.links.ExpectException;
+import org.junit.internal.runners.links.FailOnTimeout;
+import org.junit.internal.runners.links.IgnoreTestNotifier;
 import org.junit.internal.runners.links.IgnoreViolatedAssumptions;
-import org.junit.internal.runners.links.Invoke;
-import org.junit.internal.runners.links.Link;
-import org.junit.internal.runners.links.NotificationStrategy;
-import org.junit.internal.runners.links.Notifying;
-import org.junit.internal.runners.links.WithAfters;
-import org.junit.internal.runners.links.WithBefores;
-import org.junit.internal.runners.links.WithTimeout;
+import org.junit.internal.runners.links.InvokeMethod;
+import org.junit.internal.runners.links.Notifier;
+import org.junit.internal.runners.links.RunAfters;
+import org.junit.internal.runners.links.RunBefores;
+import org.junit.internal.runners.links.RunTestNotifier;
+import org.junit.internal.runners.links.Statement;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.ReflectiveCallable;
@@ -112,12 +112,12 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 		}
 	}
 
-	protected NotificationStrategy chain(TestMethod method, Object test) {
+	protected Notifier chain(TestMethod method, Object test) {
 		// TODO: (Oct 5, 2007 11:09:00 AM) Rename Link?
 
 		// TODO: (Oct 9, 2007 2:12:24 PM) method + test is parameter object?
 
-		Link link= invoke(method, test);
+		Statement link= invoke(method, test);
 		link= possiblyExpectingExceptions(method, link);
 		link= withPotentialTimeout(method, link);
 		link= withBefores(method, test, link);
@@ -126,41 +126,41 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 		return notifying(method, link);
 	}
 	
-	protected Link invoke(TestMethod method, Object test) {
-		return new Invoke(method, test);
+	protected Statement invoke(TestMethod method, Object test) {
+		return new InvokeMethod(method, test);
 	}
 	
-	protected Link ignoreViolatedAssumptions(Link next) {
+	protected Statement ignoreViolatedAssumptions(Statement next) {
 		return new IgnoreViolatedAssumptions(next);
 	}
 
-	protected Link possiblyExpectingExceptions(TestMethod method, Link next) {
+	protected Statement possiblyExpectingExceptions(TestMethod method, Statement next) {
 		return method.expectsException()
-			? new ExpectingException(next, method.getExpectedException())
+			? new ExpectException(next, method.getExpectedException())
 			: next;
 	}
 
-	protected Link withPotentialTimeout(TestMethod method, Link next) {
+	protected Statement withPotentialTimeout(TestMethod method, Statement next) {
 		long timeout= method.getTimeout();
 		return timeout > 0
-			? new WithTimeout(next, timeout)
+			? new FailOnTimeout(next, timeout)
 			: next;
 	}
 
-	protected Link withAfters(TestMethod method, Object target, Link link) {
+	protected Statement withAfters(TestMethod method, Object target, Statement link) {
 		// TODO: (Oct 12, 2007 10:23:59 AM) Check for DUP in callers
 
-		return new WithAfters(link, method, target);
+		return new RunAfters(link, method, target);
 	}
 
-	protected Link withBefores(TestMethod method, Object target, Link link) {
-		return new WithBefores(link, method, target);
+	protected Statement withBefores(TestMethod method, Object target, Statement link) {
+		return new RunBefores(link, method, target);
 	}
 
-	protected NotificationStrategy notifying(TestMethod method, Link link) {
+	protected Notifier notifying(TestMethod method, Statement link) {
 		return method.isIgnored()
-			? new IgnoreTest()
-			: new Notifying(link);
+			? new IgnoreTestNotifier()
+			: new RunTestNotifier(link);
 	}
 
 	@Override

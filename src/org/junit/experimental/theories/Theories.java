@@ -13,8 +13,8 @@ import org.junit.experimental.theories.PotentialAssignment.CouldNotGenerateValue
 import org.junit.experimental.theories.internal.Assignments;
 import org.junit.experimental.theories.internal.ParameterizedAssertionError;
 import org.junit.internal.runners.JUnit4ClassRunner;
-import org.junit.internal.runners.links.Link;
-import org.junit.internal.runners.links.NotificationStrategy;
+import org.junit.internal.runners.links.Notifier;
+import org.junit.internal.runners.links.Statement;
 import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.TestMethod;
 
@@ -39,8 +39,8 @@ public class Theories extends JUnit4ClassRunner {
 	}
 
 	@Override
-	protected NotificationStrategy chain(final TestMethod method, Object test) {
-		Link next= invoke(method, test);
+	protected Notifier chain(final TestMethod method, Object test) {
+		Statement next= invoke(method, test);
 		next= ignoreViolatedAssumptions(next);
 		next= possiblyExpectingExceptions(method, next);
 		return notifying(method, next);
@@ -51,7 +51,7 @@ public class Theories extends JUnit4ClassRunner {
 		return new TheoryAnchor(method);
 	}
 
-	public class TheoryAnchor extends Link {
+	public class TheoryAnchor extends Statement {
 		private int successes= 0;
 
 		private TestMethod fTestMethod;
@@ -63,7 +63,7 @@ public class Theories extends JUnit4ClassRunner {
 		}
 
 		@Override
-		public void run() throws Throwable {
+		public void evaluate() throws Throwable {
 			runWithAssignment(Assignments.allUnassigned(
 					fTestMethod.getMethod(), fTestMethod.getTestClass()
 							.getJavaClass()));
@@ -95,17 +95,17 @@ public class Theories extends JUnit4ClassRunner {
 				NoSuchMethodException, Throwable {
 			try {
 				final Object freshInstance= createTest();
-				withAfters(fTestMethod, freshInstance, withBefores(fTestMethod, freshInstance, methodCompletesWithParameters(complete, freshInstance))).run();
+				withAfters(fTestMethod, freshInstance, withBefores(fTestMethod, freshInstance, methodCompletesWithParameters(complete, freshInstance))).evaluate();
 			} catch (CouldNotGenerateValueException e) {
 				// Do nothing
 			}
 		}
 
-		private Link methodCompletesWithParameters(final Assignments complete,
+		private Statement methodCompletesWithParameters(final Assignments complete,
 				final Object freshInstance) {
-			return new Link() {
+			return new Statement() {
 				@Override
-				public void run() throws Throwable {
+				public void evaluate() throws Throwable {
 					try {
 						invokeWithActualParameters(freshInstance, complete);
 					} catch (CouldNotGenerateValueException e) {

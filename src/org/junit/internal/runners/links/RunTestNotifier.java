@@ -5,10 +5,10 @@ package org.junit.internal.runners.links;
 
 import org.junit.internal.runners.model.EachTestNotifier;
 
-public class Notifying extends NotificationStrategy {
-	private final Link fNext;
+public class RunTestNotifier extends Notifier {
+	private final Statement fNext;
 
-	public Notifying(Link next) {
+	public RunTestNotifier(Statement next) {
 		fNext= next;
 	}
 
@@ -16,7 +16,7 @@ public class Notifying extends NotificationStrategy {
 	public void run(EachTestNotifier context) {
 		context.fireTestStarted();
 		try {
-			fNext.run();
+			fNext.evaluate();
 		} catch (Throwable e) {
 			context.addFailure(e);
 		} finally {

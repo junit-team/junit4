@@ -8,7 +8,7 @@ public class MultipleFailureException extends Exception {
 	
 	private List<Throwable> fErrors = new ArrayList<Throwable>();
 	
-	public void throwUnlessEmpty() throws MultipleFailureException {
+	public void assertEmpty() throws MultipleFailureException {
 		if (!fErrors.isEmpty())
 			throw this;
 	}

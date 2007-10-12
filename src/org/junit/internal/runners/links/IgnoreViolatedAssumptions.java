@@ -5,16 +5,16 @@ package org.junit.internal.runners.links;
 
 import org.junit.Assume.AssumptionViolatedException;
 
-public class IgnoreViolatedAssumptions extends Link {
-	Link fNext;
-	public IgnoreViolatedAssumptions(Link next) {
+public class IgnoreViolatedAssumptions extends Statement {
+	Statement fNext;
+	public IgnoreViolatedAssumptions(Statement next) {
 		fNext= next;
 	}
 	
 	@Override
-	public void run() throws Throwable {
+	public void evaluate() throws Throwable {
 		try {
-			fNext.run();
+			fNext.evaluate();
 		} catch (AssumptionViolatedException e) {
 			// Do nothing
 		}

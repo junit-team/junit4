@@ -4,20 +4,20 @@
 package org.junit.internal.runners.links;
 
 
-public class ExpectingException extends Link {
-	private Link fNext;
+public class ExpectException extends Statement {
+	private Statement fNext;
 	private final Class<? extends Throwable> fExpected;
 	
-	public ExpectingException(Link next, Class<? extends Throwable> expected) {
+	public ExpectException(Statement next, Class<? extends Throwable> expected) {
 		fNext= next;
 		fExpected= expected;
 	}
 	
 	@Override
-	public void run() throws Exception {
+	public void evaluate() throws Exception {
 		boolean complete = false;
 		try {
-			fNext.run();
+			fNext.evaluate();
 			complete = true;
 		} catch (Throwable e) {
 			if (!fExpected.isAssignableFrom(e.getClass())) {
