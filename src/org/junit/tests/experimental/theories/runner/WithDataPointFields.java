@@ -222,4 +222,53 @@ public class WithDataPointFields {
 	public void honorConstructorAssumptions() {
 		assertThat(testResult(PositiveIntsWithNegativeField.class), isSuccessful());
 	}
+	
+	@RunWith(Theories.class)
+	public static class PositiveIntsWithMethodParams {
+		@DataPoint
+		public static final int ONE= 1;
+
+		private int x;
+
+		public PositiveIntsWithMethodParams(int x) {
+			assumeTrue(x > 0);
+			this.x= x;
+		}
+
+		@Theory
+		public void haveAPostiveSquare(int y) {
+			assumeTrue(y > 0);
+			assertTrue(x * y > 0);
+		}
+	}
+	
+	// TODO: (Oct 12, 2007 2:26:22 PM) Just run enclosed?
+
+	
+	@Test public void passParametersToBothConstructorAndMethod() {
+		assertThat(testResult(PositiveIntsWithMethodParams.class), isSuccessful());	
+	}
+	
+	@RunWith(Theories.class)
+	public static class DifferentTypesInConstructor {
+		@DataPoint
+		public static final int ONE= 1;
+
+		@DataPoint public static final String A = "A";
+		
+		public DifferentTypesInConstructor(int x) {
+		}
+
+		@Theory
+		public void yesIndeed(String a) {
+		}
+	}
+	
+	
+	@Test public void differentTypesForConstructorAndMethodOk() {
+		assertThat(testResult(DifferentTypesInConstructor.class), isSuccessful());	
+	}
+	
+	// TODO: (Oct 12, 2007 2:24:55 PM) Complex
+
 }

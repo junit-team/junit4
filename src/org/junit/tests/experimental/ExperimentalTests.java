@@ -12,13 +12,15 @@ import org.junit.tests.experimental.theories.runner.WhenNoParametersMatch;
 import org.junit.tests.experimental.theories.runner.WithDataPointFields;
 import org.junit.tests.experimental.theories.runner.WithDataPointMethod;
 import org.junit.tests.experimental.theories.runner.WithExtendedParameterSources;
+import org.junit.tests.experimental.theories.runner.WithOnlyTestAnnotations;
 
 @RunWith(Suite.class)
 @SuiteClasses( { ParameterizedAssertionErrorTest.class,
 		WithDataPointFields.class, PrintableResultTest.class,
 		ResultMatchersTest.class, WithDataPointMethod.class,
 		ParameterSignatureTest.class, WhenNoParametersMatch.class,
-		WithExtendedParameterSources.class, StubbedTheoriesTest.class })
+		WithExtendedParameterSources.class, StubbedTheoriesTest.class, 
+		WithOnlyTestAnnotations.class })
 public class ExperimentalTests {
 
 }

@@ -94,9 +94,57 @@ public class Theories extends JUnit4ClassRunner {
 					}
 					
 					@Override
+					public Statement chain(TestMethod method) {
+						// TODO: (Oct 12, 2007 2:00:52 PM) Name this Link
+						final Statement link= super.chain(method);
+						return new Statement() {
+						
+							@Override
+							public void evaluate() throws Throwable {
+								try {
+									link.evaluate();
+									successes++;
+								} catch (AssumptionViolatedException e) {
+									// TODO: (Oct 12, 2007 2:07:01 PM) DUP? even correct?
+									// do nothing
+								} catch (Throwable e) {
+									 // TODO: (Oct 12, 2007 2:04:01 PM) nullsOk as argument to Assignments constructor
+
+										reportParameterizedError(e, complete.getAllArguments(nullsOk()));
+									}
+								// TODO Auto-generated method stub
+						
+							}
+						
+						};
+					}
+					
+					@Override
 					protected Statement invoke(TestMethod method, Object test) {
 						// TODO: (Oct 12, 2007 12:07:28 PM) push method in
 						return methodCompletesWithParameters(complete, test);
+					}
+					
+					@Override
+					protected Statement ignoreViolatedAssumptions(final Statement next) {
+						// TODO: (Oct 12, 2007 2:15:02 PM) name this
+
+						return new Statement() {
+						
+							@Override
+							public void evaluate() throws Throwable {
+								try {
+									next.evaluate();						
+								} catch (AssumptionViolatedException e) {
+									// TODO: (Oct 12, 2007 2:19:52 PM) This feels hacky
+
+									successes--;
+									handleAssumptionViolation(e);
+									// TODO: (Oct 12, 2007 2:15:44 PM) Can I remove other calls?
+
+								}
+							}
+						};
 					}
 					
 					@Override
@@ -132,14 +180,11 @@ public class Theories extends JUnit4ClassRunner {
 		private void invokeWithActualParameters(Object target,
 				Assignments complete) throws Throwable {
 			final Object[] values= complete.getMethodArguments(nullsOk(), target);
-			try {
+//			try {
 				fTestMethod.invokeExplosively(target, values);
-				successes++;
-			} catch (AssumptionViolatedException e) {
-				handleAssumptionViolation(e);
-			} catch (Throwable e) {
-				reportParameterizedError(e, values);
-			}
+//			} catch (AssumptionViolatedException e) {
+//				handleAssumptionViolation(e);
+//			}
 		}
 
 		protected void handleAssumptionViolation(AssumptionViolatedException e) {

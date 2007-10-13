@@ -8,7 +8,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 
@@ -23,7 +22,7 @@ public class ParameterSignature {
 	}
 
 
-	public static Collection<? extends ParameterSignature> signatures(
+	public static List<ParameterSignature> signatures(
 			Constructor<?> constructor) {
 		// TODO: (Oct 12, 2007 12:33:06 PM) handle DUP above
 		ArrayList<ParameterSignature> sigs= new ArrayList<ParameterSignature>();

@@ -32,8 +32,8 @@ public class Assignments {
 
 	public static Assignments allUnassigned(Method testMethod,
 			Class<?> testClass) {
-		ArrayList<ParameterSignature> signatures= ParameterSignature.signatures(testMethod);
-		signatures.addAll(ParameterSignature.signatures(testClass.getConstructors()[0]));
+		List<ParameterSignature> signatures= ParameterSignature.signatures(testClass.getConstructors()[0]);
+		signatures.addAll(ParameterSignature.signatures(testMethod));
 		return new Assignments(new ArrayList<PotentialAssignment>(),
 				signatures, testClass);
 	}
@@ -57,9 +57,10 @@ public class Assignments {
 	public Object[] getActualValues(boolean nullsOk, int start, int stop) throws CouldNotGenerateValueException {
 		Object[] values= new Object[stop - start];
 		for (int i= start; i < stop; i++) {
-			values[i]= fAssigned.get(i).getValue();
-			if (values[i] == null && !nullsOk)
+			Object value= fAssigned.get(i).getValue();
+			if (value == null && !nullsOk)
 				throw new CouldNotGenerateValueException();
+			values[i - start]= value;
 		}
 		return values;
 	}
@@ -109,5 +110,9 @@ public class Assignments {
 
 		return getActualValues(nullsOk, getOnlyConstructor()
 				.getParameterTypes().length, fAssigned.size());
+	}
+
+	public Object[] getAllArguments(boolean nullsOk) throws CouldNotGenerateValueException {
+		return getActualValues(nullsOk, 0, fAssigned.size());
 	}
 }

@@ -13,7 +13,7 @@ public abstract class TestElement {
 				before.invokeExplosively(target);
 	}
 
-	public void runAfters(Object target) throws MultipleFailureException {
+	public void runAfters(Object target) throws Throwable {
 		MultipleFailureException errors= new MultipleFailureException();
 		
 		List<TestMethod> afters= getAfters();
