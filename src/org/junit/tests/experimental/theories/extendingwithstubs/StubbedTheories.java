@@ -18,7 +18,7 @@ public class StubbedTheories extends Theories {
 	}
 
 	@Override
-	public Statement chain(TestMethod method) {
+	public Statement childBlock(TestMethod method) {
 		return new StubbedTheoryAnchor(method);
 	}
 	

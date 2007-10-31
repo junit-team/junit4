@@ -28,100 +28,21 @@ public class Theories extends JUnit4ClassRunner {
 	}
 
 	@Override
-	protected List<TestMethod> getTestMethods() {
+	protected List<TestMethod> computeTestMethods() {
 		// TODO: (Jul 20, 2007 2:02:44 PM) Only get methods once, even if they
 		// have both @Test and @Theory
 
-		List<TestMethod> testMethods= super.getTestMethods();
+		List<TestMethod> testMethods= super.computeTestMethods();
 		testMethods.addAll(getTestClass().getAnnotatedMethods(Theory.class));
 		return testMethods;
 	}
 
 	@Override
-	public Statement chain(final TestMethod method) {
+	public Statement childBlock(final TestMethod method) {
 		return new TheoryAnchor(method);
 	}
 
 	public class TheoryAnchor extends Statement {
-		private class TheoryClassRunner extends JUnit4ClassRunner {
-			private final Assignments fComplete;
-
-			private TheoryClassRunner(Class<?> klass, Assignments complete)
-					throws InitializationError {
-				super(klass);
-				fComplete= complete;
-			}
-
-			@Override
-			protected void collectInitializationErrors(
-					List<Throwable> errors) {
-				// TODO: (Oct 12, 2007 12:08:03 PM) DUP
-				// do nothing
-			}
-
-			@Override
-			public Statement chain(TestMethod method) {
-				// TODO: (Oct 12, 2007 2:00:52 PM) Name this Link
-				final Statement link= super.chain(method);
-				return new Statement() {
-				
-					@Override
-					public void evaluate() throws Throwable {
-						try {
-							link.evaluate();
-							successes++;
-						} catch (AssumptionViolatedException e) {
-							// TODO: (Oct 12, 2007 2:07:01 PM) DUP? even correct?
-							// do nothing
-						} catch (Throwable e) {
-							 // TODO: (Oct 12, 2007 2:04:01 PM) nullsOk as argument to Assignments constructor
-
-								reportParameterizedError(e, fComplete.getAllArguments(nullsOk()));
-							}
-						// TODO Auto-generated method stub
-				
-					}
-				
-				};
-			}
-
-			@Override
-			protected Statement invoke(TestMethod method, Object test) {
-				// TODO: (Oct 12, 2007 12:07:28 PM) push method in
-				return methodCompletesWithParameters(fComplete, test);
-			}
-
-			@Override
-			protected Statement ignoreViolatedAssumptions(final Statement next) {
-				// TODO: (Oct 12, 2007 2:15:02 PM) name this
-
-				return new Statement() {
-				
-					@Override
-					public void evaluate() throws Throwable {
-						try {
-							next.evaluate();						
-						} catch (AssumptionViolatedException e) {
-							// TODO: (Oct 12, 2007 2:19:52 PM) This feels hacky
-
-							successes--;
-							handleAssumptionViolation(e);
-							// TODO: (Oct 12, 2007 2:15:44 PM) Can I remove other calls?
-
-						}
-					}
-				};
-			}
-
-			@Override
-			public Object createTest() throws Exception {
-				// TODO: (Oct 12, 2007 12:31:12 PM) DUP
-				// TODO: (Oct 12, 2007 12:40:33 PM) honor assumption violations in JUnit4ClassRunner constructor invocations
-
-				return getTestClass().getJavaClass().getConstructors()[0].newInstance(fComplete.getConstructorArguments(nullsOk()));
-			}
-		}
-
 		private int successes= 0;
 
 		private TestMethod fTestMethod;
@@ -164,7 +85,76 @@ public class Theories extends JUnit4ClassRunner {
 				IllegalAccessException, InvocationTargetException,
 				NoSuchMethodException, Throwable {
 			try {
-				new TheoryClassRunner(getTestClass().getJavaClass(), complete).chain(fTestMethod).evaluate();
+				new JUnit4ClassRunner(getTestClass().getJavaClass()) {
+					@Override
+					protected void collectInitializationErrors(
+							List<Throwable> errors) {
+						// TODO: (Oct 12, 2007 12:08:03 PM) DUP
+						// do nothing
+					}
+					
+					@Override
+					public Statement childBlock(TestMethod method) {
+						// TODO: (Oct 12, 2007 2:00:52 PM) Name this Link
+						final Statement link= super.childBlock(method);
+						return new Statement() {
+						
+							@Override
+							public void evaluate() throws Throwable {
+								try {
+									link.evaluate();
+									successes++;
+								} catch (AssumptionViolatedException e) {
+									// TODO: (Oct 12, 2007 2:07:01 PM) DUP? even correct?
+									// do nothing
+								} catch (Throwable e) {
+									 // TODO: (Oct 12, 2007 2:04:01 PM) nullsOk as argument to Assignments constructor
+
+										reportParameterizedError(e, complete.getAllArguments(nullsOk()));
+									}
+								// TODO Auto-generated method stub
+						
+							}
+						
+						};
+					}
+					
+					@Override
+					protected Statement invoke(TestMethod method, Object test) {
+						// TODO: (Oct 12, 2007 12:07:28 PM) push method in
+						return methodCompletesWithParameters(complete, test);
+					}
+					
+					@Override
+					protected Statement ignoreViolatedAssumptions(final Statement next) {
+						// TODO: (Oct 12, 2007 2:15:02 PM) name this
+
+						return new Statement() {
+						
+							@Override
+							public void evaluate() throws Throwable {
+								try {
+									next.evaluate();						
+								} catch (AssumptionViolatedException e) {
+									// TODO: (Oct 12, 2007 2:19:52 PM) This feels hacky
+
+									successes--;
+									handleAssumptionViolation(e);
+									// TODO: (Oct 12, 2007 2:15:44 PM) Can I remove other calls?
+
+								}
+							}
+						};
+					}
+					
+					@Override
+					public Object createTest() throws Exception {
+						// TODO: (Oct 12, 2007 12:31:12 PM) DUP
+						// TODO: (Oct 12, 2007 12:40:33 PM) honor assumption violations in JUnit4ClassRunner constructor invocations
+
+						return getTestClass().getJavaClass().getConstructors()[0].newInstance(complete.getConstructorArguments(nullsOk()));
+					}
+				}.childBlock(fTestMethod).evaluate();
 			} catch (AssumptionViolatedException e) {
 				handleAssumptionViolation(e);
 			} catch (CouldNotGenerateValueException e) {

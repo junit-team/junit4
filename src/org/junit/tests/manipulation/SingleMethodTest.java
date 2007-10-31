@@ -65,7 +65,11 @@ public class SingleMethodTest {
 		}
 	}
 
-	@Test public void parameterizedOneTimeSetup() throws Exception {
+	// TODO: (Oct 29, 2007 1:41:02 PM) This is both testing correct filtering of
+	// parameterized tests, and correct execution of BeforeClass for
+	// parameterized tests
+
+	@Test public void parameterizedFilterToSingleMethod() throws Exception {
 		count = 0;
 		Runner runner = Request.method(ParameterizedOneTimeSetup.class,
 				"one[0]").getRunner();

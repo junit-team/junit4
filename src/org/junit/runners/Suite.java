@@ -5,16 +5,25 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.internal.runners.CompositeRunner;
+import org.junit.internal.runners.ParentRunner;
 import org.junit.internal.runners.links.Statement;
 import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.TestClass;
+import org.junit.runner.Description;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
+import org.junit.runner.manipulation.Filter;
+import org.junit.runner.manipulation.Filterable;
+import org.junit.runner.manipulation.NoTestsRemainException;
+import org.junit.runner.manipulation.Sortable;
+import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 
 /**
@@ -24,7 +33,7 @@ import org.junit.runner.notification.RunNotifier;
  * with <code>@RunWith(Suite.class)</code> and <code>@SuiteClasses(TestClass1.class, ...)</code>.
  * When you run this class, it will run all the tests in all the suite classes.
  */
-public class Suite extends CompositeRunner {
+public class Suite extends ParentRunner<Runner> implements Filterable, Sortable {
 	/**
 	 * The <code>SuiteClasses</code> annotation specifies the classes to be run when a class
 	 * annotated with <code>@RunWith(Suite.class)</code> is run.
@@ -45,11 +54,10 @@ public class Suite extends CompositeRunner {
 	// This won't work correctly in the face of concurrency. For that we need to
 	// add parameters to getRunner(), which would be much more complicated.
 	private static Set<Class<?>> parents = new HashSet<Class<?>>();
-	private TestClass fTestClass;
+	private List<Runner> fRunners = new ArrayList<Runner>();
 	
 	protected Suite(Class<?> klass, Class<?>[] annotatedClasses) throws InitializationError {
-		// we need to add parent be
-		super(klass.getName());
+		super(klass);
 		
 		addParent(klass);
 		for (Class<?> each : annotatedClasses) {
@@ -64,6 +72,10 @@ public class Suite extends CompositeRunner {
 		fTestClass.validateStaticMethods(errors);
 		assertValid(errors);
 
+	}
+
+	private void add(Runner childRunner) {
+		fRunners .add(childRunner);
 	}
 
 	private Class<?> addParent(Class<?> parent) throws InitializationError {
@@ -87,14 +99,55 @@ public class Suite extends CompositeRunner {
 		fTestClass.validateStaticMethods(errors);
 		fTestClass.validateInstanceMethods(errors);
 	}
-	
+
+
 	@Override
-	public void run(final RunNotifier notifier) {
-		fTestClass.runProtected(notifier, getDescription(), new Statement() {
-			@Override
-			public void evaluate() {
-				runChildren(notifier);
+	protected Statement classBlock(final RunNotifier notifier) {
+		// TODO: (Oct 29, 2007 2:49:03 PM) Is this duplicated with other classBlocks?
+
+		return new Statement() {
+					@Override
+					public void evaluate() {
+						for (Runner each : getChildren())
+							runChild(each, notifier);
+					}
+				};
+	}
+
+	@Override
+	public List<Runner> getChildren() {
+		return fRunners;
+	}
+
+	private void runChild(Runner each,
+			final RunNotifier notifier) {
+		each.run(notifier);
+	}
+
+	@Override
+	protected Description describeChild(Runner runner) {
+		return runner.getDescription();
+	}
+
+	public void filter(Filter filter) throws NoTestsRemainException {
+		for (Iterator<Runner> iter= fRunners.iterator(); iter.hasNext();) {
+			Runner runner= iter.next();
+			
+			// if filter(parent) == false, tree is pruned			
+			if (filter.shouldRun(describeChild(runner)))
+				filter.apply(runner);
+			else
+				iter.remove();
+		}
+	}
+
+	public void sort(final Sorter sorter) {
+		Collections.sort(fRunners, new Comparator<Runner>() {
+			public int compare(Runner o1, Runner o2) {
+				return sorter.compare(describeChild(o1), describeChild(o2));
 			}
 		});
+		for (Runner each : fRunners)
+			sorter.apply(each);
 	}
 }

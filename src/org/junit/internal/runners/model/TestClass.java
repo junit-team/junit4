@@ -12,13 +12,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.internal.runners.links.IgnoreViolatedAssumptions;
-import org.junit.internal.runners.links.RunAfters;
-import org.junit.internal.runners.links.RunBefores;
-import org.junit.internal.runners.links.Statement;
-import org.junit.runner.Description;
-import org.junit.runner.notification.RunNotifier;
-import org.junit.runner.notification.StoppedByUserException;
 
 public class TestClass extends TestElement {
 	private final Class<?> fClass;
@@ -85,24 +78,6 @@ public class TestClass extends TestElement {
 
 	public String getName() {
 		return fClass.getName();
-	}
-
-	public void runProtected(RunNotifier notifier, Description description,
-			Statement runnable) {
-		// TODO: (Oct 8, 2007 1:02:02 PM) instead of this, have a runChildren
-		// overridable method in JUnit4ClassRunner
-		EachTestNotifier testNotifier= new EachTestNotifier(notifier,
-				description);
-		try {
-			Statement statement= new RunBefores(runnable, this, null);
-			statement= new IgnoreViolatedAssumptions(statement);
-			statement= new RunAfters(statement, this, null);
-			statement.evaluate();
-		} catch (StoppedByUserException e) {
-			throw e;
-		} catch (Throwable e) {
-			testNotifier.addFailure(e);
-		}
 	}
 
 	public void validateMethods(Class<? extends Annotation> annotation,
