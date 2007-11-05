@@ -3,7 +3,6 @@
  */
 package org.junit.experimental.theories.internal;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +20,14 @@ public class Assignments {
 
 	private final Class<?> fClass;
 
+	private final int fConstructorParameterCount;
+
 	public Assignments(List<PotentialAssignment> assigned,
-			List<ParameterSignature> unassigned, Class<?> type) {
+			List<ParameterSignature> unassigned, Class<?> type, int constructorParameterCount) {
 		fUnassigned= unassigned;
 		fAssigned= assigned;
 		fClass= type;
+		fConstructorParameterCount= constructorParameterCount;
 	}
 
 	// TODO: (Oct 12, 2007 10:27:59 AM) Do I need testClass?
@@ -33,9 +35,10 @@ public class Assignments {
 	public static Assignments allUnassigned(Method testMethod,
 			Class<?> testClass) {
 		List<ParameterSignature> signatures= ParameterSignature.signatures(testClass.getConstructors()[0]);
+		int constructorParameterCount = signatures.size();
 		signatures.addAll(ParameterSignature.signatures(testMethod));
 		return new Assignments(new ArrayList<PotentialAssignment>(),
-				signatures, testClass);
+				signatures, testClass, constructorParameterCount);
 	}
 
 	public boolean isComplete() {
@@ -50,8 +53,11 @@ public class Assignments {
 		List<PotentialAssignment> assigned= new ArrayList<PotentialAssignment>(
 				fAssigned);
 		assigned.add(source);
+		
+		// TODO: (Nov 5, 2007 9:47:51 AM) pass-through
+
 		return new Assignments(assigned, fUnassigned.subList(1, fUnassigned
-				.size()), fClass);
+				.size()), fClass, fConstructorParameterCount);
 	}
 
 	public Object[] getActualValues(boolean nullsOk, int start, int stop) throws CouldNotGenerateValueException {
@@ -90,26 +96,11 @@ public class Assignments {
 	}
 
 	public Object[] getConstructorArguments(boolean nullsOk) throws CouldNotGenerateValueException {
-		// TODO: (Oct 12, 2007 12:23:10 PM) pass-through
-		return getActualValues(nullsOk, 0, getOnlyConstructor()
-				.getParameterTypes().length);
-	}
-
-	private Constructor<?> getOnlyConstructor() {
-		try {
-			return fClass.getConstructors()[0];
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
+		return getActualValues(nullsOk, 0, fConstructorParameterCount);
 	}
 
 	public Object[] getMethodArguments(boolean nullsOk, Object target) throws CouldNotGenerateValueException {
-		// TODO: (Oct 12, 2007 12:29:57 PM) DUP
-
-		return getActualValues(nullsOk, getOnlyConstructor()
-				.getParameterTypes().length, fAssigned.size());
+		return getActualValues(nullsOk, fConstructorParameterCount, fAssigned.size());
 	}
 
 	public Object[] getAllArguments(boolean nullsOk) throws CouldNotGenerateValueException {
