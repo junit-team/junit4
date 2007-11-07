@@ -7,20 +7,15 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.internal.runners.CompositeRunner;
 import org.junit.internal.runners.JUnit4ClassRunner;
-import org.junit.internal.runners.ParentRunner;
-import org.junit.internal.runners.links.Statement;
 import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.TestClass;
 import org.junit.internal.runners.model.TestMethod;
-import org.junit.runner.Description;
-import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
-import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.notification.RunNotifier;
 
 /**
@@ -63,7 +58,7 @@ import org.junit.runner.notification.RunNotifier;
  * <code>&#064;Parameters</code> method.
  * </p>
  */
-public class Parameterized extends ParentRunner<Integer> implements Filterable {
+public class Parameterized extends CompositeRunner implements Filterable {
 	private class TestClassRunnerForParameters extends JUnit4ClassRunner {
 		private final int fParameterSetNumber;
 
@@ -113,7 +108,7 @@ public class Parameterized extends ParentRunner<Integer> implements Filterable {
 	private Constructor<?> fConstructor;
 
 	public Parameterized(Class<?> klass) throws Throwable {
-		super(klass);
+		super(klass, klass.getName());
 		fTestClass= new TestClass(klass);
 
 		List<Throwable> errors= new ArrayList<Throwable>();
@@ -123,8 +118,11 @@ public class Parameterized extends ParentRunner<Integer> implements Filterable {
 
 		fParameters= getParametersList();
 		
-		// TODO: (Nov 5, 2007 9:52:50 AM) Can I get rid of this?
 
+		for (int i = 0; i < fParameters.size(); i++)
+			add(new TestClassRunnerForParameters(klass, i));
+		
+		// TODO: (Nov 5, 2007 9:52:50 AM) Can I get rid of this?
 		for (final Object each : fParameters) {
 			if (!(each instanceof Object[]))
 				throw new Exception(String.format(
@@ -133,29 +131,6 @@ public class Parameterized extends ParentRunner<Integer> implements Filterable {
 		}
 		
 		fConstructor= getOnlyConstructor();
-	}
-
-	@Override
-	protected Statement classBlock(final RunNotifier notifier) {
-		// TODO: (Nov 5, 2007 9:58:45 AM) This looks odd
-
-		return new Statement() {
-			@Override
-			public void evaluate() throws InitializationError {
-				for (Integer i : getChildren()) {
-					runChild(i, notifier);
-				}
-			}
-		};
-	}
-
-	protected void runChild(Integer i, RunNotifier notifier) {
-		try {
-		new TestClassRunnerForParameters(fTestClass
-				.getJavaClass(), i++).run(notifier);
-		} catch (Exception e) {
-			// TODO: do something better here.
-		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -182,45 +157,6 @@ public class Parameterized extends ParentRunner<Integer> implements Filterable {
 		for (Object param : params)
 			results.add(new Object[] { param });
 		return results;
-	}
-
-	@Override
-	protected List<Integer> getChildren() {
-		// TODO: (Oct 29, 2007 1:57:23 PM) Should this be Iterable?  Iterator?
-
-		ArrayList<Integer> ints= new ArrayList<Integer>();
-		for (int i = 0; i < fParameters.size(); i++) {
-			ints.add(i);
-		}
-		return ints;
-	}
-
-	@Override
-	protected Description describeChild(Integer i) {
-		try {
-			return new TestClassRunnerForParameters(
-					fTestClass.getJavaClass(), i++).getDescription();
-		} catch (InitializationError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	public void filter(Filter filter) throws NoTestsRemainException {
-		int i= 0;
-		Iterator<Object[]> iterator= fParameters.iterator();
-		while (iterator.hasNext()) {
-			iterator.next();
-			try {
-				if (!filter.shouldRun(new TestClassRunnerForParameters(
-							fTestClass.getJavaClass(), i++).getDescription()))
-					iterator.remove();
-			} catch (InitializationError e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
 	}
 	
 	// TODO: (Nov 5, 2007 9:52:10 AM) Sort members

@@ -21,13 +21,20 @@ public class CompositeRunner extends ParentRunner<Runner> implements Filterable,
 	private final String fName;
 	
 	public CompositeRunner(String name) {
-		super(null);
-		fName= name;
+		this(null, name);
 	}
 	
-	@Override
-	public void run(RunNotifier notifier) {
-		runChildren(notifier);
+	public CompositeRunner(Class<?> type, String name) {
+		super(type);
+		fName = name;
+	}
+
+	// TODO: (Nov 7, 2007 1:48:55 PM) absorb into ParentRunner
+
+	public CompositeRunner(Class<?> type) {
+		// TODO: (Nov 7, 2007 1:59:24 PM) null is bad
+
+		this(type, null);
 	}
 
 	protected void runChildren(RunNotifier notifier) {

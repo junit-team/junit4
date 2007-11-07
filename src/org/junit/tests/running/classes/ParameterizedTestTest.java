@@ -87,9 +87,13 @@ public class ParameterizedTestTest {
 			fLog+= "after ";
 		}
 
+		public BeforeAndAfter(int x) {
+			
+		}
+		
 		@Parameters
 		public static Collection<Object[]> data() {
-			return Collections.emptyList();
+			return Arrays.asList(new Object[][] {{3}});
 		}
 		
 		@Test public void aTest() {
