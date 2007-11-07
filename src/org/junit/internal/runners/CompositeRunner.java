@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import org.junit.internal.runners.links.Statement;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
@@ -15,11 +16,12 @@ import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 
-public class CompositeRunner extends Runner implements Filterable, Sortable {
+public class CompositeRunner extends ParentRunner<Runner> implements Filterable, Sortable {
 	private final List<Runner> fRunners= new ArrayList<Runner>();
 	private final String fName;
 	
 	public CompositeRunner(String name) {
+		super(null);
 		fName= name;
 	}
 	
@@ -65,10 +67,6 @@ public class CompositeRunner extends Runner implements Filterable, Sortable {
 		}
 	}
 
-	protected String getName() {
-		return fName;
-	}
-
 	public void sort(final Sorter sorter) {
 		Collections.sort(fRunners, new Comparator<Runner>() {
 			public int compare(Runner o1, Runner o2) {
@@ -77,5 +75,25 @@ public class CompositeRunner extends Runner implements Filterable, Sortable {
 		});
 		for (Runner each : fRunners)
 			sorter.apply(each);
+	}
+
+	@Override
+	protected Statement classBlock(final RunNotifier notifier) {
+		return new Statement() {
+			@Override
+			public void evaluate() throws Throwable {
+				runChildren(notifier);
+			}			
+		};
+	}
+
+	@Override
+	protected Description describeChild(Runner child) {
+		return child.getDescription();
+	}
+
+	@Override
+	protected List<Runner> getChildren() {
+		return fRunners;
 	}
 }

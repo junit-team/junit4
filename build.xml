@@ -11,6 +11,7 @@
 	<property name="testfiles" value="junit/samples/**, junit/tests/**, org/junit/samples/**, org/junit/tests/**" />
 	<property name="unjarred" value="**/*.jar, ${testfiles}, doc/**, README.html, .classpath, .project, cpl-v10.html" />
 	<property name="binjar" value="junit-${version}.jar" />
+	<property name="depjar" value="junit-dep-${version}.jar" />
 	<property name="srcjar" value="junit-${version}-src.jar" />
 	<property name="javadocdir" value="${dist}/javadoc" />
 	<property name="javadoczip" value="${dist}-javadoc.zip" />
@@ -69,6 +70,11 @@
 			jarfile="${dist}/${binjar}"
 			basedir="${bin}"
 			excludes="${unjarred}, **/*.java, build.xml"
+		/>
+		<jar 
+			jarfile="${dist}/${depjar}" 
+			basedir="${bin}" 
+			excludes="${unjarred}, org/hamcrest/**, **/*.java, build.xml" 
 		/>
 	</target>
 

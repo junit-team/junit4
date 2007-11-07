@@ -7,7 +7,6 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -65,24 +64,18 @@ import org.junit.runner.notification.RunNotifier;
  * </p>
  */
 public class Parameterized extends ParentRunner<Integer> implements Filterable {
-	static class TestClassRunnerForParameters extends JUnit4ClassRunner {
-		private final Object[] fParameters;
-
+	private class TestClassRunnerForParameters extends JUnit4ClassRunner {
 		private final int fParameterSetNumber;
 
-		private final Constructor<?> fConstructor;
-
-		TestClassRunnerForParameters(Class<?> type, Object[] parameters, int i)
+		TestClassRunnerForParameters(Class<?> type, int i)
 				throws InitializationError {
 			super(type);
-			fParameters= parameters;
 			fParameterSetNumber= i;
-			fConstructor= getOnlyConstructor();
 		}
 
 		@Override
 		public Object createTest() throws Exception {
-			return fConstructor.newInstance(fParameters);
+			return fConstructor.newInstance(fParameters.get(fParameterSetNumber));
 		}
 
 		@Override
@@ -96,13 +89,6 @@ public class Parameterized extends ParentRunner<Integer> implements Filterable {
 					fParameterSetNumber);
 		}
 
-		private Constructor<?> getOnlyConstructor() {
-			Constructor<?>[] constructors= getTestClass().getJavaClass()
-					.getConstructors();
-			Assert.assertEquals(1, constructors.length);
-			return constructors[0];
-		}
-
 		@Override
 		protected void collectInitializationErrors(List<Throwable> errors) {
 			// do nothing: validated before.
@@ -110,6 +96,8 @@ public class Parameterized extends ParentRunner<Integer> implements Filterable {
 
 		@Override
 		public void run(RunNotifier notifier) {
+			// TODO: (Nov 5, 2007 9:57:48 AM) use blocks
+
 			for (TestMethod method : fTestMethods)
 				runChild(method, notifier);
 		}
@@ -121,6 +109,8 @@ public class Parameterized extends ParentRunner<Integer> implements Filterable {
 	}
 
 	private List<Object[]> fParameters;
+	
+	private Constructor<?> fConstructor;
 
 	public Parameterized(Class<?> klass) throws Throwable {
 		super(klass);
@@ -132,16 +122,23 @@ public class Parameterized extends ParentRunner<Integer> implements Filterable {
 		assertValid(errors);
 
 		fParameters= getParametersList();
+		
+		// TODO: (Nov 5, 2007 9:52:50 AM) Can I get rid of this?
+
 		for (final Object each : fParameters) {
 			if (!(each instanceof Object[]))
 				throw new Exception(String.format(
 						"%s.%s() must return a Collection of arrays.",
 						fTestClass.getName(), getParametersMethod().getName()));
 		}
+		
+		fConstructor= getOnlyConstructor();
 	}
 
 	@Override
 	protected Statement classBlock(final RunNotifier notifier) {
+		// TODO: (Nov 5, 2007 9:58:45 AM) This looks odd
+
 		return new Statement() {
 			@Override
 			public void evaluate() throws InitializationError {
@@ -155,7 +152,7 @@ public class Parameterized extends ParentRunner<Integer> implements Filterable {
 	protected void runChild(Integer i, RunNotifier notifier) {
 		try {
 		new TestClassRunnerForParameters(fTestClass
-				.getJavaClass(), fParameters.get(i), i++).run(notifier);
+				.getJavaClass(), i++).run(notifier);
 		} catch (Exception e) {
 			// TODO: do something better here.
 		}
@@ -180,7 +177,7 @@ public class Parameterized extends ParentRunner<Integer> implements Filterable {
 				+ fTestClass.getName());
 	}
 
-	public static Collection<Object[]> eachOne(Object... params) {
+	public static List<Object[]> eachOne(Object... params) {
 		List<Object[]> results= new ArrayList<Object[]>();
 		for (Object param : params)
 			results.add(new Object[] { param });
@@ -202,7 +199,7 @@ public class Parameterized extends ParentRunner<Integer> implements Filterable {
 	protected Description describeChild(Integer i) {
 		try {
 			return new TestClassRunnerForParameters(
-					fTestClass.getJavaClass(), null, i++).getDescription();
+					fTestClass.getJavaClass(), i++).getDescription();
 		} catch (InitializationError e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -214,15 +211,26 @@ public class Parameterized extends ParentRunner<Integer> implements Filterable {
 		int i= 0;
 		Iterator<Object[]> iterator= fParameters.iterator();
 		while (iterator.hasNext()) {
+			iterator.next();
 			try {
 				if (!filter.shouldRun(new TestClassRunnerForParameters(
-							fTestClass.getJavaClass(), iterator.next(), i++).getDescription()))
+							fTestClass.getJavaClass(), i++).getDescription()))
 					iterator.remove();
 			} catch (InitializationError e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	// TODO: (Nov 5, 2007 9:52:10 AM) Sort members
+	// TODO: (Nov 5, 2007 9:52:17 AM) Complex
+
+	private Constructor<?> getOnlyConstructor() {
+		Constructor<?>[] constructors= getTestClass().getJavaClass()
+				.getConstructors();
+		Assert.assertEquals(1, constructors.length);
+		return constructors[0];
 	}
 	
 }
