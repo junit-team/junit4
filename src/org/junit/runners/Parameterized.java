@@ -70,7 +70,17 @@ public class Parameterized extends CompositeRunner implements Filterable {
 
 		@Override
 		public Object createTest() throws Exception {
-			return fConstructor.newInstance(fParameters.get(fParameterSetNumber));
+			return fConstructor.newInstance(computeParams());
+		}
+
+		private Object[] computeParams() throws Exception {
+			try {
+				return fParameters.get(fParameterSetNumber);
+			} catch (ClassCastException e) {
+				throw new Exception(String.format(
+						"%s.%s() must return a Collection of arrays.",
+						fTestClass.getName(), getParametersMethod().getName()));				
+			}
 		}
 
 		@Override
@@ -117,18 +127,9 @@ public class Parameterized extends CompositeRunner implements Filterable {
 		assertValid(errors);
 
 		fParameters= getParametersList();
-		
 
 		for (int i = 0; i < fParameters.size(); i++)
 			add(new TestClassRunnerForParameters(klass, i));
-		
-		// TODO: (Nov 5, 2007 9:52:50 AM) Can I get rid of this?
-		for (final Object each : fParameters) {
-			if (!(each instanceof Object[]))
-				throw new Exception(String.format(
-						"%s.%s() must return a Collection of arrays.",
-						fTestClass.getName(), getParametersMethod().getName()));
-		}
 		
 		fConstructor= getOnlyConstructor();
 	}

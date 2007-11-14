@@ -1,6 +1,9 @@
 package org.junit.tests.running.classes;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.experimental.results.PrintableResult.testResult;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -56,9 +59,9 @@ public class ParameterizedTestTest {
 	@Test
 	public void failuresNamedCorrectly() {
 		Result result= JUnitCore.runClasses(FibonacciTest.class);
-		assertEquals(
-				String.format("test[1](%s)", FibonacciTest.class.getName()),
-				result.getFailures().get(0).getTestHeader());
+		assertEquals(String
+				.format("test[1](%s)", FibonacciTest.class.getName()), result
+				.getFailures().get(0).getTestHeader());
 	}
 
 	@Test
@@ -82,21 +85,23 @@ public class ParameterizedTestTest {
 		public static void before() {
 			fLog+= "before ";
 		}
+
 		@AfterClass
 		public static void after() {
 			fLog+= "after ";
 		}
 
 		public BeforeAndAfter(int x) {
-			
+
 		}
-		
+
 		@Parameters
 		public static Collection<Object[]> data() {
-			return Arrays.asList(new Object[][] {{3}});
+			return Arrays.asList(new Object[][] { { 3 } });
 		}
-		
-		@Test public void aTest() {
+
+		@Test
+		public void aTest() {
 		}
 	}
 
@@ -151,8 +156,9 @@ public class ParameterizedTestTest {
 		protected static Collection<Object[]> data() {
 			return Collections.emptyList();
 		}
-		
-		@Test public void aTest() {
+
+		@Test
+		public void aTest() {
 		}
 	}
 
@@ -171,14 +177,18 @@ public class ParameterizedTestTest {
 		public static Collection<String> data() {
 			return Arrays.asList("a", "b", "c");
 		}
-		
-		@Test public void aTest() {
+
+		@Test
+		public void aTest() {
 		}
 	}
-	
-	@Test public void meaningfulFailureWhenParameterListsAreNotArrays() {
-		Result result= JUnitCore.runClasses(WrongElementType.class);
-		String expected= String.format("%s.data() must return a Collection of arrays.", WrongElementType.class.getName());
-		assertEquals(expected, result.getFailures().get(0).getMessage());
+
+	@Test
+	public void meaningfulFailureWhenParameterListsAreNotArrays() {
+		String expected= String.format(
+				"%s.data() must return a Collection of arrays.",
+				WrongElementType.class.getName());
+		assertThat(testResult(WrongElementType.class).toString(),
+				containsString(expected));
 	}
 }
