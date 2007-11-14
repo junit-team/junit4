@@ -10,7 +10,7 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.internal.Assignments;
 import org.junit.internal.runners.links.Statement;
 import org.junit.internal.runners.model.InitializationError;
-import org.junit.internal.runners.model.TestMethod;
+import org.junit.internal.runners.model.FrameworkMethod;
 
 public class StubbedTheories extends Theories {
 	public StubbedTheories(Class<?> klass) throws InitializationError {
@@ -18,12 +18,12 @@ public class StubbedTheories extends Theories {
 	}
 
 	@Override
-	public Statement childBlock(TestMethod method) {
+	public Statement childBlock(FrameworkMethod method) {
 		return new StubbedTheoryAnchor(method);
 	}
 	
 	public class StubbedTheoryAnchor extends TheoryAnchor {
-		public StubbedTheoryAnchor(TestMethod method) {
+		public StubbedTheoryAnchor(FrameworkMethod method) {
 			super(method);
 		}
 

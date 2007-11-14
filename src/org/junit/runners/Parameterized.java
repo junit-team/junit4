@@ -14,7 +14,7 @@ import org.junit.internal.runners.CompositeRunner;
 import org.junit.internal.runners.JUnit4ClassRunner;
 import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.TestClass;
-import org.junit.internal.runners.model.TestMethod;
+import org.junit.internal.runners.model.FrameworkMethod;
 import org.junit.runner.manipulation.Filterable;
 import org.junit.runner.notification.RunNotifier;
 
@@ -79,7 +79,7 @@ public class Parameterized extends CompositeRunner implements Filterable {
 		}
 
 		@Override
-		protected String testName(final TestMethod method) {
+		protected String testName(final FrameworkMethod method) {
 			return String.format("%s[%s]", method.getName(),
 					fParameterSetNumber);
 		}
@@ -93,7 +93,7 @@ public class Parameterized extends CompositeRunner implements Filterable {
 		public void run(RunNotifier notifier) {
 			// TODO: (Nov 5, 2007 9:57:48 AM) use blocks
 
-			for (TestMethod method : fTestMethods)
+			for (FrameworkMethod method : fTestMethods)
 				runChild(method, notifier);
 		}
 	}
@@ -139,10 +139,10 @@ public class Parameterized extends CompositeRunner implements Filterable {
 				null);
 	}
 
-	private TestMethod getParametersMethod() throws Exception {
-		List<TestMethod> methods= fTestClass
+	private FrameworkMethod getParametersMethod() throws Exception {
+		List<FrameworkMethod> methods= fTestClass
 				.getAnnotatedMethods(Parameters.class);
-		for (TestMethod each : methods) {
+		for (FrameworkMethod each : methods) {
 			int modifiers= each.getMethod().getModifiers();
 			if (Modifier.isStatic(modifiers) && Modifier.isPublic(modifiers))
 				return each;

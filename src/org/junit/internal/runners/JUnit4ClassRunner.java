@@ -20,7 +20,8 @@ import org.junit.internal.runners.links.Statement;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.ReflectiveCallable;
-import org.junit.internal.runners.model.TestMethod;
+import org.junit.internal.runners.model.TestAnnotation;
+import org.junit.internal.runners.model.FrameworkMethod;
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
@@ -29,8 +30,8 @@ import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 
-public class JUnit4ClassRunner extends ParentRunner<TestMethod> implements Filterable, Sortable {
-	protected final List<TestMethod> fTestMethods;
+public class JUnit4ClassRunner extends ParentRunner<FrameworkMethod> implements Filterable, Sortable {
+	protected final List<FrameworkMethod> fTestMethods;
 
 	public JUnit4ClassRunner(Class<?> klass) throws InitializationError {
 		super(klass);
@@ -38,7 +39,7 @@ public class JUnit4ClassRunner extends ParentRunner<TestMethod> implements Filte
 		validate();
 	}
 
-	protected List<TestMethod> computeTestMethods() {
+	protected List<FrameworkMethod> computeTestMethods() {
 		return fTestClass.getTestMethods();
 	}
 
@@ -57,13 +58,13 @@ public class JUnit4ClassRunner extends ParentRunner<TestMethod> implements Filte
 		return new Statement() {
 			@Override
 			public void evaluate() {
-				for (TestMethod method : getChildren())
+				for (FrameworkMethod method : getChildren())
 					runChild(method, notifier);
 			}
 		};
 	}
 
-	protected void runChild(TestMethod method, RunNotifier notifier) {
+	protected void runChild(FrameworkMethod method, RunNotifier notifier) {
 		Description description= describeChild(method);
 		EachTestNotifier eachNotifier= new EachTestNotifier(notifier,
 				description);
@@ -75,16 +76,16 @@ public class JUnit4ClassRunner extends ParentRunner<TestMethod> implements Filte
 	}
 
 	@Override
-	protected Description describeChild(TestMethod method) {
+	protected Description describeChild(FrameworkMethod method) {
 		return Description.createTestDescription(fTestClass.getJavaClass(),
 				testName(method), method.getMethod().getAnnotations());
 	}
 
-	protected String testName(TestMethod method) {
+	protected String testName(FrameworkMethod method) {
 		return method.getName();
 	}
 
-	public Statement childBlock(TestMethod method) {
+	public Statement childBlock(FrameworkMethod method) {
 		Object test;
 		try {
 			// TODO: (Oct 12, 2007 11:49:18 AM) Can I ditch reflective callable?
@@ -99,16 +100,18 @@ public class JUnit4ClassRunner extends ParentRunner<TestMethod> implements Filte
 			return new Fail(e);
 		}
 
+		TestAnnotation annotation= new TestAnnotation(method);
+		
 		Statement link= invoke(method, test);
-		link= possiblyExpectingExceptions(method, link);
-		link= withPotentialTimeout(method, link);
+		link= possiblyExpectingExceptions(annotation, link);
+		link= withPotentialTimeout(annotation, link);
 		link= withBefores(method, test, link);
 		link= ignoreViolatedAssumptions(link);
 		link= withAfters(method, test, link);
 		return link;
 	}
 
-	protected Statement invoke(TestMethod method, Object test) {
+	protected Statement invoke(FrameworkMethod method, Object test) {
 		return new InvokeMethod(method, test);
 	}
 
@@ -116,37 +119,38 @@ public class JUnit4ClassRunner extends ParentRunner<TestMethod> implements Filte
 		return new IgnoreViolatedAssumptions(next);
 	}
 
-	protected Statement possiblyExpectingExceptions(TestMethod method,
+	private Statement possiblyExpectingExceptions(TestAnnotation annotation,
 			Statement next) {
-		return method.expectsException() ? new ExpectException(next, method
+		return annotation.expectsException() ? new ExpectException(next, annotation
 				.getExpectedException()) : next;
 	}
 
-	protected Statement withPotentialTimeout(TestMethod method, Statement next) {
-		long timeout= method.getTimeout();
+	protected Statement withPotentialTimeout(TestAnnotation annotation,
+			Statement next) {
+		long timeout= annotation.getTimeout();
 		return timeout > 0 ? new FailOnTimeout(next, timeout) : next;
 	}
 
-	protected Statement withAfters(TestMethod method, Object target,
+	protected Statement withAfters(FrameworkMethod method, Object target,
 			Statement link) {
 		// TODO: (Oct 12, 2007 10:23:59 AM) Check for DUP in callers
 
-		return new RunAfters(link, method, target);
+		return new RunAfters(link, new TestMethodElement(getTestClass()), target);
 	}
 
-	protected Statement withBefores(TestMethod method, Object target,
+	protected Statement withBefores(FrameworkMethod method, Object target,
 			Statement link) {
-		return new RunBefores(link, method, target);
+		return new RunBefores(link, new TestMethodElement(getTestClass()), target);
 	}
 
-	protected Notifier notifying(TestMethod method, Statement link) {
+	protected Notifier notifying(FrameworkMethod method, Statement link) {
 		return method.isIgnored() ? new IgnoreTestNotifier()
 				: new RunTestNotifier(link);
 	}
 
 	public void filter(Filter filter) throws NoTestsRemainException {
-		for (Iterator<TestMethod> iter= fTestMethods.iterator(); iter.hasNext();) {
-			TestMethod method= iter.next();
+		for (Iterator<FrameworkMethod> iter= fTestMethods.iterator(); iter.hasNext();) {
+			FrameworkMethod method= iter.next();
 			if (!filter.shouldRun(describeChild(method)))
 				iter.remove();
 		}
@@ -155,8 +159,8 @@ public class JUnit4ClassRunner extends ParentRunner<TestMethod> implements Filte
 	}
 
 	public void sort(final Sorter sorter) {
-		Collections.sort(fTestMethods, new Comparator<TestMethod>() {
-			public int compare(TestMethod o1, TestMethod o2) {
+		Collections.sort(fTestMethods, new Comparator<FrameworkMethod>() {
+			public int compare(FrameworkMethod o1, FrameworkMethod o2) {
 				return sorter.compare(describeChild(o1),
 						describeChild(o2));
 			}
@@ -164,7 +168,7 @@ public class JUnit4ClassRunner extends ParentRunner<TestMethod> implements Filte
 	}
 
 	@Override
-	protected List<TestMethod> getChildren() {
+	protected List<FrameworkMethod> getChildren() {
 		return fTestMethods;
 	}
 }

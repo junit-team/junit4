@@ -1,8 +1,5 @@
 package org.junit.runner;
 
-import java.util.List;
-
-import org.junit.internal.runners.model.InitializationError;
 import org.junit.runner.notification.RunNotifier;
 
 /**
@@ -39,10 +36,5 @@ public abstract class Runner implements Describable {
 	 */
 	public int testCount() {
 		return getDescription().testCount();
-	}
-
-	protected void assertValid(List<Throwable> errors) throws InitializationError {
-		if (!errors.isEmpty())
-			throw new InitializationError(errors);
 	}
 }

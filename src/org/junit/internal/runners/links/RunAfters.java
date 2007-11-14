@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.junit.internal.runners.model.MultipleFailureException;
 import org.junit.internal.runners.model.TestElement;
-import org.junit.internal.runners.model.TestMethod;
+import org.junit.internal.runners.model.FrameworkMethod;
 
 public class RunAfters extends Statement {
 	private final Statement fNext;
@@ -30,8 +30,8 @@ public class RunAfters extends Statement {
 		} catch (Throwable e) {
 			errors.add(e);
 		} finally {
-			List<TestMethod> afters= fElement.getAfters();
-			for (TestMethod each : afters)
+			List<FrameworkMethod> afters= fElement.getAfters();
+			for (FrameworkMethod each : afters)
 				try {
 					each.invokeExplosively(fTarget);
 				} catch (Throwable e) {

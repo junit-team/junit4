@@ -20,29 +20,29 @@ public class TestClass extends TestElement {
 		fClass= klass;
 	}
 
-	public List<TestMethod> getTestMethods() {
+	public List<FrameworkMethod> getTestMethods() {
 		return getAnnotatedMethods(Test.class);
 	}
 
 	@Override
-	public List<TestMethod> getBefores() {
+	public List<FrameworkMethod> getBefores() {
 		return getAnnotatedMethods(BeforeClass.class);
 	}
 
 	@Override
-	public List<TestMethod> getAfters() {
+	public List<FrameworkMethod> getAfters() {
 		return getAnnotatedMethods(AfterClass.class);
 	}
 
-	public List<TestMethod> getAnnotatedMethods(
+	public List<FrameworkMethod> getAnnotatedMethods(
 			Class<? extends Annotation> annotationClass) {
-		List<TestMethod> results= new ArrayList<TestMethod>();
+		List<FrameworkMethod> results= new ArrayList<FrameworkMethod>();
 		for (Class<?> eachClass : getSuperClasses(fClass)) {
 			Method[] methods= eachClass.getDeclaredMethods();
 			for (Method eachMethod : methods) {
 				Annotation annotation= eachMethod
 						.getAnnotation(annotationClass);
-				TestMethod testMethod= new TestMethod(eachMethod, this);
+				FrameworkMethod testMethod= new FrameworkMethod(eachMethod);
 				if (annotation != null && !testMethod.isShadowedBy(results))
 					results.add(testMethod);
 			}
@@ -82,9 +82,9 @@ public class TestClass extends TestElement {
 
 	public void validateMethods(Class<? extends Annotation> annotation,
 			boolean isStatic, List<Throwable> errors) {
-		List<TestMethod> methods= getAnnotatedMethods(annotation);
+		List<FrameworkMethod> methods= getAnnotatedMethods(annotation);
 
-		for (TestMethod eachTestMethod : methods) {
+		for (FrameworkMethod eachTestMethod : methods) {
 			eachTestMethod.validate(isStatic, errors);
 		}
 	}
@@ -109,7 +109,7 @@ public class TestClass extends TestElement {
 		validateMethods(Before.class, false, errors);
 		validateMethods(Test.class, false, errors);
 
-		List<TestMethod> methods= getAnnotatedMethods(Test.class);
+		List<FrameworkMethod> methods= getAnnotatedMethods(Test.class);
 		if (methods.size() == 0)
 			errors.add(new Exception("No runnable methods"));
 	}

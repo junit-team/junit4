@@ -8,6 +8,7 @@ import org.junit.internal.runners.links.RunAfters;
 import org.junit.internal.runners.links.RunBefores;
 import org.junit.internal.runners.links.Statement;
 import org.junit.internal.runners.model.EachTestNotifier;
+import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.TestClass;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
@@ -61,5 +62,12 @@ public abstract class ParentRunner<T> extends Runner {
 
 	protected String getName() {
 		return fTestClass.getName();
+	}
+
+	// TODO: (Nov 14, 2007 11:04:54 AM) sort methods
+
+	protected void assertValid(List<Throwable> errors) throws InitializationError {
+		if (!errors.isEmpty())
+			throw new InitializationError(errors);
 	}
 }
