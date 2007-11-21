@@ -26,20 +26,10 @@ public class FailOnTimeout extends Statement {
 		ExecutorService service= Executors.newSingleThreadExecutor();
 		Callable<Object> callable= new Callable<Object>() {
 			public Object call() throws Exception {
-				// TODO: (Oct 12, 2007 10:15:08 AM) Use MultipleFailureException
-				// TODO: (Oct 12, 2007 10:15:19 AM) Use MultipleFailureException in construction
-				// TODO: (Oct 12, 2007 10:15:29 AM) Convert to Statement?
-
-
-
 				try {
 					fNext.evaluate();
-				} catch (Exception e) {
-					throw e;
-				} catch (Error e) {
-					throw e;
 				} catch (Throwable e) {
-					// TODO: (Oct 5, 2007 11:27:11 AM) Now what?  Is there a useful thing to do with this?
+					throw new ExecutionException(e);
 				}
 				return null;
 			}
@@ -56,7 +46,13 @@ public class FailOnTimeout extends Statement {
 			throw new Exception(String.format(
 					"test timed out after %d milliseconds", fTimeout));
 		} catch (ExecutionException e) {
-			throw e.getCause();
+			throw unwrap(e);
 		}
+	}
+
+	private Throwable unwrap(Throwable e) {
+		if (e instanceof ExecutionException)
+			return unwrap(e.getCause());
+		return e;
 	}
 }
