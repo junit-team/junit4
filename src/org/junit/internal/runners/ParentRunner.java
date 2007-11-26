@@ -25,8 +25,23 @@ public abstract class ParentRunner<T> extends Runner {
 	protected abstract List<T> getChildren();
 	
 	protected abstract Description describeChild(T child);
-	
-	protected abstract Statement classBlock(RunNotifier notifier);
+
+	// TODO: (Nov 24, 2007 11:50:17 PM) can I avoid RunNotifier?
+
+	protected abstract void runChild(T child, RunNotifier notifier);
+
+
+	// TODO: (Nov 25, 2007 12:03:48 AM) remove final
+
+	private Statement classBlock(final RunNotifier notifier) {
+		return new Statement() {
+					@Override
+					public void evaluate() {
+						for (T each : getChildren())
+							runChild(each, notifier);
+					}
+				};
+	}
 	
 	@Override
 	public void run(final RunNotifier notifier) {

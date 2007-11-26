@@ -54,16 +54,6 @@ public class JUnit4ClassRunner extends ParentRunner<FrameworkMethod> implements 
 	}
 
 	@Override
-	protected Statement classBlock(final RunNotifier notifier) {
-		return new Statement() {
-			@Override
-			public void evaluate() {
-				for (FrameworkMethod method : getChildren())
-					runChild(method, notifier);
-			}
-		};
-	}
-
 	protected void runChild(FrameworkMethod method, RunNotifier notifier) {
 		Description description= describeChild(method);
 		EachTestNotifier eachNotifier= new EachTestNotifier(notifier,

@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.internal.runners.ParentRunner;
-import org.junit.internal.runners.links.Statement;
 import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.TestClass;
 import org.junit.runner.Description;
@@ -100,27 +99,13 @@ public class Suite extends ParentRunner<Runner> implements Filterable, Sortable 
 		fTestClass.validateInstanceMethods(errors);
 	}
 
-
-	@Override
-	protected Statement classBlock(final RunNotifier notifier) {
-		// TODO: (Oct 29, 2007 2:49:03 PM) Is this duplicated with other classBlocks?
-
-		return new Statement() {
-					@Override
-					public void evaluate() {
-						for (Runner each : getChildren())
-							runChild(each, notifier);
-					}
-				};
-	}
-
 	@Override
 	public List<Runner> getChildren() {
 		return fRunners;
 	}
 
-	private void runChild(Runner each,
-			final RunNotifier notifier) {
+	@Override
+	protected void runChild(Runner each, final RunNotifier notifier) {
 		each.run(notifier);
 	}
 

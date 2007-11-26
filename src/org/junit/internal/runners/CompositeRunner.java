@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.internal.runners.links.Statement;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
@@ -35,11 +34,6 @@ public class CompositeRunner extends ParentRunner<Runner> implements Filterable,
 		// TODO: (Nov 7, 2007 1:59:24 PM) null is bad
 
 		this(type, null);
-	}
-
-	protected void runChildren(RunNotifier notifier) {
-		for (Runner each : fRunners)
-			each.run(notifier);
 	}
 
 	@Override
@@ -85,16 +79,6 @@ public class CompositeRunner extends ParentRunner<Runner> implements Filterable,
 	}
 
 	@Override
-	protected Statement classBlock(final RunNotifier notifier) {
-		return new Statement() {
-			@Override
-			public void evaluate() throws Throwable {
-				runChildren(notifier);
-			}			
-		};
-	}
-
-	@Override
 	protected Description describeChild(Runner child) {
 		return child.getDescription();
 	}
@@ -102,5 +86,10 @@ public class CompositeRunner extends ParentRunner<Runner> implements Filterable,
 	@Override
 	protected List<Runner> getChildren() {
 		return fRunners;
+	}
+
+	@Override
+	protected void runChild(Runner each, final RunNotifier notifier) {
+		each.run(notifier);
 	}
 }
