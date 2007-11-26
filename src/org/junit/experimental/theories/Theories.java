@@ -166,8 +166,6 @@ public class Theories extends JUnit4ClassRunner {
 				}.childBlock(fTestMethod).evaluate();
 			} catch (AssumptionViolatedException e) {
 				handleAssumptionViolation(e);
-			} catch (CouldNotGenerateValueException e) {
-				// Do nothing
 			}
 		}
 
@@ -180,8 +178,6 @@ public class Theories extends JUnit4ClassRunner {
 						invokeWithActualParameters(freshInstance, complete);
 					} catch (CouldNotGenerateValueException e) {
 						// ignore
-						// TODO: (Oct 12, 2007 9:58:11 AM) Do I ignore this
-						// elsewhere?
 					}
 				}
 			};
