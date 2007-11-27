@@ -37,12 +37,13 @@ This feature will very likely be improved before the final release of JUnit 4.5
 
 ### JUnit 4 Runner API ###
 
-- Refactoring removed duplication that used to exist in classes MethodRoadie and ClassRoadie
-
-- Extracted new interface `Describable`, for any object that can return a Description
-
-- Exposed API's `TestMethod.getBefores` and `TestMethod.getAfters`
-
+- There has been a drastic rewrite of the API for custom Runners in 4.5.  This
+  needs to be written up separately before release.
+  
+- Tests with failed assumptions are now marked as Ignored, rather than silently passing.
+  This may change behavior in some client tests, and also will require some new support 
+  on the part of IDE's.
+  
 ## Summary of Changes in version 4.4 ##
 
 JUnit is designed to efficiently capture developers' intentions about
