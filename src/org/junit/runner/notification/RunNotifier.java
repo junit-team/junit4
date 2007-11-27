@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.junit.Assume.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 
@@ -147,5 +148,15 @@ public class RunNotifier {
 		fireTestStarted(description);
 		fireTestFailure(new Failure(description, cause));
 		fireTestFinished(description);
+	}
+
+	public void fireTestIgnoredReason(final Description description,
+			final AssumptionViolatedException e) {
+		new SafeNotifier() {
+			@Override
+			protected void notifyListener(RunListener each) throws Exception {
+				each.testIgnoredReason(description, e);
+			};
+		}.run();
 	}
 }

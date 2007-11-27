@@ -10,7 +10,6 @@ import org.junit.internal.runners.links.ExpectException;
 import org.junit.internal.runners.links.Fail;
 import org.junit.internal.runners.links.FailOnTimeout;
 import org.junit.internal.runners.links.IgnoreTestNotifier;
-import org.junit.internal.runners.links.IgnoreViolatedAssumptions;
 import org.junit.internal.runners.links.InvokeMethod;
 import org.junit.internal.runners.links.Notifier;
 import org.junit.internal.runners.links.RunAfters;
@@ -18,10 +17,10 @@ import org.junit.internal.runners.links.RunBefores;
 import org.junit.internal.runners.links.RunTestNotifier;
 import org.junit.internal.runners.links.Statement;
 import org.junit.internal.runners.model.EachTestNotifier;
+import org.junit.internal.runners.model.FrameworkMethod;
 import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.internal.runners.model.TestAnnotation;
-import org.junit.internal.runners.model.FrameworkMethod;
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
@@ -96,17 +95,12 @@ public class JUnit4ClassRunner extends ParentRunner<FrameworkMethod> implements 
 		link= possiblyExpectingExceptions(annotation, link);
 		link= withPotentialTimeout(annotation, link);
 		link= withBefores(method, test, link);
-		link= ignoreViolatedAssumptions(link);
 		link= withAfters(method, test, link);
 		return link;
 	}
 
 	protected Statement invoke(FrameworkMethod method, Object test) {
 		return new InvokeMethod(method, test);
-	}
-
-	protected Statement ignoreViolatedAssumptions(Statement next) {
-		return new IgnoreViolatedAssumptions(next);
 	}
 
 	private Statement possiblyExpectingExceptions(TestAnnotation annotation,

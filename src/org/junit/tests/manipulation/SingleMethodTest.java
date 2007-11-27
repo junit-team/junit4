@@ -57,6 +57,29 @@ public class SingleMethodTest {
 		public ParameterizedOneTimeSetup(int x) {
 		}
 
+		@Test public void one() {
+		}
+	}
+
+	@Test public void parameterizedFilterToSingleMethod() throws Exception {
+		count = 0;
+		Runner runner = Request.method(ParameterizedOneTimeSetup.class,
+				"one[0]").getRunner();
+		Result result = new JUnitCore().run(runner);
+
+		assertEquals(1, result.getRunCount());
+	}
+
+	@RunWith(Parameterized.class)
+	static public class ParameterizedOneTimeBeforeClass {
+		@Parameters
+		public static List<Object[]> params() {
+			return Parameterized.eachOne(1, 2);
+		} 
+
+		public ParameterizedOneTimeBeforeClass(int x) {
+		}
+
 		@BeforeClass public static void once() {
 			count++;
 		}
@@ -65,18 +88,11 @@ public class SingleMethodTest {
 		}
 	}
 
-	// TODO: (Oct 29, 2007 1:41:02 PM) This is both testing correct filtering of
-	// parameterized tests, and correct execution of BeforeClass for
-	// parameterized tests
-
-	@Test public void parameterizedFilterToSingleMethod() throws Exception {
+	
+	@Test public void parameterizedBeforeClass() throws Exception {
 		count = 0;
-		Runner runner = Request.method(ParameterizedOneTimeSetup.class,
-				"one[0]").getRunner();
-		Result result = new JUnitCore().run(runner);
-
+		JUnitCore.runClasses(ParameterizedOneTimeBeforeClass.class);
 		assertEquals(1, count);
-		assertEquals(1, result.getRunCount());
 	}
 
 	@Test public void filteringAffectsPlan() throws Exception {

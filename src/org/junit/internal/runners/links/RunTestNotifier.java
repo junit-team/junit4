@@ -3,6 +3,7 @@
  */
 package org.junit.internal.runners.links;
 
+import org.junit.Assume.AssumptionViolatedException;
 import org.junit.internal.runners.model.EachTestNotifier;
 
 public class RunTestNotifier extends Notifier {
@@ -17,6 +18,8 @@ public class RunTestNotifier extends Notifier {
 		context.fireTestStarted();
 		try {
 			fNext.evaluate();
+		} catch (AssumptionViolatedException e) {
+			context.addIgnorance(e);
 		} catch (Throwable e) {
 			context.addFailure(e);
 		} finally {

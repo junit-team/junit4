@@ -3,7 +3,7 @@ package org.junit.internal.runners;
 import java.lang.annotation.Annotation;
 import java.util.List;
 
-import org.junit.internal.runners.links.IgnoreViolatedAssumptions;
+import org.junit.Assume.AssumptionViolatedException;
 import org.junit.internal.runners.links.RunAfters;
 import org.junit.internal.runners.links.RunBefores;
 import org.junit.internal.runners.links.Statement;
@@ -49,9 +49,10 @@ public abstract class ParentRunner<T> extends Runner {
 				getDescription());
 		try {
 			Statement statement= new RunBefores(classBlock(notifier), fTestClass, null);
-			statement= new IgnoreViolatedAssumptions(statement);
 			statement= new RunAfters(statement, fTestClass, null);
 			statement.evaluate();
+		} catch (AssumptionViolatedException e) {
+			testNotifier.addIgnorance(e);
 		} catch (StoppedByUserException e) {
 			throw e;
 		} catch (Throwable e) {

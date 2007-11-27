@@ -85,88 +85,59 @@ public class Theories extends JUnit4ClassRunner {
 		protected void runWithCompleteAssignment(final Assignments complete)
 				throws InstantiationException, IllegalAccessException,
 				InvocationTargetException, NoSuchMethodException, Throwable {
-			try {
-				new JUnit4ClassRunner(getTestClass().getJavaClass()) {
-					@Override
-					protected void collectInitializationErrors(
-							List<Throwable> errors) {
-						// TODO: (Oct 12, 2007 12:08:03 PM) DUP
-						// do nothing
-					}
+			new JUnit4ClassRunner(getTestClass().getJavaClass()) {
+				@Override
+				protected void collectInitializationErrors(
+						List<Throwable> errors) {
+					// TODO: (Oct 12, 2007 12:08:03 PM) DUP
+					// do nothing
+				}
 
-					@Override
-					public Statement childBlock(FrameworkMethod method) {
-						// TODO: (Oct 12, 2007 2:00:52 PM) Name this Link
-						final Statement link= super.childBlock(method);
-						return new Statement() {
+				@Override
+				public Statement childBlock(FrameworkMethod method) {
+					// TODO: (Oct 12, 2007 2:00:52 PM) Name this Link
+					final Statement link= super.childBlock(method);
+					return new Statement() {
 
-							@Override
-							public void evaluate() throws Throwable {
-								try {
-									link.evaluate();
-									successes++;
-								} catch (AssumptionViolatedException e) {
-									// TODO: (Oct 12, 2007 2:07:01 PM) DUP? even
-									// correct?
-									// do nothing
-								} catch (Throwable e) {
-									// TODO: (Oct 12, 2007 2:04:01 PM) nullsOk
-									// as argument to Assignments constructor
+						@Override
+						public void evaluate() throws Throwable {
+							try {
+								link.evaluate();
+								successes++;
+							} catch (AssumptionViolatedException e) {
+								handleAssumptionViolation(e);
+							} catch (Throwable e) {
+								// TODO: (Oct 12, 2007 2:04:01 PM) nullsOk
+								// as argument to Assignments constructor
 
-									reportParameterizedError(e, complete
-											.getAllArguments(nullsOk()));
-								}
+								reportParameterizedError(e, complete
+										.getAllArguments(nullsOk()));
 							}
+						}
 
-						};
-					}
+					};
+				}
 
-					@Override
-					protected Statement invoke(FrameworkMethod method, Object test) {
-						// TODO: (Oct 12, 2007 12:07:28 PM) push method in
-						return methodCompletesWithParameters(complete, test);
-					}
+				@Override
+				protected Statement invoke(FrameworkMethod method, Object test) {
+					// TODO: (Oct 12, 2007 12:07:28 PM) push method in
+					return methodCompletesWithParameters(complete, test);
+				}
 
-					@Override
-					protected Statement ignoreViolatedAssumptions(
-							final Statement next) {
-						// TODO: (Oct 12, 2007 2:15:02 PM) name this
+				@Override
+				public Object createTest() throws Exception {
+					// TODO: (Nov 26, 2007 8:44:14 PM) no matching data should
+					// ignore
+					// TODO: (Oct 12, 2007 12:31:12 PM) DUP
+					// TODO: (Oct 12, 2007 12:40:33 PM) honor assumption
+					// violations in JUnit4ClassRunner constructor
+					// invocations
 
-						return new Statement() {
-
-							@Override
-							public void evaluate() throws Throwable {
-								try {
-									next.evaluate();
-								} catch (AssumptionViolatedException e) {
-									// TODO: (Oct 12, 2007 2:19:52 PM) This
-									// feels hacky
-
-									successes--;
-									handleAssumptionViolation(e);
-									// TODO: (Oct 12, 2007 2:15:44 PM) Can I
-									// remove other calls?
-
-								}
-							}
-						};
-					}
-
-					@Override
-					public Object createTest() throws Exception {
-						// TODO: (Oct 12, 2007 12:31:12 PM) DUP
-						// TODO: (Oct 12, 2007 12:40:33 PM) honor assumption
-						// violations in JUnit4ClassRunner constructor
-						// invocations
-
-						return getTestClass().getJavaClass().getConstructors()[0]
-								.newInstance(complete
-										.getConstructorArguments(nullsOk()));
-					}
-				}.childBlock(fTestMethod).evaluate();
-			} catch (AssumptionViolatedException e) {
-				handleAssumptionViolation(e);
-			}
+					return getTestClass().getJavaClass().getConstructors()[0]
+							.newInstance(complete
+									.getConstructorArguments(nullsOk()));
+				}
+			}.childBlock(fTestMethod).evaluate();
 		}
 
 		private Statement methodCompletesWithParameters(
@@ -187,11 +158,7 @@ public class Theories extends JUnit4ClassRunner {
 				Assignments complete) throws Throwable {
 			final Object[] values= complete.getMethodArguments(nullsOk(),
 					target);
-			// try {
 			fTestMethod.invokeExplosively(target, values);
-			// } catch (AssumptionViolatedException e) {
-			// handleAssumptionViolation(e);
-			// }
 		}
 
 		protected void handleAssumptionViolation(AssumptionViolatedException e) {
@@ -214,4 +181,7 @@ public class Theories extends JUnit4ClassRunner {
 			return annotation.nullsAccepted();
 		}
 	}
+
+	// TODO: (Nov 26, 2007 12:14:24 PM) complex
+
 }

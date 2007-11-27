@@ -3,6 +3,8 @@ package org.junit.runner;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Assume.AssumptionViolatedException;
+import org.junit.internal.Ignorance;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 
@@ -15,6 +17,7 @@ public class Result {
 	private int fCount= 0;
 	private int fIgnoreCount= 0;
 	private List<Failure> fFailures= new ArrayList<Failure>();
+	private List<Ignorance> fIgnorances= new ArrayList<Ignorance>();
 	private long fRunTime= 0;
 	private long fStartTime;
 
@@ -44,6 +47,11 @@ public class Result {
 	 */
 	public List<Failure> getFailures() {
 		return fFailures;
+	}
+
+
+	public List<Ignorance> getIgnorances() {
+		return fIgnorances;
 	}
 
 	/**
@@ -85,6 +93,15 @@ public class Result {
 		@Override
 		public void testIgnored(Description description) throws Exception {
 			fIgnoreCount++;
+		}
+		
+		@Override
+		public void testIgnoredReason(Description description,
+				AssumptionViolatedException e) {
+			fIgnorances.add(new Ignorance(description, e));
+			// TODO: (Nov 26, 2007 2:35:49 PM) best way to do this?
+
+			fCount--;
 		}
 	}
 

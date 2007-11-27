@@ -1,5 +1,6 @@
 package org.junit.runner.notification;
 
+import org.junit.Assume.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 
@@ -74,6 +75,10 @@ public class RunListener {
 	 * @param description describes the test that will not be run
 	 */
 	public void testIgnored(Description description) throws Exception {
+	}
+
+	public void testIgnoredReason(Description description,
+			AssumptionViolatedException e) {
 	}
 }
 

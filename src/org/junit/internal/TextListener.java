@@ -24,6 +24,7 @@ public class TextListener extends RunListener {
 	public void testRunFinished(Result result) {
 		printHeader(result.getRunTime());
 		printFailures(result);
+		printIgnorances(result);
 		printFooter(result);
 	}
 
@@ -64,6 +65,19 @@ public class TextListener extends RunListener {
 			getWriter().println("There were " + result.getFailureCount() + " failures:");
 		int i= 1;
 		for (Failure each : result.getFailures())
+			printFailure(each, i++);
+	}
+	
+	private void printIgnorances(Result result) {
+		// TODO: (Nov 26, 2007 2:00:14 PM) cheating, of course
+		if (result.getIgnoreCount() == 0)
+			return;
+		if (result.getIgnoreCount() == 1)
+			getWriter().println("There was " + result.getIgnoreCount() + " failure:");
+		else
+			getWriter().println("There were " + result.getIgnoreCount() + " failures:");
+		int i= 1;
+		for (Ignorance each : result.getIgnorances())
 			printFailure(each, i++);
 	}
 
