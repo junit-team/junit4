@@ -133,7 +133,7 @@ public class WithDataPointMethod {
 
 	private List<PotentialAssignment> potentialValues(Method method)
 			throws Exception {
-		return Assignments.allUnassigned(method, HasDateMethod.class)
+		return Assignments.allUnassigned(method, HasDateMethod.class, true)
 				.potentialsForNextUnassigned();
 	}
 
