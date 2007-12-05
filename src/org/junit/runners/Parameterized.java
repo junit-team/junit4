@@ -9,7 +9,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.internal.runners.CompositeRunner;
 import org.junit.internal.runners.JUnit4ClassRunner;
 import org.junit.internal.runners.model.InitializationError;
@@ -164,10 +163,7 @@ public class Parameterized extends CompositeRunner implements Filterable {
 	// TODO: (Nov 5, 2007 9:52:17 AM) Complex
 
 	private Constructor<?> getOnlyConstructor() {
-		Constructor<?>[] constructors= getTestClass().getJavaClass()
-				.getConstructors();
-		Assert.assertEquals(1, constructors.length);
-		return constructors[0];
+		TestClass testClass= getTestClass();
+		return testClass.getOnlyConstructor();
 	}
-	
 }
