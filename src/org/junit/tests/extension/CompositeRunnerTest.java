@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
 public class CompositeRunnerTest {
 	public static class CompositeWithClass extends CompositeRunner {
 		public CompositeWithClass(Class<?> type) {
-			super(type);
+			super(type, "something");
 		}
 	}
 	
