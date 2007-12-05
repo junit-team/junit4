@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -67,9 +68,10 @@ public class TestClass extends TestElement {
 		return results;
 	}
 
-	public Constructor<?> getConstructor() throws SecurityException,
-			NoSuchMethodException {
-		return fClass.getConstructor();
+	public Constructor<?> getConstructor() throws SecurityException {
+		// TODO: (Dec 1, 2007 11:01:06 PM) complain if wrong number of constructors
+
+		return fClass.getConstructors()[0];
 	}
 
 	public Class<?> getJavaClass() {
@@ -118,5 +120,11 @@ public class TestClass extends TestElement {
 		validateNoArgConstructor(errors);
 		validateStaticMethods(errors);
 		validateInstanceMethods(errors);
+	}
+
+	public Constructor<?> getOnlyConstructor() {
+		Constructor<?>[] constructors= fClass.getConstructors();
+		Assert.assertEquals(1, constructors.length);
+		return constructors[0];
 	}
 }
