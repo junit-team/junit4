@@ -77,8 +77,6 @@ public class JUnit4ClassRunner extends ParentRunner<FrameworkMethod> implements 
 	public Statement childBlock(FrameworkMethod method) {
 		Object test;
 		try {
-			// TODO: (Oct 12, 2007 11:49:18 AM) Can I ditch reflective callable?
-
 			test= new ReflectiveCallable() {
 				@Override
 				protected Object runReflectiveCall() throws Throwable {
@@ -117,8 +115,6 @@ public class JUnit4ClassRunner extends ParentRunner<FrameworkMethod> implements 
 
 	protected Statement withAfters(FrameworkMethod method, Object target,
 			Statement link) {
-		// TODO: (Oct 12, 2007 10:23:59 AM) Check for DUP in callers
-
 		return new RunAfters(link, new TestMethodElement(getTestClass()), target);
 	}
 
@@ -132,6 +128,9 @@ public class JUnit4ClassRunner extends ParentRunner<FrameworkMethod> implements 
 				: new RunTestNotifier(link);
 	}
 
+	// TODO: (Dec 1, 2007 11:37:28 PM) absorb into parent?
+
+	@Override
 	public void filter(Filter filter) throws NoTestsRemainException {
 		for (Iterator<FrameworkMethod> iter= fTestMethods.iterator(); iter.hasNext();) {
 			FrameworkMethod method= iter.next();
