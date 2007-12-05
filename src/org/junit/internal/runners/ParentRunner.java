@@ -1,6 +1,7 @@
 package org.junit.internal.runners;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assume.AssumptionViolatedException;
@@ -12,11 +13,15 @@ import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.TestClass;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
+import org.junit.runner.manipulation.Filter;
+import org.junit.runner.manipulation.Filterable;
+import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
 
-public abstract class ParentRunner<T> extends Runner {
+public abstract class ParentRunner<T> extends Runner implements Filterable {
 	protected TestClass fTestClass;
+	private Filter fFilter;
 
 	public ParentRunner(Class<?> testClass) {
 		fTestClass = new TestClass(testClass);
@@ -37,7 +42,7 @@ public abstract class ParentRunner<T> extends Runner {
 		return new Statement() {
 					@Override
 					public void evaluate() {
-						for (T each : getChildren())
+						for (T each : getFilteredChildren())
 							runChild(each, notifier);
 					}
 				};
@@ -63,16 +68,24 @@ public abstract class ParentRunner<T> extends Runner {
 	@Override
 	public Description getDescription() {
 		Description description= Description.createSuiteDescription(getName(), classAnnotations());
-		for (T child : getChildren())
+		for (T child : getFilteredChildren())
 			description.addChild(describeChild(child));
 		return description;
+	}
+
+	private List<T> getFilteredChildren() {
+		ArrayList<T> filtered= new ArrayList<T>();
+		for (T each : getChildren())
+			if (fFilter == null || fFilter.shouldRun(describeChild(each)))
+				filtered.add(each);
+		return filtered;
 	}
 
 	protected TestClass getTestClass() {
 		return fTestClass;
 	}
 
-	private Annotation[] classAnnotations() {
+	protected Annotation[] classAnnotations() {
 		return fTestClass.getJavaClass().getAnnotations();
 	}
 
@@ -85,5 +98,9 @@ public abstract class ParentRunner<T> extends Runner {
 	protected void assertValid(List<Throwable> errors) throws InitializationError {
 		if (!errors.isEmpty())
 			throw new InitializationError(errors);
+	}
+	
+	public void filter(Filter filter) throws NoTestsRemainException {
+		fFilter= filter;
 	}
 }
