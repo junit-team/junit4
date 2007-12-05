@@ -114,6 +114,9 @@ public class Suite extends ParentRunner<Runner> implements Filterable, Sortable 
 		return runner.getDescription();
 	}
 
+	// TODO: (Dec 1, 2007 11:37:46 PM) absorb into parent?
+
+	@Override
 	public void filter(Filter filter) throws NoTestsRemainException {
 		for (Iterator<Runner> iter= fRunners.iterator(); iter.hasNext();) {
 			Runner runner= iter.next();
