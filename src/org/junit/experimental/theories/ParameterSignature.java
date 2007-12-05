@@ -10,25 +10,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
 public class ParameterSignature {
 	public static ArrayList<ParameterSignature> signatures(Method method) {
-		ArrayList<ParameterSignature> sigs= new ArrayList<ParameterSignature>();
-		for (int i= 0; i < method.getParameterTypes().length; i++) {
-			sigs.add(new ParameterSignature(method.getParameterTypes()[i],
-					method.getParameterAnnotations()[i]));
-		}
-		return sigs;
+		return signatures(method.getParameterTypes(), method
+				.getParameterAnnotations());
 	}
 
+	public static List<ParameterSignature> signatures(Constructor<?> constructor) {
+		return signatures(constructor.getParameterTypes(), constructor
+				.getParameterAnnotations());
+	}
 
-	public static List<ParameterSignature> signatures(
-			Constructor<?> constructor) {
-		// TODO: (Oct 12, 2007 12:33:06 PM) handle DUP above
+	private static ArrayList<ParameterSignature> signatures(
+			Class<?>[] parameterTypes, Annotation[][] parameterAnnotations) {
 		ArrayList<ParameterSignature> sigs= new ArrayList<ParameterSignature>();
-		for (int i= 0; i < constructor.getParameterTypes().length; i++) {
-			sigs.add(new ParameterSignature(constructor.getParameterTypes()[i],
-					constructor.getParameterAnnotations()[i]));
+		for (int i= 0; i < parameterTypes.length; i++) {
+			sigs.add(new ParameterSignature(parameterTypes[i],
+					parameterAnnotations[i]));
 		}
 		return sigs;
 	}
@@ -62,24 +60,24 @@ public class ParameterSignature {
 		return getAnnotation(type) != null;
 	}
 
-	public <T extends Annotation> T findDeepAnnotation(
-			Class<T> annotationType) {
+	public <T extends Annotation> T findDeepAnnotation(Class<T> annotationType) {
 		Annotation[] annotations2= annotations;
 		return findDeepAnnotation(annotations2, annotationType, 3);
 	}
 
-	private <T extends Annotation> T findDeepAnnotation(Annotation[] annotations,
-			Class<T> annotationType, int depth) {
+	private <T extends Annotation> T findDeepAnnotation(
+			Annotation[] annotations, Class<T> annotationType, int depth) {
 		if (depth == 0)
 			return null;
 		for (Annotation each : annotations) {
 			if (annotationType.isInstance(each))
 				return annotationType.cast(each);
-			Annotation candidate = findDeepAnnotation(each.annotationType().getAnnotations(), annotationType, depth - 1);
+			Annotation candidate= findDeepAnnotation(each.annotationType()
+					.getAnnotations(), annotationType, depth - 1);
 			if (candidate != null)
 				return annotationType.cast(candidate);
 		}
-	
+
 		return null;
 	}
 
