@@ -24,9 +24,6 @@ class AllMembersSupplier extends ParameterSupplier {
 		private MethodParameterValue(Method method) {
 			fMethod= method;
 		}
-		
-		// TODO: (Oct 12, 2007 12:35:51 PM) better diagnostic when data point methods are not static
-
 
 		@Override
 		public Object getValue() throws CouldNotGenerateValueException {
