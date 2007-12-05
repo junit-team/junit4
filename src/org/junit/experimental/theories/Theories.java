@@ -3,7 +3,9 @@
  */
 package org.junit.experimental.theories;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +27,12 @@ public class Theories extends JUnit4ClassRunner {
 
 	@Override
 	protected void collectInitializationErrors(List<Throwable> errors) {
+		Field[] fields= getTestClass().getJavaClass().getDeclaredFields();
+		
+		// TODO: (Nov 26, 2007 9:37:26 PM) cheating
+		for (Field each : fields)
+			if (each.getAnnotation(DataPoint.class) != null && !Modifier.isStatic(each.getModifiers()))
+				errors.add(new Error("DataPoint field THREE must be static"));
 	}
 
 	@Override
@@ -56,7 +64,7 @@ public class Theories extends JUnit4ClassRunner {
 		@Override
 		public void evaluate() throws Throwable {
 			runWithAssignment(Assignments.allUnassigned(
-					fTestMethod.getMethod(), fTestClass.getJavaClass()));
+					fTestMethod.getMethod(), fTestClass.getJavaClass(), nullsOk()));
 
 			if (successes == 0)
 				Assert
@@ -89,29 +97,23 @@ public class Theories extends JUnit4ClassRunner {
 				@Override
 				protected void collectInitializationErrors(
 						List<Throwable> errors) {
-					// TODO: (Oct 12, 2007 12:08:03 PM) DUP
 					// do nothing
 				}
 
 				@Override
 				public Statement childBlock(FrameworkMethod method) {
-					// TODO: (Oct 12, 2007 2:00:52 PM) Name this Link
 					final Statement link= super.childBlock(method);
 					return new Statement() {
-
 						@Override
 						public void evaluate() throws Throwable {
 							try {
 								link.evaluate();
-								successes++;
+								handleDataPointSuccess();
 							} catch (AssumptionViolatedException e) {
 								handleAssumptionViolation(e);
 							} catch (Throwable e) {
-								// TODO: (Oct 12, 2007 2:04:01 PM) nullsOk
-								// as argument to Assignments constructor
-
 								reportParameterizedError(e, complete
-										.getAllArguments(nullsOk()));
+										.getAllArguments());
 							}
 						}
 
@@ -120,33 +122,28 @@ public class Theories extends JUnit4ClassRunner {
 
 				@Override
 				protected Statement invoke(FrameworkMethod method, Object test) {
-					// TODO: (Oct 12, 2007 12:07:28 PM) push method in
-					return methodCompletesWithParameters(complete, test);
+					return methodCompletesWithParameters(method, complete, test);
 				}
 
 				@Override
 				public Object createTest() throws Exception {
 					// TODO: (Nov 26, 2007 8:44:14 PM) no matching data should
 					// ignore
-					// TODO: (Oct 12, 2007 12:31:12 PM) DUP
-					// TODO: (Oct 12, 2007 12:40:33 PM) honor assumption
-					// violations in JUnit4ClassRunner constructor
-					// invocations
 
-					return getTestClass().getJavaClass().getConstructors()[0]
-							.newInstance(complete
-									.getConstructorArguments(nullsOk()));
+					return getTestClass().getConstructor().newInstance(
+							complete.getConstructorArguments(nullsOk()));
 				}
 			}.childBlock(fTestMethod).evaluate();
 		}
 
 		private Statement methodCompletesWithParameters(
-				final Assignments complete, final Object freshInstance) {
+				final FrameworkMethod method, final Assignments complete, final Object freshInstance) {
 			return new Statement() {
 				@Override
 				public void evaluate() throws Throwable {
 					try {
-						invokeWithActualParameters(freshInstance, complete);
+						// TODO: (Dec 1, 2007 11:23:18 PM) pass-through
+						invokeWithActualParameters(method, freshInstance, complete);
 					} catch (CouldNotGenerateValueException e) {
 						// ignore
 					}
@@ -154,11 +151,11 @@ public class Theories extends JUnit4ClassRunner {
 			};
 		}
 
-		private void invokeWithActualParameters(Object target,
+		private void invokeWithActualParameters(FrameworkMethod method, Object target,
 				Assignments complete) throws Throwable {
 			final Object[] values= complete.getMethodArguments(nullsOk(),
 					target);
-			fTestMethod.invokeExplosively(target, values);
+			method.invokeExplosively(target, values);
 		}
 
 		protected void handleAssumptionViolation(AssumptionViolatedException e) {
@@ -179,6 +176,10 @@ public class Theories extends JUnit4ClassRunner {
 			if (annotation == null)
 				return false;
 			return annotation.nullsAccepted();
+		}
+
+		protected void handleDataPointSuccess() {
+			successes++;
 		}
 	}
 
