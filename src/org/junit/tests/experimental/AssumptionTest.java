@@ -139,4 +139,18 @@ public class AssumptionTest {
 	@Test public void failingAssumptionInBeforeClassIgnoresClass() {
 		assertThat(testResult(HasFailingAssumeInBeforeClass.class), isSuccessful());
 	}
+	
+	public static class AssumptionFailureInConstructor {
+		public AssumptionFailureInConstructor() {
+			assumeTrue(false);
+		}
+		
+		@Test public void shouldFail() {
+			fail();
+		}
+	}
+	
+	@Test public void failingAssumptionInConstructorIgnoresClass() {
+		assertThat(testResult(AssumptionFailureInConstructor.class), isSuccessful());
+	}
 }
