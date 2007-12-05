@@ -1,5 +1,6 @@
 package org.junit.internal.runners;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -30,32 +31,11 @@ public class CompositeRunner extends ParentRunner<Runner> implements Filterable,
 
 	// TODO: (Nov 7, 2007 1:48:55 PM) absorb into ParentRunner
 
-	public CompositeRunner(Class<?> type) {
-		// TODO: (Nov 7, 2007 1:59:24 PM) null is bad
-
-		this(type, null);
-	}
-
-	@Override
-	public Description getDescription() {
-		Description spec= Description.createSuiteDescription(fName);
-		for (Runner runner : fRunners)
-			spec.addChild(runner.getDescription());
-		return spec;
-	}
-
-	public List<Runner> getRunners() {
-		return fRunners;
-	}
-
-	public void addAll(List<? extends Runner> runners) {
-		fRunners.addAll(runners);
-	}
-
 	public void add(Runner runner) {
 		fRunners.add(runner);
 	}
 	
+	@Override
 	public void filter(Filter filter) throws NoTestsRemainException {
 		for (Iterator<Runner> iter= fRunners.iterator(); iter.hasNext();) {
 			Runner runner= iter.next();
@@ -91,5 +71,15 @@ public class CompositeRunner extends ParentRunner<Runner> implements Filterable,
 	@Override
 	protected void runChild(Runner each, final RunNotifier notifier) {
 		each.run(notifier);
+	}
+	
+	@Override
+	protected String getName() {
+		return fName;
+	}
+	
+	@Override
+	protected Annotation[] classAnnotations() {
+		return new Annotation[0];
 	}
 }
