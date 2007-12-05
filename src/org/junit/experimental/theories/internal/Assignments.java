@@ -12,6 +12,7 @@ import org.junit.experimental.theories.ParameterSupplier;
 import org.junit.experimental.theories.ParametersSuppliedBy;
 import org.junit.experimental.theories.PotentialAssignment;
 import org.junit.experimental.theories.PotentialAssignment.CouldNotGenerateValueException;
+import org.junit.internal.runners.model.TestClass;
 
 public class Assignments {
 	private List<PotentialAssignment> fAssigned;
@@ -22,23 +23,28 @@ public class Assignments {
 
 	private final int fConstructorParameterCount;
 
+	private final boolean fNullsOk;
+
 	public Assignments(List<PotentialAssignment> assigned,
-			List<ParameterSignature> unassigned, Class<?> type, int constructorParameterCount) {
+			List<ParameterSignature> unassigned, Class<?> type,
+			int constructorParameterCount, boolean nullsOk) {
+		// TODO: (Nov 26, 2007 9:14:10 PM) too many params
+
 		fUnassigned= unassigned;
 		fAssigned= assigned;
 		fClass= type;
 		fConstructorParameterCount= constructorParameterCount;
+		fNullsOk= nullsOk;
 	}
 
-	// TODO: (Oct 12, 2007 10:27:59 AM) Do I need testClass?
-
 	public static Assignments allUnassigned(Method testMethod,
-			Class<?> testClass) {
-		List<ParameterSignature> signatures= ParameterSignature.signatures(testClass.getConstructors()[0]);
-		int constructorParameterCount = signatures.size();
-		signatures.addAll(ParameterSignature.signatures(testMethod));
-		return new Assignments(new ArrayList<PotentialAssignment>(),
-				signatures, testClass, constructorParameterCount);
+			Class<?> testClass, boolean nullsOk) throws Exception {
+		List<ParameterSignature> signatures;
+			signatures= ParameterSignature.signatures(new TestClass(testClass).getConstructor());
+			int constructorParameterCount = signatures.size();
+			signatures.addAll(ParameterSignature.signatures(testMethod));
+			return new Assignments(new ArrayList<PotentialAssignment>(),
+					signatures, testClass, constructorParameterCount, nullsOk);
 	}
 
 	public boolean isComplete() {
@@ -57,14 +63,14 @@ public class Assignments {
 		// TODO: (Nov 5, 2007 9:47:51 AM) pass-through
 
 		return new Assignments(assigned, fUnassigned.subList(1, fUnassigned
-				.size()), fClass, fConstructorParameterCount);
+				.size()), fClass, fConstructorParameterCount, fNullsOk);
 	}
 
-	public Object[] getActualValues(boolean nullsOk, int start, int stop) throws CouldNotGenerateValueException {
+	public Object[] getActualValues(int start, int stop) throws CouldNotGenerateValueException {
 		Object[] values= new Object[stop - start];
 		for (int i= start; i < stop; i++) {
 			Object value= fAssigned.get(i).getValue();
-			if (value == null && !nullsOk)
+			if (value == null && !fNullsOk)
 				throw new CouldNotGenerateValueException();
 			values[i - start]= value;
 		}
@@ -96,14 +102,14 @@ public class Assignments {
 	}
 
 	public Object[] getConstructorArguments(boolean nullsOk) throws CouldNotGenerateValueException {
-		return getActualValues(nullsOk, 0, fConstructorParameterCount);
+		return getActualValues(0, fConstructorParameterCount);
 	}
 
 	public Object[] getMethodArguments(boolean nullsOk, Object target) throws CouldNotGenerateValueException {
-		return getActualValues(nullsOk, fConstructorParameterCount, fAssigned.size());
+		return getActualValues(fConstructorParameterCount, fAssigned.size());
 	}
 
-	public Object[] getAllArguments(boolean nullsOk) throws CouldNotGenerateValueException {
-		return getActualValues(nullsOk, 0, fAssigned.size());
+	public Object[] getAllArguments() throws CouldNotGenerateValueException {
+		return getActualValues(0, fAssigned.size());
 	}
 }
