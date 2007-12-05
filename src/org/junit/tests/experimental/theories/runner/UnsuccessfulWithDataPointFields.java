@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
 import org.junit.Test;
+import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.internal.runners.model.TestClass;
@@ -71,5 +72,23 @@ public class UnsuccessfulWithDataPointFields {
 	public void nullsUsedUnlessProhibited() throws Exception {
 		assertThat(testResult(NullsOK.class),
 				hasSingleFailureContaining("null"));
+	}
+
+	@RunWith(Theories.class)
+	public static class DataPointsMustBeStatic {
+		@DataPoint
+		int THREE= 3;
+
+		@Theory
+		public void numbers(int x) {
+
+		}
+	}
+
+	@Test
+	public void dataPointsMustBeStatic() {
+		assertThat(
+				testResult(DataPointsMustBeStatic.class),
+				hasSingleFailureContaining("DataPoint field THREE must be static"));
 	}
 }
