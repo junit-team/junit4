@@ -12,6 +12,7 @@ import java.util.List;
 import org.junit.internal.runners.CompositeRunner;
 import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.JUnit4ClassRunner;
+import org.junit.internal.runners.links.Statement;
 import org.junit.internal.runners.model.FrameworkMethod;
 import org.junit.runner.manipulation.Filterable;
 import org.junit.runner.notification.RunNotifier;
@@ -96,11 +97,10 @@ public class Parameterized extends CompositeRunner implements Filterable {
 		protected void collectInitializationErrors(List<Throwable> errors) {
 			// do nothing: validated before.
 		}
-
+		
 		@Override
-		public void run(RunNotifier notifier) {
-			for (FrameworkMethod method : fTestMethods)
-				runChild(method, notifier);
+		protected Statement classBlock(RunNotifier notifier) {
+			return runChildren(notifier);
 		}
 	}
 

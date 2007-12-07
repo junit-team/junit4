@@ -46,7 +46,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 	// May be overridden
 	//
 	
-	private Statement classBlock(final RunNotifier notifier) {
+	protected Statement runChildren(final RunNotifier notifier) {
 		return new Statement() {
 			@Override
 			public void evaluate() {
@@ -54,6 +54,13 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 					runChild(each, notifier);
 			}
 		};
+	}
+
+	protected Statement classBlock(final RunNotifier notifier) {
+		Statement statement= runChildren(notifier);
+		statement= new RunBefores(statement, fTestClass, null);
+		statement= new RunAfters(statement, fTestClass, null);
+		return statement;
 	}
 
 	protected T sortChild(T child, Sorter sorter) {
@@ -95,8 +102,6 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 	public void filter(Filter filter) throws NoTestsRemainException {
 		fFilter= filter;
 		
-		// TODO: (Dec 7, 2007 12:36:23 PM) can I avoid two loops?
-
 		for (T each : getChildren())
 			if (shouldRun(each))
 				return;
@@ -120,8 +125,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 		EachTestNotifier testNotifier= new EachTestNotifier(notifier,
 				getDescription());
 		try {
-			Statement statement= new RunBefores(classBlock(notifier), fTestClass, null);
-			statement= new RunAfters(statement, fTestClass, null);
+			Statement statement= classBlock(notifier);
 			statement.evaluate();
 		} catch (AssumptionViolatedException e) {
 			testNotifier.addIgnorance(e);

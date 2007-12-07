@@ -29,44 +29,32 @@ public class JUnit4ClassRunner extends ParentRunner<FrameworkMethod> implements 
 	public JUnit4ClassRunner(Class<?> klass) throws InitializationError {
 		super(klass);
 		fTestMethods= computeTestMethods();
-		validate();
-	}
-
-	protected List<FrameworkMethod> computeTestMethods() {
-		return getTestClass().getTestMethods();
-	}
-
-	private void validate() throws InitializationError {
 		List<Throwable> errors= new ArrayList<Throwable>();
 		collectInitializationErrors(errors);
 		assertValid(errors);
+	}
+	
+	//
+	// Override in subclasses
+	//
+	
+	protected List<FrameworkMethod> computeTestMethods() {
+		return getTestClass().getTestMethods();
 	}
 
 	protected void collectInitializationErrors(List<Throwable> errors) {
 		getTestClass().validateMethodsForDefaultRunner(errors);
 	}
 
-	@Override
-	protected void runChild(FrameworkMethod method, RunNotifier notifier) {
-		Description description= describeChild(method);
-		EachTestNotifier eachNotifier= new EachTestNotifier(notifier,
-				description);
-		notifying(method, childBlock(method)).run(eachNotifier);
-	}
-
-	public Object createTest() throws Exception {
+	protected Object createTest() throws Exception {
 		return getTestClass().getConstructor().newInstance();
-	}
-
-	@Override
-	protected Description describeChild(FrameworkMethod method) {
-		return Description.createTestDescription(getTestClass().getJavaClass(),
-				testName(method), method.getMethod().getAnnotations());
 	}
 
 	protected String testName(FrameworkMethod method) {
 		return method.getName();
 	}
+	
+	// TODO: (Dec 7, 2007 2:03:00 PM) Don't call directly
 
 	public Statement childBlock(FrameworkMethod method) {
 		Object test;
@@ -90,12 +78,39 @@ public class JUnit4ClassRunner extends ParentRunner<FrameworkMethod> implements 
 		link= withAfters(method, test, link);
 		return link;
 	}
+	
+	//
+	// Implementation of ParentRunner
+	// 
+	
+	@Override
+	protected void runChild(FrameworkMethod method, RunNotifier notifier) {
+		Description description= describeChild(method);
+		EachTestNotifier eachNotifier= new EachTestNotifier(notifier,
+				description);
+		notifying(method, childBlock(method)).run(eachNotifier);
+	}
 
+	@Override
+	protected Description describeChild(FrameworkMethod method) {
+		return Description.createTestDescription(getTestClass().getJavaClass(),
+				testName(method), method.getMethod().getAnnotations());
+	}
+
+	@Override
+	protected List<FrameworkMethod> getChildren() {
+		return fTestMethods;
+	}
+
+	//
+	// Statement builders
+	//
+	
 	protected Statement invoke(FrameworkMethod method, Object test) {
 		return new InvokeMethod(method, test);
 	}
 
-	private Statement possiblyExpectingExceptions(TestAnnotation annotation,
+	protected Statement possiblyExpectingExceptions(TestAnnotation annotation,
 			Statement next) {
 		return annotation.expectsException() ? new ExpectException(next, annotation
 				.getExpectedException()) : next;
@@ -121,12 +136,4 @@ public class JUnit4ClassRunner extends ParentRunner<FrameworkMethod> implements 
 		return method.isIgnored() ? new IgnoreTestNotifier()
 				: new RunTestNotifier(link);
 	}
-
-	@Override
-	protected List<FrameworkMethod> getChildren() {
-		return fTestMethods;
-	}
-	
-	// TODO: (Dec 7, 2007 12:37:31 PM) sort members
-
 }

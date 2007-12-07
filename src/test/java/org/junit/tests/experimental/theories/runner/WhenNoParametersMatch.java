@@ -43,9 +43,6 @@ public class WhenNoParametersMatch {
 
 		assertThat(result, containsString(matcher.toString()));
 		assertThat(result, containsString("" + data));
-		
-		// TODO: (Dec 7, 2007 11:15:45 AM) DUP
-
 		assertThat(result, containsString("ignored test:"));
 	}
 }
