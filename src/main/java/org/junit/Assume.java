@@ -53,4 +53,10 @@ public class Assume {
 	public static void assumeTrue(boolean b) {
 		assumeThat(b, is(true));
 	}
+
+	public static void fail(String string) {
+		// TODO: (Dec 7, 2007 11:16:24 AM) something that looks better
+
+		assumeThat(string, nullValue());
+	}
 }
