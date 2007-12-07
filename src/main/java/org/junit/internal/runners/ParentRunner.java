@@ -94,6 +94,13 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 	
 	public void filter(Filter filter) throws NoTestsRemainException {
 		fFilter= filter;
+		
+		// TODO: (Dec 7, 2007 12:36:23 PM) can I avoid two loops?
+
+		for (T each : getChildren())
+			if (shouldRun(each))
+				return;
+		throw new NoTestsRemainException();
 	}
 	
 	public void sort(Sorter sorter) {

@@ -1,9 +1,6 @@
 package org.junit.internal.runners;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 import org.junit.internal.runners.links.ExpectException;
@@ -22,11 +19,8 @@ import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.internal.runners.model.TestAnnotation;
 import org.junit.internal.runners.model.TestMethodElement;
 import org.junit.runner.Description;
-import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
-import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.manipulation.Sortable;
-import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 
 public class JUnit4ClassRunner extends ParentRunner<FrameworkMethod> implements Filterable, Sortable {
@@ -128,31 +122,11 @@ public class JUnit4ClassRunner extends ParentRunner<FrameworkMethod> implements 
 				: new RunTestNotifier(link);
 	}
 
-	// TODO: (Dec 1, 2007 11:37:28 PM) absorb into parent?
-
-	@Override
-	public void filter(Filter filter) throws NoTestsRemainException {
-		for (Iterator<FrameworkMethod> iter= fTestMethods.iterator(); iter.hasNext();) {
-			FrameworkMethod method= iter.next();
-			if (!filter.shouldRun(describeChild(method)))
-				iter.remove();
-		}
-		if (fTestMethods.isEmpty())
-			throw new NoTestsRemainException();
-	}
-
-	@Override
-	public void sort(final Sorter sorter) {
-		Collections.sort(fTestMethods, new Comparator<FrameworkMethod>() {
-			public int compare(FrameworkMethod o1, FrameworkMethod o2) {
-				return sorter.compare(describeChild(o1),
-						describeChild(o2));
-			}
-		});
-	}
-
 	@Override
 	protected List<FrameworkMethod> getChildren() {
 		return fTestMethods;
 	}
+	
+	// TODO: (Dec 7, 2007 12:37:31 PM) sort members
+
 }
