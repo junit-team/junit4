@@ -1,9 +1,8 @@
-package org.junit.internal;
+package org.junit.runner.notification;
 
 import org.junit.runner.Description;
-import org.junit.runner.notification.Failure;
 
-// TODO: (Nov 26, 2007 2:38:40 PM) Check location and package size
+// TODO: (Dec 7, 2007 11:17:10 AM) Check structure
 
 public class Ignorance extends Failure {
 	public Ignorance(Description description, Throwable thrownException) {
