@@ -154,7 +154,4 @@ public class Parameterized extends CompositeRunner implements Filterable {
 			results.add(new Object[] { param });
 		return results;
 	}
-	
-	// TODO: (Dec 7, 2007 9:43:12 AM) sort members
-
 }

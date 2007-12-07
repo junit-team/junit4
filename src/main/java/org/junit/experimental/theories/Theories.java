@@ -101,12 +101,12 @@ public class Theories extends JUnit4ClassRunner {
 
 				@Override
 				public Statement childBlock(FrameworkMethod method) {
-					final Statement link= super.childBlock(method);
+					final Statement statement= super.childBlock(method);
 					return new Statement() {
 						@Override
 						public void evaluate() throws Throwable {
 							try {
-								link.evaluate();
+								statement.evaluate();
 								handleDataPointSuccess();
 							} catch (AssumptionViolatedException e) {
 								handleAssumptionViolation(e);

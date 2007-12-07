@@ -14,6 +14,11 @@ import org.junit.runner.Runner;
  * {@link org.junit.runner.RunWith}.
  */
 public abstract class Filter {
+	public static void apply(Filter filter, Runner runner) throws NoTestsRemainException {
+		if (filter != null)
+			filter.apply(runner);
+	}
+	
 	/**
 	 * A null <code>Filter</code> that passes all tests through.
 	 */
@@ -36,6 +41,12 @@ public abstract class Filter {
 	public abstract boolean shouldRun(Description description);
 
 	/**
+	 * Returns a textual description of this Filter
+	 * @return a textual description of this Filter
+	 */
+	public abstract String describe();
+
+	/**
 	 * Invoke with a {@link org.junit.runner.Runner} to cause all tests it intends to run
 	 * to first be checked with the filter. Only those that pass the filter will be run.
 	 * @param runner the runner to be filtered by the receiver
@@ -47,10 +58,4 @@ public abstract class Filter {
 			filterable.filter(this);
 		}
 	}
-
-	/**
-	 * Returns a textual description of this Filter
-	 * @return a textual description of this Filter
-	 */
-	public abstract String describe();
 }

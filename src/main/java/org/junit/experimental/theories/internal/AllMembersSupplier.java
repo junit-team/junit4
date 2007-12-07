@@ -62,8 +62,6 @@ public class AllMembersSupplier extends ParameterSupplier {
 				}
 			}
 		}
-		
-		// TODO: (Dec 7, 2007 12:45:57 PM) should Enclosed be a CompositeRunner, too?
 
 		for (final Method method : fClass.getMethods()) {
 			if ((method.getParameterTypes().length == 0 && sig.getType()

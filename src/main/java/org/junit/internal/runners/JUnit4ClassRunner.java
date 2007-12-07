@@ -54,9 +54,7 @@ public class JUnit4ClassRunner extends ParentRunner<FrameworkMethod> implements 
 		return method.getName();
 	}
 	
-	// TODO: (Dec 7, 2007 2:03:00 PM) Don't call directly
-
-	public Statement childBlock(FrameworkMethod method) {
+	protected Statement childBlock(FrameworkMethod method) {
 		Object test;
 		try {
 			test= new ReflectiveCallable() {

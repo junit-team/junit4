@@ -25,39 +25,19 @@ public class CompositeRunner extends ParentRunner<Runner> implements Filterable,
 		super(type);
 		fName = name;
 	}
-
-	// TODO: (Dec 7, 2007 9:42:06 AM) sort members
-
+	
 	public void add(Runner runner) {
 		fRunners.add(runner);
-	}
-	
-	@Override
-	protected Runner filterChild(Runner child, Filter filter) throws NoTestsRemainException {
-		// TODO: (Dec 7, 2007 9:38:08 AM) shouldn't have this check here
-
-		if (filter != null)
-			filter.apply(child);		
-		return child;
-	}
-	
-	@Override
-	protected Runner sortChild(Runner child, Sorter sorter) {
-		// TODO: (Dec 7, 2007 9:38:57 AM) shouldn't have this check here, and deal with duplication throughout
-
-		if (sorter != null)
-			sorter.apply(child);
-		return child;
-	}
-	
-	@Override
-	protected Description describeChild(Runner child) {
-		return child.getDescription();
 	}
 
 	@Override
 	protected List<Runner> getChildren() {
 		return fRunners;
+	}
+	
+	@Override
+	protected Description describeChild(Runner child) {
+		return child.getDescription();
 	}
 
 	@Override
@@ -73,5 +53,18 @@ public class CompositeRunner extends ParentRunner<Runner> implements Filterable,
 	@Override
 	protected Annotation[] classAnnotations() {
 		return new Annotation[0];
+	}
+
+	
+	@Override
+	protected Runner filterChild(Runner child, Filter filter) throws NoTestsRemainException {
+		Filter.apply(filter, child);
+		return child;
+	}
+	
+	@Override
+	protected Runner sortChild(Runner child, Sorter sorter) {
+		Sorter.apply(sorter, child);
+		return child;
 	}
 }

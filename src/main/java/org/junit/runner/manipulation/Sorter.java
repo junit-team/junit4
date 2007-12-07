@@ -12,6 +12,11 @@ import org.junit.runner.Runner;
  * 
  */
 public class Sorter implements Comparator<Description> {
+	public static void apply(Sorter sorter, Runner runner) {
+		if (sorter != null)
+			sorter.apply(runner);
+	}
+	
 	private final Comparator<Description> fComparator;
 
 	/**
