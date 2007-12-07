@@ -138,20 +138,14 @@ public class Theories extends JUnit4ClassRunner {
 				@Override
 				public void evaluate() throws Throwable {
 					try {
-						// TODO: (Dec 1, 2007 11:23:18 PM) pass-through
-						invokeWithActualParameters(method, freshInstance, complete);
+						final Object[] values= complete.getMethodArguments(
+								nullsOk(), freshInstance);
+						method.invokeExplosively(freshInstance, values);
 					} catch (CouldNotGenerateValueException e) {
 						// ignore
 					}
 				}
 			};
-		}
-
-		private void invokeWithActualParameters(FrameworkMethod method, Object target,
-				Assignments complete) throws Throwable {
-			final Object[] values= complete.getMethodArguments(nullsOk(),
-					target);
-			method.invokeExplosively(target, values);
 		}
 
 		protected void handleAssumptionViolation(AssumptionViolatedException e) {
