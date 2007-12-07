@@ -23,8 +23,6 @@ public class ResultMatchers {
 		};
 	}
 	
-	// TODO: (Dec 7, 2007 10:15:15 AM) fix type
-
 	@SuppressWarnings("unchecked")
 	public static Matcher<Object> hasSingleFailureContaining(final String string) {
 		return new BaseMatcher<Object>() {
