@@ -9,14 +9,14 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Assume.AssumptionViolatedException;
 import org.junit.experimental.theories.PotentialAssignment.CouldNotGenerateValueException;
 import org.junit.experimental.theories.internal.Assignments;
 import org.junit.experimental.theories.internal.ParameterizedAssertionError;
+import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.JUnit4ClassRunner;
 import org.junit.internal.runners.links.Statement;
-import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.FrameworkMethod;
 
 @SuppressWarnings("restriction")
@@ -66,7 +66,7 @@ public class Theories extends JUnit4ClassRunner {
 					fTestMethod.getMethod(), fTestClass.getJavaClass()));
 
 			if (successes == 0)
-				Assert
+				Assume
 						.fail("Never found parameters that satisfied method.  Violated assumptions: "
 								+ fInvalidParameters);
 		}
@@ -126,9 +126,6 @@ public class Theories extends JUnit4ClassRunner {
 
 				@Override
 				public Object createTest() throws Exception {
-					// TODO: (Nov 26, 2007 8:44:14 PM) no matching data should
-					// ignore
-
 					return getTestClass().getConstructor().newInstance(
 							complete.getConstructorArguments(nullsOk()));
 				}
@@ -181,7 +178,4 @@ public class Theories extends JUnit4ClassRunner {
 			successes++;
 		}
 	}
-
-	// TODO: (Nov 26, 2007 12:14:24 PM) complex
-
 }
