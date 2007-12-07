@@ -40,7 +40,12 @@ public class WhenNoParametersMatch {
 		AssumptionsFail.MATCHER= matcher;
 
 		String result= testResult(AssumptionsFail.class).toString();
+
 		assertThat(result, containsString(matcher.toString()));
 		assertThat(result, containsString("" + data));
+		
+		// TODO: (Dec 7, 2007 11:15:45 AM) DUP
+
+		assertThat(result, containsString("ignored test:"));
 	}
 }

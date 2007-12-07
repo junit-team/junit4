@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assume.AssumptionViolatedException;
-import org.junit.internal.Ignorance;
 import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.Ignorance;
 import org.junit.runner.notification.RunListener;
 
 /**
@@ -69,6 +69,8 @@ public class Result {
 	}
 
 	private class Listener extends RunListener {
+		private boolean fTestIgnored = false;
+		
 		@Override
 		public void testRunStarted(Description description) throws Exception {
 			fStartTime= System.currentTimeMillis();
@@ -81,8 +83,10 @@ public class Result {
 		}
 
 		@Override
-		public void testStarted(Description description) throws Exception {
-			fCount++;
+		public void testFinished(Description description) throws Exception {
+			if (!fTestIgnored)
+				fCount++;
+			fTestIgnored = false;
 		}
 
 		@Override
@@ -93,15 +97,13 @@ public class Result {
 		@Override
 		public void testIgnored(Description description) throws Exception {
 			fIgnoreCount++;
+			fTestIgnored = true;
 		}
 		
 		@Override
 		public void testIgnoredReason(Description description,
 				AssumptionViolatedException e) {
 			fIgnorances.add(new Ignorance(description, e));
-			// TODO: (Nov 26, 2007 2:35:49 PM) best way to do this?
-
-			fCount--;
 		}
 	}
 

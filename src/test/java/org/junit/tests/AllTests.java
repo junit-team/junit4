@@ -24,6 +24,7 @@ import org.junit.tests.junit3compatibility.OldTestClassAdaptingListenerTest;
 import org.junit.tests.junit3compatibility.OldTests;
 import org.junit.tests.junit3compatibility.SuiteMethodTest;
 import org.junit.tests.listening.ListenerTest;
+import org.junit.tests.listening.ResultTest;
 import org.junit.tests.listening.RunnerTest;
 import org.junit.tests.listening.TestListenerTest;
 import org.junit.tests.listening.TextListenerTest;
@@ -98,7 +99,8 @@ import org.junit.tests.validation.ValidationTest;
 	ExperimentalTests.class,
 	CategoryTest.class,
 	InheritedTestTest.class,
-	CompositeRunnerTest.class
+	CompositeRunnerTest.class,
+	ResultTest.class
 })
 public class AllTests {
 	public static Test suite() {
