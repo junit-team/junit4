@@ -1,3 +1,4 @@
 bin
 junit4.1
 junit*-SNAPSHOT-*
+target
