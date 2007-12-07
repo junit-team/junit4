@@ -2,13 +2,14 @@
 	<tstamp />
 
 	<property file="${user.home}/.junit.properties" />
-	<property name="src" value="src" />
-	<property name="bin" value="bin" />
+	<property name="src" value="src/main/java" />
+	<property name="bin" value="target/main" />
 	<property name="version" value="4.5-SNAPSHOT-${DSTAMP}-${TSTAMP}" />
 	<property name="dist"  value="junit${version}" />
 	<property name="versionfile"  value="${src}/junit/runner/Version.java" />
 	<property name="zipfile"  value="${dist}.zip" />
-	<property name="testfiles" value="junit/samples/**, junit/tests/**, org/junit/samples/**, org/junit/tests/**" />
+	<property name="testsrc" value="src/test/java" />
+	<property name="testbin" value="target/test/java" />
 	<property name="unjarred" value="**/*.jar, ${testfiles}, doc/**, README.html, .classpath, .project, cpl-v10.html" />
 	<property name="binjar" value="junit-${version}.jar" />
 	<property name="depjar" value="junit-dep-${version}.jar" />
@@ -51,12 +52,24 @@
 			debug="on"
 			classpath="${hamcrestlib}"
 			includeantruntime="false"
-			excludes="**/imposterization/**,**/experimental/test/**"
   		>
 			<compilerarg value="-Xlint:unchecked" />
 		</javac>
 
 		<unjar src="${hamcrestlib}" dest="${bin}" />
+		
+		<!--TODO: DUP-->
+		<mkdir dir="${testbin}"/>
+		<javac 
+			srcdir="${testsrc}"
+			destdir="${testbin}"
+			debug="on"
+			classpath="${hamcrestlib};${bin}"
+			includeantruntime="false"
+  		>
+			<compilerarg value="-Xlint:unchecked" />
+		</javac>
+
 	</target>
 
 	<target name="jars">
@@ -80,8 +93,8 @@
 
 	<target name="samples-and-tests">
 		<copy todir="${dist}">
-			<fileset dir="${bin}" includes="${testfiles}" />
-			<fileset dir="${src}" includes="${testfiles}" />
+			<fileset dir="${testbin}" />
+			<fileset dir="${testsrc}" />
 		</copy>
 	</target>
 
