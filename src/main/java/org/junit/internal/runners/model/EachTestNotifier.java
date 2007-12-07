@@ -21,9 +21,6 @@ public class EachTestNotifier {
 		fDescription= description;
 	}
 	
-	// TODO: (Nov 26, 2007 8:51:17 PM) IgnoreClass should include reason
-
-
 	public void addFailure(Throwable targetException) {
 		if (targetException instanceof MultipleFailureException) {
 			MultipleFailureException mfe= (MultipleFailureException) targetException;
