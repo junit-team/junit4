@@ -17,7 +17,7 @@ import org.junit.experimental.theories.ParameterSignature;
 import org.junit.experimental.theories.ParameterSupplier;
 import org.junit.experimental.theories.PotentialAssignment;
 
-class AllMembersSupplier extends ParameterSupplier {
+public class AllMembersSupplier extends ParameterSupplier {
 	static class MethodParameterValue extends PotentialAssignment {
 		private final Method fMethod;
 
@@ -54,16 +54,16 @@ class AllMembersSupplier extends ParameterSupplier {
 		for (final Field field : fClass.getFields()) {
 			if (Modifier.isStatic(field.getModifiers())) {
 				Class<?> type= field.getType();
-				// TODO: (Dec 6, 2007 2:46:57 PM) if DataPoints present, interpret as array, not object
-
-				if (sig.canAcceptType(type)) {
+				if (sig.canAcceptArrayType(type) && field.getAnnotation(DataPoints.class) != null) {
+					addArrayValues(list, getStaticFieldValue(field));
+				} else if (sig.canAcceptType(type)) {
 					list.add(PotentialAssignment
 							.forValue(getStaticFieldValue(field)));
-				} else if (sig.canAcceptArrayType(type)) {
-					addArrayValues(list, getStaticFieldValue(field));
 				}
 			}
 		}
+		
+		// TODO: (Dec 7, 2007 12:45:57 PM) should Enclosed be a CompositeRunner, too?
 
 		for (final Method method : fClass.getMethods()) {
 			if ((method.getParameterTypes().length == 0 && sig.getType()

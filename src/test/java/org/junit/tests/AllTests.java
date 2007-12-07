@@ -14,6 +14,7 @@ import org.junit.tests.description.TestDescriptionTest;
 import org.junit.tests.experimental.AssumptionTest;
 import org.junit.tests.experimental.AssumptionViolatedExceptionTest;
 import org.junit.tests.experimental.ExperimentalTests;
+import org.junit.tests.experimental.theories.AllMembersSupplierTest;
 import org.junit.tests.extension.CompositeRunnerTest;
 import org.junit.tests.junit3compatibility.AllTestsTest;
 import org.junit.tests.junit3compatibility.ClassRequestTest;
@@ -100,7 +101,8 @@ import org.junit.tests.validation.ValidationTest;
 	InheritedTestTest.class,
 	CompositeRunnerTest.class,
 	ResultTest.class,
-	TestClassTest.class
+	TestClassTest.class,
+	AllMembersSupplierTest.class
 })
 public class AllTests {
 	public static Test suite() {
