@@ -63,7 +63,7 @@ public class Theories extends JUnit4ClassRunner {
 		@Override
 		public void evaluate() throws Throwable {
 			runWithAssignment(Assignments.allUnassigned(
-					fTestMethod.getMethod(), fTestClass.getJavaClass()));
+					fTestMethod.getMethod(), getTestClass().getJavaClass()));
 
 			if (successes == 0)
 				Assume

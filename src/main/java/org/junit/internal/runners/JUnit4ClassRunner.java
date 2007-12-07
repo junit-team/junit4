@@ -39,7 +39,7 @@ public class JUnit4ClassRunner extends ParentRunner<FrameworkMethod> implements 
 	}
 
 	protected List<FrameworkMethod> computeTestMethods() {
-		return fTestClass.getTestMethods();
+		return getTestClass().getTestMethods();
 	}
 
 	private void validate() throws InitializationError {
@@ -49,7 +49,7 @@ public class JUnit4ClassRunner extends ParentRunner<FrameworkMethod> implements 
 	}
 
 	protected void collectInitializationErrors(List<Throwable> errors) {
-		fTestClass.validateMethodsForDefaultRunner(errors);
+		getTestClass().validateMethodsForDefaultRunner(errors);
 	}
 
 	@Override
@@ -61,12 +61,12 @@ public class JUnit4ClassRunner extends ParentRunner<FrameworkMethod> implements 
 	}
 
 	public Object createTest() throws Exception {
-		return fTestClass.getConstructor().newInstance();
+		return getTestClass().getConstructor().newInstance();
 	}
 
 	@Override
 	protected Description describeChild(FrameworkMethod method) {
-		return Description.createTestDescription(fTestClass.getJavaClass(),
+		return Description.createTestDescription(getTestClass().getJavaClass(),
 				testName(method), method.getMethod().getAnnotations());
 	}
 

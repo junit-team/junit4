@@ -23,7 +23,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
 
 public abstract class ParentRunner<T> extends Runner implements Filterable, Sortable {
-	protected TestClass fTestClass;
+	private final TestClass fTestClass;
 	private List<T> fChildren = null;
 	private Filter fFilter = null;
 	private Sorter fSorter = null;
@@ -32,12 +32,20 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 		fTestClass = new TestClass(testClass);
 	}
 
+	//
+	// Must be overridden
+	//
+	
 	protected abstract List<T> getChildren();
 	
 	protected abstract Description describeChild(T child);
 
 	protected abstract void runChild(T child, RunNotifier notifier);
 
+	//
+	// May be overridden
+	//
+	
 	private Statement classBlock(final RunNotifier notifier) {
 		return new Statement() {
 			@Override
@@ -46,6 +54,58 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 					runChild(each, notifier);
 			}
 		};
+	}
+
+	protected T sortChild(T child, Sorter sorter) {
+		return child;
+	}
+
+	/**
+	 * @throws NoTestsRemainException 
+	 */
+	protected T filterChild(T child, Filter filter) throws NoTestsRemainException {
+		return child;
+	}
+
+	protected Annotation[] classAnnotations() {
+		return fTestClass.getJavaClass().getAnnotations();
+	}
+
+	protected String getName() {
+		return fTestClass.getName();
+	}
+
+	//
+	// Available for subclasses
+	//
+	
+	protected final TestClass getTestClass() {
+		return fTestClass;
+	}
+
+	protected final void assertValid(List<Throwable> errors) throws InitializationError {
+		if (!errors.isEmpty())
+			throw new InitializationError(errors);
+	}
+	
+	//
+	// Implementation
+	// 
+	
+	public void filter(Filter filter) throws NoTestsRemainException {
+		fFilter= filter;
+	}
+	
+	public void sort(Sorter sorter) {
+		fSorter= sorter;
+	}
+
+	@Override
+	public Description getDescription() {
+		Description description= Description.createSuiteDescription(getName(), classAnnotations());
+		for (T child : getFilteredChildren())
+			description.addChild(describeChild(child));
+		return description;
 	}
 	
 	@Override
@@ -63,14 +123,6 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 		} catch (Throwable e) {
 			testNotifier.addFailure(e);
 		}
-	}
-
-	@Override
-	public Description getDescription() {
-		Description description= Description.createSuiteDescription(getName(), classAnnotations());
-		for (T child : getFilteredChildren())
-			description.addChild(describeChild(child));
-		return description;
 	}
 
 	private List<T> getFilteredChildren() {
@@ -94,15 +146,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 		return filtered;
 	}
 
-	protected T sortChild(T child, Sorter sorter) {
-		return child;
-	}
-
-	/**
-	 * @throws NoTestsRemainException 
-	 */
-	protected T filterChild(T child, Filter filter) throws NoTestsRemainException {
-		return child;
+	private boolean shouldRun(T each) {
+		return fFilter == null || fFilter.shouldRun(describeChild(each));
 	}
 
 	private Comparator<? super T> comparator() {
@@ -111,36 +156,5 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 				return fSorter.compare(describeChild(o1), describeChild(o2));
 			}
 		};
-	}
-
-	private boolean shouldRun(T each) {
-		return fFilter == null || fFilter.shouldRun(describeChild(each));
-	}
-
-	protected TestClass getTestClass() {
-		return fTestClass;
-	}
-
-	protected Annotation[] classAnnotations() {
-		return fTestClass.getJavaClass().getAnnotations();
-	}
-
-	protected String getName() {
-		return fTestClass.getName();
-	}
-
-	// TODO: (Nov 14, 2007 11:04:54 AM) sort methods
-
-	protected void assertValid(List<Throwable> errors) throws InitializationError {
-		if (!errors.isEmpty())
-			throw new InitializationError(errors);
-	}
-	
-	public void filter(Filter filter) throws NoTestsRemainException {
-		fFilter= filter;
-	}
-	
-	public void sort(Sorter sorter) {
-		fSorter= sorter;
 	}
 }

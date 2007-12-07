@@ -11,7 +11,6 @@ import java.util.Set;
 
 import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.ParentRunner;
-import org.junit.internal.runners.model.TestClass;
 import org.junit.runner.Description;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
@@ -63,9 +62,8 @@ public class Suite extends ParentRunner<Runner> implements Filterable, Sortable 
 		}
 		removeParent(klass);
 
-		fTestClass= new TestClass(klass);
 		List<Throwable> errors= new ArrayList<Throwable>();
-		fTestClass.validateStaticMethods(errors);
+		getTestClass().validateStaticMethods(errors);
 		assertValid(errors);
 
 	}
@@ -92,8 +90,8 @@ public class Suite extends ParentRunner<Runner> implements Filterable, Sortable 
 	}
 	
 	protected void validate(List<Throwable> errors) {
-		fTestClass.validateStaticMethods(errors);
-		fTestClass.validateInstanceMethods(errors);
+		getTestClass().validateStaticMethods(errors);
+		getTestClass().validateInstanceMethods(errors);
 	}
 
 	@Override

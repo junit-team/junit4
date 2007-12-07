@@ -12,7 +12,6 @@ import java.util.List;
 import org.junit.internal.runners.CompositeRunner;
 import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.JUnit4ClassRunner;
-import org.junit.internal.runners.model.TestClass;
 import org.junit.internal.runners.model.FrameworkMethod;
 import org.junit.runner.manipulation.Filterable;
 import org.junit.runner.notification.RunNotifier;
@@ -78,7 +77,7 @@ public class Parameterized extends CompositeRunner implements Filterable {
 			} catch (ClassCastException e) {
 				throw new Exception(String.format(
 						"%s.%s() must return a Collection of arrays.",
-						fTestClass.getName(), getParametersMethod().getName()));				
+						getTestClass().getName(), getParametersMethod().getName()));				
 			}
 		}
 
@@ -116,11 +115,10 @@ public class Parameterized extends CompositeRunner implements Filterable {
 
 	public Parameterized(Class<?> klass) throws Throwable {
 		super(klass, klass.getName());
-		fTestClass= new TestClass(klass);
 
 		List<Throwable> errors= new ArrayList<Throwable>();
-		fTestClass.validateStaticMethods(errors);
-		fTestClass.validateInstanceMethods(errors);
+		getTestClass().validateStaticMethods(errors);
+		getTestClass().validateInstanceMethods(errors);
 		assertValid(errors);
 
 		fParameters= getParametersList();
@@ -138,7 +136,7 @@ public class Parameterized extends CompositeRunner implements Filterable {
 	}
 
 	private FrameworkMethod getParametersMethod() throws Exception {
-		List<FrameworkMethod> methods= fTestClass
+		List<FrameworkMethod> methods= getTestClass()
 				.getAnnotatedMethods(Parameters.class);
 		for (FrameworkMethod each : methods) {
 			int modifiers= each.getMethod().getModifiers();
@@ -147,7 +145,7 @@ public class Parameterized extends CompositeRunner implements Filterable {
 		}
 
 		throw new Exception("No public static parameters method on class "
-				+ fTestClass.getName());
+				+ getTestClass().getName());
 	}
 
 	public static List<Object[]> eachOne(Object... params) {
