@@ -9,8 +9,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.ParentRunner;
-import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.TestClass;
 import org.junit.runner.Description;
 import org.junit.runner.Request;

@@ -11,7 +11,6 @@ import org.junit.internal.runners.links.RunAfters;
 import org.junit.internal.runners.links.RunBefores;
 import org.junit.internal.runners.links.Statement;
 import org.junit.internal.runners.model.EachTestNotifier;
-import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.TestClass;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
@@ -36,8 +35,6 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 	protected abstract List<T> getChildren();
 	
 	protected abstract Description describeChild(T child);
-
-	// TODO: (Nov 24, 2007 11:50:17 PM) can I avoid RunNotifier?
 
 	protected abstract void runChild(T child, RunNotifier notifier);
 

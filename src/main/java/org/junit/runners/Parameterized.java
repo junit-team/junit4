@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.internal.runners.CompositeRunner;
+import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.JUnit4ClassRunner;
-import org.junit.internal.runners.model.InitializationError;
 import org.junit.internal.runners.model.TestClass;
 import org.junit.internal.runners.model.FrameworkMethod;
 import org.junit.runner.manipulation.Filterable;

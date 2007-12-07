@@ -1,10 +1,10 @@
 package org.junit.internal.requests;
 
 import org.junit.Ignore;
+import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.internal.runners.JUnit4ClassRunner;
 import org.junit.internal.runners.SuiteMethod;
-import org.junit.internal.runners.model.InitializationError;
 import org.junit.runner.Request;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
