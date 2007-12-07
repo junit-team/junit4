@@ -36,6 +36,7 @@ import org.junit.tests.running.classes.IgnoreClassTest;
 import org.junit.tests.running.classes.ParameterizedTestTest;
 import org.junit.tests.running.classes.RunWithTest;
 import org.junit.tests.running.classes.SuiteTest;
+import org.junit.tests.running.classes.TestClassTest;
 import org.junit.tests.running.core.CommandLineTest;
 import org.junit.tests.running.core.JUnitCoreReturnsCorrectExitCodeTest;
 import org.junit.tests.running.core.SystemExitTest;
@@ -98,7 +99,8 @@ import org.junit.tests.validation.ValidationTest;
 	ExperimentalTests.class,
 	InheritedTestTest.class,
 	CompositeRunnerTest.class,
-	ResultTest.class
+	ResultTest.class,
+	TestClassTest.class
 })
 public class AllTests {
 	public static Test suite() {

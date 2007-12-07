@@ -19,6 +19,8 @@ public class TestClass extends TestElement {
 
 	public TestClass(Class<?> klass) {
 		fClass= klass;
+		if (klass != null && klass.getConstructors().length > 1)
+			throw new IllegalArgumentException("Test class can only have one constructor");
 	}
 
 	public List<FrameworkMethod> getTestMethods() {
@@ -69,8 +71,6 @@ public class TestClass extends TestElement {
 	}
 
 	public Constructor<?> getConstructor() throws SecurityException {
-		// TODO: (Dec 1, 2007 11:01:06 PM) complain if wrong number of constructors
-
 		return fClass.getConstructors()[0];
 	}
 
