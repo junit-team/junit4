@@ -29,7 +29,6 @@ import org.junit.tests.listening.RunnerTest;
 import org.junit.tests.listening.TestListenerTest;
 import org.junit.tests.listening.TextListenerTest;
 import org.junit.tests.listening.UserStopTest;
-import org.junit.tests.manipulation.CategoryTest;
 import org.junit.tests.manipulation.SingleMethodTest;
 import org.junit.tests.manipulation.SortableTest;
 import org.junit.tests.running.classes.EnclosedTest;
@@ -97,7 +96,6 @@ import org.junit.tests.validation.ValidationTest;
 	AssumptionViolatedExceptionTest.class,
 	EachTest.class,
 	ExperimentalTests.class,
-	CategoryTest.class,
 	InheritedTestTest.class,
 	CompositeRunnerTest.class,
 	ResultTest.class
