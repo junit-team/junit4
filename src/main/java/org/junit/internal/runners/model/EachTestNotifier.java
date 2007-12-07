@@ -4,7 +4,6 @@
 package org.junit.internal.runners.model;
 
 
-import static org.hamcrest.CoreMatchers.nullValue;
 import org.junit.Ignore;
 import org.junit.Assume.AssumptionViolatedException;
 import org.junit.runner.Description;
@@ -48,7 +47,7 @@ public class EachTestNotifier {
 	private AssumptionViolatedException makeIgnoredException(
 			Description description) {
 		String reason= description.getAnnotation(Ignore.class).value();
-		return new AssumptionViolatedException(reason, nullValue());
+		return new AssumptionViolatedException(reason);
 	}
 
 	public void addIgnorance(AssumptionViolatedException e) {

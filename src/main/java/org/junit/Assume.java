@@ -63,8 +63,6 @@ public class Assume {
 	}
 
 	public static void fail(String string) {
-		// TODO: (Dec 7, 2007 11:16:24 AM) something that looks better
-
-		assumeThat(string, nullValue());
+		throw new AssumptionViolatedException(string);
 	}
 }
