@@ -1,14 +1,9 @@
-package org.junit.internal.runners;
+package org.junit.internal.runners.model;
 
 import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.internal.runners.model.TestClass;
-import org.junit.internal.runners.model.TestElement;
-import org.junit.internal.runners.model.FrameworkMethod;
-
-// TODO: (Nov 14, 2007 11:49:52 AM) Does this belong in this package?
 
 public class TestMethodElement extends TestElement {
 	private TestClass fTestClass;

@@ -5,8 +5,8 @@ import static org.junit.Assert.assertThat;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.internal.runners.TestMethodElement;
 import org.junit.internal.runners.model.TestClass;
+import org.junit.internal.runners.model.TestMethodElement;
 
 public class TestMethodInterfaceTest {
 	public static class BeforesAndAfters {
