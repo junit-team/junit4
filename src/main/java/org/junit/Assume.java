@@ -23,6 +23,10 @@ public class Assume {
 			fValue= value;
 			fMatcher= matcher;
 		}
+		
+		public AssumptionViolatedException(String assumption) {
+			this(assumption, null);
+		}
 
 		@Override
 		public String getMessage() {
@@ -30,10 +34,14 @@ public class Assume {
 		}
 
 		public void describeTo(Description description) {
-			description.appendText("got: ");
-			description.appendValue(fValue);
-			description.appendText(", expected: ");
-			description.appendDescriptionOf(fMatcher);
+			if (fMatcher != null) {
+				description.appendText("got: ");
+				description.appendValue(fValue);
+				description.appendText(", expected: ");
+				description.appendDescriptionOf(fMatcher);
+			} else {
+				description.appendText("failed assumption: " + fValue);
+			}
 		}
 	}
 

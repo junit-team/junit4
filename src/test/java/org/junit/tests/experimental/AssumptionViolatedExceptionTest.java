@@ -1,7 +1,9 @@
 package org.junit.tests.experimental;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeThat;
 import static org.junit.matchers.StringContains.containsString;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
@@ -17,15 +19,30 @@ public class AssumptionViolatedExceptionTest {
 
 	public static Matcher<?> IS_THREE= is(3);
 
+	public static Matcher<?> NULL= null;
+
 	@Theory
-	public void toStringIsUseful(Object actual, Matcher<?> matcher) {
+	public void toStringReportsMatcher(Object actual, Matcher<?> matcher) {
+		assumeThat(matcher, notNullValue());
 		assertThat(new AssumptionViolatedException(actual, matcher).toString(),
 				containsString(matcher.toString()));
+	}
+
+	@Theory
+	public void toStringReportsValue(Object actual, Matcher<?> matcher) {
+		assertThat(new AssumptionViolatedException(actual, matcher).toString(),
+				containsString(String.valueOf(actual)));
 	}
 
 	@Test
 	public void AssumptionViolatedExceptionDescribesItself() {
 		AssumptionViolatedException e= new AssumptionViolatedException(3, is(2));
 		assertThat(StringDescription.asString(e), is("got: <3>, expected: is <2>"));
+	}
+
+	@Test
+	public void simpleAssumptionViolatedExceptionDescribesItself() {
+		AssumptionViolatedException e= new AssumptionViolatedException("not enough money");
+		assertThat(StringDescription.asString(e), is("failed assumption: not enough money"));
 	}
 }
