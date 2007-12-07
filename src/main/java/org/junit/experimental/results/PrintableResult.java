@@ -34,9 +34,6 @@ public class PrintableResult {
 
 	@Override
 	public String toString() {
-		if (result.getFailureCount() == 0)
-			return "PASSED!";
-
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		new TextListener(new PrintStream(stream)).testRunFinished(result);
 		return stream.toString();
