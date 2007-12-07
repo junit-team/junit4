@@ -25,12 +25,9 @@ public class MatcherTest {
 	@DataPoint
 	public static Matcher<?> ANY_FAILURE= hasFailureContaining("cheese");
 
-	// TODO: (Dec 7, 2007 1:25:37 PM) DUP
-
 	@DataPoint
 	public static PrintableResult TWO_FAILURES_ONE_CHEESE= new PrintableResult(
-			Arrays.asList(new Failure(Description.EMPTY, new Error("cheese")),
-					new Failure(Description.EMPTY, new Error("mustard"))));
+			Arrays.asList(failure("cheese"), failure("mustard")));
 
 	@Theory
 	public <T> void differentMatchersHaveDifferentDescriptions(
@@ -40,4 +37,7 @@ public class MatcherTest {
 		assertThat(matcher1.toString(), not(matcher2.toString()));
 	}
 
+	private static Failure failure(String string) {
+		return new Failure(Description.EMPTY, new Error(string));
+	}
 }
