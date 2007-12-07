@@ -3,6 +3,7 @@ package org.junit.experimental.results;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.junit.matchers.TypeSafeMatcher;
 
 public class ResultMatchers {
 	public static Matcher<PrintableResult> isSuccessful() {
@@ -10,13 +11,14 @@ public class ResultMatchers {
 	}
 
 	public static Matcher<PrintableResult> failureCountIs(final int count) {
-		return new BaseMatcher<PrintableResult>() {
-			public boolean matches(Object item) {
-				return ((PrintableResult) item).getFailures().size() == count;
-			}
-
+		return new TypeSafeMatcher<PrintableResult>() {
 			public void describeTo(Description description) {
 				description.appendText("has " + count + " failures");
+			}
+
+			@Override
+			public boolean matchesSafely(PrintableResult item) {
+				return item.getFailures().size() == count;
 			}
 		};
 	}
@@ -44,8 +46,7 @@ public class ResultMatchers {
 			}
 
 			public void describeTo(Description description) {
-				// TODO: (Dec 7, 2007 10:14:35 AM) not right
-				description.appendText("has single failure containing " + string);
+				description.appendText("has failure containing " + string);
 			}
 		};
 	}
