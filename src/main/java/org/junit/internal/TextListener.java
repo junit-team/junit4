@@ -2,11 +2,11 @@ package org.junit.internal;
 
 import java.io.PrintStream;
 import java.text.NumberFormat;
+import java.util.List;
 
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
-import org.junit.runner.notification.Ignorance;
 import org.junit.runner.notification.RunListener;
 
 public class TextListener extends RunListener {
@@ -58,43 +58,28 @@ public class TextListener extends RunListener {
 	}
 
 	protected void printFailures(Result result) {
-		if (result.getFailureCount() == 0)
-			return;
-		if (result.getFailureCount() == 1)
-			getWriter().println("There was " + result.getFailureCount() + " failure:");
-		else
-			getWriter().println("There were " + result.getFailureCount() + " failures:");
-		int i= 1;
-		for (Failure each : result.getFailures())
-			printFailure(each, i++);
+		printExceptions("failure", "", result.getFailures());
 	}
 	
 	private void printIgnorances(Result result) {
-		// TODO: (Dec 7, 2007 10:23:17 AM) DUP
+		printExceptions("ignored test", "IGNORED TEST ", result.getIgnorances());
+	}
 
-		if (result.getIgnoreCount() == 0)
+	private void printExceptions(String exceptionTypeName, String listPrefix,
+			List<? extends Failure> exceptions) {
+		if (exceptions.size() == 0)
 			return;
-		if (result.getIgnoreCount() == 1)
-			getWriter().println("There was " + result.getIgnoreCount() + " ignored test:");
+		if (exceptions.size() == 1)
+			getWriter().println("There was " + exceptions.size() + " " + exceptionTypeName + ":");
 		else
-			getWriter().println("There were " + result.getIgnoreCount() + " ignored tests:");
+			getWriter().println("There were " + exceptions.size() + " " + exceptionTypeName + "s:");
 		int i= 1;
-		for (Ignorance each : result.getIgnorances())
-			printFailure(each, i++);
+		for (Failure each : exceptions)
+			printFailure(each, listPrefix + i++);
 	}
 
-	protected void printFailure(Failure failure, int count) {
-		printFailureHeader(failure, count);
-		printFailureTrace(failure);
-	}
-
-	protected void printFailureHeader(Failure failure, int count) {
-		// TODO: (Dec 7, 2007 10:22:47 AM) indicate if this is an ignorance, somehow
-
-		getWriter().println(count + ") " + failure.getTestHeader());
-	}
-
-	protected void printFailureTrace(Failure failure) {
+	protected void printFailure(Failure failure, String prefix) {
+		getWriter().println(prefix + ") " + failure.getTestHeader());
 		getWriter().print(failure.getTrace());
 	}
 
