@@ -98,10 +98,8 @@ public class Assignments {
 		return getActualValues(0, getConstructorParameterCount(), nullsOk);
 	}
 
-	public Object[] getMethodArguments(boolean nullsOk, Object target)
+	public Object[] getMethodArguments(boolean nullsOk)
 			throws CouldNotGenerateValueException {
-		// TODO: (Dec 7, 2007 10:08:32 AM) don't need target
-
 		return getActualValues(getConstructorParameterCount(), fAssigned.size(), nullsOk);
 	}
 

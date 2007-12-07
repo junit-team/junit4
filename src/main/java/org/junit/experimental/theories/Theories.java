@@ -139,7 +139,7 @@ public class Theories extends JUnit4ClassRunner {
 				public void evaluate() throws Throwable {
 					try {
 						final Object[] values= complete.getMethodArguments(
-								nullsOk(), freshInstance);
+								nullsOk());
 						method.invokeExplosively(freshInstance, values);
 					} catch (CouldNotGenerateValueException e) {
 						// ignore
