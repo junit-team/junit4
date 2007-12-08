@@ -104,7 +104,8 @@ import org.junit.tests.validation.ValidationTest;
 	ResultTest.class,
 	TestClassTest.class,
 	AllMembersSupplierTest.class,
-	MatcherTest.class
+	MatcherTest.class,
+	ObjectContractTest.class
 })
 public class AllTests {
 	public static Test suite() {

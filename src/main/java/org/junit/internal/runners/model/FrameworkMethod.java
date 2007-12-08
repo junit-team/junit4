@@ -81,8 +81,13 @@ public class FrameworkMethod {
 	
 	@Override
 	public boolean equals(Object obj) {
-		// TODO: (Dec 7, 2007 2:21:29 PM) Don't assume type
-
+		if (! FrameworkMethod.class.isInstance(obj))
+			return false;
 		return ((FrameworkMethod)obj).fMethod.equals(fMethod);
+	}
+	
+	@Override
+	public int hashCode() {
+		return fMethod.hashCode();
 	}
 }
