@@ -36,9 +36,6 @@ public class Theories extends JUnit4ClassRunner {
 
 	@Override
 	protected List<FrameworkMethod> computeTestMethods() {
-		// TODO: (Jul 20, 2007 2:02:44 PM) Only get methods once, even if they
-		// have both @Test and @Theory
-
 		List<FrameworkMethod> testMethods= super.computeTestMethods();
 		List<FrameworkMethod> theoryMethods= getTestClass().getAnnotatedMethods(Theory.class);
 		testMethods.removeAll(theoryMethods);
