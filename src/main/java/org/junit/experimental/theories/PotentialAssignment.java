@@ -6,8 +6,6 @@ public abstract class PotentialAssignment {
 	}
 	
 	public static PotentialAssignment forValue(final Object value) {
-		// TODO: (Dec 7, 2007 9:59:09 AM) should also filter null from methods
-
 		return new PotentialAssignment() {		
 			@Override
 			public Object getValue() throws CouldNotGenerateValueException {

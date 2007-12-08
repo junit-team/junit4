@@ -21,7 +21,6 @@ public class ParameterSignature {
 				.getParameterAnnotations());
 	}
 
-	// TODO: (Dec 7, 2007 9:52:22 AM) extract a type
 	private static ArrayList<ParameterSignature> signatures(
 			Class<?>[] parameterTypes, Annotation[][] parameterAnnotations) {
 		ArrayList<ParameterSignature> sigs= new ArrayList<ParameterSignature>();

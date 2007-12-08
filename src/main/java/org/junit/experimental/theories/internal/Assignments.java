@@ -72,8 +72,6 @@ public class Assignments {
 		ParameterSignature unassigned= nextUnassigned();
 		return getSupplier(unassigned).getValueSources(unassigned);
 	}
-	
-	// TODO: (Dec 7, 2007 9:49:54 AM) push up default supplier
 
 	public ParameterSupplier getSupplier(ParameterSignature unassigned)
 			throws InstantiationException, IllegalAccessException {
