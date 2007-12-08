@@ -78,4 +78,11 @@ public class FrameworkMethod {
 				return true;
 		return false;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		// TODO: (Dec 7, 2007 2:21:29 PM) Don't assume type
+
+		return ((FrameworkMethod)obj).fMethod.equals(fMethod);
+	}
 }

@@ -40,7 +40,9 @@ public class Theories extends JUnit4ClassRunner {
 		// have both @Test and @Theory
 
 		List<FrameworkMethod> testMethods= super.computeTestMethods();
-		testMethods.addAll(getTestClass().getAnnotatedMethods(Theory.class));
+		List<FrameworkMethod> theoryMethods= getTestClass().getAnnotatedMethods(Theory.class);
+		testMethods.removeAll(theoryMethods);
+		testMethods.addAll(theoryMethods);
 		return testMethods;
 	}
 

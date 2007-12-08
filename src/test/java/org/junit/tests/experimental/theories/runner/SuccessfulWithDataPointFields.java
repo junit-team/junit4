@@ -12,6 +12,7 @@ import java.util.List;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Test;
 import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
@@ -136,8 +137,6 @@ public class SuccessfulWithDataPointFields {
 		public void yesIndeed(String a) {
 		}
 	}
-	
-
 
 	@RunWith(Theories.class)
 	public static class BeforeAndAfterEachTime {
@@ -164,6 +163,27 @@ public class SuccessfulWithDataPointFields {
 		
 		@AfterClass public static void calledTwice() {
 			assertEquals(2, befores);
+		}
+	}
+	
+	@RunWith(Theories.class)
+	public static class OneTestTwoAnnotations {
+		public static int tests= 0;
+
+		@DataPoint
+		public static String A= "A";
+
+		@BeforeClass public static void resetCalls() {
+			tests = 0;
+		}
+		
+		@Theory @Test
+		public void stringsAreOK(String string) {
+			tests++;
+		}
+		
+		@AfterClass public static void calledTwice() {
+			assertEquals(1, tests);
 		}
 	}
 }
