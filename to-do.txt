@@ -16,15 +16,12 @@
 * Automatically add failing tests to the Known Defects section of the README.html
 
 * Create test target in ant
-* Organize org.junit.tests
 * Create assume(that()) and assert(that()) 
   (what is a better name for the second one?)
   
 * Simplify implementation of equality, and organize AssertionTest
 
 * Theories class validation should be much better
-
-* assumePasses doesn't have desired effect within a Theory
 
 * Find a way to make Parameterized a single-class extension
 
