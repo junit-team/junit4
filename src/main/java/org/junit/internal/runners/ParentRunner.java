@@ -63,17 +63,6 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 		return statement;
 	}
 
-	protected T sortChild(T child, Sorter sorter) {
-		return child;
-	}
-
-	/**
-	 * @throws NoTestsRemainException 
-	 */
-	protected T filterChild(T child, Filter filter) throws NoTestsRemainException {
-		return child;
-	}
-
 	protected Annotation[] classAnnotations() {
 		return fTestClass.getJavaClass().getAnnotations();
 	}
@@ -147,7 +136,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 		for (T each : getChildren())
 			if (shouldRun(each)) {
 				try {
-					filtered.add(sortChild(filterChild(each, fFilter), fSorter));
+					filtered.add(sortChild(filterChild(each)));
 				} catch (NoTestsRemainException e) {
 					// don't add it
 				}
@@ -155,6 +144,18 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 		if (fSorter != null)
 			Collections.sort(filtered, comparator());
 		return filtered;
+	}
+	
+	private T sortChild(T child) {
+		if (fSorter != null)
+			fSorter.apply(child);
+		return child;
+	}
+
+	private T filterChild(T child) throws NoTestsRemainException {
+		if (fFilter != null)
+			fFilter.apply(child);
+		return child;
 	}
 
 	private boolean shouldRun(T each) {

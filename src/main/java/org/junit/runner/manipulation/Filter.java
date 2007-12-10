@@ -2,7 +2,6 @@ package org.junit.runner.manipulation;
 
 import org.junit.runner.Description;
 import org.junit.runner.Request;
-import org.junit.runner.Runner;
 
 /**
  * The canonical case of filtering is when you want to run a single test method in a class. Rather
@@ -14,11 +13,6 @@ import org.junit.runner.Runner;
  * {@link org.junit.runner.RunWith}.
  */
 public abstract class Filter {
-	public static void apply(Filter filter, Runner runner) throws NoTestsRemainException {
-		if (filter != null)
-			filter.apply(runner);
-	}
-	
 	/**
 	 * A null <code>Filter</code> that passes all tests through.
 	 */
@@ -49,13 +43,13 @@ public abstract class Filter {
 	/**
 	 * Invoke with a {@link org.junit.runner.Runner} to cause all tests it intends to run
 	 * to first be checked with the filter. Only those that pass the filter will be run.
-	 * @param runner the runner to be filtered by the receiver
+	 * @param child the runner to be filtered by the receiver
 	 * @throws NoTestsRemainException if the receiver removes all tests
 	 */
-	public void apply(Runner runner) throws NoTestsRemainException {
-		if (runner instanceof Filterable) {
-			Filterable filterable= (Filterable)runner;
-			filterable.filter(this);
-		}
+	public void apply(Object child) throws NoTestsRemainException {
+		if (!(child instanceof Filterable))
+			return;
+		Filterable filterable= (Filterable) child;
+		filterable.filter(this);
 	}
 }
