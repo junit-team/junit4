@@ -39,34 +39,63 @@ public class Suite extends CompositeRunner {
 		this(klass, getAnnotatedClasses(klass));
 	}
 
+	// To prevent test writers from hanging themselves, we need to shorten the rope we hand them.
+	// SuiteBuilder builds a Suite one class at a time, making sure that no Suite contains
+	// itself as a direct or indirect child.  Since Suites are constructed through
+	// reflective constructor invocations, we have one static builder that is referenced by all.
 	// This won't work correctly in the face of concurrency. For that we need to
 	// add parameters to getRunner(), which would be much more complicated.
-	private static Set<Class<?>> parents = new HashSet<Class<?>>();
+	public static SuiteBuilder builder = new SuiteBuilder();
+	
+	private static class SuiteBuilder {
+		private Set<Class<?>> parents = new HashSet<Class<?>>();
+
+		private List<Runner> runners(Class<?> klass, Class<?>[] annotatedClasses)
+				throws InitializationError {
+			ArrayList<Runner> runners= new ArrayList<Runner>();
+			addParent(klass);
+			
+			// TODO: (Dec 10, 2007 1:10:20 PM) Does this duplicate code from ClassesRequest?
+			try {
+				for (Class<?> each : annotatedClasses) {
+					Runner childRunner= Request.aClass(each).getRunner();
+					if (childRunner != null)
+						runners.add(childRunner);
+				}
+			} finally {
+				removeParent(klass);
+			}
+			return runners;
+		}
+
+		private Class<?> addParent(Class<?> parent) throws InitializationError {
+			if (!parents.add(parent))
+				throw new InitializationError(String.format("class '%s' (possibly indirectly) contains itself as a SuiteClass", parent.getName()));
+			return parent;
+		}
+		
+		private void removeParent(Class<?> klass) {
+			parents.remove(klass);
+		}
+		
+		@Override
+		public String toString() {
+			return parents.toString();
+		}
+	}
 	
 	protected Suite(Class<?> klass, Class<?>[] annotatedClasses) throws InitializationError {
 		super(klass, klass.getName());
 		
-		addParent(klass);
-		for (Class<?> each : annotatedClasses) {
-			Runner childRunner= Request.aClass(each).getRunner();
-			if (childRunner != null)
-				add(childRunner);
-		}
-		removeParent(klass);
+		// TODO: (Dec 10, 2007 1:08:21 PM) pass list of runners directly to superclass constructor
+
+		List<Runner> runners= builder.runners(klass, annotatedClasses);
+		for (Runner runner : runners)
+			add(runner);
 
 		List<Throwable> errors= new ArrayList<Throwable>();
 		getTestClass().validateStaticMethods(errors);
 		assertValid(errors);
-	}
-
-	private Class<?> addParent(Class<?> parent) throws InitializationError {
-		if (!parents.add(parent))
-			throw new InitializationError(String.format("class '%s' (possibly indirectly) contains itself as a SuiteClass", parent.getName()));
-		return parent;
-	}
-	
-	private void removeParent(Class<?> klass) {
-		parents.remove(klass);
 	}
 
 	private static Class<?>[] getAnnotatedClasses(Class<?> klass) throws InitializationError {
