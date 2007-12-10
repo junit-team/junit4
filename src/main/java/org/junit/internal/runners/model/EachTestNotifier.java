@@ -44,6 +44,8 @@ public class EachTestNotifier {
 		fNotifier.fireTestIgnoredReason(fDescription, makeIgnoredException(fDescription));
 	}
 
+	// TODO: (Dec 9, 2007 9:25:42 PM) Static ignores should not have backtraces
+	
 	private AssumptionViolatedException makeIgnoredException(
 			Description description) {
 		String reason= description.getAnnotation(Ignore.class).value();
