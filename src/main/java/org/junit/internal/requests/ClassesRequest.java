@@ -1,5 +1,8 @@
 package org.junit.internal.requests;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.internal.runners.CompositeRunner;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
@@ -16,12 +19,13 @@ public class ClassesRequest extends Request {
 	/** @inheritDoc */
 	@Override 
 	public Runner getRunner() {
-		CompositeRunner runner= new CompositeRunner(fName);
+		List<Runner> runners= new ArrayList<Runner>();
 		for (Class<?> each : fClasses) {
 			Runner childRunner= Request.aClass(each).getRunner();
-			if (childRunner != null)
-				runner.add(childRunner);
+			if (childRunner != null) // TODO when can this happen?
+				runners.add(childRunner);
 		}
+		CompositeRunner runner= new CompositeRunner(fName, runners);
 		return runner;
 	}
 }

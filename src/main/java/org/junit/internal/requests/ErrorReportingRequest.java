@@ -1,6 +1,7 @@
 package org.junit.internal.requests;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,12 +25,13 @@ public class ErrorReportingRequest extends Request {
 	@Override
 	public Runner getRunner() {
 		List<Throwable> goofs= getCauses(fCause);
-		CompositeRunner runner= new CompositeRunner(fClass.getName());
+		List<Runner> runners= new ArrayList<Runner>();
 		for (int i= 0; i < goofs.size(); i++) {
 			final Description description= Description.createTestDescription(fClass, "initializationError" + i);
 			final Throwable throwable= goofs.get(i);
-			runner.add(new ErrorReportingRunner(description, throwable));
+			runners.add(new ErrorReportingRunner(description, throwable));
 		}
+		CompositeRunner runner= new CompositeRunner(fClass.getName(), runners);
 		return runner;
 	}
 	

@@ -124,6 +124,7 @@ public class Parameterized extends CompositeRunner implements Filterable {
 		fParameters= getParametersList();
 
 		for (int i = 0; i < fParameters.size(); i++)
+			// TODO I almost finished deleting CompositeRunner.add(), but got hung up on this last invocation
 			add(new TestClassRunnerForParameters(klass, i));
 		
 		fConstructor= getTestClass().getOnlyConstructor();

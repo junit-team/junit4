@@ -13,18 +13,23 @@ import org.junit.runner.notification.RunNotifier;
 // TODO: (Dec 10, 2007 1:41:20 PM) Can this go away?
 
 public class CompositeRunner extends ParentRunner<Runner> implements Filterable, Sortable {
-	private final List<Runner> fRunners= new ArrayList<Runner>();
+	private List<Runner> fRunners= new ArrayList<Runner>();
 	private final String fName;
-	
-	public CompositeRunner(String name) {
-		this(null, name);
-	}
 	
 	public CompositeRunner(Class<?> type, String name) {
 		super(type);
 		fName = name;
 	}
 	
+	public CompositeRunner(Class<?> klass, String name, List<Runner> runners) {
+		this(klass, name);
+		fRunners= runners;
+	}
+
+	public CompositeRunner(String name, List<Runner> runners) {
+		this(null, name, runners);
+	}
+
 	public void add(Runner runner) {
 		fRunners.add(runner);
 	}

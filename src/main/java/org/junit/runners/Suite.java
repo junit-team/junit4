@@ -85,14 +85,7 @@ public class Suite extends CompositeRunner {
 	}
 	
 	protected Suite(Class<?> klass, Class<?>[] annotatedClasses) throws InitializationError {
-		super(klass, klass.getName());
-		
-		// TODO: (Dec 10, 2007 1:08:21 PM) pass list of runners directly to superclass constructor
-
-		List<Runner> runners= builder.runners(klass, annotatedClasses);
-		for (Runner runner : runners)
-			add(runner);
-
+		super(klass, klass.getName(), builder.runners(klass, annotatedClasses));
 		List<Throwable> errors= new ArrayList<Throwable>();
 		getTestClass().validateStaticMethods(errors);
 		assertValid(errors);
