@@ -108,6 +108,7 @@ public class RunNotifier {
 			@Override
 			protected void notifyListener(RunListener each) throws Exception {
 				each.testIgnored(description);
+				// TODO: (Dec 10, 2007 1:49:33 PM) Call a new method each.testIgnored(description, reason), as well
 			};
 		}.run();
 	}

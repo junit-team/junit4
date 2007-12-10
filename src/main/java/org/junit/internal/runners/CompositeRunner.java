@@ -10,6 +10,8 @@ import org.junit.runner.manipulation.Filterable;
 import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.notification.RunNotifier;
 
+// TODO: (Dec 10, 2007 1:41:20 PM) Can this go away?
+
 public class CompositeRunner extends ParentRunner<Runner> implements Filterable, Sortable {
 	private final List<Runner> fRunners= new ArrayList<Runner>();
 	private final String fName;
