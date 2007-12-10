@@ -63,7 +63,6 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
 
 	private Test fTest;
 	
-	@SuppressWarnings("unchecked")
 	public JUnit38ClassRunner(Class<?> klass) {
 		this(new TestSuite(klass.asSubclass(TestCase.class)));
 	}

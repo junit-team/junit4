@@ -19,7 +19,6 @@ import org.junit.internal.runners.JUnit4ClassRunner;
 import org.junit.internal.runners.links.Statement;
 import org.junit.internal.runners.model.FrameworkMethod;
 
-@SuppressWarnings("restriction")
 public class Theories extends JUnit4ClassRunner {
 	public Theories(Class<?> klass) throws InitializationError {
 		super(klass);
