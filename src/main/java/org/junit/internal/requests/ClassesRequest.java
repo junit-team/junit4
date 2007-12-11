@@ -22,8 +22,7 @@ public class ClassesRequest extends Request {
 		List<Runner> runners= new ArrayList<Runner>();
 		for (Class<?> each : fClasses) {
 			Runner childRunner= Request.aClass(each).getRunner();
-			if (childRunner != null) // TODO when can this happen?
-				runners.add(childRunner);
+			runners.add(childRunner);  // TODO David, I took out the null check after examining all the implementors of getRunner()
 		}
 		CompositeRunner runner= new CompositeRunner(fName, runners);
 		return runner;
