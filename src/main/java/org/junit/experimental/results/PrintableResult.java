@@ -12,7 +12,6 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
-@SuppressWarnings("restriction")
 public class PrintableResult {
 	public static PrintableResult testResult(Class<?> type) {
 		return new PrintableResult(type);

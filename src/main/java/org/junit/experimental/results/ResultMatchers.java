@@ -23,7 +23,6 @@ public class ResultMatchers {
 		};
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static Matcher<Object> hasSingleFailureContaining(final String string) {
 		return new BaseMatcher<Object>() {
 			public boolean matches(Object item) {
@@ -36,7 +35,6 @@ public class ResultMatchers {
 		};
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static Matcher<PrintableResult> hasFailureContaining(final String string) {
 		return new BaseMatcher<PrintableResult>() {
 			public boolean matches(Object item) {
