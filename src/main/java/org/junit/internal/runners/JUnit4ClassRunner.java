@@ -1,6 +1,5 @@
 package org.junit.internal.runners;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.internal.runners.links.ExpectException;
@@ -29,9 +28,7 @@ public class JUnit4ClassRunner extends ParentRunner<FrameworkMethod> implements 
 	public JUnit4ClassRunner(Class<?> klass) throws InitializationError {
 		super(klass);
 		fTestMethods= computeTestMethods();
-		List<Throwable> errors= new ArrayList<Throwable>();
-		collectInitializationErrors(errors);
-		assertValid(errors);
+		validate();
 	}
 	
 	//
@@ -42,6 +39,7 @@ public class JUnit4ClassRunner extends ParentRunner<FrameworkMethod> implements 
 		return getTestClass().getTestMethods();
 	}
 
+	@Override
 	protected void collectInitializationErrors(List<Throwable> errors) {
 		getTestClass().validateMethodsForDefaultRunner(errors);
 	}

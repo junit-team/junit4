@@ -14,8 +14,6 @@ public class ErrorReportingRunner extends ParentRunner<Throwable> {
 	private final Class<?> fClass;
 
 	public ErrorReportingRunner(Class<?> type, Throwable cause) {
-		// TODO: (Dec 10, 2007 9:35:57 PM) Is this the only time calling super(null)?
-
 		super(null);
 		// TODO: (Dec 10, 2007 9:41:50 PM) remove fClass
 

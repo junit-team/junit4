@@ -23,7 +23,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
 
 public abstract class ParentRunner<T> extends Runner implements Filterable, Sortable {
-	protected final TestClass fTestClass;
+	private final TestClass fTestClass;
 	private List<T> fChildren = null;
 	private Filter fFilter = null;
 	private Sorter fSorter = null;
@@ -35,7 +35,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 	//
 	// Must be overridden
 	//
-	
+
 	protected abstract List<T> getChildren();
 	
 	protected abstract Description describeChild(T child);
@@ -46,6 +46,16 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 	// May be overridden
 	//
 	
+	protected void collectInitializationErrors(List<Throwable> errors) {
+	}
+
+	protected Statement classBlock(final RunNotifier notifier) {
+		Statement statement= runChildren(notifier);
+		statement= new RunBefores(statement, fTestClass, null);
+		statement= new RunAfters(statement, fTestClass, null);
+		return statement;
+	}
+	
 	protected Statement runChildren(final RunNotifier notifier) {
 		return new Statement() {
 			@Override
@@ -54,13 +64,6 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 					runChild(each, notifier);
 			}
 		};
-	}
-
-	protected Statement classBlock(final RunNotifier notifier) {
-		Statement statement= runChildren(notifier);
-		statement= new RunBefores(statement, fTestClass, null);
-		statement= new RunAfters(statement, fTestClass, null);
-		return statement;
 	}
 
 	protected Annotation[] classAnnotations() {
@@ -79,15 +82,13 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 		return fTestClass;
 	}
 
-	protected final void assertValid(List<Throwable> errors) throws InitializationError {
+	protected void validate() throws InitializationError {
+		List<Throwable> errors= new ArrayList<Throwable>();
+		collectInitializationErrors(errors);
 		if (!errors.isEmpty())
 			throw new InitializationError(errors);
 	}
-	
-	//
-	// Implementation
-	// 
-	
+
 	public void filter(Filter filter) throws NoTestsRemainException {
 		fFilter= filter;
 		
