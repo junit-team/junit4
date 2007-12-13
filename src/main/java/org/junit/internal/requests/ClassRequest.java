@@ -1,6 +1,7 @@
 package org.junit.internal.requests;
 
 import org.junit.Ignore;
+import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.internal.runners.JUnit4ClassRunner;
@@ -35,9 +36,9 @@ public class ClassRequest extends Request {
 			String simpleName= runnerClass.getSimpleName();
 			InitializationError error= new InitializationError(String.format(
 					CONSTRUCTOR_ERROR_FORMAT, simpleName, simpleName));
-			return Request.errorReport(fTestClass, error).getRunner();
+			return new ErrorReportingRunner(fTestClass, error);
 		} catch (Exception e) {
-			return Request.errorReport(fTestClass, e).getRunner();
+			return new ErrorReportingRunner(fTestClass, e);
 		}
 	}
 

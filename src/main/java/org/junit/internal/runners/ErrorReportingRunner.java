@@ -1,43 +1,30 @@
 package org.junit.internal.runners;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.internal.runners.links.Statement;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 
 public class ErrorReportingRunner extends ParentRunner<Throwable> {
 	private final Throwable fCause;
 
-	private final Class<?> fClass;
-
 	public ErrorReportingRunner(Class<?> type, Throwable cause) {
-		super(null);
-		// TODO: (Dec 10, 2007 9:41:50 PM) remove fClass
-
-		fClass= type;
+		super(type);
 		fCause= cause;
 	}
 
 	@Override
 	protected Description describeChild(Throwable child) {
-		return Description.createTestDescription(fClass, "initializationError");
+		return Description.createTestDescription(getTestClass().getJavaClass(), "initializationError");
 	}
 	
 	@Override
-	protected String getName() {
-		// TODO: (Dec 10, 2007 9:53:31 PM) DUP with superclass?
-
-		return fClass.getName();
-	}
-	
-	@Override
-	protected Annotation[] classAnnotations() {
-		// TODO: (Dec 10, 2007 9:54:09 PM) DUP with other ParentRunner subclass?
-
-		return new Annotation[0];
+	protected Statement classBlock(RunNotifier notifier) {
+		// no before or after class
+		return runChildren(notifier);
 	}
 
 	@Override

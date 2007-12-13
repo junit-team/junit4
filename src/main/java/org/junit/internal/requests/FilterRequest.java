@@ -3,6 +3,7 @@
  */
 package org.junit.internal.requests;
 
+import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
@@ -34,9 +35,9 @@ public final class FilterRequest extends Request {
 			fFilter.apply(runner);
 			return runner;
 		} catch (NoTestsRemainException e) {
-			return Request.errorReport(Filter.class, new Exception(String
+			return new ErrorReportingRunner(Filter.class, new Exception(String
 					.format("No tests found matching %s from %s", fFilter
-							.describe(), fRequest.toString()))).getRunner();
+							.describe(), fRequest.toString())));
 		}
 	}
 }

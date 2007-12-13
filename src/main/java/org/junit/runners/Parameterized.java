@@ -113,17 +113,12 @@ public class Parameterized extends Suite {
 	public static @interface Parameters {
 	}
 
-	public Parameterized(Class<?> klass) throws Throwable {
-		// TODO: (Dec 11, 2007 10:06:16 PM) is this the only call?
-		this(klass, getParametersList(new TestClass(klass)));
-	}
-
 	// TODO: (Dec 11, 2007 10:09:48 PM) Parameterized so desperately wants to be
 	// a ParentRunner
 
-	private Parameterized(Class<?> klass, List<Object[]> parametersList)
-			throws InitializationError {
-		super(klass, runners(klass, parametersList));
+	public Parameterized(Class<?> klass) throws Throwable {
+		// TODO: (Dec 13, 2007 2:54:59 AM) why do I need to wrap TestClass here?
+		super(klass, runners(klass, getParametersList(new TestClass(klass))));
 		validate();
 	}
 

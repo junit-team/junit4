@@ -3,11 +3,11 @@ package org.junit.runner;
 import java.util.Comparator;
 
 import org.junit.internal.requests.ClassRequest;
-import org.junit.internal.requests.ClassesRequest;
-import org.junit.internal.requests.ErrorReportingRequest;
 import org.junit.internal.requests.FilterRequest;
 import org.junit.internal.requests.SortingRequest;
+import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.manipulation.Filter;
+import org.junit.runners.Suite;
 
 /**
  * <p>A <code>Request</code> is an abstract description of tests to be run. Older versions of 
@@ -45,6 +45,10 @@ public abstract class Request {
 		return new ClassRequest(clazz);
 	}
 
+	public static Request classWithoutSuiteMethod(Class<?> newTestClass) {
+		return new ClassRequest(newTestClass, false);
+	}
+
 	/**
 	 * Create a <code>Request</code> that, when processed, will run all the tests
 	 * in a set of classes.
@@ -53,11 +57,23 @@ public abstract class Request {
 	 * @return a <code>Request</code> that will cause all tests in the classes to be run
 	 */
 	public static Request classes(String collectionName, Class<?>... classes) {
-		return new ClassesRequest(classes);
+		// TODO: (Dec 13, 2007 2:47:58 AM) remove collectionName, which is unused
+		return runner(new Suite(classes));
 	}
-
+	
+	
+	// TODO: (Dec 13, 2007 2:49:53 AM) deprecate?
 	public static Request errorReport(Class<?> klass, Throwable cause) {
-		return new ErrorReportingRequest(klass, cause);
+		return runner(new ErrorReportingRunner(klass, cause));
+	}
+	
+	public static Request runner(final Runner runner) {
+		return new Request(){
+			@Override
+			public Runner getRunner() {
+				return runner;
+			}		
+		};
 	}
 
 	/**
@@ -128,9 +144,5 @@ public abstract class Request {
 	 */
 	public Request sortWith(Comparator<Description> comparator) {
 		return new SortingRequest(this, comparator);
-	}
-
-	public static Request classWithoutSuiteMethod(Class<?> newTestClass) {
-		return new ClassRequest(newTestClass, false);
 	}
 }
