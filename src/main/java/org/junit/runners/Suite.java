@@ -33,20 +33,6 @@ public class Suite extends ParentRunner<Runner> {
 	public @interface SuiteClasses {
 		public Class<?>[] value();
 	}
-	
-	// TODO: (Dec 12, 2007 1:56:18 PM) organize this mess of members
-
-
-	private final List<Runner> fRunners;
-
-	/**
-	 * Internal use only.
-	 */
-	public Suite(Class<?> klass) throws InitializationError {
-		// TODO: (Dec 10, 2007 9:19:14 PM) can I inline the constructor called here?
-
-		this(klass, getAnnotatedClasses(klass));
-	}
 
 	// To prevent test writers from hanging themselves, we need to shorten the rope we hand them.
 	// SuiteBuilder builds a Suite one class at a time, making sure that no Suite contains
@@ -59,19 +45,23 @@ public class Suite extends ParentRunner<Runner> {
 	private static class SuiteBuilder {
 		private Set<Class<?>> parents = new HashSet<Class<?>>();
 
-		private List<Runner> runners(Class<?> klass, Class<?>[] annotatedClasses)
+		private List<Runner> runners(Class<?> parent, Class<?>[] children)
 				throws InitializationError {
-			ArrayList<Runner> runners= new ArrayList<Runner>();
-			addParent(klass);
+			addParent(parent);
 			
 			try {
-				for (Class<?> each : annotatedClasses) {
-					Runner childRunner= Request.aClass(each).getRunner();
-					if (childRunner != null)
-						runners.add(childRunner);
-				}
+				return runners(children);
 			} finally {
-				removeParent(klass);
+				removeParent(parent);
+			}
+		}
+
+		private List<Runner> runners(Class<?>[] children) {
+			ArrayList<Runner> runners= new ArrayList<Runner>();
+			for (Class<?> each : children) {
+				Runner childRunner= Request.aClass(each).getRunner();
+				if (childRunner != null)
+					runners.add(childRunner);
 			}
 			return runners;
 		}
@@ -92,37 +82,37 @@ public class Suite extends ParentRunner<Runner> {
 		}
 	}
 	
+	// TODO: (Dec 12, 2007 1:56:18 PM) organize this mess of members
+
+
+	private final List<Runner> fRunners;
+
+	public Suite(Class<?> klass) throws InitializationError {
+		// TODO: (Dec 13, 2007 2:33:16 AM) doc difference between each constructor
+
+		this(klass, getAnnotatedClasses(klass));
+		validate();
+	}
+
+	public Suite(Class<?>[] classes) {
+		this(null, builder.runners(classes));
+	}
+
 	protected Suite(Class<?> klass, Class<?>[] annotatedClasses) throws InitializationError {
 		this(klass, builder.runners(klass, annotatedClasses));
 	}
-
-	private void validate() throws InitializationError {
-		// TODO: (Dec 10, 2007 9:17:45 PM) DUP with other ParentRunners?
-		// TODO: (Dec 10, 2007 9:18:24 PM) sort methods
-
-		
-		List<Throwable> errors= new ArrayList<Throwable>();
-		getTestClass().validateStaticMethods(errors);
-		assertValid(errors);
-	}
-
-	public Suite(String name, Class<?>[] classes) throws InitializationError {
-		this(null, name, builder.runners(null, classes));
-	}
-
-	// TODO: (Dec 12, 2007 1:51:36 PM) reduce number of constructors
 	
-
-	public Suite(Class<?> klass, List<Runner> runners) throws InitializationError {
-		this(klass, klass.getName(), runners);
+	protected Suite(Class<?> klass, List<Runner> runners) {
+		super(klass);
+		fRunners = runners;
 	}
 
-	public Suite(Class<?> klass, String name, List<Runner> runners) throws InitializationError {
-		super(klass);
-		// TODO: (Dec 12, 2007 1:56:37 PM) name is unused
 
-		fRunners = runners;
-		validate();
+	// TODO: (Dec 13, 2007 2:25:37 AM) sort members
+
+	@Override
+	protected void collectInitializationErrors(List<Throwable> errors) {
+		getTestClass().validateStaticMethods(errors);
 	}
 
 	private static Class<?>[] getAnnotatedClasses(Class<?> klass) throws InitializationError {
