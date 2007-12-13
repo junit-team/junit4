@@ -53,7 +53,7 @@ public abstract class Request {
 	 * @return a <code>Request</code> that will cause all tests in the classes to be run
 	 */
 	public static Request classes(String collectionName, Class<?>... classes) {
-		return new ClassesRequest(collectionName, classes);
+		return new ClassesRequest(classes);
 	}
 
 	public static Request errorReport(Class<?> klass, Throwable cause) {

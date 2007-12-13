@@ -1,28 +1,21 @@
 package org.junit.internal.requests;
 
-import org.junit.internal.runners.InitializationError;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
 import org.junit.runners.Suite;
 
 public class ClassesRequest extends Request {
+	// TODO: (Dec 13, 2007 2:29:43 AM) how useful are requests anymore?
+
 	private final Class<?>[] fClasses;
-	private final String fName;
 	
-	public ClassesRequest(String name, Class<?>... classes) {
+	public ClassesRequest(Class<?>... classes) {
 		fClasses= classes;
-		fName= name;
 	}
 
 	/** @inheritDoc */
 	@Override 
 	public Runner getRunner() {
-		try {
-			return new Suite(fName, fClasses);
-		} catch (InitializationError e) {
-			// TODO: (Dec 10, 2007 9:13:13 PM) untested
-
-			return Request.errorReport(null, e).getRunner();
-		}
+		return new Suite(fClasses);
 	}
 }
