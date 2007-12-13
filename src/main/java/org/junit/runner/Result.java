@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.junit.Assume.AssumptionViolatedException;
 import org.junit.runner.notification.Failure;
-import org.junit.runner.notification.Ignorance;
+import org.junit.runner.notification.FailedAssumption;
 import org.junit.runner.notification.RunListener;
 
 /**
@@ -17,9 +17,15 @@ public class Result {
 	private int fCount= 0;
 	private int fIgnoreCount= 0;
 	private List<Failure> fFailures= new ArrayList<Failure>();
-	private List<Ignorance> fIgnorances= new ArrayList<Ignorance>();
+	private List<FailedAssumption> fUnrunnables= new ArrayList<FailedAssumption>();
 	private long fRunTime= 0;
 	private long fStartTime;
+	
+	// TODO: (Dec 13, 2007 12:54:09 AM) Is Ignorance in right package?
+
+	// TODO: (Dec 13, 2007 12:59:37 AM) sort members
+
+	private List<Ignorance> fIgnorances = new ArrayList<Ignorance>();
 
 	/**
 	 * @return the number of tests run
@@ -50,8 +56,8 @@ public class Result {
 	}
 
 
-	public List<Ignorance> getIgnorances() {
-		return fIgnorances;
+	public List<FailedAssumption> getFailedAssumptions() {
+		return fUnrunnables;
 	}
 
 	/**
@@ -69,7 +75,7 @@ public class Result {
 	}
 
 	private class Listener extends RunListener {
-		private boolean fTestIgnored = false;
+		private boolean fAssumptionFailed = false;
 		
 		@Override
 		public void testRunStarted(Description description) throws Exception {
@@ -84,9 +90,9 @@ public class Result {
 
 		@Override
 		public void testFinished(Description description) throws Exception {
-			if (!fTestIgnored)
+			if (!fAssumptionFailed)
 				fCount++;
-			fTestIgnored = false;
+			fAssumptionFailed = false;
 		}
 
 		@Override
@@ -95,15 +101,20 @@ public class Result {
 		}
 
 		@Override
-		public void testIgnored(Description description) throws Exception {
+		public void testIgnored(Description description, String reason) throws Exception {
 			fIgnoreCount++;
-			fTestIgnored = true;
+			// TODO: (Dec 12, 2007 2:39:35 PM) pass-through
+
+			fIgnorances.add(new Ignorance(description, reason));
 		}
 		
 		@Override
-		public void testIgnoredReason(Description description,
+		public void testAssumptionFailed(Description description,
 				AssumptionViolatedException e) {
-			fIgnorances.add(new Ignorance(description, e));
+			// TODO: (Dec 12, 2007 2:39:00 PM) text should be unrunnable, not IGNORED TEST
+
+			fUnrunnables.add(new FailedAssumption(description, e));
+			fAssumptionFailed = true;
 		}
 	}
 
@@ -112,5 +123,15 @@ public class Result {
 	 */
 	public RunListener createListener() {
 		return new Listener();
+	}
+
+	// TODO: (Dec 12, 2007 2:40:57 PM) sort members
+
+	public int getUnrunnableCount() {
+		return fUnrunnables.size();
+	}
+
+	public List<Ignorance> getIgnorances() {
+		return fIgnorances;
 	}
 }

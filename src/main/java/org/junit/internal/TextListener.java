@@ -5,6 +5,7 @@ import java.text.NumberFormat;
 import java.util.List;
 
 import org.junit.runner.Description;
+import org.junit.runner.Ignorance;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
@@ -25,6 +26,7 @@ public class TextListener extends RunListener {
 	public void testRunFinished(Result result) {
 		printHeader(result.getRunTime());
 		printFailures(result);
+		printFailedAssumptions(result);
 		printIgnorances(result);
 		printFooter(result);
 	}
@@ -61,8 +63,26 @@ public class TextListener extends RunListener {
 		printExceptions("failure", "", result.getFailures());
 	}
 	
+	private void printFailedAssumptions(Result result) {
+		printExceptions("ignored test", "IGNORED TEST ", result.getFailedAssumptions());
+	}
+	
 	private void printIgnorances(Result result) {
-		printExceptions("ignored test", "IGNORED TEST ", result.getIgnorances());
+		// TODO: (Dec 13, 2007 12:57:04 AM) DUP
+
+		if (result.getIgnorances().size() == 0)
+			return;
+		if (result.getIgnorances().size() == 1)
+			// TODO: (Dec 13, 2007 12:55:01 AM) test this back in
+
+			getWriter().println("There was " + result.getIgnorances().size() + " " + "ignored test" + ":");
+		else
+			getWriter().println("There were " + result.getIgnorances().size() + " " + "ignored test" + "s:");
+		for (Ignorance each : result.getIgnorances()) {
+			// TODO: (Dec 13, 2007 12:57:12 AM) Cheating
+
+			getWriter().println("IGNORED TEST 1) " + each.getReason());
+		}
 	}
 
 	private void printExceptions(String exceptionTypeName, String listPrefix,

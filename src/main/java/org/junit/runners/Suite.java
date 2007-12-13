@@ -9,10 +9,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.internal.runners.CompositeRunner;
 import org.junit.internal.runners.InitializationError;
+import org.junit.internal.runners.ParentRunner;
+import org.junit.runner.Description;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
+import org.junit.runner.notification.RunNotifier;
 
 /**
  * Using <code>Suite</code> as a runner allows you to manually
@@ -21,7 +23,7 @@ import org.junit.runner.Runner;
  * with <code>@RunWith(Suite.class)</code> and <code>@SuiteClasses(TestClass1.class, ...)</code>.
  * When you run this class, it will run all the tests in all the suite classes.
  */
-public class Suite extends CompositeRunner {
+public class Suite extends ParentRunner<Runner> {
 	/**
 	 * The <code>SuiteClasses</code> annotation specifies the classes to be run when a class
 	 * annotated with <code>@RunWith(Suite.class)</code> is run.
@@ -31,11 +33,18 @@ public class Suite extends CompositeRunner {
 	public @interface SuiteClasses {
 		public Class<?>[] value();
 	}
+	
+	// TODO: (Dec 12, 2007 1:56:18 PM) organize this mess of members
+
+
+	private final List<Runner> fRunners;
 
 	/**
 	 * Internal use only.
 	 */
 	public Suite(Class<?> klass) throws InitializationError {
+		// TODO: (Dec 10, 2007 9:19:14 PM) can I inline the constructor called here?
+
 		this(klass, getAnnotatedClasses(klass));
 	}
 
@@ -55,7 +64,6 @@ public class Suite extends CompositeRunner {
 			ArrayList<Runner> runners= new ArrayList<Runner>();
 			addParent(klass);
 			
-			// TODO: (Dec 10, 2007 1:10:20 PM) Does this duplicate code from ClassesRequest?
 			try {
 				for (Class<?> each : annotatedClasses) {
 					Runner childRunner= Request.aClass(each).getRunner();
@@ -85,10 +93,36 @@ public class Suite extends CompositeRunner {
 	}
 	
 	protected Suite(Class<?> klass, Class<?>[] annotatedClasses) throws InitializationError {
-		super(klass, klass.getName(), builder.runners(klass, annotatedClasses));
+		this(klass, builder.runners(klass, annotatedClasses));
+	}
+
+	private void validate() throws InitializationError {
+		// TODO: (Dec 10, 2007 9:17:45 PM) DUP with other ParentRunners?
+		// TODO: (Dec 10, 2007 9:18:24 PM) sort methods
+
+		
 		List<Throwable> errors= new ArrayList<Throwable>();
 		getTestClass().validateStaticMethods(errors);
 		assertValid(errors);
+	}
+
+	public Suite(String name, Class<?>[] classes) throws InitializationError {
+		this(null, name, builder.runners(null, classes));
+	}
+
+	// TODO: (Dec 12, 2007 1:51:36 PM) reduce number of constructors
+	
+
+	public Suite(Class<?> klass, List<Runner> runners) throws InitializationError {
+		this(klass, klass.getName(), runners);
+	}
+
+	public Suite(Class<?> klass, String name, List<Runner> runners) throws InitializationError {
+		super(klass);
+		// TODO: (Dec 12, 2007 1:56:37 PM) name is unused
+
+		fRunners = runners;
+		validate();
 	}
 
 	private static Class<?>[] getAnnotatedClasses(Class<?> klass) throws InitializationError {
@@ -96,5 +130,20 @@ public class Suite extends CompositeRunner {
 		if (annotation == null)
 			throw new InitializationError(String.format("class '%s' must have a SuiteClasses annotation", klass.getName()));
 		return annotation.value();
+	}
+	
+	@Override
+	protected List<Runner> getChildren() {
+		return fRunners;
+	}
+	
+	@Override
+	protected Description describeChild(Runner child) {
+		return child.getDescription();
+	}
+
+	@Override
+	protected void runChild(Runner each, final RunNotifier notifier) {
+		each.run(notifier);
 	}
 }

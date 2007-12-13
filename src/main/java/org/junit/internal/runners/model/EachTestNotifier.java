@@ -41,7 +41,7 @@ public class EachTestNotifier {
 
 	public void fireTestIgnored() {
 		fNotifier.fireTestIgnored(fDescription);
-		fNotifier.fireTestIgnoredReason(fDescription, makeIgnoredException(fDescription));
+		fNotifier.fireTestAssumptionFailed(fDescription, makeIgnoredException(fDescription));
 	}
 
 	// TODO: (Dec 9, 2007 9:25:42 PM) Static ignores should not have backtraces
@@ -52,8 +52,7 @@ public class EachTestNotifier {
 		return new AssumptionViolatedException(reason);
 	}
 
-	public void addIgnorance(AssumptionViolatedException e) {
-		fNotifier.fireTestIgnored(fDescription);
-		fNotifier.fireTestIgnoredReason(fDescription, e);
+	public void addFailedAssumption(AssumptionViolatedException e) {
+		fNotifier.fireTestAssumptionFailed(fDescription, e);
 	}
 }

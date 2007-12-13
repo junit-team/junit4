@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Assume.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
@@ -108,7 +109,15 @@ public class RunNotifier {
 			@Override
 			protected void notifyListener(RunListener each) throws Exception {
 				each.testIgnored(description);
-				// TODO: (Dec 10, 2007 1:49:33 PM) Call a new method each.testIgnored(description, reason), as well
+				each.testIgnored(description, getIgnoredReason(description));
+				// TODO: (Dec 12, 2007 2:35:18 PM) ignored with reason should replace failed assumption except where failed assumption is right
+			}
+
+			private String getIgnoredReason(final Description description) {
+				Ignore annotation= description.getAnnotation(Ignore.class);
+				if (annotation == null)
+					return null;
+				return annotation.value();
 			};
 		}.run();
 	}
@@ -151,12 +160,12 @@ public class RunNotifier {
 		fireTestFinished(description);
 	}
 
-	public void fireTestIgnoredReason(final Description description,
+	public void fireTestAssumptionFailed(final Description description,
 			final AssumptionViolatedException e) {
 		new SafeNotifier() {
 			@Override
 			protected void notifyListener(RunListener each) throws Exception {
-				each.testIgnoredReason(description, e);
+				each.testAssumptionFailed(description, e);
 			};
 		}.run();
 	}

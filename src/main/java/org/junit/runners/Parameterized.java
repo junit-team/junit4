@@ -4,17 +4,16 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.internal.runners.CompositeRunner;
 import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.JUnit4ClassRunner;
 import org.junit.internal.runners.links.Statement;
 import org.junit.internal.runners.model.FrameworkMethod;
-import org.junit.runner.manipulation.Filterable;
+import org.junit.internal.runners.model.TestClass;
+import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 
 /**
@@ -57,28 +56,32 @@ import org.junit.runner.notification.RunNotifier;
  * <code>&#064;Parameters</code> method.
  * </p>
  */
-public class Parameterized extends CompositeRunner implements Filterable {
-	private class TestClassRunnerForParameters extends JUnit4ClassRunner {
+public class Parameterized extends Suite {
+	private static class TestClassRunnerForParameters extends JUnit4ClassRunner {
 		private final int fParameterSetNumber;
+		private final List<Object[]> fParameterList;
 
-		TestClassRunnerForParameters(Class<?> type, int i)
+		TestClassRunnerForParameters(Class<?> type, List<Object[]> parameterList, int i)
 				throws InitializationError {
 			super(type);
+			fParameterList= parameterList;
 			fParameterSetNumber= i;
 		}
 
 		@Override
 		public Object createTest() throws Exception {
-			return fConstructor.newInstance(computeParams());
+			return getTestClass().getOnlyConstructor().newInstance(computeParams());
 		}
 
 		private Object[] computeParams() throws Exception {
 			try {
-				return fParameters.get(fParameterSetNumber);
+				return fParameterList.get(fParameterSetNumber);
 			} catch (ClassCastException e) {
 				throw new Exception(String.format(
 						"%s.%s() must return a Collection of arrays.",
-						getTestClass().getName(), getParametersMethod().getName()));				
+						getTestClass().getName(), getParametersMethod(fTestClass).getName()));
+				// TODO: (Dec 10, 2007 9:22:07 PM) Should fTestClass be protected?
+
 			}
 		}
 
@@ -109,35 +112,39 @@ public class Parameterized extends CompositeRunner implements Filterable {
 	public static @interface Parameters {
 	}
 
-	private List<Object[]> fParameters;
-	
-	private Constructor<?> fConstructor;
-
 	public Parameterized(Class<?> klass) throws Throwable {
-		super(klass, klass.getName());
+		// TODO: (Dec 11, 2007 10:06:16 PM) is this the only call?
+		this(klass, getParametersList(new TestClass(klass)));
+	}
+	
+	// TODO: (Dec 11, 2007 10:09:48 PM) Parameterized so desperately wants to be a ParentRunner
+
+	private Parameterized(Class<?> klass, List<Object[]> parametersList) throws InitializationError {
+		super(klass, runners(klass, parametersList));
 
 		List<Throwable> errors= new ArrayList<Throwable>();
-		getTestClass().validateStaticMethods(errors);
-		getTestClass().validateInstanceMethods(errors);
+		new TestClass(klass).validateStaticMethods(errors);
+		new TestClass(klass).validateInstanceMethods(errors);
 		assertValid(errors);
+	}
 
-		fParameters= getParametersList();
-
-		for (int i = 0; i < fParameters.size(); i++)
-			// TODO I almost finished deleting CompositeRunner.add(), but got hung up on this last invocation
-			add(new TestClassRunnerForParameters(klass, i));
-		
-		fConstructor= getTestClass().getOnlyConstructor();
+	private static ArrayList<Runner> runners(Class<?> klass,
+			List<Object[]> parametersList) throws InitializationError {
+		ArrayList<Runner> runners= new ArrayList<Runner>();
+		for (int i = 0; i < parametersList.size(); i++)
+			// TODO: (Dec 11, 2007 10:08:16 PM) pass-through
+			runners.add(new TestClassRunnerForParameters(klass, parametersList, i));
+		return runners;
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<Object[]> getParametersList() throws Throwable {
-		return (List<Object[]>) getParametersMethod().invokeExplosively(
+	private static List<Object[]> getParametersList(TestClass testClass) throws Throwable {
+		return (List<Object[]>) getParametersMethod(testClass).invokeExplosively(
 				null);
 	}
 
-	private FrameworkMethod getParametersMethod() throws Exception {
-		List<FrameworkMethod> methods= getTestClass()
+	private static FrameworkMethod getParametersMethod(TestClass testClass) throws Exception {
+		List<FrameworkMethod> methods= testClass
 				.getAnnotatedMethods(Parameters.class);
 		for (FrameworkMethod each : methods) {
 			int modifiers= each.getMethod().getModifiers();
@@ -146,7 +153,7 @@ public class Parameterized extends CompositeRunner implements Filterable {
 		}
 
 		throw new Exception("No public static parameters method on class "
-				+ getTestClass().getName());
+				+ testClass.getName());
 	}
 
 	public static List<Object[]> eachOne(Object... params) {

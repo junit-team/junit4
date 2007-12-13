@@ -19,7 +19,7 @@ public class IgnoredClassRunner extends Runner {
 	@Override
 	public void run(RunNotifier notifier) {
 		notifier.fireTestIgnored(getDescription());		
-		notifier.fireTestIgnoredReason(getDescription(),
+		notifier.fireTestAssumptionFailed(getDescription(),
 				new AssumptionViolatedException(fTestClass.getAnnotation(
 						Ignore.class).value()));	
 	}

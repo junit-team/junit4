@@ -79,7 +79,7 @@ public class TextListenerTest extends TestCase {
 	
 	public void testIgnore() {
 		runner.run(IgnoreTest.class);
-		assertThat(results.toString(), both(containsString("Antimilos")).and(containsString("ignored test:")).and(containsString("IGNORED TEST 1)")));
+		assertThat(results.toString(), both(containsString("Antimilos")).and(containsString("IGNORED TEST 1)")));
 	}
 	
 	public static class AssumptionFailureTest {
@@ -88,7 +88,7 @@ public class TextListenerTest extends TestCase {
 		}
 	}
 	
-	public void testAssumptionFailureIsIgnore() {
+	public void testAssumptionFailureIsReflected() {
 		runner.run(AssumptionFailureTest.class);
 		assertThat(results.toString(), containsString("Spain"));
 	}

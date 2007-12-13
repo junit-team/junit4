@@ -19,7 +19,7 @@ public class RunTestNotifier extends Notifier {
 		try {
 			fNext.evaluate();
 		} catch (AssumptionViolatedException e) {
-			context.addIgnorance(e);
+			context.addFailedAssumption(e);
 		} catch (Throwable e) {
 			context.addFailure(e);
 		} finally {

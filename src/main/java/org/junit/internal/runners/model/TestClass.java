@@ -79,6 +79,8 @@ public class TestClass extends TestElement {
 	}
 
 	public String getName() {
+		if (fClass == null)
+			return "null";
 		return fClass.getName();
 	}
 
@@ -126,5 +128,14 @@ public class TestClass extends TestElement {
 		Constructor<?>[] constructors= fClass.getConstructors();
 		Assert.assertEquals(1, constructors.length);
 		return constructors[0];
+	}
+
+	public Annotation[] getAnnotations() {
+		if (fClass == null)
+			return new Annotation[0];
+		return fClass.getAnnotations();
+		// TODO: (Dec 12, 2007 1:57:40 PM) Do I still need getJavaClass?
+		// TODO: (Dec 12, 2007 1:57:57 PM) When is class null?
+
 	}
 }

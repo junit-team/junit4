@@ -77,8 +77,12 @@ public class RunListener {
 	public void testIgnored(Description description) throws Exception {
 	}
 
-	public void testIgnoredReason(Description description,
+	public void testAssumptionFailed(Description description,
 			AssumptionViolatedException e) {
+	}
+
+	// TODO: (Dec 12, 2007 2:34:25 PM) document
+	public void testIgnored(Description description, String reason) throws Exception {
 	}
 }
 
