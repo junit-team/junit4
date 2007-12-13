@@ -23,7 +23,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
 
 public abstract class ParentRunner<T> extends Runner implements Filterable, Sortable {
-	private final TestClass fTestClass;
+	protected final TestClass fTestClass;
 	private List<T> fChildren = null;
 	private Filter fFilter = null;
 	private Sorter fSorter = null;
@@ -64,7 +64,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 	}
 
 	protected Annotation[] classAnnotations() {
-		return fTestClass.getJavaClass().getAnnotations();
+		return fTestClass.getAnnotations();
 	}
 
 	protected String getName() {
@@ -117,7 +117,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 			Statement statement= classBlock(notifier);
 			statement.evaluate();
 		} catch (AssumptionViolatedException e) {
-			testNotifier.addIgnorance(e);
+			testNotifier.addFailedAssumption(e);
 		} catch (StoppedByUserException e) {
 			throw e;
 		} catch (Throwable e) {

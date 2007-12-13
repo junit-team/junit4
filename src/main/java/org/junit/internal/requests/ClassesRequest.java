@@ -1,11 +1,9 @@
 package org.junit.internal.requests;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.internal.runners.CompositeRunner;
+import org.junit.internal.runners.InitializationError;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
+import org.junit.runners.Suite;
 
 public class ClassesRequest extends Request {
 	private final Class<?>[] fClasses;
@@ -19,12 +17,12 @@ public class ClassesRequest extends Request {
 	/** @inheritDoc */
 	@Override 
 	public Runner getRunner() {
-		List<Runner> runners= new ArrayList<Runner>();
-		for (Class<?> each : fClasses) {
-			Runner childRunner= Request.aClass(each).getRunner();
-			runners.add(childRunner);  // TODO David, I took out the null check after examining all the implementors of getRunner()
+		try {
+			return new Suite(fName, fClasses);
+		} catch (InitializationError e) {
+			// TODO: (Dec 10, 2007 9:13:13 PM) untested
+
+			return Request.errorReport(null, e).getRunner();
 		}
-		CompositeRunner runner= new CompositeRunner(fName, runners);
-		return runner;
 	}
 }

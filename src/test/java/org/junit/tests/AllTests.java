@@ -16,7 +16,6 @@ import org.junit.tests.experimental.AssumptionViolatedExceptionTest;
 import org.junit.tests.experimental.ExperimentalTests;
 import org.junit.tests.experimental.MatcherTest;
 import org.junit.tests.experimental.theories.AllMembersSupplierTest;
-import org.junit.tests.extension.CompositeRunnerTest;
 import org.junit.tests.junit3compatibility.AllTestsTest;
 import org.junit.tests.junit3compatibility.ClassRequestTest;
 import org.junit.tests.junit3compatibility.ForwardCompatibilityTest;
@@ -100,7 +99,6 @@ import org.junit.tests.validation.ValidationTest;
 	EachTest.class,
 	ExperimentalTests.class,
 	InheritedTestTest.class,
-	CompositeRunnerTest.class,
 	ResultTest.class,
 	TestClassTest.class,
 	AllMembersSupplierTest.class,
