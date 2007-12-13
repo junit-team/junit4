@@ -59,10 +59,11 @@ import org.junit.runner.notification.RunNotifier;
 public class Parameterized extends Suite {
 	private static class TestClassRunnerForParameters extends JUnit4ClassRunner {
 		private final int fParameterSetNumber;
+
 		private final List<Object[]> fParameterList;
 
-		TestClassRunnerForParameters(Class<?> type, List<Object[]> parameterList, int i)
-				throws InitializationError {
+		TestClassRunnerForParameters(Class<?> type,
+				List<Object[]> parameterList, int i) throws InitializationError {
 			super(type);
 			fParameterList= parameterList;
 			fParameterSetNumber= i;
@@ -70,7 +71,8 @@ public class Parameterized extends Suite {
 
 		@Override
 		public Object createTest() throws Exception {
-			return getTestClass().getOnlyConstructor().newInstance(computeParams());
+			return getTestClass().getOnlyConstructor().newInstance(
+					computeParams());
 		}
 
 		private Object[] computeParams() throws Exception {
@@ -79,9 +81,8 @@ public class Parameterized extends Suite {
 			} catch (ClassCastException e) {
 				throw new Exception(String.format(
 						"%s.%s() must return a Collection of arrays.",
-						getTestClass().getName(), getParametersMethod(fTestClass).getName()));
-				// TODO: (Dec 10, 2007 9:22:07 PM) Should fTestClass be protected?
-
+						getTestClass().getName(), getParametersMethod(
+								getTestClass()).getName()));
 			}
 		}
 
@@ -100,7 +101,7 @@ public class Parameterized extends Suite {
 		protected void collectInitializationErrors(List<Throwable> errors) {
 			// do nothing: validated before.
 		}
-		
+
 		@Override
 		protected Statement classBlock(RunNotifier notifier) {
 			return runChildren(notifier);
@@ -116,34 +117,41 @@ public class Parameterized extends Suite {
 		// TODO: (Dec 11, 2007 10:06:16 PM) is this the only call?
 		this(klass, getParametersList(new TestClass(klass)));
 	}
-	
-	// TODO: (Dec 11, 2007 10:09:48 PM) Parameterized so desperately wants to be a ParentRunner
 
-	private Parameterized(Class<?> klass, List<Object[]> parametersList) throws InitializationError {
+	// TODO: (Dec 11, 2007 10:09:48 PM) Parameterized so desperately wants to be
+	// a ParentRunner
+
+	private Parameterized(Class<?> klass, List<Object[]> parametersList)
+			throws InitializationError {
 		super(klass, runners(klass, parametersList));
+		validate();
+	}
 
-		List<Throwable> errors= new ArrayList<Throwable>();
-		new TestClass(klass).validateStaticMethods(errors);
-		new TestClass(klass).validateInstanceMethods(errors);
-		assertValid(errors);
+	@Override
+	protected void collectInitializationErrors(List<Throwable> errors) {
+		getTestClass().validateStaticMethods(errors);
+		getTestClass().validateInstanceMethods(errors);
 	}
 
 	private static ArrayList<Runner> runners(Class<?> klass,
 			List<Object[]> parametersList) throws InitializationError {
 		ArrayList<Runner> runners= new ArrayList<Runner>();
-		for (int i = 0; i < parametersList.size(); i++)
+		for (int i= 0; i < parametersList.size(); i++)
 			// TODO: (Dec 11, 2007 10:08:16 PM) pass-through
-			runners.add(new TestClassRunnerForParameters(klass, parametersList, i));
+			runners.add(new TestClassRunnerForParameters(klass, parametersList,
+					i));
 		return runners;
 	}
 
 	@SuppressWarnings("unchecked")
-	private static List<Object[]> getParametersList(TestClass testClass) throws Throwable {
-		return (List<Object[]>) getParametersMethod(testClass).invokeExplosively(
-				null);
+	private static List<Object[]> getParametersList(TestClass testClass)
+			throws Throwable {
+		return (List<Object[]>) getParametersMethod(testClass)
+				.invokeExplosively(null);
 	}
 
-	private static FrameworkMethod getParametersMethod(TestClass testClass) throws Exception {
+	private static FrameworkMethod getParametersMethod(TestClass testClass)
+			throws Exception {
 		List<FrameworkMethod> methods= testClass
 				.getAnnotatedMethods(Parameters.class);
 		for (FrameworkMethod each : methods) {
