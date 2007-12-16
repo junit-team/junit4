@@ -115,8 +115,6 @@ public class Parameterized extends Suite {
 	public static @interface Parameters {
 	}
 
-	// TODO: (Dec 11, 2007 10:09:48 PM) Parameterized so desperately wants to be
-	// a ParentRunner
 
 	public Parameterized(Class<?> klass) throws Throwable {
 		// TODO: (Dec 13, 2007 2:54:59 AM) why do I need to wrap TestClass here?

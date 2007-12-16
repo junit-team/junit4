@@ -33,14 +33,6 @@ public class Suite extends ParentRunner<Runner> {
 	public @interface SuiteClasses {
 		public Class<?>[] value();
 	}
-
-	// To prevent test writers from hanging themselves, we need to shorten the rope we hand them.
-	// SuiteBuilder builds a Suite one class at a time, making sure that no Suite contains
-	// itself as a direct or indirect child.  Since Suites are constructed through
-	// reflective constructor invocations, we have one static builder that is referenced by all.
-	// This won't work correctly in the face of concurrency. For that we need to
-	// add parameters to getRunner(), which would be much more complicated.
-	public static SuiteBuilder builder = new SuiteBuilder();
 	
 	private static class SuiteBuilder {
 		private Set<Class<?>> parents = new HashSet<Class<?>>();
@@ -81,9 +73,21 @@ public class Suite extends ParentRunner<Runner> {
 			return parents.toString();
 		}
 	}
-	
-	// TODO: (Dec 12, 2007 1:56:18 PM) organize this mess of members
 
+	// To prevent test writers from hanging themselves, we need to shorten the rope we hand them.
+	// SuiteBuilder builds a Suite one class at a time, making sure that no Suite contains
+	// itself as a direct or indirect child.  Since Suites are constructed through
+	// reflective constructor invocations, we have one static builder that is referenced by all.
+	// This won't work correctly in the face of concurrency. For that we need to
+	// add parameters to getRunner(), which would be much more complicated.
+	public static SuiteBuilder builder = new SuiteBuilder();
+	
+	private static Class<?>[] getAnnotatedClasses(Class<?> klass) throws InitializationError {
+		SuiteClasses annotation= klass.getAnnotation(SuiteClasses.class);
+		if (annotation == null)
+			throw new InitializationError(String.format("class '%s' must have a SuiteClasses annotation", klass.getName()));
+		return annotation.value();
+	}
 
 	private final List<Runner> fRunners;
 
@@ -107,19 +111,9 @@ public class Suite extends ParentRunner<Runner> {
 		fRunners = runners;
 	}
 
-
-	// TODO: (Dec 13, 2007 2:25:37 AM) sort members
-
 	@Override
 	protected void collectInitializationErrors(List<Throwable> errors) {
 		getTestClass().validateStaticMethods(errors);
-	}
-
-	private static Class<?>[] getAnnotatedClasses(Class<?> klass) throws InitializationError {
-		SuiteClasses annotation= klass.getAnnotation(SuiteClasses.class);
-		if (annotation == null)
-			throw new InitializationError(String.format("class '%s' must have a SuiteClasses annotation", klass.getName()));
-		return annotation.value();
 	}
 	
 	@Override
