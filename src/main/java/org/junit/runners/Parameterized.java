@@ -104,6 +104,8 @@ public class Parameterized extends Suite {
 
 		@Override
 		protected Statement classBlock(RunNotifier notifier) {
+			// TODO: (Dec 13, 2007 3:01:19 AM) DUP ErrorReportingRunner
+
 			return runChildren(notifier);
 		}
 	}
@@ -118,7 +120,7 @@ public class Parameterized extends Suite {
 
 	public Parameterized(Class<?> klass) throws Throwable {
 		// TODO: (Dec 13, 2007 2:54:59 AM) why do I need to wrap TestClass here?
-		super(klass, runners(klass, getParametersList(new TestClass(klass))));
+		super(klass, runners(klass));
 		validate();
 	}
 
@@ -128,11 +130,10 @@ public class Parameterized extends Suite {
 		getTestClass().validateInstanceMethods(errors);
 	}
 
-	private static ArrayList<Runner> runners(Class<?> klass,
-			List<Object[]> parametersList) throws InitializationError {
+	private static ArrayList<Runner> runners(Class<?> klass) throws Throwable {
+		List<Object[]> parametersList = getParametersList(new TestClass(klass));
 		ArrayList<Runner> runners= new ArrayList<Runner>();
 		for (int i= 0; i < parametersList.size(); i++)
-			// TODO: (Dec 11, 2007 10:08:16 PM) pass-through
 			runners.add(new TestClassRunnerForParameters(klass, parametersList,
 					i));
 		return runners;
