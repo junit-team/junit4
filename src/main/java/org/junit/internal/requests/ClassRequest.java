@@ -20,6 +20,9 @@ public class ClassRequest extends Request {
 		fCanUseSuiteMethod= canUseSuiteMethod;
 	}
 
+	// TODO: (Dec 28, 2007 2:13:40 PM) Fix request / runner cycle
+
+	
 	public ClassRequest(Class<?> testClass) {
 		this(testClass, true);
 	}
