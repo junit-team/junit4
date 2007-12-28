@@ -16,16 +16,17 @@ import org.junit.Assume.AssumptionViolatedException;
 public class Guesser<T> extends ReguessableValue {
 	static class GuessMap extends HashMap<MethodCall, Object> implements
 			InvocationHandler {
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID= 1L;
 
 		public GuessMap(GuessMap guesses) {
 			super(guesses);
 		}
 
-		public GuessMap() {}
+		public GuessMap() {
+		}
 
 		GuessMap replaceGuess(Object oldValue, Object newValue) {
-			GuessMap newGuesses = new GuessMap(this);
+			GuessMap newGuesses= new GuessMap(this);
 			for (Entry<MethodCall, Object> entry : newGuesses.entrySet()) {
 				if (entry.getValue().equals(oldValue))
 					entry.setValue(newValue);
@@ -55,6 +56,7 @@ public class Guesser<T> extends ReguessableValue {
 	}
 
 	private final GuessMap guesses;
+
 	private final Class<T> type;
 
 	public Guesser(Class<T> type) {
@@ -62,45 +64,49 @@ public class Guesser<T> extends ReguessableValue {
 	}
 
 	public Guesser(Class<T> type, GuessMap guesses) {
-		this.type = type;
-		this.guesses = guesses;
+		this.type= type;
+		this.guesses= guesses;
 	}
 
-	@SuppressWarnings("unchecked") public T getProxy() {
+	@SuppressWarnings("unchecked")
+	public T getProxy() {
 		return (T) Proxy.newProxyInstance(getClass().getClassLoader(),
 				new Class[] { getType() }, guesses);
 	}
 
-	@Override public List<ReguessableValue> reguesses(
-			AssumptionViolatedException e) {
-		final ArrayList<ReguessableValue> returnThis = new ArrayList<ReguessableValue>();
+	@Override
+	public List<ReguessableValue> reguesses(AssumptionViolatedException e) {
+		final ArrayList<ReguessableValue> returnThis= new ArrayList<ReguessableValue>();
 		e.describeTo(new BaseDescription() {
-			@Override protected void append(char arg0) {}
+			@Override
+			protected void append(char arg0) {
+			}
 
-			boolean expectedSeen = false;
-			Object expected = null;
+			boolean expectedSeen= false;
+			Object expected= null;
 
-			@SuppressWarnings("unchecked") @Override public Description appendValue(
-					Object value) {
+			@Override
+			public Description appendValue(Object value) {
 				noteValue(value);
 				return super.appendValue(value);
 			}
 
 			private void noteValue(Object value) {
 				if (!expectedSeen) {
-					expected = value;
-					expectedSeen = true;
+					expected= value;
+					expectedSeen= true;
 					return;
 				}
 
-				GuessMap newGuesses = guesses.replaceGuess(expected, value);
+				GuessMap newGuesses= guesses.replaceGuess(expected, value);
 				returnThis.add(new Guesser<T>(getType(), newGuesses));
 			}
 		});
 		return returnThis;
 	}
 
-	@Override public Object getValue() throws CouldNotGenerateValueException {
+	@Override
+	public Object getValue() throws CouldNotGenerateValueException {
 		return getProxy();
 	}
 

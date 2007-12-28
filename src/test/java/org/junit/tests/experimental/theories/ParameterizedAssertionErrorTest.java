@@ -50,7 +50,6 @@ public class ParameterizedAssertionErrorTest {
 				methodName, params)));
 	}
 
-	@SuppressWarnings("unchecked")
 	@Theory(nullsAccepted= false)
 	public void buildParameterizedAssertionError(String methodName, String param) {
 		assertThat(new ParameterizedAssertionError(new RuntimeException(),

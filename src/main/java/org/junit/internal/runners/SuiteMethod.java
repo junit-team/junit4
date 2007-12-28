@@ -19,7 +19,6 @@ import junit.framework.Test;
  * </pre>
  */
 public class SuiteMethod extends JUnit38ClassRunner {
-	@SuppressWarnings("unchecked")
 	public SuiteMethod(Class<?> klass) throws Throwable {
 		super(testFromSuiteMethod(klass));
 	}
