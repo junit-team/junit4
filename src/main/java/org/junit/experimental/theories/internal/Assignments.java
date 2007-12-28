@@ -19,19 +19,19 @@ public class Assignments {
 
 	private final List<ParameterSignature> fUnassigned;
 
-	private final Class<?> fClass;
+	private final TestClass fClass;
 
 	public Assignments(List<PotentialAssignment> assigned,
-			List<ParameterSignature> unassigned, Class<?> type) {
+			List<ParameterSignature> unassigned, TestClass testClass) {
 		fUnassigned= unassigned;
 		fAssigned= assigned;
-		fClass= type;
+		fClass= testClass;
 	}
 
 	public static Assignments allUnassigned(Method testMethod,
-			Class<?> testClass) throws Exception {
+			TestClass testClass) throws Exception {
 		List<ParameterSignature> signatures;
-		signatures= ParameterSignature.signatures(new TestClass(testClass)
+		signatures= ParameterSignature.signatures(testClass
 				.getConstructor());
 		signatures.addAll(ParameterSignature.signatures(testMethod));
 		return new Assignments(new ArrayList<PotentialAssignment>(),
@@ -79,7 +79,7 @@ public class Assignments {
 		if (supplier != null)
 			return supplier;
 
-		return new AllMembersSupplier(fClass);
+		return new AllMembersSupplier(fClass.getJavaClass());
 	}
 
 	public ParameterSupplier getAnnotatedSupplier(ParameterSignature unassigned)
@@ -106,7 +106,7 @@ public class Assignments {
 	}
 
 	private int getConstructorParameterCount() {
-		List<ParameterSignature> signatures= ParameterSignature.signatures(new TestClass(fClass)
+		List<ParameterSignature> signatures= ParameterSignature.signatures(fClass
 				.getConstructor());
 		int constructorParameterCount= signatures.size();
 		return constructorParameterCount;

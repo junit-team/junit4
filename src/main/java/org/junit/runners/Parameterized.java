@@ -82,7 +82,7 @@ public class Parameterized extends Suite {
 				throw new Exception(String.format(
 						"%s.%s() must return a Collection of arrays.",
 						getTestClass().getName(), getParametersMethod(
-								getTestClass()).getName()));
+								getTestClass().getJavaClass()).getName()));
 			}
 		}
 
@@ -129,7 +129,7 @@ public class Parameterized extends Suite {
 	}
 
 	private static ArrayList<Runner> runners(Class<?> klass) throws Throwable {
-		List<Object[]> parametersList = getParametersList(new TestClass(klass));
+		List<Object[]> parametersList = getParametersList(klass);
 		ArrayList<Runner> runners= new ArrayList<Runner>();
 		for (int i= 0; i < parametersList.size(); i++)
 			runners.add(new TestClassRunnerForParameters(klass, parametersList,
@@ -138,15 +138,15 @@ public class Parameterized extends Suite {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static List<Object[]> getParametersList(TestClass testClass)
+	private static List<Object[]> getParametersList(Class<?> klass)
 			throws Throwable {
-		return (List<Object[]>) getParametersMethod(testClass)
+		return (List<Object[]>) getParametersMethod(klass)
 				.invokeExplosively(null);
 	}
 
-	private static FrameworkMethod getParametersMethod(TestClass testClass)
+	private static FrameworkMethod getParametersMethod(Class<?> klass)
 			throws Exception {
-		List<FrameworkMethod> methods= testClass
+		List<FrameworkMethod> methods= new TestClass(klass)
 				.getAnnotatedMethods(Parameters.class);
 		for (FrameworkMethod each : methods) {
 			int modifiers= each.getMethod().getModifiers();
@@ -155,7 +155,7 @@ public class Parameterized extends Suite {
 		}
 
 		throw new Exception("No public static parameters method on class "
-				+ testClass.getName());
+				+ klass.getName());
 	}
 
 	public static List<Object[]> eachOne(Object... params) {
