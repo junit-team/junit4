@@ -72,17 +72,33 @@ public class RunListener {
 	/**
 	 * Called when a test will not be run, generally because a test method is annotated 
 	 * with {@link org.junit.Ignore}.
+	 * 
+	 * This is always called at the same time as {@link testIgnored(Description, String)}.
+	 * Only one needs to be overridden.
+	 * 
 	 * @param description describes the test that will not be run
 	 */
 	public void testIgnored(Description description) throws Exception {
 	}
 
-	public void testAssumptionFailed(Description description,
-			AssumptionViolatedException e) {
+	/**
+	 * Called when a test will not be run, generally because a test method is annotated 
+	 * with {@link org.junit.Ignore}.
+	 * 
+	 * This is always called at the same time as {@link testIgnored(Description)}.
+	 * Only one needs to be overridden.
+	 * 
+	 * @param description describes the test that will not be run
+	 * @param reason states any reason string provided with the {@link org.junit.Ignore} annotation
+	 */
+	// TODO: (Dec 28, 2007 10:04:39 PM) Does javadoc turn out?
+	public void testIgnored(Description description, String reason) throws Exception {
 	}
 
-	// TODO: (Dec 12, 2007 2:34:25 PM) document
-	public void testIgnored(Description description, String reason) throws Exception {
+	// TODO: (Dec 28, 2007 10:05:18 PM) document
+
+	public void testAssumptionFailed(Description description,
+			AssumptionViolatedException e) {
 	}
 }
 

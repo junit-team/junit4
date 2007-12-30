@@ -3,8 +3,6 @@
  */
 package org.junit.internal.requests;
 
-import org.junit.Ignore;
-import org.junit.Assume.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
@@ -18,10 +16,7 @@ public class IgnoredClassRunner extends Runner {
 
 	@Override
 	public void run(RunNotifier notifier) {
-		notifier.fireTestIgnored(getDescription());		
-		notifier.fireTestAssumptionFailed(getDescription(),
-				new AssumptionViolatedException(fTestClass.getAnnotation(
-						Ignore.class).value()));	
+		notifier.fireTestIgnored(getDescription());
 	}
 
 	@Override

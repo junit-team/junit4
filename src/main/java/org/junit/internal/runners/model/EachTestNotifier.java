@@ -4,7 +4,6 @@
 package org.junit.internal.runners.model;
 
 
-import org.junit.Ignore;
 import org.junit.Assume.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
@@ -41,15 +40,6 @@ public class EachTestNotifier {
 
 	public void fireTestIgnored() {
 		fNotifier.fireTestIgnored(fDescription);
-		fNotifier.fireTestAssumptionFailed(fDescription, makeIgnoredException(fDescription));
-	}
-
-	// TODO: (Dec 9, 2007 9:25:42 PM) Static ignores should not have backtraces
-	
-	private AssumptionViolatedException makeIgnoredException(
-			Description description) {
-		String reason= description.getAnnotation(Ignore.class).value();
-		return new AssumptionViolatedException(reason);
 	}
 
 	public void addFailedAssumption(AssumptionViolatedException e) {

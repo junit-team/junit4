@@ -134,7 +134,5 @@ public class TestClass extends TestElement {
 		if (fClass == null)
 			return new Annotation[0];
 		return fClass.getAnnotations();
-		// TODO: (Dec 12, 2007 1:57:57 PM) When is class null?
-
 	}
 }

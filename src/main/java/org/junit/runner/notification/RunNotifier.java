@@ -110,7 +110,6 @@ public class RunNotifier {
 			protected void notifyListener(RunListener each) throws Exception {
 				each.testIgnored(description);
 				each.testIgnored(description, getIgnoredReason(description));
-				// TODO: (Dec 12, 2007 2:35:18 PM) ignored with reason should replace failed assumption except where failed assumption is right
 			}
 
 			private String getIgnoredReason(final Description description) {
