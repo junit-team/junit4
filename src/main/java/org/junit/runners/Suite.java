@@ -70,6 +70,7 @@ public class Suite extends ParentRunner<Runner> {
 		
 		@Override
 		public String toString() {
+			// TODO: (Dec 31, 2007 9:10:05 AM) untested
 			return parents.toString();
 		}
 	}
