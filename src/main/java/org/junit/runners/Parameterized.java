@@ -104,8 +104,6 @@ public class Parameterized extends Suite {
 
 		@Override
 		protected Statement classBlock(RunNotifier notifier) {
-			// TODO: (Dec 13, 2007 3:01:19 AM) DUP ErrorReportingRunner
-
 			return runChildren(notifier);
 		}
 	}

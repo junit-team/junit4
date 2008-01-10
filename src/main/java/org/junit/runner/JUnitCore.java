@@ -104,7 +104,7 @@ public class JUnitCore {
 	 * @return a {@link Result} describing the details of the test run and the failed tests.
 	 */
 	public Result run(Class<?>... classes) {
-		return run(Request.classes("All", classes));
+		return run(Request.classes(classes));
 	}
 
 	/**

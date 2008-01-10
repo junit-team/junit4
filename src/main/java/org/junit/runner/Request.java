@@ -53,13 +53,10 @@ public abstract class Request {
 	/**
 	 * Create a <code>Request</code> that, when processed, will run all the tests
 	 * in a set of classes.
-	 * @param collectionName a name to identify this suite of tests
 	 * @param classes the classes containing the tests
 	 * @return a <code>Request</code> that will cause all tests in the classes to be run
 	 */
-	public static Request classes(String collectionName, Class<?>... classes) {
-
-		// TODO: (Dec 13, 2007 2:47:58 AM) remove collectionName, which is unused
+	public static Request classes(Class<?>... classes) {
 		return runner(new Suite(newSuiteBuilder(), classes));
 	}
 
@@ -72,7 +69,10 @@ public abstract class Request {
 		};
 	}
 
-	// TODO: (Dec 13, 2007 2:49:53 AM) deprecate?
+	/**
+	 * Not used within JUnit.  Clients should simply instantiate ErrorReportingRunner themselves
+	 */
+	@Deprecated	
 	public static Request errorReport(Class<?> klass, Throwable cause) {
 		return runner(new ErrorReportingRunner(klass, cause));
 	}

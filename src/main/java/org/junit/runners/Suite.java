@@ -39,21 +39,46 @@ public class Suite extends ParentRunner<Runner> {
 
 	private final List<Runner> fRunners;
 
+	/**
+	 * Called reflectively on classes annotated with <code>@RunWith(Suite.class)</code>
+	 * 
+	 * @param klass the root class
+	 * @param builder builds runners for classes in the suite
+	 * @throws InitializationError
+	 */
 	public Suite(Class<?> klass, SuiteBuilder builder) throws InitializationError {
-		// TODO: (Dec 13, 2007 2:33:16 AM) doc difference between each constructor
-
 		this(builder, klass, getAnnotatedClasses(klass));
 		validate();
 	}
 
-	public Suite(SuiteBuilder requestor, Class<?>[] classes) {
-		this(null, requestor.runners(classes));
-	}
-
-	protected Suite(SuiteBuilder builder, Class<?> klass, Class<?>[] annotatedClasses) throws InitializationError {
-		this(klass, builder.runners(klass, annotatedClasses));
+	/**
+	 * Call this when there is no single root class (for example, multiple class names
+	 * passed on the command line to {@link org.junit.runner.JUnitCore}
+	 * 
+	 * @param builder builds runners for classes in the suite
+	 * @param classes the classes in the suite
+	 */
+	public Suite(SuiteBuilder builder, Class<?>[] classes) {
+		this(null, builder.runners(classes));
 	}
 	
+	/**
+	 * Called by this class and subclasses once the classes making up the suite have been determined
+	 * 
+	 * @param builder builds runners for classes in the suite
+	 * @param klass the root of the suite
+	 * @param suiteClasses the classes in the suite
+	 */
+	protected Suite(SuiteBuilder builder, Class<?> klass, Class<?>[] suiteClasses) throws InitializationError {
+		this(klass, builder.runners(klass, suiteClasses));
+	}
+	
+	/**
+	 * Called by this class and subclasses once the runners making up the suite have been determined
+	 * 
+	 * @param klass root of the suite
+	 * @param runners for each class in the suite, a {@link Runner}
+	 */
 	protected Suite(Class<?> klass, List<Runner> runners) {
 		super(klass);
 		fRunners = runners;
