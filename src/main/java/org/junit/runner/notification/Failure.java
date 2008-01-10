@@ -12,7 +12,7 @@ import org.junit.runner.Description;
  * test (for example, if a {@link org.junit.BeforeClass} method is not static), it may describe
  * something other than a single test.
  */
-public class Failure {
+public class Failure extends TestRunEvent {
 	private final Description fDescription;
 	private Throwable fThrownException;
 
@@ -29,6 +29,7 @@ public class Failure {
 	/**
 	 * @return a user-understandable label for the test
 	 */
+	@Override
 	public String getTestHeader() {
 		return fDescription.getDisplayName();
 	}
@@ -59,6 +60,7 @@ public class Failure {
 	 * Convenience method
 	 * @return the printed form of the exception
 	 */
+	@Override
 	public String getTrace() {
 		StringWriter stringWriter= new StringWriter();
 		PrintWriter writer= new PrintWriter(stringWriter);

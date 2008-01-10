@@ -32,10 +32,15 @@ public class AssumptionTest {
 	public void failedAssumptionsMeanIgnored() {
 		Result result= JUnitCore.runClasses(HasFailingAssumption.class);
 		assertThat(result.getRunCount(), is(0));
-		assertThat(result.getUnrunnableCount(), is(1));
+		assertThat(result.getFailedAssumptionCount(), is(1));
 		assertThat(result.getFailureCount(), is(0));
 	}
 
+	@Test
+	public void failingAssumptionsPrint() {
+		assertThat(testResult(HasFailingAssumption.class).toString(), containsString("invalid assumption"));
+		assertThat(testResult(HasFailingAssumption.class).toString(), containsString("INVALID ASSUMPTION 1)"));
+	}
 
 	public static class HasPassingAssumption {
 		@Test

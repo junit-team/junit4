@@ -31,4 +31,9 @@ public class IgnoreClassTest {
 		assertThat(testResult(IgnoreMe.class).toString(),
 				containsString("For a good reason"));
 	}
+	
+	@Test public void includeClassNameWhenClassIsIgnored() {
+		assertThat(testResult(IgnoreMe.class).toString(),
+				containsString(") " + IgnoreMe.class.getName()));
+	}
 }

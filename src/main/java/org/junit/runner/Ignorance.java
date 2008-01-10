@@ -1,20 +1,26 @@
 package org.junit.runner;
 
+import org.junit.runner.notification.TestRunEvent;
+
 // TODO: (Dec 12, 2007 2:39:57 PM) does this belong here?
 
-public class Ignorance {
+public class Ignorance extends TestRunEvent {
 
 	private final String fReason;
+	private final Description fDescription;
 
 	public Ignorance(Description description, String reason) {
+		fDescription= description;
 		fReason= reason;
-		// TODO: (Dec 13, 2007 12:57:49 AM) Do I use description?  Do I in failure?
-
-		// TODO Auto-generated constructor stub
 	}
 
-	public String getReason() {
-		return fReason;
+	@Override
+	public String getTestHeader() {
+		return fDescription + ": " + fReason;
 	}
 
+	@Override
+	public String getTrace() {
+		return "";
+	}
 }

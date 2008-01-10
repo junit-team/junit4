@@ -127,7 +127,7 @@ public class Result {
 
 	// TODO: (Dec 12, 2007 2:40:57 PM) sort members
 
-	public int getUnrunnableCount() {
+	public int getFailedAssumptionCount() {
 		return fUnrunnables.size();
 	}
 

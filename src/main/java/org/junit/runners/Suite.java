@@ -67,12 +67,6 @@ public class Suite extends ParentRunner<Runner> {
 		private void removeParent(Class<?> klass) {
 			parents.remove(klass);
 		}
-		
-		@Override
-		public String toString() {
-			// TODO: (Dec 31, 2007 9:10:05 AM) untested
-			return parents.toString();
-		}
 	}
 
 	// To prevent test writers from hanging themselves, we need to shorten the rope we hand them.

@@ -43,6 +43,6 @@ public class WhenNoParametersMatch {
 
 		assertThat(result, containsString(matcher.toString()));
 		assertThat(result, containsString("" + data));
-		assertThat(result, containsString("ignored test:"));
+		assertThat(result, containsString("invalid assumption:"));
 	}
 }

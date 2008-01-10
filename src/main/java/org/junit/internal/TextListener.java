@@ -5,10 +5,10 @@ import java.text.NumberFormat;
 import java.util.List;
 
 import org.junit.runner.Description;
-import org.junit.runner.Ignorance;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
+import org.junit.runner.notification.TestRunEvent;
 
 public class TextListener extends RunListener {
 
@@ -60,33 +60,19 @@ public class TextListener extends RunListener {
 	}
 
 	protected void printFailures(Result result) {
-		printExceptions("failure", "", result.getFailures());
+		printEvents("failure", "", result.getFailures());
 	}
 	
 	private void printFailedAssumptions(Result result) {
-		printExceptions("ignored test", "IGNORED TEST ", result.getFailedAssumptions());
+		printEvents("invalid assumption", "INVALID ASSUMPTION ", result.getFailedAssumptions());
 	}
 	
 	private void printIgnorances(Result result) {
-		// TODO: (Dec 13, 2007 12:57:04 AM) DUP
-
-		if (result.getIgnorances().size() == 0)
-			return;
-		if (result.getIgnorances().size() == 1)
-			// TODO: (Dec 13, 2007 12:55:01 AM) test this back in
-
-			getWriter().println("There was " + result.getIgnorances().size() + " " + "ignored test" + ":");
-		else
-			getWriter().println("There were " + result.getIgnorances().size() + " " + "ignored test" + "s:");
-		for (Ignorance each : result.getIgnorances()) {
-			// TODO: (Dec 13, 2007 12:57:12 AM) Cheating
-
-			getWriter().println("IGNORED TEST 1) " + each.getReason());
-		}
+		printEvents("ignored test", "IGNORED TEST ", result.getIgnorances());
 	}
 
-	private void printExceptions(String exceptionTypeName, String listPrefix,
-			List<? extends Failure> exceptions) {
+	private void printEvents(String exceptionTypeName, String listPrefix,
+			List<? extends TestRunEvent> exceptions) {
 		if (exceptions.size() == 0)
 			return;
 		if (exceptions.size() == 1)
@@ -94,13 +80,13 @@ public class TextListener extends RunListener {
 		else
 			getWriter().println("There were " + exceptions.size() + " " + exceptionTypeName + "s:");
 		int i= 1;
-		for (Failure each : exceptions)
+		for (TestRunEvent each : exceptions)
 			printFailure(each, listPrefix + i++);
 	}
 
-	protected void printFailure(Failure failure, String prefix) {
-		getWriter().println(prefix + ") " + failure.getTestHeader());
-		getWriter().print(failure.getTrace());
+	protected void printFailure(TestRunEvent each, String prefix) {
+		getWriter().println(prefix + ") " + each.getTestHeader());
+		getWriter().print(each.getTrace());
 	}
 
 	protected void printFooter(Result result) {
