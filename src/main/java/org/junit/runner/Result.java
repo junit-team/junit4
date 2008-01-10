@@ -109,7 +109,7 @@ public class Result {
 		}
 		
 		@Override
-		public void testAssumptionFailed(Description description,
+		public void testAssumptionInvalid(Description description,
 				AssumptionViolatedException e) {
 			// TODO: (Dec 12, 2007 2:39:00 PM) text should be unrunnable, not IGNORED TEST
 

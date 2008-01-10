@@ -164,7 +164,7 @@ public class RunNotifier {
 		new SafeNotifier() {
 			@Override
 			protected void notifyListener(RunListener each) throws Exception {
-				each.testAssumptionFailed(description, e);
+				each.testAssumptionInvalid(description, e);
 			};
 		}.run();
 	}

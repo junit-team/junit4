@@ -13,7 +13,7 @@ public class ResultTest {
 		RunListener listener= result.createListener();
 		Description someTest= Description.EMPTY;
 		listener.testStarted(someTest);
-		listener.testAssumptionFailed(someTest, null);
+		listener.testAssumptionInvalid(someTest, null);
 		listener.testFinished(someTest);
 		assertThat(result.getRunCount(), is(0));
 	}
