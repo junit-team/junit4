@@ -4,8 +4,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -17,10 +18,47 @@ import org.junit.Test;
 public class TestClass extends TestElement {
 	private final Class<?> fClass;
 
+	private Map<Class<?>, List<FrameworkMethod>> methodsForAnnotations= new HashMap<Class<?>, List<FrameworkMethod>>();
+
 	public TestClass(Class<?> klass) {
 		fClass= klass;
 		if (klass != null && klass.getConstructors().length > 1)
-			throw new IllegalArgumentException("Test class can only have one constructor");
+			throw new IllegalArgumentException(
+					"Test class can only have one constructor");
+
+		for (Class<?> eachClass : getSuperClasses(fClass))
+			for (Method eachMethod : eachClass.getDeclaredMethods())
+				addToAnnotationLists(new FrameworkMethod(eachMethod));
+	}
+
+	private void addToAnnotationLists(FrameworkMethod testMethod) {
+		for (Annotation each : testMethod.getMethod().getAnnotations())
+			addToAnnotationList(each.annotationType(), testMethod);
+	}
+
+	private void addToAnnotationList(Class<? extends Annotation> annotation,
+			FrameworkMethod testMethod) {
+		ensureKey(annotation);
+
+		// TODO: (Jan 10, 2008 12:18:09 AM) pass-through
+		addToAppropriateEnd(annotation, testMethod);
+	}
+
+	private void addToAppropriateEnd(Class<? extends Annotation> annotation, 
+			FrameworkMethod testMethod) {
+		List<FrameworkMethod> list= methodsForAnnotations.get(annotation);
+		if (testMethod.isShadowedBy(list))
+			return;
+		if (runsTopToBottom(annotation))
+			list.add(0, testMethod);
+		else
+			list.add(testMethod);
+	}
+
+	private void ensureKey(Class<? extends Annotation> annotation) {
+		if (!methodsForAnnotations.containsKey(annotation))
+			methodsForAnnotations.put(annotation,
+					new ArrayList<FrameworkMethod>());
 	}
 
 	public List<FrameworkMethod> getTestMethods() {
@@ -39,20 +77,8 @@ public class TestClass extends TestElement {
 
 	public List<FrameworkMethod> getAnnotatedMethods(
 			Class<? extends Annotation> annotationClass) {
-		List<FrameworkMethod> results= new ArrayList<FrameworkMethod>();
-		for (Class<?> eachClass : getSuperClasses(fClass)) {
-			Method[] methods= eachClass.getDeclaredMethods();
-			for (Method eachMethod : methods) {
-				Annotation annotation= eachMethod
-						.getAnnotation(annotationClass);
-				FrameworkMethod testMethod= new FrameworkMethod(eachMethod);
-				if (annotation != null && !testMethod.isShadowedBy(results))
-					results.add(testMethod);
-			}
-		}
-		if (runsTopToBottom(annotationClass))
-			Collections.reverse(results);
-		return results;
+		ensureKey(annotationClass);
+		return methodsForAnnotations.get(annotationClass);
 	}
 
 	private boolean runsTopToBottom(Class<? extends Annotation> annotation) {
@@ -88,9 +114,8 @@ public class TestClass extends TestElement {
 			boolean isStatic, List<Throwable> errors) {
 		List<FrameworkMethod> methods= getAnnotatedMethods(annotation);
 
-		for (FrameworkMethod eachTestMethod : methods) {
+		for (FrameworkMethod eachTestMethod : methods)
 			eachTestMethod.validate(isStatic, errors);
-		}
 	}
 
 	public void validateStaticMethods(List<Throwable> errors) {
