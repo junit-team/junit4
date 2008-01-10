@@ -64,7 +64,7 @@ public class TextListener extends RunListener {
 	}
 	
 	private void printFailedAssumptions(Result result) {
-		printEvents("invalid assumption", "INVALID ASSUMPTION ", result.getFailedAssumptions());
+		printEvents("invalid assumption", "INVALID ASSUMPTION ", result.getInvalidAssumptions());
 	}
 	
 	private void printIgnorances(Result result) {

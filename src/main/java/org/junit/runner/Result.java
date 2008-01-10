@@ -5,7 +5,8 @@ import java.util.List;
 
 import org.junit.Assume.AssumptionViolatedException;
 import org.junit.runner.notification.Failure;
-import org.junit.runner.notification.FailedAssumption;
+import org.junit.runner.notification.Ignorance;
+import org.junit.runner.notification.InvalidAssumption;
 import org.junit.runner.notification.RunListener;
 
 /**
@@ -17,13 +18,9 @@ public class Result {
 	private int fCount= 0;
 	private int fIgnoreCount= 0;
 	private List<Failure> fFailures= new ArrayList<Failure>();
-	private List<FailedAssumption> fUnrunnables= new ArrayList<FailedAssumption>();
+	private List<InvalidAssumption> fInvalidAssumptions= new ArrayList<InvalidAssumption>();
 	private long fRunTime= 0;
 	private long fStartTime;
-	
-	// TODO: (Dec 13, 2007 12:54:09 AM) Is Ignorance in right package?
-
-	// TODO: (Dec 13, 2007 12:59:37 AM) sort members
 
 	private List<Ignorance> fIgnorances = new ArrayList<Ignorance>();
 
@@ -55,9 +52,12 @@ public class Result {
 		return fFailures;
 	}
 
-
-	public List<FailedAssumption> getFailedAssumptions() {
-		return fUnrunnables;
+	public int getInvalidAssumptionCount() {
+		return fInvalidAssumptions.size();
+	}
+	
+	public List<InvalidAssumption> getInvalidAssumptions() {
+		return fInvalidAssumptions;
 	}
 
 	/**
@@ -65,6 +65,10 @@ public class Result {
 	 */
 	public int getIgnoreCount() {
 		return fIgnoreCount;
+	}
+
+	public List<Ignorance> getIgnorances() {
+		return fIgnorances;
 	}
 
 	/**
@@ -103,17 +107,13 @@ public class Result {
 		@Override
 		public void testIgnored(Description description, String reason) throws Exception {
 			fIgnoreCount++;
-			// TODO: (Dec 12, 2007 2:39:35 PM) pass-through
-
 			fIgnorances.add(new Ignorance(description, reason));
 		}
 		
 		@Override
 		public void testAssumptionInvalid(Description description,
 				AssumptionViolatedException e) {
-			// TODO: (Dec 12, 2007 2:39:00 PM) text should be unrunnable, not IGNORED TEST
-
-			fUnrunnables.add(new FailedAssumption(description, e));
+			fInvalidAssumptions.add(new InvalidAssumption(description, e));
 			fAssumptionFailed = true;
 		}
 	}
@@ -123,15 +123,5 @@ public class Result {
 	 */
 	public RunListener createListener() {
 		return new Listener();
-	}
-
-	// TODO: (Dec 12, 2007 2:40:57 PM) sort members
-
-	public int getFailedAssumptionCount() {
-		return fUnrunnables.size();
-	}
-
-	public List<Ignorance> getIgnorances() {
-		return fIgnorances;
 	}
 }

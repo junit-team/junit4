@@ -1,8 +1,6 @@
-package org.junit.runner;
+package org.junit.runner.notification;
 
-import org.junit.runner.notification.TestRunEvent;
-
-// TODO: (Dec 12, 2007 2:39:57 PM) does this belong here?
+import org.junit.runner.Description;
 
 public class Ignorance extends TestRunEvent {
 
