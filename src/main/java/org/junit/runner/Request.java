@@ -7,6 +7,7 @@ import org.junit.internal.requests.FilterRequest;
 import org.junit.internal.requests.SortingRequest;
 import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.manipulation.Filter;
+import org.junit.runners.SuiteBuilder;
 import org.junit.runners.Suite;
 
 /**
@@ -42,11 +43,11 @@ public abstract class Request {
 	 * @return a <code>Request</code> that will cause all tests in the class to be run
 	 */
 	public static Request aClass(Class<?> clazz) {
-		return new ClassRequest(clazz);
+		return new ClassRequest(clazz, newSuiteBuilder());
 	}
 
 	public static Request classWithoutSuiteMethod(Class<?> newTestClass) {
-		return new ClassRequest(newTestClass, false);
+		return new ClassRequest(newTestClass, newSuiteBuilder(), false);
 	}
 
 	/**
@@ -57,11 +58,20 @@ public abstract class Request {
 	 * @return a <code>Request</code> that will cause all tests in the classes to be run
 	 */
 	public static Request classes(String collectionName, Class<?>... classes) {
+
 		// TODO: (Dec 13, 2007 2:47:58 AM) remove collectionName, which is unused
-		return runner(new Suite(classes));
+		return runner(new Suite(newSuiteBuilder(), classes));
 	}
-	
-	
+
+	private static SuiteBuilder newSuiteBuilder() {
+		return new SuiteBuilder() {
+			@Override
+			public Runner runnerForClass(Class<?> each) {
+				return new ClassRequest(each, this).getRunner();
+			}
+		};
+	}
+
 	// TODO: (Dec 13, 2007 2:49:53 AM) deprecate?
 	public static Request errorReport(Class<?> klass, Throwable cause) {
 		return runner(new ErrorReportingRunner(klass, cause));
