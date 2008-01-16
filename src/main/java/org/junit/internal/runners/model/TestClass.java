@@ -38,21 +38,13 @@ public class TestClass extends TestElement {
 
 	private void addToAnnotationList(Class<? extends Annotation> annotation,
 			FrameworkMethod testMethod) {
-		ensureKey(annotation);
-
-		// TODO: (Jan 10, 2008 12:18:09 AM) pass-through
-		addToAppropriateEnd(annotation, testMethod);
-	}
-
-	private void addToAppropriateEnd(Class<? extends Annotation> annotation, 
-			FrameworkMethod testMethod) {
-		List<FrameworkMethod> list= methodsForAnnotations.get(annotation);
-		if (testMethod.isShadowedBy(list))
+		List<FrameworkMethod> methods= getAnnotatedMethods(annotation);
+		if (testMethod.isShadowedBy(methods))
 			return;
 		if (runsTopToBottom(annotation))
-			list.add(0, testMethod);
+			methods.add(0, testMethod);
 		else
-			list.add(testMethod);
+			methods.add(testMethod);
 	}
 
 	private void ensureKey(Class<? extends Annotation> annotation) {
