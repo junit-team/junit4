@@ -16,6 +16,7 @@ import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.model.FrameworkMethod;
 import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.internal.runners.model.TestAnnotation;
+import org.junit.internal.runners.model.TestClass;
 import org.junit.internal.runners.model.TestMethodElement;
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filterable;
@@ -26,7 +27,11 @@ public class JUnit4ClassRunner extends ParentRunner<FrameworkMethod> implements 
 	protected final List<FrameworkMethod> fTestMethods;
 
 	public JUnit4ClassRunner(Class<?> klass) throws InitializationError {
-		super(klass);
+		this(new TestClass(klass));
+	}
+	
+	public JUnit4ClassRunner(TestClass testClass) throws InitializationError {
+		super(testClass);
 		fTestMethods= computeTestMethods();
 		validate();
 	}
@@ -34,7 +39,7 @@ public class JUnit4ClassRunner extends ParentRunner<FrameworkMethod> implements 
 	//
 	// Override in subclasses
 	//
-	
+
 	protected List<FrameworkMethod> computeTestMethods() {
 		return getTestClass().getTestMethods();
 	}

@@ -90,7 +90,7 @@ public class Theories extends JUnit4ClassRunner {
 		protected void runWithCompleteAssignment(final Assignments complete)
 				throws InstantiationException, IllegalAccessException,
 				InvocationTargetException, NoSuchMethodException, Throwable {
-			new JUnit4ClassRunner(getTestClass().getJavaClass()) {
+			new JUnit4ClassRunner(getTestClass()) {
 				@Override
 				protected void collectInitializationErrors(
 						List<Throwable> errors) {

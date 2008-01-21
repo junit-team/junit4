@@ -33,7 +33,7 @@ public class TestClassTest {
 	
 	// Profiling a JUnit 4.4 suite shows that getAnnotatedMethods accounts for at least 13% of running time
 	// (all running time, including user test code!)
-	@Test(timeout=5) public void snappyRetrievalOfAnnotatedMethods() {
+	@Test(timeout=10) public void snappyRetrievalOfAnnotatedMethods() {
 		TestClass testClass= new TestClass(ManyMethods.class);
 		for (int i= 0; i < 100; i++) {
 			testClass.getAnnotatedMethods(Test.class);

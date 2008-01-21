@@ -29,7 +29,11 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 	private Sorter fSorter = null;
 
 	public ParentRunner(Class<?> testClass) {
-		fTestClass = new TestClass(testClass);
+		this(new TestClass(testClass));
+	}
+
+	public ParentRunner(TestClass testClass) {
+		fTestClass = testClass;
 	}
 
 	//

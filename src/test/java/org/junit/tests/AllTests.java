@@ -16,6 +16,7 @@ import org.junit.tests.experimental.AssumptionViolatedExceptionTest;
 import org.junit.tests.experimental.ExperimentalTests;
 import org.junit.tests.experimental.MatcherTest;
 import org.junit.tests.experimental.theories.AllMembersSupplierTest;
+import org.junit.tests.experimental.theories.runner.TheoriesPerformanceTest;
 import org.junit.tests.junit3compatibility.AllTestsTest;
 import org.junit.tests.junit3compatibility.ClassRequestTest;
 import org.junit.tests.junit3compatibility.ForwardCompatibilityTest;
@@ -103,7 +104,8 @@ import org.junit.tests.validation.ValidationTest;
 	TestClassTest.class,
 	AllMembersSupplierTest.class,
 	MatcherTest.class,
-	ObjectContractTest.class
+	ObjectContractTest.class,
+	TheoriesPerformanceTest.class
 })
 public class AllTests {
 	public static Test suite() {
