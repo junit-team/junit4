@@ -16,6 +16,8 @@ import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.ParameterSignature;
 import org.junit.experimental.theories.ParameterSupplier;
 import org.junit.experimental.theories.PotentialAssignment;
+import org.junit.internal.runners.model.FrameworkMethod;
+import org.junit.internal.runners.model.TestClass;
 
 public class AllMembersSupplier extends ParameterSupplier {
 	static class MethodParameterValue extends PotentialAssignment {
@@ -41,13 +43,13 @@ public class AllMembersSupplier extends ParameterSupplier {
 			}
 		}
 	}
-	
-	private final Class<?> fClass;
-	
-	public AllMembersSupplier(Class<?> type) {
-		fClass = type;
+
+	private final TestClass fClass;
+
+	public AllMembersSupplier(TestClass type) {
+		fClass= type;
 	}
-	
+
 	@Override
 	public List<PotentialAssignment> getValueSources(ParameterSignature sig) {
 		List<PotentialAssignment> list= new ArrayList<PotentialAssignment>();
@@ -63,27 +65,29 @@ public class AllMembersSupplier extends ParameterSupplier {
 			}
 		}
 
-		for (final Method method : fClass.getMethods()) {
-			if ((method.getParameterTypes().length == 0 && sig.getType()
-					.isAssignableFrom(method.getReturnType()))
-					&& method.isAnnotationPresent(DataPoint.class)) {
-				list.add(new MethodParameterValue(method));
-			} else if (method.isAnnotationPresent(DataPoints.class)) {
-				try {
-					addArrayValues(list, method.invoke(null));
-				} catch (Exception e) {
-					// ignore and move on
-				}
+		// TODO: (Jan 25, 2008 8:32:47 AM) extract these
+
+		for (FrameworkMethod dataPointMethod : fClass
+				.getAnnotatedMethods(DataPoint.class))
+			if ((dataPointMethod.getParameterTypes().length == 0 && sig
+					.getType()
+					.isAssignableFrom(dataPointMethod.getReturnType())))
+				list.add(new MethodParameterValue(dataPointMethod.getMethod()));
+
+		for (FrameworkMethod dataPointsMethod : fClass
+				.getAnnotatedMethods(DataPoints.class))
+			try {
+				addArrayValues(list, dataPointsMethod.invokeExplosively(null));
+			} catch (Throwable e) {
+				// ignore and move on
 			}
-		}
+
 		return list;
 	}
 
-	private void addArrayValues(List<PotentialAssignment> list,
-			Object array) {
+	private void addArrayValues(List<PotentialAssignment> list, Object array) {
 		for (int i= 0; i < Array.getLength(array); i++)
-			list.add(PotentialAssignment.forValue(Array.get(array,
-					i)));
+			list.add(PotentialAssignment.forValue(Array.get(array, i)));
 	}
 
 	private Object getStaticFieldValue(final Field field) {

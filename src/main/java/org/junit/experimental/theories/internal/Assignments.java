@@ -79,7 +79,7 @@ public class Assignments {
 		if (supplier != null)
 			return supplier;
 
-		return new AllMembersSupplier(fClass.getJavaClass());
+		return new AllMembersSupplier(fClass);
 	}
 
 	public ParameterSupplier getAnnotatedSupplier(ParameterSignature unassigned)
