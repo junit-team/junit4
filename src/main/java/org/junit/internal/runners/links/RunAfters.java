@@ -3,6 +3,7 @@
  */
 package org.junit.internal.runners.links;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.internal.runners.model.MultipleFailureException;
@@ -15,7 +16,9 @@ public class RunAfters extends Statement {
 	private final TestElement fElement;
 
 	private final Object fTarget;
-
+	
+	private final List<Throwable> fErrors = new ArrayList<Throwable>();
+	
 	public RunAfters(Statement next, TestElement element, Object target) {
 		fNext= next;
 		fElement= element;
@@ -24,20 +27,24 @@ public class RunAfters extends Statement {
 
 	@Override
 	public void evaluate() throws Throwable {
-		MultipleFailureException errors= new MultipleFailureException();
+		fErrors.clear();
 		try {
 			fNext.evaluate();
 		} catch (Throwable e) {
-			errors.add(e);
+			fErrors.add(e);
 		} finally {
 			List<FrameworkMethod> afters= fElement.getAfters();
 			for (FrameworkMethod each : afters)
 				try {
 					each.invokeExplosively(fTarget);
 				} catch (Throwable e) {
-					errors.add(e);
+					fErrors.add(e);
 				}
 		}
-		errors.assertEmpty();
+		if (fErrors.isEmpty())
+			return;
+		if (fErrors.size() == 1)
+			throw fErrors.get(0);
+		throw new MultipleFailureException(fErrors);
 	}
 }
