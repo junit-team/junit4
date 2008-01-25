@@ -10,6 +10,7 @@ import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.ParameterSignature;
 import org.junit.experimental.theories.PotentialAssignment;
 import org.junit.experimental.theories.internal.AllMembersSupplier;
+import org.junit.internal.runners.model.TestClass;
 
 public class AllMembersSupplierTest {
 	public static class HasDataPoints {
@@ -23,7 +24,8 @@ public class AllMembersSupplierTest {
 	@Test
 	public void dataPointsAnnotationMeansTreatAsArrayOnly()
 			throws SecurityException, NoSuchMethodException {
-		List<PotentialAssignment> valueSources= new AllMembersSupplier(HasDataPoints.class)
+		List<PotentialAssignment> valueSources= new AllMembersSupplier(
+				new TestClass(HasDataPoints.class))
 				.getValueSources(ParameterSignature.signatures(
 						HasDataPoints.class.getConstructor(Object.class))
 						.get(0));

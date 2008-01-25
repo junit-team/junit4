@@ -2,6 +2,7 @@ package org.junit.internal.runners.model;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -151,5 +152,9 @@ public class TestClass extends TestElement {
 		if (fClass == null)
 			return new Annotation[0];
 		return fClass.getAnnotations();
+	}
+
+	public Field[] getFields() {
+		return fClass.getFields();
 	}
 }

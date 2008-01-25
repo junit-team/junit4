@@ -12,18 +12,4 @@ public abstract class TestElement {
 			for (FrameworkMethod before : befores)
 				before.invokeExplosively(target);
 	}
-
-	public void runAfters(Object target) throws Throwable {
-		MultipleFailureException errors= new MultipleFailureException();
-		
-		List<FrameworkMethod> afters= getAfters();
-		for (FrameworkMethod after : afters)
-			try {
-				after.invokeExplosively(target);
-			} catch (Throwable e) {
-				errors.add(e);
-			}
-			
-		errors.assertEmpty();
-	}
 }

@@ -23,7 +23,10 @@ public class TheoriesPerformanceTest {
 
 	// If we do not share the same instance of TestClass, repeatedly parsing the 
 	// class's annotations looking for @Befores and @Afters gets really costly.
-	@Test(timeout= 500)
+	//
+	// Likewise, the TestClass must be passed into AllMembersSupplier, or the
+	// annotation parsing is again costly.
+	@Test
 	public void tryCombinationsQuickly() {
 		assertThat(testResult(UpToTen.class), isSuccessful());
 	}

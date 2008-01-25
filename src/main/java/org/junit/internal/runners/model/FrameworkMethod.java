@@ -35,7 +35,7 @@ public class FrameworkMethod {
 		return fMethod.getName();
 	}
 
-	public Class<?>[] getParameterTypes() {
+	private Class<?>[] getParameterTypes() {
 		return fMethod.getParameterTypes();
 	}
 
@@ -89,5 +89,10 @@ public class FrameworkMethod {
 	@Override
 	public int hashCode() {
 		return fMethod.hashCode();
+	}
+
+	public boolean producesType(Class<?> type) {
+		return getParameterTypes().length == 0
+				&& type.isAssignableFrom(fMethod.getReturnType());
 	}
 }

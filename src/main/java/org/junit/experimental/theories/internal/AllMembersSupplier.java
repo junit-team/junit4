@@ -53,27 +53,15 @@ public class AllMembersSupplier extends ParameterSupplier {
 	@Override
 	public List<PotentialAssignment> getValueSources(ParameterSignature sig) {
 		List<PotentialAssignment> list= new ArrayList<PotentialAssignment>();
-		for (final Field field : fClass.getFields()) {
-			if (Modifier.isStatic(field.getModifiers())) {
-				Class<?> type= field.getType();
-				if (sig.canAcceptArrayType(type) && field.getAnnotation(DataPoints.class) != null) {
-					addArrayValues(list, getStaticFieldValue(field));
-				} else if (sig.canAcceptType(type)) {
-					list.add(PotentialAssignment
-							.forValue(getStaticFieldValue(field)));
-				}
-			}
-		}
 
-		// TODO: (Jan 25, 2008 8:32:47 AM) extract these
+		addFields(sig, list);
+		addSinglePointMethods(sig, list);
+		addMultiPointMethods(list);
 
-		for (FrameworkMethod dataPointMethod : fClass
-				.getAnnotatedMethods(DataPoint.class))
-			if ((dataPointMethod.getParameterTypes().length == 0 && sig
-					.getType()
-					.isAssignableFrom(dataPointMethod.getReturnType())))
-				list.add(new MethodParameterValue(dataPointMethod.getMethod()));
+		return list;
+	}
 
+	private void addMultiPointMethods(List<PotentialAssignment> list) {
 		for (FrameworkMethod dataPointsMethod : fClass
 				.getAnnotatedMethods(DataPoints.class))
 			try {
@@ -81,8 +69,32 @@ public class AllMembersSupplier extends ParameterSupplier {
 			} catch (Throwable e) {
 				// ignore and move on
 			}
+	}
 
-		return list;
+	private void addSinglePointMethods(ParameterSignature sig,
+			List<PotentialAssignment> list) {
+		for (FrameworkMethod dataPointMethod : fClass
+				.getAnnotatedMethods(DataPoint.class)) {
+			Class<?> type= sig.getType();
+			if ((dataPointMethod.producesType(type)))
+				list.add(new MethodParameterValue(dataPointMethod.getMethod()));
+		}
+	}
+
+	private void addFields(ParameterSignature sig,
+			List<PotentialAssignment> list) {
+		for (final Field field : fClass.getFields()) {
+			if (Modifier.isStatic(field.getModifiers())) {
+				Class<?> type= field.getType();
+				if (sig.canAcceptArrayType(type)
+						&& field.getAnnotation(DataPoints.class) != null) {
+					addArrayValues(list, getStaticFieldValue(field));
+				} else if (sig.canAcceptType(type)) {
+					list.add(PotentialAssignment
+							.forValue(getStaticFieldValue(field)));
+				}
+			}
+		}
 	}
 
 	private void addArrayValues(List<PotentialAssignment> list, Object array) {
