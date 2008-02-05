@@ -422,4 +422,17 @@ public class AssertionTest {
             assertEquals(expectedMessage, e.getMessage());
         }
     }
+    
+    @Test public void nullAndStringNullPrintCorrectError() {
+        try {
+            assertEquals(null, "null");
+        } catch (AssertionError e) {
+            assertEquals("expected: null<null> but was: java.lang.String<null>", e.getMessage());
+        }
+    }
+
+    @Test(expected=AssertionError.class) public void stringNullAndNullWorksToo() {
+    	assertEquals("null", null);
+    }
+
 }

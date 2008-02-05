@@ -6,15 +6,18 @@
 	Matthias Pfau: better error message when test case constructor fails
 	
 2006 November 21
-	dakcalouro: Found bug with comparing ints and longs (1555161)
-	Ben Maurer: Found bug with timeouts taking twice as long as specified (1536198)
+	dakcalouro: Found defect with comparing ints and longs (1555161)
+	Ben Maurer: Found defect with timeouts taking twice as long as specified (1536198)
 	
 2007 February 08
-	Kazimierz Pogoda: Found bug with null array elements (1438163)
+	Kazimierz Pogoda: Found defect with null array elements (1438163)
 	
 2007 July 09
-	wangqq: Found bug with @After not running after a timeout (1745048)
+	wangqq: Found defect with @After not running after a timeout (1745048)
 
 2007 July 18
-     	Andrew Dick: Found bug with assertEquals comparing non-Integer Numbers (1715326)
-	Michael Schechter: Found bug with Filters and suite() methods (1739095)
+    Andrew Dick: Found defect with assertEquals comparing non-Integer Numbers (1715326)
+	Michael Schechter: Found defect with Filters and suite() methods (1739095)
+
+2008 February 5
+	Walter Gildersleeve: Found assertEquals(null, "null") defect (1857283)

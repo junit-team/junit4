@@ -455,9 +455,14 @@ public class Assert {
 		String expectedString= String.valueOf(expected);
 		String actualString= String.valueOf(actual);
 		if (expectedString.equals(actualString))
-			return formatted + "expected: " + expected.getClass().getName() + "<" + expectedString + "> but was: " + actual.getClass().getName() + "<" + actualString + ">";
+			return formatted + "expected: " + formatClassAndValue(expected, expectedString) + " but was: " + formatClassAndValue(actual, actualString);
 		else
 			return formatted + "expected:<" + expectedString + "> but was:<" + actualString + ">";
+	}
+	
+	private static String formatClassAndValue(Object value, String valueString) {
+		String className= value == null ? "null" : value.getClass().getName();
+		return className + "<" + valueString + ">";
 	}
 
 	/**
