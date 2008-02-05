@@ -3,6 +3,9 @@
  */
 package org.junit.internal.runners.links;
 
+import java.util.List;
+
+import org.junit.internal.runners.model.FrameworkMethod;
 import org.junit.internal.runners.model.TestElement;
 
 public class RunBefores extends Statement {
@@ -20,7 +23,9 @@ public class RunBefores extends Statement {
 
 	@Override
 	public void evaluate() throws Throwable {
-		fElement.runBefores(fTarget);
+		List<FrameworkMethod> befores= fElement.getBefores();
+		for (FrameworkMethod before : befores)
+			before.invokeExplosively(fTarget);
 		fNext.evaluate();
 	}
 }

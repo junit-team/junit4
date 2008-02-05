@@ -6,10 +6,6 @@ public abstract class TestElement {
 	public abstract List<FrameworkMethod> getAfters();
 
 	public abstract List<FrameworkMethod> getBefores();
-
-	public void runBefores(Object target) throws Throwable {
-			List<FrameworkMethod> befores= getBefores();
-			for (FrameworkMethod before : befores)
-				before.invokeExplosively(target);
-	}
+	
+	//TODO I inlined runBefores() for symmetry with runAfters. Either this or both methods should be here.
 }
