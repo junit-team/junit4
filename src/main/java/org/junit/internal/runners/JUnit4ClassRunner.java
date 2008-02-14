@@ -17,7 +17,7 @@ import org.junit.internal.runners.model.FrameworkMethod;
 import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.internal.runners.model.TestAnnotation;
 import org.junit.internal.runners.model.TestClass;
-import org.junit.internal.runners.model.TestMethodElement;
+import org.junit.internal.runners.model.TestMethod;
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filterable;
 import org.junit.runner.manipulation.Sortable;
@@ -125,12 +125,12 @@ public class JUnit4ClassRunner extends ParentRunner<FrameworkMethod> implements 
 
 	protected Statement withAfters(FrameworkMethod method, Object target,
 			Statement link) {
-		return new RunAfters(link, new TestMethodElement(getTestClass()), target);
+		return new RunAfters(link, new TestMethod(getTestClass()), target);
 	}
 
 	protected Statement withBefores(FrameworkMethod method, Object target,
 			Statement link) {
-		return new RunBefores(link, new TestMethodElement(getTestClass()), target);
+		return new RunBefores(link, new TestMethod(getTestClass()), target);
 	}
 
 	protected Notifier notifying(FrameworkMethod method, Statement link) {

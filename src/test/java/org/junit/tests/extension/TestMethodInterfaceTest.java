@@ -6,7 +6,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.internal.runners.model.TestClass;
-import org.junit.internal.runners.model.TestMethodElement;
+import org.junit.internal.runners.model.TestMethod;
 
 public class TestMethodInterfaceTest {
 	public static class BeforesAndAfters {
@@ -25,7 +25,7 @@ public class TestMethodInterfaceTest {
 
 	@Test
 	public void getBeforesIsPublic() throws SecurityException {
-		TestMethodElement testMethod= new TestMethodElement(new TestClass(
+		TestMethod testMethod= new TestMethod(new TestClass(
 				BeforesAndAfters.class));
 		assertThat(testMethod.getBefores().size(), is(1));
 		assertThat(testMethod.getAfters().size(), is(1));

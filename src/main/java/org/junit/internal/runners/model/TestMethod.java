@@ -5,10 +5,10 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 
-public class TestMethodElement extends TestElement {
+public class TestMethod extends TestElement {
 	private TestClass fTestClass;
 
-	public TestMethodElement(TestClass testClass) {
+	public TestMethod(TestClass testClass) {
 		fTestClass = testClass;
 	}
 	

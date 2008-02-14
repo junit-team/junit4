@@ -17,8 +17,6 @@ public class RunAfters extends Statement {
 
 	private final Object fTarget;
 	
-	private final List<Throwable> fErrors = new ArrayList<Throwable>();
-	
 	public RunAfters(Statement next, TestElement element, Object target) {
 		fNext= next;
 		fElement= element;
@@ -27,6 +25,7 @@ public class RunAfters extends Statement {
 
 	@Override
 	public void evaluate() throws Throwable {
+		List<Throwable> fErrors = new ArrayList<Throwable>();
 		fErrors.clear();
 		try {
 			fNext.evaluate();
