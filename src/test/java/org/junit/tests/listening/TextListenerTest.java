@@ -90,6 +90,6 @@ public class TextListenerTest extends TestCase {
 	
 	public void testAssumptionFailureIsReflected() {
 		runner.run(AssumptionFailureTest.class);
-		assertThat(results.toString(), containsString("Spain"));
+		assertThat(results.toString(), both(containsString("Spain")).and(containsString("INVALID ASSUMPTION 1)")));
 	}
 }

@@ -5,13 +5,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.internal.runners.InitializationError;
 import org.junit.runner.Runner;
 
-public abstract class SuiteBuilder {
+public abstract class RunnerBuilder {
 	private Set<Class<?>> parents = new HashSet<Class<?>>();
 
-	public abstract Runner runnerForClass(Class<?> each);
+	public abstract Runner runnerForClass(Class<?> testClass) throws Throwable;
 
 	Class<?> addParent(Class<?> parent) throws InitializationError {
 		if (!parents.add(parent))
@@ -26,15 +27,22 @@ public abstract class SuiteBuilder {
 	List<Runner> runners(Class<?>[] children) {
 		ArrayList<Runner> runners= new ArrayList<Runner>();
 		for (Class<?> each : children) {
-			Runner childRunner= runnerForClass(each);
+			Runner childRunner= safeRunnerForClass(each);
 			if (childRunner != null)
 				runners.add(childRunner);
 		}
 		return runners;
 	}
 
-	List<Runner> runners(Class<?> parent, Class<?>[] children)
-			throws InitializationError {
+	public Runner safeRunnerForClass(Class<?> testClass) {
+		try {
+			return runnerForClass(testClass);
+		} catch (Throwable e) {
+			return new ErrorReportingRunner(testClass, e);
+		}
+	}
+
+	List<Runner> runners(Class<?> parent, Class<?>[] children) throws InitializationError {
 		addParent(parent);
 		
 		try {

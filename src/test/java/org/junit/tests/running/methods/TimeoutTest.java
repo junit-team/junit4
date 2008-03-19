@@ -81,7 +81,11 @@ public class TimeoutTest {
 		}
 
 		private void infiniteLoop() {
-			for(;;);
+			for(;;)
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+				}
 		}
 	}
 	

@@ -46,7 +46,7 @@ public class Suite extends ParentRunner<Runner> {
 	 * @param builder builds runners for classes in the suite
 	 * @throws InitializationError
 	 */
-	public Suite(Class<?> klass, SuiteBuilder builder) throws InitializationError {
+	public Suite(Class<?> klass, RunnerBuilder builder) throws InitializationError {
 		this(builder, klass, getAnnotatedClasses(klass));
 		validate();
 	}
@@ -57,8 +57,9 @@ public class Suite extends ParentRunner<Runner> {
 	 * 
 	 * @param builder builds runners for classes in the suite
 	 * @param classes the classes in the suite
+	 * @throws Throwable 
 	 */
-	public Suite(SuiteBuilder builder, Class<?>[] classes) {
+	public Suite(RunnerBuilder builder, Class<?>[] classes) {
 		this(null, builder.runners(classes));
 	}
 	
@@ -68,8 +69,9 @@ public class Suite extends ParentRunner<Runner> {
 	 * @param builder builds runners for classes in the suite
 	 * @param klass the root of the suite
 	 * @param suiteClasses the classes in the suite
+	 * @throws InitializationError
 	 */
-	protected Suite(SuiteBuilder builder, Class<?> klass, Class<?>[] suiteClasses) throws InitializationError {
+	protected Suite(RunnerBuilder builder, Class<?> klass, Class<?>[] suiteClasses) throws InitializationError {
 		this(klass, builder.runners(klass, suiteClasses));
 	}
 	

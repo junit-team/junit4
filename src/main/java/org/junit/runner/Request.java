@@ -2,12 +2,12 @@ package org.junit.runner;
 
 import java.util.Comparator;
 
+import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
 import org.junit.internal.requests.ClassRequest;
 import org.junit.internal.requests.FilterRequest;
 import org.junit.internal.requests.SortingRequest;
 import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.manipulation.Filter;
-import org.junit.runners.SuiteBuilder;
 import org.junit.runners.Suite;
 
 /**
@@ -43,11 +43,11 @@ public abstract class Request {
 	 * @return a <code>Request</code> that will cause all tests in the class to be run
 	 */
 	public static Request aClass(Class<?> clazz) {
-		return new ClassRequest(clazz, newSuiteBuilder());
+		return new ClassRequest(clazz);
 	}
 
 	public static Request classWithoutSuiteMethod(Class<?> newTestClass) {
-		return new ClassRequest(newTestClass, newSuiteBuilder(), false);
+		return new ClassRequest(newTestClass, false);
 	}
 
 	/**
@@ -55,18 +55,10 @@ public abstract class Request {
 	 * in a set of classes.
 	 * @param classes the classes containing the tests
 	 * @return a <code>Request</code> that will cause all tests in the classes to be run
+	 * @throws Throwable 
 	 */
 	public static Request classes(Class<?>... classes) {
-		return runner(new Suite(newSuiteBuilder(), classes));
-	}
-
-	private static SuiteBuilder newSuiteBuilder() {
-		return new SuiteBuilder() {
-			@Override
-			public Runner runnerForClass(Class<?> each) {
-				return new ClassRequest(each, this).getRunner();
-			}
-		};
+		return runner(new Suite(new AllDefaultPossibilitiesBuilder(true), classes));
 	}
 
 	/**

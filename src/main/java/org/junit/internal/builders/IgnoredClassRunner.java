@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.junit.internal.requests;
+package org.junit.internal.builders;
 
 import org.junit.runner.Description;
 import org.junit.runner.Runner;

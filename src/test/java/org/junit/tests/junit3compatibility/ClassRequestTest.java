@@ -1,9 +1,8 @@
 package org.junit.tests.junit3compatibility;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import org.junit.Test;
-import org.junit.internal.requests.ClassRequest;
-import org.junit.runner.Request;
+import org.junit.internal.builders.SuiteMethodBuilder;
 
 public class ClassRequestTest {
 	public static class PrivateSuiteMethod {
@@ -13,8 +12,8 @@ public class ClassRequestTest {
 	}
 
 	@Test
-	public void noSuiteMethodIfMethodPrivate() {
-		assertFalse(((ClassRequest) Request.aClass(PrivateSuiteMethod.class))
-				.hasSuiteMethod());
+	public void noSuiteMethodIfMethodPrivate() throws Throwable {
+		assertNull(new SuiteMethodBuilder()
+				.runnerForClass(PrivateSuiteMethod.class));
 	}
 }
