@@ -24,6 +24,11 @@ public class GuesserQueue extends ArrayList<ReguessableValue> {
 		public Object getValue() throws CouldNotGenerateValueException {
 			return delegate.getValue();
 		}
+
+		@Override
+		public String getDescription() throws CouldNotGenerateValueException {
+			return delegate.getDescription();
+		}
 	}
 
 	static GuesserQueue forSingleValues(

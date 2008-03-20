@@ -42,6 +42,11 @@ public class AllMembersSupplier extends ParameterSupplier {
 				// do nothing, just look for more values
 			}
 		}
+
+		@Override
+		public String getDescription() throws CouldNotGenerateValueException {
+			return fMethod.getName();
+		}
 	}
 
 	private final TestClass fClass;
@@ -65,7 +70,7 @@ public class AllMembersSupplier extends ParameterSupplier {
 		for (FrameworkMethod dataPointsMethod : fClass
 				.getAnnotatedMethods(DataPoints.class))
 			try {
-				addArrayValues(list, dataPointsMethod.invokeExplosively(null));
+				addArrayValues(dataPointsMethod.getName(), list, dataPointsMethod.invokeExplosively(null));
 			} catch (Throwable e) {
 				// ignore and move on
 			}
@@ -88,18 +93,18 @@ public class AllMembersSupplier extends ParameterSupplier {
 				Class<?> type= field.getType();
 				if (sig.canAcceptArrayType(type)
 						&& field.getAnnotation(DataPoints.class) != null) {
-					addArrayValues(list, getStaticFieldValue(field));
+					addArrayValues(field.getName(), list, getStaticFieldValue(field));
 				} else if (sig.canAcceptType(type)) {
 					list.add(PotentialAssignment
-							.forValue(getStaticFieldValue(field)));
+							.forValue(field.getName(), getStaticFieldValue(field)));
 				}
 			}
 		}
 	}
 
-	private void addArrayValues(List<PotentialAssignment> list, Object array) {
+	private void addArrayValues(String name, List<PotentialAssignment> list, Object array) {
 		for (int i= 0; i < Array.getLength(array); i++)
-			list.add(PotentialAssignment.forValue(Array.get(array, i)));
+			list.add(PotentialAssignment.forValue(name + "[" + i + "]", Array.get(array, i)));
 	}
 
 	private Object getStaticFieldValue(final Field field) {

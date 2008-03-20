@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.junit.internal.builders;
 
@@ -19,9 +19,9 @@ public class AllDefaultPossibilitiesBuilder extends RunnerBuilder {
 	@Override
 	public Runner runnerForClass(Class<?> testClass) throws Throwable {
 		List<RunnerBuilder> builders= Arrays.asList(
-				new IgnoredBuilder(), 
+				new IgnoredBuilder(),
 				new AnnotatedBuilder(this),
-				suiteMethodBuilder(), 
+				suiteMethodBuilder(),
 				new JUnit3Builder(),
 				new JUnit4Builder());
 

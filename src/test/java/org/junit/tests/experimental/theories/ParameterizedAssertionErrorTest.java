@@ -5,11 +5,11 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
 import static org.junit.matchers.StringContains.containsString;
+import org.junit.Test;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.experimental.theories.internal.ParameterizedAssertionError;
 import org.junit.runner.RunWith;
-
 
 @RunWith(Theories.class)
 public class ParameterizedAssertionErrorTest {
@@ -54,5 +54,15 @@ public class ParameterizedAssertionErrorTest {
 	public void buildParameterizedAssertionError(String methodName, String param) {
 		assertThat(new ParameterizedAssertionError(new RuntimeException(),
 				methodName, param).toString(), containsString(methodName));
+	}
+
+	@Test
+	public void canJoinWhenToStringFails() {
+		assertThat(ParameterizedAssertionError.join(" ", new Object() {
+			@Override
+			public String toString() {
+				throw new UnsupportedOperationException();
+			}
+		}), is("[toString failed]"));
 	}
 }

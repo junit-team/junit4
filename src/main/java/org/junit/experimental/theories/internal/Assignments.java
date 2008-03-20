@@ -31,8 +31,7 @@ public class Assignments {
 	public static Assignments allUnassigned(Method testMethod,
 			TestClass testClass) throws Exception {
 		List<ParameterSignature> signatures;
-		signatures= ParameterSignature.signatures(testClass
-				.getConstructor());
+		signatures= ParameterSignature.signatures(testClass.getConstructor());
 		signatures.addAll(ParameterSignature.signatures(testMethod));
 		return new Assignments(new ArrayList<PotentialAssignment>(),
 				signatures, testClass);
@@ -98,17 +97,27 @@ public class Assignments {
 
 	public Object[] getMethodArguments(boolean nullsOk)
 			throws CouldNotGenerateValueException {
-		return getActualValues(getConstructorParameterCount(), fAssigned.size(), nullsOk);
+		return getActualValues(getConstructorParameterCount(),
+				fAssigned.size(), nullsOk);
 	}
 
-	public Object[] getAllArguments(boolean nullsOk) throws CouldNotGenerateValueException {
+	public Object[] getAllArguments(boolean nullsOk)
+			throws CouldNotGenerateValueException {
 		return getActualValues(0, fAssigned.size(), nullsOk);
 	}
 
 	private int getConstructorParameterCount() {
-		List<ParameterSignature> signatures= ParameterSignature.signatures(fClass
-				.getConstructor());
+		List<ParameterSignature> signatures= ParameterSignature
+				.signatures(fClass.getConstructor());
 		int constructorParameterCount= signatures.size();
 		return constructorParameterCount;
+	}
+
+	public Object[] getArgumentStrings(boolean nullsOk) throws CouldNotGenerateValueException {
+		Object[] values= new Object[fAssigned.size()];
+		for (int i= 0; i < values.length; i++) {
+			values[i]= fAssigned.get(i).getDescription();
+		}
+		return values;
 	}
 }

@@ -114,4 +114,9 @@ public class Guesser<T> extends ReguessableValue {
 		return type;
 	}
 
+	@Override
+	public String getDescription() throws CouldNotGenerateValueException {
+		return "guesser[" + type + "]";
+	}
+
 }

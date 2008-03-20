@@ -31,11 +31,19 @@ public class ParameterizedAssertionError extends RuntimeException {
 		Iterator<Object> iter = values.iterator();
 		while (iter.hasNext()) {
 			Object next = iter.next();
-			buffer.append(String.valueOf(next));
+			buffer.append(stringValueOf(next));
 			if (iter.hasNext()) {
 				buffer.append(delimiter);
 			}
 		}
 		return buffer.toString();
+	}
+
+	private static String stringValueOf(Object next) {
+		try {
+			return String.valueOf(next);
+		} catch (Throwable e) {
+			return "[toString failed]";
+		}
 	}
 }

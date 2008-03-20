@@ -110,7 +110,7 @@ public class Theories extends JUnit4ClassRunner {
 								handleAssumptionViolation(e);
 							} catch (Throwable e) {
 								reportParameterizedError(e, complete
-										.getAllArguments(nullsOk()));
+										.getArgumentStrings(nullsOk()));
 							}
 						}
 
