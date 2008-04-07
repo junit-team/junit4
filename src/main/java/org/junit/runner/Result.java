@@ -3,10 +3,7 @@ package org.junit.runner;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assume.AssumptionViolatedException;
 import org.junit.runner.notification.Failure;
-import org.junit.runner.notification.Ignorance;
-import org.junit.runner.notification.InvalidAssumption;
 import org.junit.runner.notification.RunListener;
 
 /**
@@ -17,12 +14,9 @@ import org.junit.runner.notification.RunListener;
 public class Result {
 	private int fCount= 0;
 	private int fIgnoreCount= 0;
-	private List<Failure> fFailures= new ArrayList<Failure>();
-	private List<InvalidAssumption> fInvalidAssumptions= new ArrayList<InvalidAssumption>();
+	private final List<Failure> fFailures= new ArrayList<Failure>();
 	private long fRunTime= 0;
 	private long fStartTime;
-
-	private List<Ignorance> fIgnorances = new ArrayList<Ignorance>();
 
 	/**
 	 * @return the number of tests run
@@ -52,23 +46,11 @@ public class Result {
 		return fFailures;
 	}
 
-	public int getInvalidAssumptionCount() {
-		return fInvalidAssumptions.size();
-	}
-	
-	public List<InvalidAssumption> getInvalidAssumptions() {
-		return fInvalidAssumptions;
-	}
-
 	/**
 	 * @return the number of tests ignored during the run
 	 */
 	public int getIgnoreCount() {
 		return fIgnoreCount;
-	}
-
-	public List<Ignorance> getIgnorances() {
-		return fIgnorances;
 	}
 
 	/**
@@ -79,8 +61,8 @@ public class Result {
 	}
 
 	private class Listener extends RunListener {
-		private boolean fAssumptionFailed = false;
-		
+		private boolean fIgnoredDuringExecution= false;
+
 		@Override
 		public void testRunStarted(Description description) throws Exception {
 			fStartTime= System.currentTimeMillis();
@@ -94,9 +76,9 @@ public class Result {
 
 		@Override
 		public void testFinished(Description description) throws Exception {
-			if (!fAssumptionFailed)
+			if (!fIgnoredDuringExecution)
 				fCount++;
-			fAssumptionFailed = false;
+			fIgnoredDuringExecution= false;
 		}
 
 		@Override
@@ -105,16 +87,9 @@ public class Result {
 		}
 
 		@Override
-		public void testIgnored(Description description, String reason) throws Exception {
+		public void testIgnored(Description description) throws Exception {
 			fIgnoreCount++;
-			fIgnorances.add(new Ignorance(description, reason));
-		}
-		
-		@Override
-		public void testAssumptionInvalid(Description description,
-				AssumptionViolatedException e) {
-			fInvalidAssumptions.add(new InvalidAssumption(description, e));
-			fAssumptionFailed = true;
+			fIgnoredDuringExecution= true;
 		}
 	}
 

@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.Ignore;
-import org.junit.Assume.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 
@@ -17,7 +15,7 @@ import org.junit.runner.Result;
  * to a separate class since they should only be called once per run.
  */
 public class RunNotifier {
-	private List<RunListener> fListeners= new ArrayList<RunListener>();
+	private final List<RunListener> fListeners= new ArrayList<RunListener>();
 	private boolean fPleaseStop= false;
 	
 	/** Internal use only
@@ -34,14 +32,13 @@ public class RunNotifier {
 
 	private abstract class SafeNotifier {
 		void run() {
-			for (Iterator<RunListener> all= fListeners.iterator(); all.hasNext();) {
+			for (Iterator<RunListener> all= fListeners.iterator(); all.hasNext();)
 				try {
 					notifyListener(all.next());
 				} catch (Exception e) {
 					all.remove(); // Remove the offending listener first to avoid an infinite loop
 					fireTestFailure(new Failure(Description.TEST_MECHANISM, e));
 				}
-			}
 		}
 		
 		abstract protected void notifyListener(RunListener each) throws Exception;
@@ -109,15 +106,7 @@ public class RunNotifier {
 			@Override
 			protected void notifyListener(RunListener each) throws Exception {
 				each.testIgnored(description);
-				each.testIgnored(description, getIgnoredReason(description));
 			}
-
-			private String getIgnoredReason(final Description description) {
-				Ignore annotation= description.getAnnotation(Ignore.class);
-				if (annotation == null)
-					return null;
-				return annotation.value();
-			};
 		}.run();
 	}
 
@@ -157,15 +146,5 @@ public class RunNotifier {
 		fireTestStarted(description);
 		fireTestFailure(new Failure(description, cause));
 		fireTestFinished(description);
-	}
-
-	public void fireTestAssumptionFailed(final Description description,
-			final AssumptionViolatedException e) {
-		new SafeNotifier() {
-			@Override
-			protected void notifyListener(RunListener each) throws Exception {
-				each.testAssumptionInvalid(description, e);
-			};
-		}.run();
 	}
 }

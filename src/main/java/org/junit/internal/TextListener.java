@@ -8,7 +8,6 @@ import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
-import org.junit.runner.notification.TestRunEvent;
 
 public class TextListener extends RunListener {
 
@@ -26,8 +25,6 @@ public class TextListener extends RunListener {
 	public void testRunFinished(Result result) {
 		printHeader(result.getRunTime());
 		printFailures(result);
-		printFailedAssumptions(result);
-		printIgnorances(result);
 		printFooter(result);
 	}
 
@@ -40,12 +37,12 @@ public class TextListener extends RunListener {
 	public void testFailure(Failure failure) {
 		fWriter.append('E');
 	}
-	
+
 	@Override
 	public void testIgnored(Description description) {
 		fWriter.append('I');
 	}
-	
+
 	/*
 	 * Internal methods
 	 */
@@ -60,31 +57,19 @@ public class TextListener extends RunListener {
 	}
 
 	protected void printFailures(Result result) {
-		printEvents("failure", "", result.getFailures());
-	}
-	
-	private void printFailedAssumptions(Result result) {
-		printEvents("invalid assumption", "INVALID ASSUMPTION ", result.getInvalidAssumptions());
-	}
-	
-	private void printIgnorances(Result result) {
-		printEvents("ignored test", "IGNORED TEST ", result.getIgnorances());
-	}
-
-	private void printEvents(String exceptionTypeName, String listPrefix,
-			List<? extends TestRunEvent> exceptions) {
-		if (exceptions.size() == 0)
+		List<Failure> failures= result.getFailures();
+		if (failures.size() == 0)
 			return;
-		if (exceptions.size() == 1)
-			getWriter().println("There was " + exceptions.size() + " " + exceptionTypeName + ":");
+		if (failures.size() == 1)
+			getWriter().println("There was " + failures.size() + " failure:");
 		else
-			getWriter().println("There were " + exceptions.size() + " " + exceptionTypeName + "s:");
+			getWriter().println("There were " + failures.size() + " failures:");
 		int i= 1;
-		for (TestRunEvent each : exceptions)
-			printFailure(each, listPrefix + i++);
+		for (Failure each : failures)
+			printFailure(each, "" + i++);
 	}
 
-	protected void printFailure(TestRunEvent each, String prefix) {
+	protected void printFailure(Failure each, String prefix) {
 		getWriter().println(prefix + ") " + each.getTestHeader());
 		getWriter().print(each.getTrace());
 	}

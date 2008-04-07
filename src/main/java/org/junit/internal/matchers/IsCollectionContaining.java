@@ -1,4 +1,4 @@
-package org.junit.matchers;
+package org.junit.internal.matchers;
 
 import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.IsEqual.equalTo;

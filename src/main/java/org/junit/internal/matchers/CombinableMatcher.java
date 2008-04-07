@@ -1,4 +1,4 @@
-package org.junit.matchers;
+package org.junit.internal.matchers;
 
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.anyOf;

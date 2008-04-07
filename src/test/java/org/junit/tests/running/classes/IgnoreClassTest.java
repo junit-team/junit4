@@ -1,10 +1,7 @@
 package org.junit.tests.running.classes;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.junit.experimental.results.PrintableResult.testResult;
-import static org.junit.matchers.JUnitMatchers.containsString;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
@@ -25,15 +22,5 @@ public class IgnoreClassTest {
 		Result result= JUnitCore.runClasses(IgnoreMe.class);
 		assertEquals(0, result.getFailureCount());
 		assertEquals(1, result.getIgnoreCount());
-	}
-	
-	@Test public void includeReasonWhenClassIsIgnored() {
-		assertThat(testResult(IgnoreMe.class).toString(),
-				containsString("For a good reason"));
-	}
-	
-	@Test public void includeClassNameWhenClassIsIgnored() {
-		assertThat(testResult(IgnoreMe.class).toString(),
-				containsString(") " + IgnoreMe.class.getName()));
 	}
 }

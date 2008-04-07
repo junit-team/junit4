@@ -10,7 +10,7 @@ import org.junit.internal.runners.InitializationError;
 import org.junit.runner.Runner;
 
 public abstract class RunnerBuilder {
-	private Set<Class<?>> parents = new HashSet<Class<?>>();
+	private final Set<Class<?>> parents = new HashSet<Class<?>>();
 
 	public abstract Runner runnerForClass(Class<?> testClass) throws Throwable;
 

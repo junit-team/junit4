@@ -41,7 +41,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 	//
 
 	protected abstract List<T> getChildren();
-	
+
 	protected abstract Description describeChild(T child);
 
 	protected abstract void runChild(T child, RunNotifier notifier);
@@ -49,7 +49,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 	//
 	// May be overridden
 	//
-	
+
 	protected void collectInitializationErrors(List<Throwable> errors) {
 	}
 
@@ -59,7 +59,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 		statement= new RunAfters(statement, fTestClass, null);
 		return statement;
 	}
-	
+
 	protected Statement runChildren(final RunNotifier notifier) {
 		return new Statement() {
 			@Override
@@ -81,7 +81,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 	//
 	// Available for subclasses
 	//
-	
+
 	protected final TestClass getTestClass() {
 		return fTestClass;
 	}
@@ -95,13 +95,13 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 
 	public void filter(Filter filter) throws NoTestsRemainException {
 		fFilter= filter;
-		
+
 		for (T each : getChildren())
 			if (shouldRun(each))
 				return;
 		throw new NoTestsRemainException();
 	}
-	
+
 	public void sort(Sorter sorter) {
 		fSorter= sorter;
 	}
@@ -113,7 +113,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 			description.addChild(describeChild(child));
 		return description;
 	}
-	
+
 	@Override
 	public void run(final RunNotifier notifier) {
 		EachTestNotifier testNotifier= new EachTestNotifier(notifier,
@@ -122,7 +122,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 			Statement statement= classBlock(notifier);
 			statement.evaluate();
 		} catch (AssumptionViolatedException e) {
-			testNotifier.addFailedAssumption(e);
+			testNotifier.fireTestIgnored();
 		} catch (StoppedByUserException e) {
 			throw e;
 		} catch (Throwable e) {
@@ -139,18 +139,17 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 	private List<T> computeFilteredChildren() {
 		ArrayList<T> filtered= new ArrayList<T>();
 		for (T each : getChildren())
-			if (shouldRun(each)) {
+			if (shouldRun(each))
 				try {
 					filtered.add(sortChild(filterChild(each)));
 				} catch (NoTestsRemainException e) {
 					// don't add it
 				}
-			}
 		if (fSorter != null)
 			Collections.sort(filtered, comparator());
 		return filtered;
 	}
-	
+
 	private T sortChild(T child) {
 		if (fSorter != null)
 			fSorter.apply(child);

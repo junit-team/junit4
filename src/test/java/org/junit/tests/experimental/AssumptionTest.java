@@ -9,7 +9,7 @@ import static org.junit.Assume.assumeThat;
 import static org.junit.Assume.assumeTrue;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
-import static org.junit.matchers.StringContains.containsString;
+import static org.junit.internal.matchers.StringContains.containsString;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -32,14 +32,8 @@ public class AssumptionTest {
 	public void failedAssumptionsMeanIgnored() {
 		Result result= JUnitCore.runClasses(HasFailingAssumption.class);
 		assertThat(result.getRunCount(), is(0));
-		assertThat(result.getInvalidAssumptionCount(), is(1));
+		assertThat(result.getIgnoreCount(), is(1));
 		assertThat(result.getFailureCount(), is(0));
-	}
-
-	@Test
-	public void failingAssumptionsPrint() {
-		assertThat(testResult(HasFailingAssumption.class).toString(), containsString("invalid assumption"));
-		assertThat(testResult(HasFailingAssumption.class).toString(), containsString("INVALID ASSUMPTION 1)"));
 	}
 
 	public static class HasPassingAssumption {
@@ -57,7 +51,7 @@ public class AssumptionTest {
 		assertThat(result.getIgnoreCount(), is(0));
 		assertThat(result.getFailureCount(), is(1));
 	}
-	
+
 	@Test(expected= AssumptionViolatedException.class)
 	public void assumeThatWorks() {
 		assumeThat(1, is(2));
@@ -116,45 +110,49 @@ public class AssumptionTest {
 	@Test(expected=AssumptionViolatedException.class) public void assumeTrueWorks() {
 		Assume.assumeTrue(false);
 	}
-	
+
 	public static class HasFailingAssumeInBefore {
 		@Before public void checkForSomethingThatIsntThere() {
 			assumeTrue(false);
 		}
-		
+
 		@Test public void failing() {
 			fail();
 		}
 	}
-	
+
 	@Test public void failingAssumptionInBeforePreventsTestRun() {
 		assertThat(testResult(HasFailingAssumeInBefore.class), isSuccessful());
 	}
-	
+
 	public static class HasFailingAssumeInBeforeClass {
 		@BeforeClass public static void checkForSomethingThatIsntThere() {
 			assumeTrue(false);
 		}
-		
+
 		@Test public void failing() {
 			fail();
 		}
 	}
-	
+
 	@Test public void failingAssumptionInBeforeClassIgnoresClass() {
 		assertThat(testResult(HasFailingAssumeInBeforeClass.class), isSuccessful());
 	}
-	
+
+	// TODO: (Apr 7, 2008 1:51:57 PM) Is this class causing the run/total
+	// discrepancy
+
+
 	public static class AssumptionFailureInConstructor {
 		public AssumptionFailureInConstructor() {
 			assumeTrue(false);
 		}
-		
+
 		@Test public void shouldFail() {
 			fail();
 		}
 	}
-	
+
 	@Test public void failingAssumptionInConstructorIgnoresClass() {
 		assertThat(testResult(AssumptionFailureInConstructor.class), isSuccessful());
 	}

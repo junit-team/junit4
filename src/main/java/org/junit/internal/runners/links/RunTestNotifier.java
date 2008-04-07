@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.junit.internal.runners.links;
 
@@ -19,7 +19,7 @@ public class RunTestNotifier extends Notifier {
 		try {
 			fNext.evaluate();
 		} catch (AssumptionViolatedException e) {
-			context.addFailedAssumption(e);
+			context.fireTestIgnored();
 		} catch (Throwable e) {
 			context.addFailure(e);
 		} finally {

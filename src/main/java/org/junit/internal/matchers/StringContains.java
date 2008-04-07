@@ -1,6 +1,6 @@
 /*  Copyright (c) 2000-2006 hamcrest.org
  */
-package org.junit.matchers;
+package org.junit.internal.matchers;
 
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;

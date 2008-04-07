@@ -1,17 +1,13 @@
 package org.junit.tests.listening;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
-import static org.junit.matchers.JUnitMatchers.both;
-import static org.junit.matchers.JUnitMatchers.containsString;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
 import junit.framework.TestCase;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.internal.TextListener;
 import org.junit.runner.JUnitCore;
@@ -70,26 +66,9 @@ public class TextListenerTest extends TestCase {
 		return string.replace("\n", resultsStream.toString());
 	}
 	
-	public static class IgnoreTest {
-		@Ignore("Antimilos is a Greek island in the Cyclades, and an odd reason to ignore a test.") 
-		@Test public void failsIfRun() {
-			fail();
-		}
-	}
-	
-	public void testIgnore() {
-		runner.run(IgnoreTest.class);
-		assertThat(results.toString(), both(containsString("Antimilos")).and(containsString("IGNORED TEST 1)")));
-	}
-	
 	public static class AssumptionFailureTest {
 		@Test public void failsAssumption() {
 			assumeThat("Greece", is("Spain"));
 		}
-	}
-	
-	public void testAssumptionFailureIsReflected() {
-		runner.run(AssumptionFailureTest.class);
-		assertThat(results.toString(), both(containsString("Spain")).and(containsString("INVALID ASSUMPTION 1)")));
 	}
 }

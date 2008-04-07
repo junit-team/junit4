@@ -3,7 +3,7 @@ package org.junit.tests.assertion;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import org.junit.Test;
-import org.junit.matchers.Each;
+import org.junit.internal.matchers.Each;
 
 public class EachTest {
 	@Test

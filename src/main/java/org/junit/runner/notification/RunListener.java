@@ -1,6 +1,5 @@
 package org.junit.runner.notification;
 
-import org.junit.Assume.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 
@@ -79,42 +78,6 @@ public class RunListener {
 	 * @param description describes the test that will not be run
 	 */
 	public void testIgnored(Description description) throws Exception {
-	}
-
-	/**
-	 * Called when a test will not be run, generally because a test method is annotated 
-	 * with {@link org.junit.Ignore}.
-	 * 
-	 * This is always called at the same time as {@link #testIgnored(Description)}.
-	 * Only one needs to be overridden.
-	 * 
-	 * @param description describes the test that will not be run
-	 * @param reason states any reason string provided with the {@link org.junit.Ignore} annotation
-	 */
-	public void testIgnored(Description description, String reason) throws Exception {
-	}
-	
-	/**
-	 * Called when a test can not be run, generally because an assumption has
-	 * failed, either in the test object's constructor, a method annotated with
-	 * 
-	 * {@link org.junit.Before}, or in the test method itself.  For example, this
-	 * test will be marked invalid unless the OS description string has the desired value:
-	 * 
-	 * <pre>
-	 * &#064;Test public void onlyRunsOnOsx() {
-	 *   assumeThat(osString(), is("OSX"));
-	 *   ...
-	 * }
-	 * </pre>
-	 * 
-	 * @param description
-	 *            describes the test that will not be run
-	 * @param e
-	 *            contains the assumed matcher, and the value that failed it
-	 */
-	public void testAssumptionInvalid(Description description,
-			AssumptionViolatedException e) {
 	}
 }
 

@@ -6,15 +6,15 @@ import java.io.StringWriter;
 import org.junit.runner.Description;
 
 /**
- * A <code>Failure</code> holds a description of the failed test and the 
+ * A <code>Failure</code> holds a description of the failed test and the
  * exception that was thrown while running it. In most cases the {@link org.junit.runner.Description}
  * will be of a single test. However, if problems are encountered while constructing the
  * test (for example, if a {@link org.junit.BeforeClass} method is not static), it may describe
  * something other than a single test.
  */
-public class Failure extends TestRunEvent {
+public class Failure {
 	private final Description fDescription;
-	private Throwable fThrownException;
+	private final Throwable fThrownException;
 
 	/**
 	 * Constructs a <code>Failure</code> with the given description and exception.
@@ -29,7 +29,6 @@ public class Failure extends TestRunEvent {
 	/**
 	 * @return a user-understandable label for the test
 	 */
-	@Override
 	public String getTestHeader() {
 		return fDescription.getDisplayName();
 	}
@@ -60,7 +59,6 @@ public class Failure extends TestRunEvent {
 	 * Convenience method
 	 * @return the printed form of the exception
 	 */
-	@Override
 	public String getTrace() {
 		StringWriter stringWriter= new StringWriter();
 		PrintWriter writer= new PrintWriter(stringWriter);

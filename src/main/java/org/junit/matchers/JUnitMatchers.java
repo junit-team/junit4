@@ -1,6 +1,10 @@
 package org.junit.matchers;
 
 import org.hamcrest.Matcher;
+import org.junit.internal.matchers.CombinableMatcher;
+import org.junit.internal.matchers.Each;
+import org.junit.internal.matchers.IsCollectionContaining;
+import org.junit.internal.matchers.StringContains;
 
 public class JUnitMatchers {
 	public static <T> org.hamcrest.Matcher<java.lang.Iterable<T>> hasItem(T element) {

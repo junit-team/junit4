@@ -6,8 +6,8 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
-import static org.junit.matchers.Each.each;
-import static org.junit.matchers.StringContains.containsString;
+import static org.junit.internal.matchers.Each.each;
+import static org.junit.internal.matchers.StringContains.containsString;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;

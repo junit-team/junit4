@@ -1,7 +1,7 @@
-package org.junit.matchers;
+package org.junit.internal.matchers;
 
 import static org.hamcrest.CoreMatchers.not;
-import static org.junit.matchers.IsCollectionContaining.hasItem;
+import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
