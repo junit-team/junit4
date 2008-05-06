@@ -11,7 +11,7 @@ import java.util.Map.Entry;
 
 import org.hamcrest.BaseDescription;
 import org.hamcrest.Description;
-import org.junit.Assume.AssumptionViolatedException;
+import org.junit.internal.AssumptionViolatedException;
 
 public class Guesser<T> extends ReguessableValue {
 	static class GuessMap extends HashMap<MethodCall, Object> implements

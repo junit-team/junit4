@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.junit.Assume.AssumptionViolatedException;
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.links.RunAfters;
 import org.junit.internal.runners.links.RunBefores;
 import org.junit.internal.runners.links.Statement;

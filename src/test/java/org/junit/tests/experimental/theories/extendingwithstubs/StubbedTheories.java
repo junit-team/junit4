@@ -4,10 +4,10 @@ package org.junit.tests.experimental.theories.extendingwithstubs;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assume.AssumptionViolatedException;
 import org.junit.experimental.theories.ParameterSignature;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.internal.Assignments;
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.links.Statement;
 import org.junit.internal.runners.model.FrameworkMethod;

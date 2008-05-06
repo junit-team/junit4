@@ -4,64 +4,98 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
-import org.hamcrest.Description;
+import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
-import org.hamcrest.SelfDescribing;
-import org.hamcrest.StringDescription;
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.matchers.Each;
+import org.junit.matchers.JUnitMatchers;
 
+/**
+ */
+/**
+ * A set of methods useful for stating assumptions about the conditions in which a test is meaningful.
+ * A failed assumption does not mean the code is broken, but that the test provides no useful information.
+ * The default JUnit runner treats tests with failing assumptions as ignored.  Custom runners may behave differently.
+ * 
+ * For example:
+ * <pre>
+ * // only provides information if database is reachable.
+ * @Test public void calculateTotalSalary() {
+ *    DBConnection dbc = Database.connect();
+ *    assumeNotNull(dbc);
+ *    // ...
+ * }
+ * </pre>
+ * These methods can be used directly: <code>Assume.assumeTrue(...)</code>, however, they
+ * read better if they are referenced through static import:<br/>
+ * <pre>
+ * import static org.junit.Assume.*;
+ *    ...
+ *    assumeTrue(...);
+ * </pre>
+ */
 public class Assume {
-	public static class AssumptionViolatedException extends RuntimeException implements SelfDescribing {
-		private static final long serialVersionUID= 1L;
-
-		private final Object fValue;
-
-		private final Matcher<?> fMatcher;
-
-		public AssumptionViolatedException(Object value, Matcher<?> matcher) {
-			super(value instanceof Throwable ? (Throwable) value : null);
-			fValue= value;
-			fMatcher= matcher;
-		}
-		
-		public AssumptionViolatedException(String assumption) {
-			this(assumption, null);
-		}
-
-		@Override
-		public String getMessage() {
-			return StringDescription.asString(this);
-		}
-
-		public void describeTo(Description description) {
-			if (fMatcher != null) {
-				description.appendText("got: ");
-				description.appendValue(fValue);
-				description.appendText(", expected: ");
-				description.appendDescriptionOf(fMatcher);
-			} else {
-				description.appendText("failed assumption: " + fValue);
-			}
-		}
+	/**
+	 * If called with an expression evaluating to {@code false}, the test will halt and be ignored.
+	 * @param b
+	 */
+	public static void assumeTrue(boolean b) {
+		assumeThat(b, is(true));
 	}
 
+	/**
+	 * If called with one or more null elements in {@objects}, the test will halt and be ignored.
+	 * @param objects
+	 */
+		public static void assumeNotNull(Object... objects) {
+		assumeThat(asList(objects), Each.each(notNullValue()));
+	}
+
+	    /**
+	     * Call to assume that <code>actual</code> satisfies the condition specified by <code>matcher</code>.
+	     * If not, the test halts and is ignored.
+	     * Example:
+	     * <pre>:
+	     *   assumeThat(1, is(1)); // passes
+	     *   foo(); // will execute
+	     *   assumeThat(0, is(1)); // assumption failure! test halts
+	     *   int x = 1 / 0; // will never execute
+	     * </pre>
+	     *   
+	     * @param <T> the static type accepted by the matcher (this can flag obvious compile-time problems such as {@code assumeThat(1, is("a"))}
+	     * @param actual the computed value being compared
+	     * @param matcher an expression, built of {@link Matcher}s, specifying allowed values
+	     * 
+	     * @see {@link CoreMatchers}, {@link JUnitMatchers}
+	     */
 	public static <T> void assumeThat(T value, Matcher<T> assumption) {
 		if (!assumption.matches(value))
 			throw new AssumptionViolatedException(value, assumption);
 	}
 
-	public static void assumeNotNull(Object... objects) {
-		assumeThat(asList(objects), Each.each(notNullValue()));
-	}
-
+    /**
+	 * Use to assume that an operation completes normally.  If {@code t} is non-null, the test will halt and be ignored.
+	 * 
+	 * For example:
+	 * <pre>
+	 * @Test public void parseDataFile() {
+	 *   DataFile file;
+	 *   try {
+	 *     file = DataFile.open("sampledata.txt");
+	 *   } catch (IOException e) {
+	 *     // stop test and ignore if data can't be opened
+	 *     assumeNoException(e);
+	 *   }
+	 *   // ...
+	 * }
+	 * </pre>
+	 * @param t if non-null, the offending exception
+	 */
 	public static void assumeNoException(Throwable t) {
 		assumeThat(t, nullValue());
 	}
 
-	public static void assumeTrue(boolean b) {
-		assumeThat(b, is(true));
-	}
-
+    // TODO: once the last (erroneous) reference is removed, remove this.
 	public static void fail(String string) {
 		throw new AssumptionViolatedException(string);
 	}

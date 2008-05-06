@@ -14,10 +14,9 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.Assume.AssumptionViolatedException;
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
-
 
 public class AssumptionTest {
 	public static class HasFailingAssumption {
@@ -139,8 +138,7 @@ public class AssumptionTest {
 		assertThat(testResult(HasFailingAssumeInBeforeClass.class), isSuccessful());
 	}
 
-	// TODO: (Apr 7, 2008 1:51:57 PM) Is this class causing the run/total
-	// discrepancy
+	// TODO: (Apr 7, 2008 1:51:57 PM) There is a run/total discrepancy.
 
 
 	public static class AssumptionFailureInConstructor {
