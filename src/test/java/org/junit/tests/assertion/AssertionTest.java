@@ -262,6 +262,7 @@ public class AssertionTest {
 		assertEquals(1.0, 2.0, 0.9);
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Test(expected= AssertionError.class) public void floatsNotEqualWithoutDelta() {
 		assertEquals(1.0, 1.1);
 	}

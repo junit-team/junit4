@@ -8,10 +8,7 @@ import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.matchers.Each;
-import org.junit.matchers.JUnitMatchers;
 
-/**
- */
 /**
  * A set of methods useful for stating assumptions about the conditions in which a test is meaningful.
  * A failed assumption does not mean the code is broken, but that the test provides no useful information.
@@ -20,7 +17,7 @@ import org.junit.matchers.JUnitMatchers;
  * For example:
  * <pre>
  * // only provides information if database is reachable.
- * @Test public void calculateTotalSalary() {
+ * \@Test public void calculateTotalSalary() {
  *    DBConnection dbc = Database.connect();
  *    assumeNotNull(dbc);
  *    // ...
@@ -44,7 +41,7 @@ public class Assume {
 	}
 
 	/**
-	 * If called with one or more null elements in {@objects}, the test will halt and be ignored.
+	 * If called with one or more null elements in <code>objects</code>, the test will halt and be ignored.
 	 * @param objects
 	 */
 		public static void assumeNotNull(Object... objects) {
@@ -66,11 +63,12 @@ public class Assume {
 	     * @param actual the computed value being compared
 	     * @param matcher an expression, built of {@link Matcher}s, specifying allowed values
 	     * 
-	     * @see {@link CoreMatchers}, {@link JUnitMatchers}
+	     * @see org.hamcrest.CoreMatchers
+	     * @see org.junit.matchers.JUnitMatchers
 	     */
-	public static <T> void assumeThat(T value, Matcher<T> assumption) {
-		if (!assumption.matches(value))
-			throw new AssumptionViolatedException(value, assumption);
+	public static <T> void assumeThat(T actual, Matcher<T> matcher) {
+		if (!matcher.matches(actual))
+			throw new AssumptionViolatedException(actual, matcher); 
 	}
 
     /**
@@ -78,7 +76,7 @@ public class Assume {
 	 * 
 	 * For example:
 	 * <pre>
-	 * @Test public void parseDataFile() {
+	 * \@Test public void parseDataFile() {
 	 *   DataFile file;
 	 *   try {
 	 *     file = DataFile.open("sampledata.txt");

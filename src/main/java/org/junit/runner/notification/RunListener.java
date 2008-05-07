@@ -72,9 +72,6 @@ public class RunListener {
 	 * Called when a test will not be run, generally because a test method is annotated 
 	 * with {@link org.junit.Ignore}.
 	 * 
-	 * This is always called at the same time as {@link #testIgnored(Description, String)}.
-	 * Only one needs to be overridden.
-	 * 
 	 * @param description describes the test that will not be run
 	 */
 	public void testIgnored(Description description) throws Exception {
