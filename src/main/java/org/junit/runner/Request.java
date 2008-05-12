@@ -55,7 +55,6 @@ public abstract class Request {
 	 * in a set of classes.
 	 * @param classes the classes containing the tests
 	 * @return a <code>Request</code> that will cause all tests in the classes to be run
-	 * @throws Throwable 
 	 */
 	public static Request classes(Class<?>... classes) {
 		return runner(new Suite(new AllDefaultPossibilitiesBuilder(true), classes));
