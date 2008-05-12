@@ -13,8 +13,6 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
-// TODO: (Apr 7, 2008 1:53:34 PM) fix before releasing
-@Ignore("Fix before releasing")
 @RunWith(Theories.class)
 public class WhenNoParametersMatch {
 	@DataPoints
