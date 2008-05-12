@@ -7,7 +7,7 @@ import org.junit.Assert;
 
 /**
  * Thrown when two array elements differ
- * @see Assert#assertEquals(String, Object[], Object[])
+ * @see Assert#assertArrayEquals(String, Object[], Object[])
  */
 public class ArrayComparisonFailure extends AssertionError {
 
@@ -22,7 +22,7 @@ public class ArrayComparisonFailure extends AssertionError {
 	 * dimension that was not equal
 	 * @param cause the exception that caused the array's content to fail the assertion test 
 	 * @param index the array position of the objects that are not equal.
-	 * @see Assert#assertEquals(String, Object[], Object[])
+	 * @see Assert#assertArrayEquals(String, Object[], Object[])
 	 */
 	public ArrayComparisonFailure(String message, AssertionError cause, int index) {
 		fMessage= message;

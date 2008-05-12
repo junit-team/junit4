@@ -57,7 +57,6 @@ public class Suite extends ParentRunner<Runner> {
 	 * 
 	 * @param builder builds runners for classes in the suite
 	 * @param classes the classes in the suite
-	 * @throws Throwable 
 	 */
 	public Suite(RunnerBuilder builder, Class<?>[] classes) {
 		this(null, builder.runners(classes));
