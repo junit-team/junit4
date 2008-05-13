@@ -6,6 +6,10 @@ import org.junit.internal.matchers.Each;
 import org.junit.internal.matchers.IsCollectionContaining;
 import org.junit.internal.matchers.StringContains;
 
+/**
+ * Convenience import class: these are useful matchers for use with the assertThat method, but they are
+ * not currently included in the basic CoreMatchers class from hamcrest.
+ */
 public class JUnitMatchers {
 	public static <T> org.hamcrest.Matcher<java.lang.Iterable<T>> hasItem(T element) {
 		return IsCollectionContaining.hasItem(element);

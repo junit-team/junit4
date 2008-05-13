@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.JUnit4TestAdapter;
@@ -51,7 +52,7 @@ public class SingleMethodTest {
 	static public class ParameterizedOneTimeSetup {
 		@Parameters
 		public static List<Object[]> params() {
-			return Parameterized.eachOne(1, 2);
+			return Arrays.asList(new Object[] {1}, new Object[] {2});
 		} 
 
 		public ParameterizedOneTimeSetup(int x) {
@@ -74,7 +75,7 @@ public class SingleMethodTest {
 	static public class ParameterizedOneTimeBeforeClass {
 		@Parameters
 		public static List<Object[]> params() {
-			return Parameterized.eachOne(1, 2);
+			return Arrays.asList(new Object[] {1}, new Object[] {2});
 		} 
 
 		public ParameterizedOneTimeBeforeClass(int x) {

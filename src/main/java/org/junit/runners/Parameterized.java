@@ -57,6 +57,23 @@ import org.junit.runner.notification.RunNotifier;
  * </p>
  */
 public class Parameterized extends Suite {
+	
+	/**
+	 * Annotation for a method which provides parameters to be injected into the test class constructor by <code>Parameterized</code>
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.METHOD)
+	public static @interface Parameters {
+	}
+	
+	/**
+	 * Only called reflectively. Do not use programmatically.
+	 */
+	public Parameterized(Class<?> klass) throws Throwable {
+		super(klass, runners(klass));
+		validate();
+	}
+	
 	private static class TestClassRunnerForParameters extends JUnit4ClassRunner {
 		private final int fParameterSetNumber;
 
@@ -108,17 +125,7 @@ public class Parameterized extends Suite {
 		}
 	}
 
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.METHOD)
-	public static @interface Parameters {
-	}
-
-
-	public Parameterized(Class<?> klass) throws Throwable {
-		super(klass, runners(klass));
-		validate();
-	}
-
+	
 	@Override
 	protected void collectInitializationErrors(List<Throwable> errors) {
 		getTestClass().validateStaticMethods(errors);
@@ -155,10 +162,4 @@ public class Parameterized extends Suite {
 				+ klass.getName());
 	}
 
-	public static List<Object[]> eachOne(Object... params) {
-		List<Object[]> results= new ArrayList<Object[]>();
-		for (Object param : params)
-			results.add(new Object[] { param });
-		return results;
-	}
 }

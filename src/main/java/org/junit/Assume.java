@@ -4,7 +4,6 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.matchers.Each;

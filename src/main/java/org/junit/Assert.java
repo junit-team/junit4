@@ -2,12 +2,10 @@ package org.junit;
 
 import java.lang.reflect.Array;
 
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.junit.internal.ArrayComparisonFailure;
-import org.junit.matchers.JUnitMatchers;
 
 /**
  * A set of assertion methods useful for writing tests. Only failed assertions

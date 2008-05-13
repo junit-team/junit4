@@ -9,11 +9,58 @@ import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.internal.runners.InitializationError;
 import org.junit.runner.Runner;
 
+/**
+ * A RunnerBuilder is a strategy for constructing runners for classes. 
+ * 
+ * Only writers of custom runners should use <code>RunnerBuilder</code>s.  A custom runner class with a constructor taking
+ * a <code>RunnerBuilder</code> parameter will be passed the instance of <code>RunnerBuilder</code> used to build that runner itself.  
+ * For example,
+ * imagine a custom runner that builds suites based on a list of classes in a text file:
+ * 
+ * <pre>
+ * \@RunWith(TextFileSuite.class)
+ * \@SuiteSpecFile("mysuite.txt")
+ * class MySuite {}
+ * </pre>
+ * 
+ * The implementation of TextFileSuite might include:
+ * 
+ * <pre>
+ * public TextFileSuite(Class testClass, RunnerBuilder builder) {
+ *   // ...
+ *   for (String className : readClassNames())
+ *     addRunner(builder.runnerForClass(Class.forName(className)));
+ *   // ...
+ * }
+ * </pre>
+ * 
+ * @see org.junit.runners.Suite
+ */
 public abstract class RunnerBuilder {
 	private final Set<Class<?>> parents = new HashSet<Class<?>>();
 
+	/**
+	 * Override to calculate the correct runner for a test class at runtime.
+	 * 
+	 * @param testClass class to be run
+	 * @return a Runner
+	 * @throws Throwable if a runner cannot be constructed
+	 */
 	public abstract Runner runnerForClass(Class<?> testClass) throws Throwable;
 
+	/**
+	 * Always returns a runner, even if it is just one that prints an error instead of running tests.
+	 * @param testClass class to be run
+	 * @return a Runner
+	 */
+	public Runner safeRunnerForClass(Class<?> testClass) {
+		try {
+			return runnerForClass(testClass);
+		} catch (Throwable e) {
+			return new ErrorReportingRunner(testClass, e);
+		}
+	}
+	
 	Class<?> addParent(Class<?> parent) throws InitializationError {
 		if (!parents.add(parent))
 			throw new InitializationError(String.format("class '%s' (possibly indirectly) contains itself as a SuiteClass", parent.getName()));
@@ -32,14 +79,6 @@ public abstract class RunnerBuilder {
 				runners.add(childRunner);
 		}
 		return runners;
-	}
-
-	public Runner safeRunnerForClass(Class<?> testClass) {
-		try {
-			return runnerForClass(testClass);
-		} catch (Throwable e) {
-			return new ErrorReportingRunner(testClass, e);
-		}
 	}
 
 	List<Runner> runners(Class<?> parent, Class<?>[] children) throws InitializationError {

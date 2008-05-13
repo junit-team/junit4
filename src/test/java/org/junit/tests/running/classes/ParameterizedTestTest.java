@@ -8,6 +8,7 @@ import static org.junit.matchers.JUnitMatchers.containsString;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -140,7 +141,7 @@ public class ParameterizedTestTest {
 
 		@Parameters
 		public static Collection<Object[]> data() {
-			return Parameterized.eachOne(1);
+			return Collections.singletonList(new Object[] {1});
 		}
 	}
 
