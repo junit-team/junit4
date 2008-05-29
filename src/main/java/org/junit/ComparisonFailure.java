@@ -83,7 +83,7 @@ public class ComparisonFailure extends AssertionError {
 			fActual= actual;
 		}
 
-		public String compact(String message) {
+		private String compact(String message) {
 			if (fExpected == null || fActual == null || areStringsEqual())
 				return Assert.format(message, fExpected, fActual);
 
