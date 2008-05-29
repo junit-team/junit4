@@ -91,9 +91,4 @@ public class Assume {
 	public static void assumeNoException(Throwable t) {
 		assumeThat(t, nullValue());
 	}
-
-    // TODO: once the last (erroneous) reference is removed, remove this.
-	public static void fail(String string) {
-		throw new AssumptionViolatedException(string);
-	}
 }
