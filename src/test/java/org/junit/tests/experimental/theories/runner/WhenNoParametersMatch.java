@@ -33,8 +33,6 @@ public class WhenNoParametersMatch {
 		}
 	}
 
-	// TODO: fix this test
-	@Ignore 
 	@Theory
 	public void showFailedAssumptionsWhenNoParametersFound(int data,
 			Matcher<Integer> matcher) throws Exception {
@@ -46,6 +44,5 @@ public class WhenNoParametersMatch {
 
 		assertThat(result, containsString(matcher.toString()));
 		assertThat(result, containsString("" + data));
-		assertThat(result, containsString("invalid assumption:"));
 	}
 }

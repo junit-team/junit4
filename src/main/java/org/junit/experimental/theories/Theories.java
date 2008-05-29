@@ -9,6 +9,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.experimental.theories.PotentialAssignment.CouldNotGenerateValueException;
 import org.junit.experimental.theories.internal.Assignments;
@@ -64,8 +65,8 @@ public class Theories extends JUnit4ClassRunner {
 					fTestMethod.getMethod(), getTestClass()));
 
 			if (successes == 0)
-				Assume
-						.fail("Never found parameters that satisfied method.  Violated assumptions: "
+				Assert
+						.fail("Never found parameters that satisfied method assumptions.  Violated assumptions: "
 								+ fInvalidParameters);
 		}
 
