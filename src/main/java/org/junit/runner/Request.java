@@ -46,6 +46,12 @@ public abstract class Request {
 		return new ClassRequest(clazz);
 	}
 
+	/**
+	 * Create a <code>Request</code> that, when processed, will run all the tests
+	 * in a class. If the class has a suite() method, it will be ignored.
+	 * @param clazz the class containing the tests
+	 * @return a <code>Request</code> that will cause all tests in the class to be run
+	 */
 	public static Request classWithoutSuiteMethod(Class<?> newTestClass) {
 		return new ClassRequest(newTestClass, false);
 	}
@@ -67,7 +73,11 @@ public abstract class Request {
 	public static Request errorReport(Class<?> klass, Throwable cause) {
 		return runner(new ErrorReportingRunner(klass, cause));
 	}
-	
+
+	/**
+	 * @param runner the runner to return
+	 * @return a <code>Request</code> that will run the given runner when invoked
+	 */
 	public static Request runner(final Runner runner) {
 		return new Request(){
 			@Override

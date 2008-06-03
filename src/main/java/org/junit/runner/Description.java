@@ -68,7 +68,12 @@ public class Description {
 		return new Description(testClass.getName(), testClass.getAnnotations());
 	}
 	
+	/**
+	 * Description of a Runner which runs no tests
+	 */
 	public static final Description EMPTY= new Description("No Tests");
+	
+	
 	public static final Description TEST_MECHANISM= new Description("Test mechanism");
 	
 	private final ArrayList<Description> fChildren= new ArrayList<Description>();
