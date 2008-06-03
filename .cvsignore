@@ -4,3 +4,4 @@ junit*-SNAPSHOT-*
 target
 reports
 buildfile
+java.hprof.txt

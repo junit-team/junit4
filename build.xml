@@ -142,6 +142,19 @@
 		</java>
 	</target>
 
+	<!-- TODO: DUP above -->
+
+	<target name="profile" depends="populate-dist">
+		<java classname="org.junit.runner.JUnitCore" fork="yes" failonerror="true">
+			<jvmarg value="-agentlib:hprof=cpu=samples"/>
+			<arg value="org.junit.tests.AllTests"/>
+			<classpath>
+				<pathelement location="${dist}" />
+				<pathelement location="${dist}/${binjar}" />
+			</classpath>
+		</java>
+	</target>	
+
 	<target name="zip" depends="dist">
 		<zip zipfile="${zipfile}" basedir="." includes="${dist}/**" />
 	</target>
