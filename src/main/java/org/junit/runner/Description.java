@@ -69,11 +69,15 @@ public class Description {
 	}
 	
 	/**
-	 * Description of a Runner which runs no tests
+	 * Describes a Runner which runs no tests
 	 */
 	public static final Description EMPTY= new Description("No Tests");
 	
-	
+	/**
+	 * Describes a step in the test-running mechanism that goes so wrong no
+	 * other description can be used (for example, an exception thrown from a Runner's
+	 * constructor
+	 */
 	public static final Description TEST_MECHANISM= new Description("Test mechanism");
 	
 	private final ArrayList<Description> fChildren= new ArrayList<Description>();
@@ -153,14 +157,26 @@ public class Description {
 		return getDisplayName();
 	}
 
+	/**
+	 * @return true if this is a description of a Runner that runs no tests
+	 */
 	public boolean isEmpty() {
 		return equals(EMPTY);
 	}
 
+	/**
+	 * @return a copy of this description, with no children (on the assumption that some of the
+	 * children will be added back)
+	 */
 	public Description childlessCopy() {
+		// TODO: should include annotations
 		return new Description(fDisplayName);
 	}
 
+	/**
+	 * @return the annotation of type annotationType that is attached to this description node, 
+	 * or null if none exists
+	 */
 	public <T extends Annotation> T getAnnotation(Class<T> annotationType) {
 		for (Annotation each : fAnnotations)
 			if (each.annotationType().equals(annotationType))
@@ -168,6 +184,9 @@ public class Description {
 		return null;
 	}
 
+	/**
+	 * @return all of the annotations attached to this description node
+	 */
 	public Collection<Annotation> getAnnotations() {
 		return Arrays.asList(fAnnotations);
 	}

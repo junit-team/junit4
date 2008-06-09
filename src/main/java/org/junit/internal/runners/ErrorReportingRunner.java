@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.junit.internal.runners.links.Statement;
 import org.junit.runner.Description;
+import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
 public class ErrorReportingRunner extends ParentRunner<Throwable> {
@@ -34,7 +35,10 @@ public class ErrorReportingRunner extends ParentRunner<Throwable> {
 
 	@Override
 	protected void runChild(Throwable child, RunNotifier notifier) {
-		notifier.testAborted(describeChild(child), child);
+		Description description= describeChild(child);
+		notifier.fireTestStarted(description);
+		notifier.fireTestFailure(new Failure(description, child));
+		notifier.fireTestFinished(description);
 	}
 	
 	private List<Throwable> getCauses(Throwable cause) {
