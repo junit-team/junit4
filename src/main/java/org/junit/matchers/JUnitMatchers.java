@@ -27,16 +27,22 @@ public class JUnitMatchers {
 		return IsCollectionContaining.hasItem(elementMatcher);
 	}
 
-	public static <T> org.hamcrest.Matcher<java.lang.Iterable<T>> hasItems(org.hamcrest.Matcher<? extends T>... elementMatchers) {
-		return IsCollectionContaining.hasItems(elementMatchers);
-	}
-
 	/**
 	 * @param element
 	 * @return A matcher matching any collection containing every element in elements
 	 */
 	public static <T> org.hamcrest.Matcher<java.lang.Iterable<T>> hasItems(T... elements) {
 		return IsCollectionContaining.hasItems(elements);
+	}
+
+	/**
+	 * @param elementMatchers
+	 * @return A matcher matching any collection containing at least one element that matches 
+	 *         each matcher in elementMatcher (this may be one element matching all matchers,
+	 *         or different elements matching each matcher)
+	 */
+	public static <T> org.hamcrest.Matcher<java.lang.Iterable<T>> hasItems(org.hamcrest.Matcher<? extends T>... elementMatchers) {
+		return IsCollectionContaining.hasItems(elementMatchers);
 	}
 
 	/**
@@ -47,14 +53,30 @@ public class JUnitMatchers {
 		return Each.each(elementMatcher);
 	}
 
+	/**
+	 * @param substring
+	 * @return a matcher matching any string that contains substring
+	 */
 	public static org.hamcrest.Matcher<java.lang.String> containsString(java.lang.String substring) {
 		return StringContains.containsString(substring);
 	}
 	
+	/**
+	 * This is useful for fluently combining matchers that must both pass.  For example:
+	 * <pre>
+	 *   assertThat(string, both(containsString("a")).and(containsString("b")));
+	 * </pre>
+	 */
 	public static <T> CombinableMatcher<T> both(Matcher<T> matcher) {
 		return new CombinableMatcher<T>(matcher);
 	}
 	
+	/**
+	 * This is useful for fluently combining matchers where either may pass, for example:
+	 * <pre>
+	 *   assertThat(string, both(containsString("a")).and(containsString("b")));
+	 * </pre>
+	 */
 	public static <T> CombinableMatcher<T> either(Matcher<T> matcher) {
 		return new CombinableMatcher<T>(matcher);
 	}	
