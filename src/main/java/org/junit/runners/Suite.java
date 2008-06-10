@@ -27,6 +27,9 @@ public class Suite extends ParentRunner<Runner> {
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.TYPE)
 	public @interface SuiteClasses {
+		/**
+		 * @return the classes to be run
+		 */
 		public Class<?>[] value();
 	}
 	
