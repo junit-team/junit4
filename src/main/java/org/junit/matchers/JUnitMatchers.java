@@ -11,10 +11,18 @@ import org.junit.internal.matchers.StringContains;
  * not currently included in the basic CoreMatchers class from hamcrest.
  */
 public class JUnitMatchers {
+	/**
+	 * @param element
+	 * @return A matcher matching any collection containing element
+	 */
 	public static <T> org.hamcrest.Matcher<java.lang.Iterable<T>> hasItem(T element) {
 		return IsCollectionContaining.hasItem(element);
 	}
 
+	/**
+	 * @param elementMatcher
+	 * @return A matcher matching any collection containing an element matching elementMatcher
+	 */
 	public static <T> org.hamcrest.Matcher<java.lang.Iterable<T>> hasItem(org.hamcrest.Matcher<? extends T> elementMatcher) {
 		return IsCollectionContaining.hasItem(elementMatcher);
 	}
@@ -23,16 +31,24 @@ public class JUnitMatchers {
 		return IsCollectionContaining.hasItems(elementMatchers);
 	}
 
+	/**
+	 * @param element
+	 * @return A matcher matching any collection containing every element in elements
+	 */
 	public static <T> org.hamcrest.Matcher<java.lang.Iterable<T>> hasItems(T... elements) {
 		return IsCollectionContaining.hasItems(elements);
 	}
 
-	public static org.hamcrest.Matcher<java.lang.String> containsString(java.lang.String substring) {
-		return StringContains.containsString(substring);
+	/**
+	 * @param elementMatcher
+	 * @return A matcher matching any collection in which every element matches elementMatcher
+	 */
+	public static <T> Matcher<Iterable<T>> everyItem(final Matcher<T> elementMatcher) {
+		return Each.each(elementMatcher);
 	}
 
-	public static <T> Matcher<Iterable<T>> each(final Matcher<T> individual) {
-		return Each.each(individual);
+	public static org.hamcrest.Matcher<java.lang.String> containsString(java.lang.String substring) {
+		return StringContains.containsString(substring);
 	}
 	
 	public static <T> CombinableMatcher<T> both(Matcher<T> matcher) {
