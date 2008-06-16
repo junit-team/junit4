@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.internal.runners.InitializationError;
-import org.junit.internal.runners.JUnit4ClassRunner;
+import org.junit.internal.runners.BlockJUnit4ClassRunner;
 import org.junit.internal.runners.links.Statement;
 import org.junit.internal.runners.model.FrameworkMethod;
 import org.junit.internal.runners.model.TestClass;
@@ -74,7 +74,7 @@ public class Parameterized extends Suite {
 		validate();
 	}
 	
-	private static class TestClassRunnerForParameters extends JUnit4ClassRunner {
+	private static class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
 		private final int fParameterSetNumber;
 
 		private final List<Object[]> fParameterList;

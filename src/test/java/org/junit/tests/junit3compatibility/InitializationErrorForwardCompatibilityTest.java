@@ -9,7 +9,7 @@ import junit.framework.TestListener;
 import junit.framework.TestResult;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.internal.runners.JUnit4ClassRunner;
+import org.junit.internal.runners.BlockJUnit4ClassRunner;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
@@ -91,7 +91,7 @@ public class InitializationErrorForwardCompatibilityTest {
 		assertTrue(shouldFail == listener.getError());
 	}
 	
-	public static class InitializesWithError extends JUnit4ClassRunner {
+	public static class InitializesWithError extends BlockJUnit4ClassRunner {
 		public InitializesWithError(Class<?> klass) throws Exception {
 			super(klass);
 			throw new Exception();

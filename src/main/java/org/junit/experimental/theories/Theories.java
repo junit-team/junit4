@@ -16,11 +16,11 @@ import org.junit.experimental.theories.internal.Assignments;
 import org.junit.experimental.theories.internal.ParameterizedAssertionError;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.InitializationError;
-import org.junit.internal.runners.JUnit4ClassRunner;
+import org.junit.internal.runners.BlockJUnit4ClassRunner;
 import org.junit.internal.runners.links.Statement;
 import org.junit.internal.runners.model.FrameworkMethod;
 
-public class Theories extends JUnit4ClassRunner {
+public class Theories extends BlockJUnit4ClassRunner {
 	public Theories(Class<?> klass) throws InitializationError {
 		super(klass);
 	}
@@ -91,7 +91,7 @@ public class Theories extends JUnit4ClassRunner {
 		protected void runWithCompleteAssignment(final Assignments complete)
 				throws InstantiationException, IllegalAccessException,
 				InvocationTargetException, NoSuchMethodException, Throwable {
-			new JUnit4ClassRunner(getTestClass()) {
+			new BlockJUnit4ClassRunner(getTestClass()) {
 				@Override
 				protected void collectInitializationErrors(
 						List<Throwable> errors) {

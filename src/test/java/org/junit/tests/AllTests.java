@@ -8,6 +8,7 @@ import org.junit.runners.Suite.SuiteClasses;
 import org.junit.tests.assertion.AssertionTest;
 import org.junit.tests.assertion.BothTest;
 import org.junit.tests.assertion.EachTest;
+import org.junit.tests.deprecated.JUnit4ClassRunnerTest;
 import org.junit.tests.description.AnnotatedDescriptionTest;
 import org.junit.tests.description.SuiteDescriptionTest;
 import org.junit.tests.description.TestDescriptionTest;
@@ -105,7 +106,8 @@ import org.junit.tests.validation.ValidationTest;
 	AllMembersSupplierTest.class,
 	MatcherTest.class,
 	ObjectContractTest.class,
-	TheoriesPerformanceTest.class
+	TheoriesPerformanceTest.class,
+	JUnit4ClassRunnerTest.class
 })
 public class AllTests {
 	public static Test suite() {

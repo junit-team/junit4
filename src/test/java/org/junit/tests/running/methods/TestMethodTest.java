@@ -17,7 +17,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.internal.runners.InitializationError;
-import org.junit.internal.runners.JUnit4ClassRunner;
+import org.junit.internal.runners.BlockJUnit4ClassRunner;
 import org.junit.internal.runners.model.TestClass;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -88,7 +88,7 @@ public class TestMethodTest {
 
 	private List<Throwable> validateAllMethods(Class<?> clazz) {
 		try {
-			new JUnit4ClassRunner(clazz);
+			new BlockJUnit4ClassRunner(clazz);
 		} catch (InitializationError e) {
 			return e.getCauses();
 		}

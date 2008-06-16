@@ -14,7 +14,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.internal.runners.InitializationError;
-import org.junit.internal.runners.JUnit4ClassRunner;
+import org.junit.internal.runners.BlockJUnit4ClassRunner;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -85,7 +85,7 @@ public class ParameterizedTestMethodTest {
 	
 	private List<Throwable> validateAllMethods(Class<?> clazz) {
 		try {
-			new JUnit4ClassRunner(clazz);
+			new BlockJUnit4ClassRunner(clazz);
 		} catch (InitializationError e) {
 			return e.getCauses();
 		}
