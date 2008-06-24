@@ -70,11 +70,9 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> implem
 			return new Fail(e);
 		}
 
-		TestAnnotation annotation= new TestAnnotation(method);
-		
 		Statement link= invoke(method, test);
-		link= possiblyExpectingExceptions(annotation, link);
-		link= withPotentialTimeout(annotation, link);
+		link= possiblyExpectingExceptions(method, test, link);
+		link= withPotentialTimeout(method, test, link);
 		link= withBefores(method, test, link);
 		link= withAfters(method, test, link);
 		return link;
@@ -111,15 +109,16 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> implem
 		return new InvokeMethod(method, test);
 	}
 
-	protected Statement possiblyExpectingExceptions(TestAnnotation annotation,
+	protected Statement possiblyExpectingExceptions(FrameworkMethod method, Object test,
 			Statement next) {
+		TestAnnotation annotation= getAnnotation(method);
 		return annotation.expectsException() ? new ExpectException(next, annotation
 				.getExpectedException()) : next;
 	}
 
-	protected Statement withPotentialTimeout(TestAnnotation annotation,
+	protected Statement withPotentialTimeout(FrameworkMethod method, Object test,
 			Statement next) {
-		long timeout= annotation.getTimeout();
+		long timeout= getAnnotation(method).getTimeout();
 		return timeout > 0 ? new FailOnTimeout(next, timeout) : next;
 	}
 
@@ -136,5 +135,10 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> implem
 	protected Notifier notifying(FrameworkMethod method, Statement link) {
 		return method.isIgnored() ? new IgnoreTestNotifier()
 				: new RunTestNotifier(link);
+	}
+
+
+	private TestAnnotation getAnnotation(FrameworkMethod method) {
+		return new TestAnnotation(method);
 	}
 }
