@@ -6,6 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.List;
 
+import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
 import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.ParentRunner;
 import org.junit.runner.Description;
@@ -63,6 +64,17 @@ public class Suite extends ParentRunner<Runner> {
 	 */
 	public Suite(RunnerBuilder builder, Class<?>[] classes) {
 		this(null, builder.runners(classes));
+	}
+	
+	/*
+	 * Call this when the default builder is good enough. Left in for compatibility with JUnit 4.4.
+	 * @param klass the root of the suite
+	 * @param suiteClasses the classes in the suite
+	 * @throws InitializationError
+	 */
+	//TODO this needs a unit test
+	protected Suite(Class<?> klass, Class<?>[] suiteClasses) throws InitializationError {
+		this(new AllDefaultPossibilitiesBuilder(true), klass, suiteClasses);
 	}
 	
 	/**
