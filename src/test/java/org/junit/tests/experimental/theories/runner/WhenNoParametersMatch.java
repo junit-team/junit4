@@ -7,7 +7,6 @@ import static org.junit.Assume.assumeThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.internal.matchers.StringContains.containsString;
 import org.hamcrest.Matcher;
-import org.junit.Ignore;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;

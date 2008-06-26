@@ -1,4 +1,4 @@
-#Fri Mar 02 07:18:30 PST 2007
+#Thu Jun 26 06:42:44 PDT 2008
 eclipse.preferences.version=1
 formatter_profile=_junit
 formatter_settings_version=11
@@ -9,4 +9,4 @@ org.eclipse.jdt.ui.ignorelowercasenames=true
 org.eclipse.jdt.ui.importorder=java;javax;com;
 org.eclipse.jdt.ui.ondemandthreshold=99
 org.eclipse.jdt.ui.overrideannotation=true
-org.eclipse.jdt.ui.text.custom_code_templates=<?xml version\="1.0" encoding\="UTF-8"?><templates/>
+org.eclipse.jdt.ui.text.custom_code_templates=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><templates/>

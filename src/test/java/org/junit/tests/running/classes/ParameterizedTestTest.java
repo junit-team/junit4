@@ -8,7 +8,6 @@ import static org.junit.matchers.JUnitMatchers.containsString;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

@@ -10,9 +10,10 @@ import org.junit.runner.Result;
 import org.junit.runner.RunWith;
 
 /*
- * This is a simple smoke test to make sure the old JUnit4ClassRunner basically works.
+ * @deprecated This is a simple smoke test to make sure the old JUnit4ClassRunner basically works.
  * Delete this test when JUnit4ClassRunner goes to the Great Heap In The Sky.
  */
+@Deprecated
 public class JUnit4ClassRunnerTest {
 
 	@RunWith(JUnit4ClassRunner.class)
