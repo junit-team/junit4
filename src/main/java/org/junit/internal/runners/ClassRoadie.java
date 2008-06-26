@@ -1,11 +1,9 @@
-package org.junit.internal.deprecated;
+package org.junit.internal.runners;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import org.junit.internal.runners.BlockJUnit4ClassRunner;
-import org.junit.internal.runners.JUnit4ClassRunner;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;

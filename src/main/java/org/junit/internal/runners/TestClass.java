@@ -1,4 +1,4 @@
-package org.junit.internal.deprecated;
+package org.junit.internal.runners;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -11,8 +11,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.internal.runners.BlockJUnit4ClassRunner;
-import org.junit.internal.runners.JUnit4ClassRunner;
 
 /**
  * @deprecated Included for backwards compatibility with JUnit 4.4. Will be

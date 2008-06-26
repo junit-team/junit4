@@ -1,4 +1,4 @@
-package org.junit.internal.deprecated;
+package org.junit.internal.runners;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -9,8 +9,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.Test.None;
-import org.junit.internal.runners.BlockJUnit4ClassRunner;
-import org.junit.internal.runners.JUnit4ClassRunner;
 
 /**
  * @deprecated Included for backwards compatibility with JUnit 4.4. Will be

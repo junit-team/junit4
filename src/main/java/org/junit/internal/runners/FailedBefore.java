@@ -1,7 +1,5 @@
-package org.junit.internal.deprecated;
+package org.junit.internal.runners;
 
-import org.junit.internal.runners.BlockJUnit4ClassRunner;
-import org.junit.internal.runners.JUnit4ClassRunner;
 
 /**
  * @deprecated Included for backwards compatibility with JUnit 4.4. Will be

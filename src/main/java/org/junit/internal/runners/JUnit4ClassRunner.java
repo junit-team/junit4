@@ -8,11 +8,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.internal.deprecated.ClassRoadie;
-import org.junit.internal.deprecated.MethodRoadie;
-import org.junit.internal.deprecated.MethodValidator;
-import org.junit.internal.deprecated.TestClass;
-import org.junit.internal.deprecated.TestMethod;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
