@@ -40,6 +40,7 @@ import org.junit.tests.running.classes.ParameterizedTestTest;
 import org.junit.tests.running.classes.RunWithTest;
 import org.junit.tests.running.classes.SuiteTest;
 import org.junit.tests.running.classes.TestClassTest;
+import org.junit.tests.running.classes.UseSuiteAsASuperclassTest;
 import org.junit.tests.running.core.CommandLineTest;
 import org.junit.tests.running.core.JUnitCoreReturnsCorrectExitCodeTest;
 import org.junit.tests.running.core.SystemExitTest;
@@ -107,7 +108,8 @@ import org.junit.tests.validation.ValidationTest;
 	MatcherTest.class,
 	ObjectContractTest.class,
 	TheoriesPerformanceTest.class,
-	JUnit4ClassRunnerTest.class
+	JUnit4ClassRunnerTest.class,
+	UseSuiteAsASuperclassTest.class
 })
 public class AllTests {
 	public static Test suite() {

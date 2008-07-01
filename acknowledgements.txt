@@ -21,3 +21,6 @@
 
 2008 February 5
 	Walter Gildersleeve: Found assertEquals(null, "null") defect (1857283)
+	
+2008 July 1
+	Johannes Link: Submitted test for running subclasses of Suite
