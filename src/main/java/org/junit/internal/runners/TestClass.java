@@ -11,6 +11,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runners.BlockJUnit4ClassRunner;
 
 /**
  * @deprecated Included for backwards compatibility with JUnit 4.4. Will be

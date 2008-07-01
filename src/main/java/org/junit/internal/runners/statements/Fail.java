@@ -1,4 +1,6 @@
-package org.junit.internal.runners.links;
+package org.junit.internal.runners.statements;
+
+import org.junit.runners.Statement;
 
 
 public class Fail extends Statement {

@@ -1,9 +1,10 @@
 /**
  * 
  */
-package org.junit.internal.runners.links;
+package org.junit.internal.runners.statements;
 
 import org.junit.internal.runners.model.FrameworkMethod;
+import org.junit.runners.Statement;
 
 public class InvokeMethod extends Statement {
 	private final FrameworkMethod fTestMethod;

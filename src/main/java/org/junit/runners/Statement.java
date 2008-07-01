@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.junit.internal.runners.links;
+package org.junit.runners;
 
 
 public abstract class Statement {

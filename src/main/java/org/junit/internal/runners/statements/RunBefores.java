@@ -1,12 +1,13 @@
 /**
  * 
  */
-package org.junit.internal.runners.links;
+package org.junit.internal.runners.statements;
 
 import java.util.List;
 
 import org.junit.internal.runners.model.FrameworkMethod;
 import org.junit.internal.runners.model.TestElement;
+import org.junit.runners.Statement;
 
 public class RunBefores extends Statement {
 	private final Statement fNext;

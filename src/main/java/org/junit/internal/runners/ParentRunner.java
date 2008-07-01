@@ -7,11 +7,10 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.junit.internal.AssumptionViolatedException;
-import org.junit.internal.runners.links.RunAfters;
-import org.junit.internal.runners.links.RunBefores;
-import org.junit.internal.runners.links.Statement;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.model.TestClass;
+import org.junit.internal.runners.statements.RunAfters;
+import org.junit.internal.runners.statements.RunBefores;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
@@ -21,6 +20,7 @@ import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
+import org.junit.runners.Statement;
 
 public abstract class ParentRunner<T> extends Runner implements Filterable, Sortable {
 	private final TestClass fTestClass;

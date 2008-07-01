@@ -1,4 +1,4 @@
-package org.junit.internal.runners.links;
+package org.junit.runners;
 
 import org.junit.internal.runners.model.EachTestNotifier;
 

@@ -4,10 +4,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.internal.runners.links.Statement;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.Statement;
 
 public class ErrorReportingRunner extends ParentRunner<Throwable> {
 	private final Throwable fCause;

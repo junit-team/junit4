@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.Test.None;
+import org.junit.runners.BlockJUnit4ClassRunner;
 
 /**
  * @deprecated Included for backwards compatibility with JUnit 4.4. Will be

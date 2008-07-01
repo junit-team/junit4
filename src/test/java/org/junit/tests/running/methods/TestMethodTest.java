@@ -17,10 +17,10 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.internal.runners.InitializationError;
-import org.junit.internal.runners.BlockJUnit4ClassRunner;
 import org.junit.internal.runners.model.TestClass;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
+import org.junit.runners.BlockJUnit4ClassRunner;
 
 public class TestMethodTest {
 

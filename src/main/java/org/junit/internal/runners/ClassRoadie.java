@@ -7,6 +7,7 @@ import java.util.List;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.BlockJUnit4ClassRunner;
 
 /**
  * @deprecated Included for backwards compatibility with JUnit 4.4. Will be

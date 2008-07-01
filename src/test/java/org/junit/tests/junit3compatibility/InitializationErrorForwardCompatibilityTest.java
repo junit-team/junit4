@@ -9,11 +9,11 @@ import junit.framework.TestListener;
 import junit.framework.TestResult;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.internal.runners.BlockJUnit4ClassRunner;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.BlockJUnit4ClassRunner;
 
 public class InitializationErrorForwardCompatibilityTest {
 	public static class CantInitialize extends Runner {

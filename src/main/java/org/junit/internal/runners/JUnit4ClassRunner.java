@@ -17,6 +17,7 @@ import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.BlockJUnit4ClassRunner;
 
 /**
  * @deprecated Included for backwards compatibility with JUnit 4.4. Will be

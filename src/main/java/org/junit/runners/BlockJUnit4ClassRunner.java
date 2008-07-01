@@ -1,23 +1,24 @@
-package org.junit.internal.runners;
+package org.junit.runners;
 
 import java.util.List;
 
-import org.junit.internal.runners.links.ExpectException;
-import org.junit.internal.runners.links.Fail;
-import org.junit.internal.runners.links.FailOnTimeout;
-import org.junit.internal.runners.links.IgnoreTestNotifier;
-import org.junit.internal.runners.links.InvokeMethod;
-import org.junit.internal.runners.links.Notifier;
-import org.junit.internal.runners.links.RunAfters;
-import org.junit.internal.runners.links.RunBefores;
-import org.junit.internal.runners.links.RunTestNotifier;
-import org.junit.internal.runners.links.Statement;
+import org.junit.Test;
+import org.junit.Test.None;
+import org.junit.internal.runners.InitializationError;
+import org.junit.internal.runners.ParentRunner;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.model.FrameworkMethod;
 import org.junit.internal.runners.model.ReflectiveCallable;
-import org.junit.internal.runners.model.TestAnnotation;
 import org.junit.internal.runners.model.TestClass;
 import org.junit.internal.runners.model.TestMethod;
+import org.junit.internal.runners.notifiers.IgnoreTestNotifier;
+import org.junit.internal.runners.notifiers.RunTestNotifier;
+import org.junit.internal.runners.statements.ExpectException;
+import org.junit.internal.runners.statements.Fail;
+import org.junit.internal.runners.statements.FailOnTimeout;
+import org.junit.internal.runners.statements.InvokeMethod;
+import org.junit.internal.runners.statements.RunAfters;
+import org.junit.internal.runners.statements.RunBefores;
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filterable;
 import org.junit.runner.manipulation.Sortable;
@@ -111,14 +112,13 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> implem
 
 	protected Statement possiblyExpectingExceptions(FrameworkMethod method, Object test,
 			Statement next) {
-		TestAnnotation annotation= getAnnotation(method);
-		return annotation.expectsException() ? new ExpectException(next, annotation
-				.getExpectedException()) : next;
+		Test annotation= getAnnotation(method);
+		return expectsException(annotation) ? new ExpectException(next, getExpectedException(annotation)) : next;
 	}
 
 	protected Statement withPotentialTimeout(FrameworkMethod method, Object test,
 			Statement next) {
-		long timeout= getAnnotation(method).getTimeout();
+		long timeout= getTimeout(getAnnotation(method));
 		return timeout > 0 ? new FailOnTimeout(next, timeout) : next;
 	}
 
@@ -137,8 +137,25 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> implem
 				: new RunTestNotifier(link);
 	}
 
-
-	private TestAnnotation getAnnotation(FrameworkMethod method) {
-		return new TestAnnotation(method);
+	private Class<? extends Throwable> getExpectedException(Test annotation) {
+		if (annotation == null || annotation.expected() == None.class)
+			return null;
+		else
+			return annotation.expected();
 	}
+
+	private boolean expectsException(Test annotation) {
+		return getExpectedException(annotation) != null;
+	}
+
+	private long getTimeout(Test annotation) {
+		if (annotation == null)
+			return 0;
+		return annotation.timeout();
+	}
+	
+	private Test getAnnotation(FrameworkMethod method) {
+		return method.getMethod().getAnnotation(Test.class);
+	}
+
 }
