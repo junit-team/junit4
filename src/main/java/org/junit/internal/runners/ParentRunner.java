@@ -24,7 +24,6 @@ import org.junit.runners.Statement;
 
 public abstract class ParentRunner<T> extends Runner implements Filterable, Sortable {
 	private final TestClass fTestClass;
-	private List<T> fChildren = null;
 	private Filter fFilter = null;
 	private Sorter fSorter = Sorter.NULL;
 
@@ -131,12 +130,6 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 	}
 
 	private List<T> getFilteredChildren() {
-		if (fChildren == null)
-			fChildren = computeFilteredChildren();
-		return fChildren;
-	}
-
-	private List<T> computeFilteredChildren() {
 		ArrayList<T> filtered= new ArrayList<T>();
 		for (T each : getChildren())
 			if (shouldRun(each))
