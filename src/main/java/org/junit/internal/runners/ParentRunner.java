@@ -26,7 +26,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 	private final TestClass fTestClass;
 	private List<T> fChildren = null;
 	private Filter fFilter = null;
-	private Sorter fSorter = null;
+	private Sorter fSorter = Sorter.NULL;
 
 	public ParentRunner(Class<?> testClass) {
 		this(new TestClass(testClass));
@@ -141,25 +141,23 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 		for (T each : getChildren())
 			if (shouldRun(each))
 				try {
-					filtered.add(sortChild(filterChild(each)));
+					filterChild(each);
+					sortChild(each);
+					filtered.add(each);
 				} catch (NoTestsRemainException e) {
 					// don't add it
 				}
-		if (fSorter != null)
-			Collections.sort(filtered, comparator());
+		Collections.sort(filtered, comparator());
 		return filtered;
 	}
 
-	private T sortChild(T child) {
-		if (fSorter != null)
-			fSorter.apply(child);
-		return child;
+	private void sortChild(T child) {
+		fSorter.apply(child);
 	}
 
-	private T filterChild(T child) throws NoTestsRemainException {
+	private void filterChild(T child) throws NoTestsRemainException {
 		if (fFilter != null)
 			fFilter.apply(child);
-		return child;
 	}
 
 	private boolean shouldRun(T each) {

@@ -11,6 +11,10 @@ import org.junit.runner.Description;
  * 
  */
 public class Sorter implements Comparator<Description> {
+	public static Sorter NULL= new Sorter(new Comparator<Description>() {
+		public int compare(Description o1, Description o2) {
+			return 0;
+		}});
 	private final Comparator<Description> fComparator;
 
 	/**

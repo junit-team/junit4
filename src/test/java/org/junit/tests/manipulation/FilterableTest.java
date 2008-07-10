@@ -23,6 +23,7 @@ public class FilterableTest {
 
 				@Override
 				public boolean shouldRun(Description description) {
+					System.out.println(description.getDisplayName());
 					return !description.getDisplayName().contains("skip");
 				}
 
@@ -41,10 +42,7 @@ public class FilterableTest {
 			return Arrays.asList(new Object[] { 3 }, new Object[] { 4 });
 		}
 
-		private int x;
-
 		public FilteredTest(int x) {
-			this.x= x;
 		}
 
 		@Test
@@ -54,7 +52,6 @@ public class FilterableTest {
 
 		@Test
 		public void runThis() {
-
 		}
 	}
 
