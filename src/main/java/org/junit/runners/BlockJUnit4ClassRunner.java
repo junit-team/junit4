@@ -28,15 +28,11 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> implem
 	protected final List<FrameworkMethod> fTestMethods;
 
 	public BlockJUnit4ClassRunner(Class<?> klass) throws InitializationError {
-		this(new TestClass(klass));
-	}
-	
-	public BlockJUnit4ClassRunner(TestClass testClass) throws InitializationError {
-		super(testClass);
+		super(new TestClass(klass));
 		fTestMethods= computeTestMethods();
 		validate();
 	}
-	
+
 	//
 	// Override in subclasses
 	//

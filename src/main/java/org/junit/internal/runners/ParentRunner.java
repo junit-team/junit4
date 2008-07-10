@@ -103,7 +103,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 
 	public void sort(Sorter sorter) {
 		fSorter= sorter;
-	}
+	} 
 
 	@Override
 	public Description getDescription() {
