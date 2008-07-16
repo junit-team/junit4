@@ -435,5 +435,13 @@ public class AssertionTest {
     @Test(expected=AssertionError.class) public void stringNullAndNullWorksToo() {
     	assertEquals("null", null);
     }
+    
+	@Test(expected=AssertionError.class)
+	public void compareBigDecimalAndInteger() {
+		final BigDecimal bigDecimal = new BigDecimal("1.2");
+		final Integer integer = Integer.valueOf("1");
+		assertEquals(bigDecimal, integer);
+	}
+
 
 }

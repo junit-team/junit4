@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.Test.None;
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.ParentRunner;
 import org.junit.internal.runners.model.EachTestNotifier;
@@ -11,8 +12,6 @@ import org.junit.internal.runners.model.FrameworkMethod;
 import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.internal.runners.model.TestClass;
 import org.junit.internal.runners.model.TestMethod;
-import org.junit.internal.runners.notifiers.IgnoreTestNotifier;
-import org.junit.internal.runners.notifiers.RunTestNotifier;
 import org.junit.internal.runners.statements.ExpectException;
 import org.junit.internal.runners.statements.Fail;
 import org.junit.internal.runners.statements.FailOnTimeout;
@@ -81,10 +80,22 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> implem
 	
 	@Override
 	protected void runChild(FrameworkMethod method, RunNotifier notifier) {
-		Description description= describeChild(method);
-		EachTestNotifier eachNotifier= new EachTestNotifier(notifier,
-				description);
-		notifying(method, childBlock(method)).run(eachNotifier);
+		EachTestNotifier eachNotifier= makeNotifier(method, notifier);
+		if (method.isIgnored()) {
+			eachNotifier.fireTestIgnored();
+			return;
+		}
+		
+		eachNotifier.fireTestStarted();
+		try {
+			childBlock(method).evaluate();
+		} catch (AssumptionViolatedException e) {
+			eachNotifier.fireTestIgnored();
+		} catch (Throwable e) {
+			eachNotifier.addFailure(e);
+		} finally {
+			eachNotifier.fireTestFinished();
+		}
 	}
 
 	@Override
@@ -128,9 +139,11 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> implem
 		return new RunBefores(link, new TestMethod(getTestClass()), target);
 	}
 
-	protected Notifier notifying(FrameworkMethod method, Statement link) {
-		return method.isIgnored() ? new IgnoreTestNotifier()
-				: new RunTestNotifier(link);
+	private EachTestNotifier makeNotifier(FrameworkMethod method,
+			RunNotifier notifier) {
+		Description description= describeChild(method);
+		return new EachTestNotifier(notifier,
+				description);
 	}
 
 	private Class<? extends Throwable> getExpectedException(Test annotation) {

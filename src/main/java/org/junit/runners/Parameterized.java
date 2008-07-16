@@ -28,8 +28,8 @@ import org.junit.runner.notification.RunNotifier;
  * public class FibonacciTest {
  * 	&#064;Parameters
  * 	public static Collection&lt;Object[]&gt; data() {
- * 		return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
- * 				{ 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
+ * 		return Arrays.asList(new Object[][] {Fibonacci, { { 0, 0 }, { 1, 1 }, { 2, 1 },
+ * 				{ 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } }} );
  * 	}
  * 
  * 	private int fInput;
@@ -42,7 +42,9 @@ import org.junit.runner.notification.RunNotifier;
  * 	}
  * 
  * 	&#064;Test
- * 	public void test() {
+ * 	public void test(@HeresHowYouGetValue Type value) {
+ * assertAnswerKey( new Object[][] {Fibonacci, { { 0, 0 }, { 1, 1 }, { 2, 1 },
+ * 				{ 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } }});	
  * 		assertEquals(fExpected, Fibonacci.compute(fInput));
  * 	}
  * }
