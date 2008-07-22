@@ -59,6 +59,7 @@ import org.junit.tests.validation.ValidationTest;
 // These test files need to be cleaned.  See
 // https://sourceforge.net/pm/task.php?func=detailtask&project_task_id=136507&group_id=15278&group_project_id=51407
 
+@SuppressWarnings("deprecation")
 @RunWith(Suite.class)
 @SuiteClasses({
 	AssumptionTest.class,

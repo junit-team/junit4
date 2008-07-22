@@ -1,6 +1,6 @@
 package org.junit.internal.runners.statements;
 
-import org.junit.runners.Statement;
+import org.junit.runners.model.Statement;
 
 
 public class Fail extends Statement {

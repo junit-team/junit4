@@ -1,4 +1,4 @@
-package org.junit.runners;
+package org.junit.runners.model;
 
 import java.util.Arrays;
 import java.util.List;

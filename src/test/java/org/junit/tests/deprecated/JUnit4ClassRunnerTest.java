@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
 @Deprecated
 public class JUnit4ClassRunnerTest {
 
+	@SuppressWarnings("deprecation")
 	@RunWith(JUnit4ClassRunner.class)
 	public static class Example {
 		@Test public void success() {}
@@ -31,6 +32,7 @@ public class JUnit4ClassRunnerTest {
 		assertThat(result.getFailureCount(), is(1));
 	}
 
+	@SuppressWarnings("deprecation")
 	@RunWith(JUnit4ClassRunner.class)
 	public static class UnconstructableExample {
 		public UnconstructableExample() {

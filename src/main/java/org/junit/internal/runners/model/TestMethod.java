@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.runners.FrameworkMethod;
+import org.junit.runners.model.FrameworkMethod;
 
 public class TestMethod extends TestElement {
 	private TestClass fTestClass;

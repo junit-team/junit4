@@ -20,7 +20,7 @@ import org.junit.internal.runners.model.TestClass;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runners.BlockJUnit4ClassRunner;
-import org.junit.runners.InitializationError;
+import org.junit.runners.model.InitializationError;
 
 public class TestMethodTest {
 

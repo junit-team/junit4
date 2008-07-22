@@ -6,8 +6,8 @@ package org.junit.internal.runners.statements;
 import java.util.List;
 
 import org.junit.internal.runners.model.TestElement;
-import org.junit.runners.FrameworkMethod;
-import org.junit.runners.Statement;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.Statement;
 
 public class RunBefores extends Statement {
 	private final Statement fNext;

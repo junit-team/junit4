@@ -1,7 +1,7 @@
 package org.junit.experimental.runners;
 
-import org.junit.runners.RunnerBuilder;
 import org.junit.runners.Suite;
+import org.junit.runners.model.RunnerBuilder;
 
 
 /**

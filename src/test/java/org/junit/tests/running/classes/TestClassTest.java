@@ -11,7 +11,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.internal.runners.model.TestClass;
-import org.junit.runners.FrameworkMethod;
+import org.junit.runners.model.FrameworkMethod;
 
 public class TestClassTest {
 	public static class TwoConstructors {

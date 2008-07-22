@@ -15,7 +15,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runners.FrameworkMethod;
+import org.junit.runners.model.FrameworkMethod;
 
 public class TestClass extends TestElement {
 	private final Class<?> fClass;

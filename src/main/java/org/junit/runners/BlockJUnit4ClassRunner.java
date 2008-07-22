@@ -20,6 +20,9 @@ import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filterable;
 import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.Statement;
 
 public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> implements Filterable, Sortable {
 	protected final List<FrameworkMethod> fTestMethods;

@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.runner.Runner;
-import org.junit.runners.RunnerBuilder;
+import org.junit.runners.model.RunnerBuilder;
 
 public class AllDefaultPossibilitiesBuilder extends RunnerBuilder {
 	private final boolean fCanUseSuiteMethod;

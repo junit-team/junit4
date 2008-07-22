@@ -17,7 +17,7 @@ import org.junit.experimental.theories.ParameterSignature;
 import org.junit.experimental.theories.ParameterSupplier;
 import org.junit.experimental.theories.PotentialAssignment;
 import org.junit.internal.runners.model.TestClass;
-import org.junit.runners.FrameworkMethod;
+import org.junit.runners.model.FrameworkMethod;
 
 public class AllMembersSupplier extends ParameterSupplier {
 	static class MethodParameterValue extends PotentialAssignment {

@@ -15,9 +15,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
-import org.junit.runners.InitializationError;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.junit.runners.model.InitializationError;
 
 @RunWith(Parameterized.class)
 public class ParameterizedTestMethodTest {

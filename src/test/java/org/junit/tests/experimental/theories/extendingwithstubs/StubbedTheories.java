@@ -8,9 +8,9 @@ import org.junit.experimental.theories.ParameterSignature;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.internal.Assignments;
 import org.junit.internal.AssumptionViolatedException;
-import org.junit.runners.FrameworkMethod;
-import org.junit.runners.InitializationError;
-import org.junit.runners.Statement;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.Statement;
 
 public class StubbedTheories extends Theories {
 	public StubbedTheories(Class<?> klass) throws InitializationError {

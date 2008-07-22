@@ -1,4 +1,4 @@
-package org.junit.runners;
+package org.junit.runners.model;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -70,7 +70,7 @@ public abstract class RunnerBuilder {
 		parents.remove(klass);
 	}
 
-	List<Runner> runners(Class<?>[] children) {
+	public List<Runner> runners(Class<?>[] children) {
 		ArrayList<Runner> runners= new ArrayList<Runner>();
 		for (Class<?> each : children) {
 			Runner childRunner= safeRunnerForClass(each);
@@ -80,7 +80,7 @@ public abstract class RunnerBuilder {
 		return runners;
 	}
 
-	List<Runner> runners(Class<?> parent, Class<?>[] children) throws InitializationError {
+	public List<Runner> runners(Class<?> parent, Class<?>[] children) throws InitializationError {
 		addParent(parent);
 		
 		try {

@@ -11,6 +11,8 @@ import org.junit.internal.runners.ParentRunner;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.RunnerBuilder;
 
 /**
  * Using <code>Suite</code> as a runner allows you to manually

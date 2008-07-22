@@ -20,8 +20,8 @@ import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
-import org.junit.runners.Statement;
-import org.junit.runners.InitializationError;
+import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.Statement;
 
 public abstract class ParentRunner<T> extends Runner implements Filterable, Sortable {
 	private final TestClass fTestClass;
