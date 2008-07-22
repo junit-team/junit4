@@ -8,8 +8,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.internal.runners.InitializationError;
-import org.junit.internal.runners.model.FrameworkMethod;
 import org.junit.internal.runners.model.TestClass;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;

@@ -13,9 +13,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.internal.runners.InitializationError;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
+import org.junit.runners.InitializationError;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 

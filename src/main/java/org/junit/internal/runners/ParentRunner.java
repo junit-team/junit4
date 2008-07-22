@@ -21,6 +21,7 @@ import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
 import org.junit.runners.Statement;
+import org.junit.runners.InitializationError;
 
 public abstract class ParentRunner<T> extends Runner implements Filterable, Sortable {
 	private final TestClass fTestClass;
@@ -85,7 +86,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 		return fTestClass;
 	}
 
-	protected void validate() throws InitializationError {
+	protected void validate() throws InitializationError { 
 		List<Throwable> errors= new ArrayList<Throwable>();
 		collectInitializationErrors(errors);
 		if (!errors.isEmpty())

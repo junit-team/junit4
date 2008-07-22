@@ -1,5 +1,9 @@
 package org.junit.tests.running.classes;
 
+import static org.junit.Assert.assertEquals;
+
+import java.lang.annotation.Annotation;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -7,6 +11,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.internal.runners.model.TestClass;
+import org.junit.runners.FrameworkMethod;
 
 public class TestClassTest {
 	public static class TwoConstructors {
@@ -31,17 +36,21 @@ public class TestClassTest {
 		@Test public void j() {}
 	}
 	
+	private static int fComputations;
 	// Profiling a JUnit 4.4 suite shows that getAnnotatedMethods accounts for at least 13% of running time
 	// (all running time, including user test code!)
-	@Test(timeout=100) public void snappyRetrievalOfAnnotatedMethods() {
-		//TODO it would be better to make this relative
-		TestClass testClass= new TestClass(ManyMethods.class);
-		for (int i= 0; i < 100; i++) {
-			testClass.getAnnotatedMethods(Test.class);
-			testClass.getAnnotatedMethods(Before.class);
-			testClass.getAnnotatedMethods(After.class);
-			testClass.getAnnotatedMethods(BeforeClass.class);
-			testClass.getAnnotatedMethods(AfterClass.class);
-		}
+	@Test
+	public void annotationsAreCached() {
+		TestClass testClass= new TestClass(ManyMethods.class) {			
+			@Override
+			protected Annotation[] computeAnnotations(FrameworkMethod testMethod) {
+				fComputations++;
+				return super.computeAnnotations(testMethod);
+			}
+		};
+		testClass.getAnnotatedMethods(Test.class);
+		fComputations= 0;
+		testClass.getAnnotatedMethods(Test.class);
+		assertEquals(0, fComputations);
 	}
 }

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.internal.runners.ErrorReportingRunner;
-import org.junit.internal.runners.InitializationError;
 import org.junit.runner.Runner;
 
 /**

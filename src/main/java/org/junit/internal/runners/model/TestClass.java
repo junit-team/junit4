@@ -15,11 +15,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runners.FrameworkMethod;
 
 public class TestClass extends TestElement {
 	private final Class<?> fClass;
 
-	private Map<Class<?>, List<FrameworkMethod>> methodsForAnnotations= new HashMap<Class<?>, List<FrameworkMethod>>();
+	private Map<Class<?>, List<FrameworkMethod>> fMethodsForAnnotations= new HashMap<Class<?>, List<FrameworkMethod>>();
 
 	public TestClass(Class<?> klass) {
 		fClass= klass;
@@ -33,8 +34,12 @@ public class TestClass extends TestElement {
 	}
 
 	private void addToAnnotationLists(FrameworkMethod testMethod) {
-		for (Annotation each : testMethod.getMethod().getAnnotations())
+		for (Annotation each : computeAnnotations(testMethod))
 			addToAnnotationList(each.annotationType(), testMethod);
+	}
+
+	protected Annotation[] computeAnnotations(FrameworkMethod testMethod) {
+		return testMethod.getMethod().getAnnotations();
 	}
 
 	private void addToAnnotationList(Class<? extends Annotation> annotation,
@@ -49,8 +54,8 @@ public class TestClass extends TestElement {
 	}
 
 	private void ensureKey(Class<? extends Annotation> annotation) {
-		if (!methodsForAnnotations.containsKey(annotation))
-			methodsForAnnotations.put(annotation,
+		if (!fMethodsForAnnotations.containsKey(annotation))
+			fMethodsForAnnotations.put(annotation,
 					new ArrayList<FrameworkMethod>());
 	}
 
@@ -71,7 +76,7 @@ public class TestClass extends TestElement {
 	public List<FrameworkMethod> getAnnotatedMethods(
 			Class<? extends Annotation> annotationClass) {
 		ensureKey(annotationClass);
-		return methodsForAnnotations.get(annotationClass);
+		return fMethodsForAnnotations.get(annotationClass);
 	}
 
 	private boolean runsTopToBottom(Class<? extends Annotation> annotation) {

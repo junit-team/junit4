@@ -8,8 +8,8 @@ import org.junit.experimental.theories.ParameterSignature;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.internal.Assignments;
 import org.junit.internal.AssumptionViolatedException;
-import org.junit.internal.runners.InitializationError;
-import org.junit.internal.runners.model.FrameworkMethod;
+import org.junit.runners.FrameworkMethod;
+import org.junit.runners.InitializationError;
 import org.junit.runners.Statement;
 
 public class StubbedTheories extends Theories {

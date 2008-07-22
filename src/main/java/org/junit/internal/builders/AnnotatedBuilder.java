@@ -3,9 +3,9 @@
  */
 package org.junit.internal.builders;
 
-import org.junit.internal.runners.InitializationError;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
+import org.junit.runners.InitializationError;
 import org.junit.runners.RunnerBuilder;
 
 public class AnnotatedBuilder extends RunnerBuilder {

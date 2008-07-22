@@ -23,7 +23,6 @@ public class FilterableTest {
 
 				@Override
 				public boolean shouldRun(Description description) {
-					System.out.println(description.getDisplayName());
 					return !description.getDisplayName().contains("skip");
 				}
 

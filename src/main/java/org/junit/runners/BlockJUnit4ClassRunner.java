@@ -5,10 +5,8 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.Test.None;
 import org.junit.internal.AssumptionViolatedException;
-import org.junit.internal.runners.InitializationError;
-import org.junit.internal.runners.ParentRunner;
+import org.junit.internal.runners.ParentRunner; // TODO: publish?
 import org.junit.internal.runners.model.EachTestNotifier;
-import org.junit.internal.runners.model.FrameworkMethod;
 import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.internal.runners.model.TestClass;
 import org.junit.internal.runners.model.TestMethod;
@@ -90,7 +88,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> implem
 		try {
 			childBlock(method).evaluate();
 		} catch (AssumptionViolatedException e) {
-			eachNotifier.fireTestIgnored();
+			// do nothing: same as passing (for 4.5; may change in 4.6)
 		} catch (Throwable e) {
 			eachNotifier.addFailure(e);
 		} finally {

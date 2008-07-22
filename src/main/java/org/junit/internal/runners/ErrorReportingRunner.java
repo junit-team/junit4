@@ -7,6 +7,7 @@ import java.util.List;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.InitializationError;
 import org.junit.runners.Statement;
 
 public class ErrorReportingRunner extends ParentRunner<Throwable> {

@@ -12,8 +12,8 @@ import org.junit.Test.None;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
-import org.junit.internal.runners.model.FrameworkMethod;
 import org.junit.runner.RunWith;
+import org.junit.runners.FrameworkMethod;
 
 @RunWith(Theories.class)
 public class ObjectContractTest {

@@ -14,9 +14,9 @@ import org.junit.experimental.theories.PotentialAssignment.CouldNotGenerateValue
 import org.junit.experimental.theories.internal.Assignments;
 import org.junit.experimental.theories.internal.ParameterizedAssertionError;
 import org.junit.internal.AssumptionViolatedException;
-import org.junit.internal.runners.InitializationError;
-import org.junit.internal.runners.model.FrameworkMethod;
 import org.junit.runners.BlockJUnit4ClassRunner;
+import org.junit.runners.FrameworkMethod;
+import org.junit.runners.InitializationError;
 import org.junit.runners.Statement;
 
 public class Theories extends BlockJUnit4ClassRunner {

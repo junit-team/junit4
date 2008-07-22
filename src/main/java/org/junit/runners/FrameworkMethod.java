@@ -1,10 +1,11 @@
-package org.junit.internal.runners.model;
+package org.junit.runners;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
 import org.junit.Ignore;
+import org.junit.internal.runners.model.ReflectiveCallable;
 
 public class FrameworkMethod {
 	private final Method fMethod;
@@ -72,7 +73,7 @@ public class FrameworkMethod {
 		return true;
 	}
 
-	boolean isShadowedBy(List<FrameworkMethod> results) {
+	public boolean isShadowedBy(List<FrameworkMethod> results) {
 		for (FrameworkMethod each : results)
 			if (isShadowedBy(each))
 				return true;

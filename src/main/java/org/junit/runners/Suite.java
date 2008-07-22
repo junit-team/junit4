@@ -7,7 +7,6 @@ import java.lang.annotation.Target;
 import java.util.List;
 
 import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
-import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.ParentRunner;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
@@ -72,7 +71,6 @@ public class Suite extends ParentRunner<Runner> {
 	 * @param suiteClasses the classes in the suite
 	 * @throws InitializationError
 	 */
-	//TODO this needs a unit test
 	protected Suite(Class<?> klass, Class<?>[] suiteClasses) throws InitializationError {
 		this(new AllDefaultPossibilitiesBuilder(true), klass, suiteClasses);
 	}

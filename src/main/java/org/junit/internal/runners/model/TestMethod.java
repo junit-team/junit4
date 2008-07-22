@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.runners.FrameworkMethod;
 
 public class TestMethod extends TestElement {
 	private TestClass fTestClass;

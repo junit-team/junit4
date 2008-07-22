@@ -28,10 +28,10 @@ public class AssumptionTest {
 	}
 
 	@Test
-	public void failedAssumptionsMeanIgnored() {
+	public void failedAssumptionsMeanPassing() {
 		Result result= JUnitCore.runClasses(HasFailingAssumption.class);
-		assertThat(result.getRunCount(), is(0));
-		assertThat(result.getIgnoreCount(), is(1));
+		assertThat(result.getRunCount(), is(1));
+		assertThat(result.getIgnoreCount(), is(0));
 		assertThat(result.getFailureCount(), is(0));
 	}
 
@@ -137,9 +137,6 @@ public class AssumptionTest {
 	@Test public void failingAssumptionInBeforeClassIgnoresClass() {
 		assertThat(testResult(HasFailingAssumeInBeforeClass.class), isSuccessful());
 	}
-
-	// TODO: (Apr 7, 2008 1:51:57 PM) There is a run/total discrepancy.
-
 
 	public static class AssumptionFailureInConstructor {
 		public AssumptionFailureInConstructor() {

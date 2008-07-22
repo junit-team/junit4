@@ -2,6 +2,8 @@ package org.junit.internal.runners.model;
 
 import java.util.List;
 
+import org.junit.runners.FrameworkMethod;
+
 public abstract class TestElement {
 	public abstract List<FrameworkMethod> getBefores();
 

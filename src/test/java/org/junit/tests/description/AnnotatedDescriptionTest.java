@@ -69,6 +69,13 @@ public class AnnotatedDescriptionTest {
 	}
 
 	@Test
+	public void childlessCopyOfDescriptionStillHasAnnotations() {
+		Description description= describe(ValueAnnotatedClass.class);
+		assertEquals("hello", description.childlessCopy().getAnnotation(ValuedAnnotation.class)
+				.value());
+	}
+
+	@Test
 	public void characterizeCreatingMyOwnAnnotation() {
 		Annotation annotation= new Ignore() {
 			public String value() {

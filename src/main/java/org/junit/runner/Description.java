@@ -169,8 +169,7 @@ public class Description {
 	 * children will be added back)
 	 */
 	public Description childlessCopy() {
-		// TODO: should include annotations
-		return new Description(fDisplayName);
+		return new Description(fDisplayName, fAnnotations);
 	}
 
 	/**
