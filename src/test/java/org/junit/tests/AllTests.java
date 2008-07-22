@@ -27,7 +27,6 @@ import org.junit.tests.junit3compatibility.OldTestClassAdaptingListenerTest;
 import org.junit.tests.junit3compatibility.OldTests;
 import org.junit.tests.junit3compatibility.SuiteMethodTest;
 import org.junit.tests.listening.ListenerTest;
-import org.junit.tests.listening.ResultTest;
 import org.junit.tests.listening.RunnerTest;
 import org.junit.tests.listening.TestListenerTest;
 import org.junit.tests.listening.TextListenerTest;
@@ -104,7 +103,6 @@ import org.junit.tests.validation.ValidationTest;
 	EachTest.class,
 	ExperimentalTests.class,
 	InheritedTestTest.class,
-	ResultTest.class,
 	TestClassTest.class,
 	AllMembersSupplierTest.class,
 	MatcherTest.class,
