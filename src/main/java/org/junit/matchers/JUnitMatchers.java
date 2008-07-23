@@ -28,7 +28,7 @@ public class JUnitMatchers {
 	}
 
 	/**
-	 * @param element
+	 * @param elements
 	 * @return A matcher matching any collection containing every element in elements
 	 */
 	public static <T> org.hamcrest.Matcher<java.lang.Iterable<T>> hasItems(T... elements) {

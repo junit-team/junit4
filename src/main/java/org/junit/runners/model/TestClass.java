@@ -1,4 +1,4 @@
-package org.junit.internal.runners.model;
+package org.junit.runners.model;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -15,9 +15,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runners.model.FrameworkMethod;
 
-public class TestClass extends TestElement {
+public class TestClass {
 	private final Class<?> fClass;
 
 	private Map<Class<?>, List<FrameworkMethod>> fMethodsForAnnotations= new HashMap<Class<?>, List<FrameworkMethod>>();
@@ -61,16 +60,6 @@ public class TestClass extends TestElement {
 
 	public List<FrameworkMethod> getTestMethods() {
 		return getAnnotatedMethods(Test.class);
-	}
-
-	@Override
-	public List<FrameworkMethod> getBefores() {
-		return getAnnotatedMethods(BeforeClass.class);
-	}
-
-	@Override
-	public List<FrameworkMethod> getAfters() {
-		return getAnnotatedMethods(AfterClass.class);
 	}
 
 	public List<FrameworkMethod> getAnnotatedMethods(

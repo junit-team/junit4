@@ -12,7 +12,7 @@ import org.junit.experimental.theories.ParameterSupplier;
 import org.junit.experimental.theories.ParametersSuppliedBy;
 import org.junit.experimental.theories.PotentialAssignment;
 import org.junit.experimental.theories.PotentialAssignment.CouldNotGenerateValueException;
-import org.junit.internal.runners.model.TestClass;
+import org.junit.runners.model.TestClass;
 
 public class Assignments {
 	private List<PotentialAssignment> fAssigned;

@@ -1,4 +1,4 @@
-package org.junit.internal.runners;
+package org.junit.runners;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -6,9 +6,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.EachTestNotifier;
-import org.junit.internal.runners.model.TestClass;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
 import org.junit.runner.Description;
@@ -20,8 +21,10 @@ import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
+import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
+import org.junit.runners.model.TestClass;
 
 public abstract class ParentRunner<T> extends Runner implements Filterable, Sortable {
 	private final TestClass fTestClass;
@@ -54,9 +57,11 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 	}
 
 	protected Statement classBlock(final RunNotifier notifier) {
+		List<FrameworkMethod> befores= fTestClass.getAnnotatedMethods(BeforeClass.class);
+		List<FrameworkMethod> afters= fTestClass.getAnnotatedMethods(AfterClass.class);
 		Statement statement= runChildren(notifier);
-		statement= new RunBefores(statement, fTestClass, null);
-		statement= new RunAfters(statement, fTestClass, null);
+		statement= new RunBefores(statement, befores, null);
+		statement= new RunAfters(statement, afters, null);
 		return statement;
 	}
 

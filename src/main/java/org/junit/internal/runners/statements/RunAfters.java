@@ -7,20 +7,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.internal.runners.model.MultipleFailureException;
-import org.junit.internal.runners.model.TestElement;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
 public class RunAfters extends Statement {
 	private final Statement fNext;
 
-	private final TestElement fElement;
-
 	private final Object fTarget;
+
+	private final List<FrameworkMethod> fAfters;
 	
-	public RunAfters(Statement next, TestElement element, Object target) {
+	public RunAfters(Statement next, List<FrameworkMethod> afters, Object target) {
 		fNext= next;
-		fElement= element;
+		fAfters= afters;
 		fTarget= target;
 	}
 
@@ -33,8 +32,7 @@ public class RunAfters extends Statement {
 		} catch (Throwable e) {
 			fErrors.add(e);
 		} finally {
-			List<FrameworkMethod> afters= fElement.getAfters();
-			for (FrameworkMethod each : afters)
+			for (FrameworkMethod each : fAfters)
 				try {
 					each.invokeExplosively(fTarget);
 				} catch (Throwable e) {

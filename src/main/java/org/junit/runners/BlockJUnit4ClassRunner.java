@@ -2,15 +2,14 @@ package org.junit.runners;
 
 import java.util.List;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.Test.None;
 import org.junit.internal.AssumptionViolatedException;
-import org.junit.internal.runners.ParentRunner;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.model.MultipleFailureException;
 import org.junit.internal.runners.model.ReflectiveCallable;
-import org.junit.internal.runners.model.TestClass;
-import org.junit.internal.runners.model.TestMethod;
 import org.junit.internal.runners.statements.ExpectException;
 import org.junit.internal.runners.statements.Fail;
 import org.junit.internal.runners.statements.FailOnTimeout;
@@ -24,6 +23,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
+import org.junit.runners.model.TestClass;
 
 /**
  * Implements the JUnit 4 standard test case class model, as defined by the
@@ -98,10 +98,10 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 	// Override in subclasses
 	//
 
-/**
+	/**
 	 * Returns the methods that run tests (this should be called just once per
-	 * class). Default implementation returns all methods annotated with {@code
-	 * @Test} on this class and superclasses that are not overridden.
+	 * class). Default implementation returns all methods annotated with {@code @Test} 
+	 * on this class and superclasses that are not overridden.
 	 */
 	protected List<FrameworkMethod> computeTestMethods() {
 		return getTestClass().getTestMethods();
@@ -220,7 +220,9 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 	 */
 	protected Statement withBefores(FrameworkMethod method, Object target,
 			Statement link) {
-		return new RunBefores(link, new TestMethod(getTestClass()), target);
+		List<FrameworkMethod> befores= getTestClass().getAnnotatedMethods(
+				Before.class);
+		return new RunBefores(link, befores, target);
 	}
 
 	/**
@@ -232,7 +234,9 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 	 */
 	protected Statement withAfters(FrameworkMethod method, Object target,
 			Statement link) {
-		return new RunAfters(link, new TestMethod(getTestClass()), target);
+		List<FrameworkMethod> afters= getTestClass().getAnnotatedMethods(
+				After.class);
+		return new RunAfters(link, afters, target);
 	}
 
 	private EachTestNotifier makeNotifier(FrameworkMethod method,

@@ -7,7 +7,6 @@ import java.lang.annotation.Target;
 import java.util.List;
 
 import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
-import org.junit.internal.runners.ParentRunner;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;

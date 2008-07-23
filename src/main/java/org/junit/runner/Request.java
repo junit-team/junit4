@@ -52,8 +52,8 @@ public abstract class Request {
 	 * @param clazz the class containing the tests
 	 * @return a <code>Request</code> that will cause all tests in the class to be run
 	 */
-	public static Request classWithoutSuiteMethod(Class<?> newTestClass) {
-		return new ClassRequest(newTestClass, false);
+	public static Request classWithoutSuiteMethod(Class<?> clazz) {
+		return new ClassRequest(clazz, false);
 	}
 
 	/**
