@@ -24,3 +24,6 @@
 	
 2008 July 1
 	Johannes Link: Submitted test for running subclasses of Suite
+	
+2008 July 23
+	Daniel Brolund: Submitted patch for build.xml, fixing 1.5 compatibility (2021396)
