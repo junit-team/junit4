@@ -54,7 +54,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 	 *             if the test class is malformed.
 	 */
 	public BlockJUnit4ClassRunner(Class<?> klass) throws InitializationError {
-		super(new TestClass(klass));
+		super(klass);
 		fTestMethods= computeTestMethods();
 		validate();
 	}
