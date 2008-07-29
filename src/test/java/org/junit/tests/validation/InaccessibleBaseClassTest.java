@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import org.junit.internal.runners.model.TestClass;
+import org.junit.runners.model.TestClass;
 import org.junit.tests.validation.anotherpackage.Sub;
 
 public class InaccessibleBaseClassTest {	

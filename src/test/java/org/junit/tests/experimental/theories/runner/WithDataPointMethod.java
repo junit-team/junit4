@@ -21,10 +21,10 @@ import org.junit.experimental.theories.PotentialAssignment;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.experimental.theories.internal.Assignments;
-import org.junit.internal.runners.model.TestClass;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.Failure;
+import org.junit.runners.model.TestClass;
 
 public class WithDataPointMethod {
 	@RunWith(Theories.class)

@@ -10,7 +10,7 @@ import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.ParameterSignature;
 import org.junit.experimental.theories.PotentialAssignment;
 import org.junit.experimental.theories.internal.AllMembersSupplier;
-import org.junit.internal.runners.model.TestClass;
+import org.junit.runners.model.TestClass;
 
 public class AllMembersSupplierTest {
 	public static class HasDataPoints {

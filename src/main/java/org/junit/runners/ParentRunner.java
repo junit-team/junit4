@@ -26,27 +26,52 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
 
-public abstract class ParentRunner<T> extends Runner implements Filterable, Sortable {
+/**
+ * Provides most of the functionality specific to a Runner that implements a
+ * "parent node" in the test tree, with children defined by objects of some data
+ * type {@code T}. (For {@link BlockJUnit4ClassRunner}, {@code T} is
+ * {@link Method} . For {@link Suite}, {@code T} is {@link Class}.) Subclasses
+ * must implement finding the children of the node, describing each child, and
+ * running each child. ParentRunner will filter and sort children, handle
+ * {@code @BeforeClass} and {@code @AfterClass} methods, create a composite
+ * {@link Description}, and run children sequentially.
+ */
+public abstract class ParentRunner<T> extends Runner implements Filterable,
+		Sortable {
 	private final TestClass fTestClass;
-	private Filter fFilter = null;
-	private Sorter fSorter = Sorter.NULL;
 
-	public ParentRunner(Class<?> testClass) {
-		this(new TestClass(testClass));
-	}
+	private Filter fFilter= null;
 
-	public ParentRunner(TestClass testClass) {
-		fTestClass = testClass;
+	private Sorter fSorter= Sorter.NULL;
+
+	/**
+	 * Constructs a new {@code ParentRunner} that will run {@code @TestClass}
+	 */
+	protected ParentRunner(Class<?> testClass) {
+		fTestClass= new TestClass(testClass);
 	}
 
 	//
 	// Must be overridden
 	//
 
+	/**
+	 * Returns a list of objects that define the children of this Runner.
+	 */
 	protected abstract List<T> getChildren();
 
+	/**
+	 * Returns a {@link Description} for {@code child}, which can be assumed to
+	 * be an element of the list returned by {@link ParentRunner#getChildren()}
+	 */
 	protected abstract Description describeChild(T child);
 
+	/**
+	 * Runs the test corresponding to {@code child}, which can be assumed to be
+	 * an element of the list returned by {@link ParentRunner#getChildren()}.
+	 * Subclasses are responsible for making sure that relevant test events are
+	 * reported through {@code notifier}
+	 */
 	protected abstract void runChild(T child, RunNotifier notifier);
 
 	//
@@ -57,8 +82,10 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 	}
 
 	protected Statement classBlock(final RunNotifier notifier) {
-		List<FrameworkMethod> befores= fTestClass.getAnnotatedMethods(BeforeClass.class);
-		List<FrameworkMethod> afters= fTestClass.getAnnotatedMethods(AfterClass.class);
+		List<FrameworkMethod> befores= fTestClass
+				.getAnnotatedMethods(BeforeClass.class);
+		List<FrameworkMethod> afters= fTestClass
+				.getAnnotatedMethods(AfterClass.class);
 		Statement statement= runChildren(notifier);
 		statement= new RunBefores(statement, befores, null);
 		statement= new RunAfters(statement, afters, null);
@@ -91,7 +118,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 		return fTestClass;
 	}
 
-	protected void validate() throws InitializationError { 
+	protected void validate() throws InitializationError {
 		List<Throwable> errors= new ArrayList<Throwable>();
 		collectInitializationErrors(errors);
 		if (!errors.isEmpty())
@@ -109,11 +136,12 @@ public abstract class ParentRunner<T> extends Runner implements Filterable, Sort
 
 	public void sort(Sorter sorter) {
 		fSorter= sorter;
-	} 
+	}
 
 	@Override
 	public Description getDescription() {
-		Description description= Description.createSuiteDescription(getName(), classAnnotations());
+		Description description= Description.createSuiteDescription(getName(),
+				classAnnotations());
 		for (T child : getFilteredChildren())
 			description.addChild(describeChild(child));
 		return description;

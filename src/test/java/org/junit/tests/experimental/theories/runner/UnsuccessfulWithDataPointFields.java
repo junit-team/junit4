@@ -11,8 +11,8 @@ import org.junit.Test;
 import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
-import org.junit.internal.runners.model.TestClass;
 import org.junit.runner.RunWith;
+import org.junit.runners.model.TestClass;
 
 public class UnsuccessfulWithDataPointFields {
 	@RunWith(Theories.class)
