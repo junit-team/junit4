@@ -52,7 +52,6 @@ public class Suite extends ParentRunner<Runner> {
 	 */
 	public Suite(Class<?> klass, RunnerBuilder builder) throws InitializationError {
 		this(builder, klass, getAnnotatedClasses(klass));
-		validate();
 	}
 
 	/**
@@ -61,12 +60,13 @@ public class Suite extends ParentRunner<Runner> {
 	 * 
 	 * @param builder builds runners for classes in the suite
 	 * @param classes the classes in the suite
+	 * @throws InitializationError 
 	 */
-	public Suite(RunnerBuilder builder, Class<?>[] classes) {
+	public Suite(RunnerBuilder builder, Class<?>[] classes) throws InitializationError {
 		this(null, builder.runners(classes));
 	}
 	
-	/*
+	/**
 	 * Call this when the default builder is good enough. Left in for compatibility with JUnit 4.4.
 	 * @param klass the root of the suite
 	 * @param suiteClasses the classes in the suite
@@ -93,8 +93,9 @@ public class Suite extends ParentRunner<Runner> {
 	 * 
 	 * @param klass root of the suite
 	 * @param runners for each class in the suite, a {@link Runner}
+	 * @throws InitializationError 
 	 */
-	protected Suite(Class<?> klass, List<Runner> runners) {
+	protected Suite(Class<?> klass, List<Runner> runners) throws InitializationError {
 		super(klass);
 		fRunners = runners;
 	}
@@ -115,7 +116,7 @@ public class Suite extends ParentRunner<Runner> {
 	}
 
 	@Override
-	protected void runChild(Runner each, final RunNotifier notifier) {
-		each.run(notifier);
+	protected void runChild(Runner runner, final RunNotifier notifier) {
+		runner.run(notifier);
 	}
 }

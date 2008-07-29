@@ -43,7 +43,7 @@ public class Theories extends BlockJUnit4ClassRunner {
 	}
 
 	@Override
-	public Statement childBlock(final FrameworkMethod method) {
+	public Statement methodBlock(final FrameworkMethod method) {
 		return new TheoryAnchor(method);
 	}
 
@@ -98,8 +98,8 @@ public class Theories extends BlockJUnit4ClassRunner {
 				}
 
 				@Override
-				public Statement childBlock(FrameworkMethod method) {
-					final Statement statement= super.childBlock(method);
+				public Statement methodBlock(FrameworkMethod method) {
+					final Statement statement= super.methodBlock(method);
 					return new Statement() {
 						@Override
 						public void evaluate() throws Throwable {
@@ -118,7 +118,7 @@ public class Theories extends BlockJUnit4ClassRunner {
 				}
 
 				@Override
-				protected Statement invoke(FrameworkMethod method, Object test) {
+				protected Statement methodInvoker(FrameworkMethod method, Object test) {
 					return methodCompletesWithParameters(method, complete, test);
 				}
 
@@ -127,7 +127,7 @@ public class Theories extends BlockJUnit4ClassRunner {
 					return getTestClass().getConstructor().newInstance(
 							complete.getConstructorArguments(nullsOk()));
 				}
-			}.childBlock(fTestMethod).evaluate();
+			}.methodBlock(fTestMethod).evaluate();
 		}
 
 		private Statement methodCompletesWithParameters(

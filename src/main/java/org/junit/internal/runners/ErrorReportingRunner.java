@@ -11,11 +11,12 @@ import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
+//TODO: inline the superclass, extend Runner, and then have all ParentRunners validate once again
 public class ErrorReportingRunner extends ParentRunner<Throwable> {
 	private final Throwable fCause;
 
 	public ErrorReportingRunner(Class<?> type, Throwable cause) {
-		super(type);
+		super(type, false);
 		fCause= cause;
 	}
 
@@ -27,7 +28,7 @@ public class ErrorReportingRunner extends ParentRunner<Throwable> {
 	@Override
 	protected Statement classBlock(RunNotifier notifier) {
 		// no before or after class
-		return runChildren(notifier);
+		return childrenInvoker(notifier);
 	}
 
 	@Override

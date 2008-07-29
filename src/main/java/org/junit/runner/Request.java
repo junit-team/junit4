@@ -9,6 +9,7 @@ import org.junit.internal.requests.SortingRequest;
 import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runners.Suite;
+import org.junit.runners.model.InitializationError;
 
 /**
  * <p>A <code>Request</code> is an abstract description of tests to be run. Older versions of 
@@ -63,7 +64,12 @@ public abstract class Request {
 	 * @return a <code>Request</code> that will cause all tests in the classes to be run
 	 */
 	public static Request classes(Class<?>... classes) {
-		return runner(new Suite(new AllDefaultPossibilitiesBuilder(true), classes));
+		try {
+			return runner(new Suite(new AllDefaultPossibilitiesBuilder(true), classes));
+		} catch (InitializationError e) {
+			// TODO: untested
+			return runner(new ErrorReportingRunner(null, e));
+		}
 	}
 
 	/**

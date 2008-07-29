@@ -23,7 +23,6 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
-import org.junit.runners.model.TestClass;
 
 /**
  * Implements the JUnit 4 standard test case class model, as defined by the
@@ -45,7 +44,6 @@ import org.junit.runners.model.TestClass;
  */
 public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 		implements Filterable, Sortable {
-	private final List<FrameworkMethod> fTestMethods;
 
 	/**
 	 * Creates a BlockJUnit4ClassRunner to run {@code klass}
@@ -55,8 +53,6 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 	 */
 	public BlockJUnit4ClassRunner(Class<?> klass) throws InitializationError {
 		super(klass);
-		fTestMethods= computeTestMethods();
-		validate();
 	}
 
 	//
@@ -73,7 +69,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 
 		eachNotifier.fireTestStarted();
 		try {
-			childBlock(method).evaluate();
+			methodBlock(method).evaluate();
 		} catch (AssumptionViolatedException e) {
 			// do nothing: same as passing (for 4.5; may change in 4.6)
 		} catch (Throwable e) {
@@ -91,7 +87,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 
 	@Override
 	protected List<FrameworkMethod> getChildren() {
-		return fTestMethods;
+		return computeTestMethods();
 	}
 
 	//
@@ -133,7 +129,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 	 * Returns a Statement that, when executed, either returns normally if
 	 * {@code method} passes, or throws an exception if {@code method} fails.
 	 * 
-	 * The default implementation has this rough description:
+	 * Here is an outline of the default implementation:
 	 * 
 	 * <ul>
 	 * <li>Invoke {@code method} on the result of {@code createTest()}, and
@@ -155,9 +151,9 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 	 * </ul>
 	 * 
 	 * This can be overridden in subclasses, either by overriding this method,
-	 * or the implementations of each substep.
+	 * or the implementations creating each sub-statement.
 	 */
-	protected Statement childBlock(FrameworkMethod method) {
+	protected Statement methodBlock(FrameworkMethod method) {
 		Object test;
 		try {
 			test= new ReflectiveCallable() {
@@ -170,12 +166,12 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 			return new Fail(e);
 		}
 
-		Statement link= invoke(method, test);
-		link= possiblyExpectingExceptions(method, test, link);
-		link= withPotentialTimeout(method, test, link);
-		link= withBefores(method, test, link);
-		link= withAfters(method, test, link);
-		return link;
+		Statement statement= methodInvoker(method, test);
+		statement= possiblyExpectingExceptions(method, test, statement);
+		statement= withPotentialTimeout(method, test, statement);
+		statement= withBefores(method, test, statement);
+		statement= withAfters(method, test, statement);
+		return statement;
 	}
 
 	//
@@ -185,7 +181,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 	/**
 	 * Returns a {@link Statement} that invokes {@code method} on {@code test}
 	 */
-	protected Statement invoke(FrameworkMethod method, Object test) {
+	protected Statement methodInvoker(FrameworkMethod method, Object test) {
 		return new InvokeMethod(method, test);
 	}
 
@@ -219,10 +215,10 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 	 * any throws an Exception, stop execution and pass the exception on.
 	 */
 	protected Statement withBefores(FrameworkMethod method, Object target,
-			Statement link) {
+			Statement statement) {
 		List<FrameworkMethod> befores= getTestClass().getAnnotatedMethods(
 				Before.class);
-		return new RunBefores(link, befores, target);
+		return new RunBefores(statement, befores, target);
 	}
 
 	/**
@@ -233,10 +229,10 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 	 * {@link MultipleFailureException}.
 	 */
 	protected Statement withAfters(FrameworkMethod method, Object target,
-			Statement link) {
+			Statement statement) {
 		List<FrameworkMethod> afters= getTestClass().getAnnotatedMethods(
 				After.class);
-		return new RunAfters(link, afters, target);
+		return new RunAfters(statement, afters, target);
 	}
 
 	private EachTestNotifier makeNotifier(FrameworkMethod method,

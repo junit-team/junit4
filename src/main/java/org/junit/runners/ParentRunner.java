@@ -10,6 +10,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.EachTestNotifier;
+import org.junit.internal.runners.model.MultipleFailureException;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
 import org.junit.runner.Description;
@@ -46,14 +47,21 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
 	/**
 	 * Constructs a new {@code ParentRunner} that will run {@code @TestClass}
+	 * @throws InitializationError 
 	 */
-	protected ParentRunner(Class<?> testClass) {
+	protected ParentRunner(Class<?> testClass) throws InitializationError {
 		fTestClass= new TestClass(testClass);
+		validate();
 	}
 
 	//
 	// Must be overridden
 	//
+
+	protected ParentRunner(Class<?> testClass, boolean dontValidate) {
+		// TODO: make this sensible.  What is b?
+		fTestClass= new TestClass(testClass);
+	}
 
 	/**
 	 * Returns a list of objects that define the children of this Runner.
@@ -78,34 +86,85 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	// May be overridden
 	//
 
+	/**
+	 * Adds to {@code errors} a throwable for each problem noted with the test class (available from {@link #getTestClass()}).
+	 * Default implementation adds no errors.
+	 */
 	protected void collectInitializationErrors(List<Throwable> errors) {
 	}
 
+	/** 
+	 * Constructs a {@code Statement} to run all of the tests in the test class. Override to add pre-/post-processing. 
+	 * Here is an outline of the implementation:
+	 * <ul>
+	 * <li>Call {@link #runChild(Object, RunNotifier)} on each object returned by {@link #getChildren()} (subject to any imposed filter and sort).</li>
+	 * <li>ALWAYS run all non-overridden {@code @BeforeClass} methods on this class
+	 * and superclasses before the previous step; if any throws an
+	 * Exception, stop execution and pass the exception on.
+	 * <li>ALWAYS run all non-overridden {@code @AfterClass} methods on this class
+	 * and superclasses before any of the previous steps; all AfterClass methods are
+	 * always executed: exceptions thrown by previous steps are combined, if
+	 * necessary, with exceptions from AfterClass methods into a
+	 * {@link MultipleFailureException}.
+	 * </ul>
+	 * @param notifier
+	 * @return {@code Statement}
+	 */
 	protected Statement classBlock(final RunNotifier notifier) {
+		Statement statement= childrenInvoker(notifier);
+		statement= withBeforeClasses(statement);
+		statement= withAfterClasses(statement);
+		return statement;
+	}
+
+	/**
+	 * Returns a {@link Statement}: run all non-overridden {@code @BeforeClass} methods on this class
+	 * and superclasses before executing {@code statement}; if any throws an
+	 * Exception, stop execution and pass the exception on.
+	 */
+	protected Statement withBeforeClasses(Statement statement) {
 		List<FrameworkMethod> befores= fTestClass
-				.getAnnotatedMethods(BeforeClass.class);
-		List<FrameworkMethod> afters= fTestClass
-				.getAnnotatedMethods(AfterClass.class);
-		Statement statement= runChildren(notifier);
+		.getAnnotatedMethods(BeforeClass.class);
 		statement= new RunBefores(statement, befores, null);
+		return statement;
+	}
+
+	/**
+	 * Returns a {@link Statement}: run all non-overridden {@code @AfterClass} methods on this class
+	 * and superclasses before executing {@code statement}; all AfterClass methods are
+	 * always executed: exceptions thrown by previous steps are combined, if
+	 * necessary, with exceptions from AfterClass methods into a
+	 * {@link MultipleFailureException}.
+	 */
+	protected Statement withAfterClasses(Statement statement) {
+		List<FrameworkMethod> afters= fTestClass
+		.getAnnotatedMethods(AfterClass.class);
 		statement= new RunAfters(statement, afters, null);
 		return statement;
 	}
 
-	protected Statement runChildren(final RunNotifier notifier) {
+	/**
+	 * Returns a {@link Statement}: Call {@link #runChild(Object, RunNotifier)}
+	 * on each object returned by {@link #getChildren()} (subject to any imposed
+	 * filter and sort)
+	 */
+	protected Statement childrenInvoker(final RunNotifier notifier) {
 		return new Statement() {
 			@Override
 			public void evaluate() {
-				for (T each : getFilteredChildren())
-					runChild(each, notifier);
+				runChildren(notifier);
 			}
 		};
 	}
 
-	protected Annotation[] classAnnotations() {
-		return fTestClass.getAnnotations();
+	private void runChildren(final RunNotifier notifier) {
+		for (T each : getFilteredChildren())
+			runChild(each, notifier);
 	}
 
+	/**
+	 * Returns a name used to describe this Runner
+	 */
 	protected String getName() {
 		return fTestClass.getName();
 	}
@@ -114,11 +173,14 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	// Available for subclasses
 	//
 
+	/**
+	 * Returns a {@link TestClass} object wrapping the class to be executed.
+	 */
 	protected final TestClass getTestClass() {
 		return fTestClass;
 	}
 
-	protected void validate() throws InitializationError {
+	private void validate() throws InitializationError {
 		List<Throwable> errors= new ArrayList<Throwable>();
 		collectInitializationErrors(errors);
 		if (!errors.isEmpty())
@@ -141,7 +203,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	@Override
 	public Description getDescription() {
 		Description description= Description.createSuiteDescription(getName(),
-				classAnnotations());
+				fTestClass.getAnnotations());
 		for (T child : getFilteredChildren())
 			description.addChild(describeChild(child));
 		return description;

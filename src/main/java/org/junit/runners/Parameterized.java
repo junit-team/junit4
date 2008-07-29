@@ -72,7 +72,6 @@ public class Parameterized extends Suite {
 	 */
 	public Parameterized(Class<?> klass) throws Throwable {
 		super(klass, runners(klass));
-		validate();
 	}
 	
 	private static class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
@@ -122,7 +121,7 @@ public class Parameterized extends Suite {
 
 		@Override
 		protected Statement classBlock(RunNotifier notifier) {
-			return runChildren(notifier);
+			return childrenInvoker(notifier);
 		}
 	}
 

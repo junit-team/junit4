@@ -18,7 +18,7 @@ public class StubbedTheories extends Theories {
 	}
 
 	@Override
-	public Statement childBlock(FrameworkMethod method) {
+	public Statement methodBlock(FrameworkMethod method) {
 		return new StubbedTheoryAnchor(method);
 	}
 	
