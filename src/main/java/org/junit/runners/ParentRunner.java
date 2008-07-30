@@ -1,6 +1,7 @@
 package org.junit.runners;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -86,6 +87,30 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	 * Default implementation adds no errors.
 	 */
 	protected void collectInitializationErrors(List<Throwable> errors) {
+		validateStaticMethods(errors);
+	}
+
+	protected void validateStaticMethods(List<Throwable> errors) {
+		validatePublicVoidNoArgMethods(BeforeClass.class, true, errors);
+		validatePublicVoidNoArgMethods(AfterClass.class, true, errors);
+	}
+	
+	/**
+	 * Adds to {@code errors} if any method in this class is annotated with
+	 * {@code annotation}, but:
+	 * <ul>
+	 * <li>is not public, or
+	 * <li>takes parameters, or
+	 * <li>returns something other than void, or
+	 * <li>is static (given {@code isStatic is false}), or
+	 * <li>is not static (given {@code isStatic is true}).
+	 */
+	protected void validatePublicVoidNoArgMethods(Class<? extends Annotation> annotation,
+			boolean isStatic, List<Throwable> errors) {
+		List<FrameworkMethod> methods= getTestClass().getAnnotatedMethods(annotation);
+
+		for (FrameworkMethod eachTestMethod : methods)
+			eachTestMethod.validate(isStatic, errors);
 	}
 
 	/** 
@@ -119,7 +144,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	 */
 	protected Statement withBeforeClasses(Statement statement) {
 		List<FrameworkMethod> befores= fTestClass
-		.getAnnotatedMethods(BeforeClass.class);
+				.getAnnotatedMethods(BeforeClass.class);
 		statement= new RunBefores(statement, befores, null);
 		return statement;
 	}
@@ -133,7 +158,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	 */
 	protected Statement withAfterClasses(Statement statement) {
 		List<FrameworkMethod> afters= fTestClass
-		.getAnnotatedMethods(AfterClass.class);
+				.getAnnotatedMethods(AfterClass.class);
 		statement= new RunAfters(statement, afters, null);
 		return statement;
 	}
@@ -175,26 +200,10 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 		return fTestClass;
 	}
 
-	private void validate() throws InitializationError {
-		List<Throwable> errors= new ArrayList<Throwable>();
-		collectInitializationErrors(errors);
-		if (!errors.isEmpty())
-			throw new InitializationError(errors);
-	}
-
-	public void filter(Filter filter) throws NoTestsRemainException {
-		fFilter= filter;
-
-		for (T each : getChildren())
-			if (shouldRun(each))
-				return;
-		throw new NoTestsRemainException();
-	}
-
-	public void sort(Sorter sorter) {
-		fSorter= sorter;
-	}
-
+	//
+	// Implementation of Runner
+	// 
+	
 	@Override
 	public Description getDescription() {
 		Description description= Description.createSuiteDescription(getName(),
@@ -218,6 +227,34 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 		} catch (Throwable e) {
 			testNotifier.addFailure(e);
 		}
+	}
+	
+	//
+	// Implementation of Filterable and Sortable
+	//
+
+	public void filter(Filter filter) throws NoTestsRemainException {
+		fFilter= filter;
+
+		for (T each : getChildren())
+			if (shouldRun(each))
+				return;
+		throw new NoTestsRemainException();
+	}
+
+	public void sort(Sorter sorter) {
+		fSorter= sorter;
+	}
+	
+	//
+	// Private implementation
+	// 
+
+	private void validate() throws InitializationError {
+		List<Throwable> errors= new ArrayList<Throwable>();
+		collectInitializationErrors(errors);
+		if (!errors.isEmpty())
+			throw new InitializationError(errors);
 	}
 
 	private List<T> getFilteredChildren() {

@@ -99,11 +99,6 @@ public class Suite extends ParentRunner<Runner> {
 		super(klass);
 		fRunners = runners;
 	}
-
-	@Override
-	protected void collectInitializationErrors(List<Throwable> errors) {
-		getTestClass().validateStaticMethods(errors);
-	}
 	
 	@Override
 	protected List<Runner> getChildren() {

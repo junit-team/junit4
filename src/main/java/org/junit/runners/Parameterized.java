@@ -58,6 +58,7 @@ import org.junit.runners.model.TestClass;
  * </p>
  */
 public class Parameterized extends Suite {
+	// TODO: change to ParentRunner
 	
 	/**
 	 * Annotation for a method which provides parameters to be injected into the test class constructor by <code>Parameterized</code>
@@ -71,7 +72,7 @@ public class Parameterized extends Suite {
 	 * Only called reflectively. Do not use programmatically.
 	 */
 	public Parameterized(Class<?> klass) throws Throwable {
-		super(klass, runners(klass));
+		super(klass, runners(new TestClass(klass)));
 	}
 	
 	private static class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
@@ -99,7 +100,7 @@ public class Parameterized extends Suite {
 				throw new Exception(String.format(
 						"%s.%s() must return a Collection of arrays.",
 						getTestClass().getName(), getParametersMethod(
-								getTestClass().getJavaClass()).getName()));
+								getTestClass()).getName()));
 			}
 		}
 
@@ -113,10 +114,11 @@ public class Parameterized extends Suite {
 			return String.format("%s[%s]", method.getName(),
 					fParameterSetNumber);
 		}
-
+		
 		@Override
-		protected void collectInitializationErrors(List<Throwable> errors) {
-			// do nothing: validated before.
+		protected void validateNoArgConstructor(List<Throwable> errors) {
+			// do nothing: constructor should have parameters
+			// TODO: but should still be public, and just one
 		}
 
 		@Override
@@ -125,32 +127,25 @@ public class Parameterized extends Suite {
 		}
 	}
 
-	
-	@Override
-	protected void collectInitializationErrors(List<Throwable> errors) {
-		getTestClass().validateStaticMethods(errors);
-		getTestClass().validateInstanceMethods(errors);
-	}
-
-	private static ArrayList<Runner> runners(Class<?> klass) throws Throwable {
+	private static ArrayList<Runner> runners(TestClass klass) throws Throwable {
 		List<Object[]> parametersList = getParametersList(klass);
 		ArrayList<Runner> runners= new ArrayList<Runner>();
 		for (int i= 0; i < parametersList.size(); i++)
-			runners.add(new TestClassRunnerForParameters(klass, parametersList,
+			runners.add(new TestClassRunnerForParameters(klass.getJavaClass(), parametersList,
 					i));
 		return runners;
 	}
 
 	@SuppressWarnings("unchecked")
-	private static List<Object[]> getParametersList(Class<?> klass)
+	private static List<Object[]> getParametersList(TestClass klass)
 			throws Throwable {
 		return (List<Object[]>) getParametersMethod(klass)
 				.invokeExplosively(null);
 	}
 
-	private static FrameworkMethod getParametersMethod(Class<?> klass)
+	private static FrameworkMethod getParametersMethod(TestClass testClass)
 			throws Exception {
-		List<FrameworkMethod> methods= new TestClass(klass)
+		List<FrameworkMethod> methods= testClass
 				.getAnnotatedMethods(Parameters.class);
 		for (FrameworkMethod each : methods) {
 			int modifiers= each.getMethod().getModifiers();
@@ -159,7 +154,7 @@ public class Parameterized extends Suite {
 		}
 
 		throw new Exception("No public static parameters method on class "
-				+ klass.getName());
+				+ testClass.getName());
 	}
 
 }

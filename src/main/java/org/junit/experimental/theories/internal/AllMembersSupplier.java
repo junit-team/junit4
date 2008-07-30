@@ -88,7 +88,7 @@ public class AllMembersSupplier extends ParameterSupplier {
 
 	private void addFields(ParameterSignature sig,
 			List<PotentialAssignment> list) {
-		for (final Field field : fClass.getFields()) {
+		for (final Field field : fClass.getJavaClass().getFields()) {
 			if (Modifier.isStatic(field.getModifiers())) {
 				Class<?> type= field.getType();
 				if (sig.canAcceptArrayType(type)

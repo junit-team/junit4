@@ -31,7 +31,7 @@ public class Assignments {
 	public static Assignments allUnassigned(Method testMethod,
 			TestClass testClass) throws Exception {
 		List<ParameterSignature> signatures;
-		signatures= ParameterSignature.signatures(testClass.getConstructor());
+		signatures= ParameterSignature.signatures(testClass.getOnlyConstructor());
 		signatures.addAll(ParameterSignature.signatures(testMethod));
 		return new Assignments(new ArrayList<PotentialAssignment>(),
 				signatures, testClass);
@@ -108,7 +108,7 @@ public class Assignments {
 
 	private int getConstructorParameterCount() {
 		List<ParameterSignature> signatures= ParameterSignature
-				.signatures(fClass.getConstructor());
+				.signatures(fClass.getOnlyConstructor());
 		int constructorParameterCount= signatures.size();
 		return constructorParameterCount;
 	}

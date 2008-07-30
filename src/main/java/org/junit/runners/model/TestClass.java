@@ -16,11 +16,20 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+/**
+ * Wraps a class to be run, providing method validation and annotation searching
+ */
 public class TestClass {
 	private final Class<?> fClass;
 
 	private Map<Class<?>, List<FrameworkMethod>> fMethodsForAnnotations= new HashMap<Class<?>, List<FrameworkMethod>>();
 
+	/**
+	 * Creates a {@code TestClass} wrapping {@code klass}. Each time this
+	 * constructor executes, the class is scanned for annotations, which can be
+	 * an expensive process (we hope in future JDK's it will not be.) Therefore,
+	 * try to share instances of {@code TestClass} where possible.
+	 */
 	public TestClass(Class<?> klass) {
 		fClass= klass;
 		if (klass != null && klass.getConstructors().length > 1)
@@ -37,6 +46,9 @@ public class TestClass {
 			addToAnnotationList(each.annotationType(), testMethod);
 	}
 
+	/**
+	 * Returns all of the annotations on {@code testMethod}
+	 */
 	protected Annotation[] computeAnnotations(FrameworkMethod testMethod) {
 		return testMethod.getMethod().getAnnotations();
 	}
@@ -58,10 +70,10 @@ public class TestClass {
 					new ArrayList<FrameworkMethod>());
 	}
 
-	public List<FrameworkMethod> getTestMethods() {
-		return getAnnotatedMethods(Test.class);
-	}
-
+	/**
+	 * Returns, efficiently, all the non-overridden methods in this class and
+	 * its superclasses that are annotated with {@code annotationClass}.
+	 */
 	public List<FrameworkMethod> getAnnotatedMethods(
 			Class<? extends Annotation> annotationClass) {
 		ensureKey(annotationClass);
@@ -83,58 +95,26 @@ public class TestClass {
 		return results;
 	}
 
-	public Constructor<?> getConstructor() throws SecurityException {
-		return fClass.getConstructors()[0];
-	}
-
+	/**
+	 * Returns the underlying Java class.
+	 */
 	public Class<?> getJavaClass() {
 		return fClass;
 	}
 
+	/**
+	 * Returns the class's name.
+	 */
 	public String getName() {
 		if (fClass == null)
 			return "null";
 		return fClass.getName();
 	}
 
-	public void validateMethods(Class<? extends Annotation> annotation,
-			boolean isStatic, List<Throwable> errors) {
-		List<FrameworkMethod> methods= getAnnotatedMethods(annotation);
-
-		for (FrameworkMethod eachTestMethod : methods)
-			eachTestMethod.validate(isStatic, errors);
-	}
-
-	public void validateStaticMethods(List<Throwable> errors) {
-		validateMethods(BeforeClass.class, true, errors);
-		validateMethods(AfterClass.class, true, errors);
-	}
-
-	public void validateNoArgConstructor(List<Throwable> errors) {
-		try {
-			getConstructor();
-		} catch (Exception e) {
-			errors.add(new Exception(
-					"Test class should have public zero-argument constructor",
-					e));
-		}
-	}
-
-	public void validateInstanceMethods(List<Throwable> errors) {
-		validateMethods(After.class, false, errors);
-		validateMethods(Before.class, false, errors);
-		validateMethods(Test.class, false, errors);
-
-		List<FrameworkMethod> methods= getAnnotatedMethods(Test.class);
-		if (methods.size() == 0)
-			errors.add(new Exception("No runnable methods"));
-	}
-
-	public void validateMethodsForDefaultRunner(List<Throwable> errors) {
-		validateNoArgConstructor(errors);
-		validateStaticMethods(errors);
-		validateInstanceMethods(errors);
-	}
+	/**
+	 * Returns the only public constructor in the class, or throws an {@code
+	 * AssertionError} if there are more or less than one.
+	 */
 
 	public Constructor<?> getOnlyConstructor() {
 		Constructor<?>[] constructors= fClass.getConstructors();
@@ -142,13 +122,12 @@ public class TestClass {
 		return constructors[0];
 	}
 
+	/**
+	 * Returns the annotations on this class
+	 */
 	public Annotation[] getAnnotations() {
 		if (fClass == null)
 			return new Annotation[0];
 		return fClass.getAnnotations();
-	}
-
-	public Field[] getFields() {
-		return fClass.getFields();
 	}
 }

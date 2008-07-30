@@ -26,13 +26,31 @@ public class Theories extends BlockJUnit4ClassRunner {
 
 	@Override
 	protected void collectInitializationErrors(List<Throwable> errors) {
+		super.collectInitializationErrors(errors);
+		validateDataPointFields(errors);
+		// TODO: validate theory methods
+	}
+	
+	private void validateDataPointFields(List<Throwable> errors) {
 		Field[] fields= getTestClass().getJavaClass().getDeclaredFields();
 		
 		for (Field each : fields)
 			if (each.getAnnotation(DataPoint.class) != null && !Modifier.isStatic(each.getModifiers()))
 				errors.add(new Error("DataPoint field " + each.getName() + " must be static"));
 	}
-
+	
+	@Override
+	protected void validateNoArgConstructor(List<Throwable> errors) {
+		// constructor can have args
+		// TODO: should still be public
+	}
+	
+	@Override
+	protected void validateTestMethods(List<Throwable> errors) {
+		// Tests can have params
+		// TODO: should still be public, not static
+	}
+	
 	@Override
 	protected List<FrameworkMethod> computeTestMethods() {
 		List<FrameworkMethod> testMethods= super.computeTestMethods();
@@ -124,7 +142,7 @@ public class Theories extends BlockJUnit4ClassRunner {
 
 				@Override
 				public Object createTest() throws Exception {
-					return getTestClass().getConstructor().newInstance(
+					return getTestClass().getOnlyConstructor().newInstance(
 							complete.getConstructorArguments(nullsOk()));
 				}
 			}.methodBlock(fTestMethod).evaluate();

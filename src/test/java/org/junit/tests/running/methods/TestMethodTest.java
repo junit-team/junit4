@@ -121,11 +121,8 @@ public class TestMethodTest {
 		}
 	}
 	
-	@Test public void overloaded() {
-		TestClass testClass= new TestClass(Confused.class);
-		List<Throwable> errors= new ArrayList<Throwable>();
-		testClass.validateMethodsForDefaultRunner(errors);
-		assertFalse(errors.isEmpty());
+	@Test(expected=InitializationError.class) public void overloaded() throws InitializationError {
+		new BlockJUnit4ClassRunner(Confused.class);
 	}
 	
 	public static class OnlyTestIsIgnored {

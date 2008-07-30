@@ -1,8 +1,10 @@
 package org.junit.runners;
 
+import java.lang.reflect.Constructor;
 import java.util.List;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.Test.None;
@@ -23,6 +25,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
+import org.junit.runners.model.TestClass;
 
 /**
  * Implements the JUnit 4 standard test case class model, as defined by the
@@ -96,16 +99,43 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 
 	/**
 	 * Returns the methods that run tests (this should be called just once per
-	 * class). Default implementation returns all methods annotated with {@code @Test} 
-	 * on this class and superclasses that are not overridden.
+	 * class). Default implementation returns all methods annotated with {@code
+	 * @Test} on this class and superclasses that are not overridden.
 	 */
 	protected List<FrameworkMethod> computeTestMethods() {
-		return getTestClass().getTestMethods();
+		return getTestClass().getAnnotatedMethods(Test.class);
 	}
 
 	@Override
 	protected void collectInitializationErrors(List<Throwable> errors) {
-		getTestClass().validateMethodsForDefaultRunner(errors);
+		super.collectInitializationErrors(errors);
+
+		validateNoArgConstructor(errors);
+		validateInstanceMethods(errors);
+	}
+
+	protected void validateNoArgConstructor(List<Throwable> errors) {
+		// TODO: this looks completely wrong. What would this throw?
+		Constructor<?>[] constructors= getTestClass().getJavaClass()
+				.getConstructors();
+		// TODO: doesn't check no-arg
+		if (constructors.length != 1) {
+			String gripe= "Test class should have exactly one public zero-argument constructor";
+			errors.add(new Exception(gripe));
+		}
+	}
+
+	protected void validateInstanceMethods(List<Throwable> errors) {
+		validatePublicVoidNoArgMethods(After.class, false, errors);
+		validatePublicVoidNoArgMethods(Before.class, false, errors);
+		validateTestMethods(errors);
+
+		if (computeTestMethods().size() == 0)
+			errors.add(new Exception("No runnable methods"));
+	}
+
+	protected void validateTestMethods(List<Throwable> errors) {
+		validatePublicVoidNoArgMethods(Test.class, false, errors);
 	}
 
 	/**
@@ -114,7 +144,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 	 * one exists).
 	 */
 	protected Object createTest() throws Exception {
-		return getTestClass().getConstructor().newInstance();
+		return getTestClass().getOnlyConstructor().newInstance();
 	}
 
 	/**
