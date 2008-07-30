@@ -125,6 +125,18 @@ public class TestMethodTest {
 		new BlockJUnit4ClassRunner(Confused.class);
 	}
 	
+	public static class ConstructorParameter {
+		public ConstructorParameter(Object something) {
+		}
+		
+		@Test public void a() {
+		}
+	}
+	
+	@Test(expected=InitializationError.class) public void constructorParameter() throws InitializationError {
+		new BlockJUnit4ClassRunner(ConstructorParameter.class);
+	}
+	
 	public static class OnlyTestIsIgnored {
 		@Ignore @Test public void ignored() {}
 	}

@@ -120,8 +120,8 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 	protected void validateNoArgConstructor(List<Throwable> errors) {
 		Constructor<?>[] constructors= getTestClass().getJavaClass()
 				.getConstructors();
-		// TODO: doesn't check no-arg
-		if (constructors.length != 1) {
+		if (constructors.length != 1 || 
+				constructors[0].getParameterTypes().length > 0) {
 			String gripe= "Test class should have exactly one public zero-argument constructor";
 			errors.add(new Exception(gripe));
 		}
