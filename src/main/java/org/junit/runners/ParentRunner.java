@@ -58,11 +58,6 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	// Must be overridden
 	//
 
-	protected ParentRunner(Class<?> testClass, boolean dontValidate) {
-		// TODO: make this sensible.  What is b?
-		fTestClass= new TestClass(testClass);
-	}
-
 	/**
 	 * Returns a list of objects that define the children of this Runner.
 	 */
