@@ -41,6 +41,14 @@
     encouraged, whereas `JUnit4ClassRunner` was in an internal package,
     and is now deprecated.
 
+- `ParentRunner` is a base class for runners that iterate over
+  a list of "children", each an object representing a test or suite to run.
+  `ParentRunner` provides filtering, sorting, `@BeforeClass`, `@AfterClass`,
+  and method validation to subclasses.
+
+- `TestClass` wraps a class to be run, providing efficient, repeated access
+  to all methods with a given annotation.
+
 - The new `RunnerBuilder` API allows extending the behavior of
   Suite-like custom runners.
 
