@@ -2,19 +2,15 @@ package org.junit.runners.model;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 /**
  * Wraps a class to be run, providing method validation and annotation searching
@@ -50,7 +46,7 @@ public class TestClass {
 	 * Returns all of the annotations on {@code testMethod}
 	 */
 	protected Annotation[] computeAnnotations(FrameworkMethod testMethod) {
-		return testMethod.getMethod().getAnnotations();
+		return testMethod.getAnnotations();
 	}
 
 	private void addToAnnotationList(Class<? extends Annotation> annotation,

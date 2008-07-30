@@ -36,7 +36,7 @@ import org.junit.runner.Runner;
  * @see org.junit.runners.Suite
  */
 public abstract class RunnerBuilder {
-	private final Set<Class<?>> parents = new HashSet<Class<?>>();
+	private final Set<Class<?>> parents= new HashSet<Class<?>>();
 
 	/**
 	 * Override to calculate the correct runner for a test class at runtime.
@@ -59,18 +59,35 @@ public abstract class RunnerBuilder {
 			return new ErrorReportingRunner(testClass, e);
 		}
 	}
-	
+
 	Class<?> addParent(Class<?> parent) throws InitializationError {
 		if (!parents.add(parent))
 			throw new InitializationError(String.format("class '%s' (possibly indirectly) contains itself as a SuiteClass", parent.getName()));
 		return parent;
 	}
-	
+
 	void removeParent(Class<?> klass) {
 		parents.remove(klass);
 	}
 
-	public List<Runner> runners(Class<?>[] children) {
+	/**
+	 * Constructs and returns a list of Runners, one for each child class in
+	 * {@code children}.  Care is taken to avoid infinite recursion:
+	 * this builder will throw an exception if it is requested for another
+	 * runner for {@code parent} before this call completes.
+	 */
+	public List<Runner> runners(Class<?> parent, Class<?>[] children)
+			throws InitializationError {
+		addParent(parent);
+
+		try {
+			return runners(children);
+		} finally {
+			removeParent(parent);
+		}
+	}
+	
+	private List<Runner> runners(Class<?>[] children) {
 		ArrayList<Runner> runners= new ArrayList<Runner>();
 		for (Class<?> each : children) {
 			Runner childRunner= safeRunnerForClass(each);
@@ -78,15 +95,5 @@ public abstract class RunnerBuilder {
 				runners.add(childRunner);
 		}
 		return runners;
-	}
-
-	public List<Runner> runners(Class<?> parent, Class<?>[] children) throws InitializationError {
-		addParent(parent);
-		
-		try {
-			return runners(children);
-		} finally {
-			removeParent(parent);
-		}
 	}
 }

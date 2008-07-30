@@ -24,6 +24,7 @@ import org.junit.experimental.theories.internal.Assignments;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.Failure;
+import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
 
 public class WithDataPointMethod {

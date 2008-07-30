@@ -127,6 +127,8 @@ public class Parameterized extends Suite {
 		}
 	}
 
+	// TODO: de-static?
+	
 	private static ArrayList<Runner> runners(TestClass klass) throws Throwable {
 		List<Object[]> parametersList = getParametersList(klass);
 		ArrayList<Runner> runners= new ArrayList<Runner>();

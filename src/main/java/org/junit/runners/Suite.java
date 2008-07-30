@@ -63,7 +63,7 @@ public class Suite extends ParentRunner<Runner> {
 	 * @throws InitializationError 
 	 */
 	public Suite(RunnerBuilder builder, Class<?>[] classes) throws InitializationError {
-		this(null, builder.runners(classes));
+		this(null, builder.runners(null, classes));
 	}
 	
 	/**

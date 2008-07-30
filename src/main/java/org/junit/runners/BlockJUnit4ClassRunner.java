@@ -4,8 +4,8 @@ import java.lang.reflect.Constructor;
 import java.util.List;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.Test.None;
 import org.junit.internal.AssumptionViolatedException;
@@ -25,7 +25,6 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
-import org.junit.runners.model.TestClass;
 
 /**
  * Implements the JUnit 4 standard test case class model, as defined by the
@@ -65,7 +64,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 	@Override
 	protected void runChild(FrameworkMethod method, RunNotifier notifier) {
 		EachTestNotifier eachNotifier= makeNotifier(method, notifier);
-		if (method.isIgnored()) {
+		if (method.getAnnotation(Ignore.class) != null) {
 			eachNotifier.fireTestIgnored();
 			return;
 		}
@@ -85,7 +84,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 	@Override
 	protected Description describeChild(FrameworkMethod method) {
 		return Description.createTestDescription(getTestClass().getJavaClass(),
-				testName(method), method.getMethod().getAnnotations());
+				testName(method), method.getAnnotations());
 	}
 
 	@Override
@@ -114,8 +113,11 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 		validateInstanceMethods(errors);
 	}
 
+	/**
+	 * Adds to {@code errors} if the class does not have exactly one public
+	 * constructor with no arguments.
+	 */
 	protected void validateNoArgConstructor(List<Throwable> errors) {
-		// TODO: this looks completely wrong. What would this throw?
 		Constructor<?>[] constructors= getTestClass().getJavaClass()
 				.getConstructors();
 		// TODO: doesn't check no-arg
@@ -125,6 +127,11 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 		}
 	}
 
+	/**
+	 * Adds to {@code errors} for each method annotated with {@code @Test},
+	 * {@code @Before}, or {@code @After} that is not a public, void instance
+	 * method with no arguments.
+	 */
 	protected void validateInstanceMethods(List<Throwable> errors) {
 		validatePublicVoidNoArgMethods(After.class, false, errors);
 		validatePublicVoidNoArgMethods(Before.class, false, errors);
@@ -134,6 +141,10 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 			errors.add(new Exception("No runnable methods"));
 	}
 
+	/**
+	 * Adds to {@code errors} for each method annotated with {@code @Test}that
+	 * is not a public, void instance method with no arguments.
+	 */
 	protected void validateTestMethods(List<Throwable> errors) {
 		validatePublicVoidNoArgMethods(Test.class, false, errors);
 	}
@@ -223,7 +234,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 	 */
 	protected Statement possiblyExpectingExceptions(FrameworkMethod method,
 			Object test, Statement next) {
-		Test annotation= getAnnotation(method);
+		Test annotation= method.getAnnotation(Test.class);
 		return expectsException(annotation) ? new ExpectException(next,
 				getExpectedException(annotation)) : next;
 	}
@@ -235,7 +246,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 	 */
 	protected Statement withPotentialTimeout(FrameworkMethod method,
 			Object test, Statement next) {
-		long timeout= getTimeout(getAnnotation(method));
+		long timeout= getTimeout(method.getAnnotation(Test.class));
 		return timeout > 0 ? new FailOnTimeout(next, timeout) : next;
 	}
 
@@ -286,9 +297,5 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 		if (annotation == null)
 			return 0;
 		return annotation.timeout();
-	}
-
-	private Test getAnnotation(FrameworkMethod method) {
-		return method.getMethod().getAnnotation(Test.class);
 	}
 }

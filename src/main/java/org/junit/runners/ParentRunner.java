@@ -84,17 +84,15 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
 	/**
 	 * Adds to {@code errors} a throwable for each problem noted with the test class (available from {@link #getTestClass()}).
-	 * Default implementation adds no errors.
+	 * Default implementation adds an error for each method annotated with
+	 * {@code @BeforeClass} or {@code @AfterClass} that is not
+	 * {@code public static void} with no arguments.
 	 */
 	protected void collectInitializationErrors(List<Throwable> errors) {
-		validateStaticMethods(errors);
-	}
-
-	protected void validateStaticMethods(List<Throwable> errors) {
 		validatePublicVoidNoArgMethods(BeforeClass.class, true, errors);
 		validatePublicVoidNoArgMethods(AfterClass.class, true, errors);
 	}
-	
+
 	/**
 	 * Adds to {@code errors} if any method in this class is annotated with
 	 * {@code annotation}, but:
@@ -110,7 +108,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 		List<FrameworkMethod> methods= getTestClass().getAnnotatedMethods(annotation);
 
 		for (FrameworkMethod eachTestMethod : methods)
-			eachTestMethod.validate(isStatic, errors);
+			eachTestMethod.validatePublicVoidNoArg(isStatic, errors);
 	}
 
 	/** 

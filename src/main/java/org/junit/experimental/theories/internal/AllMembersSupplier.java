@@ -21,23 +21,23 @@ import org.junit.runners.model.TestClass;
 
 public class AllMembersSupplier extends ParameterSupplier {
 	static class MethodParameterValue extends PotentialAssignment {
-		private final Method fMethod;
+		private final FrameworkMethod fMethod;
 
-		private MethodParameterValue(Method method) {
-			fMethod= method;
+		private MethodParameterValue(FrameworkMethod dataPointMethod) {
+			fMethod= dataPointMethod;
 		}
 
 		@Override
 		public Object getValue() throws CouldNotGenerateValueException {
 			try {
-				return fMethod.invoke(null);
+				return fMethod.invokeExplosively(null);
 			} catch (IllegalArgumentException e) {
 				throw new RuntimeException(
 						"unexpected: argument length is checked");
 			} catch (IllegalAccessException e) {
 				throw new RuntimeException(
 						"unexpected: getMethods returned an inaccessible method");
-			} catch (InvocationTargetException e) {
+			} catch (Throwable e) {
 				throw new CouldNotGenerateValueException();
 				// do nothing, just look for more values
 			}
@@ -82,7 +82,7 @@ public class AllMembersSupplier extends ParameterSupplier {
 				.getAnnotatedMethods(DataPoint.class)) {
 			Class<?> type= sig.getType();
 			if ((dataPointMethod.producesType(type)))
-				list.add(new MethodParameterValue(dataPointMethod.getMethod()));
+				list.add(new MethodParameterValue(dataPointMethod));
 		}
 	}
 
