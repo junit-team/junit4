@@ -69,6 +69,15 @@ public class FrameworkMethod {
 					+ " should have no parameters"));
 	}
 
+
+	/**
+	 * Adds to {@code errors} if this method:
+	 * <ul>
+	 * <li>is not public, or
+	 * <li>returns something other than void, or
+	 * <li>is static (given {@code isStatic is false}), or
+	 * <li>is not static (given {@code isStatic is true}).
+	 */
 	public void validatePublicVoid(boolean isStatic, List<Throwable> errors) {
 		if (Modifier.isStatic(fMethod.getModifiers()) != isStatic) {
 			String state= isStatic ? "should" : "should not";
