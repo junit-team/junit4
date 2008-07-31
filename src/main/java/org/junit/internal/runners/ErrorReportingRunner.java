@@ -12,7 +12,6 @@ import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
-//TODO: inline the superclass, extend Runner, and then have all ParentRunners validate once again
 public class ErrorReportingRunner extends Runner {
 	private final List<Throwable> fCauses;
 
