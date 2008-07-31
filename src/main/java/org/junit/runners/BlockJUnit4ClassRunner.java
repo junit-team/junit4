@@ -109,7 +109,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 	protected void collectInitializationErrors(List<Throwable> errors) {
 		super.collectInitializationErrors(errors);
 
-		validateNoArgConstructor(errors);
+		validateConstructor(errors);
 		validateInstanceMethods(errors);
 	}
 
@@ -117,11 +117,11 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 	 * Adds to {@code errors} if the class does not have exactly one public
 	 * constructor with no arguments.
 	 */
-	protected void validateNoArgConstructor(List<Throwable> errors) {
+	protected void validateConstructor(List<Throwable> errors) {
 		Constructor<?>[] constructors= getTestClass().getJavaClass()
 				.getConstructors();
-		if (constructors.length != 1 || 
-				constructors[0].getParameterTypes().length > 0) {
+		if (!(constructors.length == 1 && 
+				constructors[0].getParameterTypes().length == 0)) {
 			String gripe= "Test class should have exactly one public zero-argument constructor";
 			errors.add(new Exception(gripe));
 		}
