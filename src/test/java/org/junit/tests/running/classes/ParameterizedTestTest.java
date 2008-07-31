@@ -20,6 +20,7 @@ import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.junit.runners.model.InitializationError;
 
 public class ParameterizedTestTest {
 	@RunWith(Parameterized.class)
@@ -190,5 +191,26 @@ public class ParameterizedTestTest {
 				WrongElementType.class.getName());
 		assertThat(testResult(WrongElementType.class).toString(),
 				containsString(expected));
+	}
+	
+	@RunWith(Parameterized.class)
+	static public class PrivateConstructor {
+		private PrivateConstructor(int x) {
+
+		}
+
+		@Parameters
+		public static Collection<Object[]> data() {
+			return Arrays.asList(new Object[][] { { 3 } });
+		}
+
+		@Test
+		public void aTest() {
+		}
+	}
+	
+	@Test(expected=InitializationError.class)
+	public void exceptionWhenPrivateConstructor() throws Throwable {
+		new Parameterized(PrivateConstructor.class);
 	}
 }

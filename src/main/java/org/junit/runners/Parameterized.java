@@ -4,8 +4,10 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.runner.Runner;
@@ -17,8 +19,8 @@ import org.junit.runners.model.TestClass;
 
 /**
  * <p>
- * The custom runner <code>Parameterized</code> implements parameterized
- * tests. When running a parameterized test class, instances are created for the
+ * The custom runner <code>Parameterized</code> implements parameterized tests.
+ * When running a parameterized test class, instances are created for the
  * cross-product of the test methods and the test data elements.
  * </p>
  * 
@@ -29,8 +31,10 @@ import org.junit.runners.model.TestClass;
  * public class FibonacciTest {
  * 	&#064;Parameters
  * 	public static Collection&lt;Object[]&gt; data() {
- * 		return Arrays.asList(new Object[][] {Fibonacci, { { 0, 0 }, { 1, 1 }, { 2, 1 },
- * 				{ 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } }} );
+ * 		return Arrays.asList(new Object[][] {
+ * 				Fibonacci,
+ * 				{ { 0, 0 }, { 1, 1 }, { 2, 1 }, { 3, 2 }, { 4, 3 }, { 5, 5 },
+ * 						{ 6, 8 } } });
  * 	}
  * 
  * 	private int fInput;
@@ -44,8 +48,10 @@ import org.junit.runners.model.TestClass;
  * 
  * 	&#064;Test
  * 	public void test(@HeresHowYouGetValue Type value) {
- * assertAnswerKey( new Object[][] {Fibonacci, { { 0, 0 }, { 1, 1 }, { 2, 1 },
- * 				{ 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } }});	
+ * 		assertAnswerKey(new Object[][] {
+ * 				Fibonacci,
+ * 				{ { 0, 0 }, { 1, 1 }, { 2, 1 }, { 3, 2 }, { 4, 3 }, { 5, 5 },
+ * 						{ 6, 8 } } });
  * 		assertEquals(fExpected, Fibonacci.compute(fInput));
  * 	}
  * }
@@ -58,24 +64,17 @@ import org.junit.runners.model.TestClass;
  * </p>
  */
 public class Parameterized extends Suite {
-	// TODO: change to ParentRunner
-	
 	/**
-	 * Annotation for a method which provides parameters to be injected into the test class constructor by <code>Parameterized</code>
+	 * Annotation for a method which provides parameters to be injected into the
+	 * test class constructor by <code>Parameterized</code>
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.METHOD)
 	public static @interface Parameters {
 	}
-	
-	/**
-	 * Only called reflectively. Do not use programmatically.
-	 */
-	public Parameterized(Class<?> klass) throws Throwable {
-		super(klass, runners(new TestClass(klass)));
-	}
-	
-	private static class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
+
+	private class TestClassRunnerForParameters extends
+			BlockJUnit4ClassRunner {
 		private final int fParameterSetNumber;
 
 		private final List<Object[]> fParameterList;
@@ -114,11 +113,15 @@ public class Parameterized extends Suite {
 			return String.format("%s[%s]", method.getName(),
 					fParameterSetNumber);
 		}
-		
+
 		@Override
-		protected void validateNoArgConstructor(List<Throwable> errors) {
-			// do nothing: constructor should have parameters
-			// TODO: but should still be public, and just one
+		protected void validateConstructor(List<Throwable> errors) {
+			Constructor<?>[] constructors= getTestClass().getJavaClass()
+					.getConstructors();
+			if (!(constructors.length == 1)) {
+				String gripe= "Test class should have exactly one public constructor";
+				errors.add(new Exception(gripe));
+			}
 		}
 
 		@Override
@@ -127,25 +130,32 @@ public class Parameterized extends Suite {
 		}
 	}
 
-	// TODO: de-static?
-	
-	private static ArrayList<Runner> runners(TestClass klass) throws Throwable {
-		List<Object[]> parametersList = getParametersList(klass);
-		ArrayList<Runner> runners= new ArrayList<Runner>();
+	private final ArrayList<Runner> runners= new ArrayList<Runner>();
+
+	/**
+	 * Only called reflectively. Do not use programmatically.
+	 */
+	public Parameterized(Class<?> klass) throws Throwable {
+		super(klass, Collections.<Runner>emptyList());
+		List<Object[]> parametersList= getParametersList(getTestClass());
 		for (int i= 0; i < parametersList.size(); i++)
-			runners.add(new TestClassRunnerForParameters(klass.getJavaClass(), parametersList,
-					i));
+			runners.add(new TestClassRunnerForParameters(getTestClass().getJavaClass(),
+					parametersList, i));
+	}
+
+	@Override
+	protected List<Runner> getChildren() {
 		return runners;
 	}
 
 	@SuppressWarnings("unchecked")
-	private static List<Object[]> getParametersList(TestClass klass)
+	private List<Object[]> getParametersList(TestClass klass)
 			throws Throwable {
-		return (List<Object[]>) getParametersMethod(klass)
-				.invokeExplosively(null);
+		return (List<Object[]>) getParametersMethod(klass).invokeExplosively(
+				null);
 	}
 
-	private static FrameworkMethod getParametersMethod(TestClass testClass)
+	private FrameworkMethod getParametersMethod(TestClass testClass)
 			throws Exception {
 		List<FrameworkMethod> methods= testClass
 				.getAnnotatedMethods(Parameters.class);
