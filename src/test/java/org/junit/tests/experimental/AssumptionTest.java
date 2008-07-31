@@ -17,6 +17,8 @@ import org.junit.Test;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.RunListener;
 
 public class AssumptionTest {
 	public static class HasFailingAssumption {
@@ -33,6 +35,22 @@ public class AssumptionTest {
 		assertThat(result.getRunCount(), is(1));
 		assertThat(result.getIgnoreCount(), is(0));
 		assertThat(result.getFailureCount(), is(0));
+	}
+
+	private static int assumptionFailures= 0;
+	@Test
+	public void failedAssumptionsCanBeDetectedByListeners() {
+		assumptionFailures= 0;
+		JUnitCore core= new JUnitCore();
+		core.addListener(new RunListener() {
+			@Override
+			public void testAssumptionFailure(Failure failure) {
+				assumptionFailures++;
+			}
+		});
+		core.run(HasFailingAssumption.class);
+		
+		assertThat(assumptionFailures, is(1));
 	}
 
 	public static class HasPassingAssumption {

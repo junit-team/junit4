@@ -1,5 +1,6 @@
 package org.junit.runner.notification;
 
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 
@@ -66,6 +67,17 @@ public class RunListener {
 	 * @param failure describes the test that failed and the exception that was thrown
 	 */
 	public void testFailure(Failure failure) throws Exception {
+	}
+
+	/**
+	 * Called when an atomic test flags that it assumes a condition that is
+	 * false
+	 * 
+	 * @param failure
+	 *            describes the test that failed and the
+	 *            {@link AssumptionViolatedException} that was thrown
+	 */
+	public void testAssumptionFailure(Failure failure) {
 	}
 
 	/**

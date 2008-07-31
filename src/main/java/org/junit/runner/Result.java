@@ -91,6 +91,11 @@ public class Result {
 			fIgnoreCount++;
 			fIgnoredDuringExecution= true;
 		}
+		
+		@Override
+		public void testAssumptionFailure(Failure failure) {
+			// do nothing: same as passing (for 4.5; may change in 4.6)
+		}
 	}
 
 	/**

@@ -65,10 +65,4 @@ public class TextListenerTest extends TestCase {
 		writer.println();
 		return string.replace("\n", resultsStream.toString());
 	}
-	
-	public static class AssumptionFailureTest {
-		@Test public void failsAssumption() {
-			assumeThat("Greece", is("Spain"));
-		}
-	}
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 
@@ -93,6 +94,23 @@ public class RunNotifier {
 			@Override
 			protected void notifyListener(RunListener each) throws Exception {
 				each.testFailure(failure);
+			};
+		}.run();
+	}
+
+	/**
+	 * Invoke to tell listeners that an atomic test flagged that it assumed
+	 * something false.
+	 * 
+	 * @param failure
+	 *            the description of the test that failed and the
+	 *            {@link AssumptionViolatedException} thrown
+	 */
+	public void fireTestAssumptionFailed(final Failure failure) {
+		new SafeNotifier() {
+			@Override
+			protected void notifyListener(RunListener each) throws Exception {
+				each.testAssumptionFailure(failure);
 			};
 		}.run();
 	}

@@ -72,7 +72,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 		try {
 			methodBlock(method).evaluate();
 		} catch (AssumptionViolatedException e) {
-			// do nothing: same as passing (for 4.5; may change in 4.6)
+			eachNotifier.addFailedAssumption(e);
 		} catch (Throwable e) {
 			eachNotifier.addFailure(e);
 		} finally {

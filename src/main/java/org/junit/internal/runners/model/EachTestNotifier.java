@@ -4,6 +4,7 @@
 package org.junit.internal.runners.model;
 
 
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
@@ -26,6 +27,10 @@ public class EachTestNotifier {
 			return;
 		}
 		fNotifier.fireTestFailure(new Failure(fDescription, targetException));
+	}
+
+	public void addFailedAssumption(AssumptionViolatedException e) {
+		fNotifier.fireTestAssumptionFailed(new Failure(fDescription, e));
 	}
 
 	public void fireTestFinished() {
