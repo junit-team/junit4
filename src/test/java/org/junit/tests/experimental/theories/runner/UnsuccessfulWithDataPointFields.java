@@ -101,4 +101,22 @@ public class UnsuccessfulWithDataPointFields {
 						.and(
 								hasFailureContaining("DataPoint field FOUR must be static")));
 	}
+
+	@RunWith(Theories.class)
+	public static class TheoriesMustBePublic {
+		@DataPoint
+		public static int THREE= 3;
+
+		@Theory
+		void numbers(int x) {
+
+		}
+	}
+
+	@Test
+	public void theoriesMustBePublic() {
+		assertThat(
+				testResult(TheoriesMustBePublic.class),
+				hasSingleFailureContaining("public"));
+	}
 }

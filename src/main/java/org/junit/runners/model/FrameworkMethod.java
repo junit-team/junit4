@@ -63,6 +63,13 @@ public class FrameworkMethod {
 	 * <li>is not static (given {@code isStatic is true}).
 	 */
 	public void validatePublicVoidNoArg(boolean isStatic, List<Throwable> errors) {
+		validatePublicVoid(isStatic, errors);
+		if (fMethod.getParameterTypes().length != 0)
+			errors.add(new Exception("Method " + fMethod.getName()
+					+ " should have no parameters"));
+	}
+
+	public void validatePublicVoid(boolean isStatic, List<Throwable> errors) {
 		if (Modifier.isStatic(fMethod.getModifiers()) != isStatic) {
 			String state= isStatic ? "should" : "should not";
 			errors.add(new Exception("Method " + fMethod.getName() + "() "
@@ -78,9 +85,6 @@ public class FrameworkMethod {
 		if (fMethod.getReturnType() != Void.TYPE)
 			errors.add(new Exception("Method " + fMethod.getName()
 					+ " should be void"));
-		if (fMethod.getParameterTypes().length != 0)
-			errors.add(new Exception("Method " + fMethod.getName()
-					+ " should have no parameters"));
 	}
 
 	boolean isShadowedBy(List<FrameworkMethod> results) {

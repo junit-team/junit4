@@ -28,7 +28,6 @@ public class Theories extends BlockJUnit4ClassRunner {
 	protected void collectInitializationErrors(List<Throwable> errors) {
 		super.collectInitializationErrors(errors);
 		validateDataPointFields(errors);
-		// TODO: validate theory methods
 	}
 	
 	private void validateDataPointFields(List<Throwable> errors) {
@@ -46,8 +45,8 @@ public class Theories extends BlockJUnit4ClassRunner {
 	
 	@Override
 	protected void validateTestMethods(List<Throwable> errors) {
-		// Tests can have params
-		// TODO: should still be public, not static
+		for (FrameworkMethod each : computeTestMethods())
+			each.validatePublicVoid(false, errors);
 	}
 	
 	@Override
