@@ -1,6 +1,5 @@
 package org.junit.runners;
 
-import java.lang.reflect.Constructor;
 import java.util.List;
 
 import org.junit.After;
@@ -112,19 +111,33 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 		validateConstructor(errors);
 		validateInstanceMethods(errors);
 	}
+	
+	private void validateConstructor(List<Throwable> errors) {
+		validateOnlyOneConstructor(errors);
+		validateZeroArgConstructor(errors);
+	}
+
+	private void validateOnlyOneConstructor(List<Throwable> errors) {
+		if (!hasOneConstructor()) {
+			String gripe= "Test class should have exactly one public constructor";
+			errors.add(new Exception(gripe));
+		}
+	}
 
 	/**
-	 * Adds to {@code errors} if the class does not have exactly one public
-	 * constructor with no arguments.
+	 * Adds to {@code errors} if the test class's single constructor
+	 * takes parameters
 	 */
-	protected void validateConstructor(List<Throwable> errors) {
-		Constructor<?>[] constructors= getTestClass().getJavaClass()
-				.getConstructors();
-		if (!(constructors.length == 1 && 
-				constructors[0].getParameterTypes().length == 0)) {
+	protected void validateZeroArgConstructor(List<Throwable> errors) {
+		if (hasOneConstructor()
+				&& !(getTestClass().getOnlyConstructor().getParameterTypes().length == 0)) {
 			String gripe= "Test class should have exactly one public zero-argument constructor";
 			errors.add(new Exception(gripe));
 		}
+	}
+
+	private boolean hasOneConstructor() {
+		return getTestClass().getJavaClass().getConstructors().length == 1;
 	}
 
 	/**

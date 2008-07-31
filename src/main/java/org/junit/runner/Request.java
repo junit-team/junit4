@@ -67,8 +67,8 @@ public abstract class Request {
 		try {
 			return runner(new Suite(new AllDefaultPossibilitiesBuilder(true), classes));
 		} catch (InitializationError e) {
-			// TODO: untested
-			return runner(new ErrorReportingRunner(null, e));
+			throw new RuntimeException(
+					"Bug in saff's brain: Suite constructor, called as above, should always complete");
 		}
 	}
 

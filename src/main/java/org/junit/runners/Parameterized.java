@@ -4,7 +4,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -115,13 +114,8 @@ public class Parameterized extends Suite {
 		}
 
 		@Override
-		protected void validateConstructor(List<Throwable> errors) {
-			Constructor<?>[] constructors= getTestClass().getJavaClass()
-					.getConstructors();
-			if (!(constructors.length == 1)) {
-				String gripe= "Test class should have exactly one public constructor";
-				errors.add(new Exception(gripe));
-			}
+		protected void validateZeroArgConstructor(List<Throwable> errors) {
+			// constructor can, nay, should have args.
 		}
 
 		@Override
