@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
 * <pre>
  * public class Example {
  *    DatabaseConnection database;
- *    &#064;BeforeClass public void login() {
+ *    &#064;BeforeClass public static void login() {
  *          database= ...;
  *    }
  *    &#064;Test public void something() {
@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  *    &#064;Test public void somethingElse() {
  *          ...
  *    }
- *    &#064;AfterClass public void logout() {
+ *    &#064;AfterClass public static void logout() {
  *          database.logout();
  *    }
  * }
