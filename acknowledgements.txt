@@ -27,3 +27,7 @@
 	
 2008 July 23
 	Daniel Brolund: Submitted patch for build.xml, fixing 1.5 compatibility (2021396)
+	
+2008 Aug 1
+	Nat Pryce: Found defect in treatment of validation errors from custom 
+	           subclasses of the legacy JUnit4ClassRunner.
