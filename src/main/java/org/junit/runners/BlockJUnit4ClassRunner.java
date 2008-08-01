@@ -96,9 +96,9 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 	//
 
 	/**
-	 * Returns the methods that run tests (this should be called just once per
-	 * class). Default implementation returns all methods annotated with {@code
-	 * @Test} on this class and superclasses that are not overridden.
+	 * Returns the methods that run tests. Default implementation 
+	 * returns all methods annotated with {@code @Test} on this 
+	 * class and superclasses that are not overridden.
 	 */
 	protected List<FrameworkMethod> computeTestMethods() {
 		return getTestClass().getAnnotatedMethods(Test.class);
