@@ -65,8 +65,7 @@ public class FrameworkMethod {
 	public void validatePublicVoidNoArg(boolean isStatic, List<Throwable> errors) {
 		validatePublicVoid(isStatic, errors);
 		if (fMethod.getParameterTypes().length != 0)
-			errors.add(new Exception("Method " + fMethod.getName()
-					+ " should have no parameters"));
+			errors.add(new Exception("Method " + fMethod.getName() + " should have no parameters"));
 	}
 
 
@@ -81,19 +80,14 @@ public class FrameworkMethod {
 	public void validatePublicVoid(boolean isStatic, List<Throwable> errors) {
 		if (Modifier.isStatic(fMethod.getModifiers()) != isStatic) {
 			String state= isStatic ? "should" : "should not";
-			errors.add(new Exception("Method " + fMethod.getName() + "() "
-					+ state + " be static"));
+			errors.add(new Exception("Method " + fMethod.getName() + "() " + state + " be static"));
 		}
 		if (!Modifier.isPublic(fMethod.getDeclaringClass().getModifiers()))
-			errors.add(new Exception("Class "
-					+ fMethod.getDeclaringClass().getName()
-					+ " should be public"));
+			errors.add(new Exception("Class " + fMethod.getDeclaringClass().getName() + " should be public"));
 		if (!Modifier.isPublic(fMethod.getModifiers()))
-			errors.add(new Exception("Method " + fMethod.getName()
-					+ " should be public"));
+			errors.add(new Exception("Method " + fMethod.getName() + "() should be public"));
 		if (fMethod.getReturnType() != Void.TYPE)
-			errors.add(new Exception("Method " + fMethod.getName()
-					+ " should be void"));
+			errors.add(new Exception("Method " + fMethod.getName() + "() should be void"));
 	}
 
 	boolean isShadowedBy(List<FrameworkMethod> results) {
@@ -108,10 +102,9 @@ public class FrameworkMethod {
 			return false;
 		if (each.getParameterTypes().length != getParameterTypes().length)
 			return false;
-		for (int i= 0; i < each.getParameterTypes().length; i++) {
+		for (int i= 0; i < each.getParameterTypes().length; i++)
 			if (!each.getParameterTypes()[i].equals(getParameterTypes()[i]))
 				return false;
-		}
 		return true;
 	}
 
