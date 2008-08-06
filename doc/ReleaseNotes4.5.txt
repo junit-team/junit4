@@ -27,6 +27,11 @@
 - Correct results when comparing the string "null" with potentially
   null values.  [Bug 1857283]
 
+- Annotating a class with `@RunWith(JUnit4.class)` will always invoke the
+  default JUnit 4 runner in the current version of JUnit.  This default changed
+  from `JUnit4ClassRunner` in 4.4 to `BlockJUnit4ClassRunner` in 4.5 (see below),
+  and may change again.
+
 ### Extension ###
 
 - `BlockJUnit4Runner` is a new implementation of the standard JUnit 4

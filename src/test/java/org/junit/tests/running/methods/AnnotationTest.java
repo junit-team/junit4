@@ -17,6 +17,8 @@ import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 public class AnnotationTest extends TestCase {
 	static boolean run;
@@ -35,6 +37,19 @@ public class AnnotationTest extends TestCase {
 	public void testAnnotatedMethod() throws Exception {
 		JUnitCore runner= new JUnitCore();
 		runner.run(SimpleTest.class);
+		assertTrue(run);
+	}
+	
+	@RunWith(JUnit4.class)
+	static public class SimpleTestWithFutureProofExplicitRunner {
+		@Test public void success() {
+			run= true;
+		}
+	}
+
+	public void testAnnotatedMethodWithFutureProofExplicitRunner() throws Exception {
+		JUnitCore runner= new JUnitCore();
+		runner.run(SimpleTestWithFutureProofExplicitRunner.class);
 		assertTrue(run);
 	}
 	
