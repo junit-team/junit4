@@ -12,14 +12,13 @@
 <b><font color="#00CC00">J</font><font color="#FF0000">U</font><font color="#000000">nit
 4.5</b></h1> 
 <br>Brought to you by <a href="http://www.threeriversinstitute.org">Kent Beck</a>, Erich 
-
 Gamma, and <a href="http://david.saff.net">David Saff</a>. 
 <br>FAQ edited by <a href="http://www.clarkware.com">Mike Clark</a>. Web mastering by Erik 
 Meade.
 <br>(see also <a href="http://www.junit.org">JUnit.org</a>)
 
 <hr WIDTH="100%">
-<br>[old date] 18 July 2007
+<br>8 August 2008
 <p>JUnit is a simple framework to write repeatable tests. It is an instance
 of the xUnit architecture for unit testing frameworks.
 <ul>
@@ -43,6 +42,95 @@ of the xUnit architecture for unit testing frameworks.
 
 <a NAME="Summary of">
 <h2>Summary of Changes in version 4.5</h2>
+
+<h3>Installation</h3>
+
+<ul>
+<li>We are releasing <code>junit-4.5.jar</code>, which contains all the classes
+necessary to run JUnit, and <code>junit-dep-4.5.jar</code>, which leaves out
+hamcrest classes, for developers who already use hamcrest outside of
+JUnit.</li>
+</ul>
+
+<h3>Basic JUnit operation</h3>
+
+<ul>
+<li><p>JUnitCore now more often exits with the correct exit code (0 for
+success, 1 for failure)</p></li>
+<li><p>Badly formed test classes (exceptions in constructors, classes
+without tests, multiple constructors, Suite without @SuiteClasses)
+produce more helpful error messages</p></li>
+<li><p>Test classes whose only test methods are inherited from superclasses
+now run.</p></li>
+<li><p>Optimization to annotation processing can cut JUnit overhead by more than half
+on large test classes, especially when using Theories.  [Bug 1796847]</p></li>
+<li><p>A failing assumption in a constructor ignores the class</p></li>
+<li><p>Correct results when comparing the string "null" with potentially
+null values.  [Bug 1857283]</p></li>
+<li><p>Annotating a class with <code>@RunWith(JUnit4.class)</code> will always invoke the
+default JUnit 4 runner in the current version of JUnit.  This default changed
+from <code>JUnit4ClassRunner</code> in 4.4 to <code>BlockJUnit4ClassRunner</code> in 4.5 (see below),
+and may change again.</p></li>
+</ul>
+
+<h3>Extension</h3>
+
+<ul>
+<li><p><code>BlockJUnit4Runner</code> is a new implementation of the standard JUnit 4
+test class functionality.  In contrast to <code>JUnit4ClassRunner</code> (the old
+implementation):</p>
+
+<ul>
+<li><p><code>BlockJUnit4Runner</code> has a much simpler implementation based on
+Statements, allowing new operations to be inserted into the
+appropriate point in the execution flow.</p></li>
+<li><p><code>BlockJUnit4Runner</code> is published, and extension and reuse are
+encouraged, whereas <code>JUnit4ClassRunner</code> was in an internal package,
+and is now deprecated.</p></li>
+</ul></li>
+<li><p><code>ParentRunner</code> is a base class for runners that iterate over
+a list of "children", each an object representing a test or suite to run.
+<code>ParentRunner</code> provides filtering, sorting, <code>@BeforeClass</code>, <code>@AfterClass</code>,
+and method validation to subclasses.</p></li>
+<li><p><code>TestClass</code> wraps a class to be run, providing efficient, repeated access
+to all methods with a given annotation.</p></li>
+<li><p>The new <code>RunnerBuilder</code> API allows extending the behavior of
+Suite-like custom runners.</p></li>
+<li><p><code>AssumptionViolatedException.toString()</code> is more informative</p></li>
+</ul>
+
+<h3>Extra Runners</h3>
+
+<ul>
+<li><p><code>Parameterized.eachOne()</code> has been removed</p></li>
+<li><p>New runner <code>Enclosed</code> runs all static inner classes of an outer class.</p></li>
+</ul>
+
+<h3>Theories</h3>
+
+<ul>
+<li><p><code>@Before</code> and <code>@After</code> methods are run before and after each set of attempted parameters
+on a Theory, and each set of parameters is run on a new instance of the test class.</p></li>
+<li><p>Exposed API's <code>ParameterSignature.getType()</code> and <code>ParameterSignature.getAnnotations()</code></p></li>
+<li><p>An array of data points can be introduced by a field or method
+marked with the new annotation <code>@DataPoints</code></p></li>
+<li><p>The Theories custom runner has been refactored to make it faster and
+easier to extend</p></li>
+</ul>
+
+<h3>Development</h3>
+
+<ul>
+<li><p>Source has been split into directories <code>src/main/java</code> and
+<code>src/test/java</code>, making it easier to exclude tests from builds, and
+making JUnit more maven-friendly</p></li>
+<li><p>Test classes in <code>org.junit.tests</code> have been organized into
+subpackages, hopefully making finding tests easier.</p></li>
+<li><p><code>ResultMatchers</code> has more informative descriptions.</p></li>
+<li><p><code>TestSystem</code> allows testing return codes and other system-level interactions.</p></li>
+</ul>
+
+<h2>Summary of Changes in version 4.4</h2>
 
 <p>JUnit is designed to efficiently capture developers' intentions about
 their code, and quickly check their code matches those intentions.
