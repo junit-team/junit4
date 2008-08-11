@@ -4,13 +4,13 @@
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <meta name="GENERATOR" content="Microsoft FrontPage 4.0">
    <meta name="Author" content="Erich Gamma, Kent Beck, and David Saff">
-   <title>JUnit 4.5</title>
+   <title>JUnit 4.6</title>
 </head>
 <body>
 
 <h1>
 <b><font color="#00CC00">J</font><font color="#FF0000">U</font><font color="#000000">nit
-4.5</b></h1> 
+4.6</b></h1> 
 <br>Brought to you by <a href="http://www.threeriversinstitute.org">Kent Beck</a>, Erich 
 Gamma, and <a href="http://david.saff.net">David Saff</a>. 
 <br>FAQ edited by <a href="http://www.clarkware.com">Mike Clark</a>. Web mastering by Erik 
@@ -18,7 +18,7 @@ Meade.
 <br>(see also <a href="http://www.junit.org">JUnit.org</a>)
 
 <hr WIDTH="100%">
-<br>8 August 2008
+<br>[old date] 8 August 2008
 <p>JUnit is a simple framework to write repeatable tests. It is an instance
 of the xUnit architecture for unit testing frameworks.
 <ul>
@@ -41,13 +41,13 @@ of the xUnit architecture for unit testing frameworks.
 </ul>
 
 <a NAME="Summary of">
-<h2>Summary of Changes in version 4.5</h2>
+<h2>Summary of Changes in version 4.6</h2>
 
 <h3>Installation</h3>
 
 <ul>
-<li>We are releasing <code>junit-4.5.jar</code>, which contains all the classes
-necessary to run JUnit, and <code>junit-dep-4.5.jar</code>, which leaves out
+<li>We are releasing <code>junit-4.6.jar</code>, which contains all the classes
+necessary to run JUnit, and <code>junit-dep-4.6.jar</code>, which leaves out
 hamcrest classes, for developers who already use hamcrest outside of
 JUnit.</li>
 </ul>
@@ -451,20 +451,20 @@ starting their name with "test", you now tag test methods with the @Test annotat
 </tr>
 
 <tr>
-<td><tt>junit-4.5.jar</tt></td>
+<td><tt>junit-4.6.jar</tt></td>
 
 <td>a jar file with the JUnit framework, bundled with the hamcrest-core-1.1 dependency.</td>
 </tr>
 
 <tr>
-<td><tt>junit-dep-4.5.jar</tt></td>
+<td><tt>junit-dep-4.6.jar</tt></td>
 
 <td>a jar file with the JUnit framework, unbundled from any external dependencies.  
 Choosing to use this jar developers will need to also provide in the classpath a compatible version of external dependencies (ie hamcrest-core-1.1+)</td>
 </tr>
 
 <tr>
-<td><tt>junit-4.5-src.jar</tt></td>
+<td><tt>junit-4.6-src.jar</tt></td>
 
 <td>a jar file with the source code of the JUnit framework</td>
 </tr>
@@ -505,20 +505,20 @@ Choosing to use this jar developers will need to also provide in the classpath a
 Below are the installation steps for installing JUnit:
 <ol>
 <li>
-unzip the junit4.5.zip file</li>
+unzip the junit4.6.zip file</li>
 
 <li>
-add<i> </i><b>junit-4.5.jar</b> to the CLASSPATH. For example: 
-<tt> set classpath=%classpath%;INSTALL_DIR\junit-4.5.jar;INSTALL_DIR</tt></li>
+add<i> </i><b>junit-4.6.jar</b> to the CLASSPATH. For example: 
+<tt> set classpath=%classpath%;INSTALL_DIR\junit-4.6.jar;INSTALL_DIR</tt></li>
 
 <li>
 test the installation by running <tt>java org.junit.runner.JUnitCore org.junit.tests.AllTests.</tt></li>
 
 <br><b><font color="#FF0000">Notice</font></b>: that the tests are not
-contained in the junit-4.5.jar but in the installation directory directly.
+contained in the junit-4.6.jar but in the installation directory directly.
 Therefore make sure that the installation directory is on the class path
 </ol>
-<b><font color="#FF0000">Important</font></b>: don't install junit-4.5.jar
+<b><font color="#FF0000">Important</font></b>: don't install junit-4.6.jar
 into the extension directory of your JDK installation. If you do so the
 test class on the files system will not be found.
 <h2>

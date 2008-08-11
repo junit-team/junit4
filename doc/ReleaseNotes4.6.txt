@@ -1,0 +1,6 @@
+## Summary of Changes in version 4.6 ##
+
+### Documentation ###
+
+- A couple classes and packages that once had empty javadoc have been
+  doc'ed.
