@@ -100,11 +100,19 @@ you'd like. Add as many test methods (annotated with @Test) as you'd like.
 How do you run your tests and collect their results?
 <p>Once you have tests, you'll want to run them. JUnit provides tools
 to define the suite to be run and to display its results. To run tests and see the
-results on the console, run:
+results on the console, run this from a Java program:
 <blockquote>
-<pre><tt>org.junit.runner.JUnitCore.runClasses(TestClass1.class, ...);&nbsp;
-</tt></pre>
+<pre>
+org.junit.runner.JUnitCore.runClasses(TestClass1.class, ...);
+</pre>
 </blockquote>
+or this from the command line, with both your test class and junit on the classpath:
+<blockquote>
+<pre>
+java org.junit.runner.JUnitCore TestClass1.class [...other test classes...]
+</pre>
+</blockquote>
+
 You make your JUnit 4 test classes accessible to a TestRunner designed to work with earlier versions of JUnit,
 declare a static method <i>suite</i>
 that returns a test.

@@ -31,3 +31,7 @@
 2008 Aug 1
 	Nat Pryce: Found defect in treatment of validation errors from custom 
 	           subclasses of the legacy JUnit4ClassRunner.
+	           
+2008 Aug 18
+	Nir Soffer: Suggested adding to the cookbook information about running
+				running JUnit from the command line.

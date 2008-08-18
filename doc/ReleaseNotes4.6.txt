@@ -4,3 +4,5 @@
 
 - A couple classes and packages that once had empty javadoc have been
   doc'ed.
+  
+- Added how to run JUnit from the command line to the cookbook.
