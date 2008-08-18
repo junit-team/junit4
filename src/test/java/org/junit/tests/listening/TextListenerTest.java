@@ -1,8 +1,5 @@
 package org.junit.tests.listening;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assume.assumeThat;
-
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
