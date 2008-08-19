@@ -6,6 +6,7 @@ import java.util.List;
 @Deprecated
 /**
  * Use the published version: {@link org.junit.runners.InitializationError}
+ * This may disappear as soon as 1 April 2009
  */
 public class InitializationError extends Exception {
 	private static final long serialVersionUID= 1L;

@@ -23,6 +23,8 @@ import org.junit.runners.BlockJUnit4ClassRunner;
  * @deprecated Included for backwards compatibility with JUnit 4.4. Will be
  *             removed in the next release. Please use
  *             {@link BlockJUnit4ClassRunner} in place of {@link JUnit4ClassRunner}.
+ *             
+ *             This may disappear as soon as 1 April 2009
  */
 @Deprecated
 public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
