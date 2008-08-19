@@ -35,3 +35,6 @@
 2008 Aug 18
 	Nir Soffer: Suggested adding to the cookbook information about running
 				running JUnit from the command line.
+				           
+2008 Aug 19
+	Jack Woehr: Discovered build.xml was missing from junit-4.x.zip

@@ -1,8 +1,14 @@
 ## Summary of Changes in version 4.6 ##
 
+### Logging ###
+
+- JUnit can now produce and parse its own result format.  [include more here]
+
 ### Documentation ###
 
 - A couple classes and packages that once had empty javadoc have been
   doc'ed.
   
 - Added how to run JUnit from the command line to the cookbook.
+
+- junit-4.x.zip now contains build.xml

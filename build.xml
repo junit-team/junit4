@@ -134,6 +134,7 @@
 		</copy>
 		<copy file="README.html" tofile="${dist}/README.html" />
 		<copy file="cpl-v10.html" tofile="${dist}/cpl-v10.html" />
+		<copy file="build.xml" tofile="${dist}/build.xml" />
 	</target>
 
 	<target name="dist" depends="populate-dist">
