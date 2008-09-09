@@ -34,6 +34,7 @@ public class ErrorReportingRunner extends Runner {
 			runCause(each, notifier);
 	}
 
+	@SuppressWarnings("deprecation")
 	private List<Throwable> getCauses(Throwable cause) {
 		if (cause instanceof InvocationTargetException)
 			return getCauses(cause.getCause());

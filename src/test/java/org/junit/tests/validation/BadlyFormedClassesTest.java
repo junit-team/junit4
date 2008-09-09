@@ -9,6 +9,7 @@ import org.junit.runner.Result;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.Failure;
 
+@SuppressWarnings("deprecation")
 public class BadlyFormedClassesTest {
 	public static class FaultyConstructor {
 		public FaultyConstructor() throws Exception {
