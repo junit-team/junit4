@@ -5,7 +5,7 @@
 	<property name="src" value="src/main/java" />
 	<property name="target" location="target" />
 	<property name="bin" location="${target}/main" />
-	<property name="version" value="4.6-SNAPSHOT-${DSTAMP}-${TSTAMP}" />
+	<property name="version" value="4.5" />
 	<property name="dist" value="junit${version}" />
 	<property name="versionfile" value="${src}/junit/runner/Version.java" />
 	<property name="zipfile"  value="${dist}/${dist}.zip" />
