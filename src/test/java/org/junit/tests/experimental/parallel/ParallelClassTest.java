@@ -33,7 +33,7 @@ public class ParallelClassTest {
 	// TODO we need to push parallel execution down through suites (i.e. run a Suite with a parallel executioner and you get parallel execution)
 	@Test(timeout=1500) public void testsRunInParallel() {
 		long start= System.currentTimeMillis();
-		Result result= JUnitCore.runClasses(ParallelExecutioner.classes(), Example1.class, Example2.class);
+		Result result= JUnitCore.runClasses(ParallelComputer.classes(), Example1.class, Example2.class);
 		assertTrue(result.wasSuccessful());
 		long end= System.currentTimeMillis();
 		assertThat(end - start, greaterThan(999)); // Overhead could be less than half a millisecond

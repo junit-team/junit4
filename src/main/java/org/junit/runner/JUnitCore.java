@@ -16,7 +16,7 @@ import org.junit.runner.notification.RunNotifier;
  * <code>JUnitCore</code> is a facade for running tests. It supports running JUnit 4 tests, 
  * JUnit 3.8.x tests, and mixtures. To run tests from the command line, run 
  * <code>java org.junit.runner.JUnitCore TestClass1 TestClass2 ...</code>.
- * For one-shot test runs, use the static method {@link #runClasses(Executioner, Class[])}. 
+ * For one-shot test runs, use the static method {@link #runClasses(Class[])}. 
  * If you want to add special listeners,
  * create an instance of {@link org.junit.runner.JUnitCore} first and use it to run the tests.
  * 
@@ -59,23 +59,22 @@ public class JUnitCore {
 	 * Run the tests contained in <code>classes</code>. Write feedback while the tests
 	 * are running and write stack traces for all failed tests after all tests complete. This is
 	 * similar to {@link #main(String[])}, but intended to be used programmatically.
-	 * @param asdfasdf TODO
+	 * @param computer TODO
 	 * @param classes Classes in which to find tests
 	 * @return a {@link Result} describing the details of the test run and the failed tests.
 	 */
-	public static Result runClasses(Executioner asdfasdf, Class<?>... classes) {
-		return new JUnitCore().run(asdfasdf, classes);
+	public static Result runClasses(Computer computer, Class<?>... classes) {
+		return new JUnitCore().run(computer, classes);
 	}
 	/**
 	 * Run the tests contained in <code>classes</code>. Write feedback while the tests
 	 * are running and write stack traces for all failed tests after all tests complete. This is
 	 * similar to {@link #main(String[])}, but intended to be used programmatically.
-	 * @param asdfasdf TODO
 	 * @param classes Classes in which to find tests
 	 * @return a {@link Result} describing the details of the test run and the failed tests.
 	 */
 	public static Result runClasses(Class<?>... classes) {
-		return new JUnitCore().run(new Executioner(), classes);
+		return new JUnitCore().run(defaultComputer(), classes);
 	}
 	
 	/**
@@ -98,7 +97,7 @@ public class JUnitCore {
 		RunListener listener= new TextListener(system);
 		addListener(listener);
 		// TODO too many Executioner creations
-		Result result= run(new Executioner(), classes.toArray(new Class[0]));
+		Result result= run(classes.toArray(new Class[0]));
 		for (Failure each : missingClasses)
 			result.getFailures().add(each);
 		return result;
@@ -113,22 +112,21 @@ public class JUnitCore {
 	
 	/**
 	 * Run all the tests in <code>classes</code>.
-	 * @param asdfasdf TODO
 	 * @param classes the classes containing tests
 	 * @return a {@link Result} describing the details of the test run and the failed tests.
 	 */
 	public Result run(Class<?>... classes) {
-		return run(Request.classes(new Executioner(), classes));
+		return run(Request.classes(defaultComputer(), classes));
 	}
 
 	/**
 	 * Run all the tests in <code>classes</code>.
-	 * @param asdfasdf TODO
+	 * @param computer TODO
 	 * @param classes the classes containing tests
 	 * @return a {@link Result} describing the details of the test run and the failed tests.
 	 */
-	public Result run(Executioner asdfasdf, Class<?>... classes) {
-		return run(Request.classes(asdfasdf, classes));
+	public Result run(Computer computer, Class<?>... classes) {
+		return run(Request.classes(computer, classes));
 	}
 
 	/**
@@ -187,4 +185,9 @@ public class JUnitCore {
 	public void removeListener(RunListener listener) {
 		fNotifier.removeListener(listener);
 	}
+	
+	private static Computer defaultComputer() {
+		return new Computer();
+	}
+
 }

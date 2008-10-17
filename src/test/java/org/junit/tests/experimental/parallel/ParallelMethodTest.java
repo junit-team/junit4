@@ -22,7 +22,7 @@ public class ParallelMethodTest {
 	
 	@Test/*(timeout=1500)*/ public void testsRunInParallel() {
 		long start= System.currentTimeMillis();
-		Result result= JUnitCore.runClasses(ParallelExecutioner.methods(), Example.class);
+		Result result= JUnitCore.runClasses(ParallelComputer.methods(), Example.class);
 		assertTrue(result.wasSuccessful());
 		long end= System.currentTimeMillis();
 		assertThat(end - start, greaterThan(1000));

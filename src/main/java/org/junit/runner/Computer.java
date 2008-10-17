@@ -4,7 +4,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
 
-public class Executioner {
+public class Computer {
 
 	public Suite getSuite(final RunnerBuilder builder,
 			Class<?>[] classes) throws InitializationError {

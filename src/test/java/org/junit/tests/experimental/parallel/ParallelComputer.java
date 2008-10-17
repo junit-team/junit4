@@ -8,7 +8,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.runner.Executioner;
+import org.junit.runner.Computer;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
@@ -17,17 +17,17 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
 
-public class ParallelExecutioner extends Executioner {
+public class ParallelComputer extends Computer {
 	private final boolean fClasses;
 	private final boolean fMethods;
 
-	public ParallelExecutioner(boolean classes, boolean methods) {
+	public ParallelComputer(boolean classes, boolean methods) {
 		fClasses= classes;
 		fMethods= methods;
 	}
 
-	public static Executioner classes() {
-		return new ParallelExecutioner(true, false);
+	public static Computer classes() {
+		return new ParallelComputer(true, false);
 	}
 	
 //TODO extract commonality from ParallelSuite and ParallelRunner
@@ -92,7 +92,7 @@ public class ParallelExecutioner extends Executioner {
 			super.run(notifier);
 			for (Future<Object> each : fResults)
 				try {
-					each.get(2000, TimeUnit.MILLISECONDS);
+					each.get(2000, TimeUnit.MILLISECONDS); // TODO what should this really be?
 				} catch (Exception e) {
 					e.printStackTrace();
 				} 
@@ -102,18 +102,19 @@ public class ParallelExecutioner extends Executioner {
 	@Override
 	public Suite getSuite(RunnerBuilder builder, java.lang.Class<?>[] classes) throws InitializationError {
 		return fClasses
-			? new ParallelExecutioner.ParallelSuite(builder, classes)
+			? new ParallelSuite(builder, classes)
 			: super.getSuite(builder, classes);
 	}
 	
 	@Override
 	protected Runner getRunner(RunnerBuilder builder, Class<?> testClass)
 			throws Throwable {
-		// TODO: We shouldn't get parallel methods if we don't ask.
-		return new ParallelRunner(testClass);
+		return fMethods
+			? new ParallelRunner(testClass)
+			: super.getRunner(builder, testClass);
 	}
 
-	public static Executioner methods() {
-		return new ParallelExecutioner(false, true);
+	public static Computer methods() {
+		return new ParallelComputer(false, true);
 	}
 }

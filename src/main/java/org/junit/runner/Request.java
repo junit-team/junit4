@@ -60,14 +60,14 @@ public abstract class Request {
 	/**
 	 * Create a <code>Request</code> that, when processed, will run all the tests
 	 * in a set of classes.
-	 * @param asdfasdf TODO
+	 * @param computer TODO
 	 * @param classes the classes containing the tests
 	 * @return a <code>Request</code> that will cause all tests in the classes to be run
 	 */
-	public static Request classes(Executioner asdfasdf, Class<?>... classes) {
+	public static Request classes(Computer computer, Class<?>... classes) {
 		try {
 			AllDefaultPossibilitiesBuilder builder= new AllDefaultPossibilitiesBuilder(true);
-			Suite suite= asdfasdf.getSuite(builder, classes);
+			Suite suite= computer.getSuite(builder, classes);
 			return runner(suite);
 		} catch (InitializationError e) {
 			throw new RuntimeException(
