@@ -30,7 +30,7 @@ public class MaxStarterTest {
 		assertEquals(2, things.size());
 	}
 	
-	@Test public void testsNotYetRunHavePriority() {
+	@Test public void preferNewTests() {
 		Request one= Request.method(TwoTests.class, "succeed");
 		MaxCore max= new MaxCore();
 		max.run(one);
@@ -41,16 +41,17 @@ public class MaxStarterTest {
 		assertEquals(2, things.size());
 	}
 	
-	@Test public void newTestsHavePriorityOverTestsThatFailed() {
-	//TODO work this out later
+	// This covers a seemingly-unlikely case, where you had a test that failed on the
+	// last run and you also introduced new tests. In such a case it pretty much doesn't matter
+	// which order they run, you just want them both to be early in the sequence
+	@Test public void preferNewTestsOverTestsThatFailed() {
 		Request one= Request.method(TwoTests.class, "dontSucceed");
 		MaxCore max= new MaxCore();
 		max.run(one);
 		Request two= Request.aClass(TwoTests.class);
 		List<Description> things= max.sort(two);
 		Description succeed= Description.createTestDescription(TwoTests.class, "succeed");
-		Description dontSucceed= Description.createTestDescription(TwoTests.class, "dontSucceed");
-		assertEquals(dontSucceed, things.get(0));
+		assertEquals(succeed, things.get(0));
 		assertEquals(2, things.size());
 	}
 	
@@ -58,9 +59,9 @@ public class MaxStarterTest {
 		Request request= Request.aClass(TwoTests.class);
 		MaxCore max= new MaxCore();
 		max.run(request);
-		Odds thing= max.getSpreads(request).get(1);
-		assertEquals(0.0, thing.getCertainty(), 0.001); // TODO not right yet
-		assertEquals(Description.createTestDescription(TwoTests.class, "succeed"), thing.getDescription());
+		List<Description> tests= max.sort(request);
+		Description dontSucceed= Description.createTestDescription(TwoTests.class, "dontSucceed");
+		assertEquals(dontSucceed, tests.get(0));
 	}
 	
 	public static class TwoUnEqualTests {

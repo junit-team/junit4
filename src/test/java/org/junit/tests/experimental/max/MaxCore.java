@@ -10,51 +10,13 @@ import java.util.Map;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
-import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 
 public class MaxCore {
-	private List<Failure> fFailures= new ArrayList<Failure>();
-	// private Map<Description, Long> fTimes= new HashMap<Description, Long>();
-	protected Map<Description, Long> durations= new HashMap<Description, Long>();
+	protected Map<Description, Long> fDurations= new HashMap<Description, Long>();
+	protected Map<Description, Long> fFailures= new HashMap<Description, Long>();
 	
-	public List<Odds> getSpreads(Request request) {
-		List<Description> leaves= findLeaves(request);
-		Collections.sort(leaves, failureComparator());
-		List<Odds> results= new ArrayList<Odds>();
-		for (Description leaf : leaves)
-			results.add(new Odds(leaf, 0.0));
-		return results;
-	}
-
-	private List<Description> findLeaves(Request request) {
-		return findLeaves(request.getRunner().getDescription());
-	}
-
-	private Comparator<? super Description> failureComparator() { // TODO also take runtime into account
-		return new Comparator<Description>() {
-			public int compare(Description o1, Description o2) {
-				// TODO: wrong (Failures are not Descriptions)
-				return fFailures.contains(o1) ? -1 : 1;
-			}
-		};
-	}
-
-	private List<Description> findLeaves(Description description) {
-		List<Description> results= new ArrayList<Description>();
-		findLeaves(description, results);
-		return results;
-	}
-
-	private void findLeaves(Description description, List<Description> results) {
-		if (description.getChildren().isEmpty())
-			results.add(description);
-		else
-			for (Description each : description.getChildren())
-				findLeaves(each, results);
-	}
-
 	public void run(Request request) {
 		JUnitCore core= new JUnitCore();
 		core.addListener(new RunListener() {
@@ -62,39 +24,68 @@ public class MaxCore {
 
 			@Override
 			public void testStarted(Description description) throws Exception {
-				starts.put(description, System.nanoTime());
+				starts.put(description, System.nanoTime()); // Get most accurate possible time
 			}
 			
 			@Override
 			public void testFinished(Description description) throws Exception {
 				long end= System.nanoTime();
 				long start= starts.get(description);
-				durations.put(description, end - start);
+				fDurations.put(description, end - start);
 			}
 			
 			@Override
 			public void testFailure(Failure failure) throws Exception {
-				throw new UnsupportedOperationException();
+				long end= System.currentTimeMillis(); // This needs to be comparable across tests
+				fFailures.put(failure.getDescription(), end);
 			}
 		});
-		Result result= core.run(request);
-		fFailures= result.getFailures();
+		core.run(request);
 	}
 
 	public List<Description> sort(Request request) {
 		List<Description> tests= findLeaves(request);
-		Collections.sort(tests, new Comparator<Description>() {
-			public int compare(Description o1, Description o2) {
-				return getDuration(o1).compareTo(getDuration(o2));
-			}
-
-			private Long getDuration(Description o1) {
-				Long result= durations.get(o1);
-				if (result == null) result= 0L;
-				return result;
-			}
-		});
+		Collections.sort(tests, new TestComparator());
 		return tests;
 	}
 
+	private class TestComparator implements Comparator<Description> {
+		public int compare(Description o1, Description o2) {
+			// Always prefer new tests
+			if (isNew(o1))
+				return -1;
+			if (isNew(o2))
+				return 1;
+			// Then most recently failed first
+			int result= getFailure(o2).compareTo(getFailure(o1)); 
+			return result != 0
+				? result
+				// Then shorter tests first
+				: fDurations.get(o1).compareTo(fDurations.get(o2));
+		}
+	
+		private boolean isNew(Description o1) {
+			return ! fDurations.containsKey(o1);
+		}
+	
+		private Long getFailure(Description o1) {
+			Long result= fFailures.get(o1);
+			if (result == null) result= 0L; // 0 = "never failed (that I know about)"
+			return result;
+		}
+	}
+
+	private List<Description> findLeaves(Request request) {
+		List<Description> results= new ArrayList<Description>();
+		findLeaves(request.getRunner().getDescription(), results);
+		return results;
+	}
+	
+	private void findLeaves(Description description, List<Description> results) {
+		if (description.getChildren().isEmpty())
+			results.add(description);
+		else
+			for (Description each : description.getChildren())
+				findLeaves(each, results);
+	}
 }
