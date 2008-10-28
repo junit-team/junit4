@@ -15,9 +15,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.internal.requests.SortingRequest;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
+import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 
@@ -70,12 +72,15 @@ public class MaxCore implements Serializable {
 	}
 
 	public void run(Request request) {
-		JUnitCore core= new JUnitCore();
+		run(request, new JUnitCore());
+	}
+
+	public Result run(Request request, JUnitCore core) {
 		core.addListener(new RunListener() {
 			private Map<Description, Long> starts= new HashMap<Description, Long>();
 
 			@Override
-				public void testStarted(Description description) throws Exception {
+			public void testStarted(Description description) throws Exception {
 				starts.put(description, System.nanoTime()); // Get most accurate possible time
 			}
 			
@@ -92,16 +97,26 @@ public class MaxCore implements Serializable {
 				putTestFailureTimestamp(failure.getDescription(), end);
 			}
 		});
-		core.run(request);
-		try {
-			save();
-		} catch (FileNotFoundException e) {
-			// TODO
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO
-			e.printStackTrace();
+		try { 
+			return core.run(sortRequest(request).getRunner());
+		} finally {
+			try {
+				save();
+			} catch (FileNotFoundException e) {
+				// TODO
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO
+				e.printStackTrace();
+			}
 		}
+	}
+
+	private Request sortRequest(Request request) {
+		if (request instanceof SortingRequest) { // We'll pay big karma points for this
+			return request;
+		}
+		return request.sortWith(new TestComparator());
 	}
 
 	private void save() throws FileNotFoundException, IOException {

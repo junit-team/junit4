@@ -11,6 +11,8 @@ import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.tests.experimental.max.CouldNotReadCoreException;
+import org.junit.tests.experimental.max.MaxCore;
 
 /**
  * <code>JUnitCore</code> is a facade for running tests. It supports running JUnit 4 tests, 
@@ -135,15 +137,14 @@ public class JUnitCore {
 	 * @return a {@link Result} describing the details of the test run and the failed tests.
 	 */
 	public Result run(Request request) {
-		return run(request.getRunner());
-//		MaxCore max= null;
-//		try {
-//			max= MaxCore.forFolder("defaultMaxCore");
-//		} catch (CouldNotReadCoreException e) {
-//			e.printStackTrace();
-//		}
-//		max.run(request);
-//		return null;
+		//return run(request.getRunner());
+		MaxCore max= null;
+		try {
+			max= MaxCore.forFolder("defaultMaxCore");
+		} catch (CouldNotReadCoreException e) {
+			e.printStackTrace();
+		}
+		return max.run(request, this);
 	}
 
 	/**
