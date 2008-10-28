@@ -28,7 +28,7 @@ import org.junit.tests.experimental.max.MaxCore;
  */
 public class JUnitCore {
 	
-	private RunNotifier fNotifier;
+	RunNotifier fNotifier;
 
 	/**
 	 * Create a new <code>JUnitCore</code> to run tests.

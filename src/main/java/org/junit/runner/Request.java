@@ -8,8 +8,11 @@ import org.junit.internal.requests.FilterRequest;
 import org.junit.internal.requests.SortingRequest;
 import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.manipulation.Filter;
+import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
+import org.junit.tests.experimental.max.CouldNotReadCoreException;
+import org.junit.tests.experimental.max.MaxCore;
 
 /**
  * <p>A <code>Request</code> is an abstract description of tests to be run. Older versions of 
@@ -43,8 +46,37 @@ public abstract class Request {
 	 * @param clazz the class containing the tests
 	 * @return a <code>Request</code> that will cause all tests in the class to be run
 	 */
+	private static boolean firstTime= true;
 	public static Request aClass(Class<?> clazz) {
-		return new ClassRequest(clazz);
+		if (firstTime) {
+			firstTime= false;
+			final ClassRequest delegate= new ClassRequest(clazz);
+			return new Request() {
+				@Override
+				public Runner getRunner() {
+					return new Runner() {
+					
+						@Override
+						public void run(RunNotifier notifier) {
+							JUnitCore core= new JUnitCore();
+							core.fNotifier= notifier;
+							try {
+								MaxCore.forFolder("defaultMaxCore").run(delegate, core);
+							} catch (CouldNotReadCoreException e) {
+								e.printStackTrace();
+							}
+						}
+					
+						@Override
+						public Description getDescription() {
+							return delegate.getRunner().getDescription();
+						}
+					};
+				}
+			};
+		}
+		else
+			return new ClassRequest(clazz);
 	}
 
 	/**
