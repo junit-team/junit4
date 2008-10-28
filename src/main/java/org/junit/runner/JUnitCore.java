@@ -136,6 +136,14 @@ public class JUnitCore {
 	 */
 	public Result run(Request request) {
 		return run(request.getRunner());
+//		MaxCore max= null;
+//		try {
+//			max= MaxCore.forFolder("defaultMaxCore");
+//		} catch (CouldNotReadCoreException e) {
+//			e.printStackTrace();
+//		}
+//		max.run(request);
+//		return null;
 	}
 
 	/**
