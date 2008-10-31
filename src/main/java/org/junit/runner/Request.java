@@ -2,6 +2,8 @@ package org.junit.runner;
 
 import java.util.Comparator;
 
+import org.junit.experimental.max.CouldNotReadCoreException;
+import org.junit.experimental.max.MaxCore;
 import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
 import org.junit.internal.requests.ClassRequest;
 import org.junit.internal.requests.FilterRequest;
@@ -11,8 +13,6 @@ import org.junit.runner.manipulation.Filter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
-import org.junit.tests.experimental.max.CouldNotReadCoreException;
-import org.junit.tests.experimental.max.MaxCore;
 
 /**
  * <p>A <code>Request</code> is an abstract description of tests to be run. Older versions of 
@@ -46,7 +46,7 @@ public abstract class Request {
 	 * @param clazz the class containing the tests
 	 * @return a <code>Request</code> that will cause all tests in the class to be run
 	 */
-	private static boolean firstTime= true;
+	private static boolean firstTime= false; // Don't try to trick Eclipse with what we check in
 	public static Request aClass(Class<?> clazz) {
 		if (firstTime) {
 			firstTime= false;

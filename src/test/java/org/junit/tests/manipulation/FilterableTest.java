@@ -58,6 +58,5 @@ public class FilterableTest {
 	public void testFilterInRunnerConstructor() {
 		Result result= JUnitCore.runClasses(FilteredTest.class);
 		assertTrue(result.wasSuccessful());
-		throw new Error();
 	}
 }

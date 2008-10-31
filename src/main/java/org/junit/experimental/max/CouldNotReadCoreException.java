@@ -1,4 +1,4 @@
-package org.junit.tests.experimental.max;
+package org.junit.experimental.max;
 
 public class CouldNotReadCoreException extends Exception {
 	private static final long serialVersionUID= 1L;

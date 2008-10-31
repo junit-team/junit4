@@ -1,4 +1,4 @@
-package org.junit.tests.experimental.max;
+package org.junit.experimental.max;
 
 import java.io.File;
 import java.io.FileInputStream;

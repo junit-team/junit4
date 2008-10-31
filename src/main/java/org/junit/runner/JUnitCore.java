@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import junit.runner.Version;
+import org.junit.experimental.max.CouldNotReadCoreException;
+import org.junit.experimental.max.MaxCore;
 import org.junit.internal.JUnitSystem;
 import org.junit.internal.RealSystem;
 import org.junit.internal.TextListener;
@@ -11,8 +13,6 @@ import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
-import org.junit.tests.experimental.max.CouldNotReadCoreException;
-import org.junit.tests.experimental.max.MaxCore;
 
 /**
  * <code>JUnitCore</code> is a facade for running tests. It supports running JUnit 4 tests, 
