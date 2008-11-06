@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import junit.runner.Version;
-import org.junit.experimental.max.CouldNotReadCoreException;
-import org.junit.experimental.max.MaxCore;
 import org.junit.internal.JUnitSystem;
 import org.junit.internal.RealSystem;
 import org.junit.internal.TextListener;
@@ -137,14 +135,7 @@ public class JUnitCore {
 	 * @return a {@link Result} describing the details of the test run and the failed tests.
 	 */
 	public Result run(Request request) {
-		//return run(request.getRunner());
-		MaxCore max= null;
-		try {
-			max= MaxCore.forFolder("defaultMaxCore");
-		} catch (CouldNotReadCoreException e) {
-			e.printStackTrace();
-		}
-		return max.run(request, this);
+		return run(request.getRunner());
 	}
 
 	/**

@@ -14,14 +14,20 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.junit.internal.requests.SortingRequest;
+import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.Result;
+import org.junit.runner.Runner;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
+import org.junit.runners.Suite;
+import org.junit.runners.model.InitializationError;
 
 public class MaxCore implements Serializable {
 	private static final long serialVersionUID= 1L;
@@ -44,7 +50,7 @@ public class MaxCore implements Serializable {
 		try {
 			return (MaxCore) stream.readObject();
 		} catch (Exception e) {
-			throw new CouldNotReadCoreException(e);
+			throw new CouldNotReadCoreException(e); //TODO think about what we can do better here
 		} finally {
 			try {
 				stream.close();
@@ -116,7 +122,50 @@ public class MaxCore implements Serializable {
 		if (request instanceof SortingRequest) { // We'll pay big karma points for this
 			return request;
 		}
-		return request.sortWith(new TestComparator());
+		List<Description> leaves= findLeaves(request);
+		Collections.sort(leaves, new TestComparator());
+		return constructLeafRequest(leaves);
+	}
+
+	private Request constructLeafRequest(List<Description> leaves) {
+		final List<Runner> runners = new ArrayList<Runner>();
+		for (Description each : leaves) {
+			runners.add(buildRunner(each));
+		}
+		return new Request() {
+		
+			@Override
+			public Runner getRunner() {
+				try {
+					return new Suite((Class<?>)null, runners) {
+					};
+				} catch (InitializationError e) {
+					return new ErrorReportingRunner(null, e);
+				}
+			}
+		};
+	}
+
+	private Runner buildRunner(Description description) {
+		return Request.method(parseClass(description), parseMethod(description)).getRunner();
+	}
+
+	private Class<?> parseClass(Description description) {
+		Matcher matcher= Pattern.compile("(.*)\\((.*)\\)").matcher(description.toString());
+		if (matcher.matches())
+			try {
+				return Class.forName(matcher.group(2));
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		throw new UnsupportedOperationException();
+	}
+
+	private String parseMethod(Description description) {
+		Matcher matcher= Pattern.compile("(.*)\\((.*)\\)").matcher(description.toString());
+		if (matcher.matches())
+			return matcher.group(1);
+		throw new UnsupportedOperationException();
 	}
 
 	private void save() throws FileNotFoundException, IOException {
@@ -125,10 +174,8 @@ public class MaxCore implements Serializable {
 		stream.close();
 	}
 
-	public List<Description> sort(Request request) {
-		List<Description> tests= findLeaves(request);
-		Collections.sort(tests, new TestComparator());
-		return tests;
+	public List<Description> sortedLeavesForTest(Request request) {
+		return findLeaves(sortRequest(request));
 	}
 
 	private class TestComparator implements Comparator<Description> {
@@ -148,7 +195,8 @@ public class MaxCore implements Serializable {
 	
 		private Long getFailure(Description key) {
 			Long result= getFailureTimestamp(key);
-			if (result == null) result= 0L; // 0 = "never failed (that I know about)"
+			if (result == null) 
+				return 0L; // 0 = "never failed (that I know about)"
 			return result;
 		}
 	}

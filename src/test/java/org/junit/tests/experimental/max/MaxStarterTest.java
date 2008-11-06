@@ -5,16 +5,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
 import org.junit.experimental.max.CouldNotReadCoreException;
 import org.junit.experimental.max.MaxCore;
+import org.junit.runner.Computer;
 import org.junit.runner.Description;
-import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
-import org.junit.runner.notification.RunListener;
 
 
 public class MaxStarterTest {
@@ -27,7 +25,7 @@ public class MaxStarterTest {
 	@Test public void twoTestsNotRunComeBackInRandomOrder() {
 		Request request= Request.aClass(TwoTests.class);
 		MaxCore max= MaxCore.createFresh();
-		List<Description> things= max.sort(request);
+		List<Description> things= max.sortedLeavesForTest(request);
 		Description succeed= Description.createTestDescription(TwoTests.class, "succeed");
 		Description dontSucceed= Description.createTestDescription(TwoTests.class, "dontSucceed");
 		assertTrue(things.contains(succeed));
@@ -40,7 +38,7 @@ public class MaxStarterTest {
 		MaxCore max= MaxCore.createFresh();
 		max.run(one);
 		Request two= Request.aClass(TwoTests.class);
-		List<Description> things= max.sort(two);
+		List<Description> things= max.sortedLeavesForTest(two);
 		Description dontSucceed= Description.createTestDescription(TwoTests.class, "dontSucceed");
 		assertEquals(dontSucceed, things.get(0));
 		assertEquals(2, things.size());
@@ -54,7 +52,7 @@ public class MaxStarterTest {
 		MaxCore max= MaxCore.createFresh();
 		max.run(one);
 		Request two= Request.aClass(TwoTests.class);
-		List<Description> things= max.sort(two);
+		List<Description> things= max.sortedLeavesForTest(two);
 		Description succeed= Description.createTestDescription(TwoTests.class, "succeed");
 		assertEquals(succeed, things.get(0));
 		assertEquals(2, things.size());
@@ -64,10 +62,20 @@ public class MaxStarterTest {
 		Request request= Request.aClass(TwoTests.class);
 		MaxCore max= MaxCore.createFresh();
 		max.run(request);
-		List<Description> tests= max.sort(request);
+		List<Description> tests= max.sortedLeavesForTest(request);
 		Description dontSucceed= Description.createTestDescription(TwoTests.class, "dontSucceed");
 		assertEquals(dontSucceed, tests.get(0));
 	}
+	
+	@Test public void sortTestsInMultipleClasses() {
+		Request request= Request.classes(Computer.serial(), TwoTests.class, TwoTests.class);
+		MaxCore max= MaxCore.createFresh();
+		max.run(request);
+		List<Description> tests= max.sortedLeavesForTest(request);
+		Description dontSucceed= Description.createTestDescription(TwoTests.class, "dontSucceed");
+		assertEquals(dontSucceed, tests.get(0));
+		assertEquals(dontSucceed, tests.get(1));
+	}	
 	
 	public static class TwoUnEqualTests {
 		@Test public void slow() throws InterruptedException { Thread.sleep(100); }
@@ -78,7 +86,7 @@ public class MaxStarterTest {
 		Request request= Request.aClass(TwoUnEqualTests.class);
 		MaxCore max= MaxCore.createFresh();
 		max.run(request);
-		Description thing= max.sort(request).get(1);
+		Description thing= max.sortedLeavesForTest(request).get(1);
 		assertEquals(Description.createTestDescription(TwoUnEqualTests.class, "slow"), thing);
 	}
 	
@@ -87,22 +95,7 @@ public class MaxStarterTest {
 		MaxCore original= MaxCore.forFolder("folder");
 		original.run(request);
 		MaxCore reincarnation= MaxCore.forFolder("folder");
-		Description thing= reincarnation.sort(request).get(1);
-		assertEquals(Description.createTestDescription(TwoUnEqualTests.class, "slow"), thing);		
-	}
-	
-	@Test public void rememberThroughJUnitCore() {
-		new JUnitCore().run(TwoUnEqualTests.class);
-		JUnitCore core= new JUnitCore();
-		final ArrayList<Description> testOrder= new ArrayList<Description>();
-		core.addListener(new RunListener() {
-			@Override
-			public void testStarted(Description description) throws Exception {
-				testOrder.add(description);
-			}
-		});
-		core.run(TwoUnEqualTests.class);
-		assertEquals(Description.createTestDescription(TwoUnEqualTests.class, "fast"), testOrder.get(0));		
-		assertEquals(Description.createTestDescription(TwoUnEqualTests.class, "slow"), testOrder.get(1));		
+		Description thing= reincarnation.sortedLeavesForTest(request).get(1);
+		assertEquals(Description.createTestDescription(TwoUnEqualTests.class, "slow"), thing);	
 	}
 }
