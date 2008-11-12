@@ -128,7 +128,8 @@ public class AllTests {
 		MaxCore max= MaxCore.forFolder("AllTests");
 		JUnitCore core= new JUnitCore();
 		core.addListener(new TextListener(new RealSystem()));
-		max.run(Request.aClass(AllTests.class), core);
+		Request request= Request.aClass(AllTests.class);
+		max.run(request, core);
 		// TODO: not always 0
 		System.exit(0);
 	}

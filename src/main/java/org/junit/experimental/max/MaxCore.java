@@ -77,32 +77,12 @@ public class MaxCore implements Serializable {
 		this("MaxCore");
 	}
 
-	public void run(Request request) {
-		run(request, new JUnitCore());
+	public Result run(Request request) {
+		return run(request, new JUnitCore());
 	}
 
 	public Result run(Request request, JUnitCore core) {
-		core.addListener(new RunListener() {
-			private Map<Description, Long> starts= new HashMap<Description, Long>();
-
-			@Override
-			public void testStarted(Description description) throws Exception {
-				starts.put(description, System.nanoTime()); // Get most accurate possible time
-			}
-			
-			@Override
-			public void testFinished(Description description) throws Exception {
-				long end= System.nanoTime();
-				long start= starts.get(description);
-				putTestDuration(description, end - start);
-			}
-
-			@Override
-			public void testFailure(Failure failure) throws Exception {
-				long end= System.currentTimeMillis(); // This needs to be comparable across tests
-				putTestFailureTimestamp(failure.getDescription(), end);
-			}
-		});
+		core.addListener(new RememberingListener());
 		try { 
 			return core.run(sortRequest(request).getRunner());
 		} finally {
@@ -117,11 +97,18 @@ public class MaxCore implements Serializable {
 			}
 		}
 	}
+	
+	public String getFolder() {
+		return fFolder;
+	}
+
+	public void forget() {
+		new File(fFolder).delete();
+	}
 
 	private Request sortRequest(Request request) {
-		if (request instanceof SortingRequest) { // We'll pay big karma points for this
+		if (request instanceof SortingRequest) // We'll pay big karma points for this
 			return request;
-		}
 		List<Description> leaves= findLeaves(request);
 		Collections.sort(leaves, new TestComparator());
 		return constructLeafRequest(leaves);
@@ -129,16 +116,13 @@ public class MaxCore implements Serializable {
 
 	private Request constructLeafRequest(List<Description> leaves) {
 		final List<Runner> runners = new ArrayList<Runner>();
-		for (Description each : leaves) {
+		for (Description each : leaves)
 			runners.add(buildRunner(each));
-		}
 		return new Request() {
-		
 			@Override
 			public Runner getRunner() {
 				try {
-					return new Suite((Class<?>)null, runners) {
-					};
+					return new Suite((Class<?>)null, runners) {};
 				} catch (InitializationError e) {
 					return new ErrorReportingRunner(null, e);
 				}
@@ -176,6 +160,28 @@ public class MaxCore implements Serializable {
 
 	public List<Description> sortedLeavesForTest(Request request) {
 		return findLeaves(sortRequest(request));
+	}
+
+	private final class RememberingListener extends RunListener {
+		private Map<Description, Long> starts= new HashMap<Description, Long>();
+
+		@Override
+		public void testStarted(Description description) throws Exception {
+			starts.put(description, System.nanoTime()); // Get most accurate possible time
+		}
+
+		@Override
+		public void testFinished(Description description) throws Exception {
+			long end= System.nanoTime();
+			long start= starts.get(description);
+			putTestDuration(description, end - start);
+		}
+
+		@Override
+		public void testFailure(Failure failure) throws Exception {
+			long end= System.currentTimeMillis(); // This needs to be comparable across tests
+			putTestFailureTimestamp(failure.getDescription(), end);
+		}
 	}
 
 	private class TestComparator implements Comparator<Description> {
@@ -219,6 +225,10 @@ public class MaxCore implements Serializable {
 		return fFailureTimestamps.get(key.toString());
 	}
 
+	private void putTestFailureTimestamp(Description key, long end) {
+		fFailureTimestamps.put(key.toString(), end);
+	}
+
 	private boolean isNewTest(Description key) {
 		return ! fDurations.containsKey(key.toString());
 	}
@@ -229,10 +239,6 @@ public class MaxCore implements Serializable {
 	
 	private void putTestDuration(Description description, long duration) {
 		fDurations.put(description.toString(), duration);
-	}
-
-	private void putTestFailureTimestamp(Description key, long end) {
-		fFailureTimestamps.put(key.toString(), end);
 	}
 }
 
