@@ -2,15 +2,12 @@ package org.junit.runner;
 
 import java.util.Comparator;
 
-import org.junit.experimental.max.CouldNotReadCoreException;
-import org.junit.experimental.max.MaxCore;
 import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
 import org.junit.internal.requests.ClassRequest;
 import org.junit.internal.requests.FilterRequest;
 import org.junit.internal.requests.SortingRequest;
 import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.manipulation.Filter;
-import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
 
@@ -46,37 +43,8 @@ public abstract class Request {
 	 * @param clazz the class containing the tests
 	 * @return a <code>Request</code> that will cause all tests in the class to be run
 	 */
-	private static boolean firstTime= false; // Don't try to trick Eclipse with what we check in
 	public static Request aClass(Class<?> clazz) {
-		if (firstTime) {
-			firstTime= false;
-			final ClassRequest delegate= new ClassRequest(clazz);
-			return new Request() {
-				@Override
-				public Runner getRunner() {
-					return new Runner() {
-					
-						@Override
-						public void run(RunNotifier notifier) {
-							JUnitCore core= new JUnitCore();
-							core.fNotifier= notifier;
-							try {
-								MaxCore.forFolder("defaultMaxCore").run(delegate, core);
-							} catch (CouldNotReadCoreException e) {
-								e.printStackTrace();
-							}
-						}
-					
-						@Override
-						public Description getDescription() {
-							return delegate.getRunner().getDescription();
-						}
-					};
-				}
-			};
-		}
-		else
-			return new ClassRequest(clazz);
+		return new ClassRequest(clazz);
 	}
 
 	/**
@@ -151,24 +119,7 @@ public abstract class Request {
 	 * @return the filtered Request
 	 */
 	public Request filterWith(final Description desiredDescription) {
-		return filterWith(new Filter() {
-			@Override
-			public boolean shouldRun(Description description) {
-				if (description.isTest())
-					return desiredDescription.equals(description);
-				
-				// explicitly check if any children want to run
-				for (Description each : description.getChildren())
-					if (shouldRun(each))
-						return true;
-				return false;					
-			}
-
-			@Override
-			public String describe() {
-				return String.format("Method %s", desiredDescription.getDisplayName());
-			}
-		});
+		return filterWith(Filter.matchDescription(desiredDescription));
 	}
 
 	/**

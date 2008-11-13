@@ -15,11 +15,13 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.max.CouldNotReadCoreException;
 import org.junit.experimental.max.MaxCore;
+import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.runner.Computer;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.Result;
+import org.junit.runner.manipulation.Filter;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 
@@ -128,7 +130,6 @@ public class MaxStarterTest {
 		assertEquals(1, failures.size());
 	}
 	
-	@Ignore
 	@Test public void testsAreOnlyIncludedOnceWhenExpandingForSorting() throws Exception {
 		Result result= fMax.run(Request.aClass(TwoTests.class));
 		assertEquals(2, result.getRunCount());		
@@ -140,9 +141,16 @@ public class MaxStarterTest {
 	}
 	
 	@Ignore
-	@Test public void junit3TestsAreOnlyIncludedOnceWhenExpandingForSorting() throws Exception {
+	@Test public void junit3TestsAreRunOnce() throws Exception {
 		Result result= fMax.run(Request.aClass(TwoOldTests.class), new JUnitCore());
 		assertEquals(2, result.getRunCount());		
 	}
 	
+	@Test public void saffSqueezeExample() throws Exception {
+		final Description method= Description.createTestDescription(TwoOldTests.class, "testOne");
+		Filter filter= Filter.matchDescription(method);
+		JUnit38ClassRunner child= new JUnit38ClassRunner(TwoOldTests.class);
+		child.filter(filter);
+		assertEquals(1, child.testCount());
+	}
 }
