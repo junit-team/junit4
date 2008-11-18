@@ -96,7 +96,7 @@ public class JUnitCore {
 			}
 		RunListener listener= new TextListener(system);
 		addListener(listener);
-		// TODO too many Executioner creations
+		// TODO(parallel) too many Executioner creations
 		Result result= run(classes.toArray(new Class[0]));
 		for (Failure each : missingClasses)
 			result.getFailures().add(each);

@@ -18,8 +18,6 @@ import org.junit.internal.runners.statements.InvokeMethod;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
 import org.junit.runner.Description;
-import org.junit.runner.manipulation.Filterable;
-import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
@@ -43,8 +41,7 @@ import org.junit.runners.model.Statement;
  * JUnit4ClassRunner} was in an internal package, and is now deprecated.
  * </ul>
  */
-public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
-		implements Filterable, Sortable {
+public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 
 	/**
 	 * Creates a BlockJUnit4ClassRunner to run {@code klass}
@@ -198,7 +195,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod>
 	 * and superclasses before any of the previous steps; if any throws an
 	 * Exception, stop execution and pass the exception on.
 	 * <li>ALWAYS run all non-overridden {@code @After} methods on this class
-	 * and superclasses before any of the previous steps; all After methods are
+	 * and superclasses after any of the previous steps; all After methods are
 	 * always executed: exceptions thrown by previous steps are combined, if
 	 * necessary, with exceptions from After methods into a
 	 * {@link MultipleFailureException}.

@@ -150,7 +150,12 @@ public class TimeoutTest {
 		static boolean afterWasCalled= false;
 		
 		@Test(timeout=1) public void test() {
-			for(;;);
+			for(;;)
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e) {
+					// ok, tests are over
+				}
 		}
 		
 		@After public void after() {

@@ -258,7 +258,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 			throw new InitializationError(errors);
 	}
 
-	private List<T> getFilteredChildren() {
+	protected List<T> getFilteredChildren() {
 		ArrayList<T> filtered= new ArrayList<T>();
 		for (T each : getChildren())
 			if (shouldRun(each))

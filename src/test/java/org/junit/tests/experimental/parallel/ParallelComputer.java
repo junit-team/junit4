@@ -30,7 +30,7 @@ public class ParallelComputer extends Computer {
 		return new ParallelComputer(true, false);
 	}
 	
-//TODO extract commonality from ParallelSuite and ParallelRunner
+//TODO(parallel) extract commonality from ParallelSuite and ParallelRunner
 	public static class ParallelSuite extends Suite {
 		public ParallelSuite(RunnerBuilder builder, Class<?>[] classes) throws InitializationError {
 			super(builder, classes);
@@ -92,7 +92,7 @@ public class ParallelComputer extends Computer {
 			super.run(notifier);
 			for (Future<Object> each : fResults)
 				try {
-					each.get(2000, TimeUnit.MILLISECONDS); // TODO what should this really be?
+					each.get(2000, TimeUnit.MILLISECONDS); // TODO(parallel) what should this really be?
 				} catch (Exception e) {
 					e.printStackTrace();
 				} 

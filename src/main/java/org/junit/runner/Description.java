@@ -4,6 +4,11 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.junit.runners.Suite;
+import org.junit.runners.model.InitializationError;
 
 /**
  * <p>A <code>Description</code> describes a test which is to be run or has been run. <code>Descriptions</code> 
@@ -32,6 +37,8 @@ public class Description {
 	 * @return a <code>Description</code> named <code>name</code>
 	 */
 	public static Description createSuiteDescription(String name, Annotation... annotations) {
+		if (name.length() == 0)
+			throw new IllegalArgumentException("name must have non-zero length");
 		return new Description(name, annotations);
 	}
 
@@ -188,5 +195,42 @@ public class Description {
 	 */
 	public Collection<Annotation> getAnnotations() {
 		return Arrays.asList(fAnnotations);
+	}
+
+	// TODO (Nov 18, 2008 1:55:31 PM): do we want this here?
+	public Class<?> parseClass() {
+		Matcher matcher= Pattern.compile("(.*)\\((.*)\\)").matcher(toString());
+		if (matcher.matches())
+			try {
+				return Class.forName(matcher.group(2));
+			} catch (ClassNotFoundException e) {
+				// TODO (Nov 18, 2008 1:54:36 PM): something better
+				e.printStackTrace();
+			}
+		return null;
+	}
+
+	public String parseMethod() {
+		Matcher matcher= Pattern.compile("(.*)\\((.*)\\)").matcher(toString());
+		if (matcher.matches())
+			return matcher.group(1);
+		return null;
+	}
+
+	// TODO (Nov 18, 2008 1:59:37 PM): circular
+	public Runner buildRunner() {
+		if (toString().equals("TestSuite with 0 tests"))
+			try {
+				// TODO (Nov 18, 2008 2:18:28 PM): move to Suite
+				return new Suite(null, new Class<?>[0]);
+			} catch (InitializationError e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		Class<?> type= parseClass();
+		if (type == null)
+			// TODO (Nov 18, 2008 2:04:09 PM): add a check if building a runner is possible
+			throw new RuntimeException("Can't build a runner from description [" + this + "]");
+		return Request.method(type, parseMethod()).getRunner();
 	}
 }

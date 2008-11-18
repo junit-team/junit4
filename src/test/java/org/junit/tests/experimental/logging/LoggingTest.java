@@ -8,9 +8,9 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 
-//TODO log success/fail
-//TODO log class start/finish
-//TODO log timing of single tests
+//TODO(logging) log success/fail
+//TODO(logging) log class start/finish
+//TODO(logging) log timing of single tests
 
 public class LoggingTest {
 	public class TestLog {

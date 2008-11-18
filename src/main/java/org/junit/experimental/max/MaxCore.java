@@ -14,8 +14,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.junit.internal.requests.SortingRequest;
 import org.junit.internal.runners.ErrorReportingRunner;
@@ -29,6 +27,7 @@ import org.junit.runner.notification.RunListener;
 import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
 
+// TODO (Nov 18, 2008 1:40:42 PM): Is this doing too much?
 public class MaxCore implements Serializable {
 	private static final long serialVersionUID= 1L;
 
@@ -117,7 +116,7 @@ public class MaxCore implements Serializable {
 	private Request constructLeafRequest(List<Description> leaves) {
 		final List<Runner> runners = new ArrayList<Runner>();
 		for (Description each : leaves)
-			runners.add(buildRunner(each));
+			runners.add(each.buildRunner());
 		return new Request() {
 			@Override
 			public Runner getRunner() {
@@ -128,28 +127,6 @@ public class MaxCore implements Serializable {
 				}
 			}
 		};
-	}
-
-	private Runner buildRunner(Description description) {
-		return Request.method(parseClass(description), parseMethod(description)).getRunner();
-	}
-
-	private Class<?> parseClass(Description description) {
-		Matcher matcher= Pattern.compile("(.*)\\((.*)\\)").matcher(description.toString());
-		if (matcher.matches())
-			try {
-				return Class.forName(matcher.group(2));
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-		throw new UnsupportedOperationException();
-	}
-
-	private String parseMethod(Description description) {
-		Matcher matcher= Pattern.compile("(.*)\\((.*)\\)").matcher(description.toString());
-		if (matcher.matches())
-			return matcher.group(1);
-		throw new UnsupportedOperationException();
 	}
 
 	private void save() throws FileNotFoundException, IOException {

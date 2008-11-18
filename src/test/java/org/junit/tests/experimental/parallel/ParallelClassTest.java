@@ -30,7 +30,7 @@ public class ParallelClassTest {
 	@SuiteClasses({Example1.class, Example2.class})
 	public static class ExampleSuite {}
 	
-	// TODO we need to push parallel execution down through suites (i.e. run a Suite with a parallel executioner and you get parallel execution)
+	// TODO(parallel) we need to push parallel execution down through suites (i.e. run a Suite with a parallel executioner and you get parallel execution)
 	@Test(timeout=1500) public void testsRunInParallel() {
 		long start= System.currentTimeMillis();
 		Result result= JUnitCore.runClasses(ParallelComputer.classes(), Example1.class, Example2.class);

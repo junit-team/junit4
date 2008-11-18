@@ -4,6 +4,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
@@ -34,7 +35,8 @@ public class Suite extends ParentRunner<Runner> {
 		public Class<?>[] value();
 	}
 	
-	private static Class<?>[] getAnnotatedClasses(Class<?> klass) throws InitializationError {
+	// TODO (Nov 18, 2008 4:48:56 PM): unpublic?
+	public static Class<?>[] getAnnotatedClasses(Class<?> klass) throws InitializationError {
 		SuiteClasses annotation= klass.getAnnotation(SuiteClasses.class);
 		if (annotation == null)
 			throw new InitializationError(String.format("class '%s' must have a SuiteClasses annotation", klass.getName()));
@@ -63,7 +65,8 @@ public class Suite extends ParentRunner<Runner> {
 	 * @throws InitializationError 
 	 */
 	public Suite(RunnerBuilder builder, Class<?>[] classes) throws InitializationError {
-		this(null, builder.runners(null, classes));
+		// TODO (Nov 18, 2008 2:19:13 PM): extract
+		this(null, builder == null ? new ArrayList<Runner>() : builder.runners(null, classes));
 	}
 	
 	/**

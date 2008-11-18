@@ -19,35 +19,6 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
 public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
-	private static class FilteredTestSuite extends TestSuite implements Describable {
-		private final TestSuite fSuite;
-		private final Filter fFilter;
-
-		public FilteredTestSuite(TestSuite suite, Filter filter) {
-			fSuite= suite;
-			fFilter= filter;
-		}
-
-		public Description getDescription() {
-			String name= fSuite.getName() == null ? "" : fSuite.getName();
-			Description description= Description.createSuiteDescription(name);
-			int n= fSuite.testCount();
-			for (int i= 0; i < n; i++) {
-				Description childDescription= makeDescription(fSuite.testAt(i));
-				if (fFilter.shouldRun(childDescription)) {
-					description.addChild(childDescription);
-				}
-			}
-			return description;
-		}
-		
-		@Override
-		public void runTest(Test test, TestResult result) {
-			if (fFilter.shouldRun(makeDescription(test)))
-					super.runTest(test, result);
-		}
-	}
-
 	private static final class OldTestClassAdaptingListener implements
 			TestListener {
 		private final RunNotifier fNotifier;
@@ -98,14 +69,14 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
 
 	public JUnit38ClassRunner(Test test) {
 		super();
-		fTest= test;
+		setTest(test);
 	}
 
 	@Override
 	public void run(RunNotifier notifier) {
 		TestResult result= new TestResult();
 		result.addListener(createAdaptingListener(notifier));
-		fTest.run(result);
+		getTest().run(result);
 	}
 
 	public static TestListener createAdaptingListener(final RunNotifier notifier) {
@@ -114,7 +85,7 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
 	
 	@Override
 	public Description getDescription() {
-		return makeDescription(fTest);
+		return makeDescription(getTest());
 	}
 
 	private static Description makeDescription(Test test) {
@@ -123,7 +94,7 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
 			return Description.createTestDescription(tc.getClass(), tc.getName());
 		} else if (test instanceof TestSuite) {
 			TestSuite ts= (TestSuite) test;
-			String name= ts.getName() == null ? "" : ts.getName();
+			String name= ts.getName() == null ? createSuiteDescription(ts) : ts.getName();
 			Description description= Description.createSuiteDescription(name);
 			int n= ts.testCount();
 			for (int i= 0; i < n; i++)
@@ -141,21 +112,41 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
 		}
 	}
 
+	private static String createSuiteDescription(TestSuite ts) {
+		int count= ts.countTestCases();
+		String example = count == 0 ? "" : String.format(" [example: %s]", ts.testAt(0));
+		return String.format("TestSuite with %s tests%s", count, example);
+	}
+
 	public void filter(Filter filter) throws NoTestsRemainException {
-		if (fTest instanceof Filterable) {
-			Filterable adapter= (Filterable) fTest;
+		if (getTest() instanceof Filterable) {
+			Filterable adapter= (Filterable) getTest();
 			adapter.filter(filter);
-		} else if (fTest instanceof TestSuite) {
-			TestSuite suite= (TestSuite) fTest;
-			TestSuite filtered= new FilteredTestSuite(suite, filter);
-			fTest= filtered;
+		} else if (getTest() instanceof TestSuite) {
+			TestSuite suite= (TestSuite) getTest();
+			TestSuite filtered= new TestSuite(suite.getName());
+			int n= suite.testCount();
+			for (int i= 0; i < n; i++) {
+				Test test= suite.testAt(i);
+				if (filter.shouldRun(makeDescription(test)))
+					filtered.addTest(test);
+			}
+			setTest(filtered);
 		}
 	}
 
 	public void sort(Sorter sorter) {
-		if (fTest instanceof Sortable) {
-			Sortable adapter= (Sortable) fTest;
+		if (getTest() instanceof Sortable) {
+			Sortable adapter= (Sortable) getTest();
 			adapter.sort(sorter);
 		}
+	}
+
+	public void setTest(Test test) {
+		fTest = test;
+	}
+
+	public Test getTest() {
+		return fTest;
 	}
 }
