@@ -121,8 +121,16 @@ public class AssertionTest {
 		assertArrayEquals(new short[] {1}, new short[] {1});
 		assertArrayEquals(new int[] {1}, new int[] {1});
 		assertArrayEquals(new long[] {1}, new long[] {1});
+		// TODO: add floats
+		assertArrayEquals(new double[] {1.0}, new double[] {1.0}, 1.0);
 	}
-	
+
+	@Test(expected=AssertionError.class)
+	public void oneDimensionalDoubleArraysAreNotEqual() {
+		// TODO: add floats
+		assertArrayEquals(new double[] {1.0}, new double[] {2.5}, 1.0);
+	}
+
 	@Test(expected=AssertionError.class)
 	public void IntegerDoesNotEqualLong() {
 		assertEquals(new Integer(1), new Long(1));

@@ -6,6 +6,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.junit.internal.ArrayComparisonFailure;
+import org.junit.internal.InexactComparisonCriteria;
 
 /**
  * A set of assertion methods useful for writing tests. Only failed assertions
@@ -319,7 +320,7 @@ public class Assert {
 			long[] actuals) throws ArrayComparisonFailure {
 		internalArrayEquals(message, expecteds, actuals);
 	}
-
+	
 	/**
 	 * Asserts that two long arrays are equal. If they are not, an
 	 * {@link AssertionError} is thrown.
@@ -331,6 +332,37 @@ public class Assert {
 	 */
 	public static void assertArrayEquals(long[] expecteds, long[] actuals) {
 		assertArrayEquals(null, expecteds, actuals);
+	}
+	
+	// TODO: fix javadoc
+	/**
+	 * Asserts that two double arrays are equal. If they are not, an
+	 * {@link AssertionError} is thrown with the given message.
+	 * 
+	 * @param message
+	 *            the identifying message for the {@link AssertionError} (<code>null</code>
+	 *            okay)
+	 * @param expecteds
+	 *            long array with expected values.
+	 * @param actuals
+	 *            long array with actual values
+	 */
+	public static void assertArrayEquals(String message, double[] expecteds,
+			double[] actuals, double delta) throws ArrayComparisonFailure {
+		new InexactComparisonCriteria(delta).internalArrayEquals(message, expecteds, actuals);
+	}
+
+	/**
+	 * Asserts that two double arrays are equal. If they are not, an
+	 * {@link AssertionError} is thrown.
+	 * 
+	 * @param expecteds
+	 *            long array with expected values.
+	 * @param actuals
+	 *            long array with actual values
+	 */
+	public static void assertArrayEquals(double[] expecteds, double[] actuals, double delta) {
+		assertArrayEquals(null, expecteds, actuals, delta);
 	}
 
 	/**
@@ -354,19 +386,13 @@ public class Assert {
 		if (expecteds == actuals)
 			return;
 		String header= message == null ? "" : message + ": ";
-		if (expecteds == null)
-			fail(header + "expected array was null");
-		if (actuals == null)
-			fail(header + "actual array was null");
-		int actualsLength= Array.getLength(actuals);
-		int expectedsLength= Array.getLength(expecteds);
-		if (actualsLength != expectedsLength)
-			fail(header + "array lengths differed, expected.length="
-					+ expectedsLength + " actual.length=" + actualsLength);
+		int expectedsLength= assertArraysAreSameLength(expecteds, actuals,
+				header);
 
 		for (int i= 0; i < expectedsLength; i++) {
 			Object expected= Array.get(expecteds, i);
 			Object actual= Array.get(actuals, i);
+			// TODO (Nov 6, 2008 12:58:55 PM): Is this a DUP?
 			if (isArray(expected) && isArray(actual)) {
 				try {
 					internalArrayEquals(message, expected, actual);
@@ -382,8 +408,23 @@ public class Assert {
 				}
 		}
 	}
+	
 
-	private static boolean isArray(Object expected) {
+	public static int assertArraysAreSameLength(Object expecteds,
+			Object actuals, String header) {
+		if (expecteds == null)
+			fail(header + "expected array was null");
+		if (actuals == null)
+			fail(header + "actual array was null");
+		int actualsLength= Array.getLength(actuals);
+		int expectedsLength= Array.getLength(expecteds);
+		if (actualsLength != expectedsLength)
+			fail(header + "array lengths differed, expected.length="
+					+ expectedsLength + " actual.length=" + actualsLength);
+		return expectedsLength;
+	}
+
+	public static boolean isArray(Object expected) {
 		return expected != null && expected.getClass().isArray();
 	}
 
