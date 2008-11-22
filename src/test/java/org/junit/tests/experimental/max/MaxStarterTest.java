@@ -13,7 +13,6 @@ import java.util.List;
 import junit.framework.TestCase;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.max.CouldNotReadCoreException;
 import org.junit.experimental.max.MaxCore;
@@ -189,12 +188,9 @@ public class MaxStarterTest {
 				new JUnitCore());
 		assertEquals(2, result.getRunCount());
 	}
-
-	// TODO (Nov 18, 2008 1:41:18 PM): rename
-	@Test
-	public void saffSqueezeExample() throws Exception {
-		final Description method= Description.createTestDescription(
-				TwoOldTests.class, "testOne");
+	
+	@Test public void saffSqueezeExample() throws Exception {
+		final Description method= Description.createTestDescription(TwoOldTests.class, "testOne");
 		Filter filter= Filter.matchDescription(method);
 		JUnit38ClassRunner child= new JUnit38ClassRunner(TwoOldTests.class);
 		child.filter(filter);
