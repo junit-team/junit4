@@ -198,23 +198,36 @@ public class Description {
 	}
 
 	// TODO (Nov 18, 2008 1:55:31 PM): do we want this here?
+	// This seems like reasonable API once we "Composite-ize" Description
 	public Class<?> parseClass() {
-		Matcher matcher= Pattern.compile("(.*)\\((.*)\\)").matcher(toString());
-		if (matcher.matches())
-			try {
-				return Class.forName(matcher.group(2));
-			} catch (ClassNotFoundException e) {
+		String name= getClassName();
+		if (name == null)
+			return null;
+		try {
+			return Class.forName(name);
+		} catch (ClassNotFoundException e) {
 				// TODO (Nov 18, 2008 1:54:36 PM): something better
-				e.printStackTrace();
-			}
-		return null;
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	public String parseMethod() {
+	public String getClassName() {
+		Matcher matcher= Pattern.compile("(.*)\\((.*)\\)").matcher(toString());
+		return matcher.matches()
+			? matcher.group(2)
+			: null;
+	}
+
+	private String parseMethod() {
 		Matcher matcher= Pattern.compile("(.*)\\((.*)\\)").matcher(toString());
 		if (matcher.matches())
 			return matcher.group(1);
 		return null;
+	}
+	
+	public String getMethodName() {
+		return parseMethod();
 	}
 
 	// TODO (Nov 18, 2008 1:59:37 PM): circular

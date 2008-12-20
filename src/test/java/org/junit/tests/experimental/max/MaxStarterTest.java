@@ -252,7 +252,7 @@ public class MaxStarterTest {
 
 	@Test
 	public void parseMethod_whenCantParse() {
-		assertNull(Description.TEST_MECHANISM.parseMethod());
+		assertNull(Description.TEST_MECHANISM.getMethodName());
 	}
 
 	@Test
