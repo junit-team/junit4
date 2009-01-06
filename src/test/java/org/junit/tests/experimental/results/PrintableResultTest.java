@@ -8,6 +8,7 @@ import static org.junit.internal.matchers.StringContains.containsString;
 import java.util.Arrays;
 
 import org.junit.experimental.results.PrintableResult;
+import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.Description;
@@ -35,6 +36,7 @@ public class PrintableResultTest {
 				containsString(descriptionName), containsString(stackTraceClassName)));
 	}
 
+	@DataPoint
 	public static String SHELL_POINT= "Shell Point";
 
 	@Theory

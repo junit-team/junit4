@@ -122,8 +122,7 @@ public class MaxStarterTest {
 		}
 
 		@Test
-		public void fast() throws InterruptedException {
-			Thread.sleep(50);
+		public void fast() {
 		}
 	}
 
@@ -143,10 +142,8 @@ public class MaxStarterTest {
 		fMax.run(request);
 		MaxCore reincarnation= MaxCore.forFolder(fMax.getFolder());
 		try {
-			Description thing= reincarnation.sortedLeavesForTest(request)
-					.get(1);
-			assertEquals(Description.createTestDescription(
-					TwoUnEqualTests.class, "slow"), thing);
+			Description thing= reincarnation.sortedLeavesForTest(request).get(1);
+			assertEquals(Description.createTestDescription(TwoUnEqualTests.class, "slow"), thing);
 		} finally {
 			reincarnation.forget();
 		}

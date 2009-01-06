@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
 import static org.junit.internal.matchers.StringContains.containsString;
 import org.junit.Test;
+import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.experimental.theories.internal.ParameterizedAssertionError;
@@ -13,18 +14,24 @@ import org.junit.runner.RunWith;
 
 @RunWith(Theories.class)
 public class ParameterizedAssertionErrorTest {
+	@DataPoint
 	public static final String METHOD_NAME= "methodName";
 
+	@DataPoint
 	public static final NullPointerException NULL_POINTER_EXCEPTION= new NullPointerException();
 
+	@DataPoint
 	public static Object[] NO_OBJECTS= new Object[0];
 
+	@DataPoint
 	public static ParameterizedAssertionError A= new ParameterizedAssertionError(
 			NULL_POINTER_EXCEPTION, METHOD_NAME);
 
+	@DataPoint
 	public static ParameterizedAssertionError B= new ParameterizedAssertionError(
 			NULL_POINTER_EXCEPTION, METHOD_NAME);
 
+	@DataPoint
 	public static ParameterizedAssertionError B2= new ParameterizedAssertionError(
 			NULL_POINTER_EXCEPTION, "methodName2");
 

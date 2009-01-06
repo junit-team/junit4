@@ -8,6 +8,7 @@ import static org.junit.internal.matchers.StringContains.containsString;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.junit.Test;
+import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.internal.AssumptionViolatedException;
@@ -15,10 +16,13 @@ import org.junit.runner.RunWith;
 
 @RunWith(Theories.class)
 public class AssumptionViolatedExceptionTest {
+	@DataPoint
 	public static Object TWO= 2;
 
+	@DataPoint
 	public static Matcher<?> IS_THREE= is(3);
 
+	@DataPoint
 	public static Matcher<?> NULL= null;
 
 	@Theory

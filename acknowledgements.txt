@@ -38,3 +38,6 @@
 				           
 2008 Aug 19
 	Jack Woehr: Discovered build.xml was missing from junit-4.x.zip
+	
+2009 Jan 5
+	Amanda Robinson: Fixed overly permissive @DataPoint processing.

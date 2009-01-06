@@ -92,7 +92,8 @@ public class AllMembersSupplier extends ParameterSupplier {
 				if (sig.canAcceptArrayType(type)
 						&& field.getAnnotation(DataPoints.class) != null) {
 					addArrayValues(field.getName(), list, getStaticFieldValue(field));
-				} else if (sig.canAcceptType(type)) {
+				} else if (sig.canAcceptType(type)
+						&& field.getAnnotation(DataPoint.class) != null) {
 					list.add(PotentialAssignment
 							.forValue(field.getName(), getStaticFieldValue(field)));
 				}

@@ -7,6 +7,7 @@ import static org.junit.Assume.assumeThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.internal.matchers.StringContains.containsString;
 import org.hamcrest.Matcher;
+import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
@@ -22,8 +23,10 @@ public class WhenNoParametersMatch {
 
 	@RunWith(Theories.class)
 	public static class AssumptionsFail {
+		@DataPoint
 		public static int DATA= 0;
 
+		@DataPoint
 		public static Matcher<Integer> MATCHER= null;
 
 		@Theory

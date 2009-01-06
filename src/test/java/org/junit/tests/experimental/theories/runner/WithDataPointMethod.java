@@ -75,8 +75,10 @@ public class WithDataPointMethod {
 			return new ArrayList<Object>();
 		}
 
+		@DataPoint
 		public static int ONE= 1;
 
+		@DataPoint
 		public static int TWO= 2;
 
 		@Theory

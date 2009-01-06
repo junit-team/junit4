@@ -25,18 +25,18 @@ public class ParallelMethodTest {
 		Result result= JUnitCore.runClasses(ParallelComputer.methods(), Example.class);
 		assertTrue(result.wasSuccessful());
 		long end= System.currentTimeMillis();
-		assertThat(end - start, greaterThan(1000));
+		assertThat(end - start, greaterThanOrEquals(1000));
 	}
 
-	private Matcher<Long> greaterThan(final long l) {
+	private Matcher<Long> greaterThanOrEquals(final long l) {
 		return new TypeSafeMatcher<Long>() {
 			@Override
 			public boolean matchesSafely(Long item) {
-				return item > l;
+				return item >= l;
 			}
 
 			public void describeTo(Description description) {
-				description.appendText("greater than " + l);
+				description.appendText("greater than or equal" + l);
 			}
 		};
 	}

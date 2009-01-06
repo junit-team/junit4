@@ -517,5 +517,4 @@ public class AnnotationTest extends TestCase {
 		assertTrue(log.contains("two"));
 		assertEquals(2, result.getFailureCount());
 	}
-
 }

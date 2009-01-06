@@ -17,6 +17,7 @@ import org.junit.runners.model.TestClass;
 public class UnsuccessfulWithDataPointFields {
 	@RunWith(Theories.class)
 	public static class HasATheory {
+		@DataPoint
 		public static int ONE= 1;
 
 		@Theory
@@ -45,6 +46,7 @@ public class UnsuccessfulWithDataPointFields {
 
 	@RunWith(Theories.class)
 	public static class DoesntUseParams {
+		@DataPoint
 		public static int ONE= 1;
 
 		@Theory
@@ -61,8 +63,10 @@ public class UnsuccessfulWithDataPointFields {
 
 	@RunWith(Theories.class)
 	public static class NullsOK {
+		@DataPoint
 		public static String NULL= null;
 
+		@DataPoint
 		public static String A= "A";
 
 		@Theory

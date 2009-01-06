@@ -23,10 +23,11 @@ import org.junit.runner.RunWith;
 public class SuccessfulWithDataPointFields {
 	@RunWith(Theories.class)
 	public static class HasATwoParameterTheory {
+		@DataPoint
 		public static int ONE= 1;
 
 		@Theory
-		public void everythingIsZero(int x, int y) {
+		public void allIntsAreEqual(int x, int y) {
 			assertThat(x, is(y));
 		}
 	}
@@ -184,6 +185,20 @@ public class SuccessfulWithDataPointFields {
 		
 		@AfterClass public static void calledTwice() {
 			assertEquals(1, tests);
+		}
+	}
+	
+	@RunWith(Theories.class)
+	static public class StaticPublicNonDataPoints {
+		// DataPoint which passes the test
+		@DataPoint public static int ZERO = 0;
+		
+		// Not annotated as a DataPoint and therefore should be ignored:
+		public static int ONE = 1;
+
+		@Theory
+		public void onlyAnnotatedFields(int i) {
+			assertTrue(i == 0);
 		}
 	}
 }

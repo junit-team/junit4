@@ -46,7 +46,10 @@ public class Theories extends BlockJUnit4ClassRunner {
 	@Override
 	protected void validateTestMethods(List<Throwable> errors) {
 		for (FrameworkMethod each : computeTestMethods())
-			each.validatePublicVoid(false, errors);
+			if(each.getAnnotation(Theory.class) != null)
+				each.validatePublicVoid(false, errors);
+			else
+				each.validatePublicVoidNoArg(false, errors);
 	}
 	
 	@Override
