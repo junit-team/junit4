@@ -116,7 +116,7 @@ public class MaxCore implements Serializable {
 	private Request constructLeafRequest(List<Description> leaves) {
 		final List<Runner> runners = new ArrayList<Runner>();
 		for (Description each : leaves)
-			runners.add(each.buildRunner());
+			runners.add(buildRunner(each));
 		return new Request() {
 			@Override
 			public Runner getRunner() {
@@ -127,6 +127,22 @@ public class MaxCore implements Serializable {
 				}
 			}
 		};
+	}
+
+	private Runner buildRunner(Description each) {
+		if (each.toString().equals("TestSuite with 0 tests"))
+			try {
+				// TODO (Nov 18, 2008 2:18:28 PM): move to Suite
+				return new Suite(null, new Class<?>[0]);
+			} catch (InitializationError e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		Class<?> type= each.getTestClass();
+		if (type == null)
+			// TODO (Nov 18, 2008 2:04:09 PM): add a check if building a runner is possible
+			throw new RuntimeException("Can't build a runner from description [" + each + "]");
+		return Request.method(type, each.getMethodName()).getRunner();
 	}
 
 	private void save() throws FileNotFoundException, IOException {

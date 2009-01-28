@@ -27,7 +27,7 @@ public abstract class Filter {
 			return "all tests";
 		}
 	};
-	
+	//TODO javadoc
 	public static Filter matchDescription(final Description desiredDescription) {
 		return new Filter() {
 			@Override

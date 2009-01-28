@@ -35,8 +35,7 @@ public class Suite extends ParentRunner<Runner> {
 		public Class<?>[] value();
 	}
 	
-	// TODO (Nov 18, 2008 4:48:56 PM): unpublic?
-	public static Class<?>[] getAnnotatedClasses(Class<?> klass) throws InitializationError {
+	private static Class<?>[] getAnnotatedClasses(Class<?> klass) throws InitializationError {
 		SuiteClasses annotation= klass.getAnnotation(SuiteClasses.class);
 		if (annotation == null)
 			throw new InitializationError(String.format("class '%s' must have a SuiteClasses annotation", klass.getName()));

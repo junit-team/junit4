@@ -1,11 +1,8 @@
 package org.junit.tests.experimental.max;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.junit.matchers.JUnitMatchers.containsString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -240,33 +237,4 @@ public class MaxStarterTest {
 		assertEquals("Counts match up in " + testClass, coreCount, filterCount);
 	}
 
-	// TODO (Nov 18, 2008 2:00:18 PM): move these, which have nothing in
-	// particular to do with Max
-	@Test
-	public void parseClass_whenCantParse() {
-		assertNull(Description.TEST_MECHANISM.parseClass());
-	}
-
-	@Test
-	public void parseMethod_whenCantParse() {
-		assertNull(Description.TEST_MECHANISM.getMethodName());
-	}
-
-	@Test
-	public void buildRunner_whenCantParse() {
-		try {
-			Description.TEST_MECHANISM.buildRunner();
-			// this need not throw an exception in the future, but it does now.
-			// as long as it throws an exception, it should have a descriptive
-			// toString
-		} catch (Throwable t) {
-			assertThat(t.toString(), containsString("["
-					+ Description.TEST_MECHANISM.toString() + "]"));
-		}
-	}
-
-	@Test(expected= IllegalArgumentException.class)
-	public void createSuiteDescription_whenZeroLength() {
-		Description.createSuiteDescription("");
-	}
 }

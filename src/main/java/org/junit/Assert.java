@@ -320,7 +320,7 @@ public class Assert {
 			long[] actuals) throws ArrayComparisonFailure {
 		internalArrayEquals(message, expecteds, actuals);
 	}
-	
+
 	/**
 	 * Asserts that two long arrays are equal. If they are not, an
 	 * {@link AssertionError} is thrown.
@@ -334,7 +334,6 @@ public class Assert {
 		assertArrayEquals(null, expecteds, actuals);
 	}
 	
-	// TODO: fix javadoc
 	/**
 	 * Asserts that two double arrays are equal. If they are not, an
 	 * {@link AssertionError} is thrown with the given message.
@@ -343,9 +342,9 @@ public class Assert {
 	 *            the identifying message for the {@link AssertionError} (<code>null</code>
 	 *            okay)
 	 * @param expecteds
-	 *            long array with expected values.
+	 *            double array with expected values.
 	 * @param actuals
-	 *            long array with actual values
+	 *            double array with actual values
 	 */
 	public static void assertArrayEquals(String message, double[] expecteds,
 			double[] actuals, double delta) throws ArrayComparisonFailure {
@@ -357,9 +356,9 @@ public class Assert {
 	 * {@link AssertionError} is thrown.
 	 * 
 	 * @param expecteds
-	 *            long array with expected values.
+	 *            double array with expected values.
 	 * @param actuals
-	 *            long array with actual values
+	 *            double array with actual values
 	 */
 	public static void assertArrayEquals(double[] expecteds, double[] actuals, double delta) {
 		assertArrayEquals(null, expecteds, actuals, delta);

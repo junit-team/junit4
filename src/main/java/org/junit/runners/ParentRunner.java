@@ -45,9 +45,6 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	private Filter fFilter= null;
 
 	private Sorter fSorter= Sorter.NULL;
-	
-	//TODO: add a flag for whether or not to run children in parallel
-	// (as a step towards a delegation-based solution that is more general)
 
 	/**
 	 * Constructs a new {@code ParentRunner} that will run {@code @TestClass}

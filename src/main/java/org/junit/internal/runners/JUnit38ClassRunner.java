@@ -142,11 +142,11 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
 		}
 	}
 
-	public void setTest(Test test) {
+	private void setTest(Test test) {
 		fTest = test;
 	}
 
-	public Test getTest() {
+	private Test getTest() {
 		return fTest;
 	}
 }

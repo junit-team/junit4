@@ -2,12 +2,6 @@ package org.junit.tests;
 
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
-import org.junit.experimental.max.CouldNotReadCoreException;
-import org.junit.experimental.max.MaxCore;
-import org.junit.internal.RealSystem;
-import org.junit.internal.TextListener;
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Request;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -22,6 +16,7 @@ import org.junit.tests.experimental.AssumptionTest;
 import org.junit.tests.experimental.AssumptionViolatedExceptionTest;
 import org.junit.tests.experimental.ExperimentalTests;
 import org.junit.tests.experimental.MatcherTest;
+import org.junit.tests.experimental.max.JUnit38SortingTest;
 import org.junit.tests.experimental.max.MaxStarterTest;
 import org.junit.tests.experimental.theories.AllMembersSupplierTest;
 import org.junit.tests.experimental.theories.runner.TheoriesPerformanceTest;
@@ -118,19 +113,11 @@ import org.junit.tests.validation.ValidationTest;
 	JUnit4ClassRunnerTest.class,
 	UseSuiteAsASuperclassTest.class,
 	FilterableTest.class,
-	MaxStarterTest.class
+	MaxStarterTest.class,
+	JUnit38SortingTest.class
 })
 public class AllTests {
 	public static Test suite() {
 		return new JUnit4TestAdapter(AllTests.class);
-	}
-	public static void main(String[] args) throws CouldNotReadCoreException {
-		MaxCore max= MaxCore.forFolder("AllTests");
-		JUnitCore core= new JUnitCore();
-		core.addListener(new TextListener(new RealSystem()));
-		Request request= Request.aClass(AllTests.class);
-		max.run(request, core);
-		// TODO: not always 0
-		System.exit(0);
 	}
 }

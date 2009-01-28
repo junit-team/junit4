@@ -7,9 +7,6 @@ import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.junit.runners.Suite;
-import org.junit.runners.model.InitializationError;
-
 /**
  * <p>A <code>Description</code> describes a test which is to be run or has been run. <code>Descriptions</code> 
  * can be atomic (a single test) or compound (containing children tests). <code>Descriptions</code> are used
@@ -197,21 +194,19 @@ public class Description {
 		return Arrays.asList(fAnnotations);
 	}
 
-	// TODO (Nov 18, 2008 1:55:31 PM): do we want this here?
-	// This seems like reasonable API once we "Composite-ize" Description
-	public Class<?> parseClass() {
+	// TODO javadoc
+	public Class<?> getTestClass() {
 		String name= getClassName();
 		if (name == null)
 			return null;
 		try {
 			return Class.forName(name);
 		} catch (ClassNotFoundException e) {
-				// TODO (Nov 18, 2008 1:54:36 PM): something better
-			e.printStackTrace();
 			return null;
 		}
 	}
 
+	//TODO javadoc
 	public String getClassName() {
 		Matcher matcher= Pattern.compile("(.*)\\((.*)\\)").matcher(toString());
 		return matcher.matches()
@@ -226,24 +221,9 @@ public class Description {
 		return null;
 	}
 	
+	// TODO javadoc
 	public String getMethodName() {
 		return parseMethod();
 	}
 
-	// TODO (Nov 18, 2008 1:59:37 PM): circular
-	public Runner buildRunner() {
-		if (toString().equals("TestSuite with 0 tests"))
-			try {
-				// TODO (Nov 18, 2008 2:18:28 PM): move to Suite
-				return new Suite(null, new Class<?>[0]);
-			} catch (InitializationError e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		Class<?> type= parseClass();
-		if (type == null)
-			// TODO (Nov 18, 2008 2:04:09 PM): add a check if building a runner is possible
-			throw new RuntimeException("Can't build a runner from description [" + this + "]");
-		return Request.method(type, parseMethod()).getRunner();
-	}
 }

@@ -26,7 +26,7 @@ import org.junit.runner.notification.RunNotifier;
  */
 public class JUnitCore {
 	
-	RunNotifier fNotifier;
+	private RunNotifier fNotifier;
 
 	/**
 	 * Create a new <code>JUnitCore</code> to run tests.
@@ -186,7 +186,7 @@ public class JUnitCore {
 		fNotifier.removeListener(listener);
 	}
 	
-	private static Computer defaultComputer() {
+	static Computer defaultComputer() {
 		return new Computer();
 	}
 
