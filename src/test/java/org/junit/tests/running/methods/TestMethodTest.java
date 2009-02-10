@@ -102,6 +102,7 @@ public class TestMethodTest {
 		JUnitCore runner= new JUnitCore();
 		Result result= runner.run(IgnoredTest.class);
 		assertEquals(2, result.getIgnoreCount());
+		assertEquals(1, result.getRunCount());
 	}
 
 	@Test public void compatibility() {

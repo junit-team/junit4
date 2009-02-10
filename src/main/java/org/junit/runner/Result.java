@@ -61,8 +61,6 @@ public class Result {
 	}
 
 	private class Listener extends RunListener {
-		private boolean fIgnoredDuringExecution= false;
-
 		@Override
 		public void testRunStarted(Description description) throws Exception {
 			fStartTime= System.currentTimeMillis();
@@ -76,9 +74,7 @@ public class Result {
 
 		@Override
 		public void testFinished(Description description) throws Exception {
-			if (!fIgnoredDuringExecution)
-				fCount++;
-			fIgnoredDuringExecution= false;
+			fCount++;
 		}
 
 		@Override
@@ -89,7 +85,6 @@ public class Result {
 		@Override
 		public void testIgnored(Description description) throws Exception {
 			fIgnoreCount++;
-			fIgnoredDuringExecution= true;
 		}
 		
 		@Override
