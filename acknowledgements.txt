@@ -41,3 +41,6 @@
 	
 2009 Jan 5
 	Amanda Robinson: Fixed overly permissive @DataPoint processing.
+	
+2009 Feb 9
+	Mark Shapiro: Discovered bug in test counting after an ignored method (2106324)
