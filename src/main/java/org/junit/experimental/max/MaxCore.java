@@ -105,15 +105,22 @@ public class MaxCore implements Serializable {
 		new File(fFolder).delete();
 	}
 
-	private Request sortRequest(Request request) {
+	// TODO (Feb 23, 2009 10:14:05 PM): publicized for squeeze
+	public Request sortRequest(Request request) {
 		if (request instanceof SortingRequest) // We'll pay big karma points for this
 			return request;
 		List<Description> leaves= findLeaves(request);
-		Collections.sort(leaves, new TestComparator());
+		Collections.sort(leaves, testComparator());
 		return constructLeafRequest(leaves);
 	}
 
-	private Request constructLeafRequest(List<Description> leaves) {
+	// TODO (Feb 23, 2009 10:41:36 PM): V
+	public Comparator<Description> testComparator() {
+		return new TestComparator();
+	}
+
+	// TODO (Feb 23, 2009 10:42:05 PM): V
+	public Request constructLeafRequest(List<Description> leaves) {
 		final List<Runner> runners = new ArrayList<Runner>();
 		for (Description each : leaves)
 			runners.add(buildRunner(each));
@@ -129,7 +136,8 @@ public class MaxCore implements Serializable {
 		};
 	}
 
-	private Runner buildRunner(Description each) {
+	// TODO (Feb 23, 2009 11:17:01 PM): V
+	public Runner buildRunner(Description each) {
 		if (each.toString().equals("TestSuite with 0 tests"))
 			try {
 				// TODO (Nov 18, 2008 2:18:28 PM): move to Suite
@@ -142,7 +150,10 @@ public class MaxCore implements Serializable {
 		if (type == null)
 			// TODO (Nov 18, 2008 2:04:09 PM): add a check if building a runner is possible
 			throw new RuntimeException("Can't build a runner from description [" + each + "]");
-		return Request.method(type, each.getMethodName()).getRunner();
+		String methodName= each.getMethodName();
+		if (methodName == null)
+			return Request.aClass(type).getRunner();
+		return Request.method(type, methodName).getRunner();
 	}
 
 	private void save() throws FileNotFoundException, IOException {
@@ -200,20 +211,22 @@ public class MaxCore implements Serializable {
 		}
 	}
 	
-	private List<Description> findLeaves(Request request) {
+	// TODO (Feb 23, 2009 10:40:23 PM): V
+	public List<Description> findLeaves(Request request) {
 		List<Description> results= new ArrayList<Description>();
 		findLeaves(request.getRunner().getDescription(), results);
 		return results;
 	}
 	
-	private void findLeaves(Description description, List<Description> results) {
+	// TODO (Feb 23, 2009 10:50:48 PM): V
+	public void findLeaves(Description description, List<Description> results) {
 		if (description.getChildren().isEmpty())
 			results.add(description);
 		else
 			for (Description each : description.getChildren())
 				findLeaves(each, results);
 	}
-	
+
 	private Long getFailureTimestamp(Description key) {
 		return fFailureTimestamps.get(key.toString());
 	}
