@@ -25,8 +25,8 @@ import org.junit.runner.notification.RunNotifier;
  * @see org.junit.runner.Request
  */
 public class JUnitCore {
-	
-	private RunNotifier fNotifier;
+	// TODO (Feb 23, 2009 10:24:40 PM): V
+	public RunNotifier fNotifier;
 
 	/**
 	 * Create a new <code>JUnitCore</code> to run tests.
@@ -153,7 +153,7 @@ public class JUnitCore {
 	public Result run(Runner runner) {
 		Result result= new Result();
 		RunListener listener= result.createListener();
-		addFirstListener(listener);
+		fNotifier.addFirstListener(listener);
 		try {
 			fNotifier.fireTestRunStarted(runner.getDescription());
 			runner.run(fNotifier);
@@ -164,11 +164,6 @@ public class JUnitCore {
 		return result;
 	}
 	
-	private void addFirstListener(RunListener listener) {
-		fNotifier.addFirstListener(listener);
-	}
-	
-
 	/**
 	 * Add a listener to be notified as the tests run.
 	 * @param listener the listener to add

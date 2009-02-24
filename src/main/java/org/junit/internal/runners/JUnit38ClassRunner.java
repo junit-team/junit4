@@ -1,5 +1,7 @@
 package org.junit.internal.runners;
 
+import java.util.List;
+
 import junit.extensions.TestDecorator;
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
@@ -19,7 +21,7 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
 public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
-	private static final class OldTestClassAdaptingListener implements
+	private final class OldTestClassAdaptingListener implements
 			TestListener {
 		private final RunNotifier fNotifier;
 
@@ -46,7 +48,18 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
 				Describable facade= (Describable) test;
 				return facade.getDescription();
 			}
-			return Description.createTestDescription(test.getClass(), getName(test));
+			return Description.createTestDescription(getEffectiveClass(test), getName(test));
+		}
+
+		private Class<? extends Test> getEffectiveClass(Test test) {
+			// TODO (Feb 23, 2009 11:45:54 PM): Think hard about this.
+			if ("warning".equals(getName(test)))
+				try {
+					return (Class<? extends Test>) Class.forName(fTest.toString());
+				} catch (ClassNotFoundException e) {
+					return test.getClass();
+				}
+			return test.getClass();
 		}
 
 		private String getName(Test test) {
@@ -79,7 +92,7 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
 		getTest().run(result);
 	}
 
-	public static TestListener createAdaptingListener(final RunNotifier notifier) {
+	public TestListener createAdaptingListener(final RunNotifier notifier) {
 		return new OldTestClassAdaptingListener(notifier);
 	}
 	
@@ -88,7 +101,8 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
 		return makeDescription(getTest());
 	}
 
-	private static Description makeDescription(Test test) {
+	// TODO (Feb 23, 2009 10:57:14 PM): V
+	public static Description makeDescription(Test test) {
 		if (test instanceof TestCase) {
 			TestCase tc= (TestCase) test;
 			return Description.createTestDescription(tc.getClass(), tc.getName());
@@ -97,8 +111,12 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
 			String name= ts.getName() == null ? createSuiteDescription(ts) : ts.getName();
 			Description description= Description.createSuiteDescription(name);
 			int n= ts.testCount();
-			for (int i= 0; i < n; i++)
-				description.addChild(makeDescription(ts.testAt(i)));
+			for (int i= 0; i < n; i++) {
+				Description made= makeDescription(ts.testAt(i));
+				// TODO (Feb 23, 2009 11:25:23 PM): this is doing Max's work for it.  Max should get rid of these when sorting i
+				if (!made.toString().startsWith("warning("))			
+					description.addChild(made);
+			}
 			return description;
 		} else if (test instanceof Describable) {
 			Describable adapter= (Describable) test;
@@ -146,7 +164,8 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
 		fTest = test;
 	}
 
-	private Test getTest() {
+	// TODO (Feb 23, 2009 10:57:26 PM): V
+	public Test getTest() {
 		return fTest;
 	}
 }

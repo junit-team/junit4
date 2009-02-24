@@ -1,27 +1,41 @@
 package org.junit.tests.experimental.max;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.hamcrest.core.IsInstanceOf;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.max.CouldNotReadCoreException;
 import org.junit.experimental.max.MaxCore;
+import org.junit.internal.requests.SortingRequest;
+import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.runner.Computer;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.Result;
+import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
+import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.Suite;
+import org.junit.runners.model.InitializationError;
 import org.junit.tests.AllTests;
 
 public class MaxStarterTest {
@@ -139,8 +153,10 @@ public class MaxStarterTest {
 		fMax.run(request);
 		MaxCore reincarnation= MaxCore.forFolder(fMax.getFolder());
 		try {
-			Description thing= reincarnation.sortedLeavesForTest(request).get(1);
-			assertEquals(Description.createTestDescription(TwoUnEqualTests.class, "slow"), thing);
+			Description thing= reincarnation.sortedLeavesForTest(request)
+					.get(1);
+			assertEquals(Description.createTestDescription(
+					TwoUnEqualTests.class, "slow"), thing);
 		} finally {
 			reincarnation.forget();
 		}
@@ -182,9 +198,11 @@ public class MaxStarterTest {
 				new JUnitCore());
 		assertEquals(2, result.getRunCount());
 	}
-	
-	@Test public void saffSqueezeExample() throws Exception {
-		final Description method= Description.createTestDescription(TwoOldTests.class, "testOne");
+
+	@Test
+	public void saffSqueezeExample() throws Exception {
+		final Description method= Description.createTestDescription(
+				TwoOldTests.class, "testOne");
 		Filter filter= Filter.matchDescription(method);
 		JUnit38ClassRunner child= new JUnit38ClassRunner(TwoOldTests.class);
 		child.filter(filter);
@@ -237,4 +255,83 @@ public class MaxStarterTest {
 		assertEquals("Counts match up in " + testClass, coreCount, filterCount);
 	}
 
+	private static class MalformedJUnit38Test {
+		private MalformedJUnit38Test() {
+		}
+
+		public void testSucceeds() {
+		}
+	}
+
+	@Test
+	public void maxShouldSkipMalformedJUnit38Classes() {
+		Request request= Request.aClass(MalformedJUnit38Test.class);
+		fMax.run(request);
+	}
+
+	public static class MalformedJUnit38TestMethod extends TestCase {
+		private void testNothing() {
+		}
+	}
+
+	String fMessage= null;
+
+	@Test
+	public void correctErrorFromMalformedTestSqueeze() {
+		Request request= Request.aClass(MalformedJUnit38TestMethod.class);
+		assertFalse(request instanceof SortingRequest);
+		JUnit38ClassRunner runner= (JUnit38ClassRunner) request.getRunner();
+		junit.framework.Test test= runner.getTest();
+		assertThat(test, IsInstanceOf.instanceOf(TestSuite.class));
+		Description description= JUnit38ClassRunner.makeDescription(test);
+		assertThat(description.toString(),
+				containsString("MalformedJUnit38TestMethod"));
+		// assertFalse(description.getChildren().isEmpty());
+		// assertThat(description.getChildren().size(), is(1));
+		// assertThat(description.getChildren().get(0).toString(),
+		// containsString("MalformedJUnit38TestMethod"));
+	}
+
+	@Test
+	public void correctErrorFromMalformedTestSqueeze2() {
+		Request request= Request.aClass(MalformedJUnit38TestMethod.class);
+		assertFalse(request instanceof SortingRequest);
+		List<Description> leaves= fMax.findLeaves(request);
+		Collections.sort(leaves, fMax.testComparator());
+		Description each= leaves.get(0);
+		assertFalse(each.toString().equals("TestSuite with 0 tests"));
+		assertEquals(MalformedJUnit38TestMethod.class.getName(), each
+				.toString());
+		String name= each.getClassName();
+		assertNotNull(name);
+	}
+
+	@Test
+	public void correctErrorFromMalformedTest() {
+		Request request= Request.aClass(MalformedJUnit38TestMethod.class);
+		JUnitCore core= new JUnitCore();
+		Request sorted= fMax.sortRequest(request);
+		Runner runner= sorted.getRunner();
+		Result result= core.run(runner);
+		Failure failure= result.getFailures().get(0);
+
+		assertThat(failure.toString(),
+				containsString("MalformedJUnit38TestMethod"));
+		assertThat(failure.toString(), containsString("testNothing"));
+		assertThat(failure.toString(), containsString("isn't public"));
+	}
+
+	public static class HalfMalformedJUnit38TestMethod extends TestCase {
+		public void testSomething() {
+		}
+
+		private void testNothing() {
+		}
+	}
+
+	@Test
+	public void halfMalformed() {
+		assertThat(JUnitCore.runClasses(HalfMalformedJUnit38TestMethod.class)
+				.getFailureCount(), is(1));
+	}
 }

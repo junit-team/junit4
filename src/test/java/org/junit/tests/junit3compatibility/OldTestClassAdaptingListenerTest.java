@@ -17,10 +17,10 @@ public class OldTestClassAdaptingListenerTest {
 		RunListener listener= result.createListener();
 		RunNotifier notifier= new RunNotifier();
 		notifier.addFirstListener(listener);
-		TestListener adaptingListener= JUnit38ClassRunner
-				.createAdaptingListener(notifier);
 		TestCase testCase= new TestCase() {
 		};
+		TestListener adaptingListener= new JUnit38ClassRunner(testCase)
+				.createAdaptingListener(notifier);
 		adaptingListener.addFailure(testCase, new AssertionFailedError());
 		assertEquals(1, result.getFailureCount());
 	}

@@ -211,7 +211,7 @@ public class Description {
 		Matcher matcher= Pattern.compile("(.*)\\((.*)\\)").matcher(toString());
 		return matcher.matches()
 			? matcher.group(2)
-			: null;
+			: toString();
 	}
 
 	private String parseMethod() {
