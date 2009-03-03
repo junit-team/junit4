@@ -1,4 +1,4 @@
-package org.junit.tests.experimental.parallel;
+package org.junit.experimental;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -2,27 +2,20 @@ package org.junit.tests.experimental.max;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import org.hamcrest.core.IsInstanceOf;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.max.CouldNotReadCoreException;
 import org.junit.experimental.max.MaxCore;
-import org.junit.internal.requests.SortingRequest;
-import org.junit.internal.runners.ErrorReportingRunner;
+import org.junit.experimental.max.MaxHistory;
 import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.runner.Computer;
 import org.junit.runner.Description;
@@ -33,9 +26,6 @@ import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
-import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.Suite;
-import org.junit.runners.model.InitializationError;
 import org.junit.tests.AllTests;
 
 public class MaxStarterTest {
@@ -48,7 +38,8 @@ public class MaxStarterTest {
 
 	@After
 	public void forgetMax() {
-		fMax.forget();
+		MaxHistory history= fMax.fHistory;
+		history.forget();
 	}
 
 	public static class TwoTests {
@@ -130,11 +121,55 @@ public class MaxStarterTest {
 		@Test
 		public void slow() throws InterruptedException {
 			Thread.sleep(100);
+			fail();
 		}
 
 		@Test
 		public void fast() {
+			fail();
 		}
+	}
+
+	@Test
+	public void rememberOldRuns() {
+		fMax.run(TwoUnEqualTests.class);
+		String storedResults= fMax.fHistory.getFolder();
+
+		MaxCore reincarnation= MaxCore.forFolder(storedResults);
+		try {
+			List<Failure> failures= reincarnation.run(TwoUnEqualTests.class)
+					.getFailures();
+			assertEquals("fast", failures.get(0).getDescription()
+					.getMethodName());
+			assertEquals("slow", failures.get(1).getDescription()
+					.getMethodName());
+		} finally {
+			reincarnation.fHistory.forget();
+		}
+	}
+
+	@Test
+	public void rememberOldRunsSqueeze() {
+		fMax.run(TwoUnEqualTests.class);
+		String storedResults= fMax.fHistory.getFolder();
+
+		MaxCore reincarnation= MaxCore.forFolder(storedResults);
+		try {
+			List<Failure> failures= run(reincarnation)
+					.getFailures();
+			assertEquals("fast", failures.get(0).getDescription()
+					.getMethodName());
+			assertEquals("slow", failures.get(1).getDescription()
+					.getMethodName());
+		} finally {
+			reincarnation.fHistory.forget();
+		}
+	}
+
+	private Result run(MaxCore reincarnation) {
+		JUnitCore core= new JUnitCore();
+		return core.run(reincarnation.sortRequest(
+				Request.aClass(TwoUnEqualTests.class)).getRunner());
 	}
 
 	@Test
@@ -145,21 +180,6 @@ public class MaxStarterTest {
 		assertEquals(Description.createTestDescription(TwoUnEqualTests.class,
 				"slow"), thing);
 		// TODO (Nov 18, 2008 2:03:06 PM): flaky?
-	}
-
-	@Test
-	public void remember() throws CouldNotReadCoreException {
-		Request request= Request.aClass(TwoUnEqualTests.class);
-		fMax.run(request);
-		MaxCore reincarnation= MaxCore.forFolder(fMax.getFolder());
-		try {
-			Description thing= reincarnation.sortedLeavesForTest(request)
-					.get(1);
-			assertEquals(Description.createTestDescription(
-					TwoUnEqualTests.class, "slow"), thing);
-		} finally {
-			reincarnation.forget();
-		}
 	}
 
 	@Test
@@ -270,41 +290,12 @@ public class MaxStarterTest {
 	}
 
 	public static class MalformedJUnit38TestMethod extends TestCase {
+		@SuppressWarnings("unused")
 		private void testNothing() {
 		}
 	}
 
 	String fMessage= null;
-
-	@Test
-	public void correctErrorFromMalformedTestSqueeze() {
-		Request request= Request.aClass(MalformedJUnit38TestMethod.class);
-		assertFalse(request instanceof SortingRequest);
-		JUnit38ClassRunner runner= (JUnit38ClassRunner) request.getRunner();
-		junit.framework.Test test= runner.getTest();
-		assertThat(test, IsInstanceOf.instanceOf(TestSuite.class));
-		Description description= JUnit38ClassRunner.makeDescription(test);
-		assertThat(description.toString(),
-				containsString("MalformedJUnit38TestMethod"));
-		// assertFalse(description.getChildren().isEmpty());
-		// assertThat(description.getChildren().size(), is(1));
-		// assertThat(description.getChildren().get(0).toString(),
-		// containsString("MalformedJUnit38TestMethod"));
-	}
-
-	@Test
-	public void correctErrorFromMalformedTestSqueeze2() {
-		Request request= Request.aClass(MalformedJUnit38TestMethod.class);
-		assertFalse(request instanceof SortingRequest);
-		List<Description> leaves= fMax.findLeaves(request);
-		Collections.sort(leaves, fMax.testComparator());
-		Description each= leaves.get(0);
-		assertFalse(each.toString().equals("TestSuite with 0 tests"));
-		assertEquals(MalformedJUnit38TestMethod.class.getName(), each
-				.toString());
-		String name= each.getClassName();
-		assertNotNull(name);
-	}
 
 	@Test
 	public void correctErrorFromMalformedTest() {
@@ -325,6 +316,7 @@ public class MaxStarterTest {
 		public void testSomething() {
 		}
 
+		@SuppressWarnings("unused")
 		private void testNothing() {
 		}
 	}

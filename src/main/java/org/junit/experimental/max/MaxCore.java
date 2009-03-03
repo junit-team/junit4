@@ -1,19 +1,11 @@
 package org.junit.experimental.max;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.internal.requests.SortingRequest;
 import org.junit.internal.runners.ErrorReportingRunner;
@@ -22,53 +14,33 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.Result;
 import org.junit.runner.Runner;
-import org.junit.runner.notification.Failure;
-import org.junit.runner.notification.RunListener;
 import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
 
-// TODO (Nov 18, 2008 1:40:42 PM): Is this doing too much?
-public class MaxCore implements Serializable {
-	private static final long serialVersionUID= 1L;
-
-	public static MaxCore forFolder(String folder) throws CouldNotReadCoreException {
-		if (new File(folder + ".ser").exists())
-			return readCore(folder);
-		return new MaxCore(folder);
-	}
-
-	private static MaxCore readCore(String folder) throws CouldNotReadCoreException {
-		// TODO: rule of three
-		// TODO: Really?
-		ObjectInputStream stream;
-		try {
-			stream= new ObjectInputStream(new FileInputStream(folder + ".ser"));
-		} catch (IOException e) {
-			throw new CouldNotReadCoreException(e);
-		}
-		try {
-			return (MaxCore) stream.readObject();
-		} catch (Exception e) {
-			throw new CouldNotReadCoreException(e); //TODO think about what we can do better here
-		} finally {
-			try {
-				stream.close();
-			} catch (IOException e) {
-				throw new CouldNotReadCoreException(e);
-			}
-		}
-	}
-
+public class MaxCore {
 	public static MaxCore createFresh() {
-		return new MaxCore();
+		// TODO (Mar 2, 2009 11:38:46 PM): exposed implementation detail
+		File file= new File("MaxCore.ser");
+		if (file.exists())
+			file.delete();
+
+		try {
+			return new MaxCore();
+		} catch (Throwable e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
 	}
 
-	protected Map<String, Long> fDurations= new HashMap<String, Long>();
-	protected Map<String, Long> fFailureTimestamps= new HashMap<String, Long>();
-	private final String fFolder;
+	public static MaxCore forFolder(String storedResults) {
+		return new MaxCore(storedResults);
+	}
+
+	public final MaxHistory fHistory;
 	
 	private MaxCore(String folder) {
-		fFolder= folder;
+		fHistory = MaxHistory.forFolder(folder);
 	}
 
 	private MaxCore() {
@@ -76,17 +48,21 @@ public class MaxCore implements Serializable {
 		this("MaxCore");
 	}
 
+	public Result run(Class<?> testClass) {
+		return run(Request.aClass(testClass));
+	}
+
 	public Result run(Request request) {
 		return run(request, new JUnitCore());
 	}
 
 	public Result run(Request request, JUnitCore core) {
-		core.addListener(new RememberingListener());
+		core.addListener(fHistory.listener());
 		try { 
 			return core.run(sortRequest(request).getRunner());
 		} finally {
 			try {
-				save();
+				fHistory.save();
 			} catch (FileNotFoundException e) {
 				// TODO
 				e.printStackTrace();
@@ -97,26 +73,13 @@ public class MaxCore implements Serializable {
 		}
 	}
 	
-	public String getFolder() {
-		return fFolder;
-	}
-
-	public void forget() {
-		new File(fFolder).delete();
-	}
-
 	// TODO (Feb 23, 2009 10:14:05 PM): publicized for squeeze
 	public Request sortRequest(Request request) {
 		if (request instanceof SortingRequest) // We'll pay big karma points for this
 			return request;
 		List<Description> leaves= findLeaves(request);
-		Collections.sort(leaves, testComparator());
+		Collections.sort(leaves, fHistory.testComparator());
 		return constructLeafRequest(leaves);
-	}
-
-	// TODO (Feb 23, 2009 10:41:36 PM): V
-	public Comparator<Description> testComparator() {
-		return new TestComparator();
 	}
 
 	// TODO (Feb 23, 2009 10:42:05 PM): V
@@ -156,59 +119,8 @@ public class MaxCore implements Serializable {
 		return Request.method(type, methodName).getRunner();
 	}
 
-	private void save() throws FileNotFoundException, IOException {
-		ObjectOutputStream stream= new ObjectOutputStream(new FileOutputStream(fFolder + ".ser"));
-		stream.writeObject(this);
-		stream.close();
-	}
-
 	public List<Description> sortedLeavesForTest(Request request) {
 		return findLeaves(sortRequest(request));
-	}
-
-	private final class RememberingListener extends RunListener {
-		private Map<Description, Long> starts= new HashMap<Description, Long>();
-
-		@Override
-		public void testStarted(Description description) throws Exception {
-			starts.put(description, System.nanoTime()); // Get most accurate possible time
-		}
-
-		@Override
-		public void testFinished(Description description) throws Exception {
-			long end= System.nanoTime();
-			long start= starts.get(description);
-			putTestDuration(description, end - start);
-		}
-
-		@Override
-		public void testFailure(Failure failure) throws Exception {
-			long end= System.currentTimeMillis(); // This needs to be comparable across tests
-			putTestFailureTimestamp(failure.getDescription(), end);
-		}
-	}
-
-	private class TestComparator implements Comparator<Description> {
-		public int compare(Description o1, Description o2) {
-			// Always prefer new tests
-			if (isNewTest(o1))
-				return -1;
-			if (isNewTest(o2))
-				return 1;
-			// Then most recently failed first
-			int result= getFailure(o2).compareTo(getFailure(o1)); 
-			return result != 0
-				? result
-				// Then shorter tests first
-				: getTestDuration(o1).compareTo(getTestDuration(o2));
-		}
-	
-		private Long getFailure(Description key) {
-			Long result= getFailureTimestamp(key);
-			if (result == null) 
-				return 0L; // 0 = "never failed (that I know about)"
-			return result;
-		}
 	}
 	
 	// TODO (Feb 23, 2009 10:40:23 PM): V
@@ -225,26 +137,6 @@ public class MaxCore implements Serializable {
 		else
 			for (Description each : description.getChildren())
 				findLeaves(each, results);
-	}
-
-	private Long getFailureTimestamp(Description key) {
-		return fFailureTimestamps.get(key.toString());
-	}
-
-	private void putTestFailureTimestamp(Description key, long end) {
-		fFailureTimestamps.put(key.toString(), end);
-	}
-
-	private boolean isNewTest(Description key) {
-		return ! fDurations.containsKey(key.toString());
-	}
-	
-	private Long getTestDuration(Description key) {
-		return fDurations.get(key.toString());
-	}
-	
-	private void putTestDuration(Description description, long duration) {
-		fDurations.put(description.toString(), duration);
 	}
 }
 

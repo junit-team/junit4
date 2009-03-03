@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.Test;
+import org.junit.experimental.ParallelComputer;
 import org.junit.internal.matchers.TypeSafeMatcher;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;

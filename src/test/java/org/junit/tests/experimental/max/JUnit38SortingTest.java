@@ -22,7 +22,7 @@ public class JUnit38SortingTest {
 
 	@After
 	public void forgetMax() {
-		fMax.forget();
+		fMax.fHistory.forget();
 	}
 	
 	public static class JUnit4Test {

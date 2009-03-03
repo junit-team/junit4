@@ -1,8 +1,81 @@
 ## Summary of Changes in version 4.6 ##
 
-### Logging ###
+### Max ###
 
-- JUnit can now produce and parse its own result format.  [include more here]
+- JUnit now includes a new experimental Core, `MaxCore`.  `MaxCore`
+  remembers the results of previous test runs in order to run new
+  tests out of order.  `MaxCore` prefers new tests to old tests, fast
+  tests to slow tests, and recently failing tests to tests that last
+  failed long ago.  There's currently not a standard UI for running
+  `MaxCore` included in JUnit, but there is a UI included in the JUnit
+  Max Eclipse plug-in at:
+  
+    http://www.junitmax.com/junitmax/subscribe.html
+  
+  Example:
+  
+  	public static class TwoUnEqualTests {
+		@Test
+		public void slow() throws InterruptedException {
+			Thread.sleep(100);
+			fail();
+		}
+
+		@Test
+		public void fast() {
+			fail();
+		}
+	}
+
+	@Test
+	public void rememberOldRuns() throws CouldNotReadCoreException {
+		fMax.run(TwoUnEqualTests.class);
+		String storedResults= fMax.getFolder();
+
+		MaxCore reincarnation= MaxCore.forFolder(storedResults);
+		try {
+			List<Failure> failures= reincarnation.run(TwoUnEqualTests.class)
+					.getFailures();
+			assertEquals("fast", failures.get(0).getDescription()
+					.getMethodName());
+			assertEquals("slow", failures.get(1).getDescription()
+					.getMethodName());
+		} finally {
+			reincarnation.forget();
+		}
+	}
+
+### Test scheduling strategies ###
+
+`JUnitCore` now includes an experimental method that allows you to
+specify a model of the `Computer` that runs your tests.  Currently,
+the only built-in Computers are the default, serial runner, and two
+runners provided in the `ParallelRunner` class:
+`ParallelRunner.classes()`, which runs classes in parallel, and
+`ParallelRunner.methods()`, which runs classes and methods in parallel.
+
+This feature is currently less stable than MaxCore, and may be
+reimplemented in terms of MaxCore in the future.
+
+Example:
+
+	public static class Example {
+		@Test public void one() throws InterruptedException {
+			Thread.sleep(1000);
+		}
+		@Test public void two() throws InterruptedException {
+			Thread.sleep(1000);
+		}
+	}
+	
+	@Test public void testsRunInParallel() {
+		long start= System.currentTimeMillis();
+		Result result= JUnitCore.runClasses(ParallelComputer.methods(),
+				Example.class);
+		assertTrue(result.wasSuccessful());
+		long end= System.currentTimeMillis();
+		assertThat(end - start, betweenInclusive(1000, 1500));
+	}
 
 ### Documentation ###
 
