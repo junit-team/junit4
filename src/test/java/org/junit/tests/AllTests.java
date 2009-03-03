@@ -17,6 +17,7 @@ import org.junit.tests.experimental.AssumptionViolatedExceptionTest;
 import org.junit.tests.experimental.ExperimentalTests;
 import org.junit.tests.experimental.MatcherTest;
 import org.junit.tests.experimental.max.JUnit38SortingTest;
+import org.junit.tests.experimental.max.MaxComputerTest;
 import org.junit.tests.experimental.max.MaxStarterTest;
 import org.junit.tests.experimental.theories.AllMembersSupplierTest;
 import org.junit.tests.experimental.theories.runner.TheoriesPerformanceTest;
@@ -114,7 +115,8 @@ import org.junit.tests.validation.ValidationTest;
 	UseSuiteAsASuperclassTest.class,
 	FilterableTest.class,
 	MaxStarterTest.class,
-	JUnit38SortingTest.class
+	JUnit38SortingTest.class,
+	MaxComputerTest.class
 })
 public class AllTests {
 	public static Test suite() {

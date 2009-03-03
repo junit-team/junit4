@@ -1,7 +1,5 @@
 package org.junit.internal.runners;
 
-import java.util.List;
-
 import junit.extensions.TestDecorator;
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
@@ -51,6 +49,7 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
 			return Description.createTestDescription(getEffectiveClass(test), getName(test));
 		}
 
+		@SuppressWarnings("unchecked")
 		private Class<? extends Test> getEffectiveClass(Test test) {
 			// TODO (Feb 23, 2009 11:45:54 PM): Think hard about this.
 			if ("warning".equals(getName(test)))

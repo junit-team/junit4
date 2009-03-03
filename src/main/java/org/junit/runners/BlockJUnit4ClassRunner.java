@@ -286,7 +286,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 		return new RunAfters(statement, afters, target);
 	}
 
-	private EachTestNotifier makeNotifier(FrameworkMethod method,
+	protected EachTestNotifier makeNotifier(FrameworkMethod method,
 			RunNotifier notifier) {
 		Description description= describeChild(method);
 		return new EachTestNotifier(notifier, description);
