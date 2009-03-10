@@ -18,34 +18,18 @@ import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
 
 public class MaxCore {
-	public static MaxCore createFresh() {
-		// TODO (Mar 2, 2009 11:38:46 PM): exposed implementation detail
-		File file= new File("MaxCore.ser");
-		if (file.exists())
-			file.delete();
-
-		try {
-			return new MaxCore();
-		} catch (Throwable e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		}
+	public static MaxCore forFolder(String storedResults) {
+		return new MaxCore(new File(storedResults + ".ser"));
 	}
 
-	public static MaxCore forFolder(String storedResults) {
+	public static MaxCore forFolder(File storedResults) {
 		return new MaxCore(storedResults);
 	}
 
 	public final MaxHistory fHistory;
-	
-	private MaxCore(String folder) {
-		fHistory = MaxHistory.forFolder(folder);
-	}
 
-	private MaxCore() {
-		// TODO: ensure fresh
-		this("MaxCore");
+	public MaxCore(File storedResults) {
+		fHistory = MaxHistory.forFolder(storedResults);
 	}
 
 	public Result run(Class<?> testClass) {

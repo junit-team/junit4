@@ -2,6 +2,7 @@ package org.junit.tests.experimental.max;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -14,15 +15,19 @@ import org.junit.runner.Request;
 
 public class JUnit38SortingTest {
 	private MaxCore fMax;
+	private File fMaxFile;
 
 	@Before
 	public void createMax() {
-		fMax= MaxCore.createFresh();
+		fMaxFile= new File("MaxCore.ser");
+		if (fMaxFile.exists())
+			fMaxFile.delete();
+		fMax= new MaxCore(fMaxFile);
 	}
 
 	@After
 	public void forgetMax() {
-		fMax.fHistory.forget();
+		fMaxFile.delete();
 	}
 	
 	public static class JUnit4Test {

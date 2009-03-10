@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.max.MaxCore;
-import org.junit.experimental.max.MaxHistory;
 import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.runner.Computer;
 import org.junit.runner.Description;
@@ -31,15 +31,19 @@ import org.junit.tests.AllTests;
 public class MaxStarterTest {
 	private MaxCore fMax;
 
+	private File fMaxFile;
+
 	@Before
 	public void createMax() {
-		fMax= MaxCore.createFresh();
+		fMaxFile= new File("MaxCore.ser");
+		if (fMaxFile.exists())
+			fMaxFile.delete();
+		fMax= new MaxCore(fMaxFile);
 	}
 
 	@After
 	public void forgetMax() {
-		MaxHistory history= fMax.fHistory;
-		history.forget();
+		fMaxFile.delete();
 	}
 
 	public static class TwoTests {
@@ -128,48 +132,19 @@ public class MaxStarterTest {
 		public void fast() {
 			fail();
 		}
+
 	}
 
 	@Test
 	public void rememberOldRuns() {
+		// TODO (Mar 9, 2009 10:40:03 PM): Direct access to fHistory
 		fMax.run(TwoUnEqualTests.class);
-		String storedResults= fMax.fHistory.getFolder();
 
-		MaxCore reincarnation= MaxCore.forFolder(storedResults);
-		try {
-			List<Failure> failures= reincarnation.run(TwoUnEqualTests.class)
-					.getFailures();
-			assertEquals("fast", failures.get(0).getDescription()
-					.getMethodName());
-			assertEquals("slow", failures.get(1).getDescription()
-					.getMethodName());
-		} finally {
-			reincarnation.fHistory.forget();
-		}
-	}
-
-	@Test
-	public void rememberOldRunsSqueeze() {
-		fMax.run(TwoUnEqualTests.class);
-		String storedResults= fMax.fHistory.getFolder();
-
-		MaxCore reincarnation= MaxCore.forFolder(storedResults);
-		try {
-			List<Failure> failures= run(reincarnation)
-					.getFailures();
-			assertEquals("fast", failures.get(0).getDescription()
-					.getMethodName());
-			assertEquals("slow", failures.get(1).getDescription()
-					.getMethodName());
-		} finally {
-			reincarnation.fHistory.forget();
-		}
-	}
-
-	private Result run(MaxCore reincarnation) {
-		JUnitCore core= new JUnitCore();
-		return core.run(reincarnation.sortRequest(
-				Request.aClass(TwoUnEqualTests.class)).getRunner());
+		MaxCore reincarnation= MaxCore.forFolder(fMaxFile);
+		List<Failure> failures= reincarnation.run(TwoUnEqualTests.class)
+				.getFailures();
+		assertEquals("fast", failures.get(0).getDescription().getMethodName());
+		assertEquals("slow", failures.get(1).getDescription().getMethodName());
 	}
 
 	@Test
@@ -251,9 +226,7 @@ public class MaxStarterTest {
 
 	@Test
 	public void testCountsStandUpToFiltration() {
-		// TODO (Nov 18, 2008 4:42:43 PM): DUP above
-		Class<AllTests> testClass= AllTests.class;
-		assertFilterLeavesTestUnscathed(testClass);
+		assertFilterLeavesTestUnscathed(AllTests.class);
 	}
 
 	private void assertFilterLeavesTestUnscathed(Class<?> testClass) {
