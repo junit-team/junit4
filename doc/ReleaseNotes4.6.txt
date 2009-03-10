@@ -28,21 +28,16 @@
 	}
 
 	@Test
-	public void rememberOldRuns() throws CouldNotReadCoreException {
-		fMax.run(TwoUnEqualTests.class);
-		String storedResults= fMax.getFolder();
+	public void rememberOldRuns() {
+		File maxFile = new File("history.max");
+		MaxCore firstMax = MaxCore.storedLocally(maxFile);
+		firstMax.run(TwoUnEqualTests.class);
 
-		MaxCore reincarnation= MaxCore.forFolder(storedResults);
-		try {
-			List<Failure> failures= reincarnation.run(TwoUnEqualTests.class)
-					.getFailures();
-			assertEquals("fast", failures.get(0).getDescription()
-					.getMethodName());
-			assertEquals("slow", failures.get(1).getDescription()
-					.getMethodName());
-		} finally {
-			reincarnation.forget();
-		}
+		MaxCore useHistory= MaxCore.storedLocally(maxFile);
+		List<Failure> failures= useHistory.run(TwoUnEqualTests.class)
+				.getFailures();
+		assertEquals("fast", failures.get(0).getDescription().getMethodName());
+		assertEquals("slow", failures.get(1).getDescription().getMethodName());
 	}
 
 ### Test scheduling strategies ###
@@ -55,7 +50,7 @@ runners provided in the `ParallelRunner` class:
 `ParallelRunner.methods()`, which runs classes and methods in parallel.
 
 This feature is currently less stable than MaxCore, and may be
-reimplemented in terms of MaxCore in the future.
+merged with MaxCore in some way in the future.
 
 Example:
 
@@ -76,6 +71,20 @@ Example:
 		long end= System.currentTimeMillis();
 		assertThat(end - start, betweenInclusive(1000, 1500));
 	}
+
+### Comparing double arrays ###
+
+Arrays of doubles can be compared, using a delta allowance for equality:
+
+	@Test
+	public void doubleArraysAreEqual() {
+		assertArrayEquals(new double[] {1.0, 2.0}, new double[] {1.0, 2.0}, 0.01);
+	}
+	
+### `Filter.matchDescription` API ###
+
+Since 4.0, it has been possible to run a single method using the `Request.method` 
+API.  In 4.6, the filter that implements this is exposed as `Filter.matchDescription`.
 
 ### Documentation ###
 

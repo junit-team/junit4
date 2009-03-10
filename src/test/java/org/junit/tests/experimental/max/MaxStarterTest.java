@@ -38,7 +38,7 @@ public class MaxStarterTest {
 		fMaxFile= new File("MaxCore.ser");
 		if (fMaxFile.exists())
 			fMaxFile.delete();
-		fMax= new MaxCore(fMaxFile);
+		fMax= MaxCore.storedLocally(fMaxFile);
 	}
 
 	@After
@@ -137,10 +137,9 @@ public class MaxStarterTest {
 
 	@Test
 	public void rememberOldRuns() {
-		// TODO (Mar 9, 2009 10:40:03 PM): Direct access to fHistory
 		fMax.run(TwoUnEqualTests.class);
 
-		MaxCore reincarnation= MaxCore.forFolder(fMaxFile);
+		MaxCore reincarnation= MaxCore.storedLocally(fMaxFile);
 		List<Failure> failures= reincarnation.run(TwoUnEqualTests.class)
 				.getFailures();
 		assertEquals("fast", failures.get(0).getDescription().getMethodName());
@@ -198,7 +197,7 @@ public class MaxStarterTest {
 	public void saffSqueezeExample() throws Exception {
 		final Description method= Description.createTestDescription(
 				TwoOldTests.class, "testOne");
-		Filter filter= Filter.matchDescription(method);
+		Filter filter= Filter.matchMethodDescription(method);
 		JUnit38ClassRunner child= new JUnit38ClassRunner(TwoOldTests.class);
 		child.filter(filter);
 		assertEquals(1, child.testCount());

@@ -22,7 +22,7 @@ public class JUnit38SortingTest {
 		fMaxFile= new File("MaxCore.ser");
 		if (fMaxFile.exists())
 			fMaxFile.delete();
-		fMax= new MaxCore(fMaxFile);
+		fMax= MaxCore.storedLocally(fMaxFile);
 	}
 
 	@After
