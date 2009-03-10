@@ -27,8 +27,12 @@ public abstract class Filter {
 			return "all tests";
 		}
 	};
-	//TODO javadoc
-	public static Filter matchDescription(final Description desiredDescription) {
+	
+	/**
+	 * Returns a {@code Filter} that only runs the single method described by
+	 * {@code desiredDescription}
+	 */
+	public static Filter matchMethodDescription(final Description desiredDescription) {
 		return new Filter() {
 			@Override
 			public boolean shouldRun(Description description) {

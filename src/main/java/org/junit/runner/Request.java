@@ -130,7 +130,7 @@ public abstract class Request {
 	 * @return the filtered Request
 	 */
 	public Request filterWith(final Description desiredDescription) {
-		return filterWith(Filter.matchDescription(desiredDescription));
+		return filterWith(Filter.matchMethodDescription(desiredDescription));
 	}
 
 	/**
