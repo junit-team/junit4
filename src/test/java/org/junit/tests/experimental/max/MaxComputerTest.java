@@ -3,6 +3,7 @@ package org.junit.tests.experimental.max;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -27,7 +28,7 @@ import org.junit.runners.model.RunnerBuilder;
 public class MaxComputerTest {
 	private static class MaxComputer extends Computer {
 		// TODO (Mar 2, 2009 11:21:28 PM): configure somehow
-		MaxHistory fMax= new MaxHistory("MaxCore");
+		MaxHistory fMax= new MaxHistory(new File("MaxCore.max"));
 
 		@Override
 		protected Runner getRunner(RunnerBuilder builder, Class<?> testClass)

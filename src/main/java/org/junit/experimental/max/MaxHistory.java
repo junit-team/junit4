@@ -2,7 +2,6 @@ package org.junit.experimental.max;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -19,24 +18,36 @@ import org.junit.runner.notification.RunListener;
 public class MaxHistory implements Serializable {
 	private static final long serialVersionUID= 1L;
 
-	public static MaxHistory forFolder(String folder) {
-		File serializedFile= new File(folder + ".ser");
+
+	public static MaxHistory forFolder(File storedResults) {
 		try {
-			if (serializedFile.exists())
-				return readHistory(folder);
+			if (storedResults.exists())
+				return readHistory(storedResults);
 		} catch (CouldNotReadCoreException e) {
 			e.printStackTrace();
-			serializedFile.delete();
+			storedResults.delete();
 		}
-		return new MaxHistory(folder);
+		return new MaxHistory(storedResults);
 	}
+	
+//	public static MaxHistory forFolder(String folder) {
+//		File serializedFile= new File(folder + ".ser");
+//		try {
+//			if (serializedFile.exists())
+//				return readHistory(folder);
+//		} catch (CouldNotReadCoreException e) {
+//			e.printStackTrace();
+//			serializedFile.delete();
+//		}
+//		return new MaxHistory(folder);
+//	}
 
-	private static MaxHistory readHistory(String folder) throws CouldNotReadCoreException {
+	private static MaxHistory readHistory(File storedResults) throws CouldNotReadCoreException {
 		// TODO: rule of three
 		// TODO: Really?
 		ObjectInputStream stream;
 		try {
-			stream= new ObjectInputStream(new FileInputStream(folder + ".ser"));
+			stream= new ObjectInputStream(new FileInputStream(storedResults));
 		} catch (IOException e) {
 			throw new CouldNotReadCoreException(e);
 		}
@@ -56,27 +67,19 @@ public class MaxHistory implements Serializable {
 
 	public final Map<String, Long> fFailureTimestamps= new HashMap<String, Long>();
 
-	public final String fFolder;
+	public final File fFolder;
 
-	public MaxHistory(String folder) {
-		fFolder= folder;
-		// TODO Auto-generated constructor stub
+	public MaxHistory(File storedResults) {
+		fFolder= storedResults;
 	}
-	
 
-	public String getFolder() {
+	public File getFile() {
 		return fFolder;
 	}
 
-	public void forget() {
-		// TODO (Mar 2, 2009 11:40:29 PM): doesn't delete fFolder + ".ser",
-		// which is where we're storing things.
-		new File(fFolder).delete();
-	}
-
-	void save() throws FileNotFoundException, IOException {
+	public void save() throws IOException {
 		ObjectOutputStream stream= new ObjectOutputStream(new FileOutputStream(
-				fFolder + ".ser"));
+				fFolder));
 		stream.writeObject(this);
 		stream.close();
 	}
