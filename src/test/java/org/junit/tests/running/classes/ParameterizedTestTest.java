@@ -19,6 +19,8 @@ import org.junit.runner.Result;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.AfterParameterize;
+import org.junit.runners.Parameterized.BeforeParameterize;
 import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.model.InitializationError;
 
@@ -111,6 +113,94 @@ public class ParameterizedTestTest {
 		fLog= "";
 		JUnitCore.runClasses(BeforeAndAfter.class);
 		assertEquals("before after ", fLog);
+	}	
+	
+	@RunWith(Parameterized.class)
+	static public class BeforeAndAfterParameterize {
+		@BeforeParameterize
+		public static void beforeParameterize() {
+			fLog+= "beforeParameterize ";
+		}
+
+		@AfterParameterize
+		public static void afterParameterize() {
+			fLog+= "afterParameterize ";
+		}
+
+		public BeforeAndAfterParameterize(int x) {
+
+		}
+
+		@Parameters
+		public static Collection<Object[]> data() {
+			return Arrays.asList(new Object[][] { { 3 }, { 4 } });
+		}
+
+		@Test
+		public void aTest() {
+			fLog+= "aTest ";
+		}
+		
+		@Test
+		public void bTest() {
+			fLog+= "bTest ";
+		}
+	}
+
+	@Test
+	public void beforeAndAfterParameterizeAreRun() {
+		fLog= "";
+		JUnitCore.runClasses(BeforeAndAfterParameterize.class);
+		assertEquals("beforeParameterize aTest bTest afterParameterize beforeParameterize aTest bTest afterParameterize ", fLog);
+	}	
+	
+	@RunWith(Parameterized.class)
+	static public class BeforeAfterParameterizeAndBeforeAfterClass {
+		@BeforeParameterize
+		public static void beforeParameterize() {
+			fLog+= "beforeParameterize ";
+		}
+
+		@AfterParameterize
+		public static void afterParameterize() {
+			fLog+= "afterParameterize ";
+		}
+		
+		@BeforeClass
+		public static void beforeClass() {
+			fLog+= "beforeClass ";
+		}
+
+		@AfterClass
+		public static void afterClass() {
+			fLog+= "afterClass ";
+		}
+
+		public BeforeAfterParameterizeAndBeforeAfterClass(int x) {
+
+		}
+
+		@Parameters
+		public static Collection<Object[]> data() {
+			return Arrays.asList(new Object[][] { { 3 }, { 4 } });
+		}
+
+		@Test
+		public void aTest() {
+			fLog+= "aTest ";
+		}
+		
+		@Test
+		public void bTest() {
+			fLog+= "bTest ";
+		}
+	}
+
+	@Test
+	public void beforeAfterParameterizeAndBeforeAfterClassAreRun() {
+		fLog= "";
+		JUnitCore.runClasses(BeforeAfterParameterizeAndBeforeAfterClass.class);
+		assertEquals("beforeClass beforeParameterize aTest bTest afterParameterize beforeParameterize aTest bTest afterParameterize afterClass ", fLog);
 	}
 
 	@RunWith(Parameterized.class)
