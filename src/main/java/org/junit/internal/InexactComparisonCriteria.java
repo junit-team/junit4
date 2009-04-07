@@ -59,7 +59,10 @@ public class InexactComparisonCriteria {
 				}
 			} else
 				try {
-					Assert.assertEquals((Double)expected, (Double)actual, fDelta);
+					if (expected instanceof Double)
+						Assert.assertEquals((Double)expected, (Double)actual, fDelta);
+					else
+						Assert.assertEquals((Float)expected, (Float)actual, fDelta);
 				} catch (AssertionError e) {
 					throw new ArrayComparisonFailure(header, e, i);
 				}

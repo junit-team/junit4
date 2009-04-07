@@ -121,14 +121,19 @@ public class AssertionTest {
 		assertArrayEquals(new short[] {1}, new short[] {1});
 		assertArrayEquals(new int[] {1}, new int[] {1});
 		assertArrayEquals(new long[] {1}, new long[] {1});
-		// TODO: add floats
 		assertArrayEquals(new double[] {1.0}, new double[] {1.0}, 1.0);
+		// TODO (Mar 10, 2009 10:47:34 AM): Import
+		Assert.assertArrayEquals(new float[] {1.0f}, new float[] {1.0f}, 1.0f);
 	}
 
 	@Test(expected=AssertionError.class)
 	public void oneDimensionalDoubleArraysAreNotEqual() {
-		// TODO: add floats
 		assertArrayEquals(new double[] {1.0}, new double[] {2.5}, 1.0);
+	}
+
+	@Test(expected=AssertionError.class)
+	public void oneDimensionalFloatArraysAreNotEqual() {
+		assertArrayEquals(new float[] {1.0f}, new float[] {2.5f}, 1.0f);
 	}
 
 	@Test(expected=AssertionError.class)
