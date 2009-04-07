@@ -18,6 +18,10 @@ import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
 
 public class MaxCore {
+	public static MaxCore forFolder(String fileName) {
+		return storedLocally(new File(fileName));
+	}
+	
 	public static MaxCore storedLocally(File storedResults) {
 		return new MaxCore(storedResults);
 	}

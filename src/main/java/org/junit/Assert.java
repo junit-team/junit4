@@ -365,6 +365,37 @@ public class Assert {
 	}
 
 	/**
+	 * Asserts that two double arrays are equal. If they are not, an
+	 * {@link AssertionError} is thrown with the given message.
+	 * 
+	 * @param message
+	 *            the identifying message for the {@link AssertionError} (<code>null</code>
+	 *            okay)
+	 * @param expecteds
+	 *            double array with expected values.
+	 * @param actuals
+	 *            double array with actual values
+	 */
+	public static void assertArrayEquals(String message, float[] expecteds,
+			float[] actuals, float delta) throws ArrayComparisonFailure {
+		new InexactComparisonCriteria(delta).internalArrayEquals(message, expecteds, actuals);
+	}
+
+	// TODO (Mar 10, 2009 10:52:18 AM): fix javadoc
+	/**
+	 * Asserts that two double arrays are equal. If they are not, an
+	 * {@link AssertionError} is thrown.
+	 * 
+	 * @param expecteds
+	 *            double array with expected values.
+	 * @param actuals
+	 *            double array with actual values
+	 */
+	public static void assertArrayEquals(float[] expecteds, float[] actuals, float delta) {
+		assertArrayEquals(null, expecteds, actuals, delta);
+	}
+
+	/**
 	 * Asserts that two object arrays are equal. If they are not, an
 	 * {@link AssertionError} is thrown with the given message. If
 	 * <code>expecteds</code> and <code>actuals</code> are <code>null</code>,

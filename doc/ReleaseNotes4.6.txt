@@ -2,19 +2,19 @@
 
 ### Max ###
 
-- JUnit now includes a new experimental Core, `MaxCore`.  `MaxCore`
-  remembers the results of previous test runs in order to run new
-  tests out of order.  `MaxCore` prefers new tests to old tests, fast
-  tests to slow tests, and recently failing tests to tests that last
-  failed long ago.  There's currently not a standard UI for running
-  `MaxCore` included in JUnit, but there is a UI included in the JUnit
-  Max Eclipse plug-in at:
-  
-    http://www.junitmax.com/junitmax/subscribe.html
-  
-  Example:
-  
-  	public static class TwoUnEqualTests {
+JUnit now includes a new experimental Core, `MaxCore`.  `MaxCore`
+remembers the results of previous test runs in order to run new
+tests out of order.  `MaxCore` prefers new tests to old tests, fast
+tests to slow tests, and recently failing tests to tests that last
+failed long ago.  There's currently not a standard UI for running
+`MaxCore` included in JUnit, but there is a UI included in the JUnit
+Max Eclipse plug-in at:
+
+  http://www.junitmax.com/junitmax/subscribe.html
+
+Example:
+
+	public static class TwoUnEqualTests {
 		@Test
 		public void slow() throws InterruptedException {
 			Thread.sleep(100);
@@ -94,3 +94,7 @@ API.  In 4.6, the filter that implements this is exposed as `Filter.matchDescrip
 - Added how to run JUnit from the command line to the cookbook.
 
 - junit-4.x.zip now contains build.xml
+
+### Bug fixes ###
+- Fixed overly permissive @DataPoint processing (2191102)
+- Fixed bug in test counting after an ignored method (2106324)
