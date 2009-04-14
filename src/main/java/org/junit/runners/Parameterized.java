@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.internal.runners.statements.RunAfters;
-import org.junit.internal.runners.statements.RunBefores;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkMethod;
@@ -74,24 +72,6 @@ public class Parameterized extends Suite {
 	public static @interface Parameters {
 	}
 
-	/**
-	 * Annotation for a method which executes before a instance of <code>Parameterized</code> tests
-	 * are ran.
-	 */
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.METHOD)
-	public static @interface AfterParameterize {
-	}
-
-	/**
-	 * Annotation for a method which executes before a instance of <code>Parameterized</code> tests
-	 * are ran.
-	 */
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.METHOD)
-	public static @interface BeforeParameterize {
-	}
-
 	private class TestClassRunnerForParameters extends
 			BlockJUnit4ClassRunner {
 		private final int fParameterSetNumber;
@@ -140,32 +120,7 @@ public class Parameterized extends Suite {
 
 		@Override
 		protected Statement classBlock(RunNotifier notifier) {
-			Statement statement= childrenInvoker(notifier);
-			statement= withBeforeParameterize(statement);
-			statement= withAfterParameterize(statement);
-			return statement;
-		}
-
-		/**
-		 * Returns a {@link Statement}: run all non-overridden {@code @AfterParameterize} methods on this class
-		 * and superclasses before executing {@code statement}; if any throws an
-		 * Exception, stop execution and pass the exception on.
-		 */
-		protected Statement withAfterParameterize(Statement statement) {
-			List<FrameworkMethod> afterParameterizes = getTestClass().getAnnotatedMethods(AfterParameterize.class);
-			statement= new RunAfters(statement, afterParameterizes, null);
-			return statement;
-		}
-
-		/**
-		 * Returns a {@link Statement}: run all non-overridden {@code @BeforeParameterize} methods on this class
-		 * and superclasses before executing {@code statement}; if any throws an
-		 * Exception, stop execution and pass the exception on.
-		 */
-		protected Statement withBeforeParameterize(Statement statement) {
-			List<FrameworkMethod> beforeParameterizes = getTestClass().getAnnotatedMethods(BeforeParameterize.class);
-			statement= new RunBefores(statement, beforeParameterizes, null);
-			return statement;
+			return childrenInvoker(notifier);
 		}
 	}
 
