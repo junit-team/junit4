@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -127,7 +128,6 @@ public class TimeoutTest {
 		return totalTime;
 	}
 
-	@Ignore("We would like this behavior to work but it may not be possible")
 	@Test public void stalledThreadAppearsInStackTrace() throws Exception {
 		JUnitCore core= new JUnitCore();
 		Result result= core.run(InfiniteLoopTest.class);
@@ -137,7 +137,7 @@ public class TimeoutTest {
 		Writer buffer= new StringWriter();
 		PrintWriter writer= new PrintWriter(buffer);
 		exception.printStackTrace(writer);
-		assertTrue(writer.toString().contains("infiniteLoop")); // Make sure we have the stalled frame on the stack somewhere
+		assertThat(buffer.toString(), containsString("infiniteLoop")); // Make sure we have the stalled frame on the stack somewhere
 	}
 
 	@Test public void compatibility() {
