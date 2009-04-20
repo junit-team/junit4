@@ -5,6 +5,7 @@
 
 ### Docs ###
 - Javadocs now link to online JDK javadocs (bug 2090230)
+- Parameterized runner javadocs improved (bug 2186792)
 
 ### Bug fixes ###
 - Fixed: BaseTestRunner.getTest() requires class to extend TestCase (1812200)
