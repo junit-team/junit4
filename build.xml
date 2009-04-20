@@ -76,7 +76,7 @@
 		<junit_compilation srcdir="${testsrc}" destdir="${testbin}" classpath="${hamcrestlib};${bin}"/>
 	</target>
 
-	<target name="jars">
+	<target name="jars" depends="build">
 		<mkdir dir="${dist}" />
 		<jar 
 			jarfile="${dist}/${srcjar}"
