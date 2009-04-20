@@ -48,4 +48,5 @@
 2009 Apr 20
 	Chris Felaco: Discovered regression in handling suite() methods with JUnit 3 runner (1812200)
 	Toby Byron: Suggested updating linking in javadoc (2090230)
+	Raphael Parree: Improved docs on Parameterized (2186792)
 	
