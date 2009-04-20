@@ -1,0 +1,4 @@
+## Summary of Changes in version 4.7 ##
+
+### Bug fixes ###
+- Fixed: BaseTestRunner.getTest() requires class to extend TestCase (1812200)

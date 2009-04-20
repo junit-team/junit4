@@ -17,7 +17,6 @@ import java.util.Properties;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestListener;
 import junit.framework.TestSuite;
 
@@ -96,7 +95,7 @@ public abstract class BaseTestRunner implements TestListener {
 			clearStatus();
 			return null;
 		}
-		Class<? extends TestCase> testClass= null;
+		Class<?> testClass= null;
 		try {
 			testClass= loadSuiteClass(suiteClassName);
 		} catch (ClassNotFoundException e) {
@@ -204,8 +203,8 @@ public abstract class BaseTestRunner implements TestListener {
 	/**
 	 * Returns the loaded Class for a suite name.
 	 */
-	protected Class<? extends TestCase> loadSuiteClass(String suiteClassName) throws ClassNotFoundException {
-		return Class.forName(suiteClassName).asSubclass(TestCase.class);
+	protected Class<?> loadSuiteClass(String suiteClassName) throws ClassNotFoundException {
+		return Class.forName(suiteClassName);
 	}
 
 	/**

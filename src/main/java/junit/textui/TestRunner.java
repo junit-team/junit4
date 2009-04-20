@@ -184,7 +184,7 @@ public class TestRunner extends BaseTestRunner {
 	}
 
 	protected TestResult runSingleMethod(String testCase, String method, boolean wait) throws Exception {
-		Class<? extends TestCase> testClass= loadSuiteClass(testCase);
+		Class<? extends TestCase> testClass= loadSuiteClass(testCase).asSubclass(TestCase.class);
 		Test test= TestSuite.createTest(testClass, method);
 		return doRun(test, wait);
 	}
