@@ -3,5 +3,8 @@
 ### Timeouts ###
 - Tests that timeout now show the stack trace of the test thread.
 
+### Docs ###
+- Javadocs now link to online JDK javadocs (bug 2090230)
+
 ### Bug fixes ###
 - Fixed: BaseTestRunner.getTest() requires class to extend TestCase (1812200)
