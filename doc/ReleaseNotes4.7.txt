@@ -1,4 +1,7 @@
 ## Summary of Changes in version 4.7 ##
 
+### Timeouts ###
+- Tests that timeout now show the stack trace of the test thread.
+
 ### Bug fixes ###
 - Fixed: BaseTestRunner.getTest() requires class to extend TestCase (1812200)
