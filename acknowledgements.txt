@@ -49,4 +49,5 @@
 	Chris Felaco: Discovered regression in handling suite() methods with JUnit 3 runner (1812200)
 	Toby Byron: Suggested updating linking in javadoc (2090230)
 	Raphael Parree: Improved docs on Parameterized (2186792)
+	Robin de Silva Jayasinghe: Fixed Javadoc code sample for AfterClass (2126279)
 	
