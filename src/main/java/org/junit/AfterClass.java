@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
  * Here is a simple example:
 * <pre>
  * public class Example {
- *    DatabaseConnection database;
+ *    private static DatabaseConnection database;
  *    &#064;BeforeClass public static void login() {
  *          database= ...;
  *    }
