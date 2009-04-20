@@ -46,11 +46,7 @@ import org.junit.runners.model.TestClass;
  * 	}
  * 
  * 	&#064;Test
- * 	public void test(@HeresHowYouGetValue Type value) {
- * 		assertAnswerKey(new Object[][] {
- * 				Fibonacci,
- * 				{ { 0, 0 }, { 1, 1 }, { 2, 1 }, { 3, 2 }, { 4, 3 }, { 5, 5 },
- * 						{ 6, 8 } } });
+ * 	public void test() {
  * 		assertEquals(fExpected, Fibonacci.compute(fInput));
  * 	}
  * }
