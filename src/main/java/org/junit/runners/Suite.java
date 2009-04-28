@@ -1,6 +1,7 @@
 package org.junit.runners;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -28,6 +29,7 @@ public class Suite extends ParentRunner<Runner> {
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.TYPE)
+	@Inherited
 	public @interface SuiteClasses {
 		/**
 		 * @return the classes to be run
