@@ -29,18 +29,6 @@ public class MaxHistory implements Serializable {
 		}
 		return new MaxHistory(storedResults);
 	}
-	
-//	public static MaxHistory forFolder(String folder) {
-//		File serializedFile= new File(folder + ".ser");
-//		try {
-//			if (serializedFile.exists())
-//				return readHistory(folder);
-//		} catch (CouldNotReadCoreException e) {
-//			e.printStackTrace();
-//			serializedFile.delete();
-//		}
-//		return new MaxHistory(folder);
-//	}
 
 	private static MaxHistory readHistory(File storedResults) throws CouldNotReadCoreException {
 		// TODO: rule of three
@@ -63,6 +51,7 @@ public class MaxHistory implements Serializable {
 			}
 		}
 	}
+	
 	public final Map<String, Long> fDurations= new HashMap<String, Long>();
 
 	public final Map<String, Long> fFailureTimestamps= new HashMap<String, Long>();
