@@ -90,3 +90,7 @@
 - `ResultMatchers` has more informative descriptions.
 
 - `TestSystem` allows testing return codes and other system-level interactions.
+
+### Incompatible changes ###
+
+- Removed Request.classes(String, Class<?>...) factory method

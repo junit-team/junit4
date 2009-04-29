@@ -37,11 +37,21 @@ public class SuiteTest {
 	@RunWith(Suite.class)
 	@SuiteClasses({TestA.class, TestB.class})
 	public static class All {
+	}	
+	
+	public static class InheritsAll extends All {
 	}
 	
 	@Test public void ensureTestIsRun() {
 		JUnitCore core= new JUnitCore();
 		Result result= core.run(All.class);
+		assertEquals(2, result.getRunCount());
+		assertEquals(1, result.getFailureCount());
+	}
+	
+	@Test public void ensureInheritedTestIsRun() {
+		JUnitCore core= new JUnitCore();
+		Result result= core.run(InheritsAll.class);
 		assertEquals(2, result.getRunCount());
 		assertEquals(1, result.getFailureCount());
 	}

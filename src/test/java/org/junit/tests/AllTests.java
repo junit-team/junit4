@@ -15,6 +15,7 @@ import org.junit.tests.description.TestDescriptionTest;
 import org.junit.tests.experimental.AssumptionTest;
 import org.junit.tests.experimental.AssumptionViolatedExceptionTest;
 import org.junit.tests.experimental.ExperimentalTests;
+import org.junit.tests.experimental.InterceptorTest;
 import org.junit.tests.experimental.MatcherTest;
 import org.junit.tests.experimental.max.JUnit38SortingTest;
 import org.junit.tests.experimental.max.MaxComputerTest;
@@ -116,7 +117,8 @@ import org.junit.tests.validation.ValidationTest;
 	FilterableTest.class,
 	MaxStarterTest.class,
 	JUnit38SortingTest.class,
-	MaxComputerTest.class
+	MaxComputerTest.class,
+	InterceptorTest.class
 })
 public class AllTests {
 	public static Test suite() {
