@@ -251,6 +251,7 @@ public class MaxStarterTest {
 		private MalformedJUnit38Test() {
 		}
 
+		@SuppressWarnings("unused")
 		public void testSucceeds() {
 		}
 	}
@@ -277,9 +278,7 @@ public class MaxStarterTest {
 		Runner runner= sorted.getRunner();
 		Result result= core.run(runner);
 		Failure failure= result.getFailures().get(0);
-
-		assertThat(failure.toString(),
-				containsString("MalformedJUnit38TestMethod"));
+		assertThat(failure.toString(), containsString("MalformedJUnit38TestMethod"));
 		assertThat(failure.toString(), containsString("testNothing"));
 		assertThat(failure.toString(), containsString("isn't public"));
 	}

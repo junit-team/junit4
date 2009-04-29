@@ -2,6 +2,7 @@ package org.junit.experimental.max;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -30,36 +31,38 @@ public class MaxHistory implements Serializable {
 		return new MaxHistory(storedResults);
 	}
 	
-//	public static MaxHistory forFolder(String folder) {
-//		File serializedFile= new File(folder + ".ser");
-//		try {
-//			if (serializedFile.exists())
-//				return readHistory(folder);
-//		} catch (CouldNotReadCoreException e) {
-//			e.printStackTrace();
-//			serializedFile.delete();
-//		}
-//		return new MaxHistory(folder);
-//	}
-
 	private static MaxHistory readHistory(File storedResults) throws CouldNotReadCoreException {
 		// TODO: rule of three
 		// TODO: Really?
 		ObjectInputStream stream;
+		FileInputStream file= null;
 		try {
-			stream= new ObjectInputStream(new FileInputStream(storedResults));
-		} catch (IOException e) {
+			file= new FileInputStream(storedResults);
+		} catch (FileNotFoundException e) {
 			throw new CouldNotReadCoreException(e);
 		}
 		try {
-			return (MaxHistory) stream.readObject();
-		} catch (Exception e) {
-			throw new CouldNotReadCoreException(e); //TODO think about what we can do better here
-		} finally {
 			try {
-				stream.close();
+				stream= new ObjectInputStream(file);
 			} catch (IOException e) {
 				throw new CouldNotReadCoreException(e);
+			}
+			try {
+				return (MaxHistory) stream.readObject();
+			} catch (Exception e) {
+				throw new CouldNotReadCoreException(e); //TODO think about what we can do better here
+			} finally {
+				try {
+					stream.close();
+				} catch (IOException e) {
+					throw new CouldNotReadCoreException(e);
+				}
+			}
+		} finally {
+			try {
+				file.close();
+			} catch (IOException e) {
+				// TODO can't imagine what's gone wrong here, but who cares?
 			}
 		}
 	}
