@@ -1,5 +1,39 @@
 ## Summary of Changes in version 4.7 ##
 
+### Interceptors ###
+
+- Interceptors allow very flexible addition or redefinition of the behavior
+  of each test method in a test class.  For example, this class will
+  keep a log of each passing and failing test:
+  
+	@RunWith(Interceptors.class)
+	public static class WatchmanTest {
+		private static String watchedLog;
+
+		@Interceptor
+		public StatementInterceptor watchman= new TestWatchman() {
+			@Override
+			public void failed(Throwable e, FrameworkMethod method) {
+				watchedLog+= method.getName() + " "
+						+ e.getClass().getSimpleName() + "\n";
+			}
+
+			@Override
+			public void succeeded(FrameworkMethod method) {
+				watchedLog+= method.getName() + " " + "success!\n";
+			}
+		};
+
+		@Test
+		public void fails() {
+			fail();
+		}
+
+		@Test
+		public void succeeds() {
+		}
+	}
+
 ### Timeouts ###
 - Tests that timeout now show the stack trace of the test thread.
 
