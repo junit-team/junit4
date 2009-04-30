@@ -43,7 +43,7 @@ public class InterceptorTest {
 	}
 
 	@Test
-	public void interceptorIsIntroducedAnEvaluated() {
+	public void interceptorIsIntroducedAndEvaluated() {
 		wasRun= false;
 		JUnitCore.runClasses(ExampleTest.class);
 		assertTrue(wasRun);

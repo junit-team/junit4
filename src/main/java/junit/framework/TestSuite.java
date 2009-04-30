@@ -276,7 +276,7 @@ public class TestSuite implements Test {
 			return;
 		if (! isPublicTestMethod(m)) {
 			if (isTestMethod(m))
-				addTest(warning("Test method isn't public: "+m.getName()));
+				addTest(warning("Test method isn't public: "+ m.getName() + "(" + theClass.getCanonicalName() + ")"));
 			return;
 		}
 		names.add(name);

@@ -63,4 +63,17 @@ public class JUnit38ClassRunnerTest {
 		assertEquals(1, count);
 		assertEquals(1, result.getRunCount());
 	}
+	
+	public static class ClassWithInvalidMethod extends TestCase {
+		@SuppressWarnings("unused")
+		private void testInvalid() {}
+	}
+	
+	@Test public void invalidTestMethodReportedCorrectly() {
+		Result result= JUnitCore.runClasses(ClassWithInvalidMethod.class);
+		Failure failure= result.getFailures().get(0);
+		assertEquals("warning", failure.getDescription().getMethodName());
+		assertEquals("junit.framework.TestSuite$1", failure.getDescription().getClassName());
+	}
+
 }
