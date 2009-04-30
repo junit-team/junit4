@@ -6,6 +6,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.junit.internal.ArrayComparisonFailure;
+import org.junit.internal.ExactComparisonCriteria;
 import org.junit.internal.InexactComparisonCriteria;
 
 /**
@@ -412,32 +413,8 @@ public class Assert {
 	 */
 	private static void internalArrayEquals(String message, Object expecteds,
 			Object actuals) throws ArrayComparisonFailure {
-		if (expecteds == actuals)
-			return;
-		String header= message == null ? "" : message + ": ";
-		int expectedsLength= assertArraysAreSameLength(expecteds, actuals,
-				header);
-
-		for (int i= 0; i < expectedsLength; i++) {
-			Object expected= Array.get(expecteds, i);
-			Object actual= Array.get(actuals, i);
-			// TODO (Nov 6, 2008 12:58:55 PM): Is this a DUP?
-			if (isArray(expected) && isArray(actual)) {
-				try {
-					internalArrayEquals(message, expected, actual);
-				} catch (ArrayComparisonFailure e) {
-					e.addDimension(i);
-					throw e;
-				}
-			} else
-				try {
-					assertEquals(expected, actual);
-				} catch (AssertionError e) {
-					throw new ArrayComparisonFailure(header, e, i);
-				}
-		}
-	}
-	
+		new ExactComparisonCriteria().internalArrayEquals(message, expecteds, actuals);
+	}	
 
 	public static int assertArraysAreSameLength(Object expecteds,
 			Object actuals, String header) {
