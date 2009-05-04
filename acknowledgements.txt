@@ -51,3 +51,6 @@
 	Raphael Parree: Improved docs on Parameterized (2186792)
 	Robin de Silva Jayasinghe: Fixed Javadoc code sample for AfterClass (2126279)
 	
+2009 May 04
+	James Abbley: Submitted a patch that fixed the 2-second limit on Parallel execution.
+	
