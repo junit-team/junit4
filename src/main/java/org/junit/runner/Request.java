@@ -8,7 +8,6 @@ import org.junit.internal.requests.FilterRequest;
 import org.junit.internal.requests.SortingRequest;
 import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.manipulation.Filter;
-import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
 
 /**
@@ -67,7 +66,7 @@ public abstract class Request {
 	public static Request classes(Computer computer, Class<?>... classes) {
 		try {
 			AllDefaultPossibilitiesBuilder builder= new AllDefaultPossibilitiesBuilder(true);
-			Suite suite= computer.getSuite(builder, classes);
+			Runner suite= computer.getSuite(builder, classes);
 			return runner(suite);
 		} catch (InitializationError e) {
 			throw new RuntimeException(
