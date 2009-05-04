@@ -8,7 +8,7 @@ public abstract class ComparisonCriteria {
 	// TODO (Sep 8, 2008 4:36:12 PM): check structure
 	
 	/**
-	 * Asserts that two object arrays are equal. If they are not, an
+	 * Asserts that two arrays are equal. If they are not, an
 	 * {@link AssertionError} is thrown with the given message. If
 	 * <code>expecteds</code> and <code>actuals</code> are <code>null</code>,
 	 * they are considered equal.
@@ -24,7 +24,7 @@ public abstract class ComparisonCriteria {
 	 *            actual values
 	 * @param criteria TODO
 	 */
-	public void internalArrayEquals(String message, Object expecteds,
+	public void arrayEquals(String message, Object expecteds,
 			Object actuals) throws ArrayComparisonFailure {
 		// TODO: DUP above
 		// TODO (Sep 8, 2008 4:32:50 PM): Test that this fails sometimes
@@ -43,7 +43,7 @@ public abstract class ComparisonCriteria {
 			
 			if (Assert.isArray(expected) && Assert.isArray(actual)) {
 				try {
-					internalArrayEquals(message, expected, actual);
+					arrayEquals(message, expected, actual);
 				} catch (ArrayComparisonFailure e) {
 					e.addDimension(i);
 					throw e;
