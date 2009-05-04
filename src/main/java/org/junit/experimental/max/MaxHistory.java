@@ -30,7 +30,7 @@ public class MaxHistory implements Serializable {
 		}
 		return new MaxHistory(storedResults);
 	}
-
+	
 	private static MaxHistory readHistory(File storedResults) throws CouldNotReadCoreException {
 		// TODO: rule of three
 		// TODO: Really?
@@ -66,7 +66,6 @@ public class MaxHistory implements Serializable {
 			}
 		}
 	}
-	
 	public final Map<String, Long> fDurations= new HashMap<String, Long>();
 
 	public final Map<String, Long> fFailureTimestamps= new HashMap<String, Long>();
