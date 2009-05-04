@@ -3,11 +3,9 @@ package org.junit.experimental;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import org.junit.runner.Computer;
 import org.junit.runner.Runner;
@@ -31,13 +29,13 @@ public class ParallelComputer extends Computer {
 		return new ParallelComputer(true, false);
 	}
 	
-//TODO(parallel) extract commonality from ParallelSuite and ParallelRunner
+	// TODO(parallel) extract commonality from ParallelSuite and ParallelRunner
 	public static class ParallelSuite extends Suite {
 		public ParallelSuite(RunnerBuilder builder, Class<?>[] classes) throws InitializationError {
 			super(builder, classes);
 		}
 		
-		private final ParallelCollator collator = new ParallelCollator();
+		private final ParallelCollator fCollator = new ParallelCollator();
 	
 		@Override
 		protected void runChild(final Runner runner, final RunNotifier notifier) {
@@ -47,7 +45,7 @@ public class ParallelComputer extends Computer {
 					return null;
 				}
 			};
-			collator.process(callable);
+			fCollator.process(callable);
 		}
 		
 		protected void superRunChild(Runner runner, RunNotifier notifier) {
@@ -57,7 +55,7 @@ public class ParallelComputer extends Computer {
 		@Override
 		public void run(RunNotifier notifier) {
 			super.run(notifier);
-			for (Future<Object> each : collator.results)
+			for (Future<Object> each : fCollator.results)
 				try {
 					each.get();
 				} catch (Exception e) {
@@ -71,7 +69,7 @@ public class ParallelComputer extends Computer {
 			super(klass);
 		}
 		
-		private final ParallelCollator collator = new ParallelCollator();
+		private final ParallelCollator fCollator = new ParallelCollator();
 	
 		@Override
 		protected void runChild(final FrameworkMethod method, final RunNotifier notifier) {
@@ -81,7 +79,7 @@ public class ParallelComputer extends Computer {
 					return null;
 				}
 			};
-			collator.process(callable);
+			fCollator.process(callable);
 		}
 		
 		protected void superRunChild(FrameworkMethod method, RunNotifier notifier) {
@@ -91,9 +89,9 @@ public class ParallelComputer extends Computer {
 		@Override
 		public void run(RunNotifier notifier) {
 			super.run(notifier);
-			for (Future<Object> each : collator.results)
+			for (Future<Object> each : fCollator.results)
 				try {
-					each.get(); // TODO(parallel) what should this really be?
+					each.get();
 				} catch (Exception e) {
 					e.printStackTrace();
 				} 
@@ -120,9 +118,7 @@ public class ParallelComputer extends Computer {
 	}
 	
 	private static class ParallelCollator {
-		
-		final List<Future<Object>> results = new ArrayList<Future<Object>>();
-		
+		private final List<Future<Object>> results = new ArrayList<Future<Object>>();
 		private final ExecutorService service = Executors.newCachedThreadPool();
 
 		public void process(Callable<Object> callable) {

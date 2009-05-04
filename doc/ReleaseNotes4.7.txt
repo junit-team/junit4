@@ -48,3 +48,4 @@
 ### Bug fixes ###
 - Fixed: BaseTestRunner.getTest() requires class to extend TestCase (1812200)
 - Fixed: Suite does not allow for inheritance in annotations (2783118)
+- Fixed: ParallelComputer skipped tests that took longer than 2 seconds
