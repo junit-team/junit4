@@ -251,7 +251,6 @@ public class MaxStarterTest {
 		private MalformedJUnit38Test() {
 		}
 
-		@SuppressWarnings("unused")
 		public void testSucceeds() {
 		}
 	}
