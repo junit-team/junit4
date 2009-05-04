@@ -349,7 +349,7 @@ public class Assert {
 	 */
 	public static void assertArrayEquals(String message, double[] expecteds,
 			double[] actuals, double delta) throws ArrayComparisonFailure {
-		new InexactComparisonCriteria(delta).internalArrayEquals(message, expecteds, actuals);
+		new InexactComparisonCriteria(delta).arrayEquals(message, expecteds, actuals);
 	}
 
 	/**
@@ -379,7 +379,7 @@ public class Assert {
 	 */
 	public static void assertArrayEquals(String message, float[] expecteds,
 			float[] actuals, float delta) throws ArrayComparisonFailure {
-		new InexactComparisonCriteria(delta).internalArrayEquals(message, expecteds, actuals);
+		new InexactComparisonCriteria(delta).arrayEquals(message, expecteds, actuals);
 	}
 
 	/**
@@ -413,7 +413,7 @@ public class Assert {
 	 */
 	private static void internalArrayEquals(String message, Object expecteds,
 			Object actuals) throws ArrayComparisonFailure {
-		new ExactComparisonCriteria().internalArrayEquals(message, expecteds, actuals);
+		new ExactComparisonCriteria().arrayEquals(message, expecteds, actuals);
 	}	
 
 	public static int assertArraysAreSameLength(Object expecteds,
