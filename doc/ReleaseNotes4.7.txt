@@ -34,6 +34,8 @@
 		}
 	}
 
+	For more on this feature, see http://www.threeriversinstitute.org/blog/?p=155
+
 ### Timeouts ###
 - Tests that timeout now show the stack trace of the test thread.
 
