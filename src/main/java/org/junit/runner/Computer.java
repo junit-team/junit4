@@ -9,7 +9,7 @@ public class Computer {
 		return new Computer();
 	}
 
-	public Suite getSuite(final RunnerBuilder builder,
+	public Runner getSuite(final RunnerBuilder builder,
 			Class<?>[] classes) throws InitializationError {
 		return new Suite(new RunnerBuilder() {
 			@Override

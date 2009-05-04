@@ -77,11 +77,24 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	 * reported through {@code notifier}
 	 */
 	protected abstract void runChild(T child, RunNotifier notifier);
+	
+	// TODO (May 4, 2009 4:34:28 PM): This can't be right, but it allows delegation without breaking subclasses
+	public List<T> internalGetChildren() {
+		return getChildren();
+	}
 
+	public Description internalDescribeChild(T child) {
+		return describeChild(child);
+	}
+
+	public void internalRunChild(T child, RunNotifier notifier) {
+		runChild(child, notifier);
+	}
+	
 	//
 	// May be overridden
 	//
-
+	
 	/**
 	 * Adds to {@code errors} a throwable for each problem noted with the test class (available from {@link #getTestClass()}).
 	 * Default implementation adds an error for each method annotated with
@@ -194,7 +207,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	/**
 	 * Returns a {@link TestClass} object wrapping the class to be executed.
 	 */
-	protected final TestClass getTestClass() {
+	public final TestClass getTestClass() {
 		return fTestClass;
 	}
 

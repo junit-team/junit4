@@ -53,7 +53,7 @@ public class MaxComputerTest {
 		}
 
 		@Override
-		protected void runChild(FrameworkMethod method, RunNotifier notifier) {
+		public void runChild(FrameworkMethod method, RunNotifier notifier) {
 			methods.add(method);
 		}
 
@@ -136,13 +136,4 @@ public class MaxComputerTest {
 		assertEquals("testDontSucceed", result.getFailures().get(0)
 				.getDescription().getMethodName());
 	}
-
-	// Description succeed= Description.createTestDescription(TwoTests.class,
-	// "succeed");
-	// Description dontSucceed= Description.createTestDescription(
-	// TwoTests.class, "dontSucceed");
-	// assertTrue(things.contains(succeed));
-	// assertTrue(things.contains(dontSucceed));
-	// assertEquals(2, things.size());
-	// }
 }
