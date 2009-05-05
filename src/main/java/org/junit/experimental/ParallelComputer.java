@@ -66,7 +66,7 @@ public class ParallelComputer extends Computer {
 
 		@Override
 		public void runChild(final T child, final RunNotifier notifier) {
-			this.fResults.add(fService.submit(new Callable<Object>() {
+			fResults.add(fService.submit(new Callable<Object>() {
 				public Object call() throws Exception {
 					fDelegate.internalRunChild(child, notifier);
 					return null;
