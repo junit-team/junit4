@@ -79,14 +79,23 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	protected abstract void runChild(T child, RunNotifier notifier);
 	
 	// TODO (May 4, 2009 4:34:28 PM): This can't be right, but it allows delegation without breaking subclasses
+	/**
+	 * Interim interface during 4.7 development.  _Very_ likely to go away.
+	 */
 	public List<T> internalGetChildren() {
 		return getChildren();
 	}
 
+	/**
+	 * Interim interface during 4.7 development.  _Very_ likely to go away.
+	 */
 	public Description internalDescribeChild(T child) {
 		return describeChild(child);
 	}
 
+	/**
+	 * Interim interface during 4.7 development.  _Very_ likely to go away.
+	 */
 	public void internalRunChild(T child, RunNotifier notifier) {
 		runChild(child, notifier);
 	}
