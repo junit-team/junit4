@@ -36,6 +36,25 @@
 
 	For more on this feature, see http://www.threeriversinstitute.org/blog/?p=155
 
+- The Timeout Interceptor applies the same timeout to all test methods in a class:
+
+	@RunWith(Interceptors.class)
+	public static class HasGlobalTimeout {
+		public static String log;
+		
+		@Interceptor public StatementInterceptor globalTimeout = new Timeout(20);
+		
+		@Test public void testInfiniteLoop1() {
+			log+= "ran1";
+			for(;;) {}
+		}
+		
+		@Test public void testInfiniteLoop2() {
+			log+= "ran2";
+			for(;;) {}
+		}
+	}
+
 ### Timeouts ###
 - Tests that timeout now show the stack trace of the test thread.
 

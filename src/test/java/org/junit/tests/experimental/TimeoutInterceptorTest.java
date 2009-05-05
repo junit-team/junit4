@@ -1,6 +1,8 @@
 package org.junit.tests.experimental;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.containsString;
 import org.junit.Test;
 import org.junit.experimental.interceptor.Interceptor;
 import org.junit.experimental.interceptor.Interceptors;
@@ -17,8 +19,13 @@ public class TimeoutInterceptorTest {
 		
 		@Interceptor public StatementInterceptor globalTimeout = new Timeout(20);
 		
-		@Test public void testInfiniteLoop() {
-			log+= "ran";
+		@Test public void testInfiniteLoop1() {
+			log+= "ran1";
+			for(;;) {}
+		}
+		
+		@Test public void testInfiniteLoop2() {
+			log+= "ran2";
 			for(;;) {}
 		}
 	}
@@ -26,7 +33,8 @@ public class TimeoutInterceptorTest {
 	@Test(timeout=100) public void globalTimeoutAvoidsInfiniteLoop() {
 		HasGlobalTimeout.log = "";
 		Result result= JUnitCore.runClasses(HasGlobalTimeout.class);
-		assertEquals(1, result.getFailureCount());
-		assertEquals("ran", HasGlobalTimeout.log);
+		assertEquals(2, result.getFailureCount());
+		assertThat(HasGlobalTimeout.log, containsString("ran1"));
+		assertThat(HasGlobalTimeout.log, containsString("ran2"));
 	}
 }
