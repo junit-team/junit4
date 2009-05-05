@@ -17,6 +17,7 @@ import org.junit.tests.experimental.AssumptionViolatedExceptionTest;
 import org.junit.tests.experimental.ExperimentalTests;
 import org.junit.tests.experimental.InterceptorTest;
 import org.junit.tests.experimental.MatcherTest;
+import org.junit.tests.experimental.TimeoutInterceptorTest;
 import org.junit.tests.experimental.max.JUnit38SortingTest;
 import org.junit.tests.experimental.max.MaxComputerTest;
 import org.junit.tests.experimental.max.MaxStarterTest;
@@ -118,7 +119,8 @@ import org.junit.tests.validation.ValidationTest;
 	MaxStarterTest.class,
 	JUnit38SortingTest.class,
 	MaxComputerTest.class,
-	InterceptorTest.class
+	InterceptorTest.class,
+	TimeoutInterceptorTest.class
 })
 public class AllTests {
 	public static Test suite() {

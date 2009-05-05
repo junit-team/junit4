@@ -12,12 +12,15 @@ public class TestWatchman implements StatementInterceptor {
 		return new Statement() {
 			@Override
 			public void evaluate() throws Throwable {
+				starting(method);
 				try {
 					base.evaluate();
 					succeeded(method);
 				} catch (Throwable t) {
 					failed(t, method);
 					throw t;
+				} finally {
+					finished(method);
 				}
 			}
 		};
@@ -29,5 +32,11 @@ public class TestWatchman implements StatementInterceptor {
 	// TODO (Apr 28, 2009 10:50:47 PM): is this right? Is
 	// FrameworkMethod too powerful?
 	public void failed(Throwable e, FrameworkMethod method) {
+	}
+
+	public void starting(FrameworkMethod method) {
+	}
+
+	public void finished(FrameworkMethod method) {
 	}
 }

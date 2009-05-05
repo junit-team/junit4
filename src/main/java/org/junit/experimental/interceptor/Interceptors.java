@@ -16,11 +16,10 @@ public class Interceptors extends BlockJUnit4ClassRunner {
 	}
 
 	@Override
-	protected Statement withAfters(FrameworkMethod method, Object target,
+	protected Statement withBefores(FrameworkMethod method, Object target,
 			Statement statement) {
-		// TODO Auto-generated method stub
 		// TODO (Apr 28, 2009 10:55:21 PM): parameter clump?
-		return super.withAfters(method, target, intercept(statement, target, method));
+		return super.withBefores(method, target, intercept(statement, target, method));
 	}
 
 	private Statement intercept(Statement statement, Object target, FrameworkMethod method) {
