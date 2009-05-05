@@ -1,8 +1,11 @@
 package org.junit.tests.experimental;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.interceptor.Interceptor;
 import org.junit.experimental.interceptor.Interceptors;
@@ -163,5 +166,48 @@ public class InterceptorTest {
 		JUnitCore.runClasses(WatchmanTest.class);
 		assertThat(WatchmanTest.watchedLog, containsString("fails AssertionError"));
 		assertThat(WatchmanTest.watchedLog, containsString("succeeds success!"));
+	}
+
+	@RunWith(Interceptors.class)
+	public static class BeforesAndAfters {
+		private static String watchedLog;
+
+		@Before public void before() {
+			watchedLog+= "before ";
+		}
+		
+		@Interceptor
+		public StatementInterceptor watchman= new TestWatchman() {
+			@Override
+			public void starting(FrameworkMethod method) {
+				watchedLog+= "starting ";
+			}
+			
+			@Override
+			public void finished(FrameworkMethod method) {
+				watchedLog+= "finished ";
+			}
+			
+			@Override
+			public void succeeded(FrameworkMethod method) {
+				watchedLog+= "succeeded ";
+			}
+		};
+		
+		@After public void after() {
+			watchedLog+= "after ";
+		}
+
+		@Test
+		public void succeeds() {
+			watchedLog+= "test ";
+		}
+	}
+
+	@Test
+	public void beforesAndAfters() {
+		BeforesAndAfters.watchedLog= "";
+		JUnitCore.runClasses(BeforesAndAfters.class);
+		assertThat(BeforesAndAfters.watchedLog, is("before starting test succeeded finished after "));
 	}
 }
