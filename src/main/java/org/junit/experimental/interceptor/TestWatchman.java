@@ -31,7 +31,7 @@ public class TestWatchman implements StatementInterceptor {
 	public void failed(Throwable e, FrameworkMethod method) {
 	}
 
-	public void starting(FrameworkMethod method) {
+	public void starting(FrameworkMethod method) throws Exception {
 	}
 
 	public void finished(FrameworkMethod method) {
