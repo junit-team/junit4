@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.junit.experimental.interceptor;
 
 import org.junit.runners.model.FrameworkMethod;
