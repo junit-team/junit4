@@ -21,6 +21,8 @@ import org.junit.tests.experimental.TimeoutInterceptorTest;
 import org.junit.tests.experimental.max.JUnit38SortingTest;
 import org.junit.tests.experimental.max.MaxComputerTest;
 import org.junit.tests.experimental.max.MaxStarterTest;
+import org.junit.tests.experimental.parallel.ParallelClassTest;
+import org.junit.tests.experimental.parallel.ParallelMethodTest;
 import org.junit.tests.experimental.theories.AllMembersSupplierTest;
 import org.junit.tests.experimental.theories.runner.TheoriesPerformanceTest;
 import org.junit.tests.junit3compatibility.AllTestsTest;
@@ -120,7 +122,9 @@ import org.junit.tests.validation.ValidationTest;
 	JUnit38SortingTest.class,
 	MaxComputerTest.class,
 	InterceptorTest.class,
-	TimeoutInterceptorTest.class
+	TimeoutInterceptorTest.class,
+	ParallelClassTest.class,
+	ParallelMethodTest.class
 })
 public class AllTests {
 	public static Test suite() {
