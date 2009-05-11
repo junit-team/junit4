@@ -11,15 +11,19 @@ public class Computer {
 
 	public Runner getSuite(final RunnerBuilder builder,
 			Class<?>[] classes) throws InitializationError {
-		return new Suite(new RunnerBuilder() {
+		return modify(new Suite(new RunnerBuilder() {
 			@Override
 			public Runner runnerForClass(Class<?> testClass) throws Throwable {
 				return getRunner(builder, testClass);
 			}
-		}, classes);
+		}, classes));
+	}
+
+	protected Runner modify(Runner runner) {
+		return runner;
 	}
 
 	protected Runner getRunner(RunnerBuilder builder, Class<?> testClass) throws Throwable {
-		return builder.runnerForClass(testClass);
+		return modify(builder.runnerForClass(testClass));
 	}
 }

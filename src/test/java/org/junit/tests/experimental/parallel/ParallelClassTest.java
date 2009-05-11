@@ -15,7 +15,6 @@ import org.junit.runners.Suite.SuiteClasses;
 
 
 public class ParallelClassTest {
-
 	public static class Example1 {
 		@Test public void one() throws InterruptedException {
 			Thread.sleep(1000);
@@ -30,7 +29,7 @@ public class ParallelClassTest {
 	@RunWith(Suite.class)
 	@SuiteClasses({Example1.class, Example2.class})
 	public static class ExampleSuite {}
-	
+
 	// TODO(parallel) we need to push parallel execution down through suites (i.e. run a Suite with a parallel executioner and you get parallel execution)
 	@Test(timeout=1500) public void testsRunInParallel() {
 		long start= System.currentTimeMillis();
@@ -38,6 +37,15 @@ public class ParallelClassTest {
 		assertTrue(result.wasSuccessful());
 		long end= System.currentTimeMillis();
 		assertThat(end - start, greaterThan(999)); // Overhead could be less than half a millisecond
+	}
+	
+	// TODO(parallel) we need to push parallel execution down through suites (i.e. run a Suite with a parallel executioner and you get parallel execution)
+	@Test(timeout=2500) public void testsDontRunInParallelIfOnlyMethods() {
+		long start= System.currentTimeMillis();
+		Result result= JUnitCore.runClasses(ParallelComputer.methods(), Example1.class, Example2.class);
+		assertTrue(result.wasSuccessful());
+		long end= System.currentTimeMillis();
+		assertThat(end - start, greaterThan(1999)); // Overhead could be less than half a millisecond
 	}
 
 	private Matcher<Long> greaterThan(final long l) {
