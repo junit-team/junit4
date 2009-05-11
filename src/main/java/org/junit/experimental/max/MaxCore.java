@@ -47,9 +47,6 @@ public class MaxCore {
 		} finally {
 			try {
 				fHistory.save();
-			} catch (FileNotFoundException e) {
-				// TODO
-				e.printStackTrace();
 			} catch (IOException e) {
 				// TODO
 				e.printStackTrace();

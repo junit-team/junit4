@@ -18,7 +18,6 @@ public class Interceptors extends BlockJUnit4ClassRunner {
 	@Override
 	protected Statement withBefores(FrameworkMethod method, Object target,
 			Statement statement) {
-		// TODO (Apr 28, 2009 10:55:21 PM): parameter clump?
 		return super.withBefores(method, target, intercept(statement, target, method));
 	}
 
