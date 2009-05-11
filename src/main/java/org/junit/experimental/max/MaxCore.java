@@ -1,7 +1,6 @@
 package org.junit.experimental.max;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,13 +47,11 @@ public class MaxCore {
 			try {
 				fHistory.save();
 			} catch (IOException e) {
-				// TODO
 				e.printStackTrace();
 			}
 		}
 	}
 	
-	// TODO (Feb 23, 2009 10:14:05 PM): publicized for squeeze
 	public Request sortRequest(Request request) {
 		if (request instanceof SortingRequest) // We'll pay big karma points for this
 			return request;
@@ -63,8 +60,7 @@ public class MaxCore {
 		return constructLeafRequest(leaves);
 	}
 
-	// TODO (Feb 23, 2009 10:42:05 PM): V
-	public Request constructLeafRequest(List<Description> leaves) {
+	private Request constructLeafRequest(List<Description> leaves) {
 		final List<Runner> runners = new ArrayList<Runner>();
 		for (Description each : leaves)
 			runners.add(buildRunner(each));
@@ -80,8 +76,7 @@ public class MaxCore {
 		};
 	}
 
-	// TODO (Feb 23, 2009 11:17:01 PM): V
-	public Runner buildRunner(Description each) {
+	private Runner buildRunner(Description each) {
 		if (each.toString().equals("TestSuite with 0 tests"))
 			try {
 				// TODO (Nov 18, 2008 2:18:28 PM): move to Suite
@@ -104,15 +99,13 @@ public class MaxCore {
 		return findLeaves(sortRequest(request));
 	}
 	
-	// TODO (Feb 23, 2009 10:40:23 PM): V
-	public List<Description> findLeaves(Request request) {
+	private List<Description> findLeaves(Request request) {
 		List<Description> results= new ArrayList<Description>();
 		findLeaves(request.getRunner().getDescription(), results);
 		return results;
 	}
 	
-	// TODO (Feb 23, 2009 10:50:48 PM): V
-	public void findLeaves(Description description, List<Description> results) {
+	private void findLeaves(Description description, List<Description> results) {
 		if (description.getChildren().isEmpty())
 			results.add(description);
 		else

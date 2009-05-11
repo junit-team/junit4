@@ -159,7 +159,6 @@ public class MaxHistory implements Serializable {
 		return new RememberingListener();
 	}
 
-	// TODO (Feb 23, 2009 10:41:36 PM): V
 	public Comparator<Description> testComparator() {
 		return new TestComparator();
 	}
