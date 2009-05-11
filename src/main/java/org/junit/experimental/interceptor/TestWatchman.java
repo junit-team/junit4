@@ -26,8 +26,6 @@ public class TestWatchman implements StatementInterceptor {
 	public void succeeded(FrameworkMethod method) {
 	}
 
-	// TODO (Apr 28, 2009 10:50:47 PM): is this right? Is
-	// FrameworkMethod too powerful?
 	public void failed(Throwable e, FrameworkMethod method) {
 	}
 
