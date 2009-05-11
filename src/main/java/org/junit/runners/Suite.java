@@ -36,6 +36,14 @@ public class Suite extends ParentRunner<Runner> {
 		 */
 		public Class<?>[] value();
 	}
+
+	public static Runner empty() {
+		try {
+			return new Suite((Class<?>)null, new Class<?>[0]);
+		} catch (InitializationError e) {
+			throw new RuntimeException("Inconceivable");
+		}
+	}
 	
 	private static Class<?>[] getAnnotatedClasses(Class<?> klass) throws InitializationError {
 		SuiteClasses annotation= klass.getAnnotation(SuiteClasses.class);

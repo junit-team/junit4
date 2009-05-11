@@ -78,13 +78,7 @@ public class MaxCore {
 
 	private Runner buildRunner(Description each) {
 		if (each.toString().equals("TestSuite with 0 tests"))
-			try {
-				// TODO (Nov 18, 2008 2:18:28 PM): move to Suite
-				return new Suite(null, new Class<?>[0]);
-			} catch (InitializationError e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			return Suite.empty();
 		Class<?> type= each.getTestClass();
 		if (type == null)
 			// TODO (Nov 18, 2008 2:04:09 PM): add a check if building a runner is possible
