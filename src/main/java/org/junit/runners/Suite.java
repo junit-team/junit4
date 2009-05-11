@@ -118,4 +118,9 @@ public class Suite extends ParentRunner<Runner> {
 	protected void runChild(Runner runner, final RunNotifier notifier) {
 		runner.run(notifier);
 	}
+	
+	@Override
+	public boolean isSuite() {
+		return true;
+	}
 }

@@ -27,6 +27,7 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
+import org.junit.tests.SafeStatement;
 
 /**
  * Provides most of the functionality specific to a Runner that implements a
@@ -40,15 +41,32 @@ import org.junit.runners.model.TestClass;
  */
 public abstract class ParentRunner<T> extends Runner implements Filterable,
 		Sortable {
+	public interface Decorator {
+		void runChild(SafeStatement statement);
+
+		void runAll(SafeStatement statement);
+	}
+
 	private final TestClass fTestClass;
 
 	private Filter fFilter= null;
 
 	private Sorter fSorter= Sorter.NULL;
 
+	private Decorator fDecorator= new Decorator() {
+		public void runAll(SafeStatement statement) {
+			statement.execute();
+		}
+
+		public void runChild(SafeStatement statement) {
+			statement.execute();
+		}
+	};
+
 	/**
 	 * Constructs a new {@code ParentRunner} that will run {@code @TestClass}
-	 * @throws InitializationError 
+	 * 
+	 * @throws InitializationError
 	 */
 	protected ParentRunner(Class<?> testClass) throws InitializationError {
 		fTestClass= new TestClass(testClass);
@@ -77,38 +95,40 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	 * reported through {@code notifier}
 	 */
 	protected abstract void runChild(T child, RunNotifier notifier);
-	
-	// TODO (May 4, 2009 4:34:28 PM): This can't be right, but it allows delegation without breaking subclasses
+
+	// TODO (May 4, 2009 4:34:28 PM): This can't be right, but it allows
+	// delegation without breaking subclasses
 	/**
-	 * Interim interface during 4.7 development.  _Very_ likely to go away.
+	 * Interim interface during 4.7 development. _Very_ likely to go away.
 	 */
 	public List<T> internalGetChildren() {
 		return getChildren();
 	}
 
 	/**
-	 * Interim interface during 4.7 development.  _Very_ likely to go away.
+	 * Interim interface during 4.7 development. _Very_ likely to go away.
 	 */
 	public Description internalDescribeChild(T child) {
 		return describeChild(child);
 	}
 
 	/**
-	 * Interim interface during 4.7 development.  _Very_ likely to go away.
+	 * Interim interface during 4.7 development. _Very_ likely to go away.
 	 */
 	public void internalRunChild(T child, RunNotifier notifier) {
 		runChild(child, notifier);
 	}
-	
+
 	//
 	// May be overridden
 	//
-	
+
 	/**
-	 * Adds to {@code errors} a throwable for each problem noted with the test class (available from {@link #getTestClass()}).
-	 * Default implementation adds an error for each method annotated with
-	 * {@code @BeforeClass} or {@code @AfterClass} that is not
-	 * {@code public static void} with no arguments.
+	 * Adds to {@code errors} a throwable for each problem noted with the test
+	 * class (available from {@link #getTestClass()}). Default implementation
+	 * adds an error for each method annotated with {@code @BeforeClass} or
+	 * {@code @AfterClass} that is not {@code public static void} with no
+	 * arguments.
 	 */
 	protected void collectInitializationErrors(List<Throwable> errors) {
 		validatePublicVoidNoArgMethods(BeforeClass.class, true, errors);
@@ -125,28 +145,33 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	 * <li>is static (given {@code isStatic is false}), or
 	 * <li>is not static (given {@code isStatic is true}).
 	 */
-	protected void validatePublicVoidNoArgMethods(Class<? extends Annotation> annotation,
-			boolean isStatic, List<Throwable> errors) {
-		List<FrameworkMethod> methods= getTestClass().getAnnotatedMethods(annotation);
+	protected void validatePublicVoidNoArgMethods(
+			Class<? extends Annotation> annotation, boolean isStatic,
+			List<Throwable> errors) {
+		List<FrameworkMethod> methods= getTestClass().getAnnotatedMethods(
+				annotation);
 
 		for (FrameworkMethod eachTestMethod : methods)
 			eachTestMethod.validatePublicVoidNoArg(isStatic, errors);
 	}
 
-	/** 
-	 * Constructs a {@code Statement} to run all of the tests in the test class. Override to add pre-/post-processing. 
-	 * Here is an outline of the implementation:
+	/**
+	 * Constructs a {@code Statement} to run all of the tests in the test class.
+	 * Override to add pre-/post-processing. Here is an outline of the
+	 * implementation:
 	 * <ul>
-	 * <li>Call {@link #runChild(Object, RunNotifier)} on each object returned by {@link #getChildren()} (subject to any imposed filter and sort).</li>
-	 * <li>ALWAYS run all non-overridden {@code @BeforeClass} methods on this class
-	 * and superclasses before the previous step; if any throws an
+	 * <li>Call {@link #runChild(Object, RunNotifier)} on each object returned
+	 * by {@link #getChildren()} (subject to any imposed filter and sort).</li>
+	 * <li>ALWAYS run all non-overridden {@code @BeforeClass} methods on this
+	 * class and superclasses before the previous step; if any throws an
 	 * Exception, stop execution and pass the exception on.
-	 * <li>ALWAYS run all non-overridden {@code @AfterClass} methods on this class
-	 * and superclasses before any of the previous steps; all AfterClass methods are
-	 * always executed: exceptions thrown by previous steps are combined, if
-	 * necessary, with exceptions from AfterClass methods into a
+	 * <li>ALWAYS run all non-overridden {@code @AfterClass} methods on this
+	 * class and superclasses before any of the previous steps; all AfterClass
+	 * methods are always executed: exceptions thrown by previous steps are
+	 * combined, if necessary, with exceptions from AfterClass methods into a
 	 * {@link MultipleFailureException}.
 	 * </ul>
+	 * 
 	 * @param notifier
 	 * @return {@code Statement}
 	 */
@@ -158,9 +183,9 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	}
 
 	/**
-	 * Returns a {@link Statement}: run all non-overridden {@code @BeforeClass} methods on this class
-	 * and superclasses before executing {@code statement}; if any throws an
-	 * Exception, stop execution and pass the exception on.
+	 * Returns a {@link Statement}: run all non-overridden {@code @BeforeClass}
+	 * methods on this class and superclasses before executing {@code statement}
+	 * ; if any throws an Exception, stop execution and pass the exception on.
 	 */
 	protected Statement withBeforeClasses(Statement statement) {
 		List<FrameworkMethod> befores= fTestClass
@@ -170,11 +195,11 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	}
 
 	/**
-	 * Returns a {@link Statement}: run all non-overridden {@code @AfterClass} methods on this class
-	 * and superclasses before executing {@code statement}; all AfterClass methods are
-	 * always executed: exceptions thrown by previous steps are combined, if
-	 * necessary, with exceptions from AfterClass methods into a
-	 * {@link MultipleFailureException}.
+	 * Returns a {@link Statement}: run all non-overridden {@code @AfterClass}
+	 * methods on this class and superclasses before executing {@code statement}
+	 * ; all AfterClass methods are always executed: exceptions thrown by
+	 * previous steps are combined, if necessary, with exceptions from
+	 * AfterClass methods into a {@link MultipleFailureException}.
 	 */
 	protected Statement withAfterClasses(Statement statement) {
 		List<FrameworkMethod> afters= fTestClass
@@ -198,8 +223,16 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	}
 
 	private void runChildren(final RunNotifier notifier) {
-		for (T each : getFilteredChildren())
-			runChild(each, notifier);
+		fDecorator.runAll(new SafeStatement() {
+			public void execute() {
+				for (final T each : getFilteredChildren())
+					fDecorator.runChild(new SafeStatement() {
+						public void execute() {
+							runChild(each, notifier);
+						}
+					});
+			}
+		});
 	}
 
 	/**
@@ -223,7 +256,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	//
 	// Implementation of Runner
 	// 
-	
+
 	@Override
 	public Description getDescription() {
 		Description description= Description.createSuiteDescription(getName(),
@@ -248,7 +281,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 			testNotifier.addFailure(e);
 		}
 	}
-	
+
 	//
 	// Implementation of Filterable and Sortable
 	//
@@ -265,7 +298,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	public void sort(Sorter sorter) {
 		fSorter= sorter;
 	}
-	
+
 	//
 	// Private implementation
 	// 
@@ -311,5 +344,15 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 				return fSorter.compare(describeChild(o1), describeChild(o2));
 			}
 		};
+	}
+
+	// TODO (May 11, 2009 2:53:54 PM): complex
+	public void installDecorator(Decorator decorator) {
+		this.fDecorator= decorator;
+	}
+
+	// TODO (May 11, 2009 4:19:18 PM): move?
+	public boolean isSuite() {
+		return false;
 	}
 }

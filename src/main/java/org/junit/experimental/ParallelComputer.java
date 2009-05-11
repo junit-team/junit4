@@ -8,14 +8,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.junit.runner.Computer;
-import org.junit.runner.Description;
 import org.junit.runner.Runner;
-import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.ParentRunner;
-import org.junit.runners.Suite;
-import org.junit.runners.model.InitializationError;
-import org.junit.runners.model.RunnerBuilder;
+import org.junit.tests.SafeStatement;
 
 public class ParallelComputer extends Computer {
 	private final boolean fClasses;
@@ -35,69 +30,50 @@ public class ParallelComputer extends Computer {
 		return new ParallelComputer(false, true);
 	}
 
-	private static <T> Runner parallelize(ParentRunner<T> runner)
-			throws InitializationError {
-		return new ParallelParentRunner<T>(runner);
+	private static void parallelize(Runner runner) {
+		((ParentRunner<?>) runner).installDecorator(new ParentRunner.Decorator() {
+			private final List<Future<Object>> fResults= new ArrayList<Future<Object>>();
+
+			private final ExecutorService fService= Executors
+					.newCachedThreadPool();
+
+			public void runAll(SafeStatement statement) {
+				statement.execute();
+				for (Future<Object> each : fResults)
+					try {
+						each.get();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+			}
+
+			public void runChild(final SafeStatement statement) {
+				fResults.add(fService.submit(new Callable<Object>() {
+					public Object call() throws Exception {
+						statement.execute();
+						return null;
+					}
+				}));
+			}
+		});
 	}
-
-	private static class ParallelParentRunner<T> extends ParentRunner<T> {
-		private final ParentRunner<T> fDelegate;
-
-		private final List<Future<Object>> fResults= new ArrayList<Future<Object>>();
-
-		private final ExecutorService fService= Executors.newCachedThreadPool();
-
-		public ParallelParentRunner(ParentRunner<T> delegate)
-				throws InitializationError {
-			super(delegate.getTestClass().getJavaClass());
-			fDelegate= delegate;
-		}
-
-		@Override
-		public Description describeChild(T child) {
-			// TODO (May 4, 2009 4:34:05 PM): How to do this for real?
-			return fDelegate.internalDescribeChild(child);
-		}
-
-		@Override
-		public List<T> getChildren() {
-			return fDelegate.internalGetChildren();
-		}
-
-		@Override
-		public void runChild(final T child, final RunNotifier notifier) {
-			fResults.add(fService.submit(new Callable<Object>() {
-				public Object call() throws Exception {
-					fDelegate.internalRunChild(child, notifier);
-					return null;
-				}
-			}));
-		}
-
-		@Override
-		public void run(RunNotifier notifier) {
-			super.run(notifier);
-			for (Future<Object> each : fResults)
-				try {
-					each.get();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-		}
-	}
-
+	
 	@Override
-	public Runner getSuite(RunnerBuilder builder, java.lang.Class<?>[] classes)
-			throws InitializationError {
-		Suite suite= (Suite) super.getSuite(builder, classes);
-		return fClasses ? parallelize(suite) : suite;
+	protected Runner modify(Runner runner) {
+		if (shouldParallelize(runner))
+			parallelize(runner);
+		return runner;
 	}
 
-	@Override
-	protected Runner getRunner(RunnerBuilder builder, Class<?> testClass)
-			throws Throwable {
-		// TODO (May 4, 2009 4:09:16 PM): no guarantees here
-		BlockJUnit4ClassRunner runner= (BlockJUnit4ClassRunner) super.getRunner(builder, testClass);
-		return fMethods ? parallelize(runner) : runner;
+	private boolean shouldParallelize(Runner runner) {
+		if (runner instanceof ParentRunner) {
+			ParentRunner<?> parentRunner= (ParentRunner<?>) runner;
+			if (fClasses && parentRunner.isSuite())
+				return true;
+			if (fMethods && !parentRunner.isSuite())
+				return true;
+		}
+		return false;
 	}
 }
