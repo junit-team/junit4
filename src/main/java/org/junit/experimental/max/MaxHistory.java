@@ -33,7 +33,6 @@ public class MaxHistory implements Serializable {
 	
 	private static MaxHistory readHistory(File storedResults) throws CouldNotReadCoreException {
 		// TODO: rule of three
-		// TODO: Really?
 		ObjectInputStream stream;
 		FileInputStream file= null;
 		try {
