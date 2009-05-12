@@ -36,6 +36,21 @@
 
 	For more on this feature, see http://www.threeriversinstitute.org/blog/?p=155
 
+- The TestName Interceptor makes the current test name available inside test methods:
+
+	@RunWith(Interceptors.class)
+	public class NameInterceptorTest {
+		@Interceptor public TestName name = new TestName();
+		
+		@Test public void testA() {
+			assertEquals("testA", name.getMethodName());
+		}
+		
+		@Test public void testB() {
+			assertEquals("testB", name.getMethodName());
+		}
+	}
+
 - The Timeout Interceptor applies the same timeout to all test methods in a class:
 
 	@RunWith(Interceptors.class)
