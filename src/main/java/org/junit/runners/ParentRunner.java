@@ -25,6 +25,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.RunnerInterceptor;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
 
@@ -45,6 +46,16 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	private Filter fFilter= null;
 
 	private Sorter fSorter= Sorter.NULL;
+
+	private RunnerInterceptor fRunnerInterceptor= new RunnerInterceptor() {	
+		public void runChild(Runnable childStatement) {
+			childStatement.run();
+		}
+	
+		public void finished() {
+			// do nothing
+		}
+	};
 
 	/**
 	 * Constructs a new {@code ParentRunner} that will run {@code @TestClass}
@@ -77,29 +88,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	 * reported through {@code notifier}
 	 */
 	protected abstract void runChild(T child, RunNotifier notifier);
-	
-	// TODO (May 4, 2009 4:34:28 PM): This can't be right, but it allows delegation without breaking subclasses
-	/**
-	 * Interim interface during 4.7 development.  _Very_ likely to go away.
-	 */
-	public List<T> internalGetChildren() {
-		return getChildren();
-	}
-
-	/**
-	 * Interim interface during 4.7 development.  _Very_ likely to go away.
-	 */
-	public Description internalDescribeChild(T child) {
-		return describeChild(child);
-	}
-
-	/**
-	 * Interim interface during 4.7 development.  _Very_ likely to go away.
-	 */
-	public void internalRunChild(T child, RunNotifier notifier) {
-		runChild(child, notifier);
-	}
-	
+		
 	//
 	// May be overridden
 	//
@@ -198,9 +187,24 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	}
 
 	private void runChildren(final RunNotifier notifier) {
-		for (T each : getFilteredChildren())
-			runChild(each, notifier);
+		for (final T each : getFilteredChildren())
+			fRunnerInterceptor.runChild(new Runnable() {			
+				public void run() {
+					ParentRunner.this.runChild(each, notifier);
+				}
+			});
+		fRunnerInterceptor.finished();
 	}
+
+//	private void runChildrenDemo(final RunNotifier notifier) {
+//		for (final T each : getFilteredChildren())
+//			fRunnerInterceptor.sowChild(new Runnable() {
+//				public void run() {
+//					ParentRunner.this.runChild(each, notifier);
+//				}
+//			});
+//		fRunnerInterceptor.reapChildren();
+//	}
 
 	/**
 	 * Returns a name used to describe this Runner
@@ -311,5 +315,9 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 				return fSorter.compare(describeChild(o1), describeChild(o2));
 			}
 		};
+	}
+
+	public void setRunnerInterceptor(RunnerInterceptor runnerInterceptor) {
+		this.fRunnerInterceptor = runnerInterceptor;
 	}
 }

@@ -124,7 +124,8 @@ import org.junit.tests.validation.ValidationTest;
 	InterceptorTest.class,
 	TimeoutInterceptorTest.class,
 	ParallelClassTest.class,
-	ParallelMethodTest.class
+	ParallelMethodTest.class,
+	ParentRunnerTest.class
 })
 public class AllTests {
 	public static Test suite() {
