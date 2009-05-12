@@ -269,7 +269,8 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 			Statement statement) {
 		List<FrameworkMethod> befores= getTestClass().getAnnotatedMethods(
 				Before.class);
-		return new RunBefores(statement, befores, target);
+		return befores.isEmpty() ? statement : 
+			new RunBefores(statement, befores, target);
 	}
 
 	/**
@@ -281,9 +282,13 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	 */
 	protected Statement withAfters(FrameworkMethod method, Object target,
 			Statement statement) {
+		// TODO (May 11, 2009 11:28:21 PM):
+		// withBefores/withAfters/withBeforeClass/withAfterClass is a lot of
+		// duplication.
 		List<FrameworkMethod> afters= getTestClass().getAnnotatedMethods(
 				After.class);
-		return new RunAfters(statement, afters, target);
+		return afters.isEmpty() ? statement :
+			new RunAfters(statement, afters, target);
 	}
 
 	protected EachTestNotifier makeNotifier(FrameworkMethod method,
