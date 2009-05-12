@@ -81,7 +81,6 @@ public class MaxCore {
 			return Suite.empty();
 		Class<?> type= each.getTestClass();
 		if (type == null)
-			// TODO (Nov 18, 2008 2:04:09 PM): add a check if building a runner is possible
 			throw new RuntimeException("Can't build a runner from description [" + each + "]");
 		String methodName= each.getMethodName();
 		if (methodName == null)
