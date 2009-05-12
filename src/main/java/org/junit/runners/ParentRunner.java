@@ -154,8 +154,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	protected Statement withBeforeClasses(Statement statement) {
 		List<FrameworkMethod> befores= fTestClass
 				.getAnnotatedMethods(BeforeClass.class);
-		statement= new RunBefores(statement, befores, null);
-		return statement;
+		return befores.isEmpty() ? statement :
+			new RunBefores(statement, befores, null);
 	}
 
 	/**
@@ -168,8 +168,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	protected Statement withAfterClasses(Statement statement) {
 		List<FrameworkMethod> afters= fTestClass
 				.getAnnotatedMethods(AfterClass.class);
-		statement= new RunAfters(statement, afters, null);
-		return statement;
+		return afters.isEmpty() ? statement : 
+			new RunAfters(statement, afters, null);
 	}
 
 	/**
