@@ -46,6 +46,7 @@ public class TestClass {
 	private <T extends FrameworkMember<T>> void addToAnnotationLists(T member, Map<Class<?>, List<T>> map) {
 		for (Annotation each : member.getAnnotations()) {
 			Class<? extends Annotation> type= each.annotationType();
+			ensureKey(map, type);
 			List<T> members= map.get(type);
 			if (isShadowedBy(member, members))
 				return;
@@ -63,10 +64,9 @@ public class TestClass {
 		return false;
 	}
 
-	private void ensureKey(Class<? extends Annotation> annotation) {
-		if (!fMethodsForAnnotations.containsKey(annotation))
-			fMethodsForAnnotations.put(annotation,
-					new ArrayList<FrameworkMethod>());
+	private <T> void ensureKey(Map<Class<?>, List<T>> map, Class<?> annotation) {
+		if (!map.containsKey(annotation))
+			map.put(annotation, new ArrayList<T>());
 	}
 
 	/**
@@ -75,7 +75,8 @@ public class TestClass {
 	 */
 	public List<FrameworkMethod> getAnnotatedMethods(
 			Class<? extends Annotation> annotationClass) {
-		ensureKey(annotationClass);
+		// TODO (May 25, 2009 10:02:46 PM): DUP
+		ensureKey(fMethodsForAnnotations, annotationClass);
 		return fMethodsForAnnotations.get(annotationClass);
 	}
 
