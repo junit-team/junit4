@@ -4,6 +4,8 @@
 package org.junit.experimental.interceptor;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.List;
 
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
@@ -16,17 +18,43 @@ public class Interceptors extends BlockJUnit4ClassRunner {
 	}
 
 	@Override
-	protected Statement withBefores(FrameworkMethod method, Object target,
-			Statement statement) {
-		// TODO (Apr 28, 2009 10:55:21 PM): parameter clump?
-		return super.withBefores(method, target, intercept(statement, target, method));
+	protected void collectInitializationErrors(List<Throwable> errors) {
+		// TODO Auto-generated method stub
+		super.collectInitializationErrors(errors);
+		// TODO (May 18, 2009 10:44:37 PM): This misses superclasses
+		// TODO (May 18, 2009 10:44:53 PM): duplication with below
+		Field[] fields= getTestClass().getJavaClass().getDeclaredFields();
+		for (Field each : fields) {
+			// TODO (May 18, 2009 10:30:03 PM): validate, validate!
+			validateField(each, errors);
+		}
 	}
 
-	private Statement intercept(Statement statement, Object target, FrameworkMethod method) {
+	private void validateField(Field field, List<Throwable> errors) {
+		if (field.getAnnotation(Interceptor.class) == null)
+			return;
+		if (!StatementInterceptor.class.isAssignableFrom(field.getType()))
+			errors.add(new Exception("Field " + field.getName()
+					+ " must implement StatementInterceptor"));
+		if (!Modifier.isPublic(field.getModifiers()))
+			errors.add(new Exception("Field " + field.getName()
+					+ " must be public"));
+	}
+
+	@Override
+	protected Statement withBefores(FrameworkMethod method, Object target,
+			Statement statement) {
+		return super.withBefores(method, target, intercept(statement, target,
+				method));
+	}
+
+	private Statement intercept(Statement statement, Object target,
+			FrameworkMethod method) {
 		Class<?> javaClass= getTestClass().getJavaClass();
-		Field[] fields= javaClass.getFields();
 		Statement result= statement;
+		Field[] fields= javaClass.getFields();
 		for (Field each : fields) {
+			// TODO (May 18, 2009 10:30:03 PM): validate, validate!
 			if (each.getAnnotation(Interceptor.class) != null) {
 				try {
 					StatementInterceptor interceptor= (StatementInterceptor) each

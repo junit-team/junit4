@@ -5,6 +5,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.experimental.results.PrintableResult.testResult;
+import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
 import static org.junit.matchers.JUnitMatchers.containsString;
 import org.junit.After;
 import org.junit.Before;
@@ -12,6 +14,7 @@ import org.junit.Test;
 import org.junit.experimental.interceptor.Interceptor;
 import org.junit.experimental.interceptor.Interceptors;
 import org.junit.experimental.interceptor.StatementInterceptor;
+import org.junit.experimental.interceptor.TestName;
 import org.junit.experimental.interceptor.TestWatchman;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -211,5 +214,28 @@ public class InterceptorTest {
 		BeforesAndAfters.watchedLog= "";
 		JUnitCore.runClasses(BeforesAndAfters.class);
 		assertThat(BeforesAndAfters.watchedLog, is("before starting test succeeded finished after "));
+	}
+	
+	@RunWith(Interceptors.class)
+	public static class WrongTypedField {
+		@Interceptor public int x = 5;
+		@Test public void foo() {}
+	}
+	
+	@Test public void validateWrongTypedField() {
+		assertThat(testResult(WrongTypedField.class), 
+				hasSingleFailureContaining("must implement StatementInterceptor"));
+	}
+	
+	@RunWith(Interceptors.class)
+	public static class PrivateInterceptor {
+		@SuppressWarnings("unused")
+		@Interceptor private StatementInterceptor interceptor = new TestName();
+		@Test public void foo() {}
+	}
+	
+	@Test public void validatePrivateInterceptor() {
+		assertThat(testResult(PrivateInterceptor.class), 
+				hasSingleFailureContaining("must be public"));
 	}
 }

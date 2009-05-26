@@ -26,7 +26,7 @@ public class ParallelMethodTest {
 				Example.class);
 		assertTrue(result.wasSuccessful());
 		long end= System.currentTimeMillis();
-		assertThat(end - start, betweenInclusive(1000, 1500));
+		assertThat(end - start, betweenInclusive(1000, 1900));
 	}
 
 	private Matcher<Long> betweenInclusive(final long min, final long max) {

@@ -14,8 +14,8 @@ import org.junit.internal.runners.model.ReflectiveCallable;
  * {@code @Test}, {@code @Before}, {@code @After}, {@code @BeforeClass}, {@code
  * @AfterClass}, etc.)
  */
-public class FrameworkMethod {
-	private final Method fMethod;
+public class FrameworkMethod implements FrameworkMember<FrameworkMethod> {
+	final Method fMethod;
 
 	/**
 	 * Returns a new {@code FrameworkMethod} for {@code method}
@@ -90,20 +90,13 @@ public class FrameworkMethod {
 			errors.add(new Exception("Method " + fMethod.getName() + "() should be void"));
 	}
 
-	boolean isShadowedBy(List<FrameworkMethod> results) {
-		for (FrameworkMethod each : results)
-			if (isShadowedBy(each))
-				return true;
-		return false;
-	}
-
-	private boolean isShadowedBy(FrameworkMethod each) {
-		if (!each.getName().equals(getName()))
+	public boolean isShadowedBy(FrameworkMethod other) {
+		if (!other.getName().equals(getName()))
 			return false;
-		if (each.getParameterTypes().length != getParameterTypes().length)
+		if (other.getParameterTypes().length != getParameterTypes().length)
 			return false;
-		for (int i= 0; i < each.getParameterTypes().length; i++)
-			if (!each.getParameterTypes()[i].equals(getParameterTypes()[i]))
+		for (int i= 0; i < other.getParameterTypes().length; i++)
+			if (!other.getParameterTypes()[i].equals(getParameterTypes()[i]))
 				return false;
 		return true;
 	}
