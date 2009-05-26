@@ -2,6 +2,7 @@ package org.junit.runners.model;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,6 +20,7 @@ public class TestClass {
 	private final Class<?> fClass;
 
 	private Map<Class<?>, List<FrameworkMethod>> fMethodsForAnnotations= new HashMap<Class<?>, List<FrameworkMethod>>();
+	private Map<Class<?>, List<FrameworkField>> fFieldsForAnnotations= new HashMap<Class<?>, List<FrameworkField>>();
 
 	/**
 	 * Creates a {@code TestClass} wrapping {@code klass}. Each time this
@@ -32,32 +34,33 @@ public class TestClass {
 			throw new IllegalArgumentException(
 					"Test class can only have one constructor");
 
-		for (Class<?> eachClass : getSuperClasses(fClass))
+		for (Class<?> eachClass : getSuperClasses(fClass)) {
 			for (Method eachMethod : eachClass.getDeclaredMethods())
-				addToAnnotationLists(new FrameworkMethod(eachMethod));
+				addToAnnotationLists(new FrameworkMethod(eachMethod), fMethodsForAnnotations);
+			for (Field eachField : eachClass.getDeclaredFields())
+				addToAnnotationLists(new FrameworkField(eachField), fFieldsForAnnotations);
+		}
 	}
 
-	private void addToAnnotationLists(FrameworkMethod testMethod) {
-		for (Annotation each : computeAnnotations(testMethod))
-			addToAnnotationList(each.annotationType(), testMethod);
+	// TODO (May 25, 2009 9:46:48 PM): move to FrameworkMember
+	private <T extends FrameworkMember<T>> void addToAnnotationLists(T member, Map<Class<?>, List<T>> map) {
+		for (Annotation each : member.getAnnotations()) {
+			Class<? extends Annotation> type= each.annotationType();
+			List<T> members= map.get(type);
+			if (isShadowedBy(member, members))
+				return;
+			if (runsTopToBottom(type))
+				members.add(0, member);
+			else
+				members.add(member);
+		}
 	}
 
-	/**
-	 * Returns all of the annotations on {@code testMethod}
-	 */
-	protected Annotation[] computeAnnotations(FrameworkMethod testMethod) {
-		return testMethod.getAnnotations();
-	}
-
-	private void addToAnnotationList(Class<? extends Annotation> annotation,
-			FrameworkMethod testMethod) {
-		List<FrameworkMethod> methods= getAnnotatedMethods(annotation);
-		if (testMethod.isShadowedBy(methods))
-			return;
-		if (runsTopToBottom(annotation))
-			methods.add(0, testMethod);
-		else
-			methods.add(testMethod);
+	private <T extends FrameworkMember<T>> boolean isShadowedBy(T member, List<T> members) {
+		for (T each : members)
+			if (member.isShadowedBy(each))
+				return true;
+		return false;
 	}
 
 	private void ensureKey(Class<? extends Annotation> annotation) {
