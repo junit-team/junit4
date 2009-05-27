@@ -12,26 +12,20 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.interceptor.Interceptor;
-import org.junit.experimental.interceptor.Interceptors;
 import org.junit.experimental.interceptor.StatementInterceptor;
 import org.junit.experimental.interceptor.TestName;
 import org.junit.experimental.interceptor.TestWatchman;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
-import org.junit.runner.RunWith;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
 public class InterceptorTest {
 	private static boolean wasRun;
 
-	@RunWith(Interceptors.class)
 	public static class ExampleTest {
 		@Interceptor
 		public StatementInterceptor example= new StatementInterceptor() {
-			// TODO (Apr 28, 2009 10:31:18 PM): much better error if
-			// @Interceptor
-			// annotates a non-public field.
 			public Statement intercept(final Statement base,
 					FrameworkMethod method) {
 				return new Statement() {
@@ -59,7 +53,6 @@ public class InterceptorTest {
 
 	private static int runCount;
 
-	@RunWith(Interceptors.class)
 	public static class MultipleInterceptorTest {
 		private static class Incrementor implements StatementInterceptor {
 			public Statement intercept(final Statement base,
@@ -93,7 +86,6 @@ public class InterceptorTest {
 		assertEquals(2, runCount);
 	}
 
-	@RunWith(Interceptors.class)
 	public static class NoInterceptorsTest {
 		public int x;
 
@@ -111,12 +103,9 @@ public class InterceptorTest {
 
 	private static String log;
 
-	@RunWith(Interceptors.class)
 	public static class OnFailureTest {
 		@Interceptor
 		public StatementInterceptor watchman= new TestWatchman() {
-			// TODO (Apr 28, 2009 10:50:47 PM): is this right? Is
-			// FrameworkMethod too powerful?
 			@Override
 			public void failed(Throwable e, FrameworkMethod method) {
 				log+= method.getName() + " " + e.getClass().getSimpleName();
@@ -137,7 +126,6 @@ public class InterceptorTest {
 		assertEquals(1, result.getFailureCount());
 	}
 
-	@RunWith(Interceptors.class)
 	public static class WatchmanTest {
 		private static String watchedLog;
 
@@ -173,7 +161,6 @@ public class InterceptorTest {
 		assertThat(WatchmanTest.watchedLog, containsString("succeeds success!"));
 	}
 
-	@RunWith(Interceptors.class)
 	public static class BeforesAndAfters {
 		private static String watchedLog;
 
@@ -216,7 +203,6 @@ public class InterceptorTest {
 		assertThat(BeforesAndAfters.watchedLog, is("before starting test succeeded finished after "));
 	}
 	
-	@RunWith(Interceptors.class)
 	public static class WrongTypedField {
 		@Interceptor public int x = 5;
 		@Test public void foo() {}
@@ -236,8 +222,6 @@ public class InterceptorTest {
 				hasSingleFailureContaining("must implement StatementInterceptor"));
 	}
 
-	
-	@RunWith(Interceptors.class)
 	public static class PrivateInterceptor {
 		@SuppressWarnings("unused")
 		@Interceptor private StatementInterceptor interceptor = new TestName();
