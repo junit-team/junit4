@@ -80,6 +80,12 @@ public class TestClass {
 		return fMethodsForAnnotations.get(annotationClass);
 	}
 
+	public List<FrameworkField> getAnnotatedFields(Class<? extends Annotation> annotationClass) {
+		// TODO (May 25, 2009 10:02:46 PM): DUP
+		ensureKey(fFieldsForAnnotations, annotationClass);
+		return fFieldsForAnnotations.get(annotationClass);
+	}
+
 	private boolean runsTopToBottom(Class<? extends Annotation> annotation) {
 		return annotation.equals(Before.class)
 				|| annotation.equals(BeforeClass.class);

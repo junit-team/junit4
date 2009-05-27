@@ -227,6 +227,16 @@ public class InterceptorTest {
 				hasSingleFailureContaining("must implement StatementInterceptor"));
 	}
 	
+	public static class SonOfWrongTypedField extends WrongTypedField {
+		
+	}
+
+	@Test public void validateWrongTypedFieldInSuperclass() {
+		assertThat(testResult(SonOfWrongTypedField.class), 
+				hasSingleFailureContaining("must implement StatementInterceptor"));
+	}
+
+	
 	@RunWith(Interceptors.class)
 	public static class PrivateInterceptor {
 		@SuppressWarnings("unused")

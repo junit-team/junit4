@@ -19,4 +19,12 @@ public class FrameworkField implements FrameworkMember<FrameworkField> {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	public Field getField() {
+		return fField;
+	}
+
+	public Object get(Object target) throws IllegalArgumentException, IllegalAccessException {
+		return fField.get(target);
+	}
 }
