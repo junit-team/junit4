@@ -1,12 +1,12 @@
 package org.junit.tests.assertion;
 
+import static org.hamcrest.CoreMatchers.both;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.either;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeTrue;
-import static org.junit.matchers.JUnitMatchers.both;
-import static org.junit.matchers.JUnitMatchers.containsString;
-import static org.junit.matchers.JUnitMatchers.either;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoint;
@@ -17,10 +17,10 @@ import org.junit.runner.RunWith;
 @RunWith(Theories.class)
 public class BothTest {
 	@DataPoint
-	public static Matcher<Integer> IS_3= is(3);
+	public static Matcher<? super Integer> IS_3= is(3);
 
 	@DataPoint
-	public static Matcher<Integer> IS_4= is(4);
+	public static Matcher<? super Integer> IS_4= is(4);
 
 	@DataPoint
 	public static int THREE= 3;
