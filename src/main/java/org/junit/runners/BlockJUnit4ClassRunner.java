@@ -1,5 +1,7 @@
 package org.junit.runners;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.List;
 
 import org.junit.After;
@@ -7,6 +9,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.Test.None;
+import org.junit.experimental.interceptor.Interceptor;
+import org.junit.experimental.interceptor.StatementInterceptor;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.model.MultipleFailureException;
@@ -19,6 +23,7 @@ import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
@@ -107,9 +112,10 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 
 		validateConstructor(errors);
 		validateInstanceMethods(errors);
+		validateFields(errors);
 	}
-	
-	private void validateConstructor(List<Throwable> errors) {
+
+	protected void validateConstructor(List<Throwable> errors) {
 		validateOnlyOneConstructor(errors);
 		validateZeroArgConstructor(errors);
 	}
@@ -126,6 +132,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	 * takes parameters
 	 */
 	protected void validateZeroArgConstructor(List<Throwable> errors) {
+		// TODO (May 26, 2009 10:48:26 PM): don't override this
 		if (hasOneConstructor()
 				&& !(getTestClass().getOnlyConstructor().getParameterTypes().length == 0)) {
 			String gripe= "Test class should have exactly one public zero-argument constructor";
@@ -149,6 +156,20 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 
 		if (computeTestMethods().size() == 0)
 			errors.add(new Exception("No runnable methods"));
+	}
+	
+	protected void validateFields(List<Throwable> errors) {
+		for (FrameworkField each : interceptorFields())
+			validateInterceptorField(each.getField(), errors);
+	}
+
+	private void validateInterceptorField(Field field, List<Throwable> errors) {
+		if (!StatementInterceptor.class.isAssignableFrom(field.getType()))
+			errors.add(new Exception("Field " + field.getName()
+					+ " must implement StatementInterceptor"));
+		if (!Modifier.isPublic(field.getModifiers()))
+			errors.add(new Exception("Field " + field.getName()
+					+ " must be public"));
 	}
 
 	/**
@@ -220,6 +241,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 		Statement statement= methodInvoker(method, test);
 		statement= possiblyExpectingExceptions(method, test, statement);
 		statement= withPotentialTimeout(method, test, statement);
+		statement= withInterceptors(method, test, statement);
 		statement= withBefores(method, test, statement);
 		statement= withAfters(method, test, statement);
 		return statement;
@@ -271,6 +293,25 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 				Before.class);
 		return befores.isEmpty() ? statement : 
 			new RunBefores(statement, befores, target);
+	}
+	
+	protected Statement withInterceptors(FrameworkMethod method, Object test,
+			Statement statement) {
+		Statement result= statement;
+		for (FrameworkField each : interceptorFields())
+			try {
+				StatementInterceptor interceptor= (StatementInterceptor) each
+						.get(test);
+				result= interceptor.intercept(result, method);
+			} catch (IllegalAccessException e) {
+				throw new RuntimeException(
+						"How did getFields return a field we couldn't access?");
+			}
+		return result;
+	}
+
+	private List<FrameworkField> interceptorFields() {
+		return getTestClass().getAnnotatedFields(Interceptor.class);
 	}
 
 	/**
