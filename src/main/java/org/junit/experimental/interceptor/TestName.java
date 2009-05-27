@@ -6,7 +6,7 @@ public class TestName extends TestWatchman {
 	private String fName;
 
 	@Override
-	public void starting(FrameworkMethod method) throws Exception {
+	public void starting(FrameworkMethod method) {
 		fName = method.getName();
 	}
 	
