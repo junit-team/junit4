@@ -1,0 +1,144 @@
+package org.junit.tests.experimental.interceptor;
+
+import static org.junit.Assert.assertThat;
+import static org.junit.experimental.results.PrintableResult.testResult;
+import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
+import static org.junit.experimental.results.ResultMatchers.isSuccessful;
+import org.junit.Test;
+import org.junit.experimental.interceptor.ExpectedException;
+import org.junit.experimental.interceptor.Interceptor;
+
+public class ExpectedExceptionInterceptorTest {
+	public static class HasExpectedException {
+		@Interceptor
+		public ExpectedException thrown= new ExpectedException();
+
+		@Test
+		public void throwsNothing() {
+
+		}
+
+		@Test
+		public void throwsNullPointerException() {
+			thrown.expect(NullPointerException.class);
+			throw new NullPointerException();
+		}
+
+		@Test
+		public void throwsNullPointerExceptionWithMessage() {
+			thrown.expect(NullPointerException.class);
+			thrown.expectMessage("happened?");
+			throw new NullPointerException("What happened?");
+		}
+	}
+
+	@Test
+	public void expectedExceptionPasses() {
+		assertThat(testResult(HasExpectedException.class), isSuccessful());
+	}
+
+	public static class HasWrongExpectedException {
+		@Interceptor
+		public ExpectedException thrown= new ExpectedException();
+
+		@Test
+		public void throwsNullPointerException() {
+			thrown.expect(NullPointerException.class);
+			throw new IllegalArgumentException();
+		}
+	}
+
+	@Test
+	public void unExpectedExceptionFails() {
+		assertThat(
+				testResult(HasWrongExpectedException.class),
+				hasSingleFailureContaining("Unexpected exception, expected<java.lang.NullPointerException> but was<java.lang.IllegalArgumentException>"));
+	}
+
+	public static class HasWrongMessage {
+		@Interceptor
+		public ExpectedException thrown= new ExpectedException();
+
+		@Test
+		public void throwsNullPointerException() {
+			thrown.expectMessage("expectedMessage");
+			throw new IllegalArgumentException("actualMessage");
+		}
+	}
+
+	@Test
+	public void wrongMessageFails() {
+		assertThat(
+				testResult(HasWrongMessage.class),
+				hasSingleFailureContaining("Unexpected exception message, expected<expectedMessage> but was<actualMessage>"));
+	}
+
+	public static class WronglyExpectsException {
+		@Interceptor
+		public ExpectedException thrown= new ExpectedException();
+
+		@Test
+		public void doesntThrowNullPointerException() {
+			thrown.expect(NullPointerException.class);
+		}
+	}
+
+	@Test
+	public void failsIfExceptionNeverComes() {
+		assertThat(
+				testResult(WronglyExpectsException.class),
+				hasSingleFailureContaining("Expected exception: java.lang.NullPointerException"));
+	}
+
+	public static class WronglyExpectsExceptionMessage {
+		@Interceptor
+		public ExpectedException thrown= new ExpectedException();
+
+		@Test
+		public void doesntThrowAnything() {
+			thrown.expectMessage("anything!");
+		}
+	}
+
+	@Test
+	public void failsIfExceptionMessageNeverComes() {
+		assertThat(
+				testResult(WronglyExpectsExceptionMessage.class),
+				hasSingleFailureContaining("Expected exception with message: anything!"));
+	}
+
+	public static class ExpectsSubstring {
+		@Interceptor
+		public ExpectedException thrown= new ExpectedException();
+
+		@Test
+		public void throwsMore() {
+			thrown.expectMessage("anything!");
+			throw new NullPointerException(
+					"This could throw anything! (as long as it has the right substring)");
+		}
+	}
+
+	@Test
+	public void passesWithSubstringMethod() {
+		assertThat(testResult(ExpectsSubstring.class), isSuccessful());
+	}
+
+	public static class ExpectsSubstringNullMessage {
+		@Interceptor
+		public ExpectedException thrown= new ExpectedException();
+
+		@Test
+		public void throwsMore() {
+			thrown.expectMessage("anything!");
+			throw new NullPointerException();
+		}
+	}
+
+	@Test
+	public void failsWithNullExceptionMessage() {
+		assertThat(
+				testResult(ExpectsSubstringNullMessage.class),
+				hasSingleFailureContaining("Unexpected exception message, expected<anything!> but was<>"));
+	}
+}
