@@ -2,12 +2,14 @@
  */
 package org.junit.internal.matchers;
 
+import org.hamcrest.CoreMatchers;
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 
 /**
- * Tests if the argument is a string that contains a substring.
+ * @deprectated Use org.hamcrest.core.StringContains directly
  */
+@Deprecated
 public class StringContains extends SubstringMatcher {
     public StringContains(String substring) {
         super(substring);
@@ -25,7 +27,7 @@ public class StringContains extends SubstringMatcher {
 
     @Factory
     public static Matcher<String> containsString(String substring) {
-        return new StringContains(substring);
+        return CoreMatchers.containsString(substring);
     }
 
 }

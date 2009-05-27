@@ -1,10 +1,10 @@
 package org.junit.tests.experimental.theories;
 
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeTrue;
-import static org.junit.matchers.JUnitMatchers.hasItem;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

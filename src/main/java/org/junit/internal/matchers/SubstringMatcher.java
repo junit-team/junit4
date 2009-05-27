@@ -2,6 +2,10 @@ package org.junit.internal.matchers;
 
 import org.hamcrest.Description;
 
+/**
+ * @deprectated Use org.hamcrest.core.SubstringMatcher directly
+ */
+@Deprecated
 public abstract class SubstringMatcher extends TypeSafeMatcher<String> {
 
     protected final String substring;
