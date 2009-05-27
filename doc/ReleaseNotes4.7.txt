@@ -6,7 +6,6 @@
   of each test method in a test class.  For example, this class will
   keep a log of each passing and failing test:
   
-	@RunWith(Interceptors.class)
 	public static class WatchmanTest {
 		private static String watchedLog;
 
@@ -38,7 +37,6 @@
 
 - The TestName Interceptor makes the current test name available inside test methods:
 
-	@RunWith(Interceptors.class)
 	public class NameInterceptorTest {
 		@Interceptor public TestName name = new TestName();
 		
@@ -53,7 +51,6 @@
 
 - The Timeout Interceptor applies the same timeout to all test methods in a class:
 
-	@RunWith(Interceptors.class)
 	public static class HasGlobalTimeout {
 		public static String log;
 		
@@ -71,7 +68,7 @@
 	}
 
 ### Timeouts ###
-- Tests that timeout now show the stack trace of the test thread.
+- Tests that time out now show the stack trace of the test thread.
 
 ### Docs ###
 - Javadocs now link to online JDK javadocs (bug 2090230)
