@@ -297,6 +297,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	
 	protected Statement withInterceptors(FrameworkMethod method, Object test,
 			Statement statement) {
+		// TODO (May 26, 2009 11:16:13 PM): outsource to a class?
 		Statement result= statement;
 		for (FrameworkField each : interceptorFields())
 			try {

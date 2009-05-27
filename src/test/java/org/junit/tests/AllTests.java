@@ -16,6 +16,7 @@ import org.junit.tests.experimental.AssumptionTest;
 import org.junit.tests.experimental.AssumptionViolatedExceptionTest;
 import org.junit.tests.experimental.ExperimentalTests;
 import org.junit.tests.experimental.MatcherTest;
+import org.junit.tests.experimental.interceptor.ExpectedExceptionInterceptorTest;
 import org.junit.tests.experimental.interceptor.InterceptorTest;
 import org.junit.tests.experimental.interceptor.NameInterceptorTest;
 import org.junit.tests.experimental.interceptor.TimeoutInterceptorTest;
@@ -127,7 +128,8 @@ import org.junit.tests.validation.ValidationTest;
 	ParallelClassTest.class,
 	ParallelMethodTest.class,
 	ParentRunnerTest.class,
-	NameInterceptorTest.class
+	NameInterceptorTest.class,
+	ExpectedExceptionInterceptorTest.class
 })
 public class AllTests {
 	public static Test suite() {

@@ -67,6 +67,32 @@
 		}
 	}
 
+- The ExpectedException Interceptor allows in-test specification
+  of expected exception types and messages:
+    
+	public static class HasExpectedException {
+		@Interceptor
+		public ExpectedException thrown= new ExpectedException();
+
+		@Test
+		public void throwsNothing() {
+
+		}
+
+		@Test
+		public void throwsNullPointerException() {
+			thrown.expect(NullPointerException.class);
+			throw new NullPointerException();
+		}
+
+		@Test
+		public void throwsNullPointerExceptionWithMessage() {
+			thrown.expect(NullPointerException.class);
+			thrown.expectMessage("happened?");
+			throw new NullPointerException("What happened?");
+		}
+	}
+
 ### Timeouts ###
 - Tests that time out now show the stack trace of the test thread.
 
