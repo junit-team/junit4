@@ -1,13 +1,13 @@
 package org.junit.tests.assertion;
 
-import static org.junit.matchers.JUnitMatchers.both;
-import static org.junit.matchers.JUnitMatchers.matches;
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.matchers.JUnitMatchers.either;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeTrue;
+import static org.junit.matchers.JUnitMatchers.both;
+import static org.junit.matchers.JUnitMatchers.either;
+import static org.junit.matchers.JUnitMatchers.matches;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoint;
@@ -29,8 +29,9 @@ public class BothTest {
 	@Test
 	public void bothPasses() {
 		assertThat(3, both(is(3)).and(matches(is(Integer.class))));
+		assertThat("ab", both(containsString("a")).and(containsString("b")));
 	}
-
+	
 	@Theory
 	public void bothFails(int value, Matcher<Integer> first,
 			Matcher<Integer> second) {
@@ -66,7 +67,7 @@ public class BothTest {
 		assertThat(value, either(first).or(second).or(third));
 	}
 	
-	@Test public void subclassesAreOkInSecondPositionOnly() {
-		assertThat(3, both(is(Integer.class)).and(matches(is(3))));
+	@Test public void superclassesAreOkInSecondPositionOnly() {
+		assertThat("a", both(containsString("a")).and(matches(is(String.class))));
 	}
 }
