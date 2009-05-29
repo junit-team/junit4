@@ -1,6 +1,6 @@
 package org.junit.tests.experimental.theories.runner;
 
-import static org.hamcrest.CoreMatchers.both;
+import static org.junit.matchers.JUnitMatchers.both;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.experimental.results.PrintableResult.testResult;

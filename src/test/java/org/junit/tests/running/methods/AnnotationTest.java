@@ -1,8 +1,8 @@
 package org.junit.tests.running.methods;
 
-import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.both;
 
 import java.util.Collection;
 import java.util.HashSet;
