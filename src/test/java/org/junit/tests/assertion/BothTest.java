@@ -1,13 +1,19 @@
 package org.junit.tests.assertion;
 
+import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeTrue;
 import static org.junit.matchers.JUnitMatchers.both;
 import static org.junit.matchers.JUnitMatchers.either;
+import static org.junit.matchers.JUnitMatchers.isOneOf;
 import static org.junit.matchers.JUnitMatchers.matches;
+
+import java.util.Arrays;
+
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoint;
@@ -28,10 +34,10 @@ public class BothTest {
 
 	@Test
 	public void bothPasses() {
-		assertThat(3, both(is(3)).and(matches(is(Integer.class))));
+		assertThat(3, both(any(Integer.class)).and(is(3)));
 		assertThat("ab", both(containsString("a")).and(containsString("b")));
 	}
-	
+
 	@Theory
 	public void bothFails(int value, Matcher<Integer> first,
 			Matcher<Integer> second) {
@@ -48,7 +54,18 @@ public class BothTest {
 
 	@Test
 	public void eitherPasses() {
-		assertThat(3, either(is(3)).or(matches(is(4))));
+		assertThat(3, either(sameInstance(3)).or(sameInstance(4)));
+		assertThat(3, either(matches(is(String.class))).or(
+				matches(is(Integer.class))));
+		assertThat("a", either(sameInstance("a")).or(sameInstance("b")));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void isOneOfPasses() {
+		assertThat(3, isOneOf(3, 4));
+		assertThat(Arrays.asList("a"), isOneOf(Arrays.asList("a"), Arrays
+				.asList("b")));
 	}
 
 	@Theory
@@ -66,8 +83,9 @@ public class BothTest {
 				|| third.matches(value));
 		assertThat(value, either(first).or(second).or(third));
 	}
-	
-	@Test public void superclassesAreOkInSecondPositionOnly() {
-		assertThat("a", both(containsString("a")).and(matches(is(String.class))));
+
+	@Test
+	public void superclassesAreOkInSecondPositionOnly() {
+		assertThat("a", both(containsString("a")).and(is(String.class)));
 	}
 }
