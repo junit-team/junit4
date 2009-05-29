@@ -1,9 +1,5 @@
 package org.junit.matchers;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.either;
-import static org.junit.matchers.JUnitMatchers.matches;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.hamcrest.core.CombinableMatcher;
