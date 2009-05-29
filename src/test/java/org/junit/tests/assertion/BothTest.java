@@ -1,8 +1,9 @@
 package org.junit.tests.assertion;
 
-import static org.hamcrest.CoreMatchers.both;
+import static org.junit.matchers.JUnitMatchers.both;
+import static org.junit.matchers.JUnitMatchers.matches;
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.either;
+import static org.junit.matchers.JUnitMatchers.either;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
@@ -27,7 +28,7 @@ public class BothTest {
 
 	@Test
 	public void bothPasses() {
-		assertThat(3, both(is(Integer.class)).and(is(3)));
+		assertThat(3, both(is(3)).and(matches(is(Integer.class))));
 	}
 
 	@Theory
@@ -46,7 +47,7 @@ public class BothTest {
 
 	@Test
 	public void eitherPasses() {
-		assertThat(3, either(is(3)).or(is(4)));
+		assertThat(3, either(is(3)).or(matches(is(4))));
 	}
 
 	@Theory
@@ -66,6 +67,6 @@ public class BothTest {
 	}
 	
 	@Test public void subclassesAreOkInSecondPositionOnly() {
-		assertThat(3, both(is(Integer.class)).and(is(3)));
+		assertThat(3, both(is(Integer.class)).and(matches(is(3))));
 	}
 }
