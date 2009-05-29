@@ -20,7 +20,7 @@ public class JUnitMatchers {
 	 */
 	@Deprecated
 	public static <T> Matcher<Iterable<? super T>> hasItem(T element) {
-		return CoreMatchers.hasItem(element);
+		return CoreMatchers.<T>hasItem(element);
 	}
 
 	/**
@@ -30,7 +30,7 @@ public class JUnitMatchers {
 	 */
 	@Deprecated
     public static <T> Matcher<Iterable<? super T>> hasItem(Matcher<? super T> elementMatcher) {
-		return CoreMatchers.hasItem(elementMatcher);
+		return CoreMatchers.<T>hasItem(elementMatcher);
 	}
 
 	/**
