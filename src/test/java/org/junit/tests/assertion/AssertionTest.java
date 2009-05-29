@@ -1,6 +1,5 @@
 package org.junit.tests.assertion;
 
-import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertArrayEquals;
@@ -427,8 +426,7 @@ public class AssertionTest {
         }
     }
     
-    @SuppressWarnings("unchecked")
-	@Test public void assertThatIncludesAdvancedMismatch() {
+    @Test public void assertThatIncludesAdvancedMismatch() {
         String expectedMessage = "identifier\nExpected: is an instance of java.lang.Integer\n     but: \"actual\" is a java.lang.String";
         
         try {
