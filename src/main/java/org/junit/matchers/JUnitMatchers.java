@@ -1,7 +1,7 @@
 package org.junit.matchers;
 
 import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,7 +113,7 @@ public class JUnitMatchers {
 	public static <T> Matcher<T> isOneOf(T... objects) {
 		List<Matcher<? super T>> matchers = new ArrayList<Matcher<? super T>>();
 		for (T each : objects) {
-			matchers.add(is(each));
+			matchers.add(equalTo(each));
 		}
 		return anyOf(matchers);
 	}
@@ -131,7 +131,6 @@ public class JUnitMatchers {
 	 * <pre>
 	 *   assertThat(3, either(matches(is(String.class))).or(
 	 *		                  matches(is(Integer.class))));
-     *
 	 * </pre>
 	 */
 	@SuppressWarnings("unchecked")

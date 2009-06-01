@@ -134,7 +134,7 @@
 	 
 	    assertThat(3, either(matches(is(String.class))).or(
 		                     matches(is(Integer.class))));
-	    
+  
 ### Docs ###
 - Javadocs now link to online JDK javadocs (bug 2090230)
 - Parameterized runner javadocs improved (bug 2186792)

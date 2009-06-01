@@ -2,9 +2,8 @@ package org.junit;
 
 import java.lang.reflect.Array;
 
-import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.hamcrest.StringDescription;
+import org.hamcrest.MatcherAssert;
 import org.junit.internal.ArrayComparisonFailure;
 import org.junit.internal.ExactComparisonCriteria;
 import org.junit.internal.InexactComparisonCriteria;
@@ -787,14 +786,6 @@ public class Assert {
 	 */
 	public static <T> void assertThat(String reason, T actual,
 			Matcher<T> matcher) {
-		if (!matcher.matches(actual)) {
-            Description description = new StringDescription();
-            description.appendText(reason)
-                       .appendText("\nExpected: ")
-                       .appendDescriptionOf(matcher)
-                       .appendText("\n     but: ");
-            matcher.describeMismatch(actual, description);
-			throw new java.lang.AssertionError(description.toString());
-		}
+		MatcherAssert.assertThat(reason, actual, matcher);
 	}
 }
