@@ -97,7 +97,7 @@
 - Tests that time out now show the stack trace of the test thread.
 
 ### Matchers ###
-- Hamcrest 1.2 is now incorporated.
+- Hamcrest 1.2 is now incorporated (http://github.com/KentBeck/junit/issues#issue/1)
   - The following methods from `JUnitMatchers` are deprecated, and moved to `CoreMatchers`:
     - `JUnitMatchers.hasItem` is now `CoreMatchers.hasItem`
     - `JUnitMatchers.hasItems` is now `CoreMatchers.hasItems`
