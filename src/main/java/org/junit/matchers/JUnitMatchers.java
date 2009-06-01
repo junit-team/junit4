@@ -133,7 +133,7 @@ public class JUnitMatchers {
 	 * </pre>
 	 */
 	@SuppressWarnings("unchecked")
-	public static Matcher<Object> matches(Matcher<?> matcher) {
-		return (Matcher<Object>)matcher;
+	public static <T> Matcher<T> matches(Matcher<?> matcher) {
+		return (Matcher<T>)matcher;
 	}
 }
