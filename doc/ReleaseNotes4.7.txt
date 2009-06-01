@@ -116,17 +116,25 @@
   - Some matchers have slightly changed type signatures, especially those created
     by `is()` and `equalTo`.  Everything should work, except see `BothTest` for an
     example of how the `both().and()` and `either().or()` constructs may be
-    affected
+    affected.  To essentially disable type-checking for a matcher expression,
+    use `JUnitMatchers.matches()` (see below)
+    
+  - `JUnitMatchers.isOneOf(...)` is sugar for the situation where you want to specify
+	a finite list of concrete objects that can match.  For example:
+      
+	  assertThat(3, isOneOf(3, 4));
 
-Expected: (is an instance of java.lang.Integer)\n     but: \"actual\" is a java.lang.String
-      @SuppressWarnings("unchecked")
-      public void testMismatchDescriptionDescribesFirstFailingMatch() {
-    	  assertThat("bad speling", 
-    	             allOf(containsString("bad"), containsString("spelling")));
-    	  // prints: Expected: (contains string "bad" and contains string "spelling")
-    	             but: contains string "spelling" was "bad speling"
-	  }
+  - `JUnitMatchers.matches()` disables type-checking of a matcher entirely.
   
+	 Goofy example:
+	 
+	    assertThat(3, matches(containsString("a")));
+	  
+	 Real example:
+	 
+	    assertThat(3, either(matches(is(String.class))).or(
+		                     matches(is(Integer.class))));
+	    
 ### Docs ###
 - Javadocs now link to online JDK javadocs (bug 2090230)
 - Parameterized runner javadocs improved (bug 2186792)

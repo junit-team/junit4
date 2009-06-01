@@ -15,7 +15,6 @@ import org.hamcrest.core.CombinableMatcher;
  * not currently included in the basic CoreMatchers class from hamcrest.
  */
 public class JUnitMatchers {
-	// TODO (May 27, 2009 11:46:27 AM): deprecate all?
 	/**
 	 * @param element
 	 * @return A matcher matching any collection containing element
@@ -102,10 +101,13 @@ public class JUnitMatchers {
 	}
 	
 	/**
-	 * This is sugar for the situation where 
+	 * This is sugar for the situation where you want to specify
+	 * a finite list of concrete objects that can match.
 	 * For example:
 	 * <pre>
-	 *   assertThat(string, eitherIs("a").or(is("b")));
+	 *   assertThat(string, isOneOf("a", "b", "c"));
+	 *   // is equivalent to
+	 *   assertThat(string, anyOf(is("a"), is("b"), is("c")))
 	 * </pre>
 	 */
 	public static <T> Matcher<T> isOneOf(T... objects) {
@@ -118,7 +120,7 @@ public class JUnitMatchers {
 	
 	/**
 	 * Loosens type parameter, in order to use a Matcher 
-	 * in a place where Java doesn't want to typecheck:
+	 * in a place where Java doesn't want to type-check:
 	 *
 	 * Goofy example:
 	 * <pre>

@@ -10,9 +10,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.matchers.JUnitMatchers.matches;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.ComparisonFailure;
