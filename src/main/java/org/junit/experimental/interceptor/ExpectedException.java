@@ -2,6 +2,8 @@ package org.junit.experimental.interceptor;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.junit.matchers.JUnitMatchers.both;
+import static org.junit.matchers.JUnitMatchers.matches;
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
@@ -10,16 +12,21 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
 public class ExpectedException implements StatementInterceptor {
-	private Matcher<Throwable> fMatcher= null;
+	private Matcher<?> fMatcher= null;
 
 	public Statement intercept(Statement base, FrameworkMethod method) {
 		return new ExpectedExceptionStatement(base);
 	}
 
-	// TODO (Jun 1, 2009 3:56:50 PM): expect multiple things
-	// TODO (Jun 1, 2009 4:26:59 PM): expect on original throwable
+	public void expect(Matcher<?> matcher) {
+		if (fMatcher == null)
+			fMatcher = matcher;
+		else
+			fMatcher = both(fMatcher).and(matches(matcher));
+	}
+
 	public void expect(Class<? extends Throwable> type) {
-		fMatcher= instanceOf(type);
+		expect(instanceOf(type));
 	}
 
 	public void expectMessage(String substring) {
@@ -27,7 +34,7 @@ public class ExpectedException implements StatementInterceptor {
 	}
 
 	public void expectMessage(Matcher<String> matcher) {
-		fMatcher= hasMessage(matcher);
+		expect(hasMessage(matcher));
 	}
 
 	private class ExpectedExceptionStatement extends Statement {
@@ -44,7 +51,7 @@ public class ExpectedException implements StatementInterceptor {
 			} catch (Throwable e) {
 				if (fMatcher == null)
 					throw e;
-				Assert.assertThat(e, fMatcher);
+				Assert.assertThat(e, matches(fMatcher));
 				return;
 			}
 			if (fMatcher != null)

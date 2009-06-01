@@ -1,15 +1,16 @@
 package org.junit.tests.experimental.interceptor;
 
+import static org.hamcrest.CoreMatchers.any;
+import static org.hamcrest.CoreMatchers.anything;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
+import static org.junit.matchers.JUnitMatchers.matches;
 import org.junit.Test;
 import org.junit.experimental.interceptor.ExpectedException;
 import org.junit.experimental.interceptor.Interceptor;
-import org.junit.runners.model.FrameworkMethod;
-import org.junit.runners.model.Statement;
 
 public class ExpectedExceptionInterceptorTest {
 	public static class HasExpectedException {
@@ -140,12 +141,11 @@ public class ExpectedExceptionInterceptorTest {
 
 	@Test
 	public void failsWithNullExceptionMessage() {
-		assertThat(
-				testResult(ExpectsSubstringNullMessage.class),
+		assertThat(testResult(ExpectsSubstringNullMessage.class),
 				hasSingleFailureContaining("but: getMessage() was null"));
 	}
 
-	public static class ExpectsMatcher {
+	public static class ExpectsMessageMatcher {
 		@Interceptor
 		public ExpectedException thrown= new ExpectedException();
 
@@ -157,11 +157,11 @@ public class ExpectedExceptionInterceptorTest {
 	}
 
 	@Test
-	public void succeedsWithMatcher() {
-		assertThat(testResult(ExpectsMatcher.class), isSuccessful());
+	public void succeedsWithMessageMatcher() {
+		assertThat(testResult(ExpectsMessageMatcher.class), isSuccessful());
 	}
 
-	public static class ExpectsMatcherFails {
+	public static class ExpectedMessageMatcherFails {
 		@Interceptor
 		public ExpectedException thrown= new ExpectedException();
 
@@ -174,7 +174,41 @@ public class ExpectedExceptionInterceptorTest {
 
 	@Test
 	public void failsWithMatcher() {
-		assertThat(testResult(ExpectsMatcherFails.class),
+		assertThat(testResult(ExpectedMessageMatcherFails.class),
 				hasSingleFailureContaining("Wrong start"));
+	}
+
+	public static class ExpectsMatcher {
+		@Interceptor
+		public ExpectedException thrown= new ExpectedException();
+
+		@Test
+		public void throwsMore() {
+			thrown.expect(any(Throwable.class));
+			throw new NullPointerException("Ack!");
+		}
+	}
+
+	@Test
+	public void succeedsWithMatcher() {
+		assertThat(testResult(ExpectsMatcher.class), isSuccessful());
+	}
+
+	public static class ExpectsMultipleMatchers {
+		@Interceptor
+		public ExpectedException thrown= new ExpectedException();
+
+		@Test
+		public void throwsMore() {
+			thrown.expect(IllegalArgumentException.class);
+			thrown.expectMessage("Ack!");
+			throw new NullPointerException("Ack!");
+		}
+	}
+
+	@Test
+	public void failsWithMultipleMatchers() {
+		assertThat(testResult(ExpectsMultipleMatchers.class),
+				hasSingleFailureContaining("IllegalArgumentException"));
 	}
 }
