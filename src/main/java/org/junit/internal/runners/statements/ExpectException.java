@@ -5,7 +5,6 @@ package org.junit.internal.runners.statements;
 
 import org.junit.runners.model.Statement;
 
-
 public class ExpectException extends Statement {
 	private Statement fNext;
 	private final Class<? extends Throwable> fExpected;

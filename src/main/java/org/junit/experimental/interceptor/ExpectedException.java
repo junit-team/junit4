@@ -1,30 +1,36 @@
 package org.junit.experimental.interceptor;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import org.hamcrest.FeatureMatcher;
+import org.hamcrest.Matcher;
+import org.hamcrest.StringDescription;
+import org.junit.Assert;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
 public class ExpectedException implements StatementInterceptor {
-	private Class<? extends Throwable> fType;
-	private String fMessage;
+	private Matcher<Throwable> fMatcher= null;
 
 	public Statement intercept(Statement base, FrameworkMethod method) {
 		return new ExpectedExceptionStatement(base);
 	}
 
+	// TODO (Jun 1, 2009 3:56:50 PM): expect multiple things
+	// TODO (Jun 1, 2009 4:26:59 PM): expect on original throwable
 	public void expect(Class<? extends Throwable> type) {
-		fType= type;
+		fMatcher= instanceOf(type);
 	}
 
-	public void expectMessage(String message) {
-		fMessage= message;
+	public void expectMessage(String substring) {
+		expectMessage(containsString(substring));
 	}
 
-	private boolean noExpectedException() {
-		return fType == null && fMessage == null;
+	public void expectMessage(Matcher<String> matcher) {
+		fMatcher= hasMessage(matcher);
 	}
-	
-	public class ExpectedExceptionStatement extends Statement {
 
+	private class ExpectedExceptionStatement extends Statement {
 		private final Statement fNext;
 
 		public ExpectedExceptionStatement(Statement base) {
@@ -33,42 +39,27 @@ public class ExpectedException implements StatementInterceptor {
 
 		@Override
 		public void evaluate() throws Throwable {
-			boolean complete = false;
 			try {
 				fNext.evaluate();
-				complete = true;
 			} catch (Throwable e) {
-				if (noExpectedException())
+				if (fMatcher == null)
 					throw e;
-				// TODO (May 26, 2009 11:46:31 PM): isInstance?
-				if (fType != null && !fType.isAssignableFrom(e.getClass())) {
-					String message= "Unexpected exception, expected<"
-								+ fType.getName() + "> but was<"
-								+ e.getClass().getName() + ">";
-					throw new Exception(message, e);
-				}
-				if (fMessage != null && !getMessage(e).contains(fMessage)) {
-					String message= "Unexpected exception message, expected<"
-								+ fMessage + "> but was<"
-								+ getMessage(e) + ">";
-					throw new Exception(message, e);
-				}
+				Assert.assertThat(e, fMatcher);
+				return;
 			}
-			// TODO (May 26, 2009 11:54:22 PM): do I need complete
-			if (complete && !noExpectedException()) {
-				if (fType != null)
-					throw new AssertionError("Expected exception: "
-							+ fType.getName());
-				else if (fMessage != null)
-					throw new AssertionError("Expected exception with message: "
-							+ fMessage);
-				else
-					throw new RuntimeException("How'd we get here?");
-			}
+			if (fMatcher != null)
+				throw new AssertionError("Expected test to throw "
+						+ StringDescription.toString(fMatcher));
 		}
+	}
 
-		private String getMessage(Throwable e) {
-			return e.getMessage() == null ? "" : e.getMessage();
-		}
+	private Matcher<Throwable> hasMessage(Matcher<String> matcher) {
+		return new FeatureMatcher<Throwable, String>(matcher,
+				"exception with message", "getMessage()") {
+			@Override
+			protected String featureValueOf(Throwable actual) {
+				return actual.getMessage();
+			}
+		};
 	}
 }
