@@ -1,5 +1,6 @@
 package org.junit.tests.experimental.interceptor;
 
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
@@ -7,6 +8,8 @@ import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 import org.junit.Test;
 import org.junit.experimental.interceptor.ExpectedException;
 import org.junit.experimental.interceptor.Interceptor;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.Statement;
 
 public class ExpectedExceptionInterceptorTest {
 	public static class HasExpectedException {
@@ -52,7 +55,7 @@ public class ExpectedExceptionInterceptorTest {
 	public void unExpectedExceptionFails() {
 		assertThat(
 				testResult(HasWrongExpectedException.class),
-				hasSingleFailureContaining("Unexpected exception, expected<java.lang.NullPointerException> but was<java.lang.IllegalArgumentException>"));
+				hasSingleFailureContaining("Expected: an instance of java.lang.NullPointerException"));
 	}
 
 	public static class HasWrongMessage {
@@ -70,7 +73,7 @@ public class ExpectedExceptionInterceptorTest {
 	public void wrongMessageFails() {
 		assertThat(
 				testResult(HasWrongMessage.class),
-				hasSingleFailureContaining("Unexpected exception message, expected<expectedMessage> but was<actualMessage>"));
+				hasSingleFailureContaining("\"expectedMessage\"\n     but: getMessage() was \"actualMessage\""));
 	}
 
 	public static class WronglyExpectsException {
@@ -87,7 +90,7 @@ public class ExpectedExceptionInterceptorTest {
 	public void failsIfExceptionNeverComes() {
 		assertThat(
 				testResult(WronglyExpectsException.class),
-				hasSingleFailureContaining("Expected exception: java.lang.NullPointerException"));
+				hasSingleFailureContaining("Expected test to throw an instance of java.lang.NullPointerException"));
 	}
 
 	public static class WronglyExpectsExceptionMessage {
@@ -104,7 +107,7 @@ public class ExpectedExceptionInterceptorTest {
 	public void failsIfExceptionMessageNeverComes() {
 		assertThat(
 				testResult(WronglyExpectsExceptionMessage.class),
-				hasSingleFailureContaining("Expected exception with message: anything!"));
+				hasSingleFailureContaining("Expected test to throw exception with message a string containing \"anything!\""));
 	}
 
 	public static class ExpectsSubstring {
@@ -139,6 +142,39 @@ public class ExpectedExceptionInterceptorTest {
 	public void failsWithNullExceptionMessage() {
 		assertThat(
 				testResult(ExpectsSubstringNullMessage.class),
-				hasSingleFailureContaining("Unexpected exception message, expected<anything!> but was<>"));
+				hasSingleFailureContaining("but: getMessage() was null"));
+	}
+
+	public static class ExpectsMatcher {
+		@Interceptor
+		public ExpectedException thrown= new ExpectedException();
+
+		@Test
+		public void throwsMore() {
+			thrown.expectMessage(startsWith("Ack"));
+			throw new NullPointerException("Ack!");
+		}
+	}
+
+	@Test
+	public void succeedsWithMatcher() {
+		assertThat(testResult(ExpectsMatcher.class), isSuccessful());
+	}
+
+	public static class ExpectsMatcherFails {
+		@Interceptor
+		public ExpectedException thrown= new ExpectedException();
+
+		@Test
+		public void throwsMore() {
+			thrown.expectMessage(startsWith("Wrong start"));
+			throw new NullPointerException("Back!");
+		}
+	}
+
+	@Test
+	public void failsWithMatcher() {
+		assertThat(testResult(ExpectsMatcherFails.class),
+				hasSingleFailureContaining("Wrong start"));
 	}
 }
