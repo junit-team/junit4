@@ -1,13 +1,11 @@
 package org.junit.tests.experimental.interceptor;
 
 import static org.hamcrest.CoreMatchers.any;
-import static org.hamcrest.CoreMatchers.anything;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
-import static org.junit.matchers.JUnitMatchers.matches;
 import org.junit.Test;
 import org.junit.experimental.interceptor.ExpectedException;
 import org.junit.experimental.interceptor.Interceptor;
