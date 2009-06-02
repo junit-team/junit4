@@ -89,6 +89,7 @@
 		public void throwsNullPointerExceptionWithMessage() {
 			thrown.expect(NullPointerException.class);
 			thrown.expectMessage("happened?");
+			thrown.expectMessage(startsWith("What"));
 			throw new NullPointerException("What happened?");
 		}
 	}
