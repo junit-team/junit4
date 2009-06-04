@@ -10,15 +10,9 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
-		<buildCommand>
-			<name>com.architexa.diagrams.jdt.builder.AtxaJDTBuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.team.cvs.core.cvsnature</nature>
-		<nature>com.architexa.diagrams.jdt.builder.AtxaJDTBuilderProjectNature</nature>
 	</natures>
 </projectDescription>

@@ -3,8 +3,51 @@
 ### Interceptors ###
 
 - Interceptors allow very flexible addition or redefinition of the behavior
-  of each test method in a test class.  For example, this class will
-  keep a log of each passing and failing test:
+  of each test method in a test class.  Testers can reuse or extend one of the 
+  provided Interceptors below, or write their own.
+ 
+- The TemporaryFolder Interceptor allows creation of files and folders
+  that are guaranteed to be deleted when the test method finishes
+  (whether it passes or fails):
+  
+  	public static class HasTempFolder {
+		@Interceptor
+		public TemporaryFolder folder= new TemporaryFolder();
+
+		@Test
+		public void testUsingTempFolder() throws IOException {
+			File createdFile= folder.newFile("myfile.txt");
+			File createdFolder= folder.newFolder("subfolder");
+			// ...
+		}
+	}
+
+- ExternalResource is a base class for Interceptors (like TemporaryFolder)
+  that set up an external resource before a test (a file, socket, server,
+  database connection, etc.), and tear it down afterward:
+  
+  	public static class UsesExternalResource {
+		@Interceptor public ExternalResource resource = new ExternalResource() {
+			@Override
+			protected void before() throws Throwable {
+				callSequence += "before ";
+			};
+			
+			@Override
+			protected void after() {
+				callSequence += "after ";
+			};
+		};
+		
+		@Test public void testFoo() {
+			callSequence += "test ";
+		}
+	}
+  
+- TestWatchman is a base class for Interceptors that take note
+  of the testing action, without modifying it.
+  For example, this class will keep a log of each passing and failing 
+  test:
   
 	public static class WatchmanTest {
 		private static String watchedLog;

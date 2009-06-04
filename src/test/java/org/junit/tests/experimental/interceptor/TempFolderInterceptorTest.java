@@ -1,0 +1,71 @@
+package org.junit.tests.experimental.interceptor;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.experimental.results.PrintableResult.testResult;
+import static org.junit.experimental.results.ResultMatchers.isSuccessful;
+
+import java.io.File;
+import java.io.IOException;
+
+import org.junit.Test;
+import org.junit.experimental.interceptor.Interceptor;
+import org.junit.experimental.interceptor.TemporaryFolder;
+
+public class TempFolderInterceptorTest {
+	private static File createdFile;
+
+	public static class HasTempFolder {
+		@Interceptor
+		public TemporaryFolder folder= new TemporaryFolder();
+
+		@Test
+		public void testUsingTempFolder() throws IOException {
+			createdFile= folder.newFile("myfile.txt");
+			assertTrue(createdFile.exists());
+		}
+	}
+
+	@Test
+	public void tempFolderIsDeleted() {
+		assertThat(testResult(HasTempFolder.class), isSuccessful());
+		assertFalse(createdFile.exists());
+	}
+
+	public static class CreatesSubFolder {
+		@Interceptor
+		public TemporaryFolder folder= new TemporaryFolder();
+
+		@Test
+		public void testUsingTempFolder() throws IOException {
+			createdFile= folder.newFolder("subfolder");
+			new File(createdFile, "a.txt").createNewFile();
+			assertTrue(createdFile.exists());
+		}
+	}
+
+	@Test
+	public void subFolderIsDeleted() {
+		assertThat(testResult(CreatesSubFolder.class), isSuccessful());
+		assertFalse(createdFile.exists());
+	}
+
+	@Test
+	public void recursiveDeleteFolderWithOneElement() throws IOException {
+		TemporaryFolder folder= new TemporaryFolder();
+		folder.create();
+		File file= folder.newFile("a");
+		folder.delete();
+		assertFalse(file.exists());
+		assertFalse(folder.getRoot().exists());
+	}
+
+	@Test
+	public void recursiveDeleteFolderWithZeroElements() throws IOException {
+		TemporaryFolder folder= new TemporaryFolder();
+		folder.create();
+		folder.delete();
+		assertFalse(folder.getRoot().exists());
+	}
+}

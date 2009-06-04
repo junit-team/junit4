@@ -16,8 +16,10 @@ import org.junit.tests.experimental.AssumptionViolatedExceptionTest;
 import org.junit.tests.experimental.ExperimentalTests;
 import org.junit.tests.experimental.MatcherTest;
 import org.junit.tests.experimental.interceptor.ExpectedExceptionInterceptorTest;
+import org.junit.tests.experimental.interceptor.ExternalResourceInterceptorTest;
 import org.junit.tests.experimental.interceptor.InterceptorTest;
 import org.junit.tests.experimental.interceptor.NameInterceptorTest;
+import org.junit.tests.experimental.interceptor.TempFolderInterceptorTest;
 import org.junit.tests.experimental.interceptor.TimeoutInterceptorTest;
 import org.junit.tests.experimental.max.JUnit38SortingTest;
 import org.junit.tests.experimental.max.MaxComputerTest;
@@ -127,7 +129,9 @@ import org.junit.tests.validation.ValidationTest;
 	ParallelMethodTest.class,
 	ParentRunnerTest.class,
 	NameInterceptorTest.class,
-	ExpectedExceptionInterceptorTest.class
+	ExpectedExceptionInterceptorTest.class,
+	TempFolderInterceptorTest.class,
+	ExternalResourceInterceptorTest.class
 })
 public class AllTests {
 	public static Test suite() {
