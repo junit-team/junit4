@@ -25,24 +25,20 @@ public class RunAfters extends Statement {
 
 	@Override
 	public void evaluate() throws Throwable {
-		List<Throwable> fErrors = new ArrayList<Throwable>();
-		fErrors.clear();
+		List<Throwable> errors = new ArrayList<Throwable>();
+		errors.clear();
 		try {
 			fNext.evaluate();
 		} catch (Throwable e) {
-			fErrors.add(e);
+			errors.add(e);
 		} finally {
 			for (FrameworkMethod each : fAfters)
 				try {
 					each.invokeExplosively(fTarget);
 				} catch (Throwable e) {
-					fErrors.add(e);
+					errors.add(e);
 				}
 		}
-		if (fErrors.isEmpty())
-			return;
-		if (fErrors.size() == 1)
-			throw fErrors.get(0);
-		throw new MultipleFailureException(fErrors);
+		MultipleFailureException.assertEmpty(errors);
 	}
 }

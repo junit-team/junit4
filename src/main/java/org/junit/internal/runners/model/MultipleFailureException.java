@@ -14,4 +14,12 @@ public class MultipleFailureException extends Exception {
 	public List<Throwable> getFailures() {
 		return fErrors;
 	}
+
+	public static void assertEmpty(List<Throwable> errors) throws Throwable {
+		if (errors.isEmpty())
+			return;
+		if (errors.size() == 1)
+			throw errors.get(0);
+		throw new MultipleFailureException(errors);
+	}
 }

@@ -43,7 +43,40 @@
 			callSequence += "test ";
 		}
 	}
+
+- The ErrorCollector Interceptor allows execution of a test to continue
+  after the first problem is found (for example, to collect _all_ the 
+  incorrect rows in a table, and report them all at once):
+
+	public static class UsesErrorCollectorTwice {
+		@Interceptor
+		public ErrorCollector collector= new ErrorCollector();
+		
+		@Test public void example() {
+			collector.addError(new Throwable("first thing went wrong"));
+			collector.addError(new Throwable("second thing went wrong"));
+		}
+	}
+	
+- Verifier is a base class for Interceptors like ErrorCollector, which
+  can turn otherwise passing test methods into failing tests if a verification
+  check is failed
   
+    public static class ErrorLogVerifier() {
+       private ErrorLog errorLog = new ErrorLog();
+    
+       @Interceptor
+       public Verifier verifier = new Verifier() {
+          @Override public void verify() {
+             assertTrue(errorLog.isEmpty());
+          }
+       }
+       
+       @Test public void testThatMightWriteErrorLog() {
+          // ...
+       }
+    }
+
 - TestWatchman is a base class for Interceptors that take note
   of the testing action, without modifying it.
   For example, this class will keep a log of each passing and failing 

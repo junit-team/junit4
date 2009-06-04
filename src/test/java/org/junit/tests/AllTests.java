@@ -21,6 +21,7 @@ import org.junit.tests.experimental.interceptor.InterceptorTest;
 import org.junit.tests.experimental.interceptor.NameInterceptorTest;
 import org.junit.tests.experimental.interceptor.TempFolderInterceptorTest;
 import org.junit.tests.experimental.interceptor.TimeoutInterceptorTest;
+import org.junit.tests.experimental.interceptor.VerifierInterceptorTest;
 import org.junit.tests.experimental.max.JUnit38SortingTest;
 import org.junit.tests.experimental.max.MaxComputerTest;
 import org.junit.tests.experimental.max.MaxStarterTest;
@@ -131,7 +132,8 @@ import org.junit.tests.validation.ValidationTest;
 	NameInterceptorTest.class,
 	ExpectedExceptionInterceptorTest.class,
 	TempFolderInterceptorTest.class,
-	ExternalResourceInterceptorTest.class
+	ExternalResourceInterceptorTest.class,
+	VerifierInterceptorTest.class
 })
 public class AllTests {
 	public static Test suite() {
