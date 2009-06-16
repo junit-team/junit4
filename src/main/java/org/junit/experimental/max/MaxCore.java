@@ -1,8 +1,6 @@
 package org.junit.experimental.max;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,19 +40,7 @@ public class MaxCore {
 
 	public Result run(Request request, JUnitCore core) {
 		core.addListener(fHistory.listener());
-		try { 
-			return core.run(sortRequest(request).getRunner());
-		} finally {
-			try {
-				fHistory.save();
-			} catch (FileNotFoundException e) {
-				// TODO
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO
-				e.printStackTrace();
-			}
-		}
+		return core.run(sortRequest(request).getRunner());
 	}
 	
 	// TODO (Feb 23, 2009 10:14:05 PM): publicized for squeeze

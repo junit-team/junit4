@@ -8,10 +8,6 @@ public class ExternalResource implements StatementInterceptor {
 		return new Statement() {
 			@Override
 			public void evaluate() throws Throwable {
-				// TODO (Jun 3, 2009 11:49:23 PM): should we replicate
-				// @Before/@After semantics?
-				// 1. after() run even if before() fails.
-				// 2. exception in after() _adds_ to failure in base.
 				before();
 				try {
 					base.evaluate();
