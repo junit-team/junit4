@@ -22,14 +22,10 @@ public class TestWatchman implements StatementInterceptor {
 			}
 		};
 	}
-	
-	// TODO (May 25, 2009 9:44:36 PM): Fix max and Theories
 
 	public void succeeded(FrameworkMethod method) {
 	}
 
-	// TODO (Apr 28, 2009 10:50:47 PM): is this right? Is
-	// FrameworkMethod too powerful?
 	public void failed(Throwable e, FrameworkMethod method) {
 	}
 

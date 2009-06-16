@@ -24,14 +24,13 @@ public class ErrorCollector extends Verifier {
 		errors.add(error);
 	}
 
-	// TODO (Jun 15, 2009 10:00:10 PM): is this same as assertThat?
-	public <T> void checkThat(T value, Matcher<T> matcher) {
-		// TODO (Jun 15, 2009 10:01:28 PM): checkReturns
-		try {
-			assertThat(value, matcher);
-		} catch (AssertionError e) {
-			addError(e);
-		}
+	public <T> void checkThat(final T value, final Matcher<T> matcher) {
+		checkSucceeds(new Callable<Object>() {
+			public Object call() throws Exception {
+				assertThat(value, matcher);
+				return value;
+			}
+		});
 	}
 
 	public Object checkSucceeds(Callable<Object> callable) {

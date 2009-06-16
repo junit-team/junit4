@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.runner.Description;
+import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 
@@ -128,6 +129,11 @@ public class MaxHistory implements Serializable {
 		@Override
 		public void testFailure(Failure failure) throws Exception {
 			putTestFailureTimestamp(failure.getDescription(), overallStart);
+		}
+		
+		@Override
+		public void testRunFinished(Result result) throws Exception {
+			save();
 		}
 	}
 
