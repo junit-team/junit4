@@ -72,7 +72,6 @@ public class MaxCore {
 			return Suite.emptySuite();
 		Class<?> type= each.getTestClass();
 		if (type == null)
-			// TODO (Nov 18, 2008 2:04:09 PM): add a check if building a runner is possible
 			throw new RuntimeException("Can't build a runner from description [" + each + "]");
 		String methodName= each.getMethodName();
 		if (methodName == null)
@@ -84,15 +83,13 @@ public class MaxCore {
 		return findLeaves(sortRequest(request));
 	}
 	
-	// TODO (Feb 23, 2009 10:40:23 PM): V
-	public List<Description> findLeaves(Request request) {
+	private List<Description> findLeaves(Request request) {
 		List<Description> results= new ArrayList<Description>();
 		findLeaves(request.getRunner().getDescription(), results);
 		return results;
 	}
 	
-	// TODO (Feb 23, 2009 10:50:48 PM): V
-	public void findLeaves(Description description, List<Description> results) {
+	private void findLeaves(Description description, List<Description> results) {
 		if (description.getChildren().isEmpty())
 			results.add(description);
 		else
