@@ -23,6 +23,14 @@ import org.junit.runners.model.RunnerBuilder;
  * When you run this class, it will run all the tests in all the suite classes.
  */
 public class Suite extends ParentRunner<Runner> {
+	public static Runner emptySuite() {
+		try {
+			return new Suite((RunnerBuilder)null, new Class<?>[0]);
+		} catch (InitializationError e) {
+			throw new RuntimeException("This shouldn't be possible");
+		}
+	}
+	
 	/**
 	 * The <code>SuiteClasses</code> annotation specifies the classes to be run when a class
 	 * annotated with <code>@RunWith(Suite.class)</code> is run.
