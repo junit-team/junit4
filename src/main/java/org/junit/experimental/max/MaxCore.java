@@ -43,7 +43,6 @@ public class MaxCore {
 		return core.run(sortRequest(request).getRunner());
 	}
 	
-	// TODO (Feb 23, 2009 10:14:05 PM): publicized for squeeze
 	public Request sortRequest(Request request) {
 		if (request instanceof SortingRequest) // We'll pay big karma points for this
 			return request;
@@ -52,8 +51,7 @@ public class MaxCore {
 		return constructLeafRequest(leaves);
 	}
 
-	// TODO (Feb 23, 2009 10:42:05 PM): V
-	public Request constructLeafRequest(List<Description> leaves) {
+	private Request constructLeafRequest(List<Description> leaves) {
 		final List<Runner> runners = new ArrayList<Runner>();
 		for (Description each : leaves)
 			runners.add(buildRunner(each));
@@ -69,16 +67,9 @@ public class MaxCore {
 		};
 	}
 
-	// TODO (Feb 23, 2009 11:17:01 PM): V
-	public Runner buildRunner(Description each) {
+	private Runner buildRunner(Description each) {
 		if (each.toString().equals("TestSuite with 0 tests"))
-			try {
-				// TODO (Nov 18, 2008 2:18:28 PM): move to Suite
-				return new Suite(null, new Class<?>[0]);
-			} catch (InitializationError e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			return Suite.emptySuite();
 		Class<?> type= each.getTestClass();
 		if (type == null)
 			// TODO (Nov 18, 2008 2:04:09 PM): add a check if building a runner is possible
