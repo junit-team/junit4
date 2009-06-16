@@ -2,7 +2,6 @@ package org.junit.experimental.max;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -20,7 +19,6 @@ import org.junit.runner.notification.RunListener;
 public class MaxHistory implements Serializable {
 	private static final long serialVersionUID= 1L;
 
-
 	public static MaxHistory forFolder(File storedResults) {
 		try {
 			if (storedResults.exists())
@@ -31,42 +29,26 @@ public class MaxHistory implements Serializable {
 		}
 		return new MaxHistory(storedResults);
 	}
-	
-	private static MaxHistory readHistory(File storedResults) throws CouldNotReadCoreException {
-		// TODO: rule of three
-		// TODO: Really?
-		ObjectInputStream stream;
-		FileInputStream file= null;
+
+	private static MaxHistory readHistory(File storedResults)
+			throws CouldNotReadCoreException {
 		try {
-			file= new FileInputStream(storedResults);
-		} catch (FileNotFoundException e) {
+			FileInputStream file= new FileInputStream(storedResults);
+			try {
+				ObjectInputStream stream= new ObjectInputStream(file);
+				try {
+					return (MaxHistory) stream.readObject();
+				} finally {
+					stream.close();
+				}
+			} finally {
+				file.close();
+			}
+		} catch (Exception e) {
 			throw new CouldNotReadCoreException(e);
 		}
-		try {
-			try {
-				stream= new ObjectInputStream(file);
-			} catch (IOException e) {
-				throw new CouldNotReadCoreException(e);
-			}
-			try {
-				return (MaxHistory) stream.readObject();
-			} catch (Exception e) {
-				throw new CouldNotReadCoreException(e); //TODO think about what we can do better here
-			} finally {
-				try {
-					stream.close();
-				} catch (IOException e) {
-					throw new CouldNotReadCoreException(e);
-				}
-			}
-		} finally {
-			try {
-				file.close();
-			} catch (IOException e) {
-				// TODO can't imagine what's gone wrong here, but who cares?
-			}
-		}
 	}
+
 	public final Map<String, Long> fDurations= new HashMap<String, Long>();
 
 	public final Map<String, Long> fFailureTimestamps= new HashMap<String, Long>();
@@ -116,7 +98,7 @@ public class MaxHistory implements Serializable {
 		@Override
 		public void testStarted(Description description) throws Exception {
 			starts.put(description, System.nanoTime()); // Get most accurate
-														// possible time
+			// possible time
 		}
 
 		@Override
@@ -130,7 +112,7 @@ public class MaxHistory implements Serializable {
 		public void testFailure(Failure failure) throws Exception {
 			putTestFailureTimestamp(failure.getDescription(), overallStart);
 		}
-		
+
 		@Override
 		public void testRunFinished(Result result) throws Exception {
 			save();
@@ -145,21 +127,19 @@ public class MaxHistory implements Serializable {
 			if (isNewTest(o2))
 				return 1;
 			// Then most recently failed first
-			int result= getFailure(o2).compareTo(getFailure(o1)); 
-			return result != 0
-				? result
-				// Then shorter tests first
-				: getTestDuration(o1).compareTo(getTestDuration(o2));
+			int result= getFailure(o2).compareTo(getFailure(o1));
+			return result != 0 ? result
+			// Then shorter tests first
+					: getTestDuration(o1).compareTo(getTestDuration(o2));
 		}
-	
+
 		private Long getFailure(Description key) {
 			Long result= getFailureTimestamp(key);
-			if (result == null) 
+			if (result == null)
 				return 0L; // 0 = "never failed (that I know about)"
 			return result;
 		}
 	}
-
 
 	public RememberingListener listener() {
 		return new RememberingListener();
