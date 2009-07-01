@@ -28,7 +28,6 @@ public class TimeoutInterceptorTest {
 		}
 	}
 	
-	// TODO (May 6, 2009 11:30:19 AM): Make a separate build that makes gump happy
 	@Ignore("For gump, for now")
 	@Test(timeout=100) public void globalTimeoutAvoidsInfiniteLoop() {
 		HasGlobalTimeout.log = "";

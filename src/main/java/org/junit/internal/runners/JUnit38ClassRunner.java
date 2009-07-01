@@ -103,9 +103,7 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
 			int n= ts.testCount();
 			for (int i= 0; i < n; i++) {
 				Description made= makeDescription(ts.testAt(i));
-				// TODO (Feb 23, 2009 11:25:23 PM): this is doing Max's work for it.  Max should get rid of these when sorting i
-				if (!made.toString().startsWith("warning("))			
-					description.addChild(made);
+				description.addChild(made);
 			}
 			return description;
 		} else if (test instanceof Describable) {

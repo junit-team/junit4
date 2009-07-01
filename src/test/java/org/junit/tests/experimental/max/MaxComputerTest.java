@@ -27,7 +27,6 @@ import org.junit.runners.model.RunnerBuilder;
 
 public class MaxComputerTest {
 	private static class MaxComputer extends Computer {
-		// TODO (Mar 2, 2009 11:21:28 PM): configure somehow
 		MaxHistory fMax= new MaxHistory(new File("MaxCore.max"));
 
 		@Override
@@ -43,7 +42,6 @@ public class MaxComputerTest {
 	private static class MaxRunner extends BlockJUnit4ClassRunner {
 		private final MaxHistory fMax;
 
-		// TODO (Mar 2, 2009 10:59:15 PM): this grows without bound.
 		private List<FrameworkMethod> methods= new ArrayList<FrameworkMethod>();
 
 		public MaxRunner(Class<?> klass, MaxHistory max)

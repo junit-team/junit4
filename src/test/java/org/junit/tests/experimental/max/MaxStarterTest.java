@@ -153,7 +153,6 @@ public class MaxStarterTest {
 		Description thing= fMax.sortedLeavesForTest(request).get(1);
 		assertEquals(Description.createTestDescription(TwoUnEqualTests.class,
 				"slow"), thing);
-		// TODO (Nov 18, 2008 2:03:06 PM): flaky?
 	}
 
 	@Test
@@ -296,5 +295,19 @@ public class MaxStarterTest {
 	public void halfMalformed() {
 		assertThat(JUnitCore.runClasses(HalfMalformedJUnit38TestMethod.class)
 				.getFailureCount(), is(1));
+	}
+	
+
+	@Test
+	public void correctErrorFromHalfMalformedTest() {
+		Request request= Request.aClass(HalfMalformedJUnit38TestMethod.class);
+		JUnitCore core= new JUnitCore();
+		Request sorted= fMax.sortRequest(request);
+		Runner runner= sorted.getRunner();
+		Result result= core.run(runner);
+		Failure failure= result.getFailures().get(0);
+		assertThat(failure.toString(), containsString("MalformedJUnit38TestMethod"));
+		assertThat(failure.toString(), containsString("testNothing"));
+		assertThat(failure.toString(), containsString("isn't public"));
 	}
 }

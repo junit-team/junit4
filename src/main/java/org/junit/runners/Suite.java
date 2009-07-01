@@ -24,7 +24,7 @@ import org.junit.runners.model.RunnerBuilder;
 public class Suite extends ParentRunner<Runner> {
 	public static Runner emptySuite() {
 		try {
-			return new Suite((RunnerBuilder)null, new Class<?>[0]);
+			return new Suite((Class<?>)null, new Class<?>[0]);
 		} catch (InitializationError e) {
 			throw new RuntimeException("This shouldn't be possible");
 		}
