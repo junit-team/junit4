@@ -5,7 +5,6 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
@@ -74,8 +73,7 @@ public class Suite extends ParentRunner<Runner> {
 	 * @throws InitializationError 
 	 */
 	public Suite(RunnerBuilder builder, Class<?>[] classes) throws InitializationError {
-		// TODO (Nov 18, 2008 2:19:13 PM): extract
-		this(null, builder == null ? new ArrayList<Runner>() : builder.runners(null, classes));
+		this(null, builder.runners(null, classes));
 	}
 	
 	/**
