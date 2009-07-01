@@ -11,6 +11,36 @@ import org.junit.Assert;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
+/**
+ * Allows in-test specification of expected exception types and messages:
+ * 
+ * <pre>
+ * // These tests all pass.
+ * public static class HasExpectedException {
+ * 	&#064;Interceptor
+ * 	public ExpectedException thrown= new ExpectedException();
+ * 
+ * 	&#064;Test
+ * 	public void throwsNothing() {
+ * 
+ * 	}
+ * 
+ * 	&#064;Test
+ * 	public void throwsNullPointerException() {
+ * 		thrown.expect(NullPointerException.class);
+ * 		throw new NullPointerException();
+ * 	}
+ * 
+ * 	&#064;Test
+ * 	public void throwsNullPointerExceptionWithMessage() {
+ * 		thrown.expect(NullPointerException.class);
+ * 		thrown.expectMessage(&quot;happened?&quot;);
+ * 		thrown.expectMessage(startsWith(&quot;What&quot;));
+ * 		throw new NullPointerException(&quot;What happened?&quot;);
+ * 	}
+ * }
+ * </pre>
+ */
 public class ExpectedException implements StatementInterceptor {
 	private Matcher<?> fMatcher= null;
 
@@ -18,21 +48,36 @@ public class ExpectedException implements StatementInterceptor {
 		return new ExpectedExceptionStatement(base);
 	}
 
+	/**
+	 * Adds {@code matcher} to the list of requirements for any thrown exception.
+	 */
 	public void expect(Matcher<?> matcher) {
 		if (fMatcher == null)
-			fMatcher = matcher;
+			fMatcher= matcher;
 		else
-			fMatcher = both(fMatcher).and(matches(matcher));
+			fMatcher= both(fMatcher).and(matches(matcher));
 	}
 
+	/**
+	 * Adds to the list of requirements for any thrown exception that it
+	 * should be an instance of {@code type}
+	 */
 	public void expect(Class<? extends Throwable> type) {
 		expect(instanceOf(type));
 	}
 
+	/**
+	 * Adds to the list of requirements for any thrown exception that it
+	 * should <em>contain</em> string {@code substring}
+	 */
 	public void expectMessage(String substring) {
 		expectMessage(containsString(substring));
 	}
 
+	/**
+	 * Adds {@code matcher} to the list of requirements for the message 
+	 * returned from any thrown exception.
+	 */
 	public void expectMessage(Matcher<String> matcher) {
 		expect(hasMessage(matcher));
 	}

@@ -42,12 +42,10 @@ public class TestClass {
 		}
 	}
 
-	// TODO (May 25, 2009 9:46:48 PM): move to FrameworkMember
 	private <T extends FrameworkMember<T>> void addToAnnotationLists(T member, Map<Class<?>, List<T>> map) {
 		for (Annotation each : member.getAnnotations()) {
 			Class<? extends Annotation> type= each.annotationType();
-			ensureKey(map, type);
-			List<T> members= map.get(type);
+			List<T> members= getAnnotatedMembers(map, type);
 			if (member.isShadowedBy(members))
 				return;
 			if (runsTopToBottom(type))
@@ -57,19 +55,13 @@ public class TestClass {
 		}
 	}
 
-	private <T> void ensureKey(Map<Class<?>, List<T>> map, Class<?> annotation) {
-		if (!map.containsKey(annotation))
-			map.put(annotation, new ArrayList<T>());
-	}
-
 	/**
 	 * Returns, efficiently, all the non-overridden methods in this class and
 	 * its superclasses that are annotated with {@code annotationClass}.
 	 */
 	public List<FrameworkMethod> getAnnotatedMethods(
 			Class<? extends Annotation> annotationClass) {
-		ensureKey(fMethodsForAnnotations, annotationClass);
-		return fMethodsForAnnotations.get(annotationClass);
+		return getAnnotatedMembers(fMethodsForAnnotations, annotationClass);
 	}
 
 	/**
@@ -77,8 +69,14 @@ public class TestClass {
 	 * its superclasses that are annotated with {@code annotationClass}.
 	 */
 	public List<FrameworkField> getAnnotatedFields(Class<? extends Annotation> annotationClass) {
-		ensureKey(fFieldsForAnnotations, annotationClass);
-		return fFieldsForAnnotations.get(annotationClass);
+		return getAnnotatedMembers(fFieldsForAnnotations, annotationClass);
+	}
+
+	private <T> List<T> getAnnotatedMembers(Map<Class<?>, List<T>> map,
+			Class<? extends Annotation> type) {
+		if (!map.containsKey(type))
+			map.put(type, new ArrayList<T>());
+		return map.get(type);
 	}
 
 	private boolean runsTopToBottom(Class<? extends Annotation> annotation) {
