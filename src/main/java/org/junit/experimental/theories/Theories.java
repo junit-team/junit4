@@ -39,8 +39,8 @@ public class Theories extends BlockJUnit4ClassRunner {
 	}
 	
 	@Override
-	protected void validateZeroArgConstructor(List<Throwable> errors) {
-		// constructor can have args
+	protected void validateConstructor(List<Throwable> errors) {
+		validateOnlyOneConstructor(errors);
 	}
 	
 	@Override

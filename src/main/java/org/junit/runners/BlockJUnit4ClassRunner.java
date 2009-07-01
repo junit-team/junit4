@@ -115,13 +115,22 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 		validateInstanceMethods(errors);
 		validateFields(errors);
 	}
-
+	
+	/**
+	 * Adds to {@code errors} if the test class has more than one constructor,
+	 * or if the constructor takes parameters.  Override if a subclass requires
+	 * different validation rules.
+	 */
 	protected void validateConstructor(List<Throwable> errors) {
 		validateOnlyOneConstructor(errors);
 		validateZeroArgConstructor(errors);
 	}
 
-	private void validateOnlyOneConstructor(List<Throwable> errors) {
+	/**
+	 * Adds to {@code errors} if the test class has more than one constructor
+	 * (do not override)
+	 */
+	protected void validateOnlyOneConstructor(List<Throwable> errors) {
 		if (!hasOneConstructor()) {
 			String gripe= "Test class should have exactly one public constructor";
 			errors.add(new Exception(gripe));
@@ -131,9 +140,9 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	/**
 	 * Adds to {@code errors} if the test class's single constructor
 	 * takes parameters
+	 * (do not override)
 	 */
 	protected void validateZeroArgConstructor(List<Throwable> errors) {
-		// TODO (May 26, 2009 10:48:26 PM): don't override this
 		if (hasOneConstructor()
 				&& !(getTestClass().getOnlyConstructor().getParameterTypes().length == 0)) {
 			String gripe= "Test class should have exactly one public zero-argument constructor";
@@ -264,7 +273,10 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	 * has the {@code expecting} attribute, return normally only if {@code next}
 	 * throws an exception of the correct type, and throw an exception
 	 * otherwise.
+	 * 
+	 * @deprecated Will be private soon: use Interceptors instead
 	 */
+	@Deprecated
 	protected Statement possiblyExpectingExceptions(FrameworkMethod method,
 			Object test, Statement next) {
 		Test annotation= method.getAnnotation(Test.class);
