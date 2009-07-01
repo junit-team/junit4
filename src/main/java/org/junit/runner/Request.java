@@ -59,7 +59,7 @@ public abstract class Request {
 	/**
 	 * Create a <code>Request</code> that, when processed, will run all the tests
 	 * in a set of classes.
-	 * @param computer TODO
+	 * @param computer Helps construct Runners from classes
 	 * @param classes the classes containing the tests
 	 * @return a <code>Request</code> that will cause all tests in the classes to be run
 	 */
