@@ -14,7 +14,7 @@ import org.junit.internal.runners.model.ReflectiveCallable;
  * {@code @Test}, {@code @Before}, {@code @After}, {@code @BeforeClass}, {@code
  * @AfterClass}, etc.)
  */
-public class FrameworkMethod implements FrameworkMember<FrameworkMethod> {
+public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
 	final Method fMethod;
 
 	/**
@@ -90,6 +90,7 @@ public class FrameworkMethod implements FrameworkMember<FrameworkMethod> {
 			errors.add(new Exception("Method " + fMethod.getName() + "() should be void"));
 	}
 
+	@Override
 	public boolean isShadowedBy(FrameworkMethod other) {
 		if (!other.getName().equals(getName()))
 			return false;
@@ -129,6 +130,7 @@ public class FrameworkMethod implements FrameworkMember<FrameworkMethod> {
 	/**
 	 * Returns the annotations on this method
 	 */
+	@Override
 	public Annotation[] getAnnotations() {
 		return fMethod.getAnnotations();
 	}

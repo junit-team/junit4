@@ -3,21 +3,27 @@ package org.junit.runners.model;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
-public class FrameworkField implements FrameworkMember<FrameworkField> {
+import org.junit.runners.BlockJUnit4ClassRunner;
+
+/**
+ * Represents a field on a test class (currently used only for Interceptors in
+ * {@link BlockJUnit4ClassRunner}, but custom runners can make other uses)
+ */
+public class FrameworkField extends FrameworkMember<FrameworkField> {
 	private final Field fField;
 
 	public FrameworkField(Field field) {
 		fField= field;
 	}
 
+	@Override
 	public Annotation[] getAnnotations() {
 		return fField.getAnnotations();
 	}
 
-	// TODO (May 25, 2009 9:45:43 PM): faking it
+	@Override
 	public boolean isShadowedBy(FrameworkField otherMember) {
-		// TODO Auto-generated method stub
-		return false;
+		return otherMember.getField().getName().equals(getField().getName());
 	}
 
 	public Field getField() {

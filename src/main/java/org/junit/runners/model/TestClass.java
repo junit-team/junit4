@@ -48,20 +48,13 @@ public class TestClass {
 			Class<? extends Annotation> type= each.annotationType();
 			ensureKey(map, type);
 			List<T> members= map.get(type);
-			if (isShadowedBy(member, members))
+			if (member.isShadowedBy(members))
 				return;
 			if (runsTopToBottom(type))
 				members.add(0, member);
 			else
 				members.add(member);
 		}
-	}
-
-	private <T extends FrameworkMember<T>> boolean isShadowedBy(T member, List<T> members) {
-		for (T each : members)
-			if (member.isShadowedBy(each))
-				return true;
-		return false;
 	}
 
 	private <T> void ensureKey(Map<Class<?>, List<T>> map, Class<?> annotation) {
@@ -75,13 +68,15 @@ public class TestClass {
 	 */
 	public List<FrameworkMethod> getAnnotatedMethods(
 			Class<? extends Annotation> annotationClass) {
-		// TODO (May 25, 2009 10:02:46 PM): DUP
 		ensureKey(fMethodsForAnnotations, annotationClass);
 		return fMethodsForAnnotations.get(annotationClass);
 	}
 
+	/**
+	 * Returns, efficiently, all the non-overridden fields in this class and
+	 * its superclasses that are annotated with {@code annotationClass}.
+	 */
 	public List<FrameworkField> getAnnotatedFields(Class<? extends Annotation> annotationClass) {
-		// TODO (May 25, 2009 10:02:46 PM): DUP
 		ensureKey(fFieldsForAnnotations, annotationClass);
 		return fFieldsForAnnotations.get(annotationClass);
 	}

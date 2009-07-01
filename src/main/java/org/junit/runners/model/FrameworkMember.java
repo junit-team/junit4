@@ -1,12 +1,20 @@
 package org.junit.runners.model;
 
 import java.lang.annotation.Annotation;
+import java.util.List;
 
-public interface FrameworkMember<T extends FrameworkMember<T>> {
+abstract class FrameworkMember<T extends FrameworkMember<T>> {
 	/**
 	 * Returns the annotations on this method
 	 */
-	public Annotation[] getAnnotations();
+	abstract Annotation[] getAnnotations();
 
-	public boolean isShadowedBy(T otherMember);
+	abstract boolean isShadowedBy(T otherMember);
+
+	boolean isShadowedBy(List<T> members) {
+		for (T each : members)
+			if (isShadowedBy(each))
+				return true;
+		return false;
+	}
 }

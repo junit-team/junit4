@@ -110,8 +110,8 @@ public class Parameterized extends Suite {
 		}
 
 		@Override
-		protected void validateZeroArgConstructor(List<Throwable> errors) {
-			// constructor can, nay, should have args.
+		protected void validateConstructor(List<Throwable> errors) {
+			validateOnlyOneConstructor(errors);
 		}
 
 		@Override
