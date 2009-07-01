@@ -11,6 +11,5 @@ public class IsCollectionContaining<T> extends org.hamcrest.core.IsCollectionCon
 	// Client code should just use static factories, so this should be OK
 	private IsCollectionContaining(Matcher<? super T> elementMatcher) {
 		super(elementMatcher);
-		// TODO Auto-generated constructor stub
 	}
 }

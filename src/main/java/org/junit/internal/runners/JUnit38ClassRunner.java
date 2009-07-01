@@ -50,13 +50,6 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
 		}
 
 		private Class<? extends Test> getEffectiveClass(Test test) {
-//			// TODO (Feb 23, 2009 11:45:54 PM): Think hard about this. Didn't think hard enough. Throwing away information doesn't help error recovery.
-//			if ("warning".equals(getName(test)))
-//				try {
-//					return (Class<? extends Test>) Class.forName(fTest.toString());
-//				} catch (ClassNotFoundException e) {
-//					return test.getClass();
-//				}
 			return test.getClass();
 		}
 
@@ -99,8 +92,7 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
 		return makeDescription(getTest());
 	}
 
-	// TODO (Feb 23, 2009 10:57:14 PM): V
-	public static Description makeDescription(Test test) {
+	private static Description makeDescription(Test test) {
 		if (test instanceof TestCase) {
 			TestCase tc= (TestCase) test;
 			return Description.createTestDescription(tc.getClass(), tc.getName());
@@ -162,8 +154,7 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
 		fTest = test;
 	}
 
-	// TODO (Feb 23, 2009 10:57:26 PM): V
-	public Test getTest() {
+	private Test getTest() {
 		return fTest;
 	}
 }

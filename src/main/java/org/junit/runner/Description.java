@@ -194,7 +194,10 @@ public class Description {
 		return Arrays.asList(fAnnotations);
 	}
 
-	// TODO javadoc
+	/**
+	 * @return If this describes a method invocation, 
+	 * the class of the test instance.
+	 */
 	public Class<?> getTestClass() {
 		String name= getClassName();
 		if (name == null)
@@ -206,24 +209,33 @@ public class Description {
 		}
 	}
 
-	//TODO javadoc
+	/**
+	 * @return If this describes a method invocation, 
+	 * the name of the class of the test instance
+	 */
 	public String getClassName() {
-		Matcher matcher= Pattern.compile("(.*)\\((.*)\\)").matcher(toString());
+		Matcher matcher= methodStringMatcher();
 		return matcher.matches()
 			? matcher.group(2)
 			: toString();
 	}
-
-	private String parseMethod() {
-		Matcher matcher= Pattern.compile("(.*)\\((.*)\\)").matcher(toString());
-		if (matcher.matches())
-			return matcher.group(1);
-		return null;
-	}
 	
-	// TODO javadoc
+	/**
+	 * @return If this describes a method invocation, 
+	 * the name of the method (or null if not)
+	 */
 	public String getMethodName() {
 		return parseMethod();
 	}
 
+	private String parseMethod() {
+		Matcher matcher= methodStringMatcher();
+		if (matcher.matches())
+			return matcher.group(1);
+		return null;
+	}
+
+	private Matcher methodStringMatcher() {
+		return Pattern.compile("(.*)\\((.*)\\)").matcher(toString());
+	}
 }
