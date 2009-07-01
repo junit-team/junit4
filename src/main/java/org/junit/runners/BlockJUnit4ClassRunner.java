@@ -2,6 +2,7 @@ package org.junit.runners;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
@@ -275,7 +276,10 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	 * Returns a {@link Statement}: if {@code method}'s {@code @Test} annotation
 	 * has the {@code timeout} attribute, throw an exception if {@code next}
 	 * takes more than the specified number of milliseconds.
+	 * 
+	 * @deprecated Will be private soon: use Interceptors instead
 	 */
+	@Deprecated
 	protected Statement withPotentialTimeout(FrameworkMethod method,
 			Object test, Statement next) {
 		long timeout= getTimeout(method.getAnnotation(Test.class));
@@ -286,33 +290,15 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	 * Returns a {@link Statement}: run all non-overridden {@code @Before}
 	 * methods on this class and superclasses before running {@code next}; if
 	 * any throws an Exception, stop execution and pass the exception on.
+	 * 
+	 * @deprecated Will be private soon: use Interceptors instead
 	 */
+	@Deprecated
 	protected Statement withBefores(FrameworkMethod method, Object target,
 			Statement statement) {
-		List<FrameworkMethod> befores= getTestClass().getAnnotatedMethods(
-				Before.class);
+		List<FrameworkMethod> befores= getTestClass().getAnnotatedMethods(Before.class);
 		return befores.isEmpty() ? statement : 
 			new RunBefores(statement, befores, target);
-	}
-	
-	protected Statement withInterceptors(FrameworkMethod method, Object test,
-			Statement statement) {
-		// TODO (May 26, 2009 11:16:13 PM): outsource to a class?
-		Statement result= statement;
-		for (FrameworkField each : interceptorFields())
-			try {
-				StatementInterceptor interceptor= (StatementInterceptor) each
-						.get(test);
-				result= interceptor.intercept(result, method);
-			} catch (IllegalAccessException e) {
-				throw new RuntimeException(
-						"How did getFields return a field we couldn't access?");
-			}
-		return result;
-	}
-
-	private List<FrameworkField> interceptorFields() {
-		return getTestClass().getAnnotatedFields(Interceptor.class);
 	}
 
 	/**
@@ -321,16 +307,49 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	 * After methods are always executed: exceptions thrown by previous steps
 	 * are combined, if necessary, with exceptions from After methods into a
 	 * {@link MultipleFailureException}.
+	 * 
+	 * @deprecated Will be private soon: use Interceptors instead
 	 */
+	@Deprecated
 	protected Statement withAfters(FrameworkMethod method, Object target,
 			Statement statement) {
-		// TODO (May 11, 2009 11:28:21 PM):
-		// withBefores/withAfters/withBeforeClass/withAfterClass is a lot of
-		// duplication.
-		List<FrameworkMethod> afters= getTestClass().getAnnotatedMethods(
-				After.class);
+		List<FrameworkMethod> afters= getTestClass().getAnnotatedMethods(After.class);
 		return afters.isEmpty() ? statement :
 			new RunAfters(statement, afters, target);
+	}
+	
+	private Statement withInterceptors(FrameworkMethod method, Object test,
+			Statement statement) {
+		Statement result= statement;
+		for (StatementInterceptor each : interceptors(test))
+			result= each.intercept(result, method);
+		return result;
+	}
+	
+	/**
+	 * @return the StatementInterceptors that can transform the block
+	 * that runs each method in the tested class.
+	 */
+	protected List<StatementInterceptor> interceptors(Object test) {
+		List<StatementInterceptor> results= new ArrayList<StatementInterceptor>();
+		for (FrameworkField each : interceptorFields()) {
+			results.add(createInterceptor(test, each));
+		}
+		return results;
+	}
+
+	private List<FrameworkField> interceptorFields() {
+		return getTestClass().getAnnotatedFields(Interceptor.class);
+	}
+
+	private StatementInterceptor createInterceptor(Object test,
+			FrameworkField each) {
+		try {
+			return (StatementInterceptor) each.get(test);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(
+					"How did getFields return a field we couldn't access?");
+		}
 	}
 
 	protected EachTestNotifier makeNotifier(FrameworkMethod method,

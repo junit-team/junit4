@@ -124,8 +124,7 @@ public class AssertionTest {
 		assertArrayEquals(new int[] {1}, new int[] {1});
 		assertArrayEquals(new long[] {1}, new long[] {1});
 		assertArrayEquals(new double[] {1.0}, new double[] {1.0}, 1.0);
-		// TODO (Mar 10, 2009 10:47:34 AM): Import
-		Assert.assertArrayEquals(new float[] {1.0f}, new float[] {1.0f}, 1.0f);
+		assertArrayEquals(new float[] {1.0f}, new float[] {1.0f}, 1.0f);
 	}
 
 	@Test(expected=AssertionError.class)
