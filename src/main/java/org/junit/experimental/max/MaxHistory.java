@@ -16,18 +16,29 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 
+/**
+ * Stores a subset of the history of each test:
+ * <ul>
+ * <li>Last failure timestamp
+ * <li>Duration of last execution
+ * </ul>
+ */
 public class MaxHistory implements Serializable {
 	private static final long serialVersionUID= 1L;
 
-	public static MaxHistory forFolder(File storedResults) {
+	/**
+	 * Loads a {@link MaxHistory} from {@code file}, or generates a new one that
+	 * will be saved to {@code file}.
+	 */
+	public static MaxHistory locallyStored(File file) {
 		try {
-			if (storedResults.exists())
-				return readHistory(storedResults);
+			if (file.exists())
+				return readHistory(file);
 		} catch (CouldNotReadCoreException e) {
 			e.printStackTrace();
-			storedResults.delete();
+			file.delete();
 		}
-		return new MaxHistory(storedResults);
+		return new MaxHistory(file);
 	}
 
 	private static MaxHistory readHistory(File storedResults)
@@ -49,21 +60,18 @@ public class MaxHistory implements Serializable {
 		}
 	}
 
-	public final Map<String, Long> fDurations= new HashMap<String, Long>();
+	private final Map<String, Long> fDurations= new HashMap<String, Long>();
 
-	public final Map<String, Long> fFailureTimestamps= new HashMap<String, Long>();
+	private final Map<String, Long> fFailureTimestamps= new HashMap<String, Long>();
 
-	public final File fFolder;
+	// TODO (Jul 1, 2009 3:39:45 PM): rename. This ain't a folder.
+	private final File fFolder;
 
-	public MaxHistory(File storedResults) {
+	private MaxHistory(File storedResults) {
 		fFolder= storedResults;
 	}
 
-	public File getFile() {
-		return fFolder;
-	}
-
-	public void save() throws IOException {
+	private void save() throws IOException {
 		ObjectOutputStream stream= new ObjectOutputStream(new FileOutputStream(
 				fFolder));
 		stream.writeObject(this);
@@ -141,10 +149,18 @@ public class MaxHistory implements Serializable {
 		}
 	}
 
-	public RememberingListener listener() {
+	/**
+	 * @return a listener that will update this history based on the test
+	 *         results reported.
+	 */
+	public RunListener listener() {
 		return new RememberingListener();
 	}
 
+	/**
+	 * @return a comparator that ranks tests based on the JUnit Max sorting
+	 *         rules, as described in the {@link MaxCore} class comment.
+	 */
 	public Comparator<Description> testComparator() {
 		return new TestComparator();
 	}

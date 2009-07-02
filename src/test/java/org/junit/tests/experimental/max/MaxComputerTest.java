@@ -27,7 +27,7 @@ import org.junit.runners.model.RunnerBuilder;
 
 public class MaxComputerTest {
 	private static class MaxComputer extends Computer {
-		MaxHistory fMax= new MaxHistory(new File("MaxCore.max"));
+		MaxHistory fMax= MaxHistory.locallyStored(new File("MaxCore.max"));
 
 		@Override
 		protected Runner getRunner(RunnerBuilder builder, Class<?> testClass)
