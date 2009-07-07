@@ -9,7 +9,7 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 
-public class FailureList {
+class FailureList {
 	private final List<Failure> failures;
 
 	public FailureList(List<Failure> failures) {
