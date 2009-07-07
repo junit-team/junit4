@@ -11,13 +11,13 @@ import java.util.concurrent.Callable;
 
 import org.junit.Test;
 import org.junit.experimental.interceptor.ErrorCollector;
-import org.junit.experimental.interceptor.Interceptor;
+import org.junit.experimental.interceptor.Rule;
 import org.junit.experimental.interceptor.Verifier;
 import org.junit.experimental.results.PrintableResult;
 
 public class VerifierInterceptorTest {
 	public static class UsesErrorCollector {
-		@Interceptor
+		@Rule
 		public ErrorCollector collector= new ErrorCollector();
 		
 		@Test public void example() {
@@ -30,7 +30,7 @@ public class VerifierInterceptorTest {
 	}
 	
 	public static class UsesErrorCollectorTwice {
-		@Interceptor
+		@Rule
 		public ErrorCollector collector= new ErrorCollector();
 		
 		@Test public void example() {
@@ -46,7 +46,7 @@ public class VerifierInterceptorTest {
 	}
 	
 	public static class UsesErrorCollectorCheckThat {
-		@Interceptor
+		@Rule
 		public ErrorCollector collector= new ErrorCollector();
 		
 		@Test public void example() {
@@ -62,7 +62,7 @@ public class VerifierInterceptorTest {
 	}
 
 	public static class UsesErrorCollectorCheckSucceeds {
-		@Interceptor
+		@Rule
 		public ErrorCollector collector= new ErrorCollector();
 		
 		@Test public void example() {
@@ -86,7 +86,7 @@ public class VerifierInterceptorTest {
 	}
 
 	public static class UsesErrorCollectorCheckSucceedsPasses {
-		@Interceptor
+		@Rule
 		public ErrorCollector collector= new ErrorCollector();
 		
 		@Test public void example() {
@@ -106,7 +106,7 @@ public class VerifierInterceptorTest {
 	private static String sequence;
 	
 	public static class UsesVerifier {
-		@Interceptor
+		@Rule
 		public Verifier collector= new Verifier() {
 			@Override
 			public void verify() {

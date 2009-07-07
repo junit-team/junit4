@@ -5,8 +5,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.experimental.interceptor.Interceptor;
-import org.junit.experimental.interceptor.StatementInterceptor;
+import org.junit.experimental.interceptor.Rule;
+import org.junit.experimental.interceptor.MethodRule;
 import org.junit.experimental.interceptor.Timeout;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -15,7 +15,7 @@ public class TimeoutInterceptorTest {
 	public static class HasGlobalTimeout {
 		public static String log;
 		
-		@Interceptor public StatementInterceptor globalTimeout = new Timeout(20);
+		@Rule public MethodRule globalTimeout = new Timeout(20);
 		
 		@Test public void testInfiniteLoop1() {
 			log+= "ran1";

@@ -8,8 +8,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.experimental.interceptor.Interceptor;
-import org.junit.experimental.interceptor.StatementInterceptor;
+import org.junit.experimental.interceptor.Rule;
+import org.junit.experimental.interceptor.MethodRule;
 import org.junit.runners.model.TestClass;
 
 public class TestClassTest {
@@ -69,18 +69,18 @@ public class TestClassTest {
 	}
 
 	public static class SuperclassWithField {
-		@Interceptor
-		public StatementInterceptor x;
+		@Rule
+		public MethodRule x;
 	}
 
 	public static class SubclassWithField extends SuperclassWithField {
-		@Interceptor
-		public StatementInterceptor x;
+		@Rule
+		public MethodRule x;
 	}
 
 	@Test
 	public void fieldsOnSubclassesShadowSuperclasses() {
 		assertThat(new TestClass(SubclassWithField.class).getAnnotatedFields(
-				Interceptor.class).size(), is(1));
+				Rule.class).size(), is(1));
 	}
 }

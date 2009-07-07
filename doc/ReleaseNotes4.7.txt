@@ -60,15 +60,15 @@
 		}
 	}
 	
-- Verifier is a base class for Interceptors like ErrorCollector, which
+- Verifier is a base class for Rules like ErrorCollector, which
   can turn otherwise passing test methods into failing tests if a verification
   check is failed
   
     public static class ErrorLogVerifier() {
        private ErrorLog errorLog = new ErrorLog();
     
-       @Interceptor
-       public Verifier verifier = new Verifier() {
+       @Rule
+       public MethodRule verifier = new Verifier() {
           @Override public void verify() {
              assertTrue(errorLog.isEmpty());
           }
@@ -127,12 +127,12 @@
 		}
 	}
 
-- The Timeout Interceptor applies the same timeout to all test methods in a class:
+- The Timeout Rule applies the same timeout to all test methods in a class:
 
 	public static class HasGlobalTimeout {
 		public static String log;
 		
-		@Interceptor public StatementInterceptor globalTimeout = new Timeout(20);
+		@Rule public MethodRule globalTimeout = new Timeout(20);
 		
 		@Test public void testInfiniteLoop1() {
 			log+= "ran1";

@@ -30,14 +30,17 @@ public class MaxHistory implements Serializable {
 	 * Loads a {@link MaxHistory} from {@code file}, or generates a new one that
 	 * will be saved to {@code file}.
 	 */
-	public static MaxHistory locallyStored(File file) {
-		try {
-			if (file.exists())
+	public static MaxHistory forFolder(File file) {
+		// TODO: temp!
+		if (file.getPath() == null)
+			throw new NullPointerException();
+		if (file.exists())
+			try {
 				return readHistory(file);
-		} catch (CouldNotReadCoreException e) {
-			e.printStackTrace();
-			file.delete();
-		}
+			} catch (CouldNotReadCoreException e) {
+				e.printStackTrace();
+				file.delete();
+			}
 		return new MaxHistory(file);
 	}
 

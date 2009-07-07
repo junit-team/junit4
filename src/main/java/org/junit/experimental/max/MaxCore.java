@@ -35,6 +35,15 @@ public class MaxCore {
 	
 	/**
 	 * Create a new MaxCore from a serialized file stored at storedResults
+	 * @deprecated use storedLocally()
+	 */
+	@Deprecated
+	public static MaxCore forFolder(String folderName) {
+		return storedLocally(new File(folderName));
+	}
+	
+	/**
+	 * Create a new MaxCore from a serialized file stored at storedResults
 	 */
 	public static MaxCore storedLocally(File storedResults) {
 		return new MaxCore(storedResults);
@@ -43,7 +52,7 @@ public class MaxCore {
 	private final MaxHistory fHistory;
 
 	private MaxCore(File storedResults) {
-		fHistory = MaxHistory.locallyStored(storedResults);
+		fHistory = MaxHistory.forFolder(storedResults);
 	}
 
 	/**

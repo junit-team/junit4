@@ -8,13 +8,18 @@ import java.io.PrintStream;
 import java.util.List;
 
 import org.junit.internal.TextListener;
+import org.junit.runner.Computer;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
 public class PrintableResult {
 	public static PrintableResult testResult(Class<?> type) {
-		return new PrintableResult(type);
+		return testResult(type, new Computer());
+	}
+	
+	public static PrintableResult testResult(Class<?> type, Computer computer) {
+		return new PrintableResult(type, computer);
 	}
 	
 	private Result result;
@@ -27,8 +32,8 @@ public class PrintableResult {
 		this.result = result;
 	}
 	
-	public PrintableResult(Class<?> type) {
-		this(JUnitCore.runClasses(type));
+	public PrintableResult(Class<?> type, Computer computer) {
+		this(JUnitCore.runClasses(computer, type));
 	}
 
 	@Override

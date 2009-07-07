@@ -4,7 +4,7 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
 /**
- * A base class for Interceptors (like TemporaryFolder) that set up an external
+ * A base class for Rules (like TemporaryFolder) that set up an external
  * resource before a test (a file, socket, server, database connection, etc.),
  * and guarantee to tear it down afterward:
  * 
@@ -12,7 +12,7 @@ import org.junit.runners.model.Statement;
  * public static class UsesExternalResource {
  * 	Server myServer= new Server();
  * 
- * 	&#064;Interceptor
+ * 	&#064;Rule
  * 	public ExternalResource resource= new ExternalResource() {
  * 		&#064;Override
  * 		protected void before() throws Throwable {
@@ -32,8 +32,8 @@ import org.junit.runners.model.Statement;
  * }
  * </pre>
  */
-public abstract class ExternalResource implements StatementInterceptor {
-	public final Statement intercept(final Statement base,
+public abstract class ExternalResource implements MethodRule {
+	public final Statement apply(final Statement base,
 			FrameworkMethod method, Object target) {
 		return new Statement() {
 			@Override
