@@ -11,8 +11,8 @@ import static org.junit.experimental.results.ResultMatchers.hasSingleFailureCont
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.interceptor.Interceptor;
-import org.junit.experimental.interceptor.StatementInterceptor;
+import org.junit.experimental.interceptor.Rule;
+import org.junit.experimental.interceptor.MethodRule;
 import org.junit.experimental.interceptor.TestName;
 import org.junit.experimental.interceptor.TestWatchman;
 import org.junit.runner.JUnitCore;
@@ -24,9 +24,9 @@ public class InterceptorTest {
 	private static boolean wasRun;
 
 	public static class ExampleTest {
-		@Interceptor
-		public StatementInterceptor example= new StatementInterceptor() {
-			public Statement intercept(final Statement base,
+		@Rule
+		public MethodRule example= new MethodRule() {
+			public Statement apply(final Statement base,
 					FrameworkMethod method, Object target) {
 				return new Statement() {
 					@Override
@@ -54,8 +54,8 @@ public class InterceptorTest {
 	private static int runCount;
 
 	public static class MultipleInterceptorTest {
-		private static class Incrementor implements StatementInterceptor {
-			public Statement intercept(final Statement base,
+		private static class Increment implements MethodRule {
+			public Statement apply(final Statement base,
 					FrameworkMethod method, Object target) {
 				return new Statement() {
 					@Override
@@ -67,11 +67,11 @@ public class InterceptorTest {
 			}
 		}
 
-		@Interceptor
-		public StatementInterceptor interceptor1= new Incrementor();
+		@Rule
+		public MethodRule incrementor1= new Increment();
 
-		@Interceptor
-		public StatementInterceptor interceptor2= new Incrementor();
+		@Rule
+		public MethodRule incrementor2= new Increment();
 
 		@Test
 		public void nothing() {
@@ -104,8 +104,8 @@ public class InterceptorTest {
 	private static String log;
 
 	public static class OnFailureTest {
-		@Interceptor
-		public StatementInterceptor watchman= new TestWatchman() {
+		@Rule
+		public MethodRule watchman= new TestWatchman() {
 			@Override
 			public void failed(Throwable e, FrameworkMethod method) {
 				log+= method.getName() + " " + e.getClass().getSimpleName();
@@ -129,8 +129,8 @@ public class InterceptorTest {
 	public static class WatchmanTest {
 		private static String watchedLog;
 
-		@Interceptor
-		public StatementInterceptor watchman= new TestWatchman() {
+		@Rule
+		public MethodRule watchman= new TestWatchman() {
 			@Override
 			public void failed(Throwable e, FrameworkMethod method) {
 				watchedLog+= method.getName() + " "
@@ -168,8 +168,8 @@ public class InterceptorTest {
 			watchedLog+= "before ";
 		}
 		
-		@Interceptor
-		public StatementInterceptor watchman= new TestWatchman() {
+		@Rule
+		public MethodRule watchman= new TestWatchman() {
 			@Override
 			public void starting(FrameworkMethod method) {
 				watchedLog+= "starting ";
@@ -204,7 +204,7 @@ public class InterceptorTest {
 	}
 	
 	public static class WrongTypedField {
-		@Interceptor public int x = 5;
+		@Rule public int x = 5;
 		@Test public void foo() {}
 	}
 	
@@ -224,7 +224,7 @@ public class InterceptorTest {
 
 	public static class PrivateInterceptor {
 		@SuppressWarnings("unused")
-		@Interceptor private StatementInterceptor interceptor = new TestName();
+		@Rule private MethodRule interceptor = new TestName();
 		@Test public void foo() {}
 	}
 	

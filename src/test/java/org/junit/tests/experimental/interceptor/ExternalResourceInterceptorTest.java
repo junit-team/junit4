@@ -6,13 +6,13 @@ import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 import org.junit.Test;
 import org.junit.experimental.interceptor.ExternalResource;
-import org.junit.experimental.interceptor.Interceptor;
+import org.junit.experimental.interceptor.Rule;
 
 public class ExternalResourceInterceptorTest {
 	private static String callSequence;
 	
 	public static class UsesExternalResource {
-		@Interceptor public ExternalResource resource = new ExternalResource() {
+		@Rule public ExternalResource resource = new ExternalResource() {
 			@Override
 			protected void before() throws Throwable {
 				callSequence += "before ";

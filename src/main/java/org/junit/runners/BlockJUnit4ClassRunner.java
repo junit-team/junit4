@@ -10,8 +10,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.Test.None;
-import org.junit.experimental.interceptor.Interceptor;
-import org.junit.experimental.interceptor.StatementInterceptor;
+import org.junit.experimental.interceptor.Rule;
+import org.junit.experimental.interceptor.MethodRule;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.model.MultipleFailureException;
@@ -169,12 +169,12 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	}
 	
 	protected void validateFields(List<Throwable> errors) {
-		for (FrameworkField each : interceptorFields())
+		for (FrameworkField each : ruleFields())
 			validateInterceptorField(each.getField(), errors);
 	}
 
 	private void validateInterceptorField(Field field, List<Throwable> errors) {
-		if (!StatementInterceptor.class.isAssignableFrom(field.getType()))
+		if (!MethodRule.class.isAssignableFrom(field.getType()))
 			errors.add(new Exception("Field " + field.getName()
 					+ " must implement StatementInterceptor"));
 		if (!Modifier.isPublic(field.getModifiers()))
@@ -251,7 +251,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 		Statement statement= methodInvoker(method, test);
 		statement= possiblyExpectingExceptions(method, test, statement);
 		statement= withPotentialTimeout(method, test, statement);
-		statement= withInterceptors(method, test, statement);
+		statement= withRules(method, test, statement);
 		statement= withBefores(method, test, statement);
 		statement= withAfters(method, test, statement);
 		return statement;
@@ -330,34 +330,33 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 			new RunAfters(statement, afters, target);
 	}
 	
-	private Statement withInterceptors(FrameworkMethod method, Object target,
+	private Statement withRules(FrameworkMethod method, Object target,
 			Statement statement) {
 		Statement result= statement;
-		for (StatementInterceptor each : interceptors(target))
-			result= each.intercept(result, method, target);
+		for (MethodRule each : rules(target))
+			result= each.apply(result, method, target);
 		return result;
 	}
 	
 	/**
-	 * @return the StatementInterceptors that can transform the block
+	 * @return the MethodRules that can transform the block
 	 * that runs each method in the tested class.
 	 */
-	protected List<StatementInterceptor> interceptors(Object test) {
-		List<StatementInterceptor> results= new ArrayList<StatementInterceptor>();
-		for (FrameworkField each : interceptorFields()) {
-			results.add(createInterceptor(test, each));
-		}
+	protected List<MethodRule> rules(Object test) {
+		List<MethodRule> results= new ArrayList<MethodRule>();
+		for (FrameworkField each : ruleFields())
+			results.add(createRule(test, each));
 		return results;
 	}
 
-	private List<FrameworkField> interceptorFields() {
-		return getTestClass().getAnnotatedFields(Interceptor.class);
+	private List<FrameworkField> ruleFields() {
+		return getTestClass().getAnnotatedFields(Rule.class);
 	}
 
-	private StatementInterceptor createInterceptor(Object test,
+	private MethodRule createRule(Object test,
 			FrameworkField each) {
 		try {
-			return (StatementInterceptor) each.get(test);
+			return (MethodRule) each.get(test);
 		} catch (IllegalAccessException e) {
 			throw new RuntimeException(
 					"How did getFields return a field we couldn't access?");

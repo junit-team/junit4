@@ -8,12 +8,12 @@ import static org.junit.experimental.results.ResultMatchers.hasSingleFailureCont
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 import org.junit.Test;
 import org.junit.experimental.interceptor.ExpectedException;
-import org.junit.experimental.interceptor.Interceptor;
+import org.junit.experimental.interceptor.Rule;
 
 public class ExpectedExceptionInterceptorTest {
 	public static class HasExpectedException {
-		@Interceptor
-		public ExpectedException thrown= new ExpectedException();
+		@Rule
+		public ExpectedException thrown= ExpectedException.none();
 
 		@Test
 		public void throwsNothing() {
@@ -40,8 +40,8 @@ public class ExpectedExceptionInterceptorTest {
 	}
 
 	public static class HasWrongExpectedException {
-		@Interceptor
-		public ExpectedException thrown= new ExpectedException();
+		@Rule
+		public ExpectedException thrown= ExpectedException.none();
 
 		@Test
 		public void throwsNullPointerException() {
@@ -58,8 +58,8 @@ public class ExpectedExceptionInterceptorTest {
 	}
 
 	public static class HasWrongMessage {
-		@Interceptor
-		public ExpectedException thrown= new ExpectedException();
+		@Rule
+		public ExpectedException thrown= ExpectedException.none();
 
 		@Test
 		public void throwsNullPointerException() {
@@ -76,8 +76,8 @@ public class ExpectedExceptionInterceptorTest {
 	}
 
 	public static class WronglyExpectsException {
-		@Interceptor
-		public ExpectedException thrown= new ExpectedException();
+		@Rule
+		public ExpectedException thrown= ExpectedException.none();
 
 		@Test
 		public void doesntThrowNullPointerException() {
@@ -93,8 +93,8 @@ public class ExpectedExceptionInterceptorTest {
 	}
 
 	public static class WronglyExpectsExceptionMessage {
-		@Interceptor
-		public ExpectedException thrown= new ExpectedException();
+		@Rule
+		public ExpectedException thrown= ExpectedException.none();
 
 		@Test
 		public void doesntThrowAnything() {
@@ -110,8 +110,8 @@ public class ExpectedExceptionInterceptorTest {
 	}
 
 	public static class ExpectsSubstring {
-		@Interceptor
-		public ExpectedException thrown= new ExpectedException();
+		@Rule
+		public ExpectedException thrown= ExpectedException.none();
 
 		@Test
 		public void throwsMore() {
@@ -127,8 +127,8 @@ public class ExpectedExceptionInterceptorTest {
 	}
 
 	public static class ExpectsSubstringNullMessage {
-		@Interceptor
-		public ExpectedException thrown= new ExpectedException();
+		@Rule
+		public ExpectedException thrown= ExpectedException.none();
 
 		@Test
 		public void throwsMore() {
@@ -144,8 +144,8 @@ public class ExpectedExceptionInterceptorTest {
 	}
 
 	public static class ExpectsMessageMatcher {
-		@Interceptor
-		public ExpectedException thrown= new ExpectedException();
+		@Rule
+		public ExpectedException thrown= ExpectedException.none();
 
 		@Test
 		public void throwsMore() {
@@ -160,8 +160,8 @@ public class ExpectedExceptionInterceptorTest {
 	}
 
 	public static class ExpectedMessageMatcherFails {
-		@Interceptor
-		public ExpectedException thrown= new ExpectedException();
+		@Rule
+		public ExpectedException thrown= ExpectedException.none();
 
 		@Test
 		public void throwsMore() {
@@ -177,8 +177,8 @@ public class ExpectedExceptionInterceptorTest {
 	}
 
 	public static class ExpectsMatcher {
-		@Interceptor
-		public ExpectedException thrown= new ExpectedException();
+		@Rule
+		public ExpectedException thrown= ExpectedException.none();
 
 		@Test
 		public void throwsMore() {
@@ -193,8 +193,8 @@ public class ExpectedExceptionInterceptorTest {
 	}
 
 	public static class ExpectsMultipleMatchers {
-		@Interceptor
-		public ExpectedException thrown= new ExpectedException();
+		@Rule
+		public ExpectedException thrown= ExpectedException.none();
 
 		@Test
 		public void throwsMore() {

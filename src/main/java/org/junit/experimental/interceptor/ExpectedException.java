@@ -12,17 +12,18 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
 /**
- * Allows in-test specification of expected exception types and messages:
+ * The ExpectedException Rule allows in-test specification of expected exception
+ * types and messages:
  * 
  * <pre>
  * // These tests all pass.
  * public static class HasExpectedException {
- * 	&#064;Interceptor
+ * 	&#064;Rule
  * 	public ExpectedException thrown= new ExpectedException();
  * 
  * 	&#064;Test
  * 	public void throwsNothing() {
- * 
+ *    // no exception expected, none thrown: passes.
  * 	}
  * 
  * 	&#064;Test
@@ -41,10 +42,18 @@ import org.junit.runners.model.Statement;
  * }
  * </pre>
  */
-public class ExpectedException implements StatementInterceptor {
+public class ExpectedException implements MethodRule {
+	public static ExpectedException none() {
+		return new ExpectedException();
+	}
+
 	private Matcher<?> fMatcher= null;
 
-	public Statement intercept(Statement base, FrameworkMethod method, Object target) {
+	private ExpectedException() {
+		
+	}
+	
+	public Statement apply(Statement base, FrameworkMethod method, Object target) {
 		return new ExpectedExceptionStatement(base);
 	}
 

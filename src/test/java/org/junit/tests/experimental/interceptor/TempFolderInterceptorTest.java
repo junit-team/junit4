@@ -10,14 +10,14 @@ import java.io.File;
 import java.io.IOException;
 
 import org.junit.Test;
-import org.junit.experimental.interceptor.Interceptor;
+import org.junit.experimental.interceptor.Rule;
 import org.junit.experimental.interceptor.TemporaryFolder;
 
 public class TempFolderInterceptorTest {
 	private static File createdFile;
 
 	public static class HasTempFolder {
-		@Interceptor
+		@Rule
 		public TemporaryFolder folder= new TemporaryFolder();
 
 		@Test
@@ -34,7 +34,7 @@ public class TempFolderInterceptorTest {
 	}
 
 	public static class CreatesSubFolder {
-		@Interceptor
+		@Rule
 		public TemporaryFolder folder= new TemporaryFolder();
 
 		@Test

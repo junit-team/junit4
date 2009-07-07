@@ -23,7 +23,6 @@ import org.junit.tests.experimental.interceptor.TempFolderInterceptorTest;
 import org.junit.tests.experimental.interceptor.TimeoutInterceptorTest;
 import org.junit.tests.experimental.interceptor.VerifierInterceptorTest;
 import org.junit.tests.experimental.max.JUnit38SortingTest;
-import org.junit.tests.experimental.max.MaxComputerTest;
 import org.junit.tests.experimental.max.MaxStarterTest;
 import org.junit.tests.experimental.parallel.ParallelClassTest;
 import org.junit.tests.experimental.parallel.ParallelMethodTest;
@@ -123,7 +122,6 @@ import org.junit.tests.validation.ValidationTest;
 	FilterableTest.class,
 	MaxStarterTest.class,
 	JUnit38SortingTest.class,
-	MaxComputerTest.class,
 	InterceptorTest.class,
 	TimeoutInterceptorTest.class,
 	ParallelClassTest.class,
