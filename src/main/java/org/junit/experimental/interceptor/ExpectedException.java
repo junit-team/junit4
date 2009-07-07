@@ -44,7 +44,7 @@ import org.junit.runners.model.Statement;
 public class ExpectedException implements StatementInterceptor {
 	private Matcher<?> fMatcher= null;
 
-	public Statement intercept(Statement base, FrameworkMethod method) {
+	public Statement intercept(Statement base, FrameworkMethod method, Object target) {
 		return new ExpectedExceptionStatement(base);
 	}
 
