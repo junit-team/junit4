@@ -5,7 +5,7 @@ import org.junit.runners.model.Statement;
 
 public class TestWatchman implements StatementInterceptor {
 	public Statement intercept(final Statement base,
-			final FrameworkMethod method) {
+			final FrameworkMethod method, Object target) {
 		return new Statement() {
 			@Override
 			public void evaluate() throws Throwable {

@@ -330,11 +330,11 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 			new RunAfters(statement, afters, target);
 	}
 	
-	private Statement withInterceptors(FrameworkMethod method, Object test,
+	private Statement withInterceptors(FrameworkMethod method, Object target,
 			Statement statement) {
 		Statement result= statement;
-		for (StatementInterceptor each : interceptors(test))
-			result= each.intercept(result, method);
+		for (StatementInterceptor each : interceptors(target))
+			result= each.intercept(result, method, target);
 		return result;
 	}
 	

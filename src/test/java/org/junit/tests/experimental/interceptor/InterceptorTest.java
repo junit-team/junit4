@@ -27,7 +27,7 @@ public class InterceptorTest {
 		@Interceptor
 		public StatementInterceptor example= new StatementInterceptor() {
 			public Statement intercept(final Statement base,
-					FrameworkMethod method) {
+					FrameworkMethod method, Object target) {
 				return new Statement() {
 					@Override
 					public void evaluate() throws Throwable {
@@ -56,7 +56,7 @@ public class InterceptorTest {
 	public static class MultipleInterceptorTest {
 		private static class Incrementor implements StatementInterceptor {
 			public Statement intercept(final Statement base,
-					FrameworkMethod method) {
+					FrameworkMethod method, Object target) {
 				return new Statement() {
 					@Override
 					public void evaluate() throws Throwable {

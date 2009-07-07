@@ -14,7 +14,7 @@ public class Timeout implements StatementInterceptor {
 		fMillis= millis;
 	}
 
-	public Statement intercept(Statement base, FrameworkMethod method) {
+	public Statement intercept(Statement base, FrameworkMethod method, Object target) {
 		return new FailOnTimeout(base, fMillis);
 	}
 }

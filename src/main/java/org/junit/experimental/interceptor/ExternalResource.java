@@ -34,7 +34,7 @@ import org.junit.runners.model.Statement;
  */
 public abstract class ExternalResource implements StatementInterceptor {
 	public final Statement intercept(final Statement base,
-			FrameworkMethod method) {
+			FrameworkMethod method, Object target) {
 		return new Statement() {
 			@Override
 			public void evaluate() throws Throwable {

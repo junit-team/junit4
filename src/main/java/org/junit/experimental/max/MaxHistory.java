@@ -64,16 +64,15 @@ public class MaxHistory implements Serializable {
 
 	private final Map<String, Long> fFailureTimestamps= new HashMap<String, Long>();
 
-	// TODO (Jul 1, 2009 3:39:45 PM): rename. This ain't a folder.
-	private final File fFolder;
+	private final File fHistoryStore;
 
 	private MaxHistory(File storedResults) {
-		fFolder= storedResults;
+		fHistoryStore= storedResults;
 	}
 
 	private void save() throws IOException {
 		ObjectOutputStream stream= new ObjectOutputStream(new FileOutputStream(
-				fFolder));
+				fHistoryStore));
 		stream.writeObject(this);
 		stream.close();
 	}
