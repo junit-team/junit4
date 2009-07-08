@@ -1,4 +1,4 @@
-#Mon Jul 06 21:57:53 EDT 2009
+#Tue Jul 07 23:32:42 EDT 2009
 eclipse.preferences.version=1
 org.eclipse.jdt.core.codeComplete.argumentPrefixes=
 org.eclipse.jdt.core.codeComplete.argumentSuffixes=
@@ -85,7 +85,7 @@ org.eclipse.jdt.core.compiler.problem.unusedDeclaredThrownExceptionWhenOverridin
 org.eclipse.jdt.core.compiler.problem.unusedImport=warning
 org.eclipse.jdt.core.compiler.problem.unusedLabel=warning
 org.eclipse.jdt.core.compiler.problem.unusedLocal=warning
-org.eclipse.jdt.core.compiler.problem.unusedParameter=warning
+org.eclipse.jdt.core.compiler.problem.unusedParameter=ignore
 org.eclipse.jdt.core.compiler.problem.unusedParameterIncludeDocCommentReference=enabled
 org.eclipse.jdt.core.compiler.problem.unusedParameterWhenImplementingAbstract=disabled
 org.eclipse.jdt.core.compiler.problem.unusedParameterWhenOverridingConcrete=disabled

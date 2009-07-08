@@ -11,8 +11,8 @@ import org.junit.internal.runners.model.ReflectiveCallable;
 /**
  * Represents a method on a test class to be invoked at the appropriate point in
  * test execution. These methods are usually marked with an annotation (such as
- * {@code @Test}, {@code @Before}, {@code @After}, {@code @BeforeClass}, {@code
- * @AfterClass}, etc.)
+ * {@code @Test}, {@code @Before}, {@code @After}, {@code @BeforeClass}, 
+ * {@code @AfterClass}, etc.)
  */
 public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
 	final Method fMethod;

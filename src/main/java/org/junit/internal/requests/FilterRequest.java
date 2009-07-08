@@ -27,7 +27,6 @@ public final class FilterRequest extends Request {
 		fFilter= filter;
 	}
 
-	/** @inheritDoc */
 	@Override 
 	public Runner getRunner() {
 		try {
