@@ -30,6 +30,9 @@ public class TestName extends TestWatchman {
 		fName= method.getName();
 	}
 
+	/**
+	 * @return the name of the currently-running test method
+	 */
 	public String getMethodName() {
 		return fName;
 	}

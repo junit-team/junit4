@@ -36,28 +36,45 @@ public class TemporaryFolder extends ExternalResource {
 	}
 
 	// testing purposes only
+	/**
+	 * for testing purposes only.  Do not use.
+	 */
 	public void create() throws IOException {
 		folder= File.createTempFile("junit", "");
 		folder.delete();
 		folder.mkdir();
 	}
 
+	/**
+	 * Returns a new fresh file with the given name under the temporary folder.
+	 */
 	public File newFile(String fileName) throws IOException {
 		File file= new File(folder, fileName);
 		file.createNewFile();
 		return file;
 	}
 
+	/**
+	 * Returns a new fresh folder with the given name under the temporary folder.
+	 */
 	public File newFolder(String folderName) {
 		File file= new File(folder, folderName);
 		file.mkdir();
 		return file;
 	}
 
+	/**
+	 * @return the location of this temporary folder.
+	 */
 	public File getRoot() {
 		return folder;
 	}
 
+	/**
+	 * Delete all files and folders under the temporary folder.
+	 * Usually not called directly, since it is automatically applied 
+	 * by the {@link Rule}
+	 */
 	public void delete() {
 		recursiveDelete(folder);
 	}

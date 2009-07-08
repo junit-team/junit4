@@ -43,6 +43,10 @@ import org.junit.runners.model.Statement;
  * </pre>
  */
 public class ExpectedException implements MethodRule {
+	/**
+	 * @return a Rule that expects no exception to be thrown
+	 * (identical to behavior without this Rule)
+	 */
 	public static ExpectedException none() {
 		return new ExpectedException();
 	}

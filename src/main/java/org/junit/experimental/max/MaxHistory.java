@@ -31,9 +31,6 @@ public class MaxHistory implements Serializable {
 	 * will be saved to {@code file}.
 	 */
 	public static MaxHistory forFolder(File file) {
-		// TODO: temp!
-		if (file.getPath() == null)
-			throw new NullPointerException();
 		if (file.exists())
 			try {
 				return readHistory(file);

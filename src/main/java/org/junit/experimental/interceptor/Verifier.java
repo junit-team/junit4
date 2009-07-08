@@ -37,6 +37,10 @@ public class Verifier implements MethodRule {
 		};
 	}
 
+	/**
+	 * Override this to add verification logic. Overrides should throw an
+	 * exception to indicate that verification failed.
+	 */
 	protected void verify() throws Throwable {
 	}
 }

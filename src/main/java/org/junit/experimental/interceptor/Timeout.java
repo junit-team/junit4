@@ -36,6 +36,9 @@ import org.junit.runners.model.Statement;
 public class Timeout implements MethodRule {
 	private final int fMillis;
 
+	/**
+	 * @param millis the millisecond timeout
+	 */
 	public Timeout(int millis) {
 		fMillis= millis;
 	}
