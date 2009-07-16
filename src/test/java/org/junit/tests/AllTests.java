@@ -15,17 +15,17 @@ import org.junit.tests.experimental.AssumptionTest;
 import org.junit.tests.experimental.AssumptionViolatedExceptionTest;
 import org.junit.tests.experimental.ExperimentalTests;
 import org.junit.tests.experimental.MatcherTest;
-import org.junit.tests.experimental.interceptor.ExpectedExceptionInterceptorTest;
-import org.junit.tests.experimental.interceptor.ExternalResourceInterceptorTest;
-import org.junit.tests.experimental.interceptor.InterceptorTest;
-import org.junit.tests.experimental.interceptor.NameInterceptorTest;
-import org.junit.tests.experimental.interceptor.TempFolderInterceptorTest;
-import org.junit.tests.experimental.interceptor.TimeoutInterceptorTest;
-import org.junit.tests.experimental.interceptor.VerifierInterceptorTest;
 import org.junit.tests.experimental.max.JUnit38SortingTest;
 import org.junit.tests.experimental.max.MaxStarterTest;
 import org.junit.tests.experimental.parallel.ParallelClassTest;
 import org.junit.tests.experimental.parallel.ParallelMethodTest;
+import org.junit.tests.experimental.rules.ExpectedExceptionRuleTest;
+import org.junit.tests.experimental.rules.ExternalResourceRuleTest;
+import org.junit.tests.experimental.rules.RulesTest;
+import org.junit.tests.experimental.rules.NameRulesTest;
+import org.junit.tests.experimental.rules.TempFolderRuleTest;
+import org.junit.tests.experimental.rules.TimeoutRuleTest;
+import org.junit.tests.experimental.rules.VerifierRuleTest;
 import org.junit.tests.experimental.theories.AllMembersSupplierTest;
 import org.junit.tests.experimental.theories.runner.TheoriesPerformanceTest;
 import org.junit.tests.junit3compatibility.AllTestsTest;
@@ -122,16 +122,16 @@ import org.junit.tests.validation.ValidationTest;
 	FilterableTest.class,
 	MaxStarterTest.class,
 	JUnit38SortingTest.class,
-	InterceptorTest.class,
-	TimeoutInterceptorTest.class,
+	RulesTest.class,
+	TimeoutRuleTest.class,
 	ParallelClassTest.class,
 	ParallelMethodTest.class,
 	ParentRunnerTest.class,
-	NameInterceptorTest.class,
-	ExpectedExceptionInterceptorTest.class,
-	TempFolderInterceptorTest.class,
-	ExternalResourceInterceptorTest.class,
-	VerifierInterceptorTest.class
+	NameRulesTest.class,
+	ExpectedExceptionRuleTest.class,
+	TempFolderRuleTest.class,
+	ExternalResourceRuleTest.class,
+	VerifierRuleTest.class
 })
 public class AllTests {
 	public static Test suite() {

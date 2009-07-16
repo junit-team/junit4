@@ -25,7 +25,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
-import org.junit.runners.model.RunnerInterceptor;
+import org.junit.runners.model.RunnerScheduler;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
 
@@ -47,8 +47,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
 	private Sorter fSorter= Sorter.NULL;
 
-	private RunnerInterceptor fRunnerInterceptor= new RunnerInterceptor() {	
-		public void runChild(Runnable childStatement) {
+	private RunnerScheduler fScheduler= new RunnerScheduler() {	
+		public void schedule(Runnable childStatement) {
 			childStatement.run();
 		}
 	
@@ -188,23 +188,13 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
 	private void runChildren(final RunNotifier notifier) {
 		for (final T each : getFilteredChildren())
-			fRunnerInterceptor.runChild(new Runnable() {			
+			fScheduler.schedule(new Runnable() {			
 				public void run() {
 					ParentRunner.this.runChild(each, notifier);
 				}
 			});
-		fRunnerInterceptor.finished();
+		fScheduler.finished();
 	}
-
-//	private void runChildrenDemo(final RunNotifier notifier) {
-//		for (final T each : getFilteredChildren())
-//			fRunnerInterceptor.sowChild(new Runnable() {
-//				public void run() {
-//					ParentRunner.this.runChild(each, notifier);
-//				}
-//			});
-//		fRunnerInterceptor.reapChildren();
-//	}
 
 	/**
 	 * Returns a name used to describe this Runner
@@ -317,7 +307,11 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 		};
 	}
 
-	public void setRunnerInterceptor(RunnerInterceptor runnerInterceptor) {
-		this.fRunnerInterceptor = runnerInterceptor;
+	/**
+	 * Sets a scheduler that determines the order and parallelization
+	 * of children.  Highly experimental feature that may change.
+	 */
+	public void setScheduler(RunnerScheduler scheduler) {
+		this.fScheduler = scheduler;
 	}
 }

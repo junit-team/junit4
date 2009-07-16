@@ -1,11 +1,11 @@
-package org.junit.tests.experimental.interceptor;
+package org.junit.tests.experimental.rules;
 
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import org.junit.experimental.interceptor.Rule;
-import org.junit.experimental.interceptor.TestName;
+import org.junit.experimental.rules.Rule;
+import org.junit.experimental.rules.TestName;
 
-public class NameInterceptorTest {
+public class NameRulesTest {
 	@Rule public TestName name = new TestName();
 	
 	@Test public void testA() {

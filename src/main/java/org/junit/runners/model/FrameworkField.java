@@ -6,7 +6,7 @@ import java.lang.reflect.Field;
 import org.junit.runners.BlockJUnit4ClassRunner;
 
 /**
- * Represents a field on a test class (currently used only for Interceptors in
+ * Represents a field on a test class (currently used only for Rules in
  * {@link BlockJUnit4ClassRunner}, but custom runners can make other uses)
  */
 public class FrameworkField extends FrameworkMember<FrameworkField> {

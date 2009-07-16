@@ -1,4 +1,4 @@
-package org.junit.tests.experimental.interceptor;
+package org.junit.tests.experimental.rules;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
@@ -10,12 +10,12 @@ import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 import java.util.concurrent.Callable;
 
 import org.junit.Test;
-import org.junit.experimental.interceptor.ErrorCollector;
-import org.junit.experimental.interceptor.Rule;
-import org.junit.experimental.interceptor.Verifier;
 import org.junit.experimental.results.PrintableResult;
+import org.junit.experimental.rules.ErrorCollector;
+import org.junit.experimental.rules.Rule;
+import org.junit.experimental.rules.Verifier;
 
-public class VerifierInterceptorTest {
+public class VerifierRuleTest {
 	public static class UsesErrorCollector {
 		@Rule
 		public ErrorCollector collector= new ErrorCollector();

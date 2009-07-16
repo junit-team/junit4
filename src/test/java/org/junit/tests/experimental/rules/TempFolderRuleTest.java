@@ -1,4 +1,4 @@
-package org.junit.tests.experimental.interceptor;
+package org.junit.tests.experimental.rules;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -10,10 +10,10 @@ import java.io.File;
 import java.io.IOException;
 
 import org.junit.Test;
-import org.junit.experimental.interceptor.Rule;
-import org.junit.experimental.interceptor.TemporaryFolder;
+import org.junit.experimental.rules.Rule;
+import org.junit.experimental.rules.TemporaryFolder;
 
-public class TempFolderInterceptorTest {
+public class TempFolderRuleTest {
 	private static File createdFile;
 
 	public static class HasTempFolder {

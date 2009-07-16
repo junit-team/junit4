@@ -1,14 +1,14 @@
-package org.junit.tests.experimental.interceptor;
+package org.junit.tests.experimental.rules;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 import org.junit.Test;
-import org.junit.experimental.interceptor.ExternalResource;
-import org.junit.experimental.interceptor.Rule;
+import org.junit.experimental.rules.ExternalResource;
+import org.junit.experimental.rules.Rule;
 
-public class ExternalResourceInterceptorTest {
+public class ExternalResourceRuleTest {
 	private static String callSequence;
 	
 	public static class UsesExternalResource {

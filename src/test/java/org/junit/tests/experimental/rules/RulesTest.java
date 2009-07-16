@@ -1,4 +1,4 @@
-package org.junit.tests.experimental.interceptor;
+package org.junit.tests.experimental.rules;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
@@ -11,16 +11,16 @@ import static org.junit.experimental.results.ResultMatchers.hasSingleFailureCont
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.interceptor.Rule;
-import org.junit.experimental.interceptor.MethodRule;
-import org.junit.experimental.interceptor.TestName;
-import org.junit.experimental.interceptor.TestWatchman;
+import org.junit.experimental.rules.MethodRule;
+import org.junit.experimental.rules.Rule;
+import org.junit.experimental.rules.TestName;
+import org.junit.experimental.rules.TestWatchman;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
-public class InterceptorTest {
+public class RulesTest {
 	private static boolean wasRun;
 
 	public static class ExampleTest {
@@ -45,7 +45,7 @@ public class InterceptorTest {
 	}
 
 	@Test
-	public void interceptorIsIntroducedAndEvaluated() {
+	public void ruleIsIntroducedAndEvaluated() {
 		wasRun= false;
 		JUnitCore.runClasses(ExampleTest.class);
 		assertTrue(wasRun);
@@ -53,7 +53,7 @@ public class InterceptorTest {
 
 	private static int runCount;
 
-	public static class MultipleInterceptorTest {
+	public static class MultipleRuleTest {
 		private static class Increment implements MethodRule {
 			public Statement apply(final Statement base,
 					FrameworkMethod method, Object target) {
@@ -80,13 +80,13 @@ public class InterceptorTest {
 	}
 
 	@Test
-	public void multipleInterceptorsAreRun() {
+	public void multipleRulesAreRun() {
 		runCount= 0;
-		JUnitCore.runClasses(MultipleInterceptorTest.class);
+		JUnitCore.runClasses(MultipleRuleTest.class);
 		assertEquals(2, runCount);
 	}
 
-	public static class NoInterceptorsTest {
+	public static class NoRulesTest {
 		public int x;
 
 		@Test
@@ -96,8 +96,8 @@ public class InterceptorTest {
 	}
 
 	@Test
-	public void ignoreNonInterceptors() {
-		Result result= JUnitCore.runClasses(NoInterceptorsTest.class);
+	public void ignoreNonRules() {
+		Result result= JUnitCore.runClasses(NoRulesTest.class);
 		assertEquals(0, result.getFailureCount());
 	}
 
@@ -210,7 +210,7 @@ public class InterceptorTest {
 	
 	@Test public void validateWrongTypedField() {
 		assertThat(testResult(WrongTypedField.class), 
-				hasSingleFailureContaining("must implement StatementInterceptor"));
+				hasSingleFailureContaining("must implement MethodRule"));
 	}
 	
 	public static class SonOfWrongTypedField extends WrongTypedField {
@@ -219,17 +219,17 @@ public class InterceptorTest {
 
 	@Test public void validateWrongTypedFieldInSuperclass() {
 		assertThat(testResult(SonOfWrongTypedField.class), 
-				hasSingleFailureContaining("must implement StatementInterceptor"));
+				hasSingleFailureContaining("must implement MethodRule"));
 	}
 
-	public static class PrivateInterceptor {
+	public static class PrivateRule {
 		@SuppressWarnings("unused")
-		@Rule private MethodRule interceptor = new TestName();
+		@Rule private MethodRule rule = new TestName();
 		@Test public void foo() {}
 	}
 	
-	@Test public void validatePrivateInterceptor() {
-		assertThat(testResult(PrivateInterceptor.class), 
+	@Test public void validatePrivateRule() {
+		assertThat(testResult(PrivateRule.class), 
 				hasSingleFailureContaining("must be public"));
 	}
 }

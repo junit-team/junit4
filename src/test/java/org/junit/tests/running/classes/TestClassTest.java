@@ -8,8 +8,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.experimental.interceptor.Rule;
-import org.junit.experimental.interceptor.MethodRule;
+import org.junit.experimental.rules.MethodRule;
+import org.junit.experimental.rules.Rule;
 import org.junit.runners.model.TestClass;
 
 public class TestClassTest {

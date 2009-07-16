@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.junit.experimental.interceptor;
+package org.junit.experimental.rules;
 
 import static org.junit.Assert.assertThat;
 

@@ -1,4 +1,4 @@
-package org.junit.experimental.interceptor;
+package org.junit.experimental.rules;
 
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
@@ -24,7 +24,6 @@ import org.junit.runners.model.Statement;
  * </ul>
  */
 public interface MethodRule {
-	// TODO (Jul 7, 2009 11:57:15 PM): Fix interceptor test names.
 	/**
 	 * Modifies the method-running {@link Statement} to implement an additional
 	 * test-running rule.

@@ -10,8 +10,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.Test.None;
-import org.junit.experimental.interceptor.Rule;
-import org.junit.experimental.interceptor.MethodRule;
+import org.junit.experimental.rules.MethodRule;
+import org.junit.experimental.rules.Rule;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.model.MultipleFailureException;
@@ -170,13 +170,13 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	
 	protected void validateFields(List<Throwable> errors) {
 		for (FrameworkField each : ruleFields())
-			validateInterceptorField(each.getField(), errors);
+			validateRuleField(each.getField(), errors);
 	}
 
-	private void validateInterceptorField(Field field, List<Throwable> errors) {
+	private void validateRuleField(Field field, List<Throwable> errors) {
 		if (!MethodRule.class.isAssignableFrom(field.getType()))
 			errors.add(new Exception("Field " + field.getName()
-					+ " must implement StatementInterceptor"));
+					+ " must implement MethodRule"));
 		if (!Modifier.isPublic(field.getModifiers()))
 			errors.add(new Exception("Field " + field.getName()
 					+ " must be public"));
@@ -278,7 +278,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	 * throws an exception of the correct type, and throw an exception
 	 * otherwise.
 	 * 
-	 * @deprecated Will be private soon: use Interceptors instead
+	 * @deprecated Will be private soon: use Rules instead
 	 */
 	@Deprecated
 	protected Statement possiblyExpectingExceptions(FrameworkMethod method,
@@ -293,7 +293,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	 * has the {@code timeout} attribute, throw an exception if {@code next}
 	 * takes more than the specified number of milliseconds.
 	 * 
-	 * @deprecated Will be private soon: use Interceptors instead
+	 * @deprecated Will be private soon: use Rules instead
 	 */
 	@Deprecated
 	protected Statement withPotentialTimeout(FrameworkMethod method,
@@ -307,7 +307,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	 * methods on this class and superclasses before running {@code next}; if
 	 * any throws an Exception, stop execution and pass the exception on.
 	 * 
-	 * @deprecated Will be private soon: use Interceptors instead
+	 * @deprecated Will be private soon: use Rules instead
 	 */
 	@Deprecated
 	protected Statement withBefores(FrameworkMethod method, Object target,
@@ -324,7 +324,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	 * are combined, if necessary, with exceptions from After methods into a
 	 * {@link MultipleFailureException}.
 	 * 
-	 * @deprecated Will be private soon: use Interceptors instead
+	 * @deprecated Will be private soon: use Rules instead
 	 */
 	@Deprecated
 	protected Statement withAfters(FrameworkMethod method, Object target,

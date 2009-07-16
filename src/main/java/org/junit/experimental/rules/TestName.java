@@ -1,4 +1,4 @@
-package org.junit.experimental.interceptor;
+package org.junit.experimental.rules;
 
 import org.junit.runners.model.FrameworkMethod;
 

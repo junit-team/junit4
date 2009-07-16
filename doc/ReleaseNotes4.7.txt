@@ -1,17 +1,19 @@
 ## Summary of Changes in version 4.7 ##
 
-### Interceptors ###
+### Rules ###
 
-- Interceptors allow very flexible addition or redefinition of the behavior
+- Rules allow very flexible addition or redefinition of the behavior
   of each test method in a test class.  Testers can reuse or extend one of the 
-  provided Interceptors below, or write their own.
+  provided Rules below, or write their own.
  
-- The TemporaryFolder Interceptor allows creation of files and folders
+  For more on this feature, see http://www.threeriversinstitute.org/blog/?p=155
+ 
+- The TemporaryFolder Rule allows creation of files and folders
   that are guaranteed to be deleted when the test method finishes
   (whether it passes or fails):
   
   	public static class HasTempFolder {
-		@Interceptor
+		@Rule
 		public TemporaryFolder folder= new TemporaryFolder();
 
 		@Test
@@ -22,14 +24,14 @@
 		}
 	}
 
-- ExternalResource is a base class for Interceptors (like TemporaryFolder)
+- ExternalResource is a base class for Rules (like TemporaryFolder)
   that set up an external resource before a test (a file, socket, server,
   database connection, etc.), and guarantee to tear it down afterward:
   
   	public static class UsesExternalResource {
   		Server myServer = new Server();
   		
-		@Interceptor public ExternalResource resource = new ExternalResource() {
+		@Rule public ExternalResource resource = new ExternalResource() {
 			@Override
 			protected void before() throws Throwable {
 				myServer.connect();
@@ -46,12 +48,12 @@
 		}
 	}
 
-- The ErrorCollector Interceptor allows execution of a test to continue
+- The ErrorCollector Rule allows execution of a test to continue
   after the first problem is found (for example, to collect _all_ the 
   incorrect rows in a table, and report them all at once):
 
 	public static class UsesErrorCollectorTwice {
-		@Interceptor
+		@Rule
 		public ErrorCollector collector= new ErrorCollector();
 		
 		@Test public void example() {
@@ -79,7 +81,7 @@
        }
     }
 
-- TestWatchman is a base class for Interceptors that take note
+- TestWatchman is a base class for Rules that take note
   of the testing action, without modifying it.
   For example, this class will keep a log of each passing and failing 
   test:
@@ -87,8 +89,8 @@
 	public static class WatchmanTest {
 		private static String watchedLog;
 
-		@Interceptor
-		public StatementInterceptor watchman= new TestWatchman() {
+		@Rule
+		public MethodRule watchman= new TestWatchman() {
 			@Override
 			public void failed(Throwable e, FrameworkMethod method) {
 				watchedLog+= method.getName() + " "
@@ -111,12 +113,10 @@
 		}
 	}
 
-	For more on this feature, see http://www.threeriversinstitute.org/blog/?p=155
+- The TestName Rule makes the current test name available inside test methods:
 
-- The TestName Interceptor makes the current test name available inside test methods:
-
-	public class NameInterceptorTest {
-		@Interceptor public TestName name = new TestName();
+	public class NameRuleTest {
+		@Rule public TestName name = new TestName();
 		
 		@Test public void testA() {
 			assertEquals("testA", name.getMethodName());
@@ -145,12 +145,12 @@
 		}
 	}
 
-- The ExpectedException Interceptor allows in-test specification
+- The ExpectedException Rule allows in-test specification
   of expected exception types and messages:
     
 	public static class HasExpectedException {
-		@Interceptor
-		public ExpectedException thrown= new ExpectedException();
+		@Rule
+		public ExpectedException thrown= ExpectedException.none();
 
 		@Test
 		public void throwsNothing() {

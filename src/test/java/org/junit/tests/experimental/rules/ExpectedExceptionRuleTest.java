@@ -1,4 +1,4 @@
-package org.junit.tests.experimental.interceptor;
+package org.junit.tests.experimental.rules;
 
 import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.startsWith;
@@ -7,10 +7,10 @@ import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 import org.junit.Test;
-import org.junit.experimental.interceptor.ExpectedException;
-import org.junit.experimental.interceptor.Rule;
+import org.junit.experimental.rules.ExpectedException;
+import org.junit.experimental.rules.Rule;
 
-public class ExpectedExceptionInterceptorTest {
+public class ExpectedExceptionRuleTest {
 	public static class HasExpectedException {
 		@Rule
 		public ExpectedException thrown= ExpectedException.none();

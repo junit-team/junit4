@@ -12,7 +12,7 @@ import org.junit.runner.Runner;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
-import org.junit.runners.model.RunnerInterceptor;
+import org.junit.runners.model.RunnerScheduler;
 
 public class ParallelComputer extends Computer {
 	private final boolean fClasses;
@@ -34,13 +34,13 @@ public class ParallelComputer extends Computer {
 
 	private static <T> Runner parallelize(Runner runner) {
 		if (runner instanceof ParentRunner<?>) {
-			((ParentRunner<?>) runner).setRunnerInterceptor(new RunnerInterceptor() {
+			((ParentRunner<?>) runner).setScheduler(new RunnerScheduler() {
 				private final List<Future<Object>> fResults= new ArrayList<Future<Object>>();
 
 				private final ExecutorService fService= Executors
 						.newCachedThreadPool();
 
-				public void runChild(final Runnable childStatement) {
+				public void schedule(final Runnable childStatement) {
 					fResults.add(fService.submit(new Callable<Object>() {
 						public Object call() throws Exception {
 							childStatement.run();

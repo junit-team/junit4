@@ -1,4 +1,4 @@
-package org.junit.experimental.interceptor;
+package org.junit.experimental.rules;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

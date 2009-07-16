@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.junit.experimental.interceptor;
+package org.junit.experimental.rules;
 
 import org.junit.internal.runners.statements.FailOnTimeout;
 import org.junit.runners.model.FrameworkMethod;
