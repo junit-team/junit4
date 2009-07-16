@@ -1,1 +1,1 @@
-~/bin/Markdown.pl ReleaseNotes4.6.txt >ReleaseNotes4.6.html
+~/bin/Markdown.pl ReleaseNotes4.7.txt >ReleaseNotes4.7.html
