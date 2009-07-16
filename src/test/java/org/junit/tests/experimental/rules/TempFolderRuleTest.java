@@ -9,9 +9,9 @@ import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 import java.io.File;
 import java.io.IOException;
 
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.experimental.rules.Rule;
-import org.junit.experimental.rules.TemporaryFolder;
+import org.junit.rules.TemporaryFolder;
 
 public class TempFolderRuleTest {
 	private static File createdFile;

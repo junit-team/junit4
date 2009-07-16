@@ -4,10 +4,10 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.experimental.rules.MethodRule;
-import org.junit.experimental.rules.Rule;
-import org.junit.experimental.rules.Timeout;
+import org.junit.rules.MethodRule;
+import org.junit.rules.Timeout;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 

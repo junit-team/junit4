@@ -1,7 +1,9 @@
-package org.junit.experimental.rules;
+package org.junit;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
+import org.junit.rules.MethodRule;
 
 /**
  * Annotates fields that contain rules. Such a field must be public, not

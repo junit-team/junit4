@@ -9,11 +9,11 @@ import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 
 import java.util.concurrent.Callable;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.results.PrintableResult;
-import org.junit.experimental.rules.ErrorCollector;
-import org.junit.experimental.rules.Rule;
-import org.junit.experimental.rules.Verifier;
+import org.junit.rules.ErrorCollector;
+import org.junit.rules.Verifier;
 
 public class VerifierRuleTest {
 	public static class UsesErrorCollector {

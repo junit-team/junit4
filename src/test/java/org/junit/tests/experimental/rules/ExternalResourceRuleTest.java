@@ -4,9 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.experimental.rules.ExternalResource;
-import org.junit.experimental.rules.Rule;
+import org.junit.rules.ExternalResource;
 
 public class ExternalResourceRuleTest {
 	private static String callSequence;

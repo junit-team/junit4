@@ -1,7 +1,9 @@
-package org.junit.experimental.rules;
+package org.junit.rules;
 
 import java.io.File;
 import java.io.IOException;
+
+import org.junit.Rule;
 
 /**
  * The TemporaryFolder Rule allows creation of files and folders that are

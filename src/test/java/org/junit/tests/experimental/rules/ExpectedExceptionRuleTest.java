@@ -6,9 +6,9 @@ import static org.junit.Assert.assertThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.experimental.rules.ExpectedException;
-import org.junit.experimental.rules.Rule;
+import org.junit.rules.ExpectedException;
 
 public class ExpectedExceptionRuleTest {
 	public static class HasExpectedException {

@@ -1,4 +1,4 @@
-package org.junit.experimental.rules;
+package org.junit.rules;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;

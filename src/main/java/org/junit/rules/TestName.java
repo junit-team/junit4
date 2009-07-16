@@ -1,4 +1,4 @@
-package org.junit.experimental.rules;
+package org.junit.rules;
 
 import org.junit.runners.model.FrameworkMethod;
 

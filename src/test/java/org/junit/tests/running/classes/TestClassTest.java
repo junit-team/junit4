@@ -7,9 +7,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.experimental.rules.MethodRule;
-import org.junit.experimental.rules.Rule;
+import org.junit.rules.MethodRule;
 import org.junit.runners.model.TestClass;
 
 public class TestClassTest {

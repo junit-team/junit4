@@ -1,5 +1,6 @@
-package org.junit.experimental.rules;
+package org.junit.rules;
 
+import org.junit.Rule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
