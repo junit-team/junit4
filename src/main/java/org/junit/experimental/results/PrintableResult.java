@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.junit.experimental.results;
 
 import java.io.ByteArrayOutputStream;
@@ -13,6 +10,15 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
+/**
+ * A test result that prints nicely in error messages.
+ * This is only intended to be used in JUnit self-tests.
+ * For example:
+ * 
+ * <pre>
+ *    assertThat(testResult(HasExpectedException.class), isSuccessful());
+ * </pre>
+ */
 public class PrintableResult {
 	public static PrintableResult testResult(Class<?> type) {
 		return testResult(type, new Computer());

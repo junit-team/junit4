@@ -5,6 +5,14 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
+/**
+ * Matchers on a PrintableResult, to enable JUnit self-tests.
+ * For example:
+ * 
+ * <pre>
+ * 		assertThat(testResult(HasExpectedException.class), isSuccessful());
+ * </pre>
+ */
 public class ResultMatchers {
 	public static Matcher<PrintableResult> isSuccessful() {
 		return failureCountIs(0);
