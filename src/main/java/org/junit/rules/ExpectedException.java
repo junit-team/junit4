@@ -4,10 +4,13 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.matchers.JUnitMatchers.both;
 import static org.junit.matchers.JUnitMatchers.matches;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.junit.Assert;
+import org.junit.internal.matchers.TypeSafeMatcher;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
@@ -109,7 +112,7 @@ public class ExpectedException implements MethodRule {
 			} catch (Throwable e) {
 				if (fMatcher == null)
 					throw e;
-				Assert.assertThat(e, matches(fMatcher));
+				Assert.assertThat(e, fMatcher);
 				return;
 			}
 			if (fMatcher != null)
@@ -118,12 +121,16 @@ public class ExpectedException implements MethodRule {
 		}
 	}
 
-	private Matcher<Throwable> hasMessage(Matcher<String> matcher) {
-		return new FeatureMatcher<Throwable, String>(matcher,
-				"exception with message", "getMessage()") {
+	private Matcher<Throwable> hasMessage(final Matcher<String> matcher) {
+		return new TypeSafeMatcher<Throwable>() {
+			public void describeTo(Description description) {
+				description.appendText("message ");
+				description.appendDescriptionOf(matcher);
+			}
+		
 			@Override
-			protected String featureValueOf(Throwable actual) {
-				return actual.getMessage();
+			public boolean matchesSafely(Throwable item) {
+				return matcher.matches(item.getMessage());
 			}
 		};
 	}
