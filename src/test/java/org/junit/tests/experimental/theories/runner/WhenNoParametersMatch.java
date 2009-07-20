@@ -1,11 +1,11 @@
 package org.junit.tests.experimental.theories.runner;
 
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
+import static org.junit.internal.matchers.StringContains.containsString;
 import org.hamcrest.Matcher;
 import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.DataPoints;

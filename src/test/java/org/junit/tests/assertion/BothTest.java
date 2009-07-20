@@ -1,19 +1,12 @@
 package org.junit.tests.assertion;
 
-import static org.hamcrest.CoreMatchers.any;
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeTrue;
 import static org.junit.matchers.JUnitMatchers.both;
+import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.junit.matchers.JUnitMatchers.either;
-import static org.junit.matchers.JUnitMatchers.isOneOf;
-import static org.junit.matchers.JUnitMatchers.matches;
-
-import java.util.Arrays;
-
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoint;
@@ -24,18 +17,17 @@ import org.junit.runner.RunWith;
 @RunWith(Theories.class)
 public class BothTest {
 	@DataPoint
-	public static Matcher<? super Integer> IS_3= is(3);
+	public static Matcher<Integer> IS_3= is(3);
 
 	@DataPoint
-	public static Matcher<? super Integer> IS_4= is(4);
+	public static Matcher<Integer> IS_4= is(4);
 
 	@DataPoint
 	public static int THREE= 3;
 
 	@Test
 	public void bothPasses() {
-		assertThat(3, both(any(Integer.class)).and(is(3)));
-		assertThat("ab", both(containsString("a")).and(containsString("b")));
+		assertThat(3, both(is(Integer.class)).and(is(3)));
 	}
 
 	@Theory
@@ -54,18 +46,7 @@ public class BothTest {
 
 	@Test
 	public void eitherPasses() {
-		assertThat(3, either(sameInstance(3)).or(sameInstance(4)));
-		assertThat(3, either(matches(is(String.class))).or(
-				matches(is(Integer.class))));
-		assertThat("a", either(sameInstance("a")).or(sameInstance("b")));
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void isOneOfPasses() {
-		assertThat(3, isOneOf(3, 4));
-		assertThat(Arrays.asList("a"), isOneOf(Arrays.asList("a"), Arrays
-				.asList("b")));
+		assertThat(3, either(is(3)).or(is(4)));
 	}
 
 	@Theory
@@ -83,9 +64,8 @@ public class BothTest {
 				|| third.matches(value));
 		assertThat(value, either(first).or(second).or(third));
 	}
-
-	@Test
-	public void superclassesAreOkInSecondPositionOnly() {
-		assertThat("a", both(containsString("a")).and(is(String.class)));
+	
+	@Test public void subclassesAreOkInSecondPositionOnly() {
+		assertThat(3, both(is(Integer.class)).and(is(3)));
 	}
 }

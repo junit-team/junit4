@@ -2,8 +2,8 @@ package org.junit.tests.experimental.results;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
+import static org.junit.internal.matchers.StringContains.containsString;
 
 import java.util.Arrays;
 
@@ -17,6 +17,7 @@ import org.junit.runner.notification.Failure;
 
 @RunWith(Theories.class)
 public class PrintableResultTest {
+	@SuppressWarnings("unchecked")
 	@Theory(nullsAccepted= false)
 	public void backTraceHasGoodToString(String descriptionName,
 			final String stackTraceClassName) {

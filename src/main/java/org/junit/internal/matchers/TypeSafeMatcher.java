@@ -10,10 +10,6 @@ import org.hamcrest.BaseMatcher;
  *
  * @author Joe Walnes
  */
-/**
- * @deprectated Use org.hamcrest.TypeSafeMatcher
- */
-@Deprecated
 public abstract class TypeSafeMatcher<T> extends BaseMatcher<T> {
 
     private Class<?> expectedType;
