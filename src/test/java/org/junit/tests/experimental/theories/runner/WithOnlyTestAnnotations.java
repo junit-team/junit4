@@ -25,8 +25,7 @@ public class WithOnlyTestAnnotations {
 
 	@Test
 	public void honorExpected() throws Exception {
-		assertThat(testResult(HonorExpectedException.class).getFailures()
-				.size(), is(1));
+		assertThat(testResult(HonorExpectedException.class).failureCount(), is(1));
 	}
 	
 	@RunWith(Theories.class)

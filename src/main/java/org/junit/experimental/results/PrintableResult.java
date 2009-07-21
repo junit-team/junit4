@@ -5,7 +5,6 @@ import java.io.PrintStream;
 import java.util.List;
 
 import org.junit.internal.TextListener;
-import org.junit.runner.Computer;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -20,26 +19,28 @@ import org.junit.runner.notification.Failure;
  * </pre>
  */
 public class PrintableResult {
+	/**
+	 * The result of running JUnit on {@code type}
+	 */
 	public static PrintableResult testResult(Class<?> type) {
-		return testResult(type, new Computer());
-	}
-	
-	public static PrintableResult testResult(Class<?> type, Computer computer) {
-		return new PrintableResult(type, computer);
+		return new PrintableResult(type);
 	}
 	
 	private Result result;
 
+	/**
+	 * A result that includes the given {@code failures}
+	 */
 	public PrintableResult(List<Failure> failures) {
 		this(new FailureList(failures).result());
 	}
 
-	public PrintableResult(Result result) {
+	private PrintableResult(Result result) {
 		this.result = result;
 	}
 	
-	public PrintableResult(Class<?> type, Computer computer) {
-		this(JUnitCore.runClasses(computer, type));
+	private PrintableResult(Class<?> type) {
+		this(JUnitCore.runClasses(type));
 	}
 
 	@Override
@@ -49,7 +50,10 @@ public class PrintableResult {
 		return stream.toString();
 	}
 
-	public List<Failure> getFailures() {
-		return result.getFailures();
+	/**
+	 * Returns the number of failures in this result.
+	 */
+	public int failureCount() {
+		return result.getFailures().size();
 	}
 }
