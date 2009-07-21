@@ -16,13 +16,6 @@ public class Computer {
 	public static Computer serial() {
 		return new Computer();
 	}
-	
-	/**
-	 * Constructs a new serial computer (protected to prevent outside construction).
-	 */
-	protected Computer() {
-		
-	}
 
 	/**
 	 * Create a suite for {@code classes}, building Runners with {@code builder}.
