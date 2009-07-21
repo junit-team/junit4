@@ -1,12 +1,9 @@
 package org.junit.rules;
 
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.matchers.JUnitMatchers.both;
-import static org.junit.matchers.JUnitMatchers.matches;
-import org.hamcrest.BaseMatcher;
+import static org.junit.matchers.JUnitMatchers.containsString;
 import org.hamcrest.Description;
-import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.junit.Assert;
@@ -54,7 +51,7 @@ public class ExpectedException implements MethodRule {
 		return new ExpectedException();
 	}
 
-	private Matcher<?> fMatcher= null;
+	private Matcher<Object> fMatcher= null;
 
 	private ExpectedException() {
 		
@@ -67,11 +64,13 @@ public class ExpectedException implements MethodRule {
 	/**
 	 * Adds {@code matcher} to the list of requirements for any thrown exception.
 	 */
+	// Should be able to remove this suppression in some brave new hamcrest world.
+	@SuppressWarnings("unchecked")
 	public void expect(Matcher<?> matcher) {
 		if (fMatcher == null)
-			fMatcher= matcher;
+			fMatcher= (Matcher<Object>) matcher;
 		else
-			fMatcher= both(fMatcher).and(matches(matcher));
+			fMatcher= both(fMatcher).and(matcher);
 	}
 
 	/**
@@ -124,7 +123,7 @@ public class ExpectedException implements MethodRule {
 	private Matcher<Throwable> hasMessage(final Matcher<String> matcher) {
 		return new TypeSafeMatcher<Throwable>() {
 			public void describeTo(Description description) {
-				description.appendText("message ");
+				description.appendText("exception with message ");
 				description.appendDescriptionOf(matcher);
 			}
 		

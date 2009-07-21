@@ -1,13 +1,17 @@
 package org.junit.tests.experimental.rules;
 
 import static org.hamcrest.CoreMatchers.any;
-import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
+import static org.junit.matchers.JUnitMatchers.both;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.internal.matchers.TypeSafeMatcher;
 import org.junit.rules.ExpectedException;
 
 public class ExpectedExceptionRuleTest {
@@ -71,8 +75,9 @@ public class ExpectedExceptionRuleTest {
 	@Test
 	public void wrongMessageFails() {
 		assertThat(
-				testResult(HasWrongMessage.class),
-				hasSingleFailureContaining("\"expectedMessage\"\n     but: getMessage() was \"actualMessage\""));
+				testResult(HasWrongMessage.class), both(
+				hasSingleFailureContaining("expectedMessage")).and(
+				hasSingleFailureContaining("actualMessage")));
 	}
 
 	public static class WronglyExpectsException {
@@ -140,7 +145,7 @@ public class ExpectedExceptionRuleTest {
 	@Test
 	public void failsWithNullExceptionMessage() {
 		assertThat(testResult(ExpectsSubstringNullMessage.class),
-				hasSingleFailureContaining("but: getMessage() was null"));
+				hasSingleFailureContaining("NullPointerException"));
 	}
 
 	public static class ExpectsMessageMatcher {
@@ -170,6 +175,22 @@ public class ExpectedExceptionRuleTest {
 		}
 	}
 
+
+
+	private static Matcher<String> startsWith(final String prefix) {
+		return new TypeSafeMatcher<String>() {
+			public void describeTo(Description description) {
+				description.appendText("starts with ");
+				description.appendText(prefix);
+			}
+		
+			@Override
+			public boolean matchesSafely(String item) {
+				return item.startsWith(prefix);
+			}
+		};
+	}
+	
 	@Test
 	public void failsWithMatcher() {
 		assertThat(testResult(ExpectedMessageMatcherFails.class),

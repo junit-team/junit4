@@ -8,7 +8,6 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.junit.matchers.JUnitMatchers.matches;
 
 import java.math.BigDecimal;
 
@@ -416,7 +415,7 @@ public class AssertionTest {
         String expected = "expected";
         String actual = "actual";
         
-        String expectedMessage = "identifier\nExpected: \"expected\"\n     but: was \"actual\"";
+        String expectedMessage = "identifier\nExpected: \"expected\"\n     got: \"actual\"\n";
         
         try {
             assertThat("identifier", actual, equalTo(expected));
@@ -426,10 +425,10 @@ public class AssertionTest {
     }
     
     @Test public void assertThatIncludesAdvancedMismatch() {
-        String expectedMessage = "identifier\nExpected: is an instance of java.lang.Integer\n     but: \"actual\" is a java.lang.String";
+        String expectedMessage = "identifier\nExpected: is an instance of java.lang.Integer\n     got: \"actual\"\n";
         
         try {
-            assertThat("identifier", "actual", matches(is(Integer.class)));
+            assertThat("identifier", "actual", is(Integer.class));
         } catch (AssertionError e) {
             assertEquals(expectedMessage, e.getMessage());
         }
@@ -439,7 +438,7 @@ public class AssertionTest {
         String expected = "expected";
         String actual = "actual";
         
-        String expectedMessage = "\nExpected: \"expected\"\n     but: was \"actual\"";
+        String expectedMessage = "\nExpected: \"expected\"\n     got: \"actual\"\n";
         
         try {
             assertThat(actual, equalTo(expected));

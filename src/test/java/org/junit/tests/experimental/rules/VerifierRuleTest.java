@@ -57,8 +57,8 @@ public class VerifierRuleTest {
 	
 	@Test public void usedErrorCollectorCheckThatShouldFail() {
 		PrintableResult testResult= testResult(UsesErrorCollectorCheckThat.class);
-		assertThat(testResult, hasFailureContaining("was <3>"));
-		assertThat(testResult, hasFailureContaining("was <5>"));
+		assertThat(testResult, hasFailureContaining("got: <3>"));
+		assertThat(testResult, hasFailureContaining("got: <5>"));
 	}
 
 	public static class UsesErrorCollectorCheckSucceeds {
