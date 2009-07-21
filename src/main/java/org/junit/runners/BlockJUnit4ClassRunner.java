@@ -158,7 +158,10 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	 * Adds to {@code errors} for each method annotated with {@code @Test},
 	 * {@code @Before}, or {@code @After} that is not a public, void instance
 	 * method with no arguments.
+	 * 
+	 * @deprecated unused API, will go away in future version
 	 */
+	@Deprecated
 	protected void validateInstanceMethods(List<Throwable> errors) {
 		validatePublicVoidNoArgMethods(After.class, false, errors);
 		validatePublicVoidNoArgMethods(Before.class, false, errors);
@@ -168,7 +171,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 			errors.add(new Exception("No runnable methods"));
 	}
 	
-	protected void validateFields(List<Throwable> errors) {
+	private void validateFields(List<Throwable> errors) {
 		for (FrameworkField each : ruleFields())
 			validateRuleField(each.getField(), errors);
 	}
@@ -367,7 +370,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 		}
 	}
 
-	protected EachTestNotifier makeNotifier(FrameworkMethod method,
+	private EachTestNotifier makeNotifier(FrameworkMethod method,
 			RunNotifier notifier) {
 		Description description= describeChild(method);
 		return new EachTestNotifier(notifier, description);

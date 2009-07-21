@@ -12,7 +12,7 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 public class FrameworkField extends FrameworkMember<FrameworkField> {
 	private final Field fField;
 
-	public FrameworkField(Field field) {
+	FrameworkField(Field field) {
 		fField= field;
 	}
 
@@ -26,10 +26,16 @@ public class FrameworkField extends FrameworkMember<FrameworkField> {
 		return otherMember.getField().getName().equals(getField().getName());
 	}
 
+	/**
+	 * @return the underlying java Field
+	 */
 	public Field getField() {
 		return fField;
 	}
 
+	/**
+	 * Attempts to retrieve the value of this field on {@code target}
+	 */
 	public Object get(Object target) throws IllegalArgumentException, IllegalAccessException {
 		return fField.get(target);
 	}

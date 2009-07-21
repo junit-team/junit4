@@ -22,6 +22,9 @@ import org.junit.runners.model.RunnerBuilder;
  * When you run this class, it will run all the tests in all the suite classes.
  */
 public class Suite extends ParentRunner<Runner> {
+	/**
+	 * Returns an empty suite.
+	 */
 	public static Runner emptySuite() {
 		try {
 			return new Suite((Class<?>)null, new Class<?>[0]);
