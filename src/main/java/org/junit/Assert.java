@@ -1,7 +1,5 @@
 package org.junit;
 
-import java.lang.reflect.Array;
-
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
@@ -415,24 +413,6 @@ public class Assert {
 			Object actuals) throws ArrayComparisonFailure {
 		new ExactComparisonCriteria().arrayEquals(message, expecteds, actuals);
 	}	
-
-	public static int assertArraysAreSameLength(Object expecteds,
-			Object actuals, String header) {
-		if (expecteds == null)
-			fail(header + "expected array was null");
-		if (actuals == null)
-			fail(header + "actual array was null");
-		int actualsLength= Array.getLength(actuals);
-		int expectedsLength= Array.getLength(expecteds);
-		if (actualsLength != expectedsLength)
-			fail(header + "array lengths differed, expected.length="
-					+ expectedsLength + " actual.length=" + actualsLength);
-		return expectedsLength;
-	}
-
-	public static boolean isArray(Object expected) {
-		return expected != null && expected.getClass().isArray();
-	}
 
 	/**
 	 * Asserts that two doubles or floats are equal to within a positive delta.

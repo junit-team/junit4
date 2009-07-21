@@ -17,6 +17,9 @@ import org.junit.experimental.theories.PotentialAssignment;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
 
+/**
+ * Supplies Theory parameters based on all public members of the target class.
+ */
 public class AllMembersSupplier extends ParameterSupplier {
 	static class MethodParameterValue extends PotentialAssignment {
 		private final FrameworkMethod fMethod;
@@ -49,6 +52,9 @@ public class AllMembersSupplier extends ParameterSupplier {
 
 	private final TestClass fClass;
 
+	/**
+	 * Constructs a new supplier for {@code type}
+	 */
 	public AllMembersSupplier(TestClass type) {
 		fClass= type;
 	}

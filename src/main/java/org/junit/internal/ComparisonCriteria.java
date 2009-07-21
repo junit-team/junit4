@@ -33,14 +33,14 @@ public abstract class ComparisonCriteria {
 			return;
 		String header= message == null ? "" : message + ": ";
 
-		int expectedsLength= Assert.assertArraysAreSameLength(expecteds,
+		int expectedsLength= assertArraysAreSameLength(expecteds,
 				actuals, header);
 
 		for (int i= 0; i < expectedsLength; i++) {
 			Object expected= Array.get(expecteds, i);
 			Object actual= Array.get(actuals, i);
 
-			if (Assert.isArray(expected) && Assert.isArray(actual)) {
+			if (isArray(expected) && isArray(actual)) {
 				try {
 					arrayEquals(message, expected, actual);
 				} catch (ArrayComparisonFailure e) {
@@ -54,6 +54,24 @@ public abstract class ComparisonCriteria {
 					throw new ArrayComparisonFailure(header, e, i);
 				}
 		}
+	}
+
+	private boolean isArray(Object expected) {
+		return expected != null && expected.getClass().isArray();
+	}
+
+	private int assertArraysAreSameLength(Object expecteds,
+			Object actuals, String header) {
+		if (expecteds == null)
+			Assert.fail(header + "expected array was null");
+		if (actuals == null)
+			Assert.fail(header + "actual array was null");
+		int actualsLength= Array.getLength(actuals);
+		int expectedsLength= Array.getLength(expecteds);
+		if (actualsLength != expectedsLength)
+			Assert.fail(header + "array lengths differed, expected.length="
+					+ expectedsLength + " actual.length=" + actualsLength);
+		return expectedsLength;
 	}
 
 	protected abstract void assertElementsEqual(Object expected, Object actual);

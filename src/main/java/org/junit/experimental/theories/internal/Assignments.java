@@ -14,6 +14,10 @@ import org.junit.experimental.theories.PotentialAssignment;
 import org.junit.experimental.theories.PotentialAssignment.CouldNotGenerateValueException;
 import org.junit.runners.model.TestClass;
 
+/**
+ * A potentially incomplete list of value assignments for a method's formal
+ * parameters
+ */
 public class Assignments {
 	private List<PotentialAssignment> fAssigned;
 
@@ -21,17 +25,22 @@ public class Assignments {
 
 	private final TestClass fClass;
 
-	public Assignments(List<PotentialAssignment> assigned,
+	private Assignments(List<PotentialAssignment> assigned,
 			List<ParameterSignature> unassigned, TestClass testClass) {
 		fUnassigned= unassigned;
 		fAssigned= assigned;
 		fClass= testClass;
 	}
 
+	/**
+	 * Returns a new assignment list for {@code testMethod}, with no params
+	 * assigned.
+	 */
 	public static Assignments allUnassigned(Method testMethod,
 			TestClass testClass) throws Exception {
 		List<ParameterSignature> signatures;
-		signatures= ParameterSignature.signatures(testClass.getOnlyConstructor());
+		signatures= ParameterSignature.signatures(testClass
+				.getOnlyConstructor());
 		signatures.addAll(ParameterSignature.signatures(testMethod));
 		return new Assignments(new ArrayList<PotentialAssignment>(),
 				signatures, testClass);
@@ -113,7 +122,8 @@ public class Assignments {
 		return constructorParameterCount;
 	}
 
-	public Object[] getArgumentStrings(boolean nullsOk) throws CouldNotGenerateValueException {
+	public Object[] getArgumentStrings(boolean nullsOk)
+			throws CouldNotGenerateValueException {
 		Object[] values= new Object[fAssigned.size()];
 		for (int i= 0; i < values.length; i++) {
 			values[i]= fAssigned.get(i).getDescription();
