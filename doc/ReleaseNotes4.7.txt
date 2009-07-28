@@ -178,7 +178,9 @@
 ### Matchers ###
 - Due to typing incompatibilities, JUnit is still including the 1.1 release
   of hamcrest.  This is not a change from 4.6, but is a change from
-  pre-beta releases of 4.7.
+  pre-beta releases of 4.7.  Due to this incompatibility, tests using
+  Hamcrest 1.2 must still use the MatcherAssert.assertThat method from 
+  Hamcrest, not Assert.assertThat from JUnit.
   
 ### Docs ###
 - Javadocs now link to online JDK javadocs (bug 2090230)
