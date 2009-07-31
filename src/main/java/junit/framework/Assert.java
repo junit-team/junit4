@@ -214,10 +214,16 @@ public class Assert {
 		assertTrue(message, object != null);
 	}
 	/**
-	 * Asserts that an object is null.
+	 * Asserts that an object is null. If it isn't an {@link AssertionError} is
+	 * thrown.
+	 * Message contains: Expected: <null> but was: object
+	 * 
+	 * @param object
+	 *            Object to check or <code>null</code>
 	 */
 	static public void assertNull(Object object) {
-		assertNull(null, object);
+		String message = "Expected: <null> but was: " + object.toString();
+		assertNull(message, object);
 	}
 	/**
 	 * Asserts that an object is null.  If it is not
