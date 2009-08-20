@@ -5,14 +5,20 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Rule;
 import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
+import org.junit.rules.MethodRule;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
+import org.junit.tests.experimental.categories.CategoryTest.FilterRule;
 
 /**
  * Using <code>Suite</code> as a runner allows you to manually
@@ -111,6 +117,47 @@ public class Suite extends ParentRunner<Runner> {
 	protected Suite(Class<?> klass, List<Runner> runners) throws InitializationError {
 		super(klass);
 		fRunners = runners;
+		try {
+			rules(getTestClass().getOnlyConstructor().newInstance());
+			
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * @return the MethodRules that can transform the block
+	 * that runs each method in the tested class.
+	 */
+	protected List<FilterRule> rules(Object test) {
+		List<FilterRule> results= new ArrayList<FilterRule>();
+		for (FrameworkField each : ruleFields())
+			results.add(createRule(test, each));
+		return results;
+	}
+
+	private List<FrameworkField> ruleFields() {
+		return getTestClass().getAnnotatedFields(Rule.class);
+	}
+
+	private FilterRule createRule(Object test,
+			FrameworkField each) {
+		try {
+			return (FilterRule) each.get(test);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(
+					"How did getFields return a field we couldn't access?");
+		}
 	}
 	
 	@Override

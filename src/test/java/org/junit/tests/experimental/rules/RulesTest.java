@@ -51,6 +51,17 @@ public class RulesTest {
 		assertTrue(wasRun);
 	}
 
+	public static class SonOfExampleTest extends ExampleTest {
+		
+	}
+
+	@Test
+	public void ruleIsIntroducedAndEvaluatedOnSubclass() {
+		wasRun= false;
+		JUnitCore.runClasses(SonOfExampleTest.class);
+		assertTrue(wasRun);
+	}
+	
 	private static int runCount;
 
 	public static class MultipleRuleTest {
