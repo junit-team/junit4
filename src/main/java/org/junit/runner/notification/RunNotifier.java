@@ -16,30 +16,37 @@ import org.junit.runner.Result;
  * to a separate class since they should only be called once per run.
  */
 public class RunNotifier {
+    private final Object fListenersLock = new Object();
 	private final List<RunListener> fListeners= new ArrayList<RunListener>();
 	private boolean fPleaseStop= false;
 	
 	/** Internal use only
 	 */
 	public void addListener(RunListener listener) {
-		fListeners.add(listener);
+        synchronized ( fListenersLock) {
+		  fListeners.add(listener);
+        }
 	}
 
 	/** Internal use only
 	 */
 	public void removeListener(RunListener listener) {
-		fListeners.remove(listener);
-	}
+        synchronized ( fListenersLock) {
+            fListeners.remove(listener);
+       }
+    }
 
 	private abstract class SafeNotifier {
 		void run() {
-			for (Iterator<RunListener> all= fListeners.iterator(); all.hasNext();)
-				try {
-					notifyListener(all.next());
-				} catch (Exception e) {
-					all.remove(); // Remove the offending listener first to avoid an infinite loop
-					fireTestFailure(new Failure(Description.TEST_MECHANISM, e));
-				}
+            synchronized ( fListenersLock) {
+                for (Iterator<RunListener> all= fListeners.iterator(); all.hasNext();)
+                    try {
+                        notifyListener(all.next());
+                    } catch (Exception e) {
+                        all.remove(); // Remove the offending listener first to avoid an infinite loop
+                        fireTestFailure(new Failure(Description.TEST_MECHANISM, e));
+                    }
+                }
 		}
 		
 		abstract protected void notifyListener(RunListener each) throws Exception;
@@ -157,6 +164,8 @@ public class RunNotifier {
 	 * Internal use only. The Result's listener must be first.
 	 */
 	public void addFirstListener(RunListener listener) {
-		fListeners.add(0, listener);
+        synchronized ( fListenersLock) {
+		    fListeners.add(0, listener);
+        }
 	}
 }
