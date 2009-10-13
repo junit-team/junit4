@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
  * 
  * <pre>
  * &#064;RunWith(Suite.class)
- * &#064;SuiteClasses(ATest.class, BTest.class, CTest.class)
+ * &#064;SuiteClasses({ATest.class, BTest.class, CTest.class})
  * public class ABCSuite {
  * }
  * </pre>

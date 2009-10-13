@@ -200,7 +200,7 @@ public class RulesTest {
 	public void beforesAndAfters() {
 		BeforesAndAfters.watchedLog= "";
 		JUnitCore.runClasses(BeforesAndAfters.class);
-		assertThat(BeforesAndAfters.watchedLog, is("before starting test succeeded finished after "));
+		assertThat(BeforesAndAfters.watchedLog, is("starting before test after succeeded finished "));
 	}
 	
 	public static class WrongTypedField {
