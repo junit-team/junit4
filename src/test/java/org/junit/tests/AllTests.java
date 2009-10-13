@@ -16,6 +16,7 @@ import org.junit.tests.experimental.AssumptionTest;
 import org.junit.tests.experimental.AssumptionViolatedExceptionTest;
 import org.junit.tests.experimental.ExperimentalTests;
 import org.junit.tests.experimental.MatcherTest;
+import org.junit.tests.experimental.categories.CategoryTest;
 import org.junit.tests.experimental.max.JUnit38SortingTest;
 import org.junit.tests.experimental.max.MaxStarterTest;
 import org.junit.tests.experimental.parallel.ParallelClassTest;
@@ -133,7 +134,8 @@ import org.junit.tests.validation.ValidationTest;
 	ExpectedExceptionRuleTest.class,
 	TempFolderRuleTest.class,
 	ExternalResourceRuleTest.class,
-	VerifierRuleTest.class
+	VerifierRuleTest.class,
+	CategoryTest.class
 })
 public class AllTests {
 	public static Test suite() {
