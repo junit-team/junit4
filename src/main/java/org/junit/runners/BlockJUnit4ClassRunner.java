@@ -360,7 +360,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	protected List<MethodRule> rules(Object test) {
 		List<MethodRule> results= new ArrayList<MethodRule>();
 		for (FrameworkField each : ruleFields()) {
-			if (MethodRule.class.isAssignableFrom(each.getField().getType())) {
+			if (MethodRule.class.isAssignableFrom(each.getType())) {
 				results.add(createRule(test, each));
 			}
 		}
