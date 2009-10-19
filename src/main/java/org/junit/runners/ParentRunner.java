@@ -198,8 +198,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	}
 
 	/**
-	 * @return the MethodRules that can transform the block
-	 * that runs each method in the tested class.
+	 * @return the {@code ClassRule}s that can transform the block that runs
+	 *         each method in the tested class.
 	 */
 	protected List<ClassRule> classRules() {
 		final List<ClassRule> results= new ArrayList<ClassRule>();
@@ -211,12 +211,12 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 		return results;
 	}
 
-	private ClassRule getClassRule(FrameworkField field) {
+	private ClassRule getClassRule(final FrameworkField field) {
 		try {
 			return (ClassRule) field.get(null);
 		} catch (IllegalAccessException e) {
 			throw new RuntimeException(
-					"How did getFields return a field we couldn't access?");
+					"How did getAnnotatedFields return a field we couldn't access?");
 		}
 	}
 
