@@ -8,7 +8,6 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.Test.None;
 import org.junit.internal.AssumptionViolatedException;
@@ -21,6 +20,7 @@ import org.junit.internal.runners.statements.FailOnTimeout;
 import org.junit.internal.runners.statements.InvokeMethod;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
+import org.junit.rules.ClassRule;
 import org.junit.rules.MethodRule;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -177,12 +177,20 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	}
 
 	private void validateRuleField(Field field, List<Throwable> errors) {
-		if (!MethodRule.class.isAssignableFrom(field.getType()))
-			errors.add(new Exception("Field " + field.getName()
-					+ " must implement MethodRule"));
 		if (!Modifier.isPublic(field.getModifiers()))
 			errors.add(new Exception("Field " + field.getName()
 					+ " must be public"));
+		if (!MethodRule.class.isAssignableFrom(field.getType())) {
+			if (ClassRule.class.isAssignableFrom(field.getType())) {
+				if (!Modifier.isStatic(field.getModifiers())) {
+					errors.add(new Exception("Field " + field.getName()
+							+ " must be static"));
+				}
+			} else {
+				errors.add(new Exception("Field " + field.getName()
+						+ " must implement MethodRule or ClassRule"));
+			}
+		}
 	}
 
 	/**
@@ -351,13 +359,12 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	 */
 	protected List<MethodRule> rules(Object test) {
 		List<MethodRule> results= new ArrayList<MethodRule>();
-		for (FrameworkField each : ruleFields())
-			results.add(createRule(test, each));
+		for (FrameworkField each : ruleFields()) {
+			if (MethodRule.class.isAssignableFrom(each.getField().getType())) {
+				results.add(createRule(test, each));
+			}
+		}
 		return results;
-	}
-
-	private List<FrameworkField> ruleFields() {
-		return getTestClass().getAnnotatedFields(Rule.class);
 	}
 
 	private MethodRule createRule(Object test,
