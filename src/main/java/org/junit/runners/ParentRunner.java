@@ -9,11 +9,13 @@ import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.model.MultipleFailureException;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
+import org.junit.rules.ClassRule;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
@@ -23,6 +25,7 @@ import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
+import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerScheduler;
@@ -143,6 +146,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 		Statement statement= childrenInvoker(notifier);
 		statement= withBeforeClasses(statement);
 		statement= withAfterClasses(statement);
+		statement= withClassRules(statement);
 		return statement;
 	}
 
@@ -173,6 +177,57 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	}
 
 	/**
+	 * Returns a {@link Statement}: apply all static {@link ClassRule} fields
+	 * annotated with {@link Rule}.
+	 *
+	 * @param statement
+	 *            the base statement
+	 * @return a WithClassRules statement if any class-level {@link Rule}s are
+	 *         found, or the base statement
+	 */
+	private Statement withClassRules(Statement statement) {
+		final List<ClassRule> classRules= classRules();
+		if (classRules.isEmpty()) {
+			return statement;
+		}
+		Statement next = statement;
+		for (final ClassRule classRule : classRules) {
+			next = classRule.apply(next, fTestClass);
+		}
+		return next;
+	}
+
+	/**
+	 * @return the MethodRules that can transform the block
+	 * that runs each method in the tested class.
+	 */
+	protected List<ClassRule> classRules() {
+		final List<ClassRule> results= new ArrayList<ClassRule>();
+		for (FrameworkField field : ruleFields()) {
+			if (ClassRule.class.isAssignableFrom(field.getType())) {
+				results.add(getClassRule(field));
+			}
+		}
+		return results;
+	}
+
+	private ClassRule getClassRule(FrameworkField field) {
+		try {
+			return (ClassRule) field.get(null);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(
+					"How did getFields return a field we couldn't access?");
+		}
+	}
+
+	/**
+	 * @return list of {@link FrameworkField}s annotated with {@link Rule}
+	 */
+	protected List<FrameworkField> ruleFields() {
+		return fTestClass.getAnnotatedFields(Rule.class);
+	}
+
+	/**
 	 * Returns a {@link Statement}: Call {@link #runChild(Object, RunNotifier)}
 	 * on each object returned by {@link #getChildren()} (subject to any imposed
 	 * filter and sort)
@@ -188,7 +243,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
 	private void runChildren(final RunNotifier notifier) {
 		for (final T each : getFilteredChildren())
-			fScheduler.schedule(new Runnable() {			
+ 			fScheduler.schedule(new Runnable() {			
 				public void run() {
 					ParentRunner.this.runChild(each, notifier);
 				}

@@ -34,6 +34,14 @@ public class FrameworkField extends FrameworkMember<FrameworkField> {
 	}
 
 	/**
+	 * @return the underlying Java Field type
+	 * @see java.lang.reflect.Field#getType()
+	 */
+	public Class<?> getType() {
+		return fField.getType();
+	}
+
+	/**
 	 * Attempts to retrieve the value of this field on {@code target}
 	 */
 	public Object get(Object target) throws IllegalArgumentException, IllegalAccessException {
