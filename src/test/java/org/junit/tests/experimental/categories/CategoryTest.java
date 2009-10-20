@@ -8,10 +8,10 @@ import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.experimental.categories.CategoryClass;
-import org.junit.experimental.categories.CategoryRunner;
-import org.junit.experimental.categories.CategoryRunner.CategoryFilter;
-import org.junit.experimental.categories.CategoryRunner.IncludeCategory;
+import org.junit.experimental.categories.CategoryType;
+import org.junit.experimental.categories.Categories;
+import org.junit.experimental.categories.Categories.CategoryFilter;
+import org.junit.experimental.categories.Categories.IncludeCategory;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.Result;
@@ -23,11 +23,11 @@ import org.junit.runners.Suite.SuiteClasses;
 import org.junit.runners.model.InitializationError;
 
 public class CategoryTest {
-	public static interface FastTests extends CategoryClass {
+	public interface FastTests extends CategoryType {
 
 	}
 
-	public interface SlowTests extends CategoryClass {
+	public interface SlowTests extends CategoryType {
 
 	}
 
@@ -58,7 +58,13 @@ public class CategoryTest {
 		}
 	}
 
-	@RunWith(CategoryRunner.class)
+	@RunWith(Categories.class)
+	@IncludeCategory(SlowTests.class)
+	@SuiteClasses( { A.class, B.class, C.class })
+	public static class SlowTestSuite {
+	}
+
+	@RunWith(Categories.class)
 	@IncludeCategory(SlowTests.class)
 	@SuiteClasses( { A.class })
 	public static class JustA {
@@ -67,12 +73,6 @@ public class CategoryTest {
 	@Test
 	public void testCountOnJustA() {
 		assertThat(testResult(JustA.class), isSuccessful());
-	}
-
-	@RunWith(CategoryRunner.class)
-	@IncludeCategory(SlowTests.class)
-	@SuiteClasses( { A.class, B.class, C.class })
-	public static class SlowTestSuite {
 	}
 
 	@Test
@@ -134,7 +134,7 @@ public class CategoryTest {
 		}
 	}
 
-	@RunWith(CategoryRunner.class)
+	@RunWith(Categories.class)
 	@IncludeCategory(SlowTests.class)
 	@SuiteClasses( { OneFast.class })
 	public static class OneFastSuite {
@@ -161,7 +161,7 @@ public class CategoryTest {
 		}
 	}
 
-	@RunWith(CategoryRunner.class)
+	@RunWith(Categories.class)
 	@IncludeCategory(SlowTests.class)
 	@SuiteClasses( { OneThatIsBothFastAndSlow.class })
 	public static class ChooseSlowFromBoth {
@@ -183,7 +183,7 @@ public class CategoryTest {
 		}
 	}
 
-	@RunWith(CategoryRunner.class)
+	@RunWith(Categories.class)
 	@IncludeCategory(SlowTests.class)
 	@SuiteClasses( { OneVerySlowTest.class })
 	public static class RunSlowFromVerySlow {
