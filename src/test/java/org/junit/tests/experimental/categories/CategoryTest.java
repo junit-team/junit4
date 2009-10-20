@@ -6,110 +6,29 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
-
-import java.lang.annotation.Annotation;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
 import org.junit.Test;
-import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
-import org.junit.runner.Description;
+import org.junit.experimental.categories.Category;
+import org.junit.experimental.categories.CategoryClass;
+import org.junit.experimental.categories.CategoryRunner;
+import org.junit.experimental.categories.CategoryRunner.CategoryFilter;
+import org.junit.experimental.categories.CategoryRunner.IncludeCategory;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.Result;
 import org.junit.runner.RunWith;
-import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.junit.runners.model.InitializationError;
-import org.junit.runners.model.RunnerBuilder;
-import org.junit.tests.experimental.categories.CategoryTest.CategoryRunner.IncludeCategory;
 
 public class CategoryTest {
-	public static class CategoryRunner extends Suite {
-		@Retention(RetentionPolicy.RUNTIME)
-		public @interface IncludeCategory {
-			public Class<? extends CategoryClass> value();
-		}
-
-		public CategoryRunner(Class<?> klass, RunnerBuilder builder)
-				throws InitializationError {
-			super(klass, builder);
-			try {
-				filter(new CategoryFilter(getCategory(klass)));
-			} catch (NoTestsRemainException e) {
-				// TODO Auto-generated catch block
-				// e.printStackTrace();
-				// TODO: figure out what should happen if everything is filtered out, and test that it does.
-			}
-		}
-
-		private Class<? extends CategoryClass> getCategory(Class<?> klass) {
-			return klass.getAnnotation(IncludeCategory.class).value();
-		}
-	}
-
 	public static interface FastTests extends CategoryClass {
-
-	}
-
-	@RunWith(CategoryRunner.class)
-	@IncludeCategory(FastTests.class)
-	@SuiteClasses( { A.class })
-	public static class FilterMeFast {
-
-	}
-
-	@Test
-	public void getCategory() throws InitializationError {
-		assertEquals(FastTests.class, new CategoryRunner(FilterMeFast.class,
-				new AllDefaultPossibilitiesBuilder(true))
-				.getCategory(FilterMeFast.class));
-	}
-
-	// TODO: move
-	public static class CategoryFilter extends Filter {
-		public static CategoryFilter include(
-				Class<? extends CategoryClass> categoryClass) {
-			return new CategoryFilter(categoryClass);
-		}
-
-		private final Class<? extends CategoryClass> fCategoryClass;
-
-		public CategoryFilter(Class<? extends CategoryClass> categoryClass) {
-			fCategoryClass= categoryClass;
-		}
-
-		@Override
-		public String describe() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public boolean shouldRun(Description description) {
-			// TODO: ack! why is value single-valued?
-			// TODO: not just any category should work
-			// TODO: should inheritance come into play?
-			Category annotation= description.getAnnotation(Category.class);
-			return annotation != null && annotation.value() == fCategoryClass;
-		}
-	}
-
-	// TODO: an interface that's called a class?
-	public interface CategoryClass {
 
 	}
 
 	public interface SlowTests extends CategoryClass {
 
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface Category {
-		Class<? extends CategoryClass> value();
 	}
 
 	public static class A {
@@ -183,23 +102,7 @@ public class CategoryTest {
 		assertEquals(1, runner.testCount());
 	}
 
-	@Test
-	public void categoryFilterMatchesAnnotatedMethod() {
-		CategoryFilter filter= CategoryFilter.include(SlowTests.class);
-		assertTrue(filter.shouldRun(Description.createTestDescription(A.class,
-				"b", new Category() {
-					public Class<? extends CategoryClass> value() {
-						// TODO Auto-generated method stub
-						return SlowTests.class;
-					}
-
-					public Class<? extends Annotation> annotationType() {
-						return Category.class;
-					}
-				})));
-	}
-
-	public static class AllFastTests {
+	public static class OneFastOneSlow {
 		@Category(FastTests.class)
 		@Test
 		public void a() {
@@ -213,15 +116,80 @@ public class CategoryTest {
 		}
 	}
 
-	// TODO: What to do when a class has nothing in the category
-
 	@Test
 	public void categoryFilterRejectsIncompatibleCategory()
 			throws InitializationError, NoTestsRemainException {
 		CategoryFilter filter= CategoryFilter.include(SlowTests.class);
 		BlockJUnit4ClassRunner runner= new BlockJUnit4ClassRunner(
-				AllFastTests.class);
+				OneFastOneSlow.class);
 		filter.apply(runner);
 		assertEquals(1, runner.testCount());
+	}
+
+	public static class OneFast {
+		@Category(FastTests.class)
+		@Test
+		public void a() {
+
+		}
+	}
+
+	@RunWith(CategoryRunner.class)
+	@IncludeCategory(SlowTests.class)
+	@SuiteClasses( { OneFast.class })
+	public static class OneFastSuite {
+	}
+
+	@Test
+	public void ifNoTestsToRunUseErrorRunner() {
+		Result result= JUnitCore.runClasses(OneFastSuite.class);
+		assertEquals(1, result.getRunCount());
+		assertEquals(1, result.getFailureCount());
+	}
+
+	@Test
+	public void describeACategoryFilter() {
+		CategoryFilter filter= new CategoryFilter(SlowTests.class);
+		assertEquals("category " + SlowTests.class, filter.describe());
+	}
+	
+	public static class OneThatIsBothFastAndSlow {
+		@Category({FastTests.class, SlowTests.class})
+		@Test
+		public void a() {
+
+		}
+	}
+
+	@RunWith(CategoryRunner.class)
+	@IncludeCategory(SlowTests.class)
+	@SuiteClasses( { OneThatIsBothFastAndSlow.class })
+	public static class ChooseSlowFromBoth {
+	}
+	
+	@Test public void runMethodWithTwoCategories() {
+		assertThat(testResult(ChooseSlowFromBoth.class), isSuccessful());
+	}
+	
+	public interface VerySlowTests extends SlowTests {
+		
+	}
+	
+	public static class OneVerySlowTest {
+		@Category(VerySlowTests.class)
+		@Test
+		public void a() {
+
+		}
+	}
+
+	@RunWith(CategoryRunner.class)
+	@IncludeCategory(SlowTests.class)
+	@SuiteClasses( { OneVerySlowTest.class })
+	public static class RunSlowFromVerySlow {
+	}
+	
+	@Test public void subclassesOfIncludedCategoriesAreRun() {
+		assertThat(testResult(RunSlowFromVerySlow.class), isSuccessful());
 	}
 }
