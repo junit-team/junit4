@@ -18,12 +18,16 @@ public class InitializationError extends Exception {
 		fErrors= errors;
 	}
 	
+	public InitializationError(Throwable error) {
+		this(Arrays.asList(error));
+	}
+	
 	/**
 	 * Construct a new {@code InitializationError} with one cause
 	 * with message {@code string}
 	 */
 	public InitializationError(String string) {
-		this(Arrays.<Throwable>asList(new Exception(string)));
+		this(new Exception(string));
 	}
 
 	/**
