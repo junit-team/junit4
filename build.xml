@@ -5,7 +5,9 @@
 	<property name="src" value="src/main/java" />
 	<property name="target" location="target" />
 	<property name="bin" location="${target}/main" />
-	<property name="version" value="4.7" />
+	<property name="version-base" value="4.8" />
+	<property name="version-status" value="b1" />
+	<property name="version" value="${version-base}${version-status}" />
 	<property name="dist" value="junit${version}" />
 	<property name="versionfile" value="${src}/junit/runner/Version.java" />
 	<property name="zipfile"  value="${dist}/${dist}.zip" />
@@ -106,6 +108,14 @@
 		<unjar src="${hamcrestlib}" dest="${hamcrestsrc}" />
 	</target>
 	
+	<target name="release-notes">
+		<property name="basename" value="doc/ReleaseNotes${version-base}" />
+		<exec executable="build/Markdown.pl">
+			<arg file="${basename}.txt"/>
+			<redirector output="${basename}.html" />
+		</exec>
+	</target>
+	
 	<target name="javadoc" depends="unjar.hamcrest">
 		<javadoc packagenames="${javadocpackages}"
 		         destdir="${javadocdir}"
@@ -128,7 +138,7 @@
 	</target>
 
 	<target name="populate-dist" 
-		    depends="clean, build, jars, samples-and-tests, javadoc"
+		    depends="clean, build, jars, samples-and-tests, javadoc, release-notes"
 	>
 		<copy todir="${dist}/doc">
 			<fileset dir="doc"/>

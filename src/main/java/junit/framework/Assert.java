@@ -222,7 +222,7 @@ public class Assert {
 	 *            Object to check or <code>null</code>
 	 */
 	static public void assertNull(Object object) {
-		String message = "Expected: <null> but was: " + object.toString();
+		String message = "Expected: <null> but was: " + String.valueOf(object);
 		assertNull(message, object);
 	}
 	/**

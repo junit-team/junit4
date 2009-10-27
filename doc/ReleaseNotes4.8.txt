@@ -1,41 +1,40 @@
-## Summary of Changes in version 4.7 ##
+## Summary of Changes in version 4.8 ##
 
-### Matchers ###
+### Categories ###
 
-- Hamcrest 1.2 is now incorporated (http://github.com/KentBeck/junit/issues#issue/1)
-  - The following methods from `JUnitMatchers` are deprecated, and moved to `CoreMatchers`:
-    - `JUnitMatchers.hasItem` is now `CoreMatchers.hasItem`
-    - `JUnitMatchers.hasItems` is now `CoreMatchers.hasItems`
-    - `JUnitMatchers.containsString` is now `CoreMatchers.containsString`
+From a given set of test classes, the `Categories` runner
+runs only the classes and methods
+that are annotated with either the category given with the `@IncludeCategory`
+annotation, or a subtype of that category.
+ 
+Example:
 
-  - Matchers now have more informative mismatch descriptions.  For example:
-  
-      @SuppressWarnings("unchecked")
-	  @Test public void stringIsAnInteger() {
-	      assertThat("identifier", "actual", matches(is(Integer.class)));
-	      // prints:
-	      // Expected: is an instance of java.lang.Integer
-	      //      but: \"actual\" is a java.lang.String
-      }
+	public interface FastTests extends CategoryType {}
+	public interface SlowTests extends CategoryType {}
 
-  - Some matchers have slightly changed type signatures, especially those created
-    by `is()` and `equalTo`.  Everything should work, except see `BothTest` for an
-    example of how the `both().and()` and `either().or()` constructs may be
-    affected.  To essentially disable type-checking for a matcher expression,
-    use `JUnitMatchers.matches()` (see below)
-    
-  - `JUnitMatchers.isOneOf(...)` is sugar for the situation where you want to specify
-	a finite list of concrete objects that can match.  For example:
-      
-	  assertThat(3, isOneOf(3, 4));
+	public static class A {
+		@Test
+		public void a() {
+			fail();
+		}
 
-  - `JUnitMatchers.matches()` disables type-checking of a matcher entirely.
-  
-	 Goofy example:
-	 
-	    assertThat(3, matches(containsString("a")));
-	  
-	 Real example:
-	 
-	    assertThat(3, either(matches(is(String.class))).or(
-		                     matches(is(Integer.class))));
+		@Category(SlowTests.class)
+		@Test
+		public void b() {
+		}
+	}
+
+	@Category({SlowTests.class, FastTests.class})
+	public static class B {
+		@Test
+		public void c() {
+
+		}
+	}
+
+	@RunWith(Categories.class)
+	@IncludeCategory(SlowTests.class)
+	@SuiteClasses( { A.class, B.class }) // Note that Categories is a kind of Suite
+	public static class SlowTestSuite {}
+
+

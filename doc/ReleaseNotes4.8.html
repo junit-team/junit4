@@ -1,0 +1,39 @@
+<h2>Summary of Changes in version 4.8</h2>
+
+<h3>Categories</h3>
+
+<p>From a given set of test classes, the <code>Categories</code> runner
+runs only the classes and methods
+that are annotated with either the category given with the <code>@IncludeCategory</code>
+annotation, or a subtype of that category.</p>
+
+<p>Example:</p>
+
+<pre><code>public interface FastTests extends CategoryType {}
+public interface SlowTests extends CategoryType {}
+
+public static class A {
+    @Test
+    public void a() {
+        fail();
+    }
+
+    @Category(SlowTests.class)
+    @Test
+    public void b() {
+    }
+}
+
+@Category({SlowTests.class, FastTests.class})
+public static class B {
+    @Test
+    public void c() {
+
+    }
+}
+
+@RunWith(Categories.class)
+@IncludeCategory(SlowTests.class)
+@SuiteClasses( { A.class, B.class }) // Note that Categories is a kind of Suite
+public static class SlowTestSuite {}
+</code></pre>
