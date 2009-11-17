@@ -37,4 +37,6 @@ Example:
 	@SuiteClasses( { A.class, B.class }) // Note that Categories is a kind of Suite
 	public static class SlowTestSuite {}
 
+### Bug fixes ###
 
+- github#16: thread safety of Result counting

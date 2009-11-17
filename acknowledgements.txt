@@ -53,4 +53,7 @@
 	
 2009 May 04
 	James Abbley: Submitted a patch that fixed the 2-second limit on Parallel execution.
-	
+
+2009 Nov 16
+    Kristian Rosenvold: Submitted a patch (github#16) that improves thread-safety of
+                        result counting
