@@ -1,6 +1,7 @@
 package org.junit.runner.notification;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,37 +17,33 @@ import org.junit.runner.Result;
  * to a separate class since they should only be called once per run.
  */
 public class RunNotifier {
-    private final Object fListenersLock = new Object();
-	private final List<RunListener> fListeners= new ArrayList<RunListener>();
+	private final List<RunListener> fListeners= 
+		Collections.synchronizedList(new ArrayList<RunListener>());
 	private boolean fPleaseStop= false;
 	
 	/** Internal use only
 	 */
 	public void addListener(RunListener listener) {
-        synchronized ( fListenersLock) {
-		  fListeners.add(listener);
-        }
+		fListeners.add(listener);
 	}
 
 	/** Internal use only
 	 */
 	public void removeListener(RunListener listener) {
-        synchronized ( fListenersLock) {
-            fListeners.remove(listener);
-       }
+		fListeners.remove(listener);
     }
 
 	private abstract class SafeNotifier {
 		void run() {
-            synchronized ( fListenersLock) {
-                for (Iterator<RunListener> all= fListeners.iterator(); all.hasNext();)
-                    try {
-                        notifyListener(all.next());
-                    } catch (Exception e) {
-                        all.remove(); // Remove the offending listener first to avoid an infinite loop
-                        fireTestFailure(new Failure(Description.TEST_MECHANISM, e));
-                    }
-                }
+			synchronized (fListeners) {
+				for (Iterator<RunListener> all= fListeners.iterator(); all.hasNext();)
+					try {
+						notifyListener(all.next());
+					} catch (Exception e) {
+						all.remove(); // Remove the offending listener first to avoid an infinite loop
+						fireTestFailure(new Failure(Description.TEST_MECHANISM, e));
+					}
+			}
 		}
 		
 		abstract protected void notifyListener(RunListener each) throws Exception;
@@ -164,8 +161,6 @@ public class RunNotifier {
 	 * Internal use only. The Result's listener must be first.
 	 */
 	public void addFirstListener(RunListener listener) {
-        synchronized ( fListenersLock) {
-		    fListeners.add(0, listener);
-        }
+		fListeners.add(0, listener);
 	}
 }

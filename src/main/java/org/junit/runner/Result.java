@@ -17,8 +17,8 @@ public class Result {
 	private AtomicInteger fCount = new AtomicInteger();
 	private AtomicInteger fIgnoreCount= new AtomicInteger();
 	private final List<Failure> fFailures= Collections.synchronizedList( new ArrayList<Failure>());
-	private volatile long fRunTime= 0;
-	private volatile long fStartTime;
+	private long fRunTime= 0;
+	private long fStartTime;
 
 	/**
 	 * @return the number of tests run
