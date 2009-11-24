@@ -40,5 +40,5 @@ import java.lang.annotation.RetentionPolicy;
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Category {
-	Class<? extends CategoryType>[] value();
+	Class<?>[] value();
 }
