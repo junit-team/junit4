@@ -90,9 +90,6 @@ public class Categories extends Suite {
 		public boolean shouldRun(Description description) {
 			if (hasCorrectCategoryAnnotation(description))
 				return true;
-
-			// TODO: feels as if we've done this child crawl several times.
-			// Change design?
 			for (Description each : description.getChildren())
 				if (shouldRun(each))
 					return true;

@@ -6,7 +6,7 @@
 	<property name="target" location="target" />
 	<property name="bin" location="${target}/main" />
 	<property name="version-base" value="4.8" />
-	<property name="version-status" value="b3" />
+	<property name="version-status" value="" />
 	<property name="version" value="${version-base}${version-status}" />
 	<property name="dist" value="junit${version}" />
 	<property name="versionfile" value="${src}/junit/runner/Version.java" />
@@ -19,7 +19,6 @@
 	<property name="srcjar" value="junit-${version}-src.jar" />
 	<property name="javadocdir" location="${dist}/javadoc" />
 	<property name="javadoczip" location="${dist}-javadoc.zip" />
-	<property name="javadocpackages" value="org.junit, org.junit.runner, org.junit.runner.description, org.junit.runner.manipulation, org.junit.runner.notification, org.junit.runners, org.hamcrest.core, org.junit.matchers" />
 	<property name="hamcrestlib" location="lib/hamcrest-core-1.1.jar" />
 	<property name="hamcrestsrc" location="${dist}/temp.hamcrest.source" />
 	
@@ -117,14 +116,17 @@
 	</target>
 	
 	<target name="javadoc" depends="unjar.hamcrest">
-		<javadoc packagenames="${javadocpackages}"
-		         destdir="${javadocdir}"
+		<javadoc destdir="${javadocdir}"
 		         author="false"
 		         version="false"
 		         use="false"
 		         windowtitle="JUnit API"
 		         stylesheetfile="stylesheet.css"
 		>
+			<excludepackage name="junit.*" />
+			<excludepackage name="org.junit.internal.*" />
+			<excludepackage name="org.junit.experimental.theories.internal.*" />
+			
 			<sourcepath location="${src}" />
 			<sourcepath location="${hamcrestsrc}" />
 			<link href="http://java.sun.com/javase/6/docs/api/" />
