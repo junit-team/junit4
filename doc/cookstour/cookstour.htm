@@ -1,0 +1,668 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Generator" content="Microsoft Word 97">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (Win95; I) [Netscape]">
+   <meta name="Author" content="ERICH GAMMA">
+   <title>JUnit: A Cook’s Tour</title>
+</head>
+<body>
+
+<h1>
+<font color="#33FF33">J</font><font color="#CC0000">U</font>nit A Cook's
+Tour</h1>
+<br>Note: this article is based on JUnit 3.8.x.
+<hr WIDTH="100%">
+<p><b><font face="Arial"><font size=+1>1. Introduction</font></font></b>
+<p><font size=-1>In an earlier article (see Test Infected: Programmers
+Love Writing Tests, Java Report, July 1998, Volume 3, Number 7), we described
+how to use a simple framework to write repeatable tests. In this article,
+we will take a peek under the covers and show you how the framework itself
+is constructed.</font>
+<p><font size=-1>We carefully studied the JUnit framework and reflected
+on how we constructed it. We found lessons at many different levels. In
+this article we will try communicate them all at once, a hopeless task,
+but at least we will do it in the context of showing you the design and
+construction of a piece of software with proven value.</font>
+<p><font size=-1>We open with a discussion of the goals of the framework.
+The goals will reappear in many small details during the presentation of
+the framework itself. Following this, we present the design and implementation
+of the framework. The design will be described in terms of patterns (surprise,
+surprise), the implementation as a literate program. We conclude with a
+few choice thoughts about framework development.</font>
+<p><b><font face="Arial"><font size=+1>2. Goals</font></font></b>
+<p><font size=-1>What are the goals of JUnit?</font>
+<p><font size=-1>First, we have to get back to the assumptions of development.
+If a program feature lacks an automated test, we assume it doesn’t work.
+This seems much safer than the prevailing assumption, that if a developer
+assures us a program feature works, then it works now and forever.</font>
+<p><font size=-1>From this perspective, developers aren’t done when they
+write and debug the code, they must also write tests that demonstrate that
+the program works. However, everybody is too busy, they have too much to
+do, they don’t have enough time, to screw around with testing. I have too
+much code to write already, how am I supposed write test code, too? Answer
+me that, Mr. Hard-case Project Manager.</font>
+<p><font size=-1>So, the number one goal is to write a framework within
+which we have some glimmer of hope that developers will actually write
+tests. The framework has to use familiar tools, so there is little new
+to learn. It has to require no more work than absolutely necessary to write
+a new test. It has to eliminate duplicated effort.</font>
+<p><font size=-1>If this was all tests had to do, you would be done just
+by writing expressions in a debugger. However, this isn’t sufficient for
+testing. Telling me that your program works now doesn’t help me, because
+it doesn’t assure me that your program will work one minute from now after
+I integrate, and it doesn’t assure me that your program will still work
+in five years, when you are long gone.</font>
+<p><font size=-1>So, the second goal of testing is creating tests that
+retain their value over time. Someone other than the original author has
+to be able to execute the tests and interpret the results. It should be
+possible to combine tests from various authors and run them together without
+fear of interference.</font>
+<p><font size=-1>Finally, it has to be possible to leverage existing tests
+to create new ones. Creating a setup or fixture is expensive and a framework
+has to enable reusing fixtures to run different tests. Oh, is that all?</font>
+<p><b><font face="Arial"><font size=+1>3. The Design of JUnit</font></font></b>
+<p><font size=-1>The design of JUnit will be presented in a style first
+used in (see "Patterns Generate Architectures", Kent Beck and Ralph Johnson,
+ECOOP 94). The idea is to explain the design of a system by starting with
+nothing and applying patterns, one after another, until you have the architecture
+of the system. We will present the architectural problem to be solved,
+summarize the pattern that solves it, and then show how the pattern was
+applied to JUnit.</font>
+<p><b><i><font face="Arial">3.1 Getting started- TestCase</font></i></b>
+<p><font size=-1>First we have to make an object to represent our basic
+concept, the TestCase. Developers often have tests cases in mind, but they
+realize them in many different ways-</font>
+<ul>
+<li>
+<font size=-1>print statements,</font></li>
+
+<li>
+<font size=-1>debugger expressions,</font></li>
+
+<li>
+<font size=-1>test scripts.</font></li>
+</ul>
+<font size=-1>If we want to make manipulating tests easy, we have to make
+them objects. This takes a test that was only implicit in the developer’s
+mind and makes it concrete, supporting our goal of creating tests that
+retain their value over time. At the same time, object developers are used
+to, well, developing with objects, so the decision to make tests into objects
+supports our goal of making test writing more inviting (or at least less
+imposing).</font>
+<p><font size=-1>The Command pattern (see Gamma, E., et al. Design Patterns:
+Elements of Reusable Object-Oriented Software, Addison-Wesley, Reading,
+MA, 1995) fits our needs quite nicely. Quoting from the intent, "Encapsulate
+a request as an object, thereby letting you… queue or log requests…" Command
+tells us to create an object for an operation and give it a method "execute".
+Here is the code for the class definition of TestCase:</font>
+<dir>
+<dir><font face="Arial"><font size=-2>public abstract class <b>TestCase</b>
+implements Test {</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; …</font></font>
+<br><font face="Arial"><font size=-2>}</font></font></dir>
+</dir>
+<font size=-1>Because we expect this class to be reused through inheritance,
+we declare it "public abstract". For now, ignore the fact that it implements
+the Test interface. For the purposes of our current design, you can think
+of TestCase as a lone class.</font>
+<p><font size=-1>Every TestCase is created with a name, so if a test fails,
+you can identify which test failed.</font>
+<dir>
+<dir><font face="Arial"><font size=-2>public abstract class <b>TestCase</b>
+implements Test {</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; private final String
+fName;</font></font>
+<p><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; public <b>TestCase</b>(String
+name) {</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+fName= name;</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; }</font></font>
+<p><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; public abstract
+void <b>run</b>();</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+…</font></font>
+<br><font face="Arial"><font size=-2>}</font></font></dir>
+</dir>
+<font size=-1>To illustrate the evolution of JUnit, we use diagrams that
+show snapshots of the architecture. The notation we use is simple. It annotates
+classes with shaded boxes containing the associated pattern. When the role
+of the class in the pattern is obvious then only the pattern name is shown.
+If the role isn’t clear then the shaded box is augmented by the name of
+the participant this class corresponds to. This notation minimizes the
+clutter in diagrams and was first shown in (see Gamma, E., Applying Design
+Patterns in Java, in Java Gems, SIGS Reference Library, 1997) Figure 1
+shows this notation applied to TestCase. Since we are dealing with a single
+class and there can be no ambiguities just the pattern name is shown.</font>
+<center>
+<p><img SRC="Image1.gif" height=92 width=238>
+<p><font size=-1><b>Figure 1</b> TestCase applies Command</font></center>
+
+<p><b><i><font face="Arial">3.2 Blanks to fill in- run()</font></i></b>
+<p><font size=-1>The next problem to solve is giving the developer a convenient
+"place" to put their fixture code and their test code. The declaration
+of TestCase as abstract says that the developer is expected to reuse TestCase
+by subclassing. However, if all we could do was provide a superclass with
+one variable and no behavior, we wouldn’t be doing much to satisfy our
+first goal, making tests easier to write.</font>
+<p><font size=-1>Fortunately, there is a common structure to all tests-
+they set up a test fixture, run some code against the fixture, check some
+results, and then clean up the fixture. This means that each test will
+run with a fresh fixture and the results of one test can’t influence the
+result of another. This supports the goal of maximizing the value of the
+tests.</font>
+<p><font size=-1>Template Method addresses our problem quite nicely. Quoting
+from the intent, "Define the skeleton of an algorithm in an operation,
+deferring some steps to subclasses. Template Method lets subclasses redefine
+certain steps of an algorithm without changing the algorithm’s structure."
+This is exactly right. We want the developer to be able to separately consider
+how to write the fixture (set up and tear down) code and how to write the
+testing code. The execution of this sequence, however, will remain the
+same for all tests, no matter how the fixture code is written or how the
+testing code is written.</font>
+<p><font size=-1>Here is the template method:</font>
+<dir>
+<dir><font face="Arial"><font size=-2>public void <b>run</b>() {</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; setUp();</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; runTest();</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; tearDown();</font></font>
+<br><font face="Arial"><font size=-2>}</font></font></dir>
+</dir>
+<font size=-1>The default implementations of these methods do nothing:</font>
+<dir>
+<dir><font face="Arial"><font size=-2>protected void <b>runTest</b>() {</font></font>
+<br><font face="Arial"><font size=-2>}</font></font>
+<p><font face="Arial"><font size=-2>protected void <b>setUp</b>() {</font></font>
+<br><font face="Arial"><font size=-2>}</font></font>
+<p><font face="Arial"><font size=-2>protected void <b>tearDown</b>() {</font></font>
+<br><font face="Arial"><font size=-2>}</font></font></dir>
+</dir>
+<font size=-1>Since setUp and tearDown are intended to be overridden but
+will be called by the framework we declare them as protected. The second
+snapshot of our tour is depicted in Figure 2.</font>
+<center>
+<p><img SRC="Image2.gif" height=142 width=270>
+<p><font size=-1><b>Figure 2</b> TestCase.run() applies Template Method</font></center>
+
+<p><b><i><font face="Arial">3.3 Reporting results- TestResult</font></i></b>
+<p><font size=-1>If a TestCase runs in a forest, does anyone care about
+the result? Sure- you run tests to make sure they run. After the test has
+run, you want a record, a summary of what did and didn’t work.</font>
+<p><font size=-1>If tests had equal chances of succeeding or failing, or
+if we only ever ran one test, we could just set a flag in the TestCase
+object and go look at the flag when the test completed. However, tests
+are (intended to be) highly asymmetric- they usually work. Therefore, we
+only want to record the failures and a highly condensed summary of the
+successes.</font>
+<p><font size=-1>The Smalltalk Best Practice Patterns (see Beck, K. Smalltalk
+Best Practice Patterns, Prentice Hall, 1996) has a pattern that is applicable.
+It is called <i>Collecting Parameter</i>. It suggests that when you need
+to collect results over several methods, you should add a parameter to
+the method and pass an object that will collect the results for you. We
+create a new object, TestResult, to collect the results of running tests.</font>
+<dir>
+<dir><font face="Arial"><font size=-2>public class <b>TestResult</b> extends
+Object {</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; protected int fRunTests;</font></font>
+<p><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; public <b>TestResult</b>()
+{</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+fRunTests= 0;</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; }</font></font>
+<br><font face="Arial"><font size=-2>}</font></font></dir>
+</dir>
+<font size=-1>This simple version of TestResult only counts the number
+of tests run. To use it, we have to add a parameter to the TestCase.run()
+method and notify the TestResult that the test is running:</font>
+<dir>
+<dir><font face="Arial"><font size=-2>public void <b>run</b>(TestResult
+result) {</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; result.startTest(this);</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; setUp();</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; runTest();</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; tearDown();</font></font>
+<br><font face="Arial"><font size=-2>}</font></font></dir>
+</dir>
+<font size=-1>And the TestResult has to keep track of the number of tests
+run:</font>
+<dir>
+<dir><font face="Arial"><font size=-2>public synchronized void <b>startTest</b>(Test
+test) {</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; fRunTests++;</font></font>
+<br><font face="Arial"><font size=-2>}</font></font></dir>
+</dir>
+<font size=-1>We declare the TestResult method startTest as synchronized
+so that a single TestResult can collect the results safely when the tests
+are run in different threads. Finally, we want to retain the simple external
+interface of TestCase, so we create a no-parameter version of run() that
+creates its own TestResult:</font>
+<dir>
+<dir><font face="Arial"><font size=-2>public TestResult <b>run</b>() {</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; TestResult result=
+createResult();</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; run(result);</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; return result;</font></font>
+<br><font face="Arial"><font size=-2>}</font></font>
+<p><font face="Arial"><font size=-2>protected TestResult <b>createResult</b>()
+{</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; return new TestResult();</font></font>
+<br><font face="Arial"><font size=-2>}</font></font></dir>
+</dir>
+<font size=-1>Figure 3 shows our next design snapshot.</font>
+<center>
+<p><img SRC="Image3.gif" height=149 width=325>
+<p><font size=-1>Figure 3: TestResult applies Collecting Parameter</font></center>
+
+<p><font size=-1>If tests always ran correctly, then we wouldn’t have to
+write them. Tests are interesting when they fail, especially if we didn’t
+expect them to fail. What’s more, tests can fail in ways that we expect,
+for example by computing an incorrect result, or they can fail in more
+spectacular ways, for example by writing outside the bounds of an array.
+No matter how the test fails we want to execute the following tests.</font>
+<p><font size=-1>JUnit distinguishes between <i>failures</i> and <i>errors</i>.
+The possibility of a failure is anticipated and checked for with assertions.
+Errors are unanticipated problems like an ArrayIndexOutOfBoundsException.
+Failures are signaled with an AssertionFailedError error. To distinguish
+an unanticipated error from a failure, failures are caught in an extra
+catch clause (1). The second clause (2) catches all other exceptions and
+ensures that our test run continues..</font>
+<dir>
+<dir><font face="Arial"><font size=-2>public void <b>run</b>(TestResult
+result) {</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; result.startTest(this);</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; setUp();</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; try {</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+runTest();</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; }</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; catch (AssertionFailedError
+e) { //1</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+result.addFailure(this, e);</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; }</font></font>
+<p><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; catch (Throwable
+e) { // 2</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+result.addError(this, e);</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; }</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; finally {</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+tearDown();</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; }</font></font>
+<br><font face="Arial"><font size=-2>}</font></font></dir>
+</dir>
+<font size=-1>An AssertionFailedError is triggered by the assert methods
+provided by TestCase. JUnit provides a set of assert methods for different
+purposes. Here is the simplest one:</font>
+<dir>
+<dir><font face="Arial"><font size=-2>protected void <b>assertTrue</b>(boolean
+condition) {</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; if (!condition)</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+throw new AssertionFailedError();</font></font>
+<br><font face="Arial"><font size=-2>}</font></font></dir>
+</dir>
+<font size=-1>The AssertionFailedError is not meant to be caught by the
+client (a testing method inside a TestCase) but inside the Template Method
+TestCase.run(). We therefore derive AssertionFailedError from Error.</font>
+<dir>
+<dir><font face="Arial"><font size=-2>public class <b>AssertionFailedError</b>
+extends Error {</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; public AssertionFailedError
+() {}</font></font>
+<br><font face="Arial"><font size=-2>}</font></font></dir>
+</dir>
+<font size=-1>The methods to collect the errors in TestResult are shown
+below:</font>
+<dir>
+<dir><font face="Arial"><font size=-2>public synchronized void <b>addError</b>(Test
+test, Throwable t) {</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; fErrors.addElement(new
+TestFailure(test, t));</font></font>
+<br><font face="Arial"><font size=-2>}</font></font>
+<p><font face="Arial"><font size=-2>public synchronized void <b>addFailure</b>(Test
+test, Throwable t) {</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; fFailures.addElement(new
+TestFailure(test, t));</font></font>
+<br><font face="Arial"><font size=-2>}</font></font></dir>
+</dir>
+<font size=-1>TestFailure is a little framework internal helper class to
+bind together the failed test and the signaled exception for later reporting.</font>
+<dir>
+<dir><font face="Arial"><font size=-2>public class <b>TestFailure</b> extends
+Object {</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; protected Test
+fFailedTest;</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; protected Throwable
+fThrownException;</font></font>
+<br><font face="Arial"><font size=-2>}</font></font></dir>
+</dir>
+<font size=-1>The canonical form of collecting parameter requires us to
+pass the collecting parameter to each method. If we followed this advice,
+each of the testing methods would require a parameter for the TestResult.
+This results in a "pollution" of these method signatures. As a benevolent
+side effect of using exceptions to signal failures we can avoid this signature
+pollution. A test case method, or a helper method called from it, can throw
+an exception without having to know about the TestResult. As a refresher
+here is a sample test method from our MoneyTest suite. It illustrates how
+a testing method doesn’t have to know anything about a TestResult:</font>
+<dir>
+<dir><font face="Arial"><font size=-2>public void <b>testMoneyEquals</b>()
+{</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; assertTrue(!f12CHF.equals(null));</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; assertEquals(f12CHF,
+f12CHF);</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; assertEquals(f12CHF,
+new Money(12, "CHF"));</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; assertTrue(!f12CHF.equals(f14CHF));</font></font>
+<br><font face="Arial"><font size=-2>}</font></font></dir>
+</dir>
+<font size=-1>JUnit comes with different implementations of TestResult.
+The default implementation counts the number of failures and errors and
+collects the results. TextTestResult collects the results and presents
+them in a textual form. Finally, UITestResult is used by the graphical
+version of the JUnit Test Runner to update the graphical test status.</font>
+<p><font size=-1>TestResult is an extension point of the framework. Clients
+can define their own custom TestResult classes, for example, an HTMLTestResult
+reports the results as an HTML document.</font>
+<p><b><i><font face="Arial">3.4 No stupid subclasses - TestCase again</font></i></b>
+<p><font size=-1>We have applied Command to represent a test. Command relies
+on a single method like execute() (called run() in TestCase) to invoke
+it. This simple interface allows us to invoke different implementations
+of a command through the same interface.</font>
+<p><font size=-1>We need an interface to generically run our tests. However,
+all test cases are implemented as different methods in the same class.
+This avoids the unnecessary proliferation of classes. A given test case
+class may implement many different methods, each defining a single test
+case. Each test case has a descriptive name like testMoneyEquals or testMoneyAdd.
+The test cases don’t conform to a simple command interface. Different instances
+of the same Command class need to be invoked with different methods. Therefore
+our next problem is make all the test cases look the same from the point
+of view of the invoker of the test.</font>
+<p><font size=-1>Reviewing the problems addressed by available design patterns,
+the Adapter pattern springs to mind. Adapter has the following intent "Convert
+the interface of a class into another interface clients expect". This sounds
+like a good match. Adapter tells us different ways to do this. One of them
+is a class adapter, which uses subclassing to adapt the interface. For
+example, to adapt testMoneyEquals to runTest we implement a subclass of
+MoneyTest and override runTest to invoke testMoneyEquals.</font>
+<dir>
+<dir><font face="Arial"><font size=-2>public class <b>TestMoneyEquals</b>
+extends MoneyTest {</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; public TestMoneyEquals()
+{ super("testMoneyEquals"); }</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; protected void
+runTest () { testMoneyEquals(); }</font></font>
+<br><font face="Arial"><font size=-2>}</font></font></dir>
+</dir>
+<font size=-1>The use of subclassing requires us to implement a subclass
+for each test case. This puts an additional burden on the tester. This
+is against the JUnit goal that the framework should make it as simple as
+possible to add a test case. In addition, creating a subclass for each
+testing method results in class bloat. Many classes with only a single
+method are not worth their costs and it will be difficult to come up with
+meaningful names.</font>
+<p><font size=-1>Java provides anonymous inner classes which provide an
+interesting Java-specific solution to the class naming problem. With anonymous
+inner classes we can create an Adapter without having to invent a class
+name:</font>
+<dir>
+<dir><font face="Arial"><font size=-2>TestCase test= new MoneyTest("testMoneyEquals
+") {</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; protected void
+runTest() { testMoneyEquals(); }</font></font>
+<br><font face="Arial"><font size=-2>};</font></font></dir>
+</dir>
+<font size=-1>This is much more convenient than full subclassing. It preserves
+compile-time type checking at the cost of some burden on the developer.
+Smalltalk Best Practice Patterns describes another solution for the problem
+of different instances behaving differently under the common heading of<i>
+pluggable behavior</i>. The idea is to use a single class which can be
+parameterized to perform different logic without requiring subclassing.</font>
+<p><font size=-1>The simplest form of pluggable behavior is the <i>Pluggable
+Selector</i>. Pluggable Selector stores a Smalltalk method selector in
+an instance variable. This idea is not limited to Smalltalk. It is also
+applicable to Java. In Java there is no notion of a method selector. However,
+the Java reflection API allows us to invoke a method from a string representing
+the method’s name. We can use this feature to implement a pluggable selector
+in Java. As an aside, we usually don’t use reflection in ordinary application
+code. In our case we are dealing with an infrastructure framework and it
+is therefore OK to wear the reflection hat.</font>
+<p><font size=-1>JUnit offers the client the choice of using pluggable
+selector or implementing an anonymous adapter class as shown above. To
+do so, we provide the pluggable selector as the default implementation
+of the runTest method. In this case the name of the test case has to correspond
+to the name of a test method. We use reflection to invoke the method as
+shown below. First we look up the Method object. Once we have the method
+object we can invoke it and pass its arguments. Since our test methods
+take no arguments we can pass an empty argument array:</font>
+<dir>
+<dir><font face="Arial"><font size=-2>protected void <b>runTest</b>() throws
+Throwable {</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; Method runMethod=
+null;</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; try {</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+runMethod= getClass().getMethod(fName, new Class[0]);</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; } catch (NoSuchMethodException
+e) {</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+assertTrue("Method \""+fName+"\" not found", false);</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; }</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; try {</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+runMethod.invoke(this, new Class[0]);</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; }</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; // catch InvocationTargetException
+and IllegalAccessException</font></font>
+<br><font face="Arial"><font size=-2>}</font></font></dir>
+</dir>
+<font size=-1>The JDK 1.1 reflection API only allows us to find public
+methods. For this reason you have to declare the test methods as public,
+otherwise you will get a NoSuchMethodException.</font>
+<p><font size=-1>Here is the next design snapshot, with Adapter and Pluggable
+Selector added.</font>
+<center>
+<p><img SRC="Image4.gif" height=271 width=278>
+<p><font size=-1>Figure 4: TestCase applies either Adapter with an anonymous
+inner class or Pluggable Selector</font></center>
+
+<p><b><i><font face="Arial">3.5 Don’t care about one or many - TestSuite</font></i></b>
+<p><font size=-1>To get confidence in the state of a system we need to
+run many tests. Up to this point JUnit can run a single test case and report
+the result in a TestResult. Our next challenge is to extend it so that
+it can run many different tests. This problem can be solved easily when
+the invoker of the tests doesn’t have to care about whether it runs one
+or many test cases. A popular pattern to pull out in such a situation is
+Composite. To quote its intent "Compose objects into tree structures to
+represent part-whole hierarchies. Composite lets clients treat individual
+objects and compositions of objects uniformly." The point about part-whole
+hierarchies is of interest here. We want to support suites of suites of
+suites of tests.</font>
+<p><font size=-1>Composite introduces the following participants:</font>
+<ul>
+<li>
+<font size=-1>Component: declares the interface we want to use to interact
+with our tests.</font></li>
+
+<li>
+<font size=-1>Composite: implements this interface and maintains a collection
+of tests.</font></li>
+
+<li>
+<font size=-1>Leaf: represents a test case in a composition that conforms
+to the Component interface.</font></li>
+</ul>
+<font size=-1>The pattern tells us to introduce an abstract class which
+defines the common interface for single and composite objects. The primary
+purpose of the class is to define an interface. When applying Composite
+in Java we prefer to define an interface and not an abstract class. Using
+an interface avoids committing JUnit to a specific base class for tests.
+All that is required is that the tests conform to this interface. We therefore
+tweak the pattern description and introduce a Test interface:</font>
+<dir>
+<dir><font face="Arial"><font size=-2>public interface <b>Test</b> {</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; public abstract
+void run(TestResult result);</font></font>
+<br><font face="Arial"><font size=-2>}</font></font></dir>
+</dir>
+<font size=-1>TestCase corresponds to a Leaf in Composite and implements
+this interface as we have seen above.</font>
+<p><font size=-1>Next, we introduce the Composite participant. We name
+the class TestSuite. A TestSuite keeps its child tests in a Vector:</font>
+<dir>
+<dir><font face="Arial"><font size=-2>public class <b>TestSuite</b> implements
+<b>Test</b>
+{</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; private Vector
+fTests= new Vector();</font></font>
+<br><font face="Arial"><font size=-2>}</font></font></dir>
+</dir>
+<font size=-1>The run() method delegates to its children:</font>
+<dir>
+<dir><font face="Arial"><font size=-2>public void <b>run</b>(TestResult
+result) {</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; for (Enumeration
+e= fTests.elements(); e.hasMoreElements(); ) {</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Test test= (Test)e.nextElement();</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+test.run(result);</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; }</font></font>
+<br><font face="Arial"><font size=-2>}</font></font></dir>
+</dir>
+
+<center><img SRC="Image5.gif" height=241 width=562>
+<p><font size=-1>Figure 5: TestSuite applies Composite</font></center>
+
+<p><font size=-1>Finally, clients have to be able to add tests to a suite,
+they can do so with the method addTest:</font>
+<dir>
+<dir><font face="Arial"><font size=-2>public void <b>addTest</b>(Test test)
+{</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; fTests.addElement(test);</font></font>
+<br><font face="Arial"><font size=-2>}</font></font></dir>
+</dir>
+<font size=-1>Notice how all of the above code only depends on the Test
+interface. Since both TestCase and TestSuite conform to the Test interface
+we can recursively compose suites of test suites. All developers can create
+their own TestSuites. We can run them all by creating a TestSuite composed
+of those suites.</font>
+<p><font size=-1>Here is an example of creating a TestSuite:</font>
+<dir>
+<dir><font face="Arial"><font size=-2>public static Test <b>suite</b>()
+{</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; TestSuite suite=
+new TestSuite();</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; suite.addTest(new
+MoneyTest("testMoneyEquals"));</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; suite.addTest(new
+MoneyTest("testSimpleAdd"));</font></font>
+<br><font face="Arial"><font size=-2>}</font></font></dir>
+</dir>
+<font size=-1>This works fine, but it requires us to add all the tests
+to a suite manually. Early adopters of JUnit told us this was stupid. Whenever
+you write a new test case you have to remember to add it to a static suite()
+method, otherwise it will not be run. We added a convenience constructor
+to TestSuite which takes the test case class as an argument. Its purpose
+is to extract the test methods and create a suite containing them. The
+test methods must follow the simple convention that they start with the
+prefix "test" and take no arguments. The convenience constructor uses this
+convention, constructing the test objects by using reflection to find the
+testing methods. Using this constructor the above code is simplified to:</font>
+<dir>
+<dir><font face="Arial"><font size=-2>public static Test <b>suite</b>()
+{</font></font>
+<br><font face="Arial"><font size=-2>&nbsp;&nbsp;&nbsp; return new TestSuite(MoneyTest.class);</font></font>
+<br><font face="Arial"><font size=-2>}</font></font></dir>
+</dir>
+<font size=-1>The original way is still useful when you want to run a subset
+of the test cases only.</font>
+<p><b><i><font face="Arial">3.6 Summary</font></i></b>
+<p><font size=-1>We are at the end of our cook’s tour through JUnit. The
+following figure shows the design of JUnit at a glance explained with patterns.</font>
+<center>
+<p><img SRC="Image6.gif" height=394 width=605>
+<p><font size=-1>Figure 6: JUnit Patterns Summary</font></center>
+
+<p><font size=-1>Notice how TestCase, the central abstraction in the framework,
+is involved in four patterns. Pictures of mature object designs show this
+same "pattern density". The star of the design has a rich set of relationships
+with the supporting players.</font>
+<p><font size=-1>Here is another way of looking at all of the patterns
+in JUnit. In this storyboard you see an abstract representation of the
+effect of each of the patterns in turn. So, the Command pattern creates
+the TestCase class, the Template Method pattern creates the run method,
+and so on. (The notation of the storyboard is the notation of figure 6
+with all the text deleted).</font>
+<center>
+<p><img SRC="Image7.gif" height=231 width=792>
+<p><font size=-1>Figure 7: JUnit Pattern Storyboard</font></center>
+
+<p><font size=-1>One point to notice about the storyboard is how the complexity
+of the picture jumps when we apply Composite. This is pictorial corroboration
+for our intuition that Composite is a powerful pattern, but that it "complicates
+the picture." It should therefore be used with caution.</font>
+<p><b><font face="Arial"><font size=+1>4. Conclusion</font></font></b>
+<p><font size=-1>To conclude, let’s make some general observations:</font>
+<ul>
+<li>
+<i><font size=-1>Patterns</font></i></li>
+
+<br><font size=-1>We found discussing the design in terms of patterns to
+be invaluable, both as we were developing the framework and as we try to
+explain it to others. You are now in a perfect position to judge whether
+describing a framework with patterns is effective. If you liked the discussion
+above, try the same style of presentation for your own system.</font>
+<li>
+<i><font size=-1>Pattern density</font></i></li>
+
+<br><font size=-1>There is a high pattern "density" around TestCase, which
+is the key abstraction of JUnit. Designs with high pattern density are
+easier to use but harder to change. We have found that such a high pattern
+density around key abstractions is common for mature frameworks. The opposite
+should be true of immature frameworks - they should have low pattern density.
+Once you discover what problem you are really solving, then you can begin
+to "compress" the solution, leading to a denser and denser field of patterns
+where they provide leverage.</font>
+<li>
+<i><font size=-1>Eat your own dog food</font></i></li>
+
+<br><font size=-1>As soon as we had the base unit testing functionality
+implemented, we applied it ourselves. A TestTest verifies that the framework
+reports the correct results for errors, successes, and failures. We found
+this invaluable as we continued to evolve the design of the framework.
+We found that the most challenging application of JUnit was testing its
+own behavior.</font>
+<li>
+<i><font size=-1>Intersection, not union</font></i></li>
+
+<br><font size=-1>There is a temptation in framework development to include
+every feature you can. After all, you want to make the framework as valuable
+as possible. However, there is a counteracting force- developers have to
+decide to use your framework. The fewer features the framework has, the
+easier it is to learn, the more likely a developer will use it. JUnit is
+written in this style. It implements only those features absolutely essential
+to running tests- running suites of tests, isolating the execution of tests
+from each other, and running tests automatically. Sure, we couldn’t resist
+adding some features but we were careful to put them into their own extensions
+package (test.extensions). A notable member of this package is a TestDecorator
+allowing execution of additional code before and after a test.</font>
+<li>
+<i><font size=-1>Framework writers read their code</font></i></li>
+
+<br><font size=-1>We spent far more time reading the JUnit code than we
+spent writing it, and nearly as much time removing duplicate functionality
+as we spent adding new functionality. We experimented aggressively with
+the design, adding new classes and moving responsibility around in as many
+different ways as we could imagine. We were rewarded (and are still being
+rewarded) for our monomania by a continuous flow of insights into JUnit,
+testing, object design, framework development, and opportunities for further
+articles.</font></ul>
+<font size=-1>The latest version of JUnit can be downloaded from http://www.junit.org.</font>
+<p><b><font face="Arial"><font size=+1>5. Acknowledgements</font></font></b>
+<p><font size=-1>Thanks to John Vlissides, Ralph Johnson, and Nick Edgar
+for careful reading and gentle correction.</font>
+</body>
+</html>
