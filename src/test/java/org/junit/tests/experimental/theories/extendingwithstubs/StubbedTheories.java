@@ -47,14 +47,13 @@ public class StubbedTheories extends Theories {
 			queues.remove(guessers);
 		}
 
-		@SuppressWarnings("unchecked")
 		private GuesserQueue createGuesserQueue(Assignments incomplete)
 				throws InstantiationException, IllegalAccessException {
 			ParameterSignature nextUnassigned= incomplete.nextUnassigned();
 
 			if (nextUnassigned.hasAnnotation(Stub.class)) {
 				GuesserQueue queue= new GuesserQueue();
-				queue.add(new Guesser(nextUnassigned.getType()));
+				queue.add(new Guesser<Object>(nextUnassigned.getType()));
 				return queue;
 			}
 

@@ -57,14 +57,14 @@ public class Guesser<T> extends ReguessableValue {
 
 	private final GuessMap guesses;
 
-	private final Class<T> type;
+	private final Class<? extends T> type;
 
-	public Guesser(Class<T> type) {
+	public Guesser(Class<? extends T> type) {
 		this(type, new GuessMap());
 	}
 
-	public Guesser(Class<T> type, GuessMap guesses) {
-		this.type= type;
+	public Guesser(Class<? extends T> type2, GuessMap guesses) {
+		this.type= type2;
 		this.guesses= guesses;
 	}
 
@@ -110,7 +110,7 @@ public class Guesser<T> extends ReguessableValue {
 		return getProxy();
 	}
 
-	public Class<T> getType() {
+	public Class<? extends T> getType() {
 		return type;
 	}
 

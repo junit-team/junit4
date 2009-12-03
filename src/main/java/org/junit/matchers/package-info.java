@@ -4,6 +4,6 @@
  * statement
  *
  * @since 4.0
- * @see JUnitMatchers
+ * @see org.junit.matchers.JUnitMatchers
  */
 package org.junit.matchers;
