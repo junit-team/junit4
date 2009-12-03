@@ -16,7 +16,7 @@ a test marked <code>@Category({SubClass.class})</code> will be run.</p>
 <pre><code>public interface FastTests { /* category marker */ }
 public interface SlowTests { /* category marker */ }
 
-public static class A {
+public class A {
     @Test
     public void a() {
         fail();
@@ -29,7 +29,7 @@ public static class A {
 }
 
 @Category({SlowTests.class, FastTests.class})
-public static class B {
+public class B {
     @Test
     public void c() {
 
@@ -39,7 +39,7 @@ public static class B {
 @RunWith(Categories.class)
 @IncludeCategory(SlowTests.class)
 @SuiteClasses( { A.class, B.class }) // Note that Categories is a kind of Suite
-public static class SlowTestSuite {
+public class SlowTestSuite {
   // Will run A.b and B.c, but not A.a
 }
 
@@ -47,7 +47,7 @@ public static class SlowTestSuite {
 @IncludeCategory(SlowTests.class)
 @ExcludeCategory(FastTests.class)
 @SuiteClasses( { A.class, B.class }) // Note that Categories is a kind of Suite
-public static class SlowTestSuite {
+public class SlowTestSuite {
   // Will run A.b, but not A.a or B.c
 }
 </code></pre>
