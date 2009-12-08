@@ -88,6 +88,7 @@ public class CategoryTest {
 		@Category(Category1.class) @Test public void justCategory1() {}
 		@Category(Category2.class) @Test public void justCategory2() {}
 		@Category({Category1.class, Category2.class}) @Test public void both() {}
+		@Category({Category2.class, Category1.class}) @Test public void bothReversed() {}
 	}
 
 	@RunWith(Categories.class)
@@ -112,7 +113,7 @@ public class CategoryTest {
 	}
 	
 	@Test
-	public void testsThatAreBothIncludedAndExcludedAreIncluded() {
+	public void testsThatAreBothIncludedAndExcludedAreExcluded() {
 		Result result= JUnitCore.runClasses(IncludeAndExcludeSuite.class);
 		assertThat(testResult(SomeAreSlowSuite.class), isSuccessful());
 		assertEquals(1, result.getRunCount());
@@ -130,6 +131,7 @@ public class CategoryTest {
 		Request baseRequest= Request.aClass(TestSuiteWithNoCategories.class);
 		Result result= new JUnitCore().run(baseRequest.filterWith(include));
 		assertTrue(result.wasSuccessful());
+		assertEquals(2, result.getRunCount());
 	}
 
 	@Test

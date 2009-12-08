@@ -5,6 +5,9 @@ package org.junit.experimental.categories;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
@@ -97,16 +100,35 @@ public class Categories extends Suite {
 		}
 
 		private boolean hasCorrectCategoryAnnotation(Description description) {
-			Category annotation= description.getAnnotation(Category.class);
-			if (annotation == null)
+			List<Class<?>> categories= categories(description);
+			if (categories.isEmpty())
 				return fIncluded == null;
-			for (Class<?> each : annotation.value()) {
+			for (Class<?> each : categories)
 				if (fExcluded != null && fExcluded.isAssignableFrom(each))
 					return false;
+			for (Class<?> each : categories)
 				if (fIncluded == null || fIncluded.isAssignableFrom(each))
 					return true;
-			}
 			return false;
+		}
+
+		private List<Class<?>> categories(Description description) {
+			ArrayList<Class<?>> categories= new ArrayList<Class<?>>();
+			categories.addAll(Arrays.asList(directCategories(description)));
+			categories.addAll(Arrays.asList(directCategories(parentDescription(description))));
+			return categories;
+		}
+
+		private Description parentDescription(Description description) {
+			// TODO: how heavy are we cringing?
+			return Description.createSuiteDescription(description.getTestClass());
+		}
+
+		private Class<?>[] directCategories(Description description) {
+			Category annotation= description.getAnnotation(Category.class);
+			if (annotation == null)
+				return new Class<?>[0];
+			return annotation.value();
 		}
 	}
 
