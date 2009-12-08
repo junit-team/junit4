@@ -21,6 +21,9 @@ import org.junit.runners.model.RunnerBuilder;
  * annotated with either the category given with the @IncludeCategory
  * annotation, or a subtype of that category.
  * 
+ * Note that, for now, annotating suites with {@code @Category} has no effect.
+ * Categories must be annotated on the direct method or class.
+ * 
  * Example:
  * 
  * <pre>
