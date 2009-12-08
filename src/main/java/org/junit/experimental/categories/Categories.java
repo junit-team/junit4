@@ -24,10 +24,10 @@ import org.junit.runners.model.RunnerBuilder;
  * Example:
  * 
  * <pre>
- * public interface FastTests extends CategoryType {
+ * public interface FastTests {
  * }
- * 
- * public interface SlowTests extends CategoryType {
+ * 	
+ * public interface SlowTests {
  * }
  * 
  * public static class A {
