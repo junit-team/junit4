@@ -8,7 +8,8 @@ Steps to build junit:
   - Upload stuff to github (including tag)
 - Tedious:
   - Update SourceForge if major release
-  - Update javadocs on SourceForge and junit.org
-  - Put release notes somewhere tidy, now that SourceForge isn't canonical.
-  - Announce on blog, user list, dev list, announce list, twitter, junit.org
+  - Update javadocs on github site (and "latest" link)
+  - Update javadocs on junit.org
+  - Put release notes on github.
+  - Announce on blog, user list, dev list, announce list, junit.org, twitter 
 - Profit!
