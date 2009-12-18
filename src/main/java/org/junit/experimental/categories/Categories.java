@@ -29,7 +29,7 @@ import org.junit.runners.model.RunnerBuilder;
  * <pre>
  * public interface FastTests {
  * }
- * 	
+ * 
  * public interface SlowTests {
  * }
  * 
@@ -94,12 +94,8 @@ public class Categories extends Suite {
 
 		@Override
 		public boolean shouldRun(Description description) {
-			if (hasCorrectCategoryAnnotation(description))
-				return true;
-			for (Description each : description.getChildren())
-				if (shouldRun(each))
-					return true;
-			return false;
+			return hasCorrectCategoryAnnotation(description)
+					|| !description.isTest();
 		}
 
 		private boolean hasCorrectCategoryAnnotation(Description description) {
@@ -118,13 +114,15 @@ public class Categories extends Suite {
 		private List<Class<?>> categories(Description description) {
 			ArrayList<Class<?>> categories= new ArrayList<Class<?>>();
 			categories.addAll(Arrays.asList(directCategories(description)));
-			categories.addAll(Arrays.asList(directCategories(parentDescription(description))));
+			categories.addAll(Arrays
+					.asList(directCategories(parentDescription(description))));
 			return categories;
 		}
 
 		private Description parentDescription(Description description) {
 			// TODO: how heavy are we cringing?
-			return Description.createSuiteDescription(description.getTestClass());
+			return Description.createSuiteDescription(description
+					.getTestClass());
 		}
 
 		private Class<?>[] directCategories(Description description) {

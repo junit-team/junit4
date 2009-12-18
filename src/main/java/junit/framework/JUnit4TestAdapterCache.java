@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.junit.runner.Description;
+import org.junit.runner.Plan;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
@@ -21,25 +22,34 @@ public class JUnit4TestAdapterCache extends HashMap<Description, Test> {
 		return fInstance;
 	}
 	
-	public Test asTest(Description description) {
-		if (description.isSuite())
-			return createTest(description);
-		else {
-			if (!containsKey(description))
-				put(description, createTest(description));
-			return get(description);
-		}
+	// TODO: rename var
+	public Test asTest(Plan plan) {
+		if (plan.isSuite())
+			return createTest(plan);
+		else
+			return asSingleTest(plan.getDescription());
 	}
 
-	Test createTest(Description description) {
-		if (description.isTest())
-			return new JUnit4TestCaseFacade(description);
+	private Test asSingleTest(Description description) {
+		if (!containsKey(description))
+			put(description, createSingleTest(description));
+		return get(description);
+	}
+
+	Test createTest(Plan plan) {
+		Description description= plan.getDescription();
+		if (plan.isTest())
+			return createSingleTest(description);
 		else {
 			TestSuite suite = new TestSuite(description.getDisplayName());
-			for (Description child : description.getChildren())
+			for (Plan child : plan.getChildren())
 				suite.addTest(asTest(child));
 			return suite;
 		}
+	}
+
+	private JUnit4TestCaseFacade createSingleTest(Description description) {
+		return new JUnit4TestCaseFacade(description);
 	}
 
 	public RunNotifier getNotifier(final TestResult result,
@@ -48,30 +58,31 @@ public class JUnit4TestAdapterCache extends HashMap<Description, Test> {
 		notifier.addListener(new RunListener() {
 			@Override
 			public void testFailure(Failure failure) throws Exception {
-				result.addError(asTest(failure.getDescription()), failure.getException());
+				result.addError(asSingleTest(failure.getDescription()), failure.getException());
 			}
 
 			@Override
 			public void testFinished(Description description)
 					throws Exception {
-				result.endTest(asTest(description));
+				result.endTest(asSingleTest(description));
 			}
 
 			@Override
 			public void testStarted(Description description)
 					throws Exception {
-				result.startTest(asTest(description));
+				// TODO: this needs to test that the test is created if not seen before
+				result.startTest(asSingleTest(description));
 			}
 		});
 		return notifier;
 	}
 
-	public List<Test> asTestList(Description description) {
-		if (description.isTest())
-			return Arrays.asList(asTest(description));
+	public List<Test> asTestList(Plan plan) {
+		if (plan.isTest())
+			return Arrays.asList(asTest(plan));
 		else {
 			List<Test> returnThis = new ArrayList<Test>();
-			for (Description child : description.getChildren()) {
+			for (Plan child : plan.getChildren()) {
 				returnThis.add(asTest(child));
 			}
 			return returnThis;

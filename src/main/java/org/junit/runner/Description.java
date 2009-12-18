@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -106,6 +107,7 @@ public class Description {
 	 * @param description the soon-to-be child.
 	 */
 	public void addChild(Description description) {
+		// TODO: deprecate this, too
 		fChildren.add(description);
 	}
 
@@ -237,5 +239,9 @@ public class Description {
 
 	private Matcher methodStringMatcher() {
 		return Pattern.compile("(.*)\\((.*)\\)").matcher(toString());
+	}
+
+	List<Description> getChildrenInternal() {
+		return fChildren;
 	}
 }

@@ -9,9 +9,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
-import org.junit.runner.Request;
 import org.junit.runner.Result;
 
 public class SuiteMethodTest {
@@ -66,14 +64,12 @@ public class SuiteMethodTest {
 		}
 	}
 	
-	@Test public void descriptionAndRunNotificationsAreConsistent() {
+	@Test public void failIfEverythingIsIgnoredOut() {
 		Result result= JUnitCore.runClasses(CompatibilityTest.class);
 		assertEquals(0, result.getIgnoreCount());
-		
-		Description description= Request.aClass(CompatibilityTest.class).getRunner().getDescription();
-		assertEquals(0, description.getChildren().size());
+		assertEquals(1, result.getFailureCount());
 	}
-	
+
 	static public class NewTestSuiteFails {
 		@Test public void sample() {
 			wasRun= true;

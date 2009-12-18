@@ -36,14 +36,8 @@ public abstract class Filter {
 		return new Filter() {
 			@Override
 			public boolean shouldRun(Description description) {
-				if (description.isTest())
-					return desiredDescription.equals(description);
-				
-				// explicitly check if any children want to run
-				for (Description each : description.getChildren())
-					if (shouldRun(each))
-						return true;
-				return false;					
+				// TODO: DUP!
+				return !description.isTest() || desiredDescription.equals(description);
 			}
 
 			@Override
@@ -73,9 +67,9 @@ public abstract class Filter {
 	 * @throws NoTestsRemainException if the receiver removes all tests
 	 */
 	public void apply(Object child) throws NoTestsRemainException {
-		if (!(child instanceof Filterable))
-			return;
-		Filterable filterable= (Filterable) child;
-		filterable.filter(this);
+		if (child instanceof Filterable) {
+			Filterable filterable= (Filterable) child;
+			filterable.filter(this);
+		}
 	}
 }

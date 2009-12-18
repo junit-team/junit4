@@ -79,16 +79,37 @@ public class CategoryTest {
 	public void testCount() {
 		assertThat(testResult(SlowTestSuite.class), isSuccessful());
 	}
-	
-	public static class Category1 {}
-	public static class Category2 {}
-	
+
+	public static class Category1 {
+	}
+
+	public static class Category2 {
+	}
+
 	public static class SomeAreSlow {
-		@Test public void noCategory() {}
-		@Category(Category1.class) @Test public void justCategory1() {}
-		@Category(Category2.class) @Test public void justCategory2() {}
-		@Category({Category1.class, Category2.class}) @Test public void both() {}
-		@Category({Category2.class, Category1.class}) @Test public void bothReversed() {}
+		@Test
+		public void noCategory() {
+		}
+
+		@Category(Category1.class)
+		@Test
+		public void justCategory1() {
+		}
+
+		@Category(Category2.class)
+		@Test
+		public void justCategory2() {
+		}
+
+		@Category( { Category1.class, Category2.class })
+		@Test
+		public void both() {
+		}
+
+		@Category( { Category2.class, Category1.class })
+		@Test
+		public void bothReversed() {
+		}
 	}
 
 	@RunWith(Categories.class)
@@ -96,7 +117,7 @@ public class CategoryTest {
 	@SuiteClasses( { SomeAreSlow.class })
 	public static class SomeAreSlowSuite {
 	}
-	
+
 	@Test
 	public void testCountOnAWithoutSlowTests() {
 		Result result= JUnitCore.runClasses(SomeAreSlowSuite.class);
@@ -111,7 +132,7 @@ public class CategoryTest {
 	@SuiteClasses( { SomeAreSlow.class })
 	public static class IncludeAndExcludeSuite {
 	}
-	
+
 	@Test
 	public void testsThatAreBothIncludedAndExcludedAreExcluded() {
 		Result result= JUnitCore.runClasses(IncludeAndExcludeSuite.class);
@@ -193,9 +214,9 @@ public class CategoryTest {
 		CategoryFilter filter= CategoryFilter.include(SlowTests.class);
 		assertEquals("category " + SlowTests.class, filter.describe());
 	}
-	
+
 	public static class OneThatIsBothFastAndSlow {
-		@Category({FastTests.class, SlowTests.class})
+		@Category( { FastTests.class, SlowTests.class })
 		@Test
 		public void a() {
 
@@ -207,15 +228,16 @@ public class CategoryTest {
 	@SuiteClasses( { OneThatIsBothFastAndSlow.class })
 	public static class ChooseSlowFromBoth {
 	}
-	
-	@Test public void runMethodWithTwoCategories() {
+
+	@Test
+	public void runMethodWithTwoCategories() {
 		assertThat(testResult(ChooseSlowFromBoth.class), isSuccessful());
 	}
-	
+
 	public interface VerySlowTests extends SlowTests {
-		
+
 	}
-	
+
 	public static class OneVerySlowTest {
 		@Category(VerySlowTests.class)
 		@Test
@@ -229,17 +251,21 @@ public class CategoryTest {
 	@SuiteClasses( { OneVerySlowTest.class })
 	public static class RunSlowFromVerySlow {
 	}
-	
-	@Test public void subclassesOfIncludedCategoriesAreRun() {
+
+	@Test
+	public void subclassesOfIncludedCategoriesAreRun() {
 		assertThat(testResult(RunSlowFromVerySlow.class), isSuccessful());
 	}
-	
+
 	public static class ClassAsCategory {
-		
+
 	}
-	
+
 	public static class OneMoreTest {
-		@Category(ClassAsCategory.class) @Test public void a() {}
+		@Category(ClassAsCategory.class)
+		@Test
+		public void a() {
+		}
 	}
 
 	@RunWith(Categories.class)
@@ -247,8 +273,9 @@ public class CategoryTest {
 	@SuiteClasses( { OneMoreTest.class })
 	public static class RunClassAsCategory {
 	}
-	
-	@Test public void classesCanBeCategories() {
+
+	@Test
+	public void classesCanBeCategories() {
 		assertThat(testResult(RunClassAsCategory.class), isSuccessful());
 	}
 }

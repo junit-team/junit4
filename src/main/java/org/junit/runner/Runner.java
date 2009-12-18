@@ -37,4 +37,8 @@ public abstract class Runner implements Describable {
 	public int testCount() {
 		return getDescription().testCount();
 	}
+
+	public Plan getPlan() {
+		return Plan.fromDescription(getDescription());
+	}
 }
