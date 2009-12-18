@@ -202,6 +202,7 @@ public class MaxStarterTest {
 		assertEquals(1, child.testCount());
 	}
 
+	// TODO: this test takes too dang long to run
 	@Test
 	public void testCountsMatchUp() {
 		JUnitCore core= new JUnitCore();

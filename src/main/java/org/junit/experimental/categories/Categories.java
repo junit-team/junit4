@@ -123,7 +123,7 @@ public class Categories extends Suite {
 		}
 
 		private Description parentDescription(Description description) {
-			// TODO: how heavy are we cringing?
+			// TODO: Descriptions should know their parents
 			return Description.createSuiteDescription(description.getTestClass());
 		}
 
