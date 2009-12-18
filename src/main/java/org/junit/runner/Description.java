@@ -106,13 +106,13 @@ public class Description {
 	 * @param description the soon-to-be child.
 	 */
 	public void addChild(Description description) {
-		getChildren().add(description);
+		fChildren.add(description);
 	}
 
 	/**
 	 * @return the receiver's children, if any
 	 */
-	public ArrayList<Description> getChildren() {
+	@Deprecated public ArrayList<Description> getChildren() {
 		return fChildren;
 	}
 

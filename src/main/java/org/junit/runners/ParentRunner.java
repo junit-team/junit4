@@ -43,10 +43,13 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 		Sortable {
 	private final TestClass fTestClass;
 
+	// TODO: remove these
 	private Filter fFilter= null;
 
 	private Sorter fSorter= Sorter.NULL;
 
+	private List<T> fCachedChildren= null;
+	
 	private RunnerScheduler fScheduler= new RunnerScheduler() {	
 		public void schedule(Runnable childStatement) {
 			childStatement.run();
