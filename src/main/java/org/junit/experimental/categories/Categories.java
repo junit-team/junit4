@@ -94,21 +94,26 @@ public class Categories extends Suite {
 
 		@Override
 		public boolean shouldRun(Description description) {
-			if (hasCorrectCategoryAnnotation(description))
+			if (isExcluded(description))
+				return false;
+			if (description.isSuite())
 				return true;
-			for (Description each : description.getChildren())
-				if (shouldRun(each))
+			return isIncludedMethod(description);
+		}
+
+		private boolean isExcluded(Description description) {
+			if (fExcluded == null)
+				return false;			
+			for (Class<?> each: categories(description))
+				if (fExcluded.isAssignableFrom(each))
 					return true;
 			return false;
 		}
 
-		private boolean hasCorrectCategoryAnnotation(Description description) {
+		private boolean isIncludedMethod(Description description) {
 			List<Class<?>> categories= categories(description);
 			if (categories.isEmpty())
 				return fIncluded == null;
-			for (Class<?> each : categories)
-				if (fExcluded != null && fExcluded.isAssignableFrom(each))
-					return false;
 			for (Class<?> each : categories)
 				if (fIncluded == null || fIncluded.isAssignableFrom(each))
 					return true;

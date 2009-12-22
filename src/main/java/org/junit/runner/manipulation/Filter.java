@@ -42,12 +42,7 @@ public abstract class Filter {
 			public boolean shouldRun(Description description) {
 				if (description.isTest())
 					return desiredDescription.equals(description);
-
-				// explicitly check if any children want to run
-				for (Description each : description.getChildren())
-					if (shouldRun(each))
-						return true;
-				return false;
+				return true;
 			}
 
 			@Override
