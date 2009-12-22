@@ -28,7 +28,7 @@ public class JUnit4TestAdapter implements Test, Filterable, Sortable, Describabl
 			JUnit4TestAdapterCache cache) {
 		fCache = cache;
 		fNewTestClass = newTestClass;
-		fRunner = Request.classWithoutSuiteMethod(newTestClass).getRunner();
+		fRunner = Request.classWithoutSuiteMethod(newTestClass).filterWith(removeIgnored()).getRunner();
 	}
 
 	public int countTestCases() {
@@ -50,20 +50,21 @@ public class JUnit4TestAdapter implements Test, Filterable, Sortable, Describabl
 	}
 	
 	public Description getDescription() {
-		Description description= fRunner.getDescription();		
-		return removeIgnored(description);
+		return fRunner.getDescription();
 	}
 
-	private Description removeIgnored(Description description) {
-		if (isIgnored(description))
-			return Description.EMPTY;
-		Description result = description.childlessCopy();
-		for (Description each : description.getChildren()) {
-			Description child= removeIgnored(each);
-			if (! child.isEmpty())
-				result.addChild(child);
-		}
-		return result;
+	private Filter removeIgnored() {
+		return new Filter() {			
+			@Override
+			public boolean shouldRun(Description description) {
+				return !isIgnored(description);
+			}
+			
+			@Override
+			public String describe() {
+				return "not ignored";
+			}
+		};
 	}
 
 	private boolean isIgnored(Description description) {
