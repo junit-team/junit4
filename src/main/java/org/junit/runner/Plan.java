@@ -6,7 +6,7 @@ import java.util.List;
 public class Plan {
 	private final Description fDescription;
 
-	public Plan(Description description) {
+	private Plan(Description description) {
 		fDescription= description;
 	}
 
@@ -22,8 +22,7 @@ public class Plan {
 		return results;
 	}
 
-	public static Plan fromDescription(Description description) {
+	static Plan fromDescription(Description description) {
 		return new Plan(description);
 	}
-
 }

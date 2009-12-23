@@ -5,7 +5,6 @@ import java.util.List;
 import org.junit.Ignore;
 import org.junit.runner.Describable;
 import org.junit.runner.Description;
-import org.junit.runner.Plan;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
@@ -42,7 +41,7 @@ public class JUnit4TestAdapter implements Test, Filterable, Sortable, Describabl
 
 	// reflective interface for Eclipse
 	public List<Test> getTests() {
-		return fCache.asTestList(Plan.fromDescription(getDescription()));
+		return fCache.asTestList(fRunner.getPlan());
 	}
 
 	// reflective interface for Eclipse
