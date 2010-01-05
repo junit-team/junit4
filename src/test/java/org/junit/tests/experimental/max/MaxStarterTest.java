@@ -193,33 +193,13 @@ public class MaxStarterTest {
 	}
 
 	@Test
-	public void saffSqueezeExample() throws Exception {
+	public void filterSingleMethodFromOldTestClass() throws Exception {
 		final Description method= Description.createTestDescription(
 				TwoOldTests.class, "testOne");
 		Filter filter= Filter.matchMethodDescription(method);
 		JUnit38ClassRunner child= new JUnit38ClassRunner(TwoOldTests.class);
 		child.filter(filter);
 		assertEquals(1, child.testCount());
-	}
-
-	@Test
-	public void testCountsMatchUp() {
-		JUnitCore core= new JUnitCore();
-		Request filtered= Request.aClass(AllTests.class).filterWith(
-				new Filter() {
-					@Override
-					public boolean shouldRun(Description description) {
-						return !description.toString().contains("Max");
-					}
-
-					@Override
-					public String describe() {
-						return "Avoid infinite recursion";
-					}
-				});
-		int maxCount= fMax.run(filtered, core).getRunCount();
-		int coreCount= core.run(filtered).getRunCount();
-		assertEquals(coreCount, maxCount);
 	}
 
 	@Test

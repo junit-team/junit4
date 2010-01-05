@@ -26,7 +26,6 @@ import java.util.regex.Pattern;
  * @see org.junit.runner.Runner
  */
 public class Description {
-	
 	/**
 	 * Create a <code>Description</code> named <code>name</code>.
 	 * Generally, you will add children to this <code>Description</code>.
