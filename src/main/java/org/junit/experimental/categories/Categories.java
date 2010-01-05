@@ -95,7 +95,7 @@ public class Categories extends Suite {
 		@Override
 		public boolean shouldRun(Description description) {
 			return hasCorrectCategoryAnnotation(description)
-					|| !description.isTest();
+					|| description.isSuite();
 		}
 
 		private boolean hasCorrectCategoryAnnotation(Description description) {

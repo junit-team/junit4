@@ -9,6 +9,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * TODO: Make really clear how this has changed.
+ * 
  * <p>A <code>Description</code> describes a test which is to be run or has been run. <code>Descriptions</code> 
  * can be atomic (a single test) or compound (containing children tests). <code>Descriptions</code> are used
  * to provide feedback about the tests that are about to run (for example, the tree view
@@ -112,6 +114,9 @@ public class Description {
 
 	/**
 	 * @return the receiver's children, if any
+	 * @deprecated Description should not be used for walking the test tree.
+	 * Instead, call {@code Runner.getPlan} to get a {@code Plan}, and use
+	 * {@code Plan.getChildren}
 	 */
 	@Deprecated public ArrayList<Description> getChildren() {
 		return fChildren;

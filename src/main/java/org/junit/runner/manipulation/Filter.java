@@ -37,7 +37,7 @@ public abstract class Filter {
 			@Override
 			public boolean shouldRun(Description description) {
 				// TODO: DUP!
-				return !description.isTest() || desiredDescription.equals(description);
+				return description.isSuite() || desiredDescription.equals(description);
 			}
 
 			@Override

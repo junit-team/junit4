@@ -163,7 +163,7 @@ public class SingleMethodTest {
 	}
 	
 	@Test public void classesWithSuiteMethodsAreFiltered() {
-		int testCount= Request.method(HasSuiteMethod.class, "a").getRunner().getDescription().testCount();
+		int testCount= Request.method(HasSuiteMethod.class, "a").getRunner().testCount();
 		assertThat(testCount, is(1));
 	}
 }

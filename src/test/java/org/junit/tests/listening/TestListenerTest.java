@@ -2,9 +2,11 @@ package org.junit.tests.listening;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
+import org.junit.runner.Plan;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
@@ -59,5 +61,21 @@ public class TestListenerTest {
 		Result first= core.run(OneTest.class);
 		Result second= core.run(OneTest.class);
 		assertNotSame(first, second);
+	}
+	
+
+	@Test public void callPlanVersionOfTestRunStarted() {
+		JUnitCore core= new JUnitCore();
+		
+		final boolean[] wasCalled= new boolean[1];
+		wasCalled[0]= false;
+		core.addListener(new RunListener() {
+			@Override
+			public void testRunStarted(Plan plan) throws Exception {
+				wasCalled[0]= true;
+			}
+		});
+		core.run(OneTest.class);
+		assertTrue(wasCalled[0]);
 	}
 }
