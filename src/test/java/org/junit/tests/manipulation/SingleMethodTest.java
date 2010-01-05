@@ -12,6 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
+import org.junit.runner.Plan;
 import org.junit.runner.Request;
 import org.junit.runner.Result;
 import org.junit.runner.RunWith;
@@ -148,8 +149,8 @@ public class SingleMethodTest {
 		Runner runner = Request.aClass(OneTwoSuite.class).filterWith(
 				Description.createTestDescription(TestOne.class, "a"))
 				.getRunner();
-		Description description = runner.getDescription();
-		assertEquals(1, description.getChildren().size());
+		Plan plan = runner.getPlan();
+		assertEquals(1, plan.getChildren().size());
 	}
 	
 	public static class HasSuiteMethod {

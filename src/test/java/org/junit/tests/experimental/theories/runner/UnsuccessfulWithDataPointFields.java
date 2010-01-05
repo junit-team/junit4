@@ -28,8 +28,8 @@ public class UnsuccessfulWithDataPointFields {
 
 	@Test
 	public void theoryClassMethodsShowUp() throws Exception {
-		assertThat(new Theories(HasATheory.class).getDescription()
-				.getChildren().size(), is(1));
+		assertThat(new Theories(HasATheory.class).getPlan().getChildren()
+				.size(), is(1));
 	}
 
 	@Test
@@ -119,8 +119,7 @@ public class UnsuccessfulWithDataPointFields {
 
 	@Test
 	public void theoriesMustBePublic() {
-		assertThat(
-				testResult(TheoriesMustBePublic.class),
+		assertThat(testResult(TheoriesMustBePublic.class),
 				hasSingleFailureContaining("public"));
 	}
 }
