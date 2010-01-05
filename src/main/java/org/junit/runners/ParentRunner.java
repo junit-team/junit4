@@ -46,8 +46,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
 	private List<T> fCachedChildren= null;
 
-	// TODO: unpublic!
-	public RunnerScheduler fScheduler= new RunnerScheduler() {
+	private RunnerScheduler fScheduler= new RunnerScheduler() {
 		public void schedule(Runnable childStatement) {
 			childStatement.run();
 		}
@@ -184,8 +183,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	 * on each object returned by {@link #getChildren()} (subject to any imposed
 	 * filter and sort)
 	 */
-	// TODO: public?
-	public Statement childrenInvoker(final RunNotifier notifier) {
+	protected Statement childrenInvoker(final RunNotifier notifier) {
 		return new Statement() {
 			@Override
 			public void evaluate() {
@@ -194,8 +192,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 		};
 	}
 
-	// TODO: public?
-	public void runChildren(final RunNotifier notifier) {
+	private void runChildren(final RunNotifier notifier) {
 		for (final T each : getCachedChildren())
 			fScheduler.schedule(new Runnable() {
 				public void run() {
@@ -291,8 +288,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 			throw new InitializationError(errors);
 	}
 
-	// TODO: public?
-	public List<T> getCachedChildren() {
+	private List<T> getCachedChildren() {
 		if (fCachedChildren == null)
 			fCachedChildren= getChildren();
 		return fCachedChildren;

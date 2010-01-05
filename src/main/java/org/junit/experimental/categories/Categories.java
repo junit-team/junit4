@@ -94,17 +94,26 @@ public class Categories extends Suite {
 
 		@Override
 		public boolean shouldRun(Description description) {
-			return hasCorrectCategoryAnnotation(description)
-					|| description.isSuite();
+			if (isExcluded(description))
+				return false;
+			if (description.isSuite())
+				return true;
+			return isIncludedMethod(description);
 		}
 
-		private boolean hasCorrectCategoryAnnotation(Description description) {
+		private boolean isExcluded(Description description) {
+			if (fExcluded == null)
+				return false;			
+			for (Class<?> each: categories(description))
+				if (fExcluded.isAssignableFrom(each))
+					return true;
+			return false;
+		}
+
+		private boolean isIncludedMethod(Description description) {
 			List<Class<?>> categories= categories(description);
 			if (categories.isEmpty())
 				return fIncluded == null;
-			for (Class<?> each : categories)
-				if (fExcluded != null && fExcluded.isAssignableFrom(each))
-					return false;
 			for (Class<?> each : categories)
 				if (fIncluded == null || fIncluded.isAssignableFrom(each))
 					return true;
@@ -120,9 +129,8 @@ public class Categories extends Suite {
 		}
 
 		private Description parentDescription(Description description) {
-			// TODO: how heavy are we cringing?
-			return Description.createSuiteDescription(description
-					.getTestClass());
+			// TODO: Descriptions should know their parents
+			return Description.createSuiteDescription(description.getTestClass());
 		}
 
 		private Class<?>[] directCategories(Description description) {

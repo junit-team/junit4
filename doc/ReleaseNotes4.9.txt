@@ -1,0 +1,4 @@
+## Summary of Changes in version 4.9 ##
+
+- Improved documentation of `Filter` specification, enabling a more succinct
+  implementation of `ParentRunner`.
