@@ -16,10 +16,9 @@ import org.junit.runner.manipulation.Sorter;
 public class JUnit4TestAdapter implements Test, Filterable, Sortable, Describable {
 	private final Class<?> fNewTestClass;
 
-	// TODO: unpublic all fields!
-	public Runner fRunner;
+	private final Runner fRunner;
 
-	public JUnit4TestAdapterCache fCache;
+	private final JUnit4TestAdapterCache fCache;
 
 	public JUnit4TestAdapter(Class<?> newTestClass) {
 		this(newTestClass, JUnit4TestAdapterCache.getDefault());

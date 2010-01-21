@@ -10,7 +10,10 @@ import junit.framework.TestSuite;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
+import org.junit.runner.Plan;
+import org.junit.runner.Request;
 import org.junit.runner.Result;
+import org.junit.runner.Runner;
 
 public class SuiteMethodTest {
 	public static boolean wasRun;
@@ -74,9 +77,9 @@ public class SuiteMethodTest {
 		assertEquals(0, result.getIgnoreCount());
 
 		Runner runner= Request.aClass(CompatibilityTest.class).getRunner();
-		Description description= runner.getDescription();
-		assertEquals(1, description.getChildren().size());
-		assertEquals("initializationError", description.getChildren().get(0)
+		Plan plan= runner.getPlan();
+		assertEquals(1, plan.getChildren().size());
+		assertEquals("initializationError", plan.getChildren().get(0).getDescription()
 				.getMethodName());
 	}
 
