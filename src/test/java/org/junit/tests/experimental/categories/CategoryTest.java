@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Categories;
 import org.junit.experimental.categories.Category;
@@ -277,5 +278,28 @@ public class CategoryTest {
 	@Test
 	public void classesCanBeCategories() {
 		assertThat(testResult(RunClassAsCategory.class), isSuccessful());
+	}
+	
+	public static class LeafClass {
+		@Test public void a() {}
+	}
+	
+	@RunWith(Suite.class)
+	@Category(String.class)
+	@SuiteClasses({LeafClass.class})
+	public static class CategorizedSuite {
+	}
+	
+	@RunWith(Categories.class)
+	@IncludeCategory(String.class)
+	@SuiteClasses({CategorizedSuite.class})
+	public static class ParentSuite {
+	}
+	
+	// TODO: fix fix fix!
+	@Ignore @Test public void categoriesOnSuiteTrickleDown() {
+		Result result= new JUnitCore().run(ParentSuite.class);
+		assertEquals(1, result.getRunCount());
+		assertEquals(0, result.getFailureCount());
 	}
 }

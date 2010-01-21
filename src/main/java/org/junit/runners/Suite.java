@@ -54,8 +54,7 @@ public class Suite extends ParentRunner<Runner> {
 		return annotation.value();
 	}
 
-	// TODO: put back!
-	public final List<Runner> fRunners;
+	private final List<Runner> fRunners;
 
 	/**
 	 * Called reflectively on classes annotated with <code>@RunWith(Suite.class)</code>

@@ -63,9 +63,8 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	// Implementation of ParentRunner
 	// 
 
-	// TODO: public?
 	@Override
-	public void runChild(FrameworkMethod method, RunNotifier notifier) {
+	protected void runChild(FrameworkMethod method, RunNotifier notifier) {
 		EachTestNotifier eachNotifier= makeNotifier(method, notifier);
 		if (method.getAnnotation(Ignore.class) != null) {
 			runIgnored(eachNotifier);
@@ -251,8 +250,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	 * This can be overridden in subclasses, either by overriding this method,
 	 * or the implementations creating each sub-statement.
 	 */
-	// TODO: public?
-	public Statement methodBlock(FrameworkMethod method) {
+	protected Statement methodBlock(FrameworkMethod method) {
 		Object test;
 		try {
 			test= new ReflectiveCallable() {
