@@ -3,3 +3,11 @@ bin
 junit4.*
 target
 MaxCore.max
+# IntelliJ
+.idea
+*.ipr
+*.iml
+*.iws
+build
+out
+
