@@ -40,7 +40,6 @@ public class Description {
 			throw new IllegalArgumentException("name must have non-zero length");
 		return new Description(name, annotations);
 	}
-
 	/**
 	 * Create a <code>Description</code> of a single test named <code>name</code> in the class <code>clazz</code>.
 	 * Generally, this will be a leaf <code>Description</code>.
@@ -86,10 +85,12 @@ public class Description {
 	 */
 	public static final Description TEST_MECHANISM= new Description("Test mechanism");
 	
+	// This is vestigial
 	private final ArrayList<Description> fChildren= new ArrayList<Description>();
-	private final String fDisplayName;
-	
+
+	private final String fDisplayName;	
 	private final Annotation[] fAnnotations;
+	private Description fParent = null;
 	
 	private Description(final String displayName, Annotation... annotations) {
 		fDisplayName= displayName;
@@ -110,6 +111,11 @@ public class Description {
 	public void addChild(Description description) {
 		// TODO: deprecate this, too
 		fChildren.add(description);
+		description.setParent(this);
+	}
+
+	public void setParent(Description parent) {
+		fParent = parent;
 	}
 
 	/**
@@ -247,5 +253,9 @@ public class Description {
 
 	List<Description> getChildrenInternal() {
 		return fChildren;
+	}
+
+	public Description getParentDescription() {
+		return fParent;
 	}
 }

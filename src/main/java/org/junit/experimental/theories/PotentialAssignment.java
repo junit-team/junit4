@@ -25,6 +25,10 @@ public abstract class PotentialAssignment {
 		};
 	}
 	
+	public static PotentialAssignment forValue(final Object value) {
+		return forValue(value.toString(), value);
+	}
+	
 	public abstract Object getValue() throws CouldNotGenerateValueException;
 	
 	public abstract String getDescription() throws CouldNotGenerateValueException;

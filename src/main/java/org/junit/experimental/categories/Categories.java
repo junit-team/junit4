@@ -122,15 +122,15 @@ public class Categories extends Suite {
 
 		private List<Class<?>> categories(Description description) {
 			ArrayList<Class<?>> categories= new ArrayList<Class<?>>();
-			categories.addAll(Arrays.asList(directCategories(description)));
-			categories.addAll(Arrays
-					.asList(directCategories(parentDescription(description))));
+			while (description != null) {
+				categories.addAll(Arrays.asList(directCategories(description)));
+				description = parentDescription(description);
+			}
 			return categories;
 		}
 
 		private Description parentDescription(Description description) {
-			// TODO: Descriptions should know their parents
-			return Description.createSuiteDescription(description.getTestClass());
+			return description.getParentDescription();
 		}
 
 		private Class<?>[] directCategories(Description description) {

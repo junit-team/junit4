@@ -44,6 +44,9 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 		Sortable {
 	private final TestClass fTestClass;
 
+	// TODO: does it has to be lazy?
+	private Description fDescription= null;
+
 	private List<T> fCachedChildren= null;
 
 	private RunnerScheduler fScheduler= new RunnerScheduler() {
@@ -158,8 +161,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	 * ; if any throws an Exception, stop execution and pass the exception on.
 	 */
 	protected Statement withBeforeClasses(Statement statement) {
-		List<FrameworkMethod> befores= getTestClass()
-				.getAnnotatedMethods(BeforeClass.class);
+		List<FrameworkMethod> befores= getTestClass().getAnnotatedMethods(
+				BeforeClass.class);
 		return befores.isEmpty() ? statement : new RunBefores(statement,
 				befores, null);
 	}
@@ -172,8 +175,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	 * AfterClass methods into a {@link MultipleFailureException}.
 	 */
 	protected Statement withAfterClasses(Statement statement) {
-		List<FrameworkMethod> afters= getTestClass()
-				.getAnnotatedMethods(AfterClass.class);
+		List<FrameworkMethod> afters= getTestClass().getAnnotatedMethods(
+				AfterClass.class);
 		return afters.isEmpty() ? statement : new RunAfters(statement, afters,
 				null);
 	}
@@ -226,11 +229,13 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
 	@Override
 	public Description getDescription() {
-		Description description= Description.createSuiteDescription(getName(),
-				fTestClass.getAnnotations());
-		for (T child : getCachedChildren())
-			description.addChild(describeChild(child));
-		return description;
+		if (fDescription == null) {
+			// TODO: extract createDescription?
+			fDescription= Description.createSuiteDescription(getName(), fTestClass.getAnnotations());
+			for (T child : getCachedChildren())
+				fDescription.addChild(describeChild(child));
+		}
+		return fDescription;
 	}
 
 	@Override
@@ -266,6 +271,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 				}
 		}
 
+		fDescription = null;
+		
 		if (getCachedChildren().isEmpty())
 			throw new NoTestsRemainException();
 	}

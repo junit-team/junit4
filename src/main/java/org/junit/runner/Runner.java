@@ -19,6 +19,8 @@ import org.junit.runner.notification.RunNotifier;
  * @see org.junit.runner.RunWith
  */
 public abstract class Runner implements Describable {
+	private Description fParent = null;
+	
 	/* (non-Javadoc)
 	 * @see org.junit.runner.Describable#getDescription()
 	 */
@@ -40,5 +42,13 @@ public abstract class Runner implements Describable {
 	
 	public Plan getPlan() {
 		return Plan.fromDescription(getDescription());
+	}
+	
+	public void setParent(Description parent) {
+		fParent= parent;
+	}
+	
+	protected Description getParent() {
+		return fParent;
 	}
 }
