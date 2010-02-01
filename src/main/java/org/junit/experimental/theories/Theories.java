@@ -66,6 +66,7 @@ public class Theories extends BlockJUnit4ClassRunner {
 		return new TheoryAnchor(method);
 	}
 
+	// TODO: this should be static
 	public class TheoryAnchor extends Statement {
 		private int successes= 0;
 
