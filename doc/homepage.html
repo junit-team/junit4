@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0029)http://junit.sourceforge.net/ -->
+<HTML><HEAD><TITLE>JUnit</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<META content="MSHTML 6.00.2712.300" name=GENERATOR>
+<META content="Erich Gamma" name=Author></HEAD>
+<BODY>
+<H1><B><FONT color=#00cc00>J</FONT><FONT color=#ff0000>U</FONT><FONT
+color=#000000>nit </FONT></B></H1>
+<P>JUnit is a simple framework to write repeatable tests. It is an instance of
+the xUnit architecture for unit testing frameworks.
+<UL>
+  <LI><A href="http://junit.sourceforge.net/#Getting">Getting Started</A>
+
+  <LI><A href="http://junit.sourceforge.net/#Documentation">Documentation</A>
+  <LI><A href="http://junit.sourceforge.net/#Related">JUnit related
+  sites/projects</A> </LI>
+  <LI><A href="http://junit.sourceforge.net/#Mail">Mailing Lists</A></LI>
+  <LI><A href="http://junit.sourceforge.net/#Developer">Get Involved</A></LI>
+</UL>
+
+<h2>
+<a NAME="Getting"></a>Getting Started</h2>
+
+To get started with unit testing and JUnit read the article:
+<a href="doc/cookbook/cookbook.htm">JUnit Cookbook</a>.
+<br>This article describes basic test writing using JUnit 4.
+<p>You find additional samples in the org.junit.samples package:
+<ul>
+<li>
+SimpleTest.java - some simple test cases</li>
+
+<li>
+VectorTest.java - test cases for java.util.Vector</li>
+</ul>
+<P>JUnit 4.x only comes with a textual TestRunner.  For graphical feedback,
+most major IDE's support
+JUnit 4. If necessary, you can run JUnit 4 tests in a JUnit 3
+environment by adding the following method to each test class:
+<pre>
+public static Test suite() {
+   return new JUnit4TestAdapter(ThisClass.class);
+} 
+
+</pre>
+
+<h2>
+<a NAME="Documentation"></a>Documentation</h2>
+
+<blockquote><a href="doc/cookbook/cookbook.htm">JUnit Cookbook</a>
+<br>&nbsp;&nbsp;&nbsp; A cookbook for implementing tests with JUnit.
+<br><a href="javadoc_40/index.html">Javadoc</a>
+<br>&nbsp;&nbsp;&nbsp; API documentation generated with javadoc.
+<br><a href="doc/faq/faq.htm">Frequently asked questions</a>
+<br>&nbsp;&nbsp;&nbsp; Some frequently asked questions about using JUnit.
+
+<br><a href="README.html">Release notes</a>
+<br>&nbsp;&nbsp;&nbsp; Latest JUnit release notes
+<br><a href="cpl-v10.html">License</a>
+<br>&nbsp;&nbsp;&nbsp; The terms of the common public license used for JUnit.<br>
+</blockquote>
+The following documents still describe JUnit 3.8.
+<blockquote>
+<br><a href="junit3.8.1/index.html">The JUnit 3.8 version of this homepage</a>
+<br><a href="doc/testinfected/testing.htm">Test Infected - Programmers
+Love Writing Tests</a>
+<br>&nbsp;&nbsp;&nbsp; An article demonstrating the development process
+with JUnit.
+
+<br><a href="doc/cookstour/cookstour.htm">JUnit - A cooks tour</a>
+</blockquote>
+
+<H2><A name=Related></A>JUnit Related Projects/Sites</H2>
+<UL>
+  <LI><A href="http://www.junit.org/">junit.org</A> - a site for software
+  developers using JUnit. It provides instructions for how to integrate JUnit
+  with development tools like JBuilder and VisualAge/Java.  As well as articles
+  about and extensions to JUnit.</LI>
+  <LI><A href="http://www.xprogramming.com/software.htm">XProgramming.com</A> -
+  various implementations of the xUnit testing framework architecture.&nbsp;</LI>
+
+</UL>
+<H2><A name=Mail></A>Mailing Lists</H2>
+There are three junit mailing lists:
+<UL>
+  <LI>JUnit announce: junit-announce@lists.sourceforge.net <A
+  href="http://lists.sourceforge.net/lists/listinfo/junit-announce">Archives/Subscribe/Unsubscribe</A></LI>
+    <LI>JUnit users list: junit@yahoogroups.com <A
+    href="http://groups.yahoo.com/group/junit/">Archives/Subscribe/Unsubscribe</A></LI>
+      <LI>JUnit developer list: junit-devel@lists.sourceforge.net <A
+      href="http://lists.sourceforge.net/lists/listinfo/junit-devel">Archives/Subscribe/Unsubscribe</A></LI>
+
+      </UL>
+
+      <H2><A name=Developer></A>Get Involved</H2>
+      JUnit celebrates programmers testing their own software.  As a result
+      bugs, patches, and feature requests which include JUnit TestCases have a
+      better
+      chance of being addressed than those without.  
+      
+      <br/>
+      JUnit is forged on
+      Sourceforge please use the tools <A
+      href="http://sf.net/projects/junit">provided</A> for your submissions.
+
+      <br/>
+      JUnit source code is now hosted on <a href="http://github.com/KentBeck/junit">GitHub</a>.
+
+<hr WIDTH="100%">
+<font size="1">
+hosted by </font> <A href="http://sourceforge.net"><IMG src="http://sourceforge.net/sflogo.php?group_id=15278" width="88" height="31"
+border="0" alt="SourceForge Logo"></A>
+</font>
+
+</BODY></HTML>

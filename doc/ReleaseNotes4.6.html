@@ -1,0 +1,106 @@
+<h2>Summary of Changes in version 4.6</h2>
+
+<h3>Max</h3>
+
+<p>JUnit now includes a new experimental Core, <code>MaxCore</code>.  <code>MaxCore</code>
+remembers the results of previous test runs in order to run new
+tests out of order.  <code>MaxCore</code> prefers new tests to old tests, fast
+tests to slow tests, and recently failing tests to tests that last
+failed long ago.  There's currently not a standard UI for running
+<code>MaxCore</code> included in JUnit, but there is a UI included in the JUnit
+Max Eclipse plug-in at:</p>
+
+<p>http://www.junitmax.com/junitmax/subscribe.html</p>
+
+<p>Example:</p>
+
+<pre><code>public static class TwoUnEqualTests {
+    @Test
+    public void slow() throws InterruptedException {
+        Thread.sleep(100);
+        fail();
+    }
+
+    @Test
+    public void fast() {
+        fail();
+    }
+}
+
+@Test
+public void rememberOldRuns() {
+    File maxFile = new File("history.max");
+    MaxCore firstMax = MaxCore.storedLocally(maxFile);
+    firstMax.run(TwoUnEqualTests.class);
+
+    MaxCore useHistory= MaxCore.storedLocally(maxFile);
+    List&lt;Failure&gt; failures= useHistory.run(TwoUnEqualTests.class)
+            .getFailures();
+    assertEquals("fast", failures.get(0).getDescription().getMethodName());
+    assertEquals("slow", failures.get(1).getDescription().getMethodName());
+}
+</code></pre>
+
+<h3>Test scheduling strategies</h3>
+
+<p><code>JUnitCore</code> now includes an experimental method that allows you to
+specify a model of the <code>Computer</code> that runs your tests.  Currently,
+the only built-in Computers are the default, serial runner, and two
+runners provided in the <code>ParallelRunner</code> class:
+<code>ParallelRunner.classes()</code>, which runs classes in parallel, and
+<code>ParallelRunner.methods()</code>, which runs classes and methods in parallel.</p>
+
+<p>This feature is currently less stable than MaxCore, and may be
+merged with MaxCore in some way in the future.</p>
+
+<p>Example:</p>
+
+<pre><code>public static class Example {
+    @Test public void one() throws InterruptedException {
+        Thread.sleep(1000);
+    }
+    @Test public void two() throws InterruptedException {
+        Thread.sleep(1000);
+    }
+}
+
+@Test public void testsRunInParallel() {
+    long start= System.currentTimeMillis();
+    Result result= JUnitCore.runClasses(ParallelComputer.methods(),
+            Example.class);
+    assertTrue(result.wasSuccessful());
+    long end= System.currentTimeMillis();
+    assertThat(end - start, betweenInclusive(1000, 1500));
+}
+</code></pre>
+
+<h3>Comparing double arrays</h3>
+
+<p>Arrays of doubles can be compared, using a delta allowance for equality:</p>
+
+<pre><code>@Test
+public void doubleArraysAreEqual() {
+    assertArrayEquals(new double[] {1.0, 2.0}, new double[] {1.0, 2.0}, 0.01);
+}
+</code></pre>
+
+<h3><code>Filter.matchDescription</code> API</h3>
+
+<p>Since 4.0, it has been possible to run a single method using the <code>Request.method</code> 
+API.  In 4.6, the filter that implements this is exposed as <code>Filter.matchDescription</code>.</p>
+
+<h3>Documentation</h3>
+
+<ul>
+<li><p>A couple classes and packages that once had empty javadoc have been
+doc'ed.</p></li>
+<li><p>Added how to run JUnit from the command line to the cookbook.</p></li>
+<li><p>junit-4.x.zip now contains build.xml</p></li>
+</ul>
+
+<h3>Bug fixes</h3>
+
+<ul>
+<li>Fixed overly permissive @DataPoint processing (2191102)</li>
+<li>Fixed bug in test counting after an ignored method (2106324)</li>
+</ul>

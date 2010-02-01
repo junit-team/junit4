@@ -1,0 +1,260 @@
+<h2>Summary of Changes in version 4.7</h2>
+
+<h3>Rules</h3>
+
+<ul>
+<li><p>Rules allow very flexible addition or redefinition of the behavior
+of each test method in a test class.  Testers can reuse or extend one of the 
+provided Rules below, or write their own.</p>
+
+<p>For more on this feature, see http://www.threeriversinstitute.org/blog/?p=155</p></li>
+<li><p>The TemporaryFolder Rule allows creation of files and folders
+that are guaranteed to be deleted when the test method finishes
+(whether it passes or fails):</p>
+
+<p>public static class HasTempFolder {
+    @Rule
+    public TemporaryFolder folder= new TemporaryFolder();</p>
+
+<pre><code>@Test
+public void testUsingTempFolder() throws IOException {
+    File createdFile= folder.newFile("myfile.txt");
+    File createdFolder= folder.newFolder("subfolder");
+    // ...
+}
+</code></pre>
+
+<p>}</p></li>
+<li><p>ExternalResource is a base class for Rules (like TemporaryFolder)
+that set up an external resource before a test (a file, socket, server,
+database connection, etc.), and guarantee to tear it down afterward:</p>
+
+<p>public static class UsesExternalResource {
+    Server myServer = new Server();</p>
+
+<pre><code>@Rule public ExternalResource resource = new ExternalResource() {
+    @Override
+    protected void before() throws Throwable {
+        myServer.connect();
+    };
+
+
+<pre><code>@Override
+protected void after() {
+    myServer.disconnect();
+};
+</code></pre>
+
+};
+
+
+@Test public void testFoo() {
+    new Client().run(myServer);
+}
+</code></pre>
+
+<p>}</p></li>
+<li><p>The ErrorCollector Rule allows execution of a test to continue
+after the first problem is found (for example, to collect <em>all</em> the 
+incorrect rows in a table, and report them all at once):</p>
+
+<p>public static class UsesErrorCollectorTwice {
+    @Rule
+    public ErrorCollector collector= new ErrorCollector();</p>
+
+<pre><code>@Test public void example() {
+    collector.addError(new Throwable("first thing went wrong"));
+    collector.addError(new Throwable("second thing went wrong"));
+}
+</code></pre>
+
+<p>}</p></li>
+<li><p>Verifier is a base class for Rules like ErrorCollector, which
+can turn otherwise passing test methods into failing tests if a verification
+check is failed</p>
+
+<p>public static class ErrorLogVerifier() {
+   private ErrorLog errorLog = new ErrorLog();</p>
+
+<p>@Rule
+   public MethodRule verifier = new Verifier() {
+      @Override public void verify() {
+         assertTrue(errorLog.isEmpty());
+      }
+   }</p>
+
+<p>@Test public void testThatMightWriteErrorLog() {
+      // ...
+   }
+}</p></li>
+<li><p>TestWatchman is a base class for Rules that take note
+of the testing action, without modifying it.
+For example, this class will keep a log of each passing and failing 
+test:</p>
+
+<p>public static class WatchmanTest {
+    private static String watchedLog;</p>
+
+<pre><code>@Rule
+public MethodRule watchman= new TestWatchman() {
+    @Override
+    public void failed(Throwable e, FrameworkMethod method) {
+        watchedLog+= method.getName() + " "
+                + e.getClass().getSimpleName() + "\n";
+    }
+
+
+<pre><code>@Override
+public void succeeded(FrameworkMethod method) {
+    watchedLog+= method.getName() + " " + "success!\n";
+}
+</code></pre>
+
+};
+
+
+@Test
+public void fails() {
+    fail();
+}
+
+
+@Test
+public void succeeds() {
+}
+</code></pre>
+
+<p>}</p></li>
+<li><p>The TestName Rule makes the current test name available inside test methods:</p>
+
+<p>public class NameRuleTest {
+    @Rule public TestName name = new TestName();</p>
+
+<pre><code>@Test public void testA() {
+    assertEquals("testA", name.getMethodName());
+}
+
+
+@Test public void testB() {
+    assertEquals("testB", name.getMethodName());
+}
+</code></pre>
+
+<p>}</p></li>
+<li><p>The Timeout Rule applies the same timeout to all test methods in a class:</p>
+
+<p>public static class HasGlobalTimeout {
+    public static String log;</p>
+
+<pre><code>@Rule public MethodRule globalTimeout = new Timeout(20);
+
+
+@Test public void testInfiniteLoop1() {
+    log+= "ran1";
+    for(;;) {}
+}
+
+
+@Test public void testInfiniteLoop2() {
+    log+= "ran2";
+    for(;;) {}
+}
+</code></pre>
+
+<p>}</p></li>
+<li><p>The ExpectedException Rule allows in-test specification
+of expected exception types and messages:</p>
+
+<p>public static class HasExpectedException {
+    @Rule
+    public ExpectedException thrown= ExpectedException.none();</p>
+
+<pre><code>@Test
+public void throwsNothing() {
+
+
+}
+
+
+@Test
+public void throwsNullPointerException() {
+    thrown.expect(NullPointerException.class);
+    throw new NullPointerException();
+}
+
+
+@Test
+public void throwsNullPointerExceptionWithMessage() {
+    thrown.expect(NullPointerException.class);
+    thrown.expectMessage("happened?");
+    thrown.expectMessage(startsWith("What"));
+    throw new NullPointerException("What happened?");
+}
+</code></pre>
+
+<p>}</p></li>
+</ul>
+
+<h3>Timeouts</h3>
+
+<ul>
+<li>Tests that time out now show the stack trace of the test thread.</li>
+</ul>
+
+<h3>Matchers</h3>
+
+<ul>
+<li><p>Hamcrest 1.2 is now incorporated (http://github.com/KentBeck/junit/issues#issue/1)</p>
+
+<ul>
+<li>The following methods from <code>JUnitMatchers</code> are deprecated, and moved to <code>CoreMatchers</code>:</li>
+<li><code>JUnitMatchers.hasItem</code> is now <code>CoreMatchers.hasItem</code></li>
+<li><code>JUnitMatchers.hasItems</code> is now <code>CoreMatchers.hasItems</code></li>
+<li><p><code>JUnitMatchers.containsString</code> is now <code>CoreMatchers.containsString</code></p></li>
+<li><p>Matchers now have more informative mismatch descriptions.  For example:</p>
+
+<p>@SuppressWarnings("unchecked")
+@Test public void stringIsAnInteger() {
+  assertThat("identifier", "actual", matches(is(Integer.class)));
+  // prints:
+  // Expected: is an instance of java.lang.Integer
+  //      but: \"actual\" is a java.lang.String
+}</p></li>
+<li><p>Some matchers have slightly changed type signatures, especially those created
+by <code>is()</code> and <code>equalTo</code>.  Everything should work, except see <code>BothTest</code> for an
+example of how the <code>both().and()</code> and <code>either().or()</code> constructs may be
+affected.  To essentially disable type-checking for a matcher expression,
+use <code>JUnitMatchers.matches()</code> (see below)</p></li>
+<li><p><code>JUnitMatchers.isOneOf(...)</code> is sugar for the situation where you want to specify
+a finite list of concrete objects that can match.  For example:</p>
+
+<p>assertThat(3, isOneOf(3, 4));</p></li>
+<li><p><code>JUnitMatchers.matches()</code> disables type-checking of a matcher entirely.</p>
+
+<p>Goofy example:</p>
+
+<p>assertThat(3, matches(containsString("a")));</p>
+
+<p>Real example:</p>
+
+<p>assertThat(3, either(matches(is(String.class))).or(
+                     matches(is(Integer.class))));</p></li>
+</ul></li>
+</ul>
+
+<h3>Docs</h3>
+
+<ul>
+<li>Javadocs now link to online JDK javadocs (bug 2090230)</li>
+<li>Parameterized runner javadocs improved (bug 2186792)</li>
+<li>Fixed Javadoc code sample for AfterClass (2126279)</li>
+<li>Fixed Javadoc for assertArraysEqual(float[], float[])</li>
+</ul>
+
+<h3>Bug fixes</h3>
+
+<ul>
+<li>Fixed: BaseTestRunner.getTest() requires class to extend TestCase (1812200)</li>
+<li>Fixed: Suite does not allow for inheritance in annotations (2783118)</li>
+<li>Fixed: ParallelComputer skipped tests that took longer than 2 seconds</li>
+</ul>
