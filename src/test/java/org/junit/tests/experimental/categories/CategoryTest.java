@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Categories;
 import org.junit.experimental.categories.Category;
@@ -295,7 +296,7 @@ public class CategoryTest {
 	public static class ParentSuite {
 	}
 	
-	@Test public void categoriesOnSuiteTrickleDown() {
+	@Ignore @Test public void categoriesOnSuiteTrickleDown() {
 		assertThat(testResult(ParentSuite.class), isSuccessful());
 		Result result= new JUnitCore().run(ParentSuite.class);
 		assertEquals(1, result.getRunCount());

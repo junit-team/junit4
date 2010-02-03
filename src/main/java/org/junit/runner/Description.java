@@ -111,7 +111,7 @@ public class Description {
 	public void addChild(Description description) {
 		// TODO: deprecate this, too
 		fChildren.add(description);
-		description.setParent(this);
+		// description.setParent(this);
 	}
 
 	public void setParent(Description parent) {
