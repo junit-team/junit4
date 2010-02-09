@@ -2,7 +2,6 @@ package org.junit.runners;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
@@ -182,7 +181,8 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	}
 
 	private void validateFields(List<Throwable> errors) {
-		for (FrameworkField each : ruleFields())
+		for (FrameworkField each : getTestClass()
+				.getAnnotatedFields(Rule.class))
 			validateRuleField(each.getField(), errors);
 	}
 
@@ -352,33 +352,10 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	private Statement withRules(FrameworkMethod method, Object target,
 			Statement statement) {
 		Statement result= statement;
-		for (MethodRule each : rules(target))
+		for (MethodRule each : getTestClass().getAnnotatedFieldValues(target,
+				Rule.class, MethodRule.class))
 			result= each.apply(result, method, target);
 		return result;
-	}
-
-	/**
-	 * @return the MethodRules that can transform the block that runs each
-	 *         method in the tested class.
-	 */
-	protected List<MethodRule> rules(Object test) {
-		List<MethodRule> results= new ArrayList<MethodRule>();
-		for (FrameworkField each : ruleFields())
-			results.add(createRule(test, each));
-		return results;
-	}
-
-	private List<FrameworkField> ruleFields() {
-		return getTestClass().getAnnotatedFields(Rule.class);
-	}
-
-	private MethodRule createRule(Object test, FrameworkField each) {
-		try {
-			return (MethodRule) each.get(test);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(
-					"How did getFields return a field we couldn't access?");
-		}
 	}
 
 	private EachTestNotifier makeNotifier(FrameworkMethod method,

@@ -20,6 +20,7 @@ public class TestClass {
 	private final Class<?> fClass;
 
 	private Map<Class<?>, List<FrameworkMethod>> fMethodsForAnnotations= new HashMap<Class<?>, List<FrameworkMethod>>();
+
 	private Map<Class<?>, List<FrameworkField>> fFieldsForAnnotations= new HashMap<Class<?>, List<FrameworkField>>();
 
 	/**
@@ -36,13 +37,16 @@ public class TestClass {
 
 		for (Class<?> eachClass : getSuperClasses(fClass)) {
 			for (Method eachMethod : eachClass.getDeclaredMethods())
-				addToAnnotationLists(new FrameworkMethod(eachMethod), fMethodsForAnnotations);
+				addToAnnotationLists(new FrameworkMethod(eachMethod),
+						fMethodsForAnnotations);
 			for (Field eachField : eachClass.getDeclaredFields())
-				addToAnnotationLists(new FrameworkField(eachField), fFieldsForAnnotations);
+				addToAnnotationLists(new FrameworkField(eachField),
+						fFieldsForAnnotations);
 		}
 	}
 
-	private <T extends FrameworkMember<T>> void addToAnnotationLists(T member, Map<Class<?>, List<T>> map) {
+	private <T extends FrameworkMember<T>> void addToAnnotationLists(T member,
+			Map<Class<?>, List<T>> map) {
 		for (Annotation each : member.getAnnotations()) {
 			Class<? extends Annotation> type= each.annotationType();
 			List<T> members= getAnnotatedMembers(map, type);
@@ -65,10 +69,11 @@ public class TestClass {
 	}
 
 	/**
-	 * Returns, efficiently, all the non-overridden fields in this class and
-	 * its superclasses that are annotated with {@code annotationClass}.
+	 * Returns, efficiently, all the non-overridden fields in this class and its
+	 * superclasses that are annotated with {@code annotationClass}.
 	 */
-	public List<FrameworkField> getAnnotatedFields(Class<? extends Annotation> annotationClass) {
+	public List<FrameworkField> getAnnotatedFields(
+			Class<? extends Annotation> annotationClass) {
 		return getAnnotatedMembers(fFieldsForAnnotations, annotationClass);
 	}
 
@@ -128,5 +133,19 @@ public class TestClass {
 		if (fClass == null)
 			return new Annotation[0];
 		return fClass.getAnnotations();
+	}
+
+	public <T> List<T> getAnnotatedFieldValues(Object test,
+			Class<? extends Annotation> annotationClass, Class<T> valueClass) {
+		List<T> results= new ArrayList<T>();
+		for (FrameworkField each : getAnnotatedFields(annotationClass)) {
+			try {
+				results.add(valueClass.cast(each.get(test)));
+			} catch (IllegalAccessException e) {
+				throw new RuntimeException(
+						"How did getFields return a field we couldn't access?");
+			}
+		}
+		return results;
 	}
 }

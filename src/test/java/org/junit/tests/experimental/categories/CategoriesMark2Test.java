@@ -8,7 +8,6 @@ import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -23,32 +22,33 @@ import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
-import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.TestClass;
 
 public class CategoriesMark2Test {
-	public static class CategoryFilter2 extends Filter2 {
+	public static class CategoryFilter extends Filter2 {
 		private final Class<?> fIncluded;
 
-		public CategoryFilter2(Class<?> included) {
+		public CategoryFilter(Class<?> included) {
 			fIncluded= included;
 		}
 
-		public static CategoryFilter2 include(Class<?> included) {
-			return new CategoryFilter2(included);
+		public static CategoryFilter include(Class<?> included) {
+			return new CategoryFilter(included);
 		}
 
+		// TODO: this type correct?
 		@Override
 		public List<Runner> matchingRunners(
 				List<? extends Runner> allPossibleRunners) {
 			ArrayList<Runner> result= new ArrayList<Runner>();
 			for (Runner eachRunner : allPossibleRunners) {
-				Collection<Annotation> annotations= eachRunner.getDescription().getAnnotations();
+				Collection<Annotation> annotations= eachRunner.getDescription()
+						.getAnnotations();
 				// TODO: extract method
 				for (Annotation eachAnnotation : annotations) {
 					if (eachAnnotation.annotationType().equals(Category.class)) {
-						Category category = (Category) eachAnnotation;
+						Category category= (Category) eachAnnotation;
 						Class<?>[] categories= category.value();
 						if (Arrays.asList(categories).contains(fIncluded))
 							result.add(eachRunner);
@@ -84,6 +84,8 @@ public class CategoriesMark2Test {
 		}
 	}
 
+	// Classes -> RunnerBuilder
+
 	public static abstract class Classes {
 
 		public abstract Collection<? extends Class<?>> get();
@@ -96,10 +98,17 @@ public class CategoriesMark2Test {
 	}
 
 	public static class Suite2 extends Runner {
-		private final Class<?> fTestClass;
+		private final TestClass fTestClass;
 
-		public Suite2(Class<?> testClass) {
-			fTestClass= testClass;
+		private final Object fInstance;
+
+		public Suite2(Class<?> testClass) throws InitializationError {
+			fTestClass= new TestClass(testClass);
+			try {
+				fInstance= fTestClass.getOnlyConstructor().newInstance();
+			} catch (Exception e) {
+				throw new InitializationError(e);
+			}
 		}
 
 		@Override
@@ -108,6 +117,7 @@ public class CategoriesMark2Test {
 			return null;
 		}
 
+		// TODO: require an instance?
 		@Override
 		public void run(RunNotifier notifier) {
 			List<Class<?>> allPossibleClasses= gatherClasses();
@@ -126,17 +136,8 @@ public class CategoriesMark2Test {
 		}
 
 		private List<Filter2> getFilters() {
-			// TODO: shouldn't do this twice
-			ArrayList<Filter2> result= new ArrayList<Filter2>();
-			TestClass testClass= new TestClass(fTestClass);
-			Object target= createInstance(testClass);
-			List<FrameworkField> fields= testClass
-					.getAnnotatedFields(FilterWith.class);
-			for (FrameworkField each : fields)
-				result.add((Filter2) getValue(each, target));
-
-			// TODO Auto-generated method stub
-			return result;
+			return fTestClass.getAnnotatedFieldValues(fInstance,
+					FilterWith.class, Filter2.class);
 		}
 
 		private List<Runner> runnersForClasses(List<Class<?>> allPossibleClasses) {
@@ -155,53 +156,11 @@ public class CategoriesMark2Test {
 
 		private List<Class<?>> gatherClasses() {
 			ArrayList<Class<?>> result= new ArrayList<Class<?>>();
-			// TODO: Something's wrong with the naming here.
-			TestClass testClass= new TestClass(fTestClass);
-			// TODO: where _should_ we be instantiating this?
-			Object target= createInstance(testClass);
-			List<FrameworkField> fields= testClass
-					.getAnnotatedFields(SuiteClasses2.class);
-			for (FrameworkField each : fields) {
-				Classes classes= (Classes) getValue(each, target);
-				// TODO: naming?
-				result.addAll(classes.get());
-			}
+			List<Classes> classeses= fTestClass.getAnnotatedFieldValues(
+					fInstance, SuiteClasses2.class, Classes.class);
+			for (Classes each : classeses)
+				result.addAll(each.get());
 			return result;
-		}
-
-		private Object getValue(FrameworkField each, Object target) {
-			// TODO: we must do this for rules, right?
-			try {
-				return each.get(target);
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		private Object createInstance(TestClass testClass) {
-			try {
-				return testClass.getOnlyConstructor().newInstance();
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			// TODO Auto-generated method stub
-			return null;
 		}
 	}
 
@@ -238,7 +197,7 @@ public class CategoriesMark2Test {
 		public Classes classes= new Listed(Yes1.class, No1.class);
 
 		@FilterWith
-		public Filter2 filter= CategoryFilter2.include(Yes.class);
+		public Filter2 filter= CategoryFilter.include(Yes.class);
 	}
 
 	@RunWith(Suite2.class)
@@ -247,7 +206,7 @@ public class CategoriesMark2Test {
 		public Classes classes= new Listed(Yes1.class, Yes2.class, No1.class);
 
 		@FilterWith
-		public Filter2 filter= CategoryFilter2.include(Yes.class);
+		public Filter2 filter= CategoryFilter.include(Yes.class);
 	}
 
 	@RunWith(Suite2.class)
@@ -262,11 +221,11 @@ public class CategoriesMark2Test {
 		public Classes classes= new Listed(Yes1.class, Yes2.class, No1.class);
 
 		@FilterWith
-		public Filter2 filter= CategoryFilter2.include(No.class);
+		public Filter2 filter= CategoryFilter.include(No.class);
 	}
 
 	@Test
-	public void gatherClasses() {
+	public void gatherClasses() throws InitializationError {
 		assertEquals(2, new Suite2(OnlyYesJustOne.class).gatherClasses().size());
 	}
 
@@ -290,16 +249,17 @@ public class CategoriesMark2Test {
 		assertEquals(3, result.getRunCount());
 		assertThat(testResult(Everything.class), isSuccessful());
 	}
-	
-	@Test public void runOneNo() {
+
+	@Test
+	public void runOneNo() {
 		Result result= new JUnitCore().run(Nos.class);
 		assertEquals(1, result.getRunCount());
-		assertThat(testResult(Nos.class), isSuccessful());		
+		assertThat(testResult(Nos.class), isSuccessful());
 	}
 
 	@Test
 	public void matchingRunnersOnCategories() throws InitializationError {
-		assertEquals(1, CategoryFilter2.include(Yes.class).matchingRunners(
+		assertEquals(1, CategoryFilter.include(Yes.class).matchingRunners(
 				Arrays.asList(new BlockJUnit4ClassRunner(Yes1.class))).size());
 	}
 }
