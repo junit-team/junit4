@@ -57,3 +57,5 @@
 2009 Nov 16
     Kristian Rosenvold: Submitted a patch (github#16) that improves thread-safety of
                         result counting
+2010 Feb 08
+    Paul Holser: Submitted additional test for TestName rule.
