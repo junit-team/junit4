@@ -5,7 +5,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 
-import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -15,6 +14,8 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.experimental.categories.CategoryFilter;
+import org.junit.experimental.categories.Filter2;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -26,46 +27,6 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.TestClass;
 
 public class CategoriesMark2Test {
-	public static class CategoryFilter extends Filter2 {
-		private final Class<?> fIncluded;
-
-		public CategoryFilter(Class<?> included) {
-			fIncluded= included;
-		}
-
-		public static CategoryFilter include(Class<?> included) {
-			return new CategoryFilter(included);
-		}
-
-		// TODO: this type correct?
-		@Override
-		public List<Runner> matchingRunners(
-				List<? extends Runner> allPossibleRunners) {
-			ArrayList<Runner> result= new ArrayList<Runner>();
-			for (Runner eachRunner : allPossibleRunners) {
-				Collection<Annotation> annotations= eachRunner.getDescription()
-						.getAnnotations();
-				// TODO: extract method
-				for (Annotation eachAnnotation : annotations) {
-					if (eachAnnotation.annotationType().equals(Category.class)) {
-						Category category= (Category) eachAnnotation;
-						Class<?>[] categories= category.value();
-						if (Arrays.asList(categories).contains(fIncluded))
-							result.add(eachRunner);
-					}
-				}
-			}
-
-			// TODO Auto-generated method stub
-			return result;
-		}
-	}
-
-	public static abstract class Filter2 {
-		public abstract List<Runner> matchingRunners(
-				List<? extends Runner> allPossibleRunners);
-	}
-
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface FilterWith {
 
@@ -259,7 +220,8 @@ public class CategoriesMark2Test {
 
 	@Test
 	public void matchingRunnersOnCategories() throws InitializationError {
+		Runner blockJUnit4ClassRunner= new BlockJUnit4ClassRunner(Yes1.class);
 		assertEquals(1, CategoryFilter.include(Yes.class).matchingRunners(
-				Arrays.asList(new BlockJUnit4ClassRunner(Yes1.class))).size());
+				Arrays.asList(blockJUnit4ClassRunner)).size());
 	}
 }
