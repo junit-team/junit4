@@ -16,9 +16,9 @@ import org.junit.runner.manipulation.Sorter;
 public class JUnit4TestAdapter implements Test, Filterable, Sortable, Describable {
 	private final Class<?> fNewTestClass;
 
-	private final Runner fRunner;
+	private Runner fRunner;
 
-	private final JUnit4TestAdapterCache fCache;
+	private JUnit4TestAdapterCache fCache;
 
 	public JUnit4TestAdapter(Class<?> newTestClass) {
 		this(newTestClass, JUnit4TestAdapterCache.getDefault());
@@ -28,7 +28,7 @@ public class JUnit4TestAdapter implements Test, Filterable, Sortable, Describabl
 			JUnit4TestAdapterCache cache) {
 		fCache = cache;
 		fNewTestClass = newTestClass;
-		fRunner = Request.classWithoutSuiteMethod(newTestClass).filterWith(removeIgnored()).getRunner();
+		fRunner = Request.classWithoutSuiteMethod(newTestClass).getRunner();
 	}
 
 	public int countTestCases() {
@@ -41,7 +41,7 @@ public class JUnit4TestAdapter implements Test, Filterable, Sortable, Describabl
 
 	// reflective interface for Eclipse
 	public List<Test> getTests() {
-		return fCache.asTestList(fRunner.getPlan());
+		return fCache.asTestList(getDescription());
 	}
 
 	// reflective interface for Eclipse
@@ -50,21 +50,20 @@ public class JUnit4TestAdapter implements Test, Filterable, Sortable, Describabl
 	}
 	
 	public Description getDescription() {
-		return fRunner.getDescription();
+		Description description= fRunner.getDescription();		
+		return removeIgnored(description);
 	}
 
-	private Filter removeIgnored() {
-		return new Filter() {			
-			@Override
-			public boolean shouldRun(Description description) {
-				return !isIgnored(description);
-			}
-			
-			@Override
-			public String describe() {
-				return "not ignored";
-			}
-		};
+	private Description removeIgnored(Description description) {
+		if (isIgnored(description))
+			return Description.EMPTY;
+		Description result = description.childlessCopy();
+		for (Description each : description.getChildren()) {
+			Description child= removeIgnored(each);
+			if (! child.isEmpty())
+				result.addChild(child);
+		}
+		return result;
 	}
 
 	private boolean isIgnored(Description description) {

@@ -50,9 +50,6 @@ public abstract class ExternalResource implements MethodRule {
 
 	/**
 	 * Override to set up your specific external resource.
-	 * 
-	 * TODO: can assume here.
-	 * 
 	 * @throws if setup fails (which will disable {@code after}
 	 */
 	protected void before() throws Throwable {
@@ -61,6 +58,7 @@ public abstract class ExternalResource implements MethodRule {
 
 	/**
 	 * Override to tear down your specific external resource.
+	 * @throws if setup fails (which will disable {@code after}
 	 */
 	protected void after() {
 		// do nothing

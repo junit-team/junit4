@@ -12,7 +12,6 @@ import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
-import org.junit.runner.Plan;
 import org.junit.runner.Request;
 import org.junit.runner.Result;
 import org.junit.runner.Runner;
@@ -153,19 +152,19 @@ public class MaxCore {
 	
 	private List<Description> findLeaves(Request request) {
 		List<Description> results= new ArrayList<Description>();
-		findLeaves(null, request.getRunner().getPlan(), results);
+		findLeaves(null, request.getRunner().getDescription(), results);
 		return results;
 	}
 	
-	private void findLeaves(Plan parent, Plan plan, List<Description> results) {
-		if (plan.getChildren().isEmpty())
-			if (plan.getDescription().toString().equals("warning(junit.framework.TestSuite$1)"))
-				results.add(Description.createSuiteDescription(MALFORMED_JUNIT_3_TEST_CLASS_PREFIX + parent.getDescription()));
+	private void findLeaves(Description parent, Description description, List<Description> results) {
+		if (description.getChildren().isEmpty())
+			if (description.toString().equals("warning(junit.framework.TestSuite$1)"))
+				results.add(Description.createSuiteDescription(MALFORMED_JUNIT_3_TEST_CLASS_PREFIX + parent));
 			else
-				results.add(plan.getDescription());
+				results.add(description);
 		else
-			for (Plan each : plan.getChildren())
-				findLeaves(plan, each, results);
+			for (Description each : description.getChildren())
+				findLeaves(description, each, results);
 	}
 }
 

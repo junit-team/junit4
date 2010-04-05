@@ -4,13 +4,10 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * TODO: Make really clear how this has changed.
- * 
  * <p>A <code>Description</code> describes a test which is to be run or has been run. <code>Descriptions</code> 
  * can be atomic (a single test) or compound (containing children tests). <code>Descriptions</code> are used
  * to provide feedback about the tests that are about to run (for example, the tree view
@@ -28,6 +25,7 @@ import java.util.regex.Pattern;
  * @see org.junit.runner.Runner
  */
 public class Description {
+	
 	/**
 	 * Create a <code>Description</code> named <code>name</code>.
 	 * Generally, you will add children to this <code>Description</code>.
@@ -40,6 +38,7 @@ public class Description {
 			throw new IllegalArgumentException("name must have non-zero length");
 		return new Description(name, annotations);
 	}
+
 	/**
 	 * Create a <code>Description</code> of a single test named <code>name</code> in the class <code>clazz</code>.
 	 * Generally, this will be a leaf <code>Description</code>.
@@ -85,12 +84,10 @@ public class Description {
 	 */
 	public static final Description TEST_MECHANISM= new Description("Test mechanism");
 	
-	// This is vestigial
 	private final ArrayList<Description> fChildren= new ArrayList<Description>();
-
-	private final String fDisplayName;	
+	private final String fDisplayName;
+	
 	private final Annotation[] fAnnotations;
-	private Description fParent = null;
 	
 	private Description(final String displayName, Annotation... annotations) {
 		fDisplayName= displayName;
@@ -109,22 +106,13 @@ public class Description {
 	 * @param description the soon-to-be child.
 	 */
 	public void addChild(Description description) {
-		// TODO: deprecate this, too
-		fChildren.add(description);
-		// description.setParent(this);
-	}
-
-	public void setParent(Description parent) {
-		fParent = parent;
+		getChildren().add(description);
 	}
 
 	/**
 	 * @return the receiver's children, if any
-	 * @deprecated Description should not be used for walking the test tree.
-	 * Instead, call {@code Runner.getPlan} to get a {@code Plan}, and use
-	 * {@code Plan.getChildren}
 	 */
-	@Deprecated public ArrayList<Description> getChildren() {
+	public ArrayList<Description> getChildren() {
 		return fChildren;
 	}
 
@@ -249,13 +237,5 @@ public class Description {
 
 	private Matcher methodStringMatcher() {
 		return Pattern.compile("(.*)\\((.*)\\)").matcher(toString());
-	}
-
-	List<Description> getChildrenInternal() {
-		return fChildren;
-	}
-
-	public Description getParentDescription() {
-		return fParent;
 	}
 }

@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
-import org.junit.runner.Plan;
 import org.junit.runner.Result;
 
 /**
@@ -53,23 +52,6 @@ public class RunNotifier {
 	/**
 	 * Do not invoke. 
 	 */
-	public void fireTestRunStarted(final Plan plan) {
-		new SafeNotifier() {
-			@SuppressWarnings("deprecation")
-			@Override
-			protected void notifyListener(RunListener each) throws Exception {
-				each.testRunStarted(plan);
-				each.testRunStarted(plan.getDescription());
-			};
-		}.run();
-	}
-	
-	/**
-	 * Do not invoke.  Really, don't!
-	 * @deprecated Call {@link RunNotifier#fireTestRunStarted(Plan)} if you must.
-	 *             But don't.
-	 */
-	@Deprecated
 	public void fireTestRunStarted(final Description description) {
 		new SafeNotifier() {
 			@Override
@@ -78,7 +60,6 @@ public class RunNotifier {
 			};
 		}.run();
 	}
-	
 	
 	/**
 	 * Do not invoke.

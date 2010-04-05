@@ -12,8 +12,8 @@ import java.util.Collections;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
-import org.junit.runner.Plan;
 import org.junit.runner.Request;
 import org.junit.runner.Result;
 import org.junit.runner.RunWith;
@@ -74,8 +74,8 @@ public class ParameterizedTestTest {
 	@Test
 	public void plansNamedCorrectly() throws Exception {
 		Runner runner= Request.aClass(FibonacciTest.class).getRunner();
-		Plan plan= runner.getPlan();
-		assertEquals("[0]", plan.getChildren().get(0).getDescription().getDisplayName());
+		Description description= runner.getDescription();
+		assertEquals("[0]", description.getChildren().get(0).getDisplayName());
 	}
 
 	private static String fLog;
