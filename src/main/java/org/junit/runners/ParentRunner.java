@@ -5,7 +5,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 import org.junit.AfterClass;
@@ -44,16 +43,15 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 		Sortable {
 	private final TestClass fTestClass;
 
-	// TODO: does it has to be lazy?
-	private Description fDescription= null;
+	private Filter fFilter= null;
 
-	private List<T> fCachedChildren= null;
+	private Sorter fSorter= Sorter.NULL;
 
-	private RunnerScheduler fScheduler= new RunnerScheduler() {
+	private RunnerScheduler fScheduler= new RunnerScheduler() {	
 		public void schedule(Runnable childStatement) {
 			childStatement.run();
 		}
-
+	
 		public void finished() {
 			// do nothing
 		}
@@ -61,8 +59,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
 	/**
 	 * Constructs a new {@code ParentRunner} that will run {@code @TestClass}
-	 * 
-	 * @throws InitializationError
+	 * @throws InitializationError 
 	 */
 	protected ParentRunner(Class<?> testClass) throws InitializationError {
 		fTestClass= new TestClass(testClass);
@@ -91,17 +88,16 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	 * reported through {@code notifier}
 	 */
 	protected abstract void runChild(T child, RunNotifier notifier);
-
+		
 	//
 	// May be overridden
 	//
-
+	
 	/**
-	 * Adds to {@code errors} a throwable for each problem noted with the test
-	 * class (available from {@link #getTestClass()}). Default implementation
-	 * adds an error for each method annotated with {@code @BeforeClass} or
-	 * {@code @AfterClass} that is not {@code public static void} with no
-	 * arguments.
+	 * Adds to {@code errors} a throwable for each problem noted with the test class (available from {@link #getTestClass()}).
+	 * Default implementation adds an error for each method annotated with
+	 * {@code @BeforeClass} or {@code @AfterClass} that is not
+	 * {@code public static void} with no arguments.
 	 */
 	protected void collectInitializationErrors(List<Throwable> errors) {
 		validatePublicVoidNoArgMethods(BeforeClass.class, true, errors);
@@ -118,33 +114,28 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	 * <li>is static (given {@code isStatic is false}), or
 	 * <li>is not static (given {@code isStatic is true}).
 	 */
-	protected void validatePublicVoidNoArgMethods(
-			Class<? extends Annotation> annotation, boolean isStatic,
-			List<Throwable> errors) {
-		List<FrameworkMethod> methods= getTestClass().getAnnotatedMethods(
-				annotation);
+	protected void validatePublicVoidNoArgMethods(Class<? extends Annotation> annotation,
+			boolean isStatic, List<Throwable> errors) {
+		List<FrameworkMethod> methods= getTestClass().getAnnotatedMethods(annotation);
 
 		for (FrameworkMethod eachTestMethod : methods)
 			eachTestMethod.validatePublicVoidNoArg(isStatic, errors);
 	}
 
-	/**
-	 * Constructs a {@code Statement} to run all of the tests in the test class.
-	 * Override to add pre-/post-processing. Here is an outline of the
-	 * implementation:
+	/** 
+	 * Constructs a {@code Statement} to run all of the tests in the test class. Override to add pre-/post-processing. 
+	 * Here is an outline of the implementation:
 	 * <ul>
-	 * <li>Call {@link #runChild(Object, RunNotifier)} on each object returned
-	 * by {@link #getChildren()} (subject to any imposed filter and sort).</li>
-	 * <li>ALWAYS run all non-overridden {@code @BeforeClass} methods on this
-	 * class and superclasses before the previous step; if any throws an
+	 * <li>Call {@link #runChild(Object, RunNotifier)} on each object returned by {@link #getChildren()} (subject to any imposed filter and sort).</li>
+	 * <li>ALWAYS run all non-overridden {@code @BeforeClass} methods on this class
+	 * and superclasses before the previous step; if any throws an
 	 * Exception, stop execution and pass the exception on.
-	 * <li>ALWAYS run all non-overridden {@code @AfterClass} methods on this
-	 * class and superclasses before any of the previous steps; all AfterClass
-	 * methods are always executed: exceptions thrown by previous steps are
-	 * combined, if necessary, with exceptions from AfterClass methods into a
+	 * <li>ALWAYS run all non-overridden {@code @AfterClass} methods on this class
+	 * and superclasses before any of the previous steps; all AfterClass methods are
+	 * always executed: exceptions thrown by previous steps are combined, if
+	 * necessary, with exceptions from AfterClass methods into a
 	 * {@link MultipleFailureException}.
 	 * </ul>
-	 * 
 	 * @param notifier
 	 * @return {@code Statement}
 	 */
@@ -156,29 +147,29 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	}
 
 	/**
-	 * Returns a {@link Statement}: run all non-overridden {@code @BeforeClass}
-	 * methods on this class and superclasses before executing {@code statement}
-	 * ; if any throws an Exception, stop execution and pass the exception on.
+	 * Returns a {@link Statement}: run all non-overridden {@code @BeforeClass} methods on this class
+	 * and superclasses before executing {@code statement}; if any throws an
+	 * Exception, stop execution and pass the exception on.
 	 */
 	protected Statement withBeforeClasses(Statement statement) {
-		List<FrameworkMethod> befores= getTestClass().getAnnotatedMethods(
-				BeforeClass.class);
-		return befores.isEmpty() ? statement : new RunBefores(statement,
-				befores, null);
+		List<FrameworkMethod> befores= fTestClass
+				.getAnnotatedMethods(BeforeClass.class);
+		return befores.isEmpty() ? statement :
+			new RunBefores(statement, befores, null);
 	}
 
 	/**
-	 * Returns a {@link Statement}: run all non-overridden {@code @AfterClass}
-	 * methods on this class and superclasses before executing {@code statement}
-	 * ; all AfterClass methods are always executed: exceptions thrown by
-	 * previous steps are combined, if necessary, with exceptions from
-	 * AfterClass methods into a {@link MultipleFailureException}.
+	 * Returns a {@link Statement}: run all non-overridden {@code @AfterClass} methods on this class
+	 * and superclasses before executing {@code statement}; all AfterClass methods are
+	 * always executed: exceptions thrown by previous steps are combined, if
+	 * necessary, with exceptions from AfterClass methods into a
+	 * {@link MultipleFailureException}.
 	 */
 	protected Statement withAfterClasses(Statement statement) {
-		List<FrameworkMethod> afters= getTestClass().getAnnotatedMethods(
-				AfterClass.class);
-		return afters.isEmpty() ? statement : new RunAfters(statement, afters,
-				null);
+		List<FrameworkMethod> afters= fTestClass
+				.getAnnotatedMethods(AfterClass.class);
+		return afters.isEmpty() ? statement : 
+			new RunAfters(statement, afters, null);
 	}
 
 	/**
@@ -196,8 +187,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	}
 
 	private void runChildren(final RunNotifier notifier) {
-		for (final T each : getCachedChildren())
-			fScheduler.schedule(new Runnable() {
+		for (final T each : getFilteredChildren())
+			fScheduler.schedule(new Runnable() {			
 				public void run() {
 					ParentRunner.this.runChild(each, notifier);
 				}
@@ -226,16 +217,14 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	//
 	// Implementation of Runner
 	// 
-
+	
 	@Override
 	public Description getDescription() {
-		if (fDescription == null) {
-			// TODO: extract createDescription?
-			fDescription= Description.createSuiteDescription(getName(), fTestClass.getAnnotations());
-			for (T child : getCachedChildren())
-				fDescription.addChild(describeChild(child));
-		}
-		return fDescription;
+		Description description= Description.createSuiteDescription(getName(),
+				fTestClass.getAnnotations());
+		for (T child : getFilteredChildren())
+			description.addChild(describeChild(child));
+		return description;
 	}
 
 	@Override
@@ -253,37 +242,24 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 			testNotifier.addFailure(e);
 		}
 	}
-
+	
 	//
 	// Implementation of Filterable and Sortable
 	//
 
 	public void filter(Filter filter) throws NoTestsRemainException {
-		for (Iterator<T> iter= getCachedChildren().iterator(); iter.hasNext();) {
-			T each= iter.next();
-			if (!filter.shouldRun(describeChild(each)))
-				iter.remove();
-			else
-				try {
-					filter.apply(each);
-				} catch (NoTestsRemainException e) {
-					iter.remove();
-				}
-		}
+		fFilter= filter;
 
-		fDescription = null;
-		
-		if (getCachedChildren().isEmpty())
-			throw new NoTestsRemainException();
+		for (T each : getChildren())
+			if (shouldRun(each))
+				return;
+		throw new NoTestsRemainException();
 	}
 
 	public void sort(Sorter sorter) {
-		Collections.sort(getCachedChildren(), comparator(sorter));
-		for (T each : getCachedChildren()) {
-			sorter.apply(each);
-		}
+		fSorter= sorter;
 	}
-
+	
 	//
 	// Private implementation
 	// 
@@ -295,25 +271,47 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 			throw new InitializationError(errors);
 	}
 
-	private List<T> getCachedChildren() {
-		if (fCachedChildren == null)
-			fCachedChildren= getChildren();
-		return fCachedChildren;
+	private List<T> getFilteredChildren() {
+		ArrayList<T> filtered= new ArrayList<T>();
+		for (T each : getChildren())
+			if (shouldRun(each))
+				try {
+					filterChild(each);
+					sortChild(each);
+					filtered.add(each);
+				} catch (NoTestsRemainException e) {
+					// don't add it
+				}
+		Collections.sort(filtered, comparator());
+		return filtered;
 	}
 
-	private Comparator<? super T> comparator(final Sorter sorter) {
+	private void sortChild(T child) {
+		fSorter.apply(child);
+	}
+
+	private void filterChild(T child) throws NoTestsRemainException {
+		if (fFilter != null)
+			fFilter.apply(child);
+	}
+
+	private boolean shouldRun(T each) {
+		return fFilter == null || fFilter.shouldRun(describeChild(each));
+	}
+
+	private Comparator<? super T> comparator() {
 		return new Comparator<T>() {
 			public int compare(T o1, T o2) {
-				return sorter.compare(describeChild(o1), describeChild(o2));
+				return fSorter.compare(describeChild(o1), describeChild(o2));
 			}
 		};
 	}
 
 	/**
-	 * Sets a scheduler that determines the order and parallelization of
-	 * children. Highly experimental feature that may change.
+	 * Sets a scheduler that determines the order and parallelization
+	 * of children.  Highly experimental feature that may change.
 	 */
 	public void setScheduler(RunnerScheduler scheduler) {
-		this.fScheduler= scheduler;
+		this.fScheduler = scheduler;
 	}
 }

@@ -29,7 +29,7 @@ import org.junit.runners.model.RunnerBuilder;
  * <pre>
  * public interface FastTests {
  * }
- * 
+ * 	
  * public interface SlowTests {
  * }
  * 
@@ -94,26 +94,21 @@ public class Categories extends Suite {
 
 		@Override
 		public boolean shouldRun(Description description) {
-			if (isExcluded(description))
-				return false;
-			if (description.isSuite())
+			if (hasCorrectCategoryAnnotation(description))
 				return true;
-			return isIncludedMethod(description);
-		}
-
-		private boolean isExcluded(Description description) {
-			if (fExcluded == null)
-				return false;			
-			for (Class<?> each: categories(description))
-				if (fExcluded.isAssignableFrom(each))
+			for (Description each : description.getChildren())
+				if (shouldRun(each))
 					return true;
 			return false;
 		}
 
-		private boolean isIncludedMethod(Description description) {
+		private boolean hasCorrectCategoryAnnotation(Description description) {
 			List<Class<?>> categories= categories(description);
 			if (categories.isEmpty())
 				return fIncluded == null;
+			for (Class<?> each : categories)
+				if (fExcluded != null && fExcluded.isAssignableFrom(each))
+					return false;
 			for (Class<?> each : categories)
 				if (fIncluded == null || fIncluded.isAssignableFrom(each))
 					return true;
@@ -122,15 +117,14 @@ public class Categories extends Suite {
 
 		private List<Class<?>> categories(Description description) {
 			ArrayList<Class<?>> categories= new ArrayList<Class<?>>();
-			while (description != null) {
-				categories.addAll(Arrays.asList(directCategories(description)));
-				description = parentDescription(description);
-			}
+			categories.addAll(Arrays.asList(directCategories(description)));
+			categories.addAll(Arrays.asList(directCategories(parentDescription(description))));
 			return categories;
 		}
 
 		private Description parentDescription(Description description) {
-			return description.getParentDescription();
+			// TODO: how heavy are we cringing?
+			return Description.createSuiteDescription(description.getTestClass());
 		}
 
 		private Class<?>[] directCategories(Description description) {

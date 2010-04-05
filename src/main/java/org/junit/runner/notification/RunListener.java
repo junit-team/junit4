@@ -2,7 +2,6 @@ package org.junit.runner.notification;
 
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
-import org.junit.runner.Plan;
 import org.junit.runner.Result;
 
 /**
@@ -37,17 +36,8 @@ public class RunListener {
 	/**
 	 * Called before any tests have been run.
 	 * @param description describes the tests to be run
-	 * @deprecated override {@link RunListener#testRunStarted(Plan)} instead.
 	 */
-	@Deprecated
 	public void testRunStarted(Description description) throws Exception {
-	}
-
-	/**
-	 * Called before any tests have been run.
-	 * @param plan describes the tests to be run
-	 */
-	public void testRunStarted(Plan plan) throws Exception {
 	}
 	
 	/**

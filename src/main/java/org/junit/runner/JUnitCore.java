@@ -153,7 +153,7 @@ public class JUnitCore {
 		RunListener listener= result.createListener();
 		fNotifier.addFirstListener(listener);
 		try {
-			fNotifier.fireTestRunStarted(runner.getPlan());
+			fNotifier.fireTestRunStarted(runner.getDescription());
 			runner.run(fNotifier);
 			fNotifier.fireTestRunFinished(result);
 		} finally {

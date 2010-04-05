@@ -111,9 +111,6 @@ public class Suite extends ParentRunner<Runner> {
 	protected Suite(Class<?> klass, List<Runner> runners) throws InitializationError {
 		super(klass);
 		fRunners = runners;
-		for (Runner runner : runners) {
-			runner.setParent(getDescription());
-		}
 	}
 	
 	@Override
