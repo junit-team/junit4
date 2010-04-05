@@ -2,7 +2,6 @@ package org.junit.runners;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
@@ -93,11 +92,8 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 
 	@Override
 	protected Description describeChild(FrameworkMethod method) {
-		Description description= Description.createTestDescription(
-				getTestClass().getJavaClass(), testName(method), method
-						.getAnnotations());
-		description.setParent(getDescription());
-		return description;
+		return Description.createTestDescription(getTestClass().getJavaClass(),
+				testName(method), method.getAnnotations());
 	}
 
 	@Override
