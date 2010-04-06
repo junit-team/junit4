@@ -48,8 +48,8 @@ public class TestSuite implements Test {
 	 * ...as the moon sets over the early morning Merlin, Oregon
 	 * mountains, our intrepid adventurers type...
 	 */
-	static public Test createTest(Class<? extends TestCase> theClass, String name) {
-		Constructor<? extends TestCase> constructor;
+	static public Test createTest(Class<?> theClass, String name) {
+		Constructor<?> constructor;
 		try {
 			constructor= getTestConstructor(theClass);
 		} catch (NoSuchMethodException e) {
@@ -78,7 +78,7 @@ public class TestSuite implements Test {
 	 * Gets a constructor which takes a single String as
 	 * its argument or a no arg constructor.
 	 */
-	public static Constructor<? extends TestCase> getTestConstructor(Class<? extends TestCase> theClass) throws NoSuchMethodException {
+	public static Constructor<?> getTestConstructor(Class<?> theClass) throws NoSuchMethodException {
 		try {
 			return theClass.getConstructor(String.class);	
 		} catch (NoSuchMethodException e) {
@@ -125,7 +125,11 @@ public class TestSuite implements Test {
 	 * Parts of this method were written at 2337 meters in the Hueffihuette,
 	 * Kanton Uri
 	 */
-	 public TestSuite(final Class<? extends TestCase> theClass) {
+	public TestSuite(final Class<?> theClass) {
+		addTestsFromTestCase(theClass);
+	}
+
+	private void addTestsFromTestCase(final Class<?> theClass) {
 		fName= theClass.getName();
 		try {
 			getTestConstructor(theClass); // Avoid generating multiple error messages
@@ -172,7 +176,14 @@ public class TestSuite implements Test {
 	 */
 	public TestSuite (Class<?>... classes) {
 		for (Class<?> each : classes)
-			addTest(new TestSuite(each.asSubclass(TestCase.class)));
+			addTest(testCaseForClass(each));
+	}
+
+	private Test testCaseForClass(Class<?> each) {
+		if (TestCase.class.isAssignableFrom(each))
+			return new TestSuite(each.asSubclass(TestCase.class));
+		else
+			return warning(each.getCanonicalName() + " does not extend TestCase");
 	}
 	
 	/**
@@ -270,7 +281,7 @@ public class TestSuite implements Test {
 		return super.toString();
 	 }
 
-	private void addTestMethod(Method m, List<String> names, Class<? extends TestCase> theClass) {
+	private void addTestMethod(Method m, List<String> names, Class<?> theClass) {
 		String name= m.getName();
 		if (names.contains(name))
 			return;
