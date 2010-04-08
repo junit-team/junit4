@@ -82,7 +82,7 @@ public class SuiteTest extends TestCase {
 		assertTrue(fResult.wasSuccessful());
 	}
 	public void testOneTestCaseEclipseSeesSameStructureAs381() {
-		TestSuite t= new TestSuite(ThreeTestCases 	.class);
+		TestSuite t= new TestSuite(ThreeTestCases.class);
 		assertEquals(3, Collections.list(t.tests()).size());
 	}
 	public void testShadowedTests() {

@@ -58,7 +58,6 @@ public abstract class ExternalResource implements MethodRule {
 
 	/**
 	 * Override to tear down your specific external resource.
-	 * @throws if setup fails (which will disable {@code after}
 	 */
 	protected void after() {
 		// do nothing
