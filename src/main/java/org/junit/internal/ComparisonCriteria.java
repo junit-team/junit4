@@ -9,8 +9,6 @@ import org.junit.Assert;
  * may demand exact equality, or, for example, equality within a given delta.
  */
 public abstract class ComparisonCriteria {
-	// TODO (Sep 8, 2008 4:36:12 PM): check structure
-
 	/**
 	 * Asserts that two arrays are equal, according to the criteria defined by
 	 * the concrete subclass. If they are not, an {@link AssertionError} is

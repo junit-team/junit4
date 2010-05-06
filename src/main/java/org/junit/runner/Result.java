@@ -2,6 +2,8 @@ package org.junit.runner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
@@ -12,9 +14,9 @@ import org.junit.runner.notification.RunListener;
  * the count of tests that ran.
  */
 public class Result {
-	private int fCount= 0;
-	private int fIgnoreCount= 0;
-	private final List<Failure> fFailures= new ArrayList<Failure>();
+	private AtomicInteger fCount = new AtomicInteger();
+	private AtomicInteger fIgnoreCount= new AtomicInteger();
+	private final List<Failure> fFailures= Collections.synchronizedList( new ArrayList<Failure>());
 	private long fRunTime= 0;
 	private long fStartTime;
 
@@ -22,7 +24,7 @@ public class Result {
 	 * @return the number of tests run
 	 */
 	public int getRunCount() {
-		return fCount;
+		return fCount.get();
 	}
 
 	/**
@@ -50,7 +52,7 @@ public class Result {
 	 * @return the number of tests ignored during the run
 	 */
 	public int getIgnoreCount() {
-		return fIgnoreCount;
+		return fIgnoreCount.get();
 	}
 
 	/**
@@ -74,7 +76,7 @@ public class Result {
 
 		@Override
 		public void testFinished(Description description) throws Exception {
-			fCount++;
+			fCount.getAndIncrement();
 		}
 
 		@Override
@@ -84,9 +86,9 @@ public class Result {
 
 		@Override
 		public void testIgnored(Description description) throws Exception {
-			fIgnoreCount++;
+			fIgnoreCount.getAndIncrement();
 		}
-		
+
 		@Override
 		public void testAssumptionFailure(Failure failure) {
 			// do nothing: same as passing (for 4.5; may change in 4.6)

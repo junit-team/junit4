@@ -9,7 +9,6 @@ public class InexactComparisonCriteria extends ComparisonCriteria {
 		fDelta= delta;
 	}
 
-	// TODO (Apr 29, 2009 4:43:46 PM): Look for missing JavaDoc
 	@Override
 	protected void assertElementsEqual(Object expected, Object actual) {
 		if (expected instanceof Double)

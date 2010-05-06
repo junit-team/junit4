@@ -9,7 +9,7 @@ public class Version {
 	}
 
 	public static String id() {
-		return "4.7.1-SNAPSHOT";
+		return "4.8.2";
 	}
 	
 	public static void main(String[] args) {

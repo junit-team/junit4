@@ -5,15 +5,14 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * Marks a test class or test method as belonging to one or more categories of tests.
- * The value is an array of interface classes that extend the {@link CategoryType}
- * superinterface.
+ * The value is an array of arbitrary classes.
  * 
  * This annotation is only interpreted by the Categories runner (at present).
  * 
  * For example:
 <pre>
-	public interface FastTests extends CategoryType {}
-	public interface SlowTests extends CategoryType {}
+	public interface FastTests {}
+	public interface SlowTests {}
 
 	public static class A {
 		@Test
@@ -40,5 +39,5 @@ import java.lang.annotation.RetentionPolicy;
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Category {
-	Class<? extends CategoryType>[] value();
+	Class<?>[] value();
 }

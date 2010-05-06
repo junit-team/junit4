@@ -1,0 +1,5 @@
+## Summary of Changes in version 4.9 ##
+
+### Bug fixes ###
+
+- github#98: assumeTrue() does not work with expected exceptions

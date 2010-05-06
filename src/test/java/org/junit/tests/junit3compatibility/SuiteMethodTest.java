@@ -65,8 +65,10 @@ public class SuiteMethodTest {
 			return new JUnit4TestAdapter(CompatibilityTest.class);
 		}
 	}
-	
-	@Test public void descriptionAndRunNotificationsAreConsistent() {
+
+	// when executing as JUnit 3, ignored tests are stripped out before execution
+	@Test
+	public void descriptionAndRunNotificationsAreConsistent() {
 		Result result= JUnitCore.runClasses(CompatibilityTest.class);
 		assertEquals(0, result.getIgnoreCount());
 		

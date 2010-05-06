@@ -3,7 +3,6 @@
  */
 package org.junit.internal.runners.model;
 
-
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
@@ -18,15 +17,19 @@ public class EachTestNotifier {
 		fNotifier= notifier;
 		fDescription= description;
 	}
-	
+
 	public void addFailure(Throwable targetException) {
 		if (targetException instanceof MultipleFailureException) {
-			MultipleFailureException mfe= (MultipleFailureException) targetException;
-			for (Throwable each : mfe.getFailures())
-				addFailure(each);
-			return;
+			addMultipleFailureException((MultipleFailureException) targetException);
+		} else {
+			fNotifier
+					.fireTestFailure(new Failure(fDescription, targetException));
 		}
-		fNotifier.fireTestFailure(new Failure(fDescription, targetException));
+	}
+
+	private void addMultipleFailureException(MultipleFailureException mfe) {
+		for (Throwable each : mfe.getFailures())
+			addFailure(each);
 	}
 
 	public void addFailedAssumption(AssumptionViolatedException e) {

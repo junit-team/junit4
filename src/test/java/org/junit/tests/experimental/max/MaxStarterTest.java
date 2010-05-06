@@ -193,7 +193,7 @@ public class MaxStarterTest {
 	}
 
 	@Test
-	public void saffSqueezeExample() throws Exception {
+	public void filterSingleMethodFromOldTestClass() throws Exception {
 		final Description method= Description.createTestDescription(
 				TwoOldTests.class, "testOne");
 		Filter filter= Filter.matchMethodDescription(method);

@@ -1,5 +1,7 @@
 package junit.tests.framework;
 
+import java.util.Collections;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestResult;
@@ -28,6 +30,8 @@ public class SuiteTest extends TestCase {
 		suite.addTest(new SuiteTest("testNotVoidTestCase"));
 		suite.addTest(new SuiteTest("testNotExistingTestCase"));
 		suite.addTest(new SuiteTest("testInheritedTests"));
+		suite.addTest(new SuiteTest("testOneTestCaseEclipseSeesSameStructureAs381"));		
+		suite.addTest(new SuiteTest("testNoTestCaseClass"));
 		suite.addTest(new SuiteTest("testShadowedTests"));
 		suite.addTest(new SuiteTest("testAddTestSuite"));
 		suite.addTest(new SuiteTest("testCreateSuiteFromArray"));
@@ -40,13 +44,12 @@ public class SuiteTest extends TestCase {
 		assertTrue(fResult.wasSuccessful());
 		assertEquals(2, fResult.runCount());
 	}
-// This test case is obsolete, since the compiler will catch this error in 1.5
-//	public void testNoTestCaseClass() {
-//		Test t= new TestSuite(NoTestCaseClass.class);
-//		t.run(fResult);
-//		assertEquals(1, fResult.runCount());  // warning test
-//		assertTrue(! fResult.wasSuccessful());
-//	}
+	public void testNoTestCaseClass() {
+		Test t= new TestSuite(NoTestCaseClass.class);
+		t.run(fResult);
+		assertEquals(1, fResult.runCount());  // warning test
+		assertTrue(! fResult.wasSuccessful());
+	}
 	public void testNoTestCases() {
 		Test t= new TestSuite(NoTestCases.class);
 		t.run(fResult);
@@ -71,12 +74,16 @@ public class SuiteTest extends TestCase {
 		assertTrue(suite.countTestCases() == 1);
 	}
 	public void testOneTestCase() {
-		Test t= new TestSuite(OneTestCase.class);
+		TestSuite t= new TestSuite(OneTestCase.class);
 		t.run(fResult);
 		assertTrue(fResult.runCount() == 1);  
 		assertTrue(fResult.failureCount() == 0);
 		assertTrue(fResult.errorCount() == 0);
 		assertTrue(fResult.wasSuccessful());
+	}
+	public void testOneTestCaseEclipseSeesSameStructureAs381() {
+		TestSuite t= new TestSuite(ThreeTestCases.class);
+		assertEquals(3, Collections.list(t.tests()).size());
 	}
 	public void testShadowedTests() {
 		TestSuite suite= new TestSuite(OverrideTestCase.class);

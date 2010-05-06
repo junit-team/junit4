@@ -169,4 +169,9 @@ public class AssumptionTest {
 	@Test public void failingAssumptionInConstructorIgnoresClass() {
 		assertThat(testResult(AssumptionFailureInConstructor.class), isSuccessful());
 	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void assumeWithExpectedException() {
+		assumeTrue(false);
+	}
 }

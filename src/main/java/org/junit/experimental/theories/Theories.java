@@ -18,6 +18,7 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
+import org.junit.runners.model.TestClass;
 
 public class Theories extends BlockJUnit4ClassRunner {
 	public Theories(Class<?> klass) throws InitializationError {
@@ -63,19 +64,25 @@ public class Theories extends BlockJUnit4ClassRunner {
 
 	@Override
 	public Statement methodBlock(final FrameworkMethod method) {
-		return new TheoryAnchor(method);
+		return new TheoryAnchor(method, getTestClass());
 	}
 
-	public class TheoryAnchor extends Statement {
+	public static class TheoryAnchor extends Statement {
 		private int successes= 0;
 
 		private FrameworkMethod fTestMethod;
+        private TestClass fTestClass;
 
 		private List<AssumptionViolatedException> fInvalidParameters= new ArrayList<AssumptionViolatedException>();
 
-		public TheoryAnchor(FrameworkMethod method) {
+		public TheoryAnchor(FrameworkMethod method, TestClass testClass) {
 			fTestMethod= method;
+            fTestClass= testClass;
 		}
+
+        private TestClass getTestClass() {
+            return fTestClass;
+        }
 
 		@Override
 		public void evaluate() throws Throwable {

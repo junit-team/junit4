@@ -7,10 +7,10 @@ import static org.junit.Assert.fail;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.experimental.categories.CategoryType;
 import org.junit.experimental.categories.Categories;
+import org.junit.experimental.categories.Category;
 import org.junit.experimental.categories.Categories.CategoryFilter;
+import org.junit.experimental.categories.Categories.ExcludeCategory;
 import org.junit.experimental.categories.Categories.IncludeCategory;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
@@ -23,12 +23,12 @@ import org.junit.runners.Suite.SuiteClasses;
 import org.junit.runners.model.InitializationError;
 
 public class CategoryTest {
-	public interface FastTests extends CategoryType {
-
+	public interface FastTests {
+		// category marker
 	}
 
-	public interface SlowTests extends CategoryType {
-
+	public interface SlowTests {
+		// category marker
 	}
 
 	public static class A {
@@ -79,6 +79,46 @@ public class CategoryTest {
 	public void testCount() {
 		assertThat(testResult(SlowTestSuite.class), isSuccessful());
 	}
+	
+	public static class Category1 {}
+	public static class Category2 {}
+	
+	public static class SomeAreSlow {
+		@Test public void noCategory() {}
+		@Category(Category1.class) @Test public void justCategory1() {}
+		@Category(Category2.class) @Test public void justCategory2() {}
+		@Category({Category1.class, Category2.class}) @Test public void both() {}
+		@Category({Category2.class, Category1.class}) @Test public void bothReversed() {}
+	}
+
+	@RunWith(Categories.class)
+	@ExcludeCategory(Category1.class)
+	@SuiteClasses( { SomeAreSlow.class })
+	public static class SomeAreSlowSuite {
+	}
+	
+	@Test
+	public void testCountOnAWithoutSlowTests() {
+		Result result= JUnitCore.runClasses(SomeAreSlowSuite.class);
+		assertThat(testResult(SomeAreSlowSuite.class), isSuccessful());
+		assertEquals(2, result.getRunCount());
+		assertTrue(result.wasSuccessful());
+	}
+
+	@RunWith(Categories.class)
+	@ExcludeCategory(Category1.class)
+	@IncludeCategory(Category2.class)
+	@SuiteClasses( { SomeAreSlow.class })
+	public static class IncludeAndExcludeSuite {
+	}
+	
+	@Test
+	public void testsThatAreBothIncludedAndExcludedAreExcluded() {
+		Result result= JUnitCore.runClasses(IncludeAndExcludeSuite.class);
+		assertThat(testResult(SomeAreSlowSuite.class), isSuccessful());
+		assertEquals(1, result.getRunCount());
+		assertTrue(result.wasSuccessful());
+	}
 
 	@RunWith(Suite.class)
 	@SuiteClasses( { A.class, B.class, C.class })
@@ -91,6 +131,7 @@ public class CategoryTest {
 		Request baseRequest= Request.aClass(TestSuiteWithNoCategories.class);
 		Result result= new JUnitCore().run(baseRequest.filterWith(include));
 		assertTrue(result.wasSuccessful());
+		assertEquals(2, result.getRunCount());
 	}
 
 	@Test
@@ -149,7 +190,7 @@ public class CategoryTest {
 
 	@Test
 	public void describeACategoryFilter() {
-		CategoryFilter filter= new CategoryFilter(SlowTests.class);
+		CategoryFilter filter= CategoryFilter.include(SlowTests.class);
 		assertEquals("category " + SlowTests.class, filter.describe());
 	}
 	
@@ -191,5 +232,23 @@ public class CategoryTest {
 	
 	@Test public void subclassesOfIncludedCategoriesAreRun() {
 		assertThat(testResult(RunSlowFromVerySlow.class), isSuccessful());
+	}
+	
+	public static class ClassAsCategory {
+		
+	}
+	
+	public static class OneMoreTest {
+		@Category(ClassAsCategory.class) @Test public void a() {}
+	}
+
+	@RunWith(Categories.class)
+	@IncludeCategory(ClassAsCategory.class)
+	@SuiteClasses( { OneMoreTest.class })
+	public static class RunClassAsCategory {
+	}
+	
+	@Test public void classesCanBeCategories() {
+		assertThat(testResult(RunClassAsCategory.class), isSuccessful());
 	}
 }

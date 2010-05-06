@@ -1,0 +1,59 @@
+<h2>Summary of Changes in version 4.8</h2>
+
+<h3>Categories</h3>
+
+<p>From a given set of test classes, the <code>Categories</code> runner
+runs only the classes and methods
+that are annotated with either the category given with the <code>@IncludeCategory</code>
+annotation, or a subtype of that category. Either classes or interfaces can be
+used as categories. Subtyping works, so if you say <code>@IncludeCategory(SuperClass.class)</code>,
+a test marked <code>@Category({SubClass.class})</code> will be run.</p>
+
+<p>You can also exclude categories by using the <code>@ExcludeCategory</code> annotation</p>
+
+<p>Example:</p>
+
+<pre><code>public interface FastTests { /* category marker */ }
+public interface SlowTests { /* category marker */ }
+
+public class A {
+    @Test
+    public void a() {
+        fail();
+    }
+
+    @Category(SlowTests.class)
+    @Test
+    public void b() {
+    }
+}
+
+@Category({SlowTests.class, FastTests.class})
+public class B {
+    @Test
+    public void c() {
+
+    }
+}
+
+@RunWith(Categories.class)
+@IncludeCategory(SlowTests.class)
+@SuiteClasses( { A.class, B.class }) // Note that Categories is a kind of Suite
+public class SlowTestSuite {
+  // Will run A.b and B.c, but not A.a
+}
+
+@RunWith(Categories.class)
+@IncludeCategory(SlowTests.class)
+@ExcludeCategory(FastTests.class)
+@SuiteClasses( { A.class, B.class }) // Note that Categories is a kind of Suite
+public class SlowTestSuite {
+  // Will run A.b, but not A.a or B.c
+}
+</code></pre>
+
+<h3>Bug fixes</h3>
+
+<ul>
+<li>github#16: thread safety of Result counting</li>
+</ul>

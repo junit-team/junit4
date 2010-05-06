@@ -2,7 +2,6 @@ package org.junit.runners;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
@@ -67,10 +66,14 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	protected void runChild(FrameworkMethod method, RunNotifier notifier) {
 		EachTestNotifier eachNotifier= makeNotifier(method, notifier);
 		if (method.getAnnotation(Ignore.class) != null) {
-			eachNotifier.fireTestIgnored();
-			return;
+			runIgnored(eachNotifier);
+		} else {
+			runNotIgnored(method, eachNotifier);
 		}
+	}
 
+	private void runNotIgnored(FrameworkMethod method,
+			EachTestNotifier eachNotifier) {
 		eachNotifier.fireTestStarted();
 		try {
 			methodBlock(method).evaluate();
@@ -81,6 +84,10 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 		} finally {
 			eachNotifier.fireTestFinished();
 		}
+	}
+
+	private void runIgnored(EachTestNotifier eachNotifier) {
+		eachNotifier.fireTestIgnored();
 	}
 
 	@Override
@@ -99,9 +106,9 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	//
 
 	/**
-	 * Returns the methods that run tests. Default implementation 
-	 * returns all methods annotated with {@code @Test} on this 
-	 * class and superclasses that are not overridden.
+	 * Returns the methods that run tests. Default implementation returns all
+	 * methods annotated with {@code @Test} on this class and superclasses that
+	 * are not overridden.
 	 */
 	protected List<FrameworkMethod> computeTestMethods() {
 		return getTestClass().getAnnotatedMethods(Test.class);
@@ -115,10 +122,10 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 		validateInstanceMethods(errors);
 		validateFields(errors);
 	}
-	
+
 	/**
 	 * Adds to {@code errors} if the test class has more than one constructor,
-	 * or if the constructor takes parameters.  Override if a subclass requires
+	 * or if the constructor takes parameters. Override if a subclass requires
 	 * different validation rules.
 	 */
 	protected void validateConstructor(List<Throwable> errors) {
@@ -138,9 +145,8 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	}
 
 	/**
-	 * Adds to {@code errors} if the test class's single constructor
-	 * takes parameters
-	 * (do not override)
+	 * Adds to {@code errors} if the test class's single constructor takes
+	 * parameters (do not override)
 	 */
 	protected void validateZeroArgConstructor(List<Throwable> errors) {
 		if (hasOneConstructor()
@@ -170,9 +176,10 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 		if (computeTestMethods().size() == 0)
 			errors.add(new Exception("No runnable methods"));
 	}
-	
+
 	private void validateFields(List<Throwable> errors) {
-		for (FrameworkField each : ruleFields())
+		for (FrameworkField each : getTestClass()
+				.getAnnotatedFields(Rule.class))
 			validateRuleField(each.getField(), errors);
 	}
 
@@ -233,9 +240,9 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	 * <li>HOWEVER, if {@code method}'s {@code @Test} annotation has the {@code
 	 * timeout} attribute, throw an exception if the previous step takes more
 	 * than the specified number of milliseconds.
-	 * <li>ALWAYS allow {@code @Rule} fields to modify the execution of the above
-	 * steps.  A {@code Rule} may prevent all execution of the above steps, or
-	 * add additional behavior before and after, or modify thrown exceptions.
+	 * <li>ALWAYS allow {@code @Rule} fields to modify the execution of the
+	 * above steps. A {@code Rule} may prevent all execution of the above steps,
+	 * or add additional behavior before and after, or modify thrown exceptions.
 	 * For more information, see {@link MethodRule}
 	 * <li>ALWAYS run all non-overridden {@code @Before} methods on this class
 	 * and superclasses before any of the previous steps; if any throws an
@@ -323,9 +330,10 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	@Deprecated
 	protected Statement withBefores(FrameworkMethod method, Object target,
 			Statement statement) {
-		List<FrameworkMethod> befores= getTestClass().getAnnotatedMethods(Before.class);
-		return befores.isEmpty() ? statement : 
-			new RunBefores(statement, befores, target);
+		List<FrameworkMethod> befores= getTestClass().getAnnotatedMethods(
+				Before.class);
+		return befores.isEmpty() ? statement : new RunBefores(statement,
+				befores, target);
 	}
 
 	/**
@@ -340,15 +348,17 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	@Deprecated
 	protected Statement withAfters(FrameworkMethod method, Object target,
 			Statement statement) {
-		List<FrameworkMethod> afters= getTestClass().getAnnotatedMethods(After.class);
-		return afters.isEmpty() ? statement :
-			new RunAfters(statement, afters, target);
+		List<FrameworkMethod> afters= getTestClass().getAnnotatedMethods(
+				After.class);
+		return afters.isEmpty() ? statement : new RunAfters(statement, afters,
+				target);
 	}
-	
+
 	private Statement withRules(FrameworkMethod method, Object target,
 			Statement statement) {
 		Statement result= statement;
-		for (MethodRule each : rules(target))
+		for (MethodRule each : getTestClass().getAnnotatedFieldValues(target,
+				Rule.class, MethodRule.class))
 			result= each.apply(result, method, target);
 		return result;
 	}
