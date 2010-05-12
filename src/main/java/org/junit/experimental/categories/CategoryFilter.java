@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.experimental.runners.SuiteBuilder;
 import org.junit.runner.Runner;
-import org.junit.tests.experimental.categories.SuiteBuilderTest.RunnerFilter;
 
-public class CategoryFilter implements RunnerFilter.Value {
+public class CategoryFilter implements SuiteBuilder.RunnerFilter.Value {
 	private final Class<?> fIncluded;
 
 	public CategoryFilter(Class<?> included) {
