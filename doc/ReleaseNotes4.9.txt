@@ -1,5 +1,25 @@
 ## Summary of Changes in version 4.9 ##
 
+### SuiteBuilder ###
+
+A new way of declaring suites to run.  SuiteBuilder allows for flexible
+specification of where to find the classes containing tests, and how
+to filter the resulting runners.  This suite class lists the
+explicit test classes to consider running, and then filters it down
+to only those tests or classes annotated with `@Category(Yes.class)`:
+
+	@RunWith(SuiteBuilder.class)
+	public static class OnlyYes {
+		@Classes
+		public Listed classes= new Listed(Yes1.class, Yes2.class, No1.class);
+
+		@RunnerFilter
+		public CategoryFilter filter= CategoryFilter.include(Yes.class);
+	}
+	
+We hope to soon include other implementations for the @Classes annotation,
+including a classpath-searching test gatherer.
+
 ### Bug fixes ###
 
 - github#98: assumeTrue() does not work with expected exceptions

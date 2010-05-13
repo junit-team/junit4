@@ -87,6 +87,11 @@ public abstract class RunnerBuilder {
 		}
 	}
 	
+	public List<Runner> runners(Class<?> parent, List<Class<?>> children)
+			throws InitializationError {
+		return runners(parent, children.toArray(new Class<?>[0]));
+	}
+	
 	private List<Runner> runners(Class<?>[] children) {
 		ArrayList<Runner> runners= new ArrayList<Runner>();
 		for (Class<?> each : children) {
