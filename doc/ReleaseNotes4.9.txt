@@ -9,7 +9,7 @@ explicit test classes to consider running, and then filters it down
 to only those tests or classes annotated with `@Category(Yes.class)`:
 
 	@RunWith(SuiteBuilder.class)
-	public static class OnlyYes {
+	public class OnlyYes {
 		@Classes
 		public Listed classes= new Listed(Yes1.class, Yes2.class, No1.class);
 
