@@ -2,7 +2,6 @@ package org.junit.runners;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
@@ -21,7 +20,6 @@ import org.junit.internal.runners.statements.FailOnTimeout;
 import org.junit.internal.runners.statements.InvokeMethod;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
-import org.junit.rules.ClassRule;
 import org.junit.rules.MethodRule;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -186,20 +184,12 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	}
 
 	private void validateRuleField(Field field, List<Throwable> errors) {
+		if (!MethodRule.class.isAssignableFrom(field.getType()))
+			errors.add(new Exception("Field " + field.getName()
+					+ " must implement MethodRule"));
 		if (!Modifier.isPublic(field.getModifiers()))
 			errors.add(new Exception("Field " + field.getName()
 					+ " must be public"));
-		if (!MethodRule.class.isAssignableFrom(field.getType())) {
-			if (ClassRule.class.isAssignableFrom(field.getType())) {
-				if (!Modifier.isStatic(field.getModifiers())) {
-					errors.add(new Exception("Field " + field.getName()
-							+ " must be static"));
-				}
-			} else {
-				errors.add(new Exception("Field " + field.getName()
-						+ " must implement MethodRule or ClassRule"));
-			}
-		}
 	}
 
 	/**
@@ -363,30 +353,6 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 				Rule.class, MethodRule.class))
 			result= each.apply(result, method, target);
 		return result;
-	}
-	
-	/**
-	 * @return the MethodRules that can transform the block
-	 * that runs each method in the tested class.
-	 */
-	protected List<MethodRule> rules(Object test) {
-		List<MethodRule> results= new ArrayList<MethodRule>();
-		for (FrameworkField each : ruleFields()) {
-			if (MethodRule.class.isAssignableFrom(each.getType())) {
-				results.add(createRule(test, each));
-			}
-		}
-		return results;
-	}
-
-	private MethodRule createRule(Object test,
-			FrameworkField each) {
-		try {
-			return (MethodRule) each.get(test);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(
-					"How did getFields return a field we couldn't access?");
-		}
 	}
 
 	private EachTestNotifier makeNotifier(FrameworkMethod method,

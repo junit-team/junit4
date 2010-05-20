@@ -20,6 +20,35 @@ to only those tests or classes annotated with `@Category(Yes.class)`:
 We hope to soon include other implementations for the @Classes annotation,
 including a classpath-searching test gatherer.
 
+### ClassRule ###
+
+The ClassRule annotation extends the idea of method-level Rules,
+adding static fields that can affect the operation of a whole class:
+
+	public class Counter extends ExternalResource {
+		public int count = 0;
+
+		@Override
+		protected void before() throws Throwable {
+			count++;
+		}		
+	}
+	
+	public class ExampleTestWithClassRule {
+		@ClassRule
+		public static Counter counter= new Counter();
+
+		@Test
+		public void firstTest() {
+			assertEquals(1, counter.count);
+		}
+
+		@Test
+		public void secondTest() {
+			assertEquals(1, counter.count);
+		}
+	}
+
 ### Bug fixes ###
 
 - github#98: assumeTrue() does not work with expected exceptions

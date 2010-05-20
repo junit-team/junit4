@@ -9,13 +9,14 @@ import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Rule;
+import org.junit.ClassRule.Value;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.model.MultipleFailureException;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
-import org.junit.rules.ClassRule;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
@@ -177,7 +178,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	}
 
 	/**
-	 * Returns a {@link Statement}: apply all static {@link ClassRule} fields
+	 * Returns a {@link Statement}: apply all static {@link Value} fields
 	 * annotated with {@link Rule}.
 	 *
 	 * @param statement
@@ -186,12 +187,12 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	 *         found, or the base statement
 	 */
 	private Statement withClassRules(Statement statement) {
-		final List<ClassRule> classRules= classRules();
+		final List<Value> classRules= classRules();
 		if (classRules.isEmpty()) {
 			return statement;
 		}
 		Statement next = statement;
-		for (final ClassRule classRule : classRules) {
+		for (final Value classRule : classRules) {
 			next = classRule.apply(next, fTestClass);
 		}
 		return next;
@@ -201,19 +202,16 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	 * @return the {@code ClassRule}s that can transform the block that runs
 	 *         each method in the tested class.
 	 */
-	protected List<ClassRule> classRules() {
-		final List<ClassRule> results= new ArrayList<ClassRule>();
-		for (FrameworkField field : ruleFields()) {
-			if (ClassRule.class.isAssignableFrom(field.getType())) {
-				results.add(getClassRule(field));
-			}
-		}
+	protected List<Value> classRules() {
+		List<Value> results= new ArrayList<Value>();
+		for (FrameworkField field : classRuleFields())
+			results.add(getClassRule(field));
 		return results;
 	}
 
-	private ClassRule getClassRule(final FrameworkField field) {
+	private Value getClassRule(final FrameworkField field) {
 		try {
-			return (ClassRule) field.get(null);
+			return (Value) field.get(null);
 		} catch (IllegalAccessException e) {
 			throw new RuntimeException(
 					"How did getAnnotatedFields return a field we couldn't access?");
@@ -223,8 +221,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	/**
 	 * @return list of {@link FrameworkField}s annotated with {@link Rule}
 	 */
-	protected List<FrameworkField> ruleFields() {
-		return fTestClass.getAnnotatedFields(Rule.class);
+	protected List<FrameworkField> classRuleFields() {
+		return fTestClass.getAnnotatedFields(ClassRule.class);
 	}
 
 	/**

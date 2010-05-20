@@ -203,26 +203,6 @@ public class MaxStarterTest {
 	}
 
 	@Test
-	public void testCountsMatchUp() {
-		JUnitCore core= new JUnitCore();
-		Request filtered= Request.aClass(AllTests.class).filterWith(
-				new Filter() {
-					@Override
-					public boolean shouldRun(Description description) {
-						return !description.toString().contains("Max");
-					}
-
-					@Override
-					public String describe() {
-						return "Avoid infinite recursion";
-					}
-				});
-		int maxCount= fMax.run(filtered, core).getRunCount();
-		int coreCount= core.run(filtered).getRunCount();
-		assertEquals(coreCount, maxCount);
-	}
-
-	@Test
 	public void testCountsStandUpToFiltration() {
 		assertFilterLeavesTestUnscathed(AllTests.class);
 	}

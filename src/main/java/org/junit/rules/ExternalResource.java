@@ -1,7 +1,9 @@
 package org.junit.rules;
 
+import org.junit.ClassRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
+import org.junit.runners.model.TestClass;
 
 /**
  * A base class for Rules (like TemporaryFolder) that set up an external
@@ -32,9 +34,17 @@ import org.junit.runners.model.Statement;
  * }
  * </pre>
  */
-public abstract class ExternalResource implements MethodRule {
+public abstract class ExternalResource implements MethodRule, ClassRule.Value {
 	public final Statement apply(final Statement base,
 			FrameworkMethod method, Object target) {
+		return statement(base);
+	}
+	
+	public Statement apply(Statement base, TestClass testClass) {
+		return statement(base);
+	}
+
+	private Statement statement(final Statement base) {
 		return new Statement() {
 			@Override
 			public void evaluate() throws Throwable {
