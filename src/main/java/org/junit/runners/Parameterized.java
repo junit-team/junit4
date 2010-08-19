@@ -8,6 +8,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.text.MessageFormat;
 
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
@@ -60,12 +61,53 @@ import org.junit.runners.model.TestClass;
  */
 public class Parameterized extends Suite {
 	/**
+	 * If parentheses are present in a fixture description, it is not reported
+	 * correctly, so we should strip them for now.
+	 */
+	 private static final String PROBLEMATIC_FIXTURE_DESCRIPTION_CHARS = "\\(|\\)";
+
+	/**
 	 * Annotation for a method which provides parameters to be injected into the
 	 * test class constructor by <code>Parameterized</code>
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.METHOD)
 	public static @interface Parameters {
+		 /**
+		  * <p>Optional pattern to derive the fixture name from the parameters.
+		  * Use numbers in braces to refer to the parameters or the additional
+		  * data as follows:</p>
+		  * <pre>
+		  * {0} - the original fixture name
+		  * {1} - the current parameter index
+		  * {2} - the first parameter value
+		  * {3} - the second parameter value
+		  * etc...
+		  * </pre>
+		  * <p>Default value is "[{0}]" for compatibility with previous JUnit versions.</p>
+		  *
+		  * @return {@link MessageFormat} pattern string
+		  * @see MessageFormat
+		  */
+		 String fixtureDescription() default "[{0}]";
+
+		 /**
+		  * <p>Optional pattern to derive the test name from the parameters.
+		  * Use numbers in braces to refer to the parameters or the additional
+		  * data as follows:</p>
+		  * <pre>
+		  * {0} - the original fixture name
+		  * {1} - the current parameter index
+		  * {2} - the first parameter value
+		  * {3} - the second parameter value
+		  * etc...
+		  * </pre>
+		  * <p>Default value is "{0}[{1}]" for compatibility with previous JUnit versions.</p>
+		  *
+		  * @return {@link MessageFormat} pattern string
+		  * @see MessageFormat
+		  */
+		 String testDescription() default "{0}[{1}]";
 	}
 
 	private class TestClassRunnerForParameters extends
@@ -100,13 +142,26 @@ public class Parameterized extends Suite {
 
 		@Override
 		protected String getName() {
-			return String.format("[%s]", fParameterSetNumber);
+			String str = calculateDescription(fixtureDescriptionFmt, super.getName());
+			return str.replaceAll(PROBLEMATIC_FIXTURE_DESCRIPTION_CHARS, "");
 		}
 
 		@Override
 		protected String testName(final FrameworkMethod method) {
-			return String.format("%s[%s]", method.getName(),
-					fParameterSetNumber);
+			return calculateDescription(testDescriptionFmt, method.getName());
+		}
+
+		private String calculateDescription(MessageFormat descriptionFmt, String name) {
+			try {
+				Object[] parameters = computeParams();
+				Object[] formatArgs = new Object[parameters.length + 2];
+				formatArgs[0] = name;
+				formatArgs[1] = fParameterSetNumber;
+				System.arraycopy(parameters, 0, formatArgs, 2, parameters.length);
+				return descriptionFmt.format(formatArgs, new StringBuffer(), null).toString();
+			} catch (Exception e) {
+				return String.format("[%s] ERR: %s", fParameterSetNumber, e.getMessage());
+			}
 		}
 
 		@Override
@@ -121,6 +176,8 @@ public class Parameterized extends Suite {
 	}
 
 	private final ArrayList<Runner> runners= new ArrayList<Runner>();
+    protected final MessageFormat fixtureDescriptionFmt;
+    protected final MessageFormat testDescriptionFmt;
 
 	/**
 	 * Only called reflectively. Do not use programmatically.
@@ -131,6 +188,11 @@ public class Parameterized extends Suite {
 		for (int i= 0; i < parametersList.size(); i++)
 			runners.add(new TestClassRunnerForParameters(getTestClass().getJavaClass(),
 					parametersList, i));
+
+		FrameworkMethod parametersMethod = getParametersMethod(getTestClass());
+		Parameters parameters = parametersMethod.getAnnotation(Parameters.class);
+		fixtureDescriptionFmt = new MessageFormat(parameters.fixtureDescription());
+		testDescriptionFmt = new MessageFormat(parameters.testDescription());
 	}
 
 	@Override
