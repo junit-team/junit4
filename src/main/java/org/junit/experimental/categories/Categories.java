@@ -10,8 +10,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.runner.Description;
+import org.junit.runner.RunWith;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.NoTestsRemainException;
+import org.junit.runners.Parameterized;
 import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
@@ -96,10 +98,19 @@ public class Categories extends Suite {
 		public boolean shouldRun(Description description) {
 			if (hasCorrectCategoryAnnotation(description))
 				return true;
+			if (isParameterizedClass(description))
+				return false;
 			for (Description each : description.getChildren())
 				if (shouldRun(each))
 					return true;
 			return false;
+		}
+
+		private boolean isParameterizedClass(Description description) {
+			RunWith annotation= description.getAnnotation(RunWith.class);
+			if (annotation == null)
+				return false;
+			return annotation.value().equals(Parameterized.class);
 		}
 
 		private boolean hasCorrectCategoryAnnotation(Description description) {

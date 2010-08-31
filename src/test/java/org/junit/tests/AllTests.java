@@ -137,7 +137,8 @@ import org.junit.tests.validation.ValidationTest;
 	TempFolderRuleTest.class,
 	ExternalResourceRuleTest.class,
 	VerifierRuleTest.class,
-	CategoryTest.class
+	CategoryTest.class,
+	CategoriesAndParameterizedTest.class
 })
 public class AllTests {
 	public static Test suite() {
