@@ -14,24 +14,24 @@ import org.junit.runners.model.Statement;
 /**
  * The ExpectedException Rule allows in-test specification of expected exception
  * types and messages:
- * 
+ *
  * <pre>
  * // These tests all pass.
  * public static class HasExpectedException {
  * 	&#064;Rule
  * 	public ExpectedException thrown= new ExpectedException();
- * 
+ *
  * 	&#064;Test
  * 	public void throwsNothing() {
  *    // no exception expected, none thrown: passes.
  * 	}
- * 
+ *
  * 	&#064;Test
  * 	public void throwsNullPointerException() {
  * 		thrown.expect(NullPointerException.class);
  * 		throw new NullPointerException();
  * 	}
- * 
+ *
  * 	&#064;Test
  * 	public void throwsNullPointerExceptionWithMessage() {
  * 		thrown.expect(NullPointerException.class);
@@ -54,9 +54,9 @@ public class ExpectedException implements MethodRule {
 	private Matcher<Object> fMatcher= null;
 
 	private ExpectedException() {
-		
+
 	}
-	
+
 	public Statement apply(Statement base, FrameworkMethod method, Object target) {
 		return new ExpectedExceptionStatement(base);
 	}
@@ -90,7 +90,7 @@ public class ExpectedException implements MethodRule {
 	}
 
 	/**
-	 * Adds {@code matcher} to the list of requirements for the message 
+	 * Adds {@code matcher} to the list of requirements for the message
 	 * returned from any thrown exception.
 	 */
 	public void expectMessage(Matcher<String> matcher) {
@@ -126,10 +126,31 @@ public class ExpectedException implements MethodRule {
 				description.appendText("exception with message ");
 				description.appendDescriptionOf(matcher);
 			}
-		
+
 			@Override
 			public boolean matchesSafely(Throwable item) {
 				return matcher.matches(item.getMessage());
+			}
+		};
+	}
+
+	public void expectCause(Class<? extends Throwable> type) {
+		expect(hasCauseOfType(type));
+	}
+
+	private Matcher<?> hasCauseOfType(final Class<? extends Throwable> type) {
+		return new TypeSafeMatcher<Throwable>() {
+			@Override
+			public boolean matchesSafely(Throwable item) {
+				if (item == null)
+					return false;
+				Throwable cause = item.getCause();
+				return cause != null && type.isInstance(cause);
+			}
+
+			public void describeTo(Description description) {
+				description.appendText("exception with cause that is an instance of ");
+				description.appendValue(type);
 			}
 		};
 	}

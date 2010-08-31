@@ -182,14 +182,14 @@ public class ExpectedExceptionRuleTest {
 				description.appendText("starts with ");
 				description.appendText(prefix);
 			}
-		
+
 			@Override
 			public boolean matchesSafely(String item) {
 				return item.startsWith(prefix);
 			}
 		};
 	}
-	
+
 	@Test
 	public void failsWithMatcher() {
 		assertThat(testResult(ExpectedMessageMatcherFails.class),
@@ -228,5 +228,79 @@ public class ExpectedExceptionRuleTest {
 	public void failsWithMultipleMatchers() {
 		assertThat(testResult(ExpectsMultipleMatchers.class),
 				hasSingleFailureContaining("IllegalArgumentException"));
+	}
+
+	public static class HasExpectedExceptionWithCause {
+		@Rule
+		public final ExpectedException thrown= ExpectedException.none();
+
+		@Test
+		public void throwsExceptionWithExpectedCause() {
+			thrown.expectCause(IllegalArgumentException.class);
+			throw new IllegalStateException(new IllegalArgumentException());
+		}
+	}
+
+	@Test
+	public void succeedsWithCauseMatcher() {
+		assertThat(testResult(HasExpectedExceptionWithCause.class), isSuccessful());
+	}
+
+	public static class HasExpectedExceptionWithUnexpectedCause {
+		@Rule
+		public final ExpectedException thrown= ExpectedException.none();
+
+		@Test
+		public void throwsExceptionWithUnexpectedCause() {
+			thrown.expectCause(UnsupportedOperationException.class);
+			throw new IllegalStateException(new IllegalArgumentException());
+		}
+	}
+
+	@Test
+	public void failsWithUnexpectedCause() {
+		assertThat(testResult(HasExpectedExceptionWithUnexpectedCause.class),
+				hasSingleFailureContaining("exception with cause that is an instance of"
+						+ " <class java.lang.UnsupportedOperationException>"));
+	}
+
+	public static class HasUnexpectedExceptionWithCause {
+		@Rule
+		public final ExpectedException thrown= ExpectedException.none();
+
+		@Test
+		public void throwsUnexpectedExceptionWithCause() {
+			thrown.expect(IllegalArgumentException.class);
+			thrown.expectCause(UnsupportedOperationException.class);
+			throw new IllegalStateException(new UnsupportedOperationException());
+		}
+	}
+
+	@Test
+	public void failsWithUnexpectedExceptionWithCause() {
+		assertThat(testResult(HasUnexpectedExceptionWithCause.class),
+				hasSingleFailureContaining("exception with cause that is an instance of"
+						+ " <class java.lang.UnsupportedOperationException> and an instance of"
+						+ " java.lang.IllegalArgumentException"));
+	}
+
+	public static class HasExpectedExceptionWithNoCause {
+		@Rule
+		public final ExpectedException thrown= ExpectedException.none();
+
+		@Test
+		public void throwsUnexpectedExceptionWithCause() {
+			thrown.expect(IllegalArgumentException.class);
+			thrown.expectCause(UnsupportedOperationException.class);
+			throw new IllegalArgumentException();
+		}
+	}
+
+	@Test
+	public void failsWithExpectedExceptionWithNoCause() {
+		assertThat(testResult(HasUnexpectedExceptionWithCause.class),
+				hasSingleFailureContaining("exception with cause that is an instance of"
+						+ " <class java.lang.UnsupportedOperationException> and an instance of"
+						+ " java.lang.IllegalArgumentException"));
 	}
 }
