@@ -64,32 +64,49 @@ import org.junit.runners.model.RunnerBuilder;
 public class Categories extends Suite {
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface IncludeCategory {
-		public Class<?> value();
+		public Class<?>[] value();
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface ExcludeCategory {
-		public Class<?> value();
+		public Class<?>[] value();
 	}
 
 	public static class CategoryFilter extends Filter {
-		public static CategoryFilter include(Class<?> categoryType) {
+		public static CategoryFilter include(Class<?>... categoryType) {
 			return new CategoryFilter(categoryType, null);
 		}
+		public static CategoryFilter include(Class<?> categoryType) {
+			return new CategoryFilter(new Class<?>[] {categoryType}, null);
+		}
 
-		private final Class<?> fIncluded;
+		private final Class<?>[] fIncluded;
 
-		private final Class<?> fExcluded;
+		private final Class<?>[] fExcluded;
 
-		public CategoryFilter(Class<?> includedCategory,
-				Class<?> excludedCategory) {
+		public CategoryFilter(Class<?>[] includedCategory,
+				Class<?>[] excludedCategory) {
 			fIncluded= includedCategory;
 			fExcluded= excludedCategory;
 		}
 
 		@Override
 		public String describe() {
-			return "category " + fIncluded;
+			return ((fIncluded == null || fIncluded.length == 1) ? "category ":"categories ") + join(", ", fIncluded);
+		}
+		
+		private String join(String seperator, Class<?>... values)
+		{
+			if(values == null || values.length == 0)
+			{
+				return "";
+			}
+			StringBuilder sb = new StringBuilder(values[0].toString());
+			for(int i = 1; i < values.length; i++)
+			{
+				sb.append(seperator).append(values[i].toString());
+			}
+			return sb.toString();
 		}
 
 		@Override
@@ -106,12 +123,11 @@ public class Categories extends Suite {
 			List<Class<?>> categories= categories(description);
 			if (categories.isEmpty())
 				return fIncluded == null;
-			for (Class<?> each : categories)
-				if (fExcluded != null && fExcluded.isAssignableFrom(each))
-					return false;
-			for (Class<?> each : categories)
-				if (fIncluded == null || fIncluded.isAssignableFrom(each))
-					return true;
+			
+			if(!methodContainsAnyExcludedCategories(categories, fExcluded))
+			{
+				return methodContainsAllIncludedCategories(categories, fIncluded);
+			}
 			return false;
 		}
 
@@ -133,6 +149,40 @@ public class Categories extends Suite {
 				return new Class<?>[0];
 			return annotation.value();
 		}
+		
+		private boolean methodContainsAnyExcludedCategories(
+				List<Class<?>> categories, Class<?>[] excludedCategories) {
+			if (excludedCategories != null) {
+				for (Class<?> eachExcluded : excludedCategories) {
+					if (containsCategory(categories, eachExcluded)) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
+		private boolean methodContainsAllIncludedCategories(
+				List<Class<?>> categories, Class<?>[] includedCategories) {
+			if (includedCategories != null) {
+				for (Class<?> eachIncluded : includedCategories) {
+					if (!containsCategory(categories, eachIncluded)) {
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+
+		private boolean containsCategory(List<Class<?>> categories,
+				Class<?> categoryToMatch) {
+			for (Class<?> each : categories) {
+				if (categoryToMatch.isAssignableFrom(each)) {
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 
 	public Categories(Class<?> klass, RunnerBuilder builder)
@@ -146,12 +196,12 @@ public class Categories extends Suite {
 		}
 	}
 
-	private Class<?> getIncludedCategory(Class<?> klass) {
+	private Class<?>[] getIncludedCategory(Class<?> klass) {
 		IncludeCategory annotation= klass.getAnnotation(IncludeCategory.class);
 		return annotation == null ? null : annotation.value();
 	}
 
-	private Class<?> getExcludedCategory(Class<?> klass) {
+	private Class<?>[] getExcludedCategory(Class<?> klass) {
 		ExcludeCategory annotation= klass.getAnnotation(ExcludeCategory.class);
 		return annotation == null ? null : annotation.value();
 	}

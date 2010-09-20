@@ -194,6 +194,14 @@ public class CategoryTest {
 		assertEquals("category " + SlowTests.class, filter.describe());
 	}
 	
+	@Test
+	public void describeMultipleCategoryFilter() {
+		CategoryFilter filter= CategoryFilter.include(FastTests.class,
+				SlowTests.class);
+		assertEquals("categories " + FastTests.class + ", " + SlowTests.class,
+				filter.describe());
+	}
+
 	public static class OneThatIsBothFastAndSlow {
 		@Category({FastTests.class, SlowTests.class})
 		@Test
@@ -234,6 +242,79 @@ public class CategoryTest {
 		assertThat(testResult(RunSlowFromVerySlow.class), isSuccessful());
 	}
 	
+	public interface MultiA {
+
+	}
+
+	public interface MultiB {
+
+	}
+
+	public interface MultiC {
+
+	}
+
+	@RunWith(Categories.class)
+	@IncludeCategory({ MultiA.class, MultiB.class })
+	@SuiteClasses(AllIncludedMustMatched.class)
+	public static class AllIncludedMustBeMatchedSuite {
+
+	}
+
+	public static class AllIncludedMustMatched {
+		@Test
+		@Category({ MultiA.class, MultiB.class })
+		public void a() {
+
+		}
+
+		@Test
+		@Category(MultiB.class)
+		public void b() {
+			fail("When multiple categories are included in a Suite, " +
+					"@Test method must match all include categories");
+		}
+	}
+
+	@Test
+	public void allIncludedSuiteCategoriesMustBeMatched() {
+		Result result= JUnitCore
+				.runClasses(AllIncludedMustBeMatchedSuite.class);
+		assertEquals(1, result.getRunCount());
+		assertEquals(0, result.getFailureCount());
+	}
+
+	@RunWith(Categories.class)
+	@IncludeCategory({ MultiA.class, MultiB.class })
+	@ExcludeCategory(MultiC.class)
+	@SuiteClasses(MultipleIncludesAndExcludeOnMethod.class)
+	public static class MultiIncludeWithExcludeCategorySuite {
+
+	}
+
+	public static class MultipleIncludesAndExcludeOnMethod {
+		@Test
+		@Category({ MultiA.class, MultiB.class })
+		public void a() {
+
+		}
+
+		@Test
+		@Category({ MultiA.class, MultiB.class, MultiC.class })
+		public void b() {
+			fail("When multiple categories are included and excluded in a Suite, " +
+					"@Test method must match all include categories and contain non of the excluded");
+		}
+	}
+
+	@Test
+	public void anyMethodWithExcludedCategoryWillBeExcluded() {
+		Result result= JUnitCore
+				.runClasses(MultiIncludeWithExcludeCategorySuite.class);
+		assertEquals(1, result.getRunCount());
+		assertEquals(0, result.getFailureCount());
+	}
+
 	public static class ClassAsCategory {
 		
 	}
