@@ -128,6 +128,12 @@ public class Categories extends Suite {
 		}
 
 		private Description parentDescription(Description description) {
+			// TODO:
+			// So, we have special-casing for null here, because
+			// runners like Parameterized trigger nulls.  Can we use
+			// that fact to automatically determine "un-categorizeable" test
+			// runners?
+			
 			// TODO: how heavy are we cringing?
 			Class<?> testClass= description.getTestClass();
 			if (testClass == null)
