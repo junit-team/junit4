@@ -94,23 +94,17 @@ public class Categories extends Suite {
 			return "category " + fIncluded;
 		}
 
+		// TODO: why do we have two CategoryFilters?
 		@Override
 		public boolean shouldRun(Description description) {
 			if (hasCorrectCategoryAnnotation(description))
 				return true;
-			if (isParameterizedClass(description))
-				return false;
+//			if (!canHaveCategorizedChildren(description))
+//				return false;
 			for (Description each : description.getChildren())
 				if (shouldRun(each))
 					return true;
 			return false;
-		}
-
-		private boolean isParameterizedClass(Description description) {
-			RunWith annotation= description.getAnnotation(RunWith.class);
-			if (annotation == null)
-				return false;
-			return annotation.value().equals(Parameterized.class);
 		}
 
 		private boolean hasCorrectCategoryAnnotation(Description description) {
@@ -135,10 +129,15 @@ public class Categories extends Suite {
 
 		private Description parentDescription(Description description) {
 			// TODO: how heavy are we cringing?
-			return Description.createSuiteDescription(description.getTestClass());
+			Class<?> testClass= description.getTestClass();
+			if (testClass == null)
+				return null;
+			return Description.createSuiteDescription(testClass);
 		}
 
 		private Class<?>[] directCategories(Description description) {
+			if (description == null)
+				return new Class<?>[0];
 			Category annotation= description.getAnnotation(Category.class);
 			if (annotation == null)
 				return new Class<?>[0];
@@ -150,11 +149,13 @@ public class Categories extends Suite {
 			throws InitializationError {
 		super(klass, builder);
 		try {
+			// TODO: too much work in constructors
 			filter(new CategoryFilter(getIncludedCategory(klass),
 					getExcludedCategory(klass)));
 		} catch (NoTestsRemainException e) {
 			throw new InitializationError(e);
 		}
+		assertNoCategorizedDescendentsOfUncategorizeableParents(getDescription());
 	}
 
 	private Class<?> getIncludedCategory(Class<?> klass) {
@@ -165,5 +166,28 @@ public class Categories extends Suite {
 	private Class<?> getExcludedCategory(Class<?> klass) {
 		ExcludeCategory annotation= klass.getAnnotation(ExcludeCategory.class);
 		return annotation == null ? null : annotation.value();
+	}
+
+	private void assertNoCategorizedDescendentsOfUncategorizeableParents(Description description) throws InitializationError {
+		if (!canHaveCategorizedChildren(description))
+			assertNoDescendantsHaveCategoryAnnotations(description);
+		for (Description each : description.getChildren())
+			assertNoCategorizedDescendentsOfUncategorizeableParents(each);
+	}
+	
+	private void assertNoDescendantsHaveCategoryAnnotations(Description description) throws InitializationError {			
+		for (Description each : description.getChildren()) {
+			if (each.getAnnotation(Category.class) != null)
+				throw new InitializationError("Category annotations on Parameterized classes are not supported on individual methods.");
+			assertNoDescendantsHaveCategoryAnnotations(each);
+		}
+	}
+
+	private static boolean canHaveCategorizedChildren(Description description) {
+		RunWith annotation= description.getAnnotation(RunWith.class);
+		if (annotation == null)
+			return true;
+		// TODO: something more general
+		return !annotation.value().equals(Parameterized.class);
 	}
 }

@@ -1,16 +1,11 @@
 package org.junit.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 import java.util.Collections;
 
-import junit.framework.TestResult;
-
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Categories;
 import org.junit.experimental.categories.Categories.IncludeCategory;
@@ -23,7 +18,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.Suite.SuiteClasses;
-import org.junit.tests.experimental.results.PrintableResultTest;
 
 public class CategoriesAndParameterizedTest {
 	public static class Token {
@@ -31,8 +25,8 @@ public class CategoriesAndParameterizedTest {
 	}
 
 	@RunWith(Parameterized.class)
-	public static class ParameterizedTestA {
-		public ParameterizedTestA(String a) {
+	public static class WellBehavedParameterizedTest {
+		public WellBehavedParameterizedTest(String a) {
 		}
 
 		@Parameters
@@ -47,8 +41,8 @@ public class CategoriesAndParameterizedTest {
 	}
 
 	@RunWith(Parameterized.class)
-	public static class ParameterizedTestC {
-		public ParameterizedTestC(String a) {
+	public static class ParameterizedTestWithAttemptedMethodCategory {
+		public ParameterizedTestWithAttemptedMethodCategory(String a) {
 		}
 
 		@Parameters
@@ -64,7 +58,7 @@ public class CategoriesAndParameterizedTest {
 	}
 
 	@Category(Token.class)
-	public static class SomeTestB {
+	public static class VanillaCategorizedJUnitTest {
 		@Test
 		public void testSomething() {
 			Assert.assertTrue(true);
@@ -73,27 +67,40 @@ public class CategoriesAndParameterizedTest {
 
 	@RunWith(Categories.class)
 	@IncludeCategory(Token.class)
-	@SuiteClasses({ SomeTestB.class, ParameterizedTestA.class })
-	public static class ParameterTokenSuite {
+	@SuiteClasses({ VanillaCategorizedJUnitTest.class, WellBehavedParameterizedTest.class })
+	public static class ParameterTokenSuiteWellFormed {
 	}
 
 	@RunWith(Categories.class)
 	@IncludeCategory(Token.class)
-	@SuiteClasses({ ParameterizedTestC.class, SomeTestB.class })
-	public static class ParameterTokenSuiteC {
+	@SuiteClasses({ ParameterizedTestWithAttemptedMethodCategory.class, VanillaCategorizedJUnitTest.class })
+	public static class ParameterTokenSuiteMalformed {
 	}
 
+	@RunWith(Categories.class)
+	@IncludeCategory(Token.class)
+	@SuiteClasses({ VanillaCategorizedJUnitTest.class, ParameterizedTestWithAttemptedMethodCategory.class })
+	public static class ParameterTokenSuiteMalformedAndSwapped {
+	}
+   
 	@Test
 	public void shouldSucceedWithAParameterizedClassSomewhere() {
-		Result result= new JUnitCore().run(ParameterTokenSuite.class);
+		Result result= new JUnitCore().run(ParameterTokenSuiteWellFormed.class);
 		assertTrue(result.wasSuccessful());
 	}
 
-	@Ignore("Fix next time")
 	@Test
-	public void shouldFailWith() {
+	public void shouldFailWithMethodLevelCategoryAnnotation() {
 		Assert.assertThat(
-				PrintableResult.testResult(ParameterTokenSuiteC.class),
+				PrintableResult.testResult(ParameterTokenSuiteMalformed.class),
+				ResultMatchers
+						.hasFailureContaining("Category annotations on Parameterized classes are not supported on individual methods."));
+	}
+
+	@Test
+	public void shouldFailWithMethodLevelCategoryAnnotationSwapped() {
+		Assert.assertThat(
+				PrintableResult.testResult(ParameterTokenSuiteMalformedAndSwapped.class),
 				ResultMatchers
 						.hasFailureContaining("Category annotations on Parameterized classes are not supported on individual methods."));
 	}
