@@ -11,12 +11,12 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
-import org.junit.ClassRule.Value;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.model.MultipleFailureException;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
+import org.junit.rules.BisectionRule;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
@@ -187,13 +187,13 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	 *         found, or the base statement
 	 */
 	private Statement withClassRules(Statement statement) {
-		final List<Value> classRules= classRules();
+		final List<BisectionRule> classRules= classRules();
 		if (classRules.isEmpty()) {
 			return statement;
 		}
 		Statement next = statement;
-		for (final Value classRule : classRules) {
-			next = classRule.apply(next, fTestClass);
+		for (final BisectionRule classRule : classRules) {
+			next = classRule.apply(next, getDescription());
 		}
 		return next;
 	}
@@ -202,16 +202,16 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	 * @return the {@code ClassRule}s that can transform the block that runs
 	 *         each method in the tested class.
 	 */
-	protected List<Value> classRules() {
-		List<Value> results= new ArrayList<Value>();
+	protected List<BisectionRule> classRules() {
+		List<BisectionRule> results= new ArrayList<BisectionRule>();
 		for (FrameworkField field : classRuleFields())
 			results.add(getClassRule(field));
 		return results;
 	}
 
-	private Value getClassRule(final FrameworkField field) {
+	private BisectionRule getClassRule(final FrameworkField field) {
 		try {
-			return (Value) field.get(null);
+			return (BisectionRule) field.get(null);
 		} catch (IllegalAccessException e) {
 			throw new RuntimeException(
 					"How did getAnnotatedFields return a field we couldn't access?");

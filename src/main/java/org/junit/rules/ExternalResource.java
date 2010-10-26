@@ -1,9 +1,8 @@
 package org.junit.rules;
 
-import org.junit.ClassRule;
+import org.junit.runner.Description;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
-import org.junit.runners.model.TestClass;
 
 /**
  * A base class for Rules (like TemporaryFolder) that set up an external
@@ -34,13 +33,13 @@ import org.junit.runners.model.TestClass;
  * }
  * </pre>
  */
-public abstract class ExternalResource implements MethodRule, ClassRule.Value {
+public abstract class ExternalResource implements MethodRule, BisectionRule {
 	public final Statement apply(final Statement base,
 			FrameworkMethod method, Object target) {
 		return statement(base);
 	}
 	
-	public Statement apply(Statement base, TestClass testClass) {
+	public Statement apply(Statement base, Description description) {
 		return statement(base);
 	}
 

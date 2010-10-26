@@ -10,10 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.runner.Description;
-import org.junit.runner.RunWith;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.NoTestsRemainException;
-import org.junit.runners.Parameterized;
 import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
@@ -99,8 +97,6 @@ public class Categories extends Suite {
 		public boolean shouldRun(Description description) {
 			if (hasCorrectCategoryAnnotation(description))
 				return true;
-//			if (!canHaveCategorizedChildren(description))
-//				return false;
 			for (Description each : description.getChildren())
 				if (shouldRun(each))
 					return true;
@@ -127,13 +123,7 @@ public class Categories extends Suite {
 			return categories;
 		}
 
-		private Description parentDescription(Description description) {
-			// TODO:
-			// So, we have special-casing for null here, because
-			// runners like Parameterized trigger nulls.  Can we use
-			// that fact to automatically determine "un-categorizeable" test
-			// runners?
-			
+		private Description parentDescription(Description description) {			
 			// TODO: how heavy are we cringing?
 			Class<?> testClass= description.getTestClass();
 			if (testClass == null)
@@ -189,11 +179,12 @@ public class Categories extends Suite {
 		}
 	}
 
+	// If children have names like [0], our current magical category code can't determine their
+	// parentage.
 	private static boolean canHaveCategorizedChildren(Description description) {
-		RunWith annotation= description.getAnnotation(RunWith.class);
-		if (annotation == null)
-			return true;
-		// TODO: something more general
-		return !annotation.value().equals(Parameterized.class);
+		for (Description each : description.getChildren())
+			if (each.getTestClass() == null)
+				return false;
+		return true;
 	}
 }

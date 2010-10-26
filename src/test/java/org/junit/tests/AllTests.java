@@ -16,6 +16,7 @@ import org.junit.tests.experimental.AssumptionTest;
 import org.junit.tests.experimental.AssumptionViolatedExceptionTest;
 import org.junit.tests.experimental.ExperimentalTests;
 import org.junit.tests.experimental.MatcherTest;
+import org.junit.tests.experimental.categories.CategoriesAndParameterizedTest;
 import org.junit.tests.experimental.categories.CategoryTest;
 import org.junit.tests.experimental.max.JUnit38SortingTest;
 import org.junit.tests.experimental.max.MaxStarterTest;
