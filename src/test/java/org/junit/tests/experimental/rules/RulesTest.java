@@ -7,14 +7,17 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
+import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 import static org.junit.matchers.JUnitMatchers.containsString;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
 import org.junit.rules.MethodRule;
 import org.junit.rules.TestName;
 import org.junit.rules.TestWatchman;
+import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runners.model.FrameworkMethod;
@@ -242,5 +245,30 @@ public class RulesTest {
 	@Test public void validatePrivateRule() {
 		assertThat(testResult(PrivateRule.class), 
 				hasSingleFailureContaining("must be public"));
+	}
+	
+	public static class CustomTestName implements TestRule {
+		public String name = null;
+			
+		public Statement apply(final Statement base, final Description description) {
+			return new Statement() {				
+				@Override
+				public void evaluate() throws Throwable {
+					name = description.getMethodName();
+					base.evaluate();
+				}
+			};
+		}		
+	}
+	
+	public static class UsesCustomMethodRule {
+		@Rule public CustomTestName counter = new CustomTestName();
+		@Test public void foo() {
+			assertEquals("foo", counter.name);
+		}
+	}
+	
+	@Test public void useCustomMethodRule() {
+		assertThat(testResult(UsesCustomMethodRule.class), isSuccessful());
 	}
 }

@@ -140,7 +140,9 @@ public class TestClass {
 		List<T> results= new ArrayList<T>();
 		for (FrameworkField each : getAnnotatedFields(annotationClass)) {
 			try {
-				results.add(valueClass.cast(each.get(test)));
+				Object fieldValue= each.get(test);
+				if (valueClass.isInstance(fieldValue))
+					results.add(valueClass.cast(fieldValue));
 			} catch (IllegalAccessException e) {
 				throw new RuntimeException(
 						"How did getFields return a field we couldn't access?");

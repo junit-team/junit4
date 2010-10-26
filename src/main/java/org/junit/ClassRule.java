@@ -3,13 +3,13 @@ package org.junit;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import org.junit.rules.BisectionRule;
+import org.junit.rules.TestRule;
 
 /**
- * TODO: fix
+ * TODO: expand (see TestRule for help)
  * 
  * Annotates static fields that contain rules. Such a field must be public,
- * static, and a subtype of {@link BisectionRule}.  This rule wraps the entire
+ * static, and a subtype of {@link TestRule}.  This rule wraps the entire
  * execution of a class's methods.
  */
 @Retention(RetentionPolicy.RUNTIME)

@@ -20,6 +20,7 @@ import org.junit.internal.runners.statements.FailOnTimeout;
 import org.junit.internal.runners.statements.InvokeMethod;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
+import org.junit.rules.TestRule;
 import org.junit.rules.MethodRule;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -184,7 +185,9 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	}
 
 	private void validateRuleField(Field field, List<Throwable> errors) {
-		if (!MethodRule.class.isAssignableFrom(field.getType()))
+		Class<?> type= field.getType();
+		if (!(MethodRule.class.isAssignableFrom(type) || 
+				TestRule.class.isAssignableFrom(type)))
 			errors.add(new Exception("Field " + field.getName()
 					+ " must implement MethodRule"));
 		if (!Modifier.isPublic(field.getModifiers()))
@@ -352,6 +355,9 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 		for (MethodRule each : getTestClass().getAnnotatedFieldValues(target,
 				Rule.class, MethodRule.class))
 			result= each.apply(result, method, target);
+		for (TestRule each : getTestClass().getAnnotatedFieldValues(target,
+				Rule.class, TestRule.class))
+			result= each.apply(result, describeChild(method));
 		return result;
 	}
 

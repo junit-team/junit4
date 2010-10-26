@@ -7,7 +7,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.rules.BisectionRule;
+import org.junit.rules.TestRule;
 import org.junit.rules.ExternalResource;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
@@ -61,7 +61,7 @@ public class ClassRulesTest {
 		assertEquals(1, ExampleTestWithClassRule.counter.count);
 	}
 	
-	public static class CustomCounter implements BisectionRule {
+	public static class CustomCounter implements TestRule {
 		public int count = 0;
 		
 		public Statement apply(final Statement base, Description description) {

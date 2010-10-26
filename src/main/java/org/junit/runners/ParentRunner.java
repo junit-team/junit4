@@ -16,7 +16,7 @@ import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.model.MultipleFailureException;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
-import org.junit.rules.BisectionRule;
+import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
@@ -187,12 +187,12 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	 *         found, or the base statement
 	 */
 	private Statement withClassRules(Statement statement) {
-		final List<BisectionRule> classRules= classRules();
+		final List<TestRule> classRules= classRules();
 		if (classRules.isEmpty()) {
 			return statement;
 		}
 		Statement next = statement;
-		for (final BisectionRule classRule : classRules) {
+		for (final TestRule classRule : classRules) {
 			next = classRule.apply(next, getDescription());
 		}
 		return next;
@@ -202,16 +202,16 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	 * @return the {@code ClassRule}s that can transform the block that runs
 	 *         each method in the tested class.
 	 */
-	protected List<BisectionRule> classRules() {
-		List<BisectionRule> results= new ArrayList<BisectionRule>();
+	protected List<TestRule> classRules() {
+		List<TestRule> results= new ArrayList<TestRule>();
 		for (FrameworkField field : classRuleFields())
 			results.add(getClassRule(field));
 		return results;
 	}
 
-	private BisectionRule getClassRule(final FrameworkField field) {
+	private TestRule getClassRule(final FrameworkField field) {
 		try {
-			return (BisectionRule) field.get(null);
+			return (TestRule) field.get(null);
 		} catch (IllegalAccessException e) {
 			throw new RuntimeException(
 					"How did getAnnotatedFields return a field we couldn't access?");
