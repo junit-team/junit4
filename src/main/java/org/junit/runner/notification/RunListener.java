@@ -29,6 +29,10 @@ import org.junit.runner.Result;
  * }
  * </pre>
  * </p>
+ *
+ * Thread safety: A run listener will be invoked from multiple threads and should be thread-safe
+ * for parallel execution.
+ * 
  * @see org.junit.runner.JUnitCore
  */
 public class RunListener {

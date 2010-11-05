@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
@@ -17,8 +18,7 @@ import org.junit.runner.Result;
  * to a separate class since they should only be called once per run.
  */
 public class RunNotifier {
-	private final List<RunListener> fListeners= 
-		Collections.synchronizedList(new ArrayList<RunListener>());
+	private final List<RunListener> fListeners = new CopyOnWriteArrayList<RunListener>();
 	private boolean fPleaseStop= false;
 	
 	/** Internal use only
@@ -35,20 +35,18 @@ public class RunNotifier {
 
 	private abstract class SafeNotifier {
 		void run() {
-			synchronized (fListeners) {
-				for (Iterator<RunListener> all= fListeners.iterator(); all.hasNext();)
-					try {
-						notifyListener(all.next());
-					} catch (Exception e) {
-						all.remove(); // Remove the offending listener first to avoid an infinite loop
-						fireTestFailure(new Failure(Description.TEST_MECHANISM, e));
-					}
-			}
+            for (Iterator<RunListener> all = fListeners.iterator(); all.hasNext();)
+                try {
+                    notifyListener(all.next());
+                } catch (Exception e) {
+                    all.remove(); // Remove the offending listener first to avoid an infinite loop
+                    fireTestFailure(new Failure(Description.TEST_MECHANISM, e));
+             }
 		}
-		
+
 		abstract protected void notifyListener(RunListener each) throws Exception;
 	}
-	
+
 	/**
 	 * Do not invoke. 
 	 */
