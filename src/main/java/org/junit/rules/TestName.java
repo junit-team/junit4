@@ -1,6 +1,6 @@
 package org.junit.rules;
 
-import org.junit.runners.model.FrameworkMethod;
+import org.junit.runner.Description;
 
 /**
  * The TestName Rule makes the current test name available inside test methods:
@@ -22,12 +22,12 @@ import org.junit.runners.model.FrameworkMethod;
  * }
  * </pre>
  */
-public class TestName extends TestWatchman {
+public class TestName extends TestRuleTestWatchman {
 	private String fName;
 
 	@Override
-	public void starting(FrameworkMethod method) {
-		fName= method.getName();
+	public void starting(Description d) {
+		fName= d.getMethodName();
 	}
 
 	/**

@@ -13,15 +13,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestRule;
-import org.junit.rules.MethodRule;
 import org.junit.rules.TestName;
+import org.junit.rules.TestRule;
 import org.junit.rules.TestRuleTestWatchman;
-import org.junit.rules.TestWatchman;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
-import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
 public class TestRuleTest {
@@ -183,19 +180,19 @@ public class TestRuleTest {
 		}
 		
 		@Rule
-		public MethodRule watchman= new TestWatchman() {
+		public TestRule watchman= new TestRuleTestWatchman() {
 			@Override
-			public void starting(FrameworkMethod method) {
+			public void starting(Description d) {
 				watchedLog+= "starting ";
 			}
 			
 			@Override
-			public void finished(FrameworkMethod method) {
+			public void finished(Description d) {
 				watchedLog+= "finished ";
 			}
 			
 			@Override
-			public void succeeded(FrameworkMethod method) {
+			public void succeeded(Description d) {
 				watchedLog+= "succeeded ";
 			}
 		};
@@ -238,7 +235,7 @@ public class TestRuleTest {
 
 	public static class PrivateRule {
 		@SuppressWarnings("unused")
-		@Rule private MethodRule rule = new TestName();
+		@Rule private TestRule rule = new TestName();
 		@Test public void foo() {}
 	}
 	

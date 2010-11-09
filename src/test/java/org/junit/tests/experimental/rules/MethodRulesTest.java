@@ -23,7 +23,8 @@ import org.junit.runner.Result;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
-public class RulesTest {
+@SuppressWarnings("deprecation")
+public class MethodRulesTest {
 	private static boolean wasRun;
 
 	public static class ExampleTest {
@@ -238,7 +239,7 @@ public class RulesTest {
 
 	public static class PrivateRule {
 		@SuppressWarnings("unused")
-		@Rule private MethodRule rule = new TestName();
+		@Rule private TestRule rule = new TestName();
 		@Test public void foo() {}
 	}
 	

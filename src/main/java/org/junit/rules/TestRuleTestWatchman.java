@@ -39,6 +39,7 @@ import org.junit.runners.model.Statement;
  * }
  * </pre>
  */
+// TODO: rename
 public class TestRuleTestWatchman implements TestRule {
 	public Statement apply(final Statement base, final Description description) {
 		return new Statement() {

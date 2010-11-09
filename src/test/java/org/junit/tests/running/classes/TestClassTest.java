@@ -9,7 +9,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.MethodRule;
+import org.junit.rules.TestRule;
 import org.junit.runners.model.TestClass;
 
 public class TestClassTest {
@@ -70,12 +70,12 @@ public class TestClassTest {
 
 	public static class SuperclassWithField {
 		@Rule
-		public MethodRule x;
+		public TestRule x;
 	}
 
 	public static class SubclassWithField extends SuperclassWithField {
 		@Rule
-		public MethodRule x;
+		public TestRule x;
 	}
 
 	@Test

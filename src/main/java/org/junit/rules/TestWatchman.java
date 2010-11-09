@@ -37,6 +37,9 @@ import org.junit.runners.model.Statement;
  * }
  * </pre>
  */
+// TODO: deprecation info
+// TODO: rename here when renamed elsewhere
+@Deprecated
 public class TestWatchman implements MethodRule {
 	public Statement apply(final Statement base, final FrameworkMethod method,
 			Object target) {

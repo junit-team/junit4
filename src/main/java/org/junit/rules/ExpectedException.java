@@ -8,7 +8,6 @@ import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.junit.Assert;
 import org.junit.internal.matchers.TypeSafeMatcher;
-import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
 /**

@@ -25,7 +25,7 @@ import org.junit.tests.experimental.parallel.ParallelMethodTest;
 import org.junit.tests.experimental.rules.ClassRulesTest;
 import org.junit.tests.experimental.rules.ExpectedExceptionRuleTest;
 import org.junit.tests.experimental.rules.ExternalResourceRuleTest;
-import org.junit.tests.experimental.rules.RulesTest;
+import org.junit.tests.experimental.rules.MethodRulesTest;
 import org.junit.tests.experimental.rules.NameRulesTest;
 import org.junit.tests.experimental.rules.TempFolderRuleTest;
 import org.junit.tests.experimental.rules.TestRuleTest;
@@ -128,7 +128,7 @@ import org.junit.tests.validation.ValidationTest;
 	FilterableTest.class,
 	MaxStarterTest.class,
 	JUnit38SortingTest.class,
-	RulesTest.class,
+	MethodRulesTest.class,
 	TestRuleTest.class,
 	TimeoutRuleTest.class,
 	ParallelClassTest.class,

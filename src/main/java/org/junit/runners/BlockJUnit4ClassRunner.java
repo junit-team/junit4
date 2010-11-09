@@ -21,7 +21,6 @@ import org.junit.internal.runners.statements.InvokeMethod;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
 import org.junit.rules.TestRule;
-import org.junit.rules.MethodRule;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkField;
@@ -186,13 +185,21 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 
 	private void validateRuleField(Field field, List<Throwable> errors) {
 		Class<?> type= field.getType();
-		if (!(MethodRule.class.isAssignableFrom(type) || 
-				TestRule.class.isAssignableFrom(type)))
+		if (!isMethodRule(type) && !isTestRule(type))
 			errors.add(new Exception("Field " + field.getName()
 					+ " must implement MethodRule"));
 		if (!Modifier.isPublic(field.getModifiers()))
 			errors.add(new Exception("Field " + field.getName()
 					+ " must be public"));
+	}
+
+	private boolean isTestRule(Class<?> type) {
+		return TestRule.class.isAssignableFrom(type);
+	}
+
+	@SuppressWarnings("deprecation")
+	private boolean isMethodRule(Class<?> type) {
+		return org.junit.rules.MethodRule.class.isAssignableFrom(type);
 	}
 
 	/**
@@ -352,9 +359,22 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	private Statement withRules(FrameworkMethod method, Object target,
 			Statement statement) {
 		Statement result= statement;
-		for (MethodRule each : getTestClass().getAnnotatedFieldValues(target,
-				Rule.class, MethodRule.class))
+		result= withMethodRules(method, target, result);
+		result= withTestRules(method, target, result);
+		return result;
+	}
+
+	@SuppressWarnings("deprecation")
+	private Statement withMethodRules(FrameworkMethod method, Object target,
+			Statement result) {
+		for (org.junit.rules.MethodRule each : getTestClass().getAnnotatedFieldValues(target,
+				Rule.class, org.junit.rules.MethodRule.class))
 			result= each.apply(result, method, target);
+		return result;
+	}
+
+	private Statement withTestRules(FrameworkMethod method, Object target,
+			Statement result) {
 		for (TestRule each : getTestClass().getAnnotatedFieldValues(target,
 				Rule.class, TestRule.class))
 			result= each.apply(result, describeChild(method));

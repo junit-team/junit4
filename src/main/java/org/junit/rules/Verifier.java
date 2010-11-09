@@ -1,6 +1,6 @@
 package org.junit.rules;
 
-import org.junit.runners.model.FrameworkMethod;
+import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 /**
@@ -25,9 +25,8 @@ import org.junit.runners.model.Statement;
  *     }
  * </pre>
  */
-public class Verifier implements MethodRule {
-	public Statement apply(final Statement base, FrameworkMethod method,
-			Object target) {
+public class Verifier implements TestRule {
+	public Statement apply(final Statement base, Description description) {
 		return new Statement() {
 			@Override
 			public void evaluate() throws Throwable {
