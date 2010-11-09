@@ -4,7 +4,7 @@
 package org.junit.rules;
 
 import org.junit.internal.runners.statements.FailOnTimeout;
-import org.junit.runners.model.FrameworkMethod;
+import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 /**
@@ -33,7 +33,7 @@ import org.junit.runners.model.Statement;
  * }
  * </pre>
  */
-public class Timeout implements MethodRule {
+public class Timeout implements TestRule {
 	private final int fMillis;
 
 	/**
@@ -43,7 +43,7 @@ public class Timeout implements MethodRule {
 		fMillis= millis;
 	}
 
-	public Statement apply(Statement base, FrameworkMethod method, Object target) {
+	public Statement apply(Statement base, Description description) {
 		return new FailOnTimeout(base, fMillis);
 	}
 }

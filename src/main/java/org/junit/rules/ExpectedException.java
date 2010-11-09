@@ -42,7 +42,7 @@ import org.junit.runners.model.Statement;
  * }
  * </pre>
  */
-public class ExpectedException implements MethodRule {
+public class ExpectedException implements TestRule {
 	/**
 	 * @return a Rule that expects no exception to be thrown
 	 * (identical to behavior without this Rule)
@@ -57,7 +57,8 @@ public class ExpectedException implements MethodRule {
 		
 	}
 	
-	public Statement apply(Statement base, FrameworkMethod method, Object target) {
+	public Statement apply(Statement base,
+			org.junit.runner.Description description) {
 		return new ExpectedExceptionStatement(base);
 	}
 
