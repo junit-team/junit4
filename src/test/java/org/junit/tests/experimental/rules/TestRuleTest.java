@@ -15,7 +15,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 import org.junit.rules.TestRule;
-import org.junit.rules.TestRuleTestWatchman;
+import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -115,8 +115,7 @@ public class TestRuleTest {
 
 	public static class OnFailureTest {
 		@Rule
-		// TODO: better name for TestRuleTestWatchman
-		public TestRule watchman= new TestRuleTestWatchman() {
+		public TestRule watchman= new TestWatcher() {
 			@Override
 			public void failed(Throwable e, Description description) {
 				log+= description + " " + e.getClass().getSimpleName();
@@ -141,7 +140,7 @@ public class TestRuleTest {
 		private static String watchedLog;
 
 		@Rule
-		public TestRule watchman= new TestRuleTestWatchman() {
+		public TestRule watchman= new TestWatcher() {
 			@Override
 			public void failed(Throwable e, Description description) {
 				watchedLog+= description + " "
@@ -180,7 +179,7 @@ public class TestRuleTest {
 		}
 		
 		@Rule
-		public TestRule watchman= new TestRuleTestWatchman() {
+		public TestRule watchman= new TestWatcher() {
 			@Override
 			public void starting(Description d) {
 				watchedLog+= "starting ";

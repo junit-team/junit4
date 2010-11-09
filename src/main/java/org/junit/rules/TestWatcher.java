@@ -4,9 +4,7 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 /**
- * TODO: fix javadoc
- * 
- * TestWatchman is a base class for Rules that take note of the testing
+ * TestWatcher is a base class for Rules that take note of the testing
  * action, without modifying it. For example, this class will keep a log of each
  * passing and failing test:
  * 
@@ -15,16 +13,15 @@ import org.junit.runners.model.Statement;
  * 	private static String watchedLog;
  * 
  * 	&#064;Rule
- * 	public MethodRule watchman= new TestWatchman() {
+ * 	public MethodRule watchman= new TestWatcher() {
  * 		&#064;Override
- * 		public void failed(Throwable e, FrameworkMethod method) {
- * 			watchedLog+= method.getName() + &quot; &quot; + e.getClass().getSimpleName()
- * 					+ &quot;\n&quot;;
+ * 		public void failed(Description d) {
+ * 			watchedLog+= d + &quot;\n&quot;;
  * 		}
  * 
  * 		&#064;Override
- * 		public void succeeded(FrameworkMethod method) {
- * 			watchedLog+= method.getName() + &quot; &quot; + &quot;success!\n&quot;;
+ * 		public void succeeded(Description d) {
+ * 			watchedLog+= d + &quot; &quot; + &quot;success!\n&quot;;
  * 		}
  * 	};
  * 
@@ -39,8 +36,7 @@ import org.junit.runners.model.Statement;
  * }
  * </pre>
  */
-// TODO: rename
-public class TestRuleTestWatchman implements TestRule {
+public class TestWatcher implements TestRule {
 	public Statement apply(final Statement base, final Description description) {
 		return new Statement() {
 			@Override

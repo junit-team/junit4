@@ -12,6 +12,7 @@ import org.junit.rules.TestRule;
  * static, and a subtype of {@link TestRule}.  This rule wraps the entire
  * execution of a class's methods.
  */
+// TODO: note that Class-level statements never fail
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ClassRule {
 }

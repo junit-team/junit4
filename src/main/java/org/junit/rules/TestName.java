@@ -22,7 +22,7 @@ import org.junit.runner.Description;
  * }
  * </pre>
  */
-public class TestName extends TestRuleTestWatchman {
+public class TestName extends TestWatcher {
 	private String fName;
 
 	@Override
