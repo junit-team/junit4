@@ -367,18 +367,29 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	@SuppressWarnings("deprecation")
 	private Statement withMethodRules(FrameworkMethod method, Object target,
 			Statement result) {
-		for (org.junit.rules.MethodRule each : getTestClass().getAnnotatedFieldValues(target,
-				Rule.class, org.junit.rules.MethodRule.class))
-			result= each.apply(result, method, target);
+		List<TestRule> testRules= getTestRules(target);
+		for (org.junit.rules.MethodRule each : getMethodRules(target))
+			if (! testRules.contains(each))
+				result= each.apply(result, method, target);
 		return result;
+	}
+
+	@SuppressWarnings("deprecation")
+	private List<org.junit.rules.MethodRule> getMethodRules(Object target) {
+		return getTestClass().getAnnotatedFieldValues(target,
+				Rule.class, org.junit.rules.MethodRule.class);
 	}
 
 	private Statement withTestRules(FrameworkMethod method, Object target,
 			Statement result) {
-		for (TestRule each : getTestClass().getAnnotatedFieldValues(target,
-				Rule.class, TestRule.class))
+		for (TestRule each : getTestRules(target))
 			result= each.apply(result, describeChild(method));
 		return result;
+	}
+
+	private List<TestRule> getTestRules(Object target) {
+		return getTestClass().getAnnotatedFieldValues(target,
+				Rule.class, TestRule.class);
 	}
 
 	private EachTestNotifier makeNotifier(FrameworkMethod method,

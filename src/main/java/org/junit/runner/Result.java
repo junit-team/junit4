@@ -16,7 +16,7 @@ import org.junit.runner.notification.RunListener;
 public class Result {
 	private AtomicInteger fCount = new AtomicInteger();
 	private AtomicInteger fIgnoreCount= new AtomicInteger();
-	private final List<Failure> fFailures= Collections.synchronizedList( new ArrayList<Failure>());
+	private final List<Failure> fFailures= Collections.synchronizedList(new ArrayList<Failure>());
 	private long fRunTime= 0;
 	private long fStartTime;
 

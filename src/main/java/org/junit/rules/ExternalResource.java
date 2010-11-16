@@ -33,8 +33,6 @@ import org.junit.runners.model.Statement;
  * </pre>
  */
 public abstract class ExternalResource implements TestRule {
-	// TODO: validate that no field implements both BisectionRule and MethodRule?
-	
 	public Statement apply(Statement base, Description description) {
 		return statement(base);
 	}
