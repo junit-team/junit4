@@ -41,4 +41,8 @@ function run_tests() {
   return $exit_code
 }
 
-run_tests
+if run_tests; then
+  exit 0
+else
+  exit 1
+fi

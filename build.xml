@@ -190,6 +190,6 @@
 	</target>
 
         <target name="print.version">
-          <echo message="${print.version}" />
+          <echo message="${version}" />
         </target>
 </project>
