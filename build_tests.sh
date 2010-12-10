@@ -1,9 +1,21 @@
 set -e
 
+function TEST_get_junit_version {
+  version=$(get_junit_version)
+  if [[ ! ($version == 4.*) ]]; then
+    echo "Bad version: $version"
+    return 1
+  fi
+}
+
 function TEST_ant_dist {
-  version=$(ant print.version)
+  version=$(get_junit_version)
   ant dist
   ls junit${version}/junit-${version}.jar
+}
+
+function get_junit_version {
+  ant print.version
 }
 
 SCRIPT_NAME=$0
