@@ -35,14 +35,15 @@ function run_tests() {
       echo "PASSED: $t"
     else
       echo "FAILED: $t"
-      exit_code=1
+      return 1
     fi
   done
-  return $exit_code
 }
 
 if run_tests; then
+  echo "ALL TESTS PASSED"
   exit 0
 else
+  echo "A TEST FAILED"
   exit 1
 fi
