@@ -15,7 +15,7 @@ function TEST_ant_dist {
 }
 
 function get_junit_version {
-  ant print.version | grep echo | sed 's/.* echo..\([1-9].*\)/\1/'
+  ant print.version | grep echo | sed 's/.*echo..\([1-9].*\)/\1/'
 }
 
 SCRIPT_NAME=$0
