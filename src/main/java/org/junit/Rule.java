@@ -7,12 +7,36 @@ import org.junit.rules.MethodRule;
 
 /**
  * Annotates fields that contain rules. Such a field must be public, not
- * static, and a subtype of {@link TestRule}. For more information,
- * see {@link TestRule}
+ * static, and a subtype of {@link TestRule}.  The {@link Statement} passed 
+ * to the {@link TestRule} will run any {@link Before} methods, 
+ * then the {@link Test} method, and finally any {@link After} methods,
+ * throwing an exception if any of these fail.  If there are multiple
+ * annotated {@link Rule}s on a class, they will be applied in an order
+ * that depends on your JVM's implementation of the reflection API, which is
+ * undefined, in general.
+ *
+ * For example, here is a test class that creates a temporary folder before
+ * each test method, and deletes it after each:
+ *
+ * <pre>
+ * public static class HasTempFolder {
+ * 	&#064;Rule
+ * 	public TemporaryFolder folder= new TemporaryFolder();
  * 
+ * 	&#064;Test
+ * 	public void testUsingTempFolder() throws IOException {
+ * 		File createdFile= folder.newFile(&quot;myfile.txt&quot;);
+ * 		File createdFolder= folder.newFolder(&quot;subfolder&quot;);
+ * 		// ...
+ * 	}
+ * }
+ * </pre>
+ * 
+ * For more information and more examples, see {@link TestRule}. 
+ *
  * Note: for backwards compatibility, this annotation may also mark
  * fields of type {@link MethodRule}, which will be honored.  However,
- * this is a deprecated interface and feature
+ * this is a deprecated interface and feature.
  */
 @SuppressWarnings("deprecation")
 @Retention(RetentionPolicy.RUNTIME)
