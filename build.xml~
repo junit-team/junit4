@@ -189,7 +189,7 @@
 		<echo message="To upload docs, use build/upload_docs.sh" />
 	</target>
 
-	<target name="print.version">
-	  <echo message="${version}" />
-	</target>
+        <target name="print.version">
+          <echo message="${version}" />
+        </target>
 </project>
