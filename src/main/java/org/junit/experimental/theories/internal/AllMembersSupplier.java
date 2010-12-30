@@ -7,6 +7,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.experimental.theories.DataPoint;
@@ -74,7 +75,12 @@ public class AllMembersSupplier extends ParameterSupplier {
 		for (FrameworkMethod dataPointsMethod : fClass
 				.getAnnotatedMethods(DataPoints.class))
 			try {
-				addArrayValues(dataPointsMethod.getName(), list, dataPointsMethod.invokeExplosively(null));
+				Object dataPoints= dataPointsMethod.invokeExplosively(null);
+				try {
+					addArrayValues(dataPointsMethod.getName(), list, dataPoints);
+				} catch (IllegalArgumentException e) {
+					addCollectionValues(dataPointsMethod.getName(), list, dataPoints);
+				}
 			} catch (Throwable e) {
 				// ignore and move on
 			}
@@ -95,15 +101,33 @@ public class AllMembersSupplier extends ParameterSupplier {
 		for (final Field field : fClass.getJavaClass().getFields()) {
 			if (Modifier.isStatic(field.getModifiers())) {
 				Class<?> type= field.getType();
-				if (sig.canAcceptArrayType(type)
-						&& field.getAnnotation(DataPoints.class) != null) {
-					addArrayValues(field.getName(), list, getStaticFieldValue(field));
+				if (field.getAnnotation(DataPoints.class) != null) {
+					if (sig.canAcceptArrayType(type)
+							&& field.getAnnotation(DataPoints.class) != null) {
+						addArrayValues(field.getName(), list, getStaticFieldValue(field));
+					} else {
+						addCollectionValues(field.getName(), list, getStaticFieldValue(field));
+					}
 				} else if (sig.canAcceptType(type)
 						&& field.getAnnotation(DataPoint.class) != null) {
 					list.add(PotentialAssignment
 							.forValue(field.getName(), getStaticFieldValue(field)));
 				}
 			}
+		}
+	}
+
+	private void addCollectionValues(String name,
+			List<PotentialAssignment> assignments, Object staticFieldValue) {
+		try {
+			Collection<?> collection = (Collection<?>) staticFieldValue;
+			int i = 0;
+			for (Object each : collection) {
+				assignments.add(PotentialAssignment.forValue(name + "[" + i + "]", each));
+				i++;
+			}
+		} catch (ClassCastException e) {
+			// ignore and move on
 		}
 	}
 
