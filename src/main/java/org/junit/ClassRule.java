@@ -46,10 +46,6 @@ import org.junit.rules.TestRule;
  * 			myServer.disconnect();
  * 		};
  * 	};
- *      
- *      &#064;Test public void test1() { ... }
- *      &#064;Test public void test2() { ... }
- *      &#064;Test public void test3() { ... }
  * }
  * </pre>
  * 

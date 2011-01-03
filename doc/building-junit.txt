@@ -4,6 +4,7 @@ Steps to build junit:
   - Write release notes
   - Update version in build.xml and pom.xml
 - Not too tedious:
+  - Push to github (dsaff _and_ KentBeck)
   - Run the ant zip task
   - Upload stuff to github (including tag)
 - Tedious:

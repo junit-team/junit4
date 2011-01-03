@@ -3,7 +3,9 @@
 ### ClassRule ###
 
 The `ClassRule` annotation extends the idea of method-level Rules,
-adding static fields that can affect the operation of a whole class.
+adding static fields that can affect the operation of a whole class.  Any
+subclass of `ParentRunner`, including the standard `BlockJUnit4ClassRunner` 
+and `Suite` classes, will support `ClassRule`s.
 
 For example, here is a test suite that connects to a server once before
 all the test classes run, and disconnects after they are finished:
@@ -25,18 +27,37 @@ all the test classes run, and disconnects after they are finished:
 				myServer.disconnect();
 			};
 		};
-	     
-	     @Test public void test1() { ... }
-	     @Test public void test2() { ... }
-	     @Test public void test3() { ... }
 	}
 
 ### TestRule ###
 
 In JUnit 4.9, fields that can be annotated with either `@Rule` or `@ClassRule`
 should be of type `TestRule`.  The old `MethodRule` type, which only made sense
-for method-level rules, is now deprecated.
+for method-level rules, will still work, but is deprecated.
+
+Most built-in Rules have been moved to the new type already, in a way that
+should be transparent to most users.  `TestWatchman` has been deprecated,
+and replaced by `TestWatcher`, which has the same functionality, but implements
+the new type.
+
+### LICENSE checked in ###
+
+The Common Public License that JUnit is released under is now included
+in the source repository.
 
 ### Bug fixes ###
 
 - github#98: assumeTrue() does not work with expected exceptions
+- github#74: Categories + Parameterized
+  
+  In JUnit 4.8.2, the Categories runner would fail to run correctly
+  if any contained test class had a custom Runner with a structure
+  significantly different from the built-in Runner.  With this fix,
+  such classes can be assigned one or more categories at the class level,
+  and will be run correctly.  Trying to assign categories to methods within
+  such a class will flag an error.
+
+### Minor changes ###
+
+- Backed out unused folder "experimental-use-of-antunit", replaced by 
+  bash-based script at build_tests.sh
