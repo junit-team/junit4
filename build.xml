@@ -150,27 +150,28 @@
 		<copy file="build.xml" tofile="${dist}/build.xml" />
 	</target>
 
+        <macrodef name="run-tests">
+        	<element name="extra-args" implicit="yes" />
+                <sequential>
+			<java classname="org.junit.runner.JUnitCore" fork="yes" failonerror="true">
+                		<extra-args />  
+				<arg value="org.junit.tests.AllTests"/>
+				<classpath>
+					<pathelement location="${dist}" />
+					<pathelement location="${dist}/${binjar}" />
+				</classpath>
+			</java>    
+                </sequential>
+        </macrodef>
+
 	<target name="dist" depends="populate-dist">
-		<java classname="org.junit.runner.JUnitCore" fork="yes" failonerror="true">
-			<arg value="org.junit.tests.AllTests"/>
-			<classpath>
-				<pathelement location="${dist}" />
-				<pathelement location="${dist}/${binjar}" />
-			</classpath>
-		</java>
+        	<run-tests />
 	</target>
 
-	<!-- TODO: DUP above -->
-
 	<target name="profile" depends="populate-dist">
-		<java classname="org.junit.runner.JUnitCore" fork="yes" failonerror="true">
+        	<run-tests>
 			<jvmarg value="-agentlib:hprof=cpu=samples"/>
-			<arg value="org.junit.tests.AllTests"/>
-			<classpath>
-				<pathelement location="${dist}" />
-				<pathelement location="${dist}/${binjar}" />
-			</classpath>
-		</java>
+		</run-tests>
 	</target>	
 
 	<target name="zip" depends="dist">
