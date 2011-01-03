@@ -31,7 +31,7 @@ import org.junit.rules.TestRule;
  * 
  * &#064;RunWith(Suite.class)
  * &#064;SuiteClasses({A.class, B.class, C.class})
- * public static class UsesExternalResource {
+ * public class UsesExternalResource {
  * 	public static Server myServer= new Server();
  * 
  * 	&#064;Rule
@@ -46,6 +46,10 @@ import org.junit.rules.TestRule;
  * 			myServer.disconnect();
  * 		};
  * 	};
+ *      
+ *      &#064;Test public void test1() { ... }
+ *      &#064;Test public void test2() { ... }
+ *      &#064;Test public void test3() { ... }
  * }
  * </pre>
  * 
