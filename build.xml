@@ -165,7 +165,9 @@
         </macrodef>
 
 	<target name="dist" depends="populate-dist">
-        	<run-tests />
+        	<run-tests>
+                	<jvmarg value="-Dignore.this=ignored" />
+                </run-tests>
 	</target>
 
 	<target name="profile" depends="populate-dist">
