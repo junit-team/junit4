@@ -14,6 +14,12 @@ function TEST_ant_dist {
   ls junit${version}/junit-${version}.jar
 }
 
+function TEST_ant_profile {
+  rm -rf java.hprof.txt
+  ant profile
+  ls java.hprof.txt
+}
+
 function get_junit_version {
   ant print.version | grep echo | sed 's/.*echo..\([1-9].*\)/\1/'
 }
