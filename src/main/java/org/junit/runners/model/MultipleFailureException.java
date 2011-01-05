@@ -5,7 +5,7 @@ package org.junit.runners.model;
 import java.util.List;
 
 /**
- * Collections multiple {@code Throwable}s into one exception.
+ * Collects multiple {@code Throwable}s into one exception.
  */
 public class MultipleFailureException extends Exception {
 	private static final long serialVersionUID= 1L;
@@ -41,7 +41,7 @@ public class MultipleFailureException extends Exception {
 		 * Many places in the code are documented to throw
 		 * org.junit.internal.runners.model.MultipleFailureException.
 		 * That class now extends this one, so we throw the internal
-		 * exception in case developers that have tests that catch
+		 * exception in case developers have tests that catch
 		 * MultipleFailureException.
 		 */
 		throw new org.junit.internal.runners.model.MultipleFailureException(errors);
