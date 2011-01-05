@@ -10,8 +10,6 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.Test.None;
-import org.junit.internal.AssumptionViolatedException;
-import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.model.MultipleFailureException;
 import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.internal.runners.statements.ExpectException;
@@ -63,31 +61,13 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	// 
 
 	@Override
-	protected void runChild(FrameworkMethod method, RunNotifier notifier) {
-		EachTestNotifier eachNotifier= makeNotifier(method, notifier);
+	protected void runChild(final FrameworkMethod method, RunNotifier notifier) {
+		Description description= describeChild(method);
 		if (method.getAnnotation(Ignore.class) != null) {
-			runIgnored(eachNotifier);
+			notifier.fireTestIgnored(description);
 		} else {
-			runNotIgnored(method, eachNotifier);
+			runLeaf(methodBlock(method), description, notifier);
 		}
-	}
-
-	private void runNotIgnored(FrameworkMethod method,
-			EachTestNotifier eachNotifier) {
-		eachNotifier.fireTestStarted();
-		try {
-			methodBlock(method).evaluate();
-		} catch (AssumptionViolatedException e) {
-			eachNotifier.addFailedAssumption(e);
-		} catch (Throwable e) {
-			eachNotifier.addFailure(e);
-		} finally {
-			eachNotifier.fireTestFinished();
-		}
-	}
-
-	private void runIgnored(EachTestNotifier eachNotifier) {
-		eachNotifier.fireTestIgnored();
 	}
 
 	@Override
@@ -388,12 +368,6 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	private List<TestRule> getTestRules(Object target) {
 		return getTestClass().getAnnotatedFieldValues(target,
 				Rule.class, TestRule.class);
-	}
-
-	private EachTestNotifier makeNotifier(FrameworkMethod method,
-			RunNotifier notifier) {
-		Description description= describeChild(method);
-		return new EachTestNotifier(notifier, description);
 	}
 
 	private Class<? extends Throwable> getExpectedException(Test annotation) {
