@@ -382,9 +382,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 
 	private Statement withTestRules(FrameworkMethod method, Object target,
 			Statement result) {
-		for (TestRule each : getTestRules(target))
-			result= each.apply(result, describeChild(method));
-		return result;
+		return TestRule.applyAll(getTestRules(target), result, describeChild(method));
 	}
 
 	private List<TestRule> getTestRules(Object target) {

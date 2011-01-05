@@ -192,11 +192,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 		if (classRules.isEmpty()) {
 			return statement;
 		}
-		Statement next = statement;
-		for (final TestRule classRule : classRules) {
-			next = classRule.apply(next, getDescription());
-		}
-		return next;
+		return TestRule.applyAll(classRules, statement, getDescription());
 	}
 
 	/**
