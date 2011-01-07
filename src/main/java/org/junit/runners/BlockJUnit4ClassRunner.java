@@ -20,6 +20,7 @@ import org.junit.internal.runners.statements.FailOnTimeout;
 import org.junit.internal.runners.statements.InvokeMethod;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
+import org.junit.rules.MethodRule;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -199,7 +200,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 
 	@SuppressWarnings("deprecation")
 	private boolean isMethodRule(Class<?> type) {
-		return org.junit.rules.MethodRule.class.isAssignableFrom(type);
+		return MethodRule.class.isAssignableFrom(type);
 	}
 
 	/**
@@ -245,7 +246,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	 * <li>ALWAYS allow {@code @Rule} fields to modify the execution of the
 	 * above steps. A {@code Rule} may prevent all execution of the above steps,
 	 * or add additional behavior before and after, or modify thrown exceptions.
-	 * For more information, see {@link MethodRule}
+	 * For more information, see {@link TestRule}
 	 * <li>ALWAYS run all non-overridden {@code @Before} methods on this class
 	 * and superclasses before any of the previous steps; if any throws an
 	 * Exception, stop execution and pass the exception on.

@@ -7,8 +7,9 @@ import org.junit.rules.MethodRule;
 
 /**
  * Annotates fields that contain rules. Such a field must be public, not
- * static, and a subtype of {@link TestRule}.  The {@link Statement} passed 
- * to the {@link TestRule} will run any {@link Before} methods, 
+ * static, and a subtype of {@link org.junit.rules.TestRule}.  
+ * The {@link org.junit.runners.model.Statement} passed 
+ * to the {@link org.junit.rules.TestRule} will run any {@link Before} methods, 
  * then the {@link Test} method, and finally any {@link After} methods,
  * throwing an exception if any of these fail.  If there are multiple
  * annotated {@link Rule}s on a class, they will be applied in an order
@@ -32,7 +33,8 @@ import org.junit.rules.MethodRule;
  * }
  * </pre>
  * 
- * For more information and more examples, see {@link TestRule}. 
+ * For more information and more examples, see 
+ * {@link org.junit.rules.TestRule}. 
  *
  * Note: for backwards compatibility, this annotation may also mark
  * fields of type {@link MethodRule}, which will be honored.  However,

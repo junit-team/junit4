@@ -12,12 +12,14 @@ import org.junit.rules.TestRule;
  * to the {@link TestRule} will run any {@link BeforeClass} methods, 
  * then the entire body of the test class (all contained methods, if it is
  * a standard JUnit test class, or all contained classes, if it is a 
- * {@link Suite}), and finally any {@link AfterClass} methods.
+ * {@link org.junit.runners.Suite}), and finally any {@link AfterClass} methods.
  * 
  * The statement passed to the {@link TestRule} will never throw an exception,
  * and throwing an exception from the {@link TestRule} will result in undefined
  * behavior.  This means that some {@link TestRule}s, such as 
- * {@link ErrorCollector}, {@link ExpectedException}, and {@link Timeout},
+ * {@link org.junit.rules.ErrorCollector}, 
+ * {@link org.junit.rules.ExpectedException}, 
+ * and {@link org.junit.rules.Timeout},
  * have undefined behavior when used as {@link ClassRule}s.
  * 
  * If there are multiple
