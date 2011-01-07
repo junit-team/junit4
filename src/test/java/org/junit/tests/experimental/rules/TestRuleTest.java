@@ -28,7 +28,8 @@ public class TestRuleTest {
 	public static class ExampleTest {
 		@Rule
 		public TestRule example= new TestRule() {
-			public Statement apply(final Statement base, Description description) {
+			@Override
+			protected Statement apply(final Statement base, Description description) {
 				return new Statement() {
 					@Override
 					public void evaluate() throws Throwable {
@@ -53,7 +54,7 @@ public class TestRuleTest {
 	}
 	
 	@SuppressWarnings("deprecation")
-	public static class BothKindsOfRule implements TestRule, org.junit.rules.MethodRule {
+	public static class BothKindsOfRule extends TestRule implements org.junit.rules.MethodRule {
 		public int applications = 0;
 		
 		public Statement apply(Statement base, FrameworkMethod method,
@@ -62,7 +63,8 @@ public class TestRuleTest {
 			return base;
 		}
 
-		public Statement apply(Statement base, Description description) {
+		@Override
+		protected Statement apply(Statement base, Description description) {
 			applications++;
 			return base;
 		}
@@ -96,8 +98,9 @@ public class TestRuleTest {
 	private static int runCount;
 
 	public static class MultipleRuleTest {
-		private static class Increment implements TestRule {
-			public Statement apply(final Statement base, Description description) {
+		private static class Increment extends TestRule {
+			@Override
+			protected Statement apply(final Statement base, Description description) {
 				return new Statement() {
 					@Override
 					public void evaluate() throws Throwable {
@@ -274,10 +277,11 @@ public class TestRuleTest {
 				hasSingleFailureContaining("must be public"));
 	}
 	
-	public static class CustomTestName implements TestRule {
+	public static class CustomTestName extends TestRule {
 		public String name = null;
 			
-		public Statement apply(final Statement base, final Description description) {
+		@Override
+		protected Statement apply(final Statement base, final Description description) {
 			return new Statement() {				
 				@Override
 				public void evaluate() throws Throwable {

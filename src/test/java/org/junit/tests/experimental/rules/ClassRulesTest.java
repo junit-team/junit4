@@ -61,10 +61,11 @@ public class ClassRulesTest {
 		assertEquals(1, ExampleTestWithClassRule.counter.count);
 	}
 	
-	public static class CustomCounter implements TestRule {
+	public static class CustomCounter extends TestRule {
 		public int count = 0;
 		
-		public Statement apply(final Statement base, Description description) {
+		@Override
+		protected Statement apply(final Statement base, Description description) {
 			return new Statement() {				
 				@Override
 				public void evaluate() throws Throwable {
