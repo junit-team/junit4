@@ -7,7 +7,8 @@ import org.junit.rules.TestRule;
 
 /**
  * Annotates static fields that contain rules. Such a field must be public,
- * static, and a subtype of {@link TestRule}.  The {@link Statement} passed 
+ * static, and a subtype of {@link TestRule}.  
+ * The {@link org.junit.runners.model.Statement} passed 
  * to the {@link TestRule} will run any {@link BeforeClass} methods, 
  * then the entire body of the test class (all contained methods, if it is
  * a standard JUnit test class, or all contained classes, if it is a 
