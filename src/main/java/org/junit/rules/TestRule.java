@@ -24,8 +24,8 @@ import org.junit.runners.model.Statement;
  *
  * Multiple {@link TestRule}s can be applied to a test or suite execution. The
  * {@link Statement} that executes the method or suite is passed to each annotated
- * {@link Rule} in turn, and each may return a substitute or modified
- * {@link Statement}, which is passed to the next {@link Rule}, if any. For
+ * {@link org.junit.Rule} in turn, and each may return a substitute or modified
+ * {@link Statement}, which is passed to the next {@link org.junit.Rule}, if any. For
  * examples of how this can be useful, see these provided TestRules,
  * or write your own:
  * 
