@@ -18,7 +18,7 @@ import org.junit.runners.model.Statement;
  * // These tests all pass.
  * public static class HasExpectedException {
  * 	&#064;Rule
- * 	public ExpectedException thrown= new ExpectedException();
+ * 	public ExpectedException thrown= ExpectedException.none();
  * 
  * 	&#064;Test
  * 	public void throwsNothing() {

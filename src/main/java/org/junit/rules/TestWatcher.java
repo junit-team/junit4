@@ -36,7 +36,7 @@ import org.junit.runners.model.Statement;
  * }
  * </pre>
  */
-public class TestWatcher extends TestRule {
+public abstract class TestWatcher extends TestRule {
 	@Override
 	protected Statement apply(final Statement base, final Description description) {
 		return new Statement() {
