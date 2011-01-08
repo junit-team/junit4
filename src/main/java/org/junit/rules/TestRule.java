@@ -49,22 +49,4 @@ public abstract class TestRule {
 	 * a wrapper around {@code base}, or a completely new Statement.
 	 */
 	protected abstract Statement apply(Statement base, Description description);
-
-	/**
-	 * Modifies the method-running {@link Statement} to implement the additional
-	 * test-running rules.
-	 *
-	 * @param rules The {@link TestRule rules} to apply
-	 * @param base The {@link Statement} to be modified
-	 * @param description A {@link Description} of the test implemented in {@code base}
-	 * @return a new statement, which may be the same as {@code base},
-	 * a wrapper around {@code base}, or a completely new Statement.
-	 */
-	public static Statement applyAll(Iterable<TestRule> rules, Statement base,
-			Description description) {
-		Statement result = base;
-		for (TestRule each : rules)
-			result= each.apply(result, description);
-		return result;
-	}
 }

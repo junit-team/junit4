@@ -16,6 +16,7 @@ import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.model.MultipleFailureException;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
+import org.junit.rules.RunRules;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
@@ -180,19 +181,17 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
 	/**
 	 * Returns a {@link Statement}: apply all static {@link Value} fields
-	 * annotated with {@link Rule}.
+	 * annotated with {@link ClassRule}.
 	 *
 	 * @param statement
 	 *            the base statement
-	 * @return a WithClassRules statement if any class-level {@link Rule}s are
+	 * @return a RunRules statement if any class-level {@link Rule}s are
 	 *         found, or the base statement
 	 */
 	private Statement withClassRules(Statement statement) {
-		final List<TestRule> classRules= classRules();
-		if (classRules.isEmpty()) {
-			return statement;
-		}
-		return TestRule.applyAll(classRules, statement, getDescription());
+		List<TestRule> classRules= classRules();
+		return classRules.isEmpty() ? statement :
+		    new RunRules(statement, classRules, getDescription());
 	}
 
 	/**

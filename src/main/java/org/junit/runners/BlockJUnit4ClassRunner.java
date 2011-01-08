@@ -20,6 +20,7 @@ import org.junit.internal.runners.statements.FailOnTimeout;
 import org.junit.internal.runners.statements.InvokeMethod;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
+import org.junit.rules.RunRules;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -380,9 +381,20 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 				Rule.class, org.junit.rules.MethodRule.class);
 	}
 
+	/**
+	 * Returns a {@link Statement}: apply all non-static {@link Value} fields
+	 * annotated with {@link Rule}.
+	 *
+	 * @param statement
+	 *            the base statement
+	 * @return a RunRules statement if any class-level {@link Rule}s are
+	 *         found, or the base statement
+	 */
 	private Statement withTestRules(FrameworkMethod method, Object target,
-			Statement result) {
-		return TestRule.applyAll(getTestRules(target), result, describeChild(method));
+			Statement statement) {
+		List<TestRule> testRules= getTestRules(target);
+		return testRules.isEmpty() ? statement :
+			new RunRules(statement, testRules, describeChild(method));
 	}
 
 	private List<TestRule> getTestRules(Object target) {
