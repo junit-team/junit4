@@ -20,4 +20,28 @@ public class ComparisonFailureTest extends TestCase {
 		}
 		fail();
 	}
+
+	public void testExceptionToStringWithMessage() {
+		try {
+			assertEquals("woops!", "a", "b");
+		} catch (ComparisonFailure e) {
+			if (!e.toString().startsWith("junit.framework.ComparisonFailure: woops! expected:<")) {
+				fail("Unexpected message: " + e);
+			}
+			return;
+		}
+		fail();
+	}
+
+	public void testExceptionToStringWithoutMessage() {
+		try {
+			assertEquals("a", "b");
+		} catch (ComparisonFailure e) {
+			if (!e.toString().startsWith("junit.framework.ComparisonFailure: expected:<")) {
+				fail("Unexpected message: " + e);
+			}
+			return;
+		}
+		fail();
+	}
 }
