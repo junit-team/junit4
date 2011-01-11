@@ -35,14 +35,17 @@ import org.junit.runners.model.Statement;
  *   <li>{@link ExternalResource}: start and stop a server, for example</li>
  *   <li>{@link TemporaryFolder}: create fresh files, and delete after test</li>
  *   <li>{@link TestName}: remember the test name for use during the method</li>
- *   <li>{@link TestWatcher}: add logic at events during method execution</li>
+ *   <li>{@link TestWatchman}: add logic at events during method execution</li>
  *   <li>{@link Timeout}: cause test to fail after a set time</li>
  *   <li>{@link Verifier}: fail test if object state ends up incorrect</li>
  * </ul>
+ *
+ * [[MethodRule has been deprecated, and all uses will be changed to TestRule, 
+ * so this javadoc will become more truthy with time.]]
  */
-public abstract class TestRule {
+public interface TestRule {
 	/**
-	 * Modifies the method-running {@link Statement} to implement this
+	 * Modifies the method-running {@link Statement} to implement an additional
 	 * test-running rule.
 	 * 
 	 * @param base The {@link Statement} to be modified
@@ -50,23 +53,5 @@ public abstract class TestRule {
 	 * @return a new statement, which may be the same as {@code base},
 	 * a wrapper around {@code base}, or a completely new Statement.
 	 */
-	protected abstract Statement apply(Statement base, Description description);
-
-	/**
-	 * Modifies the method-running {@link Statement} to implement the additional
-	 * test-running rules.
-	 *
-	 * @param rules The {@link TestRule rules} to apply
-	 * @param base The {@link Statement} to be modified
-	 * @param description A {@link Description} of the test implemented in {@code base}
-	 * @return a new statement, which may be the same as {@code base},
-	 * a wrapper around {@code base}, or a completely new Statement.
-	 */
-	public static Statement applyAll(Iterable<TestRule> rules, Statement base,
-			Description description) {
-		Statement result = base;
-		for (TestRule each : rules)
-			result= each.apply(result, description);
-		return result;
-	}
+	Statement apply(Statement base, Description description);
 }

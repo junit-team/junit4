@@ -1,9 +1,7 @@
 package org.junit;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 import org.junit.rules.TestRule;
 
@@ -57,6 +55,5 @@ import org.junit.rules.TestRule;
  * For more information and more examples, see {@link TestRule}. 
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD})
 public @interface ClassRule {
 }
