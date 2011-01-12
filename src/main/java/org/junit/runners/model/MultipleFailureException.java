@@ -2,6 +2,8 @@
 
 package org.junit.runners.model;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -13,12 +15,21 @@ public class MultipleFailureException extends Exception {
 	private final List<Throwable> fErrors;
 
 	public MultipleFailureException(List<Throwable> errors) {
-		super(buildMessage(errors));
-		fErrors= errors;
+		fErrors= new ArrayList<Throwable>(errors);
 	}
 
 	public List<Throwable> getFailures() {
-		return fErrors;
+		return Collections.unmodifiableList(fErrors);
+	}
+
+	@Override
+	public String getMessage() {
+		StringBuilder sb = new StringBuilder(
+				String.format("There were %d errors:", fErrors.size()));
+		for (Throwable e : fErrors) {
+			sb.append(String.format("\n  %s(%s)", e.getClass().getName(), e.getMessage()));
+		}
+		return sb.toString();
 	}
 
 	/**
@@ -46,13 +57,4 @@ public class MultipleFailureException extends Exception {
 		 */
 		throw new org.junit.internal.runners.model.MultipleFailureException(errors);
 	}
-
-	private static String buildMessage(List<Throwable> errors) {
-		StringBuilder sb = new StringBuilder(
-		    String.format("There were %d errors:", errors.size()));
-	    for (Throwable e : errors) {
-	    	sb.append(String.format("\n  %s(%s)", e.getClass().getName(), e.getMessage()));
-		}
-	    return sb.toString();
-	  }
 }
