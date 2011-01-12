@@ -18,7 +18,6 @@ import org.junit.internal.runners.statements.FailOnTimeout;
 import org.junit.internal.runners.statements.InvokeMethod;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
-import org.junit.rules.MethodRule;
 import org.junit.rules.RunRules;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -181,7 +180,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 
 	@SuppressWarnings("deprecation")
 	private boolean isMethodRule(Class<?> type) {
-		return MethodRule.class.isAssignableFrom(type);
+		return org.junit.rules.MethodRule.class.isAssignableFrom(type);
 	}
 
 	/**
@@ -366,8 +365,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	 * Returns a {@link Statement}: apply all non-static {@link Value} fields
 	 * annotated with {@link Rule}.
 	 *
-	 * @param statement
-	 *            the base statement
+	 * @param statement The base statement
 	 * @return a RunRules statement if any class-level {@link Rule}s are
 	 *         found, or the base statement
 	 */
