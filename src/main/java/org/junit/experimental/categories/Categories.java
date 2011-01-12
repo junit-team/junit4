@@ -62,6 +62,11 @@ import org.junit.runners.model.RunnerBuilder;
  * </pre>
  */
 public class Categories extends Suite {
+	// the way filters are implemented makes this unnecessarily complicated,
+	// buggy, and difficult to specify.  A new way of handling filters could
+	// someday enable a better new implementation.
+        // https://github.com/KentBeck/junit/issues/issue/172
+	
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface IncludeCategory {
 		public Class<?> value();
@@ -92,7 +97,6 @@ public class Categories extends Suite {
 			return "category " + fIncluded;
 		}
 
-		// TODO: why do we have two CategoryFilters?
 		@Override
 		public boolean shouldRun(Description description) {
 			if (hasCorrectCategoryAnnotation(description))
@@ -123,8 +127,7 @@ public class Categories extends Suite {
 			return categories;
 		}
 
-		private Description parentDescription(Description description) {			
-			// TODO: how heavy are we cringing?
+		private Description parentDescription(Description description) {
 			Class<?> testClass= description.getTestClass();
 			if (testClass == null)
 				return null;
@@ -145,7 +148,6 @@ public class Categories extends Suite {
 			throws InitializationError {
 		super(klass, builder);
 		try {
-			// TODO: too much work in constructors
 			filter(new CategoryFilter(getIncludedCategory(klass),
 					getExcludedCategory(klass)));
 		} catch (NoTestsRemainException e) {

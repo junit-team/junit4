@@ -44,6 +44,9 @@ public class Assert {
 	 * Fails a test with the given message.
 	 */
 	static public void fail(String message) {
+		if (message == null) {
+			throw new AssertionFailedError();
+		}
 		throw new AssertionFailedError(message);
 	}
 	/**
@@ -78,7 +81,8 @@ public class Assert {
 			return;
 		if (expected != null && expected.equals(actual))
 			return;
-		throw new ComparisonFailure(message, expected, actual);
+		String cleanMessage= message == null ? "" : message;
+		throw new ComparisonFailure(cleanMessage, expected, actual);
 	}
 	/**
 	 * Asserts that two Strings are equal. 
@@ -285,7 +289,7 @@ public class Assert {
 
 	public static String format(String message, Object expected, Object actual) {
 		String formatted= "";
-		if (message != null)
+		if (message != null && !message.isEmpty())
 			formatted= message+" ";
 		return formatted+"expected:<"+expected+"> but was:<"+actual+">";
 	}

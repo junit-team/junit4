@@ -62,3 +62,7 @@
     
 2010 May 03
     jonas22@github: Found bug (github#98) with assumptions and expected exceptions.
+
+2011 Jan 03
+    jens.schauder@freenet.de: Found bug (github#74) with Categories and 
+                              Parameterized.

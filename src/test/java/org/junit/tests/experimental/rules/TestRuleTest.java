@@ -19,6 +19,7 @@ import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
+import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
 public class TestRuleTest {
@@ -49,6 +50,36 @@ public class TestRuleTest {
 		wasRun= false;
 		JUnitCore.runClasses(ExampleTest.class);
 		assertTrue(wasRun);
+	}
+	
+	@SuppressWarnings("deprecation")
+	public static class BothKindsOfRule implements TestRule, org.junit.rules.MethodRule {
+		public int applications = 0;
+		
+		public Statement apply(Statement base, FrameworkMethod method,
+				Object target) {
+			applications++;
+			return base;
+		}
+
+		public Statement apply(Statement base, Description description) {
+			applications++;
+			return base;
+		}
+	}
+	
+	public static class OneFieldTwoKindsOfRule {
+		@Rule public BothKindsOfRule both = new BothKindsOfRule();
+		
+		@Test public void onlyOnce() {
+			assertEquals(1, both.applications);
+		}
+	}
+	
+
+	@Test
+	public void onlyApplyOnceEvenIfImplementsBothInterfaces() {
+		assertTrue(JUnitCore.runClasses(OneFieldTwoKindsOfRule.class).wasSuccessful());
 	}
 
 	public static class SonOfExampleTest extends ExampleTest {

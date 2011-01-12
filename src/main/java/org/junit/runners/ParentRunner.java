@@ -40,7 +40,8 @@ import org.junit.runners.model.MultipleFailureException;
  * {@link Method} . For {@link Suite}, {@code T} is {@link Class}.) Subclasses
  * must implement finding the children of the node, describing each child, and
  * running each child. ParentRunner will filter and sort children, handle
- * {@code @BeforeClass} and {@code @AfterClass} methods, create a composite
+ * {@code @BeforeClass} and {@code @AfterClass} methods, 
+ * handle annotated {@link ClassRule}s, create a composite
  * {@link Description}, and run children sequentially.
  */
 public abstract class ParentRunner<T> extends Runner implements Filterable,
@@ -267,6 +268,24 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 		return fTestClass;
 	}
 
+	/**
+	 * Runs a {@link Statement} that represents a leaf (aka atomic) test.
+	 */
+	protected final void runLeaf(Statement statement, Description description,
+			RunNotifier notifier) {
+		EachTestNotifier eachNotifier= new EachTestNotifier(notifier, description);
+		eachNotifier.fireTestStarted();
+		try {
+		    statement.evaluate();
+		} catch (AssumptionViolatedException e) {
+			eachNotifier.addFailedAssumption(e);
+		} catch (Throwable e) {
+			eachNotifier.addFailure(e);
+		} finally {
+			eachNotifier.fireTestFinished();
+		}
+	}
+	
 	//
 	// Implementation of Runner
 	// 
@@ -295,7 +314,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 			testNotifier.addFailure(e);
 		}
 	}
-	
+
 	//
 	// Implementation of Filterable and Sortable
 	//

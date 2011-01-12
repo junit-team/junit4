@@ -5,8 +5,8 @@
 	<property name="src" value="src/main/java" />
 	<property name="target" location="target" />
 	<property name="bin" location="${target}/main" />
-	<property name="version-base" value="4.9-SNAPSHOT-20100512-0041" />
-	<property name="version-status" value="" />
+	<property name="version-base" value="4.9" />
+	<property name="version-status" value="b1" />
 	<property name="version" value="${version-base}${version-status}" />
 	<property name="dist" value="junit${version}" />
 	<property name="versionfile" value="${src}/junit/runner/Version.java" />
@@ -150,27 +150,30 @@
 		<copy file="build.xml" tofile="${dist}/build.xml" />
 	</target>
 
+        <macrodef name="run-tests">
+        	<element name="extra-args" implicit="yes" />
+                <sequential>
+			<java classname="org.junit.runner.JUnitCore" fork="yes" failonerror="true">
+                		<extra-args />  
+				<arg value="org.junit.tests.AllTests"/>
+				<classpath>
+					<pathelement location="${dist}" />
+					<pathelement location="${dist}/${binjar}" />
+				</classpath>
+			</java>    
+                </sequential>
+        </macrodef>
+
 	<target name="dist" depends="populate-dist">
-		<java classname="org.junit.runner.JUnitCore" fork="yes" failonerror="true">
-			<arg value="org.junit.tests.AllTests"/>
-			<classpath>
-				<pathelement location="${dist}" />
-				<pathelement location="${dist}/${binjar}" />
-			</classpath>
-		</java>
+        	<run-tests>
+                	<jvmarg value="-Dignore.this=ignored" />
+                </run-tests>
 	</target>
 
-	<!-- TODO: DUP above -->
-
 	<target name="profile" depends="populate-dist">
-		<java classname="org.junit.runner.JUnitCore" fork="yes" failonerror="true">
+        	<run-tests>
 			<jvmarg value="-agentlib:hprof=cpu=samples"/>
-			<arg value="org.junit.tests.AllTests"/>
-			<classpath>
-				<pathelement location="${dist}" />
-				<pathelement location="${dist}/${binjar}" />
-			</classpath>
-		</java>
+		</run-tests>
 	</target>	
 
 	<target name="zip" depends="dist">
@@ -187,5 +190,9 @@
 			<fileset file="${zipfile}" />
 		</ftp>
 		<echo message="To upload docs, use build/upload_docs.sh" />
+	</target>
+
+	<target name="print.version">
+	  <echo message="${version}" />
 	</target>
 </project>

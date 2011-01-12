@@ -1,54 +1,63 @@
 ## Summary of Changes in version 4.9 ##
 
-### SuiteBuilder ###
-
-A new way of declaring suites to run.  SuiteBuilder allows for flexible
-specification of where to find the classes containing tests, and how
-to filter the resulting runners.  This suite class lists the
-explicit test classes to consider running, and then filters it down
-to only those tests or classes annotated with `@Category(Yes.class)`:
-
-	@RunWith(SuiteBuilder.class)
-	public class OnlyYes {
-		@Classes
-		public Listed classes= new Listed(Yes1.class, Yes2.class, No1.class);
-
-		@RunnerFilter
-		public CategoryFilter filter= CategoryFilter.include(Yes.class);
-	}
-	
-We hope to soon include other implementations for the @Classes annotation,
-including a classpath-searching test gatherer.
-
 ### ClassRule ###
 
-The ClassRule annotation extends the idea of method-level Rules,
-adding static fields that can affect the operation of a whole class:
+The `ClassRule` annotation extends the idea of method-level Rules,
+adding static fields that can affect the operation of a whole class.  Any
+subclass of `ParentRunner`, including the standard `BlockJUnit4ClassRunner` 
+and `Suite` classes, will support `ClassRule`s.
 
-	public class Counter extends ExternalResource {
-		public int count = 0;
+For example, here is a test suite that connects to a server once before
+all the test classes run, and disconnects after they are finished:
 
-		@Override
-		protected void before() throws Throwable {
-			count++;
-		}		
-	}
+	@RunWith(Suite.class)
+	@SuiteClasses({A.class, B.class, C.class})
+	public class UsesExternalResource {
+		public static Server myServer= new Server();
 	
-	public class ExampleTestWithClassRule {
-		@ClassRule
-		public static Counter counter= new Counter();
-
-		@Test
-		public void firstTest() {
-			assertEquals(1, counter.count);
-		}
-
-		@Test
-		public void secondTest() {
-			assertEquals(1, counter.count);
-		}
+		@Rule
+		public static ExternalResource resource= new ExternalResource() {
+			@Override
+			protected void before() throws Throwable {
+				myServer.connect();
+			};
+	
+			@Override
+			protected void after() {
+				myServer.disconnect();
+			};
+		};
 	}
+
+### TestRule ###
+
+In JUnit 4.9, fields that can be annotated with either `@Rule` or `@ClassRule`
+should be of type `TestRule`.  The old `MethodRule` type, which only made sense
+for method-level rules, will still work, but is deprecated.
+
+Most built-in Rules have been moved to the new type already, in a way that
+should be transparent to most users.  `TestWatchman` has been deprecated,
+and replaced by `TestWatcher`, which has the same functionality, but implements
+the new type.
+
+### LICENSE checked in ###
+
+The Common Public License that JUnit is released under is now included
+in the source repository.
 
 ### Bug fixes ###
 
 - github#98: assumeTrue() does not work with expected exceptions
+- github#74: Categories + Parameterized
+  
+  In JUnit 4.8.2, the Categories runner would fail to run correctly
+  if any contained test class had a custom Runner with a structure
+  significantly different from the built-in Runner.  With this fix,
+  such classes can be assigned one or more categories at the class level,
+  and will be run correctly.  Trying to assign categories to methods within
+  such a class will flag an error.
+
+### Minor changes ###
+
+- Backed out unused folder "experimental-use-of-antunit", replaced by 
+  bash-based script at build_tests.sh
