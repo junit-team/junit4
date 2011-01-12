@@ -1,28 +1,68 @@
 <h2>Summary of Changes in version 4.9</h2>
 
-<h3>SuiteBuilder</h3>
+<h3>ClassRule</h3>
 
-<p>A new way of declaring suites to run.  SuiteBuilder allows for flexible
-specification of where to find the classes containing tests, and how
-to filter the resulting runners.  This suite class lists the
-explicit test classes to consider running, and then filters it down
-to only those tests or classes annotated with <code>@Category(Yes.class)</code>:</p>
+<p>The <code>ClassRule</code> annotation extends the idea of method-level Rules,
+adding static fields that can affect the operation of a whole class.  Any
+subclass of <code>ParentRunner</code>, including the standard <code>BlockJUnit4ClassRunner</code> 
+and <code>Suite</code> classes, will support <code>ClassRule</code>s.</p>
 
-<pre><code>@RunWith(SuiteBuilder.class)
-public static class OnlyYes {
-    @Classes
-    public Listed classes= new Listed(Yes1.class, Yes2.class, No1.class);
+<p>For example, here is a test suite that connects to a server once before
+all the test classes run, and disconnects after they are finished:</p>
 
-    @RunnerFilter
-    public CategoryFilter filter= CategoryFilter.include(Yes.class);
+<pre><code>@RunWith(Suite.class)
+@SuiteClasses({A.class, B.class, C.class})
+public class UsesExternalResource {
+    public static Server myServer= new Server();
+
+    @Rule
+    public static ExternalResource resource= new ExternalResource() {
+        @Override
+        protected void before() throws Throwable {
+            myServer.connect();
+        };
+
+        @Override
+        protected void after() {
+            myServer.disconnect();
+        };
+    };
 }
 </code></pre>
 
-<p>We hope to soon include other implementations for the @Classes annotation,
-including a classpath-searching test gatherer.</p>
+<h3>TestRule</h3>
+
+<p>In JUnit 4.9, fields that can be annotated with either <code>@Rule</code> or <code>@ClassRule</code>
+should be of type <code>TestRule</code>.  The old <code>MethodRule</code> type, which only made sense
+for method-level rules, will still work, but is deprecated.</p>
+
+<p>Most built-in Rules have been moved to the new type already, in a way that
+should be transparent to most users.  <code>TestWatchman</code> has been deprecated,
+and replaced by <code>TestWatcher</code>, which has the same functionality, but implements
+the new type.</p>
+
+<h3>LICENSE checked in</h3>
+
+<p>The Common Public License that JUnit is released under is now included
+in the source repository.</p>
 
 <h3>Bug fixes</h3>
 
 <ul>
 <li>github#98: assumeTrue() does not work with expected exceptions</li>
+<li><p>github#74: Categories + Parameterized</p>
+
+<p>In JUnit 4.8.2, the Categories runner would fail to run correctly
+if any contained test class had a custom Runner with a structure
+significantly different from the built-in Runner.  With this fix,
+such classes can be assigned one or more categories at the class level,
+and will be run correctly.  Trying to assign categories to methods within
+such a class will flag an error.</p></li>
+</ul>
+
+<h3>Minor changes</h3>
+
+<ul>
+<li>Backed out unused folder "experimental-use-of-antunit", replaced by 
+bash-based script at build_tests.sh</li>
 </ul>

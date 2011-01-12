@@ -1,6 +1,5 @@
 package org.junit.rules;
 
-import org.junit.Rule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
@@ -10,20 +9,23 @@ import org.junit.runners.model.Statement;
  * a test that would otherwise fail to pass, or it may perform necessary setup or
  * cleanup for tests, or it may observe test execution to report it elsewhere.
  * {@link TestRule}s can do everything that could be done previously with
- * methods annotated with {@link Before}, {@link After}, {@link BeforeClass}, or 
- * {@link AfterClass}, but they are more powerful, and more easily shared
+ * methods annotated with {@link org.junit.Before}, 
+ * {@link org.junit.After}, {@link org.junit.BeforeClass}, or 
+ * {@link org.junit.AfterClass}, but they are more powerful, and more easily 
+ * shared
  * between projects and classes.
  * 
  * The default JUnit test runners for suites and
  * individual test cases recognize {@link TestRule}s introduced in two different
- * ways.  {@link Rule} annotates method-level {@link TestRule}s, and {@link ClassRule} 
- * annotates class-level {@link TestRule}s.  See the Javadoc for those annotations
+ * ways.  {@link org.junit.Rule} annotates method-level 
+ * {@link TestRule}s, and {@link org.junit.ClassRule} 
+ * annotates class-level {@link TestRule}s.  See Javadoc for those annotations
  * for more information.
  *
  * Multiple {@link TestRule}s can be applied to a test or suite execution. The
  * {@link Statement} that executes the method or suite is passed to each annotated
- * {@link Rule} in turn, and each may return a substitute or modified
- * {@link Statement}, which is passed to the next {@link Rule}, if any. For
+ * {@link org.junit.Rule} in turn, and each may return a substitute or modified
+ * {@link Statement}, which is passed to the next {@link org.junit.Rule}, if any. For
  * examples of how this can be useful, see these provided TestRules,
  * or write your own:
  * 

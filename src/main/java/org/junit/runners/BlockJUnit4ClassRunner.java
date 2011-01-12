@@ -10,8 +10,6 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.Test.None;
-import org.junit.internal.AssumptionViolatedException;
-import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.model.MultipleFailureException;
 import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.internal.runners.statements.ExpectException;
@@ -20,6 +18,7 @@ import org.junit.internal.runners.statements.FailOnTimeout;
 import org.junit.internal.runners.statements.InvokeMethod;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
+import org.junit.rules.MethodRule;
 import org.junit.rules.RunRules;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -64,31 +63,13 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	// 
 
 	@Override
-	protected void runChild(FrameworkMethod method, RunNotifier notifier) {
-		EachTestNotifier eachNotifier= makeNotifier(method, notifier);
+	protected void runChild(final FrameworkMethod method, RunNotifier notifier) {
+		Description description= describeChild(method);
 		if (method.getAnnotation(Ignore.class) != null) {
-			runIgnored(eachNotifier);
+			notifier.fireTestIgnored(description);
 		} else {
-			runNotIgnored(method, eachNotifier);
+			runLeaf(methodBlock(method), description, notifier);
 		}
-	}
-
-	private void runNotIgnored(FrameworkMethod method,
-			EachTestNotifier eachNotifier) {
-		eachNotifier.fireTestStarted();
-		try {
-			methodBlock(method).evaluate();
-		} catch (AssumptionViolatedException e) {
-			eachNotifier.addFailedAssumption(e);
-		} catch (Throwable e) {
-			eachNotifier.addFailure(e);
-		} finally {
-			eachNotifier.fireTestFinished();
-		}
-	}
-
-	private void runIgnored(EachTestNotifier eachNotifier) {
-		eachNotifier.fireTestIgnored();
 	}
 
 	@Override
@@ -200,7 +181,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 
 	@SuppressWarnings("deprecation")
 	private boolean isMethodRule(Class<?> type) {
-		return org.junit.rules.MethodRule.class.isAssignableFrom(type);
+		return MethodRule.class.isAssignableFrom(type);
 	}
 
 	/**
@@ -246,7 +227,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	 * <li>ALWAYS allow {@code @Rule} fields to modify the execution of the
 	 * above steps. A {@code Rule} may prevent all execution of the above steps,
 	 * or add additional behavior before and after, or modify thrown exceptions.
-	 * For more information, see {@link MethodRule}
+	 * For more information, see {@link TestRule}
 	 * <li>ALWAYS run all non-overridden {@code @Before} methods on this class
 	 * and superclasses before any of the previous steps; if any throws an
 	 * Exception, stop execution and pass the exception on.
@@ -400,12 +381,6 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	private List<TestRule> getTestRules(Object target) {
 		return getTestClass().getAnnotatedFieldValues(target,
 				Rule.class, TestRule.class);
-	}
-
-	private EachTestNotifier makeNotifier(FrameworkMethod method,
-			RunNotifier notifier) {
-		Description description= describeChild(method);
-		return new EachTestNotifier(notifier, description);
 	}
 
 	private Class<? extends Throwable> getExpectedException(Test annotation) {

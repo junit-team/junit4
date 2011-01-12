@@ -15,20 +15,20 @@ import java.lang.annotation.RetentionPolicy;
 	public interface SlowTests {}
 
 	public static class A {
-		@Test
+		&#064;Test
 		public void a() {
 			fail();
 		}
 
-		@Category(SlowTests.class)
-		@Test
+		&#064;Category(SlowTests.class)
+		&#064;Test
 		public void b() {
 		}
 	}
 
-	@Category({SlowTests.class, FastTests.class})
+	&#064;Category({SlowTests.class, FastTests.class})
 	public static class B {
-		@Test
+		&#064;Test
 		public void c() {
 
 		}
