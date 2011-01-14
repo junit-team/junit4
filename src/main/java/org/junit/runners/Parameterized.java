@@ -4,6 +4,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,6 +12,7 @@ import java.util.List;
 
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
@@ -57,6 +59,38 @@ import org.junit.runners.model.TestClass;
  * two-argument constructor and the data values in the
  * <code>&#064;Parameters</code> method.
  * </p>
+ *
+ * You can also write:
+ *
+ * <pre>
+ * &#064;RunWith(Parameterized.class)
+ * public class FibonacciTest {
+ * 	&#064;Parameters
+ * 	public static List&lt;Object[]&gt; data() {
+ * 		return Arrays.asList(new Object[][] {
+ * 				Fibonacci,
+ * 				{ { 0, 0 }, { 1, 1 }, { 2, 1 }, { 3, 2 }, { 4, 3 }, { 5, 5 },
+ * 						{ 6, 8 } } });
+ * 	}
+ * 	&#064;Parameter(1)
+ * 	private int fInput;
+ *
+ * 	&#064;Parameter(2)
+ * 	private int fExpected;
+ *
+ * 	&#064;Test
+ * 	public void test() {
+ * 		assertEquals(fExpected, Fibonacci.compute(fInput));
+ * 	}
+ * }
+ * </pre>
+ *
+ * <p>
+ * Each instance of <code>FibonacciTest</code> will be constructed without constructor
+ * and fields annoted by <code>&#064;Parameter</code>  will be initialized
+ * with the data values in the <code>&#064;Parameters</code> method.
+ * </p>
+ *
  */
 public class Parameterized extends Suite {
 	/**
@@ -67,6 +101,26 @@ public class Parameterized extends Suite {
 	@Target(ElementType.METHOD)
 	public static @interface Parameters {
 	}
+
+        /**
+         * Annotation for fields of the test class which will be initialized by the
+         * method annoted by <code>Parameters</code><br/>
+         * By using directly this annotation, the test class constructor isn't needed.<br/>
+         * Index range must start at 1.
+         * Default value is 1.
+         */
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.FIELD)
+        public static @interface Parameter {
+            /**
+             * Method that returns the index of the parameter in the array
+             * returned by the method annoted by <code>Parameters</code>.<br/>
+             * Index range must start at 1.
+             * Default value is 1.
+             * @return the index of the parameter.
+             */
+            int value() default 1;
+        }
 
 	private class TestClassRunnerForParameters extends
 			BlockJUnit4ClassRunner {
@@ -83,8 +137,30 @@ public class Parameterized extends Suite {
 
 		@Override
 		public Object createTest() throws Exception {
-			return getTestClass().getOnlyConstructor().newInstance(
-					computeParams());
+
+			Object testClassInstance = null;
+
+			List<FrameworkField> fields = getTestClass().getAnnotatedFields(Parameter.class);
+
+			if (!fields.isEmpty()){
+
+				testClassInstance = getTestClass().getJavaClass().newInstance();
+
+				for (FrameworkField f : fields) {
+		    			Field field = f.getField();
+	        			boolean accessible = field.isAccessible();
+	        			field.setAccessible(true);
+					Parameter annot = field.getAnnotation(Parameter.class);
+					int index = annot.value();
+				        field.set(testClassInstance,  fParameterList.get(fParameterSetNumber)[index-1]);
+				        field.setAccessible(accessible);
+				}
+			}else{
+
+				testClassInstance = getTestClass().getOnlyConstructor().newInstance(computeParams());
+			}
+
+			return testClassInstance;
 		}
 
 		private Object[] computeParams() throws Exception {

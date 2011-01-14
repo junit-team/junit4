@@ -19,6 +19,7 @@ import org.junit.runner.Result;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.model.InitializationError;
 
@@ -74,6 +75,58 @@ public class ParameterizedTestTest {
 	@Test
 	public void plansNamedCorrectly() throws Exception {
 		Runner runner= Request.aClass(FibonacciTest.class).getRunner();
+		Description description= runner.getDescription();
+		assertEquals("[0]", description.getChildren().get(0).getDisplayName());
+	}
+
+        @RunWith(Parameterized.class)
+	static public class FibonacciWithParameterizedFieldTest {
+		@Parameters
+		public static Collection<Object[]> data() {
+			return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
+					{ 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
+		}
+
+                @Parameter(1)
+		private int fInput;
+
+                @Parameter(2)
+		private int fExpected;
+
+		@Test
+		public void test() {
+			assertEquals(fExpected, fib(fInput));
+		}
+
+		private int fib(int x) {
+			return 0;
+		}
+	}
+
+        @Test
+	public void countWithParameterizedField() {
+		Result result= JUnitCore.runClasses(FibonacciWithParameterizedFieldTest.class);
+		assertEquals(7, result.getRunCount());
+		assertEquals(6, result.getFailureCount());
+	}
+
+	@Test
+	public void failuresNamedCorrectlyWithParameterizedField() {
+		Result result= JUnitCore.runClasses(FibonacciWithParameterizedFieldTest.class);
+		assertEquals(String
+				.format("test[1](%s)", FibonacciWithParameterizedFieldTest.class.getName()), result
+				.getFailures().get(0).getTestHeader());
+	}
+
+	@Test
+	public void countBeforeRunWithParameterizedField() throws Exception {
+		Runner runner= Request.aClass(FibonacciWithParameterizedFieldTest.class).getRunner();
+		assertEquals(7, runner.testCount());
+	}
+
+	@Test
+	public void plansNamedCorrectlyWithParameterizedField() throws Exception {
+		Runner runner= Request.aClass(FibonacciWithParameterizedFieldTest.class).getRunner();
 		Description description= runner.getDescription();
 		assertEquals("[0]", description.getChildren().get(0).getDisplayName());
 	}
