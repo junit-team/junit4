@@ -41,6 +41,10 @@ should be transparent to most users.  <code>TestWatchman</code> has been depreca
 and replaced by <code>TestWatcher</code>, which has the same functionality, but implements
 the new type.</p>
 
+<p><code>TestRule</code> is an abstract base class, and its abstract <code>apply</code> method is 
+protected.  In order to apply <code>TestRule</code>s to a <code>Statement</code>, use the <code>RunRules</code>
+class in <code>org.junit.rules</code> (thanks to <code>@kcooney</code>)</p>
+
 <h3>LICENSE checked in</h3>
 
 <p>The Common Public License that JUnit is released under is now included
@@ -58,11 +62,16 @@ significantly different from the built-in Runner.  With this fix,
 such classes can be assigned one or more categories at the class level,
 and will be run correctly.  Trying to assign categories to methods within
 such a class will flag an error.</p></li>
+<li><p>github#163: Bad comparison failure message when using assertEquals(String, String)</p>
+
+<p>Thanks to <code>@kcooney</code></p></li>
 </ul>
 
 <h3>Minor changes</h3>
 
 <ul>
-<li>Backed out unused folder "experimental-use-of-antunit", replaced by 
-bash-based script at build_tests.sh</li>
+<li><p>Backed out unused folder "experimental-use-of-antunit", replaced by 
+bash-based script at build_tests.sh</p></li>
+<li><p>Made MultipleFailureException public, to assist extension writers.
+Thanks to <code>@kcooney</code></p></li>
 </ul>
