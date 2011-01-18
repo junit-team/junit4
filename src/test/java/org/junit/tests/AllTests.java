@@ -8,6 +8,7 @@ import org.junit.runners.Suite.SuiteClasses;
 import org.junit.tests.assertion.AssertionTest;
 import org.junit.tests.assertion.BothTest;
 import org.junit.tests.assertion.EachTest;
+import org.junit.tests.assertion.MultipleFailureExceptionTest;
 import org.junit.tests.deprecated.JUnit4ClassRunnerTest;
 import org.junit.tests.description.AnnotatedDescriptionTest;
 import org.junit.tests.description.SuiteDescriptionTest;
@@ -87,6 +88,7 @@ import org.junit.tests.validation.ValidationTest;
 	AssertionTest.class,
 	CommandLineTest.class,
 	ExpectedTest.class,
+	MultipleFailureExceptionTest.class,
 	ForwardCompatibilityTest.class,
 	OldTests.class,
 	ParameterizedTestTest.class,
