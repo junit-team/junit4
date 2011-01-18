@@ -66,3 +66,11 @@
 2011 Jan 03
     jens.schauder@freenet.de: Found bug (github#74) with Categories and 
                               Parameterized.
+
+2011 Jan 18
+    Markus Keller: Reported bug (github#163): 
+           Bad comparison failure message when using assertEquals(String, String)
+    
+    Kevin Cooney (kcooney):
+           Patches for runLeaf, public multiple failure exception, abstract base
+           class for TestRule, assertion messages and null.
