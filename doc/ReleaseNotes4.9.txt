@@ -1,5 +1,7 @@
 ## Summary of Changes in version 4.9 [unreleased!] ##
 
+Release theme: Test-class and suite level Rules.
+
 ### ClassRule ###
 
 The `ClassRule` annotation extends the idea of method-level Rules,
