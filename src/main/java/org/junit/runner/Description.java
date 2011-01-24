@@ -91,7 +91,7 @@ public class Description implements Serializable {
 	
 	private final Annotation[] fAnnotations;
 	
-	private Description(final String displayName, Annotation... annotations) {
+	protected Description(final String displayName, Annotation... annotations) {
 		fDisplayName= displayName;
 		fAnnotations= annotations;
 	}
