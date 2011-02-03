@@ -223,10 +223,6 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	 * <li>HOWEVER, if {@code method}'s {@code @Test} annotation has the {@code
 	 * timeout} attribute, throw an exception if the previous step takes more
 	 * than the specified number of milliseconds.
-	 * <li>ALWAYS allow {@code @Rule} fields to modify the execution of the
-	 * above steps. A {@code Rule} may prevent all execution of the above steps,
-	 * or add additional behavior before and after, or modify thrown exceptions.
-	 * For more information, see {@link TestRule}
 	 * <li>ALWAYS run all non-overridden {@code @Before} methods on this class
 	 * and superclasses before any of the previous steps; if any throws an
 	 * Exception, stop execution and pass the exception on.
@@ -235,6 +231,10 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	 * always executed: exceptions thrown by previous steps are combined, if
 	 * necessary, with exceptions from After methods into a
 	 * {@link MultipleFailureException}.
+	 * <li>ALWAYS allow {@code @Rule} fields to modify the execution of the
+	 * above steps. A {@code Rule} may prevent all execution of the above steps,
+	 * or add additional behavior before and after, or modify thrown exceptions.
+	 * For more information, see {@link TestRule}
 	 * </ul>
 	 * 
 	 * This can be overridden in subclasses, either by overriding this method,
