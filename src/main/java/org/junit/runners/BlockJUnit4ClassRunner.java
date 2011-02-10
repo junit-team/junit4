@@ -168,7 +168,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 		Class<?> type= field.getType();
 		if (!isMethodRule(type) && !isTestRule(type))
 			errors.add(new Exception("Field " + field.getName()
-					+ " must implement MethodRule"));
+					+ " must implement MethodRule or TestRule"));
 		if (!Modifier.isPublic(field.getModifiers()))
 			errors.add(new Exception("Field " + field.getName()
 					+ " must be public"));

@@ -248,11 +248,10 @@ public class MethodRulesTest {
 				hasSingleFailureContaining("must be public"));
 	}
 	
-	public static class CustomTestName extends TestRule {
+	public static class CustomTestName implements TestRule {
 		public String name = null;
 			
-		@Override
-		protected Statement apply(final Statement base, final Description description) {
+		public Statement apply(final Statement base, final Description description) {
 			return new Statement() {				
 				@Override
 				public void evaluate() throws Throwable {

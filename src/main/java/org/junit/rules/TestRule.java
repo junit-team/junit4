@@ -40,7 +40,7 @@ import org.junit.runners.model.Statement;
  *   <li>{@link Verifier}: fail test if object state ends up incorrect</li>
  * </ul>
  */
-public abstract class TestRule {
+public interface TestRule {
 	/**
 	 * Modifies the method-running {@link Statement} to implement this
 	 * test-running rule.
@@ -50,5 +50,5 @@ public abstract class TestRule {
 	 * @return a new statement, which may be the same as {@code base},
 	 * a wrapper around {@code base}, or a completely new Statement.
 	 */
-	protected abstract Statement apply(Statement base, Description description);
+	Statement apply(Statement base, Description description);
 }

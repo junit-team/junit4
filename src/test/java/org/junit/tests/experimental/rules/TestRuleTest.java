@@ -28,8 +28,7 @@ public class TestRuleTest {
 	public static class ExampleTest {
 		@Rule
 		public TestRule example= new TestRule() {
-			@Override
-			protected Statement apply(final Statement base, Description description) {
+			public Statement apply(final Statement base, Description description) {
 				return new Statement() {
 					@Override
 					public void evaluate() throws Throwable {
@@ -54,7 +53,7 @@ public class TestRuleTest {
 	}
 	
 	@SuppressWarnings("deprecation")
-	public static class BothKindsOfRule extends TestRule implements org.junit.rules.MethodRule {
+	public static class BothKindsOfRule implements TestRule, org.junit.rules.MethodRule {
 		public int applications = 0;
 		
 		public Statement apply(Statement base, FrameworkMethod method,
@@ -63,8 +62,7 @@ public class TestRuleTest {
 			return base;
 		}
 
-		@Override
-		protected Statement apply(Statement base, Description description) {
+		public Statement apply(Statement base, Description description) {
 			applications++;
 			return base;
 		}
@@ -98,9 +96,8 @@ public class TestRuleTest {
 	private static int runCount;
 
 	public static class MultipleRuleTest {
-		private static class Increment extends TestRule {
-			@Override
-			protected Statement apply(final Statement base, Description description) {
+		private static class Increment implements TestRule {
+			public Statement apply(final Statement base, Description description) {
 				return new Statement() {
 					@Override
 					public void evaluate() throws Throwable {
@@ -151,7 +148,7 @@ public class TestRuleTest {
 		@Rule
 		public TestRule watchman= new TestWatcher() {
 			@Override
-			public void failed(Throwable e, Description description) {
+			protected void failed(Throwable e, Description description) {
 				log+= description + " " + e.getClass().getSimpleName();
 			}
 		};
@@ -176,13 +173,13 @@ public class TestRuleTest {
 		@Rule
 		public TestRule watchman= new TestWatcher() {
 			@Override
-			public void failed(Throwable e, Description description) {
+			protected void failed(Throwable e, Description description) {
 				watchedLog+= description + " "
 						+ e.getClass().getSimpleName() + "\n";
 			}
 
 			@Override
-			public void succeeded(Description description) {
+			protected void succeeded(Description description) {
 				watchedLog+= description + " " + "success!\n";
 			}
 		};
@@ -215,17 +212,17 @@ public class TestRuleTest {
 		@Rule
 		public TestRule watchman= new TestWatcher() {
 			@Override
-			public void starting(Description d) {
+			protected void starting(Description d) {
 				watchedLog+= "starting ";
 			}
 			
 			@Override
-			public void finished(Description d) {
+			protected void finished(Description d) {
 				watchedLog+= "finished ";
 			}
 			
 			@Override
-			public void succeeded(Description d) {
+			protected void succeeded(Description d) {
 				watchedLog+= "succeeded ";
 			}
 		};
@@ -277,11 +274,10 @@ public class TestRuleTest {
 				hasSingleFailureContaining("must be public"));
 	}
 	
-	public static class CustomTestName extends TestRule {
+	public static class CustomTestName implements TestRule {
 		public String name = null;
 			
-		@Override
-		protected Statement apply(final Statement base, final Description description) {
+		public Statement apply(final Statement base, final Description description) {
 			return new Statement() {				
 				@Override
 				public void evaluate() throws Throwable {
