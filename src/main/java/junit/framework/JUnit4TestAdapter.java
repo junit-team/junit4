@@ -3,6 +3,7 @@ package junit.framework;
 import java.util.List;
 
 import org.junit.Ignore;
+import org.junit.internal.IgnoreUtil;
 import org.junit.runner.Describable;
 import org.junit.runner.Description;
 import org.junit.runner.Request;
@@ -55,7 +56,7 @@ public class JUnit4TestAdapter implements Test, Filterable, Sortable, Describabl
 	}
 
 	private Description removeIgnored(Description description) {
-		if (isIgnored(description))
+		if (IgnoreUtil.isIgnored(description))
 			return Description.EMPTY;
 		Description result = description.childlessCopy();
 		for (Description each : description.getChildren()) {
@@ -64,10 +65,6 @@ public class JUnit4TestAdapter implements Test, Filterable, Sortable, Describabl
 				result.addChild(child);
 		}
 		return result;
-	}
-
-	private boolean isIgnored(Description description) {
-		return description.getAnnotation(Ignore.class) != null;
 	}
 
 	@Override

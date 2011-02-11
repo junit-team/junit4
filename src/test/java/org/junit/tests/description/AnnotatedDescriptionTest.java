@@ -6,8 +6,10 @@ import static org.junit.Assert.assertTrue;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
 
 import org.junit.Ignore;
+import org.junit.RuntimeCondition;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.Request;
@@ -78,7 +80,10 @@ public class AnnotatedDescriptionTest {
 	@Test
 	public void characterizeCreatingMyOwnAnnotation() {
 		Annotation annotation= new Ignore() {
-			public String value() {
+      public Class<? extends RuntimeCondition>[] ifTrue() {
+        return null; // shortcut... null never
+      }
+      public String value() {
 				return "message";
 			}
 
