@@ -12,7 +12,7 @@ import org.junit.runners.model.RunnerBuilder;
 public class IgnoredBuilder extends RunnerBuilder {
 	@Override
 	public Runner runnerForClass(Class<?> testClass) {
-		if (testClass.getAnnotation(Ignore.class) != null)
+		if (IgnoreUtil.isIgnored(Description.createSuiteDescription(testClass)))
 			return new IgnoredClassRunner(testClass);
 		return null;
 	}

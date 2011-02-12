@@ -19,7 +19,7 @@ public class IgnoreUtil {
   }
 
   private static boolean isTrue(Class<? extends RuntimeCondition>[] conditions, FrameworkMethod method) {
-    if (conditions == null || conditions.length == 0) {
+    if (hasNoConditions(conditions)) {
       return true;
     }
     for(Class<? extends RuntimeCondition> condition : conditions){
@@ -40,7 +40,7 @@ public class IgnoreUtil {
   }
 
   private static boolean isTrue(Class<? extends RuntimeCondition>[] conditions, Description description) {
-    if (conditions == null || conditions.length == 0) {
+    if (hasNoConditions(conditions)) {
       return true;
     }
     for(Class<? extends RuntimeCondition> condition : conditions){
@@ -55,4 +55,7 @@ public class IgnoreUtil {
     return true;
   }
 
+  private static boolean hasNoConditions(Class<? extends RuntimeCondition>[] conditions) {
+    return (conditions == null || conditions.length == 0);
+  }
 }

@@ -52,6 +52,7 @@ import org.junit.tests.manipulation.SingleMethodTest;
 import org.junit.tests.manipulation.SortableTest;
 import org.junit.tests.running.classes.EnclosedTest;
 import org.junit.tests.running.classes.IgnoreClassTest;
+import org.junit.tests.running.classes.IgnoreWithConditionClassTest;
 import org.junit.tests.running.classes.ParameterizedTestTest;
 import org.junit.tests.running.classes.RunWithTest;
 import org.junit.tests.running.classes.SuiteTest;
@@ -113,6 +114,7 @@ import org.junit.tests.validation.ValidationTest;
 	SuiteMethodTest.class,
 	BadlyFormedClassesTest.class,
 	IgnoreClassTest.class,
+	IgnoreWithConditionClassTest.class,
 	OldTestClassAdaptingListenerTest.class,
 	AnnotatedDescriptionTest.class,
 	BothTest.class,

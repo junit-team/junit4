@@ -28,10 +28,34 @@ public class IgnoreWithConditionClassTest {
 			fail();
 		}
 	}
-	
+
+	public static class AlwaysFalse implements RuntimeCondition {
+		public boolean isTrue(FrameworkMethod method) {
+			return false;
+		}
+		public boolean isTrue(Description description) {
+			return false;
+		}
+	}
+
+	@Ignore(ifTrue = AlwaysFalse.class) public static class DontIgnoreMe {
+		@Test public void iPass() {
+		}
+
+		@Test public void iPassToo() {
+		}
+	}
+
 	@Test public void ignoreClass() {
 		Result result= JUnitCore.runClasses(IgnoreMeAlso.class);
 		assertEquals(0, result.getFailureCount());
 		assertEquals(1, result.getIgnoreCount());
+	}
+
+	@Test public void dontIgnoreClass() {
+		Result result= JUnitCore.runClasses(DontIgnoreMe.class);
+		assertEquals(0, result.getFailureCount());
+		assertEquals(0, result.getIgnoreCount());
+		assertEquals(2, result.getRunCount());
 	}
 }
