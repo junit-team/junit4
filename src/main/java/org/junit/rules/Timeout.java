@@ -43,7 +43,7 @@ public class Timeout implements TestRule {
 		fMillis= millis;
 	}
 
-	public Statement apply(Statement base, Description description) {
+	public Statement apply(Statement base, Description description, Object target) {
 		return new FailOnTimeout(base, fMillis);
 	}
 }

@@ -191,7 +191,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	private Statement withClassRules(Statement statement) {
 		List<TestRule> classRules= classRules();
 		return classRules.isEmpty() ? statement :
-		    new RunRules(statement, classRules, getDescription());
+		    new RunRules(statement, classRules, getDescription(), null);
 	}
 
 	/**

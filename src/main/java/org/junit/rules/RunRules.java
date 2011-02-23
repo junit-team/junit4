@@ -1,5 +1,6 @@
 package org.junit.rules;
 
+import org.junit.ClassRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
@@ -9,8 +10,12 @@ import org.junit.runners.model.Statement;
 public class RunRules extends Statement {
 	private final Statement statement;
 
-	public RunRules(Statement base, Iterable<TestRule> rules, Description description) {
-		statement= applyAll(base, rules, description);
+	/**
+	 * 
+	 * @param target target test instance, or null when this rule is being applied as a {@link ClassRule}
+	 */
+	public RunRules(Statement base, Iterable<TestRule> rules, Description description, Object target) {
+		statement= applyAll(base, rules, description, target);
 	}
 	
 	@Override
@@ -19,9 +24,9 @@ public class RunRules extends Statement {
 	}
 
 	private static Statement applyAll(Statement result, Iterable<TestRule> rules,
-			Description description) {
+			Description description, Object target) {
 		for (TestRule each : rules)
-			result= each.apply(result, description);
+			result= each.apply(result, description, target);
 		return result;
 	}
 }

@@ -373,7 +373,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 			Statement statement) {
 		List<TestRule> testRules= getTestRules(target);
 		return testRules.isEmpty() ? statement :
-			new RunRules(statement, testRules, describeChild(method));
+			new RunRules(statement, testRules, describeChild(method), target);
 	}
 
 	private List<TestRule> getTestRules(Object target) {

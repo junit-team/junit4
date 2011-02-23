@@ -57,7 +57,7 @@ public class ExpectedException implements TestRule {
 	}
 	
 	public Statement apply(Statement base,
-			org.junit.runner.Description description) {
+			org.junit.runner.Description description, Object target) {
 		return new ExpectedExceptionStatement(base);
 	}
 
