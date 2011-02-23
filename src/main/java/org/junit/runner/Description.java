@@ -1,11 +1,14 @@
 package org.junit.runner;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.junit.Rule;
 
 /**
  * <p>A <code>Description</code> describes a test which is to be run or has been run. <code>Descriptions</code> 
@@ -36,7 +39,7 @@ public class Description {
 	public static Description createSuiteDescription(String name, Annotation... annotations) {
 		if (name.length() == 0)
 			throw new IllegalArgumentException("name must have non-zero length");
-		return new Description(name, annotations);
+		return new Description(name, null, annotations);
 	}
 
 	/**
@@ -48,8 +51,23 @@ public class Description {
 	 * @return a <code>Description</code> named <code>name</code>
 	 */
 	public static Description createTestDescription(Class<?> clazz, String name, Annotation... annotations) {
-		return new Description(String.format("%s(%s)", name, clazz.getName()), annotations);
+		return new Description(String.format("%s(%s)", name, clazz.getName()), null, annotations);
 	}
+
+	/**
+	 * Preferred way to create a description for a test, such that the full {@link Method} is available
+	 * to {@link Rule} implementations
+	 * @param clazz the class of the test
+	 * @param method the method that implements the test
+	 * @param name the name of the test (a method name for test annotated with {@link org.junit.Test})
+	 * @param annotations meta-data about the test, for downstream interpreters
+	 * @return a <code>Description</code> named <code>name</code>
+	 */
+	public static Description createTestDescription(Class<?> clazz, Method method, String name, Annotation... annotations) {
+		return new Description(String.format("%s(%s)", name, clazz.getName()), method, annotations);
+
+	}
+	
 
 	/**
 	 * Create a <code>Description</code> of a single test named <code>name</code> in the class <code>clazz</code>.
@@ -69,29 +87,32 @@ public class Description {
 	 * @return a <code>Description</code> of <code>testClass</code>
 	 */
 	public static Description createSuiteDescription(Class<?> testClass) {
-		return new Description(testClass.getName(), testClass.getAnnotations());
+		return new Description(testClass.getName(), null, testClass.getAnnotations());
 	}
 	
 	/**
 	 * Describes a Runner which runs no tests
 	 */
-	public static final Description EMPTY= new Description("No Tests");
+	public static final Description EMPTY= new Description("No Tests", null);
 	
 	/**
 	 * Describes a step in the test-running mechanism that goes so wrong no
 	 * other description can be used (for example, an exception thrown from a Runner's
 	 * constructor
 	 */
-	public static final Description TEST_MECHANISM= new Description("Test mechanism");
+	public static final Description TEST_MECHANISM= new Description("Test mechanism", null);
 	
 	private final ArrayList<Description> fChildren= new ArrayList<Description>();
 	private final String fDisplayName;
 	
 	private final Annotation[] fAnnotations;
+
+	private Method fMethod;
 	
-	private Description(final String displayName, Annotation... annotations) {
+	private Description(final String displayName, Method method, Annotation... annotations) {
 		fDisplayName= displayName;
 		fAnnotations= annotations;
+		fMethod= method;
 	}
 
 	/**
@@ -173,7 +194,7 @@ public class Description {
 	 * children will be added back)
 	 */
 	public Description childlessCopy() {
-		return new Description(fDisplayName, fAnnotations);
+		return new Description(fDisplayName, fMethod, fAnnotations);
 	}
 
 	/**
@@ -237,5 +258,9 @@ public class Description {
 
 	private Matcher methodStringMatcher() {
 		return Pattern.compile("(.*)\\((.*)\\)").matcher(toString());
+	}
+
+	public Method getMethod() {
+		return fMethod;
 	}
 }

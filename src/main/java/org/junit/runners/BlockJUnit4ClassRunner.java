@@ -73,7 +73,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 
 	@Override
 	protected Description describeChild(FrameworkMethod method) {
-		return Description.createTestDescription(getTestClass().getJavaClass(),
+		return Description.createTestDescription(getTestClass().getJavaClass(), method.getMethod(),
 				testName(method), method.getAnnotations());
 	}
 

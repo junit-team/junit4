@@ -114,7 +114,7 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
 	}
 
 	protected Description methodDescription(Method method) {
-		return Description.createTestDescription(getTestClass().getJavaClass(), testName(method), testAnnotations(method));
+		return Description.createTestDescription(getTestClass().getJavaClass(), method, testName(method), testAnnotations(method));
 	}
 
 	protected Annotation[] testAnnotations(Method method) {
