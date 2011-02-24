@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
+import org.junit.internal.AnnotationUtils;
 import org.junit.internal.runners.model.ReflectiveCallable;
 
 /**
@@ -140,6 +141,6 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
 	 * one exists.
 	 */
 	public <T extends Annotation> T getAnnotation(Class<T> annotationType) {
-		return fMethod.getAnnotation(annotationType);
+		return AnnotationUtils.findMethodMetaAnnotation(fMethod, annotationType);
 	}
 }
