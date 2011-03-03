@@ -9,7 +9,6 @@ import static org.junit.experimental.results.ResultMatchers.hasSingleFailureCont
 import java.util.Arrays;
 
 import org.hamcrest.Matcher;
-import org.junit.Ignore;
 import org.junit.experimental.results.PrintableResult;
 import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.Theories;
@@ -21,19 +20,19 @@ import org.junit.runner.notification.Failure;
 @RunWith(Theories.class)
 public class MatcherTest {
     @DataPoint
-    public static Matcher<?> SINGLE_FAILURE= hasSingleFailureContaining("cheese");
+    public static Matcher<Object> SINGLE_FAILURE= hasSingleFailureContaining("cheese");
 
     @DataPoint
-    public static Matcher<?> ANY_FAILURE= hasFailureContaining("cheese");
+    public static Matcher<PrintableResult> ANY_FAILURE= hasFailureContaining("cheese");
 
     @DataPoint
     public static PrintableResult TWO_FAILURES_ONE_CHEESE= new PrintableResult(
             Arrays.asList(failure("cheese"), failure("mustard")));
 
     @Theory
-    @Ignore("TODO: what generics-fu can make this work with param signatures as Types instead of Classes?")
-    public <T> void differentMatchersHaveDifferentDescriptions(
-            Matcher<T> matcher1, Matcher<T> matcher2, T value) {
+    @SuppressWarnings("unchecked")
+    public void differentMatchersHaveDifferentDescriptions(
+            Matcher matcher1, Matcher matcher2, PrintableResult value) {
         assumeThat(value, matcher1);
         assumeThat(value, not(matcher2));
         assertThat(matcher1.toString(), not(matcher2.toString()));

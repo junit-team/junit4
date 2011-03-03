@@ -7,7 +7,6 @@ import static org.junit.Assume.assumeThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.internal.matchers.StringContains.containsString;
 import org.hamcrest.Matcher;
-import org.junit.Ignore;
 import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
@@ -37,9 +36,9 @@ public class WhenNoParametersMatch {
     }
 
     @Theory
-    @Ignore("TODO: what generics-fu can make this work with param signatures as Types instead of Classes?")
+    @SuppressWarnings("unchecked")
     public void showFailedAssumptionsWhenNoParametersFound(int data,
-            Matcher<Integer> matcher) throws Exception {
+            Matcher matcher) throws Exception {
         assumeThat(data, not(matcher));
         AssumptionsFail.DATA= data;
         AssumptionsFail.MATCHER= matcher;
