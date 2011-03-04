@@ -180,7 +180,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	}
 
 	/**
-	 * Returns a {@link Statement}: apply all static {@link Value} fields
+	 * Returns a {@link Statement}: apply all 
+	 * static fields assignable to {@link TestRule}
 	 * annotated with {@link ClassRule}.
 	 *
 	 * @param statement
