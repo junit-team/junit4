@@ -74,3 +74,6 @@
     Kevin Cooney (kcooney):
            Patches for runLeaf, public multiple failure exception, abstract base
            class for TestRule, assertion messages and null.
+
+2011 Mar 04
+    Jerome Lacoste (lacostej@github) for initial patch for GH-191.
