@@ -45,6 +45,11 @@
                     <target>${jdk.version}</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+            </plugin>
         </plugins>
     </build>
     <dependencies>
@@ -59,4 +64,5 @@
     <properties>
          <jdk.version>1.5</jdk.version>
     </properties>
+
 </project>
