@@ -14,13 +14,13 @@ import java.util.List;
 import org.javaruntype.type.Types;
 
 public class ParameterSignature {
-    public static List<ParameterSignature> signatures(Method method) {
-        return signatures(method.getGenericParameterTypes(), method
+    public static List<ParameterSignature> signatures(Method method, Reflector reflector) {
+        return signatures(reflector.parameterTypesOf(method), method
                 .getParameterAnnotations());
     }
 
-    public static List<ParameterSignature> signatures(Constructor<?> constructor) {
-        return signatures(constructor.getGenericParameterTypes(), constructor
+    public static List<ParameterSignature> signatures(Constructor<?> constructor, Reflector reflector) {
+        return signatures(reflector.parameterTypesOf(constructor), constructor
                 .getParameterAnnotations());
     }
 

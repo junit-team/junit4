@@ -38,8 +38,8 @@ public class BothTest {
     }
 
     @Theory
-    public void descriptionIsSensible(Matcher<Integer> first, Matcher<Integer> second) {
-        Matcher<Integer> both= both(first).and(second);
+    public <T> void descriptionIsSensible(Matcher<T> first, Matcher<T> second) {
+        Matcher<?> both= both(first).and(second);
         assertThat(both.toString(), containsString(first.toString()));
         assertThat(both.toString(), containsString(second.toString()));
     }

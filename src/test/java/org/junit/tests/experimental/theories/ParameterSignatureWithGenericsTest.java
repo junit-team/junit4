@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.ParameterSignature;
+import org.junit.experimental.theories.Reflector;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
@@ -31,6 +32,6 @@ public class ParameterSignatureWithGenericsTest {
     public void getType(Method method, int index) {
         assumeTrue(index < method.getParameterTypes().length);
         assertEquals(method.getGenericParameterTypes()[index], ParameterSignature
-                .signatures(method).get(index).getType());
+                .signatures(method, Reflector.WITH_GENERICS).get(index).getType());
     }
 }

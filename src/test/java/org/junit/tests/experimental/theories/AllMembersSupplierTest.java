@@ -9,26 +9,28 @@ import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.ParameterSignature;
 import org.junit.experimental.theories.PotentialAssignment;
+import org.junit.experimental.theories.Reflector;
 import org.junit.experimental.theories.internal.AllMembersSupplier;
 import org.junit.runners.model.TestClass;
 
 public class AllMembersSupplierTest {
-	public static class HasDataPoints {
-		@DataPoints
-		public static Object[] objects= { 1, 2 };
+    public static class HasDataPoints {
+        @DataPoints
+        public static Object[] objects= { 1, 2 };
 
-		public HasDataPoints(Object obj) {
-		}
-	}
+        public HasDataPoints(Object obj) {
+        }
+    }
 
-	@Test
-	public void dataPointsAnnotationMeansTreatAsArrayOnly()
-			throws SecurityException, NoSuchMethodException {
-		List<PotentialAssignment> valueSources= new AllMembersSupplier(
-				new TestClass(HasDataPoints.class))
-				.getValueSources(ParameterSignature.signatures(
-						HasDataPoints.class.getConstructor(Object.class))
-						.get(0));
-		assertThat(valueSources.size(), is(2));
-	}
+    @Test
+    public void dataPointsAnnotationMeansTreatAsArrayOnly()
+            throws SecurityException, NoSuchMethodException {
+        List<PotentialAssignment> valueSources= new AllMembersSupplier(
+                new TestClass(HasDataPoints.class), Reflector.WITHOUT_GENERICS)
+                .getValueSources(ParameterSignature.signatures(
+                        HasDataPoints.class.getConstructor(Object.class),
+                        Reflector.WITHOUT_GENERICS)
+                        .get(0));
+        assertThat(valueSources.size(), is(2));
+    }
 }

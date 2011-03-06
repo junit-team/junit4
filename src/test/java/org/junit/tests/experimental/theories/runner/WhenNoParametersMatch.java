@@ -36,9 +36,8 @@ public class WhenNoParametersMatch {
     }
 
     @Theory
-    @SuppressWarnings("unchecked")
     public void showFailedAssumptionsWhenNoParametersFound(int data,
-            Matcher matcher) throws Exception {
+            Matcher<Integer> matcher) throws Exception {
         assumeThat(data, not(matcher));
         AssumptionsFail.DATA= data;
         AssumptionsFail.MATCHER= matcher;

@@ -15,6 +15,7 @@ import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.ParameterSignature;
 import org.junit.experimental.theories.ParameterSupplier;
 import org.junit.experimental.theories.PotentialAssignment;
+import org.junit.experimental.theories.Reflector;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
 
@@ -53,11 +54,14 @@ public class AllMembersSupplier extends ParameterSupplier {
 
     private final TestClass fClass;
 
+    private final Reflector fReflector;
+
     /**
      * Constructs a new supplier for {@code type}
      */
-    public AllMembersSupplier(TestClass type) {
+    public AllMembersSupplier(TestClass type, Reflector reflector) {
         fClass= type;
+        fReflector= reflector;
     }
 
     @Override
@@ -95,7 +99,7 @@ public class AllMembersSupplier extends ParameterSupplier {
             List<PotentialAssignment> list) {
         for (final Field field : fClass.getJavaClass().getFields()) {
             if (Modifier.isStatic(field.getModifiers())) {
-                Type type= field.getGenericType();
+                Type type= fReflector.typeOf(field);
                 if (sig.canAcceptArrayType(type)
                         && field.getAnnotation(DataPoints.class) != null) {
                     addArrayValues(field.getName(), list, getStaticFieldValue(field));
