@@ -192,7 +192,17 @@ public class Theories extends BlockJUnit4ClassRunner {
         }
 
         private Reflector reflector() {
+            Reflector fromMethod= reflectorFromMethod();
+            return fromMethod == null ? reflectorFromClass() : fromMethod;
+        }
+
+        private Reflector reflectorFromMethod() {
             ParameterMatching annotation= fTestMethod.getAnnotation(ParameterMatching.class);
+            return annotation == null ? null : annotation.value();
+        }
+
+        private Reflector reflectorFromClass() {
+            ParameterMatching annotation= fTestClass.getJavaClass().getAnnotation(ParameterMatching.class);
             return annotation == null ? Reflector.WITHOUT_GENERICS : annotation.value();
         }
 

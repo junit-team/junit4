@@ -7,7 +7,7 @@ import static org.junit.experimental.theories.Reflector.*;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-@Target(METHOD)
+@Target({METHOD, TYPE})
 @Retention(RUNTIME)
 public @interface ParameterMatching {
     Reflector value() default WITHOUT_GENERICS;
