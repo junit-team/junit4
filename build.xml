@@ -197,8 +197,12 @@
 	</target>
 
 	<target name="prepare.maven">
+		<input message="Enter passphrase: " addproperty="passphrase">
+			<handler classname="org.apache.tools.ant.input.SecureInputHandler" />
+		</input>
 		<exec executable="prepare-maven.sh">
-		    <arg value="${version}" />    
+		    <arg value="${version}" />
+		    <arg value="${passphrase}" />
 		</exec>
 	</target>
 </project>
