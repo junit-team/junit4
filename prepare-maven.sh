@@ -1,3 +1,8 @@
+if [ "$1" == "" ]; then
+    echo "Usage: prepare-maven.sh <JUNIT_VERSION>"
+	exit
+fi
+
 # Configure variables
 VERSION=$1
 DIST_DIR=junit$VERSION
@@ -25,3 +30,11 @@ jar -cf $JUNIT_DEP_DIR/junit-$VERSION-javadoc.jar -C $DIST_DIR/javadoc .
 jar -cf $JUNIT_DIR/junit-$VERSION-sources.jar -C $DIST_DIR/org . -C $DIST_DIR/junit . -C $DIST_DIR/temp.hamcrest.source .
 jar -cf $JUNIT_DEP_DIR/junit-dep-$VERSION-sources.jar -C $DIST_DIR/org . -C $DIST_DIR/junit .
 
+#S ign files
+read -s -p "Enter passphrase: " PASSPHRASE
+find $JUNIT_DIR -type f -exec gpg -ab --passphrase "$PASSPHRASE" {} \;
+find $JUNIT_DEP_DIR -type f -exec gpg -ab --passphrase "$PASSPHRASE" {} \;
+
+# Rename POM sig file to expeted convention
+mv $JUNIT_DIR/pom.xml.asc $JUNIT_DIR/junit-$VERSION.pom.asc
+mv $JUNIT_DEP_DIR/pom.xml.asc $JUNIT_DEP_DIR/junit-dep-$VERSION.pom.asc
