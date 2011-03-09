@@ -1,19 +1,25 @@
+# Configure variables
 VERSION=$1
 DIST_DIR=junit$VERSION
+JUNIT_DIR=target/maven/junit-$VERSION
+JUNIT_DEP_DIR=target/maven/junit-dep-$VERSION
 
+# Create staging directories
 rm -Rf target/maven
-mkdir target/maven
-mkdir target/maven/junit
-mkdir target/maven/junit/junit
-mkdir target/maven/junit/junit/$VERSION
-mkdir target/maven/junit/junit-dep
-mkdir target/maven/junit/junit-dep/$VERSION
+mkdir -p $JUNIT_DIR
+mkdir -p $JUNIT_DEP_DIR
 
-cp pom-template.xml target/maven/pom.xml
-cp $DIST_DIR/junit-$VERSION.jar target/maven/junit/junit/junit-$VERSION.jar
-cp $DIST_DIR/junit-dep-$VERSION.jar target/maven/junit/junit-dep/junit-dep-$VERSION.jar 
+# Copy POM file template
+cp pom-template.xml $JUNIT_DIR/pom.xml
+cp pom-template.xml $JUNIT_DEP_DIR/pom.xml
 
+# Copy binary JARs
+cp $DIST_DIR/junit-$VERSION.jar $JUNIT_DIR/junit-$VERSION.jar
+cp $DIST_DIR/junit-dep-$VERSION.jar $JUNIT_DEP_DIR/junit-dep-$VERSION.jar 
+
+# Build Javadoc JARs
 cd junit$VERSION/javadoc
-jar -cf ../../target/maven/junit-$VERSION-javadoc.jar *
-cd ../..
+jar -cf ../../$JUNIT_DIR/junit-$VERSION-javadoc.jar *
+jar -cf ../../$JUNIT_DEP_DIR/junit-$VERSION-javadoc.jar *
+cd ../../
 
