@@ -195,4 +195,10 @@
 	<target name="print.version">
 	  <echo message="${version}" />
 	</target>
+
+	<target name="prepare.maven">
+		<exec executable="prepare-maven.sh">
+		    <arg value="${version}" />    
+		</exec>
+	</target>
 </project>
