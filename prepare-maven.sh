@@ -18,8 +18,10 @@ cp $DIST_DIR/junit-$VERSION.jar $JUNIT_DIR/junit-$VERSION.jar
 cp $DIST_DIR/junit-dep-$VERSION.jar $JUNIT_DEP_DIR/junit-dep-$VERSION.jar 
 
 # Build Javadoc JARs
-cd junit$VERSION/javadoc
-jar -cf ../../$JUNIT_DIR/junit-$VERSION-javadoc.jar *
-jar -cf ../../$JUNIT_DEP_DIR/junit-$VERSION-javadoc.jar *
-cd ../../
+jar -cf $JUNIT_DIR/junit-$VERSION-javadoc.jar -C $DIST_DIR/javadoc .
+jar -cf $JUNIT_DEP_DIR/junit-$VERSION-javadoc.jar -C $DIST_DIR/javadoc .
+
+# Build Source JARs
+jar -cf $JUNIT_DIR/junit-$VERSION-sources.jar -C $DIST_DIR/org . -C $DIST_DIR/junit . -C $DIST_DIR/temp.hamcrest.source .
+jar -cf $JUNIT_DEP_DIR/junit-dep-$VERSION-sources.jar -C $DIST_DIR/org . -C $DIST_DIR/junit .
 
