@@ -1,28 +1,31 @@
 /**
- * 
+ *
  */
 package org.junit.experimental.theories;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.javaruntype.type.Types;
+
 public class ParameterSignature {
 	public static ArrayList<ParameterSignature> signatures(Method method) {
-		return signatures(method.getParameterTypes(), method
+		return signatures(method.getGenericParameterTypes(), method
 				.getParameterAnnotations());
 	}
 
 	public static List<ParameterSignature> signatures(Constructor<?> constructor) {
-		return signatures(constructor.getParameterTypes(), constructor
+		return signatures(constructor.getGenericParameterTypes(), constructor
 				.getParameterAnnotations());
 	}
 
 	private static ArrayList<ParameterSignature> signatures(
-			Class<?>[] parameterTypes, Annotation[][] parameterAnnotations) {
+			Type[] parameterTypes, Annotation[][] parameterAnnotations) {
 		ArrayList<ParameterSignature> sigs= new ArrayList<ParameterSignature>();
 		for (int i= 0; i < parameterTypes.length; i++) {
 			sigs.add(new ParameterSignature(parameterTypes[i],
@@ -31,20 +34,20 @@ public class ParameterSignature {
 		return sigs;
 	}
 
-	private final Class<?> type;
+	private final Type type;
 
 	private final Annotation[] annotations;
 
-	private ParameterSignature(Class<?> type, Annotation[] annotations) {
+	private ParameterSignature(Type type, Annotation[] annotations) {
 		this.type= type;
 		this.annotations= annotations;
 	}
 
-	public boolean canAcceptType(Class<?> candidate) {
-		return type.isAssignableFrom(candidate);
+	public boolean canAcceptType(Type candidate) {
+		return Types.forJavaLangReflectType(type).isAssignableFrom(Types.forJavaLangReflectType(candidate));
 	}
 
-	public Class<?> getType() {
+	public Type getType() {
 		return type;
 	}
 
@@ -52,8 +55,9 @@ public class ParameterSignature {
 		return Arrays.asList(annotations);
 	}
 
-	public boolean canAcceptArrayType(Class<?> type) {
-		return type.isArray() && canAcceptType(type.getComponentType());
+	public boolean canAcceptArrayType(Type type) {
+		org.javaruntype.type.Type<?> typeToken = Types.forJavaLangReflectType(type);
+		return typeToken.isArray() && canAcceptType(typeToken.getComponentClass());
 	}
 
 	public boolean hasAnnotation(Class<? extends Annotation> type) {

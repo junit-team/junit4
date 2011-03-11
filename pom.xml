@@ -54,6 +54,12 @@
           <version>1.1</version>
           <scope>compile</scope>
         </dependency>
+        <dependency>
+          <groupId>org.javaruntype</groupId>
+          <artifactId>javaruntype</artifactId>
+          <version>1.2</version>
+          <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <properties>

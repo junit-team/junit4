@@ -1,11 +1,12 @@
 /**
- * 
+ *
  */
 package org.junit.experimental.theories.internal;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,8 +85,8 @@ public class AllMembersSupplier extends ParameterSupplier {
 			List<PotentialAssignment> list) {
 		for (FrameworkMethod dataPointMethod : fClass
 				.getAnnotatedMethods(DataPoint.class)) {
-			Class<?> type= sig.getType();
-			if ((dataPointMethod.producesType(type)))
+			Type type= sig.getType();
+			if (dataPointMethod.producesType(type))
 				list.add(new MethodParameterValue(dataPointMethod));
 		}
 	}
@@ -94,7 +95,7 @@ public class AllMembersSupplier extends ParameterSupplier {
 			List<PotentialAssignment> list) {
 		for (final Field field : fClass.getJavaClass().getFields()) {
 			if (Modifier.isStatic(field.getModifiers())) {
-				Class<?> type= field.getType();
+				Type type= field.getGenericType();
 				if (sig.canAcceptArrayType(type)
 						&& field.getAnnotation(DataPoints.class) != null) {
 					addArrayValues(field.getName(), list, getStaticFieldValue(field));

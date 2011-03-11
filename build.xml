@@ -6,7 +6,7 @@
 	<property name="target" location="target" />
 	<property name="bin" location="${target}/main" />
 	<property name="version-base" value="4.9" />
-	<property name="version-status" value="b2" />
+	<property name="version-status" value="b2-pholser" />
 	<property name="version" value="${version-base}${version-status}" />
 	<property name="dist" value="junit${version}" />
 	<property name="versionfile" value="${src}/junit/runner/Version.java" />
@@ -20,6 +20,8 @@
 	<property name="javadocdir" location="${dist}/javadoc" />
 	<property name="javadoczip" location="${dist}-javadoc.zip" />
 	<property name="hamcrestlib" location="lib/hamcrest-core-1.1.jar" />
+    <property name="javaruntypelib" location="lib/javaruntype-1.2.jar" />
+    <property name="antlrruntimelib" location="lib/antlr-runtime-3.1.2.jar" />
 	<property name="hamcrestsrc" location="${dist}/temp.hamcrest.source" />
 	
 	<target name="init">
@@ -72,8 +74,11 @@
 	</macrodef>
 	
 	<target name="build" depends="versiontag">
-		<junit_compilation srcdir="${src}" destdir="${bin}" classpath="${hamcrestlib}"/>
+		<junit_compilation srcdir="${src}" destdir="${bin}"
+			classpath="${hamcrestlib};${javaruntypelib};${antlrruntimelib}"/>
 		<unjar src="${hamcrestlib}" dest="${bin}" />
+        <unjar src="${javaruntypelib}" dest="${bin}" />
+        <unjar src="${antlrruntimelib}" dest="${bin}" />
 		<junit_compilation srcdir="${testsrc}" destdir="${testbin}" classpath="${hamcrestlib};${bin}"/>
 	</target>
 

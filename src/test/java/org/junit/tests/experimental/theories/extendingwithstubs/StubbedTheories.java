@@ -22,13 +22,13 @@ public class StubbedTheories extends Theories {
 	public Statement methodBlock(FrameworkMethod method) {
 		return new StubbedTheoryAnchor(method, getTestClass());
 	}
-	
+
 	public static class StubbedTheoryAnchor extends TheoryAnchor {
 		public StubbedTheoryAnchor(FrameworkMethod method, TestClass testClass) {
 			super(method, testClass);
 		}
 
-		private List<GuesserQueue> queues= new ArrayList<GuesserQueue>();
+		private final List<GuesserQueue> queues= new ArrayList<GuesserQueue>();
 
 		@Override
 		protected void handleAssumptionViolation(AssumptionViolatedException e) {
@@ -54,7 +54,7 @@ public class StubbedTheories extends Theories {
 
 			if (nextUnassigned.hasAnnotation(Stub.class)) {
 				GuesserQueue queue= new GuesserQueue();
-				queue.add(new Guesser<Object>(nextUnassigned.getType()));
+				queue.add(new Guesser<Object>((Class<?>) nextUnassigned.getType()));
 				return queue;
 			}
 

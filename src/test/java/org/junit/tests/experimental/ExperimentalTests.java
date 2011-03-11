@@ -8,6 +8,7 @@ import org.junit.tests.experimental.results.ResultMatchersTest;
 import org.junit.tests.experimental.theories.ParameterSignatureTest;
 import org.junit.tests.experimental.theories.ParameterizedAssertionErrorTest;
 import org.junit.tests.experimental.theories.extendingwithstubs.StubbedTheoriesTest;
+import org.junit.tests.experimental.theories.runner.MatchingGenericParameters;
 import org.junit.tests.experimental.theories.runner.SuccessfulWithDataPointFields;
 import org.junit.tests.experimental.theories.runner.UnsuccessfulWithDataPointFields;
 import org.junit.tests.experimental.theories.runner.WhenNoParametersMatch;
@@ -21,8 +22,8 @@ import org.junit.tests.experimental.theories.runner.WithOnlyTestAnnotations;
 		SuccessfulWithDataPointFields.class, PrintableResultTest.class,
 		ResultMatchersTest.class, WithDataPointMethod.class,
 		ParameterSignatureTest.class, WhenNoParametersMatch.class,
-		WithExtendedParameterSources.class, StubbedTheoriesTest.class, 
-		WithOnlyTestAnnotations.class })
+		WithExtendedParameterSources.class, StubbedTheoriesTest.class,
+		WithOnlyTestAnnotations.class, MatchingGenericParameters.class })
 public class ExperimentalTests {
 
 }

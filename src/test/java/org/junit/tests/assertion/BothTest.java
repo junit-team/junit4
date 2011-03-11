@@ -38,8 +38,9 @@ public class BothTest {
 	}
 
 	@Theory
-	public <T> void descriptionIsSensible(Matcher<T> first, Matcher<T> second) {
-		Matcher<?> both= both(first).and(second);
+	@SuppressWarnings("unchecked")
+	public void descriptionIsSensible(Matcher first, Matcher second) {
+		Matcher both= both(first).and(second);
 		assertThat(both.toString(), containsString(first.toString()));
 		assertThat(both.toString(), containsString(second.toString()));
 	}
@@ -64,7 +65,7 @@ public class BothTest {
 				|| third.matches(value));
 		assertThat(value, either(first).or(second).or(third));
 	}
-	
+
 	@Test public void subclassesAreOkInSecondPositionOnly() {
 		assertThat(3, both(is(Integer.class)).and(is(3)));
 	}

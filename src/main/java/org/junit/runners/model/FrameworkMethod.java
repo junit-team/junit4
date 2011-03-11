@@ -1,17 +1,19 @@
-package org.junit.runners.model; 
+package org.junit.runners.model;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.List;
 
+import org.javaruntype.type.Types;
 import org.junit.internal.runners.model.ReflectiveCallable;
 
 /**
  * Represents a method on a test class to be invoked at the appropriate point in
  * test execution. These methods are usually marked with an annotation (such as
- * {@code @Test}, {@code @Before}, {@code @After}, {@code @BeforeClass}, 
+ * {@code @Test}, {@code @Before}, {@code @After}, {@code @BeforeClass},
  * {@code @AfterClass}, etc.)
  */
 public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
@@ -118,9 +120,13 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
 	 * Returns true iff this is a no-arg method that returns a value assignable
 	 * to {@code type}
 	 */
-	public boolean producesType(Class<?> type) {
-		return getParameterTypes().length == 0
-				&& type.isAssignableFrom(fMethod.getReturnType());
+	public boolean producesType(Type type) {
+		if (getParameterTypes().length != 0)
+			return false;
+		org.javaruntype.type.Type<?> typeToken = Types.forJavaLangReflectType(type);
+		org.javaruntype.type.Type<?> returnType =
+			Types.forJavaLangReflectType(fMethod.getGenericReturnType());
+		return typeToken.isAssignableFrom(returnType);
 	}
 
 	private Class<?>[] getParameterTypes() {
