@@ -30,9 +30,9 @@ public class MatcherTest {
 			Arrays.asList(failure("cheese"), failure("mustard")));
 
 	@Theory
-	@SuppressWarnings("unchecked")
 	public void differentMatchersHaveDifferentDescriptions(
-			Matcher matcher1, Matcher matcher2, Object value) {
+			Matcher<? super PrintableResult> matcher1, Matcher<? super PrintableResult> matcher2,
+			PrintableResult value) {
 		assumeThat(value, matcher1);
 		assumeThat(value, not(matcher2));
 		assertThat(matcher1.toString(), not(matcher2.toString()));
