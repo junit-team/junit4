@@ -16,57 +16,56 @@ import org.junit.runner.RunWith;
 
 @RunWith(Theories.class)
 public class BothTest {
-	@DataPoint
-	public static Matcher<Integer> IS_3= is(3);
+    @DataPoint
+    public static Matcher<Integer> IS_3= is(3);
 
-	@DataPoint
-	public static Matcher<Integer> IS_4= is(4);
+    @DataPoint
+    public static Matcher<Integer> IS_4= is(4);
 
-	@DataPoint
-	public static int THREE= 3;
+    @DataPoint
+    public static int THREE= 3;
 
-	@Test
-	public void bothPasses() {
-		assertThat(3, both(is(Integer.class)).and(is(3)));
-	}
+    @Test
+    public void bothPasses() {
+        assertThat(3, both(is(Integer.class)).and(is(3)));
+    }
 
-	@Theory
-	public void bothFails(int value, Matcher<Integer> first,
-			Matcher<Integer> second) {
-		assumeTrue(!(first.matches(value) && second.matches(value)));
-		assertThat(value, not(both(first).and(second)));
-	}
+    @Theory
+    public void bothFails(int value, Matcher<Integer> first,
+            Matcher<Integer> second) {
+        assumeTrue(!(first.matches(value) && second.matches(value)));
+        assertThat(value, not(both(first).and(second)));
+    }
 
-	@Theory
-	@SuppressWarnings("unchecked")
-	public void descriptionIsSensible(Matcher first, Matcher second) {
-		Matcher both= both(first).and(second);
-		assertThat(both.toString(), containsString(first.toString()));
-		assertThat(both.toString(), containsString(second.toString()));
-	}
+    @Theory
+    public void descriptionIsSensible(Matcher<Integer> first, Matcher<Integer> second) {
+        Matcher<Integer> both= both(first).and(second);
+        assertThat(both.toString(), containsString(first.toString()));
+        assertThat(both.toString(), containsString(second.toString()));
+    }
 
-	@Test
-	public void eitherPasses() {
-		assertThat(3, either(is(3)).or(is(4)));
-	}
+    @Test
+    public void eitherPasses() {
+        assertThat(3, either(is(3)).or(is(4)));
+    }
 
-	@Theory
-	public <T> void threeAndsWork(Matcher<Integer> first,
-			Matcher<Integer> second, Matcher<Integer> third, int value) {
-		assumeTrue(first.matches(value) && second.matches(value)
-				&& third.matches(value));
-		assertThat(value, both(first).and(second).and(third));
-	}
+    @Theory
+    public void threeAndsWork(Matcher<Integer> first,
+            Matcher<Integer> second, Matcher<Integer> third, int value) {
+        assumeTrue(first.matches(value) && second.matches(value)
+                && third.matches(value));
+        assertThat(value, both(first).and(second).and(third));
+    }
 
-	@Theory
-	public <T> void threeOrsWork(Matcher<Integer> first,
-			Matcher<Integer> second, Matcher<Integer> third, int value) {
-		assumeTrue(first.matches(value) || second.matches(value)
-				|| third.matches(value));
-		assertThat(value, either(first).or(second).or(third));
-	}
+    @Theory
+    public void threeOrsWork(Matcher<Integer> first,
+            Matcher<Integer> second, Matcher<Integer> third, int value) {
+        assumeTrue(first.matches(value) || second.matches(value)
+                || third.matches(value));
+        assertThat(value, either(first).or(second).or(third));
+    }
 
-	@Test public void subclassesAreOkInSecondPositionOnly() {
-		assertThat(3, both(is(Integer.class)).and(is(3)));
-	}
+    @Test public void subclassesAreOkInSecondPositionOnly() {
+        assertThat(3, both(is(Integer.class)).and(is(3)));
+    }
 }
