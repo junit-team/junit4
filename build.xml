@@ -164,6 +164,12 @@
                 </sequential>
         </macrodef>
 
+	<target name="test" depends="build">
+        	<run-tests>
+                	<jvmarg value="-Dignore.this=ignored" />
+                </run-tests>
+	</target>
+
 	<target name="dist" depends="populate-dist">
         	<run-tests>
                 	<jvmarg value="-Dignore.this=ignored" />
