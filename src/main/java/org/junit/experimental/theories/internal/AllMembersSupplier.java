@@ -85,8 +85,7 @@ public class AllMembersSupplier extends ParameterSupplier {
 			List<PotentialAssignment> list) {
 		for (FrameworkMethod dataPointMethod : fClass
 				.getAnnotatedMethods(DataPoint.class)) {
-			Type type= sig.getType();
-			if (dataPointMethod.producesType(type))
+			if (sig.canAcceptResultOf(dataPointMethod))
 				list.add(new MethodParameterValue(dataPointMethod));
 		}
 	}

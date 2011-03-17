@@ -7,7 +7,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import org.javaruntype.type.Types;
+import org.junit.experimental.theories.ParameterSignature;
 import org.junit.internal.runners.model.ReflectiveCallable;
 
 /**
@@ -119,14 +119,13 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
 	/**
 	 * Returns true iff this is a no-arg method that returns a value assignable
 	 * to {@code type}
+	 *
+	 * @deprecated in favor of {@link ParameterSignature#canAcceptResultOf(FrameworkMethod)}
 	 */
+	@Deprecated
 	public boolean producesType(Type type) {
-		if (getParameterTypes().length != 0)
-			return false;
-		org.javaruntype.type.Type<?> typeToken = Types.forJavaLangReflectType(type);
-		org.javaruntype.type.Type<?> returnType =
-			Types.forJavaLangReflectType(fMethod.getGenericReturnType());
-		return typeToken.isAssignableFrom(returnType);
+		return getParameterTypes().length == 0 && type instanceof Class<?>
+				&& ((Class<?>) type).isAssignableFrom(fMethod.getReturnType());
 	}
 
 	private Class<?>[] getParameterTypes() {

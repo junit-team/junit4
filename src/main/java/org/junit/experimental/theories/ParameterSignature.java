@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.javaruntype.type.Types;
+import org.junit.runners.model.FrameworkMethod;
 
 public class ParameterSignature {
 	public static ArrayList<ParameterSignature> signatures(Method method) {
@@ -41,6 +42,11 @@ public class ParameterSignature {
 	private ParameterSignature(Type type, Annotation[] annotations) {
 		this.type= type;
 		this.annotations= annotations;
+	}
+
+	public boolean canAcceptResultOf(FrameworkMethod dataPointMethod) {
+		Method method= dataPointMethod.getMethod();
+		return method.getParameterTypes().length == 0 && canAcceptType(method.getGenericReturnType());
 	}
 
 	public boolean canAcceptType(Type candidate) {
