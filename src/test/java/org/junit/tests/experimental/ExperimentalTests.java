@@ -15,6 +15,7 @@ import org.junit.tests.experimental.theories.runner.WhenNoParametersMatch;
 import org.junit.tests.experimental.theories.runner.WithDataPointMethod;
 import org.junit.tests.experimental.theories.runner.WithExtendedParameterSources;
 import org.junit.tests.experimental.theories.runner.WithOnlyTestAnnotations;
+import org.junit.tests.experimental.theories.runner.WithUnresolvedGenericTypeVariablesOnTheoryParms;
 
 @RunWith(Suite.class)
 @SuiteClasses( { ParameterizedAssertionErrorTest.class,
@@ -23,7 +24,8 @@ import org.junit.tests.experimental.theories.runner.WithOnlyTestAnnotations;
 		ResultMatchersTest.class, WithDataPointMethod.class,
 		ParameterSignatureTest.class, WhenNoParametersMatch.class,
 		WithExtendedParameterSources.class, StubbedTheoriesTest.class,
-		WithOnlyTestAnnotations.class, MatchingGenericParameters.class })
+		WithOnlyTestAnnotations.class, MatchingGenericParameters.class,
+		WithUnresolvedGenericTypeVariablesOnTheoryParms.class })
 public class ExperimentalTests {
 
 }

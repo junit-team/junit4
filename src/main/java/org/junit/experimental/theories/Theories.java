@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.junit.experimental.theories;
 
@@ -30,29 +30,31 @@ public class Theories extends BlockJUnit4ClassRunner {
 		super.collectInitializationErrors(errors);
 		validateDataPointFields(errors);
 	}
-	
+
 	private void validateDataPointFields(List<Throwable> errors) {
 		Field[] fields= getTestClass().getJavaClass().getDeclaredFields();
-		
+
 		for (Field each : fields)
 			if (each.getAnnotation(DataPoint.class) != null && !Modifier.isStatic(each.getModifiers()))
 				errors.add(new Error("DataPoint field " + each.getName() + " must be static"));
 	}
-	
+
 	@Override
 	protected void validateConstructor(List<Throwable> errors) {
 		validateOnlyOneConstructor(errors);
 	}
-	
+
 	@Override
 	protected void validateTestMethods(List<Throwable> errors) {
 		for (FrameworkMethod each : computeTestMethods())
-			if(each.getAnnotation(Theory.class) != null)
+			if (each.getAnnotation(Theory.class) != null) {
 				each.validatePublicVoid(false, errors);
+				each.validateNoTypeParametersOnArgs(errors);
+			}
 			else
 				each.validatePublicVoidNoArg(false, errors);
 	}
-	
+
 	@Override
 	protected List<FrameworkMethod> computeTestMethods() {
 		List<FrameworkMethod> testMethods= super.computeTestMethods();
@@ -70,10 +72,10 @@ public class Theories extends BlockJUnit4ClassRunner {
 	public static class TheoryAnchor extends Statement {
 		private int successes= 0;
 
-		private FrameworkMethod fTestMethod;
-        private TestClass fTestClass;
+		private final FrameworkMethod fTestMethod;
+        private final TestClass fTestClass;
 
-		private List<AssumptionViolatedException> fInvalidParameters= new ArrayList<AssumptionViolatedException>();
+		private final List<AssumptionViolatedException> fInvalidParameters= new ArrayList<AssumptionViolatedException>();
 
 		public TheoryAnchor(FrameworkMethod method, TestClass testClass) {
 			fTestMethod= method;

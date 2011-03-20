@@ -92,6 +92,10 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
 			errors.add(new Exception("Method " + fMethod.getName() + "() should be void"));
 	}
 
+	public void validateNoTypeParametersOnArgs(List<Throwable> errors) {
+		new NoGenericTypeParametersValidator(fMethod).validate(errors);
+	}
+
 	@Override
 	public boolean isShadowedBy(FrameworkMethod other) {
 		if (!other.getName().equals(getName()))
