@@ -1,4 +1,5 @@
 set -e
+set -o pipefail
 
 SCRIPT_NAME=$0
 TEST_NAME=${1:-ALL}
@@ -36,6 +37,29 @@ function TEST_jars {
     && jar tf $srcjar | grep -q java \
     && jar tf $depjar | grep -q class \
     && jar tf $depjar | not grep hamcrest
+}
+
+function TEST_all_maven_jars {
+  version=$(get_junit_version)
+  binjar=junit${version}/junit-${version}.jar
+  srcjar=junit${version}/junit-${version}-src.jar
+  docjar=junit${version}/junit-${version}-javadoc.jar
+  depbin=junit${version}/junit-dep-${version}.jar
+  depsrc=junit${version}/junit-dep-${version}-src.jar
+  depdoc=junit${version}/junit-dep-${version}-javadoc.jar
+
+  ant clean
+  ant all.maven.jars
+
+  jar tf $binjar | grep -q class \
+    && jar tf $srcjar | grep -q java \
+    && jar tf $docjar | grep -q html \
+    && jar tf $depbin | grep -q class \
+    && jar tf $depsrc | grep -q java \
+    && jar tf $depdoc | grep -q html \
+    && jar tf $depbin | not grep hamcrest \
+    && jar tf $depsrc | not grep hamcrest \
+    && jar tf $depdoc | not grep hamcrest
 }
 
 function not {

@@ -15,9 +15,15 @@
   <property name="testbin" location="${target}/test/java" />
   <property name="unjarred" 
             value="**/*.jar, ${testfiles}, doc/**, README.html, .classpath, .project, cpl-v10.html" />
+
   <property name="binjar" value="junit-${version}.jar" />
-  <property name="depjar" value="junit-dep-${version}.jar" />
   <property name="srcjar" value="junit-${version}-src.jar" />
+  <property name="docjar" value="junit-${version}-javadoc.jar" />
+
+  <property name="depjar" value="junit-dep-${version}.jar" />
+  <property name="depsrcjar" value="junit-dep-${version}-src.jar" />
+  <property name="depdocjar" value="junit-dep-${version}-javadoc.jar" />
+
   <property name="javadocdir" location="${dist}/javadoc" />
   <property name="javadoczip" location="${dist}-javadoc.zip" />
   <property name="hamcrestlib" location="lib/hamcrest-core-1.1.jar" />
@@ -88,6 +94,25 @@
         jarfile="${dist}/${depjar}" 
         basedir="${bin}" 
         excludes="${unjarred}, org/hamcrest/**, **/*.java, build.xml" 
+        />
+  </target>
+
+  <target name="all.maven.jars" depends="jars,javadoc">
+    <mkdir dir="${dist}" />
+    <jar 
+        jarfile="${dist}/${docjar}"
+        basedir="${javadocdir}"
+        excludes="${unjarred}"
+        />
+    <jar 
+        jarfile="${dist}/${depsrcjar}"
+        basedir="${src}"
+        excludes="${unjarred}, **/*.class"
+        />
+    <jar 
+        jarfile="${dist}/${depdocjar}"
+        basedir="${javadocdir}"
+        excludes="${unjarred}, org/hamcrest/**"
         />
   </target>
 
