@@ -1,4 +1,5 @@
-<project name="junit" default="dist" basedir=".">
+<project name="junit" default="dist" basedir="."
+         xmlns:artifact="antlib:org.apache.maven.artifact.ant">
   <tstamp />
 
   <property file="${user.home}/.junit.properties" />
@@ -28,13 +29,14 @@
   <property name="javadoczip" location="${dist}-javadoc.zip" />
   <property name="hamcrestlib" location="lib/hamcrest-core-1.1.jar" />
   <property name="hamcrestsrc" location="${dist}/temp.hamcrest.source" />
-  
+
   <target name="init">
     <tstamp/>
   </target>
 
   <target name="versiontag" depends="init">
     <filter token="version" value="${version}" />
+  
     <copy 
         file="${versionfile}.template" 
         tofile="${versionfile}" 
@@ -210,6 +212,65 @@
       <fileset file="${zipfile}" />
     </ftp>
     <echo message="To upload docs, use build/upload_docs.sh" />
+  </target>
+
+  <!-- to do automatic build upload, you need the maven ant tasks jar. -->
+  <!-- therefore, you must run ant as ant -lib build/lib stage.maven -->
+  <macrodef name="stage.maven.jar">
+    <attribute name="jar" />
+    <attribute name="pom" />
+    <element name="artifact.args" implicit="true" optional="true" />
+    <sequential>
+      <property name="maven-repository-url" 
+                value="https://oss.sonatype.org/service/local/staging/deploy/maven2/" />
+      <property name="maven-repository-id" value="sonatype-nexus-staging" />
+      <echo message="Staging to maven: @{jar}" />
+      <artifact:mvn failonerror="true">
+        <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.1:sign-and-deploy-file" />
+        <arg value="-Durl=${maven-repository-url}" />
+        <arg value="-DrepositoryId=${maven-repository-id}" />
+        <arg value="-DpomFile=@{pom}" />
+        <arg value="-Dfile=@{jar}" />
+        <artifact.args />
+        <arg value="-Pgpg" />
+      </artifact:mvn>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="stage.maven.artifactId">
+    <attribute name="artifactId" />
+    <sequential>
+      <property name="m.prefix" value="${dist}/@{artifactId}-${version}" />
+      <property name="m.jar" value="${m.prefix}.jar" />
+      <property name="m.sources.jar" value="${m.prefix}-src.jar" />
+      <property name="m.javadoc.jar" value="${m.prefix}-javadoc.jar" />
+      <property name="m.pom" value="${dist}/pom-@{artifactId}.xml" />
+
+      <filter token="version" value="${version}" />
+      <filter token="artifactId" value="@{artifactId}" />
+  
+      <copy 
+          file="pom-template.xml" 
+          tofile="${m.pom}" 
+          filtering="on"
+          overwrite="true"
+          />
+
+      <stage.maven.jar jar="${m.jar}" pom="${m.pom}" />
+
+      <stage.maven.jar jar="${m.sources.jar}" pom="${m.pom}" >
+        <arg value="-Dclassifier=sources" />
+      </stage.maven.jar>
+
+      <stage.maven.jar jar="${m.javadoc.jar}" pom="${m.pom}" >
+        <arg value="-Dclassifier=javadoc" />
+      </stage.maven.jar>
+    </sequential>
+  </macrodef>
+
+  <target name="stage.maven" depends="all.maven.jars">
+    <stage.maven.artifactId artifactId="junit" />
+    <stage.maven.artifactId artifactId="junit-dep" />
   </target>
 
   <target name="print.version">
