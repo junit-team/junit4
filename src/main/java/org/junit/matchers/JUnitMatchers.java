@@ -74,7 +74,7 @@ public class JUnitMatchers {
 	/**
 	 * This is useful for fluently combining matchers where either may pass, for example:
 	 * <pre>
-	 *   assertThat(string, both(containsString("a")).and(containsString("b")));
+	 *   assertThat(string, either(containsString("a")).or(containsString("b")));
 	 * </pre>
 	 */
 	public static <T> CombinableMatcher<T> either(Matcher<T> matcher) {

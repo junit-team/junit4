@@ -80,3 +80,6 @@
 
 2011 Apr 15
      reinholdfuereder@github for initial test for GH-39
+
+2011 Apr 15
+     ububenheimer@github for bug report https://github.com/KentBeck/junit/issues/208
