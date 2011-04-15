@@ -1,0 +1,14 @@
+BUILDING FROM GITHUB:
+=====================
+
+git clone https://github.com/KentBeck/junit.git
+cd junit
+ant dist
+
+BUILDING FROM JARS OR ZIPS:
+===========================
+
+The contents of the zip and jar files are largely maintained for historical
+reasons.  We do not at this time have an official way to build from the src
+jar or zip.  If this is an important missing feature, please let us know
+at http://github.com/KentBeck/junit/issues

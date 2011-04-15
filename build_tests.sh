@@ -4,6 +4,12 @@ set -o pipefail
 SCRIPT_NAME=$0
 TEST_NAME=${1:-ALL}
 
+function TEST_BUILDING_in_zip {
+  version=$(get_junit_version)
+  ant zip
+  unzip -l junit${version}/junit${version}.zip | grep BUILDING >/dev/null
+}
+
 function TEST_get_junit_version {
   version=$(get_junit_version)
   if [[ ! ($version == 4.*) ]]; then

@@ -168,6 +168,7 @@
       <fileset dir="doc"/>
     </copy>
     <copy file="README.html" tofile="${dist}/README.html" />
+    <copy file="BUILDING" tofile="${dist}/BUILDING" />
     <copy file="cpl-v10.html" tofile="${dist}/cpl-v10.html" />
     <copy file="build.xml" tofile="${dist}/build.xml" />
   </target>
