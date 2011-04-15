@@ -29,10 +29,10 @@ import org.junit.runner.notification.StoppedByUserException;
 import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.RunnerScheduler;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
-import org.junit.runners.model.MultipleFailureException;
 
 /**
  * Provides most of the functionality specific to a Runner that implements a
@@ -49,7 +49,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 		Sortable {
 	private final TestClass fTestClass;
 
-	private Filter fFilter= null;
+	private Filter fFilter= Filter.ALL;
 
 	private Sorter fSorter= Sorter.NULL;
 
@@ -316,7 +316,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	//
 
 	public void filter(Filter filter) throws NoTestsRemainException {
-		fFilter= filter;
+		fFilter= fFilter.intersect(filter);
 
 		for (T each : getChildren())
 			if (shouldRun(each))
@@ -359,12 +359,11 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	}
 
 	private void filterChild(T child) throws NoTestsRemainException {
-		if (fFilter != null)
-			fFilter.apply(child);
+		fFilter.apply(child);
 	}
 
 	private boolean shouldRun(T each) {
-		return fFilter == null || fFilter.shouldRun(describeChild(each));
+		return fFilter.shouldRun(describeChild(each));
 	}
 
 	private Comparator<? super T> comparator() {

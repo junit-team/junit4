@@ -47,6 +47,7 @@ import org.junit.tests.listening.RunnerTest;
 import org.junit.tests.listening.TestListenerTest;
 import org.junit.tests.listening.TextListenerTest;
 import org.junit.tests.listening.UserStopTest;
+import org.junit.tests.manipulation.FilterTest;
 import org.junit.tests.manipulation.FilterableTest;
 import org.junit.tests.manipulation.SingleMethodTest;
 import org.junit.tests.manipulation.SortableTest;
@@ -128,6 +129,7 @@ import org.junit.tests.validation.ValidationTest;
 	JUnit4ClassRunnerTest.class,
 	UseSuiteAsASuperclassTest.class,
 	FilterableTest.class,
+	FilterTest.class,
 	MaxStarterTest.class,
 	JUnit38SortingTest.class,
 	MethodRulesTest.class,

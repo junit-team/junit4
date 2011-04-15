@@ -1,6 +1,5 @@
 package junit.tests.framework;
 
-import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 import junit.framework.ComparisonFailure;
 import junit.framework.TestCase;
