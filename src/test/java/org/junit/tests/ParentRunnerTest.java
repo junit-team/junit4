@@ -63,7 +63,7 @@ public class ParentRunnerTest {
 				.filterWith(new Exclude("test2"));
 		Result result= junitCore.run(requestFilteredFiltered);
 		assertThat(result.getFailures(), isEmpty());
-		assertEquals(1, result.getRunCount()); // Fails here: actual 2
+		assertEquals(1, result.getRunCount());
 	}
 
 	private Matcher<List<?>> isEmpty() {
