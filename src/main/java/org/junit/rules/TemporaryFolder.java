@@ -61,7 +61,7 @@ public class TemporaryFolder extends ExternalResource {
 	 */
 	public File newFolder(String folderName) {
 		File file= new File(folder, folderName);
-		file.mkdir();
+		file.mkdirs();
 		return file;
 	}
 

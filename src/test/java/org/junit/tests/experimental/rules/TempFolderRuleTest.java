@@ -43,6 +43,13 @@ public class TempFolderRuleTest {
 			new File(createdFile, "a.txt").createNewFile();
 			assertTrue(createdFile.exists());
 		}
+
+		@Test
+		public void testUsingTempTreeFolders() throws IOException {
+			createdFile = folder.newFolder("subfolder/anotherfolder");
+			new File(createdFile, "a.txt").createNewFile();
+			assertTrue(createdFile.exists());
+		}
 	}
 
 	@Test
