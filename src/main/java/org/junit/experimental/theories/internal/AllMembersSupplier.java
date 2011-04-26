@@ -8,7 +8,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.ParameterSignature;
@@ -65,16 +64,21 @@ public class AllMembersSupplier extends ParameterSupplier {
 
 		addFields(sig, list);
 		addSinglePointMethods(sig, list);
-		addMultiPointMethods(list);
+		addMultiPointMethods(sig, list);
 
 		return list;
 	}
 
-	private void addMultiPointMethods(List<PotentialAssignment> list) {
+	private void addMultiPointMethods(ParameterSignature sig
+		, List<PotentialAssignment> list) {
 		for (FrameworkMethod dataPointsMethod : fClass
 				.getAnnotatedMethods(DataPoints.class))
 			try {
-				addArrayValues(dataPointsMethod.getName(), list, dataPointsMethod.invokeExplosively(null));
+				Class<?> type = dataPointsMethod.getReturnType();
+
+				if (sig.canAcceptArrayType(type)) {
+					addArrayValues(dataPointsMethod.getName(), list, dataPointsMethod.invokeExplosively(null));
+				}
 			} catch (Throwable e) {
 				// ignore and move on
 			}
