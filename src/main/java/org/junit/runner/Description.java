@@ -152,8 +152,7 @@ public class Description {
 		if (!(obj instanceof Description))
 			return false;
 		Description d = (Description) obj;
-		return getDisplayName().equals(d.getDisplayName())
-				&& getChildren().equals(d.getChildren());
+		return getDisplayName().equals(d.getDisplayName());
 	}
 	
 	@Override

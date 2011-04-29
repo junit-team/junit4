@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.junit.internal.TextListener;
 import org.junit.runner.JUnitCore;
+import org.junit.runner.Request;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
@@ -23,7 +24,14 @@ public class PrintableResult {
 	 * The result of running JUnit on {@code type}
 	 */
 	public static PrintableResult testResult(Class<?> type) {
-		return new PrintableResult(type);
+		return testResult(Request.aClass(type));
+	}
+	
+	/**
+	 * The result of running JUnit on Request {@code request}
+	 */
+	public static PrintableResult testResult(Request request) {
+		return new PrintableResult(new JUnitCore().run(request));
 	}
 	
 	private Result result;
@@ -39,10 +47,6 @@ public class PrintableResult {
 		this.result = result;
 	}
 	
-	private PrintableResult(Class<?> type) {
-		this(JUnitCore.runClasses(type));
-	}
-
 	@Override
 	public String toString() {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();

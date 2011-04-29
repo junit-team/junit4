@@ -5,8 +5,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.junit.rules.MethodRule;
-
 /**
  * Annotates fields that contain rules. Such a field must be public, not
  * static, and a subtype of {@link org.junit.rules.TestRule}.  
@@ -39,10 +37,9 @@ import org.junit.rules.MethodRule;
  * {@link org.junit.rules.TestRule}. 
  *
  * Note: for backwards compatibility, this annotation may also mark
- * fields of type {@link MethodRule}, which will be honored.  However,
+ * fields of type {@link org.junit.rules.MethodRule}, which will be honored.  However,
  * this is a deprecated interface and feature.
  */
-@SuppressWarnings("deprecation")
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface Rule {
