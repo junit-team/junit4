@@ -87,3 +87,7 @@
 2011 Apr 29
      reinholdfuereder@github: bug report, test, and fix for GH-38:
                               ParentRunner filtering
+
+2011 Apr 29
+     Markus Keller (mkeller@github): Report for GH-187:
+            Unintentional dependency on Java 6
