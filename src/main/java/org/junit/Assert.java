@@ -646,7 +646,20 @@ public class Assert {
 			Object actual) {
 		fail(format(message, expected, actual));
 	}
-
+	
+	static private <T> void failComparable(String message,
+			Comparable<T> reference, Comparable<T> actual, String comparison) {
+		String formatted= "";
+		if (message != null) {
+			formatted= message + " ";
+		}
+		String referenceString = String.valueOf(reference);
+		String actualString = String.valueOf(actual);
+		fail(formatted + "Expected " + comparison + ": "
+				+ formatClassAndValue(reference, referenceString)
+				+ " but was: " + formatClassAndValue(actual, actualString));
+	}
+	
 	static String format(String message, Object expected, Object actual) {
 		String formatted= "";
 		if (message != null && !message.equals(""))
@@ -779,5 +792,97 @@ public class Assert {
 			description.appendText("\n");
 			throw new java.lang.AssertionError(description.toString());
 		}
+	}
+	
+	private static <T> boolean assertComparableNullSafe(String reason,
+			Comparable<T> reference, Comparable<T> actual, String comparison) {
+		if (reference != null && actual != null) {
+			return true;
+		} else {
+			failComparable(reason, reference, actual, comparison);
+			return false;
+		}
+	}
+
+	/**
+	 * Asserts that <code>actual</code> is less than <code>reference</code>. If
+	 * not, an {@link AssertionError} is thrown with the given message. The
+	 * comparison will fail if either <code>actual</code> or
+	 * <code>reference</code> is <code>null</code>.
+	 * 
+	 * @param message
+	 *            The identifying message for the {@link AssertionError} (
+	 *            <code>null</code> okay)
+	 * @param reference
+	 *            The comparison reference value
+	 * @param actual
+	 *            The value to check against <code>reference</code>
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> void assertLessThan(String message,
+			Comparable<T> reference, Comparable<T> actual) {
+		if (assertComparableNullSafe(message, reference, actual, "less than")) {
+			if (actual.compareTo((T) reference) < 0) {
+				return;
+			} else {
+				failComparable(message, reference, actual, "less than");
+			}
+		}
+	}
+
+	/**
+	 * Asserts that <code>actual</code> is less than <code>reference</code>. If
+	 * not, an {@link AssertionError} is thrown. The comparison will fail if
+	 * either <code>actual</code> or <code>reference</code> is <code>null</code>
+	 * .
+	 * 
+	 * @param reference
+	 *            The comparison reference value
+	 * @param actual
+	 *            The value to check against <code>reference</code>
+	 */
+	public static <T> void assertLessThan(Comparable<T> reference, Comparable<T> actual) {
+		assertLessThan(null, reference, actual);
+	}
+
+	/**
+	 * Asserts that <code>actual</code> is greater than <code>reference</code>.
+	 * If not, an {@link AssertionError} is thrown with the given message. The
+	 * comparison will fail if either <code>actual</code> or
+	 * <code>reference</code> is <code>null</code>.
+	 * 
+	 * @param message
+	 *            The identifying message for the {@link AssertionError} (
+	 *            <code>null</code> okay)
+	 * @param reference
+	 *            The comparison reference value
+	 * @param actual
+	 *            The value to check against <code>reference</code>
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> void assertGreaterThan(String message,
+			Comparable<T> reference, Comparable<T> actual) {
+		if (assertComparableNullSafe(message, reference, actual, "greater than")) {
+			if (actual.compareTo((T) reference) > 0) {
+				return;
+			} else {
+				failComparable(message, reference, actual, "greater than");
+			}
+		}
+	}
+	
+	/**
+	 * Asserts that <code>actual</code> is less than <code>reference</code>. If
+	 * not, an {@link AssertionError} is thrown. The comparison will fail if
+	 * either <code>actual</code> or <code>reference</code> is <code>null</code>
+	 * .
+	 * 
+	 * @param reference
+	 *            The comparison reference value
+	 * @param actual
+	 *            The value to check against <code>reference</code>
+	 */
+	public static <T> void assertGreaterThan(Comparable<T> reference, Comparable<T> actual) {
+		assertGreaterThan(null, reference, actual);
 	}
 }
