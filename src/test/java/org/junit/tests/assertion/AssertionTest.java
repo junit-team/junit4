@@ -4,9 +4,11 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertGreaterThan;
+import static org.junit.Assert.assertLessThan;
 import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -482,5 +484,79 @@ public class AssertionTest {
 		final BigDecimal bigDecimal = new BigDecimal("1.2");
 		final Integer integer = Integer.valueOf("1");
 		assertEquals(bigDecimal, integer);
-	}	
+	}
+	
+	private static final BigDecimal REFERENCE_VALUE = BigDecimal.ONE;
+	private static final BigDecimal LOWER_VALUE = new BigDecimal("0.99");
+	private static final BigDecimal HIGHER_VALUE = new BigDecimal("1.01");
+	
+	@Test
+	public void assertLessThanFailsWithSelfExplanatoryMessage() {
+		try {
+			assertLessThan(REFERENCE_VALUE, REFERENCE_VALUE);
+		} catch (AssertionError e) {
+			assertEquals("Expected less than: java.math.BigDecimal<" + REFERENCE_VALUE
+			          + "> but was: java.math.BigDecimal<" + REFERENCE_VALUE + '>', e.getMessage());
+		}
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertLessThanShouldFailWhenBothValuesNull() {
+		assertLessThan(null, null);
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertLessThanShouldFailWhenReferenceNull() {
+		assertLessThan(null, REFERENCE_VALUE);
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertLessThanShouldFailWhenActualNull() {
+		assertLessThan(REFERENCE_VALUE, null);
+	}
+	
+	@Test
+	public void assertLessThanShouldPassWhenActualLessThanReference() {
+		assertLessThan(REFERENCE_VALUE, LOWER_VALUE);
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertLessThanShouldFailWhenActualEqualToReference() {
+		assertLessThan(REFERENCE_VALUE, REFERENCE_VALUE);
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertLessThanShouldFailWhenActualGreaterThanReference() {
+		assertLessThan(REFERENCE_VALUE, HIGHER_VALUE);
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertGreaterThanShouldFailWhenBothValuesNull() {
+		assertGreaterThan(null, null);
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertGreaterThanShouldFailWhenReferenceNull() {
+		assertGreaterThan(null, REFERENCE_VALUE);
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertGreaterThanShouldFailWhenActualNull() {
+		assertGreaterThan(REFERENCE_VALUE, null);
+	}
+	
+	@Test
+	public void assertGreaterThanShouldPassWhenActualGreaterThanReference() {
+		assertGreaterThan(REFERENCE_VALUE, HIGHER_VALUE);
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertGreaterThanShouldFailWhenActualEqualToReference() {
+		assertGreaterThan(REFERENCE_VALUE, REFERENCE_VALUE);
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertGreaterThanShouldFailWhenActualLessThanReference() {
+		assertGreaterThan(REFERENCE_VALUE, LOWER_VALUE);
+	}
 }
