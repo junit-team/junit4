@@ -895,4 +895,66 @@ public class Assert {
 	public static <T> void assertGreaterThan(Comparable<T> reference, Comparable<T> actual) {
 		assertGreaterThan(null, reference, actual);
 	}
+	
+	/**
+	 * Asserts that <code>actual</code> is equivalent to <code>reference</code>.
+	 * If not, an {@link AssertionError} is thrown. The comparison will fail if
+	 * either <code>actual</code> or <code>reference</code> is <code>null</code>
+	 * .
+	 * <p>
+	 * Note that this tests <em>equivalence</em>, not equality, i.e.
+	 * <code>actual.compareTo(reference) == 0</code> not
+	 * <code>actual.equalTo(reference)</code>.
+	 * <p>
+	 * Virtually all Java core classes that implement <code>Comparable</code>
+	 * have natural orderings that are consistent with equals. One exception is
+	 * <code>java.math.BigDecimal</code>, whose natural ordering equates
+	 * <code>BigDecimal</code> objects with equal values and different
+	 * precisions (such as 4.0 and 4.00).
+	 * 
+	 * @param message
+	 *            The identifying message for the {@link AssertionError} (
+	 *            <code>null</code> okay)
+	 * @param reference
+	 *            The comparison reference value
+	 * @param actual
+	 *            The value to check against <code>reference</code>
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> void assertEquivalent(String message,
+			Comparable<T> reference, Comparable<T> actual) {
+		if (assertComparableNullSafe(message, reference, actual, "equivalent to")) {
+			if (actual.compareTo((T) reference) == 0) {
+				return;
+			} else {
+				failComparable(message, reference, actual, "equivalent to");
+			}
+		}
+	}
+	
+	/**
+	 * Asserts that <code>actual</code> is equivalent to <code>reference</code>.
+	 * If not, an {@link AssertionError} is thrown. The comparison will fail if
+	 * either <code>actual</code> or <code>reference</code> is <code>null</code>
+	 * .
+	 * <p>
+	 * Note that this tests <em>equivalence</em>, not equality, i.e.
+	 * <code>actual.compareTo(reference) == 0</code> not
+	 * <code>actual.equalTo(reference)</code>.
+	 * <p>
+	 * Virtually all Java core classes that implement <code>Comparable</code>
+	 * have natural orderings that are consistent with equals. One exception is
+	 * <code>java.math.BigDecimal</code>, whose natural ordering equates
+	 * <code>BigDecimal</code> objects with equal values and different
+	 * precisions (such as 4.0 and 4.00).
+	 * 
+	 * @param reference
+	 *            The comparison reference value
+	 * @param actual
+	 *            The value to check against <code>reference</code>
+	 */
+	public static <T> void assertEquivalent(Comparable<T> reference,
+			Comparable<T> actual) {
+		assertEquivalent(null, reference, actual);
+	}
 }

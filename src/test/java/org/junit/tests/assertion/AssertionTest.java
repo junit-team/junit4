@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertEquivalent;
 import static org.junit.Assert.assertGreaterThan;
 import static org.junit.Assert.assertLessThan;
 import static org.junit.Assert.assertNotSame;
@@ -489,6 +490,7 @@ public class AssertionTest {
 	private static final BigDecimal REFERENCE_VALUE = BigDecimal.ONE;
 	private static final BigDecimal LOWER_VALUE = new BigDecimal("0.99");
 	private static final BigDecimal HIGHER_VALUE = new BigDecimal("1.01");
+	private static final BigDecimal EQUIVALENT_VALUE = new BigDecimal("1.0");
 	
 	@Test
 	public void assertLessThanFailsWithSelfExplanatoryMessage() {
@@ -558,5 +560,25 @@ public class AssertionTest {
 	@Test(expected=AssertionError.class)
 	public void assertGreaterThanShouldFailWhenActualLessThanReference() {
 		assertGreaterThan(REFERENCE_VALUE, LOWER_VALUE);
+	}
+	
+	@Test
+	public void assertEquivalentShouldPassWhenActualEqualToReference() {
+		assertEquivalent(REFERENCE_VALUE, REFERENCE_VALUE);
+	}
+	
+	@Test
+	public void assertEquivalentShouldPassWhenActualEquivalentToButNotEqualToReference() {
+		assertEquivalent(REFERENCE_VALUE, EQUIVALENT_VALUE);
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertEquivalentShouldFailWhenActualLessThanReference() {
+		assertEquivalent(REFERENCE_VALUE, LOWER_VALUE);
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertEquivalentShouldFailWhenActualGreaterThanReference() {
+		assertEquivalent(REFERENCE_VALUE, HIGHER_VALUE);
 	}
 }
