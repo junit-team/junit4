@@ -39,16 +39,36 @@ public class TempFolderRuleTest {
 
 		@Test
 		public void testUsingTempFolder() throws IOException {
-			createdFile= folder.newFolder("subfolder");
-			new File(createdFile, "a.txt").createNewFile();
-			assertTrue(createdFile.exists());
+			String subfolder = "subfolder";
+			String filename = "a.txt";
+			createdFile= folder.newFolder(subfolder);
+			new File(createdFile, filename).createNewFile();
+			
+			File expectedFile = new File(folder.getRoot(), join(subfolder, filename));
+			
+			assertTrue(expectedFile.exists());
 		}
 
 		@Test
 		public void testUsingTempTreeFolders() throws IOException {
-			createdFile = folder.newFolder("subfolder", "anotherfolder");
-			new File(createdFile, "a.txt").createNewFile();
-			assertTrue(createdFile.exists());
+			String subfolder = "subfolder";
+			String anotherfolder = "anotherfolder";
+			String filename = "a.txt";
+
+			createdFile = folder.newFolder(subfolder, anotherfolder);
+			new File(createdFile, filename).createNewFile();
+
+			File expectedFile = new File(folder.getRoot(), join(subfolder, anotherfolder, filename));
+			
+			assertTrue(expectedFile.exists());
+		}
+		
+		private String join(String... folderNames) {
+			StringBuilder path = new StringBuilder();
+			for (String folderName : folderNames) {
+				path.append(File.separator).append(folderName);
+			}
+			return path.toString();
 		}
 	}
 
