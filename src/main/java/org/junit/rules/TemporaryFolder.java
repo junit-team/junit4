@@ -59,9 +59,12 @@ public class TemporaryFolder extends ExternalResource {
 	/**
 	 * Returns a new fresh folder with the given name under the temporary folder.
 	 */
-	public File newFolder(String folderName) {
-		File file= new File(folder, folderName);
-		file.mkdirs();
+	public File newFolder(String... folderNames) {
+		File file = folder;
+		for (String folderName : folderNames) {
+			file = new File(file, folderName);
+			file.mkdir();
+		}
 		return file;
 	}
 
