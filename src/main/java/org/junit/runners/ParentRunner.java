@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.AfterClass;
@@ -53,6 +54,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
 	private Sorter fSorter= Sorter.NULL;
 
+	private List<T> fFilteredChildren= null;
+	
 	private RunnerScheduler fScheduler= new RunnerScheduler() {	
 		public void schedule(Runnable childStatement) {
 			childStatement.run();
@@ -318,14 +321,27 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	public void filter(Filter filter) throws NoTestsRemainException {
 		fFilter= fFilter.intersect(filter);
 
-		for (T each : getChildren())
+		for (Iterator<T> iter = getFilteredChildren().iterator(); iter.hasNext(); ) {
+			T each = iter.next();
 			if (shouldRun(each))
-				return;
-		throw new NoTestsRemainException();
+				try {
+					filterChild(each);
+				} catch (NoTestsRemainException e) {
+					iter.remove();
+				}
+			else
+				iter.remove();
+		}
+	    if (getFilteredChildren().isEmpty()) {
+	        throw new NoTestsRemainException();
+	    }
 	}
 
 	public void sort(Sorter sorter) {
 		fSorter= sorter;
+		for (T each : getFilteredChildren())
+			sortChild(each);
+		Collections.sort(getFilteredChildren(), comparator());
 	}
 	
 	//
@@ -340,18 +356,9 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	}
 
 	private List<T> getFilteredChildren() {
-		ArrayList<T> filtered= new ArrayList<T>();
-		for (T each : getChildren())
-			if (shouldRun(each))
-				try {
-					filterChild(each);
-					sortChild(each);
-					filtered.add(each);
-				} catch (NoTestsRemainException e) {
-					// don't add it
-				}
-		Collections.sort(filtered, comparator());
-		return filtered;
+		if (fFilteredChildren == null)
+			fFilteredChildren = getChildren();
+		return fFilteredChildren;
 	}
 
 	private void sortChild(T child) {
