@@ -794,8 +794,8 @@ public class Assert {
 		}
 	}
 	
-	private static <T> boolean assertComparableNullSafe(String reason,
-			Comparable<T> reference, Comparable<T> actual, String comparison) {
+	private static <T extends Comparable<T>> boolean failComparableWhenNull(
+			String reason, T reference, T actual, String comparison) {
 		if (reference != null && actual != null) {
 			return true;
 		} else {
@@ -818,13 +818,10 @@ public class Assert {
 	 * @param actual
 	 *            The value to check against <code>reference</code>
 	 */
-	@SuppressWarnings("unchecked")
-	public static <T> void assertLessThan(String message,
-			Comparable<T> reference, Comparable<T> actual) {
-		if (assertComparableNullSafe(message, reference, actual, "less than")) {
-			if (actual.compareTo((T) reference) < 0) {
-				return;
-			} else {
+	public static <T extends Comparable<T>> void assertLessThan(String message,
+			T reference, T actual) {
+		if (failComparableWhenNull(message, reference, actual, "less than")) {
+			if (!(actual.compareTo(reference) < 0)) {
 				failComparable(message, reference, actual, "less than");
 			}
 		}
@@ -841,7 +838,8 @@ public class Assert {
 	 * @param actual
 	 *            The value to check against <code>reference</code>
 	 */
-	public static <T> void assertLessThan(Comparable<T> reference, Comparable<T> actual) {
+	public static <T extends Comparable<T>> void assertLessThan(T reference,
+			T actual) {
 		assertLessThan(null, reference, actual);
 	}
 
@@ -859,18 +857,15 @@ public class Assert {
 	 * @param actual
 	 *            The value to check against <code>reference</code>
 	 */
-	@SuppressWarnings("unchecked")
-	public static <T> void assertGreaterThan(String message,
-			Comparable<T> reference, Comparable<T> actual) {
-		if (assertComparableNullSafe(message, reference, actual, "greater than")) {
-			if (actual.compareTo((T) reference) > 0) {
-				return;
-			} else {
+	public static <T extends Comparable<T>> void assertGreaterThan(
+			String message, T reference, T actual) {
+		if (failComparableWhenNull(message, reference, actual, "greater than")) {
+			if (!(actual.compareTo(reference) > 0)) {
 				failComparable(message, reference, actual, "greater than");
 			}
 		}
 	}
-	
+
 	/**
 	 * Asserts that <code>actual</code> is less than <code>reference</code>. If
 	 * not, an {@link AssertionError} is thrown. The comparison will fail if
@@ -882,10 +877,11 @@ public class Assert {
 	 * @param actual
 	 *            The value to check against <code>reference</code>
 	 */
-	public static <T> void assertGreaterThan(Comparable<T> reference, Comparable<T> actual) {
+	public static <T extends Comparable<T>> void assertGreaterThan(T reference,
+			T actual) {
 		assertGreaterThan(null, reference, actual);
 	}
-	
+
 	/**
 	 * Asserts that <code>actual</code> is equivalent to <code>reference</code>.
 	 * If not, an {@link AssertionError} is thrown. The comparison will fail if
@@ -910,18 +906,15 @@ public class Assert {
 	 * @param actual
 	 *            The value to check against <code>reference</code>
 	 */
-	@SuppressWarnings("unchecked")
-	public static <T> void assertEquivalent(String message,
-			Comparable<T> reference, Comparable<T> actual) {
-		if (assertComparableNullSafe(message, reference, actual, "equivalent to")) {
-			if (actual.compareTo((T) reference) == 0) {
-				return;
-			} else {
+	public static <T extends Comparable<T>> void assertEquivalent(
+			String message, T reference, T actual) {
+		if (failComparableWhenNull(message, reference, actual, "equivalent to")) {
+			if (!(actual.compareTo(reference) == 0)) {
 				failComparable(message, reference, actual, "equivalent to");
 			}
 		}
 	}
-	
+
 	/**
 	 * Asserts that <code>actual</code> is equivalent to <code>reference</code>.
 	 * If not, an {@link AssertionError} is thrown. The comparison will fail if
@@ -943,8 +936,8 @@ public class Assert {
 	 * @param actual
 	 *            The value to check against <code>reference</code>
 	 */
-	public static <T> void assertEquivalent(Comparable<T> reference,
-			Comparable<T> actual) {
+	public static <T extends Comparable<T>> void assertEquivalent(T reference,
+			T actual) {
 		assertEquivalent(null, reference, actual);
 	}
 }

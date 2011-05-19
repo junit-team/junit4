@@ -487,6 +487,7 @@ public class AssertionTest {
 		assertEquals(bigDecimal, integer);
 	}
 	
+	private static final BigDecimal NULL_VALUE = null;
 	private static final BigDecimal REFERENCE_VALUE = BigDecimal.ONE;
 	private static final BigDecimal LOWER_VALUE = new BigDecimal("0.99");
 	private static final BigDecimal HIGHER_VALUE = new BigDecimal("1.01");
@@ -504,7 +505,7 @@ public class AssertionTest {
 	
 	@Test(expected=AssertionError.class)
 	public void assertLessThanShouldFailWhenBothValuesNull() {
-		assertLessThan(null, null);
+		assertLessThan(NULL_VALUE, NULL_VALUE);
 	}
 	
 	@Test(expected=AssertionError.class)
@@ -534,7 +535,7 @@ public class AssertionTest {
 	
 	@Test(expected=AssertionError.class)
 	public void assertGreaterThanShouldFailWhenBothValuesNull() {
-		assertGreaterThan(null, null);
+		assertGreaterThan(NULL_VALUE, NULL_VALUE);
 	}
 	
 	@Test(expected=AssertionError.class)
@@ -580,5 +581,38 @@ public class AssertionTest {
 	@Test(expected=AssertionError.class)
 	public void assertEquivalentShouldFailWhenActualGreaterThanReference() {
 		assertEquivalent(REFERENCE_VALUE, HIGHER_VALUE);
+	}
+
+	/**
+	 * Stubbed {@link Comparable} to act as a sanity check for the parameter
+	 * types of the comparison methods.
+	 * <p>
+	 * It is always equivalent to itself.
+	 */
+	private class ComparableStub implements Comparable<ComparableStub> {
+		public int compareTo(ComparableStub o) {
+			return 0;
+		}
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertLessThanShouldAcceptAnyComparableType() {
+		ComparableStub comparable_value = new ComparableStub();
+		
+		assertLessThan(comparable_value, comparable_value);
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertGreaterThanShouldAcceptAnyComparableType() {
+		ComparableStub comparable_value = new ComparableStub();
+		
+		assertGreaterThan(comparable_value, comparable_value);
+	}
+	
+	@Test
+	public void assertEquivalentShouldAcceptAnyComparableType() {
+		ComparableStub comparable_value = new ComparableStub();
+		
+		assertEquivalent(comparable_value, comparable_value);
 	}
 }
