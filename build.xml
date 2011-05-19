@@ -189,6 +189,7 @@
 
   <target name="dist" depends="populate-dist">
     <run-tests>
+      <!-- TODO: does this need to be here? -->
       <jvmarg value="-Dignore.this=ignored" />
     </run-tests>
   </target>
