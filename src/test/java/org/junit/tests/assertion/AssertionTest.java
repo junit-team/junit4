@@ -509,6 +509,11 @@ public class AssertionTest {
 		public boolean equals(Object o) {
 			return this.equalsReturnValue;
 		}
+		
+		@Override
+		public String toString() {
+			return String.valueOf(this.compareToReturnValue);
+		}
 	}
 	
 	private static final ComparableStub NULL_VALUE = null;
@@ -522,8 +527,11 @@ public class AssertionTest {
 		try {
 			assertLessThan(REFERENCE_VALUE, REFERENCE_VALUE);
 		} catch (AssertionError e) {
-			assertEquals("Expected less than: java.math.BigDecimal<" + REFERENCE_VALUE
-			          + "> but was: java.math.BigDecimal<" + REFERENCE_VALUE + '>', e.getMessage());
+			assertEquals(
+					"Expected less than: " + ComparableStub.class.getName()
+							+ '<' + REFERENCE_VALUE + "> but was: "
+							+ ComparableStub.class.getName() + '<'
+							+ REFERENCE_VALUE + '>', e.getMessage());
 		}
 	}
 	
@@ -605,5 +613,155 @@ public class AssertionTest {
 	@Test(expected=AssertionError.class)
 	public void assertEquivalentShouldFailWhenActualGreaterThanReference() {
 		assertEquivalent(REFERENCE_VALUE, HIGHER_VALUE);
+	}
+	
+	@Test
+	public void assertLessThanShouldPassWithAutoboxedInt() {
+		assertLessThan(0, -1);
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertLessThanShouldFailWithAutoboxedInt() {
+		assertLessThan(0, 0);
+	}
+	
+	@Test
+	public void assertGreaterThanShouldPassWithAutoboxedInt() {
+		assertGreaterThan(0, 1);
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertGreaterThanShouldFailWithAutoboxedInt() {
+		assertGreaterThan(0, 0);
+	}
+	
+	@Test
+	public void assertEquivalentShouldPassWithAutoboxedInt() {
+		assertEquivalent(0, 0);
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertEquivalentThanShouldFailWithAutoboxedInt() {
+		assertEquivalent(0, 1);
+	}
+	
+	@Test
+	public void assertLessThanShouldPassWithAutoboxedDouble() {
+		assertLessThan(0.0, -1.0);
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertLessThanShouldFailWithAutoboxedDouble() {
+		assertLessThan(0.0, 0.0);
+	}
+	
+	@Test
+	public void assertGreaterThanShouldPassWithAutoboxedDouble() {
+		assertGreaterThan(0.0, 1.0);
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertGreaterThanShouldFailWithAutoboxedDouble() {
+		assertGreaterThan(0.0, 0.0);
+	}
+	
+	@Test
+	public void assertEquivalentShouldPassWithAutoboxedDouble() {
+		assertEquivalent(0.0, 0.0);
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertEquivalentThanShouldFailWithAutoboxedDouble() {
+		assertEquivalent(0.0, 1.0);
+	}
+	
+	@Test
+	public void assertLessThanShouldPassWithString() {
+		assertLessThan("b", "a");
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertLessThanShouldFailWithString() {
+		assertLessThan("b", "b");
+	}
+	
+	@Test
+	public void assertGreaterThanShouldPassWithString() {
+		assertGreaterThan("b", "c");
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertGreaterThanShouldFailWithString() {
+		assertGreaterThan("b", "b");
+	}
+	
+	@Test
+	public void assertEquivalentShouldPassWithString() {
+		assertEquivalent("b", "b");
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertEquivalentThanShouldFailWithString() {
+		assertEquivalent("b", "a");
+	}
+	
+	@Test
+	public void assertLessThanShouldPassWithAutoboxedChar() {
+		assertLessThan('b', 'a');
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertLessThanShouldFailWithAutoboxedChar() {
+		assertLessThan('b', 'b');
+	}
+	
+	@Test
+	public void assertGreaterThanShouldPassWithAutoboxedChar() {
+		assertGreaterThan('b', 'c');
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertGreaterThanShouldFailWithAutoboxedChar() {
+		assertGreaterThan('b', 'b');
+	}
+	
+	@Test
+	public void assertEquivalentShouldPassWithAutoboxedChar() {
+		assertEquivalent('b', 'b');
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertEquivalentThanShouldFailWithAutoboxedChar() {
+		assertEquivalent('b', 'a');
+	}
+	
+	@Test
+	public void assertLessThanShouldPassWithBigDecimal() {
+		assertLessThan(BigDecimal.ONE, BigDecimal.ZERO);
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertLessThanShouldFailWithBigDecimal() {
+		assertLessThan(BigDecimal.ZERO, BigDecimal.ZERO);
+	}
+	
+	@Test
+	public void assertGreaterThanShouldPassWithBigDecimal() {
+		assertGreaterThan(BigDecimal.ZERO, BigDecimal.ONE);
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertGreaterThanShouldFailWithBigDecimal() {
+		assertGreaterThan(BigDecimal.ZERO, BigDecimal.ZERO);
+	}
+	
+	@Test
+	public void assertEquivalentShouldPassWithBigDecimal() {
+		assertEquivalent(BigDecimal.ZERO, BigDecimal.ZERO);
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertEquivalentThanShouldFailWithBigDecimal() {
+		assertEquivalent(BigDecimal.ZERO, BigDecimal.ONE);
 	}
 }
