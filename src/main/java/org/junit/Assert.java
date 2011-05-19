@@ -793,14 +793,27 @@ public class Assert {
 			throw new java.lang.AssertionError(description.toString());
 		}
 	}
-	
-	private static <T extends Comparable<T>> boolean failComparableWhenNull(
+
+	/**
+	 * Asserts that neither <code>reference</code> nor <code>actual</code> are
+	 * <code>null</code> because comparisons can never be made against a
+	 * <code>null</code> value.
+	 * 
+	 * @param reason
+	 *            The identifying message for the {@link AssertionError} (
+	 *            <code>null</code> okay)
+	 * @param reference
+	 *            The comparison reference value
+	 * @param actual
+	 *            The value to check against <code>reference</code>
+	 * @param comparison
+	 *            Text for the type of comparison being performed, in order to
+	 *            generate a meaningful assertion failure message.
+	 */
+	private static <T extends Comparable<T>> void assertComparableNullSafe(
 			String reason, T reference, T actual, String comparison) {
-		if (reference != null && actual != null) {
-			return true;
-		} else {
+		if (reference == null || actual == null) {
 			failComparable(reason, reference, actual, comparison);
-			return false;
 		}
 	}
 
@@ -820,10 +833,9 @@ public class Assert {
 	 */
 	public static <T extends Comparable<T>> void assertLessThan(String message,
 			T reference, T actual) {
-		if (failComparableWhenNull(message, reference, actual, "less than")) {
-			if (!(actual.compareTo(reference) < 0)) {
-				failComparable(message, reference, actual, "less than");
-			}
+		assertComparableNullSafe(message, reference, actual, "less than");
+		if (!(actual.compareTo(reference) < 0)) {
+			failComparable(message, reference, actual, "less than");
 		}
 	}
 
@@ -859,10 +871,9 @@ public class Assert {
 	 */
 	public static <T extends Comparable<T>> void assertGreaterThan(
 			String message, T reference, T actual) {
-		if (failComparableWhenNull(message, reference, actual, "greater than")) {
-			if (!(actual.compareTo(reference) > 0)) {
-				failComparable(message, reference, actual, "greater than");
-			}
+		assertComparableNullSafe(message, reference, actual, "greater than");
+		if (!(actual.compareTo(reference) > 0)) {
+			failComparable(message, reference, actual, "greater than");
 		}
 	}
 
@@ -908,10 +919,9 @@ public class Assert {
 	 */
 	public static <T extends Comparable<T>> void assertEquivalent(
 			String message, T reference, T actual) {
-		if (failComparableWhenNull(message, reference, actual, "equivalent to")) {
-			if (!(actual.compareTo(reference) == 0)) {
-				failComparable(message, reference, actual, "equivalent to");
-			}
+		assertComparableNullSafe(message, reference, actual, "equivalent to");
+		if (!(actual.compareTo(reference) == 0)) {
+			failComparable(message, reference, actual, "equivalent to");
 		}
 	}
 

@@ -486,12 +486,36 @@ public class AssertionTest {
 		final Integer integer = Integer.valueOf("1");
 		assertEquals(bigDecimal, integer);
 	}
+
+	/**
+	 * Stub to act as a generic {@link Comparable} type in the comparison method
+	 * tests.
+	 */
+	private static class ComparableStub implements Comparable<ComparableStub> {
+		private final int compareToReturnValue;
+		private final boolean equalsReturnValue;
+
+		public ComparableStub(int compareToReturnValue,
+				boolean equalsReturnValue) {
+			this.compareToReturnValue= compareToReturnValue;
+			this.equalsReturnValue= equalsReturnValue;
+		}
+
+		public int compareTo(ComparableStub o) {
+			return this.compareToReturnValue;
+		}
+		
+		@Override
+		public boolean equals(Object o) {
+			return this.equalsReturnValue;
+		}
+	}
 	
-	private static final BigDecimal NULL_VALUE = null;
-	private static final BigDecimal REFERENCE_VALUE = BigDecimal.ONE;
-	private static final BigDecimal LOWER_VALUE = new BigDecimal("0.99");
-	private static final BigDecimal HIGHER_VALUE = new BigDecimal("1.01");
-	private static final BigDecimal EQUIVALENT_VALUE = new BigDecimal("1.0");
+	private static final ComparableStub NULL_VALUE = null;
+	private static final ComparableStub REFERENCE_VALUE = new ComparableStub(0, true);
+	private static final ComparableStub EQUIVALENT_VALUE = new ComparableStub(0, false);
+	private static final ComparableStub LOWER_VALUE = new ComparableStub(-1, false);
+	private static final ComparableStub HIGHER_VALUE = new ComparableStub(1, false);
 	
 	@Test
 	public void assertLessThanFailsWithSelfExplanatoryMessage() {
@@ -581,38 +605,5 @@ public class AssertionTest {
 	@Test(expected=AssertionError.class)
 	public void assertEquivalentShouldFailWhenActualGreaterThanReference() {
 		assertEquivalent(REFERENCE_VALUE, HIGHER_VALUE);
-	}
-
-	/**
-	 * Stubbed {@link Comparable} to act as a sanity check for the parameter
-	 * types of the comparison methods.
-	 * <p>
-	 * It is always equivalent to itself.
-	 */
-	private class ComparableStub implements Comparable<ComparableStub> {
-		public int compareTo(ComparableStub o) {
-			return 0;
-		}
-	}
-	
-	@Test(expected=AssertionError.class)
-	public void assertLessThanShouldAcceptAnyComparableType() {
-		ComparableStub comparable_value = new ComparableStub();
-		
-		assertLessThan(comparable_value, comparable_value);
-	}
-	
-	@Test(expected=AssertionError.class)
-	public void assertGreaterThanShouldAcceptAnyComparableType() {
-		ComparableStub comparable_value = new ComparableStub();
-		
-		assertGreaterThan(comparable_value, comparable_value);
-	}
-	
-	@Test
-	public void assertEquivalentShouldAcceptAnyComparableType() {
-		ComparableStub comparable_value = new ComparableStub();
-		
-		assertEquivalent(comparable_value, comparable_value);
 	}
 }
