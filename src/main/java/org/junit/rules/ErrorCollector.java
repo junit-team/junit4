@@ -52,12 +52,7 @@ public class ErrorCollector extends Verifier {
 	 * Execution continues, but the test will fail at the end if the match fails.
 	 */
 	public <T> void checkThat(final T value, final Matcher<T> matcher) {
-		checkSucceeds(new Callable<Object>() {
-			public Object call() throws Exception {
-				assertThat(value, matcher);
-				return value;
-			}
-		});
+		checkThat("", value, matcher);
 	}
 
 	/**
@@ -75,9 +70,9 @@ public class ErrorCollector extends Verifier {
 	}
 
 	/**
-	 * Adds to the table the exception, if any, thrown from {@code callable}.  
-	 * Execution continues, but the test will fail at the end if {@code callable}
-	 * threw an exception.
+	 * Adds to the table the exception, if any, thrown from {@code callable}.
+	 * Execution continues, but the test will fail at the end if
+	 * {@code callable} threw an exception.
 	 */
 	public Object checkSucceeds(Callable<Object> callable) {
 		try {
@@ -85,6 +80,6 @@ public class ErrorCollector extends Verifier {
 		} catch (Throwable e) {
 			addError(e);
 			return null;
-		}		
+		}
 	}
 }
