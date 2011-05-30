@@ -357,7 +357,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
 	private List<T> getFilteredChildren() {
 		if (fFilteredChildren == null)
-			fFilteredChildren = getChildren();
+			fFilteredChildren = new ArrayList<T>(getChildren());
 		return fFilteredChildren;
 	}
 
