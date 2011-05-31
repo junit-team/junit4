@@ -30,7 +30,12 @@ public abstract class Filter {
 		@Override
 		public void apply(Object child) throws NoTestsRemainException {
 			// do nothing
-		};
+		}
+
+		@Override
+		public Filter intersect(Filter second) {
+			return second;
+		}
 	};
 	
 	/**
@@ -89,6 +94,9 @@ public abstract class Filter {
 	 * by this Filter and {@code second}
 	 */
 	public Filter intersect(final Filter second) {
+		if (second == this || second == ALL) {
+			return this;
+		}
 		final Filter first= this;
 		return new Filter() {
 			@Override
