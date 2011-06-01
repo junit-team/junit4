@@ -71,9 +71,9 @@
     Markus Keller: Reported bug (github#163): 
            Bad comparison failure message when using assertEquals(String, String)
     
-    Kevin Cooney (kcooney):
-           Patches for runLeaf, public multiple failure exception, abstract base
-           class for TestRule, assertion messages and null.
+    Kevin Cooney (kcooney@github):
+           Patches for runLeaf, public multiple failure exception,
+           assertion messages and null.
 
 2011 Mar 04
     Jerome Lacoste (lacostej@github) for initial patch for GH-191.
@@ -87,3 +87,8 @@
 2011 Apr 29
      reinholdfuereder@github: bug report, test, and fix for GH-38:
                               ParentRunner filtering
+2011 May 31
+     Kevin Cooney (kcooney@github): Patches for filtering test suites:
+         copy List returned by getChildren() before mutating it;
+         optimize ParentRunner.filter for nested suites;
+         optimize Filter.intersect for common cases

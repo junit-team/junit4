@@ -8,7 +8,9 @@ import static org.junit.experimental.results.ResultMatchers.hasSingleFailureCont
 import static org.junit.runner.Description.createSuiteDescription;
 import static org.junit.runner.Description.createTestDescription;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -22,6 +24,8 @@ import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.RunnerBuilder;
 
 public class ParentRunnerFilteringTest {
 	private static Filter notThisMethodName(final String methodName) {
@@ -82,6 +86,38 @@ public class ParentRunnerFilteringTest {
 	@Test
 	public void testSuiteFiltering() throws Exception {
 		Runner runner= Request.aClass(ExampleSuite.class).getRunner();
+		Filter filter= notThisMethodName("test1");
+		try {
+			filter.apply(runner);
+		} catch (NoTestsRemainException e) {
+			return;
+		}
+		fail("Expected 'NoTestsRemainException' due to complete filtering");
+	}
+
+	public static class SuiteWithUnmodifyableChildList extends Suite {
+
+		public SuiteWithUnmodifyableChildList(
+				Class<?> klass, RunnerBuilder builder)
+				throws InitializationError {
+			super(klass, builder);
+		}
+
+		@Override
+		protected List<Runner> getChildren() {
+			return Collections.unmodifiableList(super.getChildren());
+		}
+	}
+
+	@RunWith(SuiteWithUnmodifyableChildList.class)
+	@SuiteClasses({ ExampleTest.class })
+	public static class ExampleSuiteWithUnmodifyableChildList {
+	}
+	
+	@Test
+	public void testSuiteFilteringWithUnmodifyableChildList() throws Exception {
+		Runner runner= Request.aClass(ExampleSuiteWithUnmodifyableChildList.class)
+		    .getRunner();
 		Filter filter= notThisMethodName("test1");
 		try {
 			filter.apply(runner);
