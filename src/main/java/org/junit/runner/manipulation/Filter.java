@@ -26,6 +26,11 @@ public abstract class Filter {
 		public String describe() {
 			return "all tests";
 		}
+		
+		@Override
+		public void apply(Object child) throws NoTestsRemainException {
+			// do nothing
+		};
 	};
 	
 	/**
@@ -77,5 +82,25 @@ public abstract class Filter {
 			return;
 		Filterable filterable= (Filterable) child;
 		filterable.filter(this);
+	}
+
+	/**
+	 * Returns a new Filter that accepts the intersection of the tests accepted
+	 * by this Filter and {@code second}
+	 */
+	public Filter intersect(final Filter second) {
+		final Filter first= this;
+		return new Filter() {
+			@Override
+			public boolean shouldRun(Description description) {
+				return first.shouldRun(description)
+						&& second.shouldRun(description);
+			}
+
+			@Override
+			public String describe() {
+				return first.describe() + " and " + second.describe();
+			}
+		};
 	}
 }

@@ -16,8 +16,8 @@ public class SuiteDescriptionTest {
 	@Test public void equalsIsCorrect() {	
 		assertEquals(childless, anotherChildless);
 		assertFalse(childless.equals(namedB));
-		assertFalse(childless.equals(twoKids));
-		assertFalse(twoKids.equals(anotherTwoKids));
+		assertEquals(childless, twoKids);
+		assertEquals(twoKids, anotherTwoKids);
 		assertFalse(twoKids.equals(new Integer(5)));
 	}
 

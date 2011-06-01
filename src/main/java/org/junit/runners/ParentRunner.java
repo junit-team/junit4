@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.AfterClass;
@@ -29,10 +30,10 @@ import org.junit.runner.notification.StoppedByUserException;
 import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.RunnerScheduler;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
-import org.junit.runners.model.MultipleFailureException;
 
 /**
  * Provides most of the functionality specific to a Runner that implements a
@@ -49,10 +50,12 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 		Sortable {
 	private final TestClass fTestClass;
 
-	private Filter fFilter= null;
+	private Filter fFilter= Filter.ALL;
 
 	private Sorter fSorter= Sorter.NULL;
 
+	private List<T> fFilteredChildren= null;
+	
 	private RunnerScheduler fScheduler= new RunnerScheduler() {	
 		public void schedule(Runnable childStatement) {
 			childStatement.run();
@@ -316,16 +319,29 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	//
 
 	public void filter(Filter filter) throws NoTestsRemainException {
-		fFilter= filter;
+		fFilter= fFilter.intersect(filter);
 
-		for (T each : getChildren())
+		for (Iterator<T> iter = getFilteredChildren().iterator(); iter.hasNext(); ) {
+			T each = iter.next();
 			if (shouldRun(each))
-				return;
-		throw new NoTestsRemainException();
+				try {
+					filterChild(each);
+				} catch (NoTestsRemainException e) {
+					iter.remove();
+				}
+			else
+				iter.remove();
+		}
+	    if (getFilteredChildren().isEmpty()) {
+	        throw new NoTestsRemainException();
+	    }
 	}
 
 	public void sort(Sorter sorter) {
 		fSorter= sorter;
+		for (T each : getFilteredChildren())
+			sortChild(each);
+		Collections.sort(getFilteredChildren(), comparator());
 	}
 	
 	//
@@ -340,18 +356,9 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	}
 
 	private List<T> getFilteredChildren() {
-		ArrayList<T> filtered= new ArrayList<T>();
-		for (T each : getChildren())
-			if (shouldRun(each))
-				try {
-					filterChild(each);
-					sortChild(each);
-					filtered.add(each);
-				} catch (NoTestsRemainException e) {
-					// don't add it
-				}
-		Collections.sort(filtered, comparator());
-		return filtered;
+		if (fFilteredChildren == null)
+			fFilteredChildren = getChildren();
+		return fFilteredChildren;
 	}
 
 	private void sortChild(T child) {
@@ -359,12 +366,11 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	}
 
 	private void filterChild(T child) throws NoTestsRemainException {
-		if (fFilter != null)
-			fFilter.apply(child);
+		fFilter.apply(child);
 	}
 
 	private boolean shouldRun(T each) {
-		return fFilter == null || fFilter.shouldRun(describeChild(each));
+		return fFilter.shouldRun(describeChild(each));
 	}
 
 	private Comparator<? super T> comparator() {

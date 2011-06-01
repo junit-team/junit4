@@ -77,3 +77,13 @@
 
 2011 Mar 04
     Jerome Lacoste (lacostej@github) for initial patch for GH-191.
+
+2011 Apr 15
+     reinholdfuereder@github For initial test for GH-39
+
+2011 Apr 15
+     ububenheimer@github for bug report https://github.com/KentBeck/junit/issues/208
+
+2011 Apr 29
+     reinholdfuereder@github: bug report, test, and fix for GH-38:
+                              ParentRunner filtering

@@ -5,20 +5,18 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.junit.rules.TestRule;
-
 /**
  * Annotates static fields that contain rules. Such a field must be public,
- * static, and a subtype of {@link TestRule}.  
+ * static, and a subtype of {@link org.junit.rules.TestRule}.  
  * The {@link org.junit.runners.model.Statement} passed 
- * to the {@link TestRule} will run any {@link BeforeClass} methods, 
+ * to the {@link org.junit.rules.TestRule} will run any {@link BeforeClass} methods, 
  * then the entire body of the test class (all contained methods, if it is
  * a standard JUnit test class, or all contained classes, if it is a 
  * {@link org.junit.runners.Suite}), and finally any {@link AfterClass} methods.
  * 
- * The statement passed to the {@link TestRule} will never throw an exception,
- * and throwing an exception from the {@link TestRule} will result in undefined
- * behavior.  This means that some {@link TestRule}s, such as 
+ * The statement passed to the {@link org.junit.rules.TestRule} will never throw an exception,
+ * and throwing an exception from the {@link org.junit.rules.TestRule} will result in undefined
+ * behavior.  This means that some {@link org.junit.rules.TestRule}s, such as 
  * {@link org.junit.rules.ErrorCollector}, 
  * {@link org.junit.rules.ExpectedException}, 
  * and {@link org.junit.rules.Timeout},

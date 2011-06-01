@@ -67,6 +67,10 @@ in the source repository.
 
   Thanks to `@kcooney`
 
+- github#38: ParentRunner filters more than once
+
+  Thanks to `@reinholdfuereder`
+
 ### Minor changes ###
 
 - Backed out unused folder "experimental-use-of-antunit", replaced by 
