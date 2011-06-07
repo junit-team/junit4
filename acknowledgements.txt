@@ -91,3 +91,6 @@
 2011 Apr 29
      Markus Keller (mkeller@github): Report for GH-187:
             Unintentional dependency on Java 6
+
+2011 Jun 06
+     Vampire@github: Report for GH-235: 4.7 release notes incorrect.
