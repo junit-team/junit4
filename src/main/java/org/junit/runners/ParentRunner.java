@@ -50,8 +50,6 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 		Sortable {
 	private final TestClass fTestClass;
 
-	private Filter fFilter= Filter.ALL;
-
 	private Sorter fSorter= Sorter.NULL;
 
 	private List<T> fFilteredChildren= null;
@@ -319,13 +317,11 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	//
 
 	public void filter(Filter filter) throws NoTestsRemainException {
-		fFilter= fFilter.intersect(filter);
-
 		for (Iterator<T> iter = getFilteredChildren().iterator(); iter.hasNext(); ) {
 			T each = iter.next();
-			if (shouldRun(each))
+			if (shouldRun(filter, each))
 				try {
-					filterChild(each);
+					filter.apply(each);
 				} catch (NoTestsRemainException e) {
 					iter.remove();
 				}
@@ -365,12 +361,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 		fSorter.apply(child);
 	}
 
-	private void filterChild(T child) throws NoTestsRemainException {
-		fFilter.apply(child);
-	}
-
-	private boolean shouldRun(T each) {
-		return fFilter.shouldRun(describeChild(each));
+	private boolean shouldRun(Filter filter, T each) {
+		return filter.shouldRun(describeChild(each));
 	}
 
 	private Comparator<? super T> comparator() {
