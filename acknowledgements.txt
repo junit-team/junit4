@@ -87,18 +87,16 @@
 2011 Apr 29
      reinholdfuereder@github: bug report, test, and fix for GH-38:
                               ParentRunner filtering
-<<<<<<< HEAD
-
 2011 Apr 29
      Markus Keller (mkeller@github): Report for GH-187:
             Unintentional dependency on Java 6
 
-2011 Jun 06
-     Vampire@github: Report for GH-235: 4.7 release notes incorrect.
-=======
 2011 May 31
      Kevin Cooney (kcooney@github): Patches for filtering test suites:
          copy List returned by getChildren() before mutating it;
          optimize ParentRunner.filter for nested suites;
          optimize Filter.intersect for common cases
->>>>>>> de8dfa6dcaf4353c5e399ff976db6803db73f9bd
+
+2011 Jun 06
+     Vampire@github: Report for GH-235: 4.7 release notes incorrect.
+
