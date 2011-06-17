@@ -35,13 +35,15 @@ public class RunNotifier {
 
 	private abstract class SafeNotifier {
 		void run() {
-            for (Iterator<RunListener> all = fListeners.iterator(); all.hasNext();)
+            for (Iterator<RunListener> all = fListeners.iterator(); all.hasNext();){
+                RunListener next = all.next();
                 try {
-                    notifyListener(all.next());
+                    notifyListener(next);
                 } catch (Exception e) {
-                    all.remove(); // Remove the offending listener first to avoid an infinite loop
+                    fListeners.remove( next); // Remove the offending listener first to avoid an infinite loop
                     fireTestFailure(new Failure(Description.TEST_MECHANISM, e));
-             }
+                }
+            }
 		}
 
 		abstract protected void notifyListener(RunListener each) throws Exception;
