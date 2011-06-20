@@ -42,10 +42,6 @@ should be transparent to most users.  `TestWatchman` has been deprecated,
 and replaced by `TestWatcher`, which has the same functionality, but implements
 the new type.
 
-`TestRule` is an abstract base class, and its abstract `apply` method is 
-protected.  In order to apply `TestRule`s to a `Statement`, use the `RunRules`
-class in `org.junit.rules` (thanks to `@kcooney`)
-
 ### LICENSE checked in ###
 
 The Common Public License that JUnit is released under is now included
