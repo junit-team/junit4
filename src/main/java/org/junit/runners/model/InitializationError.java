@@ -1,6 +1,8 @@
 package org.junit.runners.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -15,11 +17,11 @@ public class InitializationError extends Exception {
 	 * errors {@code errors} as causes
 	 */
 	public InitializationError(List<Throwable> errors) {
-		fErrors= errors;
+		fErrors= new ArrayList<Throwable>(errors);
 	}
 	
 	public InitializationError(Throwable error) {
-		this(Arrays.asList(error));
+		fErrors= Arrays.asList(error);
 	}
 	
 	/**
@@ -34,6 +36,16 @@ public class InitializationError extends Exception {
 	 * Returns one or more Throwables that led to this initialization error.
 	 */
 	public List<Throwable> getCauses() {
-		return fErrors;
+		return Collections.unmodifiableList(fErrors);
+	}
+
+	@Override
+	public String getMessage() {
+		StringBuilder sb = new StringBuilder(
+				String.format("There were %d errors:", fErrors.size()));
+		for (Throwable e : fErrors) {
+			sb.append(String.format("\n  %s(%s)", e.getClass().getName(), e.getMessage()));
+		}
+		return sb.toString();
 	}
 }
