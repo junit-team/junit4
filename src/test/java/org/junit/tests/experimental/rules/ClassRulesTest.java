@@ -64,7 +64,7 @@ public class ClassRulesTest {
 	public static class CustomCounter implements TestRule {
 		public int count = 0;
 		
-		public Statement apply(final Statement base, Description description) {
+		public Statement apply(final Statement base, Description description, Object target) {
 			return new Statement() {				
 				@Override
 				public void evaluate() throws Throwable {

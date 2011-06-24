@@ -10,6 +10,7 @@ import static org.junit.experimental.results.ResultMatchers.hasSingleFailureCont
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 import static org.junit.matchers.JUnitMatchers.containsString;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,10 +32,11 @@ public class MethodRulesTest {
 		@Rule
 		public MethodRule example= new MethodRule() {
 			public Statement apply(final Statement base,
-					FrameworkMethod method, Object target) {
+					FrameworkMethod method, final Object target) {
 				return new Statement() {
 					@Override
 					public void evaluate() throws Throwable {
+						Assert.assertNotNull(target);
 						wasRun= true;
 						base.evaluate();
 					};
@@ -251,7 +253,7 @@ public class MethodRulesTest {
 	public static class CustomTestName implements TestRule {
 		public String name = null;
 			
-		public Statement apply(final Statement base, final Description description) {
+		public Statement apply(final Statement base, final Description description, Object target) {
 			return new Statement() {				
 				@Override
 				public void evaluate() throws Throwable {

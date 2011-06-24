@@ -47,8 +47,9 @@ public interface TestRule {
 	 * 
 	 * @param base The {@link Statement} to be modified
 	 * @param description A {@link Description} of the test implemented in {@code base}
+	 * @param target TODO
 	 * @return a new statement, which may be the same as {@code base},
 	 * a wrapper around {@code base}, or a completely new Statement.
 	 */
-	Statement apply(Statement base, Description description);
+	Statement apply(Statement base, Description description, Object target);
 }

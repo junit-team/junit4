@@ -26,7 +26,7 @@ import org.junit.runners.model.Statement;
  * </pre>
  */
 public class Verifier implements TestRule {
-	public Statement apply(final Statement base, Description description) {
+	public Statement apply(final Statement base, Description description, Object target) {
 		return new Statement() {
 			@Override
 			public void evaluate() throws Throwable {

@@ -73,7 +73,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 
 	@Override
 	protected Description describeChild(FrameworkMethod method) {
-		return Description.createTestDescription(getTestClass().getJavaClass(),
+		return Description.createTestDescription(getTestClass().getJavaClass(), method.getMethod(),
 				testName(method), method.getAnnotations());
 	}
 
@@ -373,7 +373,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 			Statement statement) {
 		List<TestRule> testRules= getTestRules(target);
 		return testRules.isEmpty() ? statement :
-			new RunRules(statement, testRules, describeChild(method));
+			new RunRules(statement, testRules, describeChild(method), target);
 	}
 
 	private List<TestRule> getTestRules(Object target) {
