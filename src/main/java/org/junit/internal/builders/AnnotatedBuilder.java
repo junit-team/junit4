@@ -3,6 +3,7 @@
  */
 package org.junit.internal.builders;
 
+import org.junit.internal.AnnotationUtils;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.junit.runners.model.InitializationError;
@@ -19,7 +20,7 @@ public class AnnotatedBuilder extends RunnerBuilder {
 
 	@Override
 	public Runner runnerForClass(Class<?> testClass) throws Exception {
-		RunWith annotation= testClass.getAnnotation(RunWith.class);
+		RunWith annotation= AnnotationUtils.findClassMetaAnnotation(testClass, RunWith.class);
 		if (annotation != null)
 			return buildRunner(annotation.value(), testClass);
 		return null;
