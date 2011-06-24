@@ -100,3 +100,6 @@
 2011 Jun 06
      Vampire@github: Report for GH-235: 4.7 release notes incorrect.
 
+2011 Jun 24
+     Samuel Le Berrigaud (sleberrigaud@github): Report for GH-248:
+            protected BlockJUnit4ClassRunner#rules method removed from 4.8.2

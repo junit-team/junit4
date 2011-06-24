@@ -23,6 +23,7 @@ import org.junit.tests.experimental.max.JUnit38SortingTest;
 import org.junit.tests.experimental.max.MaxStarterTest;
 import org.junit.tests.experimental.parallel.ParallelClassTest;
 import org.junit.tests.experimental.parallel.ParallelMethodTest;
+import org.junit.tests.experimental.rules.BlockJUnit4ClassRunnerOverrideTest;
 import org.junit.tests.experimental.rules.ClassRulesTest;
 import org.junit.tests.experimental.rules.ExpectedExceptionRuleTest;
 import org.junit.tests.experimental.rules.ExternalResourceRuleTest;
@@ -148,7 +149,8 @@ import org.junit.tests.validation.ValidationTest;
 	VerifierRuleTest.class,
 	CategoryTest.class,
 	CategoriesAndParameterizedTest.class,
-	ParentRunnerFilteringTest.class
+	ParentRunnerFilteringTest.class,
+	BlockJUnit4ClassRunnerOverrideTest.class
 })
 public class AllTests {
 	public static Test suite() {
