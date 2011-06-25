@@ -417,7 +417,7 @@ public class Assert {
 	}	
 
 	/**
-	 * Asserts that two doubles or floats are equal to within a positive delta.
+	 * Asserts that two doubles are equal to within a positive delta.
 	 * If they are not, an {@link AssertionError} is thrown with the given
 	 * message. If the expected value is infinity then the delta value is
 	 * ignored. NaNs are considered equal:
@@ -441,6 +441,37 @@ public class Assert {
 			return;
 		if (!(Math.abs(expected - actual) <= delta))
 			failNotEquals(message, new Double(expected), new Double(actual));
+	}
+	
+	/**
+	 * Asserts that two floats are equal to within a positive delta.
+	 * If they are not, an {@link AssertionError} is thrown with the given
+	 * message. If the expected value is infinity then the delta value is
+	 * ignored. NaNs are considered equal:
+	 * <code>assertEquals(Float.NaN, Float.NaN, *)</code> passes
+	 * 
+	 * @param message
+	 *            the identifying message for the {@link AssertionError} (<code>null</code>
+	 *            okay)
+	 * @param expected
+	 *            expected value
+	 * @param actual
+	 *            the value to check against <code>expected</code>
+	 * @param delta
+	 *            the maximum delta between <code>expected</code> and
+	 *            <code>actual</code> for which both numbers are still
+	 *            considered equal.
+	 */
+	static public void assertEquals(String message, float expected,
+			float actual, float delta) {
+		if (Float.compare(expected, actual) == 0)
+		{
+			return;
+		}
+		if (!(Math.abs(expected - actual) <= delta))
+		{
+			failNotEquals(message, new Float(expected), new Float(actual));
+		}
 	}
 
 	/**
@@ -494,7 +525,7 @@ public class Assert {
 	}
 
 	/**
-	 * Asserts that two doubles or floats are equal to within a positive delta.
+	 * Asserts that two doubles are equal to within a positive delta.
 	 * If they are not, an {@link AssertionError} is thrown. If the expected
 	 * value is infinity then the delta value is ignored.NaNs are considered
 	 * equal: <code>assertEquals(Double.NaN, Double.NaN, *)</code> passes
@@ -509,6 +540,26 @@ public class Assert {
 	 *            considered equal.
 	 */
 	static public void assertEquals(double expected, double actual, double delta) {
+		assertEquals(null, expected, actual, delta);
+	}
+	
+	/**
+	 * Asserts that two floats are equal to within a positive delta.
+	 * If they are not, an {@link AssertionError} is thrown. If the expected
+	 * value is infinity then the delta value is ignored. NaNs are considered
+	 * equal: <code>assertEquals(Float.NaN, Float.NaN, *)</code> passes
+	 * 
+	 * @param expected
+	 *            expected value
+	 * @param actual
+	 *            the value to check against <code>expected</code>
+	 * @param delta
+	 *            the maximum delta between <code>expected</code> and
+	 *            <code>actual</code> for which both numbers are still
+	 *            considered equal.
+	 */
+	
+	static public void assertEquals(float expected, float actual, float delta) {
 		assertEquals(null, expected, actual, delta);
 	}
 
