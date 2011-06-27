@@ -173,7 +173,8 @@
     <copy file="build.xml" tofile="${dist}/build.xml" />
   </target>
 
-  <macrodef name="run-tests">
+  <macrodef name="run-dist-tests">
+    <!-- Runs the tests against the built jar files -->
     <element name="extra-args" implicit="yes" />
     <sequential>
       <java classname="org.junit.runner.JUnitCore" fork="yes" failonerror="true">
@@ -187,16 +188,36 @@
     </sequential>
   </macrodef>
 
-  <target name="dist" depends="populate-dist">
-    <run-tests>
-      <jvmarg value="-Dignore.this=ignored" />
-    </run-tests>
+  <macrodef name="run-local-tests">
+    <!-- Runs the tests against the local class files -->
+    <sequential>
+      <java classname="org.junit.runner.JUnitCore" fork="yes" failonerror="true">
+        <arg value="org.junit.tests.AllTests"/>
+        <classpath>
+          <pathelement location="${bin}" />
+          <pathelement location="${testbin}" />
+          <pathelement location="${hamcrestlib}" />
+        </classpath>
+      </java>    
+    </sequential>
+  </macrodef>
+
+  <target name="test" depends="build">
+    <run-local-tests />
   </target>
 
+  <target name="test-jars" depends="populate-dist">
+    <run-dist-tests>
+      <jvmarg value="-Dignore.this=ignored" />
+    </run-dist-tests>
+  </target>
+
+  <target name="dist" depends="test-jars" />
+
   <target name="profile" depends="populate-dist">
-    <run-tests>
+    <run-dist-tests>
       <jvmarg value="-agentlib:hprof=cpu=samples"/>
-    </run-tests>
+    </run-dist-tests>
   </target>
 
   <target name="zip" depends="dist">
