@@ -87,3 +87,6 @@
 2011 Apr 29
      reinholdfuereder@github: bug report, test, and fix for GH-38:
                               ParentRunner filtering
+2011 May 05
+     leet3lite.junit@soodonims.com: (github#228)
+     		Added feature assertions for java.lang.Comparable in org.junit.Assert
