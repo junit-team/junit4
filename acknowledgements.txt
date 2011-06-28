@@ -101,5 +101,5 @@
      Vampire@github: Report for GH-235: 4.7 release notes incorrect.
 
 2011 Jun 27
-     rodolfoliviero@github and JoseRibeiro@github: feature to create recursively temp folders
+     rodolfoliviero@github and JoseRibeiro@github: feature to create recursive temporary folders
 
