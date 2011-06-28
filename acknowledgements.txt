@@ -100,3 +100,6 @@
 2011 Jun 06
      Vampire@github: Report for GH-235: 4.7 release notes incorrect.
 
+2011 Jun 25
+     Juan Cortez (jcortez@github): Fixed issue #219 where floats were being 
+	 printed and represented as doubles in error messages.
