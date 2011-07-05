@@ -46,6 +46,11 @@ the new type.
 protected.  In order to apply `TestRule`s to a `Statement`, use the `RunRules`
 class in `org.junit.rules` (thanks to `@kcooney`)
 
+### Maven support ###
+
+Maven bundles have, in the past, been uploaded by kind volunteers.  Starting
+with this release, the JUnit team is attempting to perform this task ourselves.
+
 ### LICENSE checked in ###
 
 The Common Public License that JUnit is released under is now included
@@ -63,18 +68,25 @@ in the source repository.
   and will be run correctly.  Trying to assign categories to methods within
   such a class will flag an error.
 
-- github#163: Bad comparison failure message when using assertEquals(String, String)
-
-  Thanks to `@kcooney`
-
 - github#38: ParentRunner filters more than once
 
   Thanks to `@reinholdfuereder`
+
+- github#248: protected BlockJUnit4ClassRunner#rules method removed from 4.8.2
+- github#187: Accidental dependency on Java 6
+
+Thanks to `@kcooney` for:
+- github#163: Bad comparison failure message when using assertEquals(String, String)
+- github#227: ParentRunner now assumes that getChildren() returns a modifiable list
 
 ### Minor changes ###
 
 - Backed out unused folder "experimental-use-of-antunit", replaced by 
   bash-based script at build_tests.sh
+- Various Javadoc fixes
+
+Thanks to `@kcooney` for:
 
 - Made MultipleFailureException public, to assist extension writers.
-  Thanks to `@kcooney`
+- github#240: Add "test" target to build.xml, for faster ant-driven testing.
+- github#247: Give InitializationError a useful message

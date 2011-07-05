@@ -47,6 +47,11 @@ the new type.</p>
 protected.  In order to apply <code>TestRule</code>s to a <code>Statement</code>, use the <code>RunRules</code>
 class in <code>org.junit.rules</code> (thanks to <code>@kcooney</code>)</p>
 
+<h3>Maven support</h3>
+
+<p>Maven bundles have, in the past, been uploaded by kind volunteers.  Starting
+with this release, the JUnit team is attempting to perform this task ourselves.</p>
+
 <h3>LICENSE checked in</h3>
 
 <p>The Common Public License that JUnit is released under is now included
@@ -64,19 +69,29 @@ significantly different from the built-in Runner.  With this fix,
 such classes can be assigned one or more categories at the class level,
 and will be run correctly.  Trying to assign categories to methods within
 such a class will flag an error.</p></li>
-<li><p>github#163: Bad comparison failure message when using assertEquals(String, String)</p>
-
-<p>Thanks to <code>@kcooney</code></p></li>
 <li><p>github#38: ParentRunner filters more than once</p>
 
 <p>Thanks to <code>@reinholdfuereder</code></p></li>
+<li><p>github#248: protected BlockJUnit4ClassRunner#rules method removed from 4.8.2</p></li>
+<li>github#187: Accidental dependency on Java 6</li>
 </ul>
+
+<p>Thanks to <code>@kcooney</code> for:
+- github#163: Bad comparison failure message when using assertEquals(String, String)
+- github#227: ParentRunner now assumes that getChildren() returns a modifiable list</p>
 
 <h3>Minor changes</h3>
 
 <ul>
-<li><p>Backed out unused folder "experimental-use-of-antunit", replaced by 
-bash-based script at build_tests.sh</p></li>
-<li><p>Made MultipleFailureException public, to assist extension writers.
-Thanks to <code>@kcooney</code></p></li>
+<li>Backed out unused folder "experimental-use-of-antunit", replaced by 
+bash-based script at build_tests.sh</li>
+<li>Various Javadoc fixes</li>
+</ul>
+
+<p>Thanks to <code>@kcooney</code> for:</p>
+
+<ul>
+<li>Made MultipleFailureException public, to assist extension writers.</li>
+<li>github#240: Add "test" target to build.xml, for faster ant-driven testing.</li>
+<li>github#247: Give InitializationError a useful message</li>
 </ul>
