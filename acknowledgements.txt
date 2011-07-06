@@ -59,3 +59,6 @@
                         result counting
 2010 Feb 08
     Paul Holser: Submitted additional test for TestName rule.
+
+2011 July 6
+	Rob Dawson: Submitted a patch that makes Results serlializable.
