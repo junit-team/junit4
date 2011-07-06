@@ -42,10 +42,6 @@ should be transparent to most users.  `TestWatchman` has been deprecated,
 and replaced by `TestWatcher`, which has the same functionality, but implements
 the new type.
 
-`TestRule` is an abstract base class, and its abstract `apply` method is 
-protected.  In order to apply `TestRule`s to a `Statement`, use the `RunRules`
-class in `org.junit.rules` (thanks to `@kcooney`)
-
 ### Maven support ###
 
 Maven bundles have, in the past, been uploaded by kind volunteers.  Starting
@@ -76,6 +72,7 @@ in the source repository.
 - github#187: Accidental dependency on Java 6
 
 Thanks to `@kcooney` for:
+
 - github#163: Bad comparison failure message when using assertEquals(String, String)
 - github#227: ParentRunner now assumes that getChildren() returns a modifiable list
 

@@ -43,10 +43,6 @@ should be transparent to most users.  <code>TestWatchman</code> has been depreca
 and replaced by <code>TestWatcher</code>, which has the same functionality, but implements
 the new type.</p>
 
-<p><code>TestRule</code> is an abstract base class, and its abstract <code>apply</code> method is 
-protected.  In order to apply <code>TestRule</code>s to a <code>Statement</code>, use the <code>RunRules</code>
-class in <code>org.junit.rules</code> (thanks to <code>@kcooney</code>)</p>
-
 <h3>Maven support</h3>
 
 <p>Maven bundles have, in the past, been uploaded by kind volunteers.  Starting
@@ -76,9 +72,12 @@ such a class will flag an error.</p></li>
 <li>github#187: Accidental dependency on Java 6</li>
 </ul>
 
-<p>Thanks to <code>@kcooney</code> for:
-- github#163: Bad comparison failure message when using assertEquals(String, String)
-- github#227: ParentRunner now assumes that getChildren() returns a modifiable list</p>
+<p>Thanks to <code>@kcooney</code> for:</p>
+
+<ul>
+<li>github#163: Bad comparison failure message when using assertEquals(String, String)</li>
+<li>github#227: ParentRunner now assumes that getChildren() returns a modifiable list</li>
+</ul>
 
 <h3>Minor changes</h3>
 
