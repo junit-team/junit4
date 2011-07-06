@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
  * public class UsesExternalResource {
  * 	public static Server myServer= new Server();
  * 
- * 	&#064;Rule
+ * 	&#064;ClassRule
  * 	public static ExternalResource resource= new ExternalResource() {
  * 		&#064;Override
  * 		protected void before() throws Throwable {
