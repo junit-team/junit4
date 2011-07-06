@@ -108,3 +108,5 @@
      Paul Holser (pholser@alumni.rice.edu): Beginnings of fix for GH-64:
             Theories doesn't honor parameterized types
 
+2011 July 16
+	Rob Dawson: Submitted a patch that makes Results serlializable.
