@@ -104,6 +104,9 @@
      Samuel Le Berrigaud (sleberrigaud@github): Report for GH-248:
             protected BlockJUnit4ClassRunner#rules method removed from 4.8.2
 
+2011 Jul 06
+     Stefan Birkner: Fixed wrong docomentation of ClassRule (github#254).
+
 2011 Jul 8
      Paul Holser (pholser@alumni.rice.edu): Beginnings of fix for GH-64:
             Theories doesn't honor parameterized types
