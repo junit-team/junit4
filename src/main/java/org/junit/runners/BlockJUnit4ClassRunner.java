@@ -10,9 +10,6 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.Test.None;
-import org.junit.internal.AssumptionViolatedException;
-import org.junit.internal.runners.model.EachTestNotifier;
-import org.junit.internal.runners.model.MultipleFailureException;
 import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.internal.runners.statements.ExpectException;
 import org.junit.internal.runners.statements.Fail;
@@ -20,12 +17,14 @@ import org.junit.internal.runners.statements.FailOnTimeout;
 import org.junit.internal.runners.statements.InvokeMethod;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
-import org.junit.rules.MethodRule;
+import org.junit.rules.RunRules;
+import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
 
 /**
@@ -63,31 +62,13 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	// 
 
 	@Override
-	protected void runChild(FrameworkMethod method, RunNotifier notifier) {
-		EachTestNotifier eachNotifier= makeNotifier(method, notifier);
+	protected void runChild(final FrameworkMethod method, RunNotifier notifier) {
+		Description description= describeChild(method);
 		if (method.getAnnotation(Ignore.class) != null) {
-			runIgnored(eachNotifier);
+			notifier.fireTestIgnored(description);
 		} else {
-			runNotIgnored(method, eachNotifier);
+			runLeaf(methodBlock(method), description, notifier);
 		}
-	}
-
-	private void runNotIgnored(FrameworkMethod method,
-			EachTestNotifier eachNotifier) {
-		eachNotifier.fireTestStarted();
-		try {
-			methodBlock(method).evaluate();
-		} catch (AssumptionViolatedException e) {
-			eachNotifier.addFailedAssumption(e);
-		} catch (Throwable e) {
-			eachNotifier.addFailure(e);
-		} finally {
-			eachNotifier.fireTestFinished();
-		}
-	}
-
-	private void runIgnored(EachTestNotifier eachNotifier) {
-		eachNotifier.fireTestIgnored();
 	}
 
 	@Override
@@ -184,12 +165,22 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	}
 
 	private void validateRuleField(Field field, List<Throwable> errors) {
-		if (!MethodRule.class.isAssignableFrom(field.getType()))
+		Class<?> type= field.getType();
+		if (!isMethodRule(type) && !isTestRule(type))
 			errors.add(new Exception("Field " + field.getName()
-					+ " must implement MethodRule"));
+					+ " must implement MethodRule or TestRule"));
 		if (!Modifier.isPublic(field.getModifiers()))
 			errors.add(new Exception("Field " + field.getName()
 					+ " must be public"));
+	}
+
+	private boolean isTestRule(Class<?> type) {
+		return TestRule.class.isAssignableFrom(type);
+	}
+
+	@SuppressWarnings("deprecation")
+	private boolean isMethodRule(Class<?> type) {
+		return org.junit.rules.MethodRule.class.isAssignableFrom(type);
 	}
 
 	/**
@@ -232,10 +223,6 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	 * <li>HOWEVER, if {@code method}'s {@code @Test} annotation has the {@code
 	 * timeout} attribute, throw an exception if the previous step takes more
 	 * than the specified number of milliseconds.
-	 * <li>ALWAYS allow {@code @Rule} fields to modify the execution of the
-	 * above steps. A {@code Rule} may prevent all execution of the above steps,
-	 * or add additional behavior before and after, or modify thrown exceptions.
-	 * For more information, see {@link MethodRule}
 	 * <li>ALWAYS run all non-overridden {@code @Before} methods on this class
 	 * and superclasses before any of the previous steps; if any throws an
 	 * Exception, stop execution and pass the exception on.
@@ -244,6 +231,10 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	 * always executed: exceptions thrown by previous steps are combined, if
 	 * necessary, with exceptions from After methods into a
 	 * {@link MultipleFailureException}.
+	 * <li>ALWAYS allow {@code @Rule} fields to modify the execution of the
+	 * above steps. A {@code Rule} may prevent all execution of the above steps,
+	 * or add additional behavior before and after, or modify thrown exceptions.
+	 * For more information, see {@link TestRule}
 	 * </ul>
 	 * 
 	 * This can be overridden in subclasses, either by overriding this method,
@@ -349,16 +340,65 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	private Statement withRules(FrameworkMethod method, Object target,
 			Statement statement) {
 		Statement result= statement;
-		for (MethodRule each : getTestClass().getAnnotatedFieldValues(target,
-				Rule.class, MethodRule.class))
-			result= each.apply(result, method, target);
+		result= withMethodRules(method, target, result);
+		result= withTestRules(method, target, result);
 		return result;
 	}
 
-	private EachTestNotifier makeNotifier(FrameworkMethod method,
-			RunNotifier notifier) {
-		Description description= describeChild(method);
-		return new EachTestNotifier(notifier, description);
+	@SuppressWarnings("deprecation")
+	private Statement withMethodRules(FrameworkMethod method, Object target,
+			Statement result) {
+		List<TestRule> testRules= getTestRules(target);
+		for (org.junit.rules.MethodRule each : getMethodRules(target))
+			if (! testRules.contains(each))
+				result= each.apply(result, method, target);
+		return result;
+	}
+
+	@SuppressWarnings("deprecation")
+	private List<org.junit.rules.MethodRule> getMethodRules(Object target) {
+		return rules(target);
+	}
+
+	/**
+	 * @param target
+	 *            the test case instance
+	 * @return a list of MethodRules that should be applied when executing this
+	 *         test
+	 * @deprecated {@link MethodRule} is a deprecated interface. Port to
+	 *             {@link TestRule} and
+	 *             {@link BlockJUnit4ClassRunner#getTestRules(Object)}
+	 */
+	@Deprecated
+	protected List<org.junit.rules.MethodRule> rules(Object target) {
+		return getTestClass().getAnnotatedFieldValues(target, Rule.class,
+				org.junit.rules.MethodRule.class);
+	}
+
+	/**
+	 * Returns a {@link Statement}: apply all non-static {@link Value} fields
+	 * annotated with {@link Rule}.
+	 *
+	 * @param statement The base statement
+	 * @return a RunRules statement if any class-level {@link Rule}s are
+	 *         found, or the base statement
+	 */
+	private Statement withTestRules(FrameworkMethod method, Object target,
+			Statement statement) {
+		List<TestRule> testRules= getTestRules(target);
+		return testRules.isEmpty() ? statement :
+			new RunRules(statement, testRules, describeChild(method));
+	}
+
+	/**
+	 * @param target
+	 *            the test case instance
+	 * @return a list of TestRules that should be applied when executing this
+	 *         test
+	 */
+	protected List<TestRule> getTestRules(Object target) {
+		return getTestClass().getAnnotatedFieldValues(target,
+				Rule.class, TestRule.class);
 	}
 
 	private Class<? extends Throwable> getExpectedException(Test annotation) {

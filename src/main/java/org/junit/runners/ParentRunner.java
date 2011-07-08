@@ -5,15 +5,19 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.EachTestNotifier;
-import org.junit.internal.runners.model.MultipleFailureException;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
+import org.junit.rules.RunRules;
+import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
@@ -23,8 +27,10 @@ import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
+import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.RunnerScheduler;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
@@ -36,17 +42,18 @@ import org.junit.runners.model.TestClass;
  * {@link Method} . For {@link Suite}, {@code T} is {@link Class}.) Subclasses
  * must implement finding the children of the node, describing each child, and
  * running each child. ParentRunner will filter and sort children, handle
- * {@code @BeforeClass} and {@code @AfterClass} methods, create a composite
+ * {@code @BeforeClass} and {@code @AfterClass} methods, 
+ * handle annotated {@link ClassRule}s, create a composite
  * {@link Description}, and run children sequentially.
  */
 public abstract class ParentRunner<T> extends Runner implements Filterable,
 		Sortable {
 	private final TestClass fTestClass;
 
-	private Filter fFilter= null;
-
 	private Sorter fSorter= Sorter.NULL;
 
+	private List<T> fFilteredChildren= null;
+	
 	private RunnerScheduler fScheduler= new RunnerScheduler() {	
 		public void schedule(Runnable childStatement) {
 			childStatement.run();
@@ -143,6 +150,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 		Statement statement= childrenInvoker(notifier);
 		statement= withBeforeClasses(statement);
 		statement= withAfterClasses(statement);
+		statement= withClassRules(statement);
 		return statement;
 	}
 
@@ -173,6 +181,49 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	}
 
 	/**
+	 * Returns a {@link Statement}: apply all 
+	 * static fields assignable to {@link TestRule}
+	 * annotated with {@link ClassRule}.
+	 *
+	 * @param statement
+	 *            the base statement
+	 * @return a RunRules statement if any class-level {@link Rule}s are
+	 *         found, or the base statement
+	 */
+	private Statement withClassRules(Statement statement) {
+		List<TestRule> classRules= classRules();
+		return classRules.isEmpty() ? statement :
+		    new RunRules(statement, classRules, getDescription());
+	}
+
+	/**
+	 * @return the {@code ClassRule}s that can transform the block that runs
+	 *         each method in the tested class.
+	 */
+	protected List<TestRule> classRules() {
+		List<TestRule> results= new ArrayList<TestRule>();
+		for (FrameworkField field : classRuleFields())
+			results.add(getClassRule(field));
+		return results;
+	}
+
+	private TestRule getClassRule(final FrameworkField field) {
+		try {
+			return (TestRule) field.get(null);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(
+					"How did getAnnotatedFields return a field we couldn't access?");
+		}
+	}
+
+	/**
+	 * @return list of {@link FrameworkField}s annotated with {@link Rule}
+	 */
+	protected List<FrameworkField> classRuleFields() {
+		return fTestClass.getAnnotatedFields(ClassRule.class);
+	}
+
+	/**
 	 * Returns a {@link Statement}: Call {@link #runChild(Object, RunNotifier)}
 	 * on each object returned by {@link #getChildren()} (subject to any imposed
 	 * filter and sort)
@@ -188,7 +239,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
 	private void runChildren(final RunNotifier notifier) {
 		for (final T each : getFilteredChildren())
-			fScheduler.schedule(new Runnable() {			
+ 			fScheduler.schedule(new Runnable() {			
 				public void run() {
 					ParentRunner.this.runChild(each, notifier);
 				}
@@ -214,6 +265,24 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 		return fTestClass;
 	}
 
+	/**
+	 * Runs a {@link Statement} that represents a leaf (aka atomic) test.
+	 */
+	protected final void runLeaf(Statement statement, Description description,
+			RunNotifier notifier) {
+		EachTestNotifier eachNotifier= new EachTestNotifier(notifier, description);
+		eachNotifier.fireTestStarted();
+		try {
+		    statement.evaluate();
+		} catch (AssumptionViolatedException e) {
+			eachNotifier.addFailedAssumption(e);
+		} catch (Throwable e) {
+			eachNotifier.addFailure(e);
+		} finally {
+			eachNotifier.fireTestFinished();
+		}
+	}
+	
 	//
 	// Implementation of Runner
 	// 
@@ -242,22 +311,33 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 			testNotifier.addFailure(e);
 		}
 	}
-	
+
 	//
 	// Implementation of Filterable and Sortable
 	//
 
 	public void filter(Filter filter) throws NoTestsRemainException {
-		fFilter= filter;
-
-		for (T each : getChildren())
-			if (shouldRun(each))
-				return;
-		throw new NoTestsRemainException();
+		for (Iterator<T> iter = getFilteredChildren().iterator(); iter.hasNext(); ) {
+			T each = iter.next();
+			if (shouldRun(filter, each))
+				try {
+					filter.apply(each);
+				} catch (NoTestsRemainException e) {
+					iter.remove();
+				}
+			else
+				iter.remove();
+		}
+	    if (getFilteredChildren().isEmpty()) {
+	        throw new NoTestsRemainException();
+	    }
 	}
 
 	public void sort(Sorter sorter) {
 		fSorter= sorter;
+		for (T each : getFilteredChildren())
+			sortChild(each);
+		Collections.sort(getFilteredChildren(), comparator());
 	}
 	
 	//
@@ -272,31 +352,17 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	}
 
 	private List<T> getFilteredChildren() {
-		ArrayList<T> filtered= new ArrayList<T>();
-		for (T each : getChildren())
-			if (shouldRun(each))
-				try {
-					filterChild(each);
-					sortChild(each);
-					filtered.add(each);
-				} catch (NoTestsRemainException e) {
-					// don't add it
-				}
-		Collections.sort(filtered, comparator());
-		return filtered;
+		if (fFilteredChildren == null)
+			fFilteredChildren = new ArrayList<T>(getChildren());
+		return fFilteredChildren;
 	}
 
 	private void sortChild(T child) {
 		fSorter.apply(child);
 	}
 
-	private void filterChild(T child) throws NoTestsRemainException {
-		if (fFilter != null)
-			fFilter.apply(child);
-	}
-
-	private boolean shouldRun(T each) {
-		return fFilter == null || fFilter.shouldRun(describeChild(each));
+	private boolean shouldRun(Filter filter, T each) {
+		return filter.shouldRun(describeChild(each));
 	}
 
 	private Comparator<? super T> comparator() {

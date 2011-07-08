@@ -8,7 +8,6 @@ import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.junit.Assert;
 import org.junit.internal.matchers.TypeSafeMatcher;
-import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
 /**
@@ -19,7 +18,7 @@ import org.junit.runners.model.Statement;
  * // These tests all pass.
  * public static class HasExpectedException {
  * 	&#064;Rule
- * 	public ExpectedException thrown= new ExpectedException();
+ * 	public ExpectedException thrown= ExpectedException.none();
  * 
  * 	&#064;Test
  * 	public void throwsNothing() {
@@ -42,7 +41,7 @@ import org.junit.runners.model.Statement;
  * }
  * </pre>
  */
-public class ExpectedException implements MethodRule {
+public class ExpectedException implements TestRule {
 	/**
 	 * @return a Rule that expects no exception to be thrown
 	 * (identical to behavior without this Rule)
@@ -57,7 +56,8 @@ public class ExpectedException implements MethodRule {
 		
 	}
 	
-	public Statement apply(Statement base, FrameworkMethod method, Object target) {
+	public Statement apply(Statement base,
+			org.junit.runner.Description description) {
 		return new ExpectedExceptionStatement(base);
 	}
 

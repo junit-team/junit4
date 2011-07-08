@@ -8,6 +8,5 @@ MaxCore.max
 *.ipr
 *.iml
 *.iws
-build
 out
-
+java.hprof.txt

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.hamcrest.Matcher;
-import org.junit.internal.runners.model.MultipleFailureException;
+import org.junit.runners.model.MultipleFailureException;
 
 /**
  * The ErrorCollector rule allows execution of a test to continue after the

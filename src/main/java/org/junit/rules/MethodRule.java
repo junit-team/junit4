@@ -24,6 +24,7 @@ import org.junit.runners.model.Statement;
  *   <li>{@link Verifier}: fail test if object state ends up incorrect</li>
  * </ul>
  */
+@Deprecated
 public interface MethodRule {
 	/**
 	 * Modifies the method-running {@link Statement} to implement an additional

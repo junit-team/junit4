@@ -109,7 +109,7 @@ public class VerifierRuleTest {
 		@Rule
 		public Verifier collector= new Verifier() {
 			@Override
-			public void verify() {
+			protected void verify() {
 				sequence+= "verify ";
 			}
 		};

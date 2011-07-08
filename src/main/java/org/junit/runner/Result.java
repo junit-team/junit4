@@ -18,7 +18,7 @@ public class Result implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private AtomicInteger fCount = new AtomicInteger();
 	private AtomicInteger fIgnoreCount= new AtomicInteger();
-	private final List<Failure> fFailures= Collections.synchronizedList( new ArrayList<Failure>());
+	private final List<Failure> fFailures= Collections.synchronizedList(new ArrayList<Failure>());
 	private long fRunTime= 0;
 	private long fStartTime;
 

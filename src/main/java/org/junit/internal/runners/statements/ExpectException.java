@@ -3,6 +3,7 @@
  */
 package org.junit.internal.runners.statements;
 
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.runners.model.Statement;
 
 public class ExpectException extends Statement {
@@ -20,6 +21,8 @@ public class ExpectException extends Statement {
 		try {
 			fNext.evaluate();
 			complete = true;
+		} catch (AssumptionViolatedException e) {
+			throw e;
 		} catch (Throwable e) {
 			if (!fExpected.isAssignableFrom(e.getClass())) {
 				String message= "Unexpected exception, expected<"

@@ -62,6 +62,11 @@ import org.junit.runners.model.RunnerBuilder;
  * </pre>
  */
 public class Categories extends Suite {
+	// the way filters are implemented makes this unnecessarily complicated,
+	// buggy, and difficult to specify.  A new way of handling filters could
+	// someday enable a better new implementation.
+        // https://github.com/KentBeck/junit/issues/issue/172
+	
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface IncludeCategory {
 		public Class<?> value();
@@ -123,11 +128,15 @@ public class Categories extends Suite {
 		}
 
 		private Description parentDescription(Description description) {
-			// TODO: how heavy are we cringing?
-			return Description.createSuiteDescription(description.getTestClass());
+			Class<?> testClass= description.getTestClass();
+			if (testClass == null)
+				return null;
+			return Description.createSuiteDescription(testClass);
 		}
 
 		private Class<?>[] directCategories(Description description) {
+			if (description == null)
+				return new Class<?>[0];
 			Category annotation= description.getAnnotation(Category.class);
 			if (annotation == null)
 				return new Class<?>[0];
@@ -144,6 +153,7 @@ public class Categories extends Suite {
 		} catch (NoTestsRemainException e) {
 			throw new InitializationError(e);
 		}
+		assertNoCategorizedDescendentsOfUncategorizeableParents(getDescription());
 	}
 
 	private Class<?> getIncludedCategory(Class<?> klass) {
@@ -154,5 +164,29 @@ public class Categories extends Suite {
 	private Class<?> getExcludedCategory(Class<?> klass) {
 		ExcludeCategory annotation= klass.getAnnotation(ExcludeCategory.class);
 		return annotation == null ? null : annotation.value();
+	}
+
+	private void assertNoCategorizedDescendentsOfUncategorizeableParents(Description description) throws InitializationError {
+		if (!canHaveCategorizedChildren(description))
+			assertNoDescendantsHaveCategoryAnnotations(description);
+		for (Description each : description.getChildren())
+			assertNoCategorizedDescendentsOfUncategorizeableParents(each);
+	}
+	
+	private void assertNoDescendantsHaveCategoryAnnotations(Description description) throws InitializationError {			
+		for (Description each : description.getChildren()) {
+			if (each.getAnnotation(Category.class) != null)
+				throw new InitializationError("Category annotations on Parameterized classes are not supported on individual methods.");
+			assertNoDescendantsHaveCategoryAnnotations(each);
+		}
+	}
+
+	// If children have names like [0], our current magical category code can't determine their
+	// parentage.
+	private static boolean canHaveCategorizedChildren(Description description) {
+		for (Description each : description.getChildren())
+			if (each.getTestClass() == null)
+				return false;
+		return true;
 	}
 }

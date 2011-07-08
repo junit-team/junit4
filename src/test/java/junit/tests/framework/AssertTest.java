@@ -17,10 +17,34 @@ public class AssertTest extends TestCase {
 	 */
 	public void testFail() {
 		// Also, we are testing fail, so we can't rely on fail() working.
-		// We have to throw the exception manually, .
+		// We have to throw the exception manually.
 		try {
 			fail();
 		} catch (AssertionFailedError e) {
+			return;
+		}
+		throw new AssertionFailedError();
+	}
+
+	public void testAssertionFailedErrorToStringWithNoMessage() {
+		// Also, we are testing fail, so we can't rely on fail() working.
+		// We have to throw the exception manually.
+		try {
+			fail();
+		} catch (AssertionFailedError e) {
+			assertEquals("junit.framework.AssertionFailedError", e.toString());
+			return;
+		}
+		throw new AssertionFailedError();
+	}
+
+	public void testAssertionFailedErrorToStringWithMessage() {
+		// Also, we are testing fail, so we can't rely on fail() working.
+		// We have to throw the exception manually.
+		try {
+			fail("woops!");
+		} catch (AssertionFailedError e) {
+			assertEquals("junit.framework.AssertionFailedError: woops!", e.toString());
 			return;
 		}
 		throw new AssertionFailedError();

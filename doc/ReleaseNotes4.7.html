@@ -204,42 +204,11 @@ public void throwsNullPointerExceptionWithMessage() {
 <h3>Matchers</h3>
 
 <ul>
-<li><p>Hamcrest 1.2 is now incorporated (http://github.com/KentBeck/junit/issues#issue/1)</p>
-
-<ul>
-<li>The following methods from <code>JUnitMatchers</code> are deprecated, and moved to <code>CoreMatchers</code>:</li>
-<li><code>JUnitMatchers.hasItem</code> is now <code>CoreMatchers.hasItem</code></li>
-<li><code>JUnitMatchers.hasItems</code> is now <code>CoreMatchers.hasItems</code></li>
-<li><p><code>JUnitMatchers.containsString</code> is now <code>CoreMatchers.containsString</code></p></li>
-<li><p>Matchers now have more informative mismatch descriptions.  For example:</p>
-
-<p>@SuppressWarnings("unchecked")
-@Test public void stringIsAnInteger() {
-  assertThat("identifier", "actual", matches(is(Integer.class)));
-  // prints:
-  // Expected: is an instance of java.lang.Integer
-  //      but: \"actual\" is a java.lang.String
-}</p></li>
-<li><p>Some matchers have slightly changed type signatures, especially those created
-by <code>is()</code> and <code>equalTo</code>.  Everything should work, except see <code>BothTest</code> for an
-example of how the <code>both().and()</code> and <code>either().or()</code> constructs may be
-affected.  To essentially disable type-checking for a matcher expression,
-use <code>JUnitMatchers.matches()</code> (see below)</p></li>
-<li><p><code>JUnitMatchers.isOneOf(...)</code> is sugar for the situation where you want to specify
-a finite list of concrete objects that can match.  For example:</p>
-
-<p>assertThat(3, isOneOf(3, 4));</p></li>
-<li><p><code>JUnitMatchers.matches()</code> disables type-checking of a matcher entirely.</p>
-
-<p>Goofy example:</p>
-
-<p>assertThat(3, matches(containsString("a")));</p>
-
-<p>Real example:</p>
-
-<p>assertThat(3, either(matches(is(String.class))).or(
-                     matches(is(Integer.class))));</p></li>
-</ul></li>
+<li>Due to typing incompatibilities, JUnit is still including the 1.1 release
+of hamcrest.  This is not a change from 4.6, but is a change from
+pre-beta releases of 4.7.  Due to this incompatibility, tests using
+Hamcrest 1.2 must still use the MatcherAssert.assertThat method from 
+Hamcrest, not Assert.assertThat from JUnit.</li>
 </ul>
 
 <h3>Docs</h3>
