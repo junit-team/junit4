@@ -123,8 +123,10 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
 	 * Returns true iff this is a no-arg method that returns a value assignable
 	 * to {@code type}
 	 *
-	 * @deprecated To be supplanted by a forthcoming
-	 * ParameterSignature#canAcceptResultOf(FrameworkMethod)
+	 * @deprecated This is used only by the Theories runner, and does not
+	 * use all the generic type info that it ought to. It will be replaced
+	 * with a forthcoming ParameterSignature#canAcceptResultOf(FrameworkMethod)
+	 * once Theories moves to junit-contrib.
 	 */
 	@Deprecated
 	public boolean producesType(Type type) {
