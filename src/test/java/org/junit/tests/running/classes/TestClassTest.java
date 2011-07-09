@@ -7,6 +7,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -103,5 +104,21 @@ public class TestClassTest {
 		expectedException.expectMessage(equalTo("The TestRule 'x' is not public."));
 		TestClass testClass = new TestClass(TestWithProtectedTestRule.class);
 		testClass.getAnnotatedFieldValues(testClass, Rule.class, TestRule.class);
+	}
+
+	@Test
+	public void shouldThrowExcpetionWithHelpfulMessageForNonStaticFields() {
+		expectedException.expectMessage(equalTo("The TestRule 'x' is not static."));
+		TestClass testClass = new TestClass(TestWithNonStaticClassRule.class);
+		testClass.getAnnotatedFieldValues(null, ClassRule.class, TestRule.class);
+	}
+	
+	public static class TestWithNonStaticClassRule {
+		@ClassRule
+		public TestRule x;
+
+		@Test
+		public void test() {
+		}
 	}
 }

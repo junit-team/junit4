@@ -126,7 +126,25 @@ public class ParentRunnerTest {
 	
 	public static class TestWithProtectedClassRule {
 		@ClassRule
-		protected TestRule x;
+		protected static TestRule x;
+
+		@Test
+		public void test() {
+		}
+	}
+
+	@Test
+	public void shouldFailWithHelpfulMessageForNonStaticClassRule() throws Exception {
+		JUnitCore junitCore= new JUnitCore();
+		Request request= Request.aClass(TestWithNonStaticClassRule.class);
+		Result result= junitCore.run(request);
+		assertThat(result.getFailureCount(), is(1));
+		assertThat(result.getFailures().get(0).getMessage(), is(equalTo("The TestRule 'x' is not static.")));
+	}
+
+	public static class TestWithNonStaticClassRule {
+		@ClassRule
+		public TestRule x;
 
 		@Test
 		public void test() {
