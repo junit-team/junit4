@@ -105,4 +105,7 @@
             protected BlockJUnit4ClassRunner#rules method removed from 4.8.2
 
 2011 Jul 06
-     Stefan Birkner: Fixed wrong docomentation of ClassRule (github#254).
+     Stefan Birkner: Fixed wrong documentation of ClassRule (github#254).
+
+2011 Jul 09
+     Stefan Birkner: Throw exception with helpful message for non static fields with @ClassRule annotation (github#257).

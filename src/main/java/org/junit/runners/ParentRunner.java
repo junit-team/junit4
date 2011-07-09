@@ -208,12 +208,16 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	}
 
 	private TestRule getClassRule(final FrameworkField field) {
-		try {
-			return (TestRule) field.get(null);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(
-					"How did getAnnotatedFields return a field we couldn't access?");
-		}
+		if (field.isStatic())
+			try {
+				return (TestRule) field.get(null);
+			} catch (IllegalAccessException e) {
+				throw new RuntimeException(
+						"How did getAnnotatedFields return a field we couldn't access?");
+			}
+		else
+			throw new IllegalArgumentException(
+					"The field '" + field.getName() + "' is not static, but has a @ClassRule annotation.");
 	}
 
 	/**

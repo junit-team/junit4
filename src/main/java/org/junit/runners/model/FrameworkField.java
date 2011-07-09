@@ -2,6 +2,7 @@ package org.junit.runners.model;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 import org.junit.runners.BlockJUnit4ClassRunner;
 
@@ -31,6 +32,21 @@ public class FrameworkField extends FrameworkMember<FrameworkField> {
 	 */
 	public Field getField() {
 		return fField;
+	}
+	
+	/**
+	 * @return the name of the underlying field.
+	 */
+	public String getName() {
+		return fField.getName();
+	}
+
+	/**
+	 * @return {@code true} if the underlying field is static.
+	 */
+	public boolean isStatic() {
+		int modifiers = fField.getModifiers();
+		return Modifier.isStatic(modifiers);
 	}
 
 	/**

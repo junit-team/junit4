@@ -2,12 +2,15 @@ package org.junit.tests.running.classes;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.hamcrest.core.Is.is;
 
 import java.util.List;
 
 import org.hamcrest.Matcher;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.internal.matchers.TypeSafeMatcher;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
@@ -66,6 +69,15 @@ public class ParentRunnerTest {
 		assertEquals(1, result.getRunCount());
 	}
 
+	@Test
+	public void shouldFailForNonStaticClassRule() throws Exception {
+		JUnitCore junitCore= new JUnitCore();
+		Request request= Request.aClass(TestWithNonStaticClassRule.class);
+		Result result= junitCore.run(request);
+		assertThat(result.getFailureCount(), is(1));
+		assertThat(result.getFailures().get(0).getMessage(), is("The field 'rule' is not static, but has a @ClassRule annotation."));
+	}
+
 	private Matcher<List<?>> isEmpty() {
 		return new TypeSafeMatcher<List<?>>() {
 			public void describeTo(org.hamcrest.Description description) {
@@ -108,6 +120,15 @@ public class ParentRunnerTest {
 
 		@Test
 		public void test3() throws Exception {
+		}
+	}
+
+	public static class TestWithNonStaticClassRule {
+		@ClassRule
+		public TemporaryFolder rule = new TemporaryFolder();
+		
+		@Test
+		public void test() throws Exception {
 		}
 	}
 }
