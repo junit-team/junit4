@@ -1,13 +1,17 @@
 package org.junit.tests.running.classes;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import java.util.List;
 
 import org.hamcrest.Matcher;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.internal.matchers.TypeSafeMatcher;
+import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
@@ -108,6 +112,24 @@ public class ParentRunnerTest {
 
 		@Test
 		public void test3() throws Exception {
+		}
+	}
+	
+	@Test
+	public void shouldFailWithHelpfulMessageForProtectedClassRule() throws Exception {
+		JUnitCore junitCore= new JUnitCore();
+		Request request= Request.aClass(TestWithProtectedClassRule.class);
+		Result result= junitCore.run(request);
+		assertThat(result.getFailureCount(), is(1));
+		assertThat(result.getFailures().get(0).getMessage(), is(equalTo("The TestRule 'x' is not public.")));
+	}
+	
+	public static class TestWithProtectedClassRule {
+		@ClassRule
+		protected TestRule x;
+
+		@Test
+		public void test() {
 		}
 	}
 }

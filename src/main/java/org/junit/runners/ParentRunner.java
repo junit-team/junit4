@@ -27,7 +27,6 @@ import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
-import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.MultipleFailureException;
@@ -201,26 +200,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	 *         each method in the tested class.
 	 */
 	protected List<TestRule> classRules() {
-		List<TestRule> results= new ArrayList<TestRule>();
-		for (FrameworkField field : classRuleFields())
-			results.add(getClassRule(field));
-		return results;
-	}
-
-	private TestRule getClassRule(final FrameworkField field) {
-		try {
-			return (TestRule) field.get(null);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(
-					"How did getAnnotatedFields return a field we couldn't access?");
-		}
-	}
-
-	/**
-	 * @return list of {@link FrameworkField}s annotated with {@link Rule}
-	 */
-	protected List<FrameworkField> classRuleFields() {
-		return fTestClass.getAnnotatedFields(ClassRule.class);
+		return fTestClass.getAnnotatedFieldValues(null, ClassRule.class, TestRule.class);
 	}
 
 	/**
