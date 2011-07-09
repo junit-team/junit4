@@ -1,5 +1,6 @@
 package org.junit.runners.model;
 
+import static java.lang.reflect.Modifier.isPublic;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -138,16 +139,25 @@ public class TestClass {
 	public <T> List<T> getAnnotatedFieldValues(Object test,
 			Class<? extends Annotation> annotationClass, Class<T> valueClass) {
 		List<T> results= new ArrayList<T>();
-		for (FrameworkField each : getAnnotatedFields(annotationClass)) {
+		for (FrameworkField field : getAnnotatedFields(annotationClass)) {
+			assertFieldIsPublic(field);
 			try {
-				Object fieldValue= each.get(test);
+				Object fieldValue= field.get(test);
 				if (valueClass.isInstance(fieldValue))
 					results.add(valueClass.cast(fieldValue));
 			} catch (IllegalAccessException e) {
 				throw new RuntimeException(
-						"How did getFields return a field we couldn't access?");
+						"How did getFields return a field we couldn't access?", e);
 			}
 		}
 		return results;
+	}
+	
+	public void assertFieldIsPublic(FrameworkField frameworkField) {
+		Field field= frameworkField.getField();
+		int modifiers= field.getModifiers();
+		if (!isPublic(modifiers))
+			throw new IllegalArgumentException(
+					"The " + field.getType().getSimpleName() + " '" + field.getName() + "' is not public.");
 	}
 }

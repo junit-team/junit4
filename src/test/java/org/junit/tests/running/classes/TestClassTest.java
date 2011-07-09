@@ -1,5 +1,6 @@
 package org.junit.tests.running.classes;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import org.junit.After;
@@ -9,10 +10,14 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.rules.TestRule;
 import org.junit.runners.model.TestClass;
 
 public class TestClassTest {
+	@Rule
+	public ExpectedException expectedException = ExpectedException.none();
+
 	public static class TwoConstructors {
 		public TwoConstructors() {
 		}
@@ -78,9 +83,25 @@ public class TestClassTest {
 		public TestRule x;
 	}
 
+	public static class TestWithProtectedTestRule {
+		@Rule
+		protected TestRule x;
+		
+		@Test
+		public void test() {
+		}
+	}
+
 	@Test
 	public void fieldsOnSubclassesShadowSuperclasses() {
 		assertThat(new TestClass(SubclassWithField.class).getAnnotatedFields(
 				Rule.class).size(), is(1));
+	}
+
+	@Test
+	public void shouldThrowExcpetionWithHelpfulMessageForProtectedFields() {
+		expectedException.expectMessage(equalTo("The TestRule 'x' is not public."));
+		TestClass testClass = new TestClass(TestWithProtectedTestRule.class);
+		testClass.getAnnotatedFieldValues(testClass, Rule.class, TestRule.class);
 	}
 }
