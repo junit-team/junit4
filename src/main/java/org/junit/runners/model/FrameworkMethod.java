@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.List;
 
 import org.junit.internal.runners.model.ReflectiveCallable;
@@ -90,6 +91,10 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
 			errors.add(new Exception("Method " + fMethod.getName() + "() should be void"));
 	}
 
+	public void validateNoTypeParametersOnArgs(List<Throwable> errors) {
+		new NoGenericTypeParametersValidator(fMethod).validate(errors);
+	}
+
 	@Override
 	public boolean isShadowedBy(FrameworkMethod other) {
 		if (!other.getName().equals(getName()))
@@ -117,10 +122,16 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
 	/**
 	 * Returns true iff this is a no-arg method that returns a value assignable
 	 * to {@code type}
+	 *
+	 * @deprecated This is used only by the Theories runner, and does not
+	 * use all the generic type info that it ought to. It will be replaced
+	 * with a forthcoming ParameterSignature#canAcceptResultOf(FrameworkMethod)
+	 * once Theories moves to junit-contrib.
 	 */
-	public boolean producesType(Class<?> type) {
-		return getParameterTypes().length == 0
-				&& type.isAssignableFrom(fMethod.getReturnType());
+	@Deprecated
+	public boolean producesType(Type type) {
+		return getParameterTypes().length == 0 && type instanceof Class<?>
+		    && ((Class<?>) type).isAssignableFrom(fMethod.getReturnType());
 	}
 
 	private Class<?>[] getParameterTypes() {
