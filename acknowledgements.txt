@@ -59,7 +59,7 @@
                         result counting
 2010 Feb 08
     Paul Holser: Submitted additional test for TestName rule.
-    
+
 2010 May 03
     jonas22@github: Found bug (github#98) with assumptions and expected exceptions.
 
@@ -106,3 +106,7 @@
 
 2011 Jul 06
      Stefan Birkner: Fixed wrong docomentation of ClassRule (github#254).
+
+2011 July 6
+	Rob Dawson: Submitted a patch that makes Results serlializable.
+
