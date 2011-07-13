@@ -45,8 +45,8 @@ public enum RuleFieldValidator {
 	 */
 	public void validate(TestClass target, List<Throwable> errors) {
 		List<FrameworkField> fields= target.getAnnotatedFields(fAnnotation);
-		for (FrameworkField eachField : fields)
-			validateField(eachField, errors);
+		for (FrameworkField each : fields)
+			validateField(each, errors);
 	}
 
 	private void validateField(FrameworkField field, List<Throwable> errors) {

@@ -138,9 +138,9 @@ public class TestClass {
 	public <T> List<T> getAnnotatedFieldValues(Object test,
 			Class<? extends Annotation> annotationClass, Class<T> valueClass) {
 		List<T> results= new ArrayList<T>();
-		for (FrameworkField eachField : getAnnotatedFields(annotationClass)) {
+		for (FrameworkField each : getAnnotatedFields(annotationClass)) {
 			try {
-				Object fieldValue= eachField.get(test);
+				Object fieldValue= each.get(test);
 				if (valueClass.isInstance(fieldValue))
 					results.add(valueClass.cast(fieldValue));
 			} catch (IllegalAccessException e) {
