@@ -27,14 +27,14 @@ public enum RuleFieldValidator {
 	 */
 	RULE_VALIDATOR(Rule.class, false);
 
-	private final Class<? extends Annotation> annotation;
+	private final Class<? extends Annotation> fAnnotation;
 
-	private final boolean onlyStaticFields;
+	private final boolean fOnlyStaticFields;
 
 	private RuleFieldValidator(Class<? extends Annotation> annotation,
 			boolean onlyStaticFields) {
-		this.annotation= annotation;
-		this.onlyStaticFields= onlyStaticFields;
+		this.fAnnotation= annotation;
+		this.fOnlyStaticFields= onlyStaticFields;
 	}
 
 	/**
@@ -44,7 +44,7 @@ public enum RuleFieldValidator {
 	 * @param errors the list of errors.
 	 */
 	public void validate(TestClass target, List<Throwable> errors) {
-		List<FrameworkField> fields= target.getAnnotatedFields(annotation);
+		List<FrameworkField> fields= target.getAnnotatedFields(fAnnotation);
 		for (FrameworkField eachField : fields)
 			validateField(eachField, errors);
 	}
@@ -58,7 +58,7 @@ public enum RuleFieldValidator {
 
 	private void optionallyValidateStatic(FrameworkField field,
 			List<Throwable> errors) {
-		if (onlyStaticFields && !field.isStatic())
+		if (fOnlyStaticFields && !field.isStatic())
 			addError(errors, field, "must be static.");
 	}
 
