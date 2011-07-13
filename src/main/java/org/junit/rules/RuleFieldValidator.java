@@ -8,9 +8,24 @@ import org.junit.Rule;
 import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.TestClass;
 
+/**
+ * A RuleFieldValidator validates the rule fields of a
+ * {@link org.junit.runners.model.TestClass}. All reasons for rejecting the
+ * {@code TestClass} are written to a list of errors.
+ * 
+ * There're two slightly different validators. The {@link #CLASS_RULE_VALIDATOR}
+ * validates fields with a {@link ClassRule} annotation and the
+ * {@link #RULE_VALIDATOR} validates fields with a {@link Rule} annotation.
+ */
 public enum RuleFieldValidator {
-	CLASS_RULE_VALIDATOR(ClassRule.class, true), RULE_VALIDATOR(Rule.class,
-			false);
+	/**
+	 * Validates fields with a {@link ClassRule} annotation.
+	 */
+	CLASS_RULE_VALIDATOR(ClassRule.class, true),
+	/**
+	 * Validates fields with a {@link Rule} annotation.
+	 */
+	RULE_VALIDATOR(Rule.class, false);
 
 	private final Class<? extends Annotation> annotation;
 
@@ -22,6 +37,12 @@ public enum RuleFieldValidator {
 		this.onlyStaticFields= onlyStaticFields;
 	}
 
+	/**
+	 * Validate the {@link org.junit.runners.model.TestClass} and adds reasons
+	 * for rejecting the class to a list of errors.
+	 * @param target the {@code TestClass} to validate.
+	 * @param errors the list of errors.
+	 */
 	public void validate(TestClass target, List<Throwable> errors) {
 		List<FrameworkField> fields= target.getAnnotatedFields(annotation);
 		for (FrameworkField eachField : fields)
