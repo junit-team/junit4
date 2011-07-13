@@ -1,5 +1,7 @@
 package org.junit.runners;
 
+import static org.junit.rules.RuleFieldValidator.CLASS_RULE_VALIDATOR;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -108,6 +110,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	protected void collectInitializationErrors(List<Throwable> errors) {
 		validatePublicVoidNoArgMethods(BeforeClass.class, true, errors);
 		validatePublicVoidNoArgMethods(AfterClass.class, true, errors);
+		validateClassRules(errors);
 	}
 
 	/**
@@ -126,6 +129,10 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
 		for (FrameworkMethod eachTestMethod : methods)
 			eachTestMethod.validatePublicVoidNoArg(isStatic, errors);
+	}
+
+	private void validateClassRules(List<Throwable> errors) {
+		CLASS_RULE_VALIDATOR.validate(getTestClass(), errors);
 	}
 
 	/** 
@@ -319,10 +326,6 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 			sortChild(each);
 		Collections.sort(getFilteredChildren(), comparator());
 	}
-	
-	//
-	// Private implementation
-	// 
 
 	private void validate() throws InitializationError {
 		List<Throwable> errors= new ArrayList<Throwable>();

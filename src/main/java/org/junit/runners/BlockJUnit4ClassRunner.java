@@ -1,7 +1,7 @@
 package org.junit.runners;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import static org.junit.rules.RuleFieldValidator.RULE_VALIDATOR;
+
 import java.util.List;
 
 import org.junit.After;
@@ -17,11 +17,11 @@ import org.junit.internal.runners.statements.FailOnTimeout;
 import org.junit.internal.runners.statements.InvokeMethod;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
+import org.junit.rules.MethodRule;
 import org.junit.rules.RunRules;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.MultipleFailureException;
@@ -46,7 +46,6 @@ import org.junit.runners.model.Statement;
  * </ul>
  */
 public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
-
 	/**
 	 * Creates a BlockJUnit4ClassRunner to run {@code klass}
 	 * 
@@ -159,28 +158,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	}
 
 	private void validateFields(List<Throwable> errors) {
-		for (FrameworkField each : getTestClass()
-				.getAnnotatedFields(Rule.class))
-			validateRuleField(each.getField(), errors);
-	}
-
-	private void validateRuleField(Field field, List<Throwable> errors) {
-		Class<?> type= field.getType();
-		if (!isMethodRule(type) && !isTestRule(type))
-			errors.add(new Exception("Field " + field.getName()
-					+ " must implement MethodRule or TestRule"));
-		if (!Modifier.isPublic(field.getModifiers()))
-			errors.add(new Exception("Field " + field.getName()
-					+ " must be public"));
-	}
-
-	private boolean isTestRule(Class<?> type) {
-		return TestRule.class.isAssignableFrom(type);
-	}
-
-	@SuppressWarnings("deprecation")
-	private boolean isMethodRule(Class<?> type) {
-		return org.junit.rules.MethodRule.class.isAssignableFrom(type);
+		RULE_VALIDATOR.validate(getTestClass(), errors);
 	}
 
 	/**

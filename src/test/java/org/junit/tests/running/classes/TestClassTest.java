@@ -1,13 +1,11 @@
 package org.junit.tests.running.classes;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -84,41 +82,9 @@ public class TestClassTest {
 		public TestRule x;
 	}
 
-	public static class TestWithProtectedTestRule {
-		@Rule
-		protected TestRule x;
-		
-		@Test
-		public void test() {
-		}
-	}
-
 	@Test
 	public void fieldsOnSubclassesShadowSuperclasses() {
 		assertThat(new TestClass(SubclassWithField.class).getAnnotatedFields(
 				Rule.class).size(), is(1));
-	}
-
-	@Test
-	public void shouldThrowExcpetionWithHelpfulMessageForProtectedFields() {
-		expectedException.expectMessage(equalTo("The TestRule 'x' is not public."));
-		TestClass testClass = new TestClass(TestWithProtectedTestRule.class);
-		testClass.getAnnotatedFieldValues(testClass, Rule.class, TestRule.class);
-	}
-
-	@Test
-	public void shouldThrowExcpetionWithHelpfulMessageForNonStaticFields() {
-		expectedException.expectMessage(equalTo("The TestRule 'x' is not static."));
-		TestClass testClass = new TestClass(TestWithNonStaticClassRule.class);
-		testClass.getAnnotatedFieldValues(null, ClassRule.class, TestRule.class);
-	}
-	
-	public static class TestWithNonStaticClassRule {
-		@ClassRule
-		public TestRule x;
-
-		@Test
-		public void test() {
-		}
 	}
 }

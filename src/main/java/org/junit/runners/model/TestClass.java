@@ -1,8 +1,5 @@
 package org.junit.runners.model;
 
-import static java.lang.reflect.Modifier.isPublic;
-import static java.lang.reflect.Modifier.isStatic;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -140,15 +137,10 @@ public class TestClass {
 
 	public <T> List<T> getAnnotatedFieldValues(Object test,
 			Class<? extends Annotation> annotationClass, Class<T> valueClass) {
-		boolean fieldsMustBeStatic= test == null;
 		List<T> results= new ArrayList<T>();
-		for (FrameworkField field : getAnnotatedFields(annotationClass)) {
-			assertFieldIsPublic(field);
-			if (fieldsMustBeStatic) {
-				assertFieldIsStatic(field);
-			}
+		for (FrameworkField eachField : getAnnotatedFields(annotationClass)) {
 			try {
-				Object fieldValue= field.get(test);
+				Object fieldValue= eachField.get(test);
 				if (valueClass.isInstance(fieldValue))
 					results.add(valueClass.cast(fieldValue));
 			} catch (IllegalAccessException e) {
@@ -157,21 +149,5 @@ public class TestClass {
 			}
 		}
 		return results;
-	}
-	
-	private void assertFieldIsPublic(FrameworkField frameworkField) {
-		Field field= frameworkField.getField();
-		int modifiers= field.getModifiers();
-		if (!isPublic(modifiers))
-			throw new IllegalArgumentException(
-					"The " + field.getType().getSimpleName() + " '" + field.getName() + "' is not public.");
-	}
-	
-	private void assertFieldIsStatic(FrameworkField frameworkField) {
-		Field field= frameworkField.getField();
-		int modifiers= field.getModifiers();
-		if (!isStatic(modifiers))
-			throw new IllegalArgumentException(
-					"The " + field.getType().getSimpleName() + " '" + field.getName() + "' is not static.");
 	}
 }

@@ -8,10 +8,8 @@ import static org.junit.Assert.assertThat;
 import java.util.List;
 
 import org.hamcrest.Matcher;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.internal.matchers.TypeSafeMatcher;
-import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
@@ -22,6 +20,8 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerScheduler;
+import org.junit.tests.experimental.rules.tests.TestWithNonStaticClassRule;
+import org.junit.tests.experimental.rules.tests.TestWithProtectedClassRule;
 
 public class ParentRunnerTest {
 	public static String log= "";
@@ -114,40 +114,26 @@ public class ParentRunnerTest {
 		public void test3() throws Exception {
 		}
 	}
-	
-	@Test
-	public void shouldFailWithHelpfulMessageForProtectedClassRule() throws Exception {
-		JUnitCore junitCore= new JUnitCore();
-		Request request= Request.aClass(TestWithProtectedClassRule.class);
-		Result result= junitCore.run(request);
-		assertThat(result.getFailureCount(), is(1));
-		assertThat(result.getFailures().get(0).getMessage(), is(equalTo("The TestRule 'x' is not public.")));
-	}
-	
-	public static class TestWithProtectedClassRule {
-		@ClassRule
-		protected static TestRule x;
 
-		@Test
-		public void test() {
-		}
+	@Test
+	public void failWithHelpfulMessageForProtectedClassRule() {
+		assertClassHasFailureMessage(TestWithProtectedClassRule.class,
+				"The TestRule 'temporaryFolder' must be public.");
 	}
 
 	@Test
-	public void shouldFailWithHelpfulMessageForNonStaticClassRule() throws Exception {
-		JUnitCore junitCore= new JUnitCore();
-		Request request= Request.aClass(TestWithNonStaticClassRule.class);
-		Result result= junitCore.run(request);
-		assertThat(result.getFailureCount(), is(1));
-		assertThat(result.getFailures().get(0).getMessage(), is(equalTo("The TestRule 'x' is not static.")));
+	public void failWithHelpfulMessageForNonStaticClassRule() {
+		assertClassHasFailureMessage(TestWithNonStaticClassRule.class,
+				"The TestRule 'temporaryFolder' must be static.");
 	}
 
-	public static class TestWithNonStaticClassRule {
-		@ClassRule
-		public TestRule x;
+	private void assertClassHasFailureMessage(Class<?> klass, String message) {
+		JUnitCore junitCore= new JUnitCore();
+		Request request= Request.aClass(klass);
+		Result result= junitCore.run(request);
+		assertThat(result.getFailureCount(), is(2)); //the second failure is no runnable methods
+		assertThat(result.getFailures().get(0).getMessage(),
+				is(equalTo(message)));
 
-		@Test
-		public void test() {
-		}
 	}
 }
