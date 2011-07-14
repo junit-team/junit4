@@ -13,7 +13,7 @@ import org.junit.runners.model.TestClass;
  * {@link org.junit.runners.model.TestClass}. All reasons for rejecting the
  * {@code TestClass} are written to a list of errors.
  * 
- * There're two slightly different validators. The {@link #CLASS_RULE_VALIDATOR}
+ * There are two slightly different validators. The {@link #CLASS_RULE_VALIDATOR}
  * validates fields with a {@link ClassRule} annotation and the
  * {@link #RULE_VALIDATOR} validates fields with a {@link Rule} annotation.
  */
@@ -52,7 +52,6 @@ public enum RuleFieldValidator {
 	private void validateField(FrameworkField field, List<Throwable> errors) {
 		optionallyValidateStatic(field, errors);
 		validatePublic(field, errors);
-		validateNotNull(field, errors);
 		validateTestRuleOrMethodRule(field, errors);
 	}
 
@@ -67,22 +66,8 @@ public enum RuleFieldValidator {
 			addError(errors, field, "must be public.");
 	}
 
-	private void validateNotNull(FrameworkField field, List<Throwable> errors) {
-		if (field.isStatic() && field.isPublic())
-			try {
-				Object value= field.get(null);
-				if (value == null) {
-					addError(errors, field, "must not be null.");
-				}
-			} catch (IllegalAccessException e) {
-				throw new IllegalArgumentException(field.getName()
-						+ "'s value is not accessible.", e);
-			}
-	}
-
 	private void validateTestRuleOrMethodRule(FrameworkField field,
 			List<Throwable> errors) {
-		// Not tested
 		if (!isMethodRule(field) && !isTestRule(field))
 			addError(errors, field, "must implement MethodRule or TestRule.");
 	}
@@ -98,7 +83,7 @@ public enum RuleFieldValidator {
 
 	private void addError(List<Throwable> errors, FrameworkField field,
 			String suffix) {
-		String message= "The " + field.getType().getSimpleName() + " '"
+		String message= "The @" + fAnnotation.getSimpleName() + " '"
 				+ field.getName() + "' " + suffix;
 		errors.add(new Exception(message));
 	}

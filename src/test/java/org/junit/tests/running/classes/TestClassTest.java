@@ -9,14 +9,10 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.rules.TestRule;
 import org.junit.runners.model.TestClass;
 
 public class TestClassTest {
-	@Rule
-	public ExpectedException expectedException = ExpectedException.none();
-
 	public static class TwoConstructors {
 		public TwoConstructors() {
 		}

@@ -20,8 +20,8 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerScheduler;
-import org.junit.tests.experimental.rules.tests.TestWithNonStaticClassRule;
-import org.junit.tests.experimental.rules.tests.TestWithProtectedClassRule;
+import org.junit.tests.experimental.rules.RuleFieldValidatorTest.TestWithNonStaticClassRule;
+import org.junit.tests.experimental.rules.RuleFieldValidatorTest.TestWithProtectedClassRule;
 
 public class ParentRunnerTest {
 	public static String log= "";
@@ -118,13 +118,13 @@ public class ParentRunnerTest {
 	@Test
 	public void failWithHelpfulMessageForProtectedClassRule() {
 		assertClassHasFailureMessage(TestWithProtectedClassRule.class,
-				"The TestRule 'temporaryFolder' must be public.");
+				"The @ClassRule 'temporaryFolder' must be public.");
 	}
 
 	@Test
 	public void failWithHelpfulMessageForNonStaticClassRule() {
 		assertClassHasFailureMessage(TestWithNonStaticClassRule.class,
-				"The TestRule 'temporaryFolder' must be static.");
+				"The @ClassRule 'temporaryFolder' must be static.");
 	}
 
 	private void assertClassHasFailureMessage(Class<?> klass, String message) {

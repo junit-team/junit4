@@ -33,7 +33,7 @@ public class FrameworkField extends FrameworkMember<FrameworkField> {
 
 	@Override
 	public boolean isShadowedBy(FrameworkField otherMember) {
-		return otherMember.getField().getName().equals(getName());
+		return otherMember.getName().equals(getName());
 	}
 
 	public boolean isStatic() {

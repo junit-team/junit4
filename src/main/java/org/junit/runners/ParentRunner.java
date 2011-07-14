@@ -327,6 +327,10 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 		Collections.sort(getFilteredChildren(), comparator());
 	}
 
+	//
+	// Private implementation
+	// 
+
 	private void validate() throws InitializationError {
 		List<Throwable> errors= new ArrayList<Throwable>();
 		collectInitializationErrors(errors);
