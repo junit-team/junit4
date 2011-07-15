@@ -145,7 +145,7 @@ public class TestClass {
 					results.add(valueClass.cast(fieldValue));
 			} catch (IllegalAccessException e) {
 				throw new RuntimeException(
-						"How did getFields return a field we couldn't access?");
+						"How did getFields return a field we couldn't access?", e);
 			}
 		}
 		return results;

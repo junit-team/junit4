@@ -1,5 +1,7 @@
 package org.junit.tests.running.classes;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -18,6 +20,8 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerScheduler;
+import org.junit.tests.experimental.rules.RuleFieldValidatorTest.TestWithNonStaticClassRule;
+import org.junit.tests.experimental.rules.RuleFieldValidatorTest.TestWithProtectedClassRule;
 
 public class ParentRunnerTest {
 	public static String log= "";
@@ -109,5 +113,27 @@ public class ParentRunnerTest {
 		@Test
 		public void test3() throws Exception {
 		}
+	}
+
+	@Test
+	public void failWithHelpfulMessageForProtectedClassRule() {
+		assertClassHasFailureMessage(TestWithProtectedClassRule.class,
+				"The @ClassRule 'temporaryFolder' must be public.");
+	}
+
+	@Test
+	public void failWithHelpfulMessageForNonStaticClassRule() {
+		assertClassHasFailureMessage(TestWithNonStaticClassRule.class,
+				"The @ClassRule 'temporaryFolder' must be static.");
+	}
+
+	private void assertClassHasFailureMessage(Class<?> klass, String message) {
+		JUnitCore junitCore= new JUnitCore();
+		Request request= Request.aClass(klass);
+		Result result= junitCore.run(request);
+		assertThat(result.getFailureCount(), is(2)); //the second failure is no runnable methods
+		assertThat(result.getFailures().get(0).getMessage(),
+				is(equalTo(message)));
+
 	}
 }
