@@ -1,5 +1,6 @@
 package org.junit.runner;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
@@ -13,7 +14,8 @@ import org.junit.runner.notification.RunListener;
  * tests. Since tests are expected to run correctly, successful tests are only noted in
  * the count of tests that ran.
  */
-public class Result {
+public class Result implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private AtomicInteger fCount = new AtomicInteger();
 	private AtomicInteger fIgnoreCount= new AtomicInteger();
 	private final List<Failure> fFailures= Collections.synchronizedList(new ArrayList<Failure>());
