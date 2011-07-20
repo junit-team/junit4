@@ -10,7 +10,7 @@ public class FailOnTimeout extends Statement {
 
 	private final long fTimeout;
 
-	private boolean fFinished;
+	private boolean fFinished= false;
 
 	private Throwable fThrown= null;
 
@@ -21,7 +21,6 @@ public class FailOnTimeout extends Statement {
 
 	@Override
 	public void evaluate() throws Throwable {
-		fFinished= false;
 		Thread thread= new Thread() {
 			@Override
 			public void run() {
