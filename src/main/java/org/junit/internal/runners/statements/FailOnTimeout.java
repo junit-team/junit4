@@ -6,13 +6,13 @@ package org.junit.internal.runners.statements;
 import org.junit.runners.model.Statement;
 
 public class FailOnTimeout extends Statement {
-	private Statement fNext;
+	private final Statement fNext;
 
 	private final long fTimeout;
 
-	private boolean fFinished= false;
+	private boolean fFinished;
 
-	private Throwable fThrown= null;
+	private Throwable fThrown;
 
 	public FailOnTimeout(Statement next, long timeout) {
 		fNext= next;
@@ -21,6 +21,8 @@ public class FailOnTimeout extends Statement {
 
 	@Override
 	public void evaluate() throws Throwable {
+		fFinished= false;
+		fThrown= null;
 		Thread thread= new Thread() {
 			@Override
 			public void run() {
