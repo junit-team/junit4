@@ -106,3 +106,6 @@
 
 2011 Jul 06
      Stefan Birkner: Fixed wrong docomentation of ClassRule (github#254).
+
+2011 Jul 22
+     Andreas Köhler, Stefan Birkner: Fixed wrong documentation of Parameterized (github#89).
