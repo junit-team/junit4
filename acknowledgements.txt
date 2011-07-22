@@ -112,3 +112,6 @@
 
 2011 Jul 09
      Stefan Birkner: Fixed Rules bugs (github#257, gihub#258, github#260).
+
+2011 Jul 22
+     Andreas Köhler, Stefan Birkner: Fixed wrong documentation of Parameterized (github#89).
