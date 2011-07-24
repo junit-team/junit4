@@ -68,7 +68,12 @@ public class JUnitMatchers {
 	 * </pre>
 	 */
 	public static <T> CombinableMatcher<T> both(Matcher<T> matcher) {
-		return new CombinableMatcher<T>(matcher);
+		return new CombinableMatcher<T>(matcher) {
+			@Override
+			public CombinableMatcher<T> or(Matcher<? extends T> matcher) { 
+				throw new UnsupportedOperationException("both().or() is an invalid combination, use either().or() instead");
+			}
+		};
 	}
 	
 	/**
@@ -78,6 +83,11 @@ public class JUnitMatchers {
 	 * </pre>
 	 */
 	public static <T> CombinableMatcher<T> either(Matcher<T> matcher) {
-		return new CombinableMatcher<T>(matcher);
+		return new CombinableMatcher<T>(matcher) {
+			@Override
+			public CombinableMatcher<T> and(Matcher<? extends T> matcher) {
+				throw new UnsupportedOperationException("either().and() is an invalid combination, use both().and() instead");
+			}
+		};
 	}	
 }

@@ -3,6 +3,7 @@ package org.junit.tests.assertion;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 import static org.junit.matchers.JUnitMatchers.both;
 import static org.junit.matchers.JUnitMatchers.containsString;
@@ -48,6 +49,15 @@ public class BothTest {
 	public void eitherPasses() {
 		assertThat(3, either(is(3)).or(is(4)));
 	}
+	
+	@Test
+	public void eitherWithAndCombinatorIsAnInvalidCombination() {
+		try {
+			either(is(3)).and(is(4));
+			fail("either().and() is and invalid combination.");
+		} catch(UnsupportedOperationException uoe) {}
+	}
+	
 
 	@Theory
 	public <T> void threeAndsWork(Matcher<Integer> first,
@@ -67,5 +77,13 @@ public class BothTest {
 	
 	@Test public void subclassesAreOkInSecondPositionOnly() {
 		assertThat(3, both(is(Integer.class)).and(is(3)));
+	}
+	
+	@Test
+	public void bothWitOrCombinatorIsAnInvalidCombination() {
+		try {
+			both(is(Integer.class)).or(is(3));
+			fail("both().or() is an invaild combination.");
+		} catch (UnsupportedOperationException uoe) {}
 	}
 }
