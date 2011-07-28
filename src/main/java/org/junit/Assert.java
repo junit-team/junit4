@@ -474,7 +474,7 @@ public class Assert {
 
 	/**
 	 * @deprecated Use
-	 *             <code>assertEquals(double expected, double actual, double epsilon)</code>
+	 *             <code>assertEquals(double expected, double actual, double delta)</code>
 	 *             instead
 	 */
 	@Deprecated
@@ -484,7 +484,7 @@ public class Assert {
 
 	/**
 	 * @deprecated Use
-	 *             <code>assertEquals(String message, double expected, double actual, double epsilon)</code>
+	 *             <code>assertEquals(String message, double expected, double actual, double delta)</code>
 	 *             instead
 	 */
 	@Deprecated
