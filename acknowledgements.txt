@@ -109,3 +109,6 @@
 
 2011 Jul 22
      Andreas Köhler, Stefan Birkner: Fixed wrong documentation of Parameterized (github#89).
+
+2011 Jul 28
+     electrickery, Stefan Birkner: Fixed typo in JavaDoc (github#134).
