@@ -48,7 +48,7 @@ public class BothTest {
 	public void eitherPasses() {
 		assertThat(3, either(is(3)).or(is(4)));
 	}
-	
+
 	@Theory
 	public <T> void threeAndsWork(Matcher<Integer> first,
 			Matcher<Integer> second, Matcher<Integer> third, int value) {
