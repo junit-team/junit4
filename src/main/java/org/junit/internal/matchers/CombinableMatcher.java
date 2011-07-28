@@ -6,6 +6,11 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
+/**
+ * @deprecated split into {@link BothMatcher} and {@link EitherMatcher} to 
+ * provide a better static checking and prevent invalid operations like both().or() 
+ * or either().and().
+ */
 @Deprecated
 public class CombinableMatcher<T> extends BaseMatcher<T> {
 

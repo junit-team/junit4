@@ -68,5 +68,4 @@ public class BothTest {
 	@Test public void subclassesAreOkInSecondPositionOnly() {
 		assertThat(3, both(is(Integer.class)).and(is(3)));
 	}
-	
 }
