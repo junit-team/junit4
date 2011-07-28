@@ -1,8 +1,9 @@
 package org.junit.matchers;
 
 import org.hamcrest.Matcher;
-import org.junit.internal.matchers.CombinableMatcher;
+import org.junit.internal.matchers.BothMatcher;
 import org.junit.internal.matchers.Each;
+import org.junit.internal.matchers.EitherMatcher;
 import org.junit.internal.matchers.IsCollectionContaining;
 import org.junit.internal.matchers.StringContains;
 
@@ -67,13 +68,8 @@ public class JUnitMatchers {
 	 *   assertThat(string, both(containsString("a")).and(containsString("b")));
 	 * </pre>
 	 */
-	public static <T> CombinableMatcher<T> both(Matcher<T> matcher) {
-		return new CombinableMatcher<T>(matcher) {
-			@Override
-			public CombinableMatcher<T> or(Matcher<? extends T> matcher) { 
-				throw new UnsupportedOperationException("both().or() is an invalid combination, use either().or() instead");
-			}
-		};
+	public static <T> BothMatcher<T> both(Matcher<T> matcher) {
+		return new BothMatcher<T>(matcher);
 	}
 	
 	/**
@@ -82,12 +78,7 @@ public class JUnitMatchers {
 	 *   assertThat(string, either(containsString("a")).or(containsString("b")));
 	 * </pre>
 	 */
-	public static <T> CombinableMatcher<T> either(Matcher<T> matcher) {
-		return new CombinableMatcher<T>(matcher) {
-			@Override
-			public CombinableMatcher<T> and(Matcher<? extends T> matcher) {
-				throw new UnsupportedOperationException("either().and() is an invalid combination, use both().and() instead");
-			}
-		};
+	public static <T> EitherMatcher<T> either(Matcher<T> matcher) {
+		return new EitherMatcher<T>(matcher);
 	}	
 }
