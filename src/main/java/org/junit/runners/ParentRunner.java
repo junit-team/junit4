@@ -1,6 +1,6 @@
 package org.junit.runners;
 
-import static org.junit.rules.RuleFieldValidator.CLASS_RULE_VALIDATOR;
+import static org.junit.internal.runners.rules.RuleFieldValidator.CLASS_RULE_VALIDATOR;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

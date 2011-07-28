@@ -1,10 +1,12 @@
-package org.junit.rules;
+package org.junit.internal.runners.rules;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
 
 import org.junit.ClassRule;
 import org.junit.Rule;
+import org.junit.rules.MethodRule;
+import org.junit.rules.TestRule;
 import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.TestClass;
 

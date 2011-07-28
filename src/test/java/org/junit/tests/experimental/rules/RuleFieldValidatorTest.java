@@ -1,8 +1,8 @@
 package org.junit.tests.experimental.rules;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.rules.RuleFieldValidator.CLASS_RULE_VALIDATOR;
-import static org.junit.rules.RuleFieldValidator.RULE_VALIDATOR;
+import static org.junit.internal.runners.rules.RuleFieldValidator.CLASS_RULE_VALIDATOR;
+import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_VALIDATOR;
 
 import java.util.ArrayList;
 import java.util.List;

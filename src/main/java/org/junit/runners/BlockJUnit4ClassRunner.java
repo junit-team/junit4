@@ -1,6 +1,6 @@
 package org.junit.runners;
 
-import static org.junit.rules.RuleFieldValidator.RULE_VALIDATOR;
+import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_VALIDATOR;
 
 import java.util.List;
 
