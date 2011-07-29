@@ -6,8 +6,8 @@
   <property name="src" value="src/main/java" />
   <property name="target" location="target" />
   <property name="bin" location="${target}/main" />
-  <property name="version-base" value="4.9" />
-  <property name="version-status" value="b3" />
+  <property name="version-base" value="4.10" />
+  <property name="version-status" value="rc" />
   <property name="version" value="${version-base}${version-status}" />
   <property name="dist" value="junit${version}" />
   <property name="versionfile" value="${src}/junit/runner/Version.java" />
