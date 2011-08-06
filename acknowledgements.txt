@@ -112,3 +112,6 @@
 
 2011 Jul 28
      electrickery, Stefan Birkner: Fixed typo in JavaDoc (github#134).
+
+2011 Aug 7
+	Esko Luontola: Fixed TemporaryFolder creating files in the current working directory (github#278).

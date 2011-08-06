@@ -51,7 +51,7 @@ public class TemporaryFolder extends ExternalResource {
 	 * Returns a new fresh file with the given name under the temporary folder.
 	 */
 	public File newFile(String fileName) throws IOException {
-		File file= new File(folder, fileName);
+		File file= new File(getRoot(), fileName);
 		file.createNewFile();
 		return file;
 	}
@@ -60,7 +60,7 @@ public class TemporaryFolder extends ExternalResource {
 	 * Returns a new fresh folder with the given name under the temporary folder.
 	 */
 	public File newFolder(String folderName) {
-		File file= new File(folder, folderName);
+		File file= new File(getRoot(), folderName);
 		file.mkdir();
 		return file;
 	}
@@ -69,12 +69,15 @@ public class TemporaryFolder extends ExternalResource {
 	 * @return the location of this temporary folder.
 	 */
 	public File getRoot() {
+		if (folder == null) {
+			throw new IllegalStateException("the temporary folder has not yet been created");
+		}
 		return folder;
 	}
 
 	/**
 	 * Delete all files and folders under the temporary folder.
-	 * Usually not called directly, since it is automatically applied 
+	 * Usually not called directly, since it is automatically applied
 	 * by the {@link Rule}
 	 */
 	public void delete() {
