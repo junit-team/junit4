@@ -4,10 +4,12 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
@@ -483,4 +485,60 @@ public class AssertionTest {
 		final Integer integer = Integer.valueOf("1");
 		assertEquals(bigDecimal, integer);
 	}	
+	
+	@Test(expected=AssertionError.class)
+	public void sameObjectIsNotEqual() {
+		Object o = new Object();
+		assertNotEquals(o, o);
+	}
+	
+	@Test
+	public void objectsWithDiferentReferencesAreNotEqual() {
+		assertNotEquals(new Object(), new Object());
+	}
+	
+	@Test
+	public void assertNotEqualsIncludesCorrectMessage() {
+		Integer value1 = new Integer(1);
+		Integer value2 = new Integer(1);
+		String message = "The values should be different";
+		
+		try {
+			assertNotEquals(message, value1, value2);
+			fail();
+		} catch (AssertionError e) {
+			assertEquals(message + ". Actual: " + value1, e.getMessage());
+		}
+	}
+	
+	@Test
+	public void assertNotEqualsIncludesTheValueBeingTested() {
+		Integer value1 = new Integer(1);
+		Integer value2 = new Integer(1);
+		
+		try {
+			assertNotEquals(value1, value2);
+			fail();
+		} catch (AssertionError e) {
+			assertTrue(e.getMessage().contains(value1.toString()));
+		}
+	}
+	
+	@Test
+	public void assertNotEqualsWorksWithPrimitiveTypes() {
+		assertNotEquals(1L, 2L);
+		assertNotEquals("The values should be different", 1L, 2L);
+		assertNotEquals(1.0, 2.0, 0);
+		assertNotEquals("The values should be different", 1.0, 2.0, 0);
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertNotEqualsConsidersDeltaCorrectly() {
+		assertNotEquals(1.0, 0.9, 0.1);
+	}
+	
+	@Test(expected=AssertionError.class)
+	public void assertNotEqualsIgnoresDeltaOnNaN() {
+		assertNotEquals(Double.NaN, Double.NaN, 1);
+	}
 }
