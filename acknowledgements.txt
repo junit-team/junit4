@@ -110,3 +110,6 @@
 
 2011 July 16
 	Rob Dawson: Submitted a patch that makes Results serlializable.
+
+2011 Aug 7
+	Esko Luontola: Fixed TemporaryFolder creating files in the current working directory (github#278).
