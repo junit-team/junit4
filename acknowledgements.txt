@@ -114,6 +114,9 @@
 2011 July 16
 	Rob Dawson: Submitted a patch that makes Results serlializable.
 
+2011 Jul 20
+     Asaf Ary, Stefan Birkner: Fixed FailOnTimeout class (github#265).
+
 2011 Jul 22
      Andreas Köhler, Stefan Birkner: Fixed wrong documentation of Parameterized (github#89).
 
