@@ -52,7 +52,7 @@ import java.lang.annotation.Target;
  * }
  * </pre>
  * 
- * For more information and more examples, see {@link TestRule}. 
+ * For more information and more examples, see {@link org.junit.rules.TestRule}. 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})

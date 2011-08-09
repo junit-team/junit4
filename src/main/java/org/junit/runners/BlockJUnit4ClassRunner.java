@@ -365,7 +365,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	 *            the test case instance
 	 * @return a list of MethodRules that should be applied when executing this
 	 *         test
-	 * @deprecated {@link MethodRule} is a deprecated interface. Port to
+	 * @deprecated {@link org.junit.rules.MethodRule} is a deprecated interface. Port to
 	 *             {@link TestRule} and
 	 *             {@link BlockJUnit4ClassRunner#getTestRules(Object)}
 	 */
