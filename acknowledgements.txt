@@ -104,12 +104,24 @@
      Samuel Le Berrigaud (sleberrigaud@github): Report for GH-248:
             protected BlockJUnit4ClassRunner#rules method removed from 4.8.2
 
+2011 Jul 06
+     Stefan Birkner: Fixed wrong docomentation of ClassRule (github#254).
+
 2011 Jul 8
      Paul Holser (pholser@alumni.rice.edu): Beginnings of fix for GH-64:
             Theories doesn't honor parameterized types
 
 2011 July 16
 	Rob Dawson: Submitted a patch that makes Results serlializable.
+
+2011 Jul 20
+     Asaf Ary, Stefan Birkner: Fixed FailOnTimeout class (github#265).
+
+2011 Jul 22
+     Andreas Köhler, Stefan Birkner: Fixed wrong documentation of Parameterized (github#89).
+
+2011 Jul 28
+     electrickery, Stefan Birkner: Fixed typo in JavaDoc (github#134).
 
 2011 Aug 7
 	Esko Luontola: Fixed TemporaryFolder creating files in the current working directory (github#278).
