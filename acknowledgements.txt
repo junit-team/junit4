@@ -104,5 +104,5 @@
      Samuel Le Berrigaud (sleberrigaud@github): Report for GH-248:
             protected BlockJUnit4ClassRunner#rules method removed from 4.8.2
 
-2011 Ago 10
-     rodolfoliviero@github and JoseRibeiro@github: feature to create recursively temp folders
+2011 Aug 10
+     rodolfoliviero@github and JoseRibeiro@github: feature to create recursive temporary folders.
