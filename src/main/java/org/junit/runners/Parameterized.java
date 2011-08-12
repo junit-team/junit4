@@ -128,8 +128,8 @@ public class Parameterized extends Suite {
 		super(klass, Collections.<Runner>emptyList());
 		List<Object[]> parametersList= getParametersList(getTestClass());
 		for (int i= 0; i < parametersList.size(); i++)
-			runners.add(new TestClassRunnerForParameters(getTestClass().getJavaClass(),
-					parametersList, i));
+			addTestClassRunnerForParameters(getTestClass(), parametersList, i);
+
 	}
 
 	@Override
@@ -142,6 +142,13 @@ public class Parameterized extends Suite {
 			throws Throwable {
 		return (List<Object[]>) getParametersMethod(klass).invokeExplosively(
 				null);
+	}
+
+	protected void addTestClassRunnerForParameters (
+			TestClass testClass, List<Object[]> parametersList, int i)
+			throws Throwable {
+		runners.add(new TestClassRunnerForParameters(getTestClass().getJavaClass(),
+				parametersList, i));
 	}
 
 	protected FrameworkMethod getParametersMethod(TestClass testClass)
