@@ -125,3 +125,6 @@
 
 2011 Aug 7
 	Esko Luontola: Fixed TemporaryFolder creating files in the current working directory (github#278).
+
+2011 Aug 12
+	Esko Luontola: Fixed syntax error in Parameterized's usage example (github#285).
