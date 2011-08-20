@@ -297,6 +297,15 @@ public class AssertionTest {
 		assertEquals(1.0, 1.1);
 	}
 	
+	@Test
+	 public void floatsNotDoublesInArrays()
+	{
+		float delta = 4.444f;
+		float[] f1 = new float[] {1.111f};
+		float[] f2 = new float[] {5.555f};
+		Assert.assertArrayEquals(f1, f2, delta);
+	}
+	
 	@Test(expected= AssertionError.class) public void bigDecimalsNotEqual() {
 		assertEquals(new BigDecimal("123.4"), new BigDecimal("123.0"));
 	}
