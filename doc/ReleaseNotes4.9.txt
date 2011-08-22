@@ -1,4 +1,4 @@
-## Summary of Changes in version 4.9 [unreleased!] ##
+## Summary of Changes in version 4.9, final ##
 
 Release theme: Test-class and suite level Rules.
 
