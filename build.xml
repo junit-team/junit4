@@ -67,6 +67,7 @@
           debug="on"
           classpath="@{classpath}"
           includeantruntime="false"
+          source="1.5"
           target="1.5"
           >
         <compilerarg value="-Xlint:unchecked" />
