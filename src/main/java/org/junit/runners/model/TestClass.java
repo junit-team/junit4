@@ -12,6 +12,7 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.internal.MethodSorter;
 
 /**
  * Wraps a class to be run, providing method validation and annotation searching
@@ -36,7 +37,7 @@ public class TestClass {
 					"Test class can only have one constructor");
 
 		for (Class<?> eachClass : getSuperClasses(fClass)) {
-			for (Method eachMethod : eachClass.getDeclaredMethods())
+			for (Method eachMethod : MethodSorter.getDeclaredMethods(eachClass))
 				addToAnnotationLists(new FrameworkMethod(eachMethod),
 						fMethodsForAnnotations);
 			for (Field eachField : eachClass.getDeclaredFields())
