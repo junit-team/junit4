@@ -106,8 +106,8 @@
 
 2011 Jun 24
     Daniel Rothmaler (drothmaler@github):
-        #234: random temp file/folder creation 
-        #233: ErrorCollector.checkThat overload
+        #299: random temp file/folder creation 
+        #300: ErrorCollector.checkThat overload
 
 2011 Aug 10
      rodolfoliviero@github and JoseRibeiro@github: feature to create recursive temporary folders.
