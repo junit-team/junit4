@@ -1,0 +1,14 @@
+## Summary of Changes in version 4.10 [unreleased!] ##
+
+### Bug fixes ###
+  
+### Minor changes ###
+
+Thanks to `@rodolfoliviero` for:
+
+- github#283: Feature to create recursive temporary folders.
+
+Thanks to `@drothmaler` for:
+
+- github#299: Random temporary file/folder creation
+- github#300: New `ErrorCollector.checkThat` overload, that allows you to specify a reason
