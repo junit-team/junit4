@@ -104,5 +104,10 @@
      Samuel Le Berrigaud (sleberrigaud@github): Report for GH-248:
             protected BlockJUnit4ClassRunner#rules method removed from 4.8.2
 
+2011 Jun 24
+    Daniel Rothmaler (drothmaler@github):
+        #299: random temp file/folder creation 
+        #300: ErrorCollector.checkThat overload
+
 2011 Aug 10
      rodolfoliviero@github and JoseRibeiro@github: feature to create recursive temporary folders.
