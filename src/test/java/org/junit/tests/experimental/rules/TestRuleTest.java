@@ -146,7 +146,7 @@ public class TestRuleTest {
 
 	public static class OnFailureTest {
 		@Rule
-		public TestRule watchman= new TestWatcher() {
+		public TestRule watcher= new TestWatcher() {
 			@Override
 			protected void failed(Throwable e, Description description) {
 				log+= description + " " + e.getClass().getSimpleName();
@@ -171,7 +171,7 @@ public class TestRuleTest {
 		private static String watchedLog;
 
 		@Rule
-		public TestRule watchman= new TestWatcher() {
+		public TestRule watcher= new TestWatcher() {
 			@Override
 			protected void failed(Throwable e, Description description) {
 				watchedLog+= description + " "
@@ -203,45 +203,33 @@ public class TestRuleTest {
 	}
 
 	public static class BeforesAndAfters {
-		private static String watchedLog;
+		private static StringBuilder watchedLog= new StringBuilder();
 
-		@Before public void before() {
-			watchedLog+= "before ";
+		@Before
+		public void before() {
+			watchedLog.append("before ");
 		}
 		
 		@Rule
-		public TestRule watchman= new TestWatcher() {
-			@Override
-			protected void starting(Description d) {
-				watchedLog+= "starting ";
-			}
-			
-			@Override
-			protected void finished(Description d) {
-				watchedLog+= "finished ";
-			}
-			
-			@Override
-			protected void succeeded(Description d) {
-				watchedLog+= "succeeded ";
-			}
-		};
+		public TestRule watcher= new LoggingTestWatcher(watchedLog);
 		
-		@After public void after() {
-			watchedLog+= "after ";
+		@After
+		public void after() {
+			watchedLog.append("after ");
 		}
 
 		@Test
 		public void succeeds() {
-			watchedLog+= "test ";
+			watchedLog.append("test ");
 		}
 	}
 
 	@Test
 	public void beforesAndAfters() {
-		BeforesAndAfters.watchedLog= "";
+		BeforesAndAfters.watchedLog= new StringBuilder();
 		JUnitCore.runClasses(BeforesAndAfters.class);
-		assertThat(BeforesAndAfters.watchedLog, is("starting before test after succeeded finished "));
+		assertThat(BeforesAndAfters.watchedLog.toString(),
+				is("starting before test after succeeded finished "));
 	}
 	
 	public static class WrongTypedField {
