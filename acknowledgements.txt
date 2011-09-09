@@ -87,10 +87,13 @@
 2011 Apr 29
      reinholdfuereder@github: bug report, test, and fix for GH-38:
                               ParentRunner filtering
-<<<<<<< HEAD
 2011 Apr 29
      Markus Keller (mkeller@github): Report for GH-187:
             Unintentional dependency on Java 6
+
+2011 May 05
+     leet3lite.junit@soodonims.com: (github#228)
+     		Added feature assertions for java.lang.Comparable in org.junit.Assert
 
 2011 May 31
      Kevin Cooney (kcooney@github): Patches for filtering test suites:
@@ -113,6 +116,6 @@
 
 2011 Jul 28
      electrickery, Stefan Birkner: Fixed typo in JavaDoc (github#134).
-2011 May 05
-     leet3lite.junit@soodonims.com: (github#228)
-     		Added feature assertions for java.lang.Comparable in org.junit.Assert
+
+2011 Aug 10
+     rodolfoliviero@github and JoseRibeiro@github: feature to create recursive temporary folders.
