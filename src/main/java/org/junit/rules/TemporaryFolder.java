@@ -42,9 +42,7 @@ public class TemporaryFolder extends ExternalResource {
 	 * for testing purposes only.  Do not use.
 	 */
 	public void create() throws IOException {
-		folder= File.createTempFile("junit", "");
-		folder.delete();
-		folder.mkdir();
+		folder= newFolder();
 	}
 
 	/**
@@ -57,6 +55,13 @@ public class TemporaryFolder extends ExternalResource {
 	}
 
 	/**
+	 * Returns a new fresh file with a random name under the temporary folder.
+	 */
+	public File newFile() throws IOException {
+		return File.createTempFile("junit", null, folder);
+	}
+
+	/**
 	 * Returns a new fresh folder with the given name under the temporary folder.
 	 */
 	public File newFolder(String... folderNames) {
@@ -66,6 +71,17 @@ public class TemporaryFolder extends ExternalResource {
 			file.mkdir();
 		}
 		return file;
+	}
+
+	/**
+	 * Returns a new fresh folder with a random name under the temporary
+	 * folder.
+	 */
+	public File newFolder() throws IOException {
+		File createdFolder= File.createTempFile("junit", "", folder);
+		createdFolder.delete();
+		createdFolder.mkdir();
+		return createdFolder;
 	}
 
 	/**
