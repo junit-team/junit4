@@ -1,6 +1,7 @@
 package org.junit.runners;
 
 import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_VALIDATOR;
+import static org.junit.internal.runners.rules.RuleMethodValidator.RULE_METHOD_VALIDATOR;
 
 import java.util.List;
 
@@ -17,7 +18,6 @@ import org.junit.internal.runners.statements.FailOnTimeout;
 import org.junit.internal.runners.statements.InvokeMethod;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
-import org.junit.rules.MethodRule;
 import org.junit.rules.RunRules;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -101,6 +101,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 		validateConstructor(errors);
 		validateInstanceMethods(errors);
 		validateFields(errors);
+		validateMethods(errors);
 	}
 
 	/**
@@ -159,6 +160,10 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 
 	private void validateFields(List<Throwable> errors) {
 		RULE_VALIDATOR.validate(getTestClass(), errors);
+	}
+
+	private void validateMethods(List<Throwable> errors) {
+		RULE_METHOD_VALIDATOR.validate(getTestClass(), errors);
 	}
 
 	/**
@@ -375,10 +380,15 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	 *         test
 	 */
 	protected List<TestRule> getTestRules(Object target) {
-		return getTestClass().getAnnotatedFieldValues(target,
+		List<TestRule> result = getTestClass().getAnnotatedFieldValues(target,
 				Rule.class, TestRule.class);
+				
+		result.addAll(getTestClass().getAnnotatedMethodValues(target,
+				Rule.class, TestRule.class));
+		
+		return result;
 	}
-
+	
 	private Class<? extends Throwable> getExpectedException(Test annotation) {
 		if (annotation == null || annotation.expected() == None.class)
 			return null;
