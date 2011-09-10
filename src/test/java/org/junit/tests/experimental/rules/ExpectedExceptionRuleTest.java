@@ -2,6 +2,7 @@ package org.junit.tests.experimental.rules;
 
 import static org.hamcrest.CoreMatchers.any;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeTrue;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
@@ -228,5 +229,23 @@ public class ExpectedExceptionRuleTest {
 	public void failsWithMultipleMatchers() {
 		assertThat(testResult(ExpectsMultipleMatchers.class),
 				hasSingleFailureContaining("IllegalArgumentException"));
+	}
+
+	public static class DontFailForViolatedAssumption {
+		@Rule
+		public ExpectedException thrown= ExpectedException.none();
+
+		@Test
+		public void violatedAssumption() {
+			// expect an exception, which is not a AssumptionVioltatedException
+			thrown.expect(IllegalArgumentException.class);
+			assumeTrue(false);
+		}
+	}
+
+	@Test
+	public void dontFailForViolatedAssumption() {
+		assertThat(testResult(DontFailForViolatedAssumption.class),
+				isSuccessful());
 	}
 }

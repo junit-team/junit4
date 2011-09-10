@@ -7,6 +7,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.junit.Assert;
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.matchers.TypeSafeMatcher;
 import org.junit.runners.model.Statement;
 
@@ -108,6 +109,8 @@ public class ExpectedException implements TestRule {
 		public void evaluate() throws Throwable {
 			try {
 				fNext.evaluate();
+			} catch (AssumptionViolatedException e) {
+				throw e;
 			} catch (Throwable e) {
 				if (fMatcher == null)
 					throw e;
