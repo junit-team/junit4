@@ -128,3 +128,4 @@
 2011 Sep 09
      Robert Munteanu, Stefan Birkner:
             TestWatcher and TestWatchman don't call failed when assumption is violated (github#296).
+     digulla@github, Stefan Birkner: Removed useless code (github#289).

@@ -26,7 +26,6 @@ public class RunAfters extends Statement {
 	@Override
 	public void evaluate() throws Throwable {
 		List<Throwable> errors = new ArrayList<Throwable>();
-		errors.clear();
 		try {
 			fNext.evaluate();
 		} catch (Throwable e) {
