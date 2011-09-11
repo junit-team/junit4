@@ -1,9 +1,12 @@
 package org.junit.tests.experimental.rules;
 
+import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.any;
+import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeTrue;
 import static org.junit.experimental.results.PrintableResult.testResult;
+import static org.junit.experimental.results.ResultMatchers.hasFailureContaining;
 import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 import static org.junit.matchers.JUnitMatchers.both;
@@ -237,7 +240,7 @@ public class ExpectedExceptionRuleTest {
 
 		@Test
 		public void violatedAssumption() {
-			// expect an exception, which is not a AssumptionVioltatedException
+			// expect an exception, which is not an AssumptionVioltatedException
 			thrown.expect(IllegalArgumentException.class);
 			assumeTrue(false);
 		}
@@ -247,5 +250,27 @@ public class ExpectedExceptionRuleTest {
 	public void dontFailForViolatedAssumption() {
 		assertThat(testResult(DontFailForViolatedAssumption.class),
 				isSuccessful());
+	}
+
+	public static class FailForAssertion {
+		@Rule
+		public ExpectedException thrown= ExpectedException.none();
+
+		@Test
+		public void failingTest() {
+			// expect an exception, which is not an AssertionError
+			thrown.expect(NullPointerException.class);
+			fail("Failed because of assertion.");
+			throw new NullPointerException();
+		}
+	}
+
+	@Test
+	public void handOverAssertionError() {
+		assertThat(
+				testResult(FailForAssertion.class),
+				both(
+						not(hasFailureContaining("java.lang.NullPointerException")))
+						.and(hasFailureContaining("Failed because of assertion.")));
 	}
 }

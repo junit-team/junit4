@@ -129,3 +129,6 @@
      Robert Munteanu, Stefan Birkner:
             TestWatcher and TestWatchman don't call failed when assumption is violated (github#296).
      digulla@github, Stefan Birkner: Removed useless code (github#289).
+
+2011 Sep 10
+     petur@github, Stefan Birkner: Expected exceptions consider assumes and asserts (github#121).

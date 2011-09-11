@@ -21,6 +21,8 @@ public class ExpectException extends Statement {
 		try {
 			fNext.evaluate();
 			complete = true;
+		} catch (AssertionError e) {
+			throw e;
 		} catch (AssumptionViolatedException e) {
 			throw e;
 		} catch (Throwable e) {

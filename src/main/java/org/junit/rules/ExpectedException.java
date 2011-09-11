@@ -109,6 +109,8 @@ public class ExpectedException implements TestRule {
 		public void evaluate() throws Throwable {
 			try {
 				fNext.evaluate();
+			} catch (AssertionError e) {
+				throw e;
 			} catch (AssumptionViolatedException e) {
 				throw e;
 			} catch (Throwable e) {
