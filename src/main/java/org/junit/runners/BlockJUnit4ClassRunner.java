@@ -1,7 +1,7 @@
 package org.junit.runners;
 
 import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_VALIDATOR;
-import static org.junit.internal.runners.rules.RuleMethodValidator.RULE_METHOD_VALIDATOR;
+import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_METHOD_VALIDATOR;
 
 import java.util.List;
 
@@ -325,6 +325,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 		Statement result= statement;
 		result= withMethodRules(method, target, result);
 		result= withTestRules(method, target, result);
+		
 		return result;
 	}
 
@@ -380,12 +381,12 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	 *         test
 	 */
 	protected List<TestRule> getTestRules(Object target) {
-		List<TestRule> result = getTestClass().getAnnotatedFieldValues(target,
+		List<TestRule> result = getTestClass().getAnnotatedMethodValues(target,
 				Rule.class, TestRule.class);
-				
-		result.addAll(getTestClass().getAnnotatedMethodValues(target,
+			
+		result.addAll(getTestClass().getAnnotatedFieldValues(target,
 				Rule.class, TestRule.class));
-		
+
 		return result;
 	}
 	

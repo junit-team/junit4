@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  * If there are multiple
  * annotated {@link ClassRule}s on a class, they will be applied in an order
  * that depends on your JVM's implementation of the reflection API, which is
- * undefined, in general. However, Rules defined by a field will always be applied
+ * undefined, in general. However, Rules defined by fields will always be applied
  * before Rules defined by methods.
  *
  * For example, here is a test suite that connects to a server once before
@@ -61,22 +61,20 @@ import java.lang.annotation.Target;
  * public class UsesExternalResource {
  * 	public static Server myServer= new Server();
  * 
- * 	private static ExternalResource resource= new ExternalResource() {
- * 		&#064;Override
- * 		protected void before() throws Throwable {
- * 			myServer.connect();
- * 		};
- * 
- * 		&#064;Override
- * 		protected void after() {
- * 			myServer.disconnect();
- * 		};
- * 	};
- * 
  * 	&#064;ClassRule
- *  public static ExternalResource getResource() {
- *      return resource;
- *  }
+ *	public static ExternalResource getResource() {
+ * 		return new ExternalResource() {
+ *			&#064;Override
+ * 			protected void before() throws Throwable {
+ * 				myServer.connect();
+ * 			}
+ * 
+ * 			&#064;Override
+ * 			protected void after() {
+ * 				myServer.disconnect();
+ * 			}
+ * 		};
+ * 	}
  * }
  * </pre>
  * 

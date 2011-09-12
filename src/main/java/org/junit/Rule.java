@@ -16,7 +16,8 @@ import java.lang.annotation.Target;
  * annotated {@link Rule}s on a class, they will be applied in order of fields first, then methods.
  * However, if there are mutliple fields (or methods) they will be applied in an order
  * that depends on your JVM's implementation of the reflection API, which is
- * undefined, in general. However, the rule of field before method will be respected.
+ * undefined, in general. Rules defined by fields will always be applied
+ * before Rules defined by methods.
  *
  * For example, here is a test class that creates a temporary folder before
  * each test method, and deletes it after each:
@@ -41,10 +42,10 @@ import java.lang.annotation.Target;
  * public static class HasTempFolder {
  * 	private TemporaryFolder folder= new TemporaryFolder();
  *
- * &#064;Rule
- *  public TemporaryFolder getFolder() {
- *      return folder;
- *  }
+ * 	&#064;Rule
+ * 	public TemporaryFolder getFolder() {
+ * 		return folder;
+ * 	}
  *
  * 	&#064;Test
  * 	public void testUsingTempFolder() throws IOException {

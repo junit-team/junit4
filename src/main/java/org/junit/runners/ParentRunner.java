@@ -1,7 +1,7 @@
 package org.junit.runners;
 
 import static org.junit.internal.runners.rules.RuleFieldValidator.CLASS_RULE_VALIDATOR;
-import static org.junit.internal.runners.rules.RuleMethodValidator.CLASS_RULE_METHOD_VALIDATOR;
+import static org.junit.internal.runners.rules.RuleFieldValidator.CLASS_RULE_METHOD_VALIDATOR;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -209,9 +209,9 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	 *         each method in the tested class.
 	 */
 	protected List<TestRule> classRules() {
-		List<TestRule> result = fTestClass.getAnnotatedFieldValues(null, ClassRule.class, TestRule.class);
-		
-		result.addAll(fTestClass.getAnnotatedMethodValues(null, ClassRule.class, TestRule.class));
+		List<TestRule> result= fTestClass.getAnnotatedMethodValues(null, ClassRule.class, TestRule.class);
+
+		result.addAll(fTestClass.getAnnotatedFieldValues(null, ClassRule.class, TestRule.class));
 		
 		return result;
 	}

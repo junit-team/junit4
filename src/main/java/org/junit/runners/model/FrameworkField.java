@@ -17,6 +17,7 @@ public class FrameworkField extends FrameworkMember<FrameworkField> {
 		fField= field;
 	}
 
+	@Override
 	public String getName() {
 		return getField().getName();
 	}
@@ -26,6 +27,7 @@ public class FrameworkField extends FrameworkMember<FrameworkField> {
 		return fField.getAnnotations();
 	}
 
+	@Override
 	public boolean isPublic() {
 		int modifiers= fField.getModifiers();
 		return Modifier.isPublic(modifiers);
@@ -36,6 +38,7 @@ public class FrameworkField extends FrameworkMember<FrameworkField> {
 		return otherMember.getName().equals(getName());
 	}
 
+	@Override
 	public boolean isStatic() {
 		int modifiers= fField.getModifiers();
 		return Modifier.isStatic(modifiers);
@@ -52,6 +55,7 @@ public class FrameworkField extends FrameworkMember<FrameworkField> {
 	 * @return the underlying Java Field type
 	 * @see java.lang.reflect.Field#getType()
 	 */
+	@Override
 	public Class<?> getType() {
 		return fField.getType();
 	}

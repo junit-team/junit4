@@ -49,6 +49,7 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
 	/**
 	 * Returns the method's name
 	 */
+	@Override
 	public String getName() {
 		return fMethod.getName();
 	}
@@ -93,6 +94,7 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
 	/**
 	 * Returns true if this method is static, false if not
 	 */
+	@Override
 	public boolean isStatic() {
 		return Modifier.isStatic(fMethod.getModifiers());
 	}
@@ -100,15 +102,24 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
 	/**
 	 * Returns true if this method is public, false if not
 	 */
+	@Override
 	public boolean isPublic() {
 		return Modifier.isPublic(fMethod.getModifiers());
 	}
 
 	/**
-	 * Returns true if this method is public, false if not
+	 * Returns the return type of the method
 	 */
 	public Class<?> getReturnType() {
 		return fMethod.getReturnType();
+	}
+
+	/**
+	 * Returns the return type of the method
+	 */
+	@Override
+	public Class<?> getType() {
+		return getReturnType();
 	}
 
 	@Override

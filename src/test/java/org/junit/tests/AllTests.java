@@ -24,16 +24,13 @@ import org.junit.tests.experimental.max.MaxStarterTest;
 import org.junit.tests.experimental.parallel.ParallelClassTest;
 import org.junit.tests.experimental.parallel.ParallelMethodTest;
 import org.junit.tests.experimental.rules.BlockJUnit4ClassRunnerOverrideTest;
-import org.junit.tests.experimental.rules.ClassRulesMethodTest;
 import org.junit.tests.experimental.rules.ClassRulesTest;
 import org.junit.tests.experimental.rules.ExpectedExceptionRuleTest;
 import org.junit.tests.experimental.rules.ExternalResourceRuleTest;
 import org.junit.tests.experimental.rules.MethodRulesTest;
 import org.junit.tests.experimental.rules.NameRulesTest;
 import org.junit.tests.experimental.rules.RuleFieldValidatorTest;
-import org.junit.tests.experimental.rules.RuleMethodValidatorTest;
 import org.junit.tests.experimental.rules.TempFolderRuleTest;
-import org.junit.tests.experimental.rules.TestRuleMethodTest;
 import org.junit.tests.experimental.rules.TestRuleTest;
 import org.junit.tests.experimental.rules.TimeoutRuleTest;
 import org.junit.tests.experimental.rules.VerifierRuleTest;
@@ -141,14 +138,12 @@ import org.junit.tests.validation.ValidationTest;
 	JUnit38SortingTest.class,
 	MethodRulesTest.class,
 	TestRuleTest.class,
-	TestRuleMethodTest.class,
 	TimeoutRuleTest.class,
 	ParallelClassTest.class,
 	ParallelMethodTest.class,
 	ParentRunnerTest.class,
 	NameRulesTest.class,
 	ClassRulesTest.class,
-	ClassRulesMethodTest.class,
 	ExpectedExceptionRuleTest.class,
 	TempFolderRuleTest.class,
 	ExternalResourceRuleTest.class,
@@ -157,8 +152,7 @@ import org.junit.tests.validation.ValidationTest;
 	CategoriesAndParameterizedTest.class,
 	ParentRunnerFilteringTest.class,
 	BlockJUnit4ClassRunnerOverrideTest.class,
-	RuleFieldValidatorTest.class,
-	RuleMethodValidatorTest.class
+	RuleFieldValidatorTest.class
 })
 public class AllTests {
 	public static Test suite() {
