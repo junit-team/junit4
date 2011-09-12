@@ -89,6 +89,27 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
 		if (fMethod.getReturnType() != Void.TYPE)
 			errors.add(new Exception("Method " + fMethod.getName() + "() should be void"));
 	}
+	
+	/**
+	 * Returns true if this method is static, false if not
+	 */
+	public boolean isStatic() {
+		return Modifier.isStatic(fMethod.getModifiers());
+	}
+
+	/**
+	 * Returns true if this method is public, false if not
+	 */
+	public boolean isPublic() {
+		return Modifier.isPublic(fMethod.getModifiers());
+	}
+
+	/**
+	 * Returns true if this method is public, false if not
+	 */
+	public Class<?> getReturnType() {
+		return fMethod.getReturnType();
+	}
 
 	@Override
 	public boolean isShadowedBy(FrameworkMethod other) {
