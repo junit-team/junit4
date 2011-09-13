@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.rules.ExternalResource;
@@ -208,5 +209,30 @@ public class ClassRulesTest {
 		Result result= JUnitCore.runClasses(MethodExampleTestWithCustomClassRule.class);
 		assertTrue(result.wasSuccessful());
 		assertEquals(1, MethodExampleTestWithCustomClassRule.counter.count);
+	}
+	
+	public static class CallMethodOnlyOnceRule {
+		static int countOfMethodCalls = 0;
+		private static class Dummy implements TestRule {
+			public Statement apply(final Statement base, Description description) {
+				return new Statement() {
+					@Override
+					public void evaluate() throws Throwable {
+						base.evaluate();
+					};
+				};
+			}
+		}
+		@ClassRule public static Dummy both() { countOfMethodCalls++; return new Dummy(); }
+		
+		@Test public void onlyOnce() {
+			assertEquals(1, countOfMethodCalls);
+		}
+	}
+
+	@Test
+	public void testCallMethodOnlyOnceRule() {
+		CallMethodOnlyOnceRule.countOfMethodCalls = 0;
+		assertTrue(JUnitCore.runClasses(CallMethodOnlyOnceRule.class).wasSuccessful());
 	}
 }

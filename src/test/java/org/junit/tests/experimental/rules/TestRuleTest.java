@@ -629,4 +629,37 @@ public class TestRuleTest {
 		orderList.clear();
 		assertThat(testResult(UsesFieldAndMethodRule.class), isSuccessful());
 	}
+	
+	public static class MultipleCallsTest implements TestRule {
+		public int applications = 0;
+		
+		public Statement apply(Statement base, Description description) {
+			applications++;
+			return base;
+		}
+	}
+	
+	public static class CallMethodOnlyOnceRule {
+		int countOfMethodCalls = 0;
+		private static class Dummy implements TestRule {
+			public Statement apply(final Statement base, Description description) {
+				return new Statement() {
+					@Override
+					public void evaluate() throws Throwable {
+						base.evaluate();
+					};
+				};
+			}
+		}
+		@Rule public Dummy both() { countOfMethodCalls++; return new Dummy(); }
+		
+		@Test public void onlyOnce() {
+			assertEquals(1, countOfMethodCalls);
+		}
+	}
+
+	@Test
+	public void testCallMethodOnlyOnceRule() {
+		assertTrue(JUnitCore.runClasses(CallMethodOnlyOnceRule.class).wasSuccessful());
+	}
 }

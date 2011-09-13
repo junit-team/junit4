@@ -322,17 +322,17 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 
 	private Statement withRules(FrameworkMethod method, Object target,
 			Statement statement) {
+		List<TestRule> testRules= getTestRules(target);
 		Statement result= statement;
-		result= withMethodRules(method, target, result);
-		result= withTestRules(method, target, result);
+		result= withMethodRules(method, testRules, target, result);
+		result= withTestRules(method, testRules, result);
 		
 		return result;
 	}
 
 	@SuppressWarnings("deprecation")
-	private Statement withMethodRules(FrameworkMethod method, Object target,
-			Statement result) {
-		List<TestRule> testRules= getTestRules(target);
+	private Statement withMethodRules(FrameworkMethod method, List<TestRule> testRules,
+			Object target, Statement result) {
 		for (org.junit.rules.MethodRule each : getMethodRules(target))
 			if (! testRules.contains(each))
 				result= each.apply(result, method, target);
@@ -362,14 +362,14 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	/**
 	 * Returns a {@link Statement}: apply all non-static {@link Value} fields
 	 * annotated with {@link Rule}.
+	 * @param target2 
 	 *
 	 * @param statement The base statement
 	 * @return a RunRules statement if any class-level {@link Rule}s are
 	 *         found, or the base statement
 	 */
-	private Statement withTestRules(FrameworkMethod method, Object target,
+	private Statement withTestRules(FrameworkMethod method, List<TestRule> testRules,
 			Statement statement) {
-		List<TestRule> testRules= getTestRules(target);
 		return testRules.isEmpty() ? statement :
 			new RunRules(statement, testRules, describeChild(method));
 	}
