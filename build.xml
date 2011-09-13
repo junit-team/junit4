@@ -1,13 +1,14 @@
 <project name="junit" default="dist" basedir="."
          xmlns:artifact="antlib:org.apache.maven.artifact.ant">
   <tstamp />
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
 
   <property file="${user.home}/.junit.properties" />
   <property name="src" value="src/main/java" />
   <property name="target" location="target" />
   <property name="bin" location="${target}/main" />
-  <property name="version-base" value="4.9" />
-  <property name="version-status" value="" />
+  <property name="version-base" value="4.9.1" />
+  <property name="version-status" value="-SNAPSHOT" />
   <property name="version" value="${version-base}${version-status}" />
   <property name="dist" value="junit${version}" />
   <property name="versionfile" value="${src}/junit/runner/Version.java" />
@@ -217,19 +218,18 @@
 
   <!-- to do automatic build upload, you need the maven ant tasks jar. -->
   <!-- therefore, you must run ant as ant -lib build/lib stage.maven -->
-  <macrodef name="stage.maven.jar">
+  <macrodef name="push.maven.jar">
     <attribute name="jar" />
     <attribute name="pom" />
+    <attribute name="url" />
+    <attribute name="repo.id" />
     <element name="artifact.args" implicit="true" optional="true" />
     <sequential>
-      <property name="maven-repository-url" 
-                value="https://oss.sonatype.org/service/local/staging/deploy/maven2/" />
-      <property name="maven-repository-id" value="sonatype-nexus-staging" />
-      <echo message="Staging to maven: @{jar}" />
+      <echo message="Pushing to maven: @{jar} -> @{url}" />
       <artifact:mvn failonerror="true">
         <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.1:sign-and-deploy-file" />
-        <arg value="-Durl=${maven-repository-url}" />
-        <arg value="-DrepositoryId=${maven-repository-id}" />
+        <arg value="-Durl=@{url}" />
+        <arg value="-DrepositoryId=@{repo.id}" />
         <arg value="-DpomFile=@{pom}" />
         <arg value="-Dfile=@{jar}" />
         <artifact.args />
@@ -238,40 +238,77 @@
     </sequential>
   </macrodef>
 
-  <macrodef name="stage.maven.artifactId">
+  <macrodef name="push.maven.artifact">
     <attribute name="artifactId" />
+    <attribute name="url" />
+    <attribute name="repo.id" />
+    <attribute name="is.snapshot" default="false" />
     <sequential>
+      <local name="m.prefix" />
       <property name="m.prefix" value="${dist}/@{artifactId}-${version}" />
+      <local name="m.jar" />
       <property name="m.jar" value="${m.prefix}.jar" />
+      <local name="m.sources.jar" />
       <property name="m.sources.jar" value="${m.prefix}-src.jar" />
+      <local name="m.javadoc.jar" />
       <property name="m.javadoc.jar" value="${m.prefix}-javadoc.jar" />
+      <local name="m.pom" />
       <property name="m.pom" value="${dist}/pom-@{artifactId}.xml" />
 
       <filter token="version" value="${version}" />
       <filter token="artifactId" value="@{artifactId}" />
   
       <copy 
-          file="pom-template.xml" 
+          file="build/maven/pom-template.xml" 
           tofile="${m.pom}" 
           filtering="on"
           overwrite="true"
           />
 
-      <stage.maven.jar jar="${m.jar}" pom="${m.pom}" />
+      <push.maven.jar jar="${m.jar}" pom="${m.pom}" 
+                      url="@{url}" repo.id="@{repo.id}" />
+      
+      <if>
+        <equals arg1="${is.snapshot}" arg2="false" />
+        <then>
+          <push.maven.jar jar="${m.sources.jar}" pom="${m.pom}"
+                          url="@{url}" repo.id="@{repo.id}">
+            <arg value="-Dclassifier=sources" />
+          </push.maven.jar>
 
-      <stage.maven.jar jar="${m.sources.jar}" pom="${m.pom}" >
-        <arg value="-Dclassifier=sources" />
-      </stage.maven.jar>
-
-      <stage.maven.jar jar="${m.javadoc.jar}" pom="${m.pom}" >
-        <arg value="-Dclassifier=javadoc" />
-      </stage.maven.jar>
+          <push.maven.jar jar="${m.javadoc.jar}" pom="${m.pom}"
+                          url="@{url}" repo.id="@{repo.id}">
+            <arg value="-Dclassifier=javadoc" />
+          </push.maven.jar>
+        </then>
+      </if>
     </sequential>
   </macrodef>
 
   <target name="stage.maven" depends="all.maven.jars">
-    <stage.maven.artifactId artifactId="junit" />
-    <stage.maven.artifactId artifactId="junit-dep" />
+    <property name="stage.url" 
+              value="https://oss.sonatype.org/service/local/staging/deploy/maven2/" />
+    <property name="stage.repo.id" value="sonatype-nexus-staging" />
+    
+    <push.maven.artifact artifactId="junit" 
+                         url="${stage.url}"
+                         repo.id="${stage.repo.id}" />
+    <push.maven.artifact artifactId="junit-dep" 
+                         url="${stage.url}"
+                         repo.id="${stage.repo.id}" />
+  </target>
+
+  <target name="snapshot.maven" depends="all.maven.jars">
+    <property name="snapshot.url" 
+              value="https://oss.sonatype.org/content/repositories/snapshots/" />
+    <property name="snapshot.repo.id" value="sonatype-nexus-snapshots" />
+    
+    <push.maven.artifact artifactId="junit" 
+                         url="${snapshot.url}"
+                         repo.id="${snapshot.repo.id}" />
+    <push.maven.artifact artifactId="junit-dep" 
+                         url="${snapshot.url}"
+                         repo.id="${snapshot.repo.id}" />
   </target>
 
   <target name="print.version">
