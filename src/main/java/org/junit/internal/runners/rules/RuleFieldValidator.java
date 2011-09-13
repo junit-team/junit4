@@ -63,7 +63,7 @@ public enum RuleFieldValidator {
 	 */
 	public void validate(TestClass target, List<Throwable> errors) {
 		if (fMethods) {
-			List<FrameworkMethod> methods = target.getAnnotatedMethods(fAnnotation);
+			List<FrameworkMethod> methods= target.getAnnotatedMethods(fAnnotation);
 			for (FrameworkMethod each : methods)
 				validateMember(each, errors);
 		} else {
@@ -93,7 +93,9 @@ public enum RuleFieldValidator {
 	private void validateTestRuleOrMethodRule(FrameworkMember<?> field,
 			List<Throwable> errors) {
 		if (!isMethodRule(field) && !isTestRule(field))
-			addError(errors, field, fMethods ? "must return an implementation of MethodRule or TestRule." : "must implement MethodRule or TestRule.");
+			addError(errors, field, fMethods ?
+					"must return an implementation of MethodRule or TestRule." :
+					"must implement MethodRule or TestRule.");
 	}
 
 	private boolean isTestRule(FrameworkMember<?> target) {

@@ -143,7 +143,7 @@ public class RuleFieldValidatorTest {
 	}
 
 	@Test
-	public void rejectArbitraryObjectWithRuleMethodAnnotation() throws Exception {
+	public void methodRejectArbitraryObjectWithRuleAnnotation() throws Exception {
 		TestClass target= new TestClass(MethodTestWithArbitraryObjectWithRuleAnnotation.class);
 		RULE_METHOD_VALIDATOR.validate(target, errors);
 		assertOneErrorWithMessage("The @Rule 'getArbitraryObject' must return an implementation of MethodRule or TestRule.");

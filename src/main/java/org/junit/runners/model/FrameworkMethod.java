@@ -147,7 +147,7 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
 	}
 
 	/**
-	 * Returns true iff this is a no-arg method that returns a value assignable
+	 * Returns true if this is a no-arg method that returns a value assignable
 	 * to {@code type}
 	 */
 	public boolean producesType(Class<?> type) {
