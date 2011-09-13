@@ -6,7 +6,7 @@
   <property name="src" value="src/main/java" />
   <property name="target" location="target" />
   <property name="bin" location="${target}/main" />
-  <property name="version-base" value="4.10" />
+  <property name="version-base" value="4.10.1" />
   <property name="version-status" value="-SNAPSHOT" />
   <property name="version" value="${version-base}${version-status}" />
   <property name="dist" value="junit${version}" />
