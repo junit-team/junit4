@@ -1,5 +1,6 @@
 package org.junit.rules;
 
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
@@ -51,6 +52,8 @@ public class TestWatchman implements MethodRule {
 				try {
 					base.evaluate();
 					succeeded(method);
+				} catch (AssumptionViolatedException e) {
+					throw e;
 				} catch (Throwable t) {
 					failed(t, method);
 					throw t;
