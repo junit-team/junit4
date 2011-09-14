@@ -1,5 +1,6 @@
 package org.junit.runners;
 
+import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -116,6 +117,11 @@ public class Parameterized extends Suite {
 		@Override
 		protected Statement classBlock(RunNotifier notifier) {
 			return childrenInvoker(notifier);
+		}
+		
+		@Override
+		protected Annotation[] getRunnerAnnotations() {
+			return new Annotation[0];
 		}
 	}
 

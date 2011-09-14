@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.junit.ClassRule;
 import org.junit.Rule;
-import org.junit.rules.MethodRule;
 import org.junit.rules.TestRule;
 import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.TestClass;
@@ -80,7 +79,8 @@ public enum RuleFieldValidator {
 
 	@SuppressWarnings("deprecation")
 	private boolean isMethodRule(FrameworkField target) {
-		return MethodRule.class.isAssignableFrom(target.getType());
+		return org.junit.rules.MethodRule.class.isAssignableFrom(target
+				.getType());
 	}
 
 	private void addError(List<Throwable> errors, FrameworkField field,
