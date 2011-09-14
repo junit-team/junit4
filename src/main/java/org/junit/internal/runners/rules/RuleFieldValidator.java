@@ -62,55 +62,51 @@ public enum RuleFieldValidator {
 	 * @param errors the list of errors.
 	 */
 	public void validate(TestClass target, List<Throwable> errors) {
-		if (fMethods) {
-			List<FrameworkMethod> methods= target.getAnnotatedMethods(fAnnotation);
-			for (FrameworkMethod each : methods)
-				validateMember(each, errors);
-		} else {
-			List<FrameworkField> fields= target.getAnnotatedFields(fAnnotation);
-			for (FrameworkField each : fields)
-				validateMember(each, errors);
-		}
+		List<? extends FrameworkMember<?>> members= fMethods ? target.getAnnotatedMethods(fAnnotation)
+										: target.getAnnotatedFields(fAnnotation);
+		
+		for (FrameworkMember<?> each : members)
+			validateMember(each, errors);
 	}
 
-	private void validateMember(FrameworkMember<?> field, List<Throwable> errors) {
-		optionallyValidateStatic(field, errors);
-		validatePublic(field, errors);
-		validateTestRuleOrMethodRule(field, errors);
+	private void validateMember(FrameworkMember<?> member, List<Throwable> errors) {
+		optionallyValidateStatic(member, errors);
+		validatePublic(member, errors);
+		validateTestRuleOrMethodRule(member, errors);
 	}
 
-	private void optionallyValidateStatic(FrameworkMember<?> field,
+	private void optionallyValidateStatic(FrameworkMember<?> member,
 			List<Throwable> errors) {
-		if (fOnlyStaticFields && !field.isStatic())
-			addError(errors, field, "must be static.");
+		if (fOnlyStaticFields && !member.isStatic())
+			addError(errors, member, "must be static.");
 	}
 
-	private void validatePublic(FrameworkMember<?> field, List<Throwable> errors) {
-		if (!field.isPublic())
-			addError(errors, field, "must be public.");
+	private void validatePublic(FrameworkMember<?> member, List<Throwable> errors) {
+		if (!member.isPublic())
+			addError(errors, member, "must be public.");
 	}
 
-	private void validateTestRuleOrMethodRule(FrameworkMember<?> field,
+	private void validateTestRuleOrMethodRule(FrameworkMember<?> member,
 			List<Throwable> errors) {
-		if (!isMethodRule(field) && !isTestRule(field))
-			addError(errors, field, fMethods ?
+		if (!isMethodRule(member) && !isTestRule(member))
+			addError(errors, member, fMethods ?
 					"must return an implementation of MethodRule or TestRule." :
 					"must implement MethodRule or TestRule.");
 	}
 
-	private boolean isTestRule(FrameworkMember<?> target) {
-		return TestRule.class.isAssignableFrom(target.getType());
+	private boolean isTestRule(FrameworkMember<?> member) {
+		return TestRule.class.isAssignableFrom(member.getType());
 	}
 
 	@SuppressWarnings("deprecation")
-	private boolean isMethodRule(FrameworkMember<?> target) {
-		return MethodRule.class.isAssignableFrom(target.getType());
+	private boolean isMethodRule(FrameworkMember<?> member) {
+		return MethodRule.class.isAssignableFrom(member.getType());
 	}
 
-	private void addError(List<Throwable> errors, FrameworkMember<?> field,
+	private void addError(List<Throwable> errors, FrameworkMember<?> member,
 			String suffix) {
 		String message= "The @" + fAnnotation.getSimpleName() + " '"
-				+ field.getName() + "' " + suffix;
+				+ member.getName() + "' " + suffix;
 		errors.add(new Exception(message));
 	}
 }
