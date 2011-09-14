@@ -132,7 +132,7 @@
   
   <target name="release-notes">
     <property name="basename" value="doc/ReleaseNotes${version-base}" />
-    <exec executable="build/Markdown.pl">
+    <exec executable="build/Markdown.pl" failonerror="true">
       <arg file="${basename}.txt"/>
       <redirector output="${basename}.html" />
     </exec>
