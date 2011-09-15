@@ -325,6 +325,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 		for (T each : getFilteredChildren())
 			sortChild(each);
 		Collections.sort(getFilteredChildren(), comparator());
+        applySequenceRestrictions(getFilteredChildren());
 	}
 
 	//
@@ -339,14 +340,19 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	}
 
 	private List<T> getFilteredChildren() {
-		if (fFilteredChildren == null)
+		if (fFilteredChildren == null) {
 			fFilteredChildren = new ArrayList<T>(getChildren());
+            applySequenceRestrictions(fFilteredChildren);
+        }
 		return fFilteredChildren;
 	}
 
 	private void sortChild(T child) {
 		fSorter.apply(child);
 	}
+
+    protected void applySequenceRestrictions(List<T> children) {
+    }
 
 	private boolean shouldRun(Filter filter, T each) {
 		return filter.shouldRun(describeChild(each));
