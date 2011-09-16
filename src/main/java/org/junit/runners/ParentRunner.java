@@ -225,7 +225,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	}
 
 	private void runChildren(final RunNotifier notifier) {
-		for (final T each : getFilteredChildren())
+		for (final T each : finalSort(getFilteredChildren()))
  			fScheduler.schedule(new Runnable() {			
 				public void run() {
 					ParentRunner.this.runChild(each, notifier);
@@ -325,7 +325,6 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 		for (T each : getFilteredChildren())
 			sortChild(each);
 		Collections.sort(getFilteredChildren(), comparator());
-        applySequenceRestrictions(getFilteredChildren());
 	}
 
 	//
@@ -342,7 +341,6 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	private List<T> getFilteredChildren() {
 		if (fFilteredChildren == null) {
 			fFilteredChildren = new ArrayList<T>(getChildren());
-            applySequenceRestrictions(fFilteredChildren);
         }
 		return fFilteredChildren;
 	}
@@ -351,7 +349,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 		fSorter.apply(child);
 	}
 
-    protected void applySequenceRestrictions(List<T> children) {
+    protected List<T> finalSort(List<T> children) {
+        return children;
     }
 
 	private boolean shouldRun(Filter filter, T each) {
