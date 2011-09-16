@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.rules.TestWatchman;
 import org.junit.runners.model.FrameworkMethod;
 
+@SuppressWarnings("deprecation")
 public class TestWatchmanTest {
 	public static class ViolatedAssumptionTest {
 		@Rule
