@@ -47,10 +47,12 @@ public class SimpleTest extends TestCase {
 		// forced failure result == 5
 		assertTrue(result == 6);
 	}
+
+	public int unused;
 	public void testDivideByZero() {
 		int zero= 0;
 		int result= 8/zero;
-		result++; // avoid warning for not using result
+		unused= result; // avoid warning for not using result
 	}
 	public void testEquals() {
 		assertEquals(12, 12);

@@ -270,6 +270,14 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 		}
 	}
 	
+	/**
+	 * @return the annotations that should be attached to this runner's 
+	 * description.
+	 */
+	protected Annotation[] getRunnerAnnotations() {
+		return fTestClass.getAnnotations();
+	}
+	
 	//
 	// Implementation of Runner
 	// 
@@ -277,7 +285,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	@Override
 	public Description getDescription() {
 		Description description= Description.createSuiteDescription(getName(),
-				fTestClass.getAnnotations());
+				getRunnerAnnotations());
 		for (T child : getFilteredChildren())
 			description.addChild(describeChild(child));
 		return description;
