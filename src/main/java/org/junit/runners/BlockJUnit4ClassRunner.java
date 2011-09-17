@@ -362,8 +362,8 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	/**
 	 * Returns a {@link Statement}: apply all non-static {@link Value} fields
 	 * annotated with {@link Rule}.
-	 * @param target2 
-	 *
+	 * @param method 
+	 * @param testRules 
 	 * @param statement The base statement
 	 * @return a RunRules statement if any class-level {@link Rule}s are
 	 *         found, or the base statement

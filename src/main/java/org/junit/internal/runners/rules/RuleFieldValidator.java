@@ -7,9 +7,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.rules.MethodRule;
 import org.junit.rules.TestRule;
-import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMember;
-import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
 
 /**
@@ -45,13 +43,13 @@ public enum RuleFieldValidator {
 
 	private final Class<? extends Annotation> fAnnotation;
 
-	private final boolean fOnlyStaticFields;
+	private final boolean fOnlyStaticMembers;
 	private final boolean fMethods;
 
 	private RuleFieldValidator(Class<? extends Annotation> annotation,
-			boolean methods, boolean onlyStaticFields) {
+			boolean methods, boolean fOnlyStaticMembers) {
 		this.fAnnotation= annotation;
-		this.fOnlyStaticFields= onlyStaticFields;
+		this.fOnlyStaticMembers= fOnlyStaticMembers;
 		this.fMethods= methods;
 	}
 
@@ -77,7 +75,7 @@ public enum RuleFieldValidator {
 
 	private void optionallyValidateStatic(FrameworkMember<?> member,
 			List<Throwable> errors) {
-		if (fOnlyStaticFields && !member.isStatic())
+		if (fOnlyStaticMembers && !member.isStatic())
 			addError(errors, member, "must be static.");
 	}
 
