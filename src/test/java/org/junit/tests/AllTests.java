@@ -53,6 +53,7 @@ import org.junit.tests.manipulation.FilterTest;
 import org.junit.tests.manipulation.FilterableTest;
 import org.junit.tests.manipulation.SingleMethodTest;
 import org.junit.tests.manipulation.SortableTest;
+import org.junit.tests.running.classes.BlockJUnit4ClassRunnerTest;
 import org.junit.tests.running.classes.EnclosedTest;
 import org.junit.tests.running.classes.IgnoreClassTest;
 import org.junit.tests.running.classes.ParameterizedTestTest;
@@ -152,6 +153,7 @@ import org.junit.tests.validation.ValidationTest;
 	CategoriesAndParameterizedTest.class,
 	ParentRunnerFilteringTest.class,
 	RuleChainTest.class,
+	BlockJUnit4ClassRunnerTest.class,
 	BlockJUnit4ClassRunnerOverrideTest.class
 })
 public class AllTests {
