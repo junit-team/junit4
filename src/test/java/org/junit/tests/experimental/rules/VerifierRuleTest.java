@@ -52,6 +52,8 @@ public class VerifierRuleTest {
 		@Test public void example() {
 			collector.checkThat(3, is(4));
 			collector.checkThat(5, is(6));
+			collector.checkThat("reason 1", 7, is(8));
+			collector.checkThat("reason 2", 9, is(16));
 		}
 	}
 	
@@ -59,6 +61,10 @@ public class VerifierRuleTest {
 		PrintableResult testResult= testResult(UsesErrorCollectorCheckThat.class);
 		assertThat(testResult, hasFailureContaining("got: <3>"));
 		assertThat(testResult, hasFailureContaining("got: <5>"));
+		assertThat(testResult, hasFailureContaining("reason 1"));
+		assertThat(testResult, hasFailureContaining("got: <7>"));
+		assertThat(testResult, hasFailureContaining("reason 2"));
+		assertThat(testResult, hasFailureContaining("got: <9>"));
 	}
 
 	public static class UsesErrorCollectorCheckSucceeds {
@@ -120,6 +126,8 @@ public class VerifierRuleTest {
 	}
 	
 	@Test public void verifierRunsAfterTest() {
+		sequence = "";
 		assertThat(testResult(UsesVerifier.class), isSuccessful());
+		assertEquals("test verify ", sequence);
 	}
 }

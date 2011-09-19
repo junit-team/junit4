@@ -17,7 +17,6 @@ import org.junit.internal.runners.statements.FailOnTimeout;
 import org.junit.internal.runners.statements.InvokeMethod;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
-import org.junit.rules.MethodRule;
 import org.junit.rules.RunRules;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -98,9 +97,18 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	protected void collectInitializationErrors(List<Throwable> errors) {
 		super.collectInitializationErrors(errors);
 
+		validateNoNonStaticInnerClass(errors);
 		validateConstructor(errors);
 		validateInstanceMethods(errors);
 		validateFields(errors);
+	}
+
+	protected void validateNoNonStaticInnerClass(List<Throwable> errors) {
+		if (getTestClass().isANonStaticInnerClass()) {
+			String gripe= "The inner class " + getTestClass().getName()
+					+ " is not static.";
+			errors.add(new Exception(gripe));
+		}
 	}
 
 	/**
@@ -129,8 +137,9 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	 * parameters (do not override)
 	 */
 	protected void validateZeroArgConstructor(List<Throwable> errors) {
-		if (hasOneConstructor()
-				&& !(getTestClass().getOnlyConstructor().getParameterTypes().length == 0)) {
+		if (!getTestClass().isANonStaticInnerClass()
+				&& hasOneConstructor()
+				&& (getTestClass().getOnlyConstructor().getParameterTypes().length != 0)) {
 			String gripe= "Test class should have exactly one public zero-argument constructor";
 			errors.add(new Exception(gripe));
 		}

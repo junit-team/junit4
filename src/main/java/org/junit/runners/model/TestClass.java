@@ -1,5 +1,7 @@
 package org.junit.runners.model;
 
+import static java.lang.reflect.Modifier.isStatic;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -150,5 +152,9 @@ public class TestClass {
 			}
 		}
 		return results;
+	}
+
+	public boolean isANonStaticInnerClass() {
+		return fClass.isMemberClass() && !isStatic(fClass.getModifiers());
 	}
 }

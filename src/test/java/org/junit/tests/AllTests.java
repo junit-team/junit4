@@ -29,6 +29,7 @@ import org.junit.tests.experimental.rules.ExpectedExceptionRuleTest;
 import org.junit.tests.experimental.rules.ExternalResourceRuleTest;
 import org.junit.tests.experimental.rules.MethodRulesTest;
 import org.junit.tests.experimental.rules.NameRulesTest;
+import org.junit.tests.experimental.rules.RuleChainTest;
 import org.junit.tests.experimental.rules.TempFolderRuleTest;
 import org.junit.tests.experimental.rules.TestRuleTest;
 import org.junit.tests.experimental.rules.TimeoutRuleTest;
@@ -52,6 +53,7 @@ import org.junit.tests.manipulation.FilterTest;
 import org.junit.tests.manipulation.FilterableTest;
 import org.junit.tests.manipulation.SingleMethodTest;
 import org.junit.tests.manipulation.SortableTest;
+import org.junit.tests.running.classes.BlockJUnit4ClassRunnerTest;
 import org.junit.tests.running.classes.EnclosedTest;
 import org.junit.tests.running.classes.IgnoreClassTest;
 import org.junit.tests.running.classes.ParameterizedTestTest;
@@ -150,6 +152,8 @@ import org.junit.tests.validation.ValidationTest;
 	CategoryTest.class,
 	CategoriesAndParameterizedTest.class,
 	ParentRunnerFilteringTest.class,
+	RuleChainTest.class,
+	BlockJUnit4ClassRunnerTest.class,
 	BlockJUnit4ClassRunnerOverrideTest.class
 })
 public class AllTests {

@@ -18,6 +18,7 @@ public class AllTests {
 		suite.addTestSuite(TestCaseTest.class);
 		suite.addTest(SuiteTest.suite()); // Tests suite building, so can't use automatic test extraction 
 		suite.addTestSuite(TestListenerTest.class);
+		suite.addTestSuite(AssertionFailedErrorTest.class);
 		suite.addTestSuite(AssertTest.class);
 		suite.addTestSuite(TestImplementorTest.class);
 		suite.addTestSuite(NoArgTestCaseTest.class);

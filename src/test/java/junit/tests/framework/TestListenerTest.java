@@ -33,6 +33,7 @@ public class TestListenerTest extends TestCase implements TestListener {
 		fStartCount= 0;
 		fEndCount= 0;
 		fFailureCount= 0;
+		fErrorCount= 0;
 	}
 	public void startTest(Test test) {
 		fStartCount++;
