@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -25,18 +26,18 @@ public class MethodSorter {
      *       (non-)bug #7023180</a>
      */
     public static Method[] getDeclaredMethods(Class<?> clazz) {
-        final List<String> names;
+        List<String> names = Collections.emptyList();
         Method[] methods = clazz.getDeclaredMethods();
         try {
             names = methodNamesAndDescriptors(clazz);
         } catch (IOException x) {
             // TODO report somehow?
-            return methods;
         }
+        final List<String> _names = names;
         Arrays.sort(methods, new Comparator<Method>() {
             @Override public int compare(Method m1, Method m2) {
-                int i1 = names.indexOf(nameAndDescriptor(m1));
-                int i2 = names.indexOf(nameAndDescriptor(m2));
+                int i1 = _names.indexOf(nameAndDescriptor(m1));
+                int i2 = _names.indexOf(nameAndDescriptor(m2));
                 return i1 != i2 ? i1 - i2 : m1.toString().compareTo(m2.toString());
             }
         });
