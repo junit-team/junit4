@@ -1,6 +1,7 @@
 package org.junit.runners;
 
 import static org.junit.internal.runners.rules.RuleFieldValidator.CLASS_RULE_VALIDATOR;
+import static org.junit.internal.runners.rules.RuleFieldValidator.CLASS_RULE_METHOD_VALIDATOR;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -133,6 +134,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
 	private void validateClassRules(List<Throwable> errors) {
 		CLASS_RULE_VALIDATOR.validate(getTestClass(), errors);
+		CLASS_RULE_METHOD_VALIDATOR.validate(getTestClass(), errors);
 	}
 
 	/** 
@@ -207,7 +209,11 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	 *         each method in the tested class.
 	 */
 	protected List<TestRule> classRules() {
-		return fTestClass.getAnnotatedFieldValues(null, ClassRule.class, TestRule.class);
+		List<TestRule> result= fTestClass.getAnnotatedMethodValues(null, ClassRule.class, TestRule.class);
+
+		result.addAll(fTestClass.getAnnotatedFieldValues(null, ClassRule.class, TestRule.class));
+		
+		return result;
 	}
 
 	/**
