@@ -50,6 +50,7 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
 	/**
 	 * Returns the method's name
 	 */
+	@Override
 	public String getName() {
 		return fMethod.getName();
 	}
@@ -90,6 +91,37 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
 		if (fMethod.getReturnType() != Void.TYPE)
 			errors.add(new Exception("Method " + fMethod.getName() + "() should be void"));
 	}
+	
+	/**
+	 * Returns true if this method is static, false if not
+	 */
+	@Override
+	public boolean isStatic() {
+		return Modifier.isStatic(fMethod.getModifiers());
+	}
+
+	/**
+	 * Returns true if this method is public, false if not
+	 */
+	@Override
+	public boolean isPublic() {
+		return Modifier.isPublic(fMethod.getModifiers());
+	}
+
+	/**
+	 * Returns the return type of the method
+	 */
+	public Class<?> getReturnType() {
+		return fMethod.getReturnType();
+	}
+
+	/**
+	 * Returns the return type of the method
+	 */
+	@Override
+	public Class<?> getType() {
+		return getReturnType();
+	}
 
 	public void validateNoTypeParametersOnArgs(List<Throwable> errors) {
 		new NoGenericTypeParametersValidator(fMethod).validate(errors);
@@ -120,7 +152,7 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
 	}
 
 	/**
-	 * Returns true iff this is a no-arg method that returns a value assignable
+	 * Returns true if this is a no-arg method that returns a value assignable
 	 * to {@code type}
 	 *
 	 * @deprecated This is used only by the Theories runner, and does not
