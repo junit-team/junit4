@@ -132,7 +132,8 @@
   
   <target name="release-notes">
     <property name="basename" value="doc/ReleaseNotes${version-base}" />
-    <exec executable="build/Markdown.pl" failonerror="true">
+    <exec executable="perl" failonerror="true">
+      <arg file="build/Markdown.pl"/>
       <arg file="${basename}.txt"/>
       <redirector output="${basename}.html" />
     </exec>
