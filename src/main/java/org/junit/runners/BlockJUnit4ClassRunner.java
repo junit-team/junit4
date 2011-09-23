@@ -98,10 +98,19 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	protected void collectInitializationErrors(List<Throwable> errors) {
 		super.collectInitializationErrors(errors);
 
+		validateNoNonStaticInnerClass(errors);
 		validateConstructor(errors);
 		validateInstanceMethods(errors);
 		validateFields(errors);
 		validateMethods(errors);
+	}
+
+	protected void validateNoNonStaticInnerClass(List<Throwable> errors) {
+		if (getTestClass().isANonStaticInnerClass()) {
+			String gripe= "The inner class " + getTestClass().getName()
+					+ " is not static.";
+			errors.add(new Exception(gripe));
+		}
 	}
 
 	/**
@@ -130,8 +139,9 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	 * parameters (do not override)
 	 */
 	protected void validateZeroArgConstructor(List<Throwable> errors) {
-		if (hasOneConstructor()
-				&& !(getTestClass().getOnlyConstructor().getParameterTypes().length == 0)) {
+		if (!getTestClass().isANonStaticInnerClass()
+				&& hasOneConstructor()
+				&& (getTestClass().getOnlyConstructor().getParameterTypes().length != 0)) {
 			String gripe= "Test class should have exactly one public zero-argument constructor";
 			errors.add(new Exception(gripe));
 		}

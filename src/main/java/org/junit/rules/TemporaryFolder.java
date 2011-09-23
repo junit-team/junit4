@@ -42,39 +42,61 @@ public class TemporaryFolder extends ExternalResource {
 	 * for testing purposes only.  Do not use.
 	 */
 	public void create() throws IOException {
-		folder= File.createTempFile("junit", "");
-		folder.delete();
-		folder.mkdir();
+		folder= newFolder();
 	}
 
 	/**
 	 * Returns a new fresh file with the given name under the temporary folder.
 	 */
 	public File newFile(String fileName) throws IOException {
-		File file= new File(folder, fileName);
+		File file= new File(getRoot(), fileName);
 		file.createNewFile();
 		return file;
 	}
 
 	/**
+	 * Returns a new fresh file with a random name under the temporary folder.
+	 */
+	public File newFile() throws IOException {
+		return File.createTempFile("junit", null, folder);
+	}
+
+	/**
 	 * Returns a new fresh folder with the given name under the temporary folder.
 	 */
-	public File newFolder(String folderName) {
-		File file= new File(folder, folderName);
-		file.mkdir();
+	public File newFolder(String... folderNames) {
+		File file = getRoot();
+		for (String folderName : folderNames) {
+			file = new File(file, folderName);
+			file.mkdir();
+		}
 		return file;
+	}
+
+	/**
+	 * Returns a new fresh folder with a random name under the temporary
+	 * folder.
+	 */
+	public File newFolder() throws IOException {
+		File createdFolder= File.createTempFile("junit", "", folder);
+		createdFolder.delete();
+		createdFolder.mkdir();
+		return createdFolder;
 	}
 
 	/**
 	 * @return the location of this temporary folder.
 	 */
 	public File getRoot() {
+		if (folder == null) {
+			throw new IllegalStateException("the temporary folder has not yet been created");
+		}
 		return folder;
 	}
 
 	/**
 	 * Delete all files and folders under the temporary folder.
-	 * Usually not called directly, since it is automatically applied 
+	 * Usually not called directly, since it is automatically applied
 	 * by the {@link Rule}
 	 */
 	public void delete() {

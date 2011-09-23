@@ -1,5 +1,6 @@
 package org.junit.runners;
 
+import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -31,8 +32,8 @@ import org.junit.runners.model.TestClass;
  * 	&#064;Parameters
  * 	public static List&lt;Object[]&gt; data() {
  * 		return Arrays.asList(new Object[][] {
- * 				{ { 0, 0 }, { 1, 1 }, { 2, 1 }, { 3, 2 }, { 4, 3 }, { 5, 5 },
- * 						{ 6, 8 } } });
+ * 			{ 0, 0 }, { 1, 1 }, { 2, 1 }, { 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 }
+ * 		});
  * 	}
  * 
  * 	private int fInput;
@@ -116,6 +117,11 @@ public class Parameterized extends Suite {
 		@Override
 		protected Statement classBlock(RunNotifier notifier) {
 			return childrenInvoker(notifier);
+		}
+		
+		@Override
+		protected Annotation[] getRunnerAnnotations() {
+			return new Annotation[0];
 		}
 	}
 

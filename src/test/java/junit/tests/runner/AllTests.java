@@ -16,6 +16,7 @@ public class AllTests {
 	public static Test suite() { // Collect tests manually because we have to test class collection code
 		TestSuite suite= new TestSuite("Framework Tests");
 		suite.addTestSuite(StackFilterTest.class);
+		suite.addTestSuite(ResultTest.class);
 		suite.addTestSuite(BaseTestRunnerTest.class);
 		suite.addTestSuite(TextFeedbackTest.class);
 		suite.addTestSuite(TextRunnerSingleMethodTest.class);

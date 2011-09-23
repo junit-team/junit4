@@ -30,6 +30,7 @@ import org.junit.tests.experimental.rules.ExternalResourceRuleTest;
 import org.junit.tests.experimental.rules.MethodRulesTest;
 import org.junit.tests.experimental.rules.NameRulesTest;
 import org.junit.tests.experimental.rules.RuleFieldValidatorTest;
+import org.junit.tests.experimental.rules.RuleChainTest;
 import org.junit.tests.experimental.rules.TempFolderRuleTest;
 import org.junit.tests.experimental.rules.TestRuleTest;
 import org.junit.tests.experimental.rules.TimeoutRuleTest;
@@ -53,6 +54,7 @@ import org.junit.tests.manipulation.FilterTest;
 import org.junit.tests.manipulation.FilterableTest;
 import org.junit.tests.manipulation.SingleMethodTest;
 import org.junit.tests.manipulation.SortableTest;
+import org.junit.tests.running.classes.BlockJUnit4ClassRunnerTest;
 import org.junit.tests.running.classes.EnclosedTest;
 import org.junit.tests.running.classes.IgnoreClassTest;
 import org.junit.tests.running.classes.ParameterizedTestTest;
@@ -152,7 +154,9 @@ import org.junit.tests.validation.ValidationTest;
 	CategoriesAndParameterizedTest.class,
 	ParentRunnerFilteringTest.class,
 	BlockJUnit4ClassRunnerOverrideTest.class,
-	RuleFieldValidatorTest.class
+	RuleFieldValidatorTest.class,
+	RuleChainTest.class,
+	BlockJUnit4ClassRunnerTest.class
 })
 public class AllTests {
 	public static Test suite() {

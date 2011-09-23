@@ -11,6 +11,10 @@ public class AssertionFailedError extends AssertionError {
 	}
 
 	public AssertionFailedError(String message) {
-		super(message);
+		super(defaultString(message));
+	}
+
+	private static String defaultString(String message) {
+		return message == null ? "" : message;
 	}
 }
