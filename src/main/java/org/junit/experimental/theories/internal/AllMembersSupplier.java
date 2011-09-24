@@ -72,12 +72,17 @@ public class AllMembersSupplier extends ParameterSupplier {
 
 	private void addMultiPointMethods(List<PotentialAssignment> list) {
 		for (FrameworkMethod dataPointsMethod : fClass
-				.getAnnotatedMethods(DataPoints.class))
+				.getAnnotatedMethods(DataPoints.class)) {
+			if (!dataPointsMethod.isStatic()) {
+				throw new RuntimeException("The @" + DataPoints.class.getSimpleName() + 
+						" annotation is illegal for the method " + dataPointsMethod.getName() + " because it is not static.");
+			}
 			try {
 				addArrayValues(dataPointsMethod.getName(), list, dataPointsMethod.invokeExplosively(null));
 			} catch (Throwable e) {
-				// ignore and move on
+				throw new RuntimeException("Method " + dataPointsMethod.getName() + " threw " + e, e);
 			}
+		}
 	}
 
 	@SuppressWarnings("deprecation")
