@@ -88,12 +88,14 @@ public class ExpectedException implements TestRule {
 	private ExpectedException() {
 	}
 
-	public void handleAssertionErrors() {
+	public ExpectedException handleAssertionErrors() {
 		handleAssertionErrors= true;
+		return this;
 	}
 
-	public void handleAssumptionViolatedExceptions() {
+	public ExpectedException handleAssumptionViolatedExceptions() {
 		handleAssumptionViolatedExceptions= true;
+		return this;
 	}
 
 	public Statement apply(Statement base,
