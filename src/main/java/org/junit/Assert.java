@@ -734,7 +734,7 @@ public class Assert {
 	 * @see org.hamcrest.CoreMatchers
 	 * @see org.junit.matchers.JUnitMatchers
 	 */
-	public static <T> void assertThat(T actual, Matcher<T> matcher) {
+	public static <T> void assertThat(T actual, Matcher<? super T> matcher) {
 		assertThat("", actual, matcher);
 	}
 
@@ -768,7 +768,7 @@ public class Assert {
 	 * @see org.junit.matchers.JUnitMatchers
 	 */
 	public static <T> void assertThat(String reason, T actual,
-			Matcher<T> matcher) {
+			Matcher<? super T> matcher) {
 		if (!matcher.matches(actual)) {
 			Description description= new StringDescription();
 			description.appendText(reason);
