@@ -269,7 +269,7 @@
                       url="@{url}" repo.id="@{repo.id}" />
       
       <if>
-        <equals arg1="${is.snapshot}" arg2="false" />
+        <equals arg1="@{is.snapshot}" arg2="false" />
         <then>
           <push.maven.jar jar="${m.sources.jar}" pom="${m.pom}"
                           url="@{url}" repo.id="@{repo.id}">
@@ -292,10 +292,12 @@
     
     <push.maven.artifact artifactId="junit" 
                          url="${stage.url}"
-                         repo.id="${stage.repo.id}" />
+                         repo.id="${stage.repo.id}" 
+                         is.snapshot="false" />
     <push.maven.artifact artifactId="junit-dep" 
                          url="${stage.url}"
-                         repo.id="${stage.repo.id}" />
+                         repo.id="${stage.repo.id}"
+                         is.snapshot="false" />
   </target>
 
   <target name="snapshot.maven" depends="all.maven.jars">
