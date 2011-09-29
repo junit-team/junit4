@@ -7,8 +7,13 @@
   <property name="src" value="src/main/java" />
   <property name="target" location="target" />
   <property name="bin" location="${target}/main" />
+<<<<<<< HEAD
   <property name="version-base" value="4.11" />
   <property name="version-status" value="-SNAPSHOT" />
+=======
+  <property name="version-base" value="4.10" />
+  <property name="version-status" value="" />
+>>>>>>> 4.10
   <property name="version" value="${version-base}${version-status}" />
   <property name="dist" value="junit${version}" />
   <property name="versionfile" value="${src}/junit/runner/Version.java" />
@@ -270,7 +275,7 @@
                       url="@{url}" repo.id="@{repo.id}" />
       
       <if>
-        <equals arg1="${is.snapshot}" arg2="false" />
+        <equals arg1="@{is.snapshot}" arg2="false" />
         <then>
           <push.maven.jar jar="${m.sources.jar}" pom="${m.pom}"
                           url="@{url}" repo.id="@{repo.id}">
@@ -293,10 +298,12 @@
     
     <push.maven.artifact artifactId="junit" 
                          url="${stage.url}"
-                         repo.id="${stage.repo.id}" />
+                         repo.id="${stage.repo.id}" 
+                         is.snapshot="false" />
     <push.maven.artifact artifactId="junit-dep" 
                          url="${stage.url}"
-                         repo.id="${stage.repo.id}" />
+                         repo.id="${stage.repo.id}"
+                         is.snapshot="false" />
   </target>
 
   <target name="snapshot.maven" depends="all.maven.jars">
