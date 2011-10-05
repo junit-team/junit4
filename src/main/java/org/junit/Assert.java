@@ -721,6 +721,11 @@ public class Assert {
 	 *     // got value: &lt;0&gt;
 	 *   assertThat(0, is(not(1))) // passes
 	 * </pre>
+     *
+     * <code>org.hamcrest.Matcher</code> does not currently document the meaning
+     * of its type parameter <code>T</code>.  This method assumes that a matcher
+     * typed as <code>Matcher&lt;T&gt;</code> can be meaningfully applied only
+     * to values that could be assigned to a variable of type <code>T</code>.
 	 * 
 	 * @param <T>
 	 *            the static type accepted by the matcher (this can flag obvious
@@ -753,6 +758,11 @@ public class Assert {
 	 *   assertThat(&quot;Zero is one&quot;, 0, is(not(1))) // passes
 	 * </pre>
 	 * 
+     * <code>org.hamcrest.Matcher</code> does not currently document the meaning
+     * of its type parameter <code>T</code>.  This method assumes that a matcher
+     * typed as <code>Matcher&lt;T&gt;</code> can be meaningfully applied only
+     * to values that could be assigned to a variable of type <code>T</code>.
+     *
 	 * @param reason
 	 *            additional information about the error
 	 * @param <T>
