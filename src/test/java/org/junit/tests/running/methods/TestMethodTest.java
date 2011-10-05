@@ -13,10 +13,13 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.junit.RuntimeCondition;
 import org.junit.Test;
+import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runners.BlockJUnit4ClassRunner;
+import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 
 public class TestMethodTest {
@@ -92,23 +95,34 @@ public class TestMethodTest {
 		return Collections.emptyList();
 	}
 
+	public static class MethodStartsWithxxx implements RuntimeCondition {
+		public boolean isTrue(FrameworkMethod method) {
+			return method.getName().startsWith("xxx");
+		}
+		public boolean isTrue(Description description) {
+			return true;
+		}
+	}
+
 	static public class IgnoredTest {
 		@Test public void valid() {}
 		@Ignore @Test public void ignored() {}
 		@Ignore("For testing purposes") @Test public void withReason() {}
+		@Ignore(ifTrue = MethodStartsWithxxx.class) @Test public void xxxIgnored() {}
+		@Ignore(ifTrue = MethodStartsWithxxx.class) @Test public void yyyNotIgnored() {}
 	}
 
 	@Test public void ignoreRunner() {
 		JUnitCore runner= new JUnitCore();
 		Result result= runner.run(IgnoredTest.class);
-		assertEquals(2, result.getIgnoreCount());
-		assertEquals(1, result.getRunCount());
+		assertEquals(3, result.getIgnoreCount());
+		assertEquals(2, result.getRunCount());
 	}
 
 	@Test public void compatibility() {
 		TestResult result= new TestResult();
 		new JUnit4TestAdapter(IgnoredTest.class).run(result);
-		assertEquals(1, result.runCount());
+		assertEquals(2, result.runCount());
 	}
 	
 	public static class Confused {

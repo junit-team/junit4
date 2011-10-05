@@ -35,5 +35,9 @@ public @interface Ignore {
 	/**
 	 * The optional reason why the test is ignored.
 	 */
-	String value() default ""; 
+	String value() default "";
+  /**
+   * The optional conditions class whose instance allows to dynamically ignore tests. All conditions must be true for the ignore to have effect.
+   */
+  Class<? extends RuntimeCondition>[] ifTrue() default {};
 }

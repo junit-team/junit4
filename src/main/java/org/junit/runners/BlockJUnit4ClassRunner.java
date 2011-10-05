@@ -9,8 +9,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
+import org.junit.RuntimeCondition;
 import org.junit.Test;
 import org.junit.Test.None;
+import org.junit.internal.IgnoreUtil;
 import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.internal.runners.statements.ExpectException;
 import org.junit.internal.runners.statements.Fail;
@@ -63,14 +65,14 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	@Override
 	protected void runChild(final FrameworkMethod method, RunNotifier notifier) {
 		Description description= describeChild(method);
-		if (method.getAnnotation(Ignore.class) != null) {
+		if (IgnoreUtil.isIgnored(method)) {
 			notifier.fireTestIgnored(description);
 		} else {
 			runLeaf(methodBlock(method), description, notifier);
 		}
 	}
 
-	@Override
+  @Override
 	protected Description describeChild(FrameworkMethod method) {
 		return Description.createTestDescription(getTestClass().getJavaClass(),
 				testName(method), method.getAnnotations());
