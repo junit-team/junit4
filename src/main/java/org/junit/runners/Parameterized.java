@@ -68,11 +68,11 @@ public class Parameterized extends Suite {
 	public static @interface Parameters {
 	}
 
-	private class TestClassRunnerForParameters extends
+	protected class TestClassRunnerForParameters extends
 			BlockJUnit4ClassRunner {
-		private final int fParameterSetNumber;
+		protected final int fParameterSetNumber;
 
-		private final List<Object[]> fParameterList;
+		protected final List<Object[]> fParameterList;
 
 		TestClassRunnerForParameters(Class<?> type,
 				List<Object[]> parameterList, int i) throws InitializationError {
@@ -87,7 +87,7 @@ public class Parameterized extends Suite {
 					computeParams());
 		}
 
-		private Object[] computeParams() throws Exception {
+		protected Object[] computeParams() throws Exception {
 			try {
 				return fParameterList.get(fParameterSetNumber);
 			} catch (ClassCastException e) {
@@ -125,7 +125,7 @@ public class Parameterized extends Suite {
 		}
 	}
 
-	private final ArrayList<Runner> runners= new ArrayList<Runner>();
+	protected final ArrayList<Runner> runners= new ArrayList<Runner>();
 
 	/**
 	 * Only called reflectively. Do not use programmatically.
@@ -134,8 +134,8 @@ public class Parameterized extends Suite {
 		super(klass, Collections.<Runner>emptyList());
 		List<Object[]> parametersList= getParametersList(getTestClass());
 		for (int i= 0; i < parametersList.size(); i++)
-			runners.add(new TestClassRunnerForParameters(getTestClass().getJavaClass(),
-					parametersList, i));
+			addTestClassRunnerForParameters(getTestClass(), parametersList, i);
+
 	}
 
 	@Override
@@ -144,13 +144,20 @@ public class Parameterized extends Suite {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<Object[]> getParametersList(TestClass klass)
+	protected List<Object[]> getParametersList(TestClass klass)
 			throws Throwable {
 		return (List<Object[]>) getParametersMethod(klass).invokeExplosively(
 				null);
 	}
 
-	private FrameworkMethod getParametersMethod(TestClass testClass)
+	protected void addTestClassRunnerForParameters (
+			TestClass testClass, List<Object[]> parametersList, int i)
+			throws Throwable {
+		runners.add(new TestClassRunnerForParameters(getTestClass().getJavaClass(),
+				parametersList, i));
+	}
+
+	protected FrameworkMethod getParametersMethod(TestClass testClass)
 			throws Exception {
 		List<FrameworkMethod> methods= testClass
 				.getAnnotatedMethods(Parameters.class);
