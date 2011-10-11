@@ -69,21 +69,11 @@ public class Categories extends Suite {
 	
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface IncludeCategory {
-		public Class<?> value();
-	}
-	
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface IncludeCategories {
 		public Class<?>[] value();
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface ExcludeCategory {
-		public Class<?> value();
-	}
-	
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface ExcludeCategories {
 		public Class<?>[] value();
 	}
 
@@ -189,21 +179,13 @@ public class Categories extends Suite {
 	}
 
 	private Class<?>[] getIncludedCategories(Class<?> klass) {
-		IncludeCategories pluralAnnotation= klass.getAnnotation(IncludeCategories.class);
-		if (pluralAnnotation != null)
-			return pluralAnnotation.value();
-		
 		IncludeCategory annotation = klass.getAnnotation(IncludeCategory.class);
-		return annotation == null ? null : new Class<?>[] {annotation.value()};
+		return annotation == null ? null : annotation.value();
 	}
 
 	private Class<?>[] getExcludedCategories(Class<?> klass) {
-		ExcludeCategories pluralAnnotation= klass.getAnnotation(ExcludeCategories.class);
-		if (pluralAnnotation != null)
-			return pluralAnnotation.value();
-		
 		ExcludeCategory annotation= klass.getAnnotation(ExcludeCategory.class);
-		return annotation == null ? null : new Class<?>[] {annotation.value()};
+		return annotation == null ? null : annotation.value();
 	}
 
 	private void assertNoCategorizedDescendentsOfUncategorizeableParents(Description description) throws InitializationError {
