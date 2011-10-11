@@ -78,11 +78,11 @@ public class Categories extends Suite {
 	}
 
 	public static class CategoryFilter extends Filter {
-		public static CategoryFilter include(Class<?>[] categoryTypes) {
+		public static CategoryFilter include(Class<?>... categoryTypes) {
 			return new CategoryFilter(categoryTypes, null);
 		}
 		
-		public static CategoryFilter exclude(Class<?>[] categoryTypes) {
+		public static CategoryFilter exclude(Class<?>... categoryTypes) {
 			return new CategoryFilter(null, categoryTypes);
 		}
 
@@ -98,8 +98,23 @@ public class Categories extends Suite {
 
 		@Override
 		public String describe() {
-			return "category " + fIncluded;
+			return ((fIncluded == null || fIncluded.length == 1) ? "category ":"categories ") + join(", ", fIncluded);
 		}
+
+		private String join(String seperator, Class<?>... values)
+		{
+			if(values == null || values.length == 0)
+			{
+				return "";
+			}
+			StringBuilder sb = new StringBuilder(values[0].toString());
+			for(int i = 1; i < values.length; i++)
+			{
+				sb.append(seperator).append(values[i].toString());
+			}
+			return sb.toString();
+		}
+
 
 		@Override
 		public boolean shouldRun(Description description) {

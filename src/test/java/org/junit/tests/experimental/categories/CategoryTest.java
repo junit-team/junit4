@@ -131,7 +131,7 @@ public class CategoryTest {
 
 	@Test
 	public void testCountWithExplicitFilter() throws Throwable {
-		CategoryFilter include= CategoryFilter.include(new Class<?>[] {SlowTests.class});
+		CategoryFilter include= CategoryFilter.include(SlowTests.class);
 		Request baseRequest= Request.aClass(TestSuiteWithNoCategories.class);
 		Result result= new JUnitCore().run(baseRequest.filterWith(include));
 		assertTrue(result.wasSuccessful());
@@ -140,9 +140,9 @@ public class CategoryTest {
 	
 	@Test
 	public void testCountWithExplicitExcludeFilter() throws Throwable {
-		CategoryFilter include= CategoryFilter.exclude(new Class<?>[] {SlowTests.class, FastTests.class});
+		CategoryFilter exclude = CategoryFilter.exclude(SlowTests.class, FastTests.class);
 		Request baseRequest= Request.aClass(OneOfEach.class);
-		Result result= new JUnitCore().run(baseRequest.filterWith(include));
+		Result result= new JUnitCore().run(baseRequest.filterWith(exclude));
 		assertTrue(result.wasSuccessful());
 		assertEquals(1, result.getRunCount());
 	}
@@ -150,7 +150,7 @@ public class CategoryTest {
 	@Test
 	public void categoryFilterLeavesOnlyMatchingMethods()
 			throws InitializationError, NoTestsRemainException {
-		CategoryFilter filter= CategoryFilter.include(new Class<?>[] {SlowTests.class});
+		CategoryFilter filter= CategoryFilter.include(SlowTests.class);
 		BlockJUnit4ClassRunner runner= new BlockJUnit4ClassRunner(A.class);
 		filter.apply(runner);
 		assertEquals(1, runner.testCount());
@@ -179,7 +179,7 @@ public class CategoryTest {
 	@Test
 	public void categoryFilterRejectsIncompatibleCategory()
 			throws InitializationError, NoTestsRemainException {
-		CategoryFilter filter= CategoryFilter.include(new Class<?>[] {SlowTests.class});
+		CategoryFilter filter= CategoryFilter.include(SlowTests.class);
 		BlockJUnit4ClassRunner runner= new BlockJUnit4ClassRunner(
 				OneOfEach.class);
 		filter.apply(runner);
@@ -209,9 +209,14 @@ public class CategoryTest {
 
 	@Test
 	public void describeACategoryFilter() {
-		Class<?>[] includeCats = new Class<?>[] {SlowTests.class};
-		CategoryFilter filter= CategoryFilter.include(includeCats);
-		assertEquals("category " + includeCats, filter.describe());
+		CategoryFilter filter= CategoryFilter.include(SlowTests.class);
+		assertEquals("category " + SlowTests.class, filter.describe());
+	}
+	
+	@Test
+	public void describeAMultiCategoryFilter() {
+		CategoryFilter filter= CategoryFilter.include(SlowTests.class, FastTests.class);
+		assertEquals("categories " + SlowTests.class + ", " + FastTests.class, filter.describe());
 	}
 	
 	public static class OneThatIsBothFastAndSlow {
