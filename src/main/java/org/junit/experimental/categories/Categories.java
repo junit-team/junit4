@@ -71,25 +71,39 @@ public class Categories extends Suite {
 	public @interface IncludeCategory {
 		public Class<?> value();
 	}
+	
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface IncludeCategories {
+		public Class<?>[] value();
+	}
 
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface ExcludeCategory {
 		public Class<?> value();
 	}
+	
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface ExcludeCategories {
+		public Class<?>[] value();
+	}
 
 	public static class CategoryFilter extends Filter {
-		public static CategoryFilter include(Class<?> categoryType) {
-			return new CategoryFilter(categoryType, null);
+		public static CategoryFilter include(Class<?>[] categoryTypes) {
+			return new CategoryFilter(categoryTypes, null);
+		}
+		
+		public static CategoryFilter exclude(Class<?>[] categoryTypes) {
+			return new CategoryFilter(null, categoryTypes);
 		}
 
-		private final Class<?> fIncluded;
+		private final Class<?>[] fIncluded;
 
-		private final Class<?> fExcluded;
-
-		public CategoryFilter(Class<?> includedCategory,
-				Class<?> excludedCategory) {
-			fIncluded= includedCategory;
-			fExcluded= excludedCategory;
+		private final Class<?>[] fExcluded;
+		
+		public CategoryFilter(Class<?>[] includedCategories,
+				Class<?>[] excludedCategories) {
+			fIncluded= includedCategories;
+			fExcluded= excludedCategories;
 		}
 
 		@Override
@@ -112,10 +126,28 @@ public class Categories extends Suite {
 			if (categories.isEmpty())
 				return fIncluded == null;
 			for (Class<?> each : categories)
-				if (fExcluded != null && fExcluded.isAssignableFrom(each))
+				if (shouldExclude(each))
 					return false;
 			for (Class<?> each : categories)
-				if (fIncluded == null || fIncluded.isAssignableFrom(each))
+				if (shouldInclude(each))
+					return true;
+			return false;
+		}
+
+		private boolean shouldInclude(Class<?> category) {
+			if (fIncluded == null)
+				return true;
+			for(Class<?> includeCat : fIncluded)
+				if (includeCat.isAssignableFrom(category))
+					return true;
+			return false;
+		}
+
+		private boolean shouldExclude(Class<?> category) {
+			if (fExcluded == null)
+				return false;
+			for(Class<?> each : fExcluded)
+				if(each.isAssignableFrom(category))
 					return true;
 			return false;
 		}
@@ -148,22 +180,30 @@ public class Categories extends Suite {
 			throws InitializationError {
 		super(klass, builder);
 		try {
-			filter(new CategoryFilter(getIncludedCategory(klass),
-					getExcludedCategory(klass)));
+			filter(new CategoryFilter(getIncludedCategories(klass),
+					getExcludedCategories(klass)));
 		} catch (NoTestsRemainException e) {
 			throw new InitializationError(e);
 		}
 		assertNoCategorizedDescendentsOfUncategorizeableParents(getDescription());
 	}
 
-	private Class<?> getIncludedCategory(Class<?> klass) {
-		IncludeCategory annotation= klass.getAnnotation(IncludeCategory.class);
-		return annotation == null ? null : annotation.value();
+	private Class<?>[] getIncludedCategories(Class<?> klass) {
+		IncludeCategories pluralAnnotation= klass.getAnnotation(IncludeCategories.class);
+		if (pluralAnnotation != null)
+			return pluralAnnotation.value();
+		
+		IncludeCategory annotation = klass.getAnnotation(IncludeCategory.class);
+		return annotation == null ? null : new Class<?>[] {annotation.value()};
 	}
 
-	private Class<?> getExcludedCategory(Class<?> klass) {
+	private Class<?>[] getExcludedCategories(Class<?> klass) {
+		ExcludeCategories pluralAnnotation= klass.getAnnotation(ExcludeCategories.class);
+		if (pluralAnnotation != null)
+			return pluralAnnotation.value();
+		
 		ExcludeCategory annotation= klass.getAnnotation(ExcludeCategory.class);
-		return annotation == null ? null : annotation.value();
+		return annotation == null ? null : new Class<?>[] {annotation.value()};
 	}
 
 	private void assertNoCategorizedDescendentsOfUncategorizeableParents(Description description) throws InitializationError {

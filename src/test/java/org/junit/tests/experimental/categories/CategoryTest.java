@@ -30,6 +30,10 @@ public class CategoryTest {
 	public interface SlowTests {
 		// category marker
 	}
+	
+	public interface ReallySlowTests {
+		// category marker
+	}
 
 	public static class A {
 		@Test
@@ -127,23 +131,32 @@ public class CategoryTest {
 
 	@Test
 	public void testCountWithExplicitFilter() throws Throwable {
-		CategoryFilter include= CategoryFilter.include(SlowTests.class);
+		CategoryFilter include= CategoryFilter.include(new Class<?>[] {SlowTests.class});
 		Request baseRequest= Request.aClass(TestSuiteWithNoCategories.class);
 		Result result= new JUnitCore().run(baseRequest.filterWith(include));
 		assertTrue(result.wasSuccessful());
 		assertEquals(2, result.getRunCount());
 	}
+	
+	@Test
+	public void testCountWithExplicitExcludeFilter() throws Throwable {
+		CategoryFilter include= CategoryFilter.exclude(new Class<?>[] {SlowTests.class, FastTests.class});
+		Request baseRequest= Request.aClass(OneOfEach.class);
+		Result result= new JUnitCore().run(baseRequest.filterWith(include));
+		assertTrue(result.wasSuccessful());
+		assertEquals(1, result.getRunCount());
+	}
 
 	@Test
 	public void categoryFilterLeavesOnlyMatchingMethods()
 			throws InitializationError, NoTestsRemainException {
-		CategoryFilter filter= CategoryFilter.include(SlowTests.class);
+		CategoryFilter filter= CategoryFilter.include(new Class<?>[] {SlowTests.class});
 		BlockJUnit4ClassRunner runner= new BlockJUnit4ClassRunner(A.class);
 		filter.apply(runner);
 		assertEquals(1, runner.testCount());
 	}
 
-	public static class OneFastOneSlow {
+	public static class OneOfEach {
 		@Category(FastTests.class)
 		@Test
 		public void a() {
@@ -155,14 +168,20 @@ public class CategoryTest {
 		public void b() {
 
 		}
+		
+		@Category(ReallySlowTests.class)
+		@Test
+		public void c() {
+
+		}
 	}
 
 	@Test
 	public void categoryFilterRejectsIncompatibleCategory()
 			throws InitializationError, NoTestsRemainException {
-		CategoryFilter filter= CategoryFilter.include(SlowTests.class);
+		CategoryFilter filter= CategoryFilter.include(new Class<?>[] {SlowTests.class});
 		BlockJUnit4ClassRunner runner= new BlockJUnit4ClassRunner(
-				OneFastOneSlow.class);
+				OneOfEach.class);
 		filter.apply(runner);
 		assertEquals(1, runner.testCount());
 	}
@@ -190,8 +209,9 @@ public class CategoryTest {
 
 	@Test
 	public void describeACategoryFilter() {
-		CategoryFilter filter= CategoryFilter.include(SlowTests.class);
-		assertEquals("category " + SlowTests.class, filter.describe());
+		Class<?>[] includeCats = new Class<?>[] {SlowTests.class};
+		CategoryFilter filter= CategoryFilter.include(includeCats);
+		assertEquals("category " + includeCats, filter.describe());
 	}
 	
 	public static class OneThatIsBothFastAndSlow {
