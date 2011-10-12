@@ -20,6 +20,7 @@ import org.junit.tests.experimental.MatcherTest;
 import org.junit.tests.experimental.categories.CategoriesAndParameterizedTest;
 import org.junit.tests.experimental.categories.CategoriesConfiguredBySystemPropertiesTest;
 import org.junit.tests.experimental.categories.CategoryTest;
+import org.junit.tests.experimental.categories.MultiCategoryTest;
 import org.junit.tests.experimental.max.JUnit38SortingTest;
 import org.junit.tests.experimental.max.MaxStarterTest;
 import org.junit.tests.experimental.parallel.ParallelClassTest;
@@ -154,6 +155,7 @@ import org.junit.tests.validation.ValidationTest;
 	CategoryTest.class,
 	CategoriesAndParameterizedTest.class,
 	CategoriesConfiguredBySystemPropertiesTest.class,
+	MultiCategoryTest.class,
 	ParentRunnerFilteringTest.class,
 	RuleChainTest.class,
 	BlockJUnit4ClassRunnerTest.class,

@@ -97,12 +97,12 @@ public class Categories extends Suite {
 	
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface IncludeCategory {
-		public Class<?> value();
+		public Class<?>[] value();
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface ExcludeCategory {
-		public Class<?> value();
+		public Class<?>[] value();
 	}
 
 	public static class CategoryFilter extends Filter {
@@ -113,15 +113,13 @@ public class Categories extends Suite {
 		}
 
         /**
-         * TODO useful method for maven-surefire-plugin
-         * public static createCategoryFilter(Set<Class<?>> includes, Set<Class<?>> excludes):CategoryFilter
-         * TODO performance improvement includes.removeAll(excludes) unless any null, and use them both anyway
+         * Useful method for e.g. maven-surefire-plugin.
          * See the issue #336
          * https://github.com/KentBeck/junit/issues/336
-         * public static CategoryFilter createCategoryFilter(Set<Class<?>> includes, Set<Class<?>> excludes) {
-         *      return new CategoryFilter(includes, excludes);
-         * }
          * */
+        public static CategoryFilter createCategoryFilter(Set<Class<?>> includes, Set<Class<?>> excludes) {
+            return new CategoryFilter(includes, excludes);
+        }
 
 		private final Set<Class<?>> fIncluded,//NULL represents 'All' categories without limitation to Included.
                                     fExcluded;//Cannot be null. Empty Set does not exclude categories.
@@ -230,14 +228,12 @@ public class Categories extends Suite {
 	}
 
 	private static Set<Class<?>> getIncludedCategory(Class<?> klass) throws ClassNotFoundException {
-		IncludeCategory annotation = klass.getAnnotation(IncludeCategory.class);//FIX for issue #336: IncludeCategory[] annotations
-        // see https://github.com/KentBeck/junit/issues/336
+		IncludeCategory annotation = klass.getAnnotation(IncludeCategory.class);
 		return intersectWithSystemPropertyInclusions(annotation == null ? null : createSet(annotation.value()));
 	}
 
 	private static Set<Class<?>> getExcludedCategory(Class<?> klass) throws ClassNotFoundException {
-		ExcludeCategory annotation = klass.getAnnotation(ExcludeCategory.class);//FIX for issue #336: ExcludeCategory[] annotations
-        // see https://github.com/KentBeck/junit/issues/336
+		ExcludeCategory annotation = klass.getAnnotation(ExcludeCategory.class);
 		return unionWithSystemPropertyExclusions(annotation == null ? createSet() : createSet(annotation.value()));
 	}
 
