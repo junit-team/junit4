@@ -18,6 +18,7 @@ import org.junit.tests.experimental.AssumptionViolatedExceptionTest;
 import org.junit.tests.experimental.ExperimentalTests;
 import org.junit.tests.experimental.MatcherTest;
 import org.junit.tests.experimental.categories.CategoriesAndParameterizedTest;
+import org.junit.tests.experimental.categories.CategoriesConfiguredBySystemPropertiesTest;
 import org.junit.tests.experimental.categories.CategoryTest;
 import org.junit.tests.experimental.max.JUnit38SortingTest;
 import org.junit.tests.experimental.max.MaxStarterTest;
@@ -151,6 +152,7 @@ import org.junit.tests.validation.ValidationTest;
 	VerifierRuleTest.class,
 	CategoryTest.class,
 	CategoriesAndParameterizedTest.class,
+	CategoriesConfiguredBySystemPropertiesTest.class,
 	ParentRunnerFilteringTest.class,
 	RuleChainTest.class,
 	BlockJUnit4ClassRunnerTest.class,
