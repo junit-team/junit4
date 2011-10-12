@@ -21,6 +21,7 @@ import static org.junit.matchers.JUnitMatchers.hasItems;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.Is.is;
 
+
 public final class CategoriesConfiguredBySystemPropertiesTest {
 
     private static String convertToFileNames(final Class<?>... types) {

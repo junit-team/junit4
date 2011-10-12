@@ -25,6 +25,7 @@ import static org.junit.runner.Description.createSuiteDescription;
  * 
  * Note that, for now, annotating suites with {@code @Category} has no effect.
  * Categories must be annotated on the direct method or class.
+ *
  * <p>
  * Two system properties override categories declared by {@link IncludeCategory}
  * and {@link ExcludeCategory}. Every of these two properties use a comma separated
