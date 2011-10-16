@@ -43,13 +43,13 @@ public enum RuleFieldValidator {
 
 	private final Class<? extends Annotation> fAnnotation;
 
-	private final boolean fOnlyStaticMembers;
+	private final boolean fStaticMembers;
 	private final boolean fMethods;
 
 	private RuleFieldValidator(Class<? extends Annotation> annotation,
-			boolean methods, boolean fOnlyStaticMembers) {
+			boolean methods, boolean fStaticMembers) {
 		this.fAnnotation= annotation;
-		this.fOnlyStaticMembers= fOnlyStaticMembers;
+		this.fStaticMembers= fStaticMembers;
 		this.fMethods= methods;
 	}
 
@@ -68,15 +68,17 @@ public enum RuleFieldValidator {
 	}
 
 	private void validateMember(FrameworkMember<?> member, List<Throwable> errors) {
-		optionallyValidateStatic(member, errors);
+		validateStatic(member, errors);
 		validatePublic(member, errors);
 		validateTestRuleOrMethodRule(member, errors);
 	}
 
-	private void optionallyValidateStatic(FrameworkMember<?> member,
+	private void validateStatic(FrameworkMember<?> member,
 			List<Throwable> errors) {
-		if (fOnlyStaticMembers && !member.isStatic())
+		if (fStaticMembers && !member.isStatic())
 			addError(errors, member, "must be static.");
+		if (!fStaticMembers && member.isStatic())
+			addError(errors, member, "must not be static.");
 	}
 
 	private void validatePublic(FrameworkMember<?> member, List<Throwable> errors) {
