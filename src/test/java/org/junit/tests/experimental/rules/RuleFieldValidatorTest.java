@@ -60,6 +60,18 @@ public class RuleFieldValidatorTest {
 	}
 
 	@Test
+	public void rejectStaticTestRule() {
+		TestClass target= new TestClass(TestWithStaticTestRule.class);
+		RULE_VALIDATOR.validate(target, errors);
+		assertOneErrorWithMessage("The @Rule 'temporaryFolder' must not be static.");
+	}
+
+	public static class TestWithStaticTestRule {
+		@Rule
+		public static TestRule temporaryFolder = new TemporaryFolder();
+	}
+
+	@Test
 	public void acceptMethodRule() throws Exception {
 		TestClass target= new TestClass(TestWithMethodRule.class);
 		RULE_VALIDATOR.validate(target, errors);
@@ -123,6 +135,18 @@ public class RuleFieldValidatorTest {
 	public static class TestMethodWithNonStaticTestRule {
 		@Rule
 		public TestRule getTemporaryFolder() { return new TemporaryFolder(); }
+	}
+
+	@Test
+	public void rejectMethodStaticTestRule() {
+		TestClass target= new TestClass(TestMethodWithStaticTestRule.class);
+		RULE_METHOD_VALIDATOR.validate(target, errors);
+		assertOneErrorWithMessage("The @Rule 'getTemporaryFolder' must not be static.");
+	}
+
+	public static class TestMethodWithStaticTestRule {
+		@Rule
+		public static TestRule getTemporaryFolder() { return new TemporaryFolder(); }
 	}
 
 	@Test
