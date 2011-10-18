@@ -39,10 +39,10 @@ public class TemporaryFolder extends ExternalResource {
 
 	// testing purposes only
 	/**
-	 * for testing purposes only.  Do not use.
+	 * for testing purposes only. Do not use.
 	 */
 	public void create() throws IOException {
-		folder= newFolder();
+		folder= createTemporaryFolderIn(null);
 	}
 
 	/**
@@ -58,27 +58,31 @@ public class TemporaryFolder extends ExternalResource {
 	 * Returns a new fresh file with a random name under the temporary folder.
 	 */
 	public File newFile() throws IOException {
-		return File.createTempFile("junit", null, folder);
+		return File.createTempFile("junit", null, getRoot());
 	}
 
 	/**
-	 * Returns a new fresh folder with the given name under the temporary folder.
+	 * Returns a new fresh folder with the given name under the temporary
+	 * folder.
 	 */
 	public File newFolder(String... folderNames) {
-		File file = getRoot();
+		File file= getRoot();
 		for (String folderName : folderNames) {
-			file = new File(file, folderName);
+			file= new File(file, folderName);
 			file.mkdir();
 		}
 		return file;
 	}
 
 	/**
-	 * Returns a new fresh folder with a random name under the temporary
-	 * folder.
+	 * Returns a new fresh folder with a random name under the temporary folder.
 	 */
 	public File newFolder() throws IOException {
-		File createdFolder= File.createTempFile("junit", "", folder);
+		return createTemporaryFolderIn(getRoot());
+	}
+
+	private File createTemporaryFolderIn(File parentFolder) throws IOException {
+		File createdFolder= File.createTempFile("junit", "", parentFolder);
 		createdFolder.delete();
 		createdFolder.mkdir();
 		return createdFolder;
@@ -89,18 +93,19 @@ public class TemporaryFolder extends ExternalResource {
 	 */
 	public File getRoot() {
 		if (folder == null) {
-			throw new IllegalStateException("the temporary folder has not yet been created");
+			throw new IllegalStateException(
+					"the temporary folder has not yet been created");
 		}
 		return folder;
 	}
 
 	/**
-	 * Delete all files and folders under the temporary folder.
-	 * Usually not called directly, since it is automatically applied
-	 * by the {@link Rule}
+	 * Delete all files and folders under the temporary folder. Usually not
+	 * called directly, since it is automatically applied by the {@link Rule}
 	 */
 	public void delete() {
-		recursiveDelete(folder);
+		if (folder != null)
+			recursiveDelete(folder);
 	}
 
 	private void recursiveDelete(File file) {
