@@ -139,12 +139,21 @@ public class CategoryTest {
 	}
 	
 	@Test
-	public void testCountWithExplicitExcludeFilter() throws Throwable {
+	public void testCountWithMultipleExcludeFilter() throws Throwable {
 		CategoryFilter exclude = CategoryFilter.exclude(SlowTests.class, FastTests.class);
 		Request baseRequest= Request.aClass(OneOfEach.class);
 		Result result= new JUnitCore().run(baseRequest.filterWith(exclude));
 		assertTrue(result.wasSuccessful());
 		assertEquals(1, result.getRunCount());
+	}
+	
+	@Test
+	public void testCountWithMultipleIncludeFilter() throws Throwable {
+		CategoryFilter exclude = CategoryFilter.include(SlowTests.class, FastTests.class);
+		Request baseRequest= Request.aClass(OneOfEach.class);
+		Result result= new JUnitCore().run(baseRequest.filterWith(exclude));
+		assertTrue(result.wasSuccessful());
+		assertEquals(2, result.getRunCount());
 	}
 
 	@Test

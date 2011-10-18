@@ -90,8 +90,7 @@ public class Categories extends Suite {
 
 		private final Class<?>[] fExcluded;
 		
-		public CategoryFilter(Class<?>[] includedCategories,
-				Class<?>[] excludedCategories) {
+		public CategoryFilter(Class<?>[] includedCategories, Class<?>[] excludedCategories) {
 			fIncluded= includedCategories;
 			fExcluded= excludedCategories;
 		}
@@ -101,18 +100,13 @@ public class Categories extends Suite {
 			return ((fIncluded == null || fIncluded.length == 1) ? "category ":"categories ") + join(", ", fIncluded);
 		}
 
-		private String join(String seperator, Class<?>... values)
-		{
+		private String join(String seperator, Class<?>... values) {
 			if(values == null || values.length == 0)
-			{
 				return "";
-			}
-			StringBuilder sb = new StringBuilder(values[0].toString());
-			for(int i = 1; i < values.length; i++)
-			{
-				sb.append(seperator).append(values[i].toString());
-			}
-			return sb.toString();
+			StringBuilder sb= new StringBuilder();
+			for(Class<?> each :values)
+				sb.append(each.toString()).append(seperator);
+			return sb.substring(0, sb.length() - seperator.length());
 		}
 
 
@@ -130,29 +124,23 @@ public class Categories extends Suite {
 			List<Class<?>> categories= categories(description);
 			if (categories.isEmpty())
 				return fIncluded == null;
-			for (Class<?> each : categories)
-				if (shouldExclude(each))
+			return categoryListPassesFilters(categories);
+		}
+
+		private boolean categoryListPassesFilters(List<Class<?>> categories) {
+			boolean hasIncludeCategory= false;
+			for (Class<?> each : categories) {
+				if ((fExcluded != null) && classIsAssignableFromClassInArray(each, fExcluded))
 					return false;
-			for (Class<?> each : categories)
-				if (shouldInclude(each))
-					return true;
-			return false;
+				hasIncludeCategory= (fIncluded == null) || hasIncludeCategory || 
+						classIsAssignableFromClassInArray(each, fIncluded);
+			}
+			return hasIncludeCategory;
 		}
-
-		private boolean shouldInclude(Class<?> category) {
-			if (fIncluded == null)
-				return true;
-			for(Class<?> includeCat : fIncluded)
-				if (includeCat.isAssignableFrom(category))
-					return true;
-			return false;
-		}
-
-		private boolean shouldExclude(Class<?> category) {
-			if (fExcluded == null)
-				return false;
-			for(Class<?> each : fExcluded)
-				if(each.isAssignableFrom(category))
+		
+		private boolean classIsAssignableFromClassInArray(Class<?> clazz, Class<?>[] classes) {
+			for(Class<?> each : classes)
+				if (each.isAssignableFrom(clazz))
 					return true;
 			return false;
 		}
@@ -194,7 +182,7 @@ public class Categories extends Suite {
 	}
 
 	private Class<?>[] getIncludedCategories(Class<?> klass) {
-		IncludeCategory annotation = klass.getAnnotation(IncludeCategory.class);
+		IncludeCategory annotation= klass.getAnnotation(IncludeCategory.class);
 		return annotation == null ? null : annotation.value();
 	}
 
