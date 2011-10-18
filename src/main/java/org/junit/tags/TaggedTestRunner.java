@@ -43,8 +43,8 @@ import java.util.HashSet;
  */
 public class TaggedTestRunner extends BlockJUnit4ClassRunner {
 
-    private static final HashSet<String> RUN_TAGS         = getAllowedTags();
     public static final String           TAG_SYS_PROPERTY = "org.junit.runtags";
+    private static HashSet<String> RUN_TAGS         = getAllowedTags();
 
     public TaggedTestRunner(Class<?> klass) throws InitializationError {
         super(klass);
@@ -59,16 +59,18 @@ public class TaggedTestRunner extends BlockJUnit4ClassRunner {
             notifier.fireTestIgnored(description);
         }
     }
+    
+    public static void readRunTags() {
+    	RUN_TAGS         = getAllowedTags();
+    }
 
     private static HashSet<String> getAllowedTags() {
         String allowedTags = System.getProperty(TAG_SYS_PROPERTY, null);
         if (null == allowedTags || allowedTags.trim().length() < 1) {
-            System.out.println("TaggedTestRunner: No tags specified, " + TAG_SYS_PROPERTY + " System Property is empty.");
+            //System.out.println("TaggedTestRunner: No tags specified, " + TAG_SYS_PROPERTY + " System Property is empty.");
             return null;
         }
-        System.out.println(
-                "TaggedTestRunner is running with allowed tags via System Property: " + TAG_SYS_PROPERTY + "=" +
-                        allowedTags);
+        //System.out.println("TaggedTestRunner: Running tests tagged with "+allowedTags);
         return new HashSet<String>(Arrays.asList(allowedTags.split(",")));
     }
 
@@ -91,10 +93,11 @@ public class TaggedTestRunner extends BlockJUnit4ClassRunner {
                 return true;
             }
         }
+        /*
         System.err.format("Test '%s.%s' ignored. Reason: %s, Expected: %s, Actual: %s \n",
                           method.getMethod().getDeclaringClass().getName(), method.getName(),
                           runTagsAnnotation.reason(), RUN_TAGS, Arrays.toString(methodTags));
+                          */
         return false;
     }
-
 }
