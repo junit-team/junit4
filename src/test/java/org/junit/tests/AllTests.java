@@ -32,6 +32,7 @@ import org.junit.tests.experimental.rules.NameRulesTest;
 import org.junit.tests.experimental.rules.RuleFieldValidatorTest;
 import org.junit.tests.experimental.rules.RuleChainTest;
 import org.junit.tests.experimental.rules.TempFolderRuleTest;
+import org.junit.tests.experimental.rules.TemporaryFolderUsageTest;
 import org.junit.tests.experimental.rules.TestRuleTest;
 import org.junit.tests.experimental.rules.TimeoutRuleTest;
 import org.junit.tests.experimental.rules.VerifierRuleTest;
@@ -148,6 +149,7 @@ import org.junit.tests.validation.ValidationTest;
 	ClassRulesTest.class,
 	ExpectedExceptionRuleTest.class,
 	TempFolderRuleTest.class,
+	TemporaryFolderUsageTest.class,
 	ExternalResourceRuleTest.class,
 	VerifierRuleTest.class,
 	CategoryTest.class,

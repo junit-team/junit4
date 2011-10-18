@@ -60,7 +60,7 @@ public class TemporaryFolderUsageTest {
 	@Test
 	public void createInitializesRootFolder() throws IOException {
 		tempFolder.create();
-		assertFileExists("Root folder", tempFolder.getRoot());
+		assertFileExists(tempFolder.getRoot());
 	}
 
 	@Test
@@ -72,17 +72,7 @@ public class TemporaryFolderUsageTest {
 	public void deleteRemovesRootFolder() throws IOException {
 		tempFolder.create();
 		tempFolder.delete();
-		assertFileDoesNotExists("Root folder", tempFolder.getRoot());
-	}
-
-	private void assertFileDoesNotExists(String msg, File file) {
-		assertThat(msg + ": is null", file, is(notNullValue()));
-		assertThat(msg + ": still exists", file.exists(), is(false));
-	}
-
-	private void assertFileExists(String msg, File file) {
-		assertThat(msg + ": is null", file, is(notNullValue()));
-		assertThat(msg + ": does not exist", file.exists(), is(true));
+		assertFileDoesNotExist(tempFolder.getRoot());
 	}
 
 	@Test
@@ -90,7 +80,7 @@ public class TemporaryFolderUsageTest {
 		tempFolder.create();
 
 		File f= tempFolder.newFile();
-		assertFileExists("Random file", f);
+		assertFileExists(f);
 		assertFileCreatedUnderRootFolder("Random file", f);
 	}
 
@@ -101,19 +91,9 @@ public class TemporaryFolderUsageTest {
 
 		File f= tempFolder.newFile(fileName);
 
-		assertFileExists("Named file", f);
+		assertFileExists(f);
 		assertFileCreatedUnderRootFolder("Named file", f);
 		assertThat("file name", f.getName(), equalTo(fileName));
-	}
-
-	private void assertFileCreatedUnderRootFolder(String msg, File f) {
-		assertParentFolderForFileIs(msg, f, tempFolder.getRoot());
-	}
-
-	private void assertParentFolderForFileIs(String msg, File f,
-			File parentFolder) {
-		assertThat(msg + ": not under root", f.getParentFile(),
-				is(parentFolder));
 	}
 
 	@Test
@@ -121,7 +101,7 @@ public class TemporaryFolderUsageTest {
 		tempFolder.create();
 
 		File f= tempFolder.newFolder();
-		assertFileExists("Random folder", f);
+		assertFileExists(f);
 		assertFileCreatedUnderRootFolder("Random folder", f);
 	}
 
@@ -130,13 +110,35 @@ public class TemporaryFolderUsageTest {
 		tempFolder.create();
 
 		File f= tempFolder.newFolder("top", "middle", "bottom");
-		assertFileExists("Nested folder", f);
-		assertParentFolderForFileIs("bottom", f, new File(tempFolder.getRoot(),
+		assertFileExists(f);
+		assertParentFolderForFileIs(f, new File(tempFolder.getRoot(),
 				"top/middle"));
-		assertParentFolderForFileIs("middle", f.getParentFile(), new File(
-				tempFolder.getRoot(), "top"));
+		assertParentFolderForFileIs(f.getParentFile(),
+				new File(tempFolder.getRoot(), "top"));
 		assertFileCreatedUnderRootFolder("top", f.getParentFile()
 				.getParentFile());
 	}
 
+	private void assertFileDoesNotExist(File file) {
+		checkFileExists("exists", file, false);
+	}
+
+	private void checkFileExists(String msg, File file, boolean exists) {
+		assertThat("File is null", file, is(notNullValue()));
+		assertThat("File '" + file.getAbsolutePath() + "' " + msg,
+				file.exists(), is(exists));
+	}
+
+	private void assertFileExists(File file) {
+		checkFileExists("does not exist", file, true);
+	}
+
+	private void assertFileCreatedUnderRootFolder(String msg, File f) {
+		assertParentFolderForFileIs(f, tempFolder.getRoot());
+	}
+
+	private void assertParentFolderForFileIs(File f, File parentFolder) {
+		assertThat("'" + f.getAbsolutePath() + "': not under root",
+				f.getParentFile(), is(parentFolder));
+	}
 }
