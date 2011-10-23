@@ -9,7 +9,6 @@ import org.junit.Test.None;
 import org.junit.internal.runners.statements.ExpectException;
 import org.junit.internal.runners.statements.FailOnTimeout;
 import org.junit.internal.runners.statements.InvokeMethod;
-import org.junit.rules.RunRules;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 
@@ -29,25 +28,19 @@ public class AnnotatedFrameworkTest implements FrameworkTest {
 		this.testClass= testClass;
 		this.method= method;
 
-		readExpectedException();
-		readTimeout();
-		readIgnored();
+		processAnnotations();
 	}
 
-	void readExpectedException() {
+	void processAnnotations() {
 		Test testAnnotation= getAnnotation(Test.class);
+
 		expectedException= testAnnotation.expected();
 		if (expectedException == None.class) {
 			expectedException= null;
 		}
-	}
 
-	void readTimeout() {
-		Test testAnnotation= getAnnotation(Test.class);
 		timeout= testAnnotation.timeout();
-	}
 
-	void readIgnored() {
 		ignored= getAnnotation(Ignore.class) != null;
 	}
 
@@ -89,10 +82,7 @@ public class AnnotatedFrameworkTest implements FrameworkTest {
 		Statement statement= methodInvoker(test);
 		statement= possiblyExpectingExceptions(statement);
 		statement= withPotentialTimeout(statement);
-		if (!testRules.isEmpty()) {
-			statement= new RunRules(statement, testRules,
-					createDescription());
-		}
+		statement= withTestRules(testRules, statement);
 		return statement;
 	}
 
@@ -117,6 +107,14 @@ public class AnnotatedFrameworkTest implements FrameworkTest {
 	protected Statement withPotentialTimeout(Statement statement) {
 		if (timeout > 0) {
 			statement= new FailOnTimeout(statement, timeout);
+		}
+		return statement;
+	}
+
+	protected Statement withTestRules(List<TestRule> testRules,
+			Statement statement) {
+		for (TestRule testRule : testRules) {
+			statement= testRule.apply(statement, createDescription());
 		}
 		return statement;
 	}
