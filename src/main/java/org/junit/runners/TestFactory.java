@@ -16,6 +16,5 @@ public interface TestFactory {
 	 *            errors are added to the list.
 	 * @return
 	 */
-	List<? extends FrameworkTest> computeTestMethods(TestClass testClass,
-			List<Throwable> errors);
+	List<FrameworkTest> computeTestMethods(TestClass testClass, List<Throwable> errors);
 }

@@ -1,35 +1,98 @@
 package org.junit.runners.model;
 
+import java.lang.annotation.Annotation;
+import java.util.List;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.Test.None;
 import org.junit.internal.runners.statements.ExpectException;
 import org.junit.internal.runners.statements.FailOnTimeout;
 import org.junit.internal.runners.statements.InvokeMethod;
+import org.junit.rules.RunRules;
+import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 
 public class AnnotatedFrameworkTest implements FrameworkTest {
 
-	private final FrameworkMethod method;
+	protected final TestClass testClass;
 
-	public AnnotatedFrameworkTest(FrameworkMethod method) {
+	public final FrameworkMethod method;
+
+	private Class<? extends Throwable> expectedException;
+
+	private long timeout;
+
+	private boolean ignored;
+
+	public AnnotatedFrameworkTest(TestClass testClass, FrameworkMethod method) {
+		this.testClass= testClass;
 		this.method= method;
+
+		readExpectedException();
+		readTimeout();
+		readIgnored();
 	}
 
-	public Description createDescription(TestClass testClass) {
+	void readExpectedException() {
+		Test testAnnotation= getAnnotation(Test.class);
+		expectedException= testAnnotation.expected();
+		if (expectedException == None.class) {
+			expectedException= null;
+		}
+	}
+
+	void readTimeout() {
+		Test testAnnotation= getAnnotation(Test.class);
+		timeout= testAnnotation.timeout();
+	}
+
+	void readIgnored() {
+		ignored= getAnnotation(Ignore.class) != null;
+	}
+
+	public <A extends Annotation> A getAnnotation(Class<A> annotationType) {
+		return method.getAnnotation(annotationType);
+	}
+
+	public Class<? extends Throwable> getExpectedException() {
+		return expectedException;
+	}
+
+	public void setExpectedException(
+			Class<? extends Throwable> expectedException) {
+		this.expectedException= expectedException;
+	}
+
+	public long getTimeout() {
+		return timeout;
+	}
+
+	public void setTimeout(long timeout) {
+		this.timeout= timeout;
+	}
+
+	public boolean isIgnored() {
+		return ignored;
+	}
+
+	public void setIgnored(boolean ignored) {
+		this.ignored= ignored;
+	}
+
+	public Description createDescription() {
 		return Description.createTestDescription(testClass.getJavaClass(),
 				method.getName(), method.getAnnotations());
 	}
 
-	public boolean shouldBeIgnored() {
-		return method.getAnnotation(Ignore.class) != null;
-	}
-
-	public Statement createStatement(Object test) {
-		Test testAnnotation= method.getAnnotation(Test.class);
-		Statement statement= methodInvoker(method, test);
-		statement= possiblyExpectingExceptions(testAnnotation, statement);
-		statement= withPotentialTimeout(testAnnotation, statement);
+	public Statement createStatement(Object test, List<TestRule> testRules) {
+		Statement statement= methodInvoker(test);
+		statement= possiblyExpectingExceptions(statement);
+		statement= withPotentialTimeout(statement);
+		if (!testRules.isEmpty()) {
+			statement= new RunRules(statement, testRules,
+					createDescription());
+		}
 		return statement;
 	}
 
@@ -40,22 +103,18 @@ public class AnnotatedFrameworkTest implements FrameworkTest {
 	/**
 	 * Returns a {@link Statement} that invokes {@code method} on {@code test}
 	 */
-	protected Statement methodInvoker(FrameworkMethod method, Object test) {
+	protected Statement methodInvoker(Object test) {
 		return new InvokeMethod(method, test);
 	}
 
-	private Statement possiblyExpectingExceptions(Test testAnnotation,
-			Statement statement) {
-		Class<? extends Throwable> expectedException= testAnnotation.expected();
-		if (expectedException != null && expectedException != None.class) {
+	protected Statement possiblyExpectingExceptions(Statement statement) {
+		if (expectedException != null) {
 			statement= new ExpectException(statement, expectedException);
 		}
 		return statement;
 	}
 
-	private Statement withPotentialTimeout(Test testAnnotation,
-			Statement statement) {
-		long timeout= testAnnotation.timeout();
+	protected Statement withPotentialTimeout(Statement statement) {
 		if (timeout > 0) {
 			statement= new FailOnTimeout(statement, timeout);
 		}

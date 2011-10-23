@@ -5,15 +5,15 @@ import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_VALIDATOR
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.internal.runners.statements.Fail;
-import org.junit.internal.runners.statements.RunAfters;
-import org.junit.internal.runners.statements.RunBefores;
-import org.junit.rules.RunRules;
+import org.junit.rules.AfterRule;
+import org.junit.rules.BeforeRule;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runner.TestFactories;
@@ -54,10 +54,11 @@ public class CustomizableJUnit4ClassRunner extends ParentRunner<FrameworkTest> {
 	 */
 	public CustomizableJUnit4ClassRunner(Class<?> klass)
 			throws InitializationError {
-		this(klass, discoverTestFactories(klass));
+		super(klass);
+		init(discoverTestFactories(klass));
 	}
 
-	protected static List<TestFactory> discoverTestFactories(Class<?> klass)
+	protected List<TestFactory> discoverTestFactories(Class<?> klass)
 			throws InitializationError {
 		List<TestFactory> result= new ArrayList<TestFactory>();
 
@@ -82,7 +83,11 @@ public class CustomizableJUnit4ClassRunner extends ParentRunner<FrameworkTest> {
 	protected CustomizableJUnit4ClassRunner(Class<?> klass,
 			List<TestFactory> testFactories) throws InitializationError {
 		super(klass);
+		init(testFactories);
+	}
 
+	private void init(List<TestFactory> testFactories)
+			throws InitializationError {
 		List<Throwable> errors= new ArrayList<Throwable>();
 
 		for (TestFactory testFactory : testFactories) {
@@ -175,27 +180,18 @@ public class CustomizableJUnit4ClassRunner extends ParentRunner<FrameworkTest> {
 
 	@Override
 	protected Description describeChild(FrameworkTest method) {
-		return method.createDescription(getTestClass());
+		return method.createDescription();
 	}
 
 	@Override
-	protected void runChild(final FrameworkTest method, RunNotifier notifier) {
-		Description description= describeChild(method);
-		if (method.shouldBeIgnored()) {
+	protected void runChild(final FrameworkTest frameworkTest, RunNotifier notifier) {
+		Description description= describeChild(frameworkTest);
+		if (frameworkTest.isIgnored()) {
 			notifier.fireTestIgnored(description);
 		} else {
-			Statement statement= methodBlock(method);
+			Statement statement= methodBlock(frameworkTest);
 			runLeaf(statement, description, notifier);
 		}
-	}
-
-	/**
-	 * Returns a new fixture for running a test. Default implementation executes
-	 * the test class's no-argument constructor (validation should have ensured
-	 * one exists).
-	 */
-	protected Object createTest() throws Exception {
-		return getTestClass().getOnlyConstructor().newInstance();
 	}
 
 	/**
@@ -230,91 +226,59 @@ public class CustomizableJUnit4ClassRunner extends ParentRunner<FrameworkTest> {
 	 * This can be overridden in subclasses, either by overriding this method,
 	 * or the implementations creating each sub-statement.
 	 */
-	protected Statement methodBlock(FrameworkTest method) {
-		Object test;
+	protected Statement methodBlock(FrameworkTest frameworkTest) {
+		Object testInstance;
 		try {
-			test= createTest();
+			testInstance= createTest();
 		} catch (InvocationTargetException e) {
 			return new Fail(e.getTargetException());
 		} catch (Throwable e) {
 			return new Fail(e);
 		}
 
-		Statement statement= testBlock(method, test);
-		statement= withBefores(method, test, statement);
-		statement= withAfters(method, test, statement);
-		statement= withRules(method, test, statement);
-		return statement;
-	}
-
-	protected Statement testBlock(FrameworkTest method, Object test) {
-		return method.createStatement(test);
+		List<TestRule> testRules= getTestRules(frameworkTest, testInstance);
+		return frameworkTest.createStatement(testInstance, testRules);
 	}
 
 	/**
-	 * Returns a {@link Statement}: run all non-overridden {@code @Before}
-	 * methods on this class and superclasses before running {@code next}; if
-	 * any throws an Exception, stop execution and pass the exception on.
+	 * Returns a new fixture for running a test. Default implementation executes
+	 * the test class's no-argument constructor (validation should have ensured
+	 * one exists).
 	 */
-	private Statement withBefores(FrameworkTest method, Object target,
-			Statement statement) {
-		List<FrameworkMethod> befores= getTestClass().getAnnotatedMethods(
-				Before.class);
-		return befores.isEmpty() ? statement : new RunBefores(statement,
-				befores, target);
+	protected Object createTest() throws Exception {
+		return getTestClass().getOnlyConstructor().newInstance();
 	}
 
 	/**
-	 * Returns a {@link Statement}: run all non-overridden {@code @After}
-	 * methods on this class and superclasses before running {@code next}; all
-	 * After methods are always executed: exceptions thrown by previous steps
-	 * are combined, if necessary, with exceptions from After methods into a
-	 * {@link MultipleFailureException}.
-	 */
-	private Statement withAfters(FrameworkTest method, Object target,
-			Statement statement) {
-		List<FrameworkMethod> afters= getTestClass().getAnnotatedMethods(
-				After.class);
-		return afters.isEmpty() ? statement : new RunAfters(statement, afters,
-				target);
-	}
-
-	protected Statement withRules(FrameworkTest method, Object target,
-			Statement statement) {
-		List<TestRule> testRules= getTestRules(target);
-		return withTestRules(method, testRules, target, statement);
-	}
-
-	/**
-	 * Returns a {@link Statement}: apply all non-static {@link Value} fields
-	 * annotated with {@link Rule}.
-	 * 
-	 * @param method
-	 * @param testRules
-	 * @param statement
-	 *            The base statement
-	 * @return a RunRules statement if any class-level {@link Rule}s are found,
-	 *         or the base statement
-	 */
-	protected Statement withTestRules(FrameworkTest method,
-			List<TestRule> testRules, Object target, Statement statement) {
-		return testRules.isEmpty() ? statement : new RunRules(statement,
-				testRules, describeChild(method));
-	}
-
-	/**
-	 * @param target
+	 * @param frameworkTest
+	 *            TODO
+	 * @param testInstance
 	 *            the test case instance
 	 * @return a list of TestRules that should be applied when executing this
 	 *         test
 	 */
-	protected List<TestRule> getTestRules(Object target) {
-		List<TestRule> result= getTestClass().getAnnotatedMethodValues(target,
-				Rule.class, TestRule.class);
+	protected List<TestRule> getTestRules(FrameworkTest frameworkTest,
+			Object testInstance) {
+		List<TestRule> testRules= new ArrayList<TestRule>();
 
-		result.addAll(getTestClass().getAnnotatedFieldValues(target,
+		List<FrameworkMethod> befores= getTestClass().getAnnotatedMethods(
+				Before.class);
+		Collections.reverse(befores);
+		for (FrameworkMethod before : befores) {
+			testRules.add(new BeforeRule(before, testInstance));
+		}
+
+		List<FrameworkMethod> afters= getTestClass().getAnnotatedMethods(
+				After.class);
+		for (FrameworkMethod after : afters) {
+			testRules.add(new AfterRule(after, testInstance));
+		}
+
+		testRules.addAll(getTestClass().getAnnotatedMethodValues(testInstance,
+				Rule.class, TestRule.class));
+		testRules.addAll(getTestClass().getAnnotatedFieldValues(testInstance,
 				Rule.class, TestRule.class));
 
-		return result;
+		return testRules;
 	}
 }
