@@ -1,11 +1,12 @@
 package org.junit.runners;
 
+import static java.lang.String.format;
+
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -15,7 +16,6 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
-import org.junit.runners.model.TestClass;
 
 /**
  * <p>
@@ -30,10 +30,9 @@ import org.junit.runners.model.TestClass;
  * &#064;RunWith(Parameterized.class)
  * public class FibonacciTest {
  * 	&#064;Parameters
- * 	public static List&lt;Object[]&gt; data() {
- * 		return Arrays.asList(new Object[][] {
- * 			{ 0, 0 }, { 1, 1 }, { 2, 1 }, { 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 }
- * 		});
+ * 	public static Iterable&lt;Object[]&gt; data() {
+ * 		return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
+ * 				{ 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
  * 	}
  * 
  * 	private int fInput;
@@ -72,30 +71,18 @@ public class Parameterized extends Suite {
 			BlockJUnit4ClassRunner {
 		private final int fParameterSetNumber;
 
-		private final List<Object[]> fParameterList;
+		private final Object[] fParameters;
 
-		TestClassRunnerForParameters(Class<?> type,
-				List<Object[]> parameterList, int i) throws InitializationError {
+		TestClassRunnerForParameters(Class<?> type, Object[] parameters, int i)
+				throws InitializationError {
 			super(type);
-			fParameterList= parameterList;
+			fParameters= parameters;
 			fParameterSetNumber= i;
 		}
 
 		@Override
 		public Object createTest() throws Exception {
-			return getTestClass().getOnlyConstructor().newInstance(
-					computeParams());
-		}
-
-		private Object[] computeParams() throws Exception {
-			try {
-				return fParameterList.get(fParameterSetNumber);
-			} catch (ClassCastException e) {
-				throw new Exception(String.format(
-						"%s.%s() must return a Collection of arrays.",
-						getTestClass().getName(), getParametersMethod(
-								getTestClass()).getName()));
-			}
+			return getTestClass().getOnlyConstructor().newInstance(fParameters);
 		}
 
 		@Override
@@ -131,11 +118,9 @@ public class Parameterized extends Suite {
 	 * Only called reflectively. Do not use programmatically.
 	 */
 	public Parameterized(Class<?> klass) throws Throwable {
-		super(klass, Collections.<Runner>emptyList());
-		List<Object[]> parametersList= getParametersList(getTestClass());
-		for (int i= 0; i < parametersList.size(); i++)
-			runners.add(new TestClassRunnerForParameters(getTestClass().getJavaClass(),
-					parametersList, i));
+		super(klass, Collections.<Runner> emptyList());
+		Iterable<Object[]> allParameters= getAllParameters();
+		createRunnersForParameters(allParameters);
 	}
 
 	@Override
@@ -144,24 +129,49 @@ public class Parameterized extends Suite {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<Object[]> getParametersList(TestClass klass)
+	private Iterable<Object[]> getAllParameters()
 			throws Throwable {
-		return (List<Object[]>) getParametersMethod(klass).invokeExplosively(
-				null);
+		Object parameters= getParametersMethod().invokeExplosively(null);
+		if (parameters instanceof Iterable)
+			return (Iterable<Object[]>) parameters;
+		else
+			throw parametersMethodReturnedWrongType();
 	}
 
-	private FrameworkMethod getParametersMethod(TestClass testClass)
+	private FrameworkMethod getParametersMethod()
 			throws Exception {
-		List<FrameworkMethod> methods= testClass
+		List<FrameworkMethod> methods= getTestClass()
 				.getAnnotatedMethods(Parameters.class);
 		for (FrameworkMethod each : methods) {
-			int modifiers= each.getMethod().getModifiers();
-			if (Modifier.isStatic(modifiers) && Modifier.isPublic(modifiers))
+			if (each.isStatic() && each.isPublic())
 				return each;
 		}
 
 		throw new Exception("No public static parameters method on class "
-				+ testClass.getName());
+				+ getTestClass().getName());
 	}
 
+	private void createRunnersForParameters(Iterable<Object[]> allParameters)
+			throws InitializationError, Exception {
+		try {
+			int i= 0;
+			for (Object[] parametersOfSingleTest : allParameters) {
+				TestClassRunnerForParameters runner= new TestClassRunnerForParameters(
+						getTestClass().getJavaClass(), parametersOfSingleTest,
+						i);
+				runners.add(runner);
+				++i;
+			}
+		} catch (ClassCastException e) {
+			throw parametersMethodReturnedWrongType();
+		}
+	}
+
+	private Exception parametersMethodReturnedWrongType() throws Exception {
+		String className= getTestClass().getName();
+		String methodName= getParametersMethod().getName();
+		String message= format("%s.%s() must return an Iterable of arrays.",
+				className, methodName);
+		return new Exception(message);
+	}
 }
