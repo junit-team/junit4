@@ -101,10 +101,10 @@ public class Categories extends Suite {
 		}
 
 		private String join(String seperator, Class<?>... values) {
-			if(values == null || values.length == 0)
+			if (values == null || values.length == 0)
 				return "";
 			StringBuilder sb= new StringBuilder();
-			for(Class<?> each :values)
+			for(Class<?> each : values)
 				sb.append(each.toString()).append(seperator);
 			return sb.substring(0, sb.length() - seperator.length());
 		}
@@ -129,7 +129,7 @@ public class Categories extends Suite {
 
 		private boolean categoryListPassesFilters(List<Class<?>> categories) {
 			boolean hasIncludeCategory= false;
-			for (Class<?> each : categories) {
+			for (Class<?> each: categories) {
 				if ((fExcluded != null) && classIsAssignableFromClassInArray(each, fExcluded))
 					return false;
 				hasIncludeCategory= (fIncluded == null) || hasIncludeCategory || 
@@ -139,7 +139,7 @@ public class Categories extends Suite {
 		}
 		
 		private boolean classIsAssignableFromClassInArray(Class<?> clazz, Class<?>[] classes) {
-			for(Class<?> each : classes)
+			for(Class<?> each: classes)
 				if (each.isAssignableFrom(clazz))
 					return true;
 			return false;
