@@ -1,6 +1,7 @@
 package org.junit.runners;
 
 import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_VALIDATOR;
+import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_METHOD_VALIDATOR;
 
 import java.util.List;
 
@@ -101,6 +102,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 		validateConstructor(errors);
 		validateInstanceMethods(errors);
 		validateFields(errors);
+		validateMethods(errors);
 	}
 
 	protected void validateNoNonStaticInnerClass(List<Throwable> errors) {
@@ -168,6 +170,10 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 
 	private void validateFields(List<Throwable> errors) {
 		RULE_VALIDATOR.validate(getTestClass(), errors);
+	}
+
+	private void validateMethods(List<Throwable> errors) {
+		RULE_METHOD_VALIDATOR.validate(getTestClass(), errors);
 	}
 
 	/**
@@ -326,16 +332,17 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 
 	private Statement withRules(FrameworkMethod method, Object target,
 			Statement statement) {
+		List<TestRule> testRules= getTestRules(target);
 		Statement result= statement;
-		result= withMethodRules(method, target, result);
-		result= withTestRules(method, target, result);
+		result= withMethodRules(method, testRules, target, result);
+		result= withTestRules(method, testRules, result);
+		
 		return result;
 	}
 
 	@SuppressWarnings("deprecation")
-	private Statement withMethodRules(FrameworkMethod method, Object target,
-			Statement result) {
-		List<TestRule> testRules= getTestRules(target);
+	private Statement withMethodRules(FrameworkMethod method, List<TestRule> testRules,
+			Object target, Statement result) {
 		for (org.junit.rules.MethodRule each : getMethodRules(target))
 			if (! testRules.contains(each))
 				result= each.apply(result, method, target);
@@ -365,14 +372,14 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	/**
 	 * Returns a {@link Statement}: apply all non-static {@link Value} fields
 	 * annotated with {@link Rule}.
-	 *
+	 * @param method 
+	 * @param testRules 
 	 * @param statement The base statement
 	 * @return a RunRules statement if any class-level {@link Rule}s are
 	 *         found, or the base statement
 	 */
-	private Statement withTestRules(FrameworkMethod method, Object target,
+	private Statement withTestRules(FrameworkMethod method, List<TestRule> testRules,
 			Statement statement) {
-		List<TestRule> testRules= getTestRules(target);
 		return testRules.isEmpty() ? statement :
 			new RunRules(statement, testRules, describeChild(method));
 	}
@@ -384,10 +391,15 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	 *         test
 	 */
 	protected List<TestRule> getTestRules(Object target) {
-		return getTestClass().getAnnotatedFieldValues(target,
+		List<TestRule> result = getTestClass().getAnnotatedMethodValues(target,
 				Rule.class, TestRule.class);
-	}
+			
+		result.addAll(getTestClass().getAnnotatedFieldValues(target,
+				Rule.class, TestRule.class));
 
+		return result;
+	}
+	
 	private Class<? extends Throwable> getExpectedException(Test annotation) {
 		if (annotation == null || annotation.expected() == None.class)
 			return null;

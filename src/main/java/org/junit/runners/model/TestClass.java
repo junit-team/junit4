@@ -153,6 +153,22 @@ public class TestClass {
 		return results;
 	}
 
+	public <T> List<T> getAnnotatedMethodValues(Object test,
+			Class<? extends Annotation> annotationClass, Class<T> valueClass) {
+		List<T> results= new ArrayList<T>();
+		for (FrameworkMethod each : getAnnotatedMethods(annotationClass)) {
+			try {
+				Object fieldValue= each.invokeExplosively(test, new Object[]{});
+				if (valueClass.isInstance(fieldValue))
+					results.add(valueClass.cast(fieldValue));
+			} catch (Throwable e) {
+				throw new RuntimeException(
+						"Exception in " + each.getName(), e);
+			}
+		}
+		return results;
+	}
+	
 	public boolean isANonStaticInnerClass() {
 		return fClass.isMemberClass() && !isStatic(fClass.getModifiers());
 	}
