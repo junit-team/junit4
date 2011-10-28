@@ -63,7 +63,7 @@ public class CustomizableJUnit4ClassRunner extends ParentRunner<FrameworkTest> {
 		if (annotation != null) {
 			try {
 				for (Class<? extends TestFactory> testFactoryClass : annotation
-						.values()) {
+						.value()) {
 					result.add(testFactoryClass.newInstance());
 				}
 			} catch (Throwable e) {
@@ -176,12 +176,13 @@ public class CustomizableJUnit4ClassRunner extends ParentRunner<FrameworkTest> {
 	}
 
 	@Override
-	protected Description describeChild(FrameworkTest method) {
-		return method.createDescription();
+	protected Description describeChild(FrameworkTest frameworkTest) {
+		return frameworkTest.createDescription();
 	}
 
 	@Override
-	protected void runChild(final FrameworkTest frameworkTest, RunNotifier notifier) {
+	protected void runChild(final FrameworkTest frameworkTest,
+			RunNotifier notifier) {
 		Description description= describeChild(frameworkTest);
 		if (frameworkTest.isIgnored()) {
 			notifier.fireTestIgnored(description);

@@ -9,7 +9,7 @@ import org.junit.experimental.runners.customizable.example.FruitPicker.Fruit;
 import org.junit.runner.RunWith;
 
 @RunWith(CustomizableJUnit4ClassRunner.class)
-@TestFactories(values= { ReflectionTestFactory.class, EnumTestFactory.class })
+@TestFactories({ ReflectionTestFactory.class, EnumTestFactory.class })
 public class FruitPickerTest {
 
 	private final FruitPicker unit= new FruitPicker();

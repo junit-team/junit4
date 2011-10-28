@@ -16,5 +16,5 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface TestFactories {
 
-	Class<? extends TestFactory>[] values() default { ReflectionTestFactory.class };
+	Class<? extends TestFactory>[] value() default { ReflectionTestFactory.class };
 }
