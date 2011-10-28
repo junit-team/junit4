@@ -25,7 +25,6 @@ import static org.junit.runner.Description.createSuiteDescription;
  * 
  * Note that, for now, annotating suites with {@code @Category} has no effect.
  * Categories must be annotated on the direct method or class.
- *
  * <p>
  * Two system properties override categories declared by {@link IncludeCategory}
  * and {@link ExcludeCategory}. Every of these two properties use a comma separated
@@ -97,68 +96,92 @@ public class Categories extends Suite {
 	
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface IncludeCategory {
-		public Class<?>[] value();
+		public Class<?> value();
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface ExcludeCategory {
-		public Class<?>[] value();
+		public Class<?> value();
 	}
 
 	public static class CategoryFilter extends Filter {
-        private static final Class<?>[] NO_CATEGORIES = new Class<?>[0];
+        private static final Class<?>[] NO_CATEGORIES= new Class<?>[0];
 
 		public static CategoryFilter include(Class<?> categoryType) {
 			return new CategoryFilter(categoryType, null);
 		}
 
         /**
-         * Useful method for e.g. maven-surefire-plugin.
+         * TODO useful method for maven-surefire-plugin
+         * public static createCategoryFilter(Set<Class<?>> includes, Set<Class<?>> excludes):CategoryFilter
+         * TODO performance improvement includes.removeAll(excludes) unless any null, and use them both anyway
          * See the issue #336
          * https://github.com/KentBeck/junit/issues/336
+         * public static CategoryFilter createCategoryFilter(Set<Class<?>> includes, Set<Class<?>> excludes) {
+         *      return new CategoryFilter(includes, excludes);
+         * }
          * */
-        public static CategoryFilter createCategoryFilter(Set<Class<?>> includes, Set<Class<?>> excludes) {
-            return new CategoryFilter(includes, excludes);
-        }
 
 		private final Set<Class<?>> fIncluded,//NULL represents 'All' categories without limitation to Included.
                                     fExcluded;//Cannot be null. Empty Set does not exclude categories.
 
 		public CategoryFilter(final Class<?> includedCategory, final Class<?> excludedCategory) {
-            this(copyAndRefine(includedCategory, null), copyAndRefine(excludedCategory, Collections.<Class<?>>emptySet()));
+			this(copyAndRefine(includedCategory, null), copyAndRefine(excludedCategory, Collections.<Class<?>>emptySet()));
 		}
 
 		public CategoryFilter(final Collection<Class<?>> includes, final Collection<Class<?>> excludes) {
-            this(copyAndRefine(includes, null), copyAndRefine(excludes, Collections.<Class<?>>emptySet()));
+			this(copyAndRefine(includes, null), copyAndRefine(excludes, Collections.<Class<?>>emptySet()));
 		}
 
 		private CategoryFilter(final Set<Class<?>> includes, final Set<Class<?>> excludes) {
-			fIncluded = includes == null ? null : unmodifiableSet(includes);
-			fExcluded = excludes == null ? Collections.<Class<?>>emptySet() : unmodifiableSet(excludes);
+			fIncluded= includes == null ? null : unmodifiableSet(includes);
+			fExcluded= excludes == null ? Collections.<Class<?>>emptySet() : unmodifiableSet(excludes);
 		}
 
 		@Override
 		public String describe() {
-            return toString();
+			return toString();
 		}
 
+        /**
+         * Returns string representation for the relative complement of excluded categories set in the set of
+         * included categories.
+         * If no excluded categories are specified and only one included category presents, this method returns
+         * a name of included category via {@link Class#toString()} (backward compatible). More generally the
+         * method returns string in the form "[[<included_categories>] - [<excluded_categories>]]", where both
+         * <em>included_categories</em> and <em>excluded_categories</em> are comma separated names.
+         * @return string representation for the relative complement of excluded categories set in the set of
+         *          included categories. As examples of the categories sets complement:
+         * <ul>
+         *  <li> "categories [all]" for all included categories and no excluded ones;
+         *  <li> "categories [[all] - A]" for all included categories and one excluded category specified;
+         *  <li> "categories [[all] - [A, B]]" for all included categories and given excluded ones;
+         *  <li> "category A" for one included category and no excluded ones;
+         *  <li> "category [A - B]" for one included category and one excluded category specified;
+         *  <li> "category [A - [B, C]]" for one included category and given excluded ones;
+         *  <li> "categories [[A, B] - C]" for given included categories and one excluded category specified;
+         *  <li> "categories [[A, B] - [C, D, E]]" for given included categories and given excluded ones.
+         * </ul>
+         * <p>
+         * @see Class#toString() name of category
+         */
         @Override public String toString() {
-            final StringBuilder description = new StringBuilder(128);
-            if (fIncluded == null)
-                description.append("categories ")
-                        .append(fExcluded.isEmpty() ? "[all]" : "[[all]");
-            else if (fIncluded.size() == 1)
-                description.append("category ")
-                        .append(fExcluded.isEmpty() ? "" : "[")
-                        .append(fIncluded.iterator().next());
+            final StringBuilder description= new StringBuilder(128);
+            final boolean hasExcluded = !fExcluded.isEmpty();
+            if (fIncluded == null) description.append("categories ")
+                    .append(hasExcluded ? "[[all]" : "[all]");
+            else if (fIncluded.size() == 1) description.append("category ")
+                    .append(hasExcluded ? "[" : "")
+                    .append(fIncluded.iterator().next());
             else description.append("categories ")
-                        .append(fExcluded.isEmpty() ? "" : "[")
+                        .append(hasExcluded ? "[" : "")
                         .append(fIncluded.toString());
-            if (!fExcluded.isEmpty())
-                description.append(" - ")
-                        .append(fExcluded.toString())
+
+            if (hasExcluded) description.append(" - ")
+                        .append(fExcluded.size() > 1 ? fExcluded.toString() : fExcluded.iterator().next())
                         .append(']');
-			return description.toString();
+
+            return description.toString();
         }
 
 		@Override
@@ -172,7 +195,7 @@ public class Categories extends Suite {
 		}
 
 		private boolean hasCorrectCategoryAnnotation(Description description) {
-			final Set<Class<?>> categories = categories(description);
+			final Set<Class<?>> categories= categories(description);
 			if (categories.isEmpty()) return fIncluded == null;
 			for (final Class<?> each : categories)
 				if (hasAssignableFrom(fExcluded, each))
@@ -184,96 +207,60 @@ public class Categories extends Suite {
 			return false;
 		}
 
-        private static Set<Class<?>> copyAndRefine(final Class<?> clazz, final Set<Class<?>> fallback) {
-            return clazz == null ? fallback : singleton(clazz);
-        }
-
-        private static Set<Class<?>> copyAndRefine(final Collection<Class<?>> classes, final Set<Class<?>> fallback) {
-            if (classes == null || classes.isEmpty()) return fallback;
-            final Set<Class<?>> c = new HashSet<Class<?>>(classes);
-            return c.remove(null) && c.isEmpty() ? fallback : c;
-        }
-
 		private static Set<Class<?>> categories(Description description) {
-			Set<Class<?>> categories = new HashSet<Class<?>>();
+			Set<Class<?>> categories= new HashSet<Class<?>>();
 			addAll(categories, directCategories(description));
-            addAll(categories, directCategories(parentDescription(description)));
+			addAll(categories, directCategories(parentDescription(description)));
 			return categories;
 		}
 
 		private static Description parentDescription(Description description) {
-			Class<?> testClass = description.getTestClass();
+			Class<?> testClass= description.getTestClass();
 			if (testClass == null) return null;
 			return createSuiteDescription(testClass);
 		}
 
 		private static Class<?>[] directCategories(Description description) {
 			if (description == null) return NO_CATEGORIES;
-			final Category annotation = description.getAnnotation(Category.class);
+			final Category annotation= description.getAnnotation(Category.class);
 			if (annotation == null) return NO_CATEGORIES;
 			return annotation.value();
 		}
+
+		private static Set<Class<?>> copyAndRefine(final Class<?> clazz, final Set<Class<?>> fallback) {
+			return clazz == null ? fallback : singleton(clazz);
+		}
+
+		private static Set<Class<?>> copyAndRefine(final Collection<Class<?>> classes, final Set<Class<?>> fallback) {
+			if (classes == null || classes.isEmpty()) return fallback;
+			final Set<Class<?>> c= new HashSet<Class<?>>(classes);
+			return c.remove(null) && c.isEmpty() ? fallback : c;
+		}
 	}
 
-	public Categories(Class<?> klass, RunnerBuilder builder) throws InitializationError {
+	public Categories(Class<?> klass, RunnerBuilder builder)
+			throws InitializationError {
 		super(klass, builder);
 		try {
-			filter(new CategoryFilter(getIncludedCategory(klass), getExcludedCategory(klass)));
+			filter(new CategoryFilter(getIncludedCategory(klass),
+					getExcludedCategory(klass)));
 		} catch (NoTestsRemainException e) {
 			throw new InitializationError(e);
 		} catch (ClassNotFoundException e) {
-            throw new InitializationError(e);
-        }
-        assertNoCategorizedDescendentsOfUncategorizeableParents(getDescription());
+			throw new InitializationError(e);
+		}
+		assertNoCategorizedDescendentsOfUncategorizeableParents(getDescription());
 	}
 
 	private static Set<Class<?>> getIncludedCategory(Class<?> klass) throws ClassNotFoundException {
-		IncludeCategory annotation = klass.getAnnotation(IncludeCategory.class);
+		IncludeCategory annotation= klass.getAnnotation(IncludeCategory.class);
 		return intersectWithSystemPropertyInclusions(annotation == null ? null : createSet(annotation.value()));
 	}
 
 	private static Set<Class<?>> getExcludedCategory(Class<?> klass) throws ClassNotFoundException {
-		ExcludeCategory annotation = klass.getAnnotation(ExcludeCategory.class);
+		ExcludeCategory annotation= klass.getAnnotation(ExcludeCategory.class);
 		return unionWithSystemPropertyExclusions(annotation == null ? createSet() : createSet(annotation.value()));
 	}
-
-    private static Set<Class<?>> intersectWithSystemPropertyInclusions(Set<Class<?>> includes) throws ClassNotFoundException {
-        final Class<?>[] extCategories = getCategoriesBySystemProperty("org.junit.categories.included");
-        if (includes == null || includes.remove(null) && includes.isEmpty()) {///ready for plural in IncludeCategory
-            if (extCategories.length == 0) return null;//included categories are all
-            if (includes == null) includes = new HashSet<Class<?>>(extCategories.length);
-            addAll(includes, extCategories);
-            return includes;//we have some categories from external system property 'org.junit.categories.included'
-        } else if (extCategories.length == 0) return includes;
-        final Set<Class<?>> subCategories = new HashSet<Class<?>>();
-        for (final Class<?> extCategory : extCategories)
-            if (hasAssignableFrom(includes, extCategory)) subCategories.add(extCategory);
-        return subCategories;//if empty, nothing to test
-    }
-
-    private static Set<Class<?>> unionWithSystemPropertyExclusions(Set<Class<?>> excludes) throws ClassNotFoundException {
-		excludes.remove(null);///ready for plural in ExcludeCategory
-        addAll(excludes, getCategoriesBySystemProperty("org.junit.categories.excluded"));
-        return excludes;//if empty union, nothing to exclude
-    }
-
-    private static Class<?>[] getCategoriesBySystemProperty(final String systemPropertyKey) throws ClassNotFoundException {
-        final List<Class<?>> categories = new ArrayList<Class<?>>();
-        for (String clazz : System.getProperty(systemPropertyKey, "").split(",")) {
-            clazz = clazz.trim();
-            if (clazz.length() != 0) {
-                if (clazz.length() <= ".java".length()
-                        || !clazz.regionMatches(true, clazz.length() - ".java".length(), ".java", 0, ".java".length()))
-                    throw new ClassNotFoundException("file name must be finished by \".java\" ignoring case");
-                clazz = clazz.substring(0, clazz.length() - ".java".length());
-                if (clazz.indexOf('.') != -1)
-                    throw new ClassNotFoundException("File name must not contain '.'. Instead use slash '/'.");
-                clazz = clazz.replace('/', '.');
-                categories.add(Class.forName(clazz));
-            }
-        }
-        return categories.toArray(new Class[categories.size()]);
-    }
 
 	private static void assertNoCategorizedDescendentsOfUncategorizeableParents(Description description) throws InitializationError {
 		if (!canHaveCategorizedChildren(description))
@@ -281,13 +268,51 @@ public class Categories extends Suite {
 		for (Description each : description.getChildren())
 			assertNoCategorizedDescendentsOfUncategorizeableParents(each);
 	}
-	
+
 	private static void assertNoDescendantsHaveCategoryAnnotations(Description description) throws InitializationError {
 		for (Description each : description.getChildren()) {
 			if (each.getAnnotation(Category.class) != null)
 				throw new InitializationError("Category annotations on Parameterized classes are not supported on individual methods.");
 			assertNoDescendantsHaveCategoryAnnotations(each);
 		}
+	}
+
+	private static Set<Class<?>> intersectWithSystemPropertyInclusions(Set<Class<?>> includes) throws ClassNotFoundException {
+		final Class<?>[] extCategories= getCategoriesBySystemProperty("org.junit.categories.included");
+		if (includes == null || includes.remove(null) && includes.isEmpty()) {///ready for plural in IncludeCategory
+			if (extCategories.length == 0) return null;//included categories are all
+			if (includes == null) includes= new HashSet<Class<?>>(extCategories.length);
+			addAll(includes, extCategories);
+			return includes;//we have some categories from external system property 'org.junit.categories.included'
+		} else if (extCategories.length == 0) return includes;
+		final Set<Class<?>> subCategories= new HashSet<Class<?>>();
+		for (final Class<?> extCategory : extCategories)
+			if (hasAssignableFrom(includes, extCategory)) subCategories.add(extCategory);
+		return subCategories;//if empty, nothing to test
+	}
+
+	private static Set<Class<?>> unionWithSystemPropertyExclusions(Set<Class<?>> excludes) throws ClassNotFoundException {
+		excludes.remove(null);///ready for plural in ExcludeCategory
+		addAll(excludes, getCategoriesBySystemProperty("org.junit.categories.excluded"));
+		return excludes;//if empty union, nothing to exclude
+	}
+
+	private static Class<?>[] getCategoriesBySystemProperty(final String systemPropertyKey) throws ClassNotFoundException {
+		final List<Class<?>> categories= new ArrayList<Class<?>>();
+		for (String clazz : System.getProperty(systemPropertyKey, "").split(",")) {
+			clazz= clazz.trim();
+			if (clazz.length() != 0) {
+				if (clazz.length() <= ".java".length()
+                                    || !clazz.regionMatches(true, clazz.length() - ".java".length(), ".java", 0, ".java".length()))
+                                        throw new ClassNotFoundException("file name must be finished by \".java\" ignoring case");
+				clazz= clazz.substring(0, clazz.length() - ".java".length());
+				if (clazz.indexOf('.') != -1)
+                                    throw new ClassNotFoundException("File name must not contain '.'. Instead use slash '/'.");
+				clazz= clazz.replace('/', '.');
+				categories.add(Class.forName(clazz));
+			}
+		}
+		return categories.toArray(new Class[categories.size()]);
 	}
 
 	// If children have names like [0], our current magical category code can't determine their
@@ -306,13 +331,13 @@ public class Categories extends Suite {
     }
 
     private static Set<Class<?>> createSet(Class<?>... t) {
-        final Set<Class<?>> set = new HashSet<Class<?>>();
+        final Set<Class<?>> set= new HashSet<Class<?>>();
         addAll(set, t);
         return set;
     }
 
     private static Set<Class<?>> singleton(Class<?> o) {
-        final Set<Class<?>> set = new HashSet<Class<?>>();
+        final Set<Class<?>> set= new HashSet<Class<?>>();
         set.add(o);
         return set;
     }

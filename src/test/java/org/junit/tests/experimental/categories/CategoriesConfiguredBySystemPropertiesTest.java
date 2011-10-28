@@ -1,4 +1,4 @@
-﻿package org.junit.tests.experimental.categories;
+package org.junit.tests.experimental.categories;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Categories;
@@ -20,7 +20,6 @@ import static org.junit.matchers.JUnitMatchers.hasItems;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.Is.is;
-
 
 public final class CategoriesConfiguredBySystemPropertiesTest {
 
@@ -56,6 +55,8 @@ public final class CategoriesConfiguredBySystemPropertiesTest {
 
         assertThat("unexpected size", passedTestCases.size(), is(equalTo(expectedPlatforms.length)));
         assertThat(passedTestCases, hasItems(expectedPlatforms));
+
+        passedTestCases.clear();
 
         assertThat("wrong test modifications, and broken collection of expectations", testResult, isSuccessful());
     }
