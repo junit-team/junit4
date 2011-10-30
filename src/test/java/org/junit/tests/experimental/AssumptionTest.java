@@ -10,6 +10,11 @@ import static org.junit.Assume.assumeTrue;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 import static org.junit.internal.matchers.StringContains.containsString;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import junit.framework.Assert;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -174,4 +179,38 @@ public class AssumptionTest {
 	public void assumeWithExpectedException() {
 		assumeTrue(false);
 	}
+
+	final static String message = "Some random message string.";
+	final static Throwable t = new Throwable();
+
+	public static class HasAssumeWithMessage {
+		@Test public void withMessage() {
+			assumeTrue(message, false);
+		}
+	}
+
+	public static class HasAssumeWithExceptionAndMessage {
+		@Test public void withExceptionAndMessage() {
+			assumeNoException(message, t);
+		}		
+	}
+
+	@Test public void assumptionsWithMessage() {
+		final List<Failure> failures = new ArrayList<Failure>();
+		JUnitCore core = new JUnitCore();
+		core.addListener(new RunListener() {
+			@Override
+			public void testAssumptionFailure(Failure failure) {
+				failures.add(failure);
+			}
+		});
+
+		core.run(HasAssumeWithMessage.class);
+		Assert.assertTrue(failures.get(0).getMessage().contains(message));
+		
+		failures.clear();
+		core.run(HasAssumeWithExceptionAndMessage.class);
+		Assert.assertTrue(failures.get(0).getMessage().contains(message));
+		Assert.assertSame(failures.get(0).getException().getCause(), t);
+	}	
 }
