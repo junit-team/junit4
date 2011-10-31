@@ -5,7 +5,12 @@ package org.junit.experimental.categories;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.List;
+import java.util.Collections;
+import java.util.Collection;
+import java.util.HashSet;
 
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
@@ -13,10 +18,7 @@ import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
-
-import static java.util.Collections.addAll;
-import static java.util.Collections.unmodifiableSet;
-import static org.junit.runner.Description.createSuiteDescription;
+import org.junit.runner.Description;
 
 /**
  * From a given set of test classes, runs only the classes and methods that are
@@ -111,17 +113,6 @@ public class Categories extends Suite {
 			return new CategoryFilter(categoryType, null);
 		}
 
-        /**
-         * TODO useful method for maven-surefire-plugin
-         * public static createCategoryFilter(Set<Class<?>> includes, Set<Class<?>> excludes):CategoryFilter
-         * TODO performance improvement includes.removeAll(excludes) unless any null, and use them both anyway
-         * See the issue #336
-         * https://github.com/KentBeck/junit/issues/336
-         * public static CategoryFilter createCategoryFilter(Set<Class<?>> includes, Set<Class<?>> excludes) {
-         *      return new CategoryFilter(includes, excludes);
-         * }
-         * */
-
 		private final Set<Class<?>> fIncluded,//NULL represents 'All' categories without limitation to Included.
                                     fExcluded;//Cannot be null. Empty Set does not exclude categories.
 
@@ -134,8 +125,8 @@ public class Categories extends Suite {
 		}
 
 		private CategoryFilter(final Set<Class<?>> includes, final Set<Class<?>> excludes) {
-			fIncluded= includes == null ? null : unmodifiableSet(includes);
-			fExcluded= excludes == null ? Collections.<Class<?>>emptySet() : unmodifiableSet(excludes);
+			fIncluded= includes == null ? null : Collections.unmodifiableSet(includes);
+			fExcluded= excludes == null ? Collections.<Class<?>>emptySet() : Collections.unmodifiableSet(excludes);
 		}
 
 		@Override
@@ -209,15 +200,15 @@ public class Categories extends Suite {
 
 		private static Set<Class<?>> categories(Description description) {
 			Set<Class<?>> categories= new HashSet<Class<?>>();
-			addAll(categories, directCategories(description));
-			addAll(categories, directCategories(parentDescription(description)));
+			Collections.addAll(categories, directCategories(description));
+			Collections.addAll(categories, directCategories(parentDescription(description)));
 			return categories;
 		}
 
 		private static Description parentDescription(Description description) {
 			Class<?> testClass= description.getTestClass();
 			if (testClass == null) return null;
-			return createSuiteDescription(testClass);
+			return Description.createSuiteDescription(testClass);
 		}
 
 		private static Class<?>[] directCategories(Description description) {
@@ -282,7 +273,7 @@ public class Categories extends Suite {
 		if (includes == null || includes.remove(null) && includes.isEmpty()) {///ready for plural in IncludeCategory
 			if (extCategories.length == 0) return null;//included categories are all
 			if (includes == null) includes= new HashSet<Class<?>>(extCategories.length);
-			addAll(includes, extCategories);
+			Collections.addAll(includes, extCategories);
 			return includes;//we have some categories from external system property 'org.junit.categories.included'
 		} else if (extCategories.length == 0) return includes;
 		final Set<Class<?>> subCategories= new HashSet<Class<?>>();
@@ -293,7 +284,7 @@ public class Categories extends Suite {
 
 	private static Set<Class<?>> unionWithSystemPropertyExclusions(Set<Class<?>> excludes) throws ClassNotFoundException {
 		excludes.remove(null);///ready for plural in ExcludeCategory
-		addAll(excludes, getCategoriesBySystemProperty("org.junit.categories.excluded"));
+		Collections.addAll(excludes, getCategoriesBySystemProperty("org.junit.categories.excluded"));
 		return excludes;//if empty union, nothing to exclude
 	}
 
@@ -332,7 +323,7 @@ public class Categories extends Suite {
 
     private static Set<Class<?>> createSet(Class<?>... t) {
         final Set<Class<?>> set= new HashSet<Class<?>>();
-        addAll(set, t);
+        Collections.addAll(set, t);
         return set;
     }
 
