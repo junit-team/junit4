@@ -19,6 +19,7 @@ import org.junit.runner.Result;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Name;
 import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.model.InitializationError;
 
@@ -49,7 +50,7 @@ public class ParameterizedTestTest {
 			return 0;
 		}
 	}
-
+	
 	@Test
 	public void count() {
 		Result result= JUnitCore.runClasses(FibonacciTest.class);
@@ -213,4 +214,36 @@ public class ParameterizedTestTest {
 	public void exceptionWhenPrivateConstructor() throws Throwable {
 		new Parameterized(PrivateConstructor.class);
 	}
+
+	@RunWith(Parameterized.class)
+	public static class SinusTest {
+		@Parameters
+		public static Collection<Object[]> data() {
+			return Arrays.asList(new Object[][]{ { new Name("sin-90¡"), 90, 0.893996664 } });
+		}
+		
+		private static final double ACCEPTED_DELTA = 0.0000000001;
+		
+		private int fDegrees;
+		private double fExpected;
+		
+		public SinusTest(Name name, int degrees, double expected) {
+			this.fDegrees = degrees;
+			this.fExpected = expected;
+		}
+		
+		@Test
+		public void test() {
+			assertEquals(fExpected, Math.sin(fDegrees), ACCEPTED_DELTA);
+		}
+	}
+	
+	@Test
+	public void namedTestsLookFine() {
+		Result result = JUnitCore.runClasses(SinusTest.class);
+		assertEquals(String.format("%s[%s](%s)", "test", "sin-90¡", 
+				SinusTest.class.getName()), result.getFailures()
+				.get(0).getTestHeader());
+	}
+
 }

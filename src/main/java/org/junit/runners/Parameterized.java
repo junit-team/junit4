@@ -67,6 +67,24 @@ public class Parameterized extends Suite {
 	@Target(ElementType.METHOD)
 	public static @interface Parameters {
 	}
+	
+	/**
+	 * A Name can be used to identify a Parameterized Test.
+	 * Let one of the parameters be a Name.
+	 * The constructor of the class under test must also pick up the name.
+	 */
+	public static class Name {
+		private final String fName;
+		
+		public Name(final String name) {
+			fName = name;
+		}
+		
+		@Override
+		public String toString() {
+			return fName;
+		}
+	}
 
 	private class TestClassRunnerForParameters extends
 			BlockJUnit4ClassRunner {
@@ -97,16 +115,33 @@ public class Parameterized extends Suite {
 								getTestClass()).getName()));
 			}
 		}
-
+		
+		private String getTestcaseName() {
+			Object params = fParameterList.get(fParameterSetNumber);
+			// it's uncertain that the parameters are really an array 
+			// of objects
+			// in case computeParams catches a ClassCast, this method
+			// would cause another ClassCast while constructing a
+			// meaningful exception
+			if (params instanceof Object[]) {
+				for (Object o : (Object[]) params) {
+					if (o instanceof Name) {
+						return String.valueOf(o);
+					}
+				}
+			}
+			return String.valueOf(fParameterSetNumber);
+		}
+		
 		@Override
 		protected String getName() {
-			return String.format("[%s]", fParameterSetNumber);
+			return String.format("[%s]", getTestcaseName());
 		}
 
 		@Override
 		protected String testName(final FrameworkMethod method) {
 			return String.format("%s[%s]", method.getName(),
-					fParameterSetNumber);
+					getTestcaseName());
 		}
 
 		@Override
