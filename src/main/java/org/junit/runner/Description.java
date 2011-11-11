@@ -204,7 +204,7 @@ public class Description implements Serializable {
 		if (name == null)
 			return null;
 		try {
-			return Class.forName(name);
+			return Class.forName(name, false, getClass().getClassLoader());
 		} catch (ClassNotFoundException e) {
 			return null;
 		}
