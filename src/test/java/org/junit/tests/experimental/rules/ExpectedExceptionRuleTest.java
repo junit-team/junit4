@@ -6,12 +6,16 @@ import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 import static org.junit.matchers.JUnitMatchers.both;
+import org.hamcrest.CoreMatchers;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.internal.matchers.TypeSafeMatcher;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
 
 public class ExpectedExceptionRuleTest {
 	public static class HasExpectedException {
@@ -51,6 +55,44 @@ public class ExpectedExceptionRuleTest {
 			thrown.expect(NullPointerException.class);
 			throw new IllegalArgumentException();
 		}
+	}
+
+	public static class ExpectedExceptionClause {
+		@Rule
+		public ExpectedException thrown= ExpectedException.none();
+
+		@Test
+		public void throwsNullPointerException() {
+			thrown.expect(NullPointerException.class);
+			throw new IllegalArgumentException();
+		}
+	}
+
+	public static class CauseMatcher extends TypeSafeMatcher<Result> {
+		private final Class<? extends Throwable> causeClass;
+
+		public CauseMatcher(final Class<? extends Throwable> causeClass) {
+			this.causeClass= causeClass;
+		}
+
+		public void describeTo(final Description description) {
+			description.appendText("cause an instanceof ").appendText(causeClass.getName());
+		}
+
+		@Override
+		public boolean matchesSafely(final Result item) {
+			for(Failure f: item.getFailures())
+			{
+				return CoreMatchers.instanceOf(causeClass).matches(f.getException().getCause());
+			}
+			return false;
+		}
+	}
+
+	@Test
+	public void expectedExceptionClauseExists() {
+		assertThat(new JUnitCore().run(ExpectedExceptionClause.class),
+				new CauseMatcher(IllegalArgumentException.class));
 	}
 
 	@Test
