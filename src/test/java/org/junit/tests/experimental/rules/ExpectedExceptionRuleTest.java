@@ -57,50 +57,37 @@ public class ExpectedExceptionRuleTest {
 		}
 	}
 
-	public static class ExpectedExceptionClause {
-		@Rule
-		public ExpectedException thrown= ExpectedException.none();
-
-		@Test
-		public void throwsNullPointerException() {
-			thrown.expect(NullPointerException.class);
-			throw new IllegalArgumentException();
-		}
-	}
-
-	public static class CauseMatcher extends TypeSafeMatcher<Result> {
-		private final Class<? extends Throwable> causeClass;
-
-		public CauseMatcher(final Class<? extends Throwable> causeClass) {
-			this.causeClass= causeClass;
-		}
-
-		public void describeTo(final Description description) {
-			description.appendText("cause an instanceof ").appendText(causeClass.getName());
-		}
-
-		@Override
-		public boolean matchesSafely(final Result item) {
-			for(Failure f: item.getFailures())
-			{
-				return CoreMatchers.instanceOf(causeClass).matches(f.getException().getCause());
-			}
-			return false;
-		}
-	}
-
-	@Test
-	public void expectedExceptionClauseExists() {
-		assertThat(new JUnitCore().run(ExpectedExceptionClause.class),
-				new CauseMatcher(IllegalArgumentException.class));
-	}
-
 	@Test
 	public void unExpectedExceptionFails() {
 		assertThat(
 				testResult(HasWrongExpectedException.class),
 				hasSingleFailureContaining("Expected: an instance of java.lang.NullPointerException"));
 	}
+	
+	public static class CauseMatcher extends TypeSafeMatcher<Result> {
+		private final Class<? extends Throwable> causeClass;
+
+		public CauseMatcher(Class<? extends Throwable> causeClass) {
+			this.causeClass= causeClass;
+		}
+
+		public void describeTo(Description description) {
+			description.appendText("cause being an instanceof ").appendText(causeClass.getName());
+		}
+
+		@Override
+		public boolean matchesSafely(Result item) {
+			for(Failure f: item.getFailures())
+				return CoreMatchers.instanceOf(causeClass).matches(f.getException().getCause());
+			return false;
+		}
+	}
+
+	@Test
+	public void expectedExceptionClauseExists() {
+		assertThat(new JUnitCore().run(HasWrongExpectedException.class),
+				new CauseMatcher(IllegalArgumentException.class));
+	}	
 
 	public static class HasWrongMessage {
 		@Rule
