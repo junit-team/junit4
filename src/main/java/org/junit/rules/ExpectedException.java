@@ -111,14 +111,8 @@ public class ExpectedException implements TestRule {
 			} catch (Throwable e) {
 				if (fMatcher == null)
 					throw e;
-				try {
-					Assert.assertThat(e, fMatcher);
-				} catch (AssertionError ae) {
-					// add e as cause to have a complete error message in the
-					// results
-					ae.initCause(e);
-					throw ae;
-				}
+
+				Assert.assertThat(e, fMatcher);
 				return;
 			}
 			if (fMatcher != null)
