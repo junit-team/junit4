@@ -8,12 +8,6 @@ public class MethodSorterTest {
 
     @Test public void getDeclaredMethods() throws Exception {
         assertEquals("[void epsilon(), void beta(int[][]), java.lang.Object alpha(int,double,java.lang.Thread), void delta(), int gamma(), void gamma(boolean)]", declaredMethods(Dummy.class));
-        class Super {
-            void testOne() {}
-        }
-        class Sub extends Super {
-            void testTwo() {}
-        }
         assertEquals("[void testOne()]", declaredMethods(Super.class));
         assertEquals("[void testTwo()]", declaredMethods(Sub.class));
     }
@@ -29,6 +23,12 @@ public class MethodSorterTest {
         void gamma(boolean b) {}
         void delta() {}
         void epsilon() {}
+    }
+    private static class Super {
+        void testOne() {}
+    }
+    private static class Sub extends Super {
+        void testTwo() {}
     }
 
 }
