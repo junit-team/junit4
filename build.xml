@@ -7,7 +7,7 @@
   <property name="src" value="src/main/java" />
   <property name="target" location="target" />
   <property name="bin" location="${target}/main" />
-  <property name="version-base" value="4.10" />
+  <property name="version-base" value="4.11" />
   <property name="version-status" value="-SNAPSHOT" />
   <property name="version" value="${version-base}${version-status}" />
   <property name="dist" value="junit${version}" />
@@ -133,7 +133,8 @@
   
   <target name="release-notes">
     <property name="basename" value="doc/ReleaseNotes${version-base}" />
-    <exec executable="build/Markdown.pl" failonerror="true">
+    <exec executable="perl" failonerror="true">
+      <arg file="build/Markdown.pl"/>
       <arg file="${basename}.txt"/>
       <redirector output="${basename}.html" />
     </exec>
@@ -270,7 +271,7 @@
                       url="@{url}" repo.id="@{repo.id}" />
       
       <if>
-        <equals arg1="${is.snapshot}" arg2="false" />
+        <equals arg1="@{is.snapshot}" arg2="false" />
         <then>
           <push.maven.jar jar="${m.sources.jar}" pom="${m.pom}"
                           url="@{url}" repo.id="@{repo.id}">
@@ -293,10 +294,12 @@
     
     <push.maven.artifact artifactId="junit" 
                          url="${stage.url}"
-                         repo.id="${stage.repo.id}" />
+                         repo.id="${stage.repo.id}" 
+                         is.snapshot="false" />
     <push.maven.artifact artifactId="junit-dep" 
                          url="${stage.url}"
-                         repo.id="${stage.repo.id}" />
+                         repo.id="${stage.repo.id}"
+                         is.snapshot="false" />
   </target>
 
   <target name="snapshot.maven" depends="all.maven.jars">

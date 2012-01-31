@@ -3,7 +3,7 @@ package org.junit.runners.model;
 import java.lang.annotation.Annotation;
 import java.util.List;
 
-abstract class FrameworkMember<T extends FrameworkMember<T>> {
+public abstract class FrameworkMember<T extends FrameworkMember<T>> {
 	/**
 	 * Returns the annotations on this method
 	 */
@@ -17,4 +17,9 @@ abstract class FrameworkMember<T extends FrameworkMember<T>> {
 				return true;
 		return false;
 	}
+	
+	public abstract boolean isPublic();
+	public abstract boolean isStatic();
+	public abstract String getName();
+	public abstract Class<?> getType();
 }

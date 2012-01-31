@@ -721,6 +721,11 @@ public class Assert {
 	 *     // got value: &lt;0&gt;
 	 *   assertThat(0, is(not(1))) // passes
 	 * </pre>
+     *
+     * <code>org.hamcrest.Matcher</code> does not currently document the meaning
+     * of its type parameter <code>T</code>.  This method assumes that a matcher
+     * typed as <code>Matcher&lt;T&gt;</code> can be meaningfully applied only
+     * to values that could be assigned to a variable of type <code>T</code>.
 	 * 
 	 * @param <T>
 	 *            the static type accepted by the matcher (this can flag obvious
@@ -734,7 +739,7 @@ public class Assert {
 	 * @see org.hamcrest.CoreMatchers
 	 * @see org.junit.matchers.JUnitMatchers
 	 */
-	public static <T> void assertThat(T actual, Matcher<T> matcher) {
+	public static <T> void assertThat(T actual, Matcher<? super T> matcher) {
 		assertThat("", actual, matcher);
 	}
 
@@ -753,6 +758,11 @@ public class Assert {
 	 *   assertThat(&quot;Zero is one&quot;, 0, is(not(1))) // passes
 	 * </pre>
 	 * 
+     * <code>org.hamcrest.Matcher</code> does not currently document the meaning
+     * of its type parameter <code>T</code>.  This method assumes that a matcher
+     * typed as <code>Matcher&lt;T&gt;</code> can be meaningfully applied only
+     * to values that could be assigned to a variable of type <code>T</code>.
+     *
 	 * @param reason
 	 *            additional information about the error
 	 * @param <T>
@@ -768,7 +778,7 @@ public class Assert {
 	 * @see org.junit.matchers.JUnitMatchers
 	 */
 	public static <T> void assertThat(String reason, T actual,
-			Matcher<T> matcher) {
+			Matcher<? super T> matcher) {
 		if (!matcher.matches(actual)) {
 			Description description= new StringDescription();
 			description.appendText(reason);
