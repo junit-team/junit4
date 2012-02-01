@@ -9,7 +9,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
@@ -69,15 +73,15 @@ public class Parameterized extends Suite {
 
 	private class TestClassRunnerForParameters extends
 			BlockJUnit4ClassRunner {
-		private final int fParameterSetNumber;
+		private final String description;
 
 		private final Object[] fParameters;
 
-		TestClassRunnerForParameters(Class<?> type, Object[] parameters, int i)
+		TestClassRunnerForParameters(Class<?> type, Object[] parameters, String description)
 				throws InitializationError {
 			super(type);
 			fParameters= parameters;
-			fParameterSetNumber= i;
+			this.description = description;
 		}
 
 		@Override
@@ -87,13 +91,13 @@ public class Parameterized extends Suite {
 
 		@Override
 		protected String getName() {
-			return String.format("[%s]", fParameterSetNumber);
+			return String.format("[%s]", description);
 		}
 
 		@Override
 		protected String testName(final FrameworkMethod method) {
 			return String.format("%s[%s]", method.getName(),
-					fParameterSetNumber);
+					description);
 		}
 
 		@Override
@@ -119,7 +123,7 @@ public class Parameterized extends Suite {
 	 */
 	public Parameterized(Class<?> klass) throws Throwable {
 		super(klass, Collections.<Runner> emptyList());
-		Iterable<Object[]> allParameters= getAllParameters();
+		Map<String, Object[]> allParameters= getAllParameters();
 		createRunnersForParameters(allParameters);
 	}
 
@@ -129,12 +133,32 @@ public class Parameterized extends Suite {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Iterable<Object[]> getAllParameters()
+	private Map<String, Object[]> getAllParameters()
 			throws Throwable {
 		Object parameters= getParametersMethod().invokeExplosively(null);
-		if (parameters instanceof Iterable)
-			return (Iterable<Object[]>) parameters;
-		else
+		if (parameters instanceof Iterable) {
+			Map<String, Object[]> map = new TreeMap<String, Object[]>(new Comparator<String>() {
+				public int compare(String o1, String o2) {
+					return Integer.valueOf(o1) - Integer.valueOf(o2);
+				}
+			});
+			
+			Iterable<Object[]> it;
+			try{
+				it = (Iterable<Object[]>)parameters;
+				int i = 0;
+				for (Object[] objary : it) {
+					map.put(String.valueOf(i), objary);
+					i++;
+				}
+			} catch(ClassCastException e) {
+				throw parametersMethodReturnedWrongType();
+			}
+			
+			return map;
+		} else if (parameters instanceof Map) {
+			return (Map<String,Object[]>)parameters;
+		} else
 			throw parametersMethodReturnedWrongType();
 	}
 
@@ -151,16 +175,14 @@ public class Parameterized extends Suite {
 				+ getTestClass().getName());
 	}
 
-	private void createRunnersForParameters(Iterable<Object[]> allParameters)
+	private void createRunnersForParameters(Map<String, Object[]> allParameters)
 			throws InitializationError, Exception {
 		try {
-			int i= 0;
-			for (Object[] parametersOfSingleTest : allParameters) {
+			for (Entry<String, Object[]> entry : allParameters.entrySet()) {
 				TestClassRunnerForParameters runner= new TestClassRunnerForParameters(
-						getTestClass().getJavaClass(), parametersOfSingleTest,
-						i);
+						getTestClass().getJavaClass(), entry.getValue(),
+						entry.getKey());
 				runners.add(runner);
-				++i;
 			}
 		} catch (ClassCastException e) {
 			throw parametersMethodReturnedWrongType();

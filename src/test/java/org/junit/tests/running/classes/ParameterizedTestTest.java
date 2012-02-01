@@ -8,6 +8,9 @@ import static org.junit.matchers.JUnitMatchers.containsString;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -230,4 +233,103 @@ public class ParameterizedTestTest {
 	public void exceptionWhenPrivateConstructor() throws Throwable {
 		new Parameterized(PrivateConstructor.class);
 	}
+	
+	
+	@RunWith(Parameterized.class)
+	public static class MapParameterTest {
+		@Parameters
+		public static Map<String, Object[]> data() {
+			Map<String, Object[]> map = new TreeMap<String, Object[]>();
+			map.put("1st", new Object[]{0,0});
+			map.put("2nd", new Object[]{1,1});
+			map.put("3rd", new Object[]{2,1});
+			map.put("4th", new Object[]{3,2});
+			map.put("5th", new Object[]{4,3});
+			map.put("6th", new Object[]{5,5});
+			map.put("7th", new Object[]{6,8});
+			return map;
+		}
+		
+		private int fInput;
+
+		private int fExpected;
+
+		public MapParameterTest(int input, int expected) {
+			fInput= input;
+			fExpected= expected;
+		}
+
+		@Test
+		public void test() {
+			assertEquals(fExpected, fib(fInput));
+		}
+
+		private int fib(int x) {
+			return 0;
+		}
+	}
+	
+	@Test
+	public void countByMap() {
+		Result result= JUnitCore.runClasses(MapParameterTest.class);
+		assertEquals(7, result.getRunCount());
+		assertEquals(6, result.getFailureCount());
+	}
+	
+	@Test
+	public void failuresNamedCorrectlyByMap() {
+		Result result= JUnitCore.runClasses(MapParameterTest.class);
+		assertEquals(
+				String.format("test[2nd](%s)", MapParameterTest.class.getName()),
+				result.getFailures().get(0).getTestHeader());
+	}
+
+	@Test
+	public void countBeforeRunByMap() throws Exception {
+		Runner runner= Request.aClass(MapParameterTest.class).getRunner();
+		assertEquals(7, runner.testCount());
+	}
+
+	@Test
+	public void plansNamedCorrectlyByMap() throws Exception {
+		Runner runner= Request.aClass(MapParameterTest.class).getRunner();
+		Description description= runner.getDescription();
+		assertEquals("[1st]", description.getChildren().get(0).getDisplayName());
+	}
+	
+	@RunWith(Parameterized.class)
+	static public class BeforeAndAfterByMap {
+		@BeforeClass
+		public static void before() {
+			fLog+= "before ";
+		}
+
+		@AfterClass
+		public static void after() {
+			fLog+= "after ";
+		}
+
+		public BeforeAndAfterByMap(int x) {
+
+		}
+
+		@Parameters
+		public static Map<String, Object[]> data() {
+			Map<String, Object[]> map = new HashMap<String, Object[]>();
+			map.put("1st", new Object[]{3});
+			return map;
+		}
+
+		@Test
+		public void aTest() {
+		}
+	}
+
+	@Test
+	public void beforeAndAfterClassAreRunByMap() {
+		fLog= "";
+		JUnitCore.runClasses(BeforeAndAfter.class);
+		assertEquals("before after ", fLog);
+	}
+	
 }
