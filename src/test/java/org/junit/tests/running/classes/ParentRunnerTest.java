@@ -33,7 +33,7 @@ public class ParentRunnerTest {
 		}
 
 		@Test
-		public void banana() {
+		public void /* must hash-sort after "apple" */Banana() {
 			log+= "banana ";
 		}
 	}
