@@ -111,7 +111,6 @@ public class ExpectedException implements TestRule {
 			} catch (Throwable e) {
 				if (fMatcher == null)
 					throw e;
-
 				Assert.assertThat(e, fMatcher);
 				return;
 			}

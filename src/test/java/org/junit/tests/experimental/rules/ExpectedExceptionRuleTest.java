@@ -1,12 +1,14 @@
 package org.junit.tests.experimental.rules;
 
 import static org.hamcrest.CoreMatchers.any;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
+import static org.junit.experimental.results.ResultMatchers.causedBy;
+import static org.junit.experimental.results.ResultMatchers.failureIs;
 import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 import static org.junit.matchers.JUnitMatchers.both;
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.Rule;
@@ -14,8 +16,6 @@ import org.junit.Test;
 import org.junit.internal.matchers.TypeSafeMatcher;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.JUnitCore;
-import org.junit.runner.Result;
-import org.junit.runner.notification.Failure;
 
 public class ExpectedExceptionRuleTest {
 	public static class HasExpectedException {
@@ -64,29 +64,10 @@ public class ExpectedExceptionRuleTest {
 				hasSingleFailureContaining("Expected: an instance of java.lang.NullPointerException"));
 	}
 	
-	public static class CauseMatcher extends TypeSafeMatcher<Result> {
-		private final Class<? extends Throwable> causeClass;
-
-		public CauseMatcher(Class<? extends Throwable> causeClass) {
-			this.causeClass= causeClass;
-		}
-
-		public void describeTo(Description description) {
-			description.appendText("cause being an instanceof ").appendText(causeClass.getName());
-		}
-
-		@Override
-		public boolean matchesSafely(Result item) {
-			for(Failure f: item.getFailures())
-				return CoreMatchers.instanceOf(causeClass).matches(f.getException().getCause());
-			return false;
-		}
-	}
-
 	@Test
 	public void expectedExceptionClauseExists() {
 		assertThat(new JUnitCore().run(HasWrongExpectedException.class),
-				new CauseMatcher(IllegalArgumentException.class));
+				failureIs(causedBy(instanceOf(IllegalArgumentException.class))));
 	}	
 
 	public static class HasWrongMessage {
