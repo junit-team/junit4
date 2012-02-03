@@ -127,13 +127,10 @@ public class Assert {
 	}
 	
 	private static boolean equalsRegardingNull(Object expected, Object actual) {
-		if (expected == null && actual == null)
-			return true;
-		if (expected != null && isEquals(expected, actual))
-			return true;
+		if (expected == null)
+			return actual == null;
 		
-		return false;
-
+		return isEquals(expected, actual);
 	}
 
 	private static boolean isEquals(Object expected, Object actual) {
