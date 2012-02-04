@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertEquivalent;
 import static org.junit.Assert.assertGreaterThan;
 import static org.junit.Assert.assertLessThan;
+import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
 
@@ -61,7 +62,9 @@ public class ComparableAssertionTest {
 							+ '<' + REFERENCE_VALUE + "> but was: "
 							+ ComparableStub.class.getName() + '<'
 							+ REFERENCE_VALUE + '>', e.getMessage());
+			return;
 		}
+		fail("Expected AssertionError");
 	}
 	
 	@Test(expected=AssertionError.class)
