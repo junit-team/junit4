@@ -647,7 +647,7 @@ public class Assert {
 		fail(format(message, expected, actual));
 	}
 	
-	static private <T> void failComparable(String message,
+	private static <T> void failComparable(String message,
 			Comparable<T> reference, Comparable<T> actual, String comparison) {
 		String formatted= "";
 		if (message != null) {
