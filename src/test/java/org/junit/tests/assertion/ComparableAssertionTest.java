@@ -22,35 +22,36 @@ public class ComparableAssertionTest {
 	 * tests.
 	 */
 	private static class ComparableStub implements Comparable<ComparableStub> {
-		private final int compareToReturnValue;
-		private final boolean equalsReturnValue;
+		private final Integer ordinalValue;
 
-		public ComparableStub(int compareToReturnValue,
-				boolean equalsReturnValue) {
-			this.compareToReturnValue= compareToReturnValue;
-			this.equalsReturnValue= equalsReturnValue;
+		public ComparableStub(Integer ordinalValue) {
+			this.ordinalValue= ordinalValue;
 		}
 
-		public int compareTo(ComparableStub o) {
-			return this.compareToReturnValue;
+		public int compareTo(ComparableStub that) {
+			return this.ordinalValue.compareTo(that.ordinalValue);
 		}
 		
 		@Override
 		public boolean equals(Object o) {
-			return this.equalsReturnValue;
+			  return o instanceof ComparableStub && hasSameOrdinalValue((ComparableStub) o);
+		}
+
+		private boolean hasSameOrdinalValue(ComparableStub that) {
+			return this.ordinalValue == that.ordinalValue;
 		}
 		
 		@Override
 		public String toString() {
-			return String.valueOf(this.compareToReturnValue);
+			return String.valueOf(this.ordinalValue);
 		}
 	}
 	
 	private static final ComparableStub NULL_VALUE = null;
-	private static final ComparableStub REFERENCE_VALUE = new ComparableStub(0, true);
-	private static final ComparableStub EQUIVALENT_VALUE = new ComparableStub(0, false);
-	private static final ComparableStub LOWER_VALUE = new ComparableStub(-1, false);
-	private static final ComparableStub HIGHER_VALUE = new ComparableStub(1, false);
+	private static final ComparableStub REFERENCE_VALUE = new ComparableStub(Integer.valueOf(0));
+	private static final ComparableStub EQUIVALENT_VALUE = new ComparableStub(new Integer(0));
+	private static final ComparableStub LOWER_VALUE = new ComparableStub(-1);
+	private static final ComparableStub HIGHER_VALUE = new ComparableStub(1);
 	
 	@Test
 	public void assertLessThanFailsWithSelfExplanatoryMessage() {
