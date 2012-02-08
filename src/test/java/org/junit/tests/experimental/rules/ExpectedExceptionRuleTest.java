@@ -35,6 +35,26 @@ public class ExpectedExceptionRuleTest {
 			thrown.expectMessage("happened?");
 			throw new NullPointerException("What happened?");
 		}
+
+        @Test
+        public void throwsIllegalArgumentExceptionWithCause() {
+            NullPointerException expectedCause = new NullPointerException("expected cause");
+
+            thrown.expect(IllegalArgumentException.class);
+            thrown.expectMessage("Ack!");
+            thrown.expectCause(expectedCause);
+
+            throw new IllegalArgumentException("Ack!", expectedCause);
+        }
+
+        @Test
+        public void throwsIllegalArgumentExceptionWithCauseExplicitlyNull() {
+            thrown.expect(IllegalArgumentException.class);
+            thrown.expectMessage("Ack!");
+            thrown.expectCause(null);
+
+            throw new IllegalArgumentException("Ack!");
+        }
 	}
 
 	@Test
@@ -228,5 +248,27 @@ public class ExpectedExceptionRuleTest {
 	public void failsWithMultipleMatchers() {
 		assertThat(testResult(ExpectsMultipleMatchers.class),
 				hasSingleFailureContaining("IllegalArgumentException"));
+	}
+
+	public static class HasWrongCause {
+        public static final NullPointerException EXPECTED_CAUSE = new NullPointerException("expected cause");
+
+        @Rule
+		public ExpectedException thrown= ExpectedException.none();
+
+        @Test
+		public void throwWithCause() {
+            thrown.expect(IllegalArgumentException.class);
+			thrown.expectMessage("Ack!");
+            thrown.expectCause(EXPECTED_CAUSE);
+
+			throw new IllegalArgumentException("Ack!", new NullPointerException("an unexpected cause"));
+		}
+	}
+
+	@Test
+	public void failsWithWrongCause() {
+		assertThat(testResult(HasWrongCause.class),
+            hasSingleFailureContaining(HasWrongCause.EXPECTED_CAUSE.toString()));
 	}
 }

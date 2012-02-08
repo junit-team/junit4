@@ -38,6 +38,15 @@ import org.junit.runners.model.Statement;
  * 		thrown.expectMessage(startsWith(&quot;What&quot;));
  * 		throw new NullPointerException(&quot;What happened?&quot;);
  * 	}
+ *
+ * 	&#064;Test
+ * 	public void throwsIllegalArgumentExceptionWithMessageAndCause() {
+ * 	    NullPointerException expectedCause = new NullPointerException();
+ * 		thrown.expect(IllegalArgumentException.class);
+ * 		thrown.expectMessage(&quot;happened?&quot;);
+ * 	    thrown.expectCause(expectedCause);
+ * 		throw new IllegalArgumentException(&quot;What happened?&quot;, cause);
+ * 	}
  * }
  * </pre>
  */
@@ -97,7 +106,11 @@ public class ExpectedException implements TestRule {
 		expect(hasMessage(matcher));
 	}
 
-	private class ExpectedExceptionStatement extends Statement {
+    public void expectCause(Throwable expectedCause) {
+        expect(causeEquals(expectedCause));
+    }
+
+    private class ExpectedExceptionStatement extends Statement {
 		private final Statement fNext;
 
 		public ExpectedExceptionStatement(Statement base) {
@@ -133,4 +146,19 @@ public class ExpectedException implements TestRule {
 			}
 		};
 	}
+
+    private Matcher<Throwable> causeEquals(final Throwable expectedCause) {
+        return new TypeSafeMatcher<Throwable>() {
+            @Override
+            public boolean matchesSafely(Throwable item) {
+                return expectedCause == null ? item.getCause() == null : expectedCause.equals(item.getCause());
+            }
+
+            public void describeTo(Description description) {
+                description.appendText("exception with cause ");
+                description.appendText(expectedCause.toString());
+            }
+        };
+    }
+
 }
