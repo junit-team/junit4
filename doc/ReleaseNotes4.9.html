@@ -1,4 +1,6 @@
-<h2>Summary of Changes in version 4.9</h2>
+<h2>Summary of Changes in version 4.9, final</h2>
+
+<p>Release theme: Test-class and suite level Rules.</p>
 
 <h3>ClassRule</h3>
 
@@ -15,7 +17,7 @@ all the test classes run, and disconnects after they are finished:</p>
 public class UsesExternalResource {
     public static Server myServer= new Server();
 
-    @Rule
+    @ClassRule
     public static ExternalResource resource= new ExternalResource() {
         @Override
         protected void before() throws Throwable {
@@ -41,6 +43,11 @@ should be transparent to most users.  <code>TestWatchman</code> has been depreca
 and replaced by <code>TestWatcher</code>, which has the same functionality, but implements
 the new type.</p>
 
+<h3>Maven support</h3>
+
+<p>Maven bundles have, in the past, been uploaded by kind volunteers.  Starting
+with this release, the JUnit team is attempting to perform this task ourselves.</p>
+
 <h3>LICENSE checked in</h3>
 
 <p>The Common Public License that JUnit is released under is now included
@@ -58,6 +65,18 @@ significantly different from the built-in Runner.  With this fix,
 such classes can be assigned one or more categories at the class level,
 and will be run correctly.  Trying to assign categories to methods within
 such a class will flag an error.</p></li>
+<li><p>github#38: ParentRunner filters more than once</p>
+
+<p>Thanks to <code>@reinholdfuereder</code></p></li>
+<li><p>github#248: protected BlockJUnit4ClassRunner#rules method removed from 4.8.2</p></li>
+<li>github#187: Accidental dependency on Java 6</li>
+</ul>
+
+<p>Thanks to <code>@kcooney</code> for:</p>
+
+<ul>
+<li>github#163: Bad comparison failure message when using assertEquals(String, String)</li>
+<li>github#227: ParentRunner now assumes that getChildren() returns a modifiable list</li>
 </ul>
 
 <h3>Minor changes</h3>
@@ -65,4 +84,13 @@ such a class will flag an error.</p></li>
 <ul>
 <li>Backed out unused folder "experimental-use-of-antunit", replaced by 
 bash-based script at build_tests.sh</li>
+<li>Various Javadoc fixes</li>
+</ul>
+
+<p>Thanks to <code>@kcooney</code> for:</p>
+
+<ul>
+<li>Made MultipleFailureException public, to assist extension writers.</li>
+<li>github#240: Add "test" target to build.xml, for faster ant-driven testing.</li>
+<li>github#247: Give InitializationError a useful message</li>
 </ul>

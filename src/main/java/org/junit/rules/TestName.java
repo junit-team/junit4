@@ -26,7 +26,7 @@ public class TestName extends TestWatcher {
 	private String fName;
 
 	@Override
-	public void starting(Description d) {
+	protected void starting(Description d) {
 		fName= d.getMethodName();
 	}
 

@@ -11,6 +11,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.internal.MethodSorter;
 import org.junit.runners.BlockJUnit4ClassRunner;
 
 /**
@@ -41,7 +42,7 @@ public class TestClass {
 	public List<Method> getAnnotatedMethods(Class<? extends Annotation> annotationClass) {
 		List<Method> results= new ArrayList<Method>();
 		for (Class<?> eachClass : getSuperClasses(fClass)) {
-			Method[] methods= eachClass.getDeclaredMethods();
+			Method[] methods= MethodSorter.getDeclaredMethods(eachClass);
 			for (Method eachMethod : methods) {
 				Annotation annotation= eachMethod.getAnnotation(annotationClass);
 				if (annotation != null && ! isShadowed(eachMethod, results)) 

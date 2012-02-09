@@ -8,6 +8,7 @@ import org.junit.runners.Suite.SuiteClasses;
 import org.junit.tests.assertion.AssertionTest;
 import org.junit.tests.assertion.BothTest;
 import org.junit.tests.assertion.EachTest;
+import org.junit.tests.assertion.MultipleFailureExceptionTest;
 import org.junit.tests.deprecated.JUnit4ClassRunnerTest;
 import org.junit.tests.description.AnnotatedDescriptionTest;
 import org.junit.tests.description.SuiteDescriptionTest;
@@ -22,12 +23,16 @@ import org.junit.tests.experimental.max.JUnit38SortingTest;
 import org.junit.tests.experimental.max.MaxStarterTest;
 import org.junit.tests.experimental.parallel.ParallelClassTest;
 import org.junit.tests.experimental.parallel.ParallelMethodTest;
+import org.junit.tests.experimental.rules.BlockJUnit4ClassRunnerOverrideTest;
 import org.junit.tests.experimental.rules.ClassRulesTest;
 import org.junit.tests.experimental.rules.ExpectedExceptionRuleTest;
 import org.junit.tests.experimental.rules.ExternalResourceRuleTest;
 import org.junit.tests.experimental.rules.MethodRulesTest;
 import org.junit.tests.experimental.rules.NameRulesTest;
+import org.junit.tests.experimental.rules.RuleFieldValidatorTest;
+import org.junit.tests.experimental.rules.RuleChainTest;
 import org.junit.tests.experimental.rules.TempFolderRuleTest;
+import org.junit.tests.experimental.rules.TemporaryFolderUsageTest;
 import org.junit.tests.experimental.rules.TestRuleTest;
 import org.junit.tests.experimental.rules.TimeoutRuleTest;
 import org.junit.tests.experimental.rules.VerifierRuleTest;
@@ -46,12 +51,16 @@ import org.junit.tests.listening.RunnerTest;
 import org.junit.tests.listening.TestListenerTest;
 import org.junit.tests.listening.TextListenerTest;
 import org.junit.tests.listening.UserStopTest;
+import org.junit.tests.manipulation.FilterTest;
 import org.junit.tests.manipulation.FilterableTest;
 import org.junit.tests.manipulation.SingleMethodTest;
 import org.junit.tests.manipulation.SortableTest;
+import org.junit.tests.running.classes.BlockJUnit4ClassRunnerTest;
 import org.junit.tests.running.classes.EnclosedTest;
 import org.junit.tests.running.classes.IgnoreClassTest;
 import org.junit.tests.running.classes.ParameterizedTestTest;
+import org.junit.tests.running.classes.ParentRunnerFilteringTest;
+import org.junit.tests.running.classes.ParentRunnerTest;
 import org.junit.tests.running.classes.RunWithTest;
 import org.junit.tests.running.classes.SuiteTest;
 import org.junit.tests.running.classes.TestClassTest;
@@ -70,7 +79,7 @@ import org.junit.tests.validation.FailedConstructionTest;
 import org.junit.tests.validation.InaccessibleBaseClassTest;
 import org.junit.tests.validation.ValidationTest;
 
-// These test files need to be cleaned.  See
+// These test files need to be cleaned. See
 // https://sourceforge.net/pm/task.php?func=detailtask&project_task_id=136507&group_id=15278&group_project_id=51407
 
 @SuppressWarnings("deprecation")
@@ -87,6 +96,7 @@ import org.junit.tests.validation.ValidationTest;
 	AssertionTest.class,
 	CommandLineTest.class,
 	ExpectedTest.class,
+	MultipleFailureExceptionTest.class,
 	ForwardCompatibilityTest.class,
 	OldTests.class,
 	ParameterizedTestTest.class,
@@ -126,6 +136,7 @@ import org.junit.tests.validation.ValidationTest;
 	JUnit4ClassRunnerTest.class,
 	UseSuiteAsASuperclassTest.class,
 	FilterableTest.class,
+	FilterTest.class,
 	MaxStarterTest.class,
 	JUnit38SortingTest.class,
 	MethodRulesTest.class,
@@ -138,10 +149,16 @@ import org.junit.tests.validation.ValidationTest;
 	ClassRulesTest.class,
 	ExpectedExceptionRuleTest.class,
 	TempFolderRuleTest.class,
+	TemporaryFolderUsageTest.class,
 	ExternalResourceRuleTest.class,
 	VerifierRuleTest.class,
 	CategoryTest.class,
-	CategoriesAndParameterizedTest.class
+	CategoriesAndParameterizedTest.class,
+	ParentRunnerFilteringTest.class,
+	BlockJUnit4ClassRunnerOverrideTest.class,
+	RuleFieldValidatorTest.class,
+	RuleChainTest.class,
+	BlockJUnit4ClassRunnerTest.class
 })
 public class AllTests {
 	public static Test suite() {

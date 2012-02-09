@@ -33,7 +33,7 @@ import org.junit.runners.model.Statement;
  * }
  * </pre>
  */
-public class Timeout extends TestRule {
+public class Timeout implements TestRule {
 	private final int fMillis;
 
 	/**
@@ -43,8 +43,7 @@ public class Timeout extends TestRule {
 		fMillis= millis;
 	}
 
-	@Override
-	protected Statement apply(Statement base, Description description) {
+	public Statement apply(Statement base, Description description) {
 		return new FailOnTimeout(base, fMillis);
 	}
 }

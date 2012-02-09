@@ -1,5 +1,6 @@
 package org.junit.runner;
 
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,8 +25,9 @@ import java.util.regex.Pattern;
  * @see org.junit.runner.Request
  * @see org.junit.runner.Runner
  */
-public class Description {
-	
+public class Description implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Create a <code>Description</code> named <code>name</code>.
 	 * Generally, you will add children to this <code>Description</code>.
@@ -152,8 +154,7 @@ public class Description {
 		if (!(obj instanceof Description))
 			return false;
 		Description d = (Description) obj;
-		return getDisplayName().equals(d.getDisplayName())
-				&& getChildren().equals(d.getChildren());
+		return getDisplayName().equals(d.getDisplayName());
 	}
 	
 	@Override

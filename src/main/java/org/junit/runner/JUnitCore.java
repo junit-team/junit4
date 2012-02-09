@@ -25,14 +25,7 @@ import org.junit.runner.notification.RunNotifier;
  * @see org.junit.runner.Request
  */
 public class JUnitCore {
-	private RunNotifier fNotifier;
-
-	/**
-	 * Create a new <code>JUnitCore</code> to run tests.
-	 */
-	public JUnitCore() {
-		fNotifier= new RunNotifier();
-	}
+	private final RunNotifier fNotifier= new RunNotifier();
 
 	/**
 	 * Run the tests contained in the classes named in the <code>args</code>.

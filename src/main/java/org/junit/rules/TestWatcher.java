@@ -1,5 +1,6 @@
 package org.junit.rules;
 
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
@@ -15,12 +16,12 @@ import org.junit.runners.model.Statement;
  * 	&#064;Rule
  * 	public MethodRule watchman= new TestWatcher() {
  * 		&#064;Override
- * 		public void failed(Description d) {
+ * 		protected void failed(Description d) {
  * 			watchedLog+= d + &quot;\n&quot;;
  * 		}
  * 
  * 		&#064;Override
- * 		public void succeeded(Description d) {
+ * 		protected void succeeded(Description d) {
  * 			watchedLog+= d + &quot; &quot; + &quot;success!\n&quot;;
  * 		}
  * 	};
@@ -36,9 +37,8 @@ import org.junit.runners.model.Statement;
  * }
  * </pre>
  */
-public abstract class TestWatcher extends TestRule {
-	@Override
-	protected Statement apply(final Statement base, final Description description) {
+public abstract class TestWatcher implements TestRule {
+	public Statement apply(final Statement base, final Description description) {
 		return new Statement() {
 			@Override
 			public void evaluate() throws Throwable {
@@ -46,6 +46,8 @@ public abstract class TestWatcher extends TestRule {
 				try {
 					base.evaluate();
 					succeeded(description);
+				} catch (AssumptionViolatedException e) {
+					throw e;
 				} catch (Throwable t) {
 					failed(t, description);
 					throw t;
@@ -61,7 +63,7 @@ public abstract class TestWatcher extends TestRule {
 	 * 
 	 * @param description
 	 */
-	public void succeeded(Description description) {
+	protected void succeeded(Description description) {
 	}
 
 	/**
@@ -70,7 +72,7 @@ public abstract class TestWatcher extends TestRule {
 	 * @param e 
 	 * @param description
 	 */
-	public void failed(Throwable e, Description description) {
+	protected void failed(Throwable e, Description description) {
 	}
 
 	/**
@@ -78,7 +80,7 @@ public abstract class TestWatcher extends TestRule {
 	 * 
 	 * @param description  
 	 */
-	public void starting(Description description) {
+	protected void starting(Description description) {
 	}
 
 
@@ -87,6 +89,6 @@ public abstract class TestWatcher extends TestRule {
 	 * 
 	 * @param description  
 	 */
-	public void finished(Description description) {
+	protected void finished(Description description) {
 	}
 }

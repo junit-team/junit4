@@ -27,7 +27,7 @@ public class ParameterizedTestTest {
 	@RunWith(Parameterized.class)
 	static public class FibonacciTest {
 		@Parameters
-		public static Collection<Object[]> data() {
+		public static Iterable<Object[]> data() {
 			return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
 					{ 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
 		}
@@ -61,9 +61,9 @@ public class ParameterizedTestTest {
 	@Test
 	public void failuresNamedCorrectly() {
 		Result result= JUnitCore.runClasses(FibonacciTest.class);
-		assertEquals(String
-				.format("test[1](%s)", FibonacciTest.class.getName()), result
-				.getFailures().get(0).getTestHeader());
+		assertEquals(
+				String.format("test[1](%s)", FibonacciTest.class.getName()),
+				result.getFailures().get(0).getTestHeader());
 	}
 
 	@Test
@@ -194,7 +194,7 @@ public class ParameterizedTestTest {
 
 		@Parameters
 		public static Collection<Object[]> data() {
-			return Collections.singletonList(new Object[] {1});
+			return Collections.singletonList(new Object[] { 1 });
 		}
 	}
 
@@ -228,7 +228,7 @@ public class ParameterizedTestTest {
 	@RunWith(Parameterized.class)
 	static public class WrongElementType {
 		@Parameters
-		public static Collection<String> data() {
+		public static Iterable<String> data() {
 			return Arrays.asList("a", "b", "c");
 		}
 
@@ -238,14 +238,31 @@ public class ParameterizedTestTest {
 	}
 
 	@Test
-	public void meaningfulFailureWhenParameterListsAreNotArrays() {
-		String expected= String.format(
-				"%s.data() must return a Collection of arrays.",
-				WrongElementType.class.getName());
-		assertThat(testResult(WrongElementType.class).toString(),
-				containsString(expected));
+	public void meaningfulFailureWhenParametersAreNotArrays() {
+		assertThat(
+				testResult(WrongElementType.class).toString(),
+				containsString("WrongElementType.data() must return an Iterable of arrays."));
 	}
-	
+
+	@RunWith(Parameterized.class)
+	static public class ParametersNotIterable {
+		@Parameters
+		public static String data() {
+			return "foo";
+		}
+
+		@Test
+		public void aTest() {
+		}
+	}
+
+	@Test
+	public void meaningfulFailureWhenParametersAreNotAnIterable() {
+		assertThat(
+				testResult(ParametersNotIterable.class).toString(),
+				containsString("ParametersNotIterable.data() must return an Iterable of arrays."));
+	}
+
 	@RunWith(Parameterized.class)
 	static public class PrivateConstructor {
 		private PrivateConstructor(int x) {
@@ -261,8 +278,8 @@ public class ParameterizedTestTest {
 		public void aTest() {
 		}
 	}
-	
-	@Test(expected=InitializationError.class)
+
+	@Test(expected= InitializationError.class)
 	public void exceptionWhenPrivateConstructor() throws Throwable {
 		new Parameterized(PrivateConstructor.class);
 	}
