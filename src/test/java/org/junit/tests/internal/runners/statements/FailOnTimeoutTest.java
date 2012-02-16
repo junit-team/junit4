@@ -136,7 +136,7 @@ public class FailOnTimeoutTest {
 					"Stack trace does not contain the real cause of the timeout",
 					stackTraceContainsTheRealCauseOfTheTimeout);
 			assertFalse(
-					"Stack trace contains not the real cause of the timeout, which can be very misleading",
+					"Stack trace does not contain the real cause of the timeout, which can be very misleading",
 					stackTraceContainsNotTheRealCauseOfTheTimeout);
 		}
 	}
