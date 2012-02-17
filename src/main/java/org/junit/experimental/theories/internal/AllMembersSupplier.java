@@ -80,6 +80,7 @@ public class AllMembersSupplier extends ParameterSupplier {
 			}
 	}
 
+	@SuppressWarnings("deprecation")
 	private void addSinglePointMethods(ParameterSignature sig,
 			List<PotentialAssignment> list) {
 		for (FrameworkMethod dataPointMethod : fClass

@@ -1,5 +1,6 @@
 package org.junit.rules;
 
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
@@ -45,6 +46,8 @@ public abstract class TestWatcher implements TestRule {
 				try {
 					base.evaluate();
 					succeeded(description);
+				} catch (AssumptionViolatedException e) {
+					throw e;
 				} catch (Throwable t) {
 					failed(t, description);
 					throw t;
