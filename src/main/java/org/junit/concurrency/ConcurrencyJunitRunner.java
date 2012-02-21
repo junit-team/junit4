@@ -50,14 +50,14 @@ public final class ConcurrencyJunitRunner extends BlockJUnit4ClassRunner {
 	private RunnerNotifyHandler runnerNotifyHandler;
 
 	/**
-	 * Handler for the parameter {@link Concurrency#expectAtLeast()).
+	 * Handler for the parameter {@link Concurrency#expectAtLeast()}.
 	 * <small>Notifier works like an listener without an interface, yet.</small>
 	 */
 	private ExpectAtLeastHandler expectAtLeastHandler;
 	
 	/**
 	 * Handler for the parameters {@link Concurrency#expectMinimumSuccessRuns()}
-	 * and {@link Concurrency#expectMaximumSuccessRuns()).
+	 * and {@link Concurrency#expectMaximumSuccessRuns()}.
 	 * 
 	 * <small>Notifier works like an listener without an interface, yet.</small>
 	 */

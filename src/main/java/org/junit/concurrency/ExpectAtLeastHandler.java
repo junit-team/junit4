@@ -6,7 +6,7 @@ import java.util.concurrent.ExecutionException;
 import org.junit.runners.model.FrameworkMethod;
 
 /**
- * Handler for the parameter {@link Concurrency#expectAtLeast()).
+ * Handler for the parameter {@link Concurrency#expectAtLeast()}.
  * 
  * @author Christoph Jerolimov
  */

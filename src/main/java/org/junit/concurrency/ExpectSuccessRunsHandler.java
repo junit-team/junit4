@@ -4,7 +4,7 @@ import org.junit.runners.model.FrameworkMethod;
 
 /**
  * Handler for the parameters {@link Concurrency#expectMinimumSuccessRuns()}
- * and {@link Concurrency#expectMaximumSuccessRuns()).
+ * and {@link Concurrency#expectMaximumSuccessRuns()}.
  * 
  * @author Christoph Jerolimov
  */
