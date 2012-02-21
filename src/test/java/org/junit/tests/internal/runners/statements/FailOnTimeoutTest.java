@@ -122,22 +122,22 @@ public class FailOnTimeoutTest {
 		} catch (Exception timeoutException) {
 			StackTraceElement[] stackTrace= timeoutException.getStackTrace();
 			boolean stackTraceContainsTheRealCauseOfTheTimeout= false;
-			boolean stackTraceContainsNotTheRealCauseOfTheTimeout= false;
+			boolean stackTraceContainsOtherThanTheRealCauseOfTheTimeout= false;
 			for (StackTraceElement element : stackTrace) {
 				String methodName= element.getMethodName();
 				if ("theRealCauseOfTheTimeout".equals(methodName)) {
 					stackTraceContainsTheRealCauseOfTheTimeout= true;
 				}
 				if ("notTheRealCauseOfTheTimeout".equals(methodName)) {
-					stackTraceContainsNotTheRealCauseOfTheTimeout= true;
+					stackTraceContainsOtherThanTheRealCauseOfTheTimeout= true;
 				}
 			}
 			assertTrue(
 					"Stack trace does not contain the real cause of the timeout",
 					stackTraceContainsTheRealCauseOfTheTimeout);
 			assertFalse(
-					"Stack trace does not contain the real cause of the timeout, which can be very misleading",
-					stackTraceContainsNotTheRealCauseOfTheTimeout);
+					"Stack trace contains other than the real cause of the timeout, which can be very misleading",
+					stackTraceContainsOtherThanTheRealCauseOfTheTimeout);
 		}
 	}
 
