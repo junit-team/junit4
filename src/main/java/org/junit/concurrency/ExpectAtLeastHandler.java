@@ -18,6 +18,12 @@ public class ExpectAtLeastHandler {
 
 	private boolean exceptionHappened = false;
 	
+	/**
+	 * Load the {@link Concurrency#expectAtLeast()} information.
+	 * 
+	 * @param runnerNotifyHandler
+	 * @param method
+	 */
 	public ExpectAtLeastHandler(RunnerNotifyHandler runnerNotifyHandler, FrameworkMethod method) {
 		this.runnerNotifyHandler = runnerNotifyHandler;
 		
@@ -27,6 +33,9 @@ public class ExpectAtLeastHandler {
 		}
 	}
 	
+	/**
+	 * After all tests are finished check if at least one exception is thrown.
+	 */
 	public void fireTestFinished() {
 		if (expectAtLeast != null && !exceptionHappened) {
 			runnerNotifyHandler.handleException(new AssertionError(
@@ -35,6 +44,11 @@ public class ExpectAtLeastHandler {
 		}
 	}
 	
+	/**
+	 * Handle exception and check if these are expected.
+	 * 
+	 * @param actualException
+	 */
 	public void handleException(Throwable actualException) {
 		// TODO logging?
 //		System.out.println("expected " + expectAtLeast);

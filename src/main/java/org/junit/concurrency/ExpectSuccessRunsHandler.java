@@ -17,6 +17,13 @@ public class ExpectSuccessRunsHandler {
 	
 	private volatile int successRuns = 0;
 	
+	/**
+	 * Load the {@link Concurrency#expectMinimumSuccessRuns()} and
+	 * {@link Concurrency#expectMaximumSuccessRuns()} informations.
+	 * 
+	 * @param runnerNotifyHandler
+	 * @param method
+	 */
 	public ExpectSuccessRunsHandler(RunnerNotifyHandler runnerNotifyHandler, FrameworkMethod method) {
 		this.runnerNotifyHandler = runnerNotifyHandler;
 		
@@ -27,10 +34,16 @@ public class ExpectSuccessRunsHandler {
 		}
 	}
 	
+	/**
+	 * Increase successful run counter.
+	 */
 	public void handleSuccess() {
 		successRuns++;
 	}
 
+	/**
+	 * Check after all tests if the number of success runs are expected.
+	 */
 	public void fireTestFinished() {
 		if (expectMinimumSuccessRuns != -1 && successRuns < expectMinimumSuccessRuns) {
 			runnerNotifyHandler.handleException(new AssertionError(
