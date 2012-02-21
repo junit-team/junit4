@@ -185,7 +185,6 @@ public final class ConcurrencyJunitRunner extends BlockJUnit4ClassRunner {
 			this.method = method;
 		}
 
-		@Override
 		public Void call() throws ExecutionException {
 			try {
 				methodBlock(method).evaluate();

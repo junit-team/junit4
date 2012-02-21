@@ -7,7 +7,7 @@ import static java.lang.System.getenv;
 
 import static org.junit.Assert.*;
 
-import static de.tarent.advproxy.test.concurrency.ConcurrencyConfiguration.*;
+import static org.junit.concurrency.ConcurrencyConfiguration.*;
 
 public class AssertNoExternalConfiguration {
 	@Test

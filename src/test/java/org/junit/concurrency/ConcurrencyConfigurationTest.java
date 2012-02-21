@@ -9,7 +9,7 @@ import static java.lang.System.clearProperty;
 import static java.lang.System.setProperty;
 import static org.junit.Assert.*;
 
-import static de.tarent.advproxy.test.concurrency.ConcurrencyConfiguration.*;
+import static org.junit.concurrency.ConcurrencyConfiguration.*;
 
 public class ConcurrencyConfigurationTest {
 	private Class<?> clazz;
