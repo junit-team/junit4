@@ -17,7 +17,7 @@ public class OrderedTestRunner extends Runner
 	{
 		this.testClass = testClass;
 
-        Order
+        OrderedSuite.registerOrderedClass(testClass);
 	}
 
 	@Override
@@ -31,33 +31,9 @@ public class OrderedTestRunner extends Runner
 	{
 		notifier.fireTestStarted(getDescription());
 		
-		System.err.println("OrderedTestRunner should be running the tests now...");
-		
-		try
-		{						
-			for(Method meth : testClass.getDeclaredMethods()) //for each declared method
-			for(Annotation anno : meth.getAnnotations()) //for each of its annotations
-			{
-				if( anno instanceof MethodRunOrder )
-				{
-					System.err.println("About to run "+testClass.getSimpleName()+"."+meth.getName());
-					
-					try
-					{						
-						Object retval = meth.invoke(testClass.newInstance(), (Object[])null);
-					}
-					catch (Exception e)
-					{
-						//notifier.fireTestAssumptionFailed(new Failure(getDescription(), e));
-						System.err.println(e);
-					}
-				}
-			}
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+		//System.err.println("OrderedTestRunner should be running the tests now...");
+
+        OrderedSuite.runNext(notifier);
 		
 		notifier.fireTestFinished(getDescription());
 	}

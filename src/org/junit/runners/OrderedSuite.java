@@ -17,50 +17,68 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.RunnerBuilder;
 import org.mearvk.MyTestClass2;
 
-public class OrderedSuite extends Runner
+public class OrderedSuite
 {
-	public static Stack<Class> classesToBeRun = new Stack<Class>();
-	private RunnerBuilder builder = null;
+	public static Stack<Class> orderedClasses = new Stack<Class>();
+
+    private static ArrayList<Class> registeredClasses = new ArrayList<Class>();
 	
-	public OrderedSuite(RunnerBuilder builder, Class<?>[] classes)
-	{
-		this.builder = builder;
-		this.orderClasses(classes);
-	}
-
-	@Override
-	public Description getDescription()
-	{
-		//classesToBeRun.peek().getCanonicalName()
-		return Description.createSuiteDescription("To be impl'd", new Annotation[]{});
-	}
-
-	@Override
-	public void run(RunNotifier notifier)
-	{
-		System.err.println("OrderedSuite.run() called");
-
-        do
-        {
-            Class<?> klassToRun = classesToBeRun.pop();
-            
-            Method[] declaredMethods = klassToRun.getDeclaredMethods();
-            
-            ArrayList<Method> methods = orderMethods(declaredMethods);
-
-            for(Method method : methods)
-            {
-                if(method.isAnnotationPresent(MethodRunOrder.class))
-                {
-                    System.err.println("Running "+klassToRun.getSimpleName()+"."+method.getName());
-                }
-                else System.err.println("Ignoring "+klassToRun.getSimpleName()+"."+method.getName());
-            }
-        }
-        while(!classesToBeRun.empty());
+	public OrderedSuite(Class<?>[] classes)
+    {
+		orderClasses(classes);
 	}
     
-    private ArrayList<Method> orderMethods(Method[] methods)
+    public static void registerOrderedClass(Class<?> klass)
+    {
+        OrderedSuite.registeredClasses.add(klass);
+    }
+
+	//@Override
+	public Description getDescription()
+	{
+		return Description.createSuiteDescription(orderedClasses.peek().getSimpleName());
+	}
+
+	//@Override
+	public static void runNext(RunNotifier notifier)
+	{
+		System.err.println("OrderedSuite.runNext() called");
+
+        //get the next class we need to run in its proper order
+        Class<?> classToRun = orderedClasses.pop();
+        
+        //request all declared methods
+        Method[] declaredMethods = classToRun.getDeclaredMethods();
+        
+        //request that methods are ordered according to annotation notation (MethodRunOrder(order=1) and so on...)
+        ArrayList<Method> methods = orderMethods(declaredMethods);
+         
+        //try and run each annotated method in the order given
+        for(Method method : methods)
+        {
+            //double check that this method has the right annotation
+            if(method.isAnnotationPresent(MethodRunOrder.class))
+            {
+                System.err.println("Running "+classToRun.getSimpleName()+"."+method.getName());
+                
+                try
+                {
+                    //try and run the method
+                    method.invoke(classToRun.newInstance(), (Object[])null);
+
+                    //debugging help
+                    System.err.println(classToRun.getSimpleName()+"."+method.getName()+" ran without error");
+                }
+                catch(Exception e)
+                {
+                    System.err.println(e);
+                }
+            }
+            else System.err.println("Ignoring "+classToRun.getSimpleName()+"."+method.getName());
+        }
+	}
+    
+    private static ArrayList<Method> orderMethods(Method[] methods)
     {
         ArrayList<Method> validMethods = new ArrayList<Method>();
         
@@ -93,7 +111,7 @@ public class OrderedSuite extends Runner
         return validMethods;
     }
 	
-	private void orderClasses(Class<?>[] classes)
+	private static void orderClasses(Class<?>[] classes)
 	{
 		List<Class<?>> list = Arrays.asList(classes);
 		
@@ -121,14 +139,16 @@ public class OrderedSuite extends Runner
 			}
 		};
 		
+        //sort the list according to annotated run order (in reverse for the purpose of a stack)
 		Collections.sort(list, c);
 		
+        //print out some stuff for debugging and push the list onto the stack
 		for(Class<?> klass : list)
 		{
 			System.err.println("Class "+klass.getName()+" has order "+((ClassRunOrder)klass.getAnnotation(ClassRunOrder.class)).order());
 
             //push the last class to be run first, etc
-            classesToBeRun.push(klass);
+            orderedClasses.push(klass);
 		}
 	}
 }

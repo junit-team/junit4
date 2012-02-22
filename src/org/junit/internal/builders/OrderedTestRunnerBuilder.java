@@ -11,11 +11,6 @@ import org.junit.runners.model.RunnerBuilder;
 
 public class OrderedTestRunnerBuilder extends RunnerBuilder
 {
-	public OrderedTestRunnerBuilder()
-	{
-		
-	}
-	
 	@Override
 	public Runner runnerForClass(Class<?> testClass) throws Throwable
 	{		

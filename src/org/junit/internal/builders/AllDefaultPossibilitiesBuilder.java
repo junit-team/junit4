@@ -21,10 +21,10 @@ public class AllDefaultPossibilitiesBuilder extends RunnerBuilder {
 	{
 		List<RunnerBuilder> builders = 
 				Arrays.asList(
-				//ignoredBuilder(),
-				//annotatedBuilder(),
-				//suiteMethodBuilder(),
-				//junit3Builder(),
+				ignoredBuilder(),
+				annotatedBuilder(),
+				suiteMethodBuilder(),
+				junit3Builder(),
 				new OrderedTestRunnerBuilder(),
 				junit4Builder()
 				);
@@ -35,10 +35,8 @@ public class AllDefaultPossibilitiesBuilder extends RunnerBuilder {
 			
 			if (runner != null)
 			{
-				
 				System.out.println("Running tests with runner of type "+runner.getClass().getSimpleName());
 				return runner;
-				
 			}
 		}
 		return null;
