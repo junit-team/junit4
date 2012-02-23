@@ -23,7 +23,7 @@ public class Test_1
 			
 			for(Failure failure : failures)
 			{
-				System.out.println(failure.getMessage());
+				System.out.println("MESSAGES: "+failure.getMessage());
 			}
 		}
 		catch (Exception e)
