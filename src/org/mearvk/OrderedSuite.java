@@ -128,7 +128,7 @@ public class OrderedSuite
 				if(runOrderArg0.order()>runOrderArg1.order()) return -1;
 				if(runOrderArg0.order()<runOrderArg1.order()) return +1;				
 
-				throw new RuntimeException("Class "+arg0.getClass()+" has the same run order as class "+arg1.getClass());
+				throw new RuntimeException(arg0+" has the same run order as "+arg1);
 			}
 		};
 		

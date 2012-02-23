@@ -2,7 +2,7 @@ package org.mearvk;
 
 import static junit.framework.Assert.assertTrue;
 
-@ClassRunOrder(order=2)
+@ClassRunOrder(order=1)
 public class MyTestClass2
 {
 	@MethodRunOrder(order=1)
