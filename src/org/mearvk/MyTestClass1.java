@@ -1,7 +1,5 @@
 package org.mearvk;
 
-import org.junit.MethodRunOrder;
-import org.junit.ClassRunOrder;
 
 import static junit.framework.Assert.assertTrue;
 

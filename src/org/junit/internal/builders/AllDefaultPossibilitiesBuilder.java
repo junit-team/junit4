@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.junit.runner.Runner;
 import org.junit.runners.model.RunnerBuilder;
+import org.mearvk.OrderedTestRunnerBuilder;
 
 public class AllDefaultPossibilitiesBuilder extends RunnerBuilder {
 	private final boolean fCanUseSuiteMethod;

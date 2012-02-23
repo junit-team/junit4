@@ -1,7 +1,5 @@
 package org.mearvk;
 
-import org.junit.ClassRunOrder;
-import org.junit.MethodRunOrder;
 
 @ClassRunOrder(order=2)
 public class MyTestClass2
