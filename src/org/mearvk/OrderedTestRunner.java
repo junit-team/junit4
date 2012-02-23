@@ -25,10 +25,6 @@ public class OrderedTestRunner extends Runner
 	@Override
 	public void run(RunNotifier notifier)
 	{
-		notifier.fireTestStarted(getDescription());
-
         OrderedSuite.runNext(notifier);
-		
-		notifier.fireTestFinished(getDescription());
 	}
 }

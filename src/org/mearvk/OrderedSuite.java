@@ -6,8 +6,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Stack;
 
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
+import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runner.notification.StoppedByUserException;
 
 public class OrderedSuite
 {
@@ -20,17 +23,9 @@ public class OrderedSuite
         OrderedSuite.registeredClasses.add(klass);
     }
 
-	//@Override
-	public Description getDescription()
-	{
-		return Description.createSuiteDescription(orderedClasses.peek().getSimpleName());
-	}
-
-	//@Override
 	public static void runNext(RunNotifier notifier)
-	{
-		System.err.println("OrderedSuite.runNext() called");
-        
+	{        
+		//if we haven't already ordered the classes
         if(orderedClasses.empty()) 
             orderClasses(OrderedSuite.registeredClasses);
 
@@ -48,28 +43,46 @@ public class OrderedSuite
         {
             //double check that this method has the right annotation
             if(method.isAnnotationPresent(MethodRunOrder.class))
-            {
-                System.err.println("Running "+classToRun.getSimpleName()+"."+method.getName());
-                
+            {                                
+            	//save this for brevity
+            	Description testDescription = Description.createSuiteDescription(classToRun.getClass());
+            	
                 try
-                {
+                {	              	
+                	//notify listeners that test is about to start
+                	notifier.fireTestRunStarted(testDescription);
+                	
                     //try and run the method
                     method.invoke(classToRun.newInstance(), (Object[])null);
-
-                    //debugging help
-                    System.err.println(classToRun.getSimpleName()+"."+method.getName()+" ran without error");
+                    
+                    //notify listeners that test run has completed
+                    notifier.fireTestFinished(testDescription);
                 }
-                catch(Exception e)
+    		 	catch (AssumptionViolatedException e) 
+    			{
+    		 		notifier.fireTestIgnored(testDescription);
+    			} 
+                catch (StoppedByUserException e) 
                 {
-                    System.err.println(e);
+                	throw e;
+                } 
+                catch(Throwable t)
+                {
+                	if(t.getCause()==null)
+                	{
+                		notifier.fireTestFailure(new Failure(testDescription, t));
+                	}
+                	else
+                	{
+                		notifier.fireTestFailure(new Failure(testDescription, t.getCause()));
+                	}
                 }
             }
-            else System.err.println("Ignoring "+classToRun.getSimpleName()+"."+method.getName());
         }
 	}
     
     private static ArrayList<Method> orderMethods(Method[] methods)
-    {
+    {    	
         ArrayList<Method> validMethods = new ArrayList<Method>();
         
         for(Method method : methods)
@@ -93,12 +106,12 @@ public class OrderedSuite
                 if(m1RunOrder.order()<m2RunOrder.order()) return -1;
                 if(m1RunOrder.order()>m2RunOrder.order()) return +1;
 
-                return 0;
+                throw new RuntimeException("Methods in the same class cannot have the same run order.");
             }
         };
         
         Collections.sort(validMethods, methodRunOrderComparator);
-        
+                
         return validMethods;
     }
 	
@@ -113,18 +126,9 @@ public class OrderedSuite
                 ClassRunOrder runOrderArg1 = (ClassRunOrder)((Class)arg1).getAnnotation(ClassRunOrder.class);
 				
 				if(runOrderArg0.order()>runOrderArg1.order()) return -1;
-				if(runOrderArg0.order()<runOrderArg1.order()) return +1;
-				
-				try
-				{
-					throw new Exception("Class "+arg0.getClass()+" has the same run order as class "+arg1.getClass());
-				}
-				catch (Exception e)
-				{
-					System.err.println(e);
-                }
+				if(runOrderArg0.order()<runOrderArg1.order()) return +1;				
 
-                return 0;
+				throw new RuntimeException("Class "+arg0.getClass()+" has the same run order as class "+arg1.getClass());
 			}
 		};
 		

@@ -9,8 +9,9 @@ public class OrderedTestRunnerBuilder extends RunnerBuilder
 	public Runner runnerForClass(Class<?> testClass) throws Throwable
 	{		
         if(testClass.isAnnotationPresent(ClassRunOrder.class))
-            return new OrderedTestRunner(testClass);
-			
-		return null;
+        {
+        	return new OrderedTestRunner(testClass);
+        }		
+        else return null;
 	}
 }
