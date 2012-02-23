@@ -106,7 +106,7 @@ public class OrderedSuite
                 if(m1RunOrder.order()<m2RunOrder.order()) return -1;
                 if(m1RunOrder.order()>m2RunOrder.order()) return +1;
 
-                throw new RuntimeException("Methods in the same class cannot have the same run order.");
+                throw new RuntimeException("Methods in the same class ("+arg0+") cannot have the same run order.");
             }
         };
         
