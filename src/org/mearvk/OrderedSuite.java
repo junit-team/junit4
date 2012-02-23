@@ -138,8 +138,6 @@ public class OrderedSuite
         //print out some stuff for debugging and push the list onto the stack
 		for(Class<?> klass : classes)
 		{
-			System.err.println("Class "+klass.getName()+" has order "+klass.getAnnotation(ClassRunOrder.class).order());
-
             //push the last class to be run first, etc
             orderedClasses.push(klass);
 		}
