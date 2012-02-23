@@ -17,7 +17,7 @@ public class Test_1
 			
 			//Result result = core.run(new TestOrderingComputer(), MyTestClass1.class, MyTestClass2.class);
 
-            Result result = core.run(MyTestClass1.class, MyTestClass2.class);
+            Result result = core.run(MyTestClass1.class, MyTestClass2.class, MyTestClass3.class);
 			
 			List<Failure> failures = result.getFailures();
 			

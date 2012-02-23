@@ -3,13 +3,15 @@ package org.mearvk;
 import org.junit.MethodRunOrder;
 import org.junit.ClassRunOrder;
 
+import static junit.framework.Assert.assertTrue;
+
 @ClassRunOrder(order=1)
 public class MyTestClass1
 {
 		@MethodRunOrder(order=1)
 		public void runMe1()
 		{
-			//assertTrue("Oops...runMe1", false);
+			assertTrue("Oops...runMe1", false);
 			System.err.println("runMe1 was run...");
 		}
 		

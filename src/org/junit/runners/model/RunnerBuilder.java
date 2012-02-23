@@ -60,7 +60,6 @@ public abstract class RunnerBuilder {
 		} 
 		catch (Throwable e) 
 		{
-			System.out.println("Here");
 			return new ErrorReportingRunner(testClass, e);
 		}
 	}

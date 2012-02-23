@@ -33,10 +33,11 @@ public class AllDefaultPossibilitiesBuilder extends RunnerBuilder {
 			
 			if (runner != null)
 			{
-				System.out.println("Running tests with runner of type "+runner.getClass().getSimpleName());
+				System.err.println("Class of type '"+testClass.getSimpleName()+"' will be run with Runner of type '"+runner.getClass().getSimpleName()+"'");
 				return runner;
 			}
 		}
+
 		return null;
 	}
     
