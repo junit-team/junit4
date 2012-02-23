@@ -22,11 +22,6 @@ public class OrderedSuite
 	public static Stack<Class> orderedClasses = new Stack<Class>();
 
     private static ArrayList<Class> registeredClasses = new ArrayList<Class>();
-	
-	public OrderedSuite(Class<?>[] classes)
-    {
-		orderClasses(classes);
-	}
     
     public static void registerOrderedClass(Class<?> klass)
     {
@@ -43,6 +38,9 @@ public class OrderedSuite
 	public static void runNext(RunNotifier notifier)
 	{
 		System.err.println("OrderedSuite.runNext() called");
+        
+        if(orderedClasses.empty()) 
+            orderClasses(OrderedSuite.registeredClasses);
 
         //get the next class we need to run in its proper order
         Class<?> classToRun = orderedClasses.pop();
@@ -111,9 +109,9 @@ public class OrderedSuite
         return validMethods;
     }
 	
-	private static void orderClasses(Class<?>[] classes)
+	private static void orderClasses(ArrayList<Class> classes)
 	{
-		List<Class<?>> list = Arrays.asList(classes);
+		//List<Class<?>> list = Arrays.asList(classes);
 		
 		Comparator c = new Comparator()
 		{
@@ -140,10 +138,10 @@ public class OrderedSuite
 		};
 		
         //sort the list according to annotated run order (in reverse for the purpose of a stack)
-		Collections.sort(list, c);
+		Collections.sort(classes, c);
 		
         //print out some stuff for debugging and push the list onto the stack
-		for(Class<?> klass : list)
+		for(Class<?> klass : classes)
 		{
 			System.err.println("Class "+klass.getName()+" has order "+((ClassRunOrder)klass.getAnnotation(ClassRunOrder.class)).order());
 

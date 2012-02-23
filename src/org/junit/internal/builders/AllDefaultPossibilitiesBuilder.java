@@ -19,15 +19,13 @@ public class AllDefaultPossibilitiesBuilder extends RunnerBuilder {
 	@Override
 	public Runner runnerForClass(Class<?> testClass) throws Throwable 
 	{
-		List<RunnerBuilder> builders = 
-				Arrays.asList(
+		List<RunnerBuilder> builders = Arrays.asList(
 				ignoredBuilder(),
 				annotatedBuilder(),
 				suiteMethodBuilder(),
 				junit3Builder(),
-				new OrderedTestRunnerBuilder(),
-				junit4Builder()
-				);
+				orderedTestRunnerBuilder(),
+				junit4Builder());
 
 		for (RunnerBuilder each : builders) 
 		{
@@ -41,6 +39,11 @@ public class AllDefaultPossibilitiesBuilder extends RunnerBuilder {
 		}
 		return null;
 	}
+    
+    protected OrderedTestRunnerBuilder orderedTestRunnerBuilder()
+    {
+        return new OrderedTestRunnerBuilder();
+    }
 
 	protected JUnit4Builder junit4Builder() {
 		return new JUnit4Builder();

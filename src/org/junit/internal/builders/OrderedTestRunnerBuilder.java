@@ -14,7 +14,8 @@ public class OrderedTestRunnerBuilder extends RunnerBuilder
 	@Override
 	public Runner runnerForClass(Class<?> testClass) throws Throwable
 	{		
-        if(testClass.isAnnotationPresent(ClassRunOrder.class)) return new OrderedTestRunner(testClass);
+        if(testClass.isAnnotationPresent(ClassRunOrder.class))
+            return new OrderedTestRunner(testClass);
 			
 		return null;
 	}

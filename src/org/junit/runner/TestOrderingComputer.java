@@ -9,7 +9,9 @@ public class TestOrderingComputer extends Computer
 {
 	public Runner getSuite(final RunnerBuilder builder, Class<?>[] classes) throws InitializationError 
 	{
-		return new OrderedSuite(builder, classes); //end of Suite constructor
+		//return new OrderedSuite(classes); //end of Suite constructor
+
+        return null;
 	}
 }
 

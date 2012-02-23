@@ -30,8 +30,6 @@ public class OrderedTestRunner extends Runner
 	public void run(RunNotifier notifier)
 	{
 		notifier.fireTestStarted(getDescription());
-		
-		//System.err.println("OrderedTestRunner should be running the tests now...");
 
         OrderedSuite.runNext(notifier);
 		
