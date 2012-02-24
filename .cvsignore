@@ -1,0 +1,10 @@
+bin
+junit4.1
+junit*-SNAPSHOT-*
+target
+reports
+buildfile
+java.hprof.txt
+junit4.5-RC1
+junit4.*
+*.ser

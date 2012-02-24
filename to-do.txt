@@ -1,0 +1,31 @@
+* assertArrayEquals(double[], double[], double) and assertArrayEquals(float[], float[], float)
+
+* update documentation
+	* new cook's tour
+	* update Test Infected
+* Should there be a "prefix" annotation for Suites?
+  * This would allow two Suites with different BeforeClass/AfterClass behaviors,
+    but the same component tests, to co-exist
+
+* update the build process
+    * automatically upload a new JAR
+    * update site for plug-in version?
+* Ant
+	* Basic task
+* support testing run once initialization code e.g. class Foo {{...}}
+* Automatically add failing tests to the Known Defects section of the README.html
+
+* Create test target in ant
+* Create assume(that()) and assert(that()) 
+  (what is a better name for the second one?)
+  
+* Simplify implementation of equality, and organize AssertionTest
+
+* Theories class validation should be much better
+
+* Find a way to make Parameterized a single-class extension
+
+* If a suite() returns a JUnit4TestAdapter, allow Filters and Sorters to operate on 
+  the adapted Runner.
+  
+* Every time I add a Filter feature, I have to add an equivalent Sorter feature.  Suspicious.

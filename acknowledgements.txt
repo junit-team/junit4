@@ -1,0 +1,159 @@
+2006 March 9
+	Matthias Schmidt: improved org.junit package javadoc
+	
+2006 August 3
+	giovanni: better test for TestCase without a name.
+	Matthias Pfau: better error message when test case constructor fails
+	
+2006 November 21
+	dakcalouro: Found defect with comparing ints and longs (1555161)
+	Ben Maurer: Found defect with timeouts taking twice as long as specified (1536198)
+	
+2007 February 08
+	Kazimierz Pogoda: Found defect with null array elements (1438163)
+	
+2007 July 09
+	wangqq: Found defect with @After not running after a timeout (1745048)
+
+2007 July 18
+    Andrew Dick: Found defect with assertEquals comparing non-Integer Numbers (1715326)
+	Michael Schechter: Found defect with Filters and suite() methods (1739095)
+
+2008 February 5
+	Walter Gildersleeve: Found assertEquals(null, "null") defect (1857283)
+	
+2008 July 1
+	Johannes Link: Submitted test for running subclasses of Suite
+	
+2008 July 23
+	Daniel Brolund: Submitted patch for build.xml, fixing 1.5 compatibility (2021396)
+	
+2008 Aug 1
+	Nat Pryce: Found defect in treatment of validation errors from custom 
+	           subclasses of the legacy JUnit4ClassRunner.
+	           
+2008 Aug 18
+	Nir Soffer: Suggested adding to the cookbook information about running
+				running JUnit from the command line.
+				           
+2008 Aug 19
+	Jack Woehr: Discovered build.xml was missing from junit-4.x.zip
+	
+2009 Jan 5
+	Amanda Robinson: Fixed overly permissive @DataPoint processing.
+	
+2009 Feb 9
+	Mark Shapiro: Discovered bug in test counting after an ignored method (2106324)
+	
+2009 Apr 20
+	Chris Felaco: Discovered regression in handling suite() methods with JUnit 3 runner (1812200)
+	Toby Byron: Suggested updating linking in javadoc (2090230)
+	Raphael Parree: Improved docs on Parameterized (2186792)
+	Robin de Silva Jayasinghe: Fixed Javadoc code sample for AfterClass (2126279)
+	
+2009 May 04
+	James Abbley: Submitted a patch that fixed the 2-second limit on Parallel execution.
+
+2009 Nov 16
+    Kristian Rosenvold: Submitted a patch (github#16) that improves thread-safety of
+                        result counting
+2010 Feb 08
+    Paul Holser: Submitted additional test for TestName rule.
+    
+2010 May 03
+    jonas22@github: Found bug (github#98) with assumptions and expected exceptions.
+
+2011 Jan 03
+    jens.schauder@freenet.de: Found bug (github#74) with Categories and 
+                              Parameterized.
+
+2011 Jan 18
+    Markus Keller: Reported bug (github#163): 
+           Bad comparison failure message when using assertEquals(String, String)
+    
+    Kevin Cooney (kcooney@github):
+           Patches for runLeaf, public multiple failure exception,
+           assertion messages and null.
+
+2011 Mar 04
+    Jerome Lacoste (lacostej@github) for initial patch for GH-191.
+
+2011 Apr 15
+     reinholdfuereder@github For initial test for GH-39
+
+2011 Apr 15
+     ububenheimer@github for bug report https://github.com/KentBeck/junit/issues/208
+
+2011 Apr 29
+     reinholdfuereder@github: bug report, test, and fix for GH-38:
+                              ParentRunner filtering
+2011 Apr 29
+     Markus Keller (mkeller@github): Report for GH-187:
+            Unintentional dependency on Java 6
+
+2011 May 31
+     Kevin Cooney (kcooney@github): Patches for filtering test suites:
+         copy List returned by getChildren() before mutating it;
+         optimize ParentRunner.filter for nested suites;
+         optimize Filter.intersect for common cases
+
+2011 Jun 06
+     Vampire@github: Report for GH-235: 4.7 release notes incorrect.
+
+2011 Jun 24
+     Samuel Le Berrigaud (sleberrigaud@github): Report for GH-248:
+            protected BlockJUnit4ClassRunner#rules method removed from 4.8.2
+
+2011 Jun 24
+    Daniel Rothmaler (drothmaler@github):
+        #299: random temp file/folder creation 
+        #300: ErrorCollector.checkThat overload
+
+2011 Jul 06
+     Stefan Birkner: Fixed wrong documentation of ClassRule (github#254).
+
+2011 Jul 08
+     Paul Holser (pholser@alumni.rice.edu): Beginnings of fix for GH-64:
+            Theories doesn't honor parameterized types
+
+2011 Jul 09
+     Nigel Charman: Reported Rules bugs github#257 and gihub#258.
+
+2011 Jul 09
+     Stefan Birkner: Fixed rules bugs (github#257, gihub#258, github#260).
+
+2011 Jul 09
+     Stefan Birkner: Fixed rules bugs (github#257, gihub#258, github#260).
+
+2011 Jul 16
+	Rob Dawson: Submitted a patch that makes Results serlializable.
+
+2011 Jul 20
+     Asaf Ary, Stefan Birkner: Fixed FailOnTimeout class (github#265).
+
+2011 Jul 22
+     Andreas Köhler, Stefan Birkner: Fixed wrong documentation of Parameterized (github#89).
+
+2011 Jul 28
+     electrickery, Stefan Birkner: Fixed typo in JavaDoc (github#134).
+
+2011 Aug 07
+	Esko Luontola: Fixed TemporaryFolder creating files in the current working directory (github#278).
+
+2011 Aug 09
+     Stefan Birkner: Fixed JavaDoc links.
+
+2011 Aug 10
+     rodolfoliviero@github and JoseRibeiro@github: feature to create recursive temporary folders.
+
+2011 Aug 12
+	Esko Luontola: Fixed syntax error in Parameterized's usage example (github#285).
+
+2011 Sep 09
+     Robert Munteanu, Stefan Birkner:
+            TestWatcher and TestWatchman don't call failed when assumption is violated (github#296).
+     digulla@github, Stefan Birkner: Removed useless code (github#289).
+
+== NOTE: as of September 2011, we have stopped recording contributions here.
+   For a full list of everyone who has contributed great bug reports and code, please see
+   http://github.com/KentBeck/junit

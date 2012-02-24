@@ -1,0 +1,19 @@
+Steps to build junit:
+
+- Must be manual
+  - Write release notes
+  - Update version in build.xml
+- Not too tedious:
+  - Push to github (dsaff _and_ KentBeck)
+  - Run the ant zip task
+  - Upload stuff to github (including tag)
+  - Push to maven
+    - ant -lib build/lib stage.maven
+    - Promote 
+- Tedious:
+  - Update SourceForge if major release
+  - Update javadocs on github site (and "latest" link)
+  - Update javadocs on junit.org
+  - Put release notes on github.
+  - Announce on blog, user list, dev list, announce list, junit.org, twitter 
+- Profit!

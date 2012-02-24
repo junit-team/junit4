@@ -1,0 +1,96 @@
+<h2>Summary of Changes in version 4.9, final</h2>
+
+<p>Release theme: Test-class and suite level Rules.</p>
+
+<h3>ClassRule</h3>
+
+<p>The <code>ClassRule</code> annotation extends the idea of method-level Rules,
+adding static fields that can affect the operation of a whole class.  Any
+subclass of <code>ParentRunner</code>, including the standard <code>BlockJUnit4ClassRunner</code> 
+and <code>Suite</code> classes, will support <code>ClassRule</code>s.</p>
+
+<p>For example, here is a test suite that connects to a server once before
+all the test classes run, and disconnects after they are finished:</p>
+
+<pre><code>@RunWith(Suite.class)
+@SuiteClasses({A.class, B.class, C.class})
+public class UsesExternalResource {
+    public static Server myServer= new Server();
+
+    @ClassRule
+    public static ExternalResource resource= new ExternalResource() {
+        @Override
+        protected void before() throws Throwable {
+            myServer.connect();
+        };
+
+        @Override
+        protected void after() {
+            myServer.disconnect();
+        };
+    };
+}
+</code></pre>
+
+<h3>TestRule</h3>
+
+<p>In JUnit 4.9, fields that can be annotated with either <code>@Rule</code> or <code>@ClassRule</code>
+should be of type <code>TestRule</code>.  The old <code>MethodRule</code> type, which only made sense
+for method-level rules, will still work, but is deprecated.</p>
+
+<p>Most built-in Rules have been moved to the new type already, in a way that
+should be transparent to most users.  <code>TestWatchman</code> has been deprecated,
+and replaced by <code>TestWatcher</code>, which has the same functionality, but implements
+the new type.</p>
+
+<h3>Maven support</h3>
+
+<p>Maven bundles have, in the past, been uploaded by kind volunteers.  Starting
+with this release, the JUnit team is attempting to perform this task ourselves.</p>
+
+<h3>LICENSE checked in</h3>
+
+<p>The Common Public License that JUnit is released under is now included
+in the source repository.</p>
+
+<h3>Bug fixes</h3>
+
+<ul>
+<li>github#98: assumeTrue() does not work with expected exceptions</li>
+<li><p>github#74: Categories + Parameterized</p>
+
+<p>In JUnit 4.8.2, the Categories runner would fail to run correctly
+if any contained test class had a custom Runner with a structure
+significantly different from the built-in Runner.  With this fix,
+such classes can be assigned one or more categories at the class level,
+and will be run correctly.  Trying to assign categories to methods within
+such a class will flag an error.</p></li>
+<li><p>github#38: ParentRunner filters more than once</p>
+
+<p>Thanks to <code>@reinholdfuereder</code></p></li>
+<li><p>github#248: protected BlockJUnit4ClassRunner#rules method removed from 4.8.2</p></li>
+<li>github#187: Accidental dependency on Java 6</li>
+</ul>
+
+<p>Thanks to <code>@kcooney</code> for:</p>
+
+<ul>
+<li>github#163: Bad comparison failure message when using assertEquals(String, String)</li>
+<li>github#227: ParentRunner now assumes that getChildren() returns a modifiable list</li>
+</ul>
+
+<h3>Minor changes</h3>
+
+<ul>
+<li>Backed out unused folder "experimental-use-of-antunit", replaced by 
+bash-based script at build_tests.sh</li>
+<li>Various Javadoc fixes</li>
+</ul>
+
+<p>Thanks to <code>@kcooney</code> for:</p>
+
+<ul>
+<li>Made MultipleFailureException public, to assist extension writers.</li>
+<li>github#240: Add "test" target to build.xml, for faster ant-driven testing.</li>
+<li>github#247: Give InitializationError a useful message</li>
+</ul>

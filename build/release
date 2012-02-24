@@ -1,0 +1,389 @@
+#!/usr/bin/perl
+
+eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
+    if 0; # not running under some shell
+use strict;
+use warnings;
+
+# $Id: release,v 1.1 2007/09/04 17:59:38 dsaff Exp $
+
+=head1 NAME
+
+release - upload files to the CPAN and SourceForge.net
+
+=head1 SYNOPSIS
+
+	release [ LOCAL_FILE [ REMOTE_FILE ] ]
+	
+	# try a dry run without uploading anything
+	release -t
+	
+	# print a help message
+	release -h
+	
+	# print debugging information
+	release -d 
+
+=head1 DESCRIPTION
+
+This is the prototype program for using Module::Release. You should
+modify it to fit your needs.
+
+This program automates Perl module releases.  It makes the
+distribution, tests it, checks that source control is up to date, tags
+source control, uploads it to the PAUSE anonymous FTP directory and to
+the incoming directory for SourceForge.net, claims it on PAUSE for
+your CPAN account, and releases it on SourceForge.net.
+
+By default this script assumes that you use CVS, but recognizes SVN
+and switches when appropriate.
+
+=head2 Process
+
+The release script checks many things before it actually releases the
+file.  Some of these are annoying, but they are also the last line of
+defense against releasing bad distributions.
+
+=over 4
+
+=item Read the configuration data
+
+Look in the current working directory for C<.releaserc>.  See the
+Configuration section.  If release cannot find the configuration file,
+it dies.
+
+=item Test and make the distribution
+
+Run make realclean, perl Makefile.PL, make test, make dist, make
+disttest.  If testing fails, release dies.  make dist provides the
+name of the distribution if LOCAL_FILE is not provided on the command
+line.
+
+=item Check that source control is up-to-date
+
+If there are modified files, added files, or extra files so that
+source control complains, fail.
+
+=item Upload to PAUSE and SourceForge.net
+
+Simply drop the distribution in the incoming/ directory of these
+servers.
+
+=item Claim the file on PAUSE
+
+Connect to the PAUSE web thingy and claim the uploaded file for your
+CPAN account.
+
+=item Tag the repository
+
+Use the version number (in the distribution name) to tag the
+repository.  You should be able to checkout the code from any release.
+
+=item Release to SourceForge.net
+
+The release name is the distribution name without the .tar.gz. The
+file name is the distribution name.  SourceForge.net divides things
+into projects (with project IDs) and packages within the project (with
+package IDs).  Specify these in the configuration file.
+
+=back
+
+=head2 Configuration
+
+The release script uses a configuration file in the current working
+directory.  The file name is F<.releaserc>.  Although most of the
+information is the same for all of your projects, the C<sf_package_id>
+is probably different.  You can get the C<sf_package_id> from the data
+in the Quick Release Form.
+
+release's own F<.releaserc> looks like this:
+
+    sf_user comdog
+    sf_group_id 36221
+    sf_package_id 56559
+    cpan_user BDFOY
+
+=over 4
+
+=item cpan_user
+
+=item sf_user
+
+If C<cpan_user> or C<sf_user> is set to C<< <none> >>, the program will
+skip releasing for that system.  You must release for at least one system.
+
+=item sf_group_id
+
+=item sf_package_id
+
+=item sf_processor_id
+
+=item sf_type_id
+
+=item sf_release_match
+
+=item sf_release_replace
+
+To find C<sf_package_id> and C<sf_group_id>, go to the Add/Edit
+Release page for your project.  The link for "[Add Release]" might
+look something like this (this is the link for the F<release> package
+itself):
+
+    https://sourceforge.net/project/admin/newrelease.php?package_id=56559&group_id=36221
+
+so C<sf_package_id> is 56559 and C<sf_group_id> is 36221.
+
+C<sf_processor_id> and C<sf_type_id> are optional, and default to "Any"
+and "Source .gz".  See the HTML in a file release form on SourceForge.net
+for other options.
+
+C<sf_release_match> and C<sf_release_replace> are for defining the release
+name, if you don't like the default.  For example, the default would
+set the name for this program to something like "release-0.10".
+But if you want the name to be only the version number, set
+C<sf_release_match=^.+-([\d.]+)$> and C<sf_release_replace=$1>.
+
+=item passive_ftp
+
+Set C<passive_ftp> to "y" or "yes" for passive FTP transfers.  Usually
+this is to get around a firewall issue.
+
+=item release_subclass
+
+Specify the name of a subclass to use instead of Module::Release.  The
+subclass can override any of the Module::Release methods.  This makes
+it possible to maintain your own local releasing procedures.  For
+instance, one such subclass might look like this:
+
+  package Module::Release::KWILLIAMS;
+  use base qw(Module::Release);
+  
+  sub make_cvs_tag {
+    my $self = shift;
+    (my $version) = $self->{remote} =~ / - (\d[\w.]*) \.tar \.gz $/x;
+    $version =~ s/[^a-z0-9_]/_/gi;
+    return "release-$version";
+  }
+  1;
+
+To use this subclass, you'd put it in your C<@INC> somewhere, then set
+C<release_subclass> to C<Module::Release::KWILLIAMS>.
+
+=back
+
+=head2 Environment
+
+=over 4
+
+=item * CPAN_PASS
+
+=item * SF_PASS
+
+release reads the C<CPAN_PASS> and C<SF_PASS> environment variables to
+set the passwords for PAUSE and SourceForge.net, respectively.  Of course,
+you don't need to set the password for a system you're not uploading to.
+
+=item * RELEASE_DEBUG
+
+The C<RELEASE_DEBUG> environment variable sets the debugging value,
+which is 0 by default.  Set C<RELEASE_DEBUG> to a true value to get
+debugging output.
+
+=item * PERL
+
+The C<PERL> environment variable sets the path to perl for use in the
+make; otherwise, the perl used to run release will be used.
+
+=back
+
+=head1 TO DO
+
+=over 4
+
+=item * check make disttest (to catch MANIFEST errors) -- needs error catching and reporting
+
+=back
+
+=head1 SOURCE AVAILABILITY
+
+This source is part of a SourceForge.net project which always has the
+latest sources in CVS, as well as all of the previous releases.
+
+        http://sourceforge.net/projects/brian-d-foy/
+
+If, for some reason, I disappear from the world, one of the other
+members of the project can shepherd this software appropriately.
+
+=head1 AUTHOR
+
+brian d foy, C<< <bdfoy@cpan.org> >>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2002-2007, brian d foy, All rights reserved.
+
+You may use this software under the same terms as Perl itself.
+
+=head1 CREDITS
+
+Ken Williams turned the original release(1) script into a module.
+
+Andy Lester contributed to the module and script. 
+
+=cut
+
+use Getopt::Std;
+use Module::Release;
+
+my $class = "Module::Release";
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+my %opts;
+getopts('hdt', \%opts) or $opts{h} = 1;
+
+if( $opts{h} ) 
+	{
+	print <<"USE";
+
+Use: release -hdt [ LOCAL_FILE [ REMOTE_FILE ] ]
+
+Will upload current release LOCAL_FILE, naming it REMOTE_FILE.  Will
+get LOCAL_FILE and REMOTE_FILE automatically (using same name for
+both) if not supplied.
+
+	-h   This help 
+	-d   Print extra debugging information 
+	-t   Just make and test distribution, don't tag/upload
+
+The program works in the current directory, and looks for a .releaserc
+or releaserc file and the environment for its preferences.  See
+`perldoc $0`, for more information.
+
+USE
+
+	exit;
+	}
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+if( -d '.svn' )
+	{
+	$class = "Module::Release::Subversion";
+	
+	print STDERR "I see an .svn directory, so I'm loading $class"
+		if $opts{d};
+		
+	eval "use Module::Release::Subversion";
+	die "Could not load $class: $@\n" if $@;
+	}
+
+my( $script_version ) = 
+	sprintf "%1.%02d", q$Revision: 1.1 $ =~ m/ (\d+) /xg;
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+my %params;
+$params{local}  = shift @ARGV if @ARGV;
+
+if( @ARGV ) 
+	{
+    $params{remote} = shift @ARGV;
+	} 
+elsif( $params{local} ) 
+	{
+    $params{remote} = $params{local};
+	}
+
+$params{debug} = 1 if $opts{d};
+
+my $release = $class->new( %params );
+
+print STDERR "release $script_version, using $class " .  $class->VERSION . "\n" 
+	if $release->debug;
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+$release->clean;
+$release->build_makefile;
+$release->test;
+$release->dist;
+$release->check_kwalitee;
+$release->dist_test;
+# $release->check_cvs;
+
+my $Version = $release->dist_version;
+
+print STDERR "dist version is  $Version\n" if $release->debug;
+
+exit if $opts{t};
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+my $Changes = do {
+	my $changes = "Changes";
+	my $bak     = $changes . ".bak";
+	
+	die "Changes file does not exist!\n" unless -e $changes;
+	
+	print "\n", "-" x 73, "\n", "Enter Changes section\n\n> ";
+	
+	my $str = $Version . " - " . localtime() . "\n";
+	
+	while( <STDIN> )
+		{
+		$_ =~ s/^(\S)/\t$1/; # always indent
+		
+		$str .= $_;
+		print "> ";
+		}
+		
+	$str .= "\n";
+	
+	rename $changes, $bak or die "Could not backup $changes. $!\n";
+	open my $in, $bak or die "Could not read old $changes file! $!\n";
+	open my $out, ">", $changes;
+	
+	while( <$in> )
+		{
+		print $out $_;
+		last unless m/\S/;
+		}
+		
+	print $out $str;
+	
+	print $out $_ while( <$in> );
+	
+	close $in;
+	close $out;
+
+	my $command = do {
+		if(    -d 'CVS' )  { 'cvs' }
+		elsif( -d '.svn' ) { 'svn' }
+		};
+		
+	my $cvs_commit = `$command commit -m "* for version $Version" 2>&1`;
+	
+	print $cvs_commit;
+	
+	$str;
+	};
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+$release->clean;
+$release->build_makefile;
+$release->dist;
+
+$release->check_for_passwords;
+$release->ftp_upload;
+$release->pause_claim;
+$release->cvs_tag;
+
+$release->sf_login;
+$release->sf_qrs;
+$release->sf_release;
+
+print "Done.\n";
+
+__END__

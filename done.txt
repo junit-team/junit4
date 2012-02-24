@@ -1,0 +1,50 @@
+* name space of JUnit4 is org.junit
+* JUnit4 requires J2SE 5.0
+	leverage J2SE 5.0 features
+* @Test annotation
+	@Test(expected=IndexOutOfBoundsException.class)
+	@Test(timeout= 1000)
+* @Ignore(reason= "...")
+* @Before, @After setup/teardown
+* @BeforeClass, @AfterClass one-time setup/teardown
+* provide ForwardCompatibility so that existing test Runners can 
+  run JUnit4 tests:
+	public static junit.framework.Test suite() {
+		return new JUnit4TestAdapter(ListTest.class);
+	}
+* add assertEquals(Object[], Object[])
+* Add backward compatibility for old JUnit tests in the new Runner
+* support the assert keyword and use AssertionError 
+* remove the old graphical runners
+* simplify: get rid of failures and errors distinction
+* Annotation for runner strategy
+* Parameterized test
+* Should RunNotifier be API?
+* Runner should be abstract class.
+* Run single method with @BeforeClass and @AfterClass
+* Stopping a test run (there was support for this in 3.8 - TestResult.shouldStop())
+
+* Suite annotation example:
+	@Suite(tests={MoneyTest.class, SimpleTest.class})
+	or with filters
+	@Suite(pattern="*Test"}
+	@Suite(package="org.junit.test.*")
+	@Suite
+	
+* be able to run all tests simply from the command line
+* get rid of JUnit4TestCaseAdapter (use JUnit4RunnerStrategy in JUnit4TestAdapter)
+* enable tighter and more flexible IDE integration
+	* enable test reordering/prioritization
+	* test categorization & filtering (<- seems like a runner issue) @Category(short, integration)  @Test(category=windowsOnly)
+* make sure TestListener is symmetric and meets needs of runner developers
+	* TestRunEvent
+* Decide how we ship JUnit-- 1.5 only or hybrid
+	* README.html
+* add  javadoc to API interfaces and Annotations
+	http://java.sun.com/j2se/javadoc/writingapispecs/index.html
+* Merge branch back into head
+* review Ant scripts
+* make suites simpler for both the IDE providers and the users
+* ClassRequest should search up the hierarchy for the requested Class to look for @RunWith
+
+	

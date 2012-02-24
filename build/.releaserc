@@ -1,0 +1,8 @@
+sf_user = dsaff
+sf_group_id = 15278
+sf_package_id = 226053
+cpan_user = <none>
+sf_release_match = junit-(.*).jar
+sf_release_replace = $1
+sf_type_id = 2601
+sf_processor_id = 8500

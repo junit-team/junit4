@@ -1,0 +1,271 @@
+<h2>Summary of Changes in version 4.5</h2>
+
+<h3>Categories</h3>
+
+<p>Each test method and test class can be annotated as belonging to a <em>category</em>:</p>
+
+<pre><code>public static class SomeUITests {
+    @Category(UserAvailable.class)
+    @Test
+    public void askUserToPressAKey() { }
+
+    @Test
+    public void simulatePressingKey() { }
+}
+
+@Category(InternetConnected.class)
+public static class InternetTests {
+    @Test
+    public void pingServer() { }
+}
+</code></pre>
+
+<p>To run all of the tests in a particular category, you must currently explicitly create a custom request:</p>
+
+<pre><code>new JUnitCore().run(Request.aClass(SomeUITests.class).inCategories(UserAvailable.class));
+</code></pre>
+
+<p>This feature will very likely be improved before the final release of JUnit 4.5</p>
+
+<h3>Miscellaneous</h3>
+
+<ul>
+<li><p><code>@Before</code> and <code>@After</code> methods are run before and after each set of attempted parameters
+on a Theory</p></li>
+<li><p>Refactoring removed duplication that used to exist in classes MethodRoadie and ClassRoadie</p></li>
+<li><p>Exposed API <code>ParameterSignature.getType()</code></p></li>
+</ul>
+
+<h2>Summary of Changes in version 4.4</h2>
+
+<p>JUnit is designed to efficiently capture developers' intentions about
+their code, and quickly check their code matches those intentions.
+Over the last year, we've been talking about what things developers
+would like to say about their code that have been difficult in the
+past, and how we can make them easier.</p>
+
+<p><a href="http://sourceforge.net/project/showfiles.php?group_id=15278">Download</a></p>
+
+<h3>assertThat</h3>
+
+<p>Two years ago, Joe Walnes built a <a href="http://joe.truemesh.com/blog/000511.html">new assertion mechanism</a> on top of what was 
+then <a href="http://www.jmock.org/download.html">JMock 1</a>.  The method name was <code>assertThat</code>, and the syntax looked like this:</p>
+
+<pre><code>assertThat(x, is(3));
+assertThat(x, is(not(4)));
+assertThat(responseString, either(containsString("color")).or(containsString("colour")));
+assertThat(myList, hasItem("3"));
+</code></pre>
+
+<p>More generally:</p>
+
+<pre><code>assertThat([value], [matcher statement]);
+</code></pre>
+
+<p>Advantages of this assertion syntax include:</p>
+
+<ul>
+<li><p>More readable and typeable: this syntax allows you to think in terms of subject, verb, object
+(assert "x is 3") rather than <code>assertEquals</code>, which uses verb, object, subject (assert "equals 3 x")</p></li>
+<li><p>Combinations: any matcher statement <code>s</code> can be negated (<code>not(s)</code>), combined (<code>either(s).or(t)</code>),
+mapped to a collection (<code>each(s)</code>), or used in custom combinations (<code>afterFiveSeconds(s)</code>)</p></li>
+<li><p>Readable failure messages.  Compare</p>
+
+<pre><code>assertTrue(responseString.contains("color") || responseString.contains("colour"));
+// ==&gt; failure message: 
+// java.lang.AssertionError:
+
+
+assertThat(responseString, anyOf(containsString("color"), containsString("colour")));
+// ==&gt; failure message:
+// java.lang.AssertionError: 
+// Expected: (a string containing "color" or a string containing "colour")
+//      got: "Please choose a font"
+</code></pre></li>
+<li><p>Custom Matchers.  By implementing the <code>Matcher</code> interface yourself, you can get all of the
+above benefits for your own custom assertions.</p></li>
+<li><p>For a more thorough description of these points, see <a href="http://joe.truemesh.com/blog/000511.html">Joe Walnes's
+original post</a>.</p></li>
+</ul>
+
+<p>We have decided to include this API directly in JUnit.
+It's an extensible and readable syntax, and it enables
+new features, like <a href="#assumptions">assumptions</a> and <a href="#theories">theories</a>.</p>
+
+<p>Some notes:</p>
+
+<ul>
+<li>The old assert methods are never, ever, going away.  Developers may 
+continue using the old <code>assertEquals</code>, <code>assertTrue</code>, and so on.</li>
+<li><p>The second parameter of an <code>assertThat</code> statement is a <code>Matcher</code>.
+We include the Matchers we want as static imports, like this:</p>
+
+<pre><code>import static org.hamcrest.CoreMatchers.is;
+</code></pre>
+
+<p>or:</p>
+
+<pre><code>import static org.hamcrest.CoreMatchers.*;
+</code></pre></li>
+<li><p>Manually importing <code>Matcher</code> methods can be frustrating.  <a href="http://www.eclipse.org/downloads/">Eclipse 3.3</a> includes the ability to 
+define
+"Favorite" classes to import static methods from, which makes it easier 
+(Search for "Favorites" in the Preferences dialog).
+We expect that support for static imports will improve in all Java IDEs in the future.</p></li>
+<li><p>To allow compatibility with a wide variety of possible matchers, 
+we have decided to include the classes from hamcrest-core,
+from the <a href="http://code.google.com/p/hamcrest/">Hamcrest</a> project.  This is the first time that
+third-party classes have been included in JUnit.  </p></li>
+<li><p>JUnit currently ships with a few matchers, defined in 
+<code>org.hamcrest.CoreMatchers</code> and <code>org.junit.matchers.JUnitMatchers</code>. <br />
+To use many, many more, consider downloading the <a href="http://hamcrest.googlecode.com/files/hamcrest-all-1.1.jar">full hamcrest package</a>.</p></li>
+<li><p>JUnit contains special support for comparing string and array
+values, giving specific information on how they differ.  This is not
+yet available using the <code>assertThat</code> syntax, but we hope to bring
+the two assert methods into closer alignment in future releases.</p></li>
+</ul>
+
+<p><a name="assumptions" /></p>
+
+<h3>Assumptions</h3>
+
+<p>Ideally, the developer writing a test has control of all of the forces that might cause a test to fail.
+If this isn't immediately possible, making dependencies explicit can often improve a design. <br />
+For example, if a test fails when run in a different locale than the developer intended,
+it can be fixed by explicitly passing a locale to the domain code.</p>
+
+<p>However, sometimes this is not desirable or possible. <br />
+It's good to be able to run a test against the code as it is currently written, 
+implicit assumptions and all, or to write a test that exposes a known bug.
+For these situations, JUnit now includes the ability to express "assumptions":</p>
+
+<pre><code>import static org.junit.Assume.*
+
+@Test public void filenameIncludesUsername() {
+   assumeThat(File.separatorChar, is('/'));
+   assertThat(new User("optimus").configFileName(), is("configfiles/optimus.cfg"));
+}
+
+@Test public void correctBehaviorWhenFilenameIsNull() {
+   assumeTrue(bugFixed("13356"));  // bugFixed is not included in JUnit
+   assertThat(parse(null), is(new NullDocument()));
+}
+</code></pre>
+
+<p>With this release, a failed assumption will lead to the test being marked as passing,
+regardless of what the code below the assumption may assert.
+In the future, this may change, and a failed assumption may lead to the test being ignored:
+however, third-party runners do not currently allow this option.</p>
+
+<p>We have included <code>assumeTrue</code> for convenience, but thanks to the
+inclusion of Hamcrest, we do not need to create <code>assumeEquals</code>,
+<code>assumeSame</code>, and other analogues to the <code>assert*</code> methods.  All of
+those functionalities are subsumed in <code>assumeThat</code>, with the appropriate
+matcher.</p>
+
+<p>A failing assumption in a <code>@Before</code> or <code>@BeforeClass</code> method will have the same effect
+as a failing assumption in each <code>@Test</code> method of the class.</p>
+
+<p><a name="theories" /></p>
+
+<h3>Theories</h3>
+
+<p>More flexible and expressive assertions, combined with the ability to
+state assumptions clearly, lead to a new kind of statement of intent, 
+which we call a "Theory".  A test captures the intended behavior in
+one particular scenario.  A theory captures some aspect of the
+intended behavior in possibly
+infinite numbers of potential scenarios.  For example:</p>
+
+<pre><code>@RunWith(Theories.class)
+public class UserTest {
+  @DataPoint public static String GOOD_USERNAME = "optimus";
+  @DataPoint public static String USERNAME_WITH_SLASH = "optimus/prime";
+
+  @Theory public void filenameIncludesUsername(String username) {
+    assumeThat(username, not(containsString("/")));
+    assertThat(new User(username).configFileName(), containsString(username));
+  }
+}
+</code></pre>
+
+<p>This makes it clear that the user's filename should be included in the
+config file name, only if it doesn't contain a slash.  Another test
+or theory might define what happens when a username does contain a slash.</p>
+
+<p><code>UserTest</code> will attempt to run <code>filenameIncludesUsername</code> on 
+every compatible <code>DataPoint</code> defined in the class.  If any of the
+assumptions fail, the data point is silently ignored.  If all of the
+assumptions pass, but an assertion fails, the test fails.</p>
+
+<p>The support for Theories has been absorbed from the <a href="http://popper.tigris.org">Popper</a>
+project, and <a href="http://popper.tigris.org/tutorial.html">more complete documentation</a> can be found
+there.</p>
+
+<p>Defining general statements in this way can jog the developer's memory
+about other potential data points and tests, also allows <a href="http://www.junitfactory.org">automated
+tools</a> to <a href="http://shareandenjoy.saff.net/2007/04/popper-and-junitfactory.html">search</a> for new, unexpected data
+points that expose bugs.</p>
+
+<h3>Other changes</h3>
+
+<p>This release contains other bug fixes and new features.  Among them:</p>
+
+<ul>
+<li><p>Annotated descriptions</p>
+
+<p>Runner UIs, Filters, and Sorters operate on Descriptions of test
+methods and test classes.  These Descriptions now include the
+annotations on the original Java source element, allowing for richer
+display of test results, and easier development of annotation-based
+filters.</p></li>
+<li><p>Bug fix (1715326): assertEquals now compares all Numbers using their
+native implementation of <code>equals</code>.  This assertion, which passed in
+4.3, will now fail:</p>
+
+<pre><code>assertEquals(new Integer(1), new Long(1));
+</code></pre>
+
+<p>Non-integer Numbers (Floats, Doubles, BigDecimals, etc),
+which were compared incorrectly in 4.3, are now fixed.</p></li>
+<li><p><code>assertEquals(long, long)</code> and <code>assertEquals(double, double)</code> have
+been re-introduced to the <code>Assert</code> class, to take advantage of
+Java's native widening conversions.  Therefore, this still passes:</p>
+
+<pre><code>assertEquals(1, 1L);
+</code></pre></li>
+<li><p>The default runner for JUnit 4 test classes has been refactored.
+The old version was named <code>TestClassRunner</code>, and the new is named
+<code>JUnit4ClassRunner</code>.  Likewise, <code>OldTestClassRunner</code> is now
+<code>JUnit3ClassRunner</code>.  The new design allows variations in running
+individual test classes to be expressed with fewer custom classes.
+For a good example, see the source to
+<code>org.junit.experimental.theories.Theories</code>.</p></li>
+<li><p>The rules for determining which runner is applied by default to a
+test class have been simplified:</p>
+
+<ol>
+<li><p>If the class has a <code>@RunWith</code> annotation, the annotated runner
+class is used.</p></li>
+<li><p>If the class can be run with the JUnit 3 test runner (it
+subclasses <code>TestCase</code>, or contains a <code>public static Test suite()</code>
+method), JUnit38ClassRunner is used.</p></li>
+<li><p>Otherwise, JUnit4ClassRunner is used.</p></li>
+</ol>
+
+<p>This default guess can always be overridden by an explicit
+<code>@RunWith(JUnit4ClassRunner.class)</code> or
+<code>@RunWith(JUnit38ClassRunner.class)</code> annotation.</p>
+
+<p>The old class names <code>TestClassRunner</code> and <code>OldTestClassRunner</code>
+remain as deprecated.</p></li>
+<li><p>Bug fix (1739095): Filters and Sorters work correctly on test
+classes that contain a <code>suite</code> method like:</p>
+
+<pre><code>public static junit.framework.Test suite() {
+  return new JUnit4TestAdapter(MyTest.class);
+}
+</code></pre></li>
+<li><p>Bug fix (1745048): @After methods are now correctly called 
+after a test method times out.</p></li>
+</ul>
