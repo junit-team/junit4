@@ -23,6 +23,8 @@ import org.junit.runners.model.Statement;
  *   <li>{@link Timeout}: cause test to fail after a set time</li>
  *   <li>{@link Verifier}: fail test if object state ends up incorrect</li>
  * </ul>
+ * 
+ * Note that {@link MethodRule} is now deprecated, you should be using {@link TestRule} instead.
  */
 @Deprecated
 public interface MethodRule {
