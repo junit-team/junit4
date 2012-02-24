@@ -12,6 +12,13 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
 
+/**
+ * A group of ordered runners together with their test classes
+ * 
+ * @see http://code.google.com/p/junit-test-orderer/ for licensing questions.
+ * 
+ * @author Max Rupplin
+ */
 public class OrderedSuite
 {
 	public static Stack<Class<?>> orderedClasses = new Stack<Class<?>>();

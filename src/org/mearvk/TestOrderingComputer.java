@@ -5,6 +5,15 @@ import org.junit.runner.Runner;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
 
+/**
+ * DO NOT USE - MAY BE DROPPED AS UNNECESSARY
+ * 
+ * An ordered test computer.  Used to explicity bypass the default JUnit runner build process; a bit faster and cleaner.
+ * 
+ * @see http://code.google.com/p/junit-test-orderer/ for licensing questions.
+ * 
+ * @author Max Rupplin
+ */
 public class TestOrderingComputer extends Computer
 {
 	@Override

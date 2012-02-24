@@ -10,6 +10,13 @@ import org.junit.runner.Runner;
 import org.junit.runners.model.RunnerBuilder;
 import org.mearvk.OrderedTestRunnerBuilder;
 
+/**
+ * Modification of the original source for purposes of ordered unit testing
+ * 
+ * @see http://code.google.com/p/junit-test-orderer/ for licensing questions.
+ * 
+ * @author Max Rupplin, JUnit.org 
+ */
 public class AllDefaultPossibilitiesBuilder extends RunnerBuilder {
 	private final boolean fCanUseSuiteMethod;
 
