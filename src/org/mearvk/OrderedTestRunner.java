@@ -8,7 +8,7 @@ import org.junit.runner.notification.RunNotifier;
  * A runner that runs specially annotated (@ClassRunOrder, @MethodRunOrder)
  * classes. This allows testers to specify ordering in their test suites.
  * 
- * @see "http://code.google.com/p/junit-test-orderer/"
+ * @see <a href="http://code.google.com/p/junit-test-orderer">Licensing, code source, etc.</a>
  * 
  * @author Max Rupplin
  */
@@ -26,7 +26,7 @@ public class OrderedTestRunner extends Runner
 		this.testClass = testClass;
 
 		//register this class to be run in the OrderedSuite
-		OrderedSuite.registerOrderedClass(testClass);
+		OrderedSuite.registerUnorderedClass(testClass);
 	}
 
 	/**

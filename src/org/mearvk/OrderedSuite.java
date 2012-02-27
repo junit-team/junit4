@@ -16,7 +16,7 @@ import org.junit.runner.notification.StoppedByUserException;
 /**
  * A group of ordered runners together with their test classes
  * 
- * @see "http://code.google.com/p/junit-test-orderer/"
+ * @see <a href="http://code.google.com/p/junit-test-orderer">Licensing, code source, etc.</a>
  * 
  * @author Max Rupplin
  */

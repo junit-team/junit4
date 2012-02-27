@@ -11,7 +11,7 @@ import org.junit.runners.model.RunnerBuilder;
  * An ordered test computer. Used to explicity bypass the default JUnit runner
  * build process; a bit faster and cleaner.
  * 
- * @see "http://code.google.com/p/junit-test-orderer/"
+ * @see <a href="http://code.google.com/p/junit-test-orderer">Licensing, code source, etc.</a>
  * 
  * @author Max Rupplin
  */
@@ -24,30 +24,5 @@ public class TestOrderingComputer extends Computer
 		// return new OrderedSuite(classes); //end of Suite constructor
 
 		return null;
-	}
-}
-
-class MyRunnerBuilder extends RunnerBuilder
-{
-	RunnerBuilder builder = null;
-
-	public MyRunnerBuilder(RunnerBuilder builder)
-	{
-		this.builder = builder;
-	}
-
-	@Override
-	public Runner runnerForClass(Class<?> testClass) throws Throwable
-	{
-		return getRunner(builder, testClass);
-	}
-
-	/**
-	 * Create a single-class runner for {@code testClass}, using {@code builder}
-	 */
-	protected Runner getRunner(RunnerBuilder builder, Class<?> testClass)
-			throws Throwable
-	{
-		return builder.runnerForClass(testClass);
 	}
 }
