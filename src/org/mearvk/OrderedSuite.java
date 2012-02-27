@@ -33,17 +33,17 @@ public class OrderedSuite
 	protected static ArrayList<Class<?>> undorderedClasses = new ArrayList<Class<?>>();
 
 	/**
-	 * Registers classes which are passed in from the OrderedTestRunner class
+	 * Registers classes which are passed in from the {@code OrderedTestRunner} class
 	 * 
 	 * @param klass The class we are registering to be run
 	 */
-	public static void registerOrderedClass(Class<?> klass)
+	public static void registerUnorderedClass(Class<?> klass)
 	{
 		OrderedSuite.undorderedClasses.add(klass);
 	}
 
 	/**
-	 * Runs the next test class on the Stack @code{orderedClasses} of already ordered test classes
+	 * Runs the next test class on the Stack {@code orderedClasses} of already ordered test classes
 	 * 
 	 * @param notifier JUnit's notification listener
 	 */
@@ -111,7 +111,7 @@ public class OrderedSuite
 	/**
 	 * Orders the methods with a single class at runtime so they run in appropriate order
 	 * 
-	 * @param methods The methods of a class we care to order by MethodRunOrder annotation
+	 * @param methods The methods of a class we care to order by {@code MethodRunOrder} annotation
 	 * @return An array of ordered methods (least to greatest)
 	 */
 	private static ArrayList<Method> orderMethods(Method[] methods)
@@ -151,9 +151,9 @@ public class OrderedSuite
 	}
 
 	/**
-	 * Orders the classes which have been registered by the OrderedTestRunner class
+	 * Orders the classes which have been registered by the {@code OrderedTestRunner} class
 	 * 
-	 * @param classes The classes which will be ordered by ClassRunOrder annotation
+	 * @param classes The classes which will be ordered by {@code ClassRunOrder} annotation
 	 */
 	private static void orderClasses(ArrayList<Class<?>> classes)
 	{
