@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * An annotation which specifies in which order test classes should be run
  * 
- * @see "http://code.google.com/p/junit-test-orderer/"
+ * @see <a href="http://code.google.com/p/junit-test-orderer">Licensing, code source, etc.</a>
  * 
  * @author Max Rupplin
  */

@@ -4,8 +4,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * An annotation which specifies in which order methods within an annotated (
- * {@code ClassRunOrder}) should be run
+ * An annotation which specifies in which order methods within an annotated
  * 
  * @see <a href="http://code.google.com/p/junit-test-orderer">Licensing, code source, etc.</a>
  * 

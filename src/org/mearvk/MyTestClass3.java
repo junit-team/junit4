@@ -10,13 +10,13 @@ import static org.junit.Assert.assertTrue;
  */
 public class MyTestClass3
 {
-	@Test
+	@org.junit.Test
 	public void test1()
 	{
 		assertTrue("Oops...", true);
 	}
 
-	@Test
+	@org.junit.Test
 	public void test2()
 	{
 		assertTrue("Oops...", false);
