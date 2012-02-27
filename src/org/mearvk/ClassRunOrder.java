@@ -13,5 +13,10 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ClassRunOrder
 {
+	/**
+	 * The order the class will be run in.
+	 * 
+	 * @return The order the class will be run in.
+	 */
 	int order();
 }

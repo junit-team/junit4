@@ -14,5 +14,10 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MethodRunOrder
 {
+	/**
+	 * The order the should will run in.
+	 * 
+	 * @return The order specified in the annotation
+	 */
 	int order();
 }

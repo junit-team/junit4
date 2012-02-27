@@ -13,6 +13,9 @@ import org.junit.runners.model.RunnerBuilder;
  */
 public class OrderedTestRunnerBuilder extends RunnerBuilder
 {
+	/**
+	 * Returns a OrderedTestRunner if the class is annotated with ClassRunOrder or else null
+	 */
 	@Override
 	public Runner runnerForClass(Class<?> testClass) throws Throwable
 	{
@@ -20,7 +23,6 @@ public class OrderedTestRunnerBuilder extends RunnerBuilder
 		{
 			return new OrderedTestRunner(testClass);
 		}
-		else
-			return null;
+		else return null;
 	}
 }

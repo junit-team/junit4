@@ -22,24 +22,28 @@ import org.junit.runner.notification.StoppedByUserException;
  */
 public class OrderedSuite
 {
-	// class which have been ordered (class 1 runs before class 2, etc)
+	/**
+	 *  Stack which contains the classes which have already been ordered (class 1 runs before class 2, etc)
+	 */
 	protected static Stack<Class<?>> orderedClasses = new Stack<Class<?>>();
 
-	// classes which will be run but not yet have been ordered
-	protected static ArrayList<Class<?>> registeredClasses = new ArrayList<Class<?>>();
+	/**
+	 * List which contains the classes which will be run but not yet have been ordered
+	 */
+	protected static ArrayList<Class<?>> undorderedClasses = new ArrayList<Class<?>>();
 
 	/**
-	 * Registers classs which are passed in from the OrderedTestRunner class
+	 * Registers classes which are passed in from the OrderedTestRunner class
 	 * 
 	 * @param klass The class we are registering to be run
 	 */
 	public static void registerOrderedClass(Class<?> klass)
 	{
-		OrderedSuite.registeredClasses.add(klass);
+		OrderedSuite.undorderedClasses.add(klass);
 	}
 
 	/**
-	 * Runs the next TestClass on the Stack
+	 * Runs the next test class on the Stack @code{orderedClasses} of already ordered test classes
 	 * 
 	 * @param notifier JUnit's notification listener
 	 */
@@ -47,7 +51,7 @@ public class OrderedSuite
 	{
 		// if we haven't already ordered the classes
 		if (orderedClasses.empty())
-			orderClasses(OrderedSuite.registeredClasses);
+			orderClasses(OrderedSuite.undorderedClasses);
 
 		// get the next class we need to run in its proper order
 		Class<?> classToRun = orderedClasses.pop();
