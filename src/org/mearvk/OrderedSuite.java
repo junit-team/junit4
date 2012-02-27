@@ -1,5 +1,6 @@
 package org.mearvk;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,7 +16,7 @@ import org.junit.runner.notification.StoppedByUserException;
 /**
  * A group of ordered runners together with their test classes
  * 
- * @see http://code.google.com/p/junit-test-orderer/ for licensing questions.
+ * @see "http://code.google.com/p/junit-test-orderer/"
  * 
  * @author Max Rupplin
  */
@@ -99,21 +100,17 @@ public class OrderedSuite
             validMethods.add(method);
         }
         
-        Comparator methodRunOrderComparator = new Comparator()
+        Comparator<Method> methodRunOrderComparator = new Comparator<Method>()
         {
-            @Override
-			public int compare(Object arg0, Object arg1)
-            {
-                Method m1 = (Method)arg0;
-                Method m2 = (Method)arg1;
-                
+			public int compare(Method m1, Method m2)
+			{   
                 MethodRunOrder m1RunOrder = m1.getAnnotation(MethodRunOrder.class);
                 MethodRunOrder m2RunOrder = m2.getAnnotation(MethodRunOrder.class);
                 
                 if(m1RunOrder.order()<m2RunOrder.order()) return -1;
                 if(m1RunOrder.order()>m2RunOrder.order()) return +1;
 
-                throw new RuntimeException("Methods in the same class ("+arg0+") cannot have the same run order.");
+                throw new RuntimeException("Methods in the same class ("+m1+") cannot have the same run order.");
             }
         };
         
@@ -124,16 +121,28 @@ public class OrderedSuite
 	
 	private static void orderClasses(ArrayList<Class<?>> classes)
 	{
-		Comparator c = new Comparator()
+		Comparator<Object> c = new Comparator<Object>()
 		{
-			@Override
+			@SuppressWarnings("unchecked")
 			public int compare(Object arg0, Object arg1)
 			{
-                ClassRunOrder runOrderArg0 = (ClassRunOrder)((Class)arg0).getAnnotation(ClassRunOrder.class);
-                ClassRunOrder runOrderArg1 = (ClassRunOrder)((Class)arg1).getAnnotation(ClassRunOrder.class);
+				@SuppressWarnings("rawtypes")
+				Annotation anno1 = ((Class)arg0).getAnnotation(ClassRunOrder.class);
 				
-				if(runOrderArg0.order()>runOrderArg1.order()) return -1;
-				if(runOrderArg0.order()<runOrderArg1.order()) return +1;				
+				@SuppressWarnings("rawtypes")
+				Annotation anno2 = ((Class)arg1).getAnnotation(ClassRunOrder.class);
+				
+				int runOrder1=0;
+				int runOrder2=0;
+				
+				if(anno1 instanceof ClassRunOrder)
+					runOrder1 = ((ClassRunOrder) anno1).order(); 
+				
+				if(anno2 instanceof ClassRunOrder)
+					runOrder2 = ((ClassRunOrder) anno2).order(); 
+
+				if(runOrder1>runOrder2) return -1;
+				if(runOrder1<runOrder2) return +1;				
 
 				throw new RuntimeException(arg0+" has the same run order as "+arg1);
 			}

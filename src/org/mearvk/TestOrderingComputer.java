@@ -10,7 +10,7 @@ import org.junit.runners.model.RunnerBuilder;
  * 
  * An ordered test computer.  Used to explicity bypass the default JUnit runner build process; a bit faster and cleaner.
  * 
- * @see http://code.google.com/p/junit-test-orderer/ for licensing questions.
+ * @see "http://code.google.com/p/junit-test-orderer/"
  * 
  * @author Max Rupplin
  */
