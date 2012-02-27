@@ -8,7 +8,8 @@ import org.junit.runners.model.RunnerBuilder;
 /**
  * DO NOT USE - MAY BE DROPPED AS UNNECESSARY
  * 
- * An ordered test computer.  Used to explicity bypass the default JUnit runner build process; a bit faster and cleaner.
+ * An ordered test computer. Used to explicity bypass the default JUnit runner
+ * build process; a bit faster and cleaner.
  * 
  * @see "http://code.google.com/p/junit-test-orderer/"
  * 
@@ -17,33 +18,35 @@ import org.junit.runners.model.RunnerBuilder;
 public class TestOrderingComputer extends Computer
 {
 	@Override
-	public Runner getSuite(final RunnerBuilder builder, Class<?>[] classes) throws InitializationError 
+	public Runner getSuite(final RunnerBuilder builder, Class<?>[] classes)
+			throws InitializationError
 	{
-		//return new OrderedSuite(classes); //end of Suite constructor
+		// return new OrderedSuite(classes); //end of Suite constructor
 
-        return null;
+		return null;
 	}
 }
 
 class MyRunnerBuilder extends RunnerBuilder
 {
-	RunnerBuilder builder=null;
-	
+	RunnerBuilder builder = null;
+
 	public MyRunnerBuilder(RunnerBuilder builder)
 	{
-		this.builder=builder;
+		this.builder = builder;
 	}
-	
+
 	@Override
 	public Runner runnerForClass(Class<?> testClass) throws Throwable
 	{
 		return getRunner(builder, testClass);
 	}
-	
+
 	/**
 	 * Create a single-class runner for {@code testClass}, using {@code builder}
 	 */
-	protected Runner getRunner(RunnerBuilder builder, Class<?> testClass) throws Throwable 
+	protected Runner getRunner(RunnerBuilder builder, Class<?> testClass)
+			throws Throwable
 	{
 		return builder.runnerForClass(testClass);
 	}

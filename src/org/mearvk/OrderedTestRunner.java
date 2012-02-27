@@ -5,7 +5,8 @@ import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 
 /**
- * A runner that runs specially annotated (@ClassRunOrder, @MethodRunOrder) classes.  This allows testers to specify ordering in their test suites.
+ * A runner that runs specially annotated (@ClassRunOrder, @MethodRunOrder)
+ * classes. This allows testers to specify ordering in their test suites.
  * 
  * @see "http://code.google.com/p/junit-test-orderer/"
  * 
@@ -13,13 +14,13 @@ import org.junit.runner.notification.RunNotifier;
  */
 public class OrderedTestRunner extends Runner
 {
-	private Class<?> testClass=null;
-	
+	private Class<?> testClass = null;
+
 	public OrderedTestRunner(Class<?> testClass)
 	{
 		this.testClass = testClass;
 
-        OrderedSuite.registerOrderedClass(testClass);
+		OrderedSuite.registerOrderedClass(testClass);
 	}
 
 	@Override
@@ -31,6 +32,6 @@ public class OrderedTestRunner extends Runner
 	@Override
 	public void run(RunNotifier notifier)
 	{
-        OrderedSuite.runNext(notifier);
+		OrderedSuite.runNext(notifier);
 	}
 }
