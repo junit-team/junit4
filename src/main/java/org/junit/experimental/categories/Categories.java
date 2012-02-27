@@ -107,7 +107,7 @@ public class Categories extends Suite {
 	}
 
 	public static class CategoryFilter extends Filter {
-        private static final Class<?>[] NO_CATEGORIES= new Class<?>[0];
+        	private static final Class<?>[] NO_CATEGORIES= new Class<?>[0];
 
 		public static CategoryFilter include(Class<?> categoryType) {
 			return new CategoryFilter(categoryType, null);
