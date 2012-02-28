@@ -13,7 +13,7 @@ import org.mearvk.OrderedTestRunnerBuilder;
 /**
  * Modification of the original source for purposes of ordered unit testing
  * 
- * @see http://code.google.com/p/junit-test-orderer/ for licensing questions.
+ * @see <a href="http://code.google.com/p/junit-test-orderer">Licensing, code source, etc.</a>
  * 
  * @author Max Rupplin, JUnit.org 
  */

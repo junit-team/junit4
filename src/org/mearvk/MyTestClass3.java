@@ -1,12 +1,13 @@
 package org.mearvk;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertTrue;
 
 /**
- * Created by IntelliJ IDEA. User: Max Rupplin Date: 2/22/12 Time: 7:16 PM To
- * change this template use File | Settings | File Templates.
+ * A simple, non-ordered test class used to ensure that nothing major broke in the integration process
+ * 
+ * @see <a href="http://code.google.com/p/junit-test-orderer">Licensing, code source, etc.</a>
+ * 
+ * @author Max Rupplin
  */
 public class MyTestClass3
 {

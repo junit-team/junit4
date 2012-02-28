@@ -3,6 +3,7 @@ package org.mearvk;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Stack;
@@ -67,11 +68,10 @@ public class OrderedSuite
 		for (Method method : methods)
 		{
 			// double check that this method has the right annotation
-			if (method.isAnnotationPresent(MethodRunOrder.class))
-			{
+			//if (method.isAnnotationPresent(MethodRunOrder.class))
+			//{
 				// save this for brevity
-				Description testDescription = Description
-						.createSuiteDescription(classToRun.getClass());
+				Description testDescription = Description.createSuiteDescription(classToRun.getClass());
 
 				try
 				{
@@ -104,7 +104,7 @@ public class OrderedSuite
 								.getCause()));
 					}
 				}
-			}
+			//}
 		}
 	}
 
@@ -124,6 +124,13 @@ public class OrderedSuite
 				continue;
 
 			validMethods.add(method);
+		}
+		
+		//if there are no annotations to describe the method ordering just return the list as-is
+		if(validMethods.size()==0) 
+		{
+			System.err.println();
+			return new ArrayList<Method>(Arrays.asList(methods));
 		}
 
 		Comparator<Method> methodRunOrderComparator = new Comparator<Method>()

@@ -42,7 +42,7 @@ import org.junit.tests.junit3compatibility.ForwardCompatibilityTest;
 import org.junit.tests.junit3compatibility.InitializationErrorForwardCompatibilityTest;
 import org.junit.tests.junit3compatibility.JUnit38ClassRunnerTest;
 import org.junit.tests.junit3compatibility.OldTestClassAdaptingListenerTest;
-import org.junit.tests.junit3compatibility.OldTests;
+//import org.junit.tests.junit3compatibility.OldTests;
 import org.junit.tests.junit3compatibility.SuiteMethodTest;
 import org.junit.tests.listening.ListenerTest;
 import org.junit.tests.listening.RunnerTest;
@@ -96,7 +96,7 @@ import org.junit.tests.validation.ValidationTest;
 	ExpectedTest.class,
 	MultipleFailureExceptionTest.class,
 	ForwardCompatibilityTest.class,
-	OldTests.class,
+	//OldTests.class,
 	ParameterizedTestTest.class,
 	RunWithTest.class,
 	RunnerTest.class,

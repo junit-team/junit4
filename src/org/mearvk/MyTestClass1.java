@@ -2,6 +2,13 @@ package org.mearvk;
 
 import static junit.framework.Assert.assertTrue;
 
+/**
+ * A simple test class used to ensure that nothing major broke in the integration process
+ * 
+ * @see <a href="http://code.google.com/p/junit-test-orderer">Licensing, code source, etc.</a>
+ * 
+ * @author Max Rupplin
+ */
 @org.mearvk.ClassRunOrder(order = 1)
 public class MyTestClass1
 {

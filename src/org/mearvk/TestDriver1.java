@@ -6,6 +6,13 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
+/**
+ * A simple, ordered test class used during development
+ * 
+ * @see <a href="http://code.google.com/p/junit-test-orderer">Licensing, code source, etc.</a>
+ * 
+ * @author Max Rupplin
+ */
 public class TestDriver1
 {
 	public static void main(String[] args)

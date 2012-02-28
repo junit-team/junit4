@@ -2,7 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry kind="lib" path="C:/Users/Max Rupplin/Desktop/here/junit4.10/junit-dep-4.10.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Max Rupplin/Desktop/here/junit4.10/junit-4.10.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Max Rupplin/Documents/Workspace/JUnit/libs/junit-dep-4.10.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Max Rupplin/Documents/Workspace/JUnit/libs/junit-4.10.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Max Rupplin/Documents/Workspace/JUnit/libs/junit-4.10-src.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
