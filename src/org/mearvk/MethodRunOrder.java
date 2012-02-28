@@ -1,7 +1,9 @@
 package org.mearvk;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * An annotation which specifies in which order methods within an annotated
@@ -11,6 +13,7 @@ import java.lang.annotation.RetentionPolicy;
  * @author Max Rupplin
  */
 @Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
 public @interface MethodRunOrder
 {
 	/**

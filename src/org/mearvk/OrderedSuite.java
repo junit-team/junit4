@@ -2,6 +2,7 @@ package org.mearvk;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -79,21 +80,24 @@ public class OrderedSuite
 				{
 					// notify listeners that test is about to start
 					notifier.fireTestRunStarted(testDescription);
-
-					//run the @Before annotations
-					for(Method before : AnnotationGrabber.grabMethodsWithAnnotations(classToRun, Before.class))
+					
+					// try and run the method, skipping static functions 
+					if(!Modifier.isStatic(method.getModifiers()))
 					{
-						before.invoke(classToRun, (Object[])null);
+						//run the @Before annotations
+						for(Method before : AnnotationGrabber.grabMethodsWithAnnotations(classToRun, Before.class))
+						{
+							before.invoke(classToRun.newInstance(), (Object[])null);
+						}
+						
+						method.invoke(classToRun.newInstance(), (Object[]) null);
+						
+						//run the @After annotations
+						for(Method after : AnnotationGrabber.grabMethodsWithAnnotations(classToRun, After.class))
+						{
+							after.invoke(classToRun.newInstance(), (Object[])null);
+						}
 					}
-					
-					// try and run the method
-					method.invoke(classToRun.newInstance(), (Object[]) null);
-					
-					//run the @After annotations
-					for(Method after : AnnotationGrabber.grabMethodsWithAnnotations(classToRun, After.class))
-					{
-						after.invoke(classToRun, (Object[])null);
-					}					
 
 					// notify listeners that test run has completed
 					notifier.fireTestFinished(testDescription);
