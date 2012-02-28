@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Stack;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
@@ -78,8 +80,20 @@ public class OrderedSuite
 					// notify listeners that test is about to start
 					notifier.fireTestRunStarted(testDescription);
 
+					//run the @Before annotations
+					for(Method before : AnnotationGrabber.grabMethodsWithAnnotations(classToRun, Before.class))
+					{
+						before.invoke(classToRun, (Object[])null);
+					}
+					
 					// try and run the method
 					method.invoke(classToRun.newInstance(), (Object[]) null);
+					
+					//run the @After annotations
+					for(Method after : AnnotationGrabber.grabMethodsWithAnnotations(classToRun, After.class))
+					{
+						after.invoke(classToRun, (Object[])null);
+					}					
 
 					// notify listeners that test run has completed
 					notifier.fireTestFinished(testDescription);
