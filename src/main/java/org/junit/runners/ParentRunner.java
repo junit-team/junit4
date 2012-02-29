@@ -232,7 +232,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
 	private void runChildren(final RunNotifier notifier) {
 		for (final T each : getFilteredChildren())
- 			fScheduler.schedule(new Runnable() {			
+ 			fScheduler.schedule(new Runnable() {
 				public void run() {
 					ParentRunner.this.runChild(each, notifier);
 				}
@@ -318,6 +318,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	//
 
 	public void filter(Filter filter) throws NoTestsRemainException {
+		boolean modified = false;
 		for (Iterator<T> iter = getFilteredChildren().iterator(); iter.hasNext(); ) {
 			T each = iter.next();
 			if (shouldRun(filter, each))
@@ -326,12 +327,16 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 				} catch (NoTestsRemainException e) {
 					iter.remove();
 				}
-			else
+			else {
 				iter.remove();
+				modified = true;
+			}
 		}
 	    if (getFilteredChildren().isEmpty()) {
 	        throw new NoTestsRemainException();
 	    }
+		if (modified)
+			maintainSequenceInvariants(getFilteredChildren());
 	}
 
 	public void sort(Sorter sorter) {
@@ -339,6 +344,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 		for (T each : getFilteredChildren())
 			sortChild(each);
 		Collections.sort(getFilteredChildren(), comparator());
+		maintainSequenceInvariants(getFilteredChildren());
 	}
 
 	//
@@ -353,13 +359,28 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	}
 
 	private List<T> getFilteredChildren() {
-		if (fFilteredChildren == null)
+		if (fFilteredChildren == null) {
 			fFilteredChildren = new ArrayList<T>(getChildren());
+			maintainSequenceInvariants(fFilteredChildren);
+		}
 		return fFilteredChildren;
 	}
 
 	private void sortChild(T child) {
 		fSorter.apply(child);
+	}
+
+	/**
+	 * A {@link Runner} that needs to maintain certain invariants of test sequence should override this method.
+	 * The method will be called at least once before the tests are executed, but possibly more times as the
+	 * invariants that need to be applied may effect a different sequence after a
+	 * {@link #filter(org.junit.runner.manipulation.Filter)} has been applied and if a
+	 * {@link #sort(org.junit.runner.manipulation.Sorter)} has been applied then the invariants will have to be
+	 * re-established.
+	 *
+	 * @param children The list of children (to be modified in place).
+	 */
+	protected void maintainSequenceInvariants(List<T> children) {
 	}
 
 	private boolean shouldRun(Filter filter, T each) {
@@ -380,5 +401,35 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	 */
 	public void setScheduler(RunnerScheduler scheduler) {
 		this.fScheduler = scheduler;
+	}
+
+	/**
+	 * Returns {@code true} if this {@link Runner} has some restrictions on the sequence of methods that will overrule
+	 * any sorting that may be applied.
+	 *
+	 * @return {@code true} if this {@link Runner} has some restrictions on the sequence of methods that will overrule
+	 *         any sorting that may be applied.
+	 */
+	public boolean hasSequenceInvariants() {
+		return hasSequenceInvariants(getClass());
+	}
+
+	/**
+	 * Returns {@code true} if the specified {@link Runner} class has restrictions on the sequence of methods that
+	 * will overrule any sorting that may be applied.
+	 *
+	 * @param runnerClass The specified {@link Runner} class.
+	 * @return {@code true} if the specified {@link Runner} class has restrictions on the sequence of methods that
+	 *         will overrule any sorting that may be applied.
+	 */
+	public static boolean hasSequenceInvariants(Class<? extends ParentRunner> runnerClass) {
+		String methodName = "maintainSequenceInvariants";
+		try {
+			Method childMethod = runnerClass.getMethod(methodName, List.class);
+			Method baseMethod = ParentRunner.class.getMethod(methodName, List.class);
+			return !childMethod.equals(baseMethod);
+		} catch (NoSuchMethodException e) {
+			return false; // should be throw new WTFException, but no method implies no invariants
+		}
 	}
 }
