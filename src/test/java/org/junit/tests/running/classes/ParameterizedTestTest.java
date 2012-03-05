@@ -25,7 +25,7 @@ import org.junit.runners.model.InitializationError;
 public class ParameterizedTestTest {
 	@RunWith(Parameterized.class)
 	static public class FibonacciTest {
-		@Parameters(name= "[{index}: fib({0})={1}]")
+		@Parameters(name= "{index}: fib({0})={1}")
 		public static Iterable<Object[]> data() {
 			return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
 					{ 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });

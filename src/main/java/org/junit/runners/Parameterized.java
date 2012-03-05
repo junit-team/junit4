@@ -96,7 +96,7 @@ public class Parameterized extends Suite {
 		 * etc...
 		 * </pre>
 		 * <p>
-		 * Default value is "[{index}]" for compatibility with previous JUnit
+		 * Default value is "{index}" for compatibility with previous JUnit
 		 * versions.
 		 * </p>
 		 * 
@@ -104,7 +104,7 @@ public class Parameterized extends Suite {
 		 *         placeholder.
 		 * @see MessageFormat
 		 */
-		String name() default "[{index}]";
+		String name() default "{index}";
 	}
 
 	private class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
@@ -211,7 +211,8 @@ public class Parameterized extends Suite {
 	private String nameFor(String namePattern, int index, Object[] parameters) {
 		String finalPattern= namePattern.replaceAll("\\{index\\}",
 				Integer.toString(index));
-		return MessageFormat.format(finalPattern, parameters);
+		String name= MessageFormat.format(finalPattern, parameters);
+		return "[" + name + "]";
 	}
 
 	private Exception parametersMethodReturnedWrongType() throws Exception {
