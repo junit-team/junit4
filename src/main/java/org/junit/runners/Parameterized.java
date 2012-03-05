@@ -1,7 +1,5 @@
 package org.junit.runners;
 
-import static java.text.MessageFormat.format;
-
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -213,13 +211,14 @@ public class Parameterized extends Suite {
 	private String nameFor(String namePattern, int index, Object[] parameters) {
 		String finalPattern= namePattern.replaceAll("\\{index\\}",
 				Integer.toString(index));
-		return format(finalPattern, parameters);
+		return MessageFormat.format(finalPattern, parameters);
 	}
 
 	private Exception parametersMethodReturnedWrongType() throws Exception {
 		String className= getTestClass().getName();
 		String methodName= getParametersMethod().getName();
-		String message= format("{0}.{1}() must return an Iterable of arrays.",
+		String message= MessageFormat.format(
+				"{0}.{1}() must return an Iterable of arrays.",
 				className, methodName);
 		return new Exception(message);
 	}
