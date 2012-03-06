@@ -8,82 +8,13 @@ import java.util.List;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Matcher;
+import org.junit.internal.matchers.TypeSafeMatcher;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 
 class EventCollector extends RunListener {
-	private final List<Description> testRunsStarted= new ArrayList<Description>();
-
-	private final List<Result> testRunsFinished= new ArrayList<Result>();
-
-	private final List<Description> testsStarted= new ArrayList<Description>();
-
-	private final List<Description> testsFinished= new ArrayList<Description>();
-
-	private final List<Failure> failures= new ArrayList<Failure>();
-
-	private final List<Failure> assumptionFailures= new ArrayList<Failure>();
-
-	private final List<Description> testIgnored= new ArrayList<Description>();
-
-	@Override
-	public void testRunStarted(Description description) throws Exception {
-		testRunsStarted.add(description);
-	}
-
-	@Override
-	public void testRunFinished(Result result) throws Exception {
-		testRunsFinished.add(result);
-	}
-
-	@Override
-	public void testStarted(Description description) throws Exception {
-		testsStarted.add(description);
-	}
-
-	@Override
-	public void testFinished(Description description) throws Exception {
-		testsFinished.add(description);
-	}
-
-	@Override
-	public void testFailure(Failure failure) throws Exception {
-		failures.add(failure);
-	}
-
-	@Override
-	public void testAssumptionFailure(Failure failure) {
-		assumptionFailures.add(failure);
-	}
-
-	@Override
-	public void testIgnored(Description description) throws Exception {
-		testIgnored.add(description);
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder sb= new StringBuilder();
-		sb.append(testRunsStarted.size());
-		sb.append(" test runs started, ");
-		sb.append(testRunsFinished.size());
-		sb.append(" test runs finished, ");
-		sb.append(testsStarted.size());
-		sb.append(" tests started, ");
-		sb.append(testsFinished.size());
-		sb.append(" tests finished, ");
-		sb.append(failures.size());
-		sb.append(" failures, ");
-		sb.append(assumptionFailures.size());
-		sb.append(" assumption failures, ");
-		sb.append(testIgnored.size());
-		sb.append(" tests ignored");
-
-		return sb.toString();
-	}
-
 	static Matcher<EventCollector> everyTestRunSuccessful() {
 		return both(hasNoFailure()).and(hasNoAssumptionFailure());
 	}
@@ -92,7 +23,7 @@ class EventCollector extends RunListener {
 			final int numberOfFailures) {
 		return new BaseMatcher<EventCollector>() {
 			public boolean matches(Object item) {
-				return ((EventCollector) item).failures.size() == numberOfFailures;
+				return ((EventCollector) item).fFailures.size() == numberOfFailures;
 			}
 
 			public void describeTo(org.hamcrest.Description description) {
@@ -113,9 +44,10 @@ class EventCollector extends RunListener {
 
 	private static Matcher<EventCollector> hasNumberOfAssumptionFailures(
 			final int numberOfFailures) {
-		return new BaseMatcher<EventCollector>() {
-			public boolean matches(Object item) {
-				return ((EventCollector) item).assumptionFailures.size() == numberOfFailures;
+		return new TypeSafeMatcher<EventCollector>() {
+			@Override
+			public boolean matchesSafely(EventCollector item) {
+				return item.fAssumptionFailures.size() == numberOfFailures;
 			}
 
 			public void describeTo(org.hamcrest.Description description) {
@@ -144,7 +76,7 @@ class EventCollector extends RunListener {
 			public boolean matches(Object item) {
 				return hasSingleFailure().matches(item)
 						&& messageMatcher
-								.matches(((EventCollector) item).failures
+								.matches(((EventCollector) item).fFailures
 										.get(0).getMessage());
 			}
 
@@ -153,5 +85,75 @@ class EventCollector extends RunListener {
 				messageMatcher.describeTo(description);
 			}
 		};
+	}
+
+	private final List<Description> fTestRunsStarted= new ArrayList<Description>();
+
+	private final List<Result> fTestRunsFinished= new ArrayList<Result>();
+
+	private final List<Description> fTestsStarted= new ArrayList<Description>();
+
+	private final List<Description> fTestsFinished= new ArrayList<Description>();
+
+	private final List<Failure> fFailures= new ArrayList<Failure>();
+
+	private final List<Failure> fAssumptionFailures= new ArrayList<Failure>();
+
+	private final List<Description> fTestsIgnored= new ArrayList<Description>();
+
+	@Override
+	public void testRunStarted(Description description) throws Exception {
+		fTestRunsStarted.add(description);
+	}
+
+	@Override
+	public void testRunFinished(Result result) throws Exception {
+		fTestRunsFinished.add(result);
+	}
+
+	@Override
+	public void testStarted(Description description) throws Exception {
+		fTestsStarted.add(description);
+	}
+
+	@Override
+	public void testFinished(Description description) throws Exception {
+		fTestsFinished.add(description);
+	}
+
+	@Override
+	public void testFailure(Failure failure) throws Exception {
+		fFailures.add(failure);
+	}
+
+	@Override
+	public void testAssumptionFailure(Failure failure) {
+		fAssumptionFailures.add(failure);
+	}
+
+	@Override
+	public void testIgnored(Description description) throws Exception {
+		fTestsIgnored.add(description);
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb= new StringBuilder();
+		sb.append(fTestRunsStarted.size());
+		sb.append(" test runs started, ");
+		sb.append(fTestRunsFinished.size());
+		sb.append(" test runs finished, ");
+		sb.append(fTestsStarted.size());
+		sb.append(" tests started, ");
+		sb.append(fTestsFinished.size());
+		sb.append(" tests finished, ");
+		sb.append(fFailures.size());
+		sb.append(" failures, ");
+		sb.append(fAssumptionFailures.size());
+		sb.append(" assumption failures, ");
+		sb.append(fTestsIgnored.size());
+		sb.append(" tests ignored");
+
+		return sb.toString();
 	}
 }

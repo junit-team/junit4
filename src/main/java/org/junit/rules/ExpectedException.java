@@ -174,7 +174,6 @@ public class ExpectedException implements TestRule {
 			handleException(e);
 		else
 			throw e;
-
 	}
 
 	private void handleException(Throwable e) throws Throwable {
