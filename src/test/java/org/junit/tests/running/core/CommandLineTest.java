@@ -9,7 +9,6 @@ import java.io.PrintStream;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.internal.RealSystem;
 import org.junit.runner.JUnitCore;
 
 public class CommandLineTest {
@@ -34,8 +33,12 @@ public class CommandLineTest {
 	}
 
 	@Test public void runATest() {
-		testWasRun= false; // todo create a TestSystem instead
-		new JUnitCore().runMain(new RealSystem(), new String[]{"org.junit.tests.running.core.CommandLineTest$Example"});
+		testWasRun= false;
+		new MainRunner().runWithCheckForSystemExit(new Runnable() {
+			public void run() {
+				JUnitCore.main("org.junit.tests.running.core.CommandLineTest$Example");
+			}
+		});
 		assertTrue(testWasRun);
 	}
 	
