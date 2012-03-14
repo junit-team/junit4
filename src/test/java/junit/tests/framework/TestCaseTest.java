@@ -86,6 +86,15 @@ public class TestCaseTest extends TestCase {
 		verifyFailure(failure);
 	}
 
+	public void testBlock() {
+		TestCase failure= new TestCase("blocked") {
+			@Override
+			protected void runTest() {
+				block();
+			}
+		};
+		verifyBlock(failure);
+	}
 	public void testTearDownAfterError() {
 		TornDown fails= new TornDown();
 		verifyError(fails);
@@ -174,17 +183,27 @@ public class TestCaseTest extends TestCase {
 		assertTrue(result.runCount() == 1);
 		assertTrue(result.failureCount() == 0);
 		assertTrue(result.errorCount() == 1);
+		assertTrue(result.blockCount() == 0);
 	}
 	void verifyFailure(TestCase test) {
 		TestResult result= test.run();
 		assertTrue(result.runCount() == 1);
 		assertTrue(result.failureCount() == 1);
 		assertTrue(result.errorCount() == 0);
+		assertTrue(result.blockCount() == 0);
 	}
 	void verifySuccess(TestCase test) {
 		TestResult result= test.run();
 		assertTrue(result.runCount() == 1);
 		assertTrue(result.failureCount() == 0);
 		assertTrue(result.errorCount() == 0);
+		assertTrue(result.blockCount() == 0);
+	}
+	void verifyBlock(TestCase test) {
+		TestResult result= test.run();
+		assertTrue(result.runCount() == 1);
+		assertTrue(result.failureCount() == 0);
+		assertTrue(result.errorCount() == 0);
+		assertTrue(result.blockCount() == 1);
 	}
 }

@@ -56,6 +56,21 @@ public class Assert {
 		fail(null);
 	}
 	/**
+	 * Halts the test and flags it as blocked with no message.
+	 */
+	static public void block() {
+		block(null);
+	}
+	/**
+	 * Halts the test and flags it as blocked with the given message.
+	 */
+	static public void block(String message) {
+		if (message == null) {
+			throw new BlockedException();
+		}
+		throw new BlockedException(message);
+	}
+	/**
 	 * Asserts that two objects are equal. If they are not
 	 * an AssertionFailedError is thrown with the given message.
 	 */

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import junit.framework.AssertionFailedError;
+import junit.framework.BlockedException;
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.TestListener;
 import junit.framework.TestResult;
@@ -77,6 +78,9 @@ public class InitializationErrorForwardCompatibilityTest {
 
 		public junit.framework.Test getError() {
 			return fError;
+		}
+
+		public void addBlocked(junit.framework.Test test, BlockedException t) {
 		}
 	}
 	

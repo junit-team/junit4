@@ -4,6 +4,7 @@ package junit.tests.framework;
  * Test class used in SuiteTest
  */
 import junit.framework.AssertionFailedError;
+import junit.framework.BlockedException;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestListener;
@@ -14,6 +15,7 @@ public class TestListenerTest extends TestCase implements TestListener {
 	private int fStartCount;
 	private int fEndCount;
 	private int fFailureCount;
+	private int fBlockCount;
 	private int fErrorCount;
 
 	public void addError(Test test, Throwable t) {
@@ -21,6 +23,9 @@ public class TestListenerTest extends TestCase implements TestListener {
 	}
 	public void addFailure(Test test, AssertionFailedError t) {
 		fFailureCount++;
+	}
+	public void addBlocked(Test test, BlockedException t) {
+		fBlockCount++;
 	}
 	public void endTest(Test test) {
 		fEndCount++;
@@ -34,6 +39,7 @@ public class TestListenerTest extends TestCase implements TestListener {
 		fEndCount= 0;
 		fFailureCount= 0;
 		fErrorCount= 0;
+		fBlockCount= 0;
 	}
 	public void startTest(Test test) {
 		fStartCount++;
@@ -58,6 +64,17 @@ public class TestListenerTest extends TestCase implements TestListener {
 		};
 		test.run(fResult);
 		assertEquals(1, fFailureCount);
+		assertEquals(1, fEndCount);
+	}
+	public void testBlock() {
+		TestCase test= new TestCase("cantdo") {
+			@Override
+			public void runTest() {
+				block();
+			}
+		};
+		test.run(fResult);
+		assertEquals(1, fBlockCount);
 		assertEquals(1, fEndCount);
 	}
 	public void testStartStop() {

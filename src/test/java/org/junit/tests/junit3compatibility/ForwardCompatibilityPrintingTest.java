@@ -35,7 +35,7 @@ public class ForwardCompatibilityPrintingTest extends TestCase {
 
 		String expected= expected(new String[] { ".E", "Time: 0",
 				"Errors here", "", "FAILURES!!!",
-				"Tests run: 1,  Failures: 0,  Errors: 1", "" });
+				"Tests run: 1,  Failures: 0,  Errors: 1,  Blocks: 0", "" });
 		ResultPrinter printer= new TestResultPrinter(new PrintStream(output)) {
 			@Override
 			public void printErrors(TestResult result) {
@@ -67,7 +67,7 @@ public class ForwardCompatibilityPrintingTest extends TestCase {
 
 		String expected= expected(new String[] { ".E", "Time: 0",
 				"Errors here", "", "FAILURES!!!",
-				"Tests run: 1,  Failures: 0,  Errors: 1", "" });
+				"Tests run: 1,  Failures: 0,  Errors: 1,  Blocks: 0", "" });
 		ResultPrinter printer= new TestResultPrinter(new PrintStream(output)) {
 			@Override
 			public void printErrors(TestResult result) {

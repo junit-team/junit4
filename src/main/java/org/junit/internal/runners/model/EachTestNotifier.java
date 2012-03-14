@@ -3,6 +3,7 @@
  */
 package org.junit.internal.runners.model;
 
+import junit.framework.BlockedException;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
@@ -31,6 +32,10 @@ public class EachTestNotifier {
 	private void addMultipleFailureException(MultipleFailureException mfe) {
 		for (Throwable each : mfe.getFailures())
 			addFailure(each);
+	}
+
+	public void addBlocked(BlockedException e) {
+		fNotifier.fireTestBlocked(new Failure(fDescription, e));
 	}
 
 	public void addFailedAssumption(AssumptionViolatedException e) {

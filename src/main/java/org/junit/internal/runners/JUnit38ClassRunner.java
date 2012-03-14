@@ -2,6 +2,7 @@ package org.junit.internal.runners;
 
 import junit.extensions.TestDecorator;
 import junit.framework.AssertionFailedError;
+import junit.framework.BlockedException;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestListener;
@@ -41,6 +42,11 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
 			fNotifier.fireTestFailure(failure);
 		}
 
+		public void addBlock(Test test, Throwable t) {
+			Failure failure= new Failure(asDescription(test), t);
+			fNotifier.fireTestBlocked(failure);
+		}
+
 		private Description asDescription(Test test) {
 			if (test instanceof Describable) {
 				Describable facade= (Describable) test;
@@ -62,6 +68,10 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
 
 		public void addFailure(Test test, AssertionFailedError t) {
 			addError(test, t);
+		}
+
+		public void addBlocked(Test test, BlockedException t) {
+			addBlock(test, t);
 		}
 	}
 

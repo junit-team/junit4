@@ -62,11 +62,18 @@ public class RunListener {
 	public void testFinished(Description description) throws Exception {
 	}
 
-	/** 
+	/**
 	 * Called when an atomic test fails.
 	 * @param failure describes the test that failed and the exception that was thrown
 	 */
 	public void testFailure(Failure failure) throws Exception {
+	}
+
+	/**
+	 * Called when an atomic test is blocked.
+	 * @param failure describes the test that can not be run and the exception that was thrown
+	 */
+	public void testBlocked(Failure failure) throws Exception {
 	}
 
 	/**

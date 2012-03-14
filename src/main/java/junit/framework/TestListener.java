@@ -13,6 +13,10 @@ public interface TestListener {
  	 */
  	public void addFailure(Test test, AssertionFailedError t);  
 	/**
+	 * A failure occurred due required conditions were not met.
+	 */
+	public void addBlocked(Test test, BlockedException t);
+	/**
 	 * A test ended.
 	 */
  	public void endTest(Test test); 

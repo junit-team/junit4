@@ -18,6 +18,7 @@ public class Result implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private AtomicInteger fCount = new AtomicInteger();
 	private AtomicInteger fIgnoreCount= new AtomicInteger();
+	private final List<Failure> fBlocks= Collections.synchronizedList(new ArrayList<Failure>());
 	private final List<Failure> fFailures= Collections.synchronizedList(new ArrayList<Failure>());
 	private long fRunTime= 0;
 	private long fStartTime;
@@ -37,6 +38,13 @@ public class Result implements Serializable {
 	}
 
 	/**
+	 * @return the number of tests that was blocked the run
+	 */
+	public int getBlockCount() {
+		return fBlocks.size();
+	}
+
+	/**
 	 * @return the number of milliseconds it took to run the entire suite to run
 	 */
 	public long getRunTime() {
@@ -51,6 +59,13 @@ public class Result implements Serializable {
 	}
 
 	/**
+	 * @return the {@link Failure}s describing tests that was blocked and the problems they encountered
+	 */
+	public List<Failure> getBlocks() {
+		return fBlocks;
+	}
+
+	/**
 	 * @return the number of tests ignored during the run
 	 */
 	public int getIgnoreCount() {
@@ -61,7 +76,7 @@ public class Result implements Serializable {
 	 * @return <code>true</code> if all tests succeeded
 	 */
 	public boolean wasSuccessful() {
-		return getFailureCount() == 0;
+		return getFailureCount() == 0 && getBlockCount() == 0;
 	}
 
 	private class Listener extends RunListener {
@@ -94,6 +109,11 @@ public class Result implements Serializable {
 		@Override
 		public void testAssumptionFailure(Failure failure) {
 			// do nothing: same as passing (for 4.5; may change in 4.6)
+		}
+
+		@Override
+		public void testBlocked(Failure failure) throws Exception {
+			fBlocks.add(failure);
 		}
 	}
 

@@ -16,6 +16,7 @@ import java.text.NumberFormat;
 import java.util.Properties;
 
 import junit.framework.AssertionFailedError;
+import junit.framework.BlockedException;
 import junit.framework.Test;
 import junit.framework.TestListener;
 import junit.framework.TestSuite;
@@ -78,6 +79,9 @@ public abstract class BaseTestRunner implements TestListener {
 		testFailed(TestRunListener.STATUS_FAILURE, test, t);
 	}
 
+	public synchronized void addBlocked(final Test test, final BlockedException t) {
+		testFailed(TestRunListener.STATUS_BLOCKED, test, t);
+	}
 	// TestRunListener implementation
 
 	public abstract void testStarted(String testName);
