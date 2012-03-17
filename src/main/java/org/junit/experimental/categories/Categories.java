@@ -3,30 +3,38 @@
  */
 package org.junit.experimental.categories;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.List;
-import java.util.Collections;
-import java.util.Collection;
-import java.util.HashSet;
-
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
-import org.junit.runner.Description;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.util.*;
 
 /**
  * From a given set of test classes, runs only the classes and methods that are
  * annotated with either the category given with the @IncludeCategory
  * annotation, or a subtype of that category.
- * 
+ * <p>
  * Note that, for now, annotating suites with {@code @Category} has no effect.
  * Categories must be annotated on the direct method or class.
+ * <p>
+ * When filtering every individual test method to run, the child categories are
+ * those which are declared altogether on the particular test method and test
+ * class via {@link Category}.
+ * <p>
+ * Static parent categories are declared on a suite using {@link IncludeCategory}
+ * and/or {@link ExcludeCategory}. Both annotations have a declarative method
+ * <em>assignedTo</em> with a specific selection of parent's categories
+ * {@link Selection#ANY} or {@link Selection#ALL}.
+ * <p>
+ * First the runner excludes test methods from running where (ANY or ALL)
+ * <em>exclusive</em> parent categories are assignable from child categories.
+ * Then the remaining candidate is a subject to run if and only if (ANY or ALL)
+ * <em>inclusive</em> parent categories are assignable from child categories.
  * <p>
  * Two system properties override categories declared by {@link IncludeCategory}
  * and {@link ExcludeCategory}. Every of these two properties use a comma separated
@@ -98,35 +106,53 @@ public class Categories extends Suite {
 	
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface IncludeCategory {
-		public Class<?> value();
+		public Class<?>[] value();
+		public Selection assignableTo() default Selection.ALL;
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface ExcludeCategory {
-		public Class<?> value();
+		public Class<?>[] value();
+		public Selection assignableTo() default Selection.ANY;
 	}
 
 	public static class CategoryFilter extends Filter {
         	private static final Class<?>[] NO_CATEGORIES= new Class<?>[0];
 
 		public static CategoryFilter include(Class<?> categoryType) {
-			return new CategoryFilter(categoryType, null);
+			return new CategoryFilter(createSet(categoryType), null);
+		}
+
+		public static CategoryFilter include(Class<?>... categoryType) {
+			return new CategoryFilter(createSet(categoryType), null);
 		}
 
 		private final Set<Class<?>> fIncluded,//NULL represents 'All' categories without limitation to Included.
                                     fExcluded;//Cannot be null. Empty Set does not exclude categories.
 
-		public CategoryFilter(final Class<?> includedCategory, final Class<?> excludedCategory) {
+		private final Selection fIncludedSelect, fExcludedSelect;
+
+		public CategoryFilter(Class<?> includedCategory, Class<?> excludedCategory) {
 			this(copyAndRefine(includedCategory, null), copyAndRefine(excludedCategory, Collections.<Class<?>>emptySet()));
 		}
 
-		public CategoryFilter(final Collection<Class<?>> includes, final Collection<Class<?>> excludes) {
+		public CategoryFilter(Collection<Class<?>> includes, Collection<Class<?>> excludes) {
+			this(copyAndRefine(includes, null), Selection.ANY, copyAndRefine(excludes, Collections.<Class<?>>emptySet()), Selection.ALL);
+		}
+
+		public CategoryFilter(Collection<Class<?>> includes, Selection includesSelect, Collection<Class<?>> excludes, Selection excludesSelect) {
 			this(copyAndRefine(includes, null), copyAndRefine(excludes, Collections.<Class<?>>emptySet()));
 		}
 
-		private CategoryFilter(final Set<Class<?>> includes, final Set<Class<?>> excludes) {
-			fIncluded= includes == null ? null : Collections.unmodifiableSet(includes);
+		private CategoryFilter(final Set<Class<?>> includes, Selection includesSelect, final Set<Class<?>> excludes, Selection excludesSelect) {
+			if (includesSelect == null) includesSelect = Selection.ANY;
+			if (excludesSelect == null) excludesSelect = Selection.ALL;
+			fIncluded= includes == null || includes.isEmpty() ? null : Collections.unmodifiableSet(includes);
+			if (fIncluded == null && includesSelect == Selection.ALL)
+			    throw new IllegalArgumentException("Selection.ALL must have any included categories specified in parent");
 			fExcluded= excludes == null ? Collections.<Class<?>>emptySet() : Collections.unmodifiableSet(excludes);
+			fIncludedSelect= includesSelect;
+			fExcludedSelect= excludesSelect;
 		}
 
 		@Override
@@ -186,16 +212,27 @@ public class Categories extends Suite {
 		}
 
 		private boolean hasCorrectCategoryAnnotation(Description description) {
-			final Set<Class<?>> categories= categories(description);
-			if (categories.isEmpty()) return fIncluded == null;
-			for (final Class<?> each : categories)
-				if (hasAssignableFrom(fExcluded, each))
-					return false;
-			for (final Class<?> each : categories)
-				if (fIncluded == null
-					|| hasAssignableFrom(fIncluded, each))
-					return true;
-			return false;
+			final Set<Class<?>> childCategories= categories(description);
+			if (childCategories.isEmpty()) return fIncluded == null;
+
+			boolean isExcluded= false, isAll= fExcludedSelect == Selection.ALL;
+			for (final Class<?> excluded : fExcluded) {
+			    isExcluded = hasAssignableTo(childCategories, excluded);
+			    if (isExcluded ^ isAll) {
+			        if (isAll) break;
+			        return false;
+			    }
+			}
+
+			if (isAll && isExcluded && !fExcluded.isEmpty()) return false;
+			if (fIncluded == null) return true;
+
+			isAll= fIncludedSelect == Selection.ALL;
+			for (final Class<?> included : fIncluded)
+			    if (hasAssignableTo(childCategories, included) ^ isAll)
+			        return !isAll;
+
+			return isAll;
 		}
 
 		private static Set<Class<?>> categories(Description description) {
@@ -233,8 +270,8 @@ public class Categories extends Suite {
 			throws InitializationError {
 		super(klass, builder);
 		try {
-			filter(new CategoryFilter(getIncludedCategory(klass),
-					getExcludedCategory(klass)));
+			filter(new CategoryFilter(getIncludedCategory(klass), getIncludedSelection(klass),
+                                        getExcludedCategory(klass), getExcludedSelection(klass)));
 		} catch (NoTestsRemainException e) {
 			throw new InitializationError(e);
 		} catch (ClassNotFoundException e) {
@@ -248,9 +285,19 @@ public class Categories extends Suite {
 		return intersectWithSystemPropertyInclusions(annotation == null ? null : createSet(annotation.value()));
 	}
 
+	private static Selection getIncludedSelection(Class<?> klass) {
+		IncludeCategory annotation= klass.getAnnotation(IncludeCategory.class);
+		return annotation == null || annotation.assignableTo() == null ? Selection.ANY : annotation.assignableTo();
+	}
+
 	private static Set<Class<?>> getExcludedCategory(Class<?> klass) throws ClassNotFoundException {
 		ExcludeCategory annotation= klass.getAnnotation(ExcludeCategory.class);
 		return unionWithSystemPropertyExclusions(annotation == null ? createSet() : createSet(annotation.value()));
+	}
+
+	private static Selection getExcludedSelection(Class<?> klass) {
+		ExcludeCategory annotation= klass.getAnnotation(ExcludeCategory.class);
+		return annotation == null || annotation.assignableTo() == null ? Selection.ALL : annotation.assignableTo();
 	}
 
 	private static void assertNoCategorizedDescendentsOfUncategorizeableParents(Description description) throws InitializationError {
@@ -318,6 +365,12 @@ public class Categories extends Suite {
     private static boolean hasAssignableFrom(Set<Class<?>> assigns, Class<?> from) {
         for (final Class<?> assign : assigns)
             if (assign.isAssignableFrom(from)) return true;
+        return false;
+    }
+
+    private static boolean hasAssignableTo(Set<Class<?>> assigns, Class<?> to) {
+        for (final Class<?> from : assigns)
+            if (to.isAssignableFrom(from)) return true;
         return false;
     }
 

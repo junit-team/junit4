@@ -1,17 +1,11 @@
 package org.junit.tests.experimental.categories;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.experimental.results.PrintableResult.testResult;
-import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 import org.junit.Test;
 import org.junit.experimental.categories.Categories;
-import org.junit.experimental.categories.Category;
 import org.junit.experimental.categories.Categories.CategoryFilter;
 import org.junit.experimental.categories.Categories.ExcludeCategory;
 import org.junit.experimental.categories.Categories.IncludeCategory;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.Result;
@@ -22,12 +16,20 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.junit.runners.model.InitializationError;
 
+import static java.lang.String.format;
+import static org.hamcrest.core.AnyOf.anyOf;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.*;
+import static org.junit.experimental.results.PrintableResult.testResult;
+import static org.junit.experimental.results.ResultMatchers.isSuccessful;
+
 public class CategoryTest {
-	public interface FastTests {
+	public static interface FastTests {
 		// category marker
 	}
 
-	public interface SlowTests {
+	public static interface SlowTests {
 		// category marker
 	}
 
@@ -93,7 +95,7 @@ public class CategoryTest {
 
 	@RunWith(Categories.class)
 	@ExcludeCategory(Category1.class)
-	@SuiteClasses( { SomeAreSlow.class })
+	@SuiteClasses(SomeAreSlow.class)
 	public static class SomeAreSlowSuite {
 	}
 	
@@ -108,7 +110,7 @@ public class CategoryTest {
 	@RunWith(Categories.class)
 	@ExcludeCategory(Category1.class)
 	@IncludeCategory(Category2.class)
-	@SuiteClasses( { SomeAreSlow.class })
+	@SuiteClasses(SomeAreSlow.class)
 	public static class IncludeAndExcludeSuite {
 	}
 	
@@ -121,7 +123,7 @@ public class CategoryTest {
 	}
 
 	@RunWith(Suite.class)
-	@SuiteClasses( { A.class, B.class, C.class })
+	@SuiteClasses({A.class, B.class, C.class})
 	public static class TestSuiteWithNoCategories {
 	}
 
@@ -194,6 +196,14 @@ public class CategoryTest {
 		assertEquals("category " + SlowTests.class, filter.describe());
 	}
 	
+	@Test
+	public void describeMultipleCategoryFilter() {
+		CategoryFilter filter= CategoryFilter.include(FastTests.class, SlowTests.class);
+        String d1= format("categories [%s, %s]", FastTests.class, SlowTests.class),
+                d2= format("categories [%s, %s]", SlowTests.class, FastTests.class);
+        assertThat(filter.describe(), is(anyOf(equalTo(d1), equalTo(d2))));
+	}
+
 	public static class OneThatIsBothFastAndSlow {
 		@Category({FastTests.class, SlowTests.class})
 		@Test
@@ -234,6 +244,79 @@ public class CategoryTest {
 		assertThat(testResult(RunSlowFromVerySlow.class), isSuccessful());
 	}
 	
+	public interface MultiA {
+
+	}
+
+	public interface MultiB {
+
+	}
+
+	public interface MultiC {
+
+	}
+
+	@RunWith(Categories.class)
+	@IncludeCategory({MultiA.class, MultiB.class})
+	@SuiteClasses(AllIncludedMustMatched.class)
+	public static class AllIncludedMustBeMatchedSuite {
+
+	}
+
+	public static class AllIncludedMustMatched {
+		@Test
+		@Category({MultiA.class, MultiB.class})
+		public void a() {
+
+		}
+
+		@Test
+		@Category(MultiB.class)
+		public void b() {
+			fail("When multiple categories are included in a Suite, " +
+					"@Test method must match all include categories");
+		}
+	}
+
+	@Test
+	public void allIncludedSuiteCategoriesMustBeMatched() {
+		Result result= JUnitCore
+				.runClasses(AllIncludedMustBeMatchedSuite.class);
+		assertEquals(1, result.getRunCount());
+		assertEquals(0, result.getFailureCount());
+	}
+
+	@RunWith(Categories.class)
+	@IncludeCategory({MultiA.class, MultiB.class})
+	@ExcludeCategory(MultiC.class)
+	@SuiteClasses(MultipleIncludesAndExcludeOnMethod.class)
+	public static class MultiIncludeWithExcludeCategorySuite {
+
+	}
+
+	public static class MultipleIncludesAndExcludeOnMethod {
+		@Test
+		@Category({MultiA.class, MultiB.class})
+		public void a() {
+
+		}
+
+		@Test
+		@Category({ MultiA.class, MultiB.class, MultiC.class })
+		public void b() {
+			fail("When multiple categories are included and excluded in a Suite, " +
+					"@Test method must match all include categories and contain non of the excluded");
+		}
+	}
+
+	@Test
+	public void anyMethodWithExcludedCategoryWillBeExcluded() {
+		Result result= JUnitCore
+				.runClasses(MultiIncludeWithExcludeCategorySuite.class);
+		assertEquals(1, result.getRunCount());
+		assertEquals(0, result.getFailureCount());
+	}
+
 	public static class ClassAsCategory {
 		
 	}
