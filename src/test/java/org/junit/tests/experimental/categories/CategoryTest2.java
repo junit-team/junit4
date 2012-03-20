@@ -1,3 +1,17 @@
+/*
+ * The copyright holders of this work license this file to You under
+ * the Apache License, Version 2.0 (the "License"); you may not use this
+ * file except in compliance with the License.  You may obtain a copy of
+ * the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.junit.tests.experimental.categories;
 
 import org.junit.Test;
@@ -17,6 +31,10 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.junit.runners.model.InitializationError;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import static java.lang.String.format;
 import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
@@ -25,12 +43,16 @@ import static org.junit.Assert.*;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 
-public class CategoryTest {
-	public static interface FastTests {
+public class CategoryTest2 {
+	public interface FastTests {
 		// category marker
 	}
 
-	public static interface SlowTests {
+	public interface SlowTests {
+		// category marker
+	}
+
+	public interface ReallySlowTests {
 		// category marker
 	}
 
@@ -82,10 +104,10 @@ public class CategoryTest {
 	public void testCount() {
 		assertThat(testResult(SlowTestSuite.class), isSuccessful());
 	}
-	
+
 	public static class Category1 {}
 	public static class Category2 {}
-	
+
 	public static class SomeAreSlow {
 		@Test public void noCategory() {}
 		@Category(Category1.class) @Test public void justCategory1() {}
@@ -97,10 +119,10 @@ public class CategoryTest {
 	@RunWith(Categories.class)
     @IncludeCategory(value = {}, assignableTo = Selection.ANY)
 	@ExcludeCategory(Category1.class)
-	@SuiteClasses(SomeAreSlow.class)
+	@SuiteClasses( { SomeAreSlow.class })
 	public static class SomeAreSlowSuite {
 	}
-	
+
 	@Test
 	public void testCountOnAWithoutSlowTests() {
 		Result result= JUnitCore.runClasses(SomeAreSlowSuite.class);
@@ -112,10 +134,10 @@ public class CategoryTest {
 	@RunWith(Categories.class)
 	@ExcludeCategory(Category1.class)
 	@IncludeCategory(Category2.class)
-	@SuiteClasses(SomeAreSlow.class)
+	@SuiteClasses( { SomeAreSlow.class })
 	public static class IncludeAndExcludeSuite {
 	}
-	
+
 	@Test
 	public void testsThatAreBothIncludedAndExcludedAreExcluded() {
 		Result result= JUnitCore.runClasses(IncludeAndExcludeSuite.class);
@@ -125,7 +147,7 @@ public class CategoryTest {
 	}
 
 	@RunWith(Suite.class)
-	@SuiteClasses({A.class, B.class, C.class})
+	@SuiteClasses( { A.class, B.class, C.class })
 	public static class TestSuiteWithNoCategories {
 	}
 
@@ -139,6 +161,26 @@ public class CategoryTest {
 	}
 
 	@Test
+	public void testCountWithMultipleExcludeFilter() throws Throwable {
+        Set<Class<?>> exclusions= new HashSet<Class<?>>(2);
+        Collections.addAll(exclusions, SlowTests.class, FastTests.class);
+		CategoryFilter exclude = new CategoryFilter(null, Selection.ANY, exclusions, Selection.ANY);
+		Request baseRequest= Request.aClass(OneOfEach.class);
+		Result result= new JUnitCore().run(baseRequest.filterWith(exclude));
+		assertTrue(result.wasSuccessful());
+		assertEquals(1, result.getRunCount());
+	}
+
+	@Test
+	public void testCountWithMultipleIncludeFilter() throws Throwable {
+		CategoryFilter exclude = CategoryFilter.include(Selection.ANY, SlowTests.class, FastTests.class);
+		Request baseRequest= Request.aClass(OneOfEach.class);
+		Result result= new JUnitCore().run(baseRequest.filterWith(exclude));
+		assertTrue(result.wasSuccessful());
+		assertEquals(2, result.getRunCount());
+	}
+
+	@Test
 	public void categoryFilterLeavesOnlyMatchingMethods()
 			throws InitializationError, NoTestsRemainException {
 		CategoryFilter filter= CategoryFilter.include(SlowTests.class);
@@ -147,7 +189,7 @@ public class CategoryTest {
 		assertEquals(1, runner.testCount());
 	}
 
-	public static class OneFastOneSlow {
+	public static class OneOfEach {
 		@Category(FastTests.class)
 		@Test
 		public void a() {
@@ -159,6 +201,12 @@ public class CategoryTest {
 		public void b() {
 
 		}
+
+		@Category(ReallySlowTests.class)
+		@Test
+		public void c() {
+
+		}
 	}
 
 	@Test
@@ -166,7 +214,7 @@ public class CategoryTest {
 			throws InitializationError, NoTestsRemainException {
 		CategoryFilter filter= CategoryFilter.include(SlowTests.class);
 		BlockJUnit4ClassRunner runner= new BlockJUnit4ClassRunner(
-				OneFastOneSlow.class);
+				OneOfEach.class);
 		filter.apply(runner);
 		assertEquals(1, runner.testCount());
 	}
@@ -197,12 +245,12 @@ public class CategoryTest {
 		CategoryFilter filter= CategoryFilter.include(SlowTests.class);
 		assertEquals("category " + SlowTests.class, filter.describe());
 	}
-	
+
 	@Test
-	public void describeMultipleCategoryFilter() {
-		CategoryFilter filter= CategoryFilter.include(FastTests.class, SlowTests.class);
-        String d1= format("categories [%s, %s]", FastTests.class, SlowTests.class),
-                d2= format("categories [%s, %s]", SlowTests.class, FastTests.class);
+	public void describeAMultiCategoryFilter() {
+		CategoryFilter filter= CategoryFilter.include(SlowTests.class, FastTests.class);
+        String d1= format("categories [%s, %s]", SlowTests.class, FastTests.class),
+                d2= format("categories [%s, %s]", FastTests.class, SlowTests.class);
         assertThat(filter.describe(), is(anyOf(equalTo(d1), equalTo(d2))));
 	}
 
@@ -219,15 +267,15 @@ public class CategoryTest {
 	@SuiteClasses( { OneThatIsBothFastAndSlow.class })
 	public static class ChooseSlowFromBoth {
 	}
-	
+
 	@Test public void runMethodWithTwoCategories() {
 		assertThat(testResult(ChooseSlowFromBoth.class), isSuccessful());
 	}
-	
+
 	public interface VerySlowTests extends SlowTests {
-		
+
 	}
-	
+
 	public static class OneVerySlowTest {
 		@Category(VerySlowTests.class)
 		@Test
@@ -241,88 +289,15 @@ public class CategoryTest {
 	@SuiteClasses( { OneVerySlowTest.class })
 	public static class RunSlowFromVerySlow {
 	}
-	
+
 	@Test public void subclassesOfIncludedCategoriesAreRun() {
 		assertThat(testResult(RunSlowFromVerySlow.class), isSuccessful());
 	}
-	
-	public interface MultiA {
-
-	}
-
-	public interface MultiB {
-
-	}
-
-	public interface MultiC {
-
-	}
-
-	@RunWith(Categories.class)
-	@IncludeCategory({MultiA.class, MultiB.class})
-	@SuiteClasses(AllIncludedMustMatched.class)
-	public static class AllIncludedMustBeMatchedSuite {
-
-	}
-
-	public static class AllIncludedMustMatched {
-		@Test
-		@Category({MultiA.class, MultiB.class})
-		public void a() {
-
-		}
-
-		@Test
-		@Category(MultiB.class)
-		public void b() {
-			fail("When multiple categories are included in a Suite, " +
-					"@Test method must match all include categories");
-		}
-	}
-
-	@Test
-	public void allIncludedSuiteCategoriesMustBeMatched() {
-		Result result= JUnitCore
-				.runClasses(AllIncludedMustBeMatchedSuite.class);
-		assertEquals(1, result.getRunCount());
-		assertEquals(0, result.getFailureCount());
-	}
-
-	@RunWith(Categories.class)
-	@IncludeCategory({MultiA.class, MultiB.class})
-	@ExcludeCategory(MultiC.class)
-	@SuiteClasses(MultipleIncludesAndExcludeOnMethod.class)
-	public static class MultiIncludeWithExcludeCategorySuite {
-
-	}
-
-	public static class MultipleIncludesAndExcludeOnMethod {
-		@Test
-		@Category({MultiA.class, MultiB.class})
-		public void a() {
-
-		}
-
-		@Test
-		@Category({ MultiA.class, MultiB.class, MultiC.class })
-		public void b() {
-			fail("When multiple categories are included and excluded in a Suite, " +
-					"@Test method must match all include categories and contain non of the excluded");
-		}
-	}
-
-	@Test
-	public void anyMethodWithExcludedCategoryWillBeExcluded() {
-		Result result= JUnitCore
-				.runClasses(MultiIncludeWithExcludeCategorySuite.class);
-		assertEquals(1, result.getRunCount());
-		assertEquals(0, result.getFailureCount());
-	}
 
 	public static class ClassAsCategory {
-		
+
 	}
-	
+
 	public static class OneMoreTest {
 		@Category(ClassAsCategory.class) @Test public void a() {}
 	}
@@ -332,7 +307,7 @@ public class CategoryTest {
 	@SuiteClasses( { OneMoreTest.class })
 	public static class RunClassAsCategory {
 	}
-	
+
 	@Test public void classesCanBeCategories() {
 		assertThat(testResult(RunClassAsCategory.class), isSuccessful());
 	}

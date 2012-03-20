@@ -99,6 +99,8 @@ import java.util.*;
  * @see {@link Class#isAssignableFrom(Class)}
  */
 public class Categories extends Suite {
+    private static final Selection DEFAULT_IN_SELECT= Selection.ALL;
+    private static final Selection DEFAULT_EX_SELECT= Selection.ANY;
 	// the way filters are implemented makes this unnecessarily complicated,
 	// buggy, and difficult to specify.  A new way of handling filters could
 	// someday enable a better new implementation.
@@ -107,13 +109,13 @@ public class Categories extends Suite {
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface IncludeCategory {
 		public Class<?>[] value();
-		public Selection assignableTo() default Selection.ALL;
+		public Selection assignableTo() default Selection.ALL;///DEFAULT_IN_SELECT;
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface ExcludeCategory {
 		public Class<?>[] value();
-		public Selection assignableTo() default Selection.ANY;
+		public Selection assignableTo() default Selection.ANY;///DEFAULT_EX_SELECT;
 	}
 
 	public static class CategoryFilter extends Filter {
@@ -123,8 +125,25 @@ public class Categories extends Suite {
 			return new CategoryFilter(createSet(categoryType), null);
 		}
 
+		public static CategoryFilter include(Selection s, Class<?>... categoryType) {
+			return new CategoryFilter(createSet(categoryType), s, null, null);
+		}
+
 		public static CategoryFilter include(Class<?>... categoryType) {
 			return new CategoryFilter(createSet(categoryType), null);
+		}
+
+		public static CategoryFilter exclude(Class<?> categoryType) {
+			return new CategoryFilter(null, createSet(categoryType));
+		}
+
+		public static CategoryFilter exclude(Class<?>... categoryType) {
+			return new CategoryFilter(null, createSet(categoryType));
+		}
+
+		public static CategoryFilter categoryFilter(Set<Class<?>> inclusions, Selection inclusionsSelect,
+                                                    Set<Class<?>> exclusions, Selection exclusionsSelect) {
+			return new CategoryFilter(inclusions, inclusionsSelect, exclusions, exclusionsSelect);
 		}
 
 		private final Set<Class<?>> fIncluded,//NULL represents 'All' categories without limitation to Included.
@@ -137,19 +156,19 @@ public class Categories extends Suite {
 		}
 
 		public CategoryFilter(Collection<Class<?>> includes, Collection<Class<?>> excludes) {
-			this(copyAndRefine(includes, null), Selection.ANY, copyAndRefine(excludes, Collections.<Class<?>>emptySet()), Selection.ALL);
+			this(copyAndRefine(includes, null), DEFAULT_IN_SELECT, copyAndRefine(excludes, Collections.<Class<?>>emptySet()), DEFAULT_EX_SELECT);
 		}
 
 		public CategoryFilter(Collection<Class<?>> includes, Selection includesSelect, Collection<Class<?>> excludes, Selection excludesSelect) {
-			this(copyAndRefine(includes, null), copyAndRefine(excludes, Collections.<Class<?>>emptySet()));
+			this(copyAndRefine(includes, null), includesSelect, copyAndRefine(excludes, Collections.<Class<?>>emptySet()), excludesSelect);
 		}
 
 		private CategoryFilter(final Set<Class<?>> includes, Selection includesSelect, final Set<Class<?>> excludes, Selection excludesSelect) {
-			if (includesSelect == null) includesSelect = Selection.ANY;
-			if (excludesSelect == null) excludesSelect = Selection.ALL;
+			if (includesSelect == null) includesSelect = DEFAULT_IN_SELECT;
+			if (excludesSelect == null) excludesSelect = DEFAULT_EX_SELECT;
 			fIncluded= includes == null || includes.isEmpty() ? null : Collections.unmodifiableSet(includes);
-			if (fIncluded == null && includesSelect == Selection.ALL)
-			    throw new IllegalArgumentException("Selection.ALL must have any included categories specified in parent");
+			if (fIncluded == null && includesSelect == DEFAULT_IN_SELECT)
+			    throw new IllegalArgumentException(DEFAULT_IN_SELECT + " must have any included categories specified in parent");
 			fExcluded= excludes == null ? Collections.<Class<?>>emptySet() : Collections.unmodifiableSet(excludes);
 			fIncludedSelect= includesSelect;
 			fExcludedSelect= excludesSelect;
@@ -287,7 +306,7 @@ public class Categories extends Suite {
 
 	private static Selection getIncludedSelection(Class<?> klass) {
 		IncludeCategory annotation= klass.getAnnotation(IncludeCategory.class);
-		return annotation == null || annotation.assignableTo() == null ? Selection.ANY : annotation.assignableTo();
+		return annotation == null || annotation.assignableTo() == null ? DEFAULT_IN_SELECT : annotation.assignableTo();
 	}
 
 	private static Set<Class<?>> getExcludedCategory(Class<?> klass) throws ClassNotFoundException {
@@ -297,7 +316,7 @@ public class Categories extends Suite {
 
 	private static Selection getExcludedSelection(Class<?> klass) {
 		ExcludeCategory annotation= klass.getAnnotation(ExcludeCategory.class);
-		return annotation == null || annotation.assignableTo() == null ? Selection.ALL : annotation.assignableTo();
+		return annotation == null || annotation.assignableTo() == null ? DEFAULT_EX_SELECT : annotation.assignableTo();
 	}
 
 	private static void assertNoCategorizedDescendentsOfUncategorizeableParents(Description description) throws InitializationError {
