@@ -21,7 +21,7 @@ public class MethodSorter {
     public static Method[] getDeclaredMethods(Class<?> clazz) {
         Method[] methods = clazz.getDeclaredMethods();
         Arrays.sort(methods, new Comparator<Method>() {
-            @Override public int compare(Method m1, Method m2) {
+            public int compare(Method m1, Method m2) {
                 int i1 = m1.getName().hashCode();
                 int i2 = m2.getName().hashCode();
                 return i1 != i2 ? i1 - i2 : m1.toString().compareTo(m2.toString());
