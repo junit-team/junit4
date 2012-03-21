@@ -1,5 +1,6 @@
 package org.junit.tests.assertion;
 
+import static org.hamcrest.CoreMatchers.isA;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
@@ -15,6 +16,7 @@ import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
 @RunWith(Theories.class)
+@SuppressWarnings("deprecation")
 public class BothTest {
 	@DataPoint
 	public static Matcher<Integer> IS_3= is(3);
@@ -27,7 +29,7 @@ public class BothTest {
 
 	@Test
 	public void bothPasses() {
-		assertThat(3, both(is(Integer.class)).and(is(3)));
+		assertThat(3, both(isA(Integer.class)).and(is(3)));
 	}
 
 	@Theory
@@ -66,6 +68,6 @@ public class BothTest {
 	}
 	
 	@Test public void subclassesAreOkInSecondPositionOnly() {
-		assertThat(3, both(is(Integer.class)).and(is(3)));
+		assertThat(3, both(isA(Integer.class)).and(is(3)));
 	}
 }

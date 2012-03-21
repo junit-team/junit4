@@ -1,8 +1,8 @@
 package org.junit.rules;
 
+import static org.hamcrest.CoreMatchers.both;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.matchers.JUnitMatchers.both;
-import static org.junit.matchers.JUnitMatchers.containsString;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
@@ -70,7 +70,7 @@ public class ExpectedException implements TestRule {
 		if (fMatcher == null)
 			fMatcher= (Matcher<Object>) matcher;
 		else
-			fMatcher= both(fMatcher).and(matcher);
+			fMatcher= both(fMatcher).and((Matcher<Object>) matcher);
 	}
 
 	/**

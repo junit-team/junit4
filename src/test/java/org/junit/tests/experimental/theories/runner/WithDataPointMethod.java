@@ -1,5 +1,6 @@
 package org.junit.tests.experimental.theories.runner;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -7,7 +8,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 import static org.junit.internal.matchers.Each.each;
-import static org.junit.internal.matchers.StringContains.containsString;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -145,8 +145,7 @@ public class WithDataPointMethod {
 		return JUnitCore.runClasses(type).getFailures();
 	}
 
-	private Matcher<Iterable<Failure>> empty() {
-		Matcher<Failure> nullValue= nullValue();
-		return each(nullValue);
+	private Matcher<Iterable<? super Failure>> empty() {
+		return each(nullValue(Failure.class));
 	}
 }

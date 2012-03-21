@@ -1,12 +1,13 @@
 package org.junit.tests.assertion;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -446,7 +447,7 @@ public class AssertionTest {
         String expectedMessage = "identifier\nExpected: is an instance of java.lang.Integer\n     got: \"actual\"\n";
         
         try {
-            assertThat("identifier", "actual", is(Integer.class));
+            assertThat("identifier", "actual", is(instanceOf(Integer.class)));
         } catch (AssertionError e) {
             assertEquals(expectedMessage, e.getMessage());
         }
