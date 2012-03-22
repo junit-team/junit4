@@ -35,11 +35,23 @@ public class Description implements Serializable {
 	 * Create a <code>Description</code> named <code>name</code>.
 	 * Generally, you will add children to this <code>Description</code>.
 	 * @param name the name of the <code>Description</code> 
-	 * @param annotations 
+	 * @param annotations
 	 * @return a <code>Description</code> named <code>name</code>
 	 */
 	public static Description createSuiteDescription(String name, Annotation... annotations) {
 		return new Description(name, annotations);
+	}
+
+	/**
+	 * Create a <code>Description</code> named <code>name</code>.
+	 * Generally, you will add children to this <code>Description</code>.
+	 * @param name the name of the <code>Description</code>
+	 * @param uniqueId an arbitrary object used to define uniqueness (in {@link #equals(Object)}
+	 * @param annotations meta-data about the test, for downstream interpreters
+	 * @return a <code>Description</code> named <code>name</code>
+	 */
+	public static Description createSuiteDescription(String name, Object uniqueId, Annotation... annotations) {
+	    return new Description(name, uniqueId, annotations);
 	}
 
 	/**
@@ -89,13 +101,22 @@ public class Description implements Serializable {
 	
 	private final ArrayList<Description> fChildren= new ArrayList<Description>();
 	private final String fDisplayName;
+	private final Object fUniqueId;
 	private final Annotation[] fAnnotations;
-	
+
 	private Description(String displayName, Annotation... annotations) {
+		this(displayName, displayName, annotations);
+	}
+
+	private Description(String displayName, Object uniqueId, Annotation... annotations) {
 		if ((displayName == null) || (displayName.length() == 0))
 			throw new IllegalArgumentException(
 					"The display name must not be empty.");
+		if ((uniqueId == null))
+			throw new IllegalArgumentException(
+					"The unique id must not be null.");
 		fDisplayName= displayName;
+		fUniqueId= uniqueId;
 		fAnnotations= annotations;
 	}
 
@@ -149,7 +170,7 @@ public class Description implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return getDisplayName().hashCode();
+		return fUniqueId.hashCode();
 	}
 
 	@Override
@@ -157,7 +178,7 @@ public class Description implements Serializable {
 		if (!(obj instanceof Description))
 			return false;
 		Description d = (Description) obj;
-		return getDisplayName().equals(d.getDisplayName());
+		return fUniqueId.equals(d.fUniqueId);
 	}
 	
 	@Override
@@ -181,7 +202,7 @@ public class Description implements Serializable {
 	}
 
 	/**
-	 * @return the annotation of type annotationType that is attached to this description node, 
+	 * @return the annotation of type annotationType that is attached to this description node,
 	 * or null if none exists
 	 */
 	public <T extends Annotation> T getAnnotation(Class<T> annotationType) {
