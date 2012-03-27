@@ -9,6 +9,10 @@ import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 import static org.junit.matchers.JUnitMatchers.containsString;
+
+import java.util.LinkedList;
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -22,6 +26,11 @@ import org.junit.runner.Result;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
+/**
+ * This test class is very similar to {@link TestMethodRuleTest}. If you add a test here, then it is likely that the other will have to be changed.
+ * This tests {@link Rule}s attached to fields.
+ * {@link TestMethodRuleTest} tests {@link Rule}s attached to methods.
+ */
 public class TestRuleTest {
 	private static boolean wasRun;
 
@@ -146,7 +155,7 @@ public class TestRuleTest {
 
 	public static class OnFailureTest {
 		@Rule
-		public TestRule watchman= new TestWatcher() {
+		public TestRule watcher= new TestWatcher() {
 			@Override
 			protected void failed(Throwable e, Description description) {
 				log+= description + " " + e.getClass().getSimpleName();
@@ -171,7 +180,7 @@ public class TestRuleTest {
 		private static String watchedLog;
 
 		@Rule
-		public TestRule watchman= new TestWatcher() {
+		public TestRule watcher= new TestWatcher() {
 			@Override
 			protected void failed(Throwable e, Description description) {
 				watchedLog+= description + " "
@@ -203,45 +212,33 @@ public class TestRuleTest {
 	}
 
 	public static class BeforesAndAfters {
-		private static String watchedLog;
+		private static StringBuilder watchedLog= new StringBuilder();
 
-		@Before public void before() {
-			watchedLog+= "before ";
+		@Before
+		public void before() {
+			watchedLog.append("before ");
 		}
 		
 		@Rule
-		public TestRule watchman= new TestWatcher() {
-			@Override
-			protected void starting(Description d) {
-				watchedLog+= "starting ";
-			}
-			
-			@Override
-			protected void finished(Description d) {
-				watchedLog+= "finished ";
-			}
-			
-			@Override
-			protected void succeeded(Description d) {
-				watchedLog+= "succeeded ";
-			}
-		};
+		public TestRule watcher= new LoggingTestWatcher(watchedLog);
 		
-		@After public void after() {
-			watchedLog+= "after ";
+		@After
+		public void after() {
+			watchedLog.append("after ");
 		}
 
 		@Test
 		public void succeeds() {
-			watchedLog+= "test ";
+			watchedLog.append("test ");
 		}
 	}
 
 	@Test
 	public void beforesAndAfters() {
-		BeforesAndAfters.watchedLog= "";
+		BeforesAndAfters.watchedLog= new StringBuilder();
 		JUnitCore.runClasses(BeforesAndAfters.class);
-		assertThat(BeforesAndAfters.watchedLog, is("starting before test after succeeded finished "));
+		assertThat(BeforesAndAfters.watchedLog.toString(),
+				is("starting before test after succeeded finished "));
 	}
 	
 	public static class WrongTypedField {
@@ -297,5 +294,360 @@ public class TestRuleTest {
 	
 	@Test public void useCustomMethodRule() {
 		assertThat(testResult(UsesCustomMethodRule.class), isSuccessful());
+	}
+	
+	public static class MethodExampleTest {
+		private TestRule example = new TestRule() {
+			public Statement apply(final Statement base, Description description) {
+				return new Statement() {
+					@Override
+					public void evaluate() throws Throwable {
+						wasRun= true;
+						base.evaluate();
+					};
+				};
+			}
+		};
+		
+		@Rule
+		public TestRule getExample() {
+			return example;
+		}
+
+		@Test
+		public void nothing() {
+
+		}
+	}
+
+	@Test
+	public void methodRuleIsIntroducedAndEvaluated() {
+		wasRun= false;
+		JUnitCore.runClasses(MethodExampleTest.class);
+		assertTrue(wasRun);
+	}
+	
+	@SuppressWarnings("deprecation")
+	public static class MethodBothKindsOfRule implements TestRule, org.junit.rules.MethodRule {
+		public int applications = 0;
+		
+		public Statement apply(Statement base, FrameworkMethod method,
+				Object target) {
+			applications++;
+			return base;
+		}
+
+		public Statement apply(Statement base, Description description) {
+			applications++;
+			return base;
+		}
+	}
+	
+	public static class MethodOneFieldTwoKindsOfRule {
+		private MethodBothKindsOfRule both = new MethodBothKindsOfRule();
+		
+		@Rule
+		public MethodBothKindsOfRule getBoth() {
+			return both;
+		}
+		
+		@Test public void onlyOnce() {
+			assertEquals(1, both.applications);
+		}
+	}
+	
+
+	@Test
+	public void methodOnlyApplyOnceEvenIfImplementsBothInterfaces() {
+		assertTrue(JUnitCore.runClasses(MethodOneFieldTwoKindsOfRule.class).wasSuccessful());
+	}
+
+	public static class MethodSonOfExampleTest extends MethodExampleTest {
+		
+	}
+
+	@Test
+	public void methodRuleIsIntroducedAndEvaluatedOnSubclass() {
+		wasRun= false;
+		JUnitCore.runClasses(MethodSonOfExampleTest.class);
+		assertTrue(wasRun);
+	}
+	
+//	private static int runCount;
+
+	public static class MethodMultipleRuleTest {
+		private static class Increment implements TestRule {
+			public Statement apply(final Statement base, Description description) {
+				return new Statement() {
+					@Override
+					public void evaluate() throws Throwable {
+						runCount++;
+						base.evaluate();
+					};
+				};
+			}
+		}
+
+		private TestRule incrementor1= new Increment();
+		
+		@Rule
+		public TestRule getIncrementor1() {
+			return incrementor1;
+		}
+
+		private TestRule incrementor2= new Increment();
+
+		@Rule
+		public TestRule getIncrementor2() {
+			return incrementor2;
+		}
+
+		@Test
+		public void nothing() {
+
+		}
+	}
+
+	@Test
+	public void methodMultipleRulesAreRun() {
+		runCount= 0;
+		JUnitCore.runClasses(MethodMultipleRuleTest.class);
+		assertEquals(2, runCount);
+	}
+
+	public static class MethodNoRulesTest {
+		public int x;
+
+		@Test
+		public void nothing() {
+
+		}
+	}
+
+	@Test
+	public void methodIgnoreNonRules() {
+		Result result= JUnitCore.runClasses(MethodNoRulesTest.class);
+		assertEquals(0, result.getFailureCount());
+	}
+
+	public static class MethodOnFailureTest {
+		private TestRule watchman= new TestWatcher() {
+			@Override
+			protected void failed(Throwable e, Description description) {
+				log+= description + " " + e.getClass().getSimpleName();
+			}
+		};
+		
+		@Rule
+		public TestRule getWatchman() {
+			return watchman;
+		}
+
+		@Test
+		public void nothing() {
+			fail();
+		}
+	}
+
+	@Test
+	public void methodOnFailure() {
+		log= "";
+		Result result= JUnitCore.runClasses(MethodOnFailureTest.class);
+		assertEquals(String.format("nothing(%s) AssertionError", MethodOnFailureTest.class.getName()), log);
+		assertEquals(1, result.getFailureCount());
+	}
+
+	public static class MethodWatchmanTest {
+		private static String watchedLog;
+
+		private TestRule watchman= new TestWatcher() {
+			@Override
+			protected void failed(Throwable e, Description description) {
+				watchedLog+= description + " "
+						+ e.getClass().getSimpleName() + "\n";
+			}
+
+			@Override
+			protected void succeeded(Description description) {
+				watchedLog+= description + " " + "success!\n";
+			}
+		};
+
+		@Rule
+		public TestRule getWatchman() {
+			return watchman;
+		}
+
+		@Test
+		public void fails() {
+			fail();
+		}
+
+		@Test
+		public void succeeds() {
+		}
+	}
+
+	@Test
+	public void methodSucceeded() {
+		WatchmanTest.watchedLog= "";
+		JUnitCore.runClasses(WatchmanTest.class);
+		assertThat(WatchmanTest.watchedLog, containsString(String.format("fails(%s) AssertionError", WatchmanTest.class.getName())));
+		assertThat(WatchmanTest.watchedLog, containsString(String.format("succeeds(%s) success!", WatchmanTest.class.getName())));
+	}
+
+	public static class MethodBeforesAndAfters {
+		private static String watchedLog;
+
+		@Before public void before() {
+			watchedLog+= "before ";
+		}
+		
+		private TestRule watchman= new TestWatcher() {
+			@Override
+			protected void starting(Description d) {
+				watchedLog+= "starting ";
+			}
+			
+			@Override
+			protected void finished(Description d) {
+				watchedLog+= "finished ";
+			}
+			
+			@Override
+			protected void succeeded(Description d) {
+				watchedLog+= "succeeded ";
+			}
+		};
+		
+		@Rule
+		public TestRule getWatchman() {
+			return watchman;
+		}
+
+		@After public void after() {
+			watchedLog+= "after ";
+		}
+
+		@Test
+		public void succeeds() {
+			watchedLog+= "test ";
+		}
+	}
+
+	@Test
+	public void methodBeforesAndAfters() {
+		MethodBeforesAndAfters.watchedLog= "";
+		JUnitCore.runClasses(MethodBeforesAndAfters.class);
+		assertThat(MethodBeforesAndAfters.watchedLog, is("starting before test after succeeded finished "));
+	}
+	
+	public static class MethodWrongTypedField {
+		@Rule public int getX() { return 5; }
+		@Test public void foo() {}
+	}
+	
+	@Test public void methodValidateWrongTypedField() {
+		assertThat(testResult(MethodWrongTypedField.class), 
+				hasSingleFailureContaining("must return an implementation of MethodRule"));
+	}
+	
+	public static class MethodSonOfWrongTypedField extends MethodWrongTypedField {
+		
+	}
+
+	@Test public void methodValidateWrongTypedFieldInSuperclass() {
+		assertThat(testResult(MethodSonOfWrongTypedField.class), 
+				hasSingleFailureContaining("must return an implementation of MethodRule"));
+	}
+
+	public static class MethodPrivateRule {
+		@SuppressWarnings("unused")
+		@Rule private TestRule getRule() { return new TestName(); }
+		@Test public void foo() {}
+	}
+	
+	@Test public void methodValidatePrivateRule() {
+		assertThat(testResult(MethodPrivateRule.class), 
+				hasSingleFailureContaining("must be public"));
+	}
+	
+	public static class MethodUsesCustomMethodRule {
+		private CustomTestName counter = new CustomTestName();
+		@Rule public CustomTestName getCounter() { return counter; }
+		@Test public void foo() {
+			assertEquals("foo", counter.name);
+		}
+	}
+
+	@Test public void methodUseCustomMethodRule() {
+ 		assertThat(testResult(MethodUsesCustomMethodRule.class), isSuccessful());
+ 	}
+
+ 	private static final List<String> orderList= new LinkedList<String>();
+	
+	private static class OrderTestRule implements TestRule {
+		private String name;
+		
+		public OrderTestRule(String name) {
+			this.name= name;
+		}
+		
+		public Statement apply(final Statement base, final Description description) {
+			return new Statement() {				
+				@Override
+				public void evaluate() throws Throwable {
+					orderList.add(name);
+					base.evaluate();
+				}
+			};
+		}
+	};
+	
+	public static class UsesFieldAndMethodRule {
+		@Rule public OrderTestRule orderMethod() { return new OrderTestRule("orderMethod"); }
+		@Rule public OrderTestRule orderField= new OrderTestRule("orderField");
+		@Test public void foo() {
+			assertEquals("orderField", orderList.get(0));
+			assertEquals("orderMethod", orderList.get(1));
+		}
+	}
+	
+	@Test public void usesFieldAndMethodRule() {
+		orderList.clear();
+		assertThat(testResult(UsesFieldAndMethodRule.class), isSuccessful());
+	}
+	
+	public static class MultipleCallsTest implements TestRule {
+		public int applications = 0;
+		
+		public Statement apply(Statement base, Description description) {
+			applications++;
+			return base;
+		}
+	}
+	
+	public static class CallMethodOnlyOnceRule {
+		int countOfMethodCalls = 0;
+		private static class Dummy implements TestRule {
+			public Statement apply(final Statement base, Description description) {
+				return new Statement() {
+					@Override
+					public void evaluate() throws Throwable {
+						base.evaluate();
+					};
+				};
+			}
+		}
+		@Rule public Dummy both() { countOfMethodCalls++; return new Dummy(); }
+		
+		@Test public void onlyOnce() {
+			assertEquals(1, countOfMethodCalls);
+		}
+	}
+
+	@Test
+	public void testCallMethodOnlyOnceRule() {
+		assertTrue(JUnitCore.runClasses(CallMethodOnlyOnceRule.class).wasSuccessful());
 	}
 }

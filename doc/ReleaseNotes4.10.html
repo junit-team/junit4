@@ -1,0 +1,93 @@
+<h2>Summary of Changes in version 4.10 [unreleased!]</h2>
+
+<p>A full summary of commits between 4.9 and 4.10 is on <a href="https://github.com/KentBeck/junit/compare/r4.9...4.10">github</a></p>
+
+<h3>junit-dep has correct contents</h3>
+
+<p>junit-dep-4.9.jar incorrectly contained hamcrest classes, which could lead to version conflicts in projects that depend on hamcrest directly.  This is fixed in 4.10 [@dsaff, closing gh-309]</p>
+
+<h3>RuleChain</h3>
+
+<p>The RuleChain rule allows ordering of TestRules:</p>
+
+<pre><code>public static class UseRuleChain {
+    @Rule
+    public TestRule chain= RuleChain
+                           .outerRule(new LoggingRule("outer rule")
+                           .around(new LoggingRule("middle rule")
+                           .around(new LoggingRule("inner rule");
+
+    @Test
+    public void example() {
+        assertTrue(true);
+    }
+}
+</code></pre>
+
+<p>writes the log</p>
+
+<pre><code>starting outer rule
+starting middle rule
+starting inner rule
+finished inner rule
+finished middle rule
+finished outer rule
+</code></pre>
+
+<h3>TemporaryFolder</h3>
+
+<ul>
+<li><code>TemporaryFolder#newFolder(String... folderNames)</code> creates recursively deep temporary folders 
+[@rodolfoliviero, closing gh-283]</li>
+<li><code>TemporaryFolder#newFile()</code> creates a randomly named new file, and <code>#newFolder()</code> creates a randomly named new folder
+[@Daniel Rothmaler, closing gh-299]</li>
+</ul>
+
+<h3>Theories</h3>
+
+<p>The <code>Theories</code> runner does not anticipate theory parameters that have generic
+types, as reported by github#64.  Fixing this won't happen until <code>Theories</code> is
+moved to junit-contrib. In anticipation of this, 4.9.1 adds some of the
+necessary machinery to the runner classes, and deprecates a method that only
+the <code>Theories</code> runner uses, <code>FrameworkMethod</code>#producesType(). 
+The Common Public License that JUnit is released under is now included
+in the source repository.</p>
+
+<p>Thanks to <code>@pholser</code> for identifying a potential resolution for github#64
+and initiating work on it.</p>
+
+<h3>Bug fixes</h3>
+
+<ul>
+<li>Built-in Rules implementations
+<ul>
+<li>TemporaryFolder should not create files in the current working directory if applying the rule fails 
+[@orfjackal, fixing gh-278]</li>
+<li>TestWatcher and TestWatchman should not call failed for AssumptionViolatedExceptions
+[@stefanbirkner, fixing gh-296]</li>
+</ul></li>
+<li>Javadoc bugs
+<ul>
+<li>Assert documentation [@stefanbirkner, fixing gh-134]</li>
+<li>ClassRule [@stefanbirkner, fixing gh-254]</li>
+<li>Parameterized  [@stefanbirkner, fixing gh-89]</li>
+<li>Parameterized, again [@orfjackal, fixing gh-285]</li>
+</ul></li>
+<li>Miscellaneous
+<ul>
+<li>Useless code in RunAfters [@stefanbirkner, fixing gh-289]</li>
+<li>Parameterized test classes should be able to have <code>@Category</code> annotations
+[@dsaff, fixing gh-291]</li>
+<li>Error count should be initialized in junit.tests.framework.TestListenerTest [@stefanbirkner, fixing gh-225]</li>
+<li>AssertionFailedError constructor shouldn't call super with null message [@stefanbirkner, fixing gh-318]</li>
+<li>Clearer error message for non-static inner test classes  [@stefanbirkner, fixing gh-42]</li>
+</ul></li>
+</ul>
+
+<h3>Minor changes</h3>
+
+<ul>
+<li>Description, Result and Failure are Serializable [@ephox-rob, closing gh-101]</li>
+<li>FailOnTimeout is reusable, allowing for retrying Rules [@stefanbirkner, closing gh-265]</li>
+<li>New <code>ErrorCollector.checkThat</code> overload, that allows you to specify a reason [@drothmaler, closing gh-300]</li>
+</ul>
