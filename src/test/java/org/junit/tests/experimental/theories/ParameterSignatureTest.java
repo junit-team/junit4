@@ -1,7 +1,7 @@
 package org.junit.tests.experimental.theories;
 
 import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.isA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeTrue;
@@ -10,7 +10,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.ParameterSignature;
@@ -52,10 +51,6 @@ public class ParameterSignatureTest {
 		List<Annotation> annotations= ParameterSignature.signatures(method)
 				.get(0).getAnnotations();
 		assertThat(annotations,
-				hasItem(annotationOfClass(TestedOn.class)));
-	}
-
-	private Matcher<Annotation> annotationOfClass(Class<?> clazz) {
-		return instanceOf(clazz);
+				hasItem(isA(TestedOn.class)));
 	}
 }
