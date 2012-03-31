@@ -31,6 +31,18 @@
   <property name="hamcrestlib" location="lib/hamcrest-core-1.1.jar" />
   <property name="hamcrestsrc" location="${dist}/temp.hamcrest.source" />
 
+  <path id="cp">
+    <fileset dir="lib">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+
+  <path id="cptest">
+    <pathelement path="cp"/>
+    <dirset dir="${bin}">
+    </dirset>
+  </path>
+
   <target name="init">
     <tstamp/>
   </target>
@@ -66,20 +78,20 @@
           srcdir="@{srcdir}"
           destdir="@{destdir}"
           debug="on"
-          classpath="@{classpath}"
           includeantruntime="false"
           source="1.5"
           target="1.5"
           >
+      	<classpath refid="@{classpath}"></classpath>
         <compilerarg value="-Xlint:unchecked" />
       </javac>
     </sequential>
   </macrodef>
   
   <target name="build" depends="versiontag">
-    <junit_compilation srcdir="${src}" destdir="${bin}" classpath="${hamcrestlib}"/>
+    <junit_compilation srcdir="${src}" destdir="${bin}" classpath="cp"/>
     <unjar src="${hamcrestlib}" dest="${bin}" />
-    <junit_compilation srcdir="${testsrc}" destdir="${testbin}" classpath="${hamcrestlib};${bin}"/>
+    <junit_compilation srcdir="${testsrc}" destdir="${testbin}" classpath="cptest"/>
   </target>
 
   <target name="jars" depends="build">
