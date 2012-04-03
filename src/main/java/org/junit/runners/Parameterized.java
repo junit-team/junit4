@@ -28,7 +28,7 @@ import org.junit.runners.model.Statement;
  * <pre>
  * &#064;RunWith(Parameterized.class)
  * public class FibonacciTest {
- * 	&#064;Parameters(name= &quot;fib({0})={1}&quot;)
+ * 	&#064;Parameters(name= &quot;{index}: fib({0})={1}&quot;)
  * 	public static Iterable&lt;Object[]&gt; data() {
  * 		return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
  * 				{ 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
@@ -70,8 +70,8 @@ import org.junit.runners.model.Statement;
  * <dd></dd>
  * </dl>
  * In the example given above, the <code>Parameterized</code> runner creates
- * names like <code>fib(3)=2</code>. If you don't use the name parameter, then
- * the current parameter index is used as name.
+ * names like <code>[1: fib(3)=2]</code>. If you don't use the name parameter,
+ * then the current parameter index is used as name.
  * </p>
  */
 public class Parameterized extends Suite {
