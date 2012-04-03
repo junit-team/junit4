@@ -6,7 +6,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.junit.tests.assertion.AssertionTest;
-import org.junit.tests.assertion.EachTest;
 import org.junit.tests.assertion.MultipleFailureExceptionTest;
 import org.junit.tests.deprecated.JUnit4ClassRunnerTest;
 import org.junit.tests.description.AnnotatedDescriptionTest;
@@ -123,7 +122,6 @@ import org.junit.tests.validation.ValidationTest;
 	OldTestClassAdaptingListenerTest.class,
 	AnnotatedDescriptionTest.class,
 	AssumptionViolatedExceptionTest.class,
-	EachTest.class,
 	ExperimentalTests.class,
 	InheritedTestTest.class,
 	TestClassTest.class,

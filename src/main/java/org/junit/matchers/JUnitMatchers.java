@@ -3,7 +3,6 @@ package org.junit.matchers;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.hamcrest.core.CombinableMatcher;
-import org.junit.internal.matchers.Each;
 
 /**
  * Convenience import class: these are useful matchers for use with the assertThat method, but they are
@@ -59,9 +58,12 @@ public class JUnitMatchers {
 	/**
 	 * @param elementMatcher
 	 * @return A matcher matching any collection in which every element matches elementMatcher
+	 * 
+	 * @deprecated Please use {@link CoreMatchers#everyItem(Matcher)} instead.
 	 */
-	public static <T> Matcher<Iterable<? super T>> everyItem(final Matcher<? super T> elementMatcher) {
-		return Each.each(elementMatcher);
+	@Deprecated
+	public static <T> Matcher<Iterable<T>> everyItem(final Matcher<T> elementMatcher) {
+		return CoreMatchers.everyItem(elementMatcher);
 	}
 
 	/**
