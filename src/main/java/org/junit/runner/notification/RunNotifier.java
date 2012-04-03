@@ -19,7 +19,7 @@ import org.junit.runner.Result;
 public class RunNotifier {
 	private final List<RunListener> fListeners= 
 		Collections.synchronizedList(new ArrayList<RunListener>());
-	private boolean fPleaseStop= false;
+	private volatile boolean fPleaseStop= false;
 	
 	/** Internal use only
 	 */
