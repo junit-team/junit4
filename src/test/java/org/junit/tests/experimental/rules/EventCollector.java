@@ -6,7 +6,6 @@ import static org.junit.matchers.JUnitMatchers.both;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hamcrest.BaseMatcher;
 import org.hamcrest.Matcher;
 import org.junit.internal.matchers.TypeSafeMatcher;
 import org.junit.runner.Description;
@@ -21,9 +20,10 @@ class EventCollector extends RunListener {
 
 	private static Matcher<EventCollector> hasNumberOfFailures(
 			final int numberOfFailures) {
-		return new BaseMatcher<EventCollector>() {
-			public boolean matches(Object item) {
-				return ((EventCollector) item).fFailures.size() == numberOfFailures;
+		return new TypeSafeMatcher<EventCollector>() {
+			@Override
+			public boolean matchesSafely(EventCollector item) {
+				return item.fFailures.size() == numberOfFailures;
 			}
 
 			public void describeTo(org.hamcrest.Description description) {
@@ -72,12 +72,12 @@ class EventCollector extends RunListener {
 
 	static Matcher<EventCollector> hasSingleFailureWithMessage(
 			final Matcher<String> messageMatcher) {
-		return new BaseMatcher<EventCollector>() {
-			public boolean matches(Object item) {
+		return new TypeSafeMatcher<EventCollector>() {
+			@Override
+			public boolean matchesSafely(EventCollector item) {
 				return hasSingleFailure().matches(item)
-						&& messageMatcher
-								.matches(((EventCollector) item).fFailures
-										.get(0).getMessage());
+						&& messageMatcher.matches(item.fFailures.get(0)
+								.getMessage());
 			}
 
 			public void describeTo(org.hamcrest.Description description) {
