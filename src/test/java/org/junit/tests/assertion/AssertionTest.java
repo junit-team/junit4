@@ -434,7 +434,7 @@ public class AssertionTest {
         String expected = "expected";
         String actual = "actual";
         
-        String expectedMessage = "identifier\nExpected: \"expected\"\n     got: \"actual\"\n";
+        String expectedMessage = "identifier\nExpected: \"expected\"\n     but: was \"actual\"";
         
         try {
             assertThat("identifier", actual, equalTo(expected));
@@ -444,7 +444,7 @@ public class AssertionTest {
     }
     
     @Test public void assertThatIncludesAdvancedMismatch() {
-        String expectedMessage = "identifier\nExpected: is an instance of java.lang.Integer\n     got: \"actual\"\n";
+        String expectedMessage = "identifier\nExpected: is an instance of java.lang.Integer\n     but: \"actual\" is a java.lang.String";
         
         try {
             assertThat("identifier", "actual", is(instanceOf(Integer.class)));
@@ -457,7 +457,7 @@ public class AssertionTest {
         String expected = "expected";
         String actual = "actual";
         
-        String expectedMessage = "\nExpected: \"expected\"\n     got: \"actual\"\n";
+        String expectedMessage = "\nExpected: \"expected\"\n     but: was \"actual\"";
         
         try {
             assertThat(actual, equalTo(expected));
