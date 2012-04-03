@@ -6,8 +6,8 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.Assert;
-import org.junit.internal.matchers.TypeSafeMatcher;
 import org.junit.runners.model.Statement;
 
 /**

@@ -2,15 +2,13 @@ package org.junit.tests.experimental.rules;
 
 import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.both;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.internal.matchers.TypeSafeMatcher;
 import org.junit.rules.ExpectedException;
 
 public class ExpectedExceptionRuleTest {
@@ -174,22 +172,6 @@ public class ExpectedExceptionRuleTest {
 		}
 	}
 
-
-
-	private static Matcher<String> startsWith(final String prefix) {
-		return new TypeSafeMatcher<String>() {
-			public void describeTo(Description description) {
-				description.appendText("starts with ");
-				description.appendText(prefix);
-			}
-		
-			@Override
-			public boolean matchesSafely(String item) {
-				return item.startsWith(prefix);
-			}
-		};
-	}
-	
 	@Test
 	public void failsWithMatcher() {
 		assertThat(testResult(ExpectedMessageMatcherFails.class),
