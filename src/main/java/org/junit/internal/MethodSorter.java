@@ -7,21 +7,21 @@ import java.util.Comparator;
 import org.junit.SortMethodsWith;
 
 public class MethodSorter {
-	/**
-	 * DEFAULT sort order
-	 */
-	public static Comparator<Method> DEFAULT = new Comparator<Method>() {
+    /**
+     * DEFAULT sort order
+     */
+    public static Comparator<Method> DEFAULT= new Comparator<Method>() {
         public int compare(Method m1, Method m2) {
             int i1 = m1.getName().hashCode();
             int i2 = m2.getName().hashCode();
-            return i1 != i2 ? i1 - i2 : m1.toString().compareTo(m2.toString());
+            return i1 != i2 ? i1 - i2 : MethodSorter.compare(m1.toString(), m2.toString());
         }
     };
     
     /**
      * Method name ascending sort order
      */
-	public static Comparator<Method> NAME_ASC = new Comparator<Method>() {
+    public static Comparator<Method> NAME_ASCENDING= new Comparator<Method>() {
         public int compare(Method m1, Method m2) {
             return MethodSorter.compare(m1.getName(), m2.getName());
         }
@@ -34,7 +34,7 @@ public class MethodSorter {
     /**
      * Method name descending sort order
      */
-	public static Comparator<Method> NAME_DESC = new Comparator<Method>() {
+    public static Comparator<Method> NAME_DESCENDING= new Comparator<Method>() {
         public int compare(Method m1, Method m2) {
             return MethodSorter.compare(m1.getName(), m2.getName()) * -1;
         }
@@ -54,11 +54,11 @@ public class MethodSorter {
      *       (non-)bug #7023180</a>
      */
     public static Method[] getDeclaredMethods(Class<?> clazz) {
-    	Comparator<Method> comparator = getSorter(clazz.getAnnotation(SortMethodsWith.class));
-    	
-        Method[] methods = clazz.getDeclaredMethods();
+        Comparator<Method> comparator= getSorter(clazz.getAnnotation(SortMethodsWith.class));
+        
+        Method[] methods= clazz.getDeclaredMethods();
         if (comparator != null) {
-        	Arrays.sort(methods, comparator);
+            Arrays.sort(methods, comparator);
         }
 
         return methods;
@@ -66,11 +66,11 @@ public class MethodSorter {
 
     private MethodSorter() {}
 
-	private static Comparator<Method> getSorter(SortMethodsWith sortMethodsWith) {
-		if (sortMethodsWith == null) {
-			return DEFAULT;
-		}
+    private static Comparator<Method> getSorter(SortMethodsWith sortMethodsWith) {
+        if (sortMethodsWith == null) {
+            return DEFAULT;
+        }
 
-		return sortMethodsWith.value().getComparator();
-	}
+        return sortMethodsWith.value().getComparator();
+    }
 }

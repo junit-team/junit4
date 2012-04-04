@@ -25,7 +25,7 @@ public class MethodSorterTest {
     }
     
     private String toString(Class<?> clazz, Method[] methods) {
-    	return Arrays.toString(methods).replace(clazz.getName() + '.', "");
+        return Arrays.toString(methods).replace(clazz.getName() + '.', "");
     }
     
     private String declaredMethods(Class<?> clazz) {
@@ -37,7 +37,7 @@ public class MethodSorterTest {
         assertEquals("[void testOne()]", declaredMethods(Super.class));
         assertEquals("[void testTwo()]", declaredMethods(Sub.class));
     }
-	
+    
     @SortMethodsWith(MethodSorters.DEFAULT)
     private static class DummySortWithDefault {
         Object alpha(int i, double d, Thread t) {return null;}
@@ -48,10 +48,10 @@ public class MethodSorterTest {
         void epsilon() {}
     }
 
-	@Test public void testDefaultSorter() {
+    @Test public void testDefaultSorter() {
         assertEquals("[void epsilon(), void beta(int[][]), java.lang.Object alpha(int,double,java.lang.Thread), void delta(), int gamma(), void gamma(boolean)]", declaredMethods(DummySortWithDefault.class));
-	}
-	
+    }
+    
     @SortMethodsWith(MethodSorters.JVM)
     private static class DummySortJvm {
         Object alpha(int i, double d, Thread t) {return null;}
@@ -62,14 +62,14 @@ public class MethodSorterTest {
         void epsilon() {}
     }
 
-	@Test public void testSortWithJvm() {
-		Class<?> clazz = DummySortJvm.class;
+    @Test public void testSortWithJvm() {
+        Class<?> clazz = DummySortJvm.class;
         String actual = toString(clazz, clazz.getDeclaredMethods());
 
         assertEquals(actual, declaredMethods(clazz));
-	}
+    }
 
-    @SortMethodsWith(MethodSorters.NAME_ASC)
+    @SortMethodsWith(MethodSorters.NAME_ASCENDING)
     private static class DummySortWithNameAsc {
         Object alpha(int i, double d, Thread t) {return null;}
         void beta(int[][] x) {}
@@ -79,11 +79,11 @@ public class MethodSorterTest {
         void epsilon() {}
     }
 
-	@Test public void testNameAsc() {
+    @Test public void testNameAsc() {
         assertEquals("[java.lang.Object alpha(int,double,java.lang.Thread), void beta(int[][]), void delta(), void epsilon(), int gamma(), void gamma(boolean)]", declaredMethods(DummySortWithNameAsc.class));
-	}
+    }
 
-    @SortMethodsWith(MethodSorters.NAME_DESC)
+    @SortMethodsWith(MethodSorters.NAME_DESCENDING)
     private static class DummySortWithNameDesc {
         Object alpha(int i, double d, Thread t) {return null;}
         void beta(int[][] x) {}
@@ -93,7 +93,7 @@ public class MethodSorterTest {
         void epsilon() {}
     }
 
-	@Test public void testNameDesc() {
+    @Test public void testNameDesc() {
         assertEquals("[int gamma(), void gamma(boolean), void epsilon(), void delta(), void beta(int[][]), java.lang.Object alpha(int,double,java.lang.Thread)]", declaredMethods(DummySortWithNameDesc.class));
-	}
+    }
 }

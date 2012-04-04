@@ -6,16 +6,17 @@ import java.util.Comparator;
 import org.junit.internal.MethodSorter;
 
 /**
- * Sort the methods into a specified execution order
+ * Sort the methods into a specified execution order.
+ * Defines common {@link MethodSorter} implementations.
  */
 public enum MethodSorters {
-	/** Name ascending */
-	NAME_ASC(MethodSorter.NAME_ASC),
-	/** Name descending */
-	NAME_DESC(MethodSorter.NAME_DESC),
-	/** default JVM, (no sort) */
+	/** Sorts the test methods by the method name, in lexicographic order */
+	NAME_ASCENDING(MethodSorter.NAME_ASCENDING),
+	/** Sorts the test methods by the method name, in reverse lexicographic order */
+	NAME_DESCENDING(MethodSorter.NAME_DESCENDING),
+	/** the order in which the tests are returned by the JVM, i.e. there is no sorting done */
 	JVM(null),
-	/** Default, deterministic but not predictable */
+	/** the default value, deterministic, but not predictable */
 	DEFAULT(MethodSorter.DEFAULT);
 	
 	private final Comparator<Method> fComparator;
