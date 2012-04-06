@@ -646,7 +646,20 @@ public class Assert {
 			Object actual) {
 		fail(format(message, expected, actual));
 	}
-
+	
+	private static <T> void failComparable(String message,
+			Comparable<T> reference, Comparable<T> actual, String comparison) {
+		String formatted= "";
+		if (message != null) {
+			formatted= message + " ";
+		}
+		String referenceString = String.valueOf(reference);
+		String actualString = String.valueOf(actual);
+		fail(formatted + "Expected " + comparison + ": "
+				+ formatClassAndValue(reference, referenceString)
+				+ " but was: " + formatClassAndValue(actual, actualString));
+	}
+	
 	static String format(String message, Object expected, Object actual) {
 		String formatted= "";
 		if (message != null && !message.equals(""))
@@ -789,5 +802,162 @@ public class Assert {
 			description.appendText("\n");
 			throw new java.lang.AssertionError(description.toString());
 		}
+	}
+
+	/**
+	 * Asserts that neither <code>reference</code> nor <code>actual</code> are
+	 * <code>null</code> because comparisons can never be made against a
+	 * <code>null</code> value.
+	 * 
+	 * @param reason
+	 *            The identifying message for the {@link AssertionError} (
+	 *            <code>null</code> okay)
+	 * @param reference
+	 *            The comparison reference value
+	 * @param actual
+	 *            The value to check against <code>reference</code>
+	 * @param comparison
+	 *            Text for the type of comparison being performed, in order to
+	 *            generate a meaningful assertion failure message.
+	 */
+	private static <T extends Comparable<T>> void assertComparableNullSafe(
+			String reason, T reference, T actual, String comparison) {
+		if (reference == null || actual == null) {
+			failComparable(reason, reference, actual, comparison);
+		}
+	}
+
+	/**
+	 * Asserts that <code>actual</code> is less than <code>reference</code>. If
+	 * not, an {@link AssertionError} is thrown with the given message. The
+	 * comparison will fail if either <code>actual</code> or
+	 * <code>reference</code> is <code>null</code>.
+	 * 
+	 * @param message
+	 *            The identifying message for the {@link AssertionError} (
+	 *            <code>null</code> okay)
+	 * @param reference
+	 *            The comparison reference value
+	 * @param actual
+	 *            The value to check against <code>reference</code>
+	 */
+	public static <T extends Comparable<T>> void assertLessThan(String message,
+			T reference, T actual) {
+		assertComparableNullSafe(message, reference, actual, "less than");
+		if (!(actual.compareTo(reference) < 0)) {
+			failComparable(message, reference, actual, "less than");
+		}
+	}
+
+	/**
+	 * Asserts that <code>actual</code> is less than <code>reference</code>. If
+	 * not, an {@link AssertionError} is thrown. The comparison will fail if
+	 * either <code>actual</code> or <code>reference</code> is <code>null</code>
+	 * .
+	 * 
+	 * @param reference
+	 *            The comparison reference value
+	 * @param actual
+	 *            The value to check against <code>reference</code>
+	 */
+	public static <T extends Comparable<T>> void assertLessThan(T reference,
+			T actual) {
+		assertLessThan(null, reference, actual);
+	}
+
+	/**
+	 * Asserts that <code>actual</code> is greater than <code>reference</code>.
+	 * If not, an {@link AssertionError} is thrown with the given message. The
+	 * comparison will fail if either <code>actual</code> or
+	 * <code>reference</code> is <code>null</code>.
+	 * 
+	 * @param message
+	 *            The identifying message for the {@link AssertionError} (
+	 *            <code>null</code> okay)
+	 * @param reference
+	 *            The comparison reference value
+	 * @param actual
+	 *            The value to check against <code>reference</code>
+	 */
+	public static <T extends Comparable<T>> void assertGreaterThan(
+			String message, T reference, T actual) {
+		assertComparableNullSafe(message, reference, actual, "greater than");
+		if (!(actual.compareTo(reference) > 0)) {
+			failComparable(message, reference, actual, "greater than");
+		}
+	}
+
+	/**
+	 * Asserts that <code>actual</code> is less than <code>reference</code>. If
+	 * not, an {@link AssertionError} is thrown. The comparison will fail if
+	 * either <code>actual</code> or <code>reference</code> is <code>null</code>
+	 * .
+	 * 
+	 * @param reference
+	 *            The comparison reference value
+	 * @param actual
+	 *            The value to check against <code>reference</code>
+	 */
+	public static <T extends Comparable<T>> void assertGreaterThan(T reference,
+			T actual) {
+		assertGreaterThan(null, reference, actual);
+	}
+
+	/**
+	 * Asserts that <code>actual</code> is equivalent to <code>reference</code>.
+	 * If not, an {@link AssertionError} is thrown. The comparison will fail if
+	 * either <code>actual</code> or <code>reference</code> is <code>null</code>
+	 * .
+	 * <p>
+	 * Note that this tests <em>equivalence</em>, not equality, i.e.
+	 * <code>actual.compareTo(reference) == 0</code> not
+	 * <code>actual.equalTo(reference)</code>.
+	 * <p>
+	 * Virtually all Java core classes that implement <code>Comparable</code>
+	 * have natural orderings that are consistent with equals. One exception is
+	 * <code>java.math.BigDecimal</code>, whose natural ordering equates
+	 * <code>BigDecimal</code> objects with equal values and different
+	 * precisions (such as 4.0 and 4.00).
+	 * 
+	 * @param message
+	 *            The identifying message for the {@link AssertionError} (
+	 *            <code>null</code> okay)
+	 * @param reference
+	 *            The comparison reference value
+	 * @param actual
+	 *            The value to check against <code>reference</code>
+	 */
+	public static <T extends Comparable<T>> void assertEquivalent(
+			String message, T reference, T actual) {
+		assertComparableNullSafe(message, reference, actual, "equivalent to");
+		if (!(actual.compareTo(reference) == 0)) {
+			failComparable(message, reference, actual, "equivalent to");
+		}
+	}
+
+	/**
+	 * Asserts that <code>actual</code> is equivalent to <code>reference</code>.
+	 * If not, an {@link AssertionError} is thrown. The comparison will fail if
+	 * either <code>actual</code> or <code>reference</code> is <code>null</code>
+	 * .
+	 * <p>
+	 * Note that this tests <em>equivalence</em>, not equality, i.e.
+	 * <code>actual.compareTo(reference) == 0</code> not
+	 * <code>actual.equalTo(reference)</code>.
+	 * <p>
+	 * Virtually all Java core classes that implement <code>Comparable</code>
+	 * have natural orderings that are consistent with equals. One exception is
+	 * <code>java.math.BigDecimal</code>, whose natural ordering equates
+	 * <code>BigDecimal</code> objects with equal values and different
+	 * precisions (such as 4.0 and 4.00).
+	 * 
+	 * @param reference
+	 *            The comparison reference value
+	 * @param actual
+	 *            The value to check against <code>reference</code>
+	 */
+	public static <T extends Comparable<T>> void assertEquivalent(T reference,
+			T actual) {
+		assertEquivalent(null, reference, actual);
 	}
 }

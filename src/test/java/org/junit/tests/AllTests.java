@@ -7,6 +7,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.junit.tests.assertion.AssertionTest;
 import org.junit.tests.assertion.BothTest;
+import org.junit.tests.assertion.ComparableAssertionTest;
 import org.junit.tests.assertion.EachTest;
 import org.junit.tests.assertion.MultipleFailureExceptionTest;
 import org.junit.tests.deprecated.JUnit4ClassRunnerTest;
@@ -158,7 +159,8 @@ import org.junit.tests.validation.ValidationTest;
 	BlockJUnit4ClassRunnerOverrideTest.class,
 	RuleFieldValidatorTest.class,
 	RuleChainTest.class,
-	BlockJUnit4ClassRunnerTest.class
+	BlockJUnit4ClassRunnerTest.class,
+	ComparableAssertionTest.class
 })
 public class AllTests {
 	public static Test suite() {
