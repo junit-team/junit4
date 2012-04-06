@@ -1,5 +1,7 @@
 package org.junit.runner.notification;
 
+import static java.util.Arrays.asList;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -34,15 +36,30 @@ public class RunNotifier {
     }
 
 	private abstract class SafeNotifier {
+		private final List<RunListener> fCurrentListeners;
+
+		SafeNotifier() {
+			this(fListeners);
+		}
+
+		SafeNotifier(List<RunListener> currentListeners) {
+			fCurrentListeners= currentListeners;
+		}
+
 		void run() {
 			synchronized (fListeners) {
-				for (Iterator<RunListener> all= fListeners.iterator(); all.hasNext();)
+				List<RunListener> safeListeners= new ArrayList<RunListener>();
+				List<Failure> failures= new ArrayList<Failure>();
+				for (Iterator<RunListener> all= fCurrentListeners.iterator(); all
+						.hasNext();)
 					try {
-						notifyListener(all.next());
+						RunListener listener= all.next();
+						notifyListener(listener);
+						safeListeners.add(listener);
 					} catch (Exception e) {
-						all.remove(); // Remove the offending listener first to avoid an infinite loop
-						fireTestFailure(new Failure(Description.TEST_MECHANISM, e));
+						failures.add(new Failure(Description.TEST_MECHANISM, e));
 					}
+				fireTestFailures(safeListeners, failures);
 			}
 		}
 		
@@ -93,13 +110,21 @@ public class RunNotifier {
 	 * Invoke to tell listeners that an atomic test failed.
 	 * @param failure the description of the test that failed and the exception thrown
 	 */
-	public void fireTestFailure(final Failure failure) {
-		new SafeNotifier() {
-			@Override
-			protected void notifyListener(RunListener each) throws Exception {
-				each.testFailure(failure);
-			};
-		}.run();
+	public void fireTestFailure(Failure failure) {
+		fireTestFailures(fListeners, asList(failure));
+	}
+
+	private void fireTestFailures(List<RunListener> listeners,
+			final List<Failure> failures) {
+		if (!failures.isEmpty())
+			new SafeNotifier(listeners) {
+				@Override
+				protected void notifyListener(RunListener listener)
+						throws Exception {
+					for (Failure each : failures)
+						listener.testFailure(each);
+				};
+			}.run();
 	}
 
 	/**
