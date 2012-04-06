@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.junit.SortMethodsWith;
+import org.junit.FixMethodOrder;
 
 public class MethodSorter {
     /**
@@ -19,7 +19,7 @@ public class MethodSorter {
     };
     
     /**
-     * Method name ascending sort order
+     * Method name ascending lexicograhic sort order
      */
     public static Comparator<Method> NAME_ASCENDING= new Comparator<Method>() {
         public int compare(Method m1, Method m2) {
@@ -32,16 +32,7 @@ public class MethodSorter {
     }
     
     /**
-     * Method name descending sort order
-     */
-    public static Comparator<Method> NAME_DESCENDING= new Comparator<Method>() {
-        public int compare(Method m1, Method m2) {
-            return MethodSorter.compare(m1.getName(), m2.getName()) * -1;
-        }
-    };
-    
-    /**
-     * Gets declared methods of a class in a predictable order, unless @SortMethodsWith(MethodSorters.JVM) is specified.
+     * Gets declared methods of a class in a predictable order, unless @FixMethodOrder(MethodSorters.JVM) is specified.
      * 
      * Using the JVM order is unwise since the Java platform does not
      * specify any particular order, and in fact JDK 7 returns a more or less
@@ -54,7 +45,7 @@ public class MethodSorter {
      *       (non-)bug #7023180</a>
      */
     public static Method[] getDeclaredMethods(Class<?> clazz) {
-        Comparator<Method> comparator= getSorter(clazz.getAnnotation(SortMethodsWith.class));
+        Comparator<Method> comparator= getSorter(clazz.getAnnotation(FixMethodOrder.class));
         
         Method[] methods= clazz.getDeclaredMethods();
         if (comparator != null) {
@@ -66,11 +57,11 @@ public class MethodSorter {
 
     private MethodSorter() {}
 
-    private static Comparator<Method> getSorter(SortMethodsWith sortMethodsWith) {
-        if (sortMethodsWith == null) {
+    private static Comparator<Method> getSorter(FixMethodOrder fixMethodOrder) {
+        if (fixMethodOrder == null) {
             return DEFAULT;
         }
 
-        return sortMethodsWith.value().getComparator();
+        return fixMethodOrder.value().getComparator();
     }
 }

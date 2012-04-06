@@ -24,7 +24,7 @@ import org.junit.runners.MethodSorters;
  * Here is an example:
  * 
  * <pre>
- * &#064;SortMethodsWith(MethodSorters.NAME_ASC)
+ * &#064;FixMethodOrder(MethodSorters.NAME_ASCENDING)
  * public class MyTest {
  * }
  * </pre>
@@ -33,7 +33,7 @@ import org.junit.runners.MethodSorters;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-public @interface SortMethodsWith {
+public @interface FixMethodOrder {
 	/**
 	 * Optionally specify <code>value</code> to have the methods executed in a particular order
 	 */
