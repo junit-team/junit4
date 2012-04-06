@@ -5,6 +5,13 @@ import junit.framework.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+import org.junit.test.EventCollectorMatchersTest;
+import org.junit.test.EventCollectorTest;
+import org.junit.test.JUnitSelfTestRunnerTest;
+import org.junit.test.internal.AtLeastOneEventTest;
+import org.junit.test.internal.HasDisplayNameTest;
+import org.junit.test.internal.HasMessageTest;
+import org.junit.test.internal.NumberOfEventsTest;
 import org.junit.tests.assertion.AssertionTest;
 import org.junit.tests.assertion.BothTest;
 import org.junit.tests.assertion.EachTest;
@@ -29,8 +36,8 @@ import org.junit.tests.experimental.rules.ExpectedExceptionRuleTest;
 import org.junit.tests.experimental.rules.ExternalResourceRuleTest;
 import org.junit.tests.experimental.rules.MethodRulesTest;
 import org.junit.tests.experimental.rules.NameRulesTest;
-import org.junit.tests.experimental.rules.RuleFieldValidatorTest;
 import org.junit.tests.experimental.rules.RuleChainTest;
+import org.junit.tests.experimental.rules.RuleFieldValidatorTest;
 import org.junit.tests.experimental.rules.TempFolderRuleTest;
 import org.junit.tests.experimental.rules.TemporaryFolderUsageTest;
 import org.junit.tests.experimental.rules.TestRuleTest;
@@ -158,7 +165,14 @@ import org.junit.tests.validation.ValidationTest;
 	BlockJUnit4ClassRunnerOverrideTest.class,
 	RuleFieldValidatorTest.class,
 	RuleChainTest.class,
-	BlockJUnit4ClassRunnerTest.class
+	BlockJUnit4ClassRunnerTest.class,
+	AtLeastOneEventTest.class,
+	HasDisplayNameTest.class,
+	HasMessageTest.class,
+	NumberOfEventsTest.class,
+	EventCollectorMatchersTest.class,
+	EventCollectorTest.class,
+	JUnitSelfTestRunnerTest.class
 })
 public class AllTests {
 	public static Test suite() {
