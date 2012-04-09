@@ -23,6 +23,7 @@ import org.junit.runners.model.TestClass;
  * validates methods with a {@link ClassRule} annotation and the
  * {@link #RULE_METHOD_VALIDATOR} validates methods with a {@link Rule} annotation.
  */
+@SuppressWarnings("deprecation")
 public enum RuleFieldValidator {
 	/**
 	 * Validates fields with a {@link ClassRule} annotation.
@@ -98,7 +99,6 @@ public enum RuleFieldValidator {
 		return TestRule.class.isAssignableFrom(member.getType());
 	}
 
-	@SuppressWarnings("deprecation")
 	private boolean isMethodRule(FrameworkMember<?> member) {
 		return MethodRule.class.isAssignableFrom(member.getType());
 	}
