@@ -2,6 +2,7 @@ package org.junit.tests;
 
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
+import org.junit.internal.MethodSorterTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -25,11 +26,14 @@ import org.junit.tests.experimental.parallel.ParallelClassTest;
 import org.junit.tests.experimental.parallel.ParallelMethodTest;
 import org.junit.tests.experimental.rules.BlockJUnit4ClassRunnerOverrideTest;
 import org.junit.tests.experimental.rules.ClassRulesTest;
-import org.junit.tests.experimental.rules.ExpectedExceptionRuleTest;
+import org.junit.tests.experimental.rules.ExpectedExceptionTest;
 import org.junit.tests.experimental.rules.ExternalResourceRuleTest;
 import org.junit.tests.experimental.rules.MethodRulesTest;
 import org.junit.tests.experimental.rules.NameRulesTest;
+import org.junit.tests.experimental.rules.RuleFieldValidatorTest;
+import org.junit.tests.experimental.rules.RuleChainTest;
 import org.junit.tests.experimental.rules.TempFolderRuleTest;
+import org.junit.tests.experimental.rules.TemporaryFolderUsageTest;
 import org.junit.tests.experimental.rules.TestRuleTest;
 import org.junit.tests.experimental.rules.TimeoutRuleTest;
 import org.junit.tests.experimental.rules.VerifierRuleTest;
@@ -52,6 +56,7 @@ import org.junit.tests.manipulation.FilterTest;
 import org.junit.tests.manipulation.FilterableTest;
 import org.junit.tests.manipulation.SingleMethodTest;
 import org.junit.tests.manipulation.SortableTest;
+import org.junit.tests.running.classes.BlockJUnit4ClassRunnerTest;
 import org.junit.tests.running.classes.EnclosedTest;
 import org.junit.tests.running.classes.IgnoreClassTest;
 import org.junit.tests.running.classes.ParameterizedTestTest;
@@ -75,7 +80,7 @@ import org.junit.tests.validation.FailedConstructionTest;
 import org.junit.tests.validation.InaccessibleBaseClassTest;
 import org.junit.tests.validation.ValidationTest;
 
-// These test files need to be cleaned.  See
+// These test files need to be cleaned. See
 // https://sourceforge.net/pm/task.php?func=detailtask&project_task_id=136507&group_id=15278&group_project_id=51407
 
 @SuppressWarnings("deprecation")
@@ -143,14 +148,19 @@ import org.junit.tests.validation.ValidationTest;
 	ParentRunnerTest.class,
 	NameRulesTest.class,
 	ClassRulesTest.class,
-	ExpectedExceptionRuleTest.class,
+	ExpectedExceptionTest.class,
 	TempFolderRuleTest.class,
+	TemporaryFolderUsageTest.class,
 	ExternalResourceRuleTest.class,
 	VerifierRuleTest.class,
 	CategoryTest.class,
 	CategoriesAndParameterizedTest.class,
 	ParentRunnerFilteringTest.class,
-	BlockJUnit4ClassRunnerOverrideTest.class
+	BlockJUnit4ClassRunnerOverrideTest.class,
+	RuleFieldValidatorTest.class,
+	RuleChainTest.class,
+	BlockJUnit4ClassRunnerTest.class,
+	MethodSorterTest.class
 })
 public class AllTests {
 	public static Test suite() {

@@ -22,11 +22,13 @@ public class SimpleTest  {
 		 return new JUnit4TestAdapter(SimpleTest.class);
 	}
 
-	public int result; // avoid warning for not using result
+	public int unused;
 	@Test public void divideByZero() {
 		int zero= 0;
-		result= 8/zero;
+		int result= 8/zero;
+		unused= result; // avoid warning for not using result
 	}
+	
 	@Test public void testEquals() {
 		assertEquals(12, 12);
 		assertEquals(12L, 12L);

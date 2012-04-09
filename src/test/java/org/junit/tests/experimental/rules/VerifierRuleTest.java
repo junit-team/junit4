@@ -128,6 +128,6 @@ public class VerifierRuleTest {
 	@Test public void verifierRunsAfterTest() {
 		sequence = "";
 		assertThat(testResult(UsesVerifier.class), isSuccessful());
-		assertThat(sequence, is("test verify "));
+		assertEquals("test verify ", sequence);
 	}
 }

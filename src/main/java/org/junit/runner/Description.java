@@ -28,6 +28,9 @@ import java.util.regex.Pattern;
 public class Description implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	private static final Pattern METHOD_AND_CLASS_NAME_PATTERN= Pattern
+			.compile("(.*)\\((.*)\\)");
+
 	/**
 	 * Create a <code>Description</code> named <code>name</code>.
 	 * Generally, you will add children to this <code>Description</code>.
@@ -36,8 +39,6 @@ public class Description implements Serializable {
 	 * @return a <code>Description</code> named <code>name</code>
 	 */
 	public static Description createSuiteDescription(String name, Annotation... annotations) {
-		if (name.length() == 0)
-			throw new IllegalArgumentException("name must have non-zero length");
 		return new Description(name, annotations);
 	}
 
@@ -88,10 +89,12 @@ public class Description implements Serializable {
 	
 	private final ArrayList<Description> fChildren= new ArrayList<Description>();
 	private final String fDisplayName;
-	
 	private final Annotation[] fAnnotations;
 	
-	private Description(final String displayName, Annotation... annotations) {
+	private Description(String displayName, Annotation... annotations) {
+		if ((displayName == null) || (displayName.length() == 0))
+			throw new IllegalArgumentException(
+					"The display name must not be empty.");
 		fDisplayName= displayName;
 		fAnnotations= annotations;
 	}
@@ -204,7 +207,7 @@ public class Description implements Serializable {
 		if (name == null)
 			return null;
 		try {
-			return Class.forName(name);
+			return Class.forName(name, false, getClass().getClassLoader());
 		} catch (ClassNotFoundException e) {
 			return null;
 		}
@@ -215,10 +218,7 @@ public class Description implements Serializable {
 	 * the name of the class of the test instance
 	 */
 	public String getClassName() {
-		Matcher matcher= methodStringMatcher();
-		return matcher.matches()
-			? matcher.group(2)
-			: toString();
+		return methodAndClassNamePatternGroupOrDefault(2, toString());
 	}
 	
 	/**
@@ -226,17 +226,12 @@ public class Description implements Serializable {
 	 * the name of the method (or null if not)
 	 */
 	public String getMethodName() {
-		return parseMethod();
+		return methodAndClassNamePatternGroupOrDefault(1, null);
 	}
 
-	private String parseMethod() {
-		Matcher matcher= methodStringMatcher();
-		if (matcher.matches())
-			return matcher.group(1);
-		return null;
-	}
-
-	private Matcher methodStringMatcher() {
-		return Pattern.compile("(.*)\\((.*)\\)").matcher(toString());
+	private String methodAndClassNamePatternGroupOrDefault(int group,
+			String defaultString) {
+		Matcher matcher= METHOD_AND_CLASS_NAME_PATTERN.matcher(toString());
+		return matcher.matches() ? matcher.group(group) : defaultString;
 	}
 }

@@ -48,10 +48,11 @@ public class SimpleTest extends TestCase {
 		assertTrue(result == 6);
 	}
 
-	public int result; // avoid warning for not using result
+	public int unused;
 	public void testDivideByZero() {
 		int zero= 0;
-		result= 8/zero;
+		int result= 8/zero;
+		unused= result; // avoid warning for not using result
 	}
 	public void testEquals() {
 		assertEquals(12, 12);

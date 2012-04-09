@@ -13,7 +13,7 @@ import org.junit.runners.model.Statement;
  *        private ErrorLog errorLog = new ErrorLog();
  *     
  *        &#064;Rule
- *        public MethodRule verifier = new Verifier() {
+ *        public TestRule verifier = new Verifier() {
  *           &#064;Override public void verify() {
  *              assertTrue(errorLog.isEmpty());
  *           }

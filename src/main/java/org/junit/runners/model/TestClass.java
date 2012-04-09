@@ -1,5 +1,7 @@
 package org.junit.runners.model;
 
+import static java.lang.reflect.Modifier.isStatic;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -12,6 +14,7 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.internal.MethodSorter;
 
 /**
  * Wraps a class to be run, providing method validation and annotation searching
@@ -36,7 +39,7 @@ public class TestClass {
 					"Test class can only have one constructor");
 
 		for (Class<?> eachClass : getSuperClasses(fClass)) {
-			for (Method eachMethod : eachClass.getDeclaredMethods())
+			for (Method eachMethod : MethodSorter.getDeclaredMethods(eachClass))
 				addToAnnotationLists(new FrameworkMethod(eachMethod),
 						fMethodsForAnnotations);
 			for (Field eachField : eachClass.getDeclaredFields())
@@ -149,5 +152,25 @@ public class TestClass {
 			}
 		}
 		return results;
+	}
+
+	public <T> List<T> getAnnotatedMethodValues(Object test,
+			Class<? extends Annotation> annotationClass, Class<T> valueClass) {
+		List<T> results= new ArrayList<T>();
+		for (FrameworkMethod each : getAnnotatedMethods(annotationClass)) {
+			try {
+				Object fieldValue= each.invokeExplosively(test, new Object[]{});
+				if (valueClass.isInstance(fieldValue))
+					results.add(valueClass.cast(fieldValue));
+			} catch (Throwable e) {
+				throw new RuntimeException(
+						"Exception in " + each.getName(), e);
+			}
+		}
+		return results;
+	}
+	
+	public boolean isANonStaticInnerClass() {
+		return fClass.isMemberClass() && !isStatic(fClass.getModifiers());
 	}
 }

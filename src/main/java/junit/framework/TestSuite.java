@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
+import org.junit.internal.MethodSorter;
 
 /**
  * <p>A <code>TestSuite</code> is a <code>Composite</code> of Tests.
@@ -146,7 +147,7 @@ public class TestSuite implements Test {
 		Class<?> superClass= theClass;
 		List<String> names= new ArrayList<String>();
 		while (Test.class.isAssignableFrom(superClass)) {
-			for (Method each : superClass.getDeclaredMethods())
+			for (Method each : MethodSorter.getDeclaredMethods(superClass))
 				addTestMethod(each, names, theClass);
 			superClass= superClass.getSuperclass();
 		}
