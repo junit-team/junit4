@@ -28,7 +28,7 @@
 
   <property name="javadocdir" location="${dist}/javadoc" />
   <property name="javadoczip" location="${dist}-javadoc.zip" />
-  <property name="hamcrestlib" location="lib/hamcrest-core-1.1.jar" />
+  <property name="hamcrestlib" location="lib/hamcrest-core-1.3.0RC2.jar" />
   <property name="hamcrestsrc" location="${dist}/temp.hamcrest.source" />
 
   <target name="init">
