@@ -16,7 +16,7 @@ public class MethodSorterTest {
     private static final String DELTA= "void delta()";
     private static final String EPSILON= "void epsilon()";
     
-    private static class Dummy {
+    public static class Dummy {
         Object alpha(int i, double d, Thread t) {return null;}
         void beta(int[][] x) {}
         int gamma() {return 0;}
@@ -24,10 +24,10 @@ public class MethodSorterTest {
         void delta() {}
         void epsilon() {}
     }
-    private static class Super {
+    public static class Super {
         void testOne() {}
     }
-    private static class Sub extends Super {
+    public static class Sub extends Super {
         void testTwo() {}
     }
     
@@ -47,7 +47,7 @@ public class MethodSorterTest {
     }
     
     @FixMethodOrder(MethodSorters.DEFAULT)
-    private static class DummySortWithDefault {
+    public static class DummySortWithDefault {
         Object alpha(int i, double d, Thread t) {return null;}
         void beta(int[][] x) {}
         int gamma() {return 0;}
@@ -62,7 +62,7 @@ public class MethodSorterTest {
     }
     
     @FixMethodOrder(MethodSorters.JVM)
-    private static class DummySortJvm {
+    public static class DummySortJvm {
         Object alpha(int i, double d, Thread t) {return null;}
         void beta(int[][] x) {}
         int gamma() {return 0;}
@@ -79,7 +79,7 @@ public class MethodSorterTest {
     }
 
     @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-    private static class DummySortWithNameAsc {
+    public static class DummySortWithNameAsc {
         Object alpha(int i, double d, Thread t) {return null;}
         void beta(int[][] x) {}
         int gamma() {return 0;}

@@ -99,7 +99,6 @@ public enum RuleFieldValidator {
 		return TestRule.class.isAssignableFrom(member.getType());
 	}
 
-	@SuppressWarnings("deprecation")
 	private boolean isMethodRule(FrameworkMember<?> member) {
 		return MethodRule.class.isAssignableFrom(member.getType());
 	}

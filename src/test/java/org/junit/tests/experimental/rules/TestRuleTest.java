@@ -490,10 +490,10 @@ public class TestRuleTest {
 
 	@Test
 	public void methodSucceeded() {
-		WatchmanTest.watchedLog= "";
+		MethodWatchmanTest.watchedLog= "";
 		JUnitCore.runClasses(WatchmanTest.class);
-		assertThat(WatchmanTest.watchedLog, containsString(String.format("fails(%s) AssertionError", WatchmanTest.class.getName())));
-		assertThat(WatchmanTest.watchedLog, containsString(String.format("succeeds(%s) success!", WatchmanTest.class.getName())));
+		assertThat(MethodWatchmanTest.watchedLog, containsString(String.format("fails(%s) AssertionError", MethodWatchmanTest.class.getName())));
+		assertThat(MethodWatchmanTest.watchedLog, containsString(String.format("succeeds(%s) success!", MethodWatchmanTest.class.getName())));
 	}
 
 	public static class MethodBeforesAndAfters {
