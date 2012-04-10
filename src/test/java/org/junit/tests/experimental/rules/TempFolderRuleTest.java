@@ -158,6 +158,28 @@ public class TempFolderRuleTest {
 		assertFalse(folder.getRoot().exists());
 	}
 
+	public static class NameClashes {
+		@Rule
+		public TemporaryFolder folder= new TemporaryFolder();
+		
+		@Test
+		public void fileWithFileClash() throws IOException {
+			folder.newFile("something.txt");
+			folder.newFile("something.txt");
+		}
+		
+		@Test
+		public void fileWithFolderTest() throws IOException {
+			folder.newFolder("dummy");
+			folder.newFile("dummy");
+		}
+	}
+	
+	@Test
+	public void nameClashesResultInTestFailures() {
+		assertThat(testResult(NameClashes.class), failureCountIs(2));
+	}
+	
 	private static final String GET_ROOT_DUMMY= "dummy-getRoot";
 
 	private static final String NEW_FILE_DUMMY= "dummy-newFile";
