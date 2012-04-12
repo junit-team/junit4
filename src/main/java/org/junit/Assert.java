@@ -180,7 +180,7 @@ public class Assert {
 	 * @param first
 	 * 			  first value to check
 	 * @param second
-	 *            the value to check against <code>first</code>
+	 * 			  the value to check against <code>first</code>
 	 */
 	static public void assertNotEquals(Object first, Object second) {
 		assertNotEquals(null, first, second);
