@@ -159,7 +159,7 @@ public class Assert {
 	 * they are considered equal.
 	 * @param message
 	 * 			  the identifying message for the {@link AssertionError} (<code>null</code>
-	 *            okay)
+	 * 			  okay)
 	 * @param first
 	 * 			  first value to check
 	 * @param second
