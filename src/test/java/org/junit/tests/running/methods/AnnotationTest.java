@@ -1,6 +1,5 @@
 package org.junit.tests.running.methods;
 
-import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 

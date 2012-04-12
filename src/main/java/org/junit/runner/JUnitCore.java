@@ -39,12 +39,13 @@ public class JUnitCore {
 	}
 
 	/**
-	 * Do not use. Testing purposes only.
-	 * @param system 
+	 * Runs main and exits
+	 * @param system
+	 * @args args from main()
 	 */
-	public static void runMainAndExit(JUnitSystem system, String... args) {
+	private static void runMainAndExit(JUnitSystem system, String... args) {
 		Result result= new JUnitCore().runMain(system, args);
-		system.exit(result.wasSuccessful() ? 0 : 1);
+		System.exit(result.wasSuccessful() ? 0 : 1);
 	}
 
 	/**
@@ -70,10 +71,10 @@ public class JUnitCore {
 	}
 	
 	/**
-	 * Do not use. Testing purposes only.
 	 * @param system 
+	 * @args args from main()
 	 */
-	public Result runMain(JUnitSystem system, String... args) {
+	private Result runMain(JUnitSystem system, String... args) {
 		system.out().println("JUnit version " + Version.id());
 		List<Class<?>> classes= new ArrayList<Class<?>>();
 		List<Failure> missingClasses= new ArrayList<Failure>();
