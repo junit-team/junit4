@@ -505,10 +505,12 @@ public class AssertionTest {
 		
 		try {
 			assertNotEquals(message, value1, value2);
-			fail();
 		} catch (AssertionError e) {
 			assertEquals(message + ". Actual: " + value1, e.getMessage());
+			return;
 		}
+		
+		fail("Failed on assertion.");
 	}
 	
 	@Test
@@ -518,10 +520,12 @@ public class AssertionTest {
 		
 		try {
 			assertNotEquals(value1, value2);
-			fail();
 		} catch (AssertionError e) {
 			assertTrue(e.getMessage().contains(value1.toString()));
+			return;
 		}
+		
+		fail("Failed on assertion.");
 	}
 	
 	@Test

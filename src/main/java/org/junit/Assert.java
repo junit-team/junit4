@@ -163,7 +163,7 @@ public class Assert {
 	 * @param first
 	 * 			  first value to check
 	 * @param second
-	 *            the value to check against <code>first</code>
+	 * 			  the value to check against <code>first</code>
 	 */
 	static public void assertNotEquals(String message, Object first, 
 			Object second) {
@@ -199,8 +199,8 @@ public class Assert {
 	 * Asserts that two longs are <b>not</b> equals. If they are, an
 	 * {@link AssertionError} is thrown with the given message.
 	 * @param message
-	 *            the identifying message for the {@link AssertionError} (<code>null</code>
-	 *            okay)
+	 * 			  the identifying message for the {@link AssertionError} (<code>null</code>
+	 * 			  okay)
 	 * @param first
 	 * 			  first value to check
 	 * @param second
