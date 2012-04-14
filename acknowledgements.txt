@@ -100,11 +100,6 @@
 2011 Jun 06
      Vampire@github: Report for GH-235: 4.7 release notes incorrect.
 
-<<<<<<< HEAD
-2011 Jun 25
-     Juan Cortez (jcortez@github): Fixed issue #219 where floats were being 
-	 printed and represented as doubles in error messages.
-=======
 2011 Jun 24
      Samuel Le Berrigaud (sleberrigaud@github): Report for GH-248:
             protected BlockJUnit4ClassRunner#rules method removed from 4.8.2
@@ -113,6 +108,10 @@
     Daniel Rothmaler (drothmaler@github):
         #299: random temp file/folder creation 
         #300: ErrorCollector.checkThat overload
+        
+2011 Jun 25
+     Juan Cortez (jcortez@github): Fixed issue #219 where floats were being 
+	 printed and represented as doubles in error messages.
 
 2011 Jul 06
      Stefan Birkner: Fixed wrong documentation of ClassRule (github#254).
