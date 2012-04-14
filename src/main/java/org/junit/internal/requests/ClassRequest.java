@@ -6,9 +6,10 @@ import org.junit.runner.Request;
 import org.junit.runner.Runner;
 
 public class ClassRequest extends Request {
+	private final Object fRunnerLock = new Object();
 	private final Class<?> fTestClass;
-
-	private boolean fCanUseSuiteMethod;
+	private final boolean fCanUseSuiteMethod;
+	private Runner fRunner;
 
 	public ClassRequest(Class<?> testClass, boolean canUseSuiteMethod) {
 		fTestClass= testClass;
@@ -21,6 +22,11 @@ public class ClassRequest extends Request {
 
 	@Override
 	public Runner getRunner() {
-		return new AllDefaultPossibilitiesBuilder(fCanUseSuiteMethod).safeRunnerForClass(fTestClass);
+		synchronized (fRunnerLock) {
+			if (fRunner == null) {
+				fRunner = new AllDefaultPossibilitiesBuilder(fCanUseSuiteMethod).safeRunnerForClass(fTestClass);
+			}
+			return fRunner;
+		}
 	}
 }

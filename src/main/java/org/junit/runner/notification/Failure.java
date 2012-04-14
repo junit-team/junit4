@@ -1,6 +1,7 @@
 package org.junit.runner.notification;
 
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
 
 import org.junit.runner.Description;
@@ -12,7 +13,8 @@ import org.junit.runner.Description;
  * test (for example, if a {@link org.junit.BeforeClass} method is not static), it may describe
  * something other than a single test.
  */
-public class Failure {
+public class Failure implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private final Description fDescription;
 	private final Throwable fThrownException;
 

@@ -1,5 +1,8 @@
 package org.junit.runners;
 
+import static org.junit.internal.runners.rules.RuleFieldValidator.CLASS_RULE_VALIDATOR;
+import static org.junit.internal.runners.rules.RuleFieldValidator.CLASS_RULE_METHOD_VALIDATOR;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -27,7 +30,6 @@ import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
-import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.MultipleFailureException;
@@ -109,6 +111,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	protected void collectInitializationErrors(List<Throwable> errors) {
 		validatePublicVoidNoArgMethods(BeforeClass.class, true, errors);
 		validatePublicVoidNoArgMethods(AfterClass.class, true, errors);
+		validateClassRules(errors);
 	}
 
 	/**
@@ -127,6 +130,11 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
 		for (FrameworkMethod eachTestMethod : methods)
 			eachTestMethod.validatePublicVoidNoArg(isStatic, errors);
+	}
+
+	private void validateClassRules(List<Throwable> errors) {
+		CLASS_RULE_VALIDATOR.validate(getTestClass(), errors);
+		CLASS_RULE_METHOD_VALIDATOR.validate(getTestClass(), errors);
 	}
 
 	/** 
@@ -201,26 +209,11 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	 *         each method in the tested class.
 	 */
 	protected List<TestRule> classRules() {
-		List<TestRule> results= new ArrayList<TestRule>();
-		for (FrameworkField field : classRuleFields())
-			results.add(getClassRule(field));
-		return results;
-	}
+		List<TestRule> result= fTestClass.getAnnotatedMethodValues(null, ClassRule.class, TestRule.class);
 
-	private TestRule getClassRule(final FrameworkField field) {
-		try {
-			return (TestRule) field.get(null);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(
-					"How did getAnnotatedFields return a field we couldn't access?");
-		}
-	}
-
-	/**
-	 * @return list of {@link FrameworkField}s annotated with {@link Rule}
-	 */
-	protected List<FrameworkField> classRuleFields() {
-		return fTestClass.getAnnotatedFields(ClassRule.class);
+		result.addAll(fTestClass.getAnnotatedFieldValues(null, ClassRule.class, TestRule.class));
+		
+		return result;
 	}
 
 	/**
@@ -283,6 +276,14 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 		}
 	}
 	
+	/**
+	 * @return the annotations that should be attached to this runner's 
+	 * description.
+	 */
+	protected Annotation[] getRunnerAnnotations() {
+		return fTestClass.getAnnotations();
+	}
+	
 	//
 	// Implementation of Runner
 	// 
@@ -290,7 +291,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 	@Override
 	public Description getDescription() {
 		Description description= Description.createSuiteDescription(getName(),
-				fTestClass.getAnnotations());
+				getRunnerAnnotations());
 		for (T child : getFilteredChildren())
 			description.addChild(describeChild(child));
 		return description;
@@ -339,7 +340,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 			sortChild(each);
 		Collections.sort(getFilteredChildren(), comparator());
 	}
-	
+
 	//
 	// Private implementation
 	// 

@@ -8,8 +8,8 @@
     <name>JUnit</name>
     <url>http://junit.org</url>
     <description>
-        JUnit is a regression testing framework written by Erich Gamma and Kent Beck. It is used by the developer who
-        implements unit tests in Java.
+        JUnit is a regression testing framework written by Erich Gamma and Kent Beck.
+        It is used by the developer who implements unit tests in Java.
     </description>
     <organization>
         <name>JUnit</name>
@@ -35,6 +35,13 @@
         <developerConnection>scm:git:git@github.com:KentBeck/junit.git</developerConnection>
         <url>http://github.com/KentBeck/junit/tree/master</url>
     </scm>
+    <developers>
+      <developer>
+        <id>dsaff</id>
+        <name>David Saff</name>
+        <email>david@saff.net</email>
+      </developer>
+    </developers>
     <build>
         <plugins>
             <plugin>

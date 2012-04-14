@@ -83,4 +83,39 @@ public class TestClassTest {
 		assertThat(new TestClass(SubclassWithField.class).getAnnotatedFields(
 				Rule.class).size(), is(1));
 	}
+
+	public static class OuterClass {
+		public class NonStaticInnerClass {
+		}
+	}
+
+	@Test
+	public void identifyNonStaticInnerClass() {
+		assertThat(
+				new TestClass(OuterClass.NonStaticInnerClass.class)
+						.isANonStaticInnerClass(),
+				is(true));
+	}
+
+	public static class OuterClass2 {
+		public static class StaticInnerClass {
+		}
+	}
+
+	@Test
+	public void dontMarkStaticInnerClassAsNonStatic() {
+		assertThat(
+				new TestClass(OuterClass2.StaticInnerClass.class)
+						.isANonStaticInnerClass(),
+				is(false));
+	}
+
+	public static class SimpleClass {
+	}
+
+	@Test
+	public void dontMarkNonInnerClassAsInnerClass() {
+		assertThat(new TestClass(SimpleClass.class).isANonStaticInnerClass(),
+				is(false));
+	}
 }

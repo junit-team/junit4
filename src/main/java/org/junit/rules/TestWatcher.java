@@ -1,5 +1,6 @@
 package org.junit.rules;
 
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
@@ -13,7 +14,7 @@ import org.junit.runners.model.Statement;
  * 	private static String watchedLog;
  * 
  * 	&#064;Rule
- * 	public MethodRule watchman= new TestWatcher() {
+ * 	public TestRule watchman= new TestWatcher() {
  * 		&#064;Override
  * 		protected void failed(Description d) {
  * 			watchedLog+= d + &quot;\n&quot;;
@@ -45,6 +46,8 @@ public abstract class TestWatcher implements TestRule {
 				try {
 					base.evaluate();
 					succeeded(description);
+				} catch (AssumptionViolatedException e) {
+					throw e;
 				} catch (Throwable t) {
 					failed(t, description);
 					throw t;
