@@ -1,4 +1,4 @@
-## Summary of Changes in version 4.9 [unreleased!] ##
+## Summary of Changes in version 4.9, final ##
 
 Release theme: Test-class and suite level Rules.
 
@@ -17,7 +17,7 @@ all the test classes run, and disconnects after they are finished:
 	public class UsesExternalResource {
 		public static Server myServer= new Server();
 	
-		@Rule
+		@ClassRule
 		public static ExternalResource resource= new ExternalResource() {
 			@Override
 			protected void before() throws Throwable {
@@ -42,6 +42,11 @@ should be transparent to most users.  `TestWatchman` has been deprecated,
 and replaced by `TestWatcher`, which has the same functionality, but implements
 the new type.
 
+### Maven support ###
+
+Maven bundles have, in the past, been uploaded by kind volunteers.  Starting
+with this release, the JUnit team is attempting to perform this task ourselves.
+
 ### LICENSE checked in ###
 
 The Common Public License that JUnit is released under is now included
@@ -59,18 +64,26 @@ in the source repository.
   and will be run correctly.  Trying to assign categories to methods within
   such a class will flag an error.
 
-- github#163: Bad comparison failure message when using assertEquals(String, String)
-
-  Thanks to `@kcooney`
-
 - github#38: ParentRunner filters more than once
 
   Thanks to `@reinholdfuereder`
+
+- github#248: protected BlockJUnit4ClassRunner#rules method removed from 4.8.2
+- github#187: Accidental dependency on Java 6
+
+Thanks to `@kcooney` for:
+
+- github#163: Bad comparison failure message when using assertEquals(String, String)
+- github#227: ParentRunner now assumes that getChildren() returns a modifiable list
 
 ### Minor changes ###
 
 - Backed out unused folder "experimental-use-of-antunit", replaced by 
   bash-based script at build_tests.sh
+- Various Javadoc fixes
+
+Thanks to `@kcooney` for:
 
 - Made MultipleFailureException public, to assist extension writers.
-  Thanks to `@kcooney`
+- github#240: Add "test" target to build.xml, for faster ant-driven testing.
+- github#247: Give InitializationError a useful message
