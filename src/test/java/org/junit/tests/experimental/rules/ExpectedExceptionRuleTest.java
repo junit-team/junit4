@@ -1,17 +1,20 @@
 package org.junit.tests.experimental.rules;
 
-import static org.hamcrest.CoreMatchers.any;
-import static org.junit.Assert.assertThat;
-import static org.junit.experimental.results.PrintableResult.testResult;
-import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
-import static org.junit.experimental.results.ResultMatchers.isSuccessful;
-import static org.junit.matchers.JUnitMatchers.both;
+import org.hamcrest.CoreMatchers;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.internal.matchers.TypeSafeMatcher;
 import org.junit.rules.ExpectedException;
+
+import static org.hamcrest.CoreMatchers.any;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.experimental.results.PrintableResult.testResult;
+import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
+import static org.junit.experimental.results.ResultMatchers.isSuccessful;
+import static org.junit.matchers.JUnitMatchers.both;
 
 public class ExpectedExceptionRuleTest {
 	public static class HasExpectedException {
@@ -42,7 +45,7 @@ public class ExpectedExceptionRuleTest {
 
             thrown.expect(IllegalArgumentException.class);
             thrown.expectMessage("Ack!");
-            thrown.expectCause(expectedCause);
+            thrown.expectCause(is(expectedCause));
 
             throw new IllegalArgumentException("Ack!", expectedCause);
         }
@@ -51,7 +54,7 @@ public class ExpectedExceptionRuleTest {
         public void throwsIllegalArgumentExceptionWithCauseExplicitlyNull() {
             thrown.expect(IllegalArgumentException.class);
             thrown.expectMessage("Ack!");
-            thrown.expectCause(null);
+            thrown.expectCause(CoreMatchers.<Throwable>nullValue());
 
             throw new IllegalArgumentException("Ack!");
         }
@@ -260,7 +263,7 @@ public class ExpectedExceptionRuleTest {
 		public void throwWithCause() {
             thrown.expect(IllegalArgumentException.class);
 			thrown.expectMessage("Ack!");
-            thrown.expectCause(EXPECTED_CAUSE);
+            thrown.expectCause(is(EXPECTED_CAUSE));
 
 			throw new IllegalArgumentException("Ack!", new NullPointerException("an unexpected cause"));
 		}
