@@ -23,7 +23,7 @@ import java.util.*;
  * Categories must be annotated on the direct method or class.
  * <p>
  * When filtering every individual test method to run, the child categories are
- * those which are declared altogether on the particular test method and test
+ * those which are declared altogether on the particular test method or test
  * class via {@link Category}.
  * <p>
  * Static parent categories are declared on a suite using {@link IncludeCategory}
