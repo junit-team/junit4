@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd ">
     <modelVersion>4.0.0</modelVersion>
     <groupId>junit</groupId>
-    <artifactId>@artifactId@</artifactId>
+    <artifactId>junit</artifactId>
     <version>@version@</version>
     <name>JUnit</name>
     <url>http://junit.org</url>
@@ -62,7 +62,6 @@
           <scope>compile</scope>
         </dependency>
     </dependencies>
-
     <properties>
          <jdk.version>1.5</jdk.version>
     </properties>
