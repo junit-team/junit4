@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
-import org.junit.tests.TestSystem;
 
 public class JUnitCoreReturnsCorrectExitCodeTest {
 	
@@ -31,9 +30,12 @@ public class JUnitCoreReturnsCorrectExitCodeTest {
 		runClass(getClass().getName() + "$Succeed", 0);
 	}
 
-	private void runClass(String className, int returnCode) {
-		TestSystem system= new TestSystem();
-		JUnitCore.runMainAndExit(system, className); 
-		assertEquals(returnCode, system.fCode);
+	private void runClass(final String className, int returnCode) {
+		Integer exitValue= new MainRunner().runWithCheckForSystemExit(new Runnable() {
+			public void run() {
+				JUnitCore.main(className); 
+			}
+		});
+		assertEquals(Integer.valueOf(returnCode), exitValue);
 	}
 }
