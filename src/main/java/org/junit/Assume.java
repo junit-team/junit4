@@ -117,16 +117,21 @@ public class Assume {
 		assumeThat(t, nullValue());
 	}
 
-    /**
-	 * Attempts to halt the test and ignore it if Throwable <code>t</code> is not 
-	 * <code>null</code>. Similar to {@link #assumeNoException(Throwable)}, but provides
-	 * an additional message that can explain the details concerning the assumption.
+	/**
+	 * Attempts to halt the test and ignore it if Throwable <code>t</code> is
+	 * not <code>null</code>. Similar to {@link #assumeNoException(Throwable)},
+	 * but provides an additional message that can explain the details
+	 * concerning the assumption.
 	 * 
 	 * @see #assumeNoException(Throwable)
-	 * @param t if non-null, the offending exception
-	 * @param message Additional message to pass to {@link AssumptionViolatedException}.
+	 * @param t
+	 *            if non-null, the offending exception
+	 * @param message
+	 *            Additional message to pass to
+	 *            {@link AssumptionViolatedException}.
 	 */
 	public static void assumeNoException(String message, Throwable t) {
-		if (t != null) throw new AssumptionViolatedException(message, t);
-	}	
+		if (t != null)
+			throw new AssumptionViolatedException(message, t);
+	}
 }
