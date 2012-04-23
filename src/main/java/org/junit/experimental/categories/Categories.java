@@ -10,8 +10,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.runner.Description;
+import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.NoTestsRemainException;
+import org.junit.runners.ParentRunner;
+import org.junit.runners.ParentRunnerWrapper;
 import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
@@ -61,7 +64,7 @@ import org.junit.runners.model.RunnerBuilder;
  * }
  * </pre>
  */
-public class Categories extends Suite {
+public class Categories extends ParentRunnerWrapper<Runner> {
 	// the way filters are implemented makes this unnecessarily complicated,
 	// buggy, and difficult to specify.  A new way of handling filters could
 	// someday enable a better new implementation.
@@ -146,9 +149,13 @@ public class Categories extends Suite {
 
 	public Categories(Class<?> klass, RunnerBuilder builder)
 			throws InitializationError {
-		super(klass, builder);
+		this(klass, new Suite(klass, builder));
+	}
+	public Categories(Class<?> klass, ParentRunner<Runner> runner)
+			throws InitializationError {
+		super(klass, runner);
 		try {
-			filter(new CategoryFilter(getIncludedCategory(klass),
+			getWrappedRunner().filter(new CategoryFilter(getIncludedCategory(klass),
 					getExcludedCategory(klass)));
 		} catch (NoTestsRemainException e) {
 			throw new InitializationError(e);
@@ -156,24 +163,24 @@ public class Categories extends Suite {
 		assertNoCategorizedDescendentsOfUncategorizeableParents(getDescription());
 	}
 
-	private Class<?> getIncludedCategory(Class<?> klass) {
+	private static Class<?> getIncludedCategory(Class<?> klass) {
 		IncludeCategory annotation= klass.getAnnotation(IncludeCategory.class);
 		return annotation == null ? null : annotation.value();
 	}
 
-	private Class<?> getExcludedCategory(Class<?> klass) {
+	private static Class<?> getExcludedCategory(Class<?> klass) {
 		ExcludeCategory annotation= klass.getAnnotation(ExcludeCategory.class);
 		return annotation == null ? null : annotation.value();
 	}
 
-	private void assertNoCategorizedDescendentsOfUncategorizeableParents(Description description) throws InitializationError {
+	private static void assertNoCategorizedDescendentsOfUncategorizeableParents(Description description) throws InitializationError {
 		if (!canHaveCategorizedChildren(description))
 			assertNoDescendantsHaveCategoryAnnotations(description);
 		for (Description each : description.getChildren())
 			assertNoCategorizedDescendentsOfUncategorizeableParents(each);
 	}
 	
-	private void assertNoDescendantsHaveCategoryAnnotations(Description description) throws InitializationError {			
+	private static void assertNoDescendantsHaveCategoryAnnotations(Description description) throws InitializationError {			
 		for (Description each : description.getChildren()) {
 			if (each.getAnnotation(Category.class) != null)
 				throw new InitializationError("Category annotations on Parameterized classes are not supported on individual methods.");
