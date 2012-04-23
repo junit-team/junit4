@@ -5,9 +5,9 @@
     <groupId>junit</groupId>
     <artifactId>junit-dep</artifactId>
     <version>@version@</version>
-	<distributionManagement>
-		<relocation>
-			<artifactId>junit</artifactId>
-		</relocation>
-	</distributionManagement>
+    <distributionManagement>
+        <relocation>
+            <artifactId>junit</artifactId>
+        </relocation>
+    </distributionManagement>
 </project>
