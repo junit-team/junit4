@@ -28,17 +28,30 @@ import java.util.regex.Pattern;
 public class Description implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	private static final Pattern METHOD_AND_CLASS_NAME_PATTERN= Pattern
+			.compile("(.*)\\((.*)\\)");
+
 	/**
 	 * Create a <code>Description</code> named <code>name</code>.
 	 * Generally, you will add children to this <code>Description</code>.
 	 * @param name the name of the <code>Description</code> 
-	 * @param annotations 
+	 * @param annotations
 	 * @return a <code>Description</code> named <code>name</code>
 	 */
 	public static Description createSuiteDescription(String name, Annotation... annotations) {
-		if (name.length() == 0)
-			throw new IllegalArgumentException("name must have non-zero length");
 		return new Description(name, annotations);
+	}
+
+	/**
+	 * Create a <code>Description</code> named <code>name</code>.
+	 * Generally, you will add children to this <code>Description</code>.
+	 * @param name the name of the <code>Description</code>
+	 * @param uniqueId an arbitrary object used to define uniqueness (in {@link #equals(Object)}
+	 * @param annotations meta-data about the test, for downstream interpreters
+	 * @return a <code>Description</code> named <code>name</code>
+	 */
+	public static Description createSuiteDescription(String name, Serializable uniqueId, Annotation... annotations) {
+	    return new Description(name, uniqueId, annotations);
 	}
 
 	/**
@@ -88,11 +101,22 @@ public class Description implements Serializable {
 	
 	private final ArrayList<Description> fChildren= new ArrayList<Description>();
 	private final String fDisplayName;
-	
+	private final Serializable fUniqueId;
 	private final Annotation[] fAnnotations;
-	
-	private Description(final String displayName, Annotation... annotations) {
+
+	private Description(String displayName, Annotation... annotations) {
+		this(displayName, displayName, annotations);
+	}
+
+	private Description(String displayName, Serializable uniqueId, Annotation... annotations) {
+		if ((displayName == null) || (displayName.length() == 0))
+			throw new IllegalArgumentException(
+					"The display name must not be empty.");
+		if ((uniqueId == null))
+			throw new IllegalArgumentException(
+					"The unique id must not be null.");
 		fDisplayName= displayName;
+		fUniqueId= uniqueId;
 		fAnnotations= annotations;
 	}
 
@@ -146,7 +170,7 @@ public class Description implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return getDisplayName().hashCode();
+		return fUniqueId.hashCode();
 	}
 
 	@Override
@@ -154,7 +178,7 @@ public class Description implements Serializable {
 		if (!(obj instanceof Description))
 			return false;
 		Description d = (Description) obj;
-		return getDisplayName().equals(d.getDisplayName());
+		return fUniqueId.equals(d.fUniqueId);
 	}
 	
 	@Override
@@ -178,7 +202,7 @@ public class Description implements Serializable {
 	}
 
 	/**
-	 * @return the annotation of type annotationType that is attached to this description node, 
+	 * @return the annotation of type annotationType that is attached to this description node,
 	 * or null if none exists
 	 */
 	public <T extends Annotation> T getAnnotation(Class<T> annotationType) {
@@ -204,7 +228,7 @@ public class Description implements Serializable {
 		if (name == null)
 			return null;
 		try {
-			return Class.forName(name);
+			return Class.forName(name, false, getClass().getClassLoader());
 		} catch (ClassNotFoundException e) {
 			return null;
 		}
@@ -215,10 +239,7 @@ public class Description implements Serializable {
 	 * the name of the class of the test instance
 	 */
 	public String getClassName() {
-		Matcher matcher= methodStringMatcher();
-		return matcher.matches()
-			? matcher.group(2)
-			: toString();
+		return methodAndClassNamePatternGroupOrDefault(2, toString());
 	}
 	
 	/**
@@ -226,17 +247,12 @@ public class Description implements Serializable {
 	 * the name of the method (or null if not)
 	 */
 	public String getMethodName() {
-		return parseMethod();
+		return methodAndClassNamePatternGroupOrDefault(1, null);
 	}
 
-	private String parseMethod() {
-		Matcher matcher= methodStringMatcher();
-		if (matcher.matches())
-			return matcher.group(1);
-		return null;
-	}
-
-	private Matcher methodStringMatcher() {
-		return Pattern.compile("(.*)\\((.*)\\)").matcher(toString());
+	private String methodAndClassNamePatternGroupOrDefault(int group,
+			String defaultString) {
+		Matcher matcher= METHOD_AND_CLASS_NAME_PATTERN.matcher(toString());
+		return matcher.matches() ? matcher.group(group) : defaultString;
 	}
 }

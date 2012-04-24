@@ -100,7 +100,6 @@ public class CategoryTest {
 	@Test
 	public void testCountOnAWithoutSlowTests() {
 		Result result= JUnitCore.runClasses(SomeAreSlowSuite.class);
-		assertThat(testResult(SomeAreSlowSuite.class), isSuccessful());
 		assertEquals(2, result.getRunCount());
 		assertTrue(result.wasSuccessful());
 	}
@@ -115,7 +114,6 @@ public class CategoryTest {
 	@Test
 	public void testsThatAreBothIncludedAndExcludedAreExcluded() {
 		Result result= JUnitCore.runClasses(IncludeAndExcludeSuite.class);
-		assertThat(testResult(SomeAreSlowSuite.class), isSuccessful());
 		assertEquals(1, result.getRunCount());
 		assertTrue(result.wasSuccessful());
 	}

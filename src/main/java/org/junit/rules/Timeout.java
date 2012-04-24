@@ -15,7 +15,7 @@ import org.junit.runners.model.Statement;
  * 	public static String log;
  * 
  * 	&#064;Rule
- * 	public MethodRule globalTimeout= new Timeout(20);
+ * 	public TestRule globalTimeout= new Timeout(20);
  * 
  * 	&#064;Test
  * 	public void testInfiniteLoop1() {

@@ -20,5 +20,9 @@ public class DescriptionTest {
 	public void createSuiteDescription_whenZeroLength() {
 		Description.createSuiteDescription("");
 	}
-	
+
+	@Test(expected= IllegalArgumentException.class)
+	public void createSuiteDescription_whenNull() {
+		Description.createSuiteDescription((String) null);
+	}
 }

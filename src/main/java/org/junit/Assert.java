@@ -548,7 +548,9 @@ public class Assert {
 	 *            Object to check or <code>null</code>
 	 */
 	static public void assertNull(String message, Object object) {
-		assertTrue(message, object == null);
+		if (object == null)
+			return;
+		failNotNull(message, object);
 	}
 
 	/**
@@ -560,6 +562,13 @@ public class Assert {
 	 */
 	static public void assertNull(Object object) {
 		assertNull(null, object);
+	}
+
+	static private void failNotNull(String message, Object actual) {
+		String formatted= "";
+		if (message != null)
+			formatted= message + " ";
+		fail(formatted + "expected null, but was:<" + actual + ">");
 	}
 
 	/**

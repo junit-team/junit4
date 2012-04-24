@@ -1,17 +1,18 @@
 package org.junit.rules;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.both;
 import static org.junit.matchers.JUnitMatchers.containsString;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
-import org.junit.Assert;
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.matchers.TypeSafeMatcher;
 import org.junit.runners.model.Statement;
 
 /**
- * The ExpectedException Rule allows in-test specification of expected exception
+ * The ExpectedException rule allows in-test specification of expected exception
  * types and messages:
  * 
  * <pre>
@@ -22,7 +23,7 @@ import org.junit.runners.model.Statement;
  * 
  * 	&#064;Test
  * 	public void throwsNothing() {
- *    // no exception expected, none thrown: passes.
+ * 		// no exception expected, none thrown: passes.
  * 	}
  * 
  * 	&#064;Test
@@ -40,11 +41,39 @@ import org.junit.runners.model.Statement;
  * 	}
  * }
  * </pre>
+ * 
+ * By default ExpectedException rule doesn't handle AssertionErrors and
+ * AssumptionViolatedExceptions, because such exceptions are used by JUnit. If
+ * you want to handle such exceptions you have to call @link
+ * {@link #handleAssertionErrors()} or @link
+ * {@link #handleAssumptionViolatedExceptions()}.
+ * 
+ * <pre>
+ * // These tests all pass.
+ * public static class HasExpectedException {
+ * 	&#064;Rule
+ * 	public ExpectedException thrown= ExpectedException.none();
+ * 
+ * 	&#064;Test
+ * 	public void throwExpectedAssertionError() {
+ * 		thrown.handleAssertionErrors();
+ * 		thrown.expect(AssertionError.class);
+ * 		throw new AssertionError();
+ * 	}
+ * 
+ * 	&#064;Test
+ * 	public void throwExpectAssumptionViolatedException() {
+ * 		thrown.handleAssumptionViolatedExceptions();
+ * 		thrown.expect(AssumptionViolatedException.class);
+ * 		throw new AssumptionViolatedException(&quot;&quot;);
+ * 	}
+ * }
+ * </pre>
  */
 public class ExpectedException implements TestRule {
 	/**
-	 * @return a Rule that expects no exception to be thrown
-	 * (identical to behavior without this Rule)
+	 * @return a Rule that expects no exception to be thrown (identical to
+	 *         behavior without this Rule)
 	 */
 	public static ExpectedException none() {
 		return new ExpectedException();
@@ -52,19 +81,34 @@ public class ExpectedException implements TestRule {
 
 	private Matcher<Object> fMatcher= null;
 
+	private boolean handleAssumptionViolatedExceptions= false;
+
+	private boolean handleAssertionErrors= false;
+
 	private ExpectedException() {
-		
 	}
-	
+
+	public ExpectedException handleAssertionErrors() {
+		handleAssertionErrors= true;
+		return this;
+	}
+
+	public ExpectedException handleAssumptionViolatedExceptions() {
+		handleAssumptionViolatedExceptions= true;
+		return this;
+	}
+
 	public Statement apply(Statement base,
 			org.junit.runner.Description description) {
 		return new ExpectedExceptionStatement(base);
 	}
 
 	/**
-	 * Adds {@code matcher} to the list of requirements for any thrown exception.
+	 * Adds {@code matcher} to the list of requirements for any thrown
+	 * exception.
 	 */
-	// Should be able to remove this suppression in some brave new hamcrest world.
+	// Should be able to remove this suppression in some brave new hamcrest
+	// world.
 	@SuppressWarnings("unchecked")
 	public void expect(Matcher<?> matcher) {
 		if (fMatcher == null)
@@ -74,24 +118,24 @@ public class ExpectedException implements TestRule {
 	}
 
 	/**
-	 * Adds to the list of requirements for any thrown exception that it
-	 * should be an instance of {@code type}
+	 * Adds to the list of requirements for any thrown exception that it should
+	 * be an instance of {@code type}
 	 */
 	public void expect(Class<? extends Throwable> type) {
 		expect(instanceOf(type));
 	}
 
 	/**
-	 * Adds to the list of requirements for any thrown exception that it
-	 * should <em>contain</em> string {@code substring}
+	 * Adds to the list of requirements for any thrown exception that it should
+	 * <em>contain</em> string {@code substring}
 	 */
 	public void expectMessage(String substring) {
 		expectMessage(containsString(substring));
 	}
 
 	/**
-	 * Adds {@code matcher} to the list of requirements for the message 
-	 * returned from any thrown exception.
+	 * Adds {@code matcher} to the list of requirements for the message returned
+	 * from any thrown exception.
 	 */
 	public void expectMessage(Matcher<String> matcher) {
 		expect(hasMessage(matcher));
@@ -108,10 +152,14 @@ public class ExpectedException implements TestRule {
 		public void evaluate() throws Throwable {
 			try {
 				fNext.evaluate();
+			} catch (AssumptionViolatedException e) {
+				optionallyHandleException(e, handleAssumptionViolatedExceptions);
+				return;
+			} catch (AssertionError e) {
+				optionallyHandleException(e, handleAssertionErrors);
+				return;
 			} catch (Throwable e) {
-				if (fMatcher == null)
-					throw e;
-				Assert.assertThat(e, fMatcher);
+				handleException(e);
 				return;
 			}
 			if (fMatcher != null)
@@ -120,13 +168,27 @@ public class ExpectedException implements TestRule {
 		}
 	}
 
+	private void optionallyHandleException(Throwable e, boolean handleException)
+			throws Throwable {
+		if (handleException)
+			handleException(e);
+		else
+			throw e;
+	}
+
+	private void handleException(Throwable e) throws Throwable {
+		if (fMatcher == null)
+			throw e;
+		assertThat(e, fMatcher);
+	}
+
 	private Matcher<Throwable> hasMessage(final Matcher<String> matcher) {
 		return new TypeSafeMatcher<Throwable>() {
 			public void describeTo(Description description) {
 				description.appendText("exception with message ");
 				description.appendDescriptionOf(matcher);
 			}
-		
+
 			@Override
 			public boolean matchesSafely(Throwable item) {
 				return matcher.matches(item.getMessage());
