@@ -4,7 +4,6 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.internal.matchers.TypeSafeMatcher;
-import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
 /**
@@ -71,37 +70,20 @@ public class ResultMatchers {
 	}
 	
 	/**
-	 * Matches if the failure matches the given {@code failureMatcher}
+	 * Matches if the first exception in the failure matches the given {@code exceptionMatcher}
 	 */
-	public static Matcher<Result> failureIs(final Matcher<? super Throwable> failureMatcher) {
-		return new TypeSafeMatcher<Result>() {
+	public static Matcher<PrintableResult> failureIs(final Matcher<? super Throwable> exceptionMatcher) {
+		return new TypeSafeMatcher<PrintableResult>() {
 			public void describeTo(Description description) {
 				description.appendText("failure is ");
-				failureMatcher.describeTo(description);
+				exceptionMatcher.describeTo(description);
 			}
 	
 			@Override
-			public boolean matchesSafely(Result item) {
+			public boolean matchesSafely(PrintableResult item) {
 				for(Failure f: item.getFailures())
-					return failureMatcher.matches(f.getException());
+					return exceptionMatcher.matches(f.getException());
 				return false;
-			}
-		};
-	}
-
-	/**
-	 * Matches if the cause of the exception matches the given {@code causeMatcher}
-	 */
-	public static Matcher<Throwable> causedBy(final Matcher<? super Throwable> causeMatcher) {
-		return new TypeSafeMatcher<Throwable>() {
-			public void describeTo(Description description) {
-				description.appendText("caused by ");
-				causeMatcher.describeTo(description);
-			}
-	
-			@Override
-			public boolean matchesSafely(Throwable item) {
-				return causeMatcher.matches(item.getCause());
 			}
 		};
 	}

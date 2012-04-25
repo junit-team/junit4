@@ -2,6 +2,7 @@ package org.junit.experimental.results;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.internal.TextListener;
@@ -60,4 +61,11 @@ public class PrintableResult {
 	public int failureCount() {
 		return result.getFailures().size();
 	}
+	
+	/**
+	 * Returns the failures in this result.
+	 */
+	public Collection<Failure> getFailures() {
+		return result.getFailures();
+	}	
 }
