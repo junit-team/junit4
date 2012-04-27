@@ -1,11 +1,13 @@
 package org.junit.tests.internal.runners.statements;
 
-import static java.lang.Long.*;
-import static java.lang.Math.*;
-import static java.lang.System.*;
-import static java.lang.Thread.*;
-import static org.hamcrest.core.Is.*;
-import static org.junit.Assert.*;
+import static java.lang.Long.MAX_VALUE;
+import static java.lang.Math.atan;
+import static java.lang.System.currentTimeMillis;
+import static java.lang.Thread.sleep;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.internal.runners.statements.FailOnTimeout;
