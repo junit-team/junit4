@@ -311,7 +311,25 @@ public class AssertionTest {
 		assertEquals(Float.NaN, Float.NaN, Float.POSITIVE_INFINITY);
 		assertEquals(Double.NaN, Double.NaN, Double.POSITIVE_INFINITY);
 	}
-	
+
+	@Test public void nullNullmessage() {
+		try {
+			assertNull("junit");
+			fail();
+		} catch (AssertionError e) {
+			assertEquals("expected null, but was:<junit>", e.getMessage());
+		}
+	}
+
+	@Test public void nullWithMessage() {
+		try {
+			assertNull("message", "hello");
+			fail();
+		} catch (AssertionError exception) {
+			assertEquals("message expected null, but was:<hello>", exception.getMessage());
+		}
+	}
+
 	@Test public void same() {
 		Object o1= new Object();
 		assertSame(o1, o1);

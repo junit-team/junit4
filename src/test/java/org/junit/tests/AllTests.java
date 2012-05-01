@@ -36,6 +36,7 @@ import org.junit.tests.experimental.rules.TestRuleTest;
 import org.junit.tests.experimental.rules.TimeoutRuleTest;
 import org.junit.tests.experimental.rules.VerifierRuleTest;
 import org.junit.tests.experimental.theories.AllMembersSupplierTest;
+import org.junit.tests.experimental.theories.TestedOnSupplierTest;
 import org.junit.tests.experimental.theories.runner.TheoriesPerformanceTest;
 import org.junit.tests.junit3compatibility.AllTestsTest;
 import org.junit.tests.junit3compatibility.ClassRequestTest;
@@ -156,7 +157,8 @@ import org.junit.tests.validation.ValidationTest;
 	RuleFieldValidatorTest.class,
 	RuleChainTest.class,
 	BlockJUnit4ClassRunnerTest.class,
-	MethodSorterTest.class
+	MethodSorterTest.class,
+	TestedOnSupplierTest.class
 })
 public class AllTests {
 	public static Test suite() {
