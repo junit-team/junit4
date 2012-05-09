@@ -69,33 +69,46 @@ public class Categories extends Suite {
 	
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface IncludeCategory {
-		public Class<?> value();
+		public Class<?>[] value();
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface ExcludeCategory {
-		public Class<?> value();
+		public Class<?>[] value();
 	}
 
 	public static class CategoryFilter extends Filter {
-		public static CategoryFilter include(Class<?> categoryType) {
-			return new CategoryFilter(categoryType, null);
+		public static CategoryFilter include(Class<?>... categoryTypes) {
+			return new CategoryFilter(categoryTypes, null);
+		}
+		
+		public static CategoryFilter exclude(Class<?>... categoryTypes) {
+			return new CategoryFilter(null, categoryTypes);
 		}
 
-		private final Class<?> fIncluded;
+		private final Class<?>[] fIncluded;
 
-		private final Class<?> fExcluded;
-
-		public CategoryFilter(Class<?> includedCategory,
-				Class<?> excludedCategory) {
-			fIncluded= includedCategory;
-			fExcluded= excludedCategory;
+		private final Class<?>[] fExcluded;
+		
+		public CategoryFilter(Class<?>[] includedCategories, Class<?>[] excludedCategories) {
+			fIncluded= includedCategories;
+			fExcluded= excludedCategories;
 		}
 
 		@Override
 		public String describe() {
-			return "category " + fIncluded;
+			return ((fIncluded == null || fIncluded.length == 1) ? "category ":"categories ") + join(", ", fIncluded);
 		}
+
+		private String join(String seperator, Class<?>... values) {
+			if (values == null || values.length == 0)
+				return "";
+			StringBuilder sb= new StringBuilder();
+			for(Class<?> each : values)
+				sb.append(each.toString()).append(seperator);
+			return sb.substring(0, sb.length() - seperator.length());
+		}
+
 
 		@Override
 		public boolean shouldRun(Description description) {
@@ -111,11 +124,23 @@ public class Categories extends Suite {
 			List<Class<?>> categories= categories(description);
 			if (categories.isEmpty())
 				return fIncluded == null;
-			for (Class<?> each : categories)
-				if (fExcluded != null && fExcluded.isAssignableFrom(each))
+			return categoryListPassesFilters(categories);
+		}
+
+		private boolean categoryListPassesFilters(List<Class<?>> categories) {
+			boolean hasIncludeCategory= false;
+			for (Class<?> each: categories) {
+				if ((fExcluded != null) && classIsAssignableFromClassInArray(each, fExcluded))
 					return false;
-			for (Class<?> each : categories)
-				if (fIncluded == null || fIncluded.isAssignableFrom(each))
+				hasIncludeCategory= (fIncluded == null) || hasIncludeCategory || 
+						classIsAssignableFromClassInArray(each, fIncluded);
+			}
+			return hasIncludeCategory;
+		}
+		
+		private boolean classIsAssignableFromClassInArray(Class<?> clazz, Class<?>[] classes) {
+			for(Class<?> each: classes)
+				if (each.isAssignableFrom(clazz))
 					return true;
 			return false;
 		}
@@ -148,20 +173,20 @@ public class Categories extends Suite {
 			throws InitializationError {
 		super(klass, builder);
 		try {
-			filter(new CategoryFilter(getIncludedCategory(klass),
-					getExcludedCategory(klass)));
+			filter(new CategoryFilter(getIncludedCategories(klass),
+					getExcludedCategories(klass)));
 		} catch (NoTestsRemainException e) {
 			throw new InitializationError(e);
 		}
 		assertNoCategorizedDescendentsOfUncategorizeableParents(getDescription());
 	}
 
-	private Class<?> getIncludedCategory(Class<?> klass) {
+	private Class<?>[] getIncludedCategories(Class<?> klass) {
 		IncludeCategory annotation= klass.getAnnotation(IncludeCategory.class);
 		return annotation == null ? null : annotation.value();
 	}
 
-	private Class<?> getExcludedCategory(Class<?> klass) {
+	private Class<?>[] getExcludedCategories(Class<?> klass) {
 		ExcludeCategory annotation= klass.getAnnotation(ExcludeCategory.class);
 		return annotation == null ? null : annotation.value();
 	}
