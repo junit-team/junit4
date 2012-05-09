@@ -271,7 +271,7 @@ public class Assert {
 
 	static public void failSame(String message) {
 		String formatted= (message != null) ? message+" " : "";
- 		fail(formatted+"expected not same");
+		fail(formatted+"expected not same");
 	}
 
 	static public void failNotSame(String message, Object expected, Object actual) {
