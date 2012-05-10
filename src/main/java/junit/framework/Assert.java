@@ -226,8 +226,8 @@ public class Assert {
 	 *            Object to check or <code>null</code>
 	 */
 	static public void assertNull(Object object) {
-		String message= object != null ? "Expected: <null> but was: " + object.toString() : "";
-		assertNull(message, object);
+		if(object != null)
+			assertNull("Expected: <null> but was: " + object.toString(), object);
 	}
 	/**
 	 * Asserts that an object is null.  If it is not
