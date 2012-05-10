@@ -226,8 +226,8 @@ public class Assert {
 	 *            Object to check or <code>null</code>
 	 */
 	static public void assertNull(Object object) {
-		String message = "Expected: <null> but was: " + String.valueOf(object);
-		assertNull(message, object);
+		if (object != null)
+			assertNull("Expected: <null> but was: " + object.toString(), object);
 	}
 	/**
 	 * Asserts that an object is null.  If it is not
@@ -270,16 +270,12 @@ public class Assert {
 	}
 
 	static public void failSame(String message) {
-		String formatted= "";
- 		if (message != null)
- 			formatted= message+" ";
- 		fail(formatted+"expected not same");
+		String formatted= (message != null) ? message+" " : "";
+		fail(formatted+"expected not same");
 	}
 
 	static public void failNotSame(String message, Object expected, Object actual) {
-		String formatted= "";
-		if (message != null)
-			formatted= message+" ";
+		String formatted= (message != null) ? message+" " : "";
 		fail(formatted+"expected same:<"+expected+"> was not:<"+actual+">");
 	}
 
