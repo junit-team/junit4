@@ -226,7 +226,7 @@ public class Assert {
 	 *            Object to check or <code>null</code>
 	 */
 	static public void assertNull(Object object) {
-		if(object != null)
+		if (object != null)
 			assertNull("Expected: <null> but was: " + object.toString(), object);
 	}
 	/**
