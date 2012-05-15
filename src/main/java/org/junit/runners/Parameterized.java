@@ -100,7 +100,7 @@ import org.junit.runners.model.Statement;
  * </pre>
  *
  * <p>
- * Each instance of <code>FibonacciTest</code> will be constructed without constructor
+ * Each instance of <code>FibonacciTest</code> will be constructed with the default constructor
  * and fields annoted by <code>&#064;Parameter</code>  will be initialized
  * with the data values in the <code>&#064;Parameters</code> method.
  * </p>
