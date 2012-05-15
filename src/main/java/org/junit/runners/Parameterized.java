@@ -24,39 +24,39 @@ import org.junit.runners.model.Statement;
  * When running a parameterized test class, instances are created for the
  * cross-product of the test methods and the test data elements.
  * </p>
- *
+ * 
  * For example, to test a Fibonacci function, write:
- *
+ * 
  * <pre>
  * &#064;RunWith(Parameterized.class)
  * public class FibonacciTest {
- * 	&#064;Parameters(name= &quot;{index}: fib({0})={1}&quot;)
- * 	public static Iterable&lt;Object[]&gt; data() {
- * 		return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
- * 				{ 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
- * 	}
- *
- * 	private int fInput;
- *
- * 	private int fExpected;
- *
- * 	public FibonacciTest(int input, int expected) {
- * 		fInput= input;
- * 		fExpected= expected;
- * 	}
- *
- * 	&#064;Test
- * 	public void test() {
- * 		assertEquals(fExpected, Fibonacci.compute(fInput));
- * 	}
+ *  &#064;Parameters(name= &quot;{index}: fib({0})={1}&quot;)
+ *  public static Iterable&lt;Object[]&gt; data() {
+ *      return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
+ *              { 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
+ *  }
+ * 
+ *  private int fInput;
+ * 
+ *  private int fExpected;
+ * 
+ *  public FibonacciTest(int input, int expected) {
+ *      fInput= input;
+ *      fExpected= expected;
+ *  }
+ * 
+ *  &#064;Test
+ *  public void test() {
+ *      assertEquals(fExpected, Fibonacci.compute(fInput));
+ *  }
  * }
  * </pre>
- *
+ * 
  * <p>
  * Each instance of <code>FibonacciTest</code> will be constructed using the
  * two-argument constructor and the data values in the
  * <code>&#064;Parameters</code> method.
- *
+ * 
  * <p>
  * In order that you can easily identify the individual tests, you may provide a
  * name for the <code>&#064;Parameters</code> annotation. This name is allowed
@@ -81,21 +81,21 @@ import org.junit.runners.model.Statement;
  * <pre>
  * &#064;RunWith(Parameterized.class)
  * public class FibonacciTest {
- * 	&#064;Parameters
- * 	public static Iterable&lt;Object[]&gt; data() {
- * 		return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
- * 				{ 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
- * 	}
- * 	&#064;Parameter(0)
- * 	public int fInput;
+ *  &#064;Parameters
+ *  public static Iterable&lt;Object[]&gt; data() {
+ *      return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
+ *              { 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
+ *  }
+ *  &#064;Parameter(0)
+ *  public int fInput;
  *
- * 	&#064;Parameter(1)
- * 	public int fExpected;
+ *  &#064;Parameter(1)
+ *  public int fExpected;
  *
- * 	&#064;Test
- * 	public void test() {
- * 		assertEquals(fExpected, Fibonacci.compute(fInput));
- * 	}
+ *  &#064;Test
+ *  public void test() {
+ *      assertEquals(fExpected, Fibonacci.compute(fInput));
+ *  }
  * }
  * </pre>
  *
@@ -120,7 +120,7 @@ public class Parameterized extends Suite {
          * numbers in braces to refer to the parameters or the additional data
          * as follows:
          * </p>
-         *
+         * 
          * <pre>
          * {index} - the current parameter index
          * {0} - the first parameter value
@@ -131,7 +131,7 @@ public class Parameterized extends Suite {
          * Default value is "{index}" for compatibility with previous JUnit
          * versions.
          * </p>
-         *
+         * 
          * @return {@link MessageFormat} pattern string, except the index
          *         placeholder.
          * @see MessageFormat
@@ -165,7 +165,7 @@ public class Parameterized extends Suite {
         private final String fName;
 
         TestClassRunnerForParameters(Class<?> type, Object[] parameters,
-                                     String name) throws InitializationError {
+                String name) throws InitializationError {
             super(type);
             fParameters= parameters;
             fName= name;
@@ -269,7 +269,7 @@ public class Parameterized extends Suite {
     }
 
     private void createRunnersForParameters(Iterable<Object[]> allParameters,
-                                            String namePattern) throws InitializationError, Exception {
+            String namePattern) throws InitializationError, Exception {
         try {
             int i= 0;
             for (Object[] parametersOfSingleTest : allParameters) {
