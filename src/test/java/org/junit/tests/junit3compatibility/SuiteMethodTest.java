@@ -9,10 +9,17 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.internal.runners.SuiteMethod;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.Result;
+import org.junit.runner.RunWith;
+import org.junit.runner.manipulation.Filter;
+import org.junit.runner.manipulation.NoTestsRemainException;
+import org.junit.runners.AllTests;
+import org.junit.tests.junit3compatibility.AllTestsTest.All;
+import org.junit.tests.junit3compatibility.AllTestsTest.OneTest;
 
 public class SuiteMethodTest {
 	public static boolean wasRun;
@@ -119,5 +126,61 @@ public class SuiteMethodTest {
 		assertEquals(0, res.getFailureCount());
 		assertEquals(1, res.getRunCount());
 		assertEquals(0, res.getIgnoreCount());
+	}
+	
+	
+	@org.junit.Test(expected= NoTestsRemainException.class) public void testNoTestsRemainException() throws Throwable {
+		SuiteMethod m= new SuiteMethod(All.class);
+		m.filter(new Filter() {
+
+			@Override
+			public boolean shouldRun(Description description) {
+				return false;
+			}
+
+			@Override
+			public String describe() {
+				return null;
+			}
+		});
+	}
+	
+	public static class ThreeTest extends TestCase {
+		public void test1() {
+		}
+		public void test2() {
+		}
+
+		public void test3() {
+		}
+	}
+
+	public static class All2 {
+		static public junit.framework.Test suite() {
+			TestSuite suite= new TestSuite();
+			suite.addTestSuite(OneTest.class);
+			suite.addTestSuite(ThreeTest.class);
+			return suite;
+		}
+	}
+
+	@org.junit.Test public void testFilter() throws Throwable {
+		SuiteMethod m= new SuiteMethod(All2.class);
+		m.filter(new Filter() {
+			@Override
+			public boolean shouldRun(Description description) {
+				String className= description.getClassName();
+				String methodName= description.getMethodName();
+				return className != null
+						&& className.contains(ThreeTest.class.getName())
+						&& methodName != null && methodName.startsWith("test");
+			}
+			@Override
+			public String describe() {
+				return null;
+			}
+		});
+		int testCount= m.testCount();
+		assertEquals(3, testCount);
 	}
 }

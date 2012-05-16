@@ -125,20 +125,36 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
 	}
 
 	public void filter(Filter filter) throws NoTestsRemainException {
-		if (getTest() instanceof Filterable) {
-			Filterable adapter= (Filterable) getTest();
+		Test test= getTest();
+		Test filteredTest= filter(filter, test);
+		int testCases= filteredTest.countTestCases();
+		if (testCases == 0) {
+			throw new NoTestsRemainException();
+		}
+		setTest(filteredTest);
+	}
+
+	private Test filter(Filter filter, Test testToFilter)
+			throws NoTestsRemainException {
+		if (testToFilter instanceof Filterable) {
+			Filterable adapter= (Filterable) testToFilter;
 			adapter.filter(filter);
-		} else if (getTest() instanceof TestSuite) {
-			TestSuite suite= (TestSuite) getTest();
+		} else if (testToFilter instanceof TestSuite) {
+			TestSuite suite= (TestSuite) testToFilter;
 			TestSuite filtered= new TestSuite(suite.getName());
 			int n= suite.testCount();
 			for (int i= 0; i < n; i++) {
 				Test test= suite.testAt(i);
-				if (filter.shouldRun(makeDescription(test)))
+				if (test instanceof TestSuite) {
+					test= filter(filter, test);
+					if (test.countTestCases() > 0)
+						filtered.addTest(test);
+				} else if (filter.shouldRun(makeDescription(test)))
 					filtered.addTest(test);
 			}
-			setTest(filtered);
+			return filtered;
 		}
+		return testToFilter;
 	}
 
 	public void sort(Sorter sorter) {
