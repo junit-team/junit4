@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ServiceLoader;
 
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
@@ -23,15 +22,7 @@ public class RunNotifier {
 	private final List<RunListener> fListeners= 
 		Collections.synchronizedList(new ArrayList<RunListener>());
 	private volatile boolean fPleaseStop= false;
-
-	public RunNotifier() {
-		Iterable<RunListener> externalListeners;
-		try { externalListeners = ServiceLoader.load(RunListener.class); }
-		catch (NoClassDefFoundError ignore) { return; }
-		for (RunListener listener : externalListeners)
-			fListeners.add(listener);
-	}
-
+	
 	/** Internal use only
 	 */
 	public void addListener(RunListener listener) {

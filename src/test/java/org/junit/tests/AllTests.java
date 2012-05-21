@@ -48,7 +48,11 @@ import org.junit.tests.junit3compatibility.JUnit38ClassRunnerTest;
 import org.junit.tests.junit3compatibility.OldTestClassAdaptingListenerTest;
 import org.junit.tests.junit3compatibility.OldTests;
 import org.junit.tests.junit3compatibility.SuiteMethodTest;
-import org.junit.tests.listening.*;
+import org.junit.tests.listening.ListenerTest;
+import org.junit.tests.listening.RunnerTest;
+import org.junit.tests.listening.TestListenerTest;
+import org.junit.tests.listening.TextListenerTest;
+import org.junit.tests.listening.UserStopTest;
 import org.junit.tests.manipulation.FilterTest;
 import org.junit.tests.manipulation.FilterableTest;
 import org.junit.tests.manipulation.SingleMethodTest;
@@ -158,8 +162,7 @@ import org.junit.tests.validation.ValidationTest;
 	RuleChainTest.class,
 	BlockJUnit4ClassRunnerTest.class,
 	MethodSorterTest.class,
-	TestedOnSupplierTest.class,
-	ExternalListenerTest.class
+	TestedOnSupplierTest.class
 })
 public class AllTests {
 	public static Test suite() {
