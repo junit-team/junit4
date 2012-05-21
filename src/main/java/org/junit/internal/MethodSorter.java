@@ -14,7 +14,10 @@ public class MethodSorter {
         public int compare(Method m1, Method m2) {
             int i1 = m1.getName().hashCode();
             int i2 = m2.getName().hashCode();
-            return i1 != i2 ? i1 - i2 : MethodSorter.compare(m1.toString(), m2.toString());
+            if (i1 != i2) {
+                return i1 < i2 ? -1 : 1;
+            }
+            return MethodSorter.compare(m1.toString(), m2.toString());
         }
     };
     
