@@ -42,7 +42,7 @@ import org.junit.runners.model.Statement;
  *
  * 	&#064;Test
  * 	public void throwsIllegalArgumentExceptionWithMessageAndCause() {
- * 	    NullPointerException expectedCause = new NullPointerException();
+ * 		NullPointerException expectedCause = new NullPointerException();
  * 		thrown.expect(IllegalArgumentException.class);
  * 		thrown.expectMessage(&quot;What&quot;);
  * 		thrown.expectCause(is(expectedCause));
@@ -150,15 +150,15 @@ public class ExpectedException implements TestRule {
 		expect(hasMessage(matcher));
 	}
 
-    /**
-     * Adds {@code matcher} to the list of requirements for the cause of
-     * any thrown exception.
-     */
-    public void expectCause(Matcher<? extends Throwable> expectedCause) {
-        expect(hasCause(expectedCause));
-    }
+	/**
+	 * Adds {@code matcher} to the list of requirements for the cause of
+	 * any thrown exception.
+	 */
+	public void expectCause(Matcher<? extends Throwable> expectedCause) {
+		expect(hasCause(expectedCause));
+	}
 
-    private class ExpectedExceptionStatement extends Statement {
+	private class ExpectedExceptionStatement extends Statement {
 		private final Statement fNext;
 
 		public ExpectedExceptionStatement(Statement base) {
@@ -181,12 +181,12 @@ public class ExpectedException implements TestRule {
 			}
 			if (fMatcher != null)
 				throw new AssertionError("Expected test to throw "
-						+ StringDescription.toString(fMatcher));
+								+ StringDescription.toString(fMatcher));
 		}
 	}
 
 	private void optionallyHandleException(Throwable e, boolean handleException)
-			throws Throwable {
+					throws Throwable {
 		if (handleException)
 			handleException(e);
 		else
@@ -212,17 +212,18 @@ public class ExpectedException implements TestRule {
 			}
 		};
 	}
-    private Matcher<Throwable> hasCause(final Matcher<? extends Throwable> causeMatcher) {
-        return new TypeSafeMatcher<Throwable>() {
-            public void describeTo(Description description) {
-                description.appendText("exception with cause ");
-                description.appendDescriptionOf(causeMatcher);
-            }
 
-            @Override
-            public boolean matchesSafely(Throwable item) {
-                return causeMatcher.matches(item.getCause());
-            }
-        };
-    }
+	private Matcher<Throwable> hasCause(final Matcher<? extends Throwable> causeMatcher) {
+		return new TypeSafeMatcher<Throwable>() {
+			public void describeTo(Description description) {
+				description.appendText("exception with cause ");
+				description.appendDescriptionOf(causeMatcher);
+			}
+
+			@Override
+			public boolean matchesSafely(Throwable item) {
+				return causeMatcher.matches(item.getCause());
+			}
+		};
+	}
 }

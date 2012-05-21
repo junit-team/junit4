@@ -320,53 +320,53 @@ public class ExpectedExceptionTest {
 		}
 	}
 
-    public static class ThrowExceptionWithMatchingCause {
-        @Rule
-        public ExpectedException thrown = none();
-        
-        @Test
-        public void throwExceptionWithMatchingCause() {
-            NullPointerException expectedCause = new NullPointerException("expected cause");
+	public static class ThrowExceptionWithMatchingCause {
+		@Rule
+		public ExpectedException thrown = none();
 
-            thrown.expect(IllegalArgumentException.class);
-            thrown.expectMessage("Ack!");
-            thrown.expectCause(is(expectedCause));
+		@Test
+		public void throwExceptionWithMatchingCause() {
+			NullPointerException expectedCause = new NullPointerException("expected cause");
 
-            throw new IllegalArgumentException("Ack!", expectedCause);
-        }
-    }
+			thrown.expect(IllegalArgumentException.class);
+			thrown.expectMessage("Ack!");
+			thrown.expectCause(is(expectedCause));
 
-    public static class ThrowExpectedNullCause {
-        @Rule
-        public ExpectedException thrown = none();
+			throw new IllegalArgumentException("Ack!", expectedCause);
+		}
+	}
 
-        @Test
-        public void throwExpectedNullCause() {
-            thrown.expect(IllegalArgumentException.class);
-            thrown.expectMessage("Ack!");
-            thrown.expectCause(CoreMatchers.<Throwable>nullValue());
+	public static class ThrowExpectedNullCause {
+		@Rule
+		public ExpectedException thrown = none();
 
-            throw new IllegalArgumentException("Ack!");
-        }
-    }
+		@Test
+		public void throwExpectedNullCause() {
+			thrown.expect(IllegalArgumentException.class);
+			thrown.expectMessage("Ack!");
+			thrown.expectCause(CoreMatchers.<Throwable>nullValue());
 
-    public static class ThrowUnexpectedCause {
+			throw new IllegalArgumentException("Ack!");
+		}
+	}
 
-        @Rule
-        public ExpectedException thrown= ExpectedException.none();
+	public static class ThrowUnexpectedCause {
 
-        @Test
-        public void throwWithCause() {
-            thrown.expect(IllegalArgumentException.class);
-            thrown.expectMessage("Ack!");
-            thrown.expectCause(is(new NullPointerException("expected cause")));
+		@Rule
+		public ExpectedException thrown= ExpectedException.none();
 
-            throw new IllegalArgumentException("Ack!", new NullPointerException("an unexpected cause"));
-        }
-    }
+		@Test
+		public void throwWithCause() {
+			thrown.expect(IllegalArgumentException.class);
+			thrown.expectMessage("Ack!");
+			thrown.expectCause(is(new NullPointerException("expected cause")));
+
+			throw new IllegalArgumentException("Ack!", new NullPointerException("an unexpected cause"));
+		}
+	}
 
 
-    private static Matcher<String> startsWith(final String prefix) {
+	private static Matcher<String> startsWith(final String prefix) {
 		return new TypeSafeMatcher<String>() {
 			public void describeTo(Description description) {
 				description.appendText("starts with ");
