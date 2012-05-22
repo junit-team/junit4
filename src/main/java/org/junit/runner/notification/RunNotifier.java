@@ -26,8 +26,13 @@ public class RunNotifier {
 
 	public RunNotifier() {
 		Iterable<RunListener> externalListeners;
-		try { externalListeners = ServiceLoader.load(RunListener.class); }
-		catch (NoClassDefFoundError ignore) { return; }
+		try {
+			externalListeners = ServiceLoader.load(RunListener.class);
+		} catch (NoClassDefFoundError ignore) {
+			// Gets here if running on Java 5, where ServiceLoader does not exist.
+			// In this case the feature is simply not supported, with no need to alert the user.
+			return;
+		}
 		for (RunListener listener : externalListeners)
 			fListeners.add(listener);
 	}
