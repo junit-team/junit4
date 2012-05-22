@@ -73,18 +73,14 @@ public class ExpectedExceptionTest {
 						hasSingleFailureWithMessage(startsWith("\nExpected: an instance of java.lang.NullPointerException")) },
 				{ FailAndDontHandleAssertinErrors.class,
 						hasSingleFailureWithMessage(ARBITRARY_MESSAGE) },
-                {
-                        ExpectsMultipleMatchers.class,
-                        hasSingleFailureWithMessage(startsWith("\nExpected: (exception with message a string containing \"Ack!\" and an instance of java.lang.IllegalArgumentException)")) },
-                {
-                        ThrowExceptionWithMatchingCause.class,
-                        everyTestRunSuccessful() },
-                {
-                        ThrowExpectedNullCause.class,
-                        everyTestRunSuccessful() },
-                {
-                        ThrowUnexpectedCause.class,
-                        hasSingleFailureWithMessage(startsWith("\nExpected: (exception with cause")) }
+				{
+						ExpectsMultipleMatchers.class,
+						hasSingleFailureWithMessage(startsWith("\nExpected: (exception with message a string containing \"Ack!\" and an instance of java.lang.IllegalArgumentException)")) },
+				{	ThrowExceptionWithMatchingCause.class, everyTestRunSuccessful() },
+				{	ThrowExpectedNullCause.class, everyTestRunSuccessful() },
+				{
+					ThrowUnexpectedCause.class,
+						hasSingleFailureWithMessage(startsWith("\nExpected: (exception with cause")) }
         });
 	}
 
