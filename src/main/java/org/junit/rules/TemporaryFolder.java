@@ -51,7 +51,7 @@ public class TemporaryFolder extends ExternalResource {
 	 * for testing purposes only. Do not use.
 	 */
 	public void create() throws IOException {
-		folder = createTemporaryFolderIn(parentFolder);
+	        folder = createTemporaryFolderIn(parentFolder);
 	}
 
 	/**
