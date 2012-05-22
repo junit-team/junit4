@@ -25,10 +25,8 @@ import org.junit.Rule;
  * </pre>
  */
 public class TemporaryFolder extends ExternalResource {
-
         private final File parentFolder;
 	private File folder;
-
 
         public TemporaryFolder() {
                 this(null);
