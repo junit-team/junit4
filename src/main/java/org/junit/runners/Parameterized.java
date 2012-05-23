@@ -30,25 +30,25 @@ import org.junit.runners.model.Statement;
  * <pre>
  * &#064;RunWith(Parameterized.class)
  * public class FibonacciTest {
- *  &#064;Parameters(name= &quot;{index}: fib({0})={1}&quot;)
- *  public static Iterable&lt;Object[]&gt; data() {
- *      return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
- *              { 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
- *  }
+ * 	&#064;Parameters(name= &quot;{index}: fib({0})={1}&quot;)
+ * 	public static Iterable&lt;Object[]&gt; data() {
+ * 		return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
+ * 				{ 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
+ * 	}
  * 
- *  private int fInput;
+ * 	private int fInput;
  * 
- *  private int fExpected;
+ * 	private int fExpected;
  * 
- *  public FibonacciTest(int input, int expected) {
- *      fInput= input;
- *      fExpected= expected;
- *  }
+ * 	public FibonacciTest(int input, int expected) {
+ * 		fInput= input;
+ * 		fExpected= expected;
+ * 	}
  * 
- *  &#064;Test
- *  public void test() {
- *      assertEquals(fExpected, Fibonacci.compute(fInput));
- *  }
+ * 	&#064;Test
+ * 	public void test() {
+ * 		assertEquals(fExpected, Fibonacci.compute(fInput));
+ * 	}
  * }
  * </pre>
  * 
@@ -81,24 +81,24 @@ import org.junit.runners.model.Statement;
  * <pre>
  * &#064;RunWith(Parameterized.class)
  * public class FibonacciTest {
- *  &#064;Parameters
- *  public static Iterable&lt;Object[]&gt; data() {
- *      return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
- *              { 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
- *  }
- *  &#064;Parameter(0)
- *  public int fInput;
+ * 	&#064;Parameters
+ * 	public static Iterable&lt;Object[]&gt; data() {
+ * 		return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
+ * 				{ 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
+ * 	}
+ * 	&#064;Parameter(0)
+ * 	public int fInput;
  *
- *  &#064;Parameter(1)
- *  public int fExpected;
+ * 	&#064;Parameter(1)
+ * 	public int fExpected;
  *
- *  &#064;Test
- *  public void test() {
- *      assertEquals(fExpected, Fibonacci.compute(fInput));
- *  }
+ * 	&#064;Test
+ * 	public void test() {
+ * 		assertEquals(fExpected, Fibonacci.compute(fInput));
+ * 	}
  * }
  * </pre>
- *
+ * 
  * <p>
  * Each instance of <code>FibonacciTest</code> will be constructed with the default constructor
  * and fields annoted by <code>&#064;Parameter</code>  will be initialized
@@ -107,197 +107,197 @@ import org.junit.runners.model.Statement;
  * @since 4.0
  */
 public class Parameterized extends Suite {
-    /**
-     * Annotation for a method which provides parameters to be injected into the
-     * test class constructor by <code>Parameterized</code>
-     */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.METHOD)
-    public static @interface Parameters {
-        /**
-         * <p>
-         * Optional pattern to derive the test's name from the parameters. Use
-         * numbers in braces to refer to the parameters or the additional data
-         * as follows:
-         * </p>
-         * 
-         * <pre>
-         * {index} - the current parameter index
-         * {0} - the first parameter value
-         * {1} - the second parameter value
-         * etc...
-         * </pre>
-         * <p>
-         * Default value is "{index}" for compatibility with previous JUnit
-         * versions.
-         * </p>
-         * 
-         * @return {@link MessageFormat} pattern string, except the index
-         *         placeholder.
-         * @see MessageFormat
-         */
-        String name() default "{index}";
-    }
+	/**
+	 * Annotation for a method which provides parameters to be injected into the
+	 * test class constructor by <code>Parameterized</code>
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.METHOD)
+	public static @interface Parameters {
+		/**
+		 * <p>
+		 * Optional pattern to derive the test's name from the parameters. Use
+		 * numbers in braces to refer to the parameters or the additional data
+		 * as follows:
+		 * </p>
+		 * 
+		 * <pre>
+		 * {index} - the current parameter index
+		 * {0} - the first parameter value
+		 * {1} - the second parameter value
+		 * etc...
+		 * </pre>
+		 * <p>
+		 * Default value is "{index}" for compatibility with previous JUnit
+		 * versions.
+		 * </p>
+		 * 
+		 * @return {@link MessageFormat} pattern string, except the index
+		 *         placeholder.
+		 * @see MessageFormat
+		 */
+		String name() default "{index}";
+	}
+	
+	/**
+	 * Annotation for fields of the test class which will be initialized by the
+	 * method annoted by <code>Parameters</code><br/>
+	 * By using directly this annotation, the test class constructor isn't needed.<br/>
+	 * Index range must start at 0.
+	 * Default value is 0.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.FIELD)
+	public static @interface Parameter {
+		/**
+		 * Method that returns the index of the parameter in the array
+		 * returned by the method annoted by <code>Parameters</code>.<br/>
+		 * Index range must start at 0.
+		 * Default value is 0.
+		 * @return the index of the parameter.
+		 */
+		int value() default 0;
+	}
 
-    /**
-     * Annotation for fields of the test class which will be initialized by the
-     * method annoted by <code>Parameters</code><br/>
-     * By using directly this annotation, the test class constructor isn't needed.<br/>
-     * Index range must start at 0.
-     * Default value is 0.
-     */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.FIELD)
-    public static @interface Parameter {
-        /**
-         * Method that returns the index of the parameter in the array
-         * returned by the method annoted by <code>Parameters</code>.<br/>
-         * Index range must start at 0.
-         * Default value is 0.
-         * @return the index of the parameter.
-         */
-        int value() default 0;
-    }
+	private class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
+		private final Object[] fParameters;
 
-    private class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
-        private final Object[] fParameters;
+		private final String fName;
 
-        private final String fName;
+		TestClassRunnerForParameters(Class<?> type, Object[] parameters,
+				String name) throws InitializationError {
+			super(type);
+			fParameters= parameters;
+			fName= name;
+		}
 
-        TestClassRunnerForParameters(Class<?> type, Object[] parameters,
-                String name) throws InitializationError {
-            super(type);
-            fParameters= parameters;
-            fName= name;
-        }
+		@Override
+		public Object createTest() throws Exception {
+			Object testClassInstance = null;
+			List<FrameworkField> fields = getTestClass().getAnnotatedFields(Parameter.class);
+			if (!fields.isEmpty()) {
+				if (fields.size() > fParameters.length)
+					throw new Exception(getTestClass().getName() + ": The number of annoted fields is upper than the number of available parameters.");
+				testClassInstance = getTestClass().getJavaClass().newInstance();
+				for (FrameworkField f : fields) {
+					Field field = f.getField();
+					Parameter annot = field.getAnnotation(Parameter.class);
+					int index = annot.value();
+					try {
+						field.set(testClassInstance,  fParameters[index]);
+					} catch(IllegalArgumentException iare) {
+						throw new Exception(getTestClass().getName() + ": Trying to set "+field.getName()+" with the value "+fParameters[index]+" that is not the right type ("+fParameters[index].getClass().getSimpleName()+" instead of "+field.getType().getSimpleName()+").", iare);
+					} catch(IllegalAccessException iace) {
+						throw new Exception(getTestClass().getName() + ": Trying to set "+field.getName()+" but you doesn't allow JUnit to access it. Please make it public.", iace);
+					} catch (IndexOutOfBoundsException ioobe) {
+						throw new Exception(getTestClass().getName() + ": Trying to set "+field.getName()+" but the index value of the annotation is too big.", ioobe);
+					}
+				}
+			} else {
+				testClassInstance = getTestClass().getOnlyConstructor().newInstance(fParameters);
+			}
+			return testClassInstance;
+		}
 
-        @Override
-        public Object createTest() throws Exception {
-            Object testClassInstance = null;
-            List<FrameworkField> fields = getTestClass().getAnnotatedFields(Parameter.class);
-            if (!fields.isEmpty()) {
-                if (fields.size() > fParameters.length)
-                    throw new Exception(getTestClass().getName() + ": The number of annoted fields is upper than the number of available parameters.");
-                testClassInstance = getTestClass().getJavaClass().newInstance();
-                for (FrameworkField f : fields) {
-                    Field field = f.getField();
-                    Parameter annot = field.getAnnotation(Parameter.class);
-                    int index = annot.value();
-                    try {
-                        field.set(testClassInstance,  fParameters[index]);
-                    } catch(IllegalArgumentException iare) {
-                        throw new Exception(getTestClass().getName() + ": Trying to set "+field.getName()+" with the value "+fParameters[index]+" that is not the right type ("+fParameters[index].getClass().getSimpleName()+" instead of "+field.getType().getSimpleName()+").", iare);
-                    } catch(IllegalAccessException iace) {
-                        throw new Exception(getTestClass().getName() + ": Trying to set "+field.getName()+" but you doesn't allow JUnit to access it. Please make it public.", iace);
-                    } catch (IndexOutOfBoundsException ioobe) {
-                        throw new Exception(getTestClass().getName() + ": Trying to set "+field.getName()+" but the index value of the annotation is too big.", ioobe);
-                    }
-                }
-            } else {
-                testClassInstance = getTestClass().getOnlyConstructor().newInstance(fParameters);
-            }
-            return testClassInstance;
-        }
+		@Override
+		protected String getName() {
+			return fName;
+		}
 
-        @Override
-        protected String getName() {
-            return fName;
-        }
+		@Override
+		protected String testName(FrameworkMethod method) {
+			return method.getName() + getName();
+		}
 
-        @Override
-        protected String testName(FrameworkMethod method) {
-            return method.getName() + getName();
-        }
+		@Override
+		protected void validateConstructor(List<Throwable> errors) {
+			validateOnlyOneConstructor(errors);
+			if (getTestClass().getAnnotatedFields(Parameter.class) != null && getTestClass().getAnnotatedFields(Parameter.class).size() > 0)
+				validateZeroArgConstructor(errors);
+		}
 
-        @Override
-        protected void validateConstructor(List<Throwable> errors) {
-            validateOnlyOneConstructor(errors);
-            if (getTestClass().getAnnotatedFields(Parameter.class) != null && getTestClass().getAnnotatedFields(Parameter.class).size() > 0)
-                validateZeroArgConstructor(errors);
-        }
+		@Override
+		protected Statement classBlock(RunNotifier notifier) {
+			return childrenInvoker(notifier);
+		}
 
-        @Override
-        protected Statement classBlock(RunNotifier notifier) {
-            return childrenInvoker(notifier);
-        }
+		@Override
+		protected Annotation[] getRunnerAnnotations() {
+			return new Annotation[0];
+		}
+	}
 
-        @Override
-        protected Annotation[] getRunnerAnnotations() {
-            return new Annotation[0];
-        }
-    }
+	private static final List<Runner> NO_RUNNERS= Collections
+			.<Runner> emptyList();
 
-    private static final List<Runner> NO_RUNNERS= Collections
-            .<Runner> emptyList();
+	private final ArrayList<Runner> runners= new ArrayList<Runner>();
 
-    private final ArrayList<Runner> runners= new ArrayList<Runner>();
+	/**
+	 * Only called reflectively. Do not use programmatically.
+	 */
+	public Parameterized(Class<?> klass) throws Throwable {
+		super(klass, NO_RUNNERS);
+		Parameters parameters= getParametersMethod().getAnnotation(
+				Parameters.class);
+		createRunnersForParameters(allParameters(), parameters.name());
+	}
 
-    /**
-     * Only called reflectively. Do not use programmatically.
-     */
-    public Parameterized(Class<?> klass) throws Throwable {
-        super(klass, NO_RUNNERS);
-        Parameters parameters= getParametersMethod().getAnnotation(
-                Parameters.class);
-        createRunnersForParameters(allParameters(), parameters.name());
-    }
+	@Override
+	protected List<Runner> getChildren() {
+		return runners;
+	}
 
-    @Override
-    protected List<Runner> getChildren() {
-        return runners;
-    }
+	@SuppressWarnings("unchecked")
+	private Iterable<Object[]> allParameters() throws Throwable {
+		Object parameters= getParametersMethod().invokeExplosively(null);
+		if (parameters instanceof Iterable)
+			return (Iterable<Object[]>) parameters;
+		else
+			throw parametersMethodReturnedWrongType();
+	}
 
-    @SuppressWarnings("unchecked")
-    private Iterable<Object[]> allParameters() throws Throwable {
-        Object parameters= getParametersMethod().invokeExplosively(null);
-        if (parameters instanceof Iterable)
-            return (Iterable<Object[]>) parameters;
-        else
-            throw parametersMethodReturnedWrongType();
-    }
+	private FrameworkMethod getParametersMethod() throws Exception {
+		List<FrameworkMethod> methods= getTestClass().getAnnotatedMethods(
+				Parameters.class);
+		for (FrameworkMethod each : methods) {
+			if (each.isStatic() && each.isPublic())
+				return each;
+		}
 
-    private FrameworkMethod getParametersMethod() throws Exception {
-        List<FrameworkMethod> methods= getTestClass().getAnnotatedMethods(
-                Parameters.class);
-        for (FrameworkMethod each : methods) {
-            if (each.isStatic() && each.isPublic())
-                return each;
-        }
+		throw new Exception("No public static parameters method on class "
+				+ getTestClass().getName());
+	}
 
-        throw new Exception("No public static parameters method on class "
-                + getTestClass().getName());
-    }
+	private void createRunnersForParameters(Iterable<Object[]> allParameters,
+			String namePattern) throws InitializationError, Exception {
+		try {
+			int i= 0;
+			for (Object[] parametersOfSingleTest : allParameters) {
+				String name= nameFor(namePattern, i, parametersOfSingleTest);
+				TestClassRunnerForParameters runner= new TestClassRunnerForParameters(
+						getTestClass().getJavaClass(), parametersOfSingleTest,
+						name);
+				runners.add(runner);
+				++i;
+			}
+		} catch (ClassCastException e) {
+			throw parametersMethodReturnedWrongType();
+		}
+	}
 
-    private void createRunnersForParameters(Iterable<Object[]> allParameters,
-            String namePattern) throws InitializationError, Exception {
-        try {
-            int i= 0;
-            for (Object[] parametersOfSingleTest : allParameters) {
-                String name= nameFor(namePattern, i, parametersOfSingleTest);
-                TestClassRunnerForParameters runner= new TestClassRunnerForParameters(
-                        getTestClass().getJavaClass(), parametersOfSingleTest,
-                        name);
-                runners.add(runner);
-                ++i;
-            }
-        } catch (ClassCastException e) {
-            throw parametersMethodReturnedWrongType();
-        }
-    }
+	private String nameFor(String namePattern, int index, Object[] parameters) {
+		String finalPattern= namePattern.replaceAll("\\{index\\}",
+				Integer.toString(index));
+		String name= MessageFormat.format(finalPattern, parameters);
+		return "[" + name + "]";
+	}
 
-    private String nameFor(String namePattern, int index, Object[] parameters) {
-        String finalPattern= namePattern.replaceAll("\\{index\\}",
-                Integer.toString(index));
-        String name= MessageFormat.format(finalPattern, parameters);
-        return "[" + name + "]";
-    }
-
-    private Exception parametersMethodReturnedWrongType() throws Exception {
-        String className= getTestClass().getName();
-        String methodName= getParametersMethod().getName();
-        String message= MessageFormat.format(
-                "{0}.{1}() must return an Iterable of arrays.",
-                className, methodName);
-        return new Exception(message);
-    }
+	private Exception parametersMethodReturnedWrongType() throws Exception {
+		String className= getTestClass().getName();
+		String methodName= getParametersMethod().getName();
+		String message= MessageFormat.format(
+				"{0}.{1}() must return an Iterable of arrays.",
+				className, methodName);
+		return new Exception(message);
+	}
 }
