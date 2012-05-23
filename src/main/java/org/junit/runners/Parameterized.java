@@ -176,8 +176,8 @@ public class Parameterized extends Suite {
 			Object testClassInstance = null;
 			List<FrameworkField> fields = getTestClass().getAnnotatedFields(Parameter.class);
 			if (!fields.isEmpty()) {
-				if (fields.size() > fParameters.length)
-					throw new Exception(getTestClass().getName() + ": The number of annoted fields is upper than the number of available parameters.");
+				if (fields.size() != fParameters.length)
+					throw new Exception(getTestClass().getName() + ": The number of annoted fields is not the same than the number of available parameters.");
 				testClassInstance = getTestClass().getJavaClass().newInstance();
 				for (FrameworkField f : fields) {
 					Field field = f.getField();
