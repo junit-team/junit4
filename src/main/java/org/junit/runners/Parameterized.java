@@ -7,9 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
@@ -214,12 +212,32 @@ public class Parameterized extends Suite {
 			validateOnlyOneConstructor(errors);
 			List<FrameworkField> annotatedFieldsByParameter = getTestClass().getAnnotatedFields(Parameter.class);
 			if (annotatedFieldsByParameter.size() > 0) {
+				validateZeroArgConstructor(errors);
+			}
+		}
+
+		@Override
+		protected void validateFields(List<Throwable> errors) {
+			super.validateFields(errors);
+			List<FrameworkField> annotatedFieldsByParameter = getTestClass().getAnnotatedFields(Parameter.class);
+			if (annotatedFieldsByParameter.size() > 0) {
+				Map<Integer,Integer> usedIndices = new HashMap<Integer, Integer>();
+				for (int i = 0 ; i < annotatedFieldsByParameter.size() ; i++)
+					usedIndices.put(i,0);
 				for (FrameworkField f : annotatedFieldsByParameter) {
 					int indice = ((Parameter)f.getField().getAnnotation(Parameter.class)).value();
+					usedIndices.put(indice,usedIndices.get(indice)+1);
 					if (indice < 0 || indice > annotatedFieldsByParameter.size()-1)
 						errors.add(new Exception("The indices of fields annoted by @Parameter must be in the range from 0 to N-1 where N is the number of fields annoted by @Parameter. (field[name: "+f.getName()+", indice value: "+indice+"], number of fields: +"+annotatedFieldsByParameter.size()+")"));
 				}
-				validateZeroArgConstructor(errors);
+				for (int indice : usedIndices.keySet()) {
+					int numberOfuse = usedIndices.get(indice);
+					if (numberOfuse == 0) {
+						errors.add(new Exception("The indice "+indice+" is never used."));
+					} else if (numberOfuse > 1) {
+						errors.add(new Exception("The indice "+indice+" is used more than once ("+numberOfuse+")."));
+					}
+				}
 			}
 		}
 
