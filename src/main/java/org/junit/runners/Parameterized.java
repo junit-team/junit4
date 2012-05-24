@@ -221,21 +221,19 @@ public class Parameterized extends Suite {
 			super.validateFields(errors);
 			List<FrameworkField> annotatedFieldsByParameter = getTestClass().getAnnotatedFields(Parameter.class);
 			if (annotatedFieldsByParameter.size() > 0) {
-				Map<Integer,Integer> usedIndices = new HashMap<Integer, Integer>();
-				for (int i = 0 ; i < annotatedFieldsByParameter.size() ; i++)
-					usedIndices.put(i,0);
+				int[] usedIndices = new int[annotatedFieldsByParameter.size()];
 				for (FrameworkField f : annotatedFieldsByParameter) {
-					int indice = ((Parameter)f.getField().getAnnotation(Parameter.class)).value();
-					usedIndices.put(indice,usedIndices.get(indice)+1);
-					if (indice < 0 || indice > annotatedFieldsByParameter.size()-1)
-						errors.add(new Exception("The indices of fields annoted by @Parameter must be in the range from 0 to N-1 where N is the number of fields annoted by @Parameter. (field[name: "+f.getName()+", indice value: "+indice+"], number of fields: +"+annotatedFieldsByParameter.size()+")"));
+					int index = ((Parameter)f.getField().getAnnotation(Parameter.class)).value();
+					usedIndices[index]++;
+					if (index < 0 || index > annotatedFieldsByParameter.size()-1)
+						errors.add(new Exception("The indices of fields annoted by @Parameter must be in the range from 0 to N-1 where N is the number of fields annoted by @Parameter. (field[name: "+f.getName()+", indice value: "+index+"], number of fields: +"+annotatedFieldsByParameter.size()+")"));
 				}
-				for (int indice : usedIndices.keySet()) {
-					int numberOfuse = usedIndices.get(indice);
+				for (int index = 0 ; index < usedIndices.length ; index++) {
+					int numberOfuse = usedIndices[index];
 					if (numberOfuse == 0) {
-						errors.add(new Exception("The indice "+indice+" is never used."));
+						errors.add(new Exception("The indice "+index+" is never used."));
 					} else if (numberOfuse > 1) {
-						errors.add(new Exception("The indice "+indice+" is used more than once ("+numberOfuse+")."));
+						errors.add(new Exception("The indice "+index+" is used more than once ("+numberOfuse+")."));
 					}
 				}
 			}
