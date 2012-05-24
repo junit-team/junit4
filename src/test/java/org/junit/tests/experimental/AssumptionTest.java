@@ -183,34 +183,56 @@ public class AssumptionTest {
 	final static String message = "Some random message string.";
 	final static Throwable t = new Throwable();
 
+	/**
+	 * @see AssumptionTest#assumptionsWithMessage()
+	 */
 	public static class HasAssumeWithMessage {
-		@Test public void withMessage() {
+		@Test 
+		public void testMethod() {
 			assumeTrue(message, false);
 		}
 	}
 
-	public static class HasAssumeWithExceptionAndMessage {
-		@Test public void withExceptionAndMessage() {
+	@Test 
+	public void assumptionsWithMessage() {
+		final List<Failure> failures = 
+				runAndGetAssumptionFailures(HasAssumeWithMessage.class);
+
+		Assert.assertTrue(failures.get(0).getMessage().contains(message));
+	}
+
+	/**
+	 * @see AssumptionTest#assumptionsWithMessageAndCause()
+	 */
+	public static class HasAssumeWithMessageAndCause {
+		@Test 
+		public void testMethod() {
 			assumeNoException(message, t);
 		}		
 	}
 
-	@Test public void assumptionsWithMessage() {
+	@Test 
+	public void assumptionsWithMessageAndCause() {
+		final List<Failure> failures = 
+				runAndGetAssumptionFailures(HasAssumeWithMessageAndCause.class);
+		Assert.assertTrue(failures.get(0).getMessage().contains(message));
+		Assert.assertSame(failures.get(0).getException().getCause(), t);
+	}
+
+	/**
+	 * Helper method that runs tests on <code>clazz</code> and returns any
+	 * {@link Failure} objects that were {@link AssumptionViolatedException}s.
+	 */
+	private static List<Failure> runAndGetAssumptionFailures(Class<?> clazz) {
 		final List<Failure> failures = new ArrayList<Failure>();
-		JUnitCore core = new JUnitCore();
+		final JUnitCore core = new JUnitCore();
 		core.addListener(new RunListener() {
 			@Override
 			public void testAssumptionFailure(Failure failure) {
 				failures.add(failure);
 			}
 		});
-
-		core.run(HasAssumeWithMessage.class);
-		Assert.assertTrue(failures.get(0).getMessage().contains(message));
-		
-		failures.clear();
-		core.run(HasAssumeWithExceptionAndMessage.class);
-		Assert.assertTrue(failures.get(0).getMessage().contains(message));
-		Assert.assertSame(failures.get(0).getException().getCause(), t);
+		core.run(clazz);
+		return failures;
 	}	
 }
