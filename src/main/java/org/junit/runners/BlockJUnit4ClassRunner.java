@@ -168,7 +168,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 			errors.add(new Exception("No runnable methods"));
 	}
 
-	private void validateFields(List<Throwable> errors) {
+	protected void validateFields(List<Throwable> errors) {
 		RULE_VALIDATOR.validate(getTestClass(), errors);
 	}
 
