@@ -2,6 +2,7 @@ package org.junit.tests;
 
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
+import org.junit.internal.MethodSorterTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -26,7 +27,7 @@ import org.junit.tests.experimental.parallel.ParallelClassTest;
 import org.junit.tests.experimental.parallel.ParallelMethodTest;
 import org.junit.tests.experimental.rules.BlockJUnit4ClassRunnerOverrideTest;
 import org.junit.tests.experimental.rules.ClassRulesTest;
-import org.junit.tests.experimental.rules.ExpectedExceptionRuleTest;
+import org.junit.tests.experimental.rules.ExpectedExceptionTest;
 import org.junit.tests.experimental.rules.ExternalResourceRuleTest;
 import org.junit.tests.experimental.rules.MethodRulesTest;
 import org.junit.tests.experimental.rules.NameRulesTest;
@@ -38,6 +39,7 @@ import org.junit.tests.experimental.rules.TestRuleTest;
 import org.junit.tests.experimental.rules.TimeoutRuleTest;
 import org.junit.tests.experimental.rules.VerifierRuleTest;
 import org.junit.tests.experimental.theories.AllMembersSupplierTest;
+import org.junit.tests.experimental.theories.TestedOnSupplierTest;
 import org.junit.tests.experimental.theories.runner.TheoriesPerformanceTest;
 import org.junit.tests.junit3compatibility.AllTestsTest;
 import org.junit.tests.junit3compatibility.ClassRequestTest;
@@ -148,7 +150,7 @@ import org.junit.tests.validation.ValidationTest;
 	ParentRunnerTest.class,
 	NameRulesTest.class,
 	ClassRulesTest.class,
-	ExpectedExceptionRuleTest.class,
+	ExpectedExceptionTest.class,
 	TempFolderRuleTest.class,
 	TemporaryFolderUsageTest.class,
 	ExternalResourceRuleTest.class,
@@ -160,7 +162,9 @@ import org.junit.tests.validation.ValidationTest;
 	RuleFieldValidatorTest.class,
 	RuleChainTest.class,
 	BlockJUnit4ClassRunnerTest.class,
-	CauseMatcherTest.class
+	CauseMatcherTest.class,
+	MethodSorterTest.class,
+	TestedOnSupplierTest.class
 })
 public class AllTests {
 	public static Test suite() {

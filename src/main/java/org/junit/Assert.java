@@ -116,9 +116,7 @@ public class Assert {
 	 */
 	static public void assertEquals(String message, Object expected,
 			Object actual) {
-		if (expected == null && actual == null)
-			return;
-		if (expected != null && isEquals(expected, actual))
+		if (equalsRegardingNull(expected, actual))
 			return;
 		else if (expected instanceof String && actual instanceof String) {
 			String cleanMessage= message == null ? "" : message;
@@ -126,6 +124,13 @@ public class Assert {
 					(String) actual);
 		} else
 			failNotEquals(message, expected, actual);
+	}
+	
+	private static boolean equalsRegardingNull(Object expected, Object actual) {
+		if (expected == null)
+			return actual == null;
+		
+		return isEquals(expected, actual);
 	}
 
 	private static boolean isEquals(Object expected, Object actual) {
@@ -147,6 +152,120 @@ public class Assert {
 		assertEquals(null, expected, actual);
 	}
 
+	/**
+	 * Asserts that two objects are <b>not</b> equals. If they are, an
+	 * {@link AssertionError} is thrown with the given message. If
+	 * <code>first</code> and <code>second</code> are <code>null</code>,
+	 * they are considered equal.
+	 * @param message
+	 * 			  the identifying message for the {@link AssertionError} (<code>null</code>
+	 * 			  okay)
+	 * @param first
+	 * 			  first value to check
+	 * @param second
+	 * 			  the value to check against <code>first</code>
+	 */
+	static public void assertNotEquals(String message, Object first, 
+			Object second) {
+		if (equalsRegardingNull(first, second))
+			failEquals(message, first);
+	}
+	
+	/**
+	 * Asserts that two objects are <b>not</b> equals. If they are, an
+	 * {@link AssertionError} without a message is thrown. If
+	 * <code>first</code> and <code>second</code> are <code>null</code>,
+	 * they are considered equal.
+	 * 
+	 * @param first
+	 * 			  first value to check
+	 * @param second
+	 * 			  the value to check against <code>first</code>
+	 */
+	static public void assertNotEquals(Object first, Object second) {
+		assertNotEquals(null, first, second);
+	}
+
+	private static void failEquals(String message, Object actual) {
+		String formatted = "Values should be different. ";
+		if (message != null)
+			formatted = message + ". ";
+		
+		formatted += "Actual: " + actual; 
+		fail(formatted);
+	}
+	
+	/**
+	 * Asserts that two longs are <b>not</b> equals. If they are, an
+	 * {@link AssertionError} is thrown with the given message.
+	 * @param message
+	 * 			  the identifying message for the {@link AssertionError} (<code>null</code>
+	 * 			  okay)
+	 * @param first
+	 * 			  first value to check
+	 * @param second
+	 * 			  the value to check against <code>first</code>
+	 */
+	static public void assertNotEquals(String message, long first, long second) {
+		assertNotEquals(message, (Long) first, (Long) second);
+	}	
+	
+	/**
+	 * Asserts that two longs are <b>not</b> equals. If they are, an
+	 * {@link AssertionError} without a message is thrown.
+	 * @param first
+	 * 			  first value to check
+	 * @param second
+	 * 			  the value to check against <code>first</code>
+	 */
+	static public void assertNotEquals(long first, long second) {
+		assertNotEquals(null, first, second);
+	}
+	
+	/**
+	 * Asserts that two doubles or floats are <b>not</b> equal to within a positive delta.
+	 * If they are, an {@link AssertionError} is thrown with the given
+	 * message. If the expected value is infinity then the delta value is
+	 * ignored. NaNs are considered equal:
+	 * <code>assertNotEquals(Double.NaN, Double.NaN, *)</code> fails
+	 * 
+	 * @param message
+	 *            the identifying message for the {@link AssertionError} (<code>null</code>
+	 *            okay)
+	 * @param first
+	 *            first value to check
+	 * @param second
+	 *            the value to check against <code>first</code>
+	 * @param delta
+	 *            the maximum delta between <code>expected</code> and
+	 *            <code>actual</code> for which both numbers are still
+	 *            considered equal.
+	 */
+	static public void assertNotEquals(String message, double first, 
+			double second, double delta) {
+		if (!doubleIsDifferent(first, second, delta))
+			failEquals(message, new Double(first));
+	}	
+	
+	/**
+	 * Asserts that two doubles or floats are <b>not</b> equal to within a positive delta.
+	 * If they are, an {@link AssertionError} is thrown. If the expected
+	 * value is infinity then the delta value is ignored.NaNs are considered
+	 * equal: <code>assertNotEquals(Double.NaN, Double.NaN, *)</code> fails
+	 * 
+	 * @param first
+	 *            first value to check
+	 * @param second
+	 *            the value to check against <code>first</code>
+	 * @param delta
+	 *            the maximum delta between <code>expected</code> and
+	 *            <code>actual</code> for which both numbers are still
+	 *            considered equal.
+	 */
+	static public void assertNotEquals(double first, double second, double delta) {
+		assertNotEquals(null, first, second, delta);
+	}
+	
 	/**
 	 * Asserts that two object arrays are equal. If they are not, an
 	 * {@link AssertionError} is thrown with the given message. If
@@ -437,10 +556,17 @@ public class Assert {
 	 */
 	static public void assertEquals(String message, double expected,
 			double actual, double delta) {
-		if (Double.compare(expected, actual) == 0)
-			return;
-		if (!(Math.abs(expected - actual) <= delta))
+		if (doubleIsDifferent(expected, actual, delta))
 			failNotEquals(message, new Double(expected), new Double(actual));
+	}
+	
+	static private boolean doubleIsDifferent(double d1, double d2, double delta) {
+		if (Double.compare(d1, d2) == 0)
+			return false;
+		if ((Math.abs(d1 - d2) <= delta))
+			return false;
+		
+		return true;
 	}
 
 	/**
@@ -548,7 +674,9 @@ public class Assert {
 	 *            Object to check or <code>null</code>
 	 */
 	static public void assertNull(String message, Object object) {
-		assertTrue(message, object == null);
+		if (object == null)
+			return;
+		failNotNull(message, object);
 	}
 
 	/**
@@ -560,6 +688,13 @@ public class Assert {
 	 */
 	static public void assertNull(Object object) {
 		assertNull(null, object);
+	}
+
+	static private void failNotNull(String message, Object actual) {
+		String formatted= "";
+		if (message != null)
+			formatted= message + " ";
+		fail(formatted + "expected null, but was:<" + actual + ">");
 	}
 
 	/**

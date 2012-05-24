@@ -4,7 +4,6 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.internal.matchers.TypeSafeMatcher;
-import org.junit.runner.notification.Failure;
 
 /**
  * Matchers on a PrintableResult, to enable JUnit self-tests.
@@ -65,25 +64,6 @@ public class ResultMatchers {
 
 			public void describeTo(Description description) {
 				description.appendText("has failure containing " + string);
-			}
-		};
-	}
-	
-	/**
-	 * Matches if the first exception in the failure matches the given {@code exceptionMatcher}
-	 */
-	public static Matcher<PrintableResult> failureIs(final Matcher<? super Throwable> exceptionMatcher) {
-		return new TypeSafeMatcher<PrintableResult>() {
-			public void describeTo(Description description) {
-				description.appendText("failure is ");
-				exceptionMatcher.describeTo(description);
-			}
-	
-			@Override
-			public boolean matchesSafely(PrintableResult item) {
-				for(Failure f: item.getFailures())
-					return exceptionMatcher.matches(f.getException());
-				return false;
 			}
 		};
 	}

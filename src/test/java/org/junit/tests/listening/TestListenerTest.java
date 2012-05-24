@@ -38,7 +38,8 @@ public class TestListenerTest {
 		}
 	}
 	
-	@Test public void removeFailingListeners() {
+	@Test
+	public void reportsFailureOfListener() {
 		JUnitCore core= new JUnitCore();
 		core.addListener(new ExceptionListener());
 		
@@ -48,10 +49,6 @@ public class TestListenerTest {
 		assertEquals(1, result.getFailureCount());
 		Failure testFailure= result.getFailures().get(0);
 		assertEquals(Description.TEST_MECHANISM, testFailure.getDescription());
-
-		count= 0;
-		core.run(OneTest.class);
-		assertEquals(0, count); // Doesn't change because listener was removed		
 	}
 	
 	@Test public void freshResultEachTime() {

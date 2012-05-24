@@ -25,7 +25,16 @@ import org.junit.Rule;
  * </pre>
  */
 public class TemporaryFolder extends ExternalResource {
+        private final File parentFolder;
 	private File folder;
+
+        public TemporaryFolder() {
+                this(null);
+        }
+
+        public TemporaryFolder(File parentFolder) {
+                this.parentFolder = parentFolder;
+        }
 
 	@Override
 	protected void before() throws Throwable {
@@ -42,7 +51,7 @@ public class TemporaryFolder extends ExternalResource {
 	 * for testing purposes only. Do not use.
 	 */
 	public void create() throws IOException {
-		folder= createTemporaryFolderIn(null);
+	        folder = createTemporaryFolderIn(parentFolder);
 	}
 
 	/**
@@ -50,7 +59,9 @@ public class TemporaryFolder extends ExternalResource {
 	 */
 	public File newFile(String fileName) throws IOException {
 		File file= new File(getRoot(), fileName);
-		file.createNewFile();
+		if (!file.createNewFile())
+			throw new IllegalStateException(
+					"a file with the name \'" + fileName + "\' already exists in the test folder");
 		return file;
 	}
 
