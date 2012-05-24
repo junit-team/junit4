@@ -792,6 +792,6 @@ public class Assert {
 			if (actual instanceof Throwable)
 				assertionError.initCause((Throwable) actual);
 			throw assertionError;
-	}
+		}
 	}
 }
