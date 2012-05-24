@@ -9,7 +9,7 @@ import org.junit.tests.assertion.AssertionTest;
 import org.junit.tests.assertion.BothTest;
 import org.junit.tests.assertion.EachTest;
 import org.junit.tests.assertion.MultipleFailureExceptionTest;
-import org.junit.tests.assertion.ThrowableMatcherTest;
+import org.junit.tests.assertion.CauseMatcherTest;
 import org.junit.tests.deprecated.JUnit4ClassRunnerTest;
 import org.junit.tests.description.AnnotatedDescriptionTest;
 import org.junit.tests.description.SuiteDescriptionTest;
@@ -160,7 +160,7 @@ import org.junit.tests.validation.ValidationTest;
 	RuleFieldValidatorTest.class,
 	RuleChainTest.class,
 	BlockJUnit4ClassRunnerTest.class,
-	ThrowableMatcherTest.class
+	CauseMatcherTest.class
 })
 public class AllTests {
 	public static Test suite() {
