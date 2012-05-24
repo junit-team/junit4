@@ -922,7 +922,11 @@ public class Assert {
 			description.appendText("\n     got: ");
 			description.appendValue(actual);
 			description.appendText("\n");
-			throw new java.lang.AssertionError(description.toString());
+			java.lang.AssertionError assertionError= new java.lang.AssertionError(
+					description.toString());
+			if (actual instanceof Throwable)
+				assertionError.initCause((Throwable) actual);
+			throw assertionError;
 		}
 	}
 }

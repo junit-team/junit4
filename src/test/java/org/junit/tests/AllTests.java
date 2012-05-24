@@ -10,6 +10,7 @@ import org.junit.tests.assertion.AssertionTest;
 import org.junit.tests.assertion.BothTest;
 import org.junit.tests.assertion.EachTest;
 import org.junit.tests.assertion.MultipleFailureExceptionTest;
+import org.junit.tests.assertion.CauseMatcherTest;
 import org.junit.tests.deprecated.JUnit4ClassRunnerTest;
 import org.junit.tests.description.AnnotatedDescriptionTest;
 import org.junit.tests.description.SuiteDescriptionTest;
@@ -161,6 +162,7 @@ import org.junit.tests.validation.ValidationTest;
 	RuleFieldValidatorTest.class,
 	RuleChainTest.class,
 	BlockJUnit4ClassRunnerTest.class,
+	CauseMatcherTest.class,
 	MethodSorterTest.class,
 	TestedOnSupplierTest.class
 })

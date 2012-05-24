@@ -485,6 +485,17 @@ public class AssertionTest {
         }
     }
     
+	@Test public void assertThatIncludesActualException() {
+		Exception actual= new IllegalArgumentException();
+		Exception expected= new NullPointerException();
+
+		try {
+			assertThat(actual, equalTo(expected));
+		} catch (AssertionError e) {
+			assertEquals(actual, e.getCause());
+		}
+	}
+    
     @Test public void nullAndStringNullPrintCorrectError() {
         try {
             assertEquals(null, "null");

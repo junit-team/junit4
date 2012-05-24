@@ -2,13 +2,16 @@ package org.junit.tests.experimental.rules;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.any;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
+import static org.junit.matchers.JUnitMatchers.causedBy;
 import static org.junit.rules.ExpectedException.none;
 import static org.junit.tests.experimental.rules.EventCollector.everyTestRunSuccessful;
+import static org.junit.tests.experimental.rules.EventCollector.failureIs;
 import static org.junit.tests.experimental.rules.EventCollector.hasSingleAssumptionFailure;
 import static org.junit.tests.experimental.rules.EventCollector.hasSingleFailure;
 import static org.junit.tests.experimental.rules.EventCollector.hasSingleFailureWithMessage;
@@ -65,6 +68,9 @@ public class ExpectedExceptionTest {
 						everyTestRunSuccessful() },
 				{ ThrowAssumptionViolatedExceptionButExpectOtherType.class,
 						hasSingleFailure() },
+				{
+					ThrowAssumptionViolatedExceptionButExpectOtherType.class,
+					failureIs(causedBy(instanceOf(AssumptionViolatedException.class))) },
 				{ ViolateAssumptionAndExpectException.class,
 						hasSingleAssumptionFailure() },
 				{ ThrowExpectedAssertionError.class, everyTestRunSuccessful() },
