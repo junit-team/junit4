@@ -212,11 +212,11 @@ public class Parameterized extends Suite {
 		@Override
 		protected void validateConstructor(List<Throwable> errors) {
 			validateOnlyOneConstructor(errors);
-			List<FrameworkField> annotedFieldsByParameter = getTestClass().getAnnotatedFields(Parameter.class);
-			if (annotedFieldsByParameter != null && annotedFieldsByParameter.size() > 0) {
-				for (FrameworkField f : annotedFieldsByParameter) {
+			List<FrameworkField> annotatedFieldsByParameter = getTestClass().getAnnotatedFields(Parameter.class);
+			if (annotedFieldsByParameter != null && annotatedFieldsByParameter.size() > 0) {
+				for (FrameworkField f : annotatedFieldsByParameter) {
 					int indice = ((Parameter)f.getField().getAnnotation(Parameter.class)).value();
-					if (indice < 0 || indice > annotedFieldsByParameter.size()-1)
+					if (indice < 0 || indice > annotatedFieldsByParameter.size()-1)
 						errors.add(new Exception("The indices of fields annoted by @Parameter must be in the range from 0 to N-1 where N is the number of fields annoted by @Parameter. (field[name: "+f.getName()+", indice value: "+indice+"], number of fields: +"+annotedFieldsByParameter.size()+")"));
 				}
 				validateZeroArgConstructor(errors);
