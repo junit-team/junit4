@@ -22,6 +22,7 @@ import org.junit.runners.model.TestClass;
  * The {@link #CLASS_RULE_METHOD_VALIDATOR}
  * validates methods with a {@link ClassRule} annotation and the
  * {@link #RULE_METHOD_VALIDATOR} validates methods with a {@link Rule} annotation.
+ * @since 4.9
  */
 public enum RuleFieldValidator {
 	/**

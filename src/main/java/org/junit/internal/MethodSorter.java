@@ -6,6 +6,9 @@ import java.util.Comparator;
 
 import org.junit.FixMethodOrder;
 
+/**
+ * @since 4.11
+ */
 public class MethodSorter {
     /**
      * DEFAULT sort order

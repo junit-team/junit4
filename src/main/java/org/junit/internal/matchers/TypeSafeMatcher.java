@@ -10,6 +10,7 @@ import org.junit.internal.MethodSorter;
  * This simply implements the null check, checks the type and then casts.
  *
  * @author Joe Walnes
+ * @since 4.5
  */
 public abstract class TypeSafeMatcher<T> extends BaseMatcher<T> {
 

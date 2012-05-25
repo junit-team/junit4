@@ -1,5 +1,6 @@
 /**
  * 
+ * @since 4.5
  */
 package org.junit.runners.model;
 
@@ -7,6 +8,7 @@ package org.junit.runners.model;
 /**
  * Represents one or more actions to be taken at runtime in the course
  * of running a JUnit test suite.
+ * @since 4.5
  */
 public abstract class Statement {
 	/**

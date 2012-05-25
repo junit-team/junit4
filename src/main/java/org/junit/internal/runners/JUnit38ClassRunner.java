@@ -18,6 +18,9 @@ import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
+/**
+ * @since 4.4
+ */
 public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
 	private final class OldTestClassAdaptingListener implements
 			TestListener {

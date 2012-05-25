@@ -1,5 +1,6 @@
 /**
  * 
+ * @since 4.8
  */
 package org.junit.experimental.categories;
 
@@ -60,6 +61,7 @@ import org.junit.runners.model.RunnerBuilder;
  * public static class SlowTestSuite {
  * }
  * </pre>
+ * @since 4.8
  */
 public class Categories extends Suite {
 	// the way filters are implemented makes this unnecessarily complicated,

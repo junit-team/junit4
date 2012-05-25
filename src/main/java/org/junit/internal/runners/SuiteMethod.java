@@ -17,6 +17,7 @@ import junit.framework.Test;
  *    }
  * }
  * </pre>
+ * @since 4.5
  */
 public class SuiteMethod extends JUnit38ClassRunner {
 	public SuiteMethod(Class<?> klass) throws Throwable {

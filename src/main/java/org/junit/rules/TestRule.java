@@ -39,6 +39,7 @@ import org.junit.runners.model.Statement;
  *   <li>{@link Timeout}: cause test to fail after a set time</li>
  *   <li>{@link Verifier}: fail test if object state ends up incorrect</li>
  * </ul>
+ * @since 4.9
  */
 public interface TestRule {
 	/**

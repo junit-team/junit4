@@ -8,6 +8,9 @@ import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.List;
 
+/**
+ * @since 4.10
+ */
 class NoGenericTypeParametersValidator {
 	private final Method fMethod;
 

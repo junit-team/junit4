@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.junit.internal.runners.model;
 
 import org.junit.internal.AssumptionViolatedException;
@@ -9,6 +6,9 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.MultipleFailureException;
 
+/**
+ * @since 4.5
+ */
 public class EachTestNotifier {
 	private final RunNotifier fNotifier;
 

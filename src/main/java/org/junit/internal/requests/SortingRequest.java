@@ -7,6 +7,9 @@ import org.junit.runner.Request;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Sorter;
 
+/**
+ * @since 4.0
+ */
 public class SortingRequest extends Request {
 	private final Request fRequest;
 	private final Comparator<Description> fComparator;

@@ -1,4 +1,5 @@
 /*  Copyright (c) 2000-2006 hamcrest.org
+ * @since 4.5
  */
 package org.junit.internal.matchers;
 
@@ -7,6 +8,7 @@ import org.hamcrest.Matcher;
 
 /**
  * Tests if the argument is a string that contains a substring.
+ * @since 4.5
  */
 public class StringContains extends SubstringMatcher {
     public StringContains(String substring) {

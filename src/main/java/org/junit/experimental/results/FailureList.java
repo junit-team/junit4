@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.junit.experimental.results;
 
 import java.util.List;
@@ -9,6 +6,9 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 
+/**
+ * @since 4.4
+ */
 class FailureList {
 	private final List<Failure> failures;
 

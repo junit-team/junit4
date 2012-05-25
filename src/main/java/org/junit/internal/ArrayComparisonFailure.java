@@ -8,6 +8,7 @@ import org.junit.Assert;
 /**
  * Thrown when two array elements differ
  * @see Assert#assertArrayEquals(String, Object[], Object[])
+ * @since 4.2
  */
 public class ArrayComparisonFailure extends AssertionError {
 

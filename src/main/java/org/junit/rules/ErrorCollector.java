@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.junit.rules;
 
 import static org.junit.Assert.assertThat;
@@ -31,6 +28,7 @@ import org.junit.runners.model.MultipleFailureException;
  * 	}
  * }
  * </pre>
+ * @since 4.7
  */
 public class ErrorCollector extends Verifier {
 	private List<Throwable> errors= new ArrayList<Throwable>();

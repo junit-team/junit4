@@ -10,6 +10,7 @@ import org.junit.internal.matchers.CauseMatcher;
 /**
  * Convenience import class: these are useful matchers for use with the assertThat method, but they are
  * not currently included in the basic CoreMatchers class from hamcrest.
+ * @since 4.4
  */
 public class JUnitMatchers {
 	/**

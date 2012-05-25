@@ -3,6 +3,9 @@ package org.junit.runners.model;
 import java.lang.annotation.Annotation;
 import java.util.List;
 
+/**
+ * @since 4.7
+ */
 public abstract class FrameworkMember<T extends FrameworkMember<T>> {
 	/**
 	 * Returns the annotations on this method

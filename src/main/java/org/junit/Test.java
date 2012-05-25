@@ -41,6 +41,7 @@ import java.lang.annotation.Target;
  *       while(true);
  *    }
  * </pre></p>
+ * @since 4.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})

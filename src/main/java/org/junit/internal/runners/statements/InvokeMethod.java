@@ -1,11 +1,11 @@
-/**
- * 
- */
 package org.junit.internal.runners.statements;
 
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
+/**
+ * @since 4.5
+ */
 public class InvokeMethod extends Statement {
 	private final FrameworkMethod fTestMethod;
 	private Object fTarget;

@@ -3,6 +3,9 @@ package org.junit.internal.matchers;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
+/**
+ * @since 4.11
+ */
 public class CauseMatcher extends TypeSafeMatcher<Throwable> {
 	private final Matcher<? super Throwable> fCauseMatcher;
 

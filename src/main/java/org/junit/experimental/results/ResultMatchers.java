@@ -12,6 +12,7 @@ import org.junit.internal.matchers.TypeSafeMatcher;
  * <pre>
  * 		assertThat(testResult(HasExpectedException.class), isSuccessful());
  * </pre>
+ * @since 4.4
  */
 public class ResultMatchers {
 	/**

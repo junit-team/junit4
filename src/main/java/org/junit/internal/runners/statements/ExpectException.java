@@ -1,11 +1,11 @@
-/**
- * 
- */
 package org.junit.internal.runners.statements;
 
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.runners.model.Statement;
 
+/**
+ * @since 4.5
+ */
 public class ExpectException extends Statement {
 	private Statement fNext;
 	private final Class<? extends Throwable> fExpected;

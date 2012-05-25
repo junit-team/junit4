@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.junit.internal.runners.statements;
 
 import java.util.List;
@@ -8,6 +5,9 @@ import java.util.List;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
+/**
+ * @since 4.5
+ */
 public class RunBefores extends Statement {
 	private final Statement fNext;
 

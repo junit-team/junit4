@@ -23,6 +23,7 @@ import org.junit.Rule;
  * 	}
  * }
  * </pre>
+ * @since 4.7
  */
 public class TemporaryFolder extends ExternalResource {
         private final File parentFolder;

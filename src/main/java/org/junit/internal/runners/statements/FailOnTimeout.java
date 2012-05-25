@@ -1,10 +1,10 @@
-/**
- * 
- */
 package org.junit.internal.runners.statements;
 
 import org.junit.runners.model.Statement;
 
+/**
+ * @since 4.5
+ */
 public class FailOnTimeout extends Statement {
 	private final Statement fOriginalStatement;
 

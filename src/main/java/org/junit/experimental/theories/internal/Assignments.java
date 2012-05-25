@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.junit.experimental.theories.internal;
 
 import java.lang.reflect.Method;
@@ -17,6 +14,7 @@ import org.junit.runners.model.TestClass;
 /**
  * A potentially incomplete list of value assignments for a method's formal
  * parameters
+ * @since 4.5
  */
 public class Assignments {
 	private List<PotentialAssignment> fAssigned;

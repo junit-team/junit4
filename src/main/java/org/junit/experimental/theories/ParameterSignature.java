@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.junit.experimental.theories;
 
 import java.lang.annotation.Annotation;
@@ -10,6 +7,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * @since 4.4
+ */
 public class ParameterSignature {
 	public static ArrayList<ParameterSignature> signatures(Method method) {
 		return signatures(method.getParameterTypes(), method

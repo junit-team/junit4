@@ -2,6 +2,9 @@ package org.junit.internal.matchers;
 
 import org.hamcrest.Description;
 
+/**
+ * @since 4.5
+ */
 public abstract class SubstringMatcher extends TypeSafeMatcher<String> {
 
     protected final String substring;

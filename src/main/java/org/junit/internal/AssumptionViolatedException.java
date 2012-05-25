@@ -5,6 +5,9 @@ import org.hamcrest.Matcher;
 import org.hamcrest.SelfDescribing;
 import org.hamcrest.StringDescription;
 
+/**
+ * @since 4.5
+ */
 public class AssumptionViolatedException extends RuntimeException implements SelfDescribing {
 	private static final long serialVersionUID= 1L;
 

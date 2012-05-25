@@ -36,6 +36,7 @@ import org.junit.runners.model.Statement;
  * 	}
  * }
  * </pre>
+ * @since 4.9
  */
 public abstract class TestWatcher implements TestRule {
 	public Statement apply(final Statement base, final Description description) {

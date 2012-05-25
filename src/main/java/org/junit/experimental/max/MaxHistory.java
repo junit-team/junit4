@@ -22,6 +22,7 @@ import org.junit.runner.notification.RunListener;
  * <li>Last failure timestamp
  * <li>Duration of last execution
  * </ul>
+ * @since 4.6
  */
 public class MaxHistory implements Serializable {
 	private static final long serialVersionUID= 1L;

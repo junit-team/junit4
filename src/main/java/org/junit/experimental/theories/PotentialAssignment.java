@@ -1,5 +1,8 @@
 package org.junit.experimental.theories;
 
+/**
+ * @since 4.5
+ */
 public abstract class PotentialAssignment {
 	public static class CouldNotGenerateValueException extends Exception {
 		private static final long serialVersionUID= 1L;

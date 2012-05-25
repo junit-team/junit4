@@ -12,6 +12,7 @@ import org.junit.runner.Description;
  * will be of a single test. However, if problems are encountered while constructing the
  * test (for example, if a {@link org.junit.BeforeClass} method is not static), it may describe
  * something other than a single test.
+ * @since 4.0
  */
 public class Failure implements Serializable {
 	private static final long serialVersionUID = 1L;

@@ -6,6 +6,9 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
+/**
+ * @since 4.5
+ */
 public class CombinableMatcher<T> extends BaseMatcher<T> {
 
 	private final Matcher<? extends T> fMatcher;

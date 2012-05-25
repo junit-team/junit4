@@ -11,6 +11,9 @@ import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 
 // Copied (hopefully temporarily) from hamcrest-library
+/**
+ * @since 4.5
+ */
 public class IsCollectionContaining<T> extends TypeSafeMatcher<Iterable<T>> {
     private final Matcher<? extends T> elementMatcher;
 

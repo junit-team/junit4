@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.junit.experimental.theories.internal;
 
 import java.lang.reflect.Array;
@@ -19,6 +16,7 @@ import org.junit.runners.model.TestClass;
 
 /**
  * Supplies Theory parameters based on all public members of the target class.
+ * @since 4.5
  */
 public class AllMembersSupplier extends ParameterSupplier {
 	static class MethodParameterValue extends PotentialAssignment {

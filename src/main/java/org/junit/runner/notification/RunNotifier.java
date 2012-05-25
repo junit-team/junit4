@@ -17,6 +17,7 @@ import org.junit.runner.Result;
  * {@link org.junit.runner.Runner#run(RunNotifier)}. Future evolution of this class is likely to 
  * move {@link #fireTestRunStarted(Description)} and {@link #fireTestRunFinished(Result)}
  * to a separate class since they should only be called once per run.
+ * @since 4.0
  */
 public class RunNotifier {
 	private final List<RunListener> fListeners= 

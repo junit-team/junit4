@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.junit.experimental.theories;
 
 import java.lang.reflect.Field;
@@ -20,6 +17,9 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
 
+/**
+ * @since 4.4
+ */
 public class Theories extends BlockJUnit4ClassRunner {
 	public Theories(Class<?> klass) throws InitializationError {
 		super(klass);
