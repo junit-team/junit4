@@ -175,7 +175,7 @@ public class Parameterized extends Suite {
 			List<FrameworkField> fields = getTestClass().getAnnotatedFields(Parameter.class);
 			if (!fields.isEmpty()) {
 				if (fields.size() != fParameters.length)
-					throw new Exception(getTestClass().getName() + ": The number of annoted fields is not the same than the number of available parameters.");
+					throw new Exception(getTestClass().getName() + ": The number of annotated fields is not the same than the number of available parameters.");
 				testClassInstance = getTestClass().getJavaClass().newInstance();
 				for (FrameworkField f : fields) {
 					Field field = f.getField();
@@ -223,10 +223,12 @@ public class Parameterized extends Suite {
 			if (annotatedFieldsByParameter.size() > 0) {
 				int[] usedIndices = new int[annotatedFieldsByParameter.size()];
 				for (FrameworkField f : annotatedFieldsByParameter) {
-					int index = ((Parameter)f.getField().getAnnotation(Parameter.class)).value();
-					usedIndices[index]++;
-					if (index < 0 || index > annotatedFieldsByParameter.size()-1)
-						errors.add(new Exception("The indices of fields annoted by @Parameter must be in the range from 0 to N-1 where N is the number of fields annoted by @Parameter. (field[name: "+f.getName()+", indice value: "+index+"], number of fields: +"+annotatedFieldsByParameter.size()+")"));
+					int index = f.getField().getAnnotation(Parameter.class).value();
+					if (index < 0 || index > annotatedFieldsByParameter.size()-1) {
+						errors.add(new Exception("The indices of fields annotated by @Parameter must be in the range from 0 to N-1 where N is the number of fields annotated by @Parameter. (field[name: "+f.getName()+", indice value: "+index+"], number of annotated fields: "+annotatedFieldsByParameter.size()+")"));
+					} else {
+						usedIndices[index]++;
+					}
 				}
 				for (int index = 0 ; index < usedIndices.length ; index++) {
 					int numberOfuse = usedIndices[index];
