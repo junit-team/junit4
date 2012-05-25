@@ -560,7 +560,6 @@ public class Assert {
 			failNotEquals(message, new Double(expected), new Double(actual));
 	}
 	
-<<<<<<< HEAD
 	/**
 	 * Asserts that two floats are equal to within a positive delta.
 	 * If they are not, an {@link AssertionError} is thrown with the given
@@ -586,7 +585,6 @@ public class Assert {
 			return;
 		if (!(Math.abs(expected - actual) <= delta))
 			failNotEquals(message, new Float(expected), new Float(actual));
-=======
 	static private boolean doubleIsDifferent(double d1, double d2, double delta) {
 		if (Double.compare(d1, d2) == 0)
 			return false;
@@ -594,7 +592,6 @@ public class Assert {
 			return false;
 		
 		return true;
->>>>>>> upstream/master
 	}
 
 	/**
