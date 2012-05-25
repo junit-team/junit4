@@ -3,11 +3,13 @@ package org.junit.tests.running.classes;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.experimental.results.PrintableResult.testResult;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -18,6 +20,7 @@ import org.junit.runner.Request;
 import org.junit.runner.Result;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
+import org.junit.runner.notification.Failure;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
@@ -153,6 +156,68 @@ public class ParameterizedTestTest {
 		Runner runner= Request.aClass(FibonacciWithParameterizedFieldTest.class).getRunner();
 		Description description= runner.getDescription();
 		assertEquals("[0]", description.getChildren().get(0).getDisplayName());
+	}
+
+	@RunWith(Parameterized.class)
+	static public class BadIndexForAnnotatedFieldTest {
+		@Parameters
+		public static Collection<Object[]> data() {
+			return Arrays.asList(new Object[][] { { 0, 0 } });
+		}
+
+		@Parameter(2)
+		public int fInput;
+		
+		public int fExpected;
+
+		@Test
+		public void test() {
+			assertEquals(fExpected, fib(fInput));
+		}
+
+		private int fib(int x) {
+			return 0;
+		}
+	}
+	
+	@Test
+	public void failureOnInitialization() {
+		Result result = JUnitCore.runClasses(BadIndexForAnnotatedFieldTest.class);
+		assertEquals(2, result.getFailureCount());
+		List<Failure> failures = result.getFailures();
+		assertEquals("The indices of fields annotated by @Parameter must be in the range from 0 to N-1 where N is the number of fields annotated by @Parameter. (field[name: fInput, indice value: 2], number of annotated fields: 1)",
+				failures.get(0).getException().getMessage());
+		assertEquals("The indice 0 is never used.", failures.get(1).getException().getMessage());
+	}
+
+	@RunWith(Parameterized.class)
+	static public class BadNumberOfAnnotatedFieldTest {
+		@Parameters
+		public static Collection<Object[]> data() {
+			return Arrays.asList(new Object[][] { { 0, 0 } });
+		}
+
+		@Parameter(0)
+		public int fInput;
+		
+		public int fExpected;
+
+		@Test
+		public void test() {
+			assertEquals(fExpected, fib(fInput));
+		}
+
+		private int fib(int x) {
+			return 0;
+		}
+	}
+	
+	@Test
+	public void numberOfFieldsAndParametersShouldMatch() {
+		Result result = JUnitCore.runClasses(BadNumberOfAnnotatedFieldTest.class);
+		assertEquals(1, result.getFailureCount());
+		List<Failure> failures = result.getFailures();
+		assertTrue(failures.get(0).getException().getMessage().contains("The number of annotated fields is not the same than the number of available parameters."));
 	}
 
 	private static String fLog;
