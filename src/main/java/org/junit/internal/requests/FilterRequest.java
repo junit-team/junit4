@@ -12,7 +12,6 @@ import org.junit.runner.manipulation.NoTestsRemainException;
 
 /**
  * A filtered {@link Request}.
- * @since 4.0
  */
 public final class FilterRequest extends Request {
 	private final Request fRequest;

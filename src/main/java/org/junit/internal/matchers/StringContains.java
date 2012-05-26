@@ -1,5 +1,4 @@
 /*  Copyright (c) 2000-2006 hamcrest.org
- * @since 4.5
  */
 package org.junit.internal.matchers;
 

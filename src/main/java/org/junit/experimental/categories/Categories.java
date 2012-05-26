@@ -1,7 +1,3 @@
-/**
- * 
- * @since 4.8
- */
 package org.junit.experimental.categories;
 
 import java.lang.annotation.Retention;

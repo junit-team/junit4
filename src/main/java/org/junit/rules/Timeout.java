@@ -1,7 +1,3 @@
-/**
- * 
- * @since 4.7
- */
 package org.junit.rules;
 
 import org.junit.internal.runners.statements.FailOnTimeout;
