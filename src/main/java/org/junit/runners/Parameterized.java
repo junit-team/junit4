@@ -7,7 +7,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
@@ -174,8 +176,6 @@ public class Parameterized extends Suite {
 			Object testClassInstance = null;
 			List<FrameworkField> fields = getTestClass().getAnnotatedFields(Parameter.class);
 			if (!fields.isEmpty()) {
-				if (fields.size() != fParameters.length)
-					throw new Exception(getTestClass().getName() + ": The number of annotated fields is not the same than the number of available parameters.");
 				testClassInstance = getTestClass().getJavaClass().newInstance();
 				for (FrameworkField f : fields) {
 					Field field = f.getField();
@@ -185,10 +185,6 @@ public class Parameterized extends Suite {
 						field.set(testClassInstance,  fParameters[index]);
 					} catch(IllegalArgumentException iare) {
 						throw new Exception(getTestClass().getName() + ": Trying to set "+field.getName()+" with the value "+fParameters[index]+" that is not the right type ("+fParameters[index].getClass().getSimpleName()+" instead of "+field.getType().getSimpleName()+").", iare);
-					} catch(IllegalAccessException iace) {
-						throw new Exception(getTestClass().getName() + ": Trying to set "+field.getName()+" but you doesn't allow JUnit to access it. Please make it public.", iace);
-					} catch (IndexOutOfBoundsException ioobe) {
-						throw new Exception(getTestClass().getName() + ": Trying to set "+field.getName()+" but the index value of the annotation is too big.", ioobe);
 					}
 				}
 			} else {
@@ -225,17 +221,17 @@ public class Parameterized extends Suite {
 				for (FrameworkField f : annotatedFieldsByParameter) {
 					int index = f.getField().getAnnotation(Parameter.class).value();
 					if (index < 0 || index > annotatedFieldsByParameter.size()-1) {
-						errors.add(new Exception("The indices of fields annotated by @Parameter must be in the range from 0 to N-1 where N is the number of fields annotated by @Parameter. (field[name: "+f.getName()+", indice value: "+index+"], number of annotated fields: "+annotatedFieldsByParameter.size()+")"));
+						errors.add(new Exception("Invalid @parameter value: "+index+". @parameter fields counted: "+annotatedFieldsByParameter.size()+". Please use an index between 0 and "+(annotatedFieldsByParameter.size()-1)+"."));
 					} else {
 						usedIndices[index]++;
 					}
 				}
 				for (int index = 0 ; index < usedIndices.length ; index++) {
-					int numberOfuse = usedIndices[index];
-					if (numberOfuse == 0) {
-						errors.add(new Exception("The indice "+index+" is never used."));
-					} else if (numberOfuse > 1) {
-						errors.add(new Exception("The indice "+index+" is used more than once ("+numberOfuse+")."));
+					int numberOfUse = usedIndices[index];
+					if (numberOfUse == 0) {
+						errors.add(new Exception("The index "+index+" is never used."));
+					} else if (numberOfUse > 1) {
+						errors.add(new Exception("The index "+index+" is used more than once ("+numberOfUse+")."));
 					}
 				}
 			}
