@@ -12,7 +12,7 @@ import org.junit.internal.MethodSorter;
 public enum MethodSorters {
     /** Sorts the test methods by the method name, in lexicographic order */
     NAME_ASCENDING(MethodSorter.NAME_ASCENDING),
-    /** Sorts the test methods by the method name, in reverse lexicographic order */
+    /** the order in which the tests are returned by the JVM, i.e. there is no sorting done */
     JVM(null),
     /** the default value, deterministic, but not predictable */
     DEFAULT(MethodSorter.DEFAULT);

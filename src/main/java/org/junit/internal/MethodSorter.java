@@ -22,7 +22,7 @@ public class MethodSorter {
     };
     
     /**
-     * Method name ascending lexicograhic sort order
+     * Method name ascending lexicographic sort order
      */
     public static Comparator<Method> NAME_ASCENDING= new Comparator<Method>() {
         public int compare(Method m1, Method m2) {
