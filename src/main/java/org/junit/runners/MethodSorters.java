@@ -12,9 +12,10 @@ import org.junit.internal.MethodSorter;
 public enum MethodSorters {
     /** Sorts the test methods by the method name, in lexicographic order */
     NAME_ASCENDING(MethodSorter.NAME_ASCENDING),
-    /** the order in which the tests are returned by the JVM, i.e. there is no sorting done */
+    /** Leaves the test methods in the order returned by the JVM.
+     * Note that the order from the JVM my vary from run to run */
     JVM(null),
-    /** the default value, deterministic, but not predictable */
+    /** Sorts the test methods in a deterministic, but not predictable, order */
     DEFAULT(MethodSorter.DEFAULT);
     
     private final Comparator<Method> fComparator;
