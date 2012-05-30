@@ -2,13 +2,11 @@ package org.junit.internal;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.List;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 public class MethodSorterTest {
