@@ -11,13 +11,12 @@ public class MethodSorter {
      * DEFAULT sort order
      */
     public static Comparator<Method> DEFAULT= new Comparator<Method>() {
-        public int compare(Method m1, Method m2) {
-            int i1 = m1.getName().hashCode();
-            int i2 = m2.getName().hashCode();
-            if (i1 != i2) {
-                return i1 < i2 ? -1 : 1;
+        public int compare(Method left, Method right) {
+            if (MethodSorter.hashCodesAreEqual(left, right)) {
+                return MethodSorter.compareSignatures(left, right);
             }
-            return MethodSorter.compare(m1.toString(), m2.toString());
+
+            return MethodSorter.compareHashCodes(left, right);
         }
     };
     
@@ -25,20 +24,35 @@ public class MethodSorter {
      * Method name ascending lexicograhic sort order
      */
     public static Comparator<Method> NAME_ASCENDING= new Comparator<Method>() {
-        public int compare(Method m1, Method m2) {
-            String n1 = m1.getName();
-            String n2 = m2.getName();
-            if (!n1.equals(n2)) {
-                return MethodSorter.compare(m1.getName(), m2.getName());
+        public int compare(Method left, Method right) {
+            if (MethodSorter.namesAreEqual(left, right)) {
+              return MethodSorter.compareSignatures(left, right);
             }
-            return MethodSorter.compare(m1.toString(), m2.toString());
+
+            return MethodSorter.compareNames(left, right);
         }
     };
 
-    private static int compare(String s1, String s2) {
-        return s1.compareTo(s2);
+    private static int compareHashCodes(Method left, Method right) {
+        return left.getName().hashCode() <= right.getName().hashCode() ? -1 : 1;
     }
-    
+
+    private static int compareNames(Method left, Method right) {
+        return left.getName().compareTo(right.getName());
+    }
+
+    private static int compareSignatures(Method left, Method right) {
+        return left.toString().compareTo(right.toString());
+    }
+
+    private static boolean hashCodesAreEqual(Method left, Method right) {
+        return left.getName().hashCode() == right.getName().hashCode();
+    }
+
+    private static boolean namesAreEqual(Method left, Method right) {
+        return left.getName().equals(right.getName());
+    }
+
     /**
      * Gets declared methods of a class in a predictable order, unless @FixMethodOrder(MethodSorters.JVM) is specified.
      * 
