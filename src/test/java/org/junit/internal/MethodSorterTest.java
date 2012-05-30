@@ -92,10 +92,7 @@ public class MethodSorterTest {
     }
 
     @Test public void testNameAsc() {
-        // see http://bugs.sun.com/view_bug.do?bug_id=7023180 for why two alternatives are possible
-        final String expectedAlternative1 = Arrays.asList(ALPHA, BETA, DELTA, EPSILON, GAMMA_VOID, GAMMA_BOOLEAN).toString();
-        final String expectedAlternative2 = Arrays.asList(ALPHA, BETA, DELTA, EPSILON, GAMMA_BOOLEAN, GAMMA_VOID).toString();
-
-        assertThat(declaredMethods(DummySortWithNameAsc.class), anyOf(equalTo(expectedAlternative1), equalTo(expectedAlternative2)));
+        String[] expected= new String[] { ALPHA, BETA, DELTA, EPSILON, GAMMA_VOID, GAMMA_BOOLEAN };
+        assertEquals(Arrays.asList(expected).toString(), declaredMethods(DummySortWithNameAsc.class));
     }
 }

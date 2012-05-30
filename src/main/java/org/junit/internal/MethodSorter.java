@@ -22,11 +22,11 @@ public class MethodSorter {
     };
     
     /**
-     * Method name ascending lexicographic sort order
+     * Method name ascending lexicographic sort order, with toString as a tiebreaker
      */
     public static Comparator<Method> NAME_ASCENDING= new Comparator<Method>() {
         public int compare(Method m1, Method m2) {
-            return MethodSorter.compare(m1.getName(), m2.getName());
+            return MethodSorter.compare(m1.getName() + m1.toString(), m2.getName() + m2.toString());
         }
     };
 

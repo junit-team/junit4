@@ -10,7 +10,7 @@ import org.junit.internal.MethodSorter;
  * Defines common {@link MethodSorter} implementations.
  */
 public enum MethodSorters {
-    /** Sorts the test methods by the method name, in lexicographic order */
+    /** Sorts the test methods by the method name, in lexicographic order, with Method.toString used as a tiebreaker */
     NAME_ASCENDING(MethodSorter.NAME_ASCENDING),
     /** Leaves the test methods in the order returned by the JVM.
      * Note that the order from the JVM my vary from run to run */
