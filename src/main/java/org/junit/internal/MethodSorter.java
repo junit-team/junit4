@@ -26,7 +26,12 @@ public class MethodSorter {
      */
     public static Comparator<Method> NAME_ASCENDING= new Comparator<Method>() {
         public int compare(Method m1, Method m2) {
-            return MethodSorter.compare(m1.getName(), m2.getName());
+            String n1 = m1.getName();
+            String n2 = m2.getName();
+            if (!n1.equals(n2)) {
+                return MethodSorter.compare(m1.getName(), m2.getName());
+            }
+            return MethodSorter.compare(m1.toString(), m2.toString());
         }
     };
 
