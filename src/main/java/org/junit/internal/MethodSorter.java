@@ -17,7 +17,7 @@ public class MethodSorter {
             if (i1 != i2) {
                 return i1 < i2 ? -1 : 1;
             }
-            return MethodSorter.compare(m1.toString(), m2.toString());
+            return NAME_ASCENDING.compare(m1, m2);
         }
     };
     
@@ -26,13 +26,13 @@ public class MethodSorter {
      */
     public static Comparator<Method> NAME_ASCENDING= new Comparator<Method>() {
         public int compare(Method m1, Method m2) {
-            return MethodSorter.compare(m1.getName() + m1.toString(), m2.getName() + m2.toString());
+            final int comparison = m1.getName().compareTo(m2.getName());
+            if (comparison != 0) {
+                return comparison;
+            }
+            return m1.toString().compareTo(m2.toString());
         }
     };
-
-    private static int compare(String s1, String s2) {
-        return s1.compareTo(s2);
-    }
     
     /**
      * Gets declared methods of a class in a predictable order, unless @FixMethodOrder(MethodSorters.JVM) is specified.
