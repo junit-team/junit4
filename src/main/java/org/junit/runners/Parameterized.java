@@ -101,7 +101,7 @@ import org.junit.runners.model.Statement;
  * 
  * <p>
  * Each instance of <code>FibonacciTest</code> will be constructed with the default constructor
- * and fields annoted by <code>&#064;Parameter</code>  will be initialized
+ * and fields annotated by <code>&#064;Parameter</code>  will be initialized
  * with the data values in the <code>&#064;Parameters</code> method.
  * </p>
  *
@@ -141,7 +141,7 @@ public class Parameterized extends Suite {
 	
 	/**
 	 * Annotation for fields of the test class which will be initialized by the
-	 * method annoted by <code>Parameters</code><br/>
+	 * method annotated by <code>Parameters</code><br/>
 	 * By using directly this annotation, the test class constructor isn't needed.<br/>
 	 * Index range must start at 0.
 	 * Default value is 0.
