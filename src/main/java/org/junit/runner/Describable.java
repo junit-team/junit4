@@ -3,6 +3,7 @@ package org.junit.runner;
 
 /**
  * Represents an object that can describe itself
+ * @since 4.5
  */
 public interface Describable {
 	/**

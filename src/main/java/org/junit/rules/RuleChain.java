@@ -1,5 +1,6 @@
 /**
  * 
+ * @since 4.10
  */
 package org.junit.rules;
 
@@ -40,6 +41,7 @@ import org.junit.runners.model.Statement;
  * finished middle rule
  * finished outer rule
  * </pre>
+ * @since 4.10
  */
 public class RuleChain implements TestRule {
 	private static final RuleChain EMPTY_CHAIN= new RuleChain(

@@ -23,6 +23,7 @@ import org.junit.runner.notification.RunNotifier;
  * @see org.junit.runner.Result
  * @see org.junit.runner.notification.RunListener
  * @see org.junit.runner.Request
+ * @since 4.0
  */
 public class JUnitCore {
 	private final RunNotifier fNotifier= new RunNotifier();

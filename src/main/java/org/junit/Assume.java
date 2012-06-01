@@ -29,6 +29,7 @@ import org.junit.internal.matchers.Each;
  *    ...
  *    assumeTrue(...);
  * </pre>
+ * @since 4.4
  */
 public class Assume {
 	/**

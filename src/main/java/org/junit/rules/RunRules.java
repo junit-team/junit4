@@ -5,6 +5,7 @@ import org.junit.runners.model.Statement;
 
 /**
  * Runs a collection of rules on a statement.
+ * @since 4.9
  */
 public class RunRules extends Statement {
 	private final Statement statement;

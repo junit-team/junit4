@@ -12,6 +12,7 @@ import org.junit.runner.notification.RunListener;
 /**
  * A <code>Result</code> collects and summarizes information from running multiple tests.
  * All tests are counted -- additional information is collected from tests that fail.
+ * @since 4.0
  */
 public class Result implements Serializable {
 	private static final long serialVersionUID = 1L;

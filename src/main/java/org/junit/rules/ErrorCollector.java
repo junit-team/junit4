@@ -1,5 +1,6 @@
 /**
  * 
+ * @since 4.7
  */
 package org.junit.rules;
 
@@ -31,6 +32,7 @@ import org.junit.runners.model.MultipleFailureException;
  * 	}
  * }
  * </pre>
+ * @since 4.7
  */
 public class ErrorCollector extends Verifier {
 	private List<Throwable> errors= new ArrayList<Throwable>();
