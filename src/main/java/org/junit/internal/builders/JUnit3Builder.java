@@ -1,12 +1,12 @@
-/**
- * 
- */
 package org.junit.internal.builders;
 
 import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.runner.Runner;
 import org.junit.runners.model.RunnerBuilder;
 
+/**
+ * @since 4.5
+ */
 public class JUnit3Builder extends RunnerBuilder {
 	@Override
 	public Runner runnerForClass(Class<?> testClass) throws Throwable {

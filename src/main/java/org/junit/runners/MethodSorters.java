@@ -8,6 +8,7 @@ import org.junit.internal.MethodSorter;
 /**
  * Sort the methods into a specified execution order.
  * Defines common {@link MethodSorter} implementations.
+ * @since 4.11
  */
 public enum MethodSorters {
     /** Sorts the test methods by the method name, in lexicographic order,

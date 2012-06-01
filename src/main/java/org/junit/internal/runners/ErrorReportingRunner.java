@@ -10,6 +10,9 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 
+/**
+ * @since 4.0
+ */
 public class ErrorReportingRunner extends Runner {
 	private final List<Throwable> fCauses;
 

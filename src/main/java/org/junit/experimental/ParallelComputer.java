@@ -14,6 +14,9 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
 import org.junit.runners.model.RunnerScheduler;
 
+/**
+ * @since 4.6
+ */
 public class ParallelComputer extends Computer {
 	private final boolean fClasses;
 

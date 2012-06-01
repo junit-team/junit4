@@ -5,6 +5,9 @@ import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
 
+/**
+ * @since 4.0
+ */
 public class ClassRequest extends Request {
 	private final Object fRunnerLock = new Object();
 	private final Class<?> fTestClass;

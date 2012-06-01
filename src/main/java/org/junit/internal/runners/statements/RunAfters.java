@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.junit.internal.runners.statements;
 
 import java.util.ArrayList;
@@ -10,6 +7,9 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
 
+/**
+ * @since 4.5
+ */
 public class RunAfters extends Statement {
 	private final Statement fNext;
 

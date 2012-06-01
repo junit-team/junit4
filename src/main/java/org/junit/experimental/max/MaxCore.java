@@ -29,6 +29,7 @@ import org.junit.runners.model.InitializationError;
  * <li> Sort groups such that the most recent failure date is first, and never-failing tests are at the end.
  * <li> Within a group, run the fastest tests first. 
  * </ol>
+ * @since 4.6
  */
 public class MaxCore {
 	private static final String MALFORMED_JUNIT_3_TEST_CLASS_PREFIX= "malformed JUnit 3 test class: ";

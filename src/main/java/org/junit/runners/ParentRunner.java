@@ -47,6 +47,7 @@ import org.junit.runners.model.TestClass;
  * {@code @BeforeClass} and {@code @AfterClass} methods, 
  * handle annotated {@link ClassRule}s, create a composite
  * {@link Description}, and run children sequentially.
+ * @since 4.5
  */
 public abstract class ParentRunner<T> extends Runner implements Filterable,
 		Sortable {

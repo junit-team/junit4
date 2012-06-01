@@ -5,6 +5,7 @@ package org.junit.runner.notification;
  * test running GUIs should be prepared to catch a <code>StoppedByUserException</code>.
  * 
  * @see org.junit.runner.notification.RunNotifier
+ * @since 4.0
  */
 public class StoppedByUserException extends RuntimeException {
 	private static final long serialVersionUID= 1L;

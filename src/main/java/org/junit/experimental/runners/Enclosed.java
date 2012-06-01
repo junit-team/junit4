@@ -3,7 +3,6 @@ package org.junit.experimental.runners;
 import org.junit.runners.Suite;
 import org.junit.runners.model.RunnerBuilder;
 
-
 /**
  * If you put tests in inner classes, Ant, for example, won't find them. By running the outer class
  * with Enclosed, the tests in the inner classes will be run. You might put tests in inner classes
@@ -20,6 +19,7 @@ import org.junit.runners.model.RunnerBuilder;
  *  </pre>
  *  
  *  For a real example, @see org.junit.tests.manipulation.SortableTest.
+ * @since 4.5
  */
 public class Enclosed extends Suite {
 	/**

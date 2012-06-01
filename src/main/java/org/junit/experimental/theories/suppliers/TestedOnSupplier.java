@@ -7,6 +7,9 @@ import org.junit.experimental.theories.ParameterSignature;
 import org.junit.experimental.theories.ParameterSupplier;
 import org.junit.experimental.theories.PotentialAssignment;
 
+/**
+ * @since 4.4
+ */
 public class TestedOnSupplier extends ParameterSupplier {
 	@Override public List<PotentialAssignment> getValueSources(ParameterSignature sig) {
 		List<PotentialAssignment> list = new ArrayList<PotentialAssignment>();

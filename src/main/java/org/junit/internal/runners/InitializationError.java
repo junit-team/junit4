@@ -3,11 +3,12 @@ package org.junit.internal.runners;
 import java.util.Arrays;
 import java.util.List;
 
-@Deprecated
 /**
  * Use the published version: {@link org.junit.runners.InitializationError}
  * This may disappear as soon as 1 April 2009
+ * @since 4.0
  */
+@Deprecated
 public class InitializationError extends Exception {
 	private static final long serialVersionUID= 1L;
 	private final List<Throwable> fErrors;

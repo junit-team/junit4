@@ -6,6 +6,9 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
+/**
+ * @since 4.5
+ */
 public class Each {
 	public static <T> Matcher<Iterable<T>> each(final Matcher<T> individual) {
 		final Matcher<Iterable<T>> allItemsAre = not(hasItem(not(individual)));

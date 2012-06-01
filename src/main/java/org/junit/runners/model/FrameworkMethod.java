@@ -14,6 +14,7 @@ import org.junit.internal.runners.model.ReflectiveCallable;
  * test execution. These methods are usually marked with an annotation (such as
  * {@code @Test}, {@code @Before}, {@code @After}, {@code @BeforeClass}, 
  * {@code @AfterClass}, etc.)
+ * @since 4.5
  */
 public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
 	final Method fMethod;

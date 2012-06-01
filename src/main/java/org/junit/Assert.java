@@ -20,6 +20,7 @@ import org.junit.internal.InexactComparisonCriteria;
  * </pre>
  * 
  * @see AssertionError
+ * @since 4.0
  */
 public class Assert {
 	/**

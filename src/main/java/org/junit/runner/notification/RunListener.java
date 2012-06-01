@@ -30,6 +30,7 @@ import org.junit.runner.Result;
  * </pre>
  * </p>
  * @see org.junit.runner.JUnitCore
+ * @since 4.0
  */
 public class RunListener {
 

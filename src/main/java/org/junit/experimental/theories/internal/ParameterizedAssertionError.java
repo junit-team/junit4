@@ -1,13 +1,12 @@
-/**
- * 
- */
 package org.junit.experimental.theories.internal;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
-
+/**
+ * @since 4.4
+ */
 public class ParameterizedAssertionError extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 
