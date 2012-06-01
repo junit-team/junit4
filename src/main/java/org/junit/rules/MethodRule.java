@@ -25,6 +25,7 @@ import org.junit.runners.model.Statement;
  * </ul>
  * 
  * Note that {@link MethodRule} is now deprecated, you should be using {@link TestRule} instead.
+ * @since 4.7
  */
 @Deprecated
 public interface MethodRule {

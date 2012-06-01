@@ -34,6 +34,7 @@ import org.junit.runner.Runner;
  * </pre>
  * 
  * @see org.junit.runners.Suite
+ * @since 4.5
  */
 public abstract class RunnerBuilder {
 	private final Set<Class<?>> parents= new HashSet<Class<?>>();

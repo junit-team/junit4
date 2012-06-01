@@ -18,6 +18,7 @@ import org.junit.internal.MethodSorter;
 
 /**
  * Wraps a class to be run, providing method validation and annotation searching
+ * @since 4.5
  */
 public class TestClass {
 	private final Class<?> fClass;

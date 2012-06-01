@@ -79,6 +79,7 @@ import java.lang.annotation.Target;
  * </pre>
  * 
  * For more information and more examples, see {@link org.junit.rules.TestRule}. 
+ * @since 4.9
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})
