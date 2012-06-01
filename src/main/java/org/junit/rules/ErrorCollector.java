@@ -1,7 +1,3 @@
-/**
- * 
- * @since 4.7
- */
 package org.junit.rules;
 
 import static org.junit.Assert.assertThat;

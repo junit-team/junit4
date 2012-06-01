@@ -1,7 +1,3 @@
-/**
- * 
- * @since 4.10
- */
 package org.junit.rules;
 
 import java.util.ArrayList;

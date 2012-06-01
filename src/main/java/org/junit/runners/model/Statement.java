@@ -1,7 +1,3 @@
-/**
- * 
- * @since 4.5
- */
 package org.junit.runners.model;
 
 
