@@ -34,12 +34,12 @@ import org.junit.runners.model.Statement;
  * </pre>
  */
 public class Timeout implements TestRule {
-	private final int fMillis;
+	private final long fMillis;
 
 	/**
 	 * @param millis the millisecond timeout
 	 */
-	public Timeout(int millis) {
+	public Timeout(long millis) {
 		fMillis= millis;
 	}
 
