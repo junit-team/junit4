@@ -84,10 +84,10 @@ public class UnsuccessfulWithDataPointFields {
 	@RunWith(Theories.class)
 	public static class DataPointsMustBeStatic {
 		@DataPoint
-		int THREE= 3;
+		public int THREE= 3;
 
 		@DataPoint
-		int FOUR= 3;
+		public int FOUR= 4;
 
 		@Theory
 		public void numbers(int x) {
@@ -122,5 +122,36 @@ public class UnsuccessfulWithDataPointFields {
 		assertThat(
 				testResult(TheoriesMustBePublic.class),
 				hasSingleFailureContaining("public"));
+	}
+	
+	@RunWith(Theories.class)
+	public static class DataPointsMustBePublic {
+		@DataPoint
+		static int THREE= 3;
+
+		@DataPoint
+		protected static int FOUR= 4;
+		
+		@SuppressWarnings("unused")
+		@DataPoint
+		private static int FIVE= 5;
+
+		@Theory
+		public void numbers(int x) {
+
+		}
+	}
+
+	@Test
+	public void dataPointsMustBePublic() {
+		assertThat(
+				testResult(DataPointsMustBePublic.class),
+				both(failureCountIs(3))
+						.and(
+								hasFailureContaining("DataPoint field THREE must be public"))
+						.and(
+								hasFailureContaining("DataPoint field FOUR must be public"))
+						.and(
+								hasFailureContaining("DataPoint field FIVE must be public")));
 	}
 }
