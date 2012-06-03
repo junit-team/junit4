@@ -3,6 +3,8 @@
  */
 package org.junit.rules;
 
+import java.util.concurrent.TimeUnit;
+
 import org.junit.internal.runners.statements.FailOnTimeout;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -41,6 +43,14 @@ public class Timeout implements TestRule {
 	 */
 	public Timeout(long millis) {
 		fMillis= millis;
+	}
+
+	/**
+	 * @param timeout the timeout
+	 * @param unit the time unit of the timeout argument
+	 */
+	public Timeout(long timeout, TimeUnit unit) {
+		this(unit.toMillis(timeout));
 	}
 
 	public Statement apply(Statement base, Description description) {
