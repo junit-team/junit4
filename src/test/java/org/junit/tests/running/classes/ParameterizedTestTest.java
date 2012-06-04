@@ -162,7 +162,7 @@ public class ParameterizedTestTest {
 	static public class BadIndexForAnnotatedFieldTest {
 		@Parameters
 		public static Collection<Object[]> data() {
-			return Arrays.asList(new Object[][] { { 0, 0 } });
+			return Arrays.asList(new Object[][] { { 0 } });
 		}
 
 		@Parameter(2)
@@ -185,9 +185,9 @@ public class ParameterizedTestTest {
 		Result result = JUnitCore.runClasses(BadIndexForAnnotatedFieldTest.class);
 		assertEquals(2, result.getFailureCount());
 		List<Failure> failures = result.getFailures();
-		assertEquals("The indices of fields annotated by @Parameter must be in the range from 0 to N-1 where N is the number of fields annotated by @Parameter. (field[name: fInput, indice value: 2], number of annotated fields: 1)",
+		assertEquals("Invalid @parameter value: 2. @parameter fields counted: 1. Please use an index between 0 and 0.",
 				failures.get(0).getException().getMessage());
-		assertEquals("The indice 0 is never used.", failures.get(1).getException().getMessage());
+		assertEquals("The index 0 is never used.", failures.get(1).getException().getMessage());
 	}
 
 	@RunWith(Parameterized.class)
@@ -217,7 +217,7 @@ public class ParameterizedTestTest {
 		Result result = JUnitCore.runClasses(BadNumberOfAnnotatedFieldTest.class);
 		assertEquals(1, result.getFailureCount());
 		List<Failure> failures = result.getFailures();
-		assertTrue(failures.get(0).getException().getMessage().contains("The number of annotated fields is not the same than the number of available parameters."));
+		assertTrue(failures.get(0).getException().getMessage().contains("Wrong number of parameters and @parameter fields. @parameter fields counted: 1, available parameters: 2."));
 	}
 
 	private static String fLog;
