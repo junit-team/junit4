@@ -35,7 +35,7 @@ public class Description implements Serializable {
 	 * Create a <code>Description</code> named <code>name</code>.
 	 * Generally, you will add children to this <code>Description</code>.
 	 * @param name the name of the <code>Description</code> 
-	 * @param annotations
+	 * @param annotations meta-data about the test, for downstream interpreters
 	 * @return a <code>Description</code> named <code>name</code>
 	 */
 	public static Description createSuiteDescription(String name, Annotation... annotations) {
@@ -55,6 +55,18 @@ public class Description implements Serializable {
 	}
 
 	/**
+	 * Create a <code>Description</code> of a single test named <code>name</code> in the 'class' named <code>className</code>.
+	 * Generally, this will be a leaf <code>Description</code>.
+	 * @param className the class name of the test
+	 * @param name the name of the test (a method name for test annotated with {@link org.junit.Test})
+	 * @param annotations meta-data about the test, for downstream interpreters
+	 * @return a <code>Description</code> named <code>name</code>
+	 */
+	public static Description createTestDescription(String className, String name, Annotation... annotations) {
+		return new Description(String.format("%s(%s)", name, className), annotations);
+	}
+
+	/**
 	 * Create a <code>Description</code> of a single test named <code>name</code> in the class <code>clazz</code>.
 	 * Generally, this will be a leaf <code>Description</code>.
 	 * @param clazz the class of the test
@@ -63,19 +75,19 @@ public class Description implements Serializable {
 	 * @return a <code>Description</code> named <code>name</code>
 	 */
 	public static Description createTestDescription(Class<?> clazz, String name, Annotation... annotations) {
-		return new Description(String.format("%s(%s)", name, clazz.getName()), annotations);
+		return createTestDescription(clazz.getName(), name, annotations);
 	}
 
 	/**
 	 * Create a <code>Description</code> of a single test named <code>name</code> in the class <code>clazz</code>.
-	 * Generally, this will be a leaf <code>Description</code>.  
+	 * Generally, this will be a leaf <code>Description</code>.
 	 * (This remains for binary compatibility with clients of JUnit 4.3)
-	 * @param clazz the class of the test
+	 *
 	 * @param name the name of the test (a method name for test annotated with {@link org.junit.Test})
 	 * @return a <code>Description</code> named <code>name</code>
 	 */
-	public static Description createTestDescription(Class<?> clazz, String name) {
-		return createTestDescription(clazz, name, new Annotation[0]);
+	public static Description createTestDescription(String className, String name, Object uniqueId) {
+		return new Description(String.format("%s(%s)", name, className), uniqueId);
 	}
 
 	/**
@@ -101,14 +113,14 @@ public class Description implements Serializable {
 	
 	private final ArrayList<Description> fChildren= new ArrayList<Description>();
 	private final String fDisplayName;
-	private final Serializable fUniqueId;
+	private final Object fUniqueId;
 	private final Annotation[] fAnnotations;
 
 	private Description(String displayName, Annotation... annotations) {
 		this(displayName, displayName, annotations);
 	}
 
-	private Description(String displayName, Serializable uniqueId, Annotation... annotations) {
+	private Description(String displayName, Object uniqueId, Annotation... annotations) {
 		if ((displayName == null) || (displayName.length() == 0))
 			throw new IllegalArgumentException(
 					"The display name must not be empty.");
