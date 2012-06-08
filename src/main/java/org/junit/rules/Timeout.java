@@ -58,7 +58,7 @@ public class Timeout implements TestRule {
 	 * @param unit the time unit of the {@code timeout} argument
 	 */
 	public Timeout(long timeout, TimeUnit unit) {
-		fMillis= unit.toMillis(timeout);
+		this(unit.toMillis(timeout));
 	}
 	
 	public Statement apply(Statement base, Description description) {
