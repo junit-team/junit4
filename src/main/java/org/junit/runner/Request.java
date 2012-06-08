@@ -21,6 +21,7 @@ import org.junit.runners.model.InitializationError;
  * a {@link org.junit.runner.Runner} is created for each class implied by the <code>Request</code> -> 
  * the {@link org.junit.runner.Runner} returns a detailed {@link org.junit.runner.Description} 
  * which is a tree structure of the tests to be run.</p>
+ * @since 4.0
  */
 public abstract class Request {
 	/**

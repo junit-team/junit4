@@ -30,6 +30,7 @@ import org.junit.runners.MethodSorters;
  * </pre>
  * 
  * @see org.junit.runners.MethodSorters
+ * @since 4.11
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})

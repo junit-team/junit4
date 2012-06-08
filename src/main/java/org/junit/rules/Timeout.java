@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.junit.rules;
 
 import org.junit.internal.runners.statements.FailOnTimeout;
@@ -32,6 +29,7 @@ import org.junit.runners.model.Statement;
  * 	}
  * }
  * </pre>
+ * @since 4.7
  */
 public class Timeout implements TestRule {
 	private final int fMillis;

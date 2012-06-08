@@ -8,6 +8,7 @@ import org.junit.runners.model.RunnerBuilder;
  * Represents a strategy for computing runners and suites.
  * WARNING: this class is very likely to undergo serious changes in version 4.8 and
  * beyond.
+ * @since 4.6
  */
 public class Computer {
 	/**

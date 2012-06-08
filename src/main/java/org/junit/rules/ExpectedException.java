@@ -78,6 +78,7 @@ import org.junit.runners.model.Statement;
  * 	}
  * }
  * </pre>
+ * @since 4.7
  */
 public class ExpectedException implements TestRule {
 	/**

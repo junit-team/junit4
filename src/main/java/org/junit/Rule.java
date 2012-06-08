@@ -62,6 +62,7 @@ import java.lang.annotation.Target;
  * Note: for backwards compatibility, this annotation may also mark
  * fields or methods of type {@link org.junit.rules.MethodRule}, which will be honored.  However,
  * this is a deprecated interface and feature.
+ * @since 4.7
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})

@@ -13,6 +13,7 @@ import org.junit.internal.runners.SuiteMethod;
  *    }
  * }
  * </pre>
+ * @since 4.0
  */
 public class AllTests extends SuiteMethod {
 	/**
