@@ -17,6 +17,7 @@ import org.junit.runner.notification.RunNotifier;
  * 
  * @see org.junit.runner.Description
  * @see org.junit.runner.RunWith
+ * @since 4.0
  */
 public abstract class Runner implements Describable {
 	/* (non-Javadoc)

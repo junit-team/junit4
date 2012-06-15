@@ -6,6 +6,7 @@ package org.junit;
  * strings.
  * 
  * Inspired by a patch from Alex Chaffee (alex@purpletech.com)
+ * @since 4.0
  */
 public class ComparisonFailure extends AssertionError {	
 	/** 

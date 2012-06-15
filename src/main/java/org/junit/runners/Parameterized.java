@@ -73,6 +73,7 @@ import org.junit.runners.model.Statement;
  * names like <code>[1: fib(3)=2]</code>. If you don't use the name parameter,
  * then the current parameter index is used as name.
  * </p>
+ * @since 4.0
  */
 public class Parameterized extends Suite {
 	/**

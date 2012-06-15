@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
  * 
  * @see org.junit.runner.Request
  * @see org.junit.runner.Runner
+ * @since 4.0
  */
 public class Description implements Serializable {
 	private static final long serialVersionUID = 1L;

@@ -28,6 +28,7 @@ import java.lang.annotation.Target;
  * }
  * </pre>
  * @see org.junit.AfterClass
+ * @since 4.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
