@@ -87,7 +87,7 @@ public class Description implements Serializable {
 	 * @param name the name of the test (a method name for test annotated with {@link org.junit.Test})
 	 * @return a <code>Description</code> named <code>name</code>
 	 */
-	public static Description createTestDescription(String className, String name, Object uniqueId) {
+	public static Description createTestDescription(String className, String name, Serializable uniqueId) {
 		return new Description(String.format("%s(%s)", name, className), uniqueId);
 	}
 
@@ -114,14 +114,14 @@ public class Description implements Serializable {
 	
 	private final ArrayList<Description> fChildren= new ArrayList<Description>();
 	private final String fDisplayName;
-	private final Object fUniqueId;
+	private final Serializable fUniqueId;
 	private final Annotation[] fAnnotations;
 
 	private Description(String displayName, Annotation... annotations) {
 		this(displayName, displayName, annotations);
 	}
 
-	private Description(String displayName, Object uniqueId, Annotation... annotations) {
+	private Description(String displayName, Serializable uniqueId, Annotation... annotations) {
 		if ((displayName == null) || (displayName.length() == 0))
 			throw new IllegalArgumentException(
 					"The display name must not be empty.");
