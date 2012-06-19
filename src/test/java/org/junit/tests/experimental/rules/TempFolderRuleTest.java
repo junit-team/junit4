@@ -11,6 +11,7 @@ import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import org.junit.After;
@@ -43,14 +44,30 @@ public class TempFolderRuleTest {
 		public TemporaryFolder folder= new TemporaryFolder();
 
 		@Test
-		public void testUsingTempFolder() throws IOException {
+		public void testUsingTempFolderStringReflection() throws Exception {
 			String subfolder = "subfolder";
 			String filename = "a.txt";
+			// force usage of folder.newFolder(String),
+			// check is available and works, to avoid a potential NoSuchMethodError with non-recompiled code.
+			Method method = folder.getClass().getMethod("newFolder", new Class<?>[] {String.class});
+			createdFiles[0]= (File) method.invoke(folder, subfolder);
+			new File(createdFiles[0], filename).createNewFile();
+
+			File expectedFile = new File(folder.getRoot(), join(subfolder, filename));
+
+			assertTrue(expectedFile.exists());
+		}
+
+		@Test
+		public void testUsingTempFolderString() throws IOException {
+			String subfolder = "subfolder";
+			String filename = "a.txt";
+			// this uses newFolder(String), ensure that a single String works
 			createdFiles[0]= folder.newFolder(subfolder);
 			new File(createdFiles[0], filename).createNewFile();
-			
+
 			File expectedFile = new File(folder.getRoot(), join(subfolder, filename));
-			
+
 			assertTrue(expectedFile.exists());
 		}
 
