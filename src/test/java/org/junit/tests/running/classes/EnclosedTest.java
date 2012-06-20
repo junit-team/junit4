@@ -21,14 +21,17 @@ public class EnclosedTest {
 			@Test public void b() {}
 			@Test public void c() {}
 		}
+		abstract public static class C {
+			@Test public void a() {}
+		}
 	}
 	
-	@Test public void enclosedRunnerPlansEnclosedClasses() throws Exception {
+	@Test public void enclosedRunnerPlansConcreteEnclosedClasses() throws Exception {
 		Runner runner= Request.aClass(Enclosing.class).getRunner();
 		assertEquals(5, runner.testCount());
 	}
 	
-	@Test public void enclosedRunnerRunsEnclosedClasses() throws Exception {
+	@Test public void enclosedRunnerRunsConcreteEnclosedClasses() throws Exception {
 		Result result= JUnitCore.runClasses(Enclosing.class);
 		assertEquals(5, result.getRunCount());
 	}

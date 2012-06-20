@@ -1,5 +1,9 @@
 package org.junit.experimental.runners;
 
+import java.lang.reflect.Modifier;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.runners.Suite;
 import org.junit.runners.model.RunnerBuilder;
 
@@ -26,6 +30,18 @@ public class Enclosed extends Suite {
 	 * Only called reflectively. Do not use programmatically.
 	 */
 	public Enclosed(Class<?> klass, RunnerBuilder builder) throws Throwable {
-		super(builder, klass, klass.getClasses());
+		super(builder, klass, filterOutAbstractClasses(klass.getClasses()));
 	}
+	
+	private static Class<?>[] filterOutAbstractClasses(final Class<?>[] classes) {		
+		final Set<Class<?>> filteredSet = new HashSet<Class<?>>();
+
+		for (final Class<?> clazz : classes) {
+			if (!Modifier.isAbstract(clazz.getModifiers())) {
+				filteredSet.add(clazz);
+			}
+		}
+		
+		return filteredSet.toArray(new Class<?>[] { });
+	}	
 }
