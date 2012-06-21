@@ -30,10 +30,10 @@ public class Enclosed extends Suite {
 	 * Only called reflectively. Do not use programmatically.
 	 */
 	public Enclosed(Class<?> klass, RunnerBuilder builder) throws Throwable {
-		super(builder, klass, filterOutAbstractClasses(klass.getClasses()));
+		super(builder, klass, filterAbstractClasses(klass.getClasses()));
 	}
 	
-	private static Class<?>[] filterOutAbstractClasses(final Class<?>[] classes) {		
+	private static Class<?>[] filterAbstractClasses(final Class<?>[] classes) {		
 		final Set<Class<?>> filteredSet = new HashSet<Class<?>>();
 
 		for (final Class<?> clazz : classes) {
@@ -42,6 +42,6 @@ public class Enclosed extends Suite {
 			}
 		}
 		
-		return filteredSet.toArray(new Class<?>[] { });
+		return filteredSet.toArray(new Class<?>[filteredSet.size()]);
 	}	
 }
