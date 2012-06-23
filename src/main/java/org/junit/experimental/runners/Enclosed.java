@@ -1,12 +1,11 @@
 package org.junit.experimental.runners;
 
 import java.lang.reflect.Modifier;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.runners.Suite;
 import org.junit.runners.model.RunnerBuilder;
-
 
 /**
  * If you put tests in inner classes, Ant, for example, won't find them. By running the outer class
@@ -34,14 +33,14 @@ public class Enclosed extends Suite {
 	}
 	
 	private static Class<?>[] filterAbstractClasses(final Class<?>[] classes) {		
-		final Set<Class<?>> filteredSet = new HashSet<Class<?>>();
+		final List<Class<?>> filteredList = new ArrayList<Class<?>>();
 
 		for (final Class<?> clazz : classes) {
 			if (!Modifier.isAbstract(clazz.getModifiers())) {
-				filteredSet.add(clazz);
+				filteredList.add(clazz);
 			}
 		}
 		
-		return filteredSet.toArray(new Class<?>[filteredSet.size()]);
+		return filteredList.toArray(new Class<?>[filteredList.size()]);
 	}	
 }
