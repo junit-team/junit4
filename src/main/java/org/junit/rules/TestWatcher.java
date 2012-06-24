@@ -1,7 +1,11 @@
 package org.junit.rules;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
+import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
 
 /**
@@ -36,28 +40,38 @@ import org.junit.runners.model.Statement;
  * 	}
  * }
  * </pre>
+ * @since 4.9
  */
 public abstract class TestWatcher implements TestRule {
 	public Statement apply(final Statement base, final Description description) {
 		return new Statement() {
 			@Override
 			public void evaluate() throws Throwable {
-				starting(description);
+				List<Throwable> errors = new ArrayList<Throwable>();
 				try {
-					base.evaluate();
-					succeeded(description);
+					starting(description);
+					try {
+						base.evaluate();
+						succeeded(description);
+					} catch (AssumptionViolatedException e) {
+						throw e;
+					} catch (Throwable t) {
+						errors.add(t);
+						failed(t, description);
+					} finally {
+						finished(description);
+					}
 				} catch (AssumptionViolatedException e) {
 					throw e;
 				} catch (Throwable t) {
-					failed(t, description);
-					throw t;
-				} finally {
-					finished(description);
+					errors.add(t);
 				}
+				if (!errors.isEmpty())
+					throw new MultipleFailureException(errors);
 			}
 		};
 	}
-
+	
 	/**
 	 * Invoked when a test succeeds
 	 * 
