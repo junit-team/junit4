@@ -48,28 +48,59 @@ public abstract class TestWatcher implements TestRule {
 			@Override
 			public void evaluate() throws Throwable {
 				List<Throwable> errors = new ArrayList<Throwable>();
+
+				startingQuietly(description, errors);
 				try {
-					starting(description);
-					try {
-						base.evaluate();
-						succeeded(description);
-					} catch (AssumptionViolatedException e) {
-						throw e;
-					} catch (Throwable t) {
-						errors.add(t);
-						failed(t, description);
-					} finally {
-						finished(description);
-					}
+					base.evaluate();
+					succeededQuietly(description, errors);
 				} catch (AssumptionViolatedException e) {
 					throw e;
 				} catch (Throwable t) {
 					errors.add(t);
+					failedQuietly(t, description, errors);
+				} finally {
+					finishedQuietly(description, errors);
 				}
-				if (!errors.isEmpty())
-					throw new MultipleFailureException(errors);
+				
+				MultipleFailureException.assertEmpty(errors);
 			}
 		};
+	}
+
+	private void succeededQuietly(Description description,
+			List<Throwable> errors) {
+		try {
+			succeeded(description);
+		} catch (Throwable t) {
+			errors.add(t);
+		}
+	}
+	
+	private void failedQuietly(Throwable t, Description description,
+			List<Throwable> errors) {
+		try {
+			failed(t, description);
+		} catch (Throwable t1) {
+			errors.add(t1);
+		}
+	}
+
+	private void startingQuietly(Description description, 
+			List<Throwable> errors) {
+		try {
+			starting(description);
+		} catch (Throwable t) {
+			errors.add(t);
+		}
+	}
+	
+	private void finishedQuietly(Description description,
+			List<Throwable> errors) {
+		try {
+			finished(description);
+		} catch (Throwable t) {
+			errors.add(t);
+		}
 	}
 	
 	/**
@@ -96,7 +127,6 @@ public abstract class TestWatcher implements TestRule {
 	 */
 	protected void starting(Description description) {
 	}
-
 
 	/**
 	 * Invoked when a test method finishes (whether passing or failing)

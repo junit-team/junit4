@@ -55,7 +55,7 @@ public class TestWatcherTest {
 				is("starting failed finished "));
 	}
 	
-	public static class TestWatcherThrowsExceptionTest {
+	public static class TestWatcherFailedThrowsExceptionTest {
 		@Rule
 		public TestRule watcher= new TestWatcher() {
 			@Override
@@ -71,11 +71,62 @@ public class TestWatcherTest {
 	}
 	
 	@Test
-	public void testWatcherThrowsException() {
-		PrintableResult result= testResult(TestWatcherThrowsExceptionTest.class);
+	public void testWatcherFailedThrowsException() {
+		PrintableResult result= testResult(TestWatcherFailedThrowsExceptionTest.class);
 		assertThat(result, failureCountIs(2));
 		assertThat(result, hasFailureContaining("test failure"));
 		assertThat(result, hasFailureContaining("watcher failure"));
-		
 	}
+	
+	public static class TestWatcherStartingThrowsExceptionTest {
+		@Rule
+		public TestRule watcher= new TestWatcher() {
+			@Override
+			protected void starting(Description description) {
+				throw new RuntimeException("watcher failure");
+			}
+		};
+
+		@Test
+		public void fails() {
+			throw new IllegalArgumentException("test failure");
+		}
+	}
+	
+	@Test
+	public void testWatcherStartingThrowsException() {
+		PrintableResult result= testResult(TestWatcherStartingThrowsExceptionTest.class);
+		assertThat(result, failureCountIs(2));
+		assertThat(result, hasFailureContaining("test failure"));
+		assertThat(result, hasFailureContaining("watcher failure"));
+	}
+	
+	public static class TestWatcherFailedAndFinishedThrowsExceptionTest {
+		@Rule
+		public TestRule watcher= new TestWatcher() {
+			@Override
+			protected void failed(Throwable t, Description description) {
+				throw new RuntimeException("watcher failed failure");
+			}
+			
+			@Override
+			protected void finished(Description description) {
+				throw new RuntimeException("watcher finished failure");
+			}
+		};
+
+		@Test
+		public void fails() {
+			throw new IllegalArgumentException("test failure");
+		}
+	}
+	
+	@Test
+	public void testWatcherFailedAndFinishedThrowsException() {
+		PrintableResult result= testResult(TestWatcherFailedAndFinishedThrowsExceptionTest.class);
+		assertThat(result, failureCountIs(3));
+		assertThat(result, hasFailureContaining("test failure"));
+		assertThat(result, hasFailureContaining("watcher failed failure"));
+		assertThat(result, hasFailureContaining("watcher finished failure"));
+	}	
 }
