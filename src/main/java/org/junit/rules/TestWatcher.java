@@ -48,6 +48,7 @@ public abstract class TestWatcher implements TestRule {
 					base.evaluate();
 					succeeded(description);
 				} catch (AssumptionViolatedException e) {
+					skipped(e, description);
 					throw e;
 				} catch (Throwable t) {
 					failed(t, description);
@@ -74,6 +75,15 @@ public abstract class TestWatcher implements TestRule {
 	 * @param description
 	 */
 	protected void failed(Throwable e, Description description) {
+	}
+
+	/**
+	 * Invoked when a test is skipped due to a failed assumption.
+	 *
+	 * @param e
+	 * @param description
+	 */
+	protected void skipped(AssumptionViolatedException e, Description description) {
 	}
 
 	/**
