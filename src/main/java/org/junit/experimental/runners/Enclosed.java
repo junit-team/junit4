@@ -33,7 +33,7 @@ public class Enclosed extends Suite {
 	}
 	
 	private static Class<?>[] filterAbstractClasses(final Class<?>[] classes) {		
-		final List<Class<?>> filteredList = new ArrayList<Class<?>>();
+		final List<Class<?>> filteredList= new ArrayList<Class<?>>(classes.length);
 
 		for (final Class<?> clazz : classes) {
 			if (!Modifier.isAbstract(clazz.getModifiers())) {
