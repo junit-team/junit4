@@ -3,6 +3,8 @@ package org.junit.matchers;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.hamcrest.core.CombinableMatcher;
+import org.hamcrest.core.CombinableMatcher.CombinableBothMatcher;
+import org.hamcrest.core.CombinableMatcher.CombinableEitherMatcher;
 import org.junit.internal.matchers.CauseMatcher;
 
 /**
@@ -88,7 +90,7 @@ public class JUnitMatchers {
 	 * @deprecated Please use {@link CoreMatchers#both(Matcher)} instead.
 	 */
 	@Deprecated
-	public static <T> CombinableMatcher<T> both(Matcher<? super T> matcher) {
+	public static <T> CombinableBothMatcher<T> both(Matcher<? super T> matcher) {
 		return CoreMatchers.both(matcher);
 	}
 	
@@ -101,7 +103,7 @@ public class JUnitMatchers {
 	 * @deprecated Please use {@link CoreMatchers#either(Matcher)} instead.
 	 */
 	@Deprecated
-	public static <T> CombinableMatcher<T> either(Matcher<? super T> matcher) {
+	public static <T> CombinableEitherMatcher<T> either(Matcher<? super T> matcher) {
 		return CoreMatchers.either(matcher);
 	}	
 	
