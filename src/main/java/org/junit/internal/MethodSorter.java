@@ -14,22 +14,24 @@ public class MethodSorter {
         public int compare(Method m1, Method m2) {
             int i1 = m1.getName().hashCode();
             int i2 = m2.getName().hashCode();
-            return i1 != i2 ? i1 - i2 : MethodSorter.compare(m1.toString(), m2.toString());
+            if (i1 != i2) {
+                return i1 < i2 ? -1 : 1;
+            }
+            return NAME_ASCENDING.compare(m1, m2);
         }
     };
     
     /**
-     * Method name ascending lexicograhic sort order
+     * Method name ascending lexicographic sort order, with {@link Method#toString()} as a tiebreaker
      */
     public static Comparator<Method> NAME_ASCENDING= new Comparator<Method>() {
         public int compare(Method m1, Method m2) {
-            return MethodSorter.compare(m1.getName(), m2.getName());
+            final int comparison = m1.getName().compareTo(m2.getName());
+            if (comparison != 0)
+                return comparison;
+            return m1.toString().compareTo(m2.toString());
         }
     };
-
-    private static int compare(String s1, String s2) {
-        return s1.compareTo(s2);
-    }
     
     /**
      * Gets declared methods of a class in a predictable order, unless @FixMethodOrder(MethodSorters.JVM) is specified.

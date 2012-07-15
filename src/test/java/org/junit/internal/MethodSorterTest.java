@@ -6,6 +6,7 @@ import java.util.Arrays;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+
 import static org.junit.Assert.*;
 
 public class MethodSorterTest {

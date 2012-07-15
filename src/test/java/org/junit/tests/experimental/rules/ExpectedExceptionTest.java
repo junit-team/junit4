@@ -2,13 +2,20 @@ package org.junit.tests.experimental.rules;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.any;
+import static org.hamcrest.CoreMatchers.both;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
+import static org.junit.matchers.JUnitMatchers.causedBy;
 import static org.junit.rules.ExpectedException.none;
 import static org.junit.tests.experimental.rules.EventCollector.everyTestRunSuccessful;
+import static org.junit.tests.experimental.rules.EventCollector.failureIs;
 import static org.junit.tests.experimental.rules.EventCollector.hasSingleAssumptionFailure;
 import static org.junit.tests.experimental.rules.EventCollector.hasSingleFailure;
 import static org.junit.tests.experimental.rules.EventCollector.hasSingleFailureWithMessage;
@@ -61,6 +68,9 @@ public class ExpectedExceptionTest {
 						everyTestRunSuccessful() },
 				{ ThrowAssumptionViolatedExceptionButExpectOtherType.class,
 						hasSingleFailure() },
+				{
+					ThrowAssumptionViolatedExceptionButExpectOtherType.class,
+					failureIs(causedBy(instanceOf(AssumptionViolatedException.class))) },
 				{ ViolateAssumptionAndExpectException.class,
 						hasSingleAssumptionFailure() },
 				{ ThrowExpectedAssertionError.class, everyTestRunSuccessful() },
@@ -71,7 +81,13 @@ public class ExpectedExceptionTest {
 						hasSingleFailureWithMessage(ARBITRARY_MESSAGE) },
 				{
 						ExpectsMultipleMatchers.class,
-						hasSingleFailureWithMessage(startsWith("\nExpected: (an instance of java.lang.IllegalArgumentException and exception with message a string containing \"Ack!\")")) } });
+						hasSingleFailureWithMessage(startsWith("\nExpected: (an instance of java.lang.IllegalArgumentException and exception with message a string containing \"Ack!\")")) },
+				{	ThrowExceptionWithMatchingCause.class, everyTestRunSuccessful() },
+				{	ThrowExpectedNullCause.class, everyTestRunSuccessful() },
+				{
+					ThrowUnexpectedCause.class,
+						hasSingleFailureWithMessage(both(startsWith("\nExpected: (")).and(containsString("exception with cause is <java.lang.NullPointerException: expected cause>"))) }
+        });
 	}
 
 	private final Class<?> classUnderTest;
@@ -303,6 +319,51 @@ public class ExpectedExceptionTest {
 			thrown.handleAssumptionViolatedExceptions();
 			thrown.expect(AssumptionViolatedException.class);
 			throw new AssumptionViolatedException("");
+		}
+	}
+
+	public static class ThrowExceptionWithMatchingCause {
+		@Rule
+		public ExpectedException thrown = none();
+
+		@Test
+		public void throwExceptionWithMatchingCause() {
+			NullPointerException expectedCause = new NullPointerException("expected cause");
+
+			thrown.expect(IllegalArgumentException.class);
+			thrown.expectMessage("Ack!");
+			thrown.expectCause(is(expectedCause));
+
+			throw new IllegalArgumentException("Ack!", expectedCause);
+		}
+	}
+
+	public static class ThrowExpectedNullCause {
+		@Rule
+		public ExpectedException thrown = none();
+
+		@Test
+		public void throwExpectedNullCause() {
+			thrown.expect(IllegalArgumentException.class);
+			thrown.expectMessage("Ack!");
+			thrown.expectCause(nullValue(Throwable.class));
+
+			throw new IllegalArgumentException("Ack!");
+		}
+	}
+
+	public static class ThrowUnexpectedCause {
+
+		@Rule
+		public ExpectedException thrown= ExpectedException.none();
+
+		@Test
+		public void throwWithCause() {
+			thrown.expect(IllegalArgumentException.class);
+			thrown.expectMessage("Ack!");
+			thrown.expectCause(is(new NullPointerException("expected cause")));
+
+			throw new IllegalArgumentException("Ack!", new NullPointerException("an unexpected cause"));
 		}
 	}
 }

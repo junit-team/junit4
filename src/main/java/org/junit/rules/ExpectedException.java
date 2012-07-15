@@ -39,6 +39,15 @@ import org.junit.runners.model.Statement;
  * 		thrown.expectMessage(startsWith(&quot;What&quot;));
  * 		throw new NullPointerException(&quot;What happened?&quot;);
  * 	}
+ *
+ * 	&#064;Test
+ * 	public void throwsIllegalArgumentExceptionWithMessageAndCause() {
+ * 		NullPointerException expectedCause = new NullPointerException();
+ * 		thrown.expect(IllegalArgumentException.class);
+ * 		thrown.expectMessage(&quot;What&quot;);
+ * 		thrown.expectCause(is(expectedCause));
+ * 		throw new IllegalArgumentException(&quot;What happened?&quot;, cause);
+ * 	}
  * }
  * </pre>
  * 
@@ -69,6 +78,7 @@ import org.junit.runners.model.Statement;
  * 	}
  * }
  * </pre>
+ * @since 4.7
  */
 public class ExpectedException implements TestRule {
 	/**
@@ -141,6 +151,14 @@ public class ExpectedException implements TestRule {
 		expect(hasMessage(matcher));
 	}
 
+	/**
+	 * Adds {@code matcher} to the list of requirements for the cause of
+	 * any thrown exception.
+	 */
+	public void expectCause(Matcher<? extends Throwable> expectedCause) {
+		expect(hasCause(expectedCause));
+	}
+
 	private class ExpectedExceptionStatement extends Statement {
 		private final Statement fNext;
 
@@ -164,12 +182,12 @@ public class ExpectedException implements TestRule {
 			}
 			if (fMatcher != null)
 				throw new AssertionError("Expected test to throw "
-						+ StringDescription.toString(fMatcher));
+								+ StringDescription.toString(fMatcher));
 		}
 	}
 
 	private void optionallyHandleException(Throwable e, boolean handleException)
-			throws Throwable {
+					throws Throwable {
 		if (handleException)
 			handleException(e);
 		else
@@ -192,6 +210,20 @@ public class ExpectedException implements TestRule {
 			@Override
 			public boolean matchesSafely(Throwable item) {
 				return matcher.matches(item.getMessage());
+			}
+		};
+	}
+
+	private Matcher<Throwable> hasCause(final Matcher<? extends Throwable> causeMatcher) {
+		return new TypeSafeMatcher<Throwable>() {
+			public void describeTo(Description description) {
+				description.appendText("exception with cause ");
+				description.appendDescriptionOf(causeMatcher);
+			}
+
+			@Override
+			public boolean matchesSafely(Throwable item) {
+				return causeMatcher.matches(item.getCause());
 			}
 		};
 	}

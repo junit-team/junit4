@@ -23,9 +23,19 @@ import org.junit.Rule;
  * 	}
  * }
  * </pre>
+ * @since 4.7
  */
 public class TemporaryFolder extends ExternalResource {
+        private final File parentFolder;
 	private File folder;
+
+        public TemporaryFolder() {
+                this(null);
+        }
+
+        public TemporaryFolder(File parentFolder) {
+                this.parentFolder = parentFolder;
+        }
 
 	@Override
 	protected void before() throws Throwable {
@@ -42,7 +52,7 @@ public class TemporaryFolder extends ExternalResource {
 	 * for testing purposes only. Do not use.
 	 */
 	public void create() throws IOException {
-		folder= createTemporaryFolderIn(null);
+	        folder= createTemporaryFolderIn(parentFolder);
 	}
 
 	/**
@@ -65,6 +75,14 @@ public class TemporaryFolder extends ExternalResource {
 
 	/**
 	 * Returns a new fresh folder with the given name under the temporary
+	 * folder.
+	 */
+	public File newFolder(String folder) {
+		return newFolder(new String[]{folder});
+	}
+
+	/**
+	 * Returns a new fresh folder with the given name(s) under the temporary
 	 * folder.
 	 */
 	public File newFolder(String... folderNames) {

@@ -8,6 +8,7 @@ import java.util.List;
 
 /**
  * Collects multiple {@code Throwable}s into one exception.
+ * @since 4.9
  */
 public class MultipleFailureException extends Exception {
 	private static final long serialVersionUID= 1L;

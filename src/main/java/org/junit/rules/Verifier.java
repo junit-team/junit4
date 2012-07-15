@@ -24,8 +24,9 @@ import org.junit.runners.model.Statement;
  *        }
  *     }
  * </pre>
+ * @since 4.7
  */
-public class Verifier implements TestRule {
+public abstract class Verifier implements TestRule {
 	public Statement apply(final Statement base, Description description) {
 		return new Statement() {
 			@Override

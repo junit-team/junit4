@@ -5,6 +5,7 @@ package org.junit.runner.manipulation;
  * failed first, you can reduce the average time to the first test failing. Test sorting should not be used to
  * cope with order dependencies between tests. Tests that are isolated from each other are less
  * expensive to maintain and can be run individually.
+ * @since 4.0
  */
 public interface Sortable {
 

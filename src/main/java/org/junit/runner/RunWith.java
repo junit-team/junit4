@@ -22,6 +22,7 @@ import java.lang.annotation.Target;
  * public class ABCSuite {
  * }
  * </pre>
+ * @since 4.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

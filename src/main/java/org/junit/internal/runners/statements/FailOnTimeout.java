@@ -26,6 +26,9 @@ public class FailOnTimeout extends Statement {
 		StatementThread thread= new StatementThread(fOriginalStatement);
 		thread.start();
 		thread.join(fTimeout);
+		if (!thread.fFinished) {
+			thread.recordStackTrace();
+		}
 		thread.interrupt();
 		return thread;
 	}
@@ -41,7 +44,7 @@ public class FailOnTimeout extends Statement {
 	private void throwTimeoutException(StatementThread thread) throws Exception {
 		Exception exception= new Exception(String.format(
 				"test timed out after %d milliseconds", fTimeout));
-		exception.setStackTrace(thread.getStackTrace());
+		exception.setStackTrace(thread.getRecordedStackTrace());
 		throw exception;
 	}
 
@@ -52,8 +55,18 @@ public class FailOnTimeout extends Statement {
 
 		private Throwable fExceptionThrownByOriginalStatement= null;
 
+		private StackTraceElement[] fRecordedStackTrace= null;
+
 		public StatementThread(Statement statement) {
 			fStatement= statement;
+		}
+
+		public void recordStackTrace() {
+			fRecordedStackTrace= getStackTrace();
+		}
+
+		public StackTraceElement[] getRecordedStackTrace() {
+			return fRecordedStackTrace;
 		}
 
 		@Override
@@ -62,7 +75,7 @@ public class FailOnTimeout extends Statement {
 				fStatement.evaluate();
 				fFinished= true;
 			} catch (InterruptedException e) {
-				//don't log the InterruptedException
+				// don't log the InterruptedException
 			} catch (Throwable e) {
 				fExceptionThrownByOriginalStatement= e;
 			}

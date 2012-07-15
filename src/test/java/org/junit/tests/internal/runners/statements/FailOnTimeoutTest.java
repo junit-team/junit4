@@ -1,8 +1,13 @@
 package org.junit.tests.internal.runners.statements;
 
+import static java.lang.Long.MAX_VALUE;
+import static java.lang.Math.atan;
+import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.sleep;
-import static org.junit.Assert.assertTrue;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.internal.runners.statements.FailOnTimeout;
@@ -102,8 +107,64 @@ public class FailOnTimeoutTest {
 		@Override
 		public void evaluate() throws Throwable {
 			while (true) {
-				sleep(10); //sleep in order to enable interrupting thread
+				sleep(10); // sleep in order to enable interrupting thread
 				++COUNT;
+			}
+		}
+	}
+
+	@Test
+	public void stackTraceContainsRealCauseOfTimeout() throws Throwable {
+		StuckStatement stuck= new StuckStatement();
+		FailOnTimeout stuckTimeout= new FailOnTimeout(stuck, TIMEOUT);
+		try {
+			stuckTimeout.evaluate();
+			// We must not get here, we expect a timeout exception
+			fail("Expected timeout exception");
+		} catch (Exception timeoutException) {
+			StackTraceElement[] stackTrace= timeoutException.getStackTrace();
+			boolean stackTraceContainsTheRealCauseOfTheTimeout= false;
+			boolean stackTraceContainsOtherThanTheRealCauseOfTheTimeout= false;
+			for (StackTraceElement element : stackTrace) {
+				String methodName= element.getMethodName();
+				if ("theRealCauseOfTheTimeout".equals(methodName)) {
+					stackTraceContainsTheRealCauseOfTheTimeout= true;
+				}
+				if ("notTheRealCauseOfTheTimeout".equals(methodName)) {
+					stackTraceContainsOtherThanTheRealCauseOfTheTimeout= true;
+				}
+			}
+			assertTrue(
+					"Stack trace does not contain the real cause of the timeout",
+					stackTraceContainsTheRealCauseOfTheTimeout);
+			assertFalse(
+					"Stack trace contains other than the real cause of the timeout, which can be very misleading",
+					stackTraceContainsOtherThanTheRealCauseOfTheTimeout);
+		}
+	}
+
+	private static final class StuckStatement extends Statement {
+
+		@Override
+		public void evaluate() throws Throwable {
+			try {
+				// Must show up in stack trace
+				theRealCauseOfTheTimeout();
+			} catch (InterruptedException e) {
+			} finally {
+				// Must _not_ show up in stack trace
+				notTheRealCauseOfTheTimeout();
+			}
+		}
+
+		private void theRealCauseOfTheTimeout() throws InterruptedException {
+			sleep(MAX_VALUE);
+		}
+
+		private void notTheRealCauseOfTheTimeout() {
+			for (long now= currentTimeMillis(), eta= now + 1000L; now < eta; now= currentTimeMillis()) {
+				// Doesn't matter, just pretend to be busy
+				atan(now);
 			}
 		}
 	}

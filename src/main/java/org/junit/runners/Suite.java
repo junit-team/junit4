@@ -20,6 +20,7 @@ import org.junit.runners.model.RunnerBuilder;
  * static {@link junit.framework.Test} <code>suite()</code> method. To use it, annotate a class
  * with <code>@RunWith(Suite.class)</code> and <code>@SuiteClasses({TestClass1.class, ...})</code>.
  * When you run this class, it will run all the tests in all the suite classes.
+ * @since 4.0
  */
 public class Suite extends ParentRunner<Runner> {
 	/**

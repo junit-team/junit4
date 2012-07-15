@@ -86,6 +86,22 @@ class EventCollector extends RunListener {
 			}
 		};
 	}
+	
+	static Matcher<EventCollector> failureIs(final Matcher<? super Throwable> exceptionMatcher) {
+		return new TypeSafeMatcher<EventCollector>() {
+			@Override
+			public boolean matchesSafely(EventCollector item) {
+				for(Failure f: item.fFailures)
+					return exceptionMatcher.matches(f.getException());
+				return false;
+			}
+			
+			public void describeTo(org.hamcrest.Description description) {
+				description.appendText("failure is ");
+				exceptionMatcher.describeTo(description);
+			}			
+		};
+	}	
 
 	private final List<Description> fTestRunsStarted= new ArrayList<Description>();
 

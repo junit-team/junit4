@@ -3,10 +3,12 @@ package org.junit.matchers;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.hamcrest.core.CombinableMatcher;
+import org.junit.internal.matchers.CauseMatcher;
 
 /**
  * Convenience import class: these are useful matchers for use with the assertThat method, but they are
  * not currently included in the basic CoreMatchers class from hamcrest.
+ * @since 4.4
  */
 public class JUnitMatchers {
 	/**
@@ -102,4 +104,12 @@ public class JUnitMatchers {
 	public static <T> CombinableMatcher<T> either(Matcher<? super T> matcher) {
 		return CoreMatchers.either(matcher);
 	}	
+	
+	/**
+	 * @param causeMatcher
+	 * @return a matcher matching the cause of the exception with the given {@code causeMatcher}
+	 */
+	public static Matcher<Throwable> causedBy(final Matcher<? super Throwable> causeMatcher) {
+		return new CauseMatcher(causeMatcher);
+	}		
 }

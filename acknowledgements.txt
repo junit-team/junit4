@@ -108,6 +108,10 @@
     Daniel Rothmaler (drothmaler@github):
         #299: random temp file/folder creation 
         #300: ErrorCollector.checkThat overload
+        
+2011 Jun 25
+     Juan Cortez (jcortez@github): Fixed issue #219 where floats were being 
+	 printed and represented as doubles in error messages.
 
 2011 Jul 06
      Stefan Birkner: Fixed wrong documentation of ClassRule (github#254).

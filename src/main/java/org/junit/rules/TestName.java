@@ -21,6 +21,7 @@ import org.junit.runner.Description;
  * 	}
  * }
  * </pre>
+ * @since 4.7
  */
 public class TestName extends TestWatcher {
 	private String fName;

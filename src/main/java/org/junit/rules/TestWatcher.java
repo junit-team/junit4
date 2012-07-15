@@ -16,13 +16,13 @@ import org.junit.runners.model.Statement;
  * 	&#064;Rule
  * 	public TestRule watchman= new TestWatcher() {
  * 		&#064;Override
- * 		protected void failed(Description d) {
- * 			watchedLog+= d + &quot;\n&quot;;
+ * 		protected void failed(Throwable e, Description description) {
+ * 			watchedLog+= description + &quot;\n&quot;;
  * 		}
  * 
  * 		&#064;Override
- * 		protected void succeeded(Description d) {
- * 			watchedLog+= d + &quot; &quot; + &quot;success!\n&quot;;
+ * 		protected void succeeded(Description description) {
+ * 			watchedLog+= description + &quot; &quot; + &quot;success!\n&quot;;
  * 		}
  * 	};
  * 
@@ -36,6 +36,7 @@ import org.junit.runners.model.Statement;
  * 	}
  * }
  * </pre>
+ * @since 4.9
  */
 public abstract class TestWatcher implements TestRule {
 	public Statement apply(final Statement base, final Description description) {

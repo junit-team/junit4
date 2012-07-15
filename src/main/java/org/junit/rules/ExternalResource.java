@@ -31,6 +31,7 @@ import org.junit.runners.model.Statement;
  * 	}
  * }
  * </pre>
+ * @since 4.7
  */
 public abstract class ExternalResource implements TestRule {
 	public Statement apply(Statement base, Description description) {
