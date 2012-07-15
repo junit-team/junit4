@@ -2,7 +2,6 @@ package org.junit.matchers;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
-import org.hamcrest.core.CombinableMatcher;
 import org.hamcrest.core.CombinableMatcher.CombinableBothMatcher;
 import org.hamcrest.core.CombinableMatcher.CombinableEitherMatcher;
 import org.junit.internal.matchers.CauseMatcher;
