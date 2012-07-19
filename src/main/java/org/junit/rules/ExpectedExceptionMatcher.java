@@ -15,13 +15,14 @@ import org.hamcrest.TypeSafeMatcher;
  * Special matcher used by {@link ExpectedException}.
  */
 class ExpectedExceptionMatcher extends TypeSafeMatcher<Throwable> {
-	
-	private final List<Matcher<?>> fMatchers = new ArrayList<Matcher<?>>();
+
+	private final List<Matcher<?>> fMatchers= new ArrayList<Matcher<?>>();
+
 	private Matcher<Throwable> fCompositeMatcher;
-	
+
 	void and(Matcher<?> matcher) {
 		fMatchers.add(matcher);
-		fCompositeMatcher= withStacktrace(createCompositeMatcher());
+		fCompositeMatcher= null;
 	}
 
 	void andHasMessage(Matcher<String> matcher) {
@@ -38,20 +39,30 @@ class ExpectedExceptionMatcher extends TypeSafeMatcher<Throwable> {
 
 	@Override
 	protected boolean matchesSafely(Throwable item) {
-		return fCompositeMatcher.matches(item);
+		return getCompositeMatcher().matches(item);
 	}
-	
+
 	@Override
 	protected void describeMismatchSafely(Throwable item,
 			Description mismatchDescription) {
-		fCompositeMatcher.describeMismatch(item, mismatchDescription);
+		getCompositeMatcher().describeMismatch(item, mismatchDescription);
 	}
 
 	public void describeTo(Description description) {
-		fCompositeMatcher.describeTo(description);
+		getCompositeMatcher().describeTo(description);
+	}
+
+	private Matcher<Throwable> getCompositeMatcher() {
+		if (fCompositeMatcher == null)
+			fCompositeMatcher= createCompositeMatcher();
+		return fCompositeMatcher;
 	}
 
 	private Matcher<Throwable> createCompositeMatcher() {
+		return withStacktrace(allOfTheMatchers());
+	}
+
+	private Matcher<Throwable> allOfTheMatchers() {
 		if (fMatchers.size() == 1) {
 			return cast(fMatchers.get(0));
 		}
@@ -59,7 +70,7 @@ class ExpectedExceptionMatcher extends TypeSafeMatcher<Throwable> {
 	}
 
 	private List<Matcher<? super Throwable>> castedMatchers() {
-		List<Matcher<? super Throwable>> castedMatchers = new LinkedList<Matcher<? super Throwable>>();
+		List<Matcher<? super Throwable>> castedMatchers= new LinkedList<Matcher<? super Throwable>>();
 		for (Matcher<?> matcher : fMatchers) {
 			castedMatchers.add(cast(matcher));
 		}
