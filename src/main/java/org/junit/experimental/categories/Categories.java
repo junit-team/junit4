@@ -13,7 +13,12 @@ import org.junit.runners.model.RunnerBuilder;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * From a given set of test classes, runs only the classes and methods that are
@@ -36,11 +41,18 @@ import java.util.*;
  * <em>exclusive</em> parent categories are assignable from child categories.
  * Then the remaining candidate is a subject to run if and only if (ANY or ALL)
  * <em>inclusive</em> parent categories are assignable from child categories.
+ * <p> As an example, see the test suite MultiCategorySuite launched by:<p>
+ * https://github.com/KentBeck/junit/blob/master/src/test/java/org/junit/tests/experimental/categories/MultiCategoryTest.java
  * <p>
  * The Categories suite fails with initialization error when no test written in the
  * source code to run.
- * <p>If all test cases contain test candidates in Categories suite, but exclusions
+ * <p> See CategoryTest#noTestsCategoriesSuite() and CategoryTest#emptyCategoriesSuite() :<p>
+ * https://github.com/KentBeck/junit/blob/master/src/test/java/org/junit/tests/experimental/categories/CategoryTest.java
+ * <p>
+ * If all test cases contain test candidates in Categories suite, but exclusions
  * avoid running them, the suite succeeds without throwing initialization error.
+ * <p> See CategoryTest#nothingRunnable1() and CategoryTest#nothingRunnable2() :<p>
+ * https://github.com/KentBeck/junit/blob/master/src/test/java/org/junit/tests/experimental/categories/CategoryTest.java
  * <p>
  * Two system properties override categories declared by {@link IncludeCategory}
  * and {@link ExcludeCategory}. Every of these two properties use a comma separated
@@ -51,9 +63,9 @@ import java.util.*;
  * </pre></blockquote>
  * <p>
  * Thus a class 'com.Category1' has file name 'com/Category1.java'.
- * Malformed value or an unknown category ({@link ClassNotFoundException}) in these
+ * <p>Malformed value or an unknown category ({@link ClassNotFoundException}) in these
  * properties cause thrown {@link InitializationError} in this constructor.
- * This finally determines Included/Excluded categories applied to the suite:
+ * <p>This finally determines Included/Excluded categories applied to the suite:
  * <ul>
  *  <li> Included are those categories which are contained in the non-empty list of
  *       'org.junit.categories.included' and are assignable to {@link IncludeCategory};
@@ -61,11 +73,15 @@ import java.util.*;
  *  <li> Excluded are all those which are declared by {@link ExcludeCategory} on the
  *       type of suite, and in the list of categories in 'org.junit.categories.excluded'.
  * </ul>
+ * <p> As an example, see the test suite AllPlatformsSuite launched by:<p>
+ * https://github.com/KentBeck/junit/blob/master/src/test/java/org/junit/tests/experimental/categories/CategoriesConfiguredBySystemPropertiesTest.java
  * <p>
  * Empty or nonexistent properties 'org.junit.categories.included' and
  * 'org.junit.categories.excluded' do not modify the categories {@link IncludeCategory}
  * and {@link ExcludeCategory}, respectively.
- * 
+ * <p>See the test cases <p>
+ * https://github.com/KentBeck/junit/blob/master/src/test/java/org/junit/tests/experimental/categories/CategoryTest.java
+ * <p>
  * Example:
  * 
  * <pre>

@@ -376,6 +376,10 @@ public final class CategoryTest {
 	@SuiteClasses({})
     public static class EmptyCategoriesSuite {}
 
+    /**
+     * This test is mentioned in {@code Categories} and any changes
+     * must be reflected.
+     */
     @Test public void emptyCategoriesSuite() {
         assertThat(testResult(EmptyCategoriesSuite.class), failureCountIs(1));
     }
@@ -398,6 +402,10 @@ public final class CategoryTest {
         }
     }
 
+    /**
+     * This test is mentioned in {@code Categories} and any changes
+     * must be reflected.
+     */
     @Test public void noTestsCategoriesSuite() {
         assertThat(testResult(NoTestsCategoriesSuite.class), failureCountIs(1));
     }
@@ -408,6 +416,10 @@ public final class CategoryTest {
 	@SuiteClasses({ExcludedTest1.class, ExcludedTest2.class})
     public static class IncludedExcludedSameSuite {}
 
+    /**
+     * This test is mentioned in {@code Categories} and any changes
+     * must be reflected.
+     */
     @Test public void nothingRunnable1() {
         assertThat(testResult(IncludedExcludedSameSuite.class), isSuccessful());
     }
@@ -437,6 +449,10 @@ public final class CategoryTest {
         }
     }
 
+    /**
+     * This test is mentioned in {@code Categories} and any changes
+     * must be reflected.
+     */
     @Test public void nothingRunnable2() {
         assertThat(testResult(IncludedExcludedSameSuite2.class), isSuccessful());
     }
