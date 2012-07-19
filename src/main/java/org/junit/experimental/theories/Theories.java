@@ -34,8 +34,7 @@ public class Theories extends BlockJUnit4ClassRunner {
 	private void validateDataPointFields(List<Throwable> errors) {
 		Field[] fields= getTestClass().getJavaClass().getDeclaredFields();
 		
-		for (Field field : fields)
-		{
+		for (Field field : fields) {
 			if (field.getAnnotation(DataPoint.class) == null)
 				continue;
 			if (!Modifier.isStatic(field.getModifiers()))
