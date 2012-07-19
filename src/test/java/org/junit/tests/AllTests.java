@@ -3,12 +3,12 @@ package org.junit.tests;
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import org.junit.internal.MethodSorterTest;
+import org.junit.internal.matchers.StacktracePrintingMatcherTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.junit.tests.assertion.AssertionTest;
 import org.junit.tests.assertion.MultipleFailureExceptionTest;
-import org.junit.tests.assertion.CauseMatcherTest;
 import org.junit.tests.deprecated.JUnit4ClassRunnerTest;
 import org.junit.tests.description.AnnotatedDescriptionTest;
 import org.junit.tests.description.SuiteDescriptionTest;
@@ -29,8 +29,8 @@ import org.junit.tests.experimental.rules.ExpectedExceptionTest;
 import org.junit.tests.experimental.rules.ExternalResourceRuleTest;
 import org.junit.tests.experimental.rules.MethodRulesTest;
 import org.junit.tests.experimental.rules.NameRulesTest;
-import org.junit.tests.experimental.rules.RuleFieldValidatorTest;
 import org.junit.tests.experimental.rules.RuleChainTest;
+import org.junit.tests.experimental.rules.RuleFieldValidatorTest;
 import org.junit.tests.experimental.rules.TempFolderRuleTest;
 import org.junit.tests.experimental.rules.TemporaryFolderUsageTest;
 import org.junit.tests.experimental.rules.TestRuleTest;
@@ -158,9 +158,9 @@ import org.junit.tests.validation.ValidationTest;
 	RuleFieldValidatorTest.class,
 	RuleChainTest.class,
 	BlockJUnit4ClassRunnerTest.class,
-	CauseMatcherTest.class,
 	MethodSorterTest.class,
-	TestedOnSupplierTest.class
+	TestedOnSupplierTest.class,
+	StacktracePrintingMatcherTest.class
 })
 public class AllTests {
 	public static Test suite() {

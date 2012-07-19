@@ -1,6 +1,7 @@
 package org.junit.rules;
 
 import static org.hamcrest.CoreMatchers.allOf;
+import static org.junit.matchers.JUnitMatchers.withStacktrace;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -16,11 +17,11 @@ import org.hamcrest.TypeSafeMatcher;
 class ExpectedExceptionMatcher extends TypeSafeMatcher<Throwable> {
 	
 	private final List<Matcher<?>> fMatchers = new ArrayList<Matcher<?>>();
-	private Matcher<?> fCompositeMatcher;
+	private Matcher<Throwable> fCompositeMatcher;
 	
 	void and(Matcher<?> matcher) {
 		fMatchers.add(matcher);
-		fCompositeMatcher= createCompositeMatcher();
+		fCompositeMatcher= withStacktrace(createCompositeMatcher());
 	}
 
 	void andHasMessage(Matcher<String> matcher) {
@@ -39,27 +40,37 @@ class ExpectedExceptionMatcher extends TypeSafeMatcher<Throwable> {
 	protected boolean matchesSafely(Throwable item) {
 		return fCompositeMatcher.matches(item);
 	}
+	
+	@Override
+	protected void describeMismatchSafely(Throwable item,
+			Description mismatchDescription) {
+		fCompositeMatcher.describeMismatch(item, mismatchDescription);
+	}
 
 	public void describeTo(Description description) {
 		fCompositeMatcher.describeTo(description);
 	}
 
-	private Matcher<?> createCompositeMatcher() {
+	private Matcher<Throwable> createCompositeMatcher() {
 		if (fMatchers.size() == 1) {
-			return fMatchers.get(0);
+			return cast(fMatchers.get(0));
 		}
 		return allOf(castedMatchers());
+	}
+
+	private List<Matcher<? super Throwable>> castedMatchers() {
+		List<Matcher<? super Throwable>> castedMatchers = new LinkedList<Matcher<? super Throwable>>();
+		for (Matcher<?> matcher : fMatchers) {
+			castedMatchers.add(cast(matcher));
+		}
+		return castedMatchers;
 	}
 
 	// Should be able to remove this suppression in some brave new hamcrest
 	// world.
 	@SuppressWarnings("unchecked")
-	private List<Matcher<? super Object>> castedMatchers() {
-		List<Matcher<? super Object>> castedMatchers = new LinkedList<Matcher<? super Object>>();
-		for (Matcher<?> matcher : fMatchers) {
-			castedMatchers.add((Matcher<? super Object>) matcher);
-		}
-		return castedMatchers;
+	private Matcher<Throwable> cast(Matcher<?> singleMatcher) {
+		return (Matcher<Throwable>) singleMatcher;
 	}
 
 	private Matcher<Throwable> hasMessage(final Matcher<String> matcher) {

@@ -1,10 +1,9 @@
 package org.junit.tests.experimental.rules;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.any;
-import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.startsWith;
@@ -12,10 +11,8 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
-import static org.junit.matchers.JUnitMatchers.causedBy;
 import static org.junit.rules.ExpectedException.none;
 import static org.junit.tests.experimental.rules.EventCollector.everyTestRunSuccessful;
-import static org.junit.tests.experimental.rules.EventCollector.failureIs;
 import static org.junit.tests.experimental.rules.EventCollector.hasSingleAssumptionFailure;
 import static org.junit.tests.experimental.rules.EventCollector.hasSingleFailure;
 import static org.junit.tests.experimental.rules.EventCollector.hasSingleFailureWithMessage;
@@ -49,8 +46,8 @@ public class ExpectedExceptionTest {
 						hasSingleFailureWithMessage(startsWith("\nExpected: an instance of java.lang.NullPointerException")) },
 				{
 						HasWrongMessage.class,
-						hasSingleFailureWithMessage("\nExpected: exception with message a string containing \"expectedMessage\"\n"
-								+ "     but: was <java.lang.IllegalArgumentException: actualMessage>") },
+						hasSingleFailureWithMessage(startsWith("\nExpected: exception with message a string containing \"expectedMessage\"\n"
+								+ "     but: was <java.lang.IllegalArgumentException: actualMessage>")) },
 				{
 						ThrowNoExceptionButExpectExceptionWithType.class,
 						hasSingleFailureWithMessage("Expected test to throw an instance of java.lang.NullPointerException") },
@@ -70,7 +67,7 @@ public class ExpectedExceptionTest {
 						hasSingleFailure() },
 				{
 					ThrowAssumptionViolatedExceptionButExpectOtherType.class,
-					failureIs(causedBy(instanceOf(AssumptionViolatedException.class))) },
+					hasSingleFailureWithMessage(containsString("Stacktrace was: org.junit.internal.AssumptionViolatedException")) },
 				{ ViolateAssumptionAndExpectException.class,
 						hasSingleAssumptionFailure() },
 				{ ThrowExpectedAssertionError.class, everyTestRunSuccessful() },
@@ -86,7 +83,11 @@ public class ExpectedExceptionTest {
 				{	ThrowExpectedNullCause.class, everyTestRunSuccessful() },
 				{
 					ThrowUnexpectedCause.class,
-						hasSingleFailureWithMessage(both(startsWith("\nExpected: (")).and(containsString("exception with cause is <java.lang.NullPointerException: expected cause>"))) }
+						hasSingleFailureWithMessage(allOf(
+								startsWith("\nExpected: ("),
+								containsString("exception with cause is <java.lang.NullPointerException: expected cause>"),
+								containsString("Stacktrace was: java.lang.IllegalArgumentException: Ack!"),
+								containsString("Caused by: java.lang.NullPointerException: an unexpected cause"))) }
         });
 	}
 

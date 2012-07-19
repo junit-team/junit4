@@ -959,12 +959,6 @@ public class Assert {
 	 */
 	public static <T> void assertThat(String reason, T actual,
 			Matcher<? super T> matcher) {
-		try {
-			MatcherAssert.assertThat(reason, actual, matcher);
-		} catch (AssertionError assertionError) {
-			if (actual instanceof Throwable)
-				assertionError.initCause((Throwable) actual);
-			throw assertionError;
-		}
+		MatcherAssert.assertThat(reason, actual, matcher);
 	}
 }

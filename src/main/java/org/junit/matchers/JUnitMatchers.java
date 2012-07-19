@@ -4,7 +4,7 @@ import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.hamcrest.core.CombinableMatcher.CombinableBothMatcher;
 import org.hamcrest.core.CombinableMatcher.CombinableEitherMatcher;
-import org.junit.internal.matchers.CauseMatcher;
+import org.junit.internal.matchers.StacktracePrintingMatcher;
 
 /**
  * Convenience import class: these are useful matchers for use with the assertThat method, but they are
@@ -104,13 +104,14 @@ public class JUnitMatchers {
 	@Deprecated
 	public static <T> CombinableEitherMatcher<T> either(Matcher<? super T> matcher) {
 		return CoreMatchers.either(matcher);
-	}	
-	
+	}
+
 	/**
-	 * @param causeMatcher
-	 * @return a matcher matching the cause of the exception with the given {@code causeMatcher}
+	 * @param throwableMatcher
+	 * @return A matcher that delegates to throwableMatcher and in addition
+	 *         appends the stacktrace of the actual item in case of a mismatch.
 	 */
-	public static Matcher<Throwable> causedBy(final Matcher<? super Throwable> causeMatcher) {
-		return new CauseMatcher(causeMatcher);
-	}		
+	public static <T extends Throwable> Matcher<T> withStacktrace(Matcher<T> throwableMatcher) {
+		return StacktracePrintingMatcher.withStacktrace(throwableMatcher);
+	}
 }
