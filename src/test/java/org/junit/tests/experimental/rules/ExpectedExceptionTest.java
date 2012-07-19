@@ -1,7 +1,6 @@
 package org.junit.tests.experimental.rules;
 
 import static java.util.Arrays.asList;
-import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
@@ -19,6 +18,7 @@ import static org.junit.tests.experimental.rules.EventCollector.hasSingleFailure
 
 import java.util.Collection;
 
+import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
@@ -83,7 +83,7 @@ public class ExpectedExceptionTest {
 				{	ThrowExpectedNullCause.class, everyTestRunSuccessful() },
 				{
 					ThrowUnexpectedCause.class,
-						hasSingleFailureWithMessage(allOf(
+						hasSingleFailureWithMessage(CoreMatchers.<String>allOf(
 								startsWith("\nExpected: ("),
 								containsString("exception with cause is <java.lang.NullPointerException: expected cause>"),
 								containsString("Stacktrace was: java.lang.IllegalArgumentException: Ack!"),
