@@ -20,17 +20,17 @@ class ExpectedExceptionMatcher extends TypeSafeMatcher<Throwable> {
 
 	private Matcher<Throwable> fCompositeMatcher;
 
-	void and(Matcher<?> matcher) {
+	void andAlso(Matcher<?> matcher) {
 		fMatchers.add(matcher);
 		fCompositeMatcher= null;
 	}
 
-	void andHasMessage(Matcher<String> matcher) {
-		and(hasMessage(matcher));
+	void andAlsoHasMessage(Matcher<String> matcher) {
+		andAlso(hasMessage(matcher));
 	}
 
-	void andHasCause(Matcher<? extends Throwable> causeMatcher) {
-		and(hasCause(causeMatcher));
+	void andAlsoHasCause(Matcher<? extends Throwable> matcher) {
+		andAlso(hasCause(matcher));
 	}
 
 	boolean expectsThrowable() {
@@ -98,16 +98,16 @@ class ExpectedExceptionMatcher extends TypeSafeMatcher<Throwable> {
 		};
 	}
 
-	private Matcher<Throwable> hasCause(final Matcher<? extends Throwable> causeMatcher) {
+	private Matcher<Throwable> hasCause(final Matcher<? extends Throwable> matcher) {
 		return new TypeSafeMatcher<Throwable>() {
 			public void describeTo(Description description) {
 				description.appendText("exception with cause ");
-				description.appendDescriptionOf(causeMatcher);
+				description.appendDescriptionOf(matcher);
 			}
 
 			@Override
 			public boolean matchesSafely(Throwable item) {
-				return causeMatcher.matches(item.getCause());
+				return matcher.matches(item.getCause());
 			}
 		};
 	}

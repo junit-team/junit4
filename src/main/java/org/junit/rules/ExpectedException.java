@@ -115,7 +115,7 @@ public class ExpectedException implements TestRule {
 	 * exception.
 	 */
 	public void expect(Matcher<?> matcher) {
-		fMatcher.and(matcher);
+		fMatcher.andAlso(matcher);
 	}
 
 	/**
@@ -139,7 +139,7 @@ public class ExpectedException implements TestRule {
 	 * from any thrown exception.
 	 */
 	public void expectMessage(Matcher<String> matcher) {
-		fMatcher.andHasMessage(matcher);
+		fMatcher.andAlsoHasMessage(matcher);
 	}
 
 	/**
@@ -147,7 +147,7 @@ public class ExpectedException implements TestRule {
 	 * any thrown exception.
 	 */
 	public void expectCause(Matcher<? extends Throwable> expectedCause) {
-		fMatcher.andHasCause(expectedCause);
+		fMatcher.andAlsoHasCause(expectedCause);
 	}
 
 	private class ExpectedExceptionStatement extends Statement {
