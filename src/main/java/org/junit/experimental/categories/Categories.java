@@ -41,18 +41,18 @@ import java.util.ArrayList;
  * <em>exclusive</em> parent categories are assignable from child categories.
  * Then the remaining candidate is a subject to run if and only if (ANY or ALL)
  * <em>inclusive</em> parent categories are assignable from child categories.
- * <p> As an example, see the test suite MultiCategorySuite launched by:<p>
- * https://github.com/KentBeck/junit/blob/master/src/test/java/org/junit/tests/experimental/categories/MultiCategoryTest.java
+ * <p> As an example, see the nexted test suite launched by:<p>
+ * <a href=https://github.com/KentBeck/junit/blob/master/src/test/java/org/junit/tests/experimental/categories/MultiCategoryTest.java>
  * <p>
  * The Categories suite fails with initialization error when no test written in the
  * source code to run.
  * <p> See CategoryTest#noTestsCategoriesSuite() and CategoryTest#emptyCategoriesSuite() :<p>
- * https://github.com/KentBeck/junit/blob/master/src/test/java/org/junit/tests/experimental/categories/CategoryTest.java
+ * <a href=https://github.com/KentBeck/junit/blob/master/src/test/java/org/junit/tests/experimental/categories/CategoryTest.java>
  * <p>
  * If all test cases contain test candidates in Categories suite, but exclusions
  * avoid running them, the suite succeeds without throwing initialization error.
  * <p> See CategoryTest#nothingRunnable1() and CategoryTest#nothingRunnable2() :<p>
- * https://github.com/KentBeck/junit/blob/master/src/test/java/org/junit/tests/experimental/categories/CategoryTest.java
+ * <a href=https://github.com/KentBeck/junit/blob/master/src/test/java/org/junit/tests/experimental/categories/CategoryTest.java>
  * <p>
  * Two system properties override categories declared by {@link IncludeCategory}
  * and {@link ExcludeCategory}. Every of these two properties use a comma separated
@@ -74,13 +74,13 @@ import java.util.ArrayList;
  *       type of suite, and in the list of categories in 'org.junit.categories.excluded'.
  * </ul>
  * <p> As an example, see the test suite AllPlatformsSuite launched by:<p>
- * https://github.com/KentBeck/junit/blob/master/src/test/java/org/junit/tests/experimental/categories/CategoriesConfiguredBySystemPropertiesTest.java
+ * <a href=https://github.com/KentBeck/junit/blob/master/src/test/java/org/junit/tests/experimental/categories/CategoriesConfiguredBySystemPropertiesTest.java>
  * <p>
  * Empty or nonexistent properties 'org.junit.categories.included' and
  * 'org.junit.categories.excluded' do not modify the categories {@link IncludeCategory}
  * and {@link ExcludeCategory}, respectively.
  * <p>See the test cases <p>
- * https://github.com/KentBeck/junit/blob/master/src/test/java/org/junit/tests/experimental/categories/CategoryTest.java
+ * <a href=https://github.com/KentBeck/junit/blob/master/src/test/java/org/junit/tests/experimental/categories/CategoryTest.java>
  * <p>
  * Example:
  * 
