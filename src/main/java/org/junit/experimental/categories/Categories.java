@@ -58,11 +58,9 @@ import java.util.ArrayList;
  * and {@link ExcludeCategory}. Every of these two properties use a comma separated
  * list of file names of categories which are Java types, used as follows:
  * <p><blockquote><pre>
- * -Dorg.junit.categories.included=com/Category1.java,com/Category2.java
- * -Dorg.junit.categories.excluded=com/Category3.java,com/Category4.java
+ * -Dorg.junit.categories.included=com.Category1,com.Category2
+ * -Dorg.junit.categories.excluded=com.Category3,com.Category4
  * </pre></blockquote>
- * <p>
- * Thus a class 'com.Category1' has file name 'com/Category1.java'.
  * <p>Malformed value or an unknown category ({@link ClassNotFoundException}) in these
  * properties cause thrown {@link InitializationError} in this constructor.
  * <p>This finally determines Included/Excluded categories applied to the suite:
@@ -388,19 +386,13 @@ public class Categories extends Suite {
 	}
 
 	private static Class<?>[] getCategoriesBySystemProperty(final String systemPropertyKey) throws ClassNotFoundException {
-		final List<Class<?>> categories= new ArrayList<Class<?>>();
-		for (String clazz : System.getProperty(systemPropertyKey, "").split(",")) {
-			clazz= clazz.trim();
-			if (clazz.length() != 0) {
-				if (clazz.length() <= ".java".length()
-                                    || !clazz.regionMatches(true, clazz.length() - ".java".length(), ".java", 0, ".java".length()))
-                                        throw new ClassNotFoundException("file name must be finished by \".java\" ignoring case");
-				clazz= clazz.substring(0, clazz.length() - ".java".length());
-				if (clazz.indexOf('.') != -1)
-                                    throw new ClassNotFoundException("File name must not contain '.'. Instead use slash '/'.");
-				clazz= clazz.replace('/', '.');
-				categories.add(Class.forName(clazz));
-			}
+        final String classes= System.getProperty(systemPropertyKey, null);
+        if (classes == null) return new Class<?>[0];
+        final List<Class<?>> categories= new ArrayList<Class<?>>();
+		for (String clazz : classes.split(",")) {
+            clazz = clazz.trim();
+            if (clazz.length() == 0) throw new ClassNotFoundException("<empty class name>");
+            categories.add(Class.forName(clazz));
 		}
 		return categories.toArray(new Class[categories.size()]);
 	}

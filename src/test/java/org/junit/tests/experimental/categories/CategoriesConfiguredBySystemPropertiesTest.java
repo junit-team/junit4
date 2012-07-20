@@ -15,23 +15,13 @@ import static org.junit.Assert.fail;
 
 public final class CategoriesConfiguredBySystemPropertiesTest {
 
-    private static String convertToFileNames(final Class<?>... types) {
-        final StringBuilder fileNames = new StringBuilder();
-        int i = 0; for (final Class<?> type : types) {
-            fileNames.append(type.getName().replace('.', '/'))
-            .append(".java");
-            if (++i != types.length) fileNames.append(',');
-        }
-        return fileNames.toString();
-    }
-
     /**
      * This test is mentioned in {@code Categories} and any changes
      * must be reflected.
      */
     @Test public void runSuite() {
-        System.setProperty("org.junit.categories.included", convertToFileNames(IRelationalStoragePlatforms.class));
-        System.setProperty("org.junit.categories.excluded", convertToFileNames(IRunWithMySQL.class));
+        System.setProperty("org.junit.categories.included", IRelationalStoragePlatforms.class.getName());
+        System.setProperty("org.junit.categories.excluded", IRunWithMySQL.class.getName());
 
         // Targeting Test:
         final Result testResult = JUnitCore.runClasses(AllPlatformsSuite.class);
