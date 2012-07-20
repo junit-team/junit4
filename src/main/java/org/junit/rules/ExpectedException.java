@@ -1,10 +1,12 @@
 package org.junit.rules;
 
+import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.ThrowableCauseMatcher.hasCause;
 import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
+import junit.framework.Assert;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.junit.internal.AssumptionViolatedException;
@@ -163,20 +165,21 @@ public class ExpectedException implements TestRule {
 		public void evaluate() throws Throwable {
 			try {
 				fNext.evaluate();
+				if (fMatcherBuilder.expectsThrowable())
+					failDueToMissingException();
 			} catch (AssumptionViolatedException e) {
 				optionallyHandleException(e, handleAssumptionViolatedExceptions);
-				return;
 			} catch (AssertionError e) {
 				optionallyHandleException(e, handleAssertionErrors);
-				return;
 			} catch (Throwable e) {
 				handleException(e);
-				return;
 			}
-			if (fMatcherBuilder.expectsThrowable())
-				throw new AssertionError("Expected test to throw "
-								+ StringDescription.toString(fMatcherBuilder.build()));
 		}
+	}
+
+	private void failDueToMissingException() throws AssertionError {
+		String expectation= StringDescription.toString(fMatcherBuilder.build());
+		fail("Expected test to throw " + expectation);
 	}
 
 	private void optionallyHandleException(Throwable e, boolean handleException)
