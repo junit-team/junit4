@@ -1,6 +1,8 @@
 package org.junit.rules;
 
 import static org.hamcrest.CoreMatchers.allOf;
+import static org.junit.internal.matchers.ThrowableCauseMatcher.hasCause;
+import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
 import static org.junit.matchers.JUnitMatchers.isThrowable;
 
 import java.util.ArrayList;
@@ -9,7 +11,6 @@ import java.util.List;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeDiagnosingMatcher;
 import org.hamcrest.TypeSafeMatcher;
 
 /**
@@ -83,47 +84,5 @@ class ExpectedExceptionMatcher extends TypeSafeMatcher<Throwable> {
 	@SuppressWarnings("unchecked")
 	private Matcher<Throwable> cast(Matcher<?> singleMatcher) {
 		return (Matcher<Throwable>) singleMatcher;
-	}
-
-	private Matcher<Throwable> hasMessage(final Matcher<String> matcher) {
-		return new TypeSafeMatcher<Throwable>() {
-			public void describeTo(Description description) {
-				description.appendText("exception with message ");
-				description.appendDescriptionOf(matcher);
-			}
-
-			@Override
-			protected boolean matchesSafely(Throwable item) {
-				return matcher.matches(item.getMessage());
-			}
-			
-			@Override
-			protected void describeMismatchSafely(Throwable item,
-					Description mismatchDescription) {
-				mismatchDescription.appendText("message ");
-				matcher.describeMismatch(item.getMessage(), mismatchDescription);
-			}
-		};
-	}
-
-	private Matcher<Throwable> hasCause(final Matcher<? extends Throwable> matcher) {
-		return new TypeSafeMatcher<Throwable>() {
-			public void describeTo(Description description) {
-				description.appendText("exception with cause ");
-				description.appendDescriptionOf(matcher);
-			}
-
-			@Override
-			protected boolean matchesSafely(Throwable item) {
-				return matcher.matches(item.getCause());
-			}
-			
-			@Override
-			protected void describeMismatchSafely(Throwable item,
-					Description mismatchDescription) {
-				mismatchDescription.appendText("cause ");
-				matcher.describeMismatch(item.getCause(), mismatchDescription);
-			}
-		};
 	}
 }
