@@ -3,6 +3,8 @@ package org.junit.rules;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
+import static org.junit.internal.matchers.ThrowableCauseMatcher.hasCause;
+import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.junit.internal.AssumptionViolatedException;
@@ -86,7 +88,7 @@ public class ExpectedException implements TestRule {
 		return new ExpectedException();
 	}
 
-	private final ExpectedExceptionMatcher fMatcher= new ExpectedExceptionMatcher();
+	private final ExpectedExceptionMatcherBuilder fMatcherBuilder= new ExpectedExceptionMatcherBuilder();
 
 	private boolean handleAssumptionViolatedExceptions= false;
 
@@ -115,7 +117,7 @@ public class ExpectedException implements TestRule {
 	 * exception.
 	 */
 	public void expect(Matcher<?> matcher) {
-		fMatcher.andAlso(matcher);
+		fMatcherBuilder.add(matcher);
 	}
 
 	/**
@@ -139,7 +141,7 @@ public class ExpectedException implements TestRule {
 	 * from any thrown exception.
 	 */
 	public void expectMessage(Matcher<String> matcher) {
-		fMatcher.andAlsoHasMessage(matcher);
+		expect(hasMessage(matcher));
 	}
 
 	/**
@@ -147,7 +149,7 @@ public class ExpectedException implements TestRule {
 	 * any thrown exception.
 	 */
 	public void expectCause(Matcher<? extends Throwable> expectedCause) {
-		fMatcher.andAlsoHasCause(expectedCause);
+		expect(hasCause(expectedCause));
 	}
 
 	private class ExpectedExceptionStatement extends Statement {
@@ -171,9 +173,9 @@ public class ExpectedException implements TestRule {
 				handleException(e);
 				return;
 			}
-			if (fMatcher.expectsThrowable())
+			if (fMatcherBuilder.expectsThrowable())
 				throw new AssertionError("Expected test to throw "
-								+ StringDescription.toString(fMatcher));
+								+ StringDescription.toString(fMatcherBuilder.build()));
 		}
 	}
 
@@ -186,8 +188,8 @@ public class ExpectedException implements TestRule {
 	}
 
 	private void handleException(Throwable e) throws Throwable {
-		if (fMatcher.expectsThrowable())
-			assertThat(e, fMatcher);
+		if (fMatcherBuilder.expectsThrowable())
+			assertThat(e, fMatcherBuilder.build());
 		else
 			throw e;
 	}
