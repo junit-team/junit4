@@ -47,7 +47,7 @@ public class ExpectedExceptionTest {
 				{
 						HasWrongMessage.class,
 						hasSingleFailureWithMessage(startsWith("\nExpected: exception with message a string containing \"expectedMessage\"\n"
-								+ "     but: was <java.lang.IllegalArgumentException: actualMessage>")) },
+								+ "     but: message was \"actualMessage\"")) },
 				{
 						ThrowNoExceptionButExpectExceptionWithType.class,
 						hasSingleFailureWithMessage("Expected test to throw an instance of java.lang.NullPointerException") },
@@ -86,6 +86,7 @@ public class ExpectedExceptionTest {
 						hasSingleFailureWithMessage(CoreMatchers.<String>allOf(
 								startsWith("\nExpected: ("),
 								containsString("exception with cause is <java.lang.NullPointerException: expected cause>"),
+								containsString("cause was <java.lang.NullPointerException: an unexpected cause>"),
 								containsString("Stacktrace was: java.lang.IllegalArgumentException: Ack!"),
 								containsString("Caused by: java.lang.NullPointerException: an unexpected cause"))) }
         });

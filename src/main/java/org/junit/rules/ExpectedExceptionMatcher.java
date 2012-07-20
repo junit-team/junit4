@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeDiagnosingMatcher;
 import org.hamcrest.TypeSafeMatcher;
 
 /**
@@ -92,8 +93,15 @@ class ExpectedExceptionMatcher extends TypeSafeMatcher<Throwable> {
 			}
 
 			@Override
-			public boolean matchesSafely(Throwable item) {
+			protected boolean matchesSafely(Throwable item) {
 				return matcher.matches(item.getMessage());
+			}
+			
+			@Override
+			protected void describeMismatchSafely(Throwable item,
+					Description mismatchDescription) {
+				mismatchDescription.appendText("message ");
+				matcher.describeMismatch(item.getMessage(), mismatchDescription);
 			}
 		};
 	}
@@ -106,8 +114,15 @@ class ExpectedExceptionMatcher extends TypeSafeMatcher<Throwable> {
 			}
 
 			@Override
-			public boolean matchesSafely(Throwable item) {
+			protected boolean matchesSafely(Throwable item) {
 				return matcher.matches(item.getCause());
+			}
+			
+			@Override
+			protected void describeMismatchSafely(Throwable item,
+					Description mismatchDescription) {
+				mismatchDescription.appendText("cause ");
+				matcher.describeMismatch(item.getCause(), mismatchDescription);
 			}
 		};
 	}
