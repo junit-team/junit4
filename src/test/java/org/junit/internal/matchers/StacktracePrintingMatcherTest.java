@@ -14,7 +14,7 @@ import org.junit.Test;
 public class StacktracePrintingMatcherTest {
 	
 	@Test
-	public void succeedsWhenInnerMatcherSuceeds() throws Exception {
+	public void succeedsWhenInnerMatcherSucceeds() throws Exception {
 		assertTrue(isThrowable(any(Throwable.class)).matches(new Exception()));
 	}
 	
