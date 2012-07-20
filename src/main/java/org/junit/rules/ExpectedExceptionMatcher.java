@@ -1,7 +1,7 @@
 package org.junit.rules;
 
 import static org.hamcrest.CoreMatchers.allOf;
-import static org.junit.matchers.JUnitMatchers.withStacktrace;
+import static org.junit.matchers.JUnitMatchers.isThrowable;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -59,7 +59,7 @@ class ExpectedExceptionMatcher extends TypeSafeMatcher<Throwable> {
 	}
 
 	private Matcher<Throwable> createCompositeMatcher() {
-		return withStacktrace(allOfTheMatchers());
+		return isThrowable(allOfTheMatchers());
 	}
 
 	private Matcher<Throwable> allOfTheMatchers() {

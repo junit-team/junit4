@@ -9,14 +9,14 @@ import org.hamcrest.Matcher;
 
 /**
  * A matcher that delegates to throwableMatcher and in addition appends the
- * stacktrace of the actual item in case of a mismatch.
+ * stacktrace of the actual Throwable in case of a mismatch.
  */
 public class StacktracePrintingMatcher<T extends Throwable> extends
 		org.hamcrest.TypeSafeMatcher<T> {
 
 	private final Matcher<T> fThrowableMatcher;
 
-	private StacktracePrintingMatcher(Matcher<T> throwableMatcher) {
+	public StacktracePrintingMatcher(Matcher<T> throwableMatcher) {
 		fThrowableMatcher= throwableMatcher;
 	}
 
@@ -43,8 +43,14 @@ public class StacktracePrintingMatcher<T extends Throwable> extends
 	}
 
 	@Factory
-	public static <T extends Throwable> Matcher<T> withStacktrace(
+	public static <T extends Throwable> Matcher<T> isThrowable(
 			Matcher<T> throwableMatcher) {
 		return new StacktracePrintingMatcher<T>(throwableMatcher);
+	}
+
+	@Factory
+	public static <T extends Exception> Matcher<T> isException(
+			Matcher<T> exceptionMatcher) {
+		return new StacktracePrintingMatcher<T>(exceptionMatcher);
 	}
 }
