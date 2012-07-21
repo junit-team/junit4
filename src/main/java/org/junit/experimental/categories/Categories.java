@@ -386,13 +386,13 @@ public class Categories extends Suite {
 	}
 
 	private static Class<?>[] getCategoriesBySystemProperty(final String systemPropertyKey) throws ClassNotFoundException {
-        final String classes= System.getProperty(systemPropertyKey, null);
-        if (classes == null) return new Class<?>[0];
-        final List<Class<?>> categories= new ArrayList<Class<?>>();
+		final String classes= System.getProperty(systemPropertyKey, null);
+		if (classes == null) return new Class<?>[0];
+		final List<Class<?>> categories= new ArrayList<Class<?>>();
 		for (String clazz : classes.split(",")) {
-            clazz = clazz.trim();
-            if (clazz.length() == 0) throw new ClassNotFoundException("<empty class name>");
-            categories.add(Class.forName(clazz));
+			clazz= clazz.trim();
+			if (clazz.length() == 0) throw new ClassNotFoundException("<empty class name>");
+			categories.add(Class.forName(clazz));
 		}
 		return categories.toArray(new Class[categories.size()]);
 	}
