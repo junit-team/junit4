@@ -2,6 +2,8 @@ package org.junit.rules;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.junit.Rule;
 
@@ -77,8 +79,10 @@ public class TemporaryFolder extends ExternalResource {
 	 * Returns a new fresh folder with the given name under the temporary
 	 * folder.
 	 */
-	public File newFolder(String folder) {
-		return newFolder(new String[]{folder});
+	public File newFolder(String folderName) {
+        File file= new File(getRoot(), folderName);
+        file.mkdir();
+		return file;
 	}
 
 	/**
