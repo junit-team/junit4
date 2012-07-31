@@ -1,6 +1,7 @@
 package org.junit.tests.running.core;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
@@ -15,6 +16,7 @@ public class CommandLineTest {
 	private ByteArrayOutputStream results;
 	private PrintStream oldOut;
 	private static boolean testWasRun;
+	private static boolean test2WasRun;
 
 	@Before public void before() { 
 		oldOut= System.out;
@@ -30,6 +32,9 @@ public class CommandLineTest {
 		@Test public void test() { 
 			testWasRun= true; 
 		}
+		@Test public void test2() { 
+			test2WasRun= true; 
+		}
 	}
 
 	@Test public void runATest() {
@@ -41,7 +46,41 @@ public class CommandLineTest {
 		});
 		assertTrue(testWasRun);
 	}
-	
+
+	@Test public void runSingleMethod() {
+		testWasRun = false;
+		new MainRunner().runWithCheckForSystemExit(new Runnable() {
+			public void run() {
+				JUnitCore.main("org.junit.tests.running.core.CommandLineTest$Example", JUnitCore.METHOD+"test");
+			}
+		});
+		assertTrue(testWasRun);
+	}
+
+	@Test public void runTwoMethods() {
+		testWasRun = false;
+		test2WasRun = false;
+		new MainRunner().runWithCheckForSystemExit(new Runnable() {
+			public void run() {
+				JUnitCore.main("org.junit.tests.running.core.CommandLineTest$Example", JUnitCore.METHOD+"test", JUnitCore.METHOD+"test2");
+			}
+		});
+		assertTrue(testWasRun);
+		assertTrue(test2WasRun);
+	}
+
+	@Test public void donotRunSingleMethod() {
+		testWasRun = false;
+		test2WasRun = false;
+		new MainRunner().runWithCheckForSystemExit(new Runnable() {
+			public void run() {
+				JUnitCore.main("org.junit.tests.running.core.CommandLineTest$Example", JUnitCore.METHOD+"tst");
+			}
+		});
+		assertFalse(testWasRun);
+		assertFalse(test2WasRun);
+	}
+
 	@Test public void runAClass() {
 		testWasRun= false;
 		JUnitCore.runClasses(Example.class);

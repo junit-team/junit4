@@ -8,6 +8,7 @@ import org.junit.internal.JUnitSystem;
 import org.junit.internal.RealSystem;
 import org.junit.internal.TextListener;
 import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.runner.manipulation.Filter;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
@@ -26,6 +27,11 @@ import org.junit.runner.notification.RunNotifier;
  * @since 4.0
  */
 public class JUnitCore {
+	/**
+	 * command line paramter used to run single methods instead of complete test classes.
+	 */
+	public final static String METHOD = "--method=";
+	
 	private final RunNotifier fNotifier= new RunNotifier();
 
 	/**
@@ -77,11 +83,19 @@ public class JUnitCore {
 	 */
 	private Result runMain(JUnitSystem system, String... args) {
 		system.out().println("JUnit version " + Version.id());
+		List<String> methods = new ArrayList<String>();
 		List<Class<?>> classes= new ArrayList<Class<?>>();
 		List<Failure> missingClasses= new ArrayList<Failure>();
 		for (String each : args)
 			try {
-				classes.add(Class.forName(each));
+				if(each.startsWith(METHOD)) {
+					String[] m = each.split("=");
+					if(m.length==2 && !m[1].isEmpty()) {
+						methods.add(m[1]);
+					}
+				} else {
+					classes.add(Class.forName(each));
+				}
 			} catch (ClassNotFoundException e) {
 				system.out().println("Could not find class: " + each);
 				Description description= Description.createSuiteDescription(each);
@@ -90,7 +104,12 @@ public class JUnitCore {
 			}
 		RunListener listener= new TextListener(system);
 		addListener(listener);
-		Result result= run(classes.toArray(new Class[0]));
+		Result result= null;
+		if (methods.size()>0) {
+			result = run(createMethodFilter(methods), classes.toArray(new Class[0]));
+		} else {
+			result = run(classes.toArray(new Class[0]));
+		}
 		for (Failure each : missingClasses)
 			result.getFailures().add(each);
 		return result;
@@ -101,6 +120,44 @@ public class JUnitCore {
 	 */
 	public String getVersion() {
 		return Version.id();
+	}
+	
+	/**
+	 * Construct new {@link Filter} based on method list.
+	 * @param methods
+	 * @return filter to run only methods listed in <code>methods</code>
+	 */
+	private Filter createMethodFilter(final List<String> methods) {
+		return new Filter() {
+			@Override
+			public boolean shouldRun(Description description) {
+				String methodName = description.getMethodName();
+				if (methodName == null) {
+					return true;
+				} else if (methods.contains(methodName)) {
+					return true;
+				}
+				return false;
+			}
+			@Override
+			public String describe() {
+				return "Filter method";
+			}
+		};
+	}
+	
+	/**
+	 * Run only test matching filter.
+	 * @param filter applied to <code>classes</code> before run
+	 * @param classes the classes containing tests
+	 * @return a {@link Result} describing the details of the test run and the failed tests.
+	 */
+	public Result run(Filter filter, Class<?>... classes) {
+		Request request = Request.classes(defaultComputer(), classes);
+		if (filter!=null) {
+			request = request.filterWith(filter);
+		}
+		return run(request);
 	}
 	
 	/**
