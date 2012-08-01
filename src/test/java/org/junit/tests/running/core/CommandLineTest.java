@@ -51,7 +51,7 @@ public class CommandLineTest {
 		testWasRun = false;
 		new MainRunner().runWithCheckForSystemExit(new Runnable() {
 			public void run() {
-				JUnitCore.main("org.junit.tests.running.core.CommandLineTest$Example", JUnitCore.METHOD+"test");
+				JUnitCore.main("org.junit.tests.running.core.CommandLineTest$Example#test");
 			}
 		});
 		assertTrue(testWasRun);
@@ -62,11 +62,48 @@ public class CommandLineTest {
 		test2WasRun = false;
 		new MainRunner().runWithCheckForSystemExit(new Runnable() {
 			public void run() {
-				JUnitCore.main("org.junit.tests.running.core.CommandLineTest$Example", JUnitCore.METHOD+"test", JUnitCore.METHOD+"test2");
+				JUnitCore.main("org.junit.tests.running.core.CommandLineTest$Example#test"
+						, "org.junit.tests.running.core.CommandLineTest$Example#test2");
 			}
 		});
 		assertTrue(testWasRun);
 		assertTrue(test2WasRun);
+	}
+
+	@Test public void runTwoMethodsWithWildcard() {
+		testWasRun = false;
+		test2WasRun = false;
+		new MainRunner().runWithCheckForSystemExit(new Runnable() {
+			public void run() {
+				JUnitCore.main("org.junit.tests.running.core.CommandLineTest$Example#t*st*");
+			}
+		});
+		assertTrue(testWasRun);
+		assertTrue(test2WasRun);
+	}
+
+	@Test public void missingMethod() {
+		testWasRun = false;
+		test2WasRun = false;
+		new MainRunner().runWithCheckForSystemExit(new Runnable() {
+			public void run() {
+				JUnitCore.main("org.junit.tests.running.core.CommandLineTest$Example#");
+			}
+		});
+		assertTrue(testWasRun);
+		assertTrue(test2WasRun);
+	}
+
+	@Test public void missingClass() {
+		testWasRun = false;
+		test2WasRun = false;
+		new MainRunner().runWithCheckForSystemExit(new Runnable() {
+			public void run() {
+				JUnitCore.main("#test");
+			}
+		});
+		assertFalse(testWasRun);
+		assertFalse(test2WasRun);
 	}
 
 	@Test public void donotRunSingleMethod() {
@@ -74,7 +111,7 @@ public class CommandLineTest {
 		test2WasRun = false;
 		new MainRunner().runWithCheckForSystemExit(new Runnable() {
 			public void run() {
-				JUnitCore.main("org.junit.tests.running.core.CommandLineTest$Example", JUnitCore.METHOD+"tst");
+				JUnitCore.main("org.junit.tests.running.core.CommandLineTest$Example#tst");
 			}
 		});
 		assertFalse(testWasRun);

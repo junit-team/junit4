@@ -1,5 +1,6 @@
 package org.junit.runner;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,9 +29,14 @@ import org.junit.runner.notification.RunNotifier;
  */
 public class JUnitCore {
 	/**
-	 * command line paramter used to run single methods instead of complete test classes.
+	 * Separates class name from method name, e.g. ClassName#MethodName
 	 */
-	public final static String METHOD = "--method=";
+	private static final String SEPARATOR= "#";
+	
+	/**
+	 * Method name wildcard, e.g. ClassName#M*Name
+	 */
+	private static final String WILDCARD= "*";
 	
 	private final RunNotifier fNotifier= new RunNotifier();
 
@@ -83,17 +89,25 @@ public class JUnitCore {
 	 */
 	private Result runMain(JUnitSystem system, String... args) {
 		system.out().println("JUnit version " + Version.id());
-		List<String> methods = new ArrayList<String>();
+		List<Description> methods = new ArrayList<Description>();
 		List<Class<?>> classes= new ArrayList<Class<?>>();
 		List<Failure> missingClasses= new ArrayList<Failure>();
 		for (String each : args)
 			try {
-				if(each.startsWith(METHOD)) {
-					String[] m = each.split("=");
-					if(m.length==2 && !m[1].isEmpty()) {
-						methods.add(m[1]);
+				String[] class_method = each.split(SEPARATOR);
+				if (class_method.length==2) { //found: ClassName#MethodName
+					Class<?> clazz = Class.forName(class_method[0]);
+					String methodName = class_method[1];
+					if (methodName.contains(WILDCARD)) {
+						methods.addAll(findMatchingMethods(clazz, methodName));
+					} else {
+						methods.add(Description.createTestDescription(clazz, methodName));	
 					}
-				} else {
+					classes.add(clazz);
+				} else if (class_method.length==1 && each.endsWith(SEPARATOR)) { //found: ClassName#
+					Class<?> clazz = Class.forName(class_method[0]);
+					classes.add(clazz);
+				} else { //assume ClassName otherwise, wrong format may cause ClassNotFoundException
 					classes.add(Class.forName(each));
 				}
 			} catch (ClassNotFoundException e) {
@@ -121,23 +135,39 @@ public class JUnitCore {
 	public String getVersion() {
 		return Version.id();
 	}
+
+	/**
+	 * Convert method name with wildcard into a list of {@link Description}
+	 * @param clazz to search for methods matching <code>wildcardName</code>
+	 * @param wildcardName  method name pattern
+	 * @return list of matching descriptions
+	 */
+	private List<Description> findMatchingMethods(Class<?> clazz, String wildcardName) {
+		List<Description> result = new ArrayList<Description>();
+		String pattern = wildcardName.replace(WILDCARD, ".*");
+		for (Method m : clazz.getMethods()) {
+			final String methodName= m.getName();
+			if (methodName.matches(pattern)) {
+				result.add(Description.createTestDescription(clazz, methodName));
+			}
+		}
+		return result;
+	}
 	
 	/**
 	 * Construct new {@link Filter} based on method list.
 	 * @param methods
 	 * @return filter to run only methods listed in <code>methods</code>
 	 */
-	private Filter createMethodFilter(final List<String> methods) {
+	private Filter createMethodFilter(final List<Description> methods) {
 		return new Filter() {
 			@Override
 			public boolean shouldRun(Description description) {
 				String methodName = description.getMethodName();
 				if (methodName == null) {
 					return true;
-				} else if (methods.contains(methodName)) {
-					return true;
 				}
-				return false;
+				return methods.contains(description);
 			}
 			@Override
 			public String describe() {
