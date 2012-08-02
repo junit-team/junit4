@@ -91,7 +91,6 @@ public class JUnitCore {
 	private Result runMain(JUnitSystem system, String... args) {
 		system.out().println("JUnit version " + Version.id());
 		List<Description> methods= new ArrayList<Description>();
-		List<String> classNames2Filter= new ArrayList<String>();
 		List<Class<?>> classes= new ArrayList<Class<?>>();
 		List<Failure> missingClasses= new ArrayList<Failure>();
 		for (String each : args)
@@ -107,10 +106,9 @@ public class JUnitCore {
 						Failure failure= new Failure(description, new NoTestsRemainException());
 						missingClasses.add(failure);
 					} else {
-					  methods.addAll(foundMatchingMethods);
+						methods.addAll(foundMatchingMethods);
+						classes.add(clazz);
 					}
-					classNames2Filter.add(class_method[0]);
-					classes.add(clazz);
 				} else if (class_method.length==1 && each.endsWith(SEPARATOR)) { //found: ClassName#
 					Class<?> clazz = Class.forName(class_method[0]);
 					classes.add(clazz);
@@ -125,7 +123,7 @@ public class JUnitCore {
 			}
 		RunListener listener= new TextListener(system);
 		addListener(listener);
-		Result result= run(createMethodFilter(classNames2Filter, methods), classes.toArray(new Class[0]));
+		Result result= run(createMethodFilter(methods), classes.toArray(new Class[0]));
 		for (Failure each : missingClasses)
 			result.getFailures().add(each);
 		return result;
@@ -158,11 +156,14 @@ public class JUnitCore {
 	
 	/**
 	 * Construct new {@link Filter} based on method list.
-	 * @param classNames filter only classes listed here
 	 * @param methods contains methods allowed by this filter
 	 * @return new {@link Filter} to run only methods listed in <code>methods</code>
 	 */
-	private Filter createMethodFilter(final List<String> classNames, final List<Description> methods) {
+	private Filter createMethodFilter(final List<Description> methods) {
+		final List<String> classNames= new ArrayList<String>();
+		for (Description d : methods) {
+			classNames.add(d.getClassName());
+		}
 		return new Filter() {
 			@Override
 			public boolean shouldRun(Description description) {
@@ -185,21 +186,14 @@ public class JUnitCore {
 	 * @param filter applied to <code>classes</code> before run
 	 * @param classes the classes containing tests
 	 * @return a {@link Result} describing the details of the test run and the failed tests.
-	 * @throws NoTestsRemainException 
+	 * @throws NoTestsRemainException
 	 */
 	public Result run(Filter filter, Class<?>... classes) {
 		Request request = Request.classes(defaultComputer(), classes);
-		Runner r = request.getRunner();
-		if (filter!=null) {
-			try {
-				filter.apply(r);
-			} catch (NoTestsRemainException e) {
-				//hide exception, run emtpy set of classes instead
-				request = Request.classes(defaultComputer(), new Class[0]);
-				r = request.getRunner();
-			}
+		if (filter!=null && classes.length>0) {
+			request= request.filterWith(filter);
 		}
-		return run(r);
+		return run(request);
 	}
 	
 	/**
