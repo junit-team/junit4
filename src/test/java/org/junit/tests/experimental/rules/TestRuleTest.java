@@ -1,5 +1,6 @@
 package org.junit.tests.experimental.rules;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -8,7 +9,6 @@ import static org.junit.Assert.fail;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
-import static org.junit.matchers.JUnitMatchers.containsString;
 
 import java.util.LinkedList;
 import java.util.List;

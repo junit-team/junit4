@@ -1,14 +1,15 @@
 package org.junit.rules;
 
+import static junit.framework.Assert.fail;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.both;
-import static org.junit.matchers.JUnitMatchers.containsString;
-import org.hamcrest.Description;
+import static org.junit.internal.matchers.ThrowableCauseMatcher.hasCause;
+import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
+import junit.framework.Assert;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.junit.internal.AssumptionViolatedException;
-import org.junit.internal.matchers.TypeSafeMatcher;
 import org.junit.runners.model.Statement;
 
 /**
@@ -89,7 +90,7 @@ public class ExpectedException implements TestRule {
 		return new ExpectedException();
 	}
 
-	private Matcher<Object> fMatcher= null;
+	private final ExpectedExceptionMatcherBuilder fMatcherBuilder= new ExpectedExceptionMatcherBuilder();
 
 	private boolean handleAssumptionViolatedExceptions= false;
 
@@ -117,14 +118,8 @@ public class ExpectedException implements TestRule {
 	 * Adds {@code matcher} to the list of requirements for any thrown
 	 * exception.
 	 */
-	// Should be able to remove this suppression in some brave new hamcrest
-	// world.
-	@SuppressWarnings("unchecked")
 	public void expect(Matcher<?> matcher) {
-		if (fMatcher == null)
-			fMatcher= (Matcher<Object>) matcher;
-		else
-			fMatcher= both(fMatcher).and(matcher);
+		fMatcherBuilder.add(matcher);
 	}
 
 	/**
@@ -170,20 +165,21 @@ public class ExpectedException implements TestRule {
 		public void evaluate() throws Throwable {
 			try {
 				fNext.evaluate();
+				if (fMatcherBuilder.expectsThrowable())
+					failDueToMissingException();
 			} catch (AssumptionViolatedException e) {
 				optionallyHandleException(e, handleAssumptionViolatedExceptions);
-				return;
 			} catch (AssertionError e) {
 				optionallyHandleException(e, handleAssertionErrors);
-				return;
 			} catch (Throwable e) {
 				handleException(e);
-				return;
 			}
-			if (fMatcher != null)
-				throw new AssertionError("Expected test to throw "
-								+ StringDescription.toString(fMatcher));
 		}
+	}
+
+	private void failDueToMissingException() throws AssertionError {
+		String expectation= StringDescription.toString(fMatcherBuilder.build());
+		fail("Expected test to throw " + expectation);
 	}
 
 	private void optionallyHandleException(Throwable e, boolean handleException)
@@ -195,36 +191,9 @@ public class ExpectedException implements TestRule {
 	}
 
 	private void handleException(Throwable e) throws Throwable {
-		if (fMatcher == null)
+		if (fMatcherBuilder.expectsThrowable())
+			assertThat(e, fMatcherBuilder.build());
+		else
 			throw e;
-		assertThat(e, fMatcher);
-	}
-
-	private Matcher<Throwable> hasMessage(final Matcher<String> matcher) {
-		return new TypeSafeMatcher<Throwable>() {
-			public void describeTo(Description description) {
-				description.appendText("exception with message ");
-				description.appendDescriptionOf(matcher);
-			}
-
-			@Override
-			public boolean matchesSafely(Throwable item) {
-				return matcher.matches(item.getMessage());
-			}
-		};
-	}
-
-	private Matcher<Throwable> hasCause(final Matcher<? extends Throwable> causeMatcher) {
-		return new TypeSafeMatcher<Throwable>() {
-			public void describeTo(Description description) {
-				description.appendText("exception with cause ");
-				description.appendDescriptionOf(causeMatcher);
-			}
-
-			@Override
-			public boolean matchesSafely(Throwable item) {
-				return causeMatcher.matches(item.getCause());
-			}
-		};
 	}
 }
