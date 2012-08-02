@@ -118,6 +118,18 @@ public class CommandLineTest {
 		assertFalse(test2WasRun);
 	}
 
+	@Test public void donotRunWildcardMethod() {
+		testWasRun = false;
+		test2WasRun = false;
+		new MainRunner().runWithCheckForSystemExit(new Runnable() {
+			public void run() {
+				JUnitCore.main("org.junit.tests.running.core.CommandLineTest$Example#tssdft*");
+			}
+		});
+		assertFalse(testWasRun);
+		assertFalse(test2WasRun);
+	}
+	
 	@Test public void runAClass() {
 		testWasRun= false;
 		JUnitCore.runClasses(Example.class);

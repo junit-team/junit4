@@ -10,6 +10,7 @@ import org.junit.internal.RealSystem;
 import org.junit.internal.TextListener;
 import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.runner.manipulation.Filter;
+import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
@@ -89,20 +90,30 @@ public class JUnitCore {
 	 */
 	private Result runMain(JUnitSystem system, String... args) {
 		system.out().println("JUnit version " + Version.id());
-		List<Description> methods = new ArrayList<Description>();
+		List<Description> methods= new ArrayList<Description>();
+		List<String> classNames2Filter= new ArrayList<String>();
 		List<Class<?>> classes= new ArrayList<Class<?>>();
 		List<Failure> missingClasses= new ArrayList<Failure>();
 		for (String each : args)
 			try {
-				String[] class_method = each.split(SEPARATOR);
+				String[] class_method= each.split(SEPARATOR);
 				if (class_method.length==2) { //found: ClassName#MethodName
-					Class<?> clazz = Class.forName(class_method[0]);
-					String methodName = class_method[1];
+					Class<?> clazz= Class.forName(class_method[0]);
+					String methodName= class_method[1];
 					if (methodName.contains(WILDCARD)) {
-						methods.addAll(findMatchingMethods(clazz, methodName));
+						final List<Description> foundMatchingMethods= findMatchingMethods(clazz, methodName);
+						if (foundMatchingMethods.size()==0) {
+							system.out().println("No matching method found for: " + methodName);
+							Description description= Description.createSuiteDescription(each);
+							Failure failure= new Failure(description, new NoTestsRemainException());
+							missingClasses.add(failure);
+						} else {
+						  methods.addAll(foundMatchingMethods);
+						}
 					} else {
 						methods.add(Description.createTestDescription(clazz, methodName));	
 					}
+					classNames2Filter.add(class_method[0]);
 					classes.add(clazz);
 				} else if (class_method.length==1 && each.endsWith(SEPARATOR)) { //found: ClassName#
 					Class<?> clazz = Class.forName(class_method[0]);
@@ -118,12 +129,7 @@ public class JUnitCore {
 			}
 		RunListener listener= new TextListener(system);
 		addListener(listener);
-		Result result= null;
-		if (methods.size()>0) {
-			result = run(createMethodFilter(methods), classes.toArray(new Class[0]));
-		} else {
-			result = run(classes.toArray(new Class[0]));
-		}
+		Result result= run(createMethodFilter(classNames2Filter, methods), classes.toArray(new Class[0]));
 		for (Failure each : missingClasses)
 			result.getFailures().add(each);
 		return result;
@@ -156,22 +162,24 @@ public class JUnitCore {
 	
 	/**
 	 * Construct new {@link Filter} based on method list.
-	 * @param methods
-	 * @return filter to run only methods listed in <code>methods</code>
+	 * @param classNames filter only classes listed here
+	 * @param methods contains methods allowed by this filter
+	 * @return new {@link Filter} to run only methods listed in <code>methods</code>
 	 */
-	private Filter createMethodFilter(final List<Description> methods) {
+	private Filter createMethodFilter(final List<String> classNames, final List<Description> methods) {
 		return new Filter() {
 			@Override
 			public boolean shouldRun(Description description) {
 				String methodName = description.getMethodName();
+				String className = description.getClassName();
 				if (methodName == null) {
 					return true;
 				}
-				return methods.contains(description);
+				return classNames.contains(className)?methods.contains(description):true;
 			}
 			@Override
 			public String describe() {
-				return "Filter method";
+				return "command line method filter";
 			}
 		};
 	}
@@ -181,13 +189,21 @@ public class JUnitCore {
 	 * @param filter applied to <code>classes</code> before run
 	 * @param classes the classes containing tests
 	 * @return a {@link Result} describing the details of the test run and the failed tests.
+	 * @throws NoTestsRemainException 
 	 */
 	public Result run(Filter filter, Class<?>... classes) {
 		Request request = Request.classes(defaultComputer(), classes);
+		Runner r = request.getRunner();
 		if (filter!=null) {
-			request = request.filterWith(filter);
+			try {
+				filter.apply(r);
+			} catch (NoTestsRemainException e) {
+				//hide exception, run emtpy set of classes instead
+				request = Request.classes(defaultComputer(), new Class[0]);
+				r = request.getRunner();
+			}
 		}
-		return run(request);
+		return run(r);
 	}
 	
 	/**
