@@ -1,7 +1,11 @@
 package org.junit.rules;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
+import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
 
 /**
@@ -43,22 +47,62 @@ public abstract class TestWatcher implements TestRule {
 		return new Statement() {
 			@Override
 			public void evaluate() throws Throwable {
-				starting(description);
+				List<Throwable> errors = new ArrayList<Throwable>();
+
+				startingQuietly(description, errors);
 				try {
 					base.evaluate();
-					succeeded(description);
+					succeededQuietly(description, errors);
 				} catch (AssumptionViolatedException e) {
 					throw e;
 				} catch (Throwable t) {
-					failed(t, description);
-					throw t;
+					errors.add(t);
+					failedQuietly(t, description, errors);
 				} finally {
-					finished(description);
+					finishedQuietly(description, errors);
 				}
+				
+				MultipleFailureException.assertEmpty(errors);
 			}
 		};
 	}
 
+	private void succeededQuietly(Description description,
+			List<Throwable> errors) {
+		try {
+			succeeded(description);
+		} catch (Throwable t) {
+			errors.add(t);
+		}
+	}
+	
+	private void failedQuietly(Throwable t, Description description,
+			List<Throwable> errors) {
+		try {
+			failed(t, description);
+		} catch (Throwable t1) {
+			errors.add(t1);
+		}
+	}
+
+	private void startingQuietly(Description description, 
+			List<Throwable> errors) {
+		try {
+			starting(description);
+		} catch (Throwable t) {
+			errors.add(t);
+		}
+	}
+	
+	private void finishedQuietly(Description description,
+			List<Throwable> errors) {
+		try {
+			finished(description);
+		} catch (Throwable t) {
+			errors.add(t);
+		}
+	}
+	
 	/**
 	 * Invoked when a test succeeds
 	 * 
@@ -83,7 +127,6 @@ public abstract class TestWatcher implements TestRule {
 	 */
 	protected void starting(Description description) {
 	}
-
 
 	/**
 	 * Invoked when a test method finishes (whether passing or failing)
