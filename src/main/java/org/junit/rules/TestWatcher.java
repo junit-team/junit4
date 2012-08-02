@@ -18,7 +18,7 @@ import org.junit.runners.model.Statement;
  * 	private static String watchedLog;
  * 
  * 	&#064;Rule
- * 	public TestRule watchman= new TestWatcher() {
+ * 	public TestWatcher watchman= new TestWatcher() {
  * 		&#064;Override
  * 		protected void failed(Throwable e, Description description) {
  * 			watchedLog+= description + &quot;\n&quot;;
