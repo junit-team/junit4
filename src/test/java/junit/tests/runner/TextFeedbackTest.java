@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 
 import junit.framework.AssertionFailedError;
+import junit.framework.BlockedException;
 import junit.framework.TestCase;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
@@ -67,7 +68,7 @@ public class TextFeedbackTest extends TestCase {
 	}
 
 	public void testFailure() {
-		String expected= expected(new String[]{".F", "Time: 0", "Failures here", "", "FAILURES!!!", "Tests run: 1,  Failures: 1,  Errors: 0", ""});
+		String expected= expected(new String[]{".F", "Time: 0", "Failures here", "", "FAILURES!!!", "Tests run: 1,  Failures: 1,  Errors: 0,  Blocks: 0", ""});
 		ResultPrinter printer= new TestResultPrinter(new PrintStream(output)) {
 			@Override
 			public void printFailures(TestResult result) {
@@ -83,7 +84,7 @@ public class TextFeedbackTest extends TestCase {
 	}
 	
 	public void testError() {
-		String expected= expected(new String[]{".E", "Time: 0", "Errors here", "", "FAILURES!!!", "Tests run: 1,  Failures: 0,  Errors: 1", ""});
+		String expected= expected(new String[]{".E", "Time: 0", "Errors here", "", "FAILURES!!!", "Tests run: 1,  Failures: 0,  Errors: 1,  Blocks: 0", ""});
 		ResultPrinter printer= new TestResultPrinter(new PrintStream(output)) {
 			@Override
 			public void printErrors(TestResult result) {
@@ -98,6 +99,22 @@ public class TextFeedbackTest extends TestCase {
 		assertEquals(expected, output.toString());
 	}
 	
+	public void testBlock() {
+		String expected= expected(new String[]{".B", "Time: 0", "Failures here", "", "FAILURES!!!", "Tests run: 1,  Failures: 0,  Errors: 0,  Blocks: 1", ""});
+		ResultPrinter printer= new TestResultPrinter(new PrintStream(output)) {
+			@Override
+			public void printFailures(TestResult result) {
+				getWriter().println("Failures here");
+			}
+		};
+		runner.setPrinter(printer);
+		TestSuite suite = new TestSuite();
+		suite.addTest(new TestCase() { @Override
+		public void runTest() throws Exception {throw new BlockedException();}});
+		runner.doRun(suite);
+		assertEquals(expected, output.toString());
+	}
+
 	private String expected(String[] lines) {
 		OutputStream expected= new ByteArrayOutputStream();
 		PrintStream expectedWriter= new PrintStream(expected);

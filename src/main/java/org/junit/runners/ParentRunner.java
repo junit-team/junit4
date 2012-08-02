@@ -11,6 +11,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import junit.framework.BlockedException;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -268,6 +270,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 		eachNotifier.fireTestStarted();
 		try {
 		    statement.evaluate();
+		} catch (BlockedException e) {
+			eachNotifier.addBlocked(e);
 		} catch (AssumptionViolatedException e) {
 			eachNotifier.addFailedAssumption(e);
 		} catch (Throwable e) {

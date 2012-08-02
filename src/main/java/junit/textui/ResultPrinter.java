@@ -6,6 +6,7 @@ import java.text.NumberFormat;
 import java.util.Enumeration;
 
 import junit.framework.AssertionFailedError;
+import junit.framework.BlockedException;
 import junit.framework.Test;
 import junit.framework.TestFailure;
 import junit.framework.TestListener;
@@ -88,7 +89,8 @@ public class ResultPrinter implements TestListener {
 			getWriter().println("FAILURES!!!");
 			getWriter().println("Tests run: "+result.runCount()+ 
 				         ",  Failures: "+result.failureCount()+
-				         ",  Errors: "+result.errorCount());
+				         ",  Errors: "+result.errorCount()+
+				         ",  Blocks: "+ result.blockCount());
 		}
 	    getWriter().println();
 	}
@@ -117,6 +119,13 @@ public class ResultPrinter implements TestListener {
 	 */
 	public void addFailure(Test test, AssertionFailedError t) {
 		getWriter().print("F");
+	}
+
+	/**
+	 * @see junit.framework.TestListener#addBlocked(Test, BlockedException)
+	 */
+	public void addBlocked(Test test, BlockedException t) {
+		getWriter().print("B");
 	}
 
 	/**

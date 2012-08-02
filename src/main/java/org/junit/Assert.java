@@ -1,5 +1,6 @@
 package org.junit;
 
+import junit.framework.BlockedException;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
@@ -76,10 +77,26 @@ public class Assert {
 	 * @param condition
 	 *            condition to be checked
 	 */
+
 	static public void assertFalse(boolean condition) {
 		assertFalse(null, condition);
 	}
 
+	/**
+	 * Halts the test and report it as blocked with no message.
+	 */
+	static public void block() {
+		block(null);
+	}
+	/**
+	 * Halts the test and report it as blocked with the given message.
+	 */
+	static public void block(String message) {
+		if (message == null) {
+			throw new BlockedException();
+		}
+		throw new BlockedException(message);
+	}
 	/**
 	 * Fails a test with the given message.
 	 * 

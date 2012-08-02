@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import junit.framework.BlockedException;
+
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
@@ -141,6 +143,22 @@ public class RunNotifier {
 			@Override
 			protected void notifyListener(RunListener each) throws Exception {
 				each.testAssumptionFailure(failure);
+			};
+		}.run();
+	}
+
+	/**
+	 * Invoke to tell listeners that an atomic test is blocked.
+	 *
+	 * @param failure
+	 *            the description of the test that failed and the
+	 *            {@link BlockedException} thrown
+	 */
+	public void fireTestBlocked(final Failure failure) {
+		new SafeNotifier() {
+			@Override
+			protected void notifyListener(RunListener each) throws Exception {
+				each.testBlocked(failure);
 			};
 		}.run();
 	}

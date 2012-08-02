@@ -16,6 +16,7 @@ import java.util.List;
  */
 public class TestResult extends Object {
 	protected List<TestFailure> fFailures;
+	protected List<TestFailure> fBlocks;
 	protected List<TestFailure> fErrors;
 	protected List<TestListener> fListeners;
 	protected int fRunTests;
@@ -23,6 +24,7 @@ public class TestResult extends Object {
 	
 	public TestResult() {
 		fFailures= new ArrayList<TestFailure>();
+		fBlocks= new ArrayList<TestFailure>();
 		fErrors= new ArrayList<TestFailure>();
 		fListeners= new ArrayList<TestListener>();
 		fRunTests= 0;
@@ -45,6 +47,15 @@ public class TestResult extends Object {
 		fFailures.add(new TestFailure(test, t));
 		for (TestListener each : cloneListeners())
 			each.addFailure(test, t);
+	}
+	/**
+	 * Adds a failure to the list of blocked. The passed in exception caused the
+	 * blockage.
+	 */
+	public synchronized void addBlocked(Test test, BlockedException t) {
+		fBlocks.add(new TestFailure(test, t));
+		for (TestListener each : cloneListeners())
+			each.addBlocked(test, t);
 	}
 	/**
 	 * Registers a TestListener
@@ -101,6 +112,18 @@ public class TestResult extends Object {
 	}
 	
 	/**
+	 * Gets the number of detected blocks.
+	 */
+	public synchronized int blockCount() {
+		return fBlocks.size();
+	}
+	/**
+	 * Returns an Enumeration for the blocks
+	 */
+	public synchronized Enumeration<TestFailure> blocks() {
+		return Collections.enumeration(fBlocks);
+	}
+	/**
 	 * Runs a TestCase.
 	 */
 	protected void run(final TestCase test) {
@@ -129,8 +152,9 @@ public class TestResult extends Object {
 		} 
 		catch (AssertionFailedError e) {
 			addFailure(test, e);
-		}
-		catch (ThreadDeath e) { // don't catch ThreadDeath by accident
+		} catch (BlockedException e) {
+			addBlocked(test, e);
+		} catch (ThreadDeath e) { // don't catch ThreadDeath by accident
 			throw e;
 		}
 		catch (Throwable e) {
@@ -164,6 +188,6 @@ public class TestResult extends Object {
 	 * Returns whether the entire test was successful or not.
 	 */
 	public synchronized boolean wasSuccessful() {
-		return failureCount() == 0 && errorCount() == 0;
+		return failureCount() == 0 && errorCount() == 0 && blockCount() == 0;
 	}
 }

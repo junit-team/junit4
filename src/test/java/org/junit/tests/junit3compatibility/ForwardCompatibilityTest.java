@@ -1,6 +1,7 @@
 package org.junit.tests.junit3compatibility;
 
 import junit.framework.AssertionFailedError;
+import junit.framework.BlockedException;
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.TestCase;
 import junit.framework.TestFailure;
@@ -85,6 +86,10 @@ public class ForwardCompatibilityTest extends TestCase {
 		
 			public void addError(junit.framework.Test test, Throwable t) {
 				log.append(" error " + test);		
+			}
+
+			public void addBlocked(junit.framework.Test test, BlockedException t) {
+				log.append(" block " + test);
 			}
 		});
 		adapter.run(result);

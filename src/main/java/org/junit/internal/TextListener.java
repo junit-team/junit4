@@ -25,6 +25,7 @@ public class TextListener extends RunListener {
 	public void testRunFinished(Result result) {
 		printHeader(result.getRunTime());
 		printFailures(result);
+		printBlocks(result);
 		printFooter(result);
 	}
 
@@ -43,6 +44,10 @@ public class TextListener extends RunListener {
 		fWriter.append('I');
 	}
 
+	@Override
+	public void testBlocked(Failure failure) throws Exception {
+		fWriter.append('B');
+	}
 	/*
 	 * Internal methods
 	 */
@@ -69,6 +74,19 @@ public class TextListener extends RunListener {
 			printFailure(each, "" + i++);
 	}
 
+	protected void printBlocks(Result result) {
+		List<Failure> blocks= result.getBlocks();
+		if (blocks.size() == 0)
+			return;
+		if (blocks.size() == 1)
+			getWriter().println("There was " + blocks.size() + " blocked:");
+		else
+			getWriter().println("There were " + blocks.size() + " blocks:");
+		int i= 1;
+		for (Failure each : blocks)
+			printFailure(each, "" + i++);
+	}
+
 	protected void printFailure(Failure each, String prefix) {
 		getWriter().println(prefix + ") " + each.getTestHeader());
 		getWriter().print(each.getTrace());
@@ -83,7 +101,8 @@ public class TextListener extends RunListener {
 		} else {
 			getWriter().println();
 			getWriter().println("FAILURES!!!");
-			getWriter().println("Tests run: " + result.getRunCount() + ",  Failures: " + result.getFailureCount());
+			getWriter().println("Tests run: " + result.getRunCount() + ",  Failures: " + result.getFailureCount()
+					+ ", Blocks: " + result.getBlockCount());
 		}
 		getWriter().println();
 	}
