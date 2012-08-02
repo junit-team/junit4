@@ -1,13 +1,14 @@
 package org.junit.tests.assertion;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -462,7 +463,7 @@ public class AssertionTest {
         String expected = "expected";
         String actual = "actual";
         
-        String expectedMessage = "identifier\nExpected: \"expected\"\n     got: \"actual\"\n";
+        String expectedMessage = "identifier\nExpected: \"expected\"\n     but: was \"actual\"";
         
         try {
             assertThat("identifier", actual, equalTo(expected));
@@ -472,10 +473,10 @@ public class AssertionTest {
     }
     
     @Test public void assertThatIncludesAdvancedMismatch() {
-        String expectedMessage = "identifier\nExpected: is an instance of java.lang.Integer\n     got: \"actual\"\n";
+        String expectedMessage = "identifier\nExpected: is an instance of java.lang.Integer\n     but: \"actual\" is a java.lang.String";
         
         try {
-            assertThat("identifier", "actual", is(Integer.class));
+            assertThat("identifier", "actual", is(instanceOf(Integer.class)));
         } catch (AssertionError e) {
             assertEquals(expectedMessage, e.getMessage());
         }
@@ -485,7 +486,7 @@ public class AssertionTest {
         String expected = "expected";
         String actual = "actual";
         
-        String expectedMessage = "\nExpected: \"expected\"\n     got: \"actual\"\n";
+        String expectedMessage = "\nExpected: \"expected\"\n     but: was \"actual\"";
         
         try {
             assertThat(actual, equalTo(expected));
@@ -493,17 +494,6 @@ public class AssertionTest {
             assertEquals(expectedMessage, e.getMessage());
         }
     }
-    
-	@Test public void assertThatIncludesActualException() {
-		Exception actual= new IllegalArgumentException();
-		Exception expected= new NullPointerException();
-
-		try {
-			assertThat(actual, equalTo(expected));
-		} catch (AssertionError e) {
-			assertEquals(actual, e.getCause());
-		}
-	}
     
     @Test public void nullAndStringNullPrintCorrectError() {
         try {

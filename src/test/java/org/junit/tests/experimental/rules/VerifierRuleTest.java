@@ -59,12 +59,12 @@ public class VerifierRuleTest {
 	
 	@Test public void usedErrorCollectorCheckThatShouldFail() {
 		PrintableResult testResult= testResult(UsesErrorCollectorCheckThat.class);
-		assertThat(testResult, hasFailureContaining("got: <3>"));
-		assertThat(testResult, hasFailureContaining("got: <5>"));
+		assertThat(testResult, hasFailureContaining("was <3>"));
+		assertThat(testResult, hasFailureContaining("was <5>"));
 		assertThat(testResult, hasFailureContaining("reason 1"));
-		assertThat(testResult, hasFailureContaining("got: <7>"));
+		assertThat(testResult, hasFailureContaining("was <7>"));
 		assertThat(testResult, hasFailureContaining("reason 2"));
-		assertThat(testResult, hasFailureContaining("got: <9>"));
+		assertThat(testResult, hasFailureContaining("was <9>"));
 	}
 
 	public static class UsesErrorCollectorCheckSucceeds {

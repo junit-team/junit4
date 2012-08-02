@@ -6,8 +6,9 @@ import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.failureCountIs;
 import static org.junit.experimental.results.ResultMatchers.hasFailureContaining;
 import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
-import static org.junit.matchers.JUnitMatchers.both;
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
+import org.junit.experimental.results.PrintableResult;
 import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
@@ -99,7 +100,7 @@ public class UnsuccessfulWithDataPointFields {
 	public void dataPointsMustBeStatic() {
 		assertThat(
 				testResult(DataPointsMustBeStatic.class),
-				both(failureCountIs(2))
+				CoreMatchers.<PrintableResult> both(failureCountIs(2))
 						.and(
 								hasFailureContaining("DataPoint field THREE must be static"))
 						.and(

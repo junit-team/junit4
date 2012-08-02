@@ -1,8 +1,7 @@
 package org.junit;
 
-import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.hamcrest.StringDescription;
+import org.hamcrest.MatcherAssert;
 import org.junit.internal.ArrayComparisonFailure;
 import org.junit.internal.ExactComparisonCriteria;
 import org.junit.internal.InexactComparisonCriteria;
@@ -919,7 +918,7 @@ public class Assert {
 	 *            values
 	 * 
 	 * @see org.hamcrest.CoreMatchers
-	 * @see org.junit.matchers.JUnitMatchers
+	 * @see org.hamcrest.MatcherAssert
 	 */
 	public static <T> void assertThat(T actual, Matcher<? super T> matcher) {
 		assertThat("", actual, matcher);
@@ -931,7 +930,6 @@ public class Assert {
 	 * the reason and information about the matcher and failing value. Example:
 	 * 
 	 * <pre>
-	 * :
 	 *   assertThat(&quot;Help! Integers don't work&quot;, 0, is(1)); // fails:
 	 *     // failure message:
 	 *     // Help! Integers don't work
@@ -957,23 +955,10 @@ public class Assert {
 	 *            values
 	 * 
 	 * @see org.hamcrest.CoreMatchers
-	 * @see org.junit.matchers.JUnitMatchers
+	 * @see org.hamcrest.MatcherAssert
 	 */
 	public static <T> void assertThat(String reason, T actual,
 			Matcher<? super T> matcher) {
-		if (!matcher.matches(actual)) {
-			Description description= new StringDescription();
-			description.appendText(reason);
-			description.appendText("\nExpected: ");
-			description.appendDescriptionOf(matcher);
-			description.appendText("\n     got: ");
-			description.appendValue(actual);
-			description.appendText("\n");
-			java.lang.AssertionError assertionError= new java.lang.AssertionError(
-					description.toString());
-			if (actual instanceof Throwable)
-				assertionError.initCause((Throwable) actual);
-			throw assertionError;
-		}
+		MatcherAssert.assertThat(reason, actual, matcher);
 	}
 }
