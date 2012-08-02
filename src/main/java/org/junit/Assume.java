@@ -41,6 +41,31 @@ public class Assume {
 	}
 
 	/**
+	 * The inverse of {@link #assumeTrue(boolean)}.
+	 */
+	public static void assumeFalse(boolean b) {
+		assumeTrue(!b);
+	}
+
+	/**
+	 * If called with an expression evaluating to {@code false}, the test will halt and be ignored.
+	 * 
+	 * @param b If <code>false</code>, the method will attempt to stop the test and ignore it by 
+	 * throwing {@link AssumptionViolatedException}.
+	 * @param message A message to pass to {@link AssumptionViolatedException}.
+	 */
+	public static void assumeTrue(String message, boolean b) {
+		if (!b) throw new AssumptionViolatedException(message);
+	}
+
+	/**
+	 * The inverse of {@link #assumeTrue(String, boolean)}.
+	 */
+	public static void assumeFalse(String message, boolean b) {
+		assumeTrue(message, !b);
+	}
+	
+	/**
 	 * If called with one or more null elements in <code>objects</code>, the test will halt and be ignored.
 	 * @param objects
 	 */
@@ -91,5 +116,23 @@ public class Assume {
 	 */
 	public static void assumeNoException(Throwable t) {
 		assumeThat(t, nullValue());
+	}
+
+	/**
+	 * Attempts to halt the test and ignore it if Throwable <code>t</code> is
+	 * not <code>null</code>. Similar to {@link #assumeNoException(Throwable)},
+	 * but provides an additional message that can explain the details
+	 * concerning the assumption.
+	 * 
+	 * @see #assumeNoException(Throwable)
+	 * @param t
+	 *            if non-null, the offending exception
+	 * @param message
+	 *            Additional message to pass to
+	 *            {@link AssumptionViolatedException}.
+	 */
+	public static void assumeNoException(String message, Throwable t) {
+		if (t != null)
+			throw new AssumptionViolatedException(message, t);
 	}
 }
