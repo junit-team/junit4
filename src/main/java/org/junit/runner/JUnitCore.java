@@ -100,18 +100,14 @@ public class JUnitCore {
 				if (class_method.length==2) { //found: ClassName#MethodName
 					Class<?> clazz= Class.forName(class_method[0]);
 					String methodName= class_method[1];
-					if (methodName.contains(WILDCARD)) {
-						final List<Description> foundMatchingMethods= findMatchingMethods(clazz, methodName);
-						if (foundMatchingMethods.size()==0) {
-							system.out().println("No matching method found for: " + methodName);
-							Description description= Description.createSuiteDescription(each);
-							Failure failure= new Failure(description, new NoTestsRemainException());
-							missingClasses.add(failure);
-						} else {
-						  methods.addAll(foundMatchingMethods);
-						}
+					final List<Description> foundMatchingMethods= findMatchingMethods(clazz, methodName);
+					if (foundMatchingMethods.size()==0) {
+						system.out().println("No matching method found for: " + methodName);
+						Description description= Description.createSuiteDescription(each);
+						Failure failure= new Failure(description, new NoTestsRemainException());
+						missingClasses.add(failure);
 					} else {
-						methods.add(Description.createTestDescription(clazz, methodName));	
+					  methods.addAll(foundMatchingMethods);
 					}
 					classNames2Filter.add(class_method[0]);
 					classes.add(clazz);
