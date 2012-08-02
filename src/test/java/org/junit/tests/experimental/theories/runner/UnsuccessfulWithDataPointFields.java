@@ -1,5 +1,6 @@
 package org.junit.tests.experimental.theories.runner;
 
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
@@ -147,12 +148,9 @@ public class UnsuccessfulWithDataPointFields {
 	public void dataPointsMustBePublic() {
 		assertThat(
 				testResult(DataPointsMustBePublic.class),
-				both(failureCountIs(3))
-						.and(
-								hasFailureContaining("DataPoint field THREE must be public"))
-						.and(
-								hasFailureContaining("DataPoint field FOUR must be public"))
-						.and(
-								hasFailureContaining("DataPoint field FIVE must be public")));
+				allOf(failureCountIs(3),
+						hasFailureContaining("DataPoint field THREE must be public"),
+						hasFailureContaining("DataPoint field FOUR must be public"),
+						hasFailureContaining("DataPoint field FIVE must be public")));
 	}
 }
