@@ -45,7 +45,7 @@ public class Timeout implements TestRule {
 	 * @param millis the maximum time in milliseconds to allow the
 	 * 	      test to run before it should timeout
 	 */
-	public Timeout(long millis) {
+	public Timeout(int millis) {
 		fMillis= millis;
 	}
 
@@ -58,7 +58,7 @@ public class Timeout implements TestRule {
 	 * @param unit the time unit of the {@code timeout} argument
 	 */
 	public Timeout(long timeout, TimeUnit unit) {
-		this(unit.toMillis(timeout));
+		fMillis= unit.toMillis(timeout);
 	}
 	
 	public Statement apply(Statement base, Description description) {
