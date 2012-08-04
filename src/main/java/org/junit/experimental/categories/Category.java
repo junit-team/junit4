@@ -36,6 +36,7 @@ import java.lang.annotation.RetentionPolicy;
 </pre>
  * 
  * For more usage, see code example on {@link Categories}.
+ * @version 4.11
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Category {

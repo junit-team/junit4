@@ -1,13 +1,5 @@
 package org.junit.tests.experimental.categories;
 
-import static org.junit.Assert.assertThat;
-import static org.junit.experimental.results.PrintableResult.testResult;
-import static org.junit.experimental.results.ResultMatchers.hasFailureContaining;
-import static org.junit.experimental.results.ResultMatchers.isSuccessful;
-
-import java.util.Collection;
-import java.util.Collections;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Categories;
@@ -18,7 +10,18 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.Suite.SuiteClasses;
 
-public class CategoriesAndParameterizedTest {
+import java.util.Collection;
+import java.util.Collections;
+
+import static org.junit.Assert.assertThat;
+import static org.junit.experimental.results.PrintableResult.testResult;
+import static org.junit.experimental.results.ResultMatchers.hasFailureContaining;
+import static org.junit.experimental.results.ResultMatchers.isSuccessful;
+
+/**
+ * @version 4.11
+ */
+public final class CategoriesAndParameterizedTest {
 	public static class Token {
 
 	}
