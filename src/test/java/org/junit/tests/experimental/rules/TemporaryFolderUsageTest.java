@@ -1,14 +1,19 @@
 package org.junit.tests.experimental.rules;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 /**
@@ -18,6 +23,9 @@ import org.junit.rules.TemporaryFolder;
 public class TemporaryFolderUsageTest {
 
 	private TemporaryFolder tempFolder;
+
+	@Rule
+	public final ExpectedException thrown = ExpectedException.none();
 
 	@Before
 	public void setUp() {
@@ -46,6 +54,16 @@ public class TemporaryFolderUsageTest {
 		new TemporaryFolder().newFile("MyFile.txt");
 	}
 
+	@Test
+	public void newFileWithGivenFilenameThrowsIllegalArgumentExceptionIfFileExists() throws IOException {
+		tempFolder.create();
+		tempFolder.newFile("MyFile.txt");
+
+		thrown.expect(IllegalArgumentException.class);
+		thrown.expectMessage("a file with the name 'MyFile.txt' already exists in the test folder");
+		tempFolder.newFile("MyFile.txt");
+	}
+
 	@Test(expected= IllegalStateException.class)
 	public void newFolderThrowsIllegalStateExceptionIfCreateWasNotInvoked()
 			throws IOException {
@@ -57,10 +75,23 @@ public class TemporaryFolderUsageTest {
 		new TemporaryFolder().newFolder("level1", "level2", "level3");
 	}
 
-	@Test(expected = IllegalStateException.class)
-	public void newFolderWithGivenPathThrowsIllegalStateExceptionIfPathExists() throws IOException {
+	@Test
+	public void newFolderWithGivenFolderThrowsIllegalArgumentExceptionIfFolderExists() throws IOException {
+		tempFolder.create();
+		tempFolder.newFolder("level1");
+
+		thrown.expect(IllegalArgumentException.class);
+		thrown.expectMessage("a folder with the name 'level1' already exists");
+		tempFolder.newFolder("level1");
+	}
+
+	@Test
+	public void newFolderWithGivenPathThrowsIllegalArgumentExceptionIfPathExists() throws IOException {
 		tempFolder.create();
 		tempFolder.newFolder("level1", "level2", "level3");
+
+		thrown.expect(IllegalArgumentException.class);
+		thrown.expectMessage("a folder with the name 'level3' already exists");
 		tempFolder.newFolder("level1", "level2", "level3");
 	}
 

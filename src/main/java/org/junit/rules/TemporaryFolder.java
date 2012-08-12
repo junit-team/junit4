@@ -61,7 +61,7 @@ public class TemporaryFolder extends ExternalResource {
 	public File newFile(String fileName) throws IOException {
 		File file= new File(getRoot(), fileName);
 		if (!file.createNewFile())
-			throw new IllegalStateException(
+			throw new IllegalArgumentException(
 					"a file with the name \'" + fileName + "\' already exists in the test folder");
 		return file;
 	}
@@ -87,13 +87,18 @@ public class TemporaryFolder extends ExternalResource {
 	 */
 	public File newFolder(String... folderNames) {
 		File file= getRoot();
-		for (String folderName : folderNames) {
-			file= new File(file, folderName);
-			if (!file.mkdir())
-				throw new IllegalStateException(
+		for (int i = 0; i < folderNames.length; i++) {
+			String folderName = folderNames[i];
+			file = new File(file, folderName);
+			if (!file.mkdir() && isLastElementInArray(i, folderNames))
+				throw new IllegalArgumentException(
 						"a folder with the name \'" + folderName + "\' already exists");
 		}
 		return file;
+	}
+
+	private boolean isLastElementInArray(int index, String[] array) {
+		return index == array.length - 1;
 	}
 
 	/**
