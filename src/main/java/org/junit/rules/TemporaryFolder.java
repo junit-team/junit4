@@ -89,7 +89,9 @@ public class TemporaryFolder extends ExternalResource {
 		File file= getRoot();
 		for (String folderName : folderNames) {
 			file= new File(file, folderName);
-			file.mkdir();
+			if (!file.mkdir())
+				throw new IllegalStateException(
+						"a folder with the name \'" + folderName + "\' already exists");
 		}
 		return file;
 	}

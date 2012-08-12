@@ -54,7 +54,14 @@ public class TemporaryFolderUsageTest {
 
 	@Test(expected= IllegalStateException.class)
 	public void newFolderWithGivenPathThrowsIllegalStateExceptionIfCreateWasNotInvoked() {
-		new TemporaryFolder().newFolder("level1", "leve2", "leve3");
+		new TemporaryFolder().newFolder("level1", "level2", "level3");
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void newFolderWithGivenPathThrowsIllegalStateExceptionIfPathExists() throws IOException {
+		tempFolder.create();
+		tempFolder.newFolder("level1", "level2", "level3");
+		tempFolder.newFolder("level1", "level2", "level3");
 	}
 
 	@Test
