@@ -157,24 +157,24 @@ public class TemporaryFolderUsageTest {
 				.getParentFile());
 	}
 
-        @Test
-        public void canSetTheBaseFileForATemporaryFolder() throws IOException {
-                File tempDir = createTemporaryFolder();
+	@Test
+	public void canSetTheBaseFileForATemporaryFolder() throws IOException {
+		File tempDir = createTemporaryFolder();
 
-                TemporaryFolder folder = new TemporaryFolder(tempDir);
-                folder.create();
+		TemporaryFolder folder = new TemporaryFolder(tempDir);
+		folder.create();
 
-                assertThat(tempDir, is(folder.getRoot().getParentFile()));
-        }
+		assertThat(tempDir, is(folder.getRoot().getParentFile()));
+	}
 
-        private File createTemporaryFolder() throws IOException {
-                File tempDir = File.createTempFile("junit", "tempFolder");
-                assertTrue("Unable to delete temporary file", tempDir.delete());
-                assertTrue("Unable to create temp directory", tempDir.mkdir());
-                return tempDir;
-        }
+	private File createTemporaryFolder() throws IOException {
+		File tempDir = File.createTempFile("junit", "tempFolder");
+		assertTrue("Unable to delete temporary file", tempDir.delete());
+		assertTrue("Unable to create temp directory", tempDir.mkdir());
+		return tempDir;
+	}
 
-        private void assertFileDoesNotExist(File file) {
+	private void assertFileDoesNotExist(File file) {
 		checkFileExists("exists", file, false);
 	}
 

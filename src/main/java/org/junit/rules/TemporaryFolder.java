@@ -26,16 +26,16 @@ import org.junit.Rule;
  * @since 4.7
  */
 public class TemporaryFolder extends ExternalResource {
-        private final File parentFolder;
+	private final File parentFolder;
 	private File folder;
 
-        public TemporaryFolder() {
-                this(null);
-        }
+	public TemporaryFolder() {
+		this(null);
+	}
 
-        public TemporaryFolder(File parentFolder) {
-                this.parentFolder = parentFolder;
-        }
+	public TemporaryFolder(File parentFolder) {
+		this.parentFolder = parentFolder;
+	}
 
 	@Override
 	protected void before() throws Throwable {
