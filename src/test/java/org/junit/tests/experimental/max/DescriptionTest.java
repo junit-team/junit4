@@ -43,7 +43,8 @@ public class DescriptionTest {
 
 	@Test
 	public void parseClassAndMethodWithAnnotations() throws Exception {
-		Annotation[] annotations = DescriptionTest.class.getMethod("parseClassAndMethodWithAnnotations").getDeclaredAnnotations();
+		Annotation[] annotations =
+						DescriptionTest.class.getMethod("parseClassAndMethodWithAnnotations").getDeclaredAnnotations();
 
 		Description description = Description.createTestDescription(Description.class, "aTestMethod", annotations);
 
@@ -54,16 +55,16 @@ public class DescriptionTest {
 
 	@Test
 	public void parseClassNameAndMethodUniqueId() throws Exception {
-		Description description = Description.createTestDescription("something that's not a class name", "aTestMethod", 123);
+		Description description = Description.createTestDescription("not a class name", "aTestMethod", 123);
 
-		assertThat(description.getClassName(), equalTo("something that's not a class name"));
+		assertThat(description.getClassName(), equalTo("not a class name"));
 		assertThat(description.getMethodName(), equalTo("aTestMethod"));
 		assertThat(description.getAnnotations().size(), equalTo(0));
 	}
 
 	@Test
 	public void sameNamesButDifferentUniqueIdAreNotEqual() throws Exception {
-		assertThat(Description.createTestDescription("something that's not a class name", "aTestMethod", 1),
-						not(equalTo(Description.createTestDescription("something that's not a class name", "aTestMethod", 2))));
+		assertThat(Description.createTestDescription("not a class name", "aTestMethod", 1),
+						not(equalTo(Description.createTestDescription("not a class name", "aTestMethod", 2))));
 	}
 }
