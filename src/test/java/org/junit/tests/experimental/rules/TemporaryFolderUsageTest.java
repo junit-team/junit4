@@ -1,14 +1,19 @@
 package org.junit.tests.experimental.rules;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 /**
@@ -18,6 +23,9 @@ import org.junit.rules.TemporaryFolder;
 public class TemporaryFolderUsageTest {
 
 	private TemporaryFolder tempFolder;
+
+	@Rule
+	public final ExpectedException thrown = ExpectedException.none();
 
 	@Before
 	public void setUp() {
@@ -46,6 +54,16 @@ public class TemporaryFolderUsageTest {
 		new TemporaryFolder().newFile("MyFile.txt");
 	}
 
+	@Test
+	public void newFileWithGivenFilenameThrowsIllegalArgumentExceptionIfFileExists() throws IOException {
+		tempFolder.create();
+		tempFolder.newFile("MyFile.txt");
+
+		thrown.expect(IOException.class);
+		thrown.expectMessage("a file with the name 'MyFile.txt' already exists in the test folder");
+		tempFolder.newFile("MyFile.txt");
+	}
+
 	@Test(expected= IllegalStateException.class)
 	public void newFolderThrowsIllegalStateExceptionIfCreateWasNotInvoked()
 			throws IOException {
@@ -53,8 +71,28 @@ public class TemporaryFolderUsageTest {
 	}
 
 	@Test(expected= IllegalStateException.class)
-	public void newFolderWithGivenPathThrowsIllegalStateExceptionIfCreateWasNotInvoked() {
-		new TemporaryFolder().newFolder("level1", "leve2", "leve3");
+	public void newFolderWithGivenPathThrowsIllegalStateExceptionIfCreateWasNotInvoked() throws IOException {
+		new TemporaryFolder().newFolder("level1", "level2", "level3");
+	}
+
+	@Test
+	public void newFolderWithGivenFolderThrowsIllegalArgumentExceptionIfFolderExists() throws IOException {
+		tempFolder.create();
+		tempFolder.newFolder("level1");
+
+		thrown.expect(IOException.class);
+		thrown.expectMessage("a folder with the name 'level1' already exists");
+		tempFolder.newFolder("level1");
+	}
+
+	@Test
+	public void newFolderWithGivenPathThrowsIllegalArgumentExceptionIfPathExists() throws IOException {
+		tempFolder.create();
+		tempFolder.newFolder("level1", "level2", "level3");
+
+		thrown.expect(IOException.class);
+		thrown.expectMessage("a folder with the name 'level3' already exists");
+		tempFolder.newFolder("level1", "level2", "level3");
 	}
 
 	@Test
@@ -119,24 +157,24 @@ public class TemporaryFolderUsageTest {
 				.getParentFile());
 	}
 
-        @Test
-        public void canSetTheBaseFileForATemporaryFolder() throws IOException {
-                File tempDir = createTemporaryFolder();
+	@Test
+	public void canSetTheBaseFileForATemporaryFolder() throws IOException {
+		File tempDir = createTemporaryFolder();
 
-                TemporaryFolder folder = new TemporaryFolder(tempDir);
-                folder.create();
+		TemporaryFolder folder = new TemporaryFolder(tempDir);
+		folder.create();
 
-                assertThat(tempDir, is(folder.getRoot().getParentFile()));
-        }
+		assertThat(tempDir, is(folder.getRoot().getParentFile()));
+	}
 
-        private File createTemporaryFolder() throws IOException {
-                File tempDir = File.createTempFile("junit", "tempFolder");
-                assertTrue("Unable to delete temporary file", tempDir.delete());
-                assertTrue("Unable to create temp directory", tempDir.mkdir());
-                return tempDir;
-        }
+	private File createTemporaryFolder() throws IOException {
+		File tempDir = File.createTempFile("junit", "tempFolder");
+		assertTrue("Unable to delete temporary file", tempDir.delete());
+		assertTrue("Unable to create temp directory", tempDir.mkdir());
+		return tempDir;
+	}
 
-        private void assertFileDoesNotExist(File file) {
+	private void assertFileDoesNotExist(File file) {
 		checkFileExists("exists", file, false);
 	}
 
