@@ -217,7 +217,7 @@ public class TempFolderRuleTest {
 		}
 
 		@Test
-		public void testNewFolder() {
+		public void testNewFolder() throws IOException {
 			folder.newFolder(NEW_FOLDER_DUMMY);
 		}
 	}
