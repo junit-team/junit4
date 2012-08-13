@@ -59,7 +59,7 @@ public class TemporaryFolderUsageTest {
 		tempFolder.create();
 		tempFolder.newFile("MyFile.txt");
 
-		thrown.expect(IllegalArgumentException.class);
+		thrown.expect(IOException.class);
 		thrown.expectMessage("a file with the name 'MyFile.txt' already exists in the test folder");
 		tempFolder.newFile("MyFile.txt");
 	}
@@ -71,7 +71,7 @@ public class TemporaryFolderUsageTest {
 	}
 
 	@Test(expected= IllegalStateException.class)
-	public void newFolderWithGivenPathThrowsIllegalStateExceptionIfCreateWasNotInvoked() {
+	public void newFolderWithGivenPathThrowsIllegalStateExceptionIfCreateWasNotInvoked() throws IOException {
 		new TemporaryFolder().newFolder("level1", "level2", "level3");
 	}
 
@@ -80,7 +80,7 @@ public class TemporaryFolderUsageTest {
 		tempFolder.create();
 		tempFolder.newFolder("level1");
 
-		thrown.expect(IllegalArgumentException.class);
+		thrown.expect(IOException.class);
 		thrown.expectMessage("a folder with the name 'level1' already exists");
 		tempFolder.newFolder("level1");
 	}
@@ -90,7 +90,7 @@ public class TemporaryFolderUsageTest {
 		tempFolder.create();
 		tempFolder.newFolder("level1", "level2", "level3");
 
-		thrown.expect(IllegalArgumentException.class);
+		thrown.expect(IOException.class);
 		thrown.expectMessage("a folder with the name 'level3' already exists");
 		tempFolder.newFolder("level1", "level2", "level3");
 	}
