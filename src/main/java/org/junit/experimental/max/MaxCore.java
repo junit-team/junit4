@@ -116,7 +116,7 @@ public class MaxCore {
 	}
 
 	private Runner buildRunner(Description each) {
-		if (each.toString().equals("TestSuite with 0 tests"))
+		if (each.isSuite() && each.testCount() == 0)
 			return Suite.emptySuite();
 		if (each.toString().startsWith(MALFORMED_JUNIT_3_TEST_CLASS_PREFIX))
 			// This is cheating, because it runs the whole class 
