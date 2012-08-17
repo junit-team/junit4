@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.junit.experimental.theories.internal;
 
 import java.lang.reflect.Array;
@@ -25,7 +22,7 @@ public class AllMembersSupplier extends ParameterSupplier {
 		private final FrameworkMethod fMethod;
 
 		private MethodParameterValue(FrameworkMethod dataPointMethod) {
-			fMethod= dataPointMethod;
+			fMethod = dataPointMethod;
 		}
 
 		@Override
@@ -56,49 +53,51 @@ public class AllMembersSupplier extends ParameterSupplier {
 	 * Constructs a new supplier for {@code type}
 	 */
 	public AllMembersSupplier(TestClass type) {
-		fClass= type;
+		fClass = type;
 	}
 
 	@Override
 	public List<PotentialAssignment> getValueSources(ParameterSignature sig) {
-		List<PotentialAssignment> list= new ArrayList<PotentialAssignment>();
+		List<PotentialAssignment> list = new ArrayList<PotentialAssignment>();
 
 		addFields(sig, list);
 		addSinglePointMethods(sig, list);
-		addMultiPointMethods(list);
+		addMultiPointMethods(sig, list);
 
 		return list;
 	}
 
-	private void addMultiPointMethods(List<PotentialAssignment> list) {
+	private void addMultiPointMethods(ParameterSignature sig, List<PotentialAssignment> list) {
 		for (FrameworkMethod dataPointsMethod : fClass
 				.getAnnotatedMethods(DataPoints.class))
 			try {
-				addArrayValues(dataPointsMethod.getName(), list, dataPointsMethod.invokeExplosively(null));
+				addMultiPointArrayValues(sig, dataPointsMethod.getName(), list, dataPointsMethod.invokeExplosively(null));
 			} catch (Throwable e) {
 				// ignore and move on
 			}
 	}
 
-	@SuppressWarnings("deprecation")
 	private void addSinglePointMethods(ParameterSignature sig,
-			List<PotentialAssignment> list) {
+									   List<PotentialAssignment> list) {
 		for (FrameworkMethod dataPointMethod : fClass
 				.getAnnotatedMethods(DataPoint.class)) {
-			Class<?> type= sig.getType();
-			if ((dataPointMethod.producesType(type)))
+			if (isCorrectlyTyped(sig, dataPointMethod.getType()))
 				list.add(new MethodParameterValue(dataPointMethod));
 		}
 	}
 
 	private void addFields(ParameterSignature sig,
-			List<PotentialAssignment> list) {
+						   List<PotentialAssignment> list) {
 		for (final Field field : fClass.getJavaClass().getFields()) {
 			if (Modifier.isStatic(field.getModifiers())) {
-				Class<?> type= field.getType();
+				Class<?> type = field.getType();
 				if (sig.canAcceptArrayType(type)
 						&& field.getAnnotation(DataPoints.class) != null) {
-					addArrayValues(field.getName(), list, getStaticFieldValue(field));
+					try {
+						addArrayValues(field.getName(), list, getStaticFieldValue(field));
+					} catch (Throwable e) {
+						// ignore and move on
+					}
 				} else if (sig.canAcceptType(type)
 						&& field.getAnnotation(DataPoint.class) != null) {
 					list.add(PotentialAssignment
@@ -109,8 +108,23 @@ public class AllMembersSupplier extends ParameterSupplier {
 	}
 
 	private void addArrayValues(String name, List<PotentialAssignment> list, Object array) {
-		for (int i= 0; i < Array.getLength(array); i++)
+		for (int i = 0; i < Array.getLength(array); i++)
 			list.add(PotentialAssignment.forValue(name + "[" + i + "]", Array.get(array, i)));
+	}
+
+	private void addMultiPointArrayValues(ParameterSignature sig, String name, List<PotentialAssignment> list,
+										  Object array) throws Throwable {
+		for (int i = 0; i < Array.getLength(array); i++) {
+			if (!isCorrectlyTyped(sig, Array.get(array, i).getClass())) {
+				return;
+			}
+			list.add(PotentialAssignment.forValue(name + "[" + i + "]", Array.get(array, i)));
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	private boolean isCorrectlyTyped(ParameterSignature parameterSignature, Class<?> type) {
+		return parameterSignature.canAcceptType(type);
 	}
 
 	private Object getStaticFieldValue(final Field field) {
