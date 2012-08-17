@@ -177,7 +177,8 @@ public class Parameterized extends Suite {
 			List<FrameworkField> fields = getTestClass().getAnnotatedFields(Parameter.class);
 			if (!fields.isEmpty()) {
 				if (fields.size() != fParameters.length)
-					throw new Exception("Wrong number of parameters and @parameter fields. @parameter fields counted: "+fields.size()+", available parameters: "+fParameters.length+".");
+					throw new Exception("Wrong number of parameters and @parameter fields."+
+					" @Parameter fields counted: "+fields.size()+", available parameters: "+fParameters.length+".");
 				testClassInstance = getTestClass().getJavaClass().newInstance();
 				for (FrameworkField f : fields) {
 					Field field = f.getField();
@@ -186,7 +187,10 @@ public class Parameterized extends Suite {
 					try {
 						field.set(testClassInstance,  fParameters[index]);
 					} catch(IllegalArgumentException iare) {
-						throw new Exception(getTestClass().getName() + ": Trying to set "+field.getName()+" with the value "+fParameters[index]+" that is not the right type ("+fParameters[index].getClass().getSimpleName()+" instead of "+field.getType().getSimpleName()+").", iare);
+						throw new Exception(getTestClass().getName() + ": Trying to set "+field.getName()+
+						" with the value "+fParameters[index]+
+						" that is not the right type ("+fParameters[index].getClass().getSimpleName()+" instead of "+
+						field.getType().getSimpleName()+").", iare);
 					}
 				}
 			} else {
@@ -223,7 +227,11 @@ public class Parameterized extends Suite {
 				for (FrameworkField f : annotatedFieldsByParameter) {
 					int index = f.getField().getAnnotation(Parameter.class).value();
 					if (index < 0 || index > annotatedFieldsByParameter.size()-1) {
-						errors.add(new Exception("Invalid @parameter value: "+index+". @parameter fields counted: "+annotatedFieldsByParameter.size()+". Please use an index between 0 and "+(annotatedFieldsByParameter.size()-1)+"."));
+						errors.add(
+							new Exception("Invalid @Parameter value: "+index+". @Parameter fields counted: "+
+								annotatedFieldsByParameter.size()+". Please use an index between 0 and "+
+								(annotatedFieldsByParameter.size()-1)+".")
+						);
 					} else {
 						usedIndices[index]++;
 					}
@@ -231,9 +239,9 @@ public class Parameterized extends Suite {
 				for (int index = 0 ; index < usedIndices.length ; index++) {
 					int numberOfUse = usedIndices[index];
 					if (numberOfUse == 0) {
-						errors.add(new Exception("The index "+index+" is never used."));
+						errors.add(new Exception("@Parameter("+index+") is never used."));
 					} else if (numberOfUse > 1) {
-						errors.add(new Exception("The index "+index+" is used more than once ("+numberOfUse+")."));
+						errors.add(new Exception("@Parameter("+index+") is used more than once ("+numberOfUse+")."));
 					}
 				}
 			}
