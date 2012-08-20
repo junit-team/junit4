@@ -159,7 +159,7 @@ public class ParameterizedTestTest {
 	}
 
 	@RunWith(Parameterized.class)
-	static public class BadIndexForAnnotedFieldTest {
+	static public class BadIndexForAnnotatedFieldTest {
 		@Parameters
 		public static Collection<Object[]> data() {
 			return Arrays.asList(new Object[][] { { 0 } });
@@ -182,16 +182,16 @@ public class ParameterizedTestTest {
 	
 	@Test
 	public void failureOnInitialization() {
-		Result result = JUnitCore.runClasses(BadIndexForAnnotedFieldTest.class);
+		Result result = JUnitCore.runClasses(BadIndexForAnnotatedFieldTest.class);
 		assertEquals(2, result.getFailureCount());
 		List<Failure> failures = result.getFailures();
-		assertEquals("Invalid @parameter value: 2. @parameter fields counted: 1. Please use an index between 0 and 0.",
+		assertEquals("Invalid @Parameter value: 2. @Parameter fields counted: 1. Please use an index between 0 and 0.",
 				failures.get(0).getException().getMessage());
-		assertEquals("The index 0 is never used.", failures.get(1).getException().getMessage());
+		assertEquals("@Parameter(0) is never used.", failures.get(1).getException().getMessage());
 	}
 
 	@RunWith(Parameterized.class)
-	static public class BadNumberOfAnnotedFieldTest {
+	static public class BadNumberOfAnnotatedFieldTest {
 		@Parameters
 		public static Collection<Object[]> data() {
 			return Arrays.asList(new Object[][] { { 0, 0 } });
@@ -214,10 +214,10 @@ public class ParameterizedTestTest {
 
 	@Test
 	public void numberOfFieldsAndParametersShouldMatch() {
-		Result result = JUnitCore.runClasses(BadNumberOfAnnotedFieldTest.class);
+		Result result = JUnitCore.runClasses(BadNumberOfAnnotatedFieldTest.class);
 		assertEquals(1, result.getFailureCount());
 		List<Failure> failures = result.getFailures();
-		assertTrue(failures.get(0).getException().getMessage().contains("Wrong number of parameters and @parameter fields. @parameter fields counted: 1, available parameters: 2."));
+		assertTrue(failures.get(0).getException().getMessage().contains("Wrong number of parameters and @Parameter fields. @Parameter fields counted: 1, available parameters: 2."));
 	}
 
 	private static String fLog;
