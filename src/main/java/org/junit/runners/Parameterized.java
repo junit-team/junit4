@@ -230,8 +230,8 @@ public class Parameterized extends Suite {
 			if (fieldsAreAnnotated()) {
                 List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter();
 				int[] usedIndices = new int[annotatedFieldsByParameter.size()];
-				for (FrameworkField f : annotatedFieldsByParameter) {
-					int index = f.getField().getAnnotation(Parameter.class).value();
+				for (FrameworkField each : annotatedFieldsByParameter) {
+					int index = each.getField().getAnnotation(Parameter.class).value();
 					if (index < 0 || index > annotatedFieldsByParameter.size()-1) {
 						errors.add(
 							new Exception("Invalid @Parameter value: "+index+". @Parameter fields counted: "+
