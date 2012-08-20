@@ -151,7 +151,7 @@ public class Parameterized extends Suite {
 	public static @interface Parameter {
 		/**
 		 * Method that returns the index of the parameter in the array
-		 * returned by the method annoted by <code>Parameters</code>.<br/>
+		 * returned by the method annotated by <code>Parameters</code>.<br/>
 		 * Index range must start at 0.
 		 * Default value is 0.
 		 * @return the index of the parameter.
@@ -173,28 +173,35 @@ public class Parameterized extends Suite {
 
 		@Override
 		public Object createTest() throws Exception {
-			Object testClassInstance = null;
-			List<FrameworkField> fields = getTestClass().getAnnotatedFields(Parameter.class);
-			if (!fields.isEmpty()) {
-				if (fields.size() != fParameters.length)
-					throw new Exception("Wrong number of parameters and @parameter fields."+
-					" @Parameter fields counted: "+fields.size()+", available parameters: "+fParameters.length+".");
-				testClassInstance = getTestClass().getJavaClass().newInstance();
-				for (FrameworkField f : fields) {
-					Field field = f.getField();
-					Parameter annot = field.getAnnotation(Parameter.class);
-					int index = annot.value();
-					try {
-						field.set(testClassInstance,  fParameters[index]);
-					} catch(IllegalArgumentException iare) {
-						throw new Exception(getTestClass().getName() + ": Trying to set "+field.getName()+
-						" with the value "+fParameters[index]+
-						" that is not the right type ("+fParameters[index].getClass().getSimpleName()+" instead of "+
-						field.getType().getSimpleName()+").", iare);
-					}
-				}
+			if (fieldsAreAnnotated()) {
+				return createTestUsingFieldInjection();
 			} else {
-				testClassInstance = getTestClass().getOnlyConstructor().newInstance(fParameters);
+				return createTestUsingConstructorInjection();
+			}
+		}
+		
+		private Object createTestUsingConstructorInjection() throws Exception {
+			return getTestClass().getOnlyConstructor().newInstance(fParameters);
+		}
+		
+		private Object createTestUsingFieldInjection() throws Exception {
+            List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter();
+			if (annotatedFieldsByParameter.size() != fParameters.length)
+					throw new Exception("Wrong number of parameters and @Parameter fields."+
+					" @Parameter fields counted: "+annotatedFieldsByParameter.size()+", available parameters: "+fParameters.length+".");
+			Object testClassInstance = getTestClass().getJavaClass().newInstance();
+			for (FrameworkField each : annotatedFieldsByParameter) {
+				Field field = each.getField();
+				Parameter annotation = field.getAnnotation(Parameter.class);
+				int index = annotation.value();
+				try {
+					field.set(testClassInstance,  fParameters[index]);
+				} catch(IllegalArgumentException iare) {
+					throw new Exception(getTestClass().getName() + ": Trying to set "+field.getName()+
+					" with the value "+fParameters[index]+
+					" that is not the right type ("+fParameters[index].getClass().getSimpleName()+" instead of "+
+					field.getType().getSimpleName()+").", iare);
+				}
 			}
 			return testClassInstance;
 		}
@@ -212,8 +219,7 @@ public class Parameterized extends Suite {
 		@Override
 		protected void validateConstructor(List<Throwable> errors) {
 			validateOnlyOneConstructor(errors);
-			List<FrameworkField> annotatedFieldsByParameter = getTestClass().getAnnotatedFields(Parameter.class);
-			if (annotatedFieldsByParameter.size() > 0) {
+			if (fieldsAreAnnotated()) {
 				validateZeroArgConstructor(errors);
 			}
 		}
@@ -221,8 +227,8 @@ public class Parameterized extends Suite {
 		@Override
 		protected void validateFields(List<Throwable> errors) {
 			super.validateFields(errors);
-			List<FrameworkField> annotatedFieldsByParameter = getTestClass().getAnnotatedFields(Parameter.class);
-			if (annotatedFieldsByParameter.size() > 0) {
+			if (fieldsAreAnnotated()) {
+                List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter();
 				int[] usedIndices = new int[annotatedFieldsByParameter.size()];
 				for (FrameworkField f : annotatedFieldsByParameter) {
 					int index = f.getField().getAnnotation(Parameter.class).value();
@@ -330,5 +336,13 @@ public class Parameterized extends Suite {
 				"{0}.{1}() must return an Iterable of arrays.",
 				className, methodName);
 		return new Exception(message);
+	}
+	
+    private List<FrameworkField> getAnnotatedFieldsByParameter() {
+        return getTestClass().getAnnotatedFields(Parameter.class);
+    }
+    
+	private boolean fieldsAreAnnotated() {
+		return !getAnnotatedFieldsByParameter().isEmpty();
 	}
 }
