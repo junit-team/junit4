@@ -39,7 +39,7 @@ public class TypeMatchingBetweenMultiDataPointsMethod {
 		public static String[] correctlyTyped = {"Good", "Morning"};
 
 		@DataPoints
-		public static String[][] wrongfullyTyped() {
+		public static String[][] anotherCorrectlyTyped() {
 			return new String[][]{
 					{"Hello", "World"}
 			};

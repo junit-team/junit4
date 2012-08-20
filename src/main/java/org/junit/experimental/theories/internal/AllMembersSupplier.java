@@ -22,7 +22,7 @@ public class AllMembersSupplier extends ParameterSupplier {
 		private final FrameworkMethod fMethod;
 
 		private MethodParameterValue(FrameworkMethod dataPointMethod) {
-			fMethod = dataPointMethod;
+			fMethod= dataPointMethod;
 		}
 
 		@Override
@@ -53,12 +53,12 @@ public class AllMembersSupplier extends ParameterSupplier {
 	 * Constructs a new supplier for {@code type}
 	 */
 	public AllMembersSupplier(TestClass type) {
-		fClass = type;
+		fClass= type;
 	}
 
 	@Override
 	public List<PotentialAssignment> getValueSources(ParameterSignature sig) {
-		List<PotentialAssignment> list = new ArrayList<PotentialAssignment>();
+		List<PotentialAssignment> list= new ArrayList<PotentialAssignment>();
 
 		addFields(sig, list);
 		addSinglePointMethods(sig, list);
@@ -90,7 +90,7 @@ public class AllMembersSupplier extends ParameterSupplier {
 						   List<PotentialAssignment> list) {
 		for (final Field field : fClass.getJavaClass().getFields()) {
 			if (Modifier.isStatic(field.getModifiers())) {
-				Class<?> type = field.getType();
+				Class<?> type= field.getType();
 				if (sig.canAcceptArrayType(type)
 						&& field.getAnnotation(DataPoints.class) != null) {
 					try {
@@ -108,13 +108,13 @@ public class AllMembersSupplier extends ParameterSupplier {
 	}
 
 	private void addArrayValues(String name, List<PotentialAssignment> list, Object array) {
-		for (int i = 0; i < Array.getLength(array); i++)
+		for (int i= 0; i < Array.getLength(array); i++)
 			list.add(PotentialAssignment.forValue(name + "[" + i + "]", Array.get(array, i)));
 	}
 
 	private void addMultiPointArrayValues(ParameterSignature sig, String name, List<PotentialAssignment> list,
 										  Object array) throws Throwable {
-		for (int i = 0; i < Array.getLength(array); i++) {
+		for (int i= 0; i < Array.getLength(array); i++) {
 			if (!isCorrectlyTyped(sig, Array.get(array, i).getClass())) {
 				return;
 			}
