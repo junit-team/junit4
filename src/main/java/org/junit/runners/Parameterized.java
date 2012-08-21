@@ -185,7 +185,7 @@ public class Parameterized extends Suite {
 		}
 		
 		private Object createTestUsingFieldInjection() throws Exception {
-            List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter();
+			List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter();
 			if (annotatedFieldsByParameter.size() != fParameters.length)
 					throw new Exception("Wrong number of parameters and @Parameter fields."+
 					" @Parameter fields counted: "+annotatedFieldsByParameter.size()+", available parameters: "+fParameters.length+".");
@@ -228,7 +228,7 @@ public class Parameterized extends Suite {
 		protected void validateFields(List<Throwable> errors) {
 			super.validateFields(errors);
 			if (fieldsAreAnnotated()) {
-                List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter();
+				List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter();
 				int[] usedIndices = new int[annotatedFieldsByParameter.size()];
 				for (FrameworkField each : annotatedFieldsByParameter) {
 					int index = each.getField().getAnnotation(Parameter.class).value();
@@ -338,9 +338,9 @@ public class Parameterized extends Suite {
 		return new Exception(message);
 	}
 	
-    private List<FrameworkField> getAnnotatedFieldsByParameter() {
-        return getTestClass().getAnnotatedFields(Parameter.class);
-    }
+	private List<FrameworkField> getAnnotatedFieldsByParameter() {
+		return getTestClass().getAnnotatedFields(Parameter.class);
+	}
     
 	private boolean fieldsAreAnnotated() {
 		return !getAnnotatedFieldsByParameter().isEmpty();
