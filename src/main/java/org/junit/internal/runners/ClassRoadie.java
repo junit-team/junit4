@@ -15,65 +15,68 @@ import org.junit.runners.BlockJUnit4ClassRunner;
  *             {@link BlockJUnit4ClassRunner} in place of {@link JUnit4ClassRunner}.
  */
 @Deprecated
-public
-class ClassRoadie {
-	private RunNotifier fNotifier;
-	private TestClass fTestClass;
-	private Description fDescription;
-	private final Runnable fRunnable;
-	
-	public ClassRoadie(RunNotifier notifier, TestClass testClass,
-			Description description, Runnable runnable) {
-		fNotifier= notifier;
-		fTestClass= testClass;
-		fDescription= description;
-		fRunnable= runnable;
-	}
+public class ClassRoadie {
+    private RunNotifier fNotifier;
+    private TestClass fTestClass;
+    private Description fDescription;
+    private final Runnable fRunnable;
 
-	protected void runUnprotected() {
-		fRunnable.run();
-	};
+    public ClassRoadie(RunNotifier notifier, TestClass testClass,
+            Description description, Runnable runnable) {
+        fNotifier = notifier;
+        fTestClass = testClass;
+        fDescription = description;
+        fRunnable = runnable;
+    }
 
-	protected void addFailure(Throwable targetException) {
-		fNotifier.fireTestFailure(new Failure(fDescription, targetException));
-	}
+    protected void runUnprotected() {
+        fRunnable.run();
+    }
 
-	public void runProtected() {
-		try {
-			runBefores();
-			runUnprotected();
-		} catch (FailedBefore e) {
-		} finally {
-			runAfters();
-		}
-	}
+    ;
 
-	private void runBefores() throws FailedBefore {
-		try {
-			try {
-				List<Method> befores= fTestClass.getBefores();
-				for (Method before : befores)
-					before.invoke(null);
-			} catch (InvocationTargetException e) {
-				throw e.getTargetException();
-			}
-		} catch (org.junit.internal.AssumptionViolatedException e) {
-			throw new FailedBefore();
-		} catch (Throwable e) {
-			addFailure(e);
-			throw new FailedBefore();
-		}
-	}
+    protected void addFailure(Throwable targetException) {
+        fNotifier.fireTestFailure(new Failure(fDescription, targetException));
+    }
 
-	private void runAfters() {
-		List<Method> afters= fTestClass.getAfters();
-		for (Method after : afters)
-			try {
-				after.invoke(null);
-			} catch (InvocationTargetException e) {
-				addFailure(e.getTargetException());
-			} catch (Throwable e) {
-				addFailure(e); // Untested, but seems impossible
-			}
-	}
+    public void runProtected() {
+        try {
+            runBefores();
+            runUnprotected();
+        } catch (FailedBefore e) {
+        } finally {
+            runAfters();
+        }
+    }
+
+    private void runBefores() throws FailedBefore {
+        try {
+            try {
+                List<Method> befores = fTestClass.getBefores();
+                for (Method before : befores) {
+                    before.invoke(null);
+                }
+            } catch (InvocationTargetException e) {
+                throw e.getTargetException();
+            }
+        } catch (org.junit.internal.AssumptionViolatedException e) {
+            throw new FailedBefore();
+        } catch (Throwable e) {
+            addFailure(e);
+            throw new FailedBefore();
+        }
+    }
+
+    private void runAfters() {
+        List<Method> afters = fTestClass.getAfters();
+        for (Method after : afters) {
+            try {
+                after.invoke(null);
+            } catch (InvocationTargetException e) {
+                addFailure(e.getTargetException());
+            } catch (Throwable e) {
+                addFailure(e); // Untested, but seems impossible
+            }
+        }
+    }
 }

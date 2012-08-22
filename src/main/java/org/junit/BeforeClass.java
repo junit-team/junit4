@@ -7,12 +7,12 @@ import java.lang.annotation.Target;
 
 /**
  * <p>Sometimes several tests need to share computationally expensive setup
- * (like logging into a database). While this can compromise the independence of 
+ * (like logging into a database). While this can compromise the independence of
  * tests, sometimes it is a necessary optimization. Annotating a <code>public static void</code> no-arg method
- * with <code>@BeforeClass</code> causes it to be run once before any of 
+ * with <code>@BeforeClass</code> causes it to be run once before any of
  * the test methods in the class. The <code>@BeforeClass</code> methods of superclasses
  * will be run before those the current class.</p>
- * 
+ * <p/>
  * For example:
  * <pre>
  * public class Example {
@@ -27,6 +27,7 @@ import java.lang.annotation.Target;
  *    }
  * }
  * </pre>
+ *
  * @see org.junit.AfterClass
  * @since 4.0
  */

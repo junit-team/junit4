@@ -12,30 +12,31 @@ import org.junit.runner.notification.RunNotifier;
  * <p/>
  * The default runner implementation guarantees that the instances of the test case
  * class will be constructed immediately before running the test and that the runner
- * will retain no reference to the test case instances, generally making them 
+ * will retain no reference to the test case instances, generally making them
  * available for garbage collection.
- * 
+ *
  * @see org.junit.runner.Description
  * @see org.junit.runner.RunWith
  * @since 4.0
  */
 public abstract class Runner implements Describable {
-	/* (non-Javadoc)
-	 * @see org.junit.runner.Describable#getDescription()
-	 */
-	public abstract Description getDescription();
+    /* (non-Javadoc)
+      * @see org.junit.runner.Describable#getDescription()
+      */
+    public abstract Description getDescription();
 
-	/**
-	 * Run the tests for this runner.
-	 * @param notifier will be notified of events while tests are being run--tests being 
-	 * started, finishing, and failing
-	 */
-	public abstract void run(RunNotifier notifier);
-	
-	/**
-	 * @return the number of tests to be run by the receiver
-	 */
-	public int testCount() {
-		return getDescription().testCount();
-	}
+    /**
+     * Run the tests for this runner.
+     *
+     * @param notifier will be notified of events while tests are being run--tests being
+     *                 started, finishing, and failing
+     */
+    public abstract void run(RunNotifier notifier);
+
+    /**
+     * @return the number of tests to be run by the receiver
+     */
+    public int testCount() {
+        return getDescription().testCount();
+    }
 }

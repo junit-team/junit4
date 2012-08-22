@@ -1,11 +1,11 @@
 package junit.tests.framework;
 
+import junit.framework.TestCase;
+
 /**
  * Test class used in SuiteTest
  */
-import junit.framework.TestCase;
-
 public class NoTestCases extends TestCase {
-	public void noTestCase() {
-	}
+    public void noTestCase() {
+    }
 }
