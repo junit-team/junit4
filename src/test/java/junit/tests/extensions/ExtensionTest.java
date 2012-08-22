@@ -9,90 +9,94 @@ import junit.tests.WasRun;
 
 /**
  * A test case testing the extensions to the testing framework.
- *
  */
 public class ExtensionTest extends TestCase {
-	static class TornDown extends TestSetup { 
-		boolean fTornDown= false;
-		
-		TornDown(Test test) {
-			super(test);
-		}
-		@Override
-		protected void tearDown() {
-			fTornDown= true;
-		}
-	}
-	public void testRunningErrorInTestSetup() {
-		TestCase test= new TestCase("failure") {
-			@Override
-			public void runTest() {
-				fail();
-			}
-		};
+    static class TornDown extends TestSetup {
+        boolean fTornDown = false;
 
-		TestSetup wrapper= new TestSetup(test);
+        TornDown(Test test) {
+            super(test);
+        }
 
-		TestResult result= new TestResult();
-		wrapper.run(result);
-		assertTrue(!result.wasSuccessful());
-	}
-	public void testRunningErrorsInTestSetup() {
-		TestCase failure= new TestCase("failure") {
-			@Override
-			public void runTest() {
-				fail();
-			}
-		};
+        @Override
+        protected void tearDown() {
+            fTornDown = true;
+        }
+    }
 
-		TestCase error= new TestCase("error") {
-			@Override
-			public void runTest() {
-				throw new Error();
-			}
-		};
+    public void testRunningErrorInTestSetup() {
+        TestCase test = new TestCase("failure") {
+            @Override
+            public void runTest() {
+                fail();
+            }
+        };
 
-		TestSuite suite= new TestSuite();
-		suite.addTest(failure);
-		suite.addTest(error);
-		
-		TestSetup wrapper= new TestSetup(suite);
+        TestSetup wrapper = new TestSetup(test);
 
-		TestResult result= new TestResult();
-		wrapper.run(result);
+        TestResult result = new TestResult();
+        wrapper.run(result);
+        assertTrue(!result.wasSuccessful());
+    }
 
-		assertEquals(1, result.failureCount());
-		assertEquals(1, result.errorCount());
-	}
-	public void testSetupErrorDontTearDown() {
-		WasRun test= new WasRun();
+    public void testRunningErrorsInTestSetup() {
+        TestCase failure = new TestCase("failure") {
+            @Override
+            public void runTest() {
+                fail();
+            }
+        };
 
-		TornDown wrapper= new TornDown(test) {
-			@Override
-			public void setUp() {
-				fail();
-			}
-		};
+        TestCase error = new TestCase("error") {
+            @Override
+            public void runTest() {
+                throw new Error();
+            }
+        };
 
-		TestResult result= new TestResult();
-		wrapper.run(result);
+        TestSuite suite = new TestSuite();
+        suite.addTest(failure);
+        suite.addTest(error);
 
-		assertTrue(!wrapper.fTornDown);
-	}
-	public void testSetupErrorInTestSetup() {
-		WasRun test= new WasRun();
+        TestSetup wrapper = new TestSetup(suite);
 
-		TestSetup wrapper= new TestSetup(test) {
-			@Override
-			public void setUp() {
-				fail();
-			}
-		};
+        TestResult result = new TestResult();
+        wrapper.run(result);
 
-		TestResult result= new TestResult();
-		wrapper.run(result);
+        assertEquals(1, result.failureCount());
+        assertEquals(1, result.errorCount());
+    }
 
-		assertTrue(!test.fWasRun);
-		assertTrue(!result.wasSuccessful());
-	}
+    public void testSetupErrorDontTearDown() {
+        WasRun test = new WasRun();
+
+        TornDown wrapper = new TornDown(test) {
+            @Override
+            public void setUp() {
+                fail();
+            }
+        };
+
+        TestResult result = new TestResult();
+        wrapper.run(result);
+
+        assertTrue(!wrapper.fTornDown);
+    }
+
+    public void testSetupErrorInTestSetup() {
+        WasRun test = new WasRun();
+
+        TestSetup wrapper = new TestSetup(test) {
+            @Override
+            public void setUp() {
+                fail();
+            }
+        };
+
+        TestResult result = new TestResult();
+        wrapper.run(result);
+
+        assertTrue(!test.fWasRun);
+        assertTrue(!result.wasSuccessful());
+    }
 }

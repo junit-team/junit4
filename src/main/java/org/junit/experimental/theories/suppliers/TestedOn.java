@@ -9,5 +9,5 @@ import org.junit.experimental.theories.ParametersSuppliedBy;
 @ParametersSuppliedBy(TestedOnSupplier.class)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TestedOn {
-	int[] ints();
+    int[] ints();
 }

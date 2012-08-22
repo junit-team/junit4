@@ -21,40 +21,40 @@ import org.junit.runners.model.MultipleFailureException;
  */
 public class MultipleFailureExceptionTest {
 
-	@Test
-	public void assertEmptyDoesNotThrowForEmptyList() throws Throwable {
-		MultipleFailureException.assertEmpty(Collections.<Throwable>emptyList());
-	}
-	
-	@Test(expected=ExpectedException.class)
-	public void assertEmptyRethrowsSingleThrowable() throws Throwable {
-		MultipleFailureException.assertEmpty(
-				Collections.<Throwable>singletonList(new ExpectedException("pesto")));
-	}
-	
-	@Test
-	public void assertEmptyThrowsMutipleFailureExceptionForManyThrowables() throws Throwable {
-		List<Throwable> errors = new ArrayList<Throwable>();
-		errors.add(new ExpectedException("basil"));
-		errors.add(new RuntimeException("garlic"));
-		
-		try {
-			MultipleFailureException.assertEmpty(errors);
-			fail();
-		} catch (MultipleFailureException expected) {
-			assertThat(expected.getFailures(), equalTo(errors));
-			assertTrue(expected.getMessage().startsWith("There were 2 errors:\n"));
-			assertTrue(expected.getMessage().contains("ExpectedException(basil)\n"));
-			assertTrue(expected.getMessage().contains("RuntimeException(garlic)"));
-		}
-	}
+    @Test
+    public void assertEmptyDoesNotThrowForEmptyList() throws Throwable {
+        MultipleFailureException.assertEmpty(Collections.<Throwable>emptyList());
+    }
+
+    @Test(expected = ExpectedException.class)
+    public void assertEmptyRethrowsSingleThrowable() throws Throwable {
+        MultipleFailureException.assertEmpty(
+                Collections.<Throwable>singletonList(new ExpectedException("pesto")));
+    }
+
+    @Test
+    public void assertEmptyThrowsMutipleFailureExceptionForManyThrowables() throws Throwable {
+        List<Throwable> errors = new ArrayList<Throwable>();
+        errors.add(new ExpectedException("basil"));
+        errors.add(new RuntimeException("garlic"));
+
+        try {
+            MultipleFailureException.assertEmpty(errors);
+            fail();
+        } catch (MultipleFailureException expected) {
+            assertThat(expected.getFailures(), equalTo(errors));
+            assertTrue(expected.getMessage().startsWith("There were 2 errors:\n"));
+            assertTrue(expected.getMessage().contains("ExpectedException(basil)\n"));
+            assertTrue(expected.getMessage().contains("RuntimeException(garlic)"));
+        }
+    }
 
 
-	private static class ExpectedException extends RuntimeException {
-		private static final long serialVersionUID = 1L;
+    private static class ExpectedException extends RuntimeException {
+        private static final long serialVersionUID = 1L;
 
-		public ExpectedException(String message) {
-			super(message);
-		}
-	}
+        public ExpectedException(String message) {
+            super(message);
+        }
+    }
 }

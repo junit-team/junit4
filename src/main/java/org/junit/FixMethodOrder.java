@@ -20,23 +20,23 @@ import org.junit.runners.MethodSorters;
  * This class allows the user to specify the order of execution of test methods.
  * <br/>
  * For possibilities, see {@link MethodSorters}
- *
+ * <p/>
  * Here is an example:
- * 
+ * <p/>
  * <pre>
  * &#064;FixMethodOrder(MethodSorters.NAME_ASCENDING)
  * public class MyTest {
  * }
  * </pre>
- * 
+ *
  * @see org.junit.runners.MethodSorters
  * @since 4.11
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface FixMethodOrder {
-	/**
-	 * Optionally specify <code>value</code> to have the methods executed in a particular order
-	 */
-	MethodSorters value() default MethodSorters.DEFAULT;
+    /**
+     * Optionally specify <code>value</code> to have the methods executed in a particular order
+     */
+    MethodSorters value() default MethodSorters.DEFAULT;
 }
