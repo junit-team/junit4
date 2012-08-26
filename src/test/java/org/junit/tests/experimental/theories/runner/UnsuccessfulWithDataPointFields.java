@@ -1,13 +1,15 @@
 package org.junit.tests.experimental.theories.runner;
 
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.failureCountIs;
 import static org.junit.experimental.results.ResultMatchers.hasFailureContaining;
 import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
-import static org.junit.matchers.JUnitMatchers.both;
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
+import org.junit.experimental.results.PrintableResult;
 import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
@@ -84,10 +86,10 @@ public class UnsuccessfulWithDataPointFields {
 	@RunWith(Theories.class)
 	public static class DataPointsMustBeStatic {
 		@DataPoint
-		int THREE= 3;
+		public int THREE= 3;
 
 		@DataPoint
-		int FOUR= 3;
+		public int FOUR= 4;
 
 		@Theory
 		public void numbers(int x) {
@@ -99,7 +101,7 @@ public class UnsuccessfulWithDataPointFields {
 	public void dataPointsMustBeStatic() {
 		assertThat(
 				testResult(DataPointsMustBeStatic.class),
-				both(failureCountIs(2))
+				CoreMatchers.<PrintableResult> both(failureCountIs(2))
 						.and(
 								hasFailureContaining("DataPoint field THREE must be static"))
 						.and(
@@ -122,5 +124,33 @@ public class UnsuccessfulWithDataPointFields {
 		assertThat(
 				testResult(TheoriesMustBePublic.class),
 				hasSingleFailureContaining("public"));
+	}
+	
+	@RunWith(Theories.class)
+	public static class DataPointsMustBePublic {
+		@DataPoint
+		static int THREE= 3;
+
+		@DataPoint
+		protected static int FOUR= 4;
+		
+		@SuppressWarnings("unused")
+		@DataPoint
+		private static int FIVE= 5;
+
+		@Theory
+		public void numbers(int x) {
+
+		}
+	}
+
+	@Test
+	public void dataPointsMustBePublic() {
+		assertThat(
+				testResult(DataPointsMustBePublic.class),
+				allOf(failureCountIs(3),
+						hasFailureContaining("DataPoint field THREE must be public"),
+						hasFailureContaining("DataPoint field FOUR must be public"),
+						hasFailureContaining("DataPoint field FIVE must be public")));
 	}
 }

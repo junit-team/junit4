@@ -2,30 +2,27 @@ package org.junit.tests.experimental.rules;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.any;
-import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
-import static org.junit.matchers.JUnitMatchers.causedBy;
 import static org.junit.rules.ExpectedException.none;
 import static org.junit.tests.experimental.rules.EventCollector.everyTestRunSuccessful;
-import static org.junit.tests.experimental.rules.EventCollector.failureIs;
 import static org.junit.tests.experimental.rules.EventCollector.hasSingleAssumptionFailure;
 import static org.junit.tests.experimental.rules.EventCollector.hasSingleFailure;
 import static org.junit.tests.experimental.rules.EventCollector.hasSingleFailureWithMessage;
 
-import java.io.IOException;
 import java.util.Collection;
 
 import org.hamcrest.CoreMatchers;
-import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.internal.AssumptionViolatedException;
-import org.junit.internal.matchers.TypeSafeMatcher;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
@@ -49,8 +46,8 @@ public class ExpectedExceptionTest {
 						hasSingleFailureWithMessage(startsWith("\nExpected: an instance of java.lang.NullPointerException")) },
 				{
 						HasWrongMessage.class,
-						hasSingleFailureWithMessage("\nExpected: exception with message a string containing \"expectedMessage\"\n"
-								+ "     got: <java.lang.IllegalArgumentException: actualMessage>\n") },
+						hasSingleFailureWithMessage(startsWith("\nExpected: exception with message a string containing \"expectedMessage\"\n"
+								+ "     but: message was \"actualMessage\"")) },
 				{
 						ThrowNoExceptionButExpectExceptionWithType.class,
 						hasSingleFailureWithMessage("Expected test to throw an instance of java.lang.NullPointerException") },
@@ -70,7 +67,7 @@ public class ExpectedExceptionTest {
 						hasSingleFailure() },
 				{
 					ThrowAssumptionViolatedExceptionButExpectOtherType.class,
-					failureIs(causedBy(instanceOf(AssumptionViolatedException.class))) },
+					hasSingleFailureWithMessage(containsString("Stacktrace was: org.junit.internal.AssumptionViolatedException")) },
 				{ ViolateAssumptionAndExpectException.class,
 						hasSingleAssumptionFailure() },
 				{ ThrowExpectedAssertionError.class, everyTestRunSuccessful() },
@@ -81,12 +78,17 @@ public class ExpectedExceptionTest {
 						hasSingleFailureWithMessage(ARBITRARY_MESSAGE) },
 				{
 						ExpectsMultipleMatchers.class,
-						hasSingleFailureWithMessage(startsWith("\nExpected: (exception with message a string containing \"Ack!\" and an instance of java.lang.IllegalArgumentException)")) },
+						hasSingleFailureWithMessage(startsWith("\nExpected: (an instance of java.lang.IllegalArgumentException and exception with message a string containing \"Ack!\")")) },
 				{	ThrowExceptionWithMatchingCause.class, everyTestRunSuccessful() },
 				{	ThrowExpectedNullCause.class, everyTestRunSuccessful() },
 				{
 					ThrowUnexpectedCause.class,
-						hasSingleFailureWithMessage(startsWith("\nExpected: (exception with cause")) }
+						hasSingleFailureWithMessage(CoreMatchers.<String>allOf(
+								startsWith("\nExpected: ("),
+								containsString("exception with cause is <java.lang.NullPointerException: expected cause>"),
+								containsString("cause was <java.lang.NullPointerException: an unexpected cause>"),
+								containsString("Stacktrace was: java.lang.IllegalArgumentException: Ack!"),
+								containsString("Caused by: java.lang.NullPointerException: an unexpected cause"))) }
         });
 	}
 
@@ -234,7 +236,7 @@ public class ExpectedExceptionTest {
 
 		@Test
 		public void throwsMore() {
-			thrown.expect(any(IOException.class));
+			thrown.expect(any(Exception.class));
 			throw new NullPointerException("Ack!");
 		}
 	}
@@ -346,7 +348,7 @@ public class ExpectedExceptionTest {
 		public void throwExpectedNullCause() {
 			thrown.expect(IllegalArgumentException.class);
 			thrown.expectMessage("Ack!");
-			thrown.expectCause(CoreMatchers.<Throwable>nullValue());
+			thrown.expectCause(nullValue(Throwable.class));
 
 			throw new IllegalArgumentException("Ack!");
 		}
@@ -365,20 +367,5 @@ public class ExpectedExceptionTest {
 
 			throw new IllegalArgumentException("Ack!", new NullPointerException("an unexpected cause"));
 		}
-	}
-
-
-	private static Matcher<String> startsWith(final String prefix) {
-		return new TypeSafeMatcher<String>() {
-			public void describeTo(Description description) {
-				description.appendText("starts with ");
-				description.appendText(prefix);
-			}
-
-			@Override
-			public boolean matchesSafely(String item) {
-				return item.startsWith(prefix);
-			}
-		};
 	}
 }

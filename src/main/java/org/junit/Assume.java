@@ -1,12 +1,12 @@
 package org.junit;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.everyItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import org.hamcrest.Matcher;
 import org.junit.internal.AssumptionViolatedException;
-import org.junit.internal.matchers.Each;
 
 /**
  * A set of methods useful for stating assumptions about the conditions in which a test is meaningful.
@@ -45,7 +45,7 @@ public class Assume {
 	 * @param objects
 	 */
 		public static void assumeNotNull(Object... objects) {
-		assumeThat(asList(objects), Each.each(notNullValue()));
+		assumeThat(asList(objects), everyItem(notNullValue()));
 	}
 
 	    /**

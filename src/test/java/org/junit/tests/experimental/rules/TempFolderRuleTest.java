@@ -1,5 +1,6 @@
 package org.junit.tests.experimental.rules;
 
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -7,7 +8,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.failureCountIs;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
-import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 
 import java.io.File;
 import java.io.IOException;
@@ -217,7 +217,7 @@ public class TempFolderRuleTest {
 		}
 
 		@Test
-		public void testNewFolder() {
+		public void testNewFolder() throws IOException {
 			folder.newFolder(NEW_FOLDER_DUMMY);
 		}
 	}

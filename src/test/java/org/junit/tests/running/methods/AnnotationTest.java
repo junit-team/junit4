@@ -1,8 +1,8 @@
 package org.junit.tests.running.methods;
 
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.both;
-import static org.junit.matchers.JUnitMatchers.containsString;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -143,7 +143,7 @@ public class AnnotationTest extends TestCase {
 		Result runner= core.run(TestAndTeardownFailureTest.class);
 		assertEquals(1, runner.getRunCount());
 		assertEquals(2, runner.getFailureCount());
-		assertThat(runner.getFailures().toString(), both(containsString("hereAfter")).and(containsString("inTest")));
+		assertThat(runner.getFailures().toString(), allOf(containsString("hereAfter"), containsString("inTest")));
 	}
 	
 	static public class TeardownAfterFailureTest {
