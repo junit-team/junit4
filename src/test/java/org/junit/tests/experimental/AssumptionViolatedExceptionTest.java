@@ -47,6 +47,6 @@ public class AssumptionViolatedExceptionTest {
 	@Test
 	public void simpleAssumptionViolatedExceptionDescribesItself() {
 		AssumptionViolatedException e= new AssumptionViolatedException("not enough money");
-		assertThat(StringDescription.asString(e), is("failed assumption: not enough money"));
+		assertThat(StringDescription.asString(e), is("not enough money"));
 	}
 }
