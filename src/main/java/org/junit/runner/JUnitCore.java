@@ -34,11 +34,6 @@ public class JUnitCore {
 	 */
 	private static final String SEPARATOR= "#";
 	
-	/**
-	 * Method name wildcard, e.g. ClassName#M*Name
-	 */
-	private static final String WILDCARD= "*";
-	
 	private final RunNotifier fNotifier= new RunNotifier();
 
 	/**
@@ -138,16 +133,15 @@ public class JUnitCore {
 
 	/**
 	 * Convert method name with wildcard into a list of {@link Description}
-	 * @param clazz to search for methods matching <code>wildcardName</code>
-	 * @param wildcardName  method name pattern
+	 * @param clazz to search for methods matching <code>methodPattern</code>
+	 * @param methodPattern  method name pattern
 	 * @return list of matching descriptions
 	 */
-	private List<Description> findMatchingMethods(Class<?> clazz, String wildcardName) {
+	private List<Description> findMatchingMethods(Class<?> clazz, String methodPattern) {
 		List<Description> result = new ArrayList<Description>();
-		String pattern = wildcardName.replace(WILDCARD, ".*");
 		for (Method m : clazz.getMethods()) {
 			final String methodName= m.getName();
-			if (methodName.matches(pattern)) {
+			if (methodName.matches(methodPattern)) {
 				result.add(Description.createTestDescription(clazz, methodName));
 			}
 		}
