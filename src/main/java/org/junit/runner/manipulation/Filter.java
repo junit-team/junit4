@@ -94,7 +94,9 @@ public abstract class Filter {
 				if (methodName == null) {
 					return true;
 				}
-				if (!classNames.contains(className) && mode.equals(FilterMode.STRICT))
+				if (!classNames.contains(className) && mode.equals(FilterMode.RELAXED))
+					return true;
+				else if (!classNames.contains(className) && mode.equals(FilterMode.STRICT))
 					return false;
 				else
 					return desiredDescriptions.contains(description);
