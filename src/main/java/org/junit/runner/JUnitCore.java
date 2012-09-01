@@ -118,7 +118,7 @@ public class JUnitCore {
 			}
 		RunListener listener= new TextListener(system);
 		addListener(listener);
-		Result result= run(createMethodFilter(methods), classes.toArray(new Class[0]));
+		Result result= run(Filter.matchMethodDescriptions(methods, Filter.FilterMode.RELAXED), classes.toArray(new Class[0]));
 		for (Failure each : missingClasses)
 			result.getFailures().add(each);
 		return result;
@@ -146,33 +146,6 @@ public class JUnitCore {
 			}
 		}
 		return result;
-	}
-	
-	/**
-	 * Construct new {@link Filter} based on method list.
-	 * @param methods contains methods allowed by this filter
-	 * @return new {@link Filter} to run only methods listed in <code>methods</code>
-	 */
-	private Filter createMethodFilter(final List<Description> methods) {
-		final List<String> classNames= new ArrayList<String>();
-		for (Description d : methods) {
-			classNames.add(d.getClassName());
-		}
-		return new Filter() {
-			@Override
-			public boolean shouldRun(Description description) {
-				String methodName = description.getMethodName();
-				String className = description.getClassName();
-				if (methodName == null) {
-					return true;
-				}
-				return classNames.contains(className)?methods.contains(description):true;
-			}
-			@Override
-			public String describe() {
-				return "command line method filter";
-			}
-		};
 	}
 	
 	/**
