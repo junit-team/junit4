@@ -1,10 +1,10 @@
 package org.junit.runner;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 import junit.runner.Version;
+import org.junit.Test;
 import org.junit.internal.JUnitSystem;
 import org.junit.internal.RealSystem;
 import org.junit.internal.TextListener;
@@ -14,6 +14,8 @@ import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.TestClass;
 
 /**
  * <code>JUnitCore</code> is a facade for running tests. It supports running JUnit 4 tests, 
@@ -132,14 +134,15 @@ public class JUnitCore {
 	}
 
 	/**
-	 * Convert method name with wildcard into a list of {@link Description}
+	 * Convert method pattern into a list of {@link Description}.
 	 * @param clazz to search for methods matching <code>methodPattern</code>
 	 * @param methodPattern  method name pattern
 	 * @return list of matching descriptions
 	 */
 	private List<Description> findMatchingMethods(Class<?> clazz, String methodPattern) {
+		TestClass testClass = new TestClass(clazz);
 		List<Description> result = new ArrayList<Description>();
-		for (Method m : clazz.getMethods()) {
+		for (FrameworkMethod m : testClass.getAnnotatedMethods(Test.class)) {
 			final String methodName= m.getName();
 			if (methodName.matches(methodPattern)) {
 				result.add(Description.createTestDescription(clazz, methodName));
