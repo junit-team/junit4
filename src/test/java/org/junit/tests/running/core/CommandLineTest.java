@@ -75,7 +75,7 @@ public class CommandLineTest {
 		test2WasRun = false;
 		new MainRunner().runWithCheckForSystemExit(new Runnable() {
 			public void run() {
-				JUnitCore.main("org.junit.tests.running.core.CommandLineTest$Example#t*st*");
+				JUnitCore.main("org.junit.tests.running.core.CommandLineTest$Example#t.*st.*");
 			}
 		});
 		assertTrue(testWasRun);
