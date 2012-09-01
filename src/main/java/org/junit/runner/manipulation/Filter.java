@@ -107,6 +107,15 @@ public abstract class Filter {
 			}
 		};
 	}
+	
+	/**
+	 * 
+	 * @param desiredDescriptions is a list of methods
+	 * @return <code>Filter</code> to run only methods listed in <code>desiredDescripitons</code>
+	 */
+	public static Filter matchMethodDescriptions(final List<Description> desiredDescriptions) {
+		return matchMethodDescriptions(desiredDescriptions, FilterMode.STRICT);
+	}
 
 	/**
 	 * @param description the description of the test to be run

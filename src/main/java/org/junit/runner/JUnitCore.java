@@ -93,24 +93,19 @@ public class JUnitCore {
 		for (String each : args)
 			try {
 				String[] class_method= each.split(SEPARATOR);
-				if (class_method.length==2) { //found: ClassName#MethodName
-					Class<?> clazz= Class.forName(class_method[0]);
-					String methodName= class_method[1];
-					final List<Description> foundMatchingMethods= findMatchingMethods(clazz, methodName);
-					if (foundMatchingMethods.size()==0) {
-						system.out().println("No matching method found for: " + methodName);
-						Description description= Description.createSuiteDescription(each);
-						Failure failure= new Failure(description, new NoTestsRemainException());
-						missingClasses.add(failure);
-					} else {
-						methods.addAll(foundMatchingMethods);
-						classes.add(clazz);
-					}
-				} else if (class_method.length==1 && each.endsWith(SEPARATOR)) { //found: ClassName#
-					Class<?> clazz = Class.forName(class_method[0]);
+				Class<?> clazz= Class.forName(class_method[0]);
+				String methodName= ".*";
+				if (class_method.length == 2)
+					methodName= class_method[1];
+				final Description foundMatchingMethods= Description.createSuiteDescription(clazz, methodName);
+				if (foundMatchingMethods.getChildren().isEmpty()) {
+					system.out().println("No matching method found for: " + each);
+					Description description= Description.createSuiteDescription(each);
+					Failure failure= new Failure(description, new NoTestsRemainException());
+					missingClasses.add(failure);
+				} else {
+					methods.addAll(foundMatchingMethods.getChildren());
 					classes.add(clazz);
-				} else { //assume ClassName otherwise, wrong format may cause ClassNotFoundException
-					classes.add(Class.forName(each));
 				}
 			} catch (ClassNotFoundException e) {
 				system.out().println("Could not find class: " + each);
@@ -120,7 +115,7 @@ public class JUnitCore {
 			}
 		RunListener listener= new TextListener(system);
 		addListener(listener);
-		Result result= run(Filter.matchMethodDescriptions(methods, Filter.FilterMode.RELAXED), classes.toArray(new Class[0]));
+		Result result= run(Filter.matchMethodDescriptions(methods), classes.toArray(new Class[0]));
 		for (Failure each : missingClasses)
 			result.getFailures().add(each);
 		return result;
@@ -131,24 +126,6 @@ public class JUnitCore {
 	 */
 	public String getVersion() {
 		return Version.id();
-	}
-
-	/**
-	 * Convert method pattern into a list of {@link Description}.
-	 * @param clazz to search for methods matching <code>methodPattern</code>
-	 * @param methodPattern  method name pattern
-	 * @return list of matching descriptions
-	 */
-	private List<Description> findMatchingMethods(Class<?> clazz, String methodPattern) {
-		TestClass testClass = new TestClass(clazz);
-		List<Description> result = new ArrayList<Description>();
-		for (FrameworkMethod m : testClass.getAnnotatedMethods(Test.class)) {
-			final String methodName= m.getName();
-			if (methodName.matches(methodPattern)) {
-				result.add(Description.createTestDescription(clazz, methodName));
-			}
-		}
-		return result;
 	}
 	
 	/**
