@@ -40,7 +40,7 @@ public class Description implements Serializable {
 	 * @return a <code>Description</code> named <code>name</code>
 	 */
 	public static Description createSuiteDescription(String name, Annotation... annotations) {
-		return new Description(name, annotations);
+		return new Description(name, null, annotations);
 	}
 
 	/**
@@ -52,7 +52,7 @@ public class Description implements Serializable {
 	 * @return a <code>Description</code> named <code>name</code>
 	 */
 	public static Description createSuiteDescription(String name, Serializable uniqueId, Annotation... annotations) {
-	    return new Description(name, uniqueId, annotations);
+	    return new Description(name, null, uniqueId, annotations);
 	}
 
 	/**
@@ -66,7 +66,7 @@ public class Description implements Serializable {
 	 * @return a <code>Description</code> named <code>name</code>
 	 */
 	public static Description createTestDescription(String className, String name, Annotation... annotations) {
-		return new Description(String.format("%s(%s)", name, className), annotations);
+		return new Description(String.format("%s(%s)", name, className), null, annotations);
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class Description implements Serializable {
 	 * @return a <code>Description</code> named <code>name</code>
 	 */
 	public static Description createTestDescription(Class<?> clazz, String name, Annotation... annotations) {
-		return createTestDescription(clazz.getName(), name, annotations);
+		return new Description(String.format("%s(%s)", name, clazz.getName()), clazz, annotations);
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class Description implements Serializable {
 	 * @return a <code>Description</code> named <code>name</code>
 	 */
 	public static Description createTestDescription(Class<?> clazz, String name) {
-		return createTestDescription(clazz.getName(), name);
+		return new Description(String.format("%s(%s)", name, clazz.getName()), clazz);
 	}
 
 	/**
@@ -101,7 +101,7 @@ public class Description implements Serializable {
 	 * @return a <code>Description</code> named <code>name</code>
 	 */
 	public static Description createTestDescription(String className, String name, Serializable uniqueId) {
-		return new Description(String.format("%s(%s)", name, className), uniqueId);
+		return new Description(String.format("%s(%s)", name, className), null, uniqueId);
 	}
 
 	/**
@@ -110,31 +110,32 @@ public class Description implements Serializable {
 	 * @return a <code>Description</code> of <code>testClass</code>
 	 */
 	public static Description createSuiteDescription(Class<?> testClass) {
-		return new Description(testClass.getName(), testClass.getAnnotations());
+		return new Description(testClass.getName(), testClass, testClass.getAnnotations());
 	}
 	
 	/**
 	 * Describes a Runner which runs no tests
 	 */
-	public static final Description EMPTY= new Description("No Tests");
+	public static final Description EMPTY= new Description("No Tests", null);
 	
 	/**
 	 * Describes a step in the test-running mechanism that goes so wrong no
 	 * other description can be used (for example, an exception thrown from a Runner's
 	 * constructor
 	 */
-	public static final Description TEST_MECHANISM= new Description("Test mechanism");
+	public static final Description TEST_MECHANISM= new Description("Test mechanism", null);
 	
 	private final ArrayList<Description> fChildren= new ArrayList<Description>();
 	private final String fDisplayName;
 	private final Serializable fUniqueId;
 	private final Annotation[] fAnnotations;
+    private final Class<?> fClazz;
 
-	private Description(String displayName, Annotation... annotations) {
-		this(displayName, displayName, annotations);
+	private Description(String displayName, Class<?> clazz, Annotation... annotations) {
+		this(displayName, clazz, displayName, annotations);
 	}
 
-	private Description(String displayName, Serializable uniqueId, Annotation... annotations) {
+	private Description(String displayName, Class<?> clazz, Serializable uniqueId, Annotation... annotations) {
 		if ((displayName == null) || (displayName.length() == 0))
 			throw new IllegalArgumentException(
 					"The display name must not be empty.");
@@ -142,6 +143,7 @@ public class Description implements Serializable {
 			throw new IllegalArgumentException(
 					"The unique id must not be null.");
 		fDisplayName= displayName;
+        fClazz = clazz;
 		fUniqueId= uniqueId;
 		fAnnotations= annotations;
 	}
@@ -224,7 +226,7 @@ public class Description implements Serializable {
 	 * children will be added back)
 	 */
 	public Description childlessCopy() {
-		return new Description(fDisplayName, fAnnotations);
+		return new Description(fDisplayName, fClazz, fAnnotations);
 	}
 
 	/**
@@ -250,6 +252,9 @@ public class Description implements Serializable {
 	 * the class of the test instance.
 	 */
 	public Class<?> getTestClass() {
+        if (fClazz != null) {
+            return fClazz;
+        }
 		String name= getClassName();
 		if (name == null)
 			return null;

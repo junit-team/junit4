@@ -2,13 +2,17 @@ package org.junit.tests.experimental.max;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Description;
 
 import java.lang.annotation.Annotation;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 public class DescriptionTest {
 
@@ -67,4 +71,45 @@ public class DescriptionTest {
 		assertThat(Description.createTestDescription("not a class name", "aTestMethod", 1),
 						not(equalTo(Description.createTestDescription("not a class name", "aTestMethod", 2))));
 	}
+
+    @Test
+    public void roundTripsClassObject() throws Exception {
+        class URLClassLoader2 extends URLClassLoader {
+            URLClassLoader2(URL[] urls) {
+                super(urls);
+            }
+            @Override // just making public
+            public Class<?> findClass(String name) throws ClassNotFoundException {
+                return super.findClass(name);
+            }
+        }
+        URLClassLoader2 l = new URLClassLoader2(new URL[] {Sweet.class.getProtectionDomain().getCodeSource().getLocation()});
+        Class<?> clazz = l.findClass(Sweet.class.getName());
+        assertEquals(l, clazz.getClassLoader());
+        Description d = Description.createSuiteDescription(clazz);
+        assertEquals(clazz, d.getTestClass());
+        assertNull(d.getMethodName());
+        assertEquals(1, d.getAnnotations().size());
+        assertEquals(Ignore.class, d.getAnnotations().iterator().next().annotationType());
+        d = Description.createTestDescription(clazz, "tessed");
+        assertEquals(clazz, d.getTestClass());
+        assertEquals("tessed", d.getMethodName());
+        assertEquals(0, d.getAnnotations().size());
+        d = Description.createTestDescription(clazz, "tessed", clazz.getMethod("tessed").getAnnotations());
+        assertEquals(clazz, d.getTestClass());
+        assertEquals("tessed", d.getMethodName());
+        assertEquals(1, d.getAnnotations().size());
+        assertEquals(Test.class, d.getAnnotations().iterator().next().annotationType());
+        d = d.childlessCopy();
+        assertEquals(clazz, d.getTestClass());
+        assertEquals("tessed", d.getMethodName());
+        assertEquals(1, d.getAnnotations().size());
+        assertEquals(Test.class, d.getAnnotations().iterator().next().annotationType());
+    }
+    @Ignore
+    private static class Sweet {
+        @Test
+        public void tessed() {}
+    }
+
 }
