@@ -75,7 +75,7 @@ public class DescriptionTest {
 	@Test
 	public void usesPassedInClassObject() throws Exception {
 		class URLClassLoader2 extends URLClassLoader {
-			URLClassLoader2(URL[] urls) {
+			URLClassLoader2(URL... urls) {
 				super(urls);
 			}
 			@Override // just making public
@@ -84,7 +84,7 @@ public class DescriptionTest {
 			}
 		}
 		URL classpath= Sweet.class.getProtectionDomain().getCodeSource().getLocation();
-		URLClassLoader2 loader= new URLClassLoader2(new URL[] {classpath});
+		URLClassLoader2 loader= new URLClassLoader2(classpath);
 		Class<?> clazz= loader.findClass(Sweet.class.getName());
 		assertEquals(loader, clazz.getClassLoader());
 
