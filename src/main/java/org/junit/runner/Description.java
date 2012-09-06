@@ -146,8 +146,8 @@ public class Description implements Serializable {
 		if ((uniqueId == null))
 			throw new IllegalArgumentException(
 					"The unique id must not be null.");
-		fDisplayName= displayName;
 		fTestClass= clazz;
+		fDisplayName= displayName;
 		fUniqueId= uniqueId;
 		fAnnotations= annotations;
 	}
