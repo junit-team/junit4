@@ -273,7 +273,7 @@ public class Description implements Serializable {
 	 * the name of the class of the test instance
 	 */
 	public String getClassName() {
-		return methodAndClassNamePatternGroupOrDefault(2, toString());
+		return fTestClass != null ? fTestClass.getName() : methodAndClassNamePatternGroupOrDefault(2, toString());
 	}
 	
 	/**
