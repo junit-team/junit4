@@ -2,8 +2,10 @@ package junit.framework;
 
 /**
  * A set of assert methods.  Messages are only displayed when an assert fails.
+ *
+ * @deprecated Please use {@link org.junit.Assert} instead.
  */
-
+@Deprecated
 public class Assert {
 	/**
 	 * Protect constructor since it is a static only class
@@ -71,7 +73,7 @@ public class Assert {
 	 * an AssertionFailedError is thrown.
 	 */
 	static public void assertEquals(Object expected, Object actual) {
-	    assertEquals(null, expected, actual);
+		assertEquals(null, expected, actual);
 	}
 	/**
 	 * Asserts that two Strings are equal. 
@@ -88,7 +90,7 @@ public class Assert {
 	 * Asserts that two Strings are equal. 
 	 */
 	static public void assertEquals(String expected, String actual) {
-	    assertEquals(null, expected, actual);
+		assertEquals(null, expected, actual);
 	}
 	/**
 	 * Asserts that two doubles are equal concerning a delta.  If they are not
@@ -106,7 +108,7 @@ public class Assert {
 	 * value is infinity then the delta value is ignored.
 	 */
 	static public void assertEquals(double expected, double actual, double delta) {
-	    assertEquals(null, expected, actual, delta);
+		assertEquals(null, expected, actual, delta);
 	}
 	/**
 	 * Asserts that two floats are equal concerning a positive delta. If they
@@ -117,7 +119,7 @@ public class Assert {
 		if (Float.compare(expected, actual) == 0)
 			return;
 		if (!(Math.abs(expected - actual) <= delta))
-				failNotEquals(message, new Float(expected), new Float(actual));
+			failNotEquals(message, new Float(expected), new Float(actual));
 	}
 	/**
 	 * Asserts that two floats are equal concerning a delta. If the expected
@@ -131,24 +133,24 @@ public class Assert {
 	 * an AssertionFailedError is thrown with the given message.
 	 */
 	static public void assertEquals(String message, long expected, long actual) {
-	    assertEquals(message, new Long(expected), new Long(actual));
+		assertEquals(message, new Long(expected), new Long(actual));
 	}
 	/**
 	 * Asserts that two longs are equal.
 	 */
 	static public void assertEquals(long expected, long actual) {
-	    assertEquals(null, expected, actual);
+		assertEquals(null, expected, actual);
 	}
 	/**
 	 * Asserts that two booleans are equal. If they are not
 	 * an AssertionFailedError is thrown with the given message.
 	 */
 	static public void assertEquals(String message, boolean expected, boolean actual) {
-    		assertEquals(message, Boolean.valueOf(expected), Boolean.valueOf(actual));
-  	}
+		assertEquals(message, Boolean.valueOf(expected), Boolean.valueOf(actual));
+	}
 	/**
 	 * Asserts that two booleans are equal.
- 	 */
+	 */
 	static public void assertEquals(boolean expected, boolean actual) {
 		assertEquals(null, expected, actual);
 	}
@@ -156,11 +158,11 @@ public class Assert {
 	 * Asserts that two bytes are equal. If they are not
 	 * an AssertionFailedError is thrown with the given message.
 	 */
-  	static public void assertEquals(String message, byte expected, byte actual) {
+	static public void assertEquals(String message, byte expected, byte actual) {
 		assertEquals(message, new Byte(expected), new Byte(actual));
 	}
 	/**
-   	 * Asserts that two bytes are equal.
+	 * Asserts that two bytes are equal.
 	 */
 	static public void assertEquals(byte expected, byte actual) {
 		assertEquals(null, expected, actual);
@@ -169,13 +171,13 @@ public class Assert {
 	 * Asserts that two chars are equal. If they are not
 	 * an AssertionFailedError is thrown with the given message.
 	 */
-  	static public void assertEquals(String message, char expected, char actual) {
-    		assertEquals(message, new Character(expected), new Character(actual));
-  	}
+	static public void assertEquals(String message, char expected, char actual) {
+		assertEquals(message, new Character(expected), new Character(actual));
+	}
 	/**
 	 * Asserts that two chars are equal.
 	 */
-  	static public void assertEquals(char expected, char actual) {
+	static public void assertEquals(char expected, char actual) {
 		assertEquals(null, expected, actual);
 	}
 	/**
@@ -183,9 +185,9 @@ public class Assert {
 	 * an AssertionFailedError is thrown with the given message.
 	 */
 	static public void assertEquals(String message, short expected, short actual) {
-    		assertEquals(message, new Short(expected), new Short(actual));
+		assertEquals(message, new Short(expected), new Short(actual));
 	}
-  	/**
+	/**
 	 * Asserts that two shorts are equal.
 	 */
 	static public void assertEquals(short expected, short actual) {
@@ -195,14 +197,14 @@ public class Assert {
 	 * Asserts that two ints are equal. If they are not
 	 * an AssertionFailedError is thrown with the given message.
 	 */
-  	static public void assertEquals(String message, int expected, int actual) {
+	static public void assertEquals(String message, int expected, int actual) {
 		assertEquals(message, new Integer(expected), new Integer(actual));
-  	}
-  	/**
-   	 * Asserts that two ints are equal.
+	}
+	/**
+	 * Asserts that two ints are equal.
 	 */
-  	static public void assertEquals(int expected, int actual) {
-  		assertEquals(null, expected, actual);
+	static public void assertEquals(int expected, int actual) {
+		assertEquals(null, expected, actual);
 	}
 	/**
 	 * Asserts that an object isn't null.
@@ -221,7 +223,7 @@ public class Assert {
 	 * Asserts that an object is null. If it isn't an {@link AssertionError} is
 	 * thrown.
 	 * Message contains: Expected: <null> but was: object
-	 * 
+	 *
 	 * @param object
 	 *            Object to check or <code>null</code>
 	 */
@@ -250,7 +252,7 @@ public class Assert {
 	 * the same an AssertionFailedError is thrown.
 	 */
 	static public void assertSame(Object expected, Object actual) {
-	    assertSame(null, expected, actual);
+		assertSame(null, expected, actual);
 	}
 	/**
 	 * Asserts that two objects do not refer to the same object. If they do
