@@ -5,8 +5,13 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.junit.Test;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.TestClass;
 
 /**
  * <p>A <code>Description</code> describes a test which is to be run or has been run. <code>Descriptions</code> 
@@ -111,6 +116,24 @@ public class Description implements Serializable {
 	 */
 	public static Description createSuiteDescription(Class<?> testClass) {
 		return new Description(testClass.getName(), testClass.getAnnotations());
+	}
+	
+	/**
+	 * Create a <code>Description</code> with methods matching <code>methodPattern</code>
+	 * @param clazz to search for methods matching <code>methodPattern</code>
+	 * @param methodPattern  regexp method name pattern
+	 * @return 
+	 */
+	public static  Description createSuiteDescription(Class<?> clazz, String methodPattern) {
+		TestClass testClass = new TestClass(clazz);
+		Description suite = createSuiteDescription(clazz);
+		for (FrameworkMethod m : testClass.getAnnotatedMethods(Test.class)) {
+			final String methodName= m.getName();
+			if (methodName.matches(methodPattern)) {
+				suite.addChild(createTestDescription(clazz, methodName));
+			}
+		}
+		return suite;
 	}
 	
 	/**

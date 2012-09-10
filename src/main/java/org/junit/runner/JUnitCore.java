@@ -4,13 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import junit.runner.Version;
+import org.junit.Test;
 import org.junit.internal.JUnitSystem;
 import org.junit.internal.RealSystem;
 import org.junit.internal.TextListener;
 import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.runner.manipulation.Filter;
+import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.TestClass;
 
 /**
  * <code>JUnitCore</code> is a facade for running tests. It supports running JUnit 4 tests, 
@@ -26,6 +31,11 @@ import org.junit.runner.notification.RunNotifier;
  * @since 4.0
  */
 public class JUnitCore {
+	/**
+	 * Separates class name from method name, e.g. ClassName#MethodName
+	 */
+	private static final String SEPARATOR= "#";
+	
 	private final RunNotifier fNotifier= new RunNotifier();
 
 	/**
@@ -77,11 +87,26 @@ public class JUnitCore {
 	 */
 	private Result runMain(JUnitSystem system, String... args) {
 		system.out().println("JUnit version " + Version.id());
+		List<Description> methods= new ArrayList<Description>();
 		List<Class<?>> classes= new ArrayList<Class<?>>();
 		List<Failure> missingClasses= new ArrayList<Failure>();
 		for (String each : args)
 			try {
-				classes.add(Class.forName(each));
+				String[] class_method= each.split(SEPARATOR);
+				Class<?> clazz= Class.forName(class_method[0]);
+				String methodName= ".*";
+				if (class_method.length == 2)
+					methodName= class_method[1];
+				final Description foundMatchingMethods= Description.createSuiteDescription(clazz, methodName);
+				if (foundMatchingMethods.getChildren().isEmpty()) {
+					system.out().println("No matching method found for: " + each);
+					Description description= Description.createSuiteDescription(each);
+					Failure failure= new Failure(description, new NoTestsRemainException());
+					missingClasses.add(failure);
+				} else {
+					methods.addAll(foundMatchingMethods.getChildren());
+					classes.add(clazz);
+				}
 			} catch (ClassNotFoundException e) {
 				system.out().println("Could not find class: " + each);
 				Description description= Description.createSuiteDescription(each);
@@ -90,7 +115,7 @@ public class JUnitCore {
 			}
 		RunListener listener= new TextListener(system);
 		addListener(listener);
-		Result result= run(classes.toArray(new Class[0]));
+		Result result= run(Filter.matchMethodDescriptions(methods), classes.toArray(new Class[0]));
 		for (Failure each : missingClasses)
 			result.getFailures().add(each);
 		return result;
@@ -101,6 +126,21 @@ public class JUnitCore {
 	 */
 	public String getVersion() {
 		return Version.id();
+	}
+	
+	/**
+	 * Run only test matching filter.
+	 * @param filter applied to <code>classes</code> before run
+	 * @param classes the classes containing tests
+	 * @return a {@link Result} describing the details of the test run and the failed tests.
+	 * @throws NoTestsRemainException
+	 */
+	public Result run(Filter filter, Class<?>... classes) {
+		Request request = Request.classes(defaultComputer(), classes);
+		if (filter!=null && classes.length>0) {
+			request= request.filterWith(filter);
+		}
+		return run(request);
 	}
 	
 	/**
