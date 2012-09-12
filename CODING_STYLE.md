@@ -2,11 +2,10 @@
 
 
 ## Tabs and Indents
-
-* Tab size				: 4
-* Indent				: 4
-* Continuation indent	: 8
-* Label indent			: 0
+* Tab size : 4
+* Indent : 4
+* Continuation indent : 8
+* Label indent : 0
 
 > Don't use tab characters.
 
@@ -68,53 +67,51 @@
 ## Wrapping and Braces
 
 ### Braces placement
-* In class declaration	: End of line
-* In method declaration	: End of line
-* Other					: End of line
+* In class declaration : End of line
+* In method declaration : End of line
+* Other : End of line
 
 ### Use Of Braces
-* ```if()``` statement			: When multiline
-* ```for()``` statement			: When multiline
-* ```while()``` statement		: When multiline
-* ```do .. while()``` statement	: When multiline
+* ```if()``` statement : When multiline
+* ```for()``` statement : When multiline
+* ```while()``` statement : When multiline
+* ```do .. while()``` statement	 : When multiline
 
 ### Annotations
-* Class annotations				: Wrap always
-* Method annotations			: Wrap always
-* Field annotations				: Wrap always
-* Paramater annotations			: Do not wrap
-* Local variable annotations	: Do not wrap
+* Class annotations : Wrap always
+* Method annotations : Wrap always
+* Field annotations : Wrap always
+* Paramater annotations : Do not wrap
+* Local variable annotations : Do not wrap
 
 ## Blank Lines
 
 ### Keep Maximum Blank Lines
-* In declarations	: 2
-* In code			: 2
-* Before ```}```	: 2
+* In declarations : 2
+* In code : 2
+* Before ```}``` : 2
 
 ### Minimum Blank Lines
-* Before package statement		: 0
-* After package statement		: 1
-* Before imports				: 1
-* After imports					: 1
-* Around class					: 1
-* After class header			: 0
-* After anonymous class header	: 0
-* Around field in interface		: 0
-* Around field					: 0
-* Around method in interface	: 1
-* Around method					: 1
-* Before method body			: 0 
+* Before package statement : 0
+* After package statement : 1
+* Before imports : 1
+* After imports : 1
+* Around class : 1
+* After class header : 0
+* After anonymous class header : 0
+* Around field in interface : 0
+* Around field : 0
+* Around method in interface : 1
+* Around method : 1
+* Before method body : 0 
 
 ## JavaDoc
 
 ### Alignment
-
 * Align parameter descriptions
 * Align thrown exception descriptions
 
 ### Blank Lines
-
 * After description
 
 ### Invalid tags
