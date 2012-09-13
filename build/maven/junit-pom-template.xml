@@ -63,7 +63,7 @@
                         <Bundle-SymbolicName>org.junit</Bundle-SymbolicName>
                         <Bundle-Name>${project.name}</Bundle-Name>
                         <Bundle-Version>${project.version}</Bundle-Version>
-                        <Export-Package>org.hamcrest.*;version="${hamcrest.version}",junit.*;version="3.8.2",org.junit.*;version="${project.version}</Export-Package>
+                        <Export-Package>org.hamcrest.*;version="${hamcrest.version}",junit.*;version="${project.version}",org.junit.*;version="${project.version}</Export-Package>
                         <Bundle-Description>${project.description}</Bundle-Description>
                         <Bundle-License>Common Public License Version 1.0</Bundle-License>
                         <Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
