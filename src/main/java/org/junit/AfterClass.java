@@ -13,6 +13,9 @@ import java.lang.annotation.Target;
  * exception. The <code>&#064;AfterClass</code> methods declared in superclasses will be run after those of the current
  * class.</p>
  * 
+ * <p>Note: If a subclass shadows a <code>&#064;AfterClass</code> method of the superclass by using the
+ * same name, it would render the <code>&#064;AfterClass</code> annotation of the superclass useless.</p>
+ *
  * Here is a simple example:
 * <pre>
  * public class Example {

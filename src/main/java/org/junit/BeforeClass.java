@@ -13,6 +13,9 @@ import java.lang.annotation.Target;
  * the test methods in the class. The <code>@BeforeClass</code> methods of superclasses
  * will be run before those the current class.</p>
  * 
+ * <p>Note: If a subclass shadows a <code>&#064;BeforeClass</code> method of the superclass by using the
+ * same name, it would render the <code>&#064;BeforeClass</code> annotation of the superclass useless.</p>
+ *
  * For example:
  * <pre>
  * public class Example {
