@@ -11,10 +11,7 @@ import java.lang.annotation.Target;
  * with <code>&#064;After</code> causes that method to be run after the {@link org.junit.Test} method. All <code>&#064;After</code>
  * methods are guaranteed to run even if a {@link org.junit.Before} or {@link org.junit.Test} method throws an 
  * exception. The <code>&#064;After</code> methods declared in superclasses will be run after those of the current
- * class.</p>
- * 
- * <p>Note: If a subclass overrides a <code>&#064;After</code> method of the superclass, it would render the
- * <code>&#064;After</code> annotation of the superclass useless.</p>
+ * class, unless they are overridden in the current class.</p>
  *
  * Here is a simple example:
 * <pre>

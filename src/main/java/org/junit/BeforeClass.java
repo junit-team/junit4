@@ -11,10 +11,7 @@ import java.lang.annotation.Target;
  * tests, sometimes it is a necessary optimization. Annotating a <code>public static void</code> no-arg method
  * with <code>@BeforeClass</code> causes it to be run once before any of 
  * the test methods in the class. The <code>@BeforeClass</code> methods of superclasses
- * will be run before those the current class.</p>
- * 
- * <p>Note: If a subclass shadows a <code>&#064;BeforeClass</code> method of the superclass by using the
- * same name, it would render the <code>&#064;BeforeClass</code> annotation of the superclass useless.</p>
+ * will be run before those the current class, unless they are shadowed in the current class.</p>
  *
  * For example:
  * <pre>
