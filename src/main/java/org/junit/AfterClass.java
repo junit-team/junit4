@@ -11,8 +11,8 @@ import java.lang.annotation.Target;
  * with <code>&#064;AfterClass</code> causes that method to be run after all the tests in the class have been run. All <code>&#064;AfterClass</code>
  * methods are guaranteed to run even if a {@link org.junit.BeforeClass} method throws an 
  * exception. The <code>&#064;AfterClass</code> methods declared in superclasses will be run after those of the current
- * class.</p>
- * 
+ * class, unless they are shadowed in the current class.</p>
+ *
  * Here is a simple example:
 * <pre>
  * public class Example {
