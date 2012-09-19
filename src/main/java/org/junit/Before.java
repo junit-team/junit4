@@ -12,9 +12,6 @@ import java.lang.annotation.Target;
  * The <code>&#064;Before</code> methods of superclasses will be run before those of the current class,
  * unless they are overridden in the current class. No other ordering is defined.
  * </p>
- *
- * <p>Note: If a subclass overrides a <code>&#064;Before</code> method of the superclass, it would render the
- * <code>&#064;Before</code> annotation of the superclass useless.</p>
  * 
  * Here is a simple example:
  * <pre>
