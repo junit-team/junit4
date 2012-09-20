@@ -1,54 +1,52 @@
 package org.junit.tests.experimental.parallel;
 
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNot.not;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 import org.junit.Test;
 import org.junit.experimental.ParallelComputer;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
 
 
 public class ParallelClassTest {
+	private static volatile Thread fExample1One= null;
+	private static volatile Thread fExample1Two= null;
+	private static volatile Thread fExample2One= null;
+	private static volatile Thread fExample2Two= null;
 
 	public static class Example1 {
-		@Test public void one() throws InterruptedException {
-			Thread.sleep(1000);
+		@Test public void one() {
+			fExample1One= Thread.currentThread();
+		}
+		@Test public void two() {
+			fExample1Two= Thread.currentThread();
 		}
 	}
 	public static class Example2 {
-		@Test public void one() throws InterruptedException {
-			Thread.sleep(1000);
+		@Test public void one() {
+			fExample2One= Thread.currentThread();
+		}
+		@Test public void two() {
+			fExample2Two= Thread.currentThread();
 		}
 	}
 	
-	@RunWith(Suite.class)
-	@SuiteClasses({Example1.class, Example2.class})
-	public static class ExampleSuite {}
-	
-	@Test(timeout=1500) public void testsRunInParallel() {
-		long start= System.currentTimeMillis();
+	@Test public void testsRunInParallel() {
 		Result result= JUnitCore.runClasses(ParallelComputer.classes(), Example1.class, Example2.class);
 		assertTrue(result.wasSuccessful());
-		long end= System.currentTimeMillis();
-		assertThat(end - start, greaterThan(999)); // Overhead could be less than half a millisecond
-	}
-
-	private Matcher<Long> greaterThan(final long l) {
-		return new TypeSafeMatcher<Long>() {
-			@Override
-			public boolean matchesSafely(Long item) {
-				return item > l;
-			}
-
-			public void describeTo(Description description) {
-				description.appendText("greater than " + l);
-			}
-		};
+		assertNotNull(fExample1One);
+		assertNotNull(fExample1Two);
+		assertNotNull(fExample2One);
+		assertNotNull(fExample2Two);
+		assertThat(fExample1One, is(fExample1Two));
+		assertThat(fExample2One, is(fExample2Two));
+		assertThat(fExample1One, is(not(fExample2One)));
+		fExample1One= null;
+		fExample1Two= null;
+		fExample2One= null;
+		fExample2Two= null;
 	}
 }
