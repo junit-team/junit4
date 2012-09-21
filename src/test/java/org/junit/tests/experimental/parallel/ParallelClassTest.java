@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.experimental.ParallelComputer;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
+import org.junit.Before;
 
 
 public class ParallelClassTest {
@@ -34,6 +35,13 @@ public class ParallelClassTest {
 		}
 	}
 	
+	@Before public void cleanupReferences() {
+		fExample1One= null;
+		fExample1Two= null;
+		fExample2One= null;
+		fExample2Two= null;
+	}
+	
 	@Test public void testsRunInParallel() {
 		Result result= JUnitCore.runClasses(ParallelComputer.classes(), Example1.class, Example2.class);
 		assertTrue(result.wasSuccessful());
@@ -44,9 +52,5 @@ public class ParallelClassTest {
 		assertThat(fExample1One, is(fExample1Two));
 		assertThat(fExample2One, is(fExample2Two));
 		assertThat(fExample1One, is(not(fExample2One)));
-		fExample1One= null;
-		fExample1Two= null;
-		fExample2One= null;
-		fExample2Two= null;
 	}
 }
