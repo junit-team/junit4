@@ -10,6 +10,7 @@ import org.junit.experimental.ParallelComputer;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.Before;
+import java.util.concurrent.CountDownLatch;
 
 
 public class ParallelClassTest {
@@ -17,29 +18,39 @@ public class ParallelClassTest {
 	private static volatile Thread fExample1Two= null;
 	private static volatile Thread fExample2One= null;
 	private static volatile Thread fExample2Two= null;
+	private static volatile CountDownLatch fSynchronizer;
 
 	public static class Example1 {
-		@Test public void one() {
+		@Test public void one() throws InterruptedException {
+			fSynchronizer.countDown();
+			fSynchronizer.await();
 			fExample1One= Thread.currentThread();
 		}
-		@Test public void two() {
+		@Test public void two() throws InterruptedException {
+			fSynchronizer.countDown();
+			fSynchronizer.await();
 			fExample1Two= Thread.currentThread();
 		}
 	}
 	public static class Example2 {
-		@Test public void one() {
+		@Test public void one() throws InterruptedException {
+			fSynchronizer.countDown();
+			fSynchronizer.await();
 			fExample2One= Thread.currentThread();
 		}
-		@Test public void two() {
+		@Test public void two() throws InterruptedException {
+			fSynchronizer.countDown();
+			fSynchronizer.await();
 			fExample2Two= Thread.currentThread();
 		}
 	}
 	
-	@Before public void cleanupReferences() {
+	@Before public void init() {
 		fExample1One= null;
 		fExample1Two= null;
 		fExample2One= null;
 		fExample2Two= null;
+		fSynchronizer= new CountDownLatch(2);
 	}
 	
 	@Test public void testsRunInParallel() {
