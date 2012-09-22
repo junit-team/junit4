@@ -1,0 +1,503 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--
+JUnit
+
+Common Public License - v 1.0
+
+THE ACCOMPANYING PROGRAM IS PROVIDED UNDER THE TERMS OF THIS COMMON PUBLIC
+LICENSE ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THE PROGRAM
+CONSTITUTES RECIPIENT'S ACCEPTANCE OF THIS AGREEMENT.
+
+1. DEFINITIONS
+
+"Contribution" means:
+
+      a) in the case of the initial Contributor, the initial code and
+         documentation distributed under this Agreement, and
+      b) in the case of each subsequent Contributor:
+
+      i) changes to the Program, and
+
+      ii) additions to the Program;
+
+      where such changes and/or additions to the Program originate from and are
+distributed by that particular Contributor. A Contribution 'originates' from a
+Contributor if it was added to the Program by such Contributor itself or anyone
+acting on such Contributor's behalf. Contributions do not include additions to
+the Program which: (i) are separate modules of software distributed in
+conjunction with the Program under their own license agreement, and (ii) are
+not derivative works of the Program. 
+
+"Contributor" means any person or entity that distributes the Program.
+
+"Licensed Patents " mean patent claims licensable by a Contributor which are
+necessarily infringed by the use or sale of its Contribution alone or when
+combined with the Program.
+
+"Program" means the Contributions distributed in accordance with this Agreement.
+
+"Recipient" means anyone who receives the Program under this Agreement,
+including all Contributors.
+
+2. GRANT OF RIGHTS
+
+      a) Subject to the terms of this Agreement, each Contributor hereby grants
+Recipient a non-exclusive, worldwide, royalty-free copyright license to
+reproduce, prepare derivative works of, publicly display, publicly perform,
+distribute and sublicense the Contribution of such Contributor, if any, and
+such derivative works, in source code and object code form.
+
+      b) Subject to the terms of this Agreement, each Contributor hereby grants
+Recipient a non-exclusive, worldwide, royalty-free patent license under
+Licensed Patents to make, use, sell, offer to sell, import and otherwise
+transfer the Contribution of such Contributor, if any, in source code and
+object code form. This patent license shall apply to the combination of the
+Contribution and the Program if, at the time the Contribution is added by the
+Contributor, such addition of the Contribution causes such combination to be
+covered by the Licensed Patents. The patent license shall not apply to any
+other combinations which include the Contribution. No hardware per se is
+licensed hereunder. 
+
+      c) Recipient understands that although each Contributor grants the
+licenses to its Contributions set forth herein, no assurances are provided by
+any Contributor that the Program does not infringe the patent or other
+intellectual property rights of any other entity. Each Contributor disclaims
+any liability to Recipient for claims brought by any other entity based on
+infringement of intellectual property rights or otherwise. As a condition to
+exercising the rights and licenses granted hereunder, each Recipient hereby
+assumes sole responsibility to secure any other intellectual property rights
+needed, if any. For example, if a third party patent license is required to
+allow Recipient to distribute the Program, it is Recipient's responsibility to
+acquire that license before distributing the Program.
+
+      d) Each Contributor represents that to its knowledge it has sufficient
+copyright rights in its Contribution, if any, to grant the copyright license
+set forth in this Agreement. 
+
+3. REQUIREMENTS
+
+A Contributor may choose to distribute the Program in object code form under
+its own license agreement, provided that:
+
+      a) it complies with the terms and conditions of this Agreement; and
+
+      b) its license agreement:
+
+      i) effectively disclaims on behalf of all Contributors all warranties and
+conditions, express and implied, including warranties or conditions of title
+and non-infringement, and implied warranties or conditions of merchantability
+and fitness for a particular purpose; 
+
+      ii) effectively excludes on behalf of all Contributors all liability for
+damages, including direct, indirect, special, incidental and consequential
+damages, such as lost profits; 
+
+      iii) states that any provisions which differ from this Agreement are
+offered by that Contributor alone and not by any other party; and
+
+      iv) states that source code for the Program is available from such
+Contributor, and informs licensees how to obtain it in a reasonable manner on
+or through a medium customarily used for software exchange. 
+
+When the Program is made available in source code form:
+
+      a) it must be made available under this Agreement; and 
+
+      b) a copy of this Agreement must be included with each copy of the
+Program. 
+
+Contributors may not remove or alter any copyright notices contained within the
+Program.
+
+Each Contributor must identify itself as the originator of its Contribution, if
+any, in a manner that reasonably allows subsequent Recipients to identify the
+originator of the Contribution.
+
+4. COMMERCIAL DISTRIBUTION
+
+Commercial distributors of software may accept certain responsibilities with
+respect to end users, business partners and the like. While this license is
+intended to facilitate the commercial use of the Program, the Contributor who
+includes the Program in a commercial product offering should do so in a manner
+which does not create potential liability for other Contributors. Therefore, if
+a Contributor includes the Program in a commercial product offering, such
+Contributor ("Commercial Contributor") hereby agrees to defend and indemnify
+every other Contributor ("Indemnified Contributor") against any losses, damages
+and costs (collectively "Losses") arising from claims, lawsuits and other legal
+actions brought by a third party against the Indemnified Contributor to the
+extent caused by the acts or omissions of such Commercial Contributor in
+connection with its distribution of the Program in a commercial product
+offering. The obligations in this section do not apply to any claims or Losses
+relating to any actual or alleged intellectual property infringement. In order
+to qualify, an Indemnified Contributor must: a) promptly notify the Commercial
+Contributor in writing of such claim, and b) allow the Commercial Contributor
+to control, and cooperate with the Commercial Contributor in, the defense and
+any related settlement negotiations. The Indemnified Contributor may
+participate in any such claim at its own expense.
+
+For example, a Contributor might include the Program in a commercial product
+offering, Product X. That Contributor is then a Commercial Contributor. If that
+Commercial Contributor then makes performance claims, or offers warranties
+related to Product X, those performance claims and warranties are such
+Commercial Contributor's responsibility alone. Under this section, the
+Commercial Contributor would have to defend claims against the other
+Contributors related to those performance claims and warranties, and if a court
+requires any other Contributor to pay any damages as a result, the Commercial
+Contributor must pay those damages.
+
+5. NO WARRANTY
+
+EXCEPT AS EXPRESSLY SET FORTH IN THIS AGREEMENT, THE PROGRAM IS PROVIDED ON AN
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EITHER EXPRESS OR
+IMPLIED INCLUDING, WITHOUT LIMITATION, ANY WARRANTIES OR CONDITIONS OF TITLE,
+NON-INFRINGEMENT, MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. Each
+Recipient is solely responsible for determining the appropriateness of using
+and distributing the Program and assumes all risks associated with its exercise
+of rights under this Agreement, including but not limited to the risks and
+costs of program errors, compliance with applicable laws, damage to or loss of
+data, programs or equipment, and unavailability or interruption of operations.
+
+6. DISCLAIMER OF LIABILITY
+
+EXCEPT AS EXPRESSLY SET FORTH IN THIS AGREEMENT, NEITHER RECIPIENT NOR ANY
+CONTRIBUTORS SHALL HAVE ANY LIABILITY FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING WITHOUT LIMITATION LOST
+PROFITS), HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+WAY OUT OF THE USE OR DISTRIBUTION OF THE PROGRAM OR THE EXERCISE OF ANY RIGHTS
+GRANTED HEREUNDER, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+7. GENERAL
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<groupId>junit</groupId>
+	<artifactId>junit</artifactId>
+	<version>4.11-SNAPSHOT</version>
+	
+	<name>JUnit</name>
+	<url>http://junit.org</url>
+	<description>JUnit is a regression testing framework written by Erich Gamma and Kent Beck. It is used by the developer who implements unit tests in Java.</description>
+	<organization>
+		<name>JUnit</name>
+		<url>http://www.junit.org</url>
+	</organization>
+	<inceptionYear>2002</inceptionYear>
+	<mailingLists>
+		<mailingList>
+			<name>JUnit Mailing List</name>
+			<post>junit@yahoogroups.com</post>
+			<archive>http://tech.groups.yahoo.com/group/junit/</archive>
+		</mailingList>
+	</mailingLists>
+	<licenses>
+		<license>
+			<name>Common Public License Version 1.0</name>
+			<url>http://www.opensource.org/licenses/cpl1.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<connection>scm:git:git://github.com/KentBeck/junit.git</connection>
+		<developerConnection>scm:git:git@github.com:KentBeck/junit.git</developerConnection>
+		<url>http://github.com/KentBeck/junit/tree/master</url>
+	</scm>
+	<developers>
+		<developer>
+			<id>dsaff</id>
+			<name>David Saff</name>
+			<email>david@saff.net</email>
+		</developer>
+	</developers>
+	<contributors>
+		<contributor>
+			<name>Tibor Digana</name>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</contributor>
+	</contributors>
+	<properties>
+		<hamcrestVersion>1.3</hamcrestVersion>
+		<jdkVersion>1.5</jdkVersion>
+		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+	</properties>
+	<prerequisites>
+		<maven>3.0.4</maven>
+	</prerequisites>
+	<dependencies>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-core</artifactId>
+			<version>${hamcrestVersion}</version>
+		</dependency>
+	</dependencies>
+	<distributionManagement>
+		<downloadUrl>http://sourceforge.net/projects/junit/</downloadUrl>
+		<repository>
+			<id>sourceforge-staging</id>
+			<name>upload.to.sourceforge</name>
+			<url>ftp://localhost/sourceforge</url>
+			<!--
+				<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+				<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+			-->
+		</repository>
+	</distributionManagement>
+	<build>
+		<resources>
+			<resource>
+				<directory>${project.basedir}/src/main/resources</directory>
+			</resource>
+			<resource>
+				<directory>${project.basedir}</directory>
+				<includes>
+					<include>LICENSE</include>
+				</includes>
+			</resource>
+		</resources>
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ftp</artifactId>
+				<version>2.2</version>
+			</extension>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-http</artifactId>
+				<version>2.2</version>
+			</extension>
+		</extensions>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>parse-project-version</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>parse-version</goal>
+						</goals>
+						<configuration>
+							<propertyPrefix>junit</propertyPrefix>
+							<versionString>${project.version}</versionString>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>1.1.1</version>
+				<executions>
+					<execution>
+						<id>enforce-versions</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<fail>true</fail>
+							<rules>
+								<requireMavenVersion>
+									<message>Current version of Maven ${maven.version} required to build the project should be ${project.prerequisites.maven}, or higher!</message>
+									<version>${project.prerequisites.maven}</version>
+									</requireMavenVersion>
+										<requireJavaVersion>
+											<message>Current JDK version ${java.version} should be ${jdkVersion}, or higher!</message>
+											<version>${jdkVersion}</version>
+										</requireJavaVersion>
+										<requireNoRepositories>
+											<message>Best Practice is to never define repositories in pom.xml (use a repository manager instead).</message>
+										</requireNoRepositories>
+									<requireReleaseDeps>
+									<message>No Snapshots Dependencies Allowed!</message>
+								</requireReleaseDeps>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin><!-- Using jdk 1.5.0_22, package-info.java files are compiled correctly. -->
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.5.1</version>
+				<configuration>
+					<encoding>${project.build.sourceEncoding}</encoding>
+					<source>${jdkVersion}</source>
+					<target>${jdkVersion}</target>
+					<compilerVersion>1.5</compilerVersion>
+					<showDeprecation>true</showDeprecation>
+					<showWarnings>true</showWarnings>
+					<debug>true</debug>
+					<fork>true</fork>
+					<compilerArgument>-Xlint:unchecked</compilerArgument>
+					<maxmem>128m</maxmem>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.12.3</version>
+				<configuration>
+					<test>org/junit/tests/AllTests.java</test>
+					<useSystemClassLoader>true</useSystemClassLoader>
+					<enableAssertions>false</enableAssertions>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.surefire</groupId>
+						<artifactId>surefire-junit47</artifactId>
+						<version>2.12.3</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.8.1</version>
+				<executions>
+					<execution>
+						<id>attach-javadoc</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
+							<show>protected</show>
+							<author>false</author>
+							<version>false</version>
+							<detectLinks>false</detectLinks>
+							<linksource>true</linksource>
+							<keywords>true</keywords>
+							<use>true</use>
+							<windowtitle>JUnit API</windowtitle>
+							<encoding>UTF-8</encoding>
+							<locale>en</locale>
+							<javadocVersion>1.5</javadocVersion>
+							<javaApiLinks>
+								<property>
+									<name>api_1.5</name>
+									<value>http://docs.oracle.com/javase/1.5.0/docs/api/index.html</value>
+								</property>
+							</javaApiLinks>
+							<excludePackageNames>junit.*,org.junit.internal.*,org.junit.experimental.theories.internal.*</excludePackageNames>
+							<verbose>true</verbose>
+							<minmemory>32m</minmemory>
+							<maxmemory>128m</maxmemory>
+							<failOnError>true</failOnError>
+							<includeDependencySources>true</includeDependencySources>
+							<dependencySourceIncludes>
+								<dependencySourceInclude>org.hamcrest:hamcrest-core:*</dependencySourceInclude>
+							</dependencySourceIncludes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.3</version>
+				<executions>
+					<execution>
+						<id>assembly ${project.artifactId}-${project.version}.zip for sourceforge</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<appendAssemblyId>false</appendAssemblyId>
+							<descriptors>
+								<descriptor>src/main/assembly/src.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration><!-- import release version without user's prompt if non-empty property value; otherwise prompt -->
+					<developmentVersion>${releaseVersion}</developmentVersion>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<profiles>
+		<profile>
+			<id>checkRelease</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-enforcer-plugin</artifactId>
+						<version>1.1.1</version>
+						<executions>
+							<execution>
+								<id>enforce-versions</id>
+								<phase>initialize</phase>
+								<goals>
+									<goal>enforce</goal>
+								</goals>
+								<configuration>
+									<fail>true</fail>
+									<rules>
+										<requireReleaseVersion>
+											<message>No Snapshot Project Allowed!</message>
+										</requireReleaseVersion>
+									</rules>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>checkSnapshot</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-enforcer-plugin</artifactId>
+						<version>1.1.1</version>
+						<executions>
+							<execution>
+								<id>enforce-versions</id>
+								<phase>initialize</phase>
+								<goals>
+									<goal>enforce</goal>
+								</goals>
+								<configuration>
+									<fail>true</fail>
+									<rules>
+										<evaluateBeanshell><!-- Require Snapshot Version -->
+											<message>Snapshot project version (major.minor-SNAPSHOT, e.g. 4.11-SNAPSHOT) is required before deploying release project!</message>
+											<condition>
+												<![CDATA[print("parsing project version ${project.version} to components:\n${junit.majorVersion}\n${junit.minorVersion}\n${junit.incrementalVersion}\n${junit.qualifier}\n${junit.buildNumber}");
+												"SNAPSHOT".equals("${junit.qualifier}") && !"0".equals("${junit.majorVersion}") && !"0".equals("${junit.minorVersion}") && "0".equals("${junit.incrementalVersion}") && "0".equals("${junit.buildNumber}")]]>
+											</condition>
+										</evaluateBeanshell>
+									</rules>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>
