@@ -12,8 +12,10 @@ import org.junit.runner.Result;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class ParallelMethodTest {
+	private static final long TIMEOUT= 15;
 	private static volatile Thread fOne= null;
 	private static volatile Thread fTwo= null;
 	
@@ -25,12 +27,12 @@ public class ParallelMethodTest {
 		}
 		@Test public void one() throws InterruptedException {
 			fSynchronizer.countDown();
-			fSynchronizer.await();
+			assertTrue(fSynchronizer.await(TIMEOUT, TimeUnit.SECONDS));
 			fOne= Thread.currentThread();
 		}
 		@Test public void two() throws InterruptedException {
 			fSynchronizer.countDown();
-			fSynchronizer.await();
+			assertTrue(fSynchronizer.await(TIMEOUT, TimeUnit.SECONDS));
 			fTwo= Thread.currentThread();
 		}
 	}
