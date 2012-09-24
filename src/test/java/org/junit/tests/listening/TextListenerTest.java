@@ -10,19 +10,21 @@ import org.junit.internal.TextListener;
 import org.junit.runner.JUnitCore;
 import org.junit.tests.TestSystem;
 
+import static org.hamcrest.core.StringContains.containsString;
+import static org.hamcrest.core.IsNot.not;
+import static org.junit.Assert.assertThat;
+
 public class TextListenerTest extends TestCase {
 	
 	private JUnitCore runner;
 	private OutputStream results;
-	private TextListener listener;
 
 	@Override
 	public void setUp() {
 		runner= new JUnitCore();
 		TestSystem system= new TestSystem();
 		results= system.outContents();
-		listener= new TextListener(system);
-		runner.addListener(listener);
+		runner.addListener(new TextListener(system));
 	}
 	
 	public static class OneTest {
@@ -45,15 +47,14 @@ public class TextListenerTest extends TestCase {
 		assertTrue(results.toString().indexOf(convert("\nThere was 1 failure:\n1) error(org.junit.tests.listening.TextListenerTest$ErrorTest)\njava.lang.Exception")) != -1);
 	}
 	
-	public static class Slow {
-		@Test public void pause() throws InterruptedException {
-			Thread.sleep(1000);
-		}
+	public static class Time {
+		@Test public void time() {}
 	}
 	
 	public void testTime() {
-		runner.run(Slow.class);
-		assertFalse(results.toString().contains("Time: 0"));
+		runner.run(Time.class);
+		assertThat(results.toString(), containsString("Time: "));
+		assertThat(results.toString(), not(containsString(convert("Time: \n"))));
 	}
 	
 	private String convert(String string) {
