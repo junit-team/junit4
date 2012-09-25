@@ -1,11 +1,8 @@
 package org.junit.experimental;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.runner.Computer;
 import org.junit.runner.Runner;
@@ -32,30 +29,22 @@ public class ParallelComputer extends Computer {
 		return new ParallelComputer(false, true);
 	}
 
-	private static <T> Runner parallelize(Runner runner) {
-		if (runner instanceof ParentRunner<?>) {
+	private static Runner parallelize(Runner runner) {
+		if (runner instanceof ParentRunner) {
 			((ParentRunner<?>) runner).setScheduler(new RunnerScheduler() {
-				private final List<Future<Object>> fResults= new ArrayList<Future<Object>>();
+				private final ExecutorService fService= Executors.newCachedThreadPool();
 
-				private final ExecutorService fService= Executors
-						.newCachedThreadPool();
-
-				public void schedule(final Runnable childStatement) {
-					fResults.add(fService.submit(new Callable<Object>() {
-						public Object call() throws Exception {
-							childStatement.run();
-							return null;
-						}
-					}));
+				public void schedule(Runnable childStatement) {
+					fService.submit(childStatement);
 				}
 
 				public void finished() {
-					for (Future<Object> each : fResults)
-						try {
-							each.get();
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
+					try {
+						fService.shutdown();
+						fService.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+					} catch (InterruptedException e) {
+						e.printStackTrace(System.err);
+					}
 				}
 			});
 		}
