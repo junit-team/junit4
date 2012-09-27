@@ -110,20 +110,14 @@ Minimum Blank Lines
 JavaDoc
 ----------------------------------
 Alignment
-* Align parameter descriptions
 * Align thrown exception descriptions
 
 Blank Lines
 * After description
 
-Invalid tags
-* Keep empty @param tags
-* Keep empty @return tags
-* Keep empty @throws tags
-
 Other
 * Enable leading asterisks
-* Use @throws rather then @exception
+* Use @throws rather than @exception
 * Keep empty lines
 
 ----------------------------------
