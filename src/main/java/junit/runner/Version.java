@@ -8,20 +8,7 @@ import java.util.Properties;
  * This class defines the current version of JUnit
  */
 public class Version {
-    private static final String VERSION;
-    static {
-        try {
-            final Properties properties= new Properties();
-            InputStream pomProps= getPomPropertiesAsStream("junit");
-            if (pomProps == null) pomProps= getPomPropertiesAsStream("junit-dep");
-            if (pomProps != null) properties.load(pomProps);
-            VERSION= properties.getProperty("version", "<version>");
-            if (pomProps != null) pomProps.close();
-            assert !VERSION.equals("<version>") : "your class loader does not load resources at /META-INF/maven/junit/...";
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-    }
+    private static final String VERSION = getVersion();
 
 	private Version() {
 		// don't instantiate
@@ -37,5 +24,19 @@ public class Version {
 
     private static InputStream getPomPropertiesAsStream(String artifactId) {
         return Version.class.getResourceAsStream("/META-INF/maven/junit/" + artifactId + "/pom.properties");
+    }
+    
+	private static String getVersion() {
+        try {
+            final Properties properties= new Properties();
+            InputStream pomProps= getPomPropertiesAsStream("junit");
+            if (pomProps != null) properties.load(pomProps);
+            String version= properties.getProperty("version", "<version>");
+            if (pomProps != null) pomProps.close();
+            assert !version.equals("<version>") : "your class loader does not load resources at /META-INF/maven/junit/...";
+			return version;
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
     }
 }

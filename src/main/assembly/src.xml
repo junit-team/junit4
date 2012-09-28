@@ -33,7 +33,7 @@
             <directoryMode>0755</directoryMode>
             <includes>
                 <include>${groupId}:${artifactId}:${packaging}</include>
-				<include>org.hamcrest:hamcrest-core</include>
+                <include>org.hamcrest:hamcrest-core</include>
             </includes>
         </dependencySet>
     </dependencySets>
