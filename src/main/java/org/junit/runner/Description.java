@@ -179,7 +179,7 @@ public class Description implements Serializable {
 	 * @return <code>true</code> if the receiver is an atomic test
 	 */
 	public boolean isTest() {
-		return getChildren().isEmpty();
+		return getMethodName() != null;
 	}
 
 	/**
