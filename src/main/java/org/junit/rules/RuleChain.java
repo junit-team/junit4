@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.junit.rules;
 
 import java.util.ArrayList;
@@ -18,7 +15,7 @@ import org.junit.runners.model.Statement;
  * <pre>
  * public static class UseRuleChain {
  * 	&#064;Rule
- * 	public TestRule chain= RuleChain
+ * 	public RuleChain chain= RuleChain
  * 	                       .outerRule(new LoggingRule("outer rule")
  * 	                       .around(new LoggingRule("middle rule")
  * 	                       .around(new LoggingRule("inner rule");
@@ -40,6 +37,7 @@ import org.junit.runners.model.Statement;
  * finished middle rule
  * finished outer rule
  * </pre>
+ * @since 4.10
  */
 public class RuleChain implements TestRule {
 	private static final RuleChain EMPTY_CHAIN= new RuleChain(

@@ -5,6 +5,7 @@ package org.junit.runners.model;
  * should be run (in serial or parallel)
  * 
  * WARNING: still experimental, may go away.
+ * @since 4.7
  */
 public interface RunnerScheduler {
 	/**

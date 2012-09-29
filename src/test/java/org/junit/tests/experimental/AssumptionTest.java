@@ -1,15 +1,22 @@
 package org.junit.tests.experimental;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assume.assumeNoException;
 import static org.junit.Assume.assumeNotNull;
 import static org.junit.Assume.assumeThat;
 import static org.junit.Assume.assumeTrue;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
-import static org.junit.internal.matchers.StringContains.containsString;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -173,5 +180,78 @@ public class AssumptionTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void assumeWithExpectedException() {
 		assumeTrue(false);
+	}
+	
+	final static String message = "Some random message string.";
+	final static Throwable t = new Throwable();
+
+	/**
+	 * @see AssumptionTest#assumptionsWithMessage()
+	 */
+	public static class HasAssumeWithMessage {
+		@Test 
+		public void testMethod() {
+			assumeTrue(message, false);
+		}
+	}
+
+	@Test 
+	public void assumptionsWithMessage() {
+		final List<Failure> failures = 
+				runAndGetAssumptionFailures(HasAssumeWithMessage.class);
+
+		assertTrue(failures.get(0).getMessage().contains(message));
+	}
+
+	/**
+	 * @see AssumptionTest#assumptionsWithMessageAndCause()
+	 */
+	public static class HasAssumeWithMessageAndCause {
+		@Test 
+		public void testMethod() {
+			assumeNoException(message, t);
+		}		
+	}
+
+	@Test 
+	public void assumptionsWithMessageAndCause() {
+		final List<Failure> failures = 
+				runAndGetAssumptionFailures(HasAssumeWithMessageAndCause.class);
+		assertTrue(failures.get(0).getMessage().contains(message));
+		assertSame(failures.get(0).getException().getCause(), t);
+	}
+
+	public static class HasFailingAssumptionWithMessage {
+		@Test
+		public void assumptionsFail() {
+			assumeThat(message, 3, is(4));
+			fail();
+		}
+	}
+
+	@Test
+	public void failedAssumptionsWithMessage() {
+		final List<Failure> failures = 
+			runAndGetAssumptionFailures(HasFailingAssumptionWithMessage.class);
+
+		assertEquals(failures.size(), 1);
+		assertTrue(failures.get(0).getMessage().contains(message));
+	}
+
+	/**
+	 * Helper method that runs tests on <code>clazz</code> and returns any
+	 * {@link Failure} objects that were {@link AssumptionViolatedException}s.
+	 */
+	private static List<Failure> runAndGetAssumptionFailures(Class<?> clazz) {
+		final List<Failure> failures = new ArrayList<Failure>();
+		final JUnitCore core = new JUnitCore();
+		core.addListener(new RunListener() {
+			@Override
+			public void testAssumptionFailure(Failure failure) {
+				failures.add(failure);
+			}
+		});
+		core.run(clazz);
+		return failures;
 	}
 }

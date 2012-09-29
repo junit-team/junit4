@@ -13,7 +13,7 @@ import org.junit.runners.model.Statement;
  *        private ErrorLog errorLog = new ErrorLog();
  *     
  *        &#064;Rule
- *        public TestRule verifier = new Verifier() {
+ *        public Verifier verifier = new Verifier() {
  *           &#064;Override public void verify() {
  *              assertTrue(errorLog.isEmpty());
  *           }
@@ -24,6 +24,7 @@ import org.junit.runners.model.Statement;
  *        }
  *     }
  * </pre>
+ * @since 4.7
  */
 public abstract class Verifier implements TestRule {
 	public Statement apply(final Statement base, Description description) {

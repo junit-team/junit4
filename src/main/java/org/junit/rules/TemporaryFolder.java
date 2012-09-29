@@ -23,18 +23,19 @@ import org.junit.Rule;
  * 	}
  * }
  * </pre>
+ * @since 4.7
  */
 public class TemporaryFolder extends ExternalResource {
-        private final File parentFolder;
+	private final File parentFolder;
 	private File folder;
 
-        public TemporaryFolder() {
-                this(null);
-        }
+	public TemporaryFolder() {
+		this(null);
+	}
 
-        public TemporaryFolder(File parentFolder) {
-                this.parentFolder = parentFolder;
-        }
+	public TemporaryFolder(File parentFolder) {
+		this.parentFolder = parentFolder;
+	}
 
 	@Override
 	protected void before() throws Throwable {
@@ -51,7 +52,7 @@ public class TemporaryFolder extends ExternalResource {
 	 * for testing purposes only. Do not use.
 	 */
 	public void create() throws IOException {
-	        folder = createTemporaryFolderIn(parentFolder);
+	        folder= createTemporaryFolderIn(parentFolder);
 	}
 
 	/**
@@ -60,7 +61,7 @@ public class TemporaryFolder extends ExternalResource {
 	public File newFile(String fileName) throws IOException {
 		File file= new File(getRoot(), fileName);
 		if (!file.createNewFile())
-			throw new IllegalStateException(
+			throw new IOException(
 					"a file with the name \'" + fileName + "\' already exists in the test folder");
 		return file;
 	}
@@ -76,13 +77,28 @@ public class TemporaryFolder extends ExternalResource {
 	 * Returns a new fresh folder with the given name under the temporary
 	 * folder.
 	 */
-	public File newFolder(String... folderNames) {
+	public File newFolder(String folder) throws IOException {
+		return newFolder(new String[]{folder});
+	}
+
+	/**
+	 * Returns a new fresh folder with the given name(s) under the temporary
+	 * folder.
+	 */
+	public File newFolder(String... folderNames) throws IOException {
 		File file= getRoot();
-		for (String folderName : folderNames) {
-			file= new File(file, folderName);
-			file.mkdir();
+		for (int i = 0; i < folderNames.length; i++) {
+			String folderName = folderNames[i];
+			file = new File(file, folderName);
+			if (!file.mkdir() && isLastElementInArray(i, folderNames))
+				throw new IOException(
+						"a folder with the name \'" + folderName + "\' already exists");
 		}
 		return file;
+	}
+
+	private boolean isLastElementInArray(int index, String[] array) {
+		return index == array.length - 1;
 	}
 
 	/**

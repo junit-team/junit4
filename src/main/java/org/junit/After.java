@@ -11,8 +11,8 @@ import java.lang.annotation.Target;
  * with <code>&#064;After</code> causes that method to be run after the {@link org.junit.Test} method. All <code>&#064;After</code>
  * methods are guaranteed to run even if a {@link org.junit.Before} or {@link org.junit.Test} method throws an 
  * exception. The <code>&#064;After</code> methods declared in superclasses will be run after those of the current
- * class.</p>
- * 
+ * class, unless they are overridden in the current class.</p>
+ *
  * Here is a simple example:
 * <pre>
  * public class Example {
@@ -31,6 +31,7 @@ import java.lang.annotation.Target;
  * 
  * @see org.junit.Before
  * @see org.junit.Test
+ * @since 4.0
  */
 
 @Retention(RetentionPolicy.RUNTIME)

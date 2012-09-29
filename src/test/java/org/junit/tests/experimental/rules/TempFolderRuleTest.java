@@ -1,5 +1,6 @@
 package org.junit.tests.experimental.rules;
 
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -7,10 +8,10 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.failureCountIs;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
-import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import org.junit.After;
@@ -43,14 +44,30 @@ public class TempFolderRuleTest {
 		public TemporaryFolder folder= new TemporaryFolder();
 
 		@Test
-		public void testUsingTempFolder() throws IOException {
+		public void testUsingTempFolderStringReflection() throws Exception {
 			String subfolder = "subfolder";
 			String filename = "a.txt";
+			// force usage of folder.newFolder(String),
+			// check is available and works, to avoid a potential NoSuchMethodError with non-recompiled code.
+			Method method = folder.getClass().getMethod("newFolder", new Class<?>[] {String.class});
+			createdFiles[0]= (File) method.invoke(folder, subfolder);
+			new File(createdFiles[0], filename).createNewFile();
+
+			File expectedFile = new File(folder.getRoot(), join(subfolder, filename));
+
+			assertTrue(expectedFile.exists());
+		}
+
+		@Test
+		public void testUsingTempFolderString() throws IOException {
+			String subfolder = "subfolder";
+			String filename = "a.txt";
+			// this uses newFolder(String), ensure that a single String works
 			createdFiles[0]= folder.newFolder(subfolder);
 			new File(createdFiles[0], filename).createNewFile();
-			
+
 			File expectedFile = new File(folder.getRoot(), join(subfolder, filename));
-			
+
 			assertTrue(expectedFile.exists());
 		}
 
@@ -200,7 +217,7 @@ public class TempFolderRuleTest {
 		}
 
 		@Test
-		public void testNewFolder() {
+		public void testNewFolder() throws IOException {
 			folder.newFolder(NEW_FOLDER_DUMMY);
 		}
 	}

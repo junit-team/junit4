@@ -5,6 +5,7 @@ import java.util.List;
 
 /**
  * Represents one or more problems encountered while initializing a Runner
+ * @since 4.5
  */
 public class InitializationError extends Exception {
 	private static final long serialVersionUID= 1L;

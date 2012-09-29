@@ -11,6 +11,7 @@ import org.junit.runner.Request;
  * {@link org.junit.runner.JUnitCore#run(Request)}. Alternatively, apply a <code>Filter</code> to 
  * a {@link org.junit.runner.Runner} before running tests (for example, in conjunction with 
  * {@link org.junit.runner.RunWith}.
+ * @since 4.0
  */
 public abstract class Filter {
 	/**

@@ -1,5 +1,6 @@
 package org.junit.tests.experimental.rules;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -8,15 +9,16 @@ import static org.junit.Assert.fail;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
-import static org.junit.matchers.JUnitMatchers.containsString;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.rules.TestName;
 import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
@@ -455,6 +457,34 @@ public class TestRuleTest {
 		Result result= JUnitCore.runClasses(MethodOnFailureTest.class);
 		assertEquals(String.format("nothing(%s) AssertionError", MethodOnFailureTest.class.getName()), log);
 		assertEquals(1, result.getFailureCount());
+	}
+
+	public static class MethodOnSkippedTest {
+		private TestRule watchman= new TestWatcher() {
+			@Override
+			protected void skipped(AssumptionViolatedException e, Description description) {
+				log+= description + " " + e.getClass().getSimpleName();
+			}
+		};
+
+		@Rule
+		public TestRule getWatchman() {
+			return watchman;
+		}
+
+		@Test
+		public void nothing() {
+			Assume.assumeTrue(false);
+		}
+	}
+
+	@Test
+	public void methodOnSkipped() {
+		log= "";
+		Result result= JUnitCore.runClasses(MethodOnSkippedTest.class);
+		assertEquals(String.format("nothing(%s) AssumptionViolatedException", MethodOnSkippedTest.class.getName()), log);
+		assertEquals(0, result.getFailureCount());
+		assertEquals(1, result.getRunCount());
 	}
 
 	public static class MethodWatchmanTest {

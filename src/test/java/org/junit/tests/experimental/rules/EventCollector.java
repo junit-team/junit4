@@ -1,13 +1,13 @@
 package org.junit.tests.experimental.rules;
 
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.matchers.JUnitMatchers.both;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.hamcrest.Matcher;
-import org.junit.internal.matchers.TypeSafeMatcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -15,7 +15,7 @@ import org.junit.runner.notification.RunListener;
 
 class EventCollector extends RunListener {
 	static Matcher<EventCollector> everyTestRunSuccessful() {
-		return both(hasNoFailure()).and(hasNoAssumptionFailure());
+		return allOf(hasNoFailure(), hasNoAssumptionFailure());
 	}
 
 	private static Matcher<EventCollector> hasNumberOfFailures(

@@ -44,6 +44,7 @@ import org.junit.runners.model.Statement;
  * <li>It is published, and extension and reuse are encouraged, whereas {@code
  * JUnit4ClassRunner} was in an internal package, and is now deprecated.
  * </ul>
+ * @since 4.5
  */
 public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	/**
@@ -168,7 +169,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 			errors.add(new Exception("No runnable methods"));
 	}
 
-	private void validateFields(List<Throwable> errors) {
+	protected void validateFields(List<Throwable> errors) {
 		RULE_VALIDATOR.validate(getTestClass(), errors);
 	}
 
