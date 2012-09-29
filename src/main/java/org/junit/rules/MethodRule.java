@@ -24,10 +24,10 @@ import org.junit.runners.model.Statement;
  *   <li>{@link Verifier}: fail test if object state ends up incorrect</li>
  * </ul>
  * 
- * Note that {@link MethodRule} is now deprecated, you should be using {@link TestRule} instead.
+ * Note that {@link MethodRule} has been replaced by {@link TestRule},
+ * which has the added benefit of supporting class rules.
  * @since 4.7
  */
-@Deprecated
 public interface MethodRule {
 	/**
 	 * Modifies the method-running {@link Statement} to implement an additional

@@ -341,7 +341,6 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 		return result;
 	}
 
-	@SuppressWarnings("deprecation")
 	private Statement withMethodRules(FrameworkMethod method, List<TestRule> testRules,
 			Object target, Statement result) {
 		for (org.junit.rules.MethodRule each : getMethodRules(target))
@@ -350,7 +349,6 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 		return result;
 	}
 
-	@SuppressWarnings("deprecation")
 	private List<org.junit.rules.MethodRule> getMethodRules(Object target) {
 		return rules(target);
 	}
@@ -360,11 +358,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 	 *            the test case instance
 	 * @return a list of MethodRules that should be applied when executing this
 	 *         test
-	 * @deprecated {@link org.junit.rules.MethodRule} is a deprecated interface. Port to
-	 *             {@link TestRule} and
-	 *             {@link BlockJUnit4ClassRunner#getTestRules(Object)}
 	 */
-	@Deprecated
 	protected List<org.junit.rules.MethodRule> rules(Object target) {
 		return getTestClass().getAnnotatedFieldValues(target, Rule.class,
 				org.junit.rules.MethodRule.class);

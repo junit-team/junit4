@@ -6,9 +6,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotates static fields that contain rules or methods that return them. A field must be public,
+ * Annotates static fields that reference rules or methods that return them. A field must be public,
  * static, and a subtype of {@link org.junit.rules.TestRule}.  A method must be public static, and return
- * a subtype of {@link org.junit.rules.TestRule} 
+ * a subtype of {@link org.junit.rules.TestRule}.<p>
+ *
  * The {@link org.junit.runners.model.Statement} passed 
  * to the {@link org.junit.rules.TestRule} will run any {@link BeforeClass} methods, 
  * then the entire body of the test class (all contained methods, if it is
