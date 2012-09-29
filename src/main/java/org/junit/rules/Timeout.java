@@ -1,5 +1,7 @@
 package org.junit.rules;
 
+import java.util.concurrent.TimeUnit;
+
 import org.junit.internal.runners.statements.FailOnTimeout;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -32,15 +34,31 @@ import org.junit.runners.model.Statement;
  * @since 4.7
  */
 public class Timeout implements TestRule {
-	private final int fMillis;
+	private final long fMillis;
 
 	/**
-	 * @param millis the millisecond timeout
+	 * Create a {@code Timeout} instance with the timeout specified
+	 * in milliseconds.
+	 * 
+	 * @param millis the maximum time in milliseconds to allow the
+	 * 	      test to run before it should timeout
 	 */
 	public Timeout(int millis) {
 		fMillis= millis;
 	}
 
+	/**
+	 * Create a {@code Timeout} instance with the timeout specified
+	 * at the unit of granularity of the provided {@code TimeUnit}.
+	 * 
+	 * @param timeout the maximum time to allow the test to run
+	 *        before it should timeout
+	 * @param unit the time unit of the {@code timeout} argument
+	 */
+	public Timeout(long timeout, TimeUnit unit) {
+		fMillis= unit.toMillis(timeout);
+	}
+	
 	public Statement apply(Statement base, Description description) {
 		return new FailOnTimeout(base, fMillis);
 	}
