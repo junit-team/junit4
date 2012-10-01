@@ -54,8 +54,8 @@ public abstract class TestWatcher implements TestRule {
 					base.evaluate();
 					succeededQuietly(description, errors);
 				} catch (AssumptionViolatedException e) {
-					skipped(e, description);
-					throw e;
+					errors.add(e);
+					skippedQuietly(e, description, errors);
 				} catch (Throwable t) {
 					errors.add(t);
 					failedQuietly(t, description, errors);
@@ -86,7 +86,16 @@ public abstract class TestWatcher implements TestRule {
 		}
 	}
 
-	private void startingQuietly(Description description, 
+	private void skippedQuietly(AssumptionViolatedException t, Description description,
+			List<Throwable> errors) {
+		try {
+			skipped(t, description);
+		} catch (Throwable t1) {
+			errors.add(t1);
+		}
+	}
+
+	private void startingQuietly(Description description,
 			List<Throwable> errors) {
 		try {
 			starting(description);
