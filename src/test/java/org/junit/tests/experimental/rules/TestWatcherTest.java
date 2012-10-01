@@ -10,6 +10,7 @@ import static org.junit.runner.JUnitCore.runClasses;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.results.PrintableResult;
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
@@ -33,6 +34,29 @@ public class TestWatcherTest {
 		runClasses(ViolatedAssumptionTest.class);
 		assertThat(ViolatedAssumptionTest.watchedLog.toString(),
 				is("starting finished "));
+	}
+
+	public static class TestWatcherSkippedThrowsExceptionTest {
+		@Rule
+		public TestRule watcher= new TestWatcher() {
+			@Override
+			protected void skipped(AssumptionViolatedException e, Description description) {
+				throw new RuntimeException("watcher failure");
+			}
+		};
+
+		@Test
+		public void fails() {
+			throw new AssumptionViolatedException("test failure");
+		}
+	}
+
+	@Test
+	public void testWatcherSkippedThrowsException() {
+		PrintableResult result= testResult(TestWatcherSkippedThrowsExceptionTest.class);
+		assertThat(result, failureCountIs(2));
+		assertThat(result, hasFailureContaining("test failure"));
+		assertThat(result, hasFailureContaining("watcher failure"));
 	}
 
 	public static class FailingTest {
