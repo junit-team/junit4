@@ -13,45 +13,45 @@ import org.junit.runner.RunWith;
 
 public class TypeMatchingBetweenMultiDataPointsMethod {
 
-	@RunWith(Theories.class)
-	public static class WithWrongfullyTypedDataPointsMethod {
-		@DataPoint
-		public static String[] correctlyTyped = {"Good", "Morning"};
+    @RunWith(Theories.class)
+    public static class WithWrongfullyTypedDataPointsMethod {
+        @DataPoint
+        public static String[] correctlyTyped = {"Good", "Morning"};
 
-		@DataPoints
-		public static String[] wrongfullyTyped() {
-			return new String[]{"Hello", "World"};
-		}
+        @DataPoints
+        public static String[] wrongfullyTyped() {
+            return new String[]{"Hello", "World"};
+        }
 
-		@Theory
-		public void testTheory(String[] array) {
-		}
-	}
+        @Theory
+        public void testTheory(String[] array) {
+        }
+    }
 
-	@Test
-	public void ignoreWrongTypedDataPointsMethod() {
-		assertThat(testResult(WithWrongfullyTypedDataPointsMethod.class), isSuccessful());
-	}
+    @Test
+    public void ignoreWrongTypedDataPointsMethod() {
+        assertThat(testResult(WithWrongfullyTypedDataPointsMethod.class), isSuccessful());
+    }
 
-	@RunWith(Theories.class)
-	public static class WithCorrectlyTypedDataPointsMethod {
-		@DataPoint
-		public static String[] correctlyTyped = {"Good", "Morning"};
+    @RunWith(Theories.class)
+    public static class WithCorrectlyTypedDataPointsMethod {
+        @DataPoint
+        public static String[] correctlyTyped = {"Good", "Morning"};
 
-		@DataPoints
-		public static String[][] anotherCorrectlyTyped() {
-			return new String[][]{
-					{"Hello", "World"}
-			};
-		}
+        @DataPoints
+        public static String[][] anotherCorrectlyTyped() {
+            return new String[][]{
+                    {"Hello", "World"}
+            };
+        }
 
-		@Theory
-		public void testTheory(String[] array) {
-		}
-	}
+        @Theory
+        public void testTheory(String[] array) {
+        }
+    }
 
-	@Test
-	public void pickUpMultiPointDataPointMethods() throws Exception {
-		assertThat(testResult(WithCorrectlyTypedDataPointsMethod.class), isSuccessful());
-	}
+    @Test
+    public void pickUpMultiPointDataPointMethods() throws Exception {
+        assertThat(testResult(WithCorrectlyTypedDataPointsMethod.class), isSuccessful());
+    }
 }

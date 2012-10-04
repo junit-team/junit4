@@ -2,7 +2,8 @@ package org.junit.runners;
 
 import org.junit.internal.runners.SuiteMethod;
 
-/** Runner for use with JUnit 3.8.x-style AllTests classes
+/**
+ * Runner for use with JUnit 3.8.x-style AllTests classes
  * (those that only implement a static <code>suite()</code>
  * method). For example:
  * <pre>
@@ -13,13 +14,14 @@ import org.junit.internal.runners.SuiteMethod;
  *    }
  * }
  * </pre>
+ *
  * @since 4.0
  */
 public class AllTests extends SuiteMethod {
-	/**
-	 * Only called reflectively. Do not use programmatically.
-	 */
-	public AllTests(Class<?> klass) throws Throwable {
-		super(klass);
-	}
+    /**
+     * Only called reflectively. Do not use programmatically.
+     */
+    public AllTests(Class<?> klass) throws Throwable {
+        super(klass);
+    }
 }
