@@ -6,8 +6,8 @@ import org.junit.runners.model.InitializationError;
 import org.junit.tests.validation.anotherpackage.Sub;
 
 public class InaccessibleBaseClassTest {
-	@Test(expected= InitializationError.class)
-	public void inaccessibleBaseClassIsCaughtAtValidation() throws InitializationError {
-		new BlockJUnit4ClassRunner(Sub.class);
-	}
+    @Test(expected = InitializationError.class)
+    public void inaccessibleBaseClassIsCaughtAtValidation() throws InitializationError {
+        new BlockJUnit4ClassRunner(Sub.class);
+    }
 }
