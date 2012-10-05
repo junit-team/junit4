@@ -10,7 +10,7 @@ import org.junit.runners.model.RunnerBuilder;
 /**
  * If you put tests in inner classes, Ant, for example, won't find them. By running the outer class
  * with Enclosed, the tests in the inner classes will be run. You might put tests in inner classes
- * to group them for convenience or to share constants.
+ * to group them for convenience or to share constants. Abstract inner classes are ignored.
  * 
  *  So, for example:
  *  <pre>
@@ -19,10 +19,12 @@ import org.junit.runners.model.RunnerBuilder;
  *  	...useful shared stuff...
  *  	public static class OneKindOfListTest {...}
  *  	public static class AnotherKind {...}
+ *  	abstract public static class Ignored {...}
  *  }
  *  </pre>
  *  
  *  For a real example, @see org.junit.tests.manipulation.SortableTest.
+ *  
  */
 public class Enclosed extends Suite {
 	/**
