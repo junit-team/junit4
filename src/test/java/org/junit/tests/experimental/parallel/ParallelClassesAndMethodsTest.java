@@ -21,6 +21,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.Arrays;
 
 import static org.hamcrest.core.Is.is;
@@ -291,6 +293,66 @@ public final class ParallelClassesAndMethodsTest {
                                     fExample2One, fExample2Two,
                                     fExample3One, fExample3Two);
         assertThat(threads.size(), anyOf(is(1), is(2), is(3)));
+    }
+
+    @Test public void classesAndMethodsSimpleDoublePools() {
+        fSynchronizer= null;
+        ExecutorService poolClasses= Executors.newSingleThreadExecutor();
+        ExecutorService poolMethods= Executors.newSingleThreadExecutor();
+        Computer comp= ParallelComputer.classesAndMethods(poolClasses, poolMethods);//nothing much parallelized
+        Result result= JUnitCore.runClasses(comp, Example1.class, Example2.class, Example3.class);
+        assertTrue(result.wasSuccessful());
+        assertNotNull(fExample1One);
+        assertNotNull(fExample1Two);
+        assertNotNull(fExample2One);
+        assertNotNull(fExample2Two);
+        assertNotNull(fExample3One);
+        assertNotNull(fExample3Two);
+        HashSet<Thread> threads= new HashSet<Thread>();
+        Collections.addAll(threads, fExample1One, fExample1Two,
+                                    fExample2One, fExample2Two,
+                                    fExample3One, fExample3Two);
+        assertThat(threads.size(), is(1));
+    }
+
+    @Test public void classesAndMethodsDoublePools() {
+        fSynchronizer= new CyclicBarrier(2);
+        ExecutorService poolClasses= Executors.newFixedThreadPool(3);
+        ExecutorService poolMethods= Executors.newFixedThreadPool(2);
+        Computer comp= ParallelComputer.classesAndMethods(poolClasses, poolMethods);//2 Threads / class
+        Result result= JUnitCore.runClasses(comp, Example1.class, Example2.class, Example3.class);
+        assertTrue(result.wasSuccessful());
+        assertNotNull(fExample1One);
+        assertNotNull(fExample1Two);
+        assertNotNull(fExample2One);
+        assertNotNull(fExample2Two);
+        assertNotNull(fExample3One);
+        assertNotNull(fExample3Two);
+        HashSet<Thread> threads= new HashSet<Thread>();
+        Collections.addAll(threads, fExample1One, fExample1Two,
+                                    fExample2One, fExample2Two,
+                                    fExample3One, fExample3Two);
+        assertThat(threads.size(), is(2));
+    }
+
+    @Test public void classesAndMethodsBigDoublePools() {
+        fSynchronizer= new CyclicBarrier(3);
+        ExecutorService poolClasses= Executors.newFixedThreadPool(5);
+        ExecutorService poolMethods= Executors.newFixedThreadPool(4);
+        Computer comp= ParallelComputer.classesAndMethods(poolClasses, poolMethods);//3 or 4 method Threads
+        Result result= JUnitCore.runClasses(comp, Example1.class, Example2.class, Example3.class);
+        assertTrue(result.wasSuccessful());
+        assertNotNull(fExample1One);
+        assertNotNull(fExample1Two);
+        assertNotNull(fExample2One);
+        assertNotNull(fExample2Two);
+        assertNotNull(fExample3One);
+        assertNotNull(fExample3Two);
+        HashSet<Thread> threads= new HashSet<Thread>();
+        Collections.addAll(threads, fExample1One, fExample1Two,
+                                    fExample2One, fExample2Two,
+                                    fExample3One, fExample3Two);
+        assertThat(threads.size(), anyOf(is(3), is(4)));
     }
 
     @Test public void fibonacci() {
