@@ -23,6 +23,7 @@ import org.junit.tests.experimental.max.JUnit38SortingTest;
 import org.junit.tests.experimental.max.MaxStarterTest;
 import org.junit.tests.experimental.parallel.ParallelClassTest;
 import org.junit.tests.experimental.parallel.ParallelMethodTest;
+import org.junit.tests.experimental.parallel.ParallelClassesAndMethodsTest;
 import org.junit.tests.experimental.rules.BlockJUnit4ClassRunnerOverrideTest;
 import org.junit.tests.experimental.rules.ClassRulesTest;
 import org.junit.tests.experimental.rules.ExpectedExceptionTest;
@@ -143,6 +144,7 @@ import org.junit.tests.validation.ValidationTest;
         TimeoutRuleTest.class,
         ParallelClassTest.class,
         ParallelMethodTest.class,
+        ParallelClassesAndMethodsTest.class,
         ParentRunnerTest.class,
         NameRulesTest.class,
         ClassRulesTest.class,
