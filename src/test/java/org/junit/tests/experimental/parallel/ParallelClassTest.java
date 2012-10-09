@@ -6,8 +6,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.Executors;
+import java.util.HashSet;
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,51 +26,41 @@ public class ParallelClassTest {
     private static volatile Thread fExample1Two = null;
     private static volatile Thread fExample2One = null;
     private static volatile Thread fExample2Two = null;
-    private static volatile CountDownLatch fSynchronizer;
+    private static volatile CyclicBarrier fSynchronizer;
 
     public static class Example1 {
-        @Test
-        public void one() throws InterruptedException {
-            fSynchronizer.countDown();
-            assertTrue(fSynchronizer.await(TIMEOUT, TimeUnit.SECONDS));
-            fExample1One = Thread.currentThread();
+        @Test public void one() throws InterruptedException, BrokenBarrierException, TimeoutException {
+            if (fSynchronizer != null) fSynchronizer.await(TIMEOUT, TimeUnit.SECONDS);
+            fExample1One= Thread.currentThread();
         }
 
-        @Test
-        public void two() throws InterruptedException {
-            fSynchronizer.countDown();
-            assertTrue(fSynchronizer.await(TIMEOUT, TimeUnit.SECONDS));
-            fExample1Two = Thread.currentThread();
+        @Test public void two() throws InterruptedException, BrokenBarrierException, TimeoutException {
+            if (fSynchronizer != null) fSynchronizer.await(TIMEOUT, TimeUnit.SECONDS);
+            fExample1Two= Thread.currentThread();
         }
     }
 
     public static class Example2 {
-        @Test
-        public void one() throws InterruptedException {
-            fSynchronizer.countDown();
-            assertTrue(fSynchronizer.await(TIMEOUT, TimeUnit.SECONDS));
-            fExample2One = Thread.currentThread();
+        @Test public void one() throws InterruptedException, BrokenBarrierException, TimeoutException {
+            if (fSynchronizer != null) fSynchronizer.await(TIMEOUT, TimeUnit.SECONDS);
+            fExample2One= Thread.currentThread();
         }
 
-        @Test
-        public void two() throws InterruptedException {
-            fSynchronizer.countDown();
-            assertTrue(fSynchronizer.await(TIMEOUT, TimeUnit.SECONDS));
-            fExample2Two = Thread.currentThread();
+        @Test public void two() throws InterruptedException, BrokenBarrierException, TimeoutException {
+            if (fSynchronizer != null) fSynchronizer.await(TIMEOUT, TimeUnit.SECONDS);
+            fExample2Two= Thread.currentThread();
         }
     }
 
-    @Before
-    public void init() {
+    @Before public void init() {
         fExample1One = null;
         fExample1Two = null;
         fExample2One = null;
         fExample2Two = null;
-        fSynchronizer = new CountDownLatch(2);
     }
 
-    @Test
-    public void testsRunInParallel() {
+    @Test public void infinitivePool() {
+        fSynchronizer= new CyclicBarrier(2);
         Result result = JUnitCore.runClasses(ParallelComputer.classes(), Example1.class, Example2.class);
         assertTrue(result.wasSuccessful());
         assertNotNull(fExample1One);
@@ -75,5 +70,41 @@ public class ParallelClassTest {
         assertThat(fExample1One, is(fExample1Two));
         assertThat(fExample2One, is(fExample2Two));
         assertThat(fExample1One, is(not(fExample2One)));
+        HashSet<Thread> threads= new HashSet<Thread>();
+        Collections.addAll(threads, fExample1One, fExample1Two, fExample2One, fExample2Two);
+        assertThat(threads.size(), is(2));
+    }
+
+    @Test public void singleThread() throws InterruptedException {
+        fSynchronizer= null;
+        Result result= JUnitCore.runClasses(ParallelComputer.classes(Executors.newSingleThreadExecutor()),
+                                            Example1.class, Example2.class);
+        assertTrue(result.wasSuccessful());
+        assertNotNull(fExample1One);
+        assertNotNull(fExample1Two);
+        assertNotNull(fExample2One);
+        assertNotNull(fExample2Two);
+        HashSet<Thread> threads= new HashSet<Thread>();
+        Collections.addAll(threads, fExample1One, fExample1Two, fExample2One, fExample2Two);
+        assertThat(threads.size(), is(1));
+		assertThat(threads.iterator().next(), is(not(Thread.currentThread())));
+    }
+
+    @Test public void fixedSizePool() throws InterruptedException {
+        fSynchronizer= new CyclicBarrier(2);
+        Class<?>[] classes= {Example1.class, Example2.class};
+        Result result= JUnitCore.runClasses(ParallelComputer.classes(Executors.newFixedThreadPool(classes.length)),
+                                            classes);
+        assertTrue(result.wasSuccessful());
+        assertNotNull(fExample1One);
+        assertNotNull(fExample1Two);
+        assertNotNull(fExample2One);
+        assertNotNull(fExample2Two);
+        assertThat(fExample1One, is(fExample1Two));
+        assertThat(fExample2One, is(fExample2Two));
+        assertThat(fExample1One, is(not(fExample2One)));
+        HashSet<Thread> threads= new HashSet<Thread>();
+        Collections.addAll(threads, fExample1One, fExample1Two, fExample2One, fExample2Two);
+        assertThat(threads.size(), is(2));
     }
 }
