@@ -22,22 +22,42 @@ import org.junit.runners.model.RunnerScheduler;
 import org.junit.internal.runners.ErrorReportingRunner;
 
 public class ParallelComputer extends Computer {
+    // true: parallelized classes if #classes(), #classesAndMethods() or ParallelComputer(true, x), ParallelComputer(pool[,...])
     private final boolean fParallelClasses;
+
+    // true: parallelized mehods if #methods(), #classesAndMethods() or ParallelComputer(x, true), ParallelComputer(x, pool), ParallelComputer(pool[,...])
     private final boolean fParallelMethods;
+
+    // true if a pool is provided by caller: #classes(pool), #methods(pool), #classesAndMethods(pool[,...]), ParallelComputer(pool[,...])
+    // else a pool is created (same as previous implementation), see #threadPoolClasses() and #threadPoolMethods()
     private final boolean fProvidedPools;
+
+    // true if provided pool is one common for methods/classes; enables the fSinglePoolBalancer
     private final boolean fHasSinglePoll;
+
+    // if single pool, ThreadPoolExecutor#getCorePoolSize(); necessary to compute thread resources for classes/methods, see #getSuite()
     private final int fSinglePoolCoreSize;
+
+    // if single pool, ThreadPoolExecutor#getMaximumPoolSize(); necessary to compute thread resources for classes/methods, see #getSuite()
     private final int fSinglePoolMaxSize;
+
+    // if single pool, the user can specify min concurrent methods. Without this the parallel classes consumed all thread resources.
     private final int fSinglePoolMinConcurrentMethods;
+
+    // provided pools
+    // if a single pool, both refer to the same
     private final ExecutorService fPoolClasses;
     private final ExecutorService fPoolMethods;
 
-    //disables the callers Thread for scheduling purposes until all classes finished
+    // disables the callers Thread for scheduling purposes until all classes finished
     private volatile CountDownLatch fClassesFinisher;
 
-    //prevents resource exhaustion on classes when used with single Thread pool
+    // prevents thread resources exhaustion on classes when used with single pool => gives a chance to parallelize methods
+    // see fSinglePoolMinConcurrentMethods above
+    // used in #parallelize(): allows a number of parallel classes and mehods
     private volatile Semaphore fSinglePoolBalancer;
 
+    // fClassesFinisher is initialized with this value, see #getSuite() and #getParent()
     private int countClasses;
 
     public ParallelComputer(boolean classes, boolean methods) {
