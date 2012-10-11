@@ -25,7 +25,7 @@ public class ParallelComputer extends Computer {
     // true: parallelized classes if #classes(), #classesAndMethods() or ParallelComputer(true, x), ParallelComputer(pool[,...])
     private final boolean fParallelClasses;
 
-    // true: parallelized mehods if #methods(), #classesAndMethods() or ParallelComputer(x, true), ParallelComputer(x, pool), ParallelComputer(pool[,...])
+    // true: parallelized methods if #methods(), #classesAndMethods() or ParallelComputer(x, true), ParallelComputer(x, pool), ParallelComputer(pool[,...])
     private final boolean fParallelMethods;
 
     // true if a pool is provided by caller: #classes(pool), #methods(pool), #classesAndMethods(pool[,...]), ParallelComputer(pool[,...])
@@ -54,7 +54,7 @@ public class ParallelComputer extends Computer {
 
     // prevents thread resources exhaustion on classes when used with single pool => gives a chance to parallelize methods
     // see fSinglePoolMinConcurrentMethods above
-    // used in #parallelize(): allows a number of parallel classes and mehods
+    // used in #parallelize(): allows a number of parallel classes and methods
     private volatile Semaphore fSinglePoolBalancer;
 
     // fClassesFinisher is initialized with this value, see #getSuite() and #getParent()
