@@ -199,7 +199,7 @@ public class ParallelComputer extends Computer {
             }
 
             public void finished() {
-                fClassesFinisher.countDown();
+                if (fClassesFinisher != null) fClassesFinisher.countDown();
             }
         });
         return runner;
@@ -218,7 +218,7 @@ public class ParallelComputer extends Computer {
 
             public void finished() {
                 if (isClassPool) { //wait until all test cases finished
-                    awaitClassesFinished();
+                    if (fProvidedPools) awaitClassesFinished();
                     tryFinish(service);
                 } else { //wait until the test case finished
                     if (fProvidedPools) {
@@ -254,7 +254,7 @@ public class ParallelComputer extends Computer {
                 maxConcurrentClasses= Math.min(maxConcurrentClasses, countClasses);
                 fSinglePoolBalancer= new Semaphore(maxConcurrentClasses);
             }
-            fClassesFinisher= new CountDownLatch(countClasses);
+            fClassesFinisher= fProvidedPools ? new CountDownLatch(countClasses) : null;
             if (fParallelClasses) parallelize((ParentRunner) suite, threadPoolClasses(), true);
         }
         return suite;
