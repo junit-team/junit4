@@ -53,7 +53,9 @@ public class AllMembersSupplierTest {
 
     public static class HasDataPointsMethodWithNullValue {
         @DataPoints
-        public static Integer[] objects = {null, 1};
+        public static Integer[] getObjects() {
+            return new Integer[] {null, 1};
+        }
 
         public HasDataPointsMethodWithNullValue(Integer i) {
         }
