@@ -5,6 +5,7 @@ import junit.framework.Test;
 import org.junit.internal.MethodSorterTest;
 import org.junit.internal.matchers.StacktracePrintingMatcherTest;
 import org.junit.runner.RunWith;
+import org.junit.runner.notification.ConcurrentRunNotifierTest;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.junit.tests.assertion.AssertionTest;
@@ -86,6 +87,7 @@ import org.junit.tests.validation.ValidationTest;
 @SuppressWarnings("deprecation")
 @RunWith(Suite.class)
 @SuiteClasses({
+        ConcurrentRunNotifierTest.class,
         AssumptionTest.class,
         ClassRequestTest.class,
         ListenerTest.class,

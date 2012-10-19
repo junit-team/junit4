@@ -34,7 +34,10 @@ public class RunNotifier {
      */
     public void addListener(RunListener listener) {
         final Lock w= writeLock;
-        w.lock();
+        // Must NOT release read lock before acquiring write lock
+        // ; otherwise run() and fireTestFailures() may operate with obsolete listeners.
+        if (lock.getReadHoldCount() == 0) w.lock();
+        else w.tryLock();
         try {
             fListeners.add(listener);
         } finally {
@@ -47,7 +50,10 @@ public class RunNotifier {
      */
     public void removeListener(RunListener listener) {
         final Lock w= writeLock;
-        w.lock();
+        // Must NOT release read lock before acquiring write lock
+        // ; otherwise run() and fireTestFailures() may operate with obsolete listeners.
+        if (lock.getReadHoldCount() == 0) w.lock();
+        else w.tryLock();
         try {
             fListeners.remove(listener);
         } finally {
@@ -214,7 +220,10 @@ public class RunNotifier {
      */
     public void addFirstListener(RunListener listener) {
         final Lock w= writeLock;
-        w.lock();
+        // Must NOT release read lock before acquiring write lock
+        // ; otherwise run() and fireTestFailures() may operate with obsolete listeners.
+        if (lock.getReadHoldCount() == 0) w.lock();
+        else w.tryLock();
         try {
             ConcurrentLinkedQueue<RunListener> list= fListeners;
             RunListener[] listeners= list.toArray(new RunListener[list.size()]);
