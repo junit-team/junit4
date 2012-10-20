@@ -24,8 +24,6 @@ import org.junit.runner.Result;
  */
 public class RunNotifier {
     private final ReentrantReadWriteLock lock= new ReentrantReadWriteLock();
-    private final ReentrantReadWriteLock.ReadLock readLock= lock.readLock();
-    private final ReentrantReadWriteLock.WriteLock writeLock= lock.writeLock();
     private final ConcurrentLinkedQueue<RunListener> fListeners= new ConcurrentLinkedQueue<RunListener>();
     private volatile boolean fPleaseStop = false;
 
@@ -33,15 +31,18 @@ public class RunNotifier {
      * Internal use only
      */
     public void addListener(RunListener listener) {
-        final Lock w= writeLock;
-        // Must NOT release read lock before acquiring write lock
-        // ; otherwise run() and fireTestFailures() may operate with obsolete listeners.
-        if (lock.getReadHoldCount() == 0) w.lock();
-        else w.tryLock();
-        try {
+        final Lock w= lock.writeLock();
+        if (lock.getReadHoldCount() == 0) {
+            //normal use case: notifier modifies listeners
+            w.lock();
+            try {
+                fListeners.add(listener);
+            } finally {
+                w.unlock();
+            }
+        } else {
+            //not normal use case: notifier -> listener -> notifier's addListener()
             fListeners.add(listener);
-        } finally {
-            w.unlock();
         }
     }
 
@@ -49,15 +50,18 @@ public class RunNotifier {
      * Internal use only
      */
     public void removeListener(RunListener listener) {
-        final Lock w= writeLock;
-        // Must NOT release read lock before acquiring write lock
-        // ; otherwise run() and fireTestFailures() may operate with obsolete listeners.
-        if (lock.getReadHoldCount() == 0) w.lock();
-        else w.tryLock();
-        try {
+        final Lock w= lock.writeLock();
+        if (lock.getReadHoldCount() == 0) {
+            //normal use case: notifier modifies listeners
+            w.lock();
+            try {
+                fListeners.remove(listener);
+            } finally {
+                w.unlock();
+            }
+        } else {
+            //not normal use case: notifier -> listener -> notifier's removeListener()
             fListeners.remove(listener);
-        } finally {
-            w.unlock();
         }
     }
 
@@ -73,7 +77,7 @@ public class RunNotifier {
         }
 
         void run() {
-            final Lock r= readLock;
+            final Lock r= lock.readLock();
             r.lock();
             try {
                 ArrayList<RunListener> safeListeners= new ArrayList<RunListener>();
@@ -219,19 +223,25 @@ public class RunNotifier {
      * Internal use only. The Result's listener must be first.
      */
     public void addFirstListener(RunListener listener) {
-        final Lock w= writeLock;
-        // Must NOT release read lock before acquiring write lock
-        // ; otherwise run() and fireTestFailures() may operate with obsolete listeners.
-        if (lock.getReadHoldCount() == 0) w.lock();
-        else w.tryLock();
-        try {
-            ConcurrentLinkedQueue<RunListener> list= fListeners;
-            RunListener[] listeners= list.toArray(new RunListener[list.size()]);
-            list.clear();
-            list.add(listener);
-            list.addAll(asList(listeners));
-        } finally {
-            w.unlock();
+        final Lock w= lock.writeLock();
+        if (lock.getReadHoldCount() == 0) {
+            //normal use case: notifier modifies listeners
+            w.lock();
+            try {
+                addFirst(fListeners, listener);
+            } finally {
+                w.unlock();
+            }
+        } else {
+            //not normal use case: notifier -> listener -> notifier's addFirstListener()
+            addFirst(fListeners, listener);
         }
+    }
+
+    private static void addFirst(Collection<RunListener> c, RunListener listener) {
+        RunListener[] listeners= c.toArray(new RunListener[c.size()]);
+        c.clear();
+        c.add(listener);
+        c.addAll(asList(listeners));
     }
 }
