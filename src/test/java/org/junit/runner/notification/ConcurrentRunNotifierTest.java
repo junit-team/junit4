@@ -22,7 +22,7 @@ import static org.junit.Assert.assertFalse;
  * <p/>
  *
  * @author tibor17
- * @since 4.11, 16.10.2012, 18:47
+ * @since 4.11
  */
 public final class ConcurrentRunNotifierTest {
     private static final long TIMEOUT= 15;
