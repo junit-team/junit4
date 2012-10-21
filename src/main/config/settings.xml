@@ -41,7 +41,7 @@
 	<server>
 		<id>sourceforge-staging</id>
 		<username>anonymous</username>
-		<password>saff@mit.edu</password>
+		<password>david@saff.net</password>
 		<filePermissions>664</filePermissions>
 		<directoryPermissions>775</directoryPermissions>
 		<configuration>
