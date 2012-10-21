@@ -41,7 +41,7 @@ public class ParallelComputer extends Computer {
                 public void finished() {
                     try {
                         fService.shutdown();
-                        fService.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+                        fService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
                     } catch (InterruptedException e) {
                         e.printStackTrace(System.err);
                     }
