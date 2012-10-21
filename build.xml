@@ -133,7 +133,7 @@
     <property name="basename" value="doc/ReleaseNotes${version-base}" />
     <exec executable="perl" failonerror="true">
       <arg file="build/Markdown.pl"/>
-      <arg file="${basename}.txt"/>
+      <arg file="${basename}.md"/>
       <redirector output="${basename}.html" />
     </exec>
   </target>
