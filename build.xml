@@ -2,7 +2,7 @@
          xmlns:artifact="antlib:org.apache.maven.artifact.ant">
   <tstamp />
   <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
-
+  <taskdef resource="aQute/bnd/ant/taskdef.properties" classpath="lib/biz.aQute.bnd.jar"/>
   <property file="${user.home}/.junit.properties" />
   <property name="src" value="src/main/java" />
   <property name="target" location="target" />
@@ -40,6 +40,7 @@
 
   <target name="versiontag" depends="init">
     <filter token="version" value="${version}" />
+    <filter token="version-base" value="${version-base}" />
   
     <copy 
         file="${versionfile}.template" 
@@ -47,6 +48,13 @@
         filtering="on"
         overwrite="true"
         />
+    <copy 
+  	todir="${target}/bnd" 	
+        filtering="on"
+        overwrite="true"
+        >
+    	<fileset dir="build/bnd"/>
+    </copy>
   </target>
 
   <target name="clean">
@@ -92,16 +100,8 @@
         basedir="${src}"
         excludes="${unjarred}, **/*.class"
         />
-    <jar 
-        jarfile="${dist}/${binjar}"
-        basedir="${bin}"
-        excludes="${unjarred}, **/*.java, build.xml"
-        />
-    <jar 
-        jarfile="${dist}/${depjar}" 
-        basedir="${bin}" 
-        excludes="${unjarred}, org/hamcrest/**, **/*.java, build.xml" 
-        />
+    <bnd classpath="${bin}${path.separator}${hamcrestlib}" eclipse="false" output="${dist}/${binjar}" files="${target}/bnd/junit.bnd"/>  	
+    <bnd classpath="${bin}" eclipse="false" output="${dist}/${depjar}" files="${target}/bnd/junit-dep.bnd"/>      
   </target>
 
   <target name="all.maven.jars" depends="jars,javadoc">

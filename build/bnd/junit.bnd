@@ -1,0 +1,8 @@
+Bundle-SymbolicName: junit
+Bundle-Name: JUnit
+Bundle-Version: @version-base@
+Export-Package: \
+    org.hamcrest.*;version="1.1",\
+    junit.*;version="3.8.2",\
+    org.junit.*;version="@version-base@"
+    
