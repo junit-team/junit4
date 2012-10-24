@@ -1,42 +1,42 @@
 package org.junit.rules;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * TestWatcher is a base class for Rules that take note of the testing
  * action, without modifying it. For example, this class will keep a log of each
  * passing and failing test:
- * <p/>
+ *
  * <pre>
  * public static class WatchmanTest {
- * 	private static String watchedLog;
+ *  private static String watchedLog;
  *
- * 	&#064;Rule
- * 	public TestWatcher watchman= new TestWatcher() {
- * 		&#064;Override
- * 		protected void failed(Throwable e, Description description) {
- * 			watchedLog+= description + &quot;\n&quot;;
- *         }
+ *  &#064;Rule
+ *  public TestWatcher watchman= new TestWatcher() {
+ *      &#064;Override
+ *      protected void failed(Throwable e, Description description) {
+ *          watchedLog+= description + &quot;\n&quot;;
+ *      }
  *
- * 		&#064;Override
- * 		protected void succeeded(Description description) {
- * 			watchedLog+= description + &quot; &quot; + &quot;success!\n&quot;;
+ *      &#064;Override
+ *      protected void succeeded(Description description) {
+ *          watchedLog+= description + &quot; &quot; + &quot;success!\n&quot;;
  *         }
  *     };
  *
- * 	&#064;Test
- * 	public void fails() {
- * 		fail();
- *     }
+ *  &#064;Test
+ *  public void fails() {
+ *      fail();
+ *  }
  *
- * 	&#064;Test
- * 	public void succeeds() {
+ *  &#064;Test
+ *  public void succeeds() {
  *     }
  * }
  * </pre>
@@ -70,7 +70,7 @@ public abstract class TestWatcher implements TestRule {
     }
 
     private void succeededQuietly(Description description,
-                                  List<Throwable> errors) {
+            List<Throwable> errors) {
         try {
             succeeded(description);
         } catch (Throwable t) {
@@ -79,7 +79,7 @@ public abstract class TestWatcher implements TestRule {
     }
 
     private void failedQuietly(Throwable t, Description description,
-                               List<Throwable> errors) {
+            List<Throwable> errors) {
         try {
             failed(t, description);
         } catch (Throwable t1) {
@@ -88,7 +88,7 @@ public abstract class TestWatcher implements TestRule {
     }
 
     private void skippedQuietly(AssumptionViolatedException e, Description description,
-                                List<Throwable> errors) {
+            List<Throwable> errors) {
         try {
             skipped(e, description);
         } catch (Throwable t) {
@@ -97,7 +97,7 @@ public abstract class TestWatcher implements TestRule {
     }
 
     private void startingQuietly(Description description,
-                                 List<Throwable> errors) {
+            List<Throwable> errors) {
         try {
             starting(description);
         } catch (Throwable t) {
@@ -106,7 +106,7 @@ public abstract class TestWatcher implements TestRule {
     }
 
     private void finishedQuietly(Description description,
-                                 List<Throwable> errors) {
+            List<Throwable> errors) {
         try {
             finished(description);
         } catch (Throwable t) {
