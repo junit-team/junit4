@@ -39,8 +39,7 @@ import org.junit.runners.model.Statement;
  * </pre>
  *
  * @since 4.7
- * @deprecated {@link MethodRule} is deprecated.
- *             Use {@link TestWatcher} implements {@link TestRule} instead.
+ * @deprecated Use {@link TestWatcher} (which implements {@link TestRule}) instead.
  */
 @Deprecated
 public class TestWatchman implements MethodRule {
