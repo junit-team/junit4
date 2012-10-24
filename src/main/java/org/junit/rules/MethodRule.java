@@ -23,21 +23,22 @@ import org.junit.runners.model.Statement;
  *   <li>{@link Timeout}: cause test to fail after a set time</li>
  *   <li>{@link Verifier}: fail test if object state ends up incorrect</li>
  * </ul>
- * 
+ *
  * Note that {@link MethodRule} has been replaced by {@link TestRule},
  * which has the added benefit of supporting class rules.
+ *
  * @since 4.7
  */
 public interface MethodRule {
-	/**
-	 * Modifies the method-running {@link Statement} to implement an additional
-	 * test-running rule.
-	 * 
-	 * @param base The {@link Statement} to be modified
-	 * @param method The method to be run
-	 * @param target The object on with the method will be run.
-	 * @return a new statement, which may be the same as {@code base},
-	 * a wrapper around {@code base}, or a completely new Statement.
-	 */
-	Statement apply(Statement base, FrameworkMethod method, Object target);
+    /**
+     * Modifies the method-running {@link Statement} to implement an additional
+     * test-running rule.
+     *
+     * @param base The {@link Statement} to be modified
+     * @param method The method to be run
+     * @param target The object on with the method will be run.
+     * @return a new statement, which may be the same as {@code base},
+     *         a wrapper around {@code base}, or a completely new Statement.
+     */
+    Statement apply(Statement base, FrameworkMethod method, Object target);
 }

@@ -44,13 +44,14 @@ import java.lang.annotation.Target;
  * 		&#064;Override
  * 		protected void before() throws Throwable {
  * 			myServer.connect();
- * 		}
+ *      }
  *
  * 		&#064;Override
  * 		protected void after() {
  * 			myServer.disconnect();
- * 		}
- * 	};
+ *      }
+ *   };
+ * }
  * </pre>
  *
  * and the same using a method
