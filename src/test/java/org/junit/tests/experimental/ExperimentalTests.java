@@ -16,13 +16,13 @@ import org.junit.tests.experimental.theories.runner.WithExtendedParameterSources
 import org.junit.tests.experimental.theories.runner.WithOnlyTestAnnotations;
 
 @RunWith(Suite.class)
-@SuiteClasses( { ParameterizedAssertionErrorTest.class,
-		UnsuccessfulWithDataPointFields.class,
-		SuccessfulWithDataPointFields.class, PrintableResultTest.class,
-		ResultMatchersTest.class, WithDataPointMethod.class,
-		ParameterSignatureTest.class, WhenNoParametersMatch.class,
-		WithExtendedParameterSources.class, StubbedTheoriesTest.class, 
-		WithOnlyTestAnnotations.class })
+@SuiteClasses({ParameterizedAssertionErrorTest.class,
+        UnsuccessfulWithDataPointFields.class,
+        SuccessfulWithDataPointFields.class, PrintableResultTest.class,
+        ResultMatchersTest.class, WithDataPointMethod.class,
+        ParameterSignatureTest.class, WhenNoParametersMatch.class,
+        WithExtendedParameterSources.class, StubbedTheoriesTest.class,
+        WithOnlyTestAnnotations.class})
 public class ExperimentalTests {
 
 }

@@ -12,7 +12,7 @@ import org.junit.runners.model.Statement;
  * {@link Statement}, which is passed to the next {@link Rule}, if any. For
  * examples of how this can be useful, see these provided MethodRules,
  * or write your own:
- * 
+ *
  * <ul>
  *   <li>{@link ErrorCollector}: collect multiple errors in one test method</li>
  *   <li>{@link ExpectedException}: make flexible assertions about thrown exceptions</li>

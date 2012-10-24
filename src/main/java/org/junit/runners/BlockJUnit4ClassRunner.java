@@ -1,7 +1,7 @@
 package org.junit.runners;
 
-import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_VALIDATOR;
 import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_METHOD_VALIDATOR;
+import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_VALIDATOR;
 
 import java.util.List;
 
@@ -32,18 +32,19 @@ import org.junit.runners.model.Statement;
  * annotations in the org.junit package. Many users will never notice this
  * class: it is now the default test class runner, but it should have exactly
  * the same behavior as the old test class runner ({@code JUnit4ClassRunner}).
- * 
+ *
  * BlockJUnit4ClassRunner has advantages for writers of custom JUnit runners
  * that are slight changes to the default behavior, however:
- * 
+ *
  * <ul>
  * <li>It has a much simpler implementation based on {@link Statement}s,
  * allowing new operations to be inserted into the appropriate point in the
  * execution flow.
- * 
+ *
  * <li>It is published, and extension and reuse are encouraged, whereas {@code
  * JUnit4ClassRunner} was in an internal package, and is now deprecated.
  * </ul>
+ *
  * @since 4.5
  */
 public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {

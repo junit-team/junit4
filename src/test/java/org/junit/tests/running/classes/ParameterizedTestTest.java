@@ -27,349 +27,349 @@ import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.model.InitializationError;
 
 public class ParameterizedTestTest {
-	@RunWith(Parameterized.class)
-	static public class FibonacciTest {
-		@Parameters(name= "{index}: fib({0})={1}")
-		public static Iterable<Object[]> data() {
-			return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
-					{ 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
-		}
+    @RunWith(Parameterized.class)
+    static public class FibonacciTest {
+        @Parameters(name = "{index}: fib({0})={1}")
+        public static Iterable<Object[]> data() {
+            return Arrays.asList(new Object[][]{{0, 0}, {1, 1}, {2, 1},
+                    {3, 2}, {4, 3}, {5, 5}, {6, 8}});
+        }
 
-		private final int fInput;
+        private final int fInput;
 
-		private final int fExpected;
+        private final int fExpected;
 
-		public FibonacciTest(int input, int expected) {
-			fInput= input;
-			fExpected= expected;
-		}
+        public FibonacciTest(int input, int expected) {
+            fInput = input;
+            fExpected = expected;
+        }
 
-		@Test
-		public void test() {
-			assertEquals(fExpected, fib(fInput));
-		}
+        @Test
+        public void test() {
+            assertEquals(fExpected, fib(fInput));
+        }
 
-		private int fib(int x) {
-			return 0;
-		}
-	}
+        private int fib(int x) {
+            return 0;
+        }
+    }
 
-	@Test
-	public void count() {
-		Result result= JUnitCore.runClasses(FibonacciTest.class);
-		assertEquals(7, result.getRunCount());
-		assertEquals(6, result.getFailureCount());
-	}
+    @Test
+    public void count() {
+        Result result = JUnitCore.runClasses(FibonacciTest.class);
+        assertEquals(7, result.getRunCount());
+        assertEquals(6, result.getFailureCount());
+    }
 
-	@Test
-	public void failuresNamedCorrectly() {
-		Result result= JUnitCore.runClasses(FibonacciTest.class);
-		assertEquals(
-				"test[1: fib(1)=1](" + FibonacciTest.class.getName() + ")",
-				result.getFailures().get(0).getTestHeader());
-	}
+    @Test
+    public void failuresNamedCorrectly() {
+        Result result = JUnitCore.runClasses(FibonacciTest.class);
+        assertEquals(
+                "test[1: fib(1)=1](" + FibonacciTest.class.getName() + ")",
+                result.getFailures().get(0).getTestHeader());
+    }
 
-	@Test
-	public void countBeforeRun() throws Exception {
-		Runner runner= Request.aClass(FibonacciTest.class).getRunner();
-		assertEquals(7, runner.testCount());
-	}
+    @Test
+    public void countBeforeRun() throws Exception {
+        Runner runner = Request.aClass(FibonacciTest.class).getRunner();
+        assertEquals(7, runner.testCount());
+    }
 
-	@Test
-	public void plansNamedCorrectly() throws Exception {
-		Runner runner= Request.aClass(FibonacciTest.class).getRunner();
-		Description description= runner.getDescription();
-		assertEquals("[0: fib(0)=0]", description.getChildren().get(0)
-				.getDisplayName());
-	}
+    @Test
+    public void plansNamedCorrectly() throws Exception {
+        Runner runner = Request.aClass(FibonacciTest.class).getRunner();
+        Description description = runner.getDescription();
+        assertEquals("[0: fib(0)=0]", description.getChildren().get(0)
+                .getDisplayName());
+    }
 
-	@RunWith(Parameterized.class)
-	public static class ParameterizedWithoutSpecialTestname {
-		@Parameters
-		public static Collection<Object[]> data() {
-			return Arrays.asList(new Object[][] { { 3 }, { 3 } });
-		}
+    @RunWith(Parameterized.class)
+    public static class ParameterizedWithoutSpecialTestname {
+        @Parameters
+        public static Collection<Object[]> data() {
+            return Arrays.asList(new Object[][]{{3}, {3}});
+        }
 
-		public ParameterizedWithoutSpecialTestname(Object something) {
-		}
+        public ParameterizedWithoutSpecialTestname(Object something) {
+        }
 
-		@Test
-		public void testSomething() {
-		}
-	}
+        @Test
+        public void testSomething() {
+        }
+    }
 
-	@Test
-	public void usesIndexAsTestName() {
-		Runner runner= Request
-				.aClass(ParameterizedWithoutSpecialTestname.class).getRunner();
-		Description description= runner.getDescription();
-		assertEquals("[1]", description.getChildren().get(1).getDisplayName());
-	}
+    @Test
+    public void usesIndexAsTestName() {
+        Runner runner = Request
+                .aClass(ParameterizedWithoutSpecialTestname.class).getRunner();
+        Description description = runner.getDescription();
+        assertEquals("[1]", description.getChildren().get(1).getDisplayName());
+    }
 
-	@RunWith(Parameterized.class)
-	static public class FibonacciWithParameterizedFieldTest {
-		@Parameters
-		public static Collection<Object[]> data() {
-			return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
-					{ 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
-		}
+    @RunWith(Parameterized.class)
+    static public class FibonacciWithParameterizedFieldTest {
+        @Parameters
+        public static Collection<Object[]> data() {
+            return Arrays.asList(new Object[][]{{0, 0}, {1, 1}, {2, 1},
+                    {3, 2}, {4, 3}, {5, 5}, {6, 8}});
+        }
 
-		@Parameter(0)
-		public int fInput;
+        @Parameter(0)
+        public int fInput;
 
-		@Parameter(1)
-		public int fExpected;
+        @Parameter(1)
+        public int fExpected;
 
-		@Test
-		public void test() {
-			assertEquals(fExpected, fib(fInput));
-		}
+        @Test
+        public void test() {
+            assertEquals(fExpected, fib(fInput));
+        }
 
-		private int fib(int x) {
-			return 0;
-		}
-	}
+        private int fib(int x) {
+            return 0;
+        }
+    }
 
-	@Test
-	public void countWithParameterizedField() {
-		Result result= JUnitCore.runClasses(FibonacciWithParameterizedFieldTest.class);
-		assertEquals(7, result.getRunCount());
-		assertEquals(6, result.getFailureCount());
-	}
+    @Test
+    public void countWithParameterizedField() {
+        Result result = JUnitCore.runClasses(FibonacciWithParameterizedFieldTest.class);
+        assertEquals(7, result.getRunCount());
+        assertEquals(6, result.getFailureCount());
+    }
 
-	@Test
-	public void failuresNamedCorrectlyWithParameterizedField() {
-		Result result= JUnitCore.runClasses(FibonacciWithParameterizedFieldTest.class);
-		assertEquals(String
-				.format("test[1](%s)", FibonacciWithParameterizedFieldTest.class.getName()), result
-				.getFailures().get(0).getTestHeader());
-	}
+    @Test
+    public void failuresNamedCorrectlyWithParameterizedField() {
+        Result result = JUnitCore.runClasses(FibonacciWithParameterizedFieldTest.class);
+        assertEquals(String
+                .format("test[1](%s)", FibonacciWithParameterizedFieldTest.class.getName()), result
+                .getFailures().get(0).getTestHeader());
+    }
 
-	@Test
-	public void countBeforeRunWithParameterizedField() throws Exception {
-		Runner runner= Request.aClass(FibonacciWithParameterizedFieldTest.class).getRunner();
-		assertEquals(7, runner.testCount());
-	}
+    @Test
+    public void countBeforeRunWithParameterizedField() throws Exception {
+        Runner runner = Request.aClass(FibonacciWithParameterizedFieldTest.class).getRunner();
+        assertEquals(7, runner.testCount());
+    }
 
-	@Test
-	public void plansNamedCorrectlyWithParameterizedField() throws Exception {
-		Runner runner= Request.aClass(FibonacciWithParameterizedFieldTest.class).getRunner();
-		Description description= runner.getDescription();
-		assertEquals("[0]", description.getChildren().get(0).getDisplayName());
-	}
+    @Test
+    public void plansNamedCorrectlyWithParameterizedField() throws Exception {
+        Runner runner = Request.aClass(FibonacciWithParameterizedFieldTest.class).getRunner();
+        Description description = runner.getDescription();
+        assertEquals("[0]", description.getChildren().get(0).getDisplayName());
+    }
 
-	@RunWith(Parameterized.class)
-	static public class BadIndexForAnnotatedFieldTest {
-		@Parameters
-		public static Collection<Object[]> data() {
-			return Arrays.asList(new Object[][] { { 0 } });
-		}
+    @RunWith(Parameterized.class)
+    static public class BadIndexForAnnotatedFieldTest {
+        @Parameters
+        public static Collection<Object[]> data() {
+            return Arrays.asList(new Object[][]{{0}});
+        }
 
-		@Parameter(2)
-		public int fInput;
-		
-		public int fExpected;
+        @Parameter(2)
+        public int fInput;
 
-		@Test
-		public void test() {
-			assertEquals(fExpected, fib(fInput));
-		}
+        public int fExpected;
 
-		private int fib(int x) {
-			return 0;
-		}
-	}
-	
-	@Test
-	public void failureOnInitialization() {
-		Result result = JUnitCore.runClasses(BadIndexForAnnotatedFieldTest.class);
-		assertEquals(2, result.getFailureCount());
-		List<Failure> failures = result.getFailures();
-		assertEquals("Invalid @Parameter value: 2. @Parameter fields counted: 1. Please use an index between 0 and 0.",
-				failures.get(0).getException().getMessage());
-		assertEquals("@Parameter(0) is never used.", failures.get(1).getException().getMessage());
-	}
+        @Test
+        public void test() {
+            assertEquals(fExpected, fib(fInput));
+        }
 
-	@RunWith(Parameterized.class)
-	static public class BadNumberOfAnnotatedFieldTest {
-		@Parameters
-		public static Collection<Object[]> data() {
-			return Arrays.asList(new Object[][] { { 0, 0 } });
-		}
+        private int fib(int x) {
+            return 0;
+        }
+    }
 
-		@Parameter(0)
-		public int fInput;
+    @Test
+    public void failureOnInitialization() {
+        Result result = JUnitCore.runClasses(BadIndexForAnnotatedFieldTest.class);
+        assertEquals(2, result.getFailureCount());
+        List<Failure> failures = result.getFailures();
+        assertEquals("Invalid @Parameter value: 2. @Parameter fields counted: 1. Please use an index between 0 and 0.",
+                failures.get(0).getException().getMessage());
+        assertEquals("@Parameter(0) is never used.", failures.get(1).getException().getMessage());
+    }
 
-		public int fExpected;
+    @RunWith(Parameterized.class)
+    static public class BadNumberOfAnnotatedFieldTest {
+        @Parameters
+        public static Collection<Object[]> data() {
+            return Arrays.asList(new Object[][]{{0, 0}});
+        }
 
-		@Test
-		public void test() {
-			assertEquals(fExpected, fib(fInput));
-		}
+        @Parameter(0)
+        public int fInput;
 
-		private int fib(int x) {
-			return 0;
-		}
-	}
+        public int fExpected;
 
-	@Test
-	public void numberOfFieldsAndParametersShouldMatch() {
-		Result result = JUnitCore.runClasses(BadNumberOfAnnotatedFieldTest.class);
-		assertEquals(1, result.getFailureCount());
-		List<Failure> failures = result.getFailures();
-		assertTrue(failures.get(0).getException().getMessage().contains("Wrong number of parameters and @Parameter fields. @Parameter fields counted: 1, available parameters: 2."));
-	}
+        @Test
+        public void test() {
+            assertEquals(fExpected, fib(fInput));
+        }
 
-	private static String fLog;
+        private int fib(int x) {
+            return 0;
+        }
+    }
 
-	@RunWith(Parameterized.class)
-	static public class BeforeAndAfter {
-		@BeforeClass
-		public static void before() {
-			fLog+= "before ";
-		}
+    @Test
+    public void numberOfFieldsAndParametersShouldMatch() {
+        Result result = JUnitCore.runClasses(BadNumberOfAnnotatedFieldTest.class);
+        assertEquals(1, result.getFailureCount());
+        List<Failure> failures = result.getFailures();
+        assertTrue(failures.get(0).getException().getMessage().contains("Wrong number of parameters and @Parameter fields. @Parameter fields counted: 1, available parameters: 2."));
+    }
 
-		@AfterClass
-		public static void after() {
-			fLog+= "after ";
-		}
+    private static String fLog;
 
-		public BeforeAndAfter(int x) {
+    @RunWith(Parameterized.class)
+    static public class BeforeAndAfter {
+        @BeforeClass
+        public static void before() {
+            fLog += "before ";
+        }
 
-		}
+        @AfterClass
+        public static void after() {
+            fLog += "after ";
+        }
 
-		@Parameters
-		public static Collection<Object[]> data() {
-			return Arrays.asList(new Object[][] { { 3 } });
-		}
+        public BeforeAndAfter(int x) {
 
-		@Test
-		public void aTest() {
-		}
-	}
+        }
 
-	@Test
-	public void beforeAndAfterClassAreRun() {
-		fLog= "";
-		JUnitCore.runClasses(BeforeAndAfter.class);
-		assertEquals("before after ", fLog);
-	}
+        @Parameters
+        public static Collection<Object[]> data() {
+            return Arrays.asList(new Object[][]{{3}});
+        }
 
-	@RunWith(Parameterized.class)
-	static public class EmptyTest {
-		@BeforeClass
-		public static void before() {
-			fLog+= "before ";
-		}
+        @Test
+        public void aTest() {
+        }
+    }
 
-		@AfterClass
-		public static void after() {
-			fLog+= "after ";
-		}
-	}
+    @Test
+    public void beforeAndAfterClassAreRun() {
+        fLog = "";
+        JUnitCore.runClasses(BeforeAndAfter.class);
+        assertEquals("before after ", fLog);
+    }
 
-	@Test
-	public void validateClassCatchesNoParameters() {
-		Result result= JUnitCore.runClasses(EmptyTest.class);
-		assertEquals(1, result.getFailureCount());
-	}
+    @RunWith(Parameterized.class)
+    static public class EmptyTest {
+        @BeforeClass
+        public static void before() {
+            fLog += "before ";
+        }
 
-	@RunWith(Parameterized.class)
-	static public class IncorrectTest {
-		@Test
-		public int test() {
-			return 0;
-		}
+        @AfterClass
+        public static void after() {
+            fLog += "after ";
+        }
+    }
 
-		@Parameters
-		public static Collection<Object[]> data() {
-			return Collections.singletonList(new Object[] { 1 });
-		}
-	}
+    @Test
+    public void validateClassCatchesNoParameters() {
+        Result result = JUnitCore.runClasses(EmptyTest.class);
+        assertEquals(1, result.getFailureCount());
+    }
 
-	@Test
-	public void failuresAddedForBadTestMethod() throws Exception {
-		Result result= JUnitCore.runClasses(IncorrectTest.class);
-		assertEquals(1, result.getFailureCount());
-	}
+    @RunWith(Parameterized.class)
+    static public class IncorrectTest {
+        @Test
+        public int test() {
+            return 0;
+        }
 
-	@RunWith(Parameterized.class)
-	static public class ProtectedParametersTest {
-		@Parameters
-		protected static Collection<Object[]> data() {
-			return Collections.emptyList();
-		}
+        @Parameters
+        public static Collection<Object[]> data() {
+            return Collections.singletonList(new Object[]{1});
+        }
+    }
 
-		@Test
-		public void aTest() {
-		}
-	}
+    @Test
+    public void failuresAddedForBadTestMethod() throws Exception {
+        Result result = JUnitCore.runClasses(IncorrectTest.class);
+        assertEquals(1, result.getFailureCount());
+    }
 
-	@Test
-	public void meaningfulFailureWhenParametersNotPublic() throws Exception {
-		Result result= JUnitCore.runClasses(ProtectedParametersTest.class);
-		String expected= String.format(
-				"No public static parameters method on class %s",
-				ProtectedParametersTest.class.getName());
-		assertEquals(expected, result.getFailures().get(0).getMessage());
-	}
+    @RunWith(Parameterized.class)
+    static public class ProtectedParametersTest {
+        @Parameters
+        protected static Collection<Object[]> data() {
+            return Collections.emptyList();
+        }
 
-	@RunWith(Parameterized.class)
-	static public class WrongElementType {
-		@Parameters
-		public static Iterable<String> data() {
-			return Arrays.asList("a", "b", "c");
-		}
+        @Test
+        public void aTest() {
+        }
+    }
 
-		@Test
-		public void aTest() {
-		}
-	}
+    @Test
+    public void meaningfulFailureWhenParametersNotPublic() throws Exception {
+        Result result = JUnitCore.runClasses(ProtectedParametersTest.class);
+        String expected = String.format(
+                "No public static parameters method on class %s",
+                ProtectedParametersTest.class.getName());
+        assertEquals(expected, result.getFailures().get(0).getMessage());
+    }
 
-	@Test
-	public void meaningfulFailureWhenParametersAreNotArrays() {
-		assertThat(
-				testResult(WrongElementType.class).toString(),
-				containsString("WrongElementType.data() must return an Iterable of arrays."));
-	}
+    @RunWith(Parameterized.class)
+    static public class WrongElementType {
+        @Parameters
+        public static Iterable<String> data() {
+            return Arrays.asList("a", "b", "c");
+        }
 
-	@RunWith(Parameterized.class)
-	static public class ParametersNotIterable {
-		@Parameters
-		public static String data() {
-			return "foo";
-		}
+        @Test
+        public void aTest() {
+        }
+    }
 
-		@Test
-		public void aTest() {
-		}
-	}
+    @Test
+    public void meaningfulFailureWhenParametersAreNotArrays() {
+        assertThat(
+                testResult(WrongElementType.class).toString(),
+                containsString("WrongElementType.data() must return an Iterable of arrays."));
+    }
 
-	@Test
-	public void meaningfulFailureWhenParametersAreNotAnIterable() {
-		assertThat(
-				testResult(ParametersNotIterable.class).toString(),
-				containsString("ParametersNotIterable.data() must return an Iterable of arrays."));
-	}
+    @RunWith(Parameterized.class)
+    static public class ParametersNotIterable {
+        @Parameters
+        public static String data() {
+            return "foo";
+        }
 
-	@RunWith(Parameterized.class)
-	static public class PrivateConstructor {
-		private PrivateConstructor(int x) {
+        @Test
+        public void aTest() {
+        }
+    }
 
-		}
+    @Test
+    public void meaningfulFailureWhenParametersAreNotAnIterable() {
+        assertThat(
+                testResult(ParametersNotIterable.class).toString(),
+                containsString("ParametersNotIterable.data() must return an Iterable of arrays."));
+    }
 
-		@Parameters
-		public static Collection<Object[]> data() {
-			return Arrays.asList(new Object[][] { { 3 } });
-		}
+    @RunWith(Parameterized.class)
+    static public class PrivateConstructor {
+        private PrivateConstructor(int x) {
 
-		@Test
-		public void aTest() {
-		}
-	}
+        }
 
-	@Test(expected= InitializationError.class)
-	public void exceptionWhenPrivateConstructor() throws Throwable {
-		new Parameterized(PrivateConstructor.class);
-	}
+        @Parameters
+        public static Collection<Object[]> data() {
+            return Arrays.asList(new Object[][]{{3}});
+        }
+
+        @Test
+        public void aTest() {
+        }
+    }
+
+    @Test(expected = InitializationError.class)
+    public void exceptionWhenPrivateConstructor() throws Throwable {
+        new Parameterized(PrivateConstructor.class);
+    }
 }

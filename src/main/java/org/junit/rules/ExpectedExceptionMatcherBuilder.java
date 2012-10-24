@@ -13,34 +13,34 @@ import org.hamcrest.Matcher;
  */
 class ExpectedExceptionMatcherBuilder {
 
-	private final List<Matcher<?>> fMatchers= new ArrayList<Matcher<?>>();
+    private final List<Matcher<?>> fMatchers = new ArrayList<Matcher<?>>();
 
-	void add(Matcher<?> matcher) {
-		fMatchers.add(matcher);
-	}
+    void add(Matcher<?> matcher) {
+        fMatchers.add(matcher);
+    }
 
-	boolean expectsThrowable() {
-		return !fMatchers.isEmpty();
-	}
+    boolean expectsThrowable() {
+        return !fMatchers.isEmpty();
+    }
 
-	Matcher<Throwable> build() {
-		return isThrowable(allOfTheMatchers());
-	}
+    Matcher<Throwable> build() {
+        return isThrowable(allOfTheMatchers());
+    }
 
-	private Matcher<Throwable> allOfTheMatchers() {
-		if (fMatchers.size() == 1) {
-			return cast(fMatchers.get(0));
-		}
-		return allOf(castedMatchers());
-	}
+    private Matcher<Throwable> allOfTheMatchers() {
+        if (fMatchers.size() == 1) {
+            return cast(fMatchers.get(0));
+        }
+        return allOf(castedMatchers());
+    }
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private List<Matcher<? super Throwable>> castedMatchers() {
-		return new ArrayList<Matcher<? super Throwable>>((List) fMatchers);
-	}
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private List<Matcher<? super Throwable>> castedMatchers() {
+        return new ArrayList<Matcher<? super Throwable>>((List) fMatchers);
+    }
 
-	@SuppressWarnings("unchecked")
-	private Matcher<Throwable> cast(Matcher<?> singleMatcher) {
-		return (Matcher<Throwable>) singleMatcher;
-	}
+    @SuppressWarnings("unchecked")
+    private Matcher<Throwable> cast(Matcher<?> singleMatcher) {
+        return (Matcher<Throwable>) singleMatcher;
+    }
 }

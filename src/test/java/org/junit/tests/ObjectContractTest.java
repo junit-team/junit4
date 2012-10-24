@@ -17,30 +17,30 @@ import org.junit.runners.model.FrameworkMethod;
 
 @RunWith(Theories.class)
 public class ObjectContractTest {
-	@DataPoints
-	public static Object[] objects= { new FrameworkMethod(toStringMethod()),
-			new FrameworkMethod(toStringMethod()), 3, null };
+    @DataPoints
+    public static Object[] objects = {new FrameworkMethod(toStringMethod()),
+            new FrameworkMethod(toStringMethod()), 3, null};
 
-	@Theory
-	@Test(expected= None.class)
-	public void equalsThrowsNoException(Object a, Object b) {
-		assumeNotNull(a);
-		a.equals(b);
-	}
+    @Theory
+    @Test(expected = None.class)
+    public void equalsThrowsNoException(Object a, Object b) {
+        assumeNotNull(a);
+        a.equals(b);
+    }
 
-	@Theory
-	public void equalsMeansEqualHashCodes(Object a, Object b) {
-		assumeNotNull(a, b);
-		assumeThat(a, is(b));
-		assertThat(a.hashCode(), is(b.hashCode()));
-	}
+    @Theory
+    public void equalsMeansEqualHashCodes(Object a, Object b) {
+        assumeNotNull(a, b);
+        assumeThat(a, is(b));
+        assertThat(a.hashCode(), is(b.hashCode()));
+    }
 
-	private static Method toStringMethod() {
-		try {
-			return Object.class.getMethod("toString");
-		} catch (SecurityException e) {
-		} catch (NoSuchMethodException e) {
-		}
-		return null;
-	}
+    private static Method toStringMethod() {
+        try {
+            return Object.class.getMethod("toString");
+        } catch (SecurityException e) {
+        } catch (NoSuchMethodException e) {
+        }
+        return null;
+    }
 }
