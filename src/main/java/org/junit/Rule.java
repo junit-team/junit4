@@ -27,14 +27,14 @@ import java.lang.annotation.Target;
  *
  * <pre>
  * public static class HasTempFolder {
- * 	&#064;Rule
- * 	public TemporaryFolder folder= new TemporaryFolder();
+ *     &#064;Rule
+ *     public TemporaryFolder folder= new TemporaryFolder();
  *
- * 	&#064;Test
- * 	public void testUsingTempFolder() throws IOException {
- * 		File createdFile= folder.newFile(&quot;myfile.txt&quot;);
- * 		File createdFolder= folder.newFolder(&quot;subfolder&quot;);
- * 		// ...
+ *     &#064;Test
+ *     public void testUsingTempFolder() throws IOException {
+ *         File createdFile= folder.newFile(&quot;myfile.txt&quot;);
+ *         File createdFolder= folder.newFolder(&quot;subfolder&quot;);
+ *         // ...
  *     }
  * }
  * </pre>

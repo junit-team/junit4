@@ -37,18 +37,18 @@ import java.lang.annotation.Target;
  * &#064;RunWith(Suite.class)
  * &#064;SuiteClasses({A.class, B.class, C.class})
  * public class UsesExternalResource {
- * 	public static Server myServer= new Server();
+ *     public static Server myServer= new Server();
  *
- * 	&#064;ClassRule
- * 	public static ExternalResource resource= new ExternalResource() {
- * 		&#064;Override
- * 		protected void before() throws Throwable {
- * 			myServer.connect();
+ *     &#064;ClassRule
+ *     public static ExternalResource resource= new ExternalResource() {
+ *       &#064;Override
+ *       protected void before() throws Throwable {
+ *          myServer.connect();
  *      }
  *
- * 		&#064;Override
- * 		protected void after() {
- * 			myServer.disconnect();
+ *      &#064;Override
+ *      protected void after() {
+ * 	        myServer.disconnect();
  *      }
  *   };
  * }
