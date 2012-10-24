@@ -86,12 +86,12 @@ public abstract class TestWatcher implements TestRule {
 		}
 	}
 
-	private void skippedQuietly(AssumptionViolatedException t, Description description,
+	private void skippedQuietly(AssumptionViolatedException e, Description description,
 			List<Throwable> errors) {
 		try {
-			skipped(t, description);
-		} catch (Throwable t1) {
-			errors.add(t1);
+			skipped(e, description);
+		} catch (Throwable t) {
+			errors.add(t);
 		}
 	}
 
