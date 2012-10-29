@@ -24,9 +24,9 @@ import org.junit.internal.runners.ErrorReportingRunner;
 /**
  * Represents a factory of Computers scheduling concurrent JUnit classes and methods in several variants. <p>
  * <p>
- * Use the {@link #classes() factory of classes} to launch given JUnit classes in parallel. This may be used if all
+ * Use the {@link #classes()} to launch given JUnit classes in parallel. This may be used if all
  * classes have approximately same execution time. <p>
- * In order to call parallel tests, use the {@link #methods() factory of methods}. This is useful if calling many
+ * In order to call parallel tests, use the {@link #methods()}. This is useful if calling many
  * methods with different execution time per class in parallel, and run only few classes in a sequence or ideally one
  * class. <p>
  * This variant allocates classes and methods in unbounded thread pools. <p>
