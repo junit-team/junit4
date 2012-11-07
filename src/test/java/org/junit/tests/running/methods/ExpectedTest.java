@@ -67,4 +67,35 @@ public class ExpectedTest {
     public void expectsSuperclass() {
         assertTrue(new JUnitCore().run(ExpectSuperclass.class).wasSuccessful());
     }
+    
+    public static class ExpectNotSuperClassMessage {
+    	@Test(expected = RuntimeException.class, message = "Test Message")
+    	public void throwsSuperClass() throws Exception {
+    		throw new Exception();
+    	}
+    }
+    
+    @Test
+    public void expectsNotSuperclassMessage() {
+    	JUnitCore core = new JUnitCore();
+    	Result result = core.run(ExpectNotSuperClassMessage.class);
+    	assertFalse(result.wasSuccessful());
+    	String message = result.getFailures().get(0).getMessage();
+    	assertTrue("Test Message".equals(message));
+    }
+    
+    public static class ExpectMessage {
+    	@Test(expected = Exception.class, message = "Test Message")
+    	public void throwsNone() {
+    	}
+    }
+    
+    @Test
+    public void expectsMessage() {
+    	JUnitCore core = new JUnitCore();
+    	Result result = core.run(ExpectMessage.class);
+    	assertFalse(result.wasSuccessful());
+    	String message = result.getFailures().get(0).getMessage();
+    	assertTrue("Test Message".equals(message));    	
+    }
 }

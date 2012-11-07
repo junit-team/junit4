@@ -5,11 +5,13 @@ import org.junit.runners.model.Statement;
 
 public class ExpectException extends Statement {
     private Statement fNext;
+    private String fMessage;
     private final Class<? extends Throwable> fExpected;
 
-    public ExpectException(Statement next, Class<? extends Throwable> expected) {
+    public ExpectException(Statement next, Class<? extends Throwable> expected, String message) {
         fNext = next;
         fExpected = expected;
+        fMessage = message;
     }
 
     @Override
@@ -22,15 +24,33 @@ public class ExpectException extends Statement {
             throw e;
         } catch (Throwable e) {
             if (!fExpected.isAssignableFrom(e.getClass())) {
-                String message = "Unexpected exception, expected<"
-                        + fExpected.getName() + "> but was<"
-                        + e.getClass().getName() + ">";
+            	String message;
+            	
+            	if ( isMessageEmpty() ) {
+            		message = "Unexpected exception, expected<"
+                            + fExpected.getName() + "> but was<"
+                            + e.getClass().getName() + ">";
+            	} else {
+            		message = fMessage;
+            	}
+            	
                 throw new Exception(message, e);
             }
         }
         if (complete) {
-            throw new AssertionError("Expected exception: "
-                    + fExpected.getName());
+        	String message;
+        	if ( isMessageEmpty() ) {
+        		message = "Expected exception: "
+        				+ fExpected.getName();
+        	} else {
+        		message = fMessage;
+        	}
+        	
+            throw new AssertionError(message);
         }
+    }
+    
+    private boolean isMessageEmpty() {
+    	return fMessage == null || fMessage.isEmpty();
     }
 }

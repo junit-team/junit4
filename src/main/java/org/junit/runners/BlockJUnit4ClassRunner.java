@@ -281,7 +281,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
             Object test, Statement next) {
         Test annotation = method.getAnnotation(Test.class);
         return expectsException(annotation) ? new ExpectException(next,
-                getExpectedException(annotation)) : next;
+                getExpectedException(annotation), getExpectedMessage(annotation)) : next;
     }
 
     /**
@@ -401,6 +401,14 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
         } else {
             return annotation.expected();
         }
+    }
+    
+    private String getExpectedMessage(Test annotation) {
+    	if ( annotation == null ) {
+    		return null;
+    	} else {
+    		return annotation.message();
+    	}
     }
 
     private boolean expectsException(Test annotation) {
