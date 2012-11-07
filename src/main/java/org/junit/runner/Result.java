@@ -1,13 +1,13 @@
 package org.junit.runner;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A <code>Result</code> collects and summarizes information from running multiple tests.
@@ -16,12 +16,12 @@ import org.junit.runner.notification.RunListener;
  * @since 4.0
  */
 public class Result implements Serializable {
-    private static final long serialVersionUID = 1L;
-    private AtomicInteger fCount = new AtomicInteger();
-    private AtomicInteger fIgnoreCount = new AtomicInteger();
-    private final List<Failure> fFailures = Collections.synchronizedList(new ArrayList<Failure>());
-    private long fRunTime = 0;
-    private long fStartTime;
+    private static final long serialVersionUID = 2L;
+    private final AtomicInteger fCount = new AtomicInteger();
+    private final AtomicInteger fIgnoreCount = new AtomicInteger();
+    private final CopyOnWriteArrayList<Failure> fFailures = new CopyOnWriteArrayList<Failure>();
+    private final AtomicLong fRunTime = new AtomicLong();
+    private final AtomicLong fStartTime = new AtomicLong();
 
     /**
      * @return the number of tests run
@@ -41,7 +41,7 @@ public class Result implements Serializable {
      * @return the number of milliseconds it took to run the entire suite to run
      */
     public long getRunTime() {
-        return fRunTime;
+        return fRunTime.get();
     }
 
     /**
@@ -68,13 +68,13 @@ public class Result implements Serializable {
     private class Listener extends RunListener {
         @Override
         public void testRunStarted(Description description) throws Exception {
-            fStartTime = System.currentTimeMillis();
+            fStartTime.set(System.currentTimeMillis());
         }
 
         @Override
         public void testRunFinished(Result result) throws Exception {
             long endTime = System.currentTimeMillis();
-            fRunTime += endTime - fStartTime;
+            fRunTime.addAndGet(endTime - fStartTime.get());
         }
 
         @Override
