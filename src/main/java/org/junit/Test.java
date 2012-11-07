@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
  * </pre>
  * </p>
  *
- * <p>The <code>Test</code> annotation supports three optional parameters.
+ * <p>The <code>Test</code> annotation supports two optional parameters.
  * The first, <code>expected</code>, declares that a test method should throw
  * an exception. If it doesn't throw an exception or if it throws a different exception
  * than the one declared, the test fails. For example, the following test succeeds:
@@ -34,10 +34,7 @@ import java.lang.annotation.Target;
  *    }
  * </pre></p>
  *
- * <p>The second, <code>message</code>, only valid in the context of providing <code>expected</code>,
- * declares a <code>String</code> to be returned if the test fails.</p>
- * 
- * <p>The third optional parameter, <code>timeout</code>, causes a test to fail if it takes
+ * <p>The second optional parameter, <code>timeout</code>, causes a test to fail if it takes
  * longer than a specified amount of clock time (measured in milliseconds). The following test fails:
  * <pre>
  *    &#064;Test(<b>timeout=100</b>) public void infinity() {
@@ -62,16 +59,10 @@ public @interface Test {
     }
 
     /**
-     * Optionally specify <code>expected</code>, a Throwable, to cause a test method to succeed if
+     * Optionally specify <code>expected</code>, a Throwable, to cause a test method to succeed iff
      * an exception of the specified class is thrown by the method.
      */
     Class<? extends Throwable> expected() default None.class;
-    
-    /**
-     * Optionally specify <code>message</code>, a String, to be returned if the method does not throw
-     * <code>expected</code>
-     */
-    String message() default "";
 
     /**
      * Optionally specify <code>timeout</code> in milliseconds to cause a test method to fail if it
