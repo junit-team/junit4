@@ -110,7 +110,7 @@ public class Categories extends Suite {
         private boolean hasCorrectCategoryAnnotation(Description description) {
             List<Class<?>> categories = categories(description);
             if (categories.isEmpty()) {
-                return fIncluded == null;
+                return false;
             }
             for (Class<?> each : categories) {
                 if (fExcluded != null && fExcluded.isAssignableFrom(each)) {

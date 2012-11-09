@@ -122,7 +122,7 @@ public class CategoryTest {
     @Test
     public void testCountOnAWithoutSlowTests() {
         Result result = JUnitCore.runClasses(SomeAreSlowSuite.class);
-        assertEquals(2, result.getRunCount());
+        assertEquals(1, result.getRunCount());
         assertTrue(result.wasSuccessful());
     }
 
