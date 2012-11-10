@@ -88,7 +88,8 @@ public class ExpectedExceptionTest {
                                 containsString("exception with cause is <java.lang.NullPointerException: expected cause>"),
                                 containsString("cause was <java.lang.NullPointerException: an unexpected cause>"),
                                 containsString("Stacktrace was: java.lang.IllegalArgumentException: Ack!"),
-                                containsString("Caused by: java.lang.NullPointerException: an unexpected cause")))}
+                                containsString("Caused by: java.lang.NullPointerException: an unexpected cause")))},
+                { CustomMessageWithoutExpectedException.class, hasSingleFailureWithMessage(ARBITRARY_MESSAGE) }
         });
     }
 
@@ -366,6 +367,18 @@ public class ExpectedExceptionTest {
             thrown.expectCause(is(new NullPointerException("expected cause")));
 
             throw new IllegalArgumentException("Ack!", new NullPointerException("an unexpected cause"));
+        }
+    }
+    
+    public static class CustomMessageWithoutExpectedException {
+
+        @Rule
+        public ExpectedException thrown = ExpectedException.none();
+
+        @Test
+        public void throwWithCause() {
+            thrown.expect(IllegalArgumentException.class);
+            thrown.setMissingExceptionMessage(ARBITRARY_MESSAGE);
         }
     }
 }

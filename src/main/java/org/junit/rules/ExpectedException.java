@@ -96,6 +96,8 @@ public class ExpectedException implements TestRule {
     private boolean handleAssumptionViolatedExceptions = false;
 
     private boolean handleAssertionErrors = false;
+    
+    private String missingExceptionMessage;
 
     private ExpectedException() {
     }
@@ -108,6 +110,17 @@ public class ExpectedException implements TestRule {
     public ExpectedException handleAssumptionViolatedExceptions() {
         handleAssumptionViolatedExceptions = true;
         return this;
+    }
+    
+    /**
+     * Specifies the detail message for an exception to be thrown if the test does 
+     * not throw the expected exception.
+     * @param providedMessage exception detail message
+     * @return self
+     */
+    public ExpectedException setMissingExceptionMessage(String providedMessage) {
+    	missingExceptionMessage = providedMessage;
+    	return this;
     }
 
     public Statement apply(Statement base,
@@ -180,8 +193,16 @@ public class ExpectedException implements TestRule {
     }
 
     private void failDueToMissingException() throws AssertionError {
-        String expectation = StringDescription.toString(fMatcherBuilder.build());
-        fail("Expected test to throw " + expectation);
+    	String failureMessage;
+    	
+    	if ( isMissingExceptionMessageEmpty() ) {
+    		String expectation = StringDescription.toString(fMatcherBuilder.build());
+    		failureMessage = "Expected test to throw " + expectation;
+    	} else {
+    		failureMessage = missingExceptionMessage;
+    	}
+
+        fail(failureMessage);
     }
 
     private void optionallyHandleException(Throwable e, boolean handleException)
@@ -199,5 +220,9 @@ public class ExpectedException implements TestRule {
         } else {
             throw e;
         }
+    }
+    
+    private boolean isMissingExceptionMessageEmpty() {
+    	return missingExceptionMessage == null || missingExceptionMessage.isEmpty();
     }
 }
