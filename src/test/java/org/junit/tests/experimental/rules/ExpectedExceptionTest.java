@@ -376,7 +376,7 @@ public class ExpectedExceptionTest {
         public ExpectedException thrown = ExpectedException.none();
 
         @Test
-        public void throwWithCause() {
+        public void noThrow() {
             thrown.expect(IllegalArgumentException.class);
             thrown.setMissingExceptionMessage(ARBITRARY_MESSAGE);
         }
