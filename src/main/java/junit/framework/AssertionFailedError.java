@@ -5,16 +5,16 @@ package junit.framework;
  */
 public class AssertionFailedError extends AssertionError {
 
-	private static final long serialVersionUID= 1L;
+    private static final long serialVersionUID = 1L;
 
-	public AssertionFailedError() {
-	}
+    public AssertionFailedError() {
+    }
 
-	public AssertionFailedError(String message) {
-		super(defaultString(message));
-	}
+    public AssertionFailedError(String message) {
+        super(defaultString(message));
+    }
 
-	private static String defaultString(String message) {
-		return message == null ? "" : message;
-	}
+    private static String defaultString(String message) {
+        return message == null ? "" : message;
+    }
 }

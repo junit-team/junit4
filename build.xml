@@ -28,7 +28,8 @@
 
   <property name="javadocdir" location="${dist}/javadoc" />
   <property name="javadoczip" location="${dist}-javadoc.zip" />
-  <property name="hamcrestlib" location="lib/hamcrest-core-1.1.jar" />
+  <property name="hamcrestlib" location="lib/hamcrest-core-1.3.jar" />
+  <property name="hamcrestlibsources" location="lib/hamcrest-core-1.3-sources.jar" />
   <property name="hamcrestsrc" location="${dist}/temp.hamcrest.source" />
 
   <property name="maven.deploy.goal" value="org.apache.maven.plugins:maven-gpg-plugin:1.1:sign-and-deploy-file" />
@@ -125,14 +126,14 @@
   </target>
 
   <target name="unjar.hamcrest">
-    <unjar src="${hamcrestlib}" dest="${hamcrestsrc}" />
+    <unjar src="${hamcrestlibsources}" dest="${hamcrestsrc}" />
   </target>
   
   <target name="release-notes">
     <property name="basename" value="doc/ReleaseNotes${version-base}" />
     <exec executable="perl" failonerror="true">
       <arg file="build/Markdown.pl"/>
-      <arg file="${basename}.txt"/>
+      <arg file="${basename}.md"/>
       <redirector output="${basename}.html" />
     </exec>
   </target>
@@ -173,7 +174,8 @@
     <copy file="build.xml" tofile="${dist}/build.xml" />
   </target>
 
-  <macrodef name="run-tests">
+  <macrodef name="run-dist-tests">
+    <!-- Runs the tests against the built jar files -->
     <element name="extra-args" implicit="yes" />
     <sequential>
       <java classname="org.junit.runner.JUnitCore" fork="yes" failonerror="true">
@@ -187,16 +189,34 @@
     </sequential>
   </macrodef>
 
+  <macrodef name="run-local-tests">
+    <!-- Runs the tests against the local class files -->
+    <sequential>
+      <java classname="org.junit.runner.JUnitCore" fork="yes" failonerror="true">
+        <arg value="org.junit.tests.AllTests"/>
+        <classpath>
+          <pathelement location="${bin}" />
+          <pathelement location="${testbin}" />
+          <pathelement location="${hamcrestlib}" />
+        </classpath>
+      </java>    
+    </sequential>
+  </macrodef>
+
+  <target name="test" depends="build">
+    <run-local-tests />
+  </target>
+
   <target name="dist" depends="populate-dist">
-    <run-tests>
-      <jvmarg value="-Dignore.this=ignored" />
-    </run-tests>
+    <run-dist-tests>
+      <jvmarg value="-Dignore.this=ignored"/>
+    </run-dist-tests>
   </target>
 
   <target name="profile" depends="populate-dist">
-    <run-tests>
+    <run-dist-tests>
       <jvmarg value="-agentlib:hprof=cpu=samples"/>
-    </run-tests>
+    </run-dist-tests>
   </target>
 
   <target name="zip" depends="dist">

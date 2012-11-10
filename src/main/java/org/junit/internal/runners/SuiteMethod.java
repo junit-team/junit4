@@ -6,7 +6,8 @@ import java.lang.reflect.Modifier;
 
 import junit.framework.Test;
 
-/** Runner for use with JUnit 3.8.x-style AllTests classes
+/**
+ * Runner for use with JUnit 3.8.x-style AllTests classes
  * (those that only implement a static <code>suite()</code>
  * method). For example:
  * <pre>
@@ -19,22 +20,22 @@ import junit.framework.Test;
  * </pre>
  */
 public class SuiteMethod extends JUnit38ClassRunner {
-	public SuiteMethod(Class<?> klass) throws Throwable {
-		super(testFromSuiteMethod(klass));
-	}
+    public SuiteMethod(Class<?> klass) throws Throwable {
+        super(testFromSuiteMethod(klass));
+    }
 
-	public static Test testFromSuiteMethod(Class<?> klass) throws Throwable {
-		Method suiteMethod= null;
-		Test suite= null;
-		try {
-			suiteMethod= klass.getMethod("suite");
-			if (! Modifier.isStatic(suiteMethod.getModifiers())) {
-				throw new Exception(klass.getName() + ".suite() must be static");
-			}
-			suite= (Test) suiteMethod.invoke(null); // static method
-		} catch (InvocationTargetException e) {
-			throw e.getCause();
-		}
-		return suite;
-	}
+    public static Test testFromSuiteMethod(Class<?> klass) throws Throwable {
+        Method suiteMethod = null;
+        Test suite = null;
+        try {
+            suiteMethod = klass.getMethod("suite");
+            if (!Modifier.isStatic(suiteMethod.getModifiers())) {
+                throw new Exception(klass.getName() + ".suite() must be static");
+            }
+            suite = (Test) suiteMethod.invoke(null); // static method
+        } catch (InvocationTargetException e) {
+            throw e.getCause();
+        }
+        return suite;
+    }
 }

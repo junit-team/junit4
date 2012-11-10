@@ -9,12 +9,12 @@ import java.lang.annotation.Target;
  * <p>If you allocate expensive external resources in a {@link org.junit.BeforeClass} method you need to release them
  * after all the tests in the class have run. Annotating a <code>public static void</code> method
  * with <code>&#064;AfterClass</code> causes that method to be run after all the tests in the class have been run. All <code>&#064;AfterClass</code>
- * methods are guaranteed to run even if a {@link org.junit.BeforeClass} method throws an 
+ * methods are guaranteed to run even if a {@link org.junit.BeforeClass} method throws an
  * exception. The <code>&#064;AfterClass</code> methods declared in superclasses will be run after those of the current
- * class.</p>
- * 
+ * class, unless they are shadowed in the current class.</p>
+ *
  * Here is a simple example:
-* <pre>
+ * <pre>
  * public class Example {
  *    private static DatabaseConnection database;
  *    &#064;BeforeClass public static void login() {
@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
  *    }
  * }
  * </pre>
- * 
+ *
  * @see org.junit.BeforeClass
  * @see org.junit.Test
  * @since 4.0

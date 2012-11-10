@@ -11,13 +11,14 @@ import org.junit.runners.model.InitializationError;
  * This is the only way this class should be used--any extension that
  * depends on the implementation details of this class is likely to break
  * in future versions.
+ *
  * @since 4.5
  */
 public final class JUnit4 extends BlockJUnit4ClassRunner {
-	/**
-	 * Constructs a new instance of the default runner
-	 */
-	public JUnit4(Class<?> klass) throws InitializationError {
-		super(klass);
-	}
+    /**
+     * Constructs a new instance of the default runner
+     */
+    public JUnit4(Class<?> klass) throws InitializationError {
+        super(klass);
+    }
 }

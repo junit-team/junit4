@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.junit.experimental.theories.internal;
 
 import java.lang.reflect.Array;
@@ -21,107 +18,127 @@ import org.junit.runners.model.TestClass;
  * Supplies Theory parameters based on all public members of the target class.
  */
 public class AllMembersSupplier extends ParameterSupplier {
-	static class MethodParameterValue extends PotentialAssignment {
-		private final FrameworkMethod fMethod;
+    static class MethodParameterValue extends PotentialAssignment {
+        private final FrameworkMethod fMethod;
 
-		private MethodParameterValue(FrameworkMethod dataPointMethod) {
-			fMethod= dataPointMethod;
-		}
+        private MethodParameterValue(FrameworkMethod dataPointMethod) {
+            fMethod = dataPointMethod;
+        }
 
-		@Override
-		public Object getValue() throws CouldNotGenerateValueException {
-			try {
-				return fMethod.invokeExplosively(null);
-			} catch (IllegalArgumentException e) {
-				throw new RuntimeException(
-						"unexpected: argument length is checked");
-			} catch (IllegalAccessException e) {
-				throw new RuntimeException(
-						"unexpected: getMethods returned an inaccessible method");
-			} catch (Throwable e) {
-				throw new CouldNotGenerateValueException();
-				// do nothing, just look for more values
-			}
-		}
+        @Override
+        public Object getValue() throws CouldNotGenerateValueException {
+            try {
+                return fMethod.invokeExplosively(null);
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeException(
+                        "unexpected: argument length is checked");
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(
+                        "unexpected: getMethods returned an inaccessible method");
+            } catch (Throwable e) {
+                throw new CouldNotGenerateValueException();
+                // do nothing, just look for more values
+            }
+        }
 
-		@Override
-		public String getDescription() throws CouldNotGenerateValueException {
-			return fMethod.getName();
-		}
-	}
+        @Override
+        public String getDescription() throws CouldNotGenerateValueException {
+            return fMethod.getName();
+        }
+    }
 
-	private final TestClass fClass;
+    private final TestClass fClass;
 
-	/**
-	 * Constructs a new supplier for {@code type}
-	 */
-	public AllMembersSupplier(TestClass type) {
-		fClass= type;
-	}
+    /**
+     * Constructs a new supplier for {@code type}
+     */
+    public AllMembersSupplier(TestClass type) {
+        fClass = type;
+    }
 
-	@Override
-	public List<PotentialAssignment> getValueSources(ParameterSignature sig) {
-		List<PotentialAssignment> list= new ArrayList<PotentialAssignment>();
+    @Override
+    public List<PotentialAssignment> getValueSources(ParameterSignature sig) {
+        List<PotentialAssignment> list = new ArrayList<PotentialAssignment>();
 
-		addFields(sig, list);
-		addSinglePointMethods(sig, list);
-		addMultiPointMethods(list);
+        addFields(sig, list);
+        addSinglePointMethods(sig, list);
+        addMultiPointMethods(sig, list);
 
-		return list;
-	}
+        return list;
+    }
 
-	private void addMultiPointMethods(List<PotentialAssignment> list) {
-		for (FrameworkMethod dataPointsMethod : fClass
-				.getAnnotatedMethods(DataPoints.class))
-			try {
-				addArrayValues(dataPointsMethod.getName(), list, dataPointsMethod.invokeExplosively(null));
-			} catch (Throwable e) {
-				// ignore and move on
-			}
-	}
+    private void addMultiPointMethods(ParameterSignature sig, List<PotentialAssignment> list) {
+        for (FrameworkMethod dataPointsMethod : fClass
+                .getAnnotatedMethods(DataPoints.class)) {
+            try {
+                addMultiPointArrayValues(sig, dataPointsMethod.getName(), list, dataPointsMethod.invokeExplosively(null));
+            } catch (Throwable e) {
+                // ignore and move on
+            }
+        }
+    }
 
-	@SuppressWarnings("deprecation")
-	private void addSinglePointMethods(ParameterSignature sig,
-			List<PotentialAssignment> list) {
-		for (FrameworkMethod dataPointMethod : fClass
-				.getAnnotatedMethods(DataPoint.class)) {
-			Class<?> type= sig.getType();
-			if ((dataPointMethod.producesType(type)))
-				list.add(new MethodParameterValue(dataPointMethod));
-		}
-	}
+    private void addSinglePointMethods(ParameterSignature sig,
+            List<PotentialAssignment> list) {
+        for (FrameworkMethod dataPointMethod : fClass
+                .getAnnotatedMethods(DataPoint.class)) {
+            if (isCorrectlyTyped(sig, dataPointMethod.getType())) {
+                list.add(new MethodParameterValue(dataPointMethod));
+            }
+        }
+    }
 
-	private void addFields(ParameterSignature sig,
-			List<PotentialAssignment> list) {
-		for (final Field field : fClass.getJavaClass().getFields()) {
-			if (Modifier.isStatic(field.getModifiers())) {
-				Class<?> type= field.getType();
-				if (sig.canAcceptArrayType(type)
-						&& field.getAnnotation(DataPoints.class) != null) {
-					addArrayValues(field.getName(), list, getStaticFieldValue(field));
-				} else if (sig.canAcceptType(type)
-						&& field.getAnnotation(DataPoint.class) != null) {
-					list.add(PotentialAssignment
-							.forValue(field.getName(), getStaticFieldValue(field)));
-				}
-			}
-		}
-	}
+    private void addFields(ParameterSignature sig,
+            List<PotentialAssignment> list) {
+        for (final Field field : fClass.getJavaClass().getFields()) {
+            if (Modifier.isStatic(field.getModifiers())) {
+                Class<?> type = field.getType();
+                if (sig.canAcceptArrayType(type)
+                        && field.getAnnotation(DataPoints.class) != null) {
+                    try {
+                        addArrayValues(field.getName(), list, getStaticFieldValue(field));
+                    } catch (Throwable e) {
+                        // ignore and move on
+                    }
+                } else if (sig.canAcceptType(type)
+                        && field.getAnnotation(DataPoint.class) != null) {
+                    list.add(PotentialAssignment
+                            .forValue(field.getName(), getStaticFieldValue(field)));
+                }
+            }
+        }
+    }
 
-	private void addArrayValues(String name, List<PotentialAssignment> list, Object array) {
-		for (int i= 0; i < Array.getLength(array); i++)
-			list.add(PotentialAssignment.forValue(name + "[" + i + "]", Array.get(array, i)));
-	}
+    private void addArrayValues(String name, List<PotentialAssignment> list, Object array) {
+        for (int i = 0; i < Array.getLength(array); i++) {
+            list.add(PotentialAssignment.forValue(name + "[" + i + "]", Array.get(array, i)));
+        }
+    }
 
-	private Object getStaticFieldValue(final Field field) {
-		try {
-			return field.get(null);
-		} catch (IllegalArgumentException e) {
-			throw new RuntimeException(
-					"unexpected: field from getClass doesn't exist on object");
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(
-					"unexpected: getFields returned an inaccessible field");
-		}
-	}
+    private void addMultiPointArrayValues(ParameterSignature sig, String name, List<PotentialAssignment> list,
+            Object array) throws Throwable {
+        for (int i = 0; i < Array.getLength(array); i++) {
+            if (!isCorrectlyTyped(sig, Array.get(array, i).getClass())) {
+                return;
+            }
+            list.add(PotentialAssignment.forValue(name + "[" + i + "]", Array.get(array, i)));
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private boolean isCorrectlyTyped(ParameterSignature parameterSignature, Class<?> type) {
+        return parameterSignature.canAcceptType(type);
+    }
+
+    private Object getStaticFieldValue(final Field field) {
+        try {
+            return field.get(null);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException(
+                    "unexpected: field from getClass doesn't exist on object");
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(
+                    "unexpected: getFields returned an inaccessible field");
+        }
+    }
 }
