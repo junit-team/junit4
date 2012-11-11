@@ -1,4 +1,4 @@
-## Summary of changes in version 4.11 [unreleased!]
+## Summary of changes in version 4.11
 
 ### Matchers: Upgrade to Hamcrest 1.3
 
@@ -96,6 +96,7 @@ From this release on, you should use `junit:junit` which will be what `junit:jun
 
 A number of improvements have been made to Rules:
 
+* `MethodRule` is no longer deprecated.
 * Both `@Rule` and `@ClassRule` can now be used on methods that return a `TestRule`.
 * `ExpectedException` now always prints the stacktrace of the actual exception in case of failure.
 * A parent folder can be specified for `TemporaryFolder`. In addition, the `newFile`/`newFolder` methods will now fail when the file or folder could not be created.
