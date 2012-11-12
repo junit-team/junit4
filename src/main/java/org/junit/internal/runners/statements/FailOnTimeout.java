@@ -2,14 +2,21 @@ package org.junit.internal.runners.statements;
 
 import org.junit.runners.model.Statement;
 
+import java.util.concurrent.TimeUnit;
+
 public class FailOnTimeout extends Statement {
     private final Statement fOriginalStatement;
-
+    private final TimeUnit fTimeUnit;
     private final long fTimeout;
 
     public FailOnTimeout(Statement originalStatement, long timeout) {
+        this(originalStatement, timeout, TimeUnit.MILLISECONDS);
+    }
+
+    public FailOnTimeout(Statement originalStatement, long timeout, TimeUnit unit) {
         fOriginalStatement = originalStatement;
         fTimeout = timeout;
+        fTimeUnit = unit;
     }
 
     @Override
@@ -23,7 +30,7 @@ public class FailOnTimeout extends Statement {
     private StatementThread evaluateStatement() throws InterruptedException {
         StatementThread thread = new StatementThread(fOriginalStatement);
         thread.start();
-        thread.join(fTimeout);
+        fTimeUnit.timedJoin(thread, fTimeout);
         if (!thread.fFinished) {
             thread.recordStackTrace();
         }
@@ -42,7 +49,7 @@ public class FailOnTimeout extends Statement {
 
     private void throwTimeoutException(StatementThread thread) throws Exception {
         Exception exception = new Exception(String.format(
-                "test timed out after %d milliseconds", fTimeout));
+                "test timed out after %d milliseconds", TimeUnit.MILLISECONDS.convert(fTimeout, fTimeUnit)));
         exception.setStackTrace(thread.getRecordedStackTrace());
         throw exception;
     }
