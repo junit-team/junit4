@@ -119,8 +119,8 @@ public class ExpectedException implements TestRule {
      * @return self
      */
     public ExpectedException reportMissingExceptionWithMessage(String providedMessage) {
-    	missingExceptionMessage = providedMessage;
-    	return this;
+        missingExceptionMessage = providedMessage;
+        return this;
     }
 
     public Statement apply(Statement base,
@@ -193,14 +193,14 @@ public class ExpectedException implements TestRule {
     }
 
     private void failDueToMissingException() throws AssertionError {
-    	String failureMessage;
-    	
-    	if ( isMissingExceptionMessageEmpty() ) {
-    		String expectation = StringDescription.toString(fMatcherBuilder.build());
-    		failureMessage = "Expected test to throw " + expectation;
-    	} else {
-    		failureMessage = missingExceptionMessage;
-    	}
+        String failureMessage;
+        
+        if ( isMissingExceptionMessageEmpty() ) {
+            String expectation = StringDescription.toString(fMatcherBuilder.build());
+            failureMessage = "Expected test to throw " + expectation;
+        } else {
+            failureMessage = missingExceptionMessage;
+        }
 
         fail(failureMessage);
     }
@@ -223,6 +223,6 @@ public class ExpectedException implements TestRule {
     }
     
     private boolean isMissingExceptionMessageEmpty() {
-    	return missingExceptionMessage == null || missingExceptionMessage.isEmpty();
+        return missingExceptionMessage == null || missingExceptionMessage.isEmpty();
     }
 }
