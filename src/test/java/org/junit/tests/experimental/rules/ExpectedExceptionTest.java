@@ -378,7 +378,7 @@ public class ExpectedExceptionTest {
         @Test
         public void noThrow() {
             thrown.expect(IllegalArgumentException.class);
-            thrown.setMissingExceptionMessage(ARBITRARY_MESSAGE);
+            thrown.reportMissingExceptionWithMessage(ARBITRARY_MESSAGE);
         }
     }
 }
