@@ -113,9 +113,9 @@ public class ExpectedException implements TestRule {
     }
     
     /**
-     * Specifies the detail message for an exception to be thrown if the test does 
-     * not throw the expected exception.
-     * @param providedMessage exception detail message
+     * Specifies the failure message for tests that are expected to throw 
+     * an exception but do not throw any.
+     * @param message exception detail message
      * @return self
      */
     public ExpectedException reportMissingExceptionWithMessage(String message) {
