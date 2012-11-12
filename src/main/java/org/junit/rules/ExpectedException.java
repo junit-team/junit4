@@ -118,8 +118,8 @@ public class ExpectedException implements TestRule {
      * @param providedMessage exception detail message
      * @return self
      */
-    public ExpectedException reportMissingExceptionWithMessage(String providedMessage) {
-        missingExceptionMessage = providedMessage;
+    public ExpectedException reportMissingExceptionWithMessage(String message) {
+        missingExceptionMessage = message;
         return this;
     }
 
