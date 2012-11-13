@@ -215,7 +215,7 @@ public class ExpectedException implements TestRule {
     
     private String missingExceptionMessage() {
         if (isMissingExceptionMessageEmpty()) {
-        	String expectation = StringDescription.toString(fMatcherBuilder.build());
+            String expectation = StringDescription.toString(fMatcherBuilder.build());
             return "Expected test to throw " + expectation;
         } else {
             return missingExceptionMessage;
