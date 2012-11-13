@@ -9,8 +9,8 @@ public class FailOnTimeout extends Statement {
     private final TimeUnit fTimeUnit;
     private final long fTimeout;
 
-    public FailOnTimeout(Statement originalStatement, long timeout) {
-        this(originalStatement, timeout, TimeUnit.MILLISECONDS);
+    public FailOnTimeout(Statement originalStatement, long millis) {
+        this(originalStatement, millis, TimeUnit.MILLISECONDS);
     }
 
     public FailOnTimeout(Statement originalStatement, long timeout, TimeUnit unit) {
@@ -49,7 +49,7 @@ public class FailOnTimeout extends Statement {
 
     private void throwTimeoutException(StatementThread thread) throws Exception {
         Exception exception = new Exception(String.format(
-                "test timed out after %d milliseconds", TimeUnit.MILLISECONDS.convert(fTimeout, fTimeUnit)));
+                "test timed out after %d %s", fTimeout, fTimeUnit.name().toLowerCase()));
         exception.setStackTrace(thread.getRecordedStackTrace());
         throw exception;
     }

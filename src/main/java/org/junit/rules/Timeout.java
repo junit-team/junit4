@@ -35,6 +35,13 @@ import java.util.concurrent.TimeUnit;
  *      ...
  *      wait();
  *  }
+ *
+ *  &#064;Test
+ *  public void run4() {
+ *      //uninterrupted code
+ *      for (;;)
+ *         ; //extremely, an infinite loop
+ *  }
  * }
  * </pre>
  *

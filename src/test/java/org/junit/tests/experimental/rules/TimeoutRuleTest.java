@@ -19,6 +19,8 @@ import static org.junit.Assert.assertThat;
 public class TimeoutRuleTest {
     private static final ReentrantLock run1Lock = new ReentrantLock();
 
+    private static volatile boolean run4done = false;
+
     public static class HasGlobalLongTimeout {
         public static final StringBuffer logger = new StringBuffer();
 
@@ -42,6 +44,13 @@ public class TimeoutRuleTest {
         public synchronized void run3() throws InterruptedException {
             logger.append("run3");
             wait();
+        }
+
+        @Test
+        public void run4() {
+            logger.append("run4");
+            while (!run4done) {
+            }
         }
     }
 
@@ -69,13 +78,22 @@ public class TimeoutRuleTest {
             logger.append("run3");
             wait();
         }
+
+        @Test
+        public void run4() {
+            logger.append("run4");
+            while (!run4done) {
+            }
+        }
     }
 
     @Before public void before() {
+        run4done = false;
         run1Lock.lock();
     }
 
     @After public void after() {
+        run4done = true;//to make sure that the thread won't continue at run4()
         run1Lock.unlock();
     }
 
@@ -83,19 +101,21 @@ public class TimeoutRuleTest {
     public void timeUnitTimeout() throws InterruptedException {
         HasGlobalTimeUnitTimeout.logger.setLength(0);
         Result result = JUnitCore.runClasses(HasGlobalTimeUnitTimeout.class);
-        assertEquals(3, result.getFailureCount());
+        assertEquals(4, result.getFailureCount());
         assertThat(HasGlobalTimeUnitTimeout.logger.toString(), containsString("run1"));
         assertThat(HasGlobalTimeUnitTimeout.logger.toString(), containsString("run2"));
         assertThat(HasGlobalTimeUnitTimeout.logger.toString(), containsString("run3"));
+        assertThat(HasGlobalTimeUnitTimeout.logger.toString(), containsString("run4"));
     }
 
     @Test
     public void longTimeout() throws InterruptedException {
         HasGlobalLongTimeout.logger.setLength(0);
         Result result = JUnitCore.runClasses(HasGlobalLongTimeout.class);
-        assertEquals(3, result.getFailureCount());
+        assertEquals(4, result.getFailureCount());
         assertThat(HasGlobalLongTimeout.logger.toString(), containsString("run1"));
         assertThat(HasGlobalLongTimeout.logger.toString(), containsString("run2"));
         assertThat(HasGlobalLongTimeout.logger.toString(), containsString("run3"));
+        assertThat(HasGlobalLongTimeout.logger.toString(), containsString("run4"));
     }
 }
