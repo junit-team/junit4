@@ -21,23 +21,7 @@ import java.util.concurrent.TimeUnit;
  *  }
  *
  *  &#064;Test
- *  public void run2() throws InterruptedException {
- *      reentrantLock.lockInterruptibly();
- *      try {
- *         ...
- *      } finally {
- *         reentrantLock.unlock();
- *      }
- *  }
- *
- *  &#064;Test
- *  public synchronized void run3() throws InterruptedException {
- *      ...
- *      wait();
- *  }
- *
- *  &#064;Test
- *  public void run4() {
+ *  public void run2() {
  *      //uninterrupted code
  *      for (;;)
  *         ; //extremely, an infinite loop
@@ -45,8 +29,9 @@ import java.util.concurrent.TimeUnit;
  * }
  * </pre>
  *
- * A test is running in an extra thread, and its execution is interrupted via {@link Thread#interrupt}
- * when the timeout elapsed. This happens in interruptable I/O and locks, and methods in {@link Object}
+ * Each test is run in a new thread. If the specified timeout elapses before
+ * the test completes, its execution is interrupted via {@link Thread#interrupt()}.
+ * This happens in interruptable I/O and locks, and methods in {@link Object}
  * and {@link Thread} throwing {@link InterruptedException}.
  *
  * @since 4.7
@@ -58,23 +43,15 @@ public class Timeout implements TestRule {
     /**
      * Create a {@code Timeout} instance with the timeout specified
      * in milliseconds.
-     * This constructor is deprecated and will be removed in the next release.
-     * Instead use {@link #Timeout(long)} or
-     * {@link #Timeout(long, java.util.concurrent.TimeUnit)}.
+     * <p> This constructor is deprecated.
+     * <p> Instead use {@link #Timeout(long, java.util.concurrent.TimeUnit)},
+     * {@link Timeout#millis(long)}, or {@link Timeout#seconds(long)}.
      *
      * @param millis the maximum time in milliseconds to allow the
      * test to run before it should timeout
      */
     @Deprecated
     public Timeout(int millis) {
-        this((long) millis);
-    }
-
-    /**
-     * @param millis the millisecond timeout
-     * @since 4.11
-     */
-    public Timeout(long millis) {
         this(millis, TimeUnit.MILLISECONDS);
     }
 
@@ -85,12 +62,29 @@ public class Timeout implements TestRule {
      * @param timeout the maximum time to allow the test to run
      * before it should timeout
      * @param unit the time unit for the {@code timeout}
-     * @since 4.11
+     * @since 4.12
      */
     public Timeout(long timeout, TimeUnit unit) {
         fTimeout = timeout;
         fTimeUnit = unit;
     }
+
+    /**
+     * @param millis the timeout in milliseconds
+     * @since 4.12
+     */
+    public static Timeout millis(long millis) {
+        return new Timeout(millis, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * @param seconds the timeout in seconds
+     * @since 4.12
+     */
+    public static Timeout seconds(long seconds) {
+        return new Timeout(seconds, TimeUnit.SECONDS);
+    }
+
 
     public Statement apply(Statement base, Description description) {
         return new FailOnTimeout(base, fTimeout, fTimeUnit);

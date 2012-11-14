@@ -21,11 +21,8 @@ public class TimeoutRuleTest {
 
     private static volatile boolean run4done = false;
 
-    public static class HasGlobalLongTimeout {
+    public abstract static class AbstractTimeoutTest {
         public static final StringBuffer logger = new StringBuffer();
-
-        @Rule
-        public final TestRule globalTimeout = new Timeout(50L);
 
         @Test
         public void run1() throws InterruptedException {
@@ -54,45 +51,28 @@ public class TimeoutRuleTest {
         }
     }
 
-    public static class HasGlobalTimeUnitTimeout {
-        public static final StringBuffer logger = new StringBuffer();
+    public static class HasGlobalLongTimeout
+            extends AbstractTimeoutTest {
+
+        @Rule
+        public final TestRule globalTimeout = Timeout.millis(50L);
+    }
+
+    public static class HasGlobalTimeUnitTimeout
+            extends AbstractTimeoutTest {
 
         @Rule
         public final TestRule globalTimeout = new Timeout(50, TimeUnit.MILLISECONDS);
-
-        @Test
-        public void run1() throws InterruptedException {
-            logger.append("run1");
-            TimeoutRuleTest.run1Lock.lockInterruptibly();
-            TimeoutRuleTest.run1Lock.unlock();
-        }
-
-        @Test
-        public void run2() throws InterruptedException {
-            logger.append("run2");
-            Thread.currentThread().join();
-        }
-
-        @Test
-        public synchronized void run3() throws InterruptedException {
-            logger.append("run3");
-            wait();
-        }
-
-        @Test
-        public void run4() {
-            logger.append("run4");
-            while (!run4done) {
-            }
-        }
     }
 
-    @Before public void before() {
+    @Before
+    public void before() {
         run4done = false;
         run1Lock.lock();
     }
 
-    @After public void after() {
+    @After
+    public void after() {
         run4done = true;//to make sure that the thread won't continue at run4()
         run1Lock.unlock();
     }
