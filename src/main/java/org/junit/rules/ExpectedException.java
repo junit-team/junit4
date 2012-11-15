@@ -223,6 +223,6 @@ public class ExpectedException implements TestRule {
     }
     
     private boolean isMissingExceptionMessageEmpty() {
-        return missingExceptionMessage == null || missingExceptionMessage.isEmpty();
+        return missingExceptionMessage == null || missingExceptionMessage.length() == 0;
     }
 }
