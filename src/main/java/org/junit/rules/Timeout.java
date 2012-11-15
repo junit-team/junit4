@@ -21,10 +21,8 @@ import java.util.concurrent.TimeUnit;
  *  }
  *
  *  &#064;Test
- *  public void run2() {
- *      //uninterrupted code
- *      for (;;)
- *         ; //extremely, an infinite loop
+ *  public void infiniteLoop() {
+ *      while (true) {}
  *  }
  * }
  * </pre>

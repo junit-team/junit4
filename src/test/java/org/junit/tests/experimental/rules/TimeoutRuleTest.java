@@ -51,15 +51,13 @@ public class TimeoutRuleTest {
         }
     }
 
-    public static class HasGlobalLongTimeout
-            extends AbstractTimeoutTest {
+    public static class HasGlobalLongTimeout extends AbstractTimeoutTest {
 
         @Rule
         public final TestRule globalTimeout = Timeout.millis(50L);
     }
 
-    public static class HasGlobalTimeUnitTimeout
-            extends AbstractTimeoutTest {
+    public static class HasGlobalTimeUnitTimeout extends AbstractTimeoutTest {
 
         @Rule
         public final TestRule globalTimeout = new Timeout(50, TimeUnit.MILLISECONDS);
