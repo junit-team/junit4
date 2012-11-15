@@ -37,6 +37,10 @@ public class ParameterSignature {
         this.annotations = annotations;
     }
 
+    public boolean canAcceptValue(Object candidate) {
+        return (candidate == null) ? !type.isPrimitive() : canAcceptType(candidate.getClass());
+    }
+
     public boolean canAcceptType(Class<?> candidate) {
         return type.isAssignableFrom(candidate);
     }

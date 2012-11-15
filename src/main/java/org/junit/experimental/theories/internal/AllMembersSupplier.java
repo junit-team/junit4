@@ -82,7 +82,7 @@ public class AllMembersSupplier extends ParameterSupplier {
             List<PotentialAssignment> list) {
         for (FrameworkMethod dataPointMethod : fClass
                 .getAnnotatedMethods(DataPoint.class)) {
-            if (isCorrectlyTyped(sig, dataPointMethod.getType())) {
+            if (sig.canAcceptType(dataPointMethod.getType())) {
                 list.add(new MethodParameterValue(dataPointMethod));
             }
         }
@@ -118,16 +118,11 @@ public class AllMembersSupplier extends ParameterSupplier {
     private void addMultiPointArrayValues(ParameterSignature sig, String name, List<PotentialAssignment> list,
             Object array) throws Throwable {
         for (int i = 0; i < Array.getLength(array); i++) {
-            if (!isCorrectlyTyped(sig, Array.get(array, i).getClass())) {
+            if (!sig.canAcceptValue(Array.get(array, i))) {
                 return;
             }
             list.add(PotentialAssignment.forValue(name + "[" + i + "]", Array.get(array, i)));
         }
-    }
-
-    @SuppressWarnings("deprecation")
-    private boolean isCorrectlyTyped(ParameterSignature parameterSignature, Class<?> type) {
-        return parameterSignature.canAcceptType(type);
     }
 
     private Object getStaticFieldValue(final Field field) {

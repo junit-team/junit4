@@ -31,4 +31,44 @@ public class AllMembersSupplierTest {
                         .get(0));
         assertThat(valueSources.size(), is(2));
     }
+
+    public static class HasDataPointsFieldWithNullValue {
+        @DataPoints
+        public static Object[] objects = {null, "a"};
+
+        public HasDataPointsFieldWithNullValue(Object obj) {
+        }
+    }
+
+    @Test
+    public void dataPointsArrayFieldMayContainNullValue()
+            throws SecurityException, NoSuchMethodException {
+        List<PotentialAssignment> valueSources = new AllMembersSupplier(
+                new TestClass(HasDataPointsFieldWithNullValue.class))
+                .getValueSources(ParameterSignature.signatures(
+                        HasDataPointsFieldWithNullValue.class.getConstructor(Object.class))
+                        .get(0));
+        assertThat(valueSources.size(), is(2));
+    }
+
+    public static class HasDataPointsMethodWithNullValue {
+        @DataPoints
+        public static Integer[] getObjects() {
+            return new Integer[] {null, 1};
+        }
+
+        public HasDataPointsMethodWithNullValue(Integer i) {
+        }
+    }
+
+    @Test
+    public void dataPointsArrayMethodMayContainNullValue()
+            throws SecurityException, NoSuchMethodException {
+        List<PotentialAssignment> valueSources = new AllMembersSupplier(
+                new TestClass(HasDataPointsMethodWithNullValue.class))
+                .getValueSources(ParameterSignature.signatures(
+                        HasDataPointsMethodWithNullValue.class.getConstructor(Integer.class))
+                        .get(0));
+        assertThat(valueSources.size(), is(2));
+    }
 }
