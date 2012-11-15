@@ -2,6 +2,8 @@ package org.junit.internal.runners.statements;
 
 import org.junit.runners.model.Statement;
 
+import java.io.InterruptedIOException;
+import java.nio.channels.ClosedByInterruptException;
 import java.util.concurrent.TimeUnit;
 
 public class FailOnTimeout extends Statement {
@@ -29,6 +31,7 @@ public class FailOnTimeout extends Statement {
 
     private StatementThread evaluateStatement() throws InterruptedException {
         StatementThread thread = new StatementThread(fOriginalStatement);
+        thread.setDaemon(true);
         thread.start();
         fTimeUnit.timedJoin(thread, fTimeout);
         if (!thread.fFinished) {
@@ -56,14 +59,14 @@ public class FailOnTimeout extends Statement {
 
     private static class StatementThread extends Thread {
         private final Statement fStatement;
-
-        private boolean fFinished = false;
-
-        private Throwable fExceptionThrownByOriginalStatement = null;
-
-        private StackTraceElement[] fRecordedStackTrace = null;
+        private volatile boolean fFinished;
+        private volatile Throwable fExceptionThrownByOriginalStatement;
+        private volatile StackTraceElement[] fRecordedStackTrace;
 
         public StatementThread(Statement statement) {
+            fFinished = false;
+            fExceptionThrownByOriginalStatement = null;
+            fRecordedStackTrace = null;
             fStatement = statement;
         }
 
@@ -82,6 +85,10 @@ public class FailOnTimeout extends Statement {
                 fFinished = true;
             } catch (InterruptedException e) {
                 // don't log the InterruptedException
+            } catch (InterruptedIOException e) {
+                // don't log the InterruptedIOException
+            } catch (ClosedByInterruptException e) {
+                // don't log the ClosedByInterruptException
             } catch (Throwable e) {
                 fExceptionThrownByOriginalStatement = e;
             }

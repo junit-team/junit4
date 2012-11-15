@@ -9,6 +9,13 @@ import org.junit.rules.Timeout;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -49,6 +56,28 @@ public class TimeoutRuleTest {
             while (!run4done) {
             }
         }
+
+        @Test
+        public void run5() throws IOException {
+            logger.append("run5");
+            Random rnd = new Random();
+            byte[] data = new byte[1024];
+            while (true) {
+                File tmp = File.createTempFile("dummy", ".tmp");
+                tmp.deleteOnExit();
+                FileChannel in = new RandomAccessFile(tmp, "rw").getChannel();
+                rnd.nextBytes(data);
+                in.write(ByteBuffer.wrap(data));//Interrupted thread closes channel and throws ClosedByInterruptException.
+                in.close();
+            }
+        }
+
+        @Test
+        public void run6() throws InterruptedIOException {
+            logger.append("run6");
+            //Java IO throws InterruptedIOException on SUN machines.
+            throw new InterruptedIOException();
+        }
     }
 
     public static class HasGlobalLongTimeout extends AbstractTimeoutTest {
@@ -79,21 +108,25 @@ public class TimeoutRuleTest {
     public void timeUnitTimeout() throws InterruptedException {
         HasGlobalTimeUnitTimeout.logger.setLength(0);
         Result result = JUnitCore.runClasses(HasGlobalTimeUnitTimeout.class);
-        assertEquals(4, result.getFailureCount());
+        assertEquals(6, result.getFailureCount());
         assertThat(HasGlobalTimeUnitTimeout.logger.toString(), containsString("run1"));
         assertThat(HasGlobalTimeUnitTimeout.logger.toString(), containsString("run2"));
         assertThat(HasGlobalTimeUnitTimeout.logger.toString(), containsString("run3"));
         assertThat(HasGlobalTimeUnitTimeout.logger.toString(), containsString("run4"));
+        assertThat(HasGlobalTimeUnitTimeout.logger.toString(), containsString("run5"));
+        assertThat(HasGlobalTimeUnitTimeout.logger.toString(), containsString("run6"));
     }
 
     @Test
     public void longTimeout() throws InterruptedException {
         HasGlobalLongTimeout.logger.setLength(0);
         Result result = JUnitCore.runClasses(HasGlobalLongTimeout.class);
-        assertEquals(4, result.getFailureCount());
+        assertEquals(6, result.getFailureCount());
         assertThat(HasGlobalLongTimeout.logger.toString(), containsString("run1"));
         assertThat(HasGlobalLongTimeout.logger.toString(), containsString("run2"));
         assertThat(HasGlobalLongTimeout.logger.toString(), containsString("run3"));
         assertThat(HasGlobalLongTimeout.logger.toString(), containsString("run4"));
+        assertThat(HasGlobalLongTimeout.logger.toString(), containsString("run5"));
+        assertThat(HasGlobalLongTimeout.logger.toString(), containsString("run6"));
     }
 }
