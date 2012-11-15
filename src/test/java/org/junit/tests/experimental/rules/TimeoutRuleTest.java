@@ -1,10 +1,7 @@
 package org.junit.tests.experimental.rules;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-
-import org.junit.Ignore;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
@@ -12,35 +9,91 @@ import org.junit.rules.Timeout;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 
-public class TimeoutRuleTest {
-    public static class HasGlobalTimeout {
-        public static String log;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
-        @Rule
-        public TestRule globalTimeout = new Timeout(20);
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+
+public class TimeoutRuleTest {
+    private static final ReentrantLock run1Lock = new ReentrantLock();
+
+    private static volatile boolean run4done = false;
+
+    public abstract static class AbstractTimeoutTest {
+        public static final StringBuffer logger = new StringBuffer();
 
         @Test
-        public void testInfiniteLoop1() {
-            log += "ran1";
-            for (; ; ) {
-            }
+        public void run1() throws InterruptedException {
+            logger.append("run1");
+            TimeoutRuleTest.run1Lock.lockInterruptibly();
+            TimeoutRuleTest.run1Lock.unlock();
         }
 
         @Test
-        public void testInfiniteLoop2() {
-            log += "ran2";
-            for (; ; ) {
+        public void run2() throws InterruptedException {
+            logger.append("run2");
+            Thread.currentThread().join();
+        }
+
+        @Test
+        public synchronized void run3() throws InterruptedException {
+            logger.append("run3");
+            wait();
+        }
+
+        @Test
+        public void run4() {
+            logger.append("run4");
+            while (!run4done) {
             }
         }
     }
 
-    @Ignore("For gump, for now")
-    @Test(timeout = 100)
-    public void globalTimeoutAvoidsInfiniteLoop() {
-        HasGlobalTimeout.log = "";
-        Result result = JUnitCore.runClasses(HasGlobalTimeout.class);
-        assertEquals(2, result.getFailureCount());
-        assertThat(HasGlobalTimeout.log, containsString("ran1"));
-        assertThat(HasGlobalTimeout.log, containsString("ran2"));
+    public static class HasGlobalLongTimeout extends AbstractTimeoutTest {
+
+        @Rule
+        public final TestRule globalTimeout = Timeout.millis(50L);
+    }
+
+    public static class HasGlobalTimeUnitTimeout extends AbstractTimeoutTest {
+
+        @Rule
+        public final TestRule globalTimeout = new Timeout(50, TimeUnit.MILLISECONDS);
+    }
+
+    @Before
+    public void before() {
+        run4done = false;
+        run1Lock.lock();
+    }
+
+    @After
+    public void after() {
+        run4done = true;//to make sure that the thread won't continue at run4()
+        run1Lock.unlock();
+    }
+
+    @Test
+    public void timeUnitTimeout() throws InterruptedException {
+        HasGlobalTimeUnitTimeout.logger.setLength(0);
+        Result result = JUnitCore.runClasses(HasGlobalTimeUnitTimeout.class);
+        assertEquals(4, result.getFailureCount());
+        assertThat(HasGlobalTimeUnitTimeout.logger.toString(), containsString("run1"));
+        assertThat(HasGlobalTimeUnitTimeout.logger.toString(), containsString("run2"));
+        assertThat(HasGlobalTimeUnitTimeout.logger.toString(), containsString("run3"));
+        assertThat(HasGlobalTimeUnitTimeout.logger.toString(), containsString("run4"));
+    }
+
+    @Test
+    public void longTimeout() throws InterruptedException {
+        HasGlobalLongTimeout.logger.setLength(0);
+        Result result = JUnitCore.runClasses(HasGlobalLongTimeout.class);
+        assertEquals(4, result.getFailureCount());
+        assertThat(HasGlobalLongTimeout.logger.toString(), containsString("run1"));
+        assertThat(HasGlobalLongTimeout.logger.toString(), containsString("run2"));
+        assertThat(HasGlobalLongTimeout.logger.toString(), containsString("run3"));
+        assertThat(HasGlobalLongTimeout.logger.toString(), containsString("run4"));
     }
 }
