@@ -3,7 +3,9 @@ package org.junit.internal;
 import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -55,8 +57,33 @@ public class MethodSorterTest {
 
     private String declaredMethods(Class<?> clazz) {
         return toString(clazz, MethodSorter.getDeclaredMethods(clazz));
+    }    
+   
+    private List<String> getDeclaredFilteredMethods(Class<?> clazz, List<String> ofInterest) {
+    	// the method under test.
+    	Method[] actualMethods = MethodSorter.getDeclaredMethods(clazz);
+    	
+    	// obtain just the names instead of the full methods.
+    	List<String> names = new ArrayList<String>();
+    	for (Method m : actualMethods) {
+    		names.add(m.toString().replace(clazz.getName() + '.', ""));
+    	}
+
+    	// reduce to the methods of interest.
+    	names.retainAll(ofInterest);
+    	
+    	return names;
     }
 
+    @Test
+    public void getMethodsNullSorterSubset() {
+        List<String> expected = Arrays.asList(
+        		new String[]{EPSILON, BETA, ALPHA, DELTA, GAMMA_VOID, GAMMA_BOOLEAN});
+        List<String> actual = getDeclaredFilteredMethods(Dummy.class, expected);
+        assertEquals(expected, actual);
+    }
+
+    
     @Test
     public void getMethodsNullSorter() throws Exception {
         String[] expected = new String[]{EPSILON, BETA, ALPHA, DELTA, GAMMA_VOID, GAMMA_BOOLEAN};
