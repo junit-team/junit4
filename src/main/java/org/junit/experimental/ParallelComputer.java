@@ -22,32 +22,7 @@ import org.junit.runners.model.RunnerScheduler;
 import org.junit.internal.runners.ErrorReportingRunner;
 
 /**
- * Represents a factory of Computers scheduling concurrent JUnit classes and methods in several variants. <p>
- * <p>
- * Use the {@link #classes()} to launch given JUnit classes in parallel. This may be used if all
- * classes have approximately same execution time. <p>
- * In order to call parallel tests, use the {@link #methods()}. This is useful if calling many
- * methods with different execution time per class in parallel, and run only few classes in a sequence or ideally one
- * class. <p>
- * This variant allocates classes and methods in unbounded thread pools. <p>
- * <p>
- * If you want to customize the Computer, via e.g. bounded thread pool related to the number of processors, then use
- * other variant. The Computer of classes and methods can be customized by provided Thread pool using
- * {@link #classes(java.util.concurrent.ExecutorService)}
- * and {@link #methods(java.util.concurrent.ExecutorService)}, respectively. <p>
- * <p>
- * Sometimes you want to parallelize both the classes and methods in one Computer. There are five variants for that: <p>
- * Scheduling all classes and short-lived test methods in an unbounded cached thread pool via
- * {@link #classesAndMethodsUnbounded()} which is a comfortable use case. This may however waste the thread resources
- * when used with a lot of time demanding classes/methods. So you may want to use the next two variants, i.e.
- * {@link #classesAndMethodsBounded(int)} with embedded fixed-size thread pool and
- * {@link #classesAndMethods(java.util.concurrent.ThreadPoolExecutor)} with provided thread pool. These two variants
- * attempt to consume thread resources in favor of parallel classes, so they are useful when the pool has much greater
- * capacity than the number of examined classes. On the other hand you can manage the thread resources allocated
- * across classes and methods using other factories
- * {@link #classesAndMethods(java.util.concurrent.ThreadPoolExecutor, int)} (has a little locking overhead), and
- * {@link #classesAndMethods(java.util.concurrent.ExecutorService, java.util.concurrent.ExecutorService)} (requires an
- * extra thread pool).
+ * Represents a factory of Computers scheduling concurrent JUnit classes and methods in several variants.
  */
 public class ParallelComputer extends Computer {
     // true: parallelized classes if #classes(), #classesAndMethods() or ParallelComputer(true, x), ParallelComputer(pool[,...])
