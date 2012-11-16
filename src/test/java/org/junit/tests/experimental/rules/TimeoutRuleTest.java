@@ -4,6 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.rules.TestRule;
 import org.junit.rules.Timeout;
 import org.junit.runner.JUnitCore;
@@ -30,6 +31,9 @@ public class TimeoutRuleTest {
 
     public abstract static class AbstractTimeoutTest {
         public static final StringBuffer logger = new StringBuffer();
+
+        @Rule
+        public final TemporaryFolder tmpFile = new TemporaryFolder();
 
         @Test
         public void run1() throws InterruptedException {
@@ -62,7 +66,7 @@ public class TimeoutRuleTest {
             logger.append("run5");
             Random rnd = new Random();
             byte[] data = new byte[1024];
-            File tmp = File.createTempFile("dummy", ".tmp");
+            File tmp = tmpFile.newFile();
             tmp.deleteOnExit();
             while (true) {
                 FileChannel channel = new RandomAccessFile(tmp, "rw").getChannel();
