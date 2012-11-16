@@ -302,10 +302,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      * Returns a {@link Statement}: run all non-overridden {@code @Before}
      * methods on this class and superclasses before running {@code next}; if
      * any throws an Exception, stop execution and pass the exception on.
-     *
-     * @deprecated Will be private soon: use Rules instead
      */
-    @Deprecated
     protected Statement withBefores(FrameworkMethod method, Object target,
             Statement statement) {
         List<FrameworkMethod> befores = getTestClass().getAnnotatedMethods(
@@ -320,10 +317,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      * After methods are always executed: exceptions thrown by previous steps
      * are combined, if necessary, with exceptions from After methods into a
      * {@link MultipleFailureException}.
-     *
-     * @deprecated Will be private soon: use Rules instead
      */
-    @Deprecated
     protected Statement withAfters(FrameworkMethod method, Object target,
             Statement statement) {
         List<FrameworkMethod> afters = getTestClass().getAnnotatedMethods(
