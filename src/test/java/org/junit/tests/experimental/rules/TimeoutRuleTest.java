@@ -62,13 +62,15 @@ public class TimeoutRuleTest {
             logger.append("run5");
             Random rnd = new Random();
             byte[] data = new byte[1024];
+            File tmp = File.createTempFile("dummy", ".tmp");
+            tmp.deleteOnExit();
             while (true) {
-                File tmp = File.createTempFile("dummy", ".tmp");
-                tmp.deleteOnExit();
-                FileChannel in = new RandomAccessFile(tmp, "rw").getChannel();
+                FileChannel channel = new RandomAccessFile(tmp, "rw").getChannel();
                 rnd.nextBytes(data);
-                in.write(ByteBuffer.wrap(data));//Interrupted thread closes channel and throws ClosedByInterruptException.
-                in.close();
+                ByteBuffer buffer = ByteBuffer.wrap(data);
+                channel.write(buffer);//Interrupted thread closes channel and throws ClosedByInterruptException.
+                channel.close();
+                tmp.delete();
             }
         }
 
