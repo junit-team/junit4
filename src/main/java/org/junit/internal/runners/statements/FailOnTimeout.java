@@ -61,12 +61,12 @@ public class FailOnTimeout extends Statement {
         private final Statement fStatement;
 
         /**
-         * Without modifier of volatile, the values in these variables
-         * may become old in {@link FailOnTimeout#evaluate()}.
+         * Without modifier of volatile, the values in these variables may
+         * become old (default in this case) in {@link FailOnTimeout#evaluate()}.
          * When declaring 'volatile' variables, the CPU is forced
          * to reconcile the values stored in registers and thread's stack
-         * by cache coherence at every write-read operation on these variables
-         * ; Otherwise the CPU and VM may reconcile the memories as it wants
+         * by cache coherence at every write-read operation on these variables;
+         * Otherwise the CPU and VM may reconcile the memories as it wants
          * (for performance reasons) and therefore these values read in
          * {@link FailOnTimeout#evaluate()} may not be up-to-date without volatile.
          * Besides visibility, the volatile variables have also other guarantees:
