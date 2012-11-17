@@ -21,7 +21,7 @@ public class MethodSorterTest {
     private static final String SUPER_METHOD = "void superMario()";
     private static final String SUB_METHOD = "void subBowser()";
 
-    static class Dummy {
+    static class ClassWithoutSorterAnnotation {
         Object alpha(int i, double d, Thread t) {
             return null;
         }
@@ -81,7 +81,7 @@ public class MethodSorterTest {
     public void testMethodsNullSorterSelf() {
         List<String> expected = Arrays.asList(
         		new String[]{EPSILON, BETA, ALPHA, DELTA, GAMMA_VOID, GAMMA_BOOLEAN});
-        List<String> actual = getDeclaredFilteredMethods(Dummy.class, expected);
+        List<String> actual = getDeclaredFilteredMethods(ClassWithoutSorterAnnotation.class, expected);
         assertEquals(expected, actual);
     }
     
@@ -103,7 +103,7 @@ public class MethodSorterTest {
     @Test
     public void getMethodsNullSorter() throws Exception {
         String[] expected = new String[]{EPSILON, BETA, ALPHA, DELTA, GAMMA_VOID, GAMMA_BOOLEAN};
-        assertEquals(Arrays.asList(expected).toString(), declaredMethods(Dummy.class));
+        assertEquals(Arrays.asList(expected).toString(), declaredMethods(ClassWithoutSorterAnnotation.class));
         assertEquals("[void superMario()]", declaredMethods(Super.class));
         assertEquals("[void subBowser()]", declaredMethods(Sub.class));
     }
