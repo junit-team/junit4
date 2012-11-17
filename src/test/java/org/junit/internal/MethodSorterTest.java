@@ -18,6 +18,8 @@ public class MethodSorterTest {
     private static final String GAMMA_BOOLEAN = "void gamma(boolean)";
     private static final String DELTA = "void delta()";
     private static final String EPSILON = "void epsilon()";
+    private static final String SUPER_METHOD = "void superMario()";
+    private static final String SUB_METHOD = "void subBowser()";
 
     static class Dummy {
         Object alpha(int i, double d, Thread t) {
@@ -42,12 +44,12 @@ public class MethodSorterTest {
     }
 
     static class Super {
-        void testOne() {
+        void superMario() {
         }
     }
 
     static class Sub extends Super {
-        void testTwo() {
+        void subBowser() {
         }
     }
 
@@ -76,10 +78,24 @@ public class MethodSorterTest {
     }
 
     @Test
-    public void getMethodsNullSorterSubset() {
+    public void getMethodsNullSorterSelf() {
         List<String> expected = Arrays.asList(
         		new String[]{EPSILON, BETA, ALPHA, DELTA, GAMMA_VOID, GAMMA_BOOLEAN});
         List<String> actual = getDeclaredFilteredMethods(Dummy.class, expected);
+        assertEquals(expected, actual);
+    }
+    
+    @Test
+    public void getMethodsNullSorterSuper() {
+        List<String> expected = Arrays.asList(new String[]{SUPER_METHOD});
+        List<String> actual = getDeclaredFilteredMethods(Super.class, expected);
+        assertEquals(expected, actual);
+    }
+    
+    @Test
+    public void getMethodsNullSorterSub() {
+        List<String> expected = Arrays.asList(new String[]{SUB_METHOD});
+        List<String> actual = getDeclaredFilteredMethods(Sub.class, expected);
         assertEquals(expected, actual);
     }
 
@@ -88,8 +104,8 @@ public class MethodSorterTest {
     public void getMethodsNullSorter() throws Exception {
         String[] expected = new String[]{EPSILON, BETA, ALPHA, DELTA, GAMMA_VOID, GAMMA_BOOLEAN};
         assertEquals(Arrays.asList(expected).toString(), declaredMethods(Dummy.class));
-        assertEquals("[void testOne()]", declaredMethods(Super.class));
-        assertEquals("[void testTwo()]", declaredMethods(Sub.class));
+        assertEquals("[void superMario()]", declaredMethods(Super.class));
+        assertEquals("[void subBowser()]", declaredMethods(Sub.class));
     }
 
     @FixMethodOrder(MethodSorters.DEFAULT)
