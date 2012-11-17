@@ -62,7 +62,13 @@ public class MethodSorterTest {
     }    
    
     private List<String> getDeclaredFilteredMethods(Class<?> clazz, List<String> ofInterest) {
-    	// the method under test.
+    	List<String> names= getDeclaredMethodNames(clazz);
+    	names.retainAll(ofInterest);   	
+    	return names;
+    }
+
+	private List<String> getDeclaredMethodNames(Class<?> clazz) {
+		// the method under test.
     	Method[] actualMethods = MethodSorter.getDeclaredMethods(clazz);
     	
     	// obtain just the names instead of the full methods.
@@ -70,12 +76,8 @@ public class MethodSorterTest {
     	for (Method m : actualMethods) {
     		names.add(m.toString().replace(clazz.getName() + '.', ""));
     	}
-
-    	// reduce to the methods of interest.
-    	names.retainAll(ofInterest);
-    	
-    	return names;
-    }
+		return names;
+	}
 
     @Test
     public void testMethodsNullSorterSelf() {
