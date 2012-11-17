@@ -132,6 +132,14 @@ public class MethodSorterTest {
     }
 
     @Test
+    public void testDefaultMethodSorter() {
+        List<String> expected = Arrays.asList(new String[]{EPSILON, BETA, ALPHA, DELTA, GAMMA_VOID, GAMMA_BOOLEAN});
+        List<String> actual = getDeclaredFilteredMethods(DummySortWithDefault.class, expected);
+        assertEquals(expected, actual);
+    }
+
+    
+    @Test
     public void testDefaultSorter() {
         String[] expected = new String[]{EPSILON, BETA, ALPHA, DELTA, GAMMA_VOID, GAMMA_BOOLEAN};
         assertEquals(Arrays.asList(expected).toString(), declaredMethods(DummySortWithDefault.class));
