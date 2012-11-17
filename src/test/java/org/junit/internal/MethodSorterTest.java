@@ -78,7 +78,7 @@ public class MethodSorterTest {
     }
 
     @Test
-    public void getMethodsNullSorterSelf() {
+    public void testMethodsNullSorterSelf() {
         List<String> expected = Arrays.asList(
         		new String[]{EPSILON, BETA, ALPHA, DELTA, GAMMA_VOID, GAMMA_BOOLEAN});
         List<String> actual = getDeclaredFilteredMethods(Dummy.class, expected);
@@ -86,14 +86,14 @@ public class MethodSorterTest {
     }
     
     @Test
-    public void getMethodsNullSorterSuper() {
+    public void testMethodsNullSorterSuper() {
         List<String> expected = Arrays.asList(new String[]{SUPER_METHOD});
         List<String> actual = getDeclaredFilteredMethods(Super.class, expected);
         assertEquals(expected, actual);
     }
     
     @Test
-    public void getMethodsNullSorterSub() {
+    public void testMethodsNullSorterSub() {
         List<String> expected = Arrays.asList(new String[]{SUB_METHOD});
         List<String> actual = getDeclaredFilteredMethods(Sub.class, expected);
         assertEquals(expected, actual);
