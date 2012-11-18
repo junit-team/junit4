@@ -55,7 +55,7 @@ public class MethodSorterTest {
 
     private List<String> getDeclaredFilteredMethods(Class<?> clazz, List<String> ofInterest) {
         // the method under test.
-	    Method[] actualMethods = MethodSorter.getDeclaredMethods(clazz);
+        Method[] actualMethods = MethodSorter.getDeclaredMethods(clazz);
 
         // obtain just the names instead of the full methods.
         List<String> names = new ArrayList<String>();
@@ -68,7 +68,7 @@ public class MethodSorterTest {
         return names;
     }
 
-	@Test
+    @Test
     public void testMethodsNullSorterSelf() {
         List<String> expected = Arrays.asList(
         		new String[]{EPSILON, BETA, ALPHA, DELTA, GAMMA_VOID, GAMMA_BOOLEAN});
