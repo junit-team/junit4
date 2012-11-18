@@ -54,18 +54,18 @@ public class MethodSorterTest {
     }
 
     private List<String> getDeclaredFilteredMethods(Class<?> clazz, List<String> ofInterest) {
-    	// the method under test.
-		Method[] actualMethods = MethodSorter.getDeclaredMethods(clazz);
-		
-		// obtain just the names instead of the full methods.
-		List<String> names = new ArrayList<String>();
-		for (Method m : actualMethods) {
-			names.add(m.toString().replace(clazz.getName() + '.', ""));
-		}
-		
-		// filter to just the methods of interest
-    	names.retainAll(ofInterest);   	
-    	return names;
+        // the method under test.
+	    Method[] actualMethods = MethodSorter.getDeclaredMethods(clazz);
+
+        // obtain just the names instead of the full methods.
+        List<String> names = new ArrayList<String>();
+        for (Method m : actualMethods) {
+            names.add(m.toString().replace(clazz.getName() + '.', ""));
+        }
+
+        // filter to just the methods of interest
+        names.retainAll(ofInterest);   	
+        return names;
     }
 
 	@Test
@@ -142,7 +142,7 @@ public class MethodSorterTest {
         void epsilon() {
         }
     }
-    
+
     @Test
     public void testJvmMethodSorter() {
     	Method[] fromJvm = DummySortJvm.class.getDeclaredMethods();
