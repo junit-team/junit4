@@ -169,6 +169,13 @@ public class MethodSorterTest {
         void epsilon() {
         }
     }
+    
+    @Test
+    public void testJvmMethodSorter() {
+    	Method[] fromJvm = DummySortJvm.class.getDeclaredMethods();
+    	Method[] sorted = MethodSorter.getDeclaredMethods(DummySortJvm.class);
+    	assertEquals( Arrays.asList(fromJvm), Arrays.asList(sorted));
+    }
 
     @Test
     public void testSortWithJvm() {
