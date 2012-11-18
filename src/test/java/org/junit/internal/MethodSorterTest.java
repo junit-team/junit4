@@ -53,14 +53,6 @@ public class MethodSorterTest {
         }
     }
 
-    private String toString(Class<?> clazz, Method[] methods) {
-        return Arrays.toString(methods).replace(clazz.getName() + '.', "");
-    }
-
-    private String declaredMethods(Class<?> clazz) {
-        return toString(clazz, MethodSorter.getDeclaredMethods(clazz));
-    }    
-   
     private List<String> getDeclaredFilteredMethods(Class<?> clazz, List<String> ofInterest) {
     	List<String> names= getDeclaredMethodNames(clazz);
     	names.retainAll(ofInterest);   	
@@ -101,15 +93,6 @@ public class MethodSorterTest {
         assertEquals(expected, actual);
     }
 
-    
-    @Test
-    public void getMethodsNullSorter() throws Exception {
-        String[] expected = new String[]{EPSILON, BETA, ALPHA, DELTA, GAMMA_VOID, GAMMA_BOOLEAN};
-        assertEquals(Arrays.asList(expected).toString(), declaredMethods(DummySortWithoutAnnotation.class));
-        assertEquals("[void superMario()]", declaredMethods(Super.class));
-        assertEquals("[void subBowser()]", declaredMethods(Sub.class));
-    }
-
     @FixMethodOrder(MethodSorters.DEFAULT)
     static class DummySortWithDefault {
         Object alpha(int i, double d, Thread t) {
@@ -138,13 +121,6 @@ public class MethodSorterTest {
         List<String> expected = Arrays.asList(new String[]{EPSILON, BETA, ALPHA, DELTA, GAMMA_VOID, GAMMA_BOOLEAN});
         List<String> actual = getDeclaredFilteredMethods(DummySortWithDefault.class, expected);
         assertEquals(expected, actual);
-    }
-
-    
-    @Test
-    public void testDefaultSorter() {
-        String[] expected = new String[]{EPSILON, BETA, ALPHA, DELTA, GAMMA_VOID, GAMMA_BOOLEAN};
-        assertEquals(Arrays.asList(expected).toString(), declaredMethods(DummySortWithDefault.class));
     }
 
     @FixMethodOrder(MethodSorters.JVM)
@@ -177,14 +153,6 @@ public class MethodSorterTest {
     	assertEquals( Arrays.asList(fromJvm), Arrays.asList(sorted));
     }
 
-    @Test
-    public void testSortWithJvm() {
-        Class<?> clazz = DummySortJvm.class;
-        String actual = toString(clazz, clazz.getDeclaredMethods());
-
-        assertEquals(actual, declaredMethods(clazz));
-    }
-
     @FixMethodOrder(MethodSorters.NAME_ASCENDING)
     static class DummySortWithNameAsc {
         Object alpha(int i, double d, Thread t) {
@@ -213,12 +181,5 @@ public class MethodSorterTest {
         List<String> expected = Arrays.asList(new String[]{ALPHA, BETA, DELTA, EPSILON, GAMMA_VOID, GAMMA_BOOLEAN});
         List<String> actual = getDeclaredFilteredMethods(DummySortWithNameAsc.class, expected);
         assertEquals(expected, actual);
-    }
-
-    
-    @Test
-    public void testNameAsc() {
-        String[] expected = new String[]{ALPHA, BETA, DELTA, EPSILON, GAMMA_VOID, GAMMA_BOOLEAN};
-        assertEquals(Arrays.asList(expected).toString(), declaredMethods(DummySortWithNameAsc.class));
     }
 }
