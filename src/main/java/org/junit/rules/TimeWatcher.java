@@ -10,49 +10,49 @@ import org.junit.runner.Description;
  *
  * <pre>
  * public static class TimeWatcherTest {
- *  private static final Logger logger = Logger.getLogger(&quot;&quot;);
+ *     private static final Logger logger = Logger.getLogger(&quot;&quot;);
  *
- *  private static void logInfo(String testName, String status, long nanos) {
- *      logger.info(String.format(&quot;Test %s %s, spent %d microseconds&quot;,
- *                                  testName, status, TimeWatcher.toMicros(nanos)));
- *  }
+ *     private static void logInfo(String testName, String status, long nanos) {
+ *         logger.info(String.format(&quot;Test %s %s, spent %d microseconds&quot;,
+ *                                     testName, status, TimeWatcher.toMicros(nanos)));
+ *     }
  *
- *  &#064;Rule
- *  public TimeWatcher timeWatcher= new TimeWatcher() {
- *      &#064;Override
- *      protected void succeeded(long nanos, Description description) {
- *          logInfo(description.getMethodName(), &quot;succeeded&quot;, nanos);
- *      }
+ *     &#064;Rule
+ *     public TimeWatcher timeWatcher= new TimeWatcher() {
+ *         &#064;Override
+ *         protected void succeeded(long nanos, Description description) {
+ *             logInfo(description.getMethodName(), &quot;succeeded&quot;, nanos);
+ *         }
  *
- *      &#064;Override
- *      protected void failed(long nanos, Throwable e, Description description) {
- *          logInfo(description.getMethodName(), &quot;failed&quot;, nanos);
- *      }
+ *         &#064;Override
+ *         protected void failed(long nanos, Throwable e, Description description) {
+ *             logInfo(description.getMethodName(), &quot;failed&quot;, nanos);
+ *         }
  *
- *      &#064;Override
- *      protected void skipped(long nanos, AssumptionViolatedException e, Description description) {
- *          logInfo(description.getMethodName(), &quot;skipped&quot;, nanos);
- *      }
+ *         &#064;Override
+ *         protected void skipped(long nanos, AssumptionViolatedException e, Description description) {
+ *             logInfo(description.getMethodName(), &quot;skipped&quot;, nanos);
+ *         }
  *
- *      &#064;Override
- *      protected void finished(long nanos, Description description) {
- *          logInfo(description.getMethodName(), &quot;finished&quot;, nanos);
- *      }
- *  };
+ *         &#064;Override
+ *         protected void finished(long nanos, Description description) {
+ *             logInfo(description.getMethodName(), &quot;finished&quot;, nanos);
+ *         }
+ *     };
  *
- *  &#064;Test
- *  public void succeeds() {
- *  }
+ *     &#064;Test
+ *     public void succeeds() {
+ *     }
  *
- *  &#064;Test
- *  public void fails() {
- *      fail();
- *  }
+ *     &#064;Test
+ *     public void fails() {
+ *         fail();
+ *     }
  *
- *  &#064;Test
- *  public void skips() {
- *      assumeTrue(false);
- *  }
+ *     &#064;Test
+ *     public void skips() {
+ *         assumeTrue(false);
+ *     }
  * }
  * </pre>
  *
