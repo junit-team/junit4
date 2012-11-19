@@ -14,7 +14,7 @@ import org.junit.runner.Description;
  *
  *  private static void logInfo(String testName, String status, long nanos) {
  *      logger.info(String.format(&quot;Test %s %s, spent %d microseconds&quot;,
- *      testName, status, TimeWatcher.micros(nanos)));
+ *                                  testName, status, TimeWatcher.toMicros(nanos)));
  *  }
  *
  *  &#064;Rule
@@ -55,8 +55,8 @@ import org.junit.runner.Description;
  * @since 4.12
  */
 public class TimeWatcher extends TestWatcher {
-    private volatile long startTime = 0L;
-    private volatile long endTime = 0L;
+    private volatile long startNanos = 0L;
+    private volatile long endNanos = 0L;
 
     /**
      * Invoked when a test succeeds
@@ -80,47 +80,47 @@ public class TimeWatcher extends TestWatcher {
      * @param nanos time in nanoseconds
      * @return time converted to microseconds
      */
-    public static long micros(long nanos) {
-        return nanos / (long) 1E3;
+    public static long toMicros(long nanos) {
+        return nanos / (1000);
     }
 
     /**
      * @param nanos time in nanoseconds
      * @return time converted to milliseconds
      */
-    public static long millis(long nanos) {
-        return nanos / (long) 1E6;
+    public static long toMillis(long nanos) {
+        return nanos / (1000 * 1000);
     }
 
     /**
      * @param nanos time in nanoseconds
      * @return time converted to seconds
      */
-    public static long seconds(long nanos) {
-        return nanos / (long) 1E9;
+    public static long toSeconds(long nanos) {
+        return nanos / (1000 * 1000 * 1000);
     }
 
     private long getNanos() {
-        return endTime - startTime;
+        return endNanos - startNanos;
     }
 
     @Override final protected void succeeded(Description description) {
-        endTime = System.nanoTime();
+        endNanos = System.nanoTime();
         succeeded(getNanos(), description);
     }
 
     @Override final protected void failed(Throwable e, Description description) {
-        endTime = System.nanoTime();
+        endNanos = System.nanoTime();
         failed(getNanos(), e, description);
     }
 
     @Override final protected void skipped(AssumptionViolatedException e, Description description) {
-        endTime = System.nanoTime();
+        endNanos = System.nanoTime();
         skipped(getNanos(), e, description);
     }
 
     @Override final protected void starting(Description description) {
-        startTime = System.nanoTime();
+        startNanos = System.nanoTime();
     }
 
     @Override final protected void finished(Description description) {

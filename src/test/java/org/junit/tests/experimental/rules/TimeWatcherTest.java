@@ -24,7 +24,7 @@ import static org.junit.Assert.fail;
  * @since 4.12
  */
 public class TimeWatcherTest {
-    public static enum TestStatus { SUCCEEDED, FAILED, SKIPPED }
+    public static enum TestStatus {PASSED, FAILED, SKIPPED }
 
     public static abstract class AbstractTimeWatcherTest {
         private static final Logger logger = Logger.getLogger("");
@@ -35,7 +35,7 @@ public class TimeWatcherTest {
 
         private static void logInfo() {
             logger.info(String.format("Test '%s' %s, spent %d microseconds",
-                    testName, status, TimeWatcher.micros(timeSpent)));
+                    testName, status, TimeWatcher.toMicros(timeSpent)));
         }
 
         @Rule
@@ -43,7 +43,7 @@ public class TimeWatcherTest {
             @Override
             protected void succeeded(long nanos, Description description) {
                 timeSpent = nanos;
-                status = TestStatus.SUCCEEDED;
+                status = TestStatus.PASSED;
                 testName = description.getMethodName();
                 //logInfo();
             }
@@ -97,8 +97,8 @@ public class TimeWatcherTest {
     public void succeeded() {
         Result result = JUnitCore.runClasses(SuccessfulTest.class);
         assertEquals(0, result.getFailureCount());
-        assertThat(AbstractTimeWatcherTest.testName, equalTo("successfulTest"));
-        assertThat(AbstractTimeWatcherTest.status, equalTo(TestStatus.SUCCEEDED));
+        assertThat(AbstractTimeWatcherTest.testName, is(equalTo("successfulTest")));
+        assertThat(AbstractTimeWatcherTest.status, is(equalTo(TestStatus.PASSED)));
         assertThat(AbstractTimeWatcherTest.timeSpent, is(not(0L)));
     }
 
@@ -106,8 +106,8 @@ public class TimeWatcherTest {
     public void failed() {
         Result result = JUnitCore.runClasses(FailedTest.class);
         assertEquals(1, result.getFailureCount());
-        assertThat(AbstractTimeWatcherTest.testName, equalTo("failedTest"));
-        assertThat(AbstractTimeWatcherTest.status, equalTo(TestStatus.FAILED));
+        assertThat(AbstractTimeWatcherTest.testName, is(equalTo("failedTest")));
+        assertThat(AbstractTimeWatcherTest.status, is(equalTo(TestStatus.FAILED)));
         assertThat(AbstractTimeWatcherTest.timeSpent, is(not(0L)));
     }
 
@@ -115,8 +115,8 @@ public class TimeWatcherTest {
     public void skipped() {
         Result result = JUnitCore.runClasses(SkippedTest.class);
         assertEquals(0, result.getFailureCount());
-        assertThat(AbstractTimeWatcherTest.testName, equalTo("skippedTest"));
-        assertThat(AbstractTimeWatcherTest.status, equalTo(TestStatus.SKIPPED));
+        assertThat(AbstractTimeWatcherTest.testName, is(equalTo("skippedTest")));
+        assertThat(AbstractTimeWatcherTest.status, is(equalTo(TestStatus.SKIPPED)));
         assertThat(AbstractTimeWatcherTest.timeSpent, is(not(0L)));
     }
 }
