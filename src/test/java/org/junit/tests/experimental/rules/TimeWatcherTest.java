@@ -30,12 +30,14 @@ public class TimeWatcherTest {
         private static final Logger logger = Logger.getLogger("");
 
         public static long timeSpent;
+        public static long timeSpentIfFinished;
         public static String testName;
+        public static String testNameIfFinished;
         public static TestStatus status;
 
-        private static void logInfo() {
+        private static void logInfo(String name, String status, long nanos) {
             logger.info(String.format("Test '%s' %s, spent %d microseconds",
-                    testName, status, TimeWatcher.toMicros(timeSpent)));
+                    name, status, TimeWatcher.toMicros(nanos)));
         }
 
         @Rule
@@ -45,7 +47,7 @@ public class TimeWatcherTest {
                 timeSpent = nanos;
                 status = TestStatus.PASSED;
                 testName = description.getMethodName();
-                //logInfo();
+                //logInfo(testName, status.name(), timeSpent);
             }
 
             @Override
@@ -53,7 +55,7 @@ public class TimeWatcherTest {
                 timeSpent = nanos;
                 status = TestStatus.FAILED;
                 testName = description.getMethodName();
-                //logInfo();
+                //logInfo(testName, status.name(), timeSpent);
             }
 
             @Override
@@ -61,7 +63,14 @@ public class TimeWatcherTest {
                 timeSpent = nanos;
                 status = TestStatus.SKIPPED;
                 testName = description.getMethodName();
-                //logInfo();
+                //logInfo(testName, status.name(), timeSpent);
+            }
+
+            @Override
+            protected void finished(long nanos, Description description) {
+                timeSpentIfFinished = nanos;
+                testNameIfFinished = description.getMethodName();
+                //logInfo(testNameIfFinished, "finished", timeSpentIfFinished);
             }
         };
     }
@@ -89,8 +98,10 @@ public class TimeWatcherTest {
     @Before
     public void init() {
         AbstractTimeWatcherTest.testName = null;
+        AbstractTimeWatcherTest.testNameIfFinished = null;
         AbstractTimeWatcherTest.status = null;
         AbstractTimeWatcherTest.timeSpent = 0;
+        AbstractTimeWatcherTest.timeSpentIfFinished = 0;
     }
 
     @Test
@@ -98,8 +109,10 @@ public class TimeWatcherTest {
         Result result = JUnitCore.runClasses(SuccessfulTest.class);
         assertEquals(0, result.getFailureCount());
         assertThat(AbstractTimeWatcherTest.testName, is(equalTo("successfulTest")));
+        assertThat(AbstractTimeWatcherTest.testName, is(equalTo(AbstractTimeWatcherTest.testNameIfFinished)));
         assertThat(AbstractTimeWatcherTest.status, is(equalTo(TestStatus.PASSED)));
         assertThat(AbstractTimeWatcherTest.timeSpent, is(not(0L)));
+        assertThat(AbstractTimeWatcherTest.timeSpent, is(equalTo(AbstractTimeWatcherTest.timeSpentIfFinished)));
     }
 
     @Test
@@ -107,8 +120,10 @@ public class TimeWatcherTest {
         Result result = JUnitCore.runClasses(FailedTest.class);
         assertEquals(1, result.getFailureCount());
         assertThat(AbstractTimeWatcherTest.testName, is(equalTo("failedTest")));
+        assertThat(AbstractTimeWatcherTest.testName, is(equalTo(AbstractTimeWatcherTest.testNameIfFinished)));
         assertThat(AbstractTimeWatcherTest.status, is(equalTo(TestStatus.FAILED)));
         assertThat(AbstractTimeWatcherTest.timeSpent, is(not(0L)));
+        assertThat(AbstractTimeWatcherTest.timeSpent, is(equalTo(AbstractTimeWatcherTest.timeSpentIfFinished)));
     }
 
     @Test
@@ -116,7 +131,9 @@ public class TimeWatcherTest {
         Result result = JUnitCore.runClasses(SkippedTest.class);
         assertEquals(0, result.getFailureCount());
         assertThat(AbstractTimeWatcherTest.testName, is(equalTo("skippedTest")));
+        assertThat(AbstractTimeWatcherTest.testName, is(equalTo(AbstractTimeWatcherTest.testNameIfFinished)));
         assertThat(AbstractTimeWatcherTest.status, is(equalTo(TestStatus.SKIPPED)));
         assertThat(AbstractTimeWatcherTest.timeSpent, is(not(0L)));
+        assertThat(AbstractTimeWatcherTest.timeSpent, is(equalTo(AbstractTimeWatcherTest.timeSpentIfFinished)));
     }
 }

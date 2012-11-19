@@ -10,7 +10,7 @@ import org.junit.runner.Description;
  *
  * <pre>
  * public static class TimeWatcherTest {
- *  private static final Logger logger = Logger.getLogger("");
+ *  private static final Logger logger = Logger.getLogger(&quot;&quot;);
  *
  *  private static void logInfo(String testName, String status, long nanos) {
  *      logger.info(String.format(&quot;Test %s %s, spent %d microseconds&quot;,
@@ -32,6 +32,11 @@ import org.junit.runner.Description;
  *      &#064;Override
  *      protected void skipped(long nanos, AssumptionViolatedException e, Description description) {
  *          logInfo(description.getMethodName(), &quot;skipped&quot;, nanos);
+ *      }
+ *
+ *      &#064;Override
+ *      protected void finished(long nanos, Description description) {
+ *          logInfo(description.getMethodName(), &quot;finished&quot;, nanos);
  *      }
  *  };
  *
@@ -74,6 +79,12 @@ public class TimeWatcher extends TestWatcher {
      * Invoked when a test is skipped due to a failed assumption.
      */
     protected void skipped(long nanos, AssumptionViolatedException e, Description description) {
+    }
+
+    /**
+     * Invoked when a test method finishes (whether passing or failing)
+     */
+    protected void finished(long nanos, Description description) {
     }
 
     /**
@@ -124,5 +135,6 @@ public class TimeWatcher extends TestWatcher {
     }
 
     @Override final protected void finished(Description description) {
+        finished(getNanos(), description);
     }
 }
