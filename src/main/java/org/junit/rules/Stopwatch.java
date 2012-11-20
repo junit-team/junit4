@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
  *
  * <pre>
  * public static class StopwatchTest {
- *     private static final Logger logger = Logger.getLogger(&quot;&quot;);
+ *     private static final Logger logger= Logger.getLogger(&quot;&quot;);
  *
  *     private static void logInfo(String testName, String status, long nanos) {
  *         logger.info(String.format(&quot;Test %s %s, spent %d microseconds&quot;,
@@ -62,8 +62,8 @@ import java.util.concurrent.TimeUnit;
  * @since 4.12
  */
 public class Stopwatch extends TestWatcher {
-    private long startNanos = 0L;
-    private long endNanos = 0L;
+    private long fStartNanos;
+    private long fEndNanos;
 
     /**
      * Invoked when a test succeeds
@@ -114,15 +114,15 @@ public class Stopwatch extends TestWatcher {
     }
 
     private long getNanos() {
-        return endNanos - startNanos;
+        return fEndNanos - fStartNanos;
     }
 
     private void starting() {
-        startNanos = System.nanoTime();
+        fStartNanos= System.nanoTime();
     }
 
     private void stopping() {
-        endNanos = System.nanoTime();
+        fEndNanos= System.nanoTime();
     }
 
     @Override final protected void succeeded(Description description) {
