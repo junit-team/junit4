@@ -62,8 +62,8 @@ import java.util.concurrent.TimeUnit;
  * @since 4.12
  */
 public class Stopwatch extends TestWatcher {
-    private volatile long startNanos = 0L;
-    private volatile long endNanos = 0L;
+    private long startNanos = 0L;
+    private long endNanos = 0L;
 
     /**
      * Invoked when a test succeeds
