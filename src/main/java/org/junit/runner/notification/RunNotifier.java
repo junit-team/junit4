@@ -1,8 +1,7 @@
 package org.junit.runner.notification;
 
-import static java.util.Arrays.asList;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -25,24 +24,18 @@ import org.junit.runner.Result;
 public class RunNotifier {
     private final ReentrantReadWriteLock lock= new ReentrantReadWriteLock();
     private final ConcurrentLinkedQueue<RunListener> fListeners= new ConcurrentLinkedQueue<RunListener>();
-    private volatile boolean fPleaseStop = false;
+    private volatile boolean fPleaseStop= false;
 
     /**
      * Internal use only
      */
     public void addListener(RunListener listener) {
         final Lock w= lock.writeLock();
-        if (lock.getReadHoldCount() == 0) {
-            //normal use case: notifier modifies listeners
-            w.lock();
-            try {
-                fListeners.add(listener);
-            } finally {
-                w.unlock();
-            }
-        } else {
-            //not normal use case: notifier -> listener -> notifier's addListener()
+        w.lock();
+        try {
             fListeners.add(listener);
+        } finally {
+            w.unlock();
         }
     }
 
@@ -51,17 +44,11 @@ public class RunNotifier {
      */
     public void removeListener(RunListener listener) {
         final Lock w= lock.writeLock();
-        if (lock.getReadHoldCount() == 0) {
-            //normal use case: notifier modifies listeners
-            w.lock();
-            try {
-                fListeners.remove(listener);
-            } finally {
-                w.unlock();
-            }
-        } else {
-            //not normal use case: notifier -> listener -> notifier's removeListener()
+        w.lock();
+        try {
             fListeners.remove(listener);
+        } finally {
+            w.unlock();
         }
     }
 
@@ -73,7 +60,7 @@ public class RunNotifier {
         }
 
         SafeNotifier(Collection<RunListener> currentListeners) {
-            fCurrentListeners = currentListeners;
+            fCurrentListeners= currentListeners;
         }
 
         void run() {
@@ -147,7 +134,7 @@ public class RunNotifier {
      * @param failure the description of the test that failed and the exception thrown
      */
     public void fireTestFailure(Failure failure) {
-        fireTestFailures(fListeners, asList(failure));
+        fireTestFailures(fListeners, Arrays.asList(failure));
     }
 
     private void fireTestFailures(Collection<RunListener> listeners, final List<Failure> failures) {
@@ -216,7 +203,7 @@ public class RunNotifier {
      * to be shared amongst the many runners involved.
      */
     public void pleaseStop() {
-        fPleaseStop = true;
+        fPleaseStop= true;
     }
 
     /**
@@ -224,17 +211,12 @@ public class RunNotifier {
      */
     public void addFirstListener(RunListener listener) {
         final Lock w= lock.writeLock();
-        if (lock.getReadHoldCount() == 0) {
-            //normal use case: notifier modifies listeners
-            w.lock();
-            try {
-                addFirst(fListeners, listener);
-            } finally {
-                w.unlock();
-            }
-        } else {
-            //not normal use case: notifier -> listener -> notifier's addFirstListener()
+        //normal use case: notifier modifies listeners
+        w.lock();
+        try {
             addFirst(fListeners, listener);
+        } finally {
+            w.unlock();
         }
     }
 
@@ -242,6 +224,6 @@ public class RunNotifier {
         RunListener[] listeners= c.toArray(new RunListener[c.size()]);
         c.clear();
         c.add(listener);
-        c.addAll(asList(listeners));
+        c.addAll(Arrays.asList(listeners));
     }
 }

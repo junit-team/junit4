@@ -165,32 +165,17 @@ public final class ConcurrentRunNotifierTest {
     }
 
     private static class ExaminedListener extends RunListener {
-        final RunNotifier notifier;
         final AtomicBoolean testRunStarted= new AtomicBoolean(false);
         volatile boolean useMe = false;
         volatile boolean hasTestFailure = false;
 
-        ExaminedListener() {
-            this(null);
-        }
-
-        ExaminedListener(RunNotifier notifier) {
-            this(notifier, false);
-        }
-
         ExaminedListener(boolean useMe) {
-            this(null, useMe);
-        }
-
-        ExaminedListener(RunNotifier notifier, boolean useMe) {
-            this.notifier = notifier;
             this.useMe = useMe;
         }
 
         public void testRunStarted(Description description) throws Exception {
             testRunStarted.set(true);
             if (!useMe) throw new Exception();
-            if (notifier != null) notifier.removeListener(this);
         }
 
         public void testRunFinished(Result result) throws Exception {
@@ -268,120 +253,6 @@ public final class ConcurrentRunNotifierTest {
     }
 
     @Test @SuppressWarnings("unchecked")
-    public void addRemoveAndUseListenersConcurrently() throws InterruptedException {
-        final RunNotifier notifier = new RunNotifier();
-
-        final ExaminedListener[] examinedListeners = new ExaminedListener[(int) 1E4];
-        for (int i = 0; i < examinedListeners.length; ++i) {
-            examinedListeners[i] = new ExaminedListener(notifier, true);
-        }
-
-        final CyclicBarrier trigger = new CyclicBarrier(2);
-        final AtomicBoolean condition = new AtomicBoolean(true);
-
-        ExecutorService callbacksPool = Executors.newSingleThreadExecutor();
-        callbacksPool.submit(new Callable() {
-            public Object call() throws Exception {
-                trigger.await();
-                while (condition.get()) {
-                    notifier.fireTestRunStarted(null);
-                }
-                notifier.fireTestRunStarted(null);
-                return null;
-            }
-        });
-
-        ExecutorService listenersPool = Executors.newSingleThreadExecutor();
-        listenersPool.submit(new Callable() {
-            public Object call() throws Exception {
-                trigger.await();
-                for (ExaminedListener examinedListener : examinedListeners) {
-                    notifier.addListener(examinedListener);
-                    Thread.yield();
-                    notifier.removeListener(examinedListener);
-                }
-                return null;
-            }
-        });
-
-        callbacksPool.shutdown();
-        listenersPool.shutdown();
-
-        assertTrue(listenersPool.awaitTermination(TIMEOUT, TimeUnit.SECONDS));
-        condition.set(false);
-        assertTrue(callbacksPool.awaitTermination(TIMEOUT, TimeUnit.SECONDS));
-
-
-        for (ExaminedListener examinedListener : examinedListeners)
-            assertFalse(examinedListener.hasTestFailure);
-
-        for (ExaminedListener examinedListener : examinedListeners)
-            examinedListener.testRunStarted.set(false);
-
-        notifier.fireTestRunStarted(null);
-
-        for (ExaminedListener examinedListener : examinedListeners)
-            assertFalse("there should be no listener registered", examinedListener.testRunStarted.get());
-    }
-
-    @Test @SuppressWarnings("unchecked")
-    public void addFirstRemoveAndUseListenersConcurrently() throws InterruptedException {
-        final RunNotifier notifier = new RunNotifier();
-
-        final ExaminedListener[] examinedListeners = new ExaminedListener[(int) 1E4];
-        for (int i = 0; i < examinedListeners.length; ++i) {
-            examinedListeners[i] = new ExaminedListener(notifier, true);
-        }
-
-        final CyclicBarrier trigger = new CyclicBarrier(2);
-        final AtomicBoolean condition = new AtomicBoolean(true);
-
-        ExecutorService callbacksPool = Executors.newSingleThreadExecutor();
-        callbacksPool.submit(new Callable() {
-            public Object call() throws Exception {
-                trigger.await();
-                while (condition.get()) {
-                    notifier.fireTestRunStarted(null);
-                }
-                notifier.fireTestRunStarted(null);
-                return null;
-            }
-        });
-
-        ExecutorService listenersPool = Executors.newSingleThreadExecutor();
-        listenersPool.submit(new Callable() {
-            public Object call() throws Exception {
-                trigger.await();
-                for (ExaminedListener examinedListener : examinedListeners) {
-                    notifier.addListener(examinedListener);
-                    Thread.yield();
-                    notifier.removeListener(examinedListener);
-                }
-                return null;
-            }
-        });
-
-        callbacksPool.shutdown();
-        listenersPool.shutdown();
-
-        assertTrue(listenersPool.awaitTermination(TIMEOUT, TimeUnit.SECONDS));
-        condition.set(false);
-        assertTrue(callbacksPool.awaitTermination(TIMEOUT, TimeUnit.SECONDS));
-
-
-        for (ExaminedListener examinedListener : examinedListeners)
-            assertFalse(examinedListener.hasTestFailure);
-
-        for (ExaminedListener examinedListener : examinedListeners)
-            examinedListener.testRunStarted.set(false);
-
-        notifier.fireTestRunStarted(null);
-
-        for (ExaminedListener examinedListener : examinedListeners)
-            assertFalse("there should be no listener registered", examinedListener.testRunStarted.get());
-    }
-
-    @Test @SuppressWarnings("unchecked")
     public void reportConcurrentFailuresAfterAddListener() throws InterruptedException {
         final RunNotifier notifier = new RunNotifier();
 
@@ -391,7 +262,7 @@ public final class ConcurrentRunNotifierTest {
         for (int i = 0; i < examinedListeners.length; ++i) {
             boolean fail = StrictMath.random() >= 0.5d;
             if (fail) ++totalListenersFailures;
-            examinedListeners[i] = new ExaminedListener(notifier, !fail);
+            examinedListeners[i] = new ExaminedListener(!fail);
         }
 
         final CyclicBarrier trigger = new CyclicBarrier(2);
@@ -440,11 +311,11 @@ public final class ConcurrentRunNotifierTest {
 
         int totalListenersFailures = 0;
 
-        final ExaminedListener[] examinedListeners = new ExaminedListener[(int) 1E3];
+        final ExaminedListener[] examinedListeners = new ExaminedListener[(int) 1E2];
         for (int i = 0; i < examinedListeners.length; ++i) {
             boolean fail = StrictMath.random() >= 0.5d;
             if (fail) ++totalListenersFailures;
-            examinedListeners[i] = new ExaminedListener(notifier, !fail);
+            examinedListeners[i] = new ExaminedListener(!fail);
         }
 
         final CyclicBarrier trigger = new CyclicBarrier(2);
