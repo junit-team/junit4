@@ -6,7 +6,7 @@ import org.junit.runner.Description;
 import java.util.concurrent.TimeUnit;
 
 /**
- * The Stopwatch Rule notifies one of own protected methods of the time spent by a test.<p/>
+ * The Stopwatch Rule notifies one of its own protected methods of the time spent by a test.<p/>
  * Override them to get the time in nanoseconds. For example, this class will keep logging the
  * time spent by each passing, failing and skipped test:
  *
