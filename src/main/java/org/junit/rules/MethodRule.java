@@ -12,7 +12,7 @@ import org.junit.runners.model.Statement;
  * {@link Statement}, which is passed to the next {@link Rule}, if any. For
  * examples of how this can be useful, see these provided MethodRules,
  * or write your own:
- * 
+ *
  * <ul>
  *   <li>{@link ErrorCollector}: collect multiple errors in one test method</li>
  *   <li>{@link ExpectedException}: make flexible assertions about thrown exceptions</li>
@@ -23,21 +23,22 @@ import org.junit.runners.model.Statement;
  *   <li>{@link Timeout}: cause test to fail after a set time</li>
  *   <li>{@link Verifier}: fail test if object state ends up incorrect</li>
  * </ul>
- * 
+ *
  * Note that {@link MethodRule} is now deprecated, you should be using {@link TestRule} instead.
+ *
  * @since 4.7
  */
 @Deprecated
 public interface MethodRule {
-	/**
-	 * Modifies the method-running {@link Statement} to implement an additional
-	 * test-running rule.
-	 * 
-	 * @param base The {@link Statement} to be modified
-	 * @param method The method to be run
-	 * @param target The object on with the method will be run.
-	 * @return a new statement, which may be the same as {@code base},
-	 * a wrapper around {@code base}, or a completely new Statement.
-	 */
-	Statement apply(Statement base, FrameworkMethod method, Object target);
+    /**
+     * Modifies the method-running {@link Statement} to implement an additional
+     * test-running rule.
+     *
+     * @param base The {@link Statement} to be modified
+     * @param method The method to be run
+     * @param target The object on with the method will be run.
+     * @return a new statement, which may be the same as {@code base},
+     *         a wrapper around {@code base}, or a completely new Statement.
+     */
+    Statement apply(Statement base, FrameworkMethod method, Object target);
 }

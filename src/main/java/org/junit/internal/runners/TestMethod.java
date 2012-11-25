@@ -18,52 +18,54 @@ import org.junit.runners.BlockJUnit4ClassRunner;
  */
 @Deprecated
 public class TestMethod {
-	private final Method fMethod;
-	private TestClass fTestClass;
+    private final Method fMethod;
+    private TestClass fTestClass;
 
-	public TestMethod(Method method, TestClass testClass) {
-		fMethod= method;
-		fTestClass= testClass;
-	}
+    public TestMethod(Method method, TestClass testClass) {
+        fMethod = method;
+        fTestClass = testClass;
+    }
 
-	public boolean isIgnored() {
-		return fMethod.getAnnotation(Ignore.class) != null;
-	}
+    public boolean isIgnored() {
+        return fMethod.getAnnotation(Ignore.class) != null;
+    }
 
-	public long getTimeout() {
-		Test annotation= fMethod.getAnnotation(Test.class);
-		if (annotation == null)
-			return 0;
-		long timeout= annotation.timeout();
-		return timeout;
-	}
+    public long getTimeout() {
+        Test annotation = fMethod.getAnnotation(Test.class);
+        if (annotation == null) {
+            return 0;
+        }
+        long timeout = annotation.timeout();
+        return timeout;
+    }
 
-	protected Class<? extends Throwable> getExpectedException() {
-		Test annotation= fMethod.getAnnotation(Test.class);
-		if (annotation == null || annotation.expected() == None.class)
-			return null;
-		else
-			return annotation.expected();
-	}
+    protected Class<? extends Throwable> getExpectedException() {
+        Test annotation = fMethod.getAnnotation(Test.class);
+        if (annotation == null || annotation.expected() == None.class) {
+            return null;
+        } else {
+            return annotation.expected();
+        }
+    }
 
-	boolean isUnexpected(Throwable exception) {
-		return ! getExpectedException().isAssignableFrom(exception.getClass());
-	}
+    boolean isUnexpected(Throwable exception) {
+        return !getExpectedException().isAssignableFrom(exception.getClass());
+    }
 
-	boolean expectsException() {
-		return getExpectedException() != null;
-	}
+    boolean expectsException() {
+        return getExpectedException() != null;
+    }
 
-	List<Method> getBefores() {
-		return fTestClass.getAnnotatedMethods(Before.class);
-	}
+    List<Method> getBefores() {
+        return fTestClass.getAnnotatedMethods(Before.class);
+    }
 
-	List<Method> getAfters() {
-		return fTestClass.getAnnotatedMethods(After.class);
-	}
+    List<Method> getAfters() {
+        return fTestClass.getAnnotatedMethods(After.class);
+    }
 
-	public void invoke(Object test) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-		fMethod.invoke(test);
-	}
+    public void invoke(Object test) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+        fMethod.invoke(test);
+    }
 
 }
