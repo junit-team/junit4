@@ -30,24 +30,24 @@ import org.junit.runners.model.Statement;
  * <pre>
  * &#064;RunWith(Parameterized.class)
  * public class FibonacciTest {
- * 	&#064;Parameters(name= &quot;{index}: fib({0})={1}&quot;)
- * 	public static Iterable&lt;Object[]&gt; data() {
- * 		return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
+ *     &#064;Parameters(name= &quot;{index}: fib[{0}]={1}&quot;)
+ *     public static Iterable&lt;Object[]&gt; data() {
+ *         return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
  *                 { 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
  *     }
  *
- * 	private int fInput;
+ *     private int fInput;
  *
- * 	private int fExpected;
+ *     private int fExpected;
  *
- * 	public FibonacciTest(int input, int expected) {
- * 		fInput= input;
- * 		fExpected= expected;
+ *     public FibonacciTest(int input, int expected) {
+ *         fInput= input;
+ *         fExpected= expected;
  *     }
  *
- * 	&#064;Test
- * 	public void test() {
- * 		assertEquals(fExpected, Fibonacci.compute(fInput));
+ *     &#064;Test
+ *     public void test() {
+ *         assertEquals(fExpected, Fibonacci.compute(fInput));
  *     }
  * }
  * </pre>
@@ -85,7 +85,8 @@ import org.junit.runners.model.Statement;
  *  public static Iterable&lt;Object[]&gt; data() {
  *      return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
  *                 { 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
- *     }
+ *  }
+ *  
  *  &#064;Parameter(0)
  *  public int fInput;
  *
@@ -95,7 +96,7 @@ import org.junit.runners.model.Statement;
  *  &#064;Test
  *  public void test() {
  *      assertEquals(fExpected, Fibonacci.compute(fInput));
- *     }
+ *  }
  * }
  * </pre>
  *
