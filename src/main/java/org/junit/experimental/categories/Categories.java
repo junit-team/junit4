@@ -14,45 +14,45 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
 
 /**
- * From a given set of test classes, runs only the classes and methods that are
- * annotated with either the category given with the @IncludeCategory
- * annotation, or a subtype of that category.
- *
- * Note that, for now, annotating suites with {@code @Category} has no effect.
- * Categories must be annotated on the direct method or class.
- *
+ * From a given set of test classes, runs only the classes and methods that are annotated with
+ * either the category given with the @IncludeCategory annotation, or a subtype of that category.
+ * 
+ * Note that, for now, annotating suites with {@code @Category} has no effect. Categories must be
+ * annotated on the direct method or class. If {@link Category}'s inherited-Parameter is true,
+ * {@link Category} annotations of ancestors will be evaluated too.
+ * 
  * Example:
- *
+ * 
  * <pre>
  * public interface FastTests {
  * }
- *
+ * 
  * public interface SlowTests {
  * }
- *
+ * 
  * public static class A {
- *  &#064;Test
- *  public void a() {
- *      fail();
+ *     &#064;Test
+ *     public void a() {
+ *         fail();
  *     }
- *
- *  &#064;Category(SlowTests.class)
- *  &#064;Test
- *  public void b() {
+ * 
+ *     &#064;Category(SlowTests.class)
+ *     &#064;Test
+ *     public void b() {
  *     }
  * }
- *
- * &#064;Category( { SlowTests.class, FastTests.class })
+ * 
+ * &#064;Category({ SlowTests.class, FastTests.class })
  * public static class B {
- *  &#064;Test
- *  public void c() {
- *
+ *     &#064;Test
+ *     public void c() {
+ * 
  *     }
  * }
- *
+ * 
  * &#064;RunWith(Categories.class)
  * &#064;IncludeCategory(SlowTests.class)
- * &#064;SuiteClasses( { A.class, B.class })
+ * &#064;SuiteClasses({ A.class, B.class })
  * // Note that Categories is a kind of Suite
  * public static class SlowTestSuite {
  * }
@@ -60,7 +60,7 @@ import org.junit.runners.model.RunnerBuilder;
  */
 public class Categories extends Suite {
     // the way filters are implemented makes this unnecessarily complicated,
-    // buggy, and difficult to specify.  A new way of handling filters could
+    // buggy, and difficult to specify. A new way of handling filters could
     // someday enable a better new implementation.
     // https://github.com/KentBeck/junit/issues/issue/172
 
@@ -83,8 +83,7 @@ public class Categories extends Suite {
 
         private final Class<?> fExcluded;
 
-        public CategoryFilter(Class<?> includedCategory,
-                Class<?> excludedCategory) {
+        public CategoryFilter(Class<?> includedCategory, Class<?> excludedCategory) {
             fIncluded = includedCategory;
             fExcluded = excludedCategory;
         }
@@ -127,8 +126,8 @@ public class Categories extends Suite {
 
         private List<Class<?>> categories(Description description) {
             ArrayList<Class<?>> categories = new ArrayList<Class<?>>();
-            categories.addAll(Arrays.asList(directCategories(description)));
-            categories.addAll(Arrays.asList(directCategories(parentDescription(description))));
+            categories.addAll(directCategories(description));
+            categories.addAll(directCategories(parentDescription(description)));
             return categories;
         }
 
@@ -140,25 +139,46 @@ public class Categories extends Suite {
             return Description.createSuiteDescription(testClass);
         }
 
-        private Class<?>[] directCategories(Description description) {
+        private List<Class<?>> ancestorCategories(Class<?> klass) {
+            List<Class<?>> classes = new ArrayList<Class<?>>();
+            // klass null or no superclass => empty list
+            if (klass == null || klass.getSuperclass() == null) {
+                return classes;
+            }
+            // add classes defined in super
+            Class<?> superClass = klass.getSuperclass();
+            Category annotation = superClass.getAnnotation(Category.class);
+            if (annotation != null && annotation.inherited()) {
+                classes.addAll(Arrays.asList(annotation.value()));
+            }
+            // add classes defined in super of super (recursion)
+            classes.addAll(ancestorCategories(superClass));
+            return classes;
+        }
+
+        private List<Class<?>> directCategories(Description description) {
+            List<Class<?>> classes = new ArrayList<Class<?>>();
+            // no description => empty list
             if (description == null) {
-                return new Class<?>[0];
+                return classes;
             }
+            // add classes defined directly on the test
             Category annotation = description.getAnnotation(Category.class);
-            if (annotation == null) {
-                return new Class<?>[0];
+            if (annotation != null) {
+                classes.addAll(Arrays.asList(annotation.value()));
             }
-            return annotation.value();
+            // add classes that are defined somewhere in ancestors
+            classes.addAll(ancestorCategories(description.getTestClass()));
+            return classes;
         }
     }
 
-    public Categories(Class<?> klass, RunnerBuilder builder)
-            throws InitializationError {
+    public Categories(Class<?> klass, RunnerBuilder builder) throws InitializationError {
         super(klass, builder);
         try {
-            filter(new CategoryFilter(getIncludedCategory(klass),
-                    getExcludedCategory(klass)));
-        } catch (NoTestsRemainException e) {
+            filter(new CategoryFilter(getIncludedCategory(klass), getExcludedCategory(klass)));
+        }
+        catch (NoTestsRemainException e) {
             throw new InitializationError(e);
         }
         assertNoCategorizedDescendentsOfUncategorizeableParents(getDescription());
@@ -174,7 +194,8 @@ public class Categories extends Suite {
         return annotation == null ? null : annotation.value();
     }
 
-    private void assertNoCategorizedDescendentsOfUncategorizeableParents(Description description) throws InitializationError {
+    private void assertNoCategorizedDescendentsOfUncategorizeableParents(Description description)
+            throws InitializationError {
         if (!canHaveCategorizedChildren(description)) {
             assertNoDescendantsHaveCategoryAnnotations(description);
         }
@@ -183,10 +204,12 @@ public class Categories extends Suite {
         }
     }
 
-    private void assertNoDescendantsHaveCategoryAnnotations(Description description) throws InitializationError {
+    private void assertNoDescendantsHaveCategoryAnnotations(Description description)
+            throws InitializationError {
         for (Description each : description.getChildren()) {
             if (each.getAnnotation(Category.class) != null) {
-                throw new InitializationError("Category annotations on Parameterized classes are not supported on individual methods.");
+                throw new InitializationError(
+                        "Category annotations on Parameterized classes are not supported on individual methods.");
             }
             assertNoDescendantsHaveCategoryAnnotations(each);
         }
