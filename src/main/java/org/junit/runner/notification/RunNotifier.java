@@ -22,7 +22,7 @@ import org.junit.runner.Result;
  * @since 4.0
  */
 public class RunNotifier {
-    private final ReentrantReadWriteLock lock= new ReentrantReadWriteLock();
+    private final ReentrantReadWriteLock fLock= new ReentrantReadWriteLock();
     private final ConcurrentLinkedQueue<RunListener> fListeners= new ConcurrentLinkedQueue<RunListener>();
     private volatile boolean fPleaseStop= false;
 
@@ -30,7 +30,7 @@ public class RunNotifier {
      * Internal use only
      */
     public void addListener(RunListener listener) {
-        final Lock w= lock.writeLock();
+        final Lock w= fLock.writeLock();
         w.lock();
         try {
             fListeners.add(listener);
@@ -43,7 +43,7 @@ public class RunNotifier {
      * Internal use only
      */
     public void removeListener(RunListener listener) {
-        final Lock w= lock.writeLock();
+        final Lock w= fLock.writeLock();
         w.lock();
         try {
             fListeners.remove(listener);
@@ -64,7 +64,7 @@ public class RunNotifier {
         }
 
         void run() {
-            final Lock r= lock.readLock();
+            final Lock r= fLock.readLock();
             r.lock();
             try {
                 ArrayList<RunListener> safeListeners= new ArrayList<RunListener>();
@@ -210,7 +210,7 @@ public class RunNotifier {
      * Internal use only. The Result's listener must be first.
      */
     public void addFirstListener(RunListener listener) {
-        final Lock w= lock.writeLock();
+        final Lock w= fLock.writeLock();
         //normal use case: notifier modifies listeners
         w.lock();
         try {
