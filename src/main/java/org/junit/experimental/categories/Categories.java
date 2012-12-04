@@ -66,32 +66,40 @@ public class Categories extends Suite {
 
     @Retention(RetentionPolicy.RUNTIME)
     public @interface IncludeCategory {
-        public Class<?> value();
+        public Class<?>[] value();
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     public @interface ExcludeCategory {
-        public Class<?> value();
+        public Class<?>[] value();
     }
 
     public static class CategoryFilter extends Filter {
+
         public static CategoryFilter include(Class<?> categoryType) {
+            return new CategoryFilter(new Class<?>[]{categoryType}, null);
+        }
+
+        public static CategoryFilter include(Class<?>[] categoryType) {
             return new CategoryFilter(categoryType, null);
         }
 
-        private final Class<?> fIncluded;
+        private final Class<?>[] includedCategories;
 
-        private final Class<?> fExcluded;
+        private final Class<?>[] excludedCategories;
 
-        public CategoryFilter(Class<?> includedCategory,
-                Class<?> excludedCategory) {
-            fIncluded = includedCategory;
-            fExcluded = excludedCategory;
+        public CategoryFilter(Class<?>[] includedCategories,
+                Class<?>[] excludedCategories) {
+            this.includedCategories = includedCategories;
+            this.excludedCategories = excludedCategories;
         }
 
         @Override
         public String describe() {
-            return "category " + fIncluded;
+            Integer numIncludedCategories = includedCategories == null ? 0 : includedCategories.length;
+            Integer numExcludedCategories = excludedCategories == null ? 0 : excludedCategories.length;
+            return "category. contains: " + numIncludedCategories + " included categories and "
+                    + numExcludedCategories + " excluded categories.";
         }
 
         @Override
@@ -107,18 +115,37 @@ public class Categories extends Suite {
             return false;
         }
 
+        /**
+         * Checks if the given array of classes (eg includedCategories) contains a given class
+         * This is used to determine if a specified class in a {@link Category} annotation is represented in the
+         * class-array specified in a {@link IncludeCategory} or {@link ExcludeCategory} annotation of a suite ran with
+         * {@link Categories}
+         *
+         * @param categories array of categories (specified value of {@link IncludeCategory} or {@link ExcludeCategory})
+         * @param category defined category (one of the classes specified in {@link Category})
+         * @return true if the given category class is assignable from any of the given classes in categories
+         */
+        private boolean containsCategory(Class<?>[] categories, Class<?> category){
+            for(Class<?> cat : categories){
+                if(cat.isAssignableFrom(category)){
+                    return true;
+                }
+            }
+            return false;
+        }
+
         private boolean hasCorrectCategoryAnnotation(Description description) {
             List<Class<?>> categories = categories(description);
             if (categories.isEmpty()) {
-                return fIncluded == null;
+                return includedCategories == null;
             }
-            for (Class<?> each : categories) {
-                if (fExcluded != null && fExcluded.isAssignableFrom(each)) {
+            for (Class<?> category : categories) {
+                if (excludedCategories != null && containsCategory(excludedCategories, category)) {
                     return false;
                 }
             }
-            for (Class<?> each : categories) {
-                if (fIncluded == null || fIncluded.isAssignableFrom(each)) {
+            for (Class<?> category : categories) {
+                if (includedCategories == null || containsCategory(includedCategories, category)) {
                     return true;
                 }
             }
@@ -156,20 +183,20 @@ public class Categories extends Suite {
             throws InitializationError {
         super(klass, builder);
         try {
-            filter(new CategoryFilter(getIncludedCategory(klass),
-                    getExcludedCategory(klass)));
+            filter(new CategoryFilter(getIncludedCategories(klass),
+                    getExcludedCategories(klass)));
         } catch (NoTestsRemainException e) {
             throw new InitializationError(e);
         }
         assertNoCategorizedDescendentsOfUncategorizeableParents(getDescription());
     }
 
-    private Class<?> getIncludedCategory(Class<?> klass) {
+    private Class<?>[] getIncludedCategories(Class<?> klass) {
         IncludeCategory annotation = klass.getAnnotation(IncludeCategory.class);
         return annotation == null ? null : annotation.value();
     }
 
-    private Class<?> getExcludedCategory(Class<?> klass) {
+    private Class<?>[] getExcludedCategories(Class<?> klass) {
         ExcludeCategory annotation = klass.getAnnotation(ExcludeCategory.class);
         return annotation == null ? null : annotation.value();
     }
