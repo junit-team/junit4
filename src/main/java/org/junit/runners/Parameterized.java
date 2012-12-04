@@ -162,16 +162,19 @@ public class Parameterized extends Suite {
         int value() default 0;
     }
 
-    private class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
+    protected class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
         private final Object[] fParameters;
 
-        private final String fName;
+        private final String fPattern;
 
-        TestClassRunnerForParameters(Class<?> type, Object[] parameters,
-                String name) throws InitializationError {
+        private final int fIndex;
+
+        protected TestClassRunnerForParameters(Class<?> type, String pattern, int index, Object[] parameters) throws InitializationError {
             super(type);
+
+            fPattern = pattern;
+            fIndex = index;
             fParameters = parameters;
-            fName = name;
         }
 
         @Override
@@ -212,7 +215,9 @@ public class Parameterized extends Suite {
 
         @Override
         protected String getName() {
-            return fName;
+            String finalPattern = fPattern.replaceAll("\\{index\\}", Integer.toString(fIndex));
+            String name = MessageFormat.format(finalPattern, fParameters);
+            return "[" + name + "]";
         }
 
         @Override
@@ -268,8 +273,7 @@ public class Parameterized extends Suite {
         }
     }
 
-    private static final List<Runner> NO_RUNNERS = Collections
-            .<Runner>emptyList();
+    private static final List<Runner> NO_RUNNERS = Collections.<Runner>emptyList();
 
     private final ArrayList<Runner> runners = new ArrayList<Runner>();
 
@@ -286,6 +290,10 @@ public class Parameterized extends Suite {
     @Override
     protected List<Runner> getChildren() {
         return runners;
+    }
+
+    protected Runner createRunner(String pattern, int index, Object[] parameters) throws InitializationError {
+        return new TestClassRunnerForParameters(getTestClass().getJavaClass(), pattern, index, parameters);
     }
 
     @SuppressWarnings("unchecked")
@@ -311,28 +319,15 @@ public class Parameterized extends Suite {
                 + getTestClass().getName());
     }
 
-    private void createRunnersForParameters(Iterable<Object[]> allParameters,
-            String namePattern) throws InitializationError, Exception {
+    private void createRunnersForParameters(Iterable<Object[]> allParameters, String namePattern) throws Exception {
         try {
             int i = 0;
             for (Object[] parametersOfSingleTest : allParameters) {
-                String name = nameFor(namePattern, i, parametersOfSingleTest);
-                TestClassRunnerForParameters runner = new TestClassRunnerForParameters(
-                        getTestClass().getJavaClass(), parametersOfSingleTest,
-                        name);
-                runners.add(runner);
-                ++i;
+                runners.add(createRunner(namePattern, i++, parametersOfSingleTest));
             }
         } catch (ClassCastException e) {
             throw parametersMethodReturnedWrongType();
         }
-    }
-
-    private String nameFor(String namePattern, int index, Object[] parameters) {
-        String finalPattern = namePattern.replaceAll("\\{index\\}",
-                Integer.toString(index));
-        String name = MessageFormat.format(finalPattern, parameters);
-        return "[" + name + "]";
     }
 
     private Exception parametersMethodReturnedWrongType() throws Exception {
