@@ -40,4 +40,9 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Category {
     Class<?>[] value();
+    /**
+     * {@link Categories} will evaluate this. If its true it will behave as if all deriving classes were annotated with
+     * this Category
+     */
+    boolean inherited() default false;
 }

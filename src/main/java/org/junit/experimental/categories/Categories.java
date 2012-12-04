@@ -20,6 +20,7 @@ import org.junit.runners.model.RunnerBuilder;
  *
  * Note that, for now, annotating suites with {@code @Category} has no effect.
  * Categories must be annotated on the direct method or class.
+ * If {@link org.junit.experimental.categories.Category#inherited()} of ancestors is true they will be recognized too.
  *
  * Example:
  *
@@ -129,6 +130,7 @@ public class Categories extends Suite {
             ArrayList<Class<?>> categories = new ArrayList<Class<?>>();
             categories.addAll(Arrays.asList(directCategories(description)));
             categories.addAll(Arrays.asList(directCategories(parentDescription(description))));
+            categories.addAll(ancestorCategories(description.getTestClass()));
             return categories;
         }
 
@@ -138,6 +140,28 @@ public class Categories extends Suite {
                 return null;
             }
             return Description.createSuiteDescription(testClass);
+        }
+
+        /**
+         * @param testClass the test class
+         * @return all {@link org.junit.experimental.categories.Category#value()}-classes defined in Ancestors of the
+         * test class which have {@link org.junit.experimental.categories.Category#inherited()} set true
+         */
+        private List<Class<?>> ancestorCategories(Class<?> testClass) {
+            List<Class<?>> testClasses = new ArrayList<Class<?>>();
+            // testClass null or no superclass => empty list
+            if (testClass == null || testClass.getSuperclass() == null) {
+                return testClasses;
+            }
+            // add classes defined in superclass
+            Class<?> superClass = testClass.getSuperclass();
+            Category annotation = superClass.getAnnotation(Category.class);
+            if (annotation != null && annotation.inherited()) {
+                testClasses.addAll(Arrays.asList(annotation.value()));
+            }
+            // add classes defined in superclass.getSuperclass() (recursion)
+            testClasses.addAll(ancestorCategories(superClass));
+            return testClasses;
         }
 
         private Class<?>[] directCategories(Description description) {
