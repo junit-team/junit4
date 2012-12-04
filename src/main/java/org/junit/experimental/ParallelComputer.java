@@ -19,7 +19,6 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Queue;
-
 import org.junit.runner.Computer;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
@@ -102,12 +101,12 @@ public class ParallelComputer extends Computer {
     //set if a pool is shut down externally
     private final AtomicBoolean fIsShutDown;
 
-    // disables the callers Thread for scheduling purposes until all classes finished
+    // Used if fHasSinglePoll is set. Disables this Thread for scheduling purposes until all classes finished.
     private volatile CountDownLatch fClassesFinisher;
 
     // prevents thread resources exhaustion on classes when used with single pool => gives a chance to parallelize methods
     // see fSinglePoolMinConcurrentMethods above
-    // used in #parallelize(): allows a number of parallel classes and methods
+    // used in #tryParallelize(): allows a number of parallel classes and methods
     private volatile Semaphore fSinglePoolBalancer;
 
     // fClassesFinisher is initialized with this value, see #getSuite() and #getParent()
@@ -175,9 +174,9 @@ public class ParallelComputer extends Computer {
             throw new IllegalArgumentException("min concurrent methods " + fSinglePoolMinConcurrentMethods + " should be >= 1");
         if (fHasSinglePoll && fSinglePoolMinConcurrentMethods >= fSinglePoolMaxSize)
             throw new IllegalArgumentException("min methods pool size should be less than max pool size");
-        fBeforeShutdown= new ConcurrentLinkedQueue<Description>();
-        fIsShutDown= new AtomicBoolean();
         addDefaultShutdownHandler();
+        fBeforeShutdown= new ConcurrentLinkedQueue<Description>();
+        fIsShutDown= new AtomicBoolean(false);
     }
 
     public static Computer classes() {
@@ -265,34 +264,27 @@ public class ParallelComputer extends Computer {
         return new ParallelComputer(poolClasses, poolMethods);
     }
 
-    private Runner sequencer(final ParentRunner runner) {
+    /**
+     * @return <tt>true</tt> if a parallel scheduler is set in the <tt>runner</tt>
+     */
+    private boolean tryParallelize(final ParentRunner runner, final ExecutorService service, final boolean isClasses) {
         runner.setScheduler(new RunnerScheduler() {
-            public void schedule(Runnable childStatement) {
-                if (fIsShutDown.get()) return;
-                childStatement.run();
-                fBeforeShutdown.add(runner.getDescription());
-            }
-
-            public void finished() {
-                if (fClassesFinisher != null) fClassesFinisher.countDown();
-            }
-        });
-        return runner;
-    }
-
-    private Runner parallelize(final ParentRunner runner, final ExecutorService service, final boolean isClassPool) {
-        runner.setScheduler(new RunnerScheduler() {
-            private final ConcurrentLinkedQueue<Future<?>> fTaskFutures
-                = !isClassPool & fProvidedPools ? new ConcurrentLinkedQueue<Future<?>>() : null;
+            private final ConcurrentLinkedQueue<Future<?>> fMethodsFutures
+                = !isClasses & fProvidedPools & fParallelMethods ? new ConcurrentLinkedQueue<Future<?>>() : null;
 
             public void schedule(Runnable childStatement) {
                 if (fIsShutDown.get()) return;
-                if (isClassPool & fHasSinglePoll) fSinglePoolBalancer.acquireUninterruptibly();
+                if (isClasses & fHasSinglePoll) fSinglePoolBalancer.acquireUninterruptibly();
                 if (fIsShutDown.get()) return;
                 try {
-                    Future<?> f= service.submit(childStatement);
-                    fBeforeShutdown.add(runner.getDescription());
-                    if (!isClassPool & fProvidedPools) fTaskFutures.add(f);
+                    if (service == null) {
+                        fBeforeShutdown.add(runner.getDescription());
+                        childStatement.run();
+                    } else {
+                        Future<?> f= service.submit(childStatement);
+                        if (!isClasses & fProvidedPools & fParallelMethods) fMethodsFutures.add(f);
+                        fBeforeShutdown.add(runner.getDescription());
+                    }
                 } catch (RejectedExecutionException e) {
                     /*after external shut down*/
                     shutdownQuietly(false);
@@ -300,21 +292,22 @@ public class ParallelComputer extends Computer {
             }
 
             public void finished() {
-                if (isClassPool) { //wait until all test cases finished
-                    if (fProvidedPools) awaitClassesFinished();
+                if (isClasses) { //wait until all test cases finished
+                    awaitClassesFinished();
                     tryFinish(service);
                 } else { //wait until the test case finished
                     if (fProvidedPools) {
-                        awaitClassFinished(fTaskFutures);
+                        awaitClassFinished(fMethodsFutures);
                         if (fHasSinglePoll) fSinglePoolBalancer.release();
                     } else tryFinish(service);
                 }
             }
         });
-        return runner;
+        return service != null;
     }
 
     private static void tryFinish(ExecutorService pool) {
+        if (pool == null) return;
         try {
             pool.shutdown();
             pool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
@@ -324,8 +317,7 @@ public class ParallelComputer extends Computer {
     }
 
     @Override
-    public Runner getSuite(RunnerBuilder builder, Class<?>[] classes)
-            throws InitializationError {
+    public Runner getSuite(RunnerBuilder builder, Class<?>[] classes) throws InitializationError {
         Runner suite= super.getSuite(builder, classes);
         if (canSchedule(suite)) {
             if (fHasSinglePoll) {
@@ -337,20 +329,18 @@ public class ParallelComputer extends Computer {
                 maxConcurrentClasses= Math.min(maxConcurrentClasses, fCountClasses);
                 fSinglePoolBalancer= new Semaphore(maxConcurrentClasses);
             }
-            fClassesFinisher= fProvidedPools ? new CountDownLatch(fCountClasses) : null;
-            if (fParallelClasses) parallelize((ParentRunner) suite, threadPoolClasses(), true);
+            fClassesFinisher= fHasSinglePoll ? new CountDownLatch(fCountClasses) : null;
+            tryParallelize((ParentRunner) suite, threadPoolClasses(), true);
         }
         return suite;
     }
 
     @Override
-    protected Runner getRunner(RunnerBuilder builder, Class<?> testClass)
-            throws Throwable {
+    protected Runner getRunner(RunnerBuilder builder, Class<?> testClass) throws Throwable {
         Runner runner= super.getRunner(builder, testClass);
         if (canSchedule(runner)) {
             ++fCountClasses;//incremented without been AtomicInteger because not yet concurrent access
-            ParentRunner child= (ParentRunner) runner;
-            runner= fParallelMethods ? parallelize(child, threadPoolMethods(), false) : sequencer(child);
+            tryParallelize((ParentRunner) runner, threadPoolMethods(), false);
         }
         return runner;
     }
@@ -380,32 +370,34 @@ public class ParallelComputer extends Computer {
     }
 
     private ExecutorService threadPoolClasses() {
-        return fProvidedPools ? fPoolClasses : newThreadPoolClasses();
+        return !fProvidedPools && fParallelClasses ? newThreadPoolClasses() : fPoolClasses;
     }
 
     private ExecutorService threadPoolMethods() {
-        return fProvidedPools ? fPoolMethods : newThreadPoolMethods();
+        return !fProvidedPools && fParallelMethods ? newThreadPoolMethods() : fPoolMethods;
     }
 
-    private void awaitClassFinished(Queue<Future<?>> children) {
-        for (Future<?> child : children) {
-            try {
-                child.get();
-            } catch (InterruptedException e) {
-                /*after called external ExecutorService#shutdownNow()*/
-                shutdownQuietly(true);
-            } catch (ExecutionException e) {
-                /*cause fired in run-notifier*/
-            } catch (CancellationException e) {
-                /*cannot happen because not calling Future#cancel(boolean)*/
+    private void awaitClassFinished(Queue<Future<?>> methodsFutures) {
+        if (methodsFutures != null) {//fParallelMethods is false
+            for (Future<?> methodFuture : methodsFutures) {
+                try {
+                    methodFuture.get();
+                } catch (InterruptedException e) {
+                    /*after called external ExecutorService#shutdownNow()*/
+                    shutdownQuietly(true);
+                } catch (ExecutionException e) {
+                    /*cause fired in run-notifier*/
+                } catch (CancellationException e) {
+                    /*cannot happen because not calling Future#cancel(boolean)*/
+                }
             }
         }
-        fClassesFinisher.countDown();
+        if (fHasSinglePoll) fClassesFinisher.countDown();
     }
 
     private void awaitClassesFinished() {
         try {
-            fClassesFinisher.await();
+            if (fHasSinglePoll) fClassesFinisher.await();
         } catch (InterruptedException e) {
             e.printStackTrace(System.err);
         }
@@ -431,12 +423,10 @@ public class ParallelComputer extends Computer {
      */
     private void shutdownQuietly(boolean shutdownNow) {
         try {
-            if (fIsShutDown.compareAndSet(false, true) && fCountClasses > 0) {//let other threads avoid submitting new tasks
-                if (fHasSinglePoll) {
+            if (fIsShutDown.compareAndSet(false, true)) {//let other threads avoid submitting new tasks
+                if (fHasSinglePoll && fCountClasses > 0) {
                     //let dormant class-threads wake up and escape from balancer
                     fSinglePoolBalancer.release(fCountClasses);
-                }
-                if (fProvidedPools) {
                     //cached a value in volatile field to the stack as a constant for faster reads
                     final CountDownLatch classesFinisher= fClassesFinisher;
                     //signals that the total num classes could not be reached
@@ -485,7 +475,6 @@ public class ParallelComputer extends Computer {
 
         public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
             if (executor.isShutdown()) {
-                //keep using false in order to avoid calling pool's methods
                 shutdownQuietly(false);
             }
             fPoolHandler.rejectedExecution(r, executor);

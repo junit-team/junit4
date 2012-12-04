@@ -1,56 +1,52 @@
 package org.junit.tests.experimental.parallel;
 
-import org.junit.Test;
-import org.junit.experimental.ParallelComputer;
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Result;
-import org.junit.Rule;
-import org.junit.rules.ExpectedException;
-
-import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.experimental.ParallelComputer;
+import org.junit.rules.ExpectedException;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
- * Testing ParallelComputer when a pool is shut down externally.
+ * Testing ParallelComputer when a pool or parallel computer is shutdown.
  *
  * @author tibor17
  * @since 4.12
  */
 public class ParallelComputerShutDownTest {
-    private static volatile CountDownLatch fTrigger;
     private static volatile boolean fIsShutdown;
     private static volatile boolean fShutdown1;
     private static volatile boolean fShutdown2;
+    private static volatile Runnable fShutdownTask;
 
     @Rule
-    public final TestWrapper testControl= new TestWrapper(250, TimeUnit.MILLISECONDS) {
+    public final TestWrapper testControl= new TestWrapper(500, TimeUnit.MILLISECONDS) {
         @Override
         boolean isShutdown() {
             return fIsShutdown;
         }
 
         @Override
-        void shutdown() {
-            fIsShutdown= true;
-        }
-
-        @Override
         protected void before() {
-            fTrigger= new CountDownLatch(1);//triggers shutdown
             fIsShutdown= false;
             fShutdown1= false;
             fShutdown2= false;
             super.before();
+        }
+
+        @Override
+        protected void after() {
+            super.after();
+            fShutdownTask= null;
         }
     };
 
@@ -64,7 +60,7 @@ public class ParallelComputerShutDownTest {
     public void shutdownHangs() throws InterruptedException {
         thrown.handleAssertionErrors().expect(AssertionError.class);
         testControl.setComputer(ParallelComputer.classesAndMethodsUnbounded());
-        Thread.sleep(350L);
+        Thread.sleep(600L);
         fIsShutdown= true;
     }
 
@@ -98,12 +94,9 @@ public class ParallelComputerShutDownTest {
 
     public static class Shutdown1 {
         @Test
-        public void one() throws InterruptedException {
+        public void one() {
             fShutdown1= true;
-            fTrigger.countDown();
-            while(!fIsShutdown) {
-                Thread.yield();
-            }
+            fShutdownTask.run();
         }
     }
 
@@ -150,7 +143,7 @@ public class ParallelComputerShutDownTest {
                                       new LinkedBlockingQueue<Runnable>());
         ParallelComputer computer= ParallelComputer.classesAndMethods(pool, 1);
         testControl.setComputer(computer);
-        scheduleShutdown(pool);
+        fShutdownTask= createShutdownTask(pool);
         Class<?>[] tests= {Shutdown1.class, Shutdown2.class};
         Result result= JUnitCore.runClasses(computer, tests);
         assertTrue(result.wasSuccessful());
@@ -165,7 +158,7 @@ public class ParallelComputerShutDownTest {
                                       new LinkedBlockingQueue<Runnable>());
         ParallelComputer computer= ParallelComputer.classesAndMethods(pool, 1);
         testControl.setComputer(computer);
-        scheduleShutdownNow(pool);
+        fShutdownTask= createShutdownNowTask(pool);
         Class<?>[] tests= {Shutdown1.class, Shutdown2.class};
         Result result= JUnitCore.runClasses(computer, tests);
         assertTrue(result.wasSuccessful());
@@ -180,7 +173,7 @@ public class ParallelComputerShutDownTest {
                                       new LinkedBlockingQueue<Runnable>());
         ParallelComputer computer= ParallelComputer.classesAndMethods(pool, 1);
         testControl.setComputer(computer);
-        scheduleShutdown(pool);
+        fShutdownTask= createShutdownTask(pool);
         Class<?>[] tests= {Shutdown2.class, Shutdown1.class};
         Result result= JUnitCore.runClasses(computer, tests);
         assertTrue(result.wasSuccessful());
@@ -195,7 +188,7 @@ public class ParallelComputerShutDownTest {
                                       new LinkedBlockingQueue<Runnable>());
         ParallelComputer computer= ParallelComputer.classesAndMethods(pool, 1);
         testControl.setComputer(computer);
-        scheduleShutdown(pool);
+        fShutdownTask= createShutdownTask(pool);
         Class<?>[] tests= {Shutdown2.class, Shutdown1.class};
         Result result= JUnitCore.runClasses(computer, tests);
         assertTrue(result.wasSuccessful());
@@ -210,7 +203,7 @@ public class ParallelComputerShutDownTest {
                                       new LinkedBlockingQueue<Runnable>());
         ParallelComputer computer= ParallelComputer.classesAndMethods(pool, 3);
         testControl.setComputer(computer);
-        scheduleShutdown(pool);
+        fShutdownTask= createShutdownTask(pool);
         Class<?>[] tests= {Shutdown1.class, Shutdown2.class};
         Result result= JUnitCore.runClasses(computer, tests);
         assertTrue(result.wasSuccessful());
@@ -224,7 +217,7 @@ public class ParallelComputerShutDownTest {
                                       new LinkedBlockingQueue<Runnable>());
         ParallelComputer computer= ParallelComputer.classesAndMethods(pool, 3);
         testControl.setComputer(computer);
-        scheduleShutdown(pool);
+        fShutdownTask= createShutdownTask(pool);
         Class<?>[] tests= {Shutdown1.class, Shutdown2.class};
         Result result= JUnitCore.runClasses(computer, tests);
         assertTrue(result.wasSuccessful());
@@ -236,7 +229,7 @@ public class ParallelComputerShutDownTest {
         ExecutorService classPool= Executors.newFixedThreadPool(3);
         ExecutorService methodPool= Executors.newFixedThreadPool(3);
         ParallelComputer computer= ParallelComputer.classesAndMethods(classPool, methodPool);
-        scheduleShutdown(computer);
+        fShutdownTask= createShutdownTask(computer);
         Class<?>[] tests= {Shutdown1.class, Shutdown2.class};
         Result result= JUnitCore.runClasses(computer, tests);
         assertTrue(result.wasSuccessful());
@@ -248,7 +241,7 @@ public class ParallelComputerShutDownTest {
         ExecutorService classPool= Executors.newFixedThreadPool(3);
         ExecutorService methodPool= Executors.newFixedThreadPool(3);
         ParallelComputer computer= ParallelComputer.classesAndMethods(classPool, methodPool);
-        scheduleShutdownNow(computer);
+        fShutdownTask= createShutdownNowTask(computer);
         Class<?>[] tests= {Shutdown1.class, Shutdown2.class};
         Result result= JUnitCore.runClasses(computer, tests);
         assertTrue(result.wasSuccessful());
@@ -259,7 +252,7 @@ public class ParallelComputerShutDownTest {
     public void classesInfinitePoolShutdown() {
         ExecutorService pool= Executors.newCachedThreadPool();
         ParallelComputer computer= ParallelComputer.classes(pool);
-        scheduleShutdown(computer);
+        fShutdownTask= createShutdownTask(computer);
         Class<?>[] tests= {Shutdown1.class, Shutdown2.class};
         Result result= JUnitCore.runClasses(computer, tests);
         assertTrue(result.wasSuccessful());
@@ -270,7 +263,7 @@ public class ParallelComputerShutDownTest {
     public void classesInfinitePoolShutdownNow() {
         ExecutorService pool= Executors.newCachedThreadPool();
         ParallelComputer computer= ParallelComputer.classes(pool);
-        scheduleShutdownNow(computer);
+        fShutdownTask= createShutdownNowTask(computer);
         Class<?>[] tests= {Shutdown1.class, Shutdown2.class};
         Result result= JUnitCore.runClasses(computer, tests);
         assertTrue(result.wasSuccessful());
@@ -281,7 +274,7 @@ public class ParallelComputerShutDownTest {
     public void classesSimplePoolShutdown() {
         ExecutorService pool= Executors.newSingleThreadExecutor();
         ParallelComputer computer= ParallelComputer.classes(pool);
-        scheduleShutdown(computer);
+        fShutdownTask= createShutdownTask(computer);
         Class<?>[] tests= {Shutdown1.class, Shutdown2.class};
         Result result= JUnitCore.runClasses(computer, tests);
         assertTrue(result.wasSuccessful());
@@ -292,7 +285,7 @@ public class ParallelComputerShutDownTest {
     public void classesSimplePoolShutdownNow() {
         ExecutorService pool= Executors.newSingleThreadExecutor();
         ParallelComputer computer= ParallelComputer.classes(pool);
-        scheduleShutdownNow(computer);
+        fShutdownTask= createShutdownNowTask(computer);
         Class<?>[] tests= {Shutdown1.class, Shutdown2.class};
         Result result= JUnitCore.runClasses(computer, tests);
         assertTrue(result.wasSuccessful());
@@ -303,7 +296,7 @@ public class ParallelComputerShutDownTest {
     public void classesShutdown() {
         ExecutorService pool= Executors.newFixedThreadPool(2);
         ParallelComputer computer= ParallelComputer.classes(pool);
-        scheduleShutdown(computer);
+        fShutdownTask= createShutdownTask(computer);
         Class<?>[] tests= {Shutdown1.class, Shutdown2.class};
         Result result= JUnitCore.runClasses(computer, tests);
         assertTrue(result.wasSuccessful());
@@ -314,7 +307,7 @@ public class ParallelComputerShutDownTest {
     public void classesShutdownNow() {
         ExecutorService pool= Executors.newFixedThreadPool(2);
         ParallelComputer computer= ParallelComputer.classes(pool);
-        scheduleShutdownNow(computer);
+        fShutdownTask= createShutdownNowTask(computer);
         Class<?>[] tests= {Shutdown1.class, Shutdown2.class};
         Result result= JUnitCore.runClasses(computer, tests);
         assertTrue(result.wasSuccessful());
@@ -325,7 +318,7 @@ public class ParallelComputerShutDownTest {
     public void classesBigPoolShutdown() {
         ExecutorService pool= Executors.newFixedThreadPool(3);
         ParallelComputer computer= ParallelComputer.classes(pool);
-        scheduleShutdown(computer);
+        fShutdownTask= createShutdownTask(computer);
         Class<?>[] tests= {Shutdown1.class, Shutdown2.class};
         Result result= JUnitCore.runClasses(computer, tests);
         assertTrue(result.wasSuccessful());
@@ -336,7 +329,7 @@ public class ParallelComputerShutDownTest {
     public void classesBigPoolShutdownNow() {
         ExecutorService pool= Executors.newFixedThreadPool(3);
         ParallelComputer computer= ParallelComputer.classes(pool);
-        scheduleShutdownNow(computer);
+        fShutdownTask= createShutdownNowTask(computer);
         Class<?>[] tests= {Shutdown1.class, Shutdown2.class};
         Result result= JUnitCore.runClasses(computer, tests);
         assertTrue(result.wasSuccessful());
@@ -347,7 +340,7 @@ public class ParallelComputerShutDownTest {
     public void methodsInfinitePoolShutdown1() {
         final ExecutorService pool= Executors.newCachedThreadPool();
         ParallelComputer computer= ParallelComputer.methods(pool);
-        scheduleShutdown(computer);
+        fShutdownTask= createShutdownTask(computer);
         Class<?>[] tests= {Shutdown1.class, Shutdown2.class};
         Result result= JUnitCore.runClasses(computer, tests);
         assertTrue(result.wasSuccessful());
@@ -359,7 +352,7 @@ public class ParallelComputerShutDownTest {
     public void methodsInfinitePoolShutdown1Now() {
         final ExecutorService pool= Executors.newCachedThreadPool();
         ParallelComputer computer= ParallelComputer.methods(pool);
-        scheduleShutdownNow(computer);
+        fShutdownTask= createShutdownNowTask(computer);
         Class<?>[] tests= {Shutdown1.class, Shutdown2.class};
         Result result= JUnitCore.runClasses(computer, tests);
         assertTrue(result.wasSuccessful());
@@ -371,7 +364,7 @@ public class ParallelComputerShutDownTest {
     public void methodsInfinitePoolShutdown2() {
         final ExecutorService pool= Executors.newCachedThreadPool();
         ParallelComputer computer= ParallelComputer.methods(pool);
-        scheduleShutdown(computer);
+        fShutdownTask= createShutdownTask(computer);
         Class<?>[] tests= {Shutdown2.class, Shutdown1.class};
         Result result= JUnitCore.runClasses(computer, tests);
         assertTrue(result.wasSuccessful());
@@ -383,7 +376,7 @@ public class ParallelComputerShutDownTest {
     public void methodsInfinitePoolShutdown2Now() {
         final ExecutorService pool= Executors.newCachedThreadPool();
         ParallelComputer computer= ParallelComputer.methods(pool);
-        scheduleShutdownNow(computer);
+        fShutdownTask= createShutdownNowTask(computer);
         Class<?>[] tests= {Shutdown2.class, Shutdown1.class};
         Result result= JUnitCore.runClasses(computer, tests);
         assertTrue(result.wasSuccessful());
@@ -395,7 +388,7 @@ public class ParallelComputerShutDownTest {
     public void methodsSimplePool() {
         final ExecutorService pool= Executors.newSingleThreadExecutor();
         ParallelComputer computer= ParallelComputer.methods(pool);
-        scheduleShutdown(computer);
+        fShutdownTask= createShutdownTask(computer);
         Class<?>[] tests= {Shutdown1.class, Shutdown2.class};
         Result result= JUnitCore.runClasses(computer, tests);
         assertTrue(result.wasSuccessful());
@@ -407,7 +400,7 @@ public class ParallelComputerShutDownTest {
     public void methods() {
         ExecutorService pool= Executors.newFixedThreadPool(2);
         ParallelComputer computer= ParallelComputer.methods(pool);
-        scheduleShutdown(computer);
+        fShutdownTask= createShutdownTask(computer);
         Class<?>[] tests= {Shutdown1.class, Shutdown2.class};
         Result result= JUnitCore.runClasses(computer, tests);
         assertTrue(result.wasSuccessful());
@@ -419,7 +412,7 @@ public class ParallelComputerShutDownTest {
     public void methodsBigPoolShutdown() {
         ExecutorService pool= Executors.newFixedThreadPool(3);
         ParallelComputer computer= ParallelComputer.methods(pool);
-        scheduleShutdown(computer);
+        fShutdownTask= createShutdownTask(computer);
         Class<?>[] tests= {Shutdown1.class, Shutdown2.class};
         Result result= JUnitCore.runClasses(computer, tests);
         assertTrue(result.wasSuccessful());
@@ -431,7 +424,7 @@ public class ParallelComputerShutDownTest {
     public void methodsBigPoolShutdownNow() {
         ExecutorService pool= Executors.newFixedThreadPool(3);
         ParallelComputer computer= ParallelComputer.methods(pool);
-        scheduleShutdownNow(computer);
+        fShutdownTask= createShutdownNowTask(computer);
         Class<?>[] tests= {Shutdown1.class, Shutdown2.class};
         Result result= JUnitCore.runClasses(computer, tests);
         assertTrue(result.wasSuccessful());
@@ -439,64 +432,38 @@ public class ParallelComputerShutDownTest {
         assertFalse(fShutdown2);
     }
 
-    private static void scheduleShutdown(final ExecutorService pool) {
-        Executors.newSingleThreadExecutor().submit(new Callable<Void>() {
-            public Void call() throws InterruptedException {
-                fTrigger.await();
-                pool.shutdown();
-                fIsShutdown = true;
-                return null;
-            }
-        });
-    }
-
-    private static void scheduleShutdownNow(final ExecutorService pool) {
-        Executors.newSingleThreadExecutor().submit(new Callable<Void>() {
-            public Void call() throws InterruptedException {
-                fTrigger.await();
-                pool.shutdownNow();
-                fIsShutdown= true;
-                return null;
-            }
-        });
-    }
-
-    private static Future<Void> scheduleShutdown(final ParallelComputer computer) {
-        return Executors.newSingleThreadExecutor().submit(new Callable<Void>() {
-            public Void call() throws InterruptedException {
-                fTrigger.await();
-                try {
-                    computer.shutdown(false);
-                    return null;
-                } finally {
-                    fIsShutdown= true;
-                }
-            }
-        });
-    }
-
-    private static Future<Void> scheduleShutdownNow(final ParallelComputer computer) {
-        return Executors.newSingleThreadExecutor().submit(new Callable<Void>() {
-            public Void call() throws InterruptedException {
-                fTrigger.await();
-                try {
-                    computer.shutdown(true);
-                    return null;
-                } finally {
-                    fIsShutdown= true;
-                }
-            }
-        });
-    }
-
-    private static Runnable createShutdownWatcher(final ExecutorService... pools) {
+    private static Runnable createShutdownTask(final ExecutorService pool) {
         return new Runnable() {
             public void run() {
-                for (ExecutorService pool : pools) {
-                    try {
-                        pool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-                    } catch (InterruptedException e) {}
-                }
+                pool.shutdown();
+                fIsShutdown= true;
+            }
+        };
+    }
+
+    private static Runnable createShutdownNowTask(final ExecutorService pool) {
+        return new Runnable() {
+            public void run() {
+                pool.shutdownNow();
+                fIsShutdown= true;
+            }
+        };
+    }
+
+    private static Runnable createShutdownTask(final ParallelComputer computer) {
+        return new Runnable() {
+            public void run() {
+                computer.shutdown(false);
+                fIsShutdown= true;
+            }
+        };
+    }
+
+    private static Runnable createShutdownNowTask(final ParallelComputer computer) {
+        return new Runnable() {
+            public void run() {
+                computer.shutdown(true);
+                fIsShutdown= true;
             }
         };
     }
