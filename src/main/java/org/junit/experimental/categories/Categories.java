@@ -64,11 +64,23 @@ public class Categories extends Suite {
     // someday enable a better new implementation.
     // https://github.com/KentBeck/junit/issues/issue/172
 
+    /**
+     * {@link IncludeCategory} determines which Tests are ran by {@link Categories}.
+     * <p/>
+     *  If specified all Tests annotated with classes specified in the value of this annotation will be ran by
+     * {@link Categories} as long they are not specified using {@link ExcludeCategory}
+     */
     @Retention(RetentionPolicy.RUNTIME)
     public @interface IncludeCategory {
         public Class<?>[] value();
     }
 
+    /**
+     * {@link ExcludeCategory} determines which Tests are skipped by {@link Categories}.
+     * <p/>
+     * If specified all Tests annotated with classes specified in the value of this annotation will be skipped by
+     * {@link Categories} regardless of being mentioned in {@link IncludeCategory}
+     */
     @Retention(RetentionPolicy.RUNTIME)
     public @interface ExcludeCategory {
         public Class<?>[] value();
