@@ -19,8 +19,8 @@ import org.junit.runners.model.RunnerBuilder;
  * annotation, or a subtype of that category.
  *
  * Note that, for now, annotating suites with {@code @Category} has no effect.
- * Categories must be annotated on the direct method or class. If {@link Category}'s inherited-Parameter is true,
- * {@link Category} annotations of ancestors will be evaluated too.
+ * Categories must be annotated on the direct method or class.
+ * If {@link org.junit.experimental.categories.Category#inherited()} of ancestors is true they will be recognized too.
  *
  * Example:
  *
@@ -145,21 +145,21 @@ public class Categories extends Suite {
         /**
          * @param testClass the test class
          * @return all {@link org.junit.experimental.categories.Category#value()}-classes defined in Ancestors of the
-         * test class which have {@link org.junit.experimental.categories.Category#inherited()} set to true
+         * test class which have {@link org.junit.experimental.categories.Category#inherited()} set true
          */
         private List<Class<?>> ancestorCategories(Class<?> testClass) {
             List<Class<?>> testClasses = new ArrayList<Class<?>>();
-            // klass null or no superclass => empty list
+            // testClass null or no superclass => empty list
             if (testClass == null || testClass.getSuperclass() == null) {
                 return testClasses;
             }
-            // add classes defined in super
+            // add classes defined in superclass
             Class<?> superClass = testClass.getSuperclass();
             Category annotation = superClass.getAnnotation(Category.class);
             if (annotation != null && annotation.inherited()) {
                 testClasses.addAll(Arrays.asList(annotation.value()));
             }
-            // add classes defined in super of super (recursion)
+            // add classes defined in superclass.getSuperclass() (recursion)
             testClasses.addAll(ancestorCategories(superClass));
             return testClasses;
         }

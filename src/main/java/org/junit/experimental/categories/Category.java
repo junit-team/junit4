@@ -41,8 +41,8 @@ import java.lang.annotation.RetentionPolicy;
 public @interface Category {
     Class<?>[] value();
     /**
-     * {@link Categories} will evaluate this field. If its value is true it will behave as if all deriving classes were
-     * annotated with this Category
+     * {@link Categories} will evaluate this. If its true it will behave as if all deriving classes were annotated with
+     * this Category
      */
     boolean inherited() default false;
 }
