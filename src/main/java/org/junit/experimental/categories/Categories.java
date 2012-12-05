@@ -92,26 +92,54 @@ public class Categories extends Suite {
             return new CategoryFilter(new Class<?>[]{categoryType}, null);
         }
 
-        public static CategoryFilter include(Class<?>[] categoryType) {
+        public static CategoryFilter include(Class<?>... categoryType) {
             return new CategoryFilter(categoryType, null);
         }
 
-        private final Class<?>[] includedCategories;
+        private Class<?>[] fIncludedCategories = new Class<?>[]{};
 
-        private final Class<?>[] excludedCategories;
+        private Class<?>[] fExcludedCategories = new Class<?>[]{};
+
+        public CategoryFilter(Class<?> includedCategory, Class<?> excludedCategory) {
+            if (includedCategory != null){
+                fIncludedCategories = new Class<?>[]{includedCategory};
+            }
+            if (excludedCategory != null){
+                fExcludedCategories = new Class<?>[]{excludedCategory};
+            }
+        }
 
         public CategoryFilter(Class<?>[] includedCategories,
                 Class<?>[] excludedCategories) {
-            this.includedCategories = includedCategories;
-            this.excludedCategories = excludedCategories;
+            if (includedCategories != null){
+                fIncludedCategories = includedCategories;
+            }
+            if (excludedCategories != null){
+                fExcludedCategories = excludedCategories;
+            }
         }
 
         @Override
         public String describe() {
-            Integer numIncludedCategories = includedCategories == null ? 0 : includedCategories.length;
-            Integer numExcludedCategories = excludedCategories == null ? 0 : excludedCategories.length;
-            return "category. contains: " + numIncludedCategories + " included categories and "
-                    + numExcludedCategories + " excluded categories.";
+            StringBuilder description = new StringBuilder("Categories: ");
+            if (fIncludedCategories.length > 0){
+                description.append("Included categories: ");
+                for (Class<?> each : fIncludedCategories){
+                    description.append(each.getSimpleName()).append(" ");
+                }
+            } else{
+                description.append("No included categories ");
+            }
+            description.append("| ");
+            if (fExcludedCategories.length > 0){
+                description.append("Excluded categories: ");
+                for (Class<?> each : fExcludedCategories){
+                    description.append(each.getSimpleName()).append(" ");
+                }
+            } else{
+                description.append("No excluded categories");
+            }
+            return description.toString();
         }
 
         @Override
@@ -128,7 +156,7 @@ public class Categories extends Suite {
         }
 
         /**
-         * Checks if the given array of classes (eg includedCategories) contains a given class
+         * Checks if the given array of classes (eg fIncludedCategories) contains a given class
          * This is used to determine if a specified class in a {@link Category} annotation is represented in the
          * class-array specified in a {@link IncludeCategory} or {@link ExcludeCategory} annotation of a suite ran with
          * {@link Categories}
@@ -138,8 +166,8 @@ public class Categories extends Suite {
          * @return true if the given category class is assignable from any of the given classes in categories
          */
         private boolean containsCategory(Class<?>[] categories, Class<?> category){
-            for(Class<?> cat : categories){
-                if(cat.isAssignableFrom(category)){
+            for (Class<?> each : categories){
+                if (each.isAssignableFrom(category)){
                     return true;
                 }
             }
@@ -149,15 +177,15 @@ public class Categories extends Suite {
         private boolean hasCorrectCategoryAnnotation(Description description) {
             List<Class<?>> categories = categories(description);
             if (categories.isEmpty()) {
-                return includedCategories == null;
+                return fIncludedCategories.length == 0;
             }
-            for (Class<?> category : categories) {
-                if (excludedCategories != null && containsCategory(excludedCategories, category)) {
+            for (Class<?> each : categories) {
+                if (fExcludedCategories.length > 0 && containsCategory(fExcludedCategories, each)) {
                     return false;
                 }
             }
-            for (Class<?> category : categories) {
-                if (includedCategories == null || containsCategory(includedCategories, category)) {
+            for (Class<?> each : categories) {
+                if (fIncludedCategories.length == 0 || containsCategory(fIncludedCategories, each)) {
                     return true;
                 }
             }
