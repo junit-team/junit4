@@ -61,7 +61,7 @@ public class MethodSorterTest {
         List<String> names = new ArrayList<String>();
         for (Method m : actualMethods) {
             // Filter out synthetic methods from, e.g., coverage tools.
-        	if (!m.isSynthetic()) {
+            if (!m.isSynthetic()) {
                 names.add(m.toString().replace(clazz.getName() + '.', ""));
         	}
         }
@@ -85,7 +85,7 @@ public class MethodSorterTest {
     
     @Test
     public void testMethodsNullSorterSub() {
-        List<String> expected = Arrays.asList(new String[]{SUB_METHOD});
+        List<String> expected = Arrays.asList(SUB_METHOD);
         List<String> actual = getDeclaredMethodNames(Sub.class);
         assertEquals(expected, actual);
     }
