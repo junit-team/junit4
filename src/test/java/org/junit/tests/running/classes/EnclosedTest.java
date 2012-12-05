@@ -15,38 +15,35 @@ public class EnclosedTest {
     public static class Enclosing {
         public static class A {
             @Test
-            public void a() {
-            }
+            public void a() {}
 
             @Test
-            public void b() {
-            }
+            public void b() {}
         }
-
         public static class B {
             @Test
-            public void a() {
-            }
+            public void a() {}
 
             @Test
-            public void b() {
-            }
+            public void b() {}
 
             @Test
-            public void c() {
-            }
+            public void c() {}
+        }
+        abstract public static class C {
+            @Test public void a() {}
         }
     }
 
     @Test
-    public void enclosedRunnerPlansEnclosedClasses() throws Exception {
-        Runner runner = Request.aClass(Enclosing.class).getRunner();
+    public void enclosedRunnerPlansConcreteEnclosedClasses() throws Exception {
+        Runner runner= Request.aClass(Enclosing.class).getRunner();
         assertEquals(5, runner.testCount());
     }
 
     @Test
-    public void enclosedRunnerRunsEnclosedClasses() throws Exception {
-        Result result = JUnitCore.runClasses(Enclosing.class);
+    public void enclosedRunnerRunsConcreteEnclosedClasses() throws Exception {
+        Result result= JUnitCore.runClasses(Enclosing.class);
         assertEquals(5, result.getRunCount());
     }
 

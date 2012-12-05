@@ -31,6 +31,7 @@ import org.junit.tests.experimental.rules.MethodRulesTest;
 import org.junit.tests.experimental.rules.NameRulesTest;
 import org.junit.tests.experimental.rules.RuleChainTest;
 import org.junit.tests.experimental.rules.RuleFieldValidatorTest;
+import org.junit.tests.experimental.rules.StopwatchTest;
 import org.junit.tests.experimental.rules.TempFolderRuleTest;
 import org.junit.tests.experimental.rules.TemporaryFolderUsageTest;
 import org.junit.tests.experimental.rules.TestRuleTest;
@@ -160,7 +161,8 @@ import org.junit.tests.validation.ValidationTest;
         BlockJUnit4ClassRunnerTest.class,
         MethodSorterTest.class,
         TestedOnSupplierTest.class,
-        StacktracePrintingMatcherTest.class
+        StacktracePrintingMatcherTest.class,
+        StopwatchTest.class
 })
 public class AllTests {
     public static Test suite() {
