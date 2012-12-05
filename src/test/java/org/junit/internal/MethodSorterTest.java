@@ -54,40 +54,39 @@ public class MethodSorterTest {
         }
     }
 
-    private List<String> getDeclaredFilteredMethods(Class<?> clazz, List<String> ofInterest) {
-        // the method under test.
+    private List<String> getDeclaredMethodNames(Class<?> clazz) {
         Method[] actualMethods = MethodSorter.getDeclaredMethods(clazz);
 
-        // obtain just the names instead of the full methods.
+        // Obtain just the names instead of the full methods.
         List<String> names = new ArrayList<String>();
         for (Method m : actualMethods) {
-            names.add(m.toString().replace(clazz.getName() + '.', ""));
+            // Filter out synthetic methods from, e.g., coverage tools.
+        	if (!m.isSynthetic()) {
+                names.add(m.toString().replace(clazz.getName() + '.', ""));
+        	}
         }
-
-        // filter to just the methods of interest
-        names.retainAll(ofInterest);   	
+        
         return names;
     }
 
     @Test
     public void testMethodsNullSorterSelf() {
-        List<String> expected = Arrays.asList(
-        		new String[]{EPSILON, BETA, ALPHA, DELTA, GAMMA_VOID, GAMMA_BOOLEAN});
-        List<String> actual = getDeclaredFilteredMethods(DummySortWithoutAnnotation.class, expected);
+        List<String> expected = Arrays.asList(EPSILON, BETA, ALPHA, DELTA, GAMMA_VOID, GAMMA_BOOLEAN);
+        List<String> actual = getDeclaredMethodNames(DummySortWithoutAnnotation.class);
         assertEquals(expected, actual);
     }
     
     @Test
     public void testMethodsNullSorterSuper() {
-        List<String> expected = Arrays.asList(new String[]{SUPER_METHOD});
-        List<String> actual = getDeclaredFilteredMethods(Super.class, expected);
+        List<String> expected = Arrays.asList(SUPER_METHOD);
+        List<String> actual = getDeclaredMethodNames(Super.class);
         assertEquals(expected, actual);
     }
     
     @Test
     public void testMethodsNullSorterSub() {
         List<String> expected = Arrays.asList(new String[]{SUB_METHOD});
-        List<String> actual = getDeclaredFilteredMethods(Sub.class, expected);
+        List<String> actual = getDeclaredMethodNames(Sub.class);
         assertEquals(expected, actual);
     }
 
@@ -116,8 +115,8 @@ public class MethodSorterTest {
 
     @Test
     public void testDefaultMethodSorter() {
-        List<String> expected = Arrays.asList(new String[]{EPSILON, BETA, ALPHA, DELTA, GAMMA_VOID, GAMMA_BOOLEAN});
-        List<String> actual = getDeclaredFilteredMethods(DummySortWithDefault.class, expected);
+        List<String> expected = Arrays.asList(EPSILON, BETA, ALPHA, DELTA, GAMMA_VOID, GAMMA_BOOLEAN);
+        List<String> actual = getDeclaredMethodNames(DummySortWithDefault.class);
         assertEquals(expected, actual);
     }
 
@@ -146,9 +145,9 @@ public class MethodSorterTest {
 
     @Test
     public void testJvmMethodSorter() {
-        Method[] fromJvm = DummySortJvm.class.getDeclaredMethods();
+        Method[] fromJvmWithSynthetics = DummySortJvm.class.getDeclaredMethods();
         Method[] sorted = MethodSorter.getDeclaredMethods(DummySortJvm.class);
-        assertArrayEquals(fromJvm, sorted);
+        assertArrayEquals(fromJvmWithSynthetics, sorted);
     }
 
     @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -176,8 +175,8 @@ public class MethodSorterTest {
 
     @Test
     public void testAscendingMethodSorter() {
-        List<String> expected = Arrays.asList(new String[]{ALPHA, BETA, DELTA, EPSILON, GAMMA_VOID, GAMMA_BOOLEAN});
-        List<String> actual = getDeclaredFilteredMethods(DummySortWithNameAsc.class, expected);
+        List<String> expected = Arrays.asList(ALPHA, BETA, DELTA, EPSILON, GAMMA_VOID, GAMMA_BOOLEAN);
+        List<String> actual = getDeclaredMethodNames(DummySortWithNameAsc.class);
         assertEquals(expected, actual);
     }
 }
