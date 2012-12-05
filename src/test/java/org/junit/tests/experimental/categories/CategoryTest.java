@@ -1,12 +1,5 @@
 package org.junit.tests.experimental.categories;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.experimental.results.PrintableResult.testResult;
-import static org.junit.experimental.results.ResultMatchers.isSuccessful;
-
 import org.junit.Test;
 import org.junit.experimental.categories.Categories;
 import org.junit.experimental.categories.Categories.CategoryFilter;
@@ -22,6 +15,10 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.junit.runners.model.InitializationError;
+
+import static org.junit.Assert.*;
+import static org.junit.experimental.results.PrintableResult.testResult;
+import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 
 public class CategoryTest {
     public interface FastTests {
@@ -276,5 +273,26 @@ public class CategoryTest {
     @Test
     public void classesCanBeCategories() {
         assertThat(testResult(RunClassAsCategory.class), isSuccessful());
+    }
+
+    @Category(SlowTests.class)
+    public static abstract class Ancestor{}
+
+    public static class Inherited extends Ancestor {
+        @Test
+        public void a(){
+        }
+    }
+
+    @RunWith(Categories.class)
+    @IncludeCategory(SlowTests.class)
+    @SuiteClasses(Inherited.class)
+    public interface InheritanceSuite {}
+
+    @Test
+    public void testInheritance() {
+        Result result = JUnitCore.runClasses(InheritanceSuite.class);
+        assertEquals(1, result.getRunCount());
+        assertTrue(result.wasSuccessful());
     }
 }

@@ -1,5 +1,6 @@
 package org.junit.experimental.categories;
 
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -38,6 +39,7 @@ import java.lang.annotation.RetentionPolicy;
  * For more usage, see code example on {@link Categories}.
  */
 @Retention(RetentionPolicy.RUNTIME)
+@Inherited
 public @interface Category {
     Class<?>[] value();
 }
