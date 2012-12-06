@@ -1,5 +1,12 @@
 package org.junit.tests.experimental.categories;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.junit.experimental.results.PrintableResult.testResult;
+import static org.junit.experimental.results.ResultMatchers.isSuccessful;
+
 import org.junit.Test;
 import org.junit.experimental.categories.Categories;
 import org.junit.experimental.categories.Categories.CategoryFilter;
@@ -15,10 +22,6 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.junit.runners.model.InitializationError;
-
-import static org.junit.Assert.*;
-import static org.junit.experimental.results.PrintableResult.testResult;
-import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 
 public class CategoryTest {
     public interface FastTests {
