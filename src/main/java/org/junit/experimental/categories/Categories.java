@@ -96,25 +96,25 @@ public class Categories extends Suite {
             return new CategoryFilter(categoryType, null);
         }
 
-        private Class<?>[] fIncludedCategories = new Class<?>[]{};
+        private Class<?>[] fIncludedCategories = new Class<?>[] {};
 
-        private Class<?>[] fExcludedCategories = new Class<?>[]{};
+        private Class<?>[] fExcludedCategories = new Class<?>[] {};
 
         public CategoryFilter(Class<?> includedCategory, Class<?> excludedCategory) {
-            if (includedCategory != null){
-                fIncludedCategories = new Class<?>[]{includedCategory};
+            if (includedCategory != null) {
+                fIncludedCategories = new Class<?>[] {includedCategory};
             }
-            if (excludedCategory != null){
-                fExcludedCategories = new Class<?>[]{excludedCategory};
+            if (excludedCategory != null) {
+                fExcludedCategories = new Class<?>[] {excludedCategory};
             }
         }
 
         public CategoryFilter(Class<?>[] includedCategories,
                 Class<?>[] excludedCategories) {
-            if (includedCategories != null){
+            if (includedCategories != null) {
                 fIncludedCategories = includedCategories;
             }
-            if (excludedCategories != null){
+            if (excludedCategories != null) {
                 fExcludedCategories = excludedCategories;
             }
         }
@@ -122,21 +122,21 @@ public class Categories extends Suite {
         @Override
         public String describe() {
             StringBuilder description = new StringBuilder("Categories: ");
-            if (fIncludedCategories.length > 0){
+            if (fIncludedCategories.length > 0) {
                 description.append("Included categories: ");
-                for (Class<?> each : fIncludedCategories){
+                for (Class<?> each : fIncludedCategories) {
                     description.append(each.getSimpleName()).append(" ");
                 }
-            } else{
+            } else {
                 description.append("No included categories ");
             }
             description.append("| ");
-            if (fExcludedCategories.length > 0){
+            if (fExcludedCategories.length > 0) {
                 description.append("Excluded categories: ");
-                for (Class<?> each : fExcludedCategories){
+                for (Class<?> each : fExcludedCategories) {
                     description.append(each.getSimpleName()).append(" ");
                 }
-            } else{
+            } else {
                 description.append("No excluded categories");
             }
             return description.toString();
@@ -165,9 +165,9 @@ public class Categories extends Suite {
          * @param category defined category (one of the classes specified in {@link Category})
          * @return true if the given category class is assignable from any of the given classes in categories
          */
-        private boolean containsCategory(Class<?>[] categories, Class<?> category){
-            for (Class<?> each : categories){
-                if (each.isAssignableFrom(category)){
+        private boolean containsCategory(Class<?>[] categories, Class<?> category) {
+            for (Class<?> each : categories) {
+                if (each.isAssignableFrom(category)) {
                     return true;
                 }
             }
