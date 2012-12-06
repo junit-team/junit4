@@ -72,7 +72,7 @@ public class Categories extends Suite {
      */
     @Retention(RetentionPolicy.RUNTIME)
     public @interface IncludeCategory {
-        public Class<?>[] value();
+        public Class<?>[] value() default {};
     }
 
     /**
@@ -83,7 +83,7 @@ public class Categories extends Suite {
      */
     @Retention(RetentionPolicy.RUNTIME)
     public @interface ExcludeCategory {
-        public Class<?>[] value();
+        public Class<?>[] value() default {};
     }
 
     public static class CategoryFilter extends Filter {
@@ -180,7 +180,7 @@ public class Categories extends Suite {
                 return fIncludedCategories.length == 0;
             }
             for (Class<?> each : categories) {
-                if (fExcludedCategories.length > 0 && containsCategory(fExcludedCategories, each)) {
+                if (containsCategory(fExcludedCategories, each)) {
                     return false;
                 }
             }
