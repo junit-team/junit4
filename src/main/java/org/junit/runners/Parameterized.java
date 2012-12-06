@@ -165,16 +165,13 @@ public class Parameterized extends Suite {
     protected class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
         private final Object[] fParameters;
 
-        private final String fPattern;
-
-        private final int fIndex;
+        private String fName;
 
         protected TestClassRunnerForParameters(Class<?> type, String pattern, int index, Object[] parameters) throws InitializationError {
             super(type);
 
-            fPattern = pattern;
-            fIndex = index;
             fParameters = parameters;
+            fName = nameFor(pattern, index, parameters);
         }
 
         @Override
@@ -213,11 +210,15 @@ public class Parameterized extends Suite {
             return testClassInstance;
         }
 
+        protected String nameFor(String pattern, int index, Object[] parameters) {
+            String finalPattern = pattern.replaceAll("\\{index\\}", Integer.toString(index));
+            String name = MessageFormat.format(finalPattern, parameters);
+            return "[" + name + "]";
+        }
+
         @Override
         protected String getName() {
-            String finalPattern = fPattern.replaceAll("\\{index\\}", Integer.toString(fIndex));
-            String name = MessageFormat.format(finalPattern, fParameters);
-            return "[" + name + "]";
+            return fName;
         }
 
         @Override
