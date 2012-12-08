@@ -171,15 +171,15 @@ public class Categories extends Suite {
         }
 
         /**
-         * Returns string in the form "[<included_categories>] - [<excluded_categories>]", where both
+         * Returns string in the form <tt>&quot;[included categories] - [excluded categories]&quot;</tt>, where both
          * sets have comma separated names of categories.
          *
          * @return string representation for the relative complement of excluded categories set
          * in the set of included categories. Examples:
          * <ul>
-         *  <li> "categories [all]" for all included categories and no excluded ones;
-         *  <li> "categories [all] - [A, B]" for all included categories and given excluded ones;
-         *  <li> "categories [A, B] - [C, D]" for given included categories and given excluded ones.
+         *  <li> <tt>&quot;categories [all]&quot;</tt> for all included categories and no excluded ones;
+         *  <li> <tt>&quot;categories [all] - [A, B]&quot;</tt> for all included categories and given excluded ones;
+         *  <li> <tt>&quot;categories [A, B] - [C, D]&quot;</tt> for given included categories and given excluded ones.
          * </ul>
          * @see Class#toString() name of category
          */
