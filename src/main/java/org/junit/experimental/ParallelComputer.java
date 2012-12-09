@@ -96,10 +96,10 @@ public class ParallelComputer extends Computer {
     private final ExecutorService fPoolClasses;
     private final ExecutorService fPoolMethods;
 
-    private final ConcurrentLinkedQueue<Description> fBeforeShutdown;
+    private final ConcurrentLinkedQueue<Description> fBeforeShutdown= new ConcurrentLinkedQueue<Description>();
 
     //set if a pool is shut down externally
-    private final AtomicBoolean fIsShutDown;
+    private final AtomicBoolean fIsShutDown= new AtomicBoolean(false);
 
     // Used if fHasSinglePoll is set. Disables this Thread for scheduling purposes until all classes finished.
     private volatile CountDownLatch fClassesFinisher;
@@ -130,8 +130,6 @@ public class ParallelComputer extends Computer {
         fSinglePoolCoreSize= -1;
         fSinglePoolMaxSize= -1;
         fSinglePoolMinConcurrentMethods= -1;
-        fBeforeShutdown= null;
-        fIsShutDown= null;
     }
 
     private ParallelComputer(ExecutorService poolClasses, ExecutorService poolMethods) {
@@ -148,14 +146,21 @@ public class ParallelComputer extends Computer {
         fClassesFinisher= null;
         fSinglePoolBalancer= null;
         fCountClasses= 0;//to satisfy JVM spec -write operation first on volatile fields
-        if (poolClasses == null && poolMethods == null)
+
+        if (poolClasses == null && poolMethods == null) {
             throw new NullPointerException("null classes/methods executor");
-        if (poolClasses != null && poolClasses.isShutdown())
-            throw new IllegalStateException(poolClasses
-                + " provided classes executor is in shutdown state and cannot restart");
-        if (poolMethods != null && poolMethods.isShutdown())
-            throw new IllegalStateException(poolMethods
-                + " provided methods executor is in shutdown state and cannot restart");
+        }
+
+        if (poolClasses != null && poolClasses.isShutdown()) {
+            throw new IllegalStateException(poolClasses +
+                    " provided classes executor is in shutdown state and cannot restart");
+        }
+
+        if (poolMethods != null && poolMethods.isShutdown()) {
+            throw new IllegalStateException(poolMethods +
+                    " provided methods executor is in shutdown state and cannot restart");
+        }
+
         fParallelClasses= poolClasses != null;
         fParallelMethods= poolMethods != null;
         fPoolClasses= poolClasses;
@@ -165,18 +170,25 @@ public class ParallelComputer extends Computer {
         fSinglePoolCoreSize= fHasSinglePoll ? singlePoolCoreSize : -1;
         fSinglePoolMaxSize= fHasSinglePoll ? singlePoolMaxSize : -1;
         fSinglePoolMinConcurrentMethods= fHasSinglePoll ? minConcurrentMethods : -1;
+
         final boolean isFixedSize= fSinglePoolCoreSize == fSinglePoolMaxSize;
-        if (fHasSinglePoll && isFixedSize && fSinglePoolCoreSize <= 1)
+        if (fHasSinglePoll && isFixedSize && fSinglePoolCoreSize <= 1) {
             throw new IllegalArgumentException("core pool size " + fSinglePoolCoreSize + " should be > 1");
-        if (fHasSinglePoll && fSinglePoolMaxSize <= 1)
+        }
+
+        if (fHasSinglePoll && fSinglePoolMaxSize <= 1) {
             throw new IllegalArgumentException("max pool size " + fSinglePoolMaxSize + " should be > 1");
-        if (fHasSinglePoll && fSinglePoolMinConcurrentMethods < 1)
+        }
+
+        if (fHasSinglePoll && fSinglePoolMinConcurrentMethods < 1) {
             throw new IllegalArgumentException("min concurrent methods " + fSinglePoolMinConcurrentMethods + " should be >= 1");
-        if (fHasSinglePoll && fSinglePoolMinConcurrentMethods >= fSinglePoolMaxSize)
+        }
+
+        if (fHasSinglePoll && fSinglePoolMinConcurrentMethods >= fSinglePoolMaxSize) {
             throw new IllegalArgumentException("min methods pool size should be less than max pool size");
+        }
+
         addDefaultShutdownHandler();
-        fBeforeShutdown= new ConcurrentLinkedQueue<Description>();
-        fIsShutDown= new AtomicBoolean(false);
     }
 
     public static Computer classes() {
@@ -188,12 +200,18 @@ public class ParallelComputer extends Computer {
     }
 
     public static ParallelComputer methods(ExecutorService pool) {
-        if (pool == null) throw new NullPointerException("null methods executor");
+        if (pool == null) {
+            throw new NullPointerException("null methods executor");
+        }
+
         return new ParallelComputer(null, pool);
     }
 
     public static ParallelComputer classes(ExecutorService pool) {
-        if (pool == null) throw new NullPointerException("null classes executor");
+        if (pool == null) {
+            throw new NullPointerException("null classes executor");
+        }
+
         return new ParallelComputer(pool, null);
     }
 
@@ -257,10 +275,18 @@ public class ParallelComputer extends Computer {
      * @throws NullPointerException if a pool is null
      */
     public static ParallelComputer classesAndMethods(ExecutorService poolClasses, ExecutorService poolMethods) {
-        if (poolClasses == null) throw new NullPointerException("null classes executor");
-        if (poolMethods == null) throw new NullPointerException("null methods executor");
-		if (poolClasses == poolMethods)
+        if (poolClasses == null) {
+            throw new NullPointerException("null classes executor");
+        }
+
+        if (poolMethods == null) {
+            throw new NullPointerException("null methods executor");
+        }
+
+        if (poolClasses == poolMethods) {
             throw new IllegalArgumentException("instead call #classesAndMethods(ThreadPoolExecutor, int)");
+        }
+
         return new ParallelComputer(poolClasses, poolMethods);
     }
 
@@ -273,16 +299,29 @@ public class ParallelComputer extends Computer {
                 = !isClasses & fProvidedPools & fParallelMethods ? new ConcurrentLinkedQueue<Future<?>>() : null;
 
             public void schedule(Runnable childStatement) {
-                if (fIsShutDown.get()) return;
-                if (isClasses & fHasSinglePoll) fSinglePoolBalancer.acquireUninterruptibly();
-                if (fIsShutDown.get()) return;
+                if (shouldEscapeSchedulingTasks()) {
+                    return;
+                }
+
+                if (isClasses & fHasSinglePoll) {
+                    fSinglePoolBalancer.acquireUninterruptibly();
+                }
+
+                if (shouldEscapeSchedulingTasks()) {
+                    return;
+                }
+
                 try {
                     if (service == null) {
                         fBeforeShutdown.add(runner.getDescription());
                         childStatement.run();
                     } else {
                         Future<?> f= service.submit(childStatement);
-                        if (!isClasses & fProvidedPools & fParallelMethods) fMethodsFutures.add(f);
+
+                        if (!isClasses & fProvidedPools & fParallelMethods) {
+                            fMethodsFutures.add(f);
+                        }
+
                         fBeforeShutdown.add(runner.getDescription());
                     }
                 } catch (RejectedExecutionException e) {
@@ -298,11 +337,16 @@ public class ParallelComputer extends Computer {
                 } else { //wait until the test case finished
                     if (fProvidedPools) {
                         awaitClassFinished(fMethodsFutures);
-                        if (fHasSinglePoll) fSinglePoolBalancer.release();
-                    } else tryFinish(service);
+                        if (fHasSinglePoll) {
+                            fSinglePoolBalancer.release();
+                        }
+                    } else {
+                        tryFinish(service);
+                    }
                 }
             }
         });
+
         return service != null;
     }
 
@@ -322,10 +366,12 @@ public class ParallelComputer extends Computer {
         if (canSchedule(suite)) {
             if (fHasSinglePoll) {
                 int maxConcurrentClasses;
-                if (fSinglePoolCoreSize == 0 || fSinglePoolCoreSize == fSinglePoolMaxSize)
+                if (fSinglePoolCoreSize == 0 || fSinglePoolCoreSize == fSinglePoolMaxSize) {
                     //is unbounded or fixed-size single pool
                     maxConcurrentClasses= fSinglePoolMaxSize - fSinglePoolMinConcurrentMethods;
-                else maxConcurrentClasses= Math.max(1, fSinglePoolCoreSize - fSinglePoolMinConcurrentMethods);
+                } else {
+                    maxConcurrentClasses= Math.max(1, fSinglePoolCoreSize - fSinglePoolMinConcurrentMethods);
+                }
                 maxConcurrentClasses= Math.min(maxConcurrentClasses, fCountClasses);
                 fSinglePoolBalancer= new Semaphore(maxConcurrentClasses);
             }
@@ -392,21 +438,31 @@ public class ParallelComputer extends Computer {
                 }
             }
         }
-        if (fHasSinglePoll) fClassesFinisher.countDown();
+
+        if (fHasSinglePoll) {
+            fClassesFinisher.countDown();
+        }
     }
 
     private void awaitClassesFinished() {
-        try {
-            if (fHasSinglePoll) fClassesFinisher.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace(System.err);
+        if (fHasSinglePoll) {
+            try {
+                fClassesFinisher.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace(System.err);
+            }
         }
     }
 
     private void addDefaultShutdownHandler() {
         if (fProvidedPools) {
-            if (fParallelClasses) setDefaultShutdownHandler(fPoolClasses);
-            if (!fHasSinglePoll && fParallelMethods) setDefaultShutdownHandler(fPoolMethods);
+            if (fParallelClasses) {
+                setDefaultShutdownHandler(fPoolClasses);
+            }
+
+            if (!fHasSinglePoll && fParallelMethods) {
+                setDefaultShutdownHandler(fPoolMethods);
+            }
         }
     }
 
@@ -416,6 +472,14 @@ public class ParallelComputer extends Computer {
             RejectedExecutionHandler poolHandler= pool.getRejectedExecutionHandler();
             pool.setRejectedExecutionHandler(new ShutdownHandler(poolHandler));
         }
+    }
+
+    private boolean shouldEscapeSchedulingTasks() {
+        return fIsShutDown.get();
+    }
+
+    private void stopScheulingTasks() {
+        fIsShutDown.set(true);
     }
 
     /**
@@ -430,14 +494,20 @@ public class ParallelComputer extends Computer {
                     //cached a value in volatile field to the stack as a constant for faster reads
                     final CountDownLatch classesFinisher= fClassesFinisher;
                     //signals that the total num classes could not be reached
-                    while (classesFinisher.getCount() > 0)
+                    while (classesFinisher.getCount() > 0) {
                         classesFinisher.countDown();
+                    }
                 }
             }
 
             if (fProvidedPools) {
-                if (fParallelClasses) shutdown(fPoolClasses, shutdownNow);
-                if (!fHasSinglePoll && fParallelMethods) shutdown(fPoolMethods, shutdownNow);
+                if (fParallelClasses) {
+                    shutdown(fPoolClasses, shutdownNow);
+                }
+
+                if (!fHasSinglePoll && fParallelMethods) {
+                    shutdown(fPoolMethods, shutdownNow);
+                }
             }
         } catch (Throwable t) {
             //may be only OOM, security and permission exceptions
@@ -446,23 +516,33 @@ public class ParallelComputer extends Computer {
     }
 
     private static void shutdown(ExecutorService pool, boolean shutdownNow) {
-        if (shutdownNow) pool.shutdownNow();
-        else pool.shutdown();
+        if (shutdownNow) {
+            pool.shutdownNow();
+        } else {
+            pool.shutdown();
+        }
     }
 
     /**
      * Attempts to stop all actively executing tasks and immediately returns a collection
      * of descriptions of those tasks which have completed prior to this call.
      * <p>
+     * If the instance is created by {@link #classes()} or {@link #methods()}, the internal
+     * thread pools escape scheduling new tasks without shutting down the {@link ExecutorService}.
+     * Otherwise, the provided pools are shutdown.
+     * <p>
      * If <tt>shutdownNow</tt> is set, waiting methods will cancel via {@link Thread#interrupt}.
      *
      * @param shutdownNow if <tt>true</tt> interrupts waiting methods
      * @return collection of recent descriptions
-     * @throws IllegalStateException if created by {@link #classes()} or {@link #methods()}
      */
     public final Collection<Description> shutdown(boolean shutdownNow) {
-        if (!fProvidedPools) throw new IllegalStateException();
-        shutdownQuietly(shutdownNow);
+        if (fProvidedPools) {
+            shutdownQuietly(shutdownNow);
+        } else {
+            stopScheulingTasks();
+        }
+
         return new ArrayList<Description>(fBeforeShutdown);
     }
 
