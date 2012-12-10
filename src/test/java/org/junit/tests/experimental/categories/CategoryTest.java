@@ -277,4 +277,25 @@ public class CategoryTest {
     public void classesCanBeCategories() {
         assertThat(testResult(RunClassAsCategory.class), isSuccessful());
     }
+
+    @Category(SlowTests.class)
+    public static abstract class Ancestor{}
+
+    public static class Inherited extends Ancestor {
+        @Test
+        public void a(){
+        }
+    }
+
+    @RunWith(Categories.class)
+    @IncludeCategory(SlowTests.class)
+    @SuiteClasses(Inherited.class)
+    public interface InheritanceSuite {}
+
+    @Test
+    public void testInheritance() {
+        Result result = JUnitCore.runClasses(InheritanceSuite.class);
+        assertEquals(1, result.getRunCount());
+        assertTrue(result.wasSuccessful());
+    }
 }
