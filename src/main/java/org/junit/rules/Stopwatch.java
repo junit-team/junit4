@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * The Stopwatch Rule notifies one of its own protected methods of the time spent by a test.<p/>
  * Override them to get the time in nanoseconds. For example, this class will keep logging the
- * time spent by each passing, failing and skipped test:
+ * time spent by each passed, failed, skipped, and finished test:
  *
  * <pre>
  * public static class StopwatchTest {
@@ -58,12 +58,32 @@ import java.util.concurrent.TimeUnit;
  * }
  * </pre>
  *
+ * An example to assert runtime:
+ * <pre>
+ * &#064;Test
+ * public void performanceTest() throws InterruptedException {
+ *     long delta= 30;
+ *     Thread.sleep(300L);
+ *     assertEquals(stopwatch.runtime(MILLISECONDS), 300d, delta);
+ *     Thread.sleep(500L);
+ *     assertEquals(stopwatch.runtime(MILLISECONDS), 800d, delta);
+ * }
+ * </pre>
+ *
  * @author tibor17
  * @since 4.12
  */
 public class Stopwatch extends TestWatcher {
     private long fStartNanos;
     private long fEndNanos;
+
+    /**
+     * @param unit time unit for returned runtime
+     * @return runtime measured during the test
+     */
+    public long runtime(TimeUnit unit) {
+        return unit.convert(currentNanoTime() - fStartNanos, TimeUnit.NANOSECONDS);
+    }
 
     /**
      * Invoked when a test succeeds
@@ -118,11 +138,15 @@ public class Stopwatch extends TestWatcher {
     }
 
     private void starting() {
-        fStartNanos= System.nanoTime();
+        fStartNanos= currentNanoTime();
     }
 
     private void stopping() {
-        fEndNanos= System.nanoTime();
+        fEndNanos= currentNanoTime();
+    }
+
+    private long currentNanoTime() {
+        return System.nanoTime();
     }
 
     @Override final protected void succeeded(Description description) {
