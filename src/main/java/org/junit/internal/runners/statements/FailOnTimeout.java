@@ -58,19 +58,16 @@ public class FailOnTimeout extends Statement {
     }
 
     private static class StatementThread extends Thread {
+        /**
+         * This is final variable because the statement is set once.
+         * Final makes sure that the statement is immediately visible in
+         * #run() (other than current thread) after constructor finished.
+         */
         private final Statement fStatement;
 
         /**
-         * Without modifier of volatile, the values in these variables may
-         * become old (default in this case) in {@link FailOnTimeout#evaluate()}.
-         * When declaring 'volatile' variables, the CPU is forced
-         * to reconcile the values stored in registers and thread's stack
-         * by cache coherence at every write-read operation on these variables;
-         * Otherwise the CPU and VM may reconcile the memories as it wants
-         * (for performance reasons) and therefore these values read in
-         * {@link FailOnTimeout#evaluate()} may not be up-to-date without volatile.
-         * Besides visibility, the volatile variables have also other guarantees:
-         * atomicity and ordering.
+         * These variable are volatile to make sure that the Thread calling #evaluate()
+         * can immediately read their values set in current thread.
          * */
         private volatile boolean fFinished;
         private volatile Throwable fExceptionThrownByOriginalStatement;
