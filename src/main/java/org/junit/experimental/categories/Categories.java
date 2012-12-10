@@ -237,8 +237,6 @@ public class Categories extends Suite {
                     return matchesAllParentCategories(childCategories, fIncluded);
                 }
             }
-
-            return false;
         }
 
         /**
