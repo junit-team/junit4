@@ -66,12 +66,14 @@ public class FailOnTimeout extends Statement {
         private final Statement fStatement;
 
         /**
-         * These variable are volatile to make sure that the Thread calling #evaluate()
-         * can immediately read their values set in current thread.
+         * These two variables are volatile to make sure that the Thread calling #evaluate()
+         * can immediately read their values set by this thread.
          * */
         private volatile boolean fFinished;
         private volatile Throwable fExceptionThrownByOriginalStatement;
-        private volatile StackTraceElement[] fRecordedStackTrace;
+
+        // No need for volatile, because written and read by one thread.
+        private StackTraceElement[] fRecordedStackTrace;
 
         public StatementThread(Statement statement) {
             fFinished = false;
