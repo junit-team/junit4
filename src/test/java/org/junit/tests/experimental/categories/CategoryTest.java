@@ -211,7 +211,7 @@ public class CategoryTest {
     @Test
     public void describeACategoryFilter() {
         CategoryFilter filter = CategoryFilter.include(SlowTests.class);
-        assertEquals("category " + SlowTests.class, filter.describe());
+        assertEquals("Categories: Included categories: SlowTests | No excluded categories", filter.describe());
     }
 
     public static class OneThatIsBothFastAndSlow {

@@ -64,34 +64,82 @@ public class Categories extends Suite {
     // someday enable a better new implementation.
     // https://github.com/KentBeck/junit/issues/issue/172
 
+    /**
+     * {@link IncludeCategory} determines which Tests are ran by {@link Categories}.
+     * <p/>
+     *  If specified all Tests annotated with classes specified in the value of this annotation will be ran by
+     * {@link Categories} as long they are not specified using {@link ExcludeCategory}
+     */
     @Retention(RetentionPolicy.RUNTIME)
     public @interface IncludeCategory {
-        public Class<?> value();
+        public Class<?>[] value() default {};
     }
 
+    /**
+     * {@link ExcludeCategory} determines which Tests are skipped by {@link Categories}.
+     * <p/>
+     * If specified all Tests annotated with classes specified in the value of this annotation will be skipped by
+     * {@link Categories} regardless of being mentioned in {@link IncludeCategory}
+     */
     @Retention(RetentionPolicy.RUNTIME)
     public @interface ExcludeCategory {
-        public Class<?> value();
+        public Class<?>[] value() default {};
     }
 
     public static class CategoryFilter extends Filter {
+
         public static CategoryFilter include(Class<?> categoryType) {
+            return new CategoryFilter(new Class<?>[]{categoryType}, null);
+        }
+
+        public static CategoryFilter include(Class<?>... categoryType) {
             return new CategoryFilter(categoryType, null);
         }
 
-        private final Class<?> fIncluded;
+        private Class<?>[] fIncludedCategories = new Class<?>[] {};
 
-        private final Class<?> fExcluded;
+        private Class<?>[] fExcludedCategories = new Class<?>[] {};
 
-        public CategoryFilter(Class<?> includedCategory,
-                Class<?> excludedCategory) {
-            fIncluded = includedCategory;
-            fExcluded = excludedCategory;
+        public CategoryFilter(Class<?> includedCategory, Class<?> excludedCategory) {
+            if (includedCategory != null) {
+                fIncludedCategories = new Class<?>[] {includedCategory};
+            }
+            if (excludedCategory != null) {
+                fExcludedCategories = new Class<?>[] {excludedCategory};
+            }
+        }
+
+        public CategoryFilter(Class<?>[] includedCategories,
+                Class<?>[] excludedCategories) {
+            if (includedCategories != null) {
+                fIncludedCategories = includedCategories;
+            }
+            if (excludedCategories != null) {
+                fExcludedCategories = excludedCategories;
+            }
         }
 
         @Override
         public String describe() {
-            return "category " + fIncluded;
+            StringBuilder description = new StringBuilder("Categories: ");
+            if (fIncludedCategories.length > 0) {
+                description.append("Included categories: ");
+                for (Class<?> each : fIncludedCategories) {
+                    description.append(each.getSimpleName()).append(" ");
+                }
+            } else {
+                description.append("No included categories ");
+            }
+            description.append("| ");
+            if (fExcludedCategories.length > 0) {
+                description.append("Excluded categories: ");
+                for (Class<?> each : fExcludedCategories) {
+                    description.append(each.getSimpleName()).append(" ");
+                }
+            } else {
+                description.append("No excluded categories");
+            }
+            return description.toString();
         }
 
         @Override
@@ -107,18 +155,37 @@ public class Categories extends Suite {
             return false;
         }
 
+        /**
+         * Checks if the given array of classes (eg fIncludedCategories) contains a given class
+         * This is used to determine if a specified class in a {@link Category} annotation is represented in the
+         * class-array specified in a {@link IncludeCategory} or {@link ExcludeCategory} annotation of a suite ran with
+         * {@link Categories}
+         *
+         * @param categories array of categories (specified value of {@link IncludeCategory} or {@link ExcludeCategory})
+         * @param category defined category (one of the classes specified in {@link Category})
+         * @return true if the given category class is assignable from any of the given classes in categories
+         */
+        private boolean containsCategory(Class<?>[] categories, Class<?> category) {
+            for (Class<?> each : categories) {
+                if (each.isAssignableFrom(category)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         private boolean hasCorrectCategoryAnnotation(Description description) {
             List<Class<?>> categories = categories(description);
             if (categories.isEmpty()) {
-                return fIncluded == null;
+                return fIncludedCategories.length == 0;
             }
             for (Class<?> each : categories) {
-                if (fExcluded != null && fExcluded.isAssignableFrom(each)) {
+                if (containsCategory(fExcludedCategories, each)) {
                     return false;
                 }
             }
             for (Class<?> each : categories) {
-                if (fIncluded == null || fIncluded.isAssignableFrom(each)) {
+                if (fIncludedCategories.length == 0 || containsCategory(fIncludedCategories, each)) {
                     return true;
                 }
             }
@@ -156,20 +223,20 @@ public class Categories extends Suite {
             throws InitializationError {
         super(klass, builder);
         try {
-            filter(new CategoryFilter(getIncludedCategory(klass),
-                    getExcludedCategory(klass)));
+            filter(new CategoryFilter(getIncludedCategories(klass),
+                    getExcludedCategories(klass)));
         } catch (NoTestsRemainException e) {
             throw new InitializationError(e);
         }
         assertNoCategorizedDescendentsOfUncategorizeableParents(getDescription());
     }
 
-    private Class<?> getIncludedCategory(Class<?> klass) {
+    private Class<?>[] getIncludedCategories(Class<?> klass) {
         IncludeCategory annotation = klass.getAnnotation(IncludeCategory.class);
         return annotation == null ? null : annotation.value();
     }
 
-    private Class<?> getExcludedCategory(Class<?> klass) {
+    private Class<?>[] getExcludedCategories(Class<?> klass) {
         ExcludeCategory annotation = klass.getAnnotation(ExcludeCategory.class);
         return annotation == null ? null : annotation.value();
     }
