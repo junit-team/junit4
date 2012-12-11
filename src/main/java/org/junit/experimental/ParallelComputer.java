@@ -69,58 +69,79 @@ import org.junit.internal.runners.ErrorReportingRunner;
  * @see <a href="https://github.com/KentBeck/junit/wiki/ParallelComputer">ParallelComputer at JUnit wiki</a>
  */
 public class ParallelComputer extends Computer {
-    // true: parallelized classes if #classes(), #classesAndMethods() or ParallelComputer(true, x), ParallelComputer(pool[,...])
+
+    /**
+     * {@code true} if has to run classes in parallel.
+     */
     private final boolean fParallelClasses;
 
-    // true: parallelized methods if #methods(), #classesAndMethods() or ParallelComputer(x, true), ParallelComputer(x, pool), ParallelComputer(pool[,...])
+    /**
+     * {@code true} if has to run methods in parallel.
+     */
     private final boolean fParallelMethods;
 
-    // true if a pool is provided by caller: #classes(pool), #methods(pool), #classesAndMethods(pool[,...]), ParallelComputer(pool[,...])
-    // else a pool is created (same as previous implementation), see #threadPoolClasses() and #threadPoolMethods()
+    /**
+     * {@code true} if called a factory method which specifies a thread pool.
+     */
     private final boolean fProvidedPools;
 
-    // true if provided pool is one common for methods/classes; enables the fSinglePoolBalancer
+    /**
+     * {@code true} if {@link #classesAndMethods(ThreadPoolExecutor)} or {@link #classesAndMethods(ThreadPoolExecutor, int)}.
+     */
     private final boolean fHasSinglePoll;
 
-    // if single pool, ThreadPoolExecutor#getCorePoolSize(); necessary to compute thread resources for classes/methods, see #getSuite()
+    /**
+     * Is {@link ThreadPoolExecutor#getCorePoolSize()} if {@link #fHasSinglePoll} is set.
+     * To compute num of parallel methods {@link #fSinglePoolMinConcurrentMethods} in single pool #classesAndMethods().
+     */
     private final int fSinglePoolCoreSize;
 
-    // if single pool, ThreadPoolExecutor#getMaximumPoolSize(); necessary to compute thread resources for classes/methods, see #getSuite()
+    /**
+     * {@link ThreadPoolExecutor#getMaximumPoolSize()} if {@link #fHasSinglePoll} is set. To compute num of parallel methods.
+     */
     private final int fSinglePoolMaxSize;
 
-    // if single pool, the user can specify min concurrent methods. Without this the parallel classes consumed all thread resources.
     private final int fSinglePoolMinConcurrentMethods;
 
-    // provided pools
-    // if a single pool, both refer to the same
+    /**
+     * Thread pools if specified in factories.
+     */
     private final ExecutorService fPoolClasses;
     private final ExecutorService fPoolMethods;
 
+    /**
+     * To return executed parents and children before {@link #shutdown(boolean)}.
+     */
     private final ConcurrentLinkedQueue<Description> fBeforeShutdown= new ConcurrentLinkedQueue<Description>();
 
-    //set if a pool is shut down externally
+    /**
+     * {@code true} if shutdown.
+     */
     private final AtomicBoolean fIsShutDown= new AtomicBoolean(false);
 
-    // Used if fHasSinglePoll is set. Disables this Thread for scheduling purposes until all classes finished.
+    /**
+     * If {@link #fHasSinglePoll}, waiting in {@link RunnerScheduler#finished()} until all classes have completed.
+     */
     private volatile CountDownLatch fClassesFinisher;
 
-    // prevents thread resources exhaustion on classes when used with single pool => gives a chance to parallelize methods
-    // see fSinglePoolMinConcurrentMethods above
-    // used in #tryParallelize(): allows a number of parallel classes and methods
+    /**
+     * If {@link #fHasSinglePoll}, ensures min num of parallel methods is {@link #fSinglePoolMinConcurrentMethods}.
+     * Prevents from all thread resources exhaustion in favor of parallel classes.
+     */
     private volatile Semaphore fSinglePoolBalancer;
 
-    // fClassesFinisher is initialized with this value, see #getSuite() and #getParent()
     private volatile int fCountClasses;
 
     /**
      * @deprecated As of JUnit 4.12, replace by {@link #methods()}, {@link #classes()}
      *             and {@link #classesAndMethodsUnbounded()}.
      */
-    @Deprecated//should be private
+    @Deprecated
     public ParallelComputer(boolean classes, boolean methods) {
+        // to satisfy JVM spec -write operation first on volatile fields
         fClassesFinisher= null;
         fSinglePoolBalancer= null;
-        fCountClasses= 0;//to satisfy JVM spec -write operation first on volatile fields
+        fCountClasses= 0;
         fParallelClasses= classes;
         fParallelMethods= methods;
         fPoolClasses= null;
@@ -143,9 +164,10 @@ public class ParallelComputer extends Computer {
     private ParallelComputer(ExecutorService poolClasses, ExecutorService poolMethods,
                             int singlePoolCoreSize, int singlePoolMaxSize,
                             int minConcurrentMethods) {
+        // to satisfy JVM spec -write operation first on volatile fields
         fClassesFinisher= null;
         fSinglePoolBalancer= null;
-        fCountClasses= 0;//to satisfy JVM spec -write operation first on volatile fields
+        fCountClasses= 0;
 
         if (poolClasses == null && poolMethods == null) {
             throw new NullPointerException("null classes/methods executor");
@@ -246,7 +268,7 @@ public class ParallelComputer extends Computer {
      * @return computer parallelized by given pool
      * @throws IllegalArgumentException if <tt>maximumPoolSize &lt; 2</tt>;
      *         or <tt>corePoolSize &lt; 2</tt> for fixed-size pool
-     * @throws IllegalStateException if the pool is already shut down
+     * @throws IllegalStateException if the pool is already shutdown
      * @throws NullPointerException <tt>pool</tt> is null
      */
     public static ParallelComputer classesAndMethods(ThreadPoolExecutor pool) {
@@ -262,7 +284,7 @@ public class ParallelComputer extends Computer {
      * @throws IllegalArgumentException if <tt>maximumPoolSize &lt; 2</tt>;
      *         or <tt>corePoolSize &lt; 2</tt> for fixed-size pool;
      *         or <tt>minConcurrentMethods &lt; 1<tt>
-     * @throws IllegalStateException if the pool is already shut down
+     * @throws IllegalStateException if the pool is already shutdown
      * @throws NullPointerException <tt>pool</tt> is null
      */
     public static ParallelComputer classesAndMethods(ThreadPoolExecutor pool, int minConcurrentMethods) {
@@ -325,16 +347,18 @@ public class ParallelComputer extends Computer {
                         fBeforeShutdown.add(runner.getDescription());
                     }
                 } catch (RejectedExecutionException e) {
-                    /*after external shut down*/
+                    // after external shutdown
                     shutdownQuietly(false);
                 }
             }
 
             public void finished() {
-                if (isClasses) { //wait until all test cases finished
+                if (isClasses) {
+                    // wait until all test cases finished
                     awaitClassesFinished();
                     tryFinish(service);
-                } else { //wait until the test case finished
+                } else {
+                    // wait until the test case finished
                     if (fProvidedPools) {
                         awaitClassFinished(fMethodsFutures);
                         if (fHasSinglePoll) {
@@ -367,7 +391,7 @@ public class ParallelComputer extends Computer {
             if (fHasSinglePoll) {
                 int maxConcurrentClasses;
                 if (fSinglePoolCoreSize == 0 || fSinglePoolCoreSize == fSinglePoolMaxSize) {
-                    //is unbounded or fixed-size single pool
+                    // is unbounded or fixed-size single pool
                     maxConcurrentClasses= fSinglePoolMaxSize - fSinglePoolMinConcurrentMethods;
                 } else {
                     maxConcurrentClasses= Math.max(1, fSinglePoolCoreSize - fSinglePoolMinConcurrentMethods);
@@ -385,7 +409,8 @@ public class ParallelComputer extends Computer {
     protected Runner getRunner(RunnerBuilder builder, Class<?> testClass) throws Throwable {
         Runner runner= super.getRunner(builder, testClass);
         if (canSchedule(runner)) {
-            ++fCountClasses;//incremented without been AtomicInteger because not yet concurrent access
+            // incremented without been AtomicInteger because not yet concurrent access
+            ++fCountClasses;
             tryParallelize((ParentRunner) runner, threadPoolMethods(), false);
         }
         return runner;
@@ -424,17 +449,18 @@ public class ParallelComputer extends Computer {
     }
 
     private void awaitClassFinished(Queue<Future<?>> methodsFutures) {
-        if (methodsFutures != null) {//fParallelMethods is false
+        if (methodsFutures != null) {
+            // fParallelMethods should be false
             for (Future<?> methodFuture : methodsFutures) {
                 try {
                     methodFuture.get();
                 } catch (InterruptedException e) {
-                    /*after called external ExecutorService#shutdownNow()*/
+                    // after called external ExecutorService#shutdownNow()
                     shutdownQuietly(true);
                 } catch (ExecutionException e) {
-                    /*cause fired in run-notifier*/
+                    // test throws exception
                 } catch (CancellationException e) {
-                    /*cannot happen because not calling Future#cancel(boolean)*/
+                    // cannot happen because not calling Future#cancel()
                 }
             }
         }
@@ -487,13 +513,14 @@ public class ParallelComputer extends Computer {
      */
     private void shutdownQuietly(boolean shutdownNow) {
         try {
-            if (fIsShutDown.compareAndSet(false, true)) {//let other threads avoid submitting new tasks
+            // let other threads avoid submitting new tasks
+            if (fIsShutDown.compareAndSet(false, true)) {
                 if (fHasSinglePoll && fCountClasses > 0) {
-                    //let dormant class-threads wake up and escape from balancer
+                    // let dormant class-threads wake up and escape from balancer
                     fSinglePoolBalancer.release(fCountClasses);
-                    //cached a value in volatile field to the stack as a constant for faster reads
+                    // cached a value in volatile field to the stack as a constant for faster reads
                     final CountDownLatch classesFinisher= fClassesFinisher;
-                    //signals that the total num classes could not be reached
+                    // signals that the total num of classes could not be reached
                     while (classesFinisher.getCount() > 0) {
                         classesFinisher.countDown();
                     }
@@ -510,7 +537,7 @@ public class ParallelComputer extends Computer {
                 }
             }
         } catch (Throwable t) {
-            //may be only OOM, security and permission exceptions
+            // may be only OOM, security and permission exceptions
             t.printStackTrace(System.err);
         }
     }

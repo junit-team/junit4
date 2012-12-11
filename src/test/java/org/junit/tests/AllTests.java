@@ -25,6 +25,7 @@ import org.junit.tests.experimental.parallel.ParallelClassTest;
 import org.junit.tests.experimental.parallel.ParallelMethodTest;
 import org.junit.tests.experimental.parallel.ParallelClassesAndMethodsTest;
 import org.junit.tests.experimental.parallel.ParallelComputerShutDownTest;
+import org.junit.tests.experimental.parallel.PerformanceTest;
 import org.junit.tests.experimental.rules.BlockJUnit4ClassRunnerOverrideTest;
 import org.junit.tests.experimental.rules.ClassRulesTest;
 import org.junit.tests.experimental.rules.ExpectedExceptionTest;
@@ -147,6 +148,7 @@ import org.junit.tests.validation.ValidationTest;
         ParallelMethodTest.class,
         ParallelClassesAndMethodsTest.class,
         ParallelComputerShutDownTest.class,
+        PerformanceTest.class,
         ParentRunnerTest.class,
         NameRulesTest.class,
         ClassRulesTest.class,

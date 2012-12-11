@@ -86,7 +86,7 @@ public final class ParallelClassesAndMethodsTest {
     
     public static class Erroneous {
         @Rule static final TestName testName= new TestName();
-        //intended error in rule -no public instance member
+        // intended error in rule -no public instance member
         @Test public void test() {}
     }
 
@@ -155,11 +155,16 @@ public final class ParallelClassesAndMethodsTest {
     }
 
     @Test public void runParallelOversize() throws InterruptedException {
-        fSynchronizer= new CyclicBarrier(6);//continue with tests if 6 threads for methods are scheduled until timeout; otherwise fail
-        ThreadPoolExecutor pool= new ThreadPoolExecutor(0, 11,// 11 => more than (six thread parties in barrier + three concurrent classes)
-                                                        Long.MAX_VALUE, TimeUnit.NANOSECONDS,//don't reuse threads
-                                                        new SynchronousQueue<Runnable>());//default like for unbounded pools
-        Computer comp= ParallelComputer.classesAndMethods(pool, 7);//capacity: 7 concurrent methods and 4 concurrent classes
+        // continue with tests if 6 threads for methods are scheduled until timeout; otherwise fail
+        fSynchronizer= new CyclicBarrier(6);
+        // 11 => more than (six thread parties in barrier + three concurrent classes)
+        ThreadPoolExecutor pool= new ThreadPoolExecutor(0, 11,
+                                                        // don't reuse threads
+                                                        Long.MAX_VALUE, TimeUnit.NANOSECONDS,
+                                                        // default like for unbounded pools
+                                                        new SynchronousQueue<Runnable>());
+        // capacity: 7 concurrent methods and 4 concurrent classes
+        Computer comp= ParallelComputer.classesAndMethods(pool, 7);
         Result result= JUnitCore.runClasses(comp, Example1.class, Example2.class, Example3.class);
         assertTrue(result.wasSuccessful());
         assertNotNull(fExample1One);
@@ -173,16 +178,21 @@ public final class ParallelClassesAndMethodsTest {
                                     fExample2One, fExample2Two,
                                     fExample3One, fExample3Two);
         assertThat(threads.size(), is(6));
-        //should be 6 == number of thread parties in CyclicBarrier == number of concurrent methods
-        //7 == capacity, we give the Computer a chance to excess the number of concurrent methods if fails
+        // should be 6 == number of thread parties in CyclicBarrier == number of concurrent methods
+        // 7 == capacity, we give the Computer a chance to excess the number of concurrent methods if fails
     }
 
     @Test public void runParallel() throws InterruptedException {
-        fSynchronizer= new CyclicBarrier(6);//continue with tests if 6 threads for methods are scheduled until timeout; otherwise fail
-        ThreadPoolExecutor pool= new ThreadPoolExecutor(0, 9,// 9 == (six thread parties in barrier + three concurrent classes)
-                                                        Long.MAX_VALUE, TimeUnit.NANOSECONDS,//don't reuse threads
-                                                        new SynchronousQueue<Runnable>());//default like for unbounded pools
-        Computer comp= ParallelComputer.classesAndMethods(pool, 6);//capacity: 6 concurrent methods and 3 concurrent classes
+        // continue with tests if 6 threads for methods are scheduled until timeout; otherwise fail
+        fSynchronizer= new CyclicBarrier(6);
+        // 9 == (six thread parties in barrier + three concurrent classes)
+        ThreadPoolExecutor pool= new ThreadPoolExecutor(0, 9,
+                                                        // don't reuse threads
+                                                        Long.MAX_VALUE, TimeUnit.NANOSECONDS,
+                                                        // default like for unbounded pools
+                                                        new SynchronousQueue<Runnable>());
+        // capacity: 6 concurrent methods and 3 concurrent classes
+        Computer comp= ParallelComputer.classesAndMethods(pool, 6);
         Result result= JUnitCore.runClasses(comp, Example1.class, Example2.class, Example3.class);
         assertTrue(result.wasSuccessful());
         assertNotNull(fExample1One);
@@ -196,15 +206,18 @@ public final class ParallelClassesAndMethodsTest {
                                     fExample2One, fExample2Two,
                                     fExample3One, fExample3Two);
         assertThat(threads.size(), is(6));
-        //should be 6 == number of thread parties in CyclicBarrier == number of concurrent methods
+        // should be 6 == number of thread parties in CyclicBarrier == number of concurrent methods
     }
 
     @Test public void runParallelUndersized() throws InterruptedException {
         fSynchronizer= null;
         ThreadPoolExecutor pool= new ThreadPoolExecutor(3, 4,
-                                                        0, TimeUnit.NANOSECONDS,//reuse threads
-                                                        new LinkedBlockingQueue<Runnable>());//default like for unbounded pools
-        Computer comp= ParallelComputer.classesAndMethods(pool, 2);//capacity: 2 concurrent methods at least, and 1 or 2 concurrent classes
+                                                        // reuse threads
+                                                        0, TimeUnit.NANOSECONDS,
+                                                        // default like for unbounded pools
+                                                        new LinkedBlockingQueue<Runnable>());
+        // capacity: 2 concurrent methods at least, and 1 or 2 concurrent classes
+        Computer comp= ParallelComputer.classesAndMethods(pool, 2);
         Result result= JUnitCore.runClasses(comp, Example1.class, Example2.class, Example3.class);
         assertTrue(result.wasSuccessful());
         assertNotNull(fExample1One);
@@ -222,7 +235,8 @@ public final class ParallelClassesAndMethodsTest {
 
     @Test public void runParallelMinimum() throws InterruptedException {
         fSynchronizer= null;
-        Computer comp= ParallelComputer.classesAndMethodsBounded(2);//capacity: 1 concurrent method, and 1 concurrent class
+        // capacity: 1 concurrent method, and 1 concurrent class
+        Computer comp= ParallelComputer.classesAndMethodsBounded(2);
         Result result= JUnitCore.runClasses(comp, Example1.class, Example2.class, Example3.class);
         assertTrue(result.wasSuccessful());
         assertNotNull(fExample1One);
@@ -242,7 +256,8 @@ public final class ParallelClassesAndMethodsTest {
     }
 
     @Test public void classesAndMethodsUnbounded() {
-        fSynchronizer= new CyclicBarrier(6);//continue with tests if 6 threads for methods are scheduled until timeout; otherwise fail
+        // continue with tests if 6 threads for methods are scheduled until timeout; otherwise fail
+        fSynchronizer= new CyclicBarrier(6);
         Computer comp= ParallelComputer.classesAndMethodsUnbounded();
         Result result= JUnitCore.runClasses(comp, Example1.class, Example2.class, Example3.class);
         assertTrue(result.wasSuccessful());
@@ -260,8 +275,10 @@ public final class ParallelClassesAndMethodsTest {
     }
 
     @Test public void classesAndMethodsBounded() throws InterruptedException {
-        fSynchronizer= new CyclicBarrier(6);//continue with tests if 6 threads for methods are scheduled until timeout; otherwise fail
-        Computer comp= ParallelComputer.classesAndMethodsBounded(10);//min capacity: 6 concurrent methods, and 3 concurrent classes
+        // continue with tests if 6 threads for methods are scheduled until timeout; otherwise fail
+        fSynchronizer= new CyclicBarrier(6);
+        // min capacity: 6 concurrent methods, and 3 concurrent classes
+        Computer comp= ParallelComputer.classesAndMethodsBounded(10);
         Result result= JUnitCore.runClasses(comp, Example1.class, Example2.class, Example3.class);
         assertTrue(result.wasSuccessful());
         assertNotNull(fExample1One);
@@ -279,7 +296,8 @@ public final class ParallelClassesAndMethodsTest {
 
     @Test public void classesAndMethodsBoundedUndersized() throws InterruptedException {
         fSynchronizer= null;
-        Computer comp= ParallelComputer.classesAndMethodsBounded(4);//1 - 3 concurrent methods
+        // 1 - 3 concurrent methods
+        Computer comp= ParallelComputer.classesAndMethodsBounded(4);
         Result result= JUnitCore.runClasses(comp, Example1.class, Example2.class, Example3.class);
         assertTrue(result.wasSuccessful());
         assertNotNull(fExample1One);
@@ -299,7 +317,8 @@ public final class ParallelClassesAndMethodsTest {
         fSynchronizer= null;
         ExecutorService poolClasses= Executors.newSingleThreadExecutor();
         ExecutorService poolMethods= Executors.newSingleThreadExecutor();
-        Computer comp= ParallelComputer.classesAndMethods(poolClasses, poolMethods);//nothing much parallelized
+        // nothing much parallelized
+        Computer comp= ParallelComputer.classesAndMethods(poolClasses, poolMethods);
         Result result= JUnitCore.runClasses(comp, Example1.class, Example2.class, Example3.class);
         assertTrue(result.wasSuccessful());
         assertNotNull(fExample1One);
@@ -319,7 +338,8 @@ public final class ParallelClassesAndMethodsTest {
         fSynchronizer= new CyclicBarrier(2);
         ExecutorService poolClasses= Executors.newFixedThreadPool(3);
         ExecutorService poolMethods= Executors.newFixedThreadPool(2);
-        Computer comp= ParallelComputer.classesAndMethods(poolClasses, poolMethods);//2 Threads / class
+        // 2 Threads / class
+        Computer comp= ParallelComputer.classesAndMethods(poolClasses, poolMethods);
         Result result= JUnitCore.runClasses(comp, Example1.class, Example2.class, Example3.class);
         assertTrue(result.wasSuccessful());
         assertNotNull(fExample1One);
@@ -339,7 +359,8 @@ public final class ParallelClassesAndMethodsTest {
         fSynchronizer= new CyclicBarrier(3);
         ExecutorService poolClasses= Executors.newFixedThreadPool(5);
         ExecutorService poolMethods= Executors.newFixedThreadPool(4);
-        Computer comp= ParallelComputer.classesAndMethods(poolClasses, poolMethods);//3 or 4 method Threads
+        // 3 or 4 method Threads
+        Computer comp= ParallelComputer.classesAndMethods(poolClasses, poolMethods);
         Result result= JUnitCore.runClasses(comp, Example1.class, Example2.class, Example3.class);
         assertTrue(result.wasSuccessful());
         assertNotNull(fExample1One);
