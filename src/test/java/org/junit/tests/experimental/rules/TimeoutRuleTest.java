@@ -71,7 +71,8 @@ public class TimeoutRuleTest {
                 FileChannel channel = new RandomAccessFile(tmp, "rw").getChannel();
                 rnd.nextBytes(data);
                 ByteBuffer buffer = ByteBuffer.wrap(data);
-                channel.write(buffer);//Interrupted thread closes channel and throws ClosedByInterruptException.
+                // Interrupted thread closes channel and throws ClosedByInterruptException.
+                channel.write(buffer);
                 channel.close();
                 tmp.delete();
             }
@@ -80,7 +81,7 @@ public class TimeoutRuleTest {
         @Test
         public void run6() throws InterruptedIOException {
             logger.append("run6");
-            //Java IO throws InterruptedIOException on SUN machines.
+            // Java IO throws InterruptedIOException only on SUN machines.
             throw new InterruptedIOException();
         }
     }
@@ -105,7 +106,8 @@ public class TimeoutRuleTest {
 
     @After
     public void after() {
-        run4done = true;//to make sure that the thread won't continue at run4()
+        // set run4done to make sure that the thread won't continue at run4()
+        run4done = true;
         run1Lock.unlock();
     }
 
