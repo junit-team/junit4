@@ -67,7 +67,6 @@ public class TimeoutRuleTest {
             Random rnd = new Random();
             byte[] data = new byte[1024];
             File tmp = tmpFile.newFile();
-            tmp.deleteOnExit();
             while (true) {
                 FileChannel channel = new RandomAccessFile(tmp, "rw").getChannel();
                 rnd.nextBytes(data);

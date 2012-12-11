@@ -31,7 +31,8 @@ public class FailOnTimeout extends Statement {
 
     private StatementThread evaluateStatement() throws InterruptedException {
         StatementThread thread = new StatementThread(fOriginalStatement);
-        thread.setDaemon(true);//Let the process/application complete after timeout expired.
+        // Let the process/application complete after timeout expired.
+        thread.setDaemon(true);
         thread.start();
         fTimeUnit.timedJoin(thread, fTimeout);
         if (!thread.fFinished) {
