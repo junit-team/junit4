@@ -49,7 +49,7 @@ public class MethodSorter {
      *      (non-)bug #7023180</a>
      */
     public static Method[] getDeclaredMethods(Class<?> clazz) {
-        Comparator<Method> comparator = getSorter(getOrderAnnotation(clazz));
+        Comparator<Method> comparator = getSorter(clazz.getAnnotation(FixMethodOrder.class));
 
         Method[] methods = clazz.getDeclaredMethods();
         if (comparator != null) {
@@ -57,21 +57,6 @@ public class MethodSorter {
         }
 
         return methods;
-    }
-
-    private static FixMethodOrder getOrderAnnotation(Class<?> clazz) {
-        Class<?> current = clazz;
-        FixMethodOrder fixMethodOrder = null;
-
-        while (current != null) {
-            fixMethodOrder = current.getAnnotation(FixMethodOrder.class);
-            if (fixMethodOrder != null) {
-                return fixMethodOrder;
-            }
-            current = current.getSuperclass();
-        }
-
-        return null;
     }
 
     private MethodSorter() {
