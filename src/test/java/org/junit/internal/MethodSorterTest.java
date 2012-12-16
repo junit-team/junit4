@@ -179,4 +179,38 @@ public class MethodSorterTest {
         List<String> actual = getDeclaredMethodNames(DummySortWithNameAsc.class);
         assertEquals(expected, actual);
     }
+    
+    @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+    static class DummySortWithNameAscSuper {
+    	
+    }
+    
+    static class DummySortWithNameAscSub extends DummySortWithNameAscSuper {
+        Object alpha(int i, double d, Thread t) {
+            return null;
+        }
+
+        void beta(int[][] x) {
+        }
+
+        int gamma() {
+            return 0;
+        }
+
+        void gamma(boolean b) {
+        }
+
+        void delta() {
+        }
+
+        void epsilon() {
+        }
+    }
+    
+    @Test
+    public void testSuperclassAscendingMethodSorter() {
+        List<String> expected = Arrays.asList(ALPHA, BETA, DELTA, EPSILON, GAMMA_VOID, GAMMA_BOOLEAN);
+        List<String> actual = getDeclaredMethodNames(DummySortWithNameAscSub.class);
+        assertEquals(expected, actual);
+    }
 }
