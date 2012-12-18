@@ -320,6 +320,24 @@ public class ParallelComputer extends Computer {
             private final ConcurrentLinkedQueue<Future<?>> fMethodsFutures
                 = !isClasses & fProvidedPools & fParallelMethods ? new ConcurrentLinkedQueue<Future<?>>() : null;
 
+            private void run(Runnable child) {
+                fBeforeShutdown.add(runner.getDescription());
+                child.run();
+            }
+
+            private void submit(Runnable child) {
+                try {
+                    Future<?> f= service.submit(child);
+                    if (!isClasses & fProvidedPools & fParallelMethods) {
+                        fMethodsFutures.add(f);
+                    }
+                    fBeforeShutdown.add(runner.getDescription());
+                } catch (RejectedExecutionException e) {
+                    // after external shutdown
+                    shutdownQuietly(false);
+                }
+            }
+
             public void schedule(Runnable childStatement) {
                 if (shouldEscapeSchedulingTasks()) {
                     return;
@@ -333,22 +351,10 @@ public class ParallelComputer extends Computer {
                     return;
                 }
 
-                try {
-                    if (service == null) {
-                        fBeforeShutdown.add(runner.getDescription());
-                        childStatement.run();
-                    } else {
-                        Future<?> f= service.submit(childStatement);
-
-                        if (!isClasses & fProvidedPools & fParallelMethods) {
-                            fMethodsFutures.add(f);
-                        }
-
-                        fBeforeShutdown.add(runner.getDescription());
-                    }
-                } catch (RejectedExecutionException e) {
-                    // after external shutdown
-                    shutdownQuietly(false);
+                if (service == null) {
+                    run(childStatement);
+                } else {
+                    submit(childStatement);
                 }
             }
 
