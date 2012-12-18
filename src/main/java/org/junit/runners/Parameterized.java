@@ -30,24 +30,24 @@ import org.junit.runners.model.Statement;
  * <pre>
  * &#064;RunWith(Parameterized.class)
  * public class FibonacciTest {
- * 	&#064;Parameters(name= &quot;{index}: fib({0})={1}&quot;)
- * 	public static Iterable&lt;Object[]&gt; data() {
- * 		return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
+ *     &#064;Parameters(name= &quot;{index}: fib[{0}]={1}&quot;)
+ *     public static Iterable&lt;Object[]&gt; data() {
+ *         return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
  *                 { 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
  *     }
  *
- * 	private int fInput;
+ *     private int fInput;
  *
- * 	private int fExpected;
+ *     private int fExpected;
  *
- * 	public FibonacciTest(int input, int expected) {
- * 		fInput= input;
- * 		fExpected= expected;
+ *     public FibonacciTest(int input, int expected) {
+ *         fInput= input;
+ *         fExpected= expected;
  *     }
  *
- * 	&#064;Test
- * 	public void test() {
- * 		assertEquals(fExpected, Fibonacci.compute(fInput));
+ *     &#064;Test
+ *     public void test() {
+ *         assertEquals(fExpected, Fibonacci.compute(fInput));
  *     }
  * }
  * </pre>
@@ -85,7 +85,8 @@ import org.junit.runners.model.Statement;
  *  public static Iterable&lt;Object[]&gt; data() {
  *      return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
  *                 { 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
- *     }
+ *  }
+ *  
  *  &#064;Parameter(0)
  *  public int fInput;
  *
@@ -95,7 +96,7 @@ import org.junit.runners.model.Statement;
  *  &#064;Test
  *  public void test() {
  *      assertEquals(fExpected, Fibonacci.compute(fInput));
- *     }
+ *  }
  * }
  * </pre>
  *
@@ -161,16 +162,16 @@ public class Parameterized extends Suite {
         int value() default 0;
     }
 
-    private class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
+    protected class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
         private final Object[] fParameters;
 
-        private final String fName;
+        private String fName;
 
-        TestClassRunnerForParameters(Class<?> type, Object[] parameters,
-                String name) throws InitializationError {
+        protected TestClassRunnerForParameters(Class<?> type, String pattern, int index, Object[] parameters) throws InitializationError {
             super(type);
+
             fParameters = parameters;
-            fName = name;
+            fName = nameFor(pattern, index, parameters);
         }
 
         @Override
@@ -207,6 +208,12 @@ public class Parameterized extends Suite {
                 }
             }
             return testClassInstance;
+        }
+
+        protected String nameFor(String pattern, int index, Object[] parameters) {
+            String finalPattern = pattern.replaceAll("\\{index\\}", Integer.toString(index));
+            String name = MessageFormat.format(finalPattern, parameters);
+            return "[" + name + "]";
         }
 
         @Override
@@ -267,8 +274,7 @@ public class Parameterized extends Suite {
         }
     }
 
-    private static final List<Runner> NO_RUNNERS = Collections
-            .<Runner>emptyList();
+    private static final List<Runner> NO_RUNNERS = Collections.<Runner>emptyList();
 
     private final ArrayList<Runner> runners = new ArrayList<Runner>();
 
@@ -285,6 +291,10 @@ public class Parameterized extends Suite {
     @Override
     protected List<Runner> getChildren() {
         return runners;
+    }
+
+    protected Runner createRunner(String pattern, int index, Object[] parameters) throws InitializationError {
+        return new TestClassRunnerForParameters(getTestClass().getJavaClass(), pattern, index, parameters);
     }
 
     @SuppressWarnings("unchecked")
@@ -310,28 +320,15 @@ public class Parameterized extends Suite {
                 + getTestClass().getName());
     }
 
-    private void createRunnersForParameters(Iterable<Object[]> allParameters,
-            String namePattern) throws InitializationError, Exception {
+    private void createRunnersForParameters(Iterable<Object[]> allParameters, String namePattern) throws Exception {
         try {
             int i = 0;
             for (Object[] parametersOfSingleTest : allParameters) {
-                String name = nameFor(namePattern, i, parametersOfSingleTest);
-                TestClassRunnerForParameters runner = new TestClassRunnerForParameters(
-                        getTestClass().getJavaClass(), parametersOfSingleTest,
-                        name);
-                runners.add(runner);
-                ++i;
+                runners.add(createRunner(namePattern, i++, parametersOfSingleTest));
             }
         } catch (ClassCastException e) {
             throw parametersMethodReturnedWrongType();
         }
-    }
-
-    private String nameFor(String namePattern, int index, Object[] parameters) {
-        String finalPattern = namePattern.replaceAll("\\{index\\}",
-                Integer.toString(index));
-        String name = MessageFormat.format(finalPattern, parameters);
-        return "[" + name + "]";
     }
 
     private Exception parametersMethodReturnedWrongType() throws Exception {

@@ -10,3 +10,4 @@ MaxCore.max
 *.iws
 out
 java.hprof.txt
+.gitattributes

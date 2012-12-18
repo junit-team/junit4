@@ -6,9 +6,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotates static fields that contain rules or methods that return them. A field must be public,
+ * Annotates static fields that reference rules or methods that return them. A field must be public,
  * static, and a subtype of {@link org.junit.rules.TestRule}.  A method must be public static, and return
- * a subtype of {@link org.junit.rules.TestRule}
+ * a subtype of {@link org.junit.rules.TestRule}.<p>
+ *
  * The {@link org.junit.runners.model.Statement} passed
  * to the {@link org.junit.rules.TestRule} will run any {@link BeforeClass} methods,
  * then the entire body of the test class (all contained methods, if it is
@@ -36,20 +37,20 @@ import java.lang.annotation.Target;
  * &#064;RunWith(Suite.class)
  * &#064;SuiteClasses({A.class, B.class, C.class})
  * public class UsesExternalResource {
- * 	public static Server myServer= new Server();
+ *     public static Server myServer= new Server();
  *
- * 	&#064;ClassRule
- * 	public static ExternalResource resource= new ExternalResource() {
- * 		&#064;Override
- * 		protected void before() throws Throwable {
- * 			myServer.connect();
- *         };
+ *     &#064;ClassRule
+ *     public static ExternalResource resource= new ExternalResource() {
+ *       &#064;Override
+ *       protected void before() throws Throwable {
+ *          myServer.connect();
+ *      }
  *
- * 		&#064;Override
- * 		protected void after() {
- * 			myServer.disconnect();
- *         };
- *     };
+ *      &#064;Override
+ *      protected void after() {
+ * 	        myServer.disconnect();
+ *      }
+ *   };
  * }
  * </pre>
  *
@@ -59,19 +60,19 @@ import java.lang.annotation.Target;
  * &#064;RunWith(Suite.class)
  * &#064;SuiteClasses({A.class, B.class, C.class})
  * public class UsesExternalResource {
- *  public static Server myServer= new Server();
+ *     public static Server myServer= new Server();
  *
- *  &#064;ClassRule
- *  public static ExternalResource getResource() {
- *      return new ExternalResource() {
- *          &#064;Override
- *          protected void before() throws Throwable {
- *              myServer.connect();
+ *     &#064;ClassRule
+ *     public static ExternalResource getResource() {
+ *         return new ExternalResource() {
+ *             &#064;Override
+ *             protected void before() throws Throwable {
+ *                 myServer.connect();
  *             }
  *
- *          &#064;Override
- *          protected void after() {
- *              myServer.disconnect();
+ *             &#064;Override
+ *             protected void after() {
+ *                 myServer.disconnect();
  *             }
  *         };
  *     }

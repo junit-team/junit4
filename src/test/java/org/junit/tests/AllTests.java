@@ -19,6 +19,8 @@ import org.junit.tests.experimental.ExperimentalTests;
 import org.junit.tests.experimental.MatcherTest;
 import org.junit.tests.experimental.categories.CategoriesAndParameterizedTest;
 import org.junit.tests.experimental.categories.CategoryTest;
+import org.junit.tests.experimental.categories.JavadocTest;
+import org.junit.tests.experimental.categories.MultiCategoryTest;
 import org.junit.tests.experimental.max.JUnit38SortingTest;
 import org.junit.tests.experimental.max.MaxStarterTest;
 import org.junit.tests.experimental.parallel.ParallelClassTest;
@@ -34,6 +36,7 @@ import org.junit.tests.experimental.rules.MethodRulesTest;
 import org.junit.tests.experimental.rules.NameRulesTest;
 import org.junit.tests.experimental.rules.RuleChainTest;
 import org.junit.tests.experimental.rules.RuleFieldValidatorTest;
+import org.junit.tests.experimental.rules.StopwatchTest;
 import org.junit.tests.experimental.rules.TempFolderRuleTest;
 import org.junit.tests.experimental.rules.TemporaryFolderUsageTest;
 import org.junit.tests.experimental.rules.TestRuleTest;
@@ -159,6 +162,8 @@ import org.junit.tests.validation.ValidationTest;
         VerifierRuleTest.class,
         CategoryTest.class,
         CategoriesAndParameterizedTest.class,
+        MultiCategoryTest.class,
+        JavadocTest.class,
         ParentRunnerFilteringTest.class,
         BlockJUnit4ClassRunnerOverrideTest.class,
         RuleFieldValidatorTest.class,
@@ -166,7 +171,8 @@ import org.junit.tests.validation.ValidationTest;
         BlockJUnit4ClassRunnerTest.class,
         MethodSorterTest.class,
         TestedOnSupplierTest.class,
-        StacktracePrintingMatcherTest.class
+        StacktracePrintingMatcherTest.class,
+        StopwatchTest.class
 })
 public class AllTests {
     public static Test suite() {
