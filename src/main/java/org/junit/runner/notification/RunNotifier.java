@@ -1,12 +1,11 @@
 package org.junit.runner.notification;
 
-import static java.util.Arrays.asList;
-
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
-
+import java.util.concurrent.ConcurrentLinkedQueue;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
@@ -21,9 +20,8 @@ import org.junit.runner.Result;
  * @since 4.0
  */
 public class RunNotifier {
-    private final List<RunListener> fListeners =
-            Collections.synchronizedList(new ArrayList<RunListener>());
-    private volatile boolean fPleaseStop = false;
+    private final ConcurrentLinkedQueue<RunListener> fListeners= new ConcurrentLinkedQueue<RunListener>();
+    private volatile boolean fPleaseStop= false;
 
     /**
      * Internal use only
@@ -40,32 +38,29 @@ public class RunNotifier {
     }
 
     private abstract class SafeNotifier {
-        private final List<RunListener> fCurrentListeners;
+        private final Collection<RunListener> fCurrentListeners;
 
         SafeNotifier() {
             this(fListeners);
         }
 
-        SafeNotifier(List<RunListener> currentListeners) {
-            fCurrentListeners = currentListeners;
+        SafeNotifier(Collection<RunListener> currentListeners) {
+            fCurrentListeners= currentListeners;
         }
 
         void run() {
-            synchronized (fListeners) {
-                List<RunListener> safeListeners = new ArrayList<RunListener>();
-                List<Failure> failures = new ArrayList<Failure>();
-                for (Iterator<RunListener> all = fCurrentListeners.iterator(); all
-                        .hasNext(); ) {
-                    try {
-                        RunListener listener = all.next();
-                        notifyListener(listener);
-                        safeListeners.add(listener);
-                    } catch (Exception e) {
-                        failures.add(new Failure(Description.TEST_MECHANISM, e));
-                    }
+            int capacity= fCurrentListeners.size();
+            ArrayList<RunListener> safeListeners= new ArrayList<RunListener>(capacity);
+            ArrayList<Failure> failures= new ArrayList<Failure>(capacity);
+            for (RunListener listener : fCurrentListeners) {
+                try {
+                    notifyListener(listener);
+                    safeListeners.add(listener);
+                } catch (Exception e) {
+                    failures.add(new Failure(Description.TEST_MECHANISM, e));
                 }
-                fireTestFailures(safeListeners, failures);
             }
+            fireTestFailures(safeListeners, failures);
         }
 
         abstract protected void notifyListener(RunListener each) throws Exception;
@@ -80,8 +75,6 @@ public class RunNotifier {
             protected void notifyListener(RunListener each) throws Exception {
                 each.testRunStarted(description);
             }
-
-            ;
         }.run();
     }
 
@@ -94,8 +87,6 @@ public class RunNotifier {
             protected void notifyListener(RunListener each) throws Exception {
                 each.testRunFinished(result);
             }
-
-            ;
         }.run();
     }
 
@@ -114,8 +105,6 @@ public class RunNotifier {
             protected void notifyListener(RunListener each) throws Exception {
                 each.testStarted(description);
             }
-
-            ;
         }.run();
     }
 
@@ -125,22 +114,18 @@ public class RunNotifier {
      * @param failure the description of the test that failed and the exception thrown
      */
     public void fireTestFailure(Failure failure) {
-        fireTestFailures(fListeners, asList(failure));
+        fireTestFailures(fListeners, Arrays.asList(failure));
     }
 
-    private void fireTestFailures(List<RunListener> listeners,
-            final List<Failure> failures) {
+    private void fireTestFailures(Collection<RunListener> listeners, final List<Failure> failures) {
         if (!failures.isEmpty()) {
             new SafeNotifier(listeners) {
                 @Override
-                protected void notifyListener(RunListener listener)
-                        throws Exception {
+                protected void notifyListener(RunListener listener) throws Exception {
                     for (Failure each : failures) {
                         listener.testFailure(each);
                     }
                 }
-
-                ;
             }.run();
         }
     }
@@ -158,8 +143,6 @@ public class RunNotifier {
             protected void notifyListener(RunListener each) throws Exception {
                 each.testAssumptionFailure(failure);
             }
-
-            ;
         }.run();
     }
 
@@ -190,8 +173,6 @@ public class RunNotifier {
             protected void notifyListener(RunListener each) throws Exception {
                 each.testFinished(description);
             }
-
-            ;
         }.run();
     }
 
@@ -202,13 +183,16 @@ public class RunNotifier {
      * to be shared amongst the many runners involved.
      */
     public void pleaseStop() {
-        fPleaseStop = true;
+        fPleaseStop= true;
     }
 
     /**
      * Internal use only. The Result's listener must be first.
      */
     public void addFirstListener(RunListener listener) {
-        fListeners.add(0, listener);
+        LinkedList<RunListener> listeners= new LinkedList<RunListener>(fListeners);
+        listeners.addFirst(listener);
+        fListeners.clear();
+        fListeners.addAll(listeners);
     }
 }
