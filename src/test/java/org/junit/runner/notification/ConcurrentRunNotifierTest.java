@@ -207,7 +207,7 @@ public final class ConcurrentRunNotifierTest {
 
         int totalListenersFailures = 0;
 
-        final ExaminedListener[] examinedListeners = new ExaminedListener[(int) 1E3];
+        final ExaminedListener[] examinedListeners = new ExaminedListener[1000];
         for (int i = 0; i < examinedListeners.length; ++i) {
             boolean fail = StrictMath.random() >= 0.5d;
             if (fail) ++totalListenersFailures;
@@ -260,7 +260,7 @@ public final class ConcurrentRunNotifierTest {
 
         int totalListenersFailures = 0;
 
-        final ExaminedListener[] examinedListeners = new ExaminedListener[(int) 1E2];
+        final ExaminedListener[] examinedListeners = new ExaminedListener[100];
         for (int i = 0; i < examinedListeners.length; ++i) {
             boolean fail = StrictMath.random() >= 0.5d;
             if (fail) ++totalListenersFailures;
