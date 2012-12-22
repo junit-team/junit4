@@ -4,7 +4,7 @@
 	
 	<groupId>junit</groupId>
 	<artifactId>junit</artifactId>
-	<version>4.11-SNAPSHOT</version>
+	<version>4.12-SNAPSHOT</version>
 	
 	<name>JUnit</name>
 	<url>http://junit.org</url>
