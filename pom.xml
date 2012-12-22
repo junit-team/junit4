@@ -333,26 +333,6 @@
 			</plugin>
 			<plugin>
 				<!--
-					The goal is to sign all artifacts so that the user may verify them before downloading.
-					The automatic build system may reuire your key ID, and passphrase specified using system properties:
-					-Dgpg.passphrase="<passphrase>" -Dgpg.keyname="<your key ID>"
-					In order to create the key pair, use the command "gpg &ndash;&ndash;gen-key".
-					(&ndash;&ndash; stands for double dash)
-				-->
-				<artifactId>maven-gpg-plugin</artifactId>
-				<version>1.4</version>
-				<executions>
-					<execution>
-						<id>gpg-sign</id>
-						<phase>install</phase>
-						<goals>
-							<goal>sign</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<!--
 					This wagon plugin uploads all jar archives and one zip file
 					to the sourceforge FTP server.
 					See the credentials for serve id "sourceforge-staging"
@@ -415,39 +395,30 @@
 			</build>
 		</profile>
 		<profile>
-			<id>checkSnapshot</id>
+			<id>sign</id>
 			<!--
 				Purpose:
-				This section will check the version is a snapshot and has
-				a correct form of "<major>.<minor>-SNAPSHOT" when preparing release.
-				An incremental version (like 4.11.x-SNAPSHOT) is not JUnit standard.
-				So if you mistakenly specify the incremental version, the build
-				fails. Same if "SNAPSHOT" qualifier is missing.
+				Release Management system has to use this profile and sign all artifacts to deploy.
 			-->
 			<build>
 				<plugins>
 					<plugin>
-						<artifactId>maven-enforcer-plugin</artifactId>
-						<version>1.1.1</version>
+						<!--
+							The goal is to sign all artifacts so that the user may verify them before downloading.
+							The automatic build system may reuire your key ID, and passphrase specified using system properties:
+							-Dgpg.passphrase="<passphrase>" -Dgpg.keyname="<your key ID>"
+							In order to create the key pair, use the command "gpg &ndash;&ndash;gen-key".
+							(&ndash;&ndash; stands for double dash)
+						-->
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.4</version>
 						<executions>
 							<execution>
-								<id>enforce-versions</id>
-								<phase>initialize</phase>
+								<id>gpg-sign</id>
+								<phase>install</phase>
 								<goals>
-									<goal>enforce</goal>
+									<goal>sign</goal>
 								</goals>
-								<configuration>
-									<fail>true</fail>
-									<rules>
-										<evaluateBeanshell><!-- Require Snapshot Version -->
-											<message>Snapshot project version (major.minor-SNAPSHOT, e.g. 4.11-SNAPSHOT) is required before deploying release project!</message>
-											<condition>
-												<![CDATA[print("parsing project version ${project.version} to components:\n${junit.majorVersion}\n${junit.minorVersion}\n${junit.incrementalVersion}\n${junit.qualifier}\n${junit.buildNumber}");
-												"SNAPSHOT".equals("${junit.qualifier}") && !"0".equals("${junit.majorVersion}") && !"0".equals("${junit.minorVersion}") && "0".equals("${junit.incrementalVersion}") && "0".equals("${junit.buildNumber}")]]>
-											</condition>
-										</evaluateBeanshell>
-									</rules>
-								</configuration>
 							</execution>
 						</executions>
 					</plugin>
