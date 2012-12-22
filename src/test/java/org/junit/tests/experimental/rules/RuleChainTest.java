@@ -9,6 +9,7 @@ import static org.junit.rules.RuleChain.outerRule;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -17,6 +18,11 @@ import org.junit.runner.Description;
 
 public class RuleChainTest {
     private static final List<String> LOG = new ArrayList<String>();
+
+	@Before
+	public void clearLog() {
+		LOG.clear();
+	}
 
     private static class LoggingRule extends TestWatcher {
         private final String label;
@@ -57,4 +63,26 @@ public class RuleChainTest {
                 "finished outer rule");
         assertEquals(expectedLog, LOG);
     }
+
+	public static class UseRuleChainOf {
+		@Rule
+		public final RuleChain chain= RuleChain.of(
+				new LoggingRule("outer rule"), new LoggingRule("middle rule"),
+				new LoggingRule("inner rule"));
+
+		@Test
+		public void example() {
+			assertTrue(true);
+		}
+	}
+
+	@Test
+	public void executeRuleChainOfInCorrectOrder() throws Exception {
+		testResult(UseRuleChainOf.class);
+		List<String> expectedLog= asList("starting outer rule",
+				"starting middle rule", "starting inner rule",
+				"finished inner rule", "finished middle rule",
+				"finished outer rule");
+		assertEquals(expectedLog, LOG);
+	}
 }

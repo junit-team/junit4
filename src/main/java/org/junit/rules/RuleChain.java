@@ -67,6 +67,20 @@ public class RuleChain implements TestRule {
         return emptyRuleChain().around(outerRule);
     }
 
+	/**
+	 * Returns a {@code RuleChain} containing the specified rules in the
+	 * specified order.
+	 */
+	public static RuleChain of(TestRule first, TestRule second,
+			TestRule... rest) {
+		final List<TestRule> rules= new ArrayList<TestRule>(2 + rest.length);
+		rules.add(first);
+		rules.add(second);
+		Collections.addAll(rules, rest);
+		Collections.reverse(rules);
+		return new RuleChain(rules);
+	}
+
     private RuleChain(List<TestRule> rules) {
         this.rulesStartingWithInnerMost = rules;
     }
