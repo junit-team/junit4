@@ -302,10 +302,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      * Returns a {@link Statement}: run all non-overridden {@code @Before}
      * methods on this class and superclasses before running {@code next}; if
      * any throws an Exception, stop execution and pass the exception on.
-     *
-     * @deprecated Will be private soon: use Rules instead
      */
-    @Deprecated
     protected Statement withBefores(FrameworkMethod method, Object target,
             Statement statement) {
         List<FrameworkMethod> befores = getTestClass().getAnnotatedMethods(
@@ -320,10 +317,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      * After methods are always executed: exceptions thrown by previous steps
      * are combined, if necessary, with exceptions from After methods into a
      * {@link MultipleFailureException}.
-     *
-     * @deprecated Will be private soon: use Rules instead
      */
-    @Deprecated
     protected Statement withAfters(FrameworkMethod method, Object target,
             Statement statement) {
         List<FrameworkMethod> afters = getTestClass().getAnnotatedMethods(
@@ -342,7 +336,6 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
         return result;
     }
 
-    @SuppressWarnings("deprecation")
     private Statement withMethodRules(FrameworkMethod method, List<TestRule> testRules,
             Object target, Statement result) {
         for (org.junit.rules.MethodRule each : getMethodRules(target)) {
@@ -353,7 +346,6 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
         return result;
     }
 
-    @SuppressWarnings("deprecation")
     private List<org.junit.rules.MethodRule> getMethodRules(Object target) {
         return rules(target);
     }
@@ -362,11 +354,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      * @param target the test case instance
      * @return a list of MethodRules that should be applied when executing this
      *         test
-     * @deprecated {@link org.junit.rules.MethodRule} is a deprecated interface. Port to
-     *             {@link TestRule} and
-     *             {@link BlockJUnit4ClassRunner#getTestRules(Object)}
      */
-    @Deprecated
     protected List<org.junit.rules.MethodRule> rules(Object target) {
         return getTestClass().getAnnotatedFieldValues(target, Rule.class,
                 org.junit.rules.MethodRule.class);
