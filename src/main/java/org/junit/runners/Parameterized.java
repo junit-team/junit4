@@ -307,30 +307,24 @@ public class Parameterized extends Suite {
             Statement statement = childrenInvoker(notifier);
             
             try {
-                fTestInstance = new ReflectiveCallable() {
-                    @Override
-                    protected Object runReflectiveCall() throws Throwable {
-                        return createTest();
-                    }
-                }.run();
-            } catch (Throwable e) {
-                return new Fail(e);
-            }
+				fTestInstance = superCreateTest();
+			} catch (Throwable e) {
+				return new Fail(e);
+			}
             
             statement = withParameterRules(statement,fTestInstance);
             
             return statement;
         }
         
+
         @Override
-        protected Statement methodBlock(FrameworkMethod method) {
-            Statement statement = methodInvoker(method, fTestInstance);
-            statement = possiblyExpectingExceptions(method, fTestInstance, statement);
-            statement = withPotentialTimeout(method, fTestInstance, statement);
-            statement = withBefores(method, fTestInstance, statement);
-            statement = withAfters(method, fTestInstance, statement);
-            statement = withRules(method, fTestInstance, statement);
-            return statement;
+        public Object createTest() throws Exception {
+        	return fTestInstance;
+        }
+        
+        private Object superCreateTest() throws Exception {
+        	return super.createTest();
         }
         
         private List<TestRule> getParameterRules(Object target) {
