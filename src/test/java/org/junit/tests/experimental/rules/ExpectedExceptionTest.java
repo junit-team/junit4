@@ -3,7 +3,6 @@ package org.junit.tests.experimental.rules;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.startsWith;
@@ -72,8 +71,9 @@ public class ExpectedExceptionTest {
                 {ViolateAssumptionAndExpectException.class,
                         hasSingleAssumptionFailure()},
                 {ThrowExpectedAssertionError.class, everyTestRunSuccessful()},
-                {DontThrowAssertionErrorButExpectOne.class, hasSingleFailureWithMessage(
-                        endsWith("Expected test to throw an instance of java.lang.AssertionError"))},
+                {
+                    DontThrowAssertionErrorButExpectOne.class,
+                    hasSingleFailureWithMessage("Expected test to throw an instance of java.lang.AssertionError")},
                 {
                         ThrowUnexpectedAssertionError.class,
                         hasSingleFailureWithMessage(startsWith("\nExpected: an instance of java.lang.NullPointerException"))},
