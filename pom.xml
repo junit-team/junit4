@@ -289,6 +289,49 @@
 			</plugin>
 			<plugin>
 				<!--
+					Renames LICENSE file in project root to LICENSE.txt in built zip files.
+				-->
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>truezip-maven-plugin</artifactId>
+				<version>1.1</version>
+				<executions>
+					<execution>
+						<id>rename LICENSE to LICENSE.txt in jar/</id>
+						<phase>package</phase>
+						<goals>
+							<goal>move</goal>
+						</goals>
+						<configuration>
+							<from>${project.build.directory}/${project.build.finalName}.jar/LICENSE</from>
+							<to>${project.build.directory}/${project.build.finalName}.jar/LICENSE.txt</to>
+						</configuration>
+					</execution>
+					<execution>
+						<id>rename LICENSE to LICENSE.txt in sources jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>move</goal>
+						</goals>
+						<configuration>
+							<from>${project.build.directory}/${project.build.finalName}-sources.jar/LICENSE</from>
+							<to>${project.build.directory}/${project.build.finalName}-sources.jar/LICENSE.txt</to>
+						</configuration>
+					</execution>
+					<execution>
+						<id>rename LICENSE to LICENSE.txt in zip</id>
+						<phase>package</phase>
+						<goals>
+							<goal>move</goal>
+						</goals>
+						<configuration>
+							<from>${project.build.directory}/${project.build.finalName}.zip/${project.build.finalName}/LICENSE</from>
+							<to>${project.build.directory}/${project.build.finalName}.zip/${project.build.finalName}/LICENSE.txt</to>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<!--
 					The goal is to modify the SNAPSHOT version of development
 					to a release version. See the profile with id "checkSnapshot".
 					The plugin does not have a default phase to execute, thus you
