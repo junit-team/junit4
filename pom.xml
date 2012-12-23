@@ -149,8 +149,9 @@
 							<fail>true</fail>
 							<rules>
 								<requireMavenVersion>
+									<!-- Some plugin features require a recent Maven runtime to work properly -->
 									<message>Current version of Maven ${maven.version} required to build the project should be ${project.prerequisites.maven}, or higher!</message>
-									<version>${project.prerequisites.maven}</version>
+									<version>[${project.prerequisites.maven},)</version>
 								</requireMavenVersion>
 								<requireJavaVersion>
 									<message>Current JDK version ${java.version} should be ${jdkVersion}, or higher!</message>
