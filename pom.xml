@@ -279,7 +279,7 @@
 									<value>http://docs.oracle.com/javase/1.5.0/docs/api/index.html</value>
 								</property>
 							</javaApiLinks>
-							<excludePackageNames>junit.*,org.junit.internal.*,org.junit.experimental.theories.internal.*</excludePackageNames>
+							<excludePackageNames>junit.*,*.internal,*.internal.*</excludePackageNames>
 							<verbose>true</verbose>
 							<minmemory>32m</minmemory>
 							<maxmemory>128m</maxmemory>
