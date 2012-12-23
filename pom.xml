@@ -132,35 +132,6 @@
 			-->
 			<plugin>
 				<!--
-					Assigns properties with prefix "junit"
-					For instance, project version 4.11-SNAPSHOT is parsed
-					and the following properties handle the values:
-					junit.majorVersion=4
-					junit.minorVersion=11
-					junit.incrementalVersion=0
-					junit.qualifier=SNAPSHOT
-					junit.buildNumber=0
-					These are handled in a profile with id "checkSnapshot".
-				-->
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.7</version>
-				<executions>
-					<execution>
-						<id>parse-project-version</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>parse-version</goal>
-						</goals>
-						<configuration>
-							<propertyPrefix>junit</propertyPrefix>
-							<versionString>${project.version}</versionString>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<!--
 					Checks that the version of user's maven installation is 3.0.4,
 					the JDK is 1.5+, no non-standard repositories are specified in
 					the project, requires only release versions of dependencies of other artifacts.
