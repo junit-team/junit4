@@ -51,27 +51,6 @@
             </includes>
         </fileSet>
         <fileSet>
-            <directory>${project.build.sourceDirectory}</directory>
-            <outputDirectory>${artifactId}-${version}</outputDirectory>
-            <lineEnding>unix</lineEnding>
-            <fileMode>0644</fileMode>
-            <directoryMode>0644</directoryMode>
-            <includes>
-                <include>**/*.java</include>
-            </includes>
-        </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/src/main/resources</directory>
-            <outputDirectory>${artifactId}-${version}</outputDirectory>
-            <lineEnding>crlf</lineEnding>
-            <fileMode>0644</fileMode>
-            <directoryMode>0644</directoryMode>
-            <filtered>true</filtered>
-            <includes>
-                <include>**/*</include>
-            </includes>
-        </fileSet>
-        <fileSet>
             <directory>${project.build.testSourceDirectory}</directory>
             <outputDirectory>${artifactId}-${version}</outputDirectory>
             <lineEnding>unix</lineEnding>
