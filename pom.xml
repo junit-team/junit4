@@ -268,7 +268,7 @@
 							<detectLinks>false</detectLinks>
 							<linksource>true</linksource>
 							<keywords>true</keywords>
-							<use>true</use>
+							<use>false</use>
 							<windowtitle>JUnit API</windowtitle>
 							<encoding>UTF-8</encoding>
 							<locale>en</locale>
