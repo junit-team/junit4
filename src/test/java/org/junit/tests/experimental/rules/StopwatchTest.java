@@ -9,12 +9,14 @@ import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeTrue;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assert.assertNotEquals;
 
 /**
  * @author tibor17
@@ -91,6 +93,24 @@ public class StopwatchTest {
         }
     }
 
+    public static class WrongDurationTest extends AbstractStopwatchTest {
+        @Test
+        public void wrongDuration() throws InterruptedException {
+            Thread.sleep(500L);
+            assertNotEquals(fStopwatch.runtime(MILLISECONDS), 300d, 100d);
+        }
+    }
+
+    public static class DurationTest extends AbstractStopwatchTest {
+        @Test
+        public void duration() throws InterruptedException {
+            Thread.sleep(300L);
+            assertEquals(300d, fStopwatch.runtime(MILLISECONDS), 100d);
+            Thread.sleep(500L);
+            assertEquals(800d, fStopwatch.runtime(MILLISECONDS), 250d);
+        }
+    }
+
     @Before
     public void init() {
         fRecord= new Record();
@@ -128,5 +148,17 @@ public class StopwatchTest {
         assertThat(fRecord.fStatus, is(TestStatus.SKIPPED));
         assertTrue("timeSpent > 0", fRecord.fDuration > 0);
         assertThat(fRecord.fDuration, is(fFinishedRecord.fDuration));
+    }
+
+    @Test
+    public void wrongDuration() {
+        Result result= JUnitCore.runClasses(WrongDurationTest.class);
+        assertTrue(result.wasSuccessful());
+    }
+
+    @Test
+    public void duration() {
+        Result result= JUnitCore.runClasses(DurationTest.class);
+        assertTrue(result.wasSuccessful());
     }
 }

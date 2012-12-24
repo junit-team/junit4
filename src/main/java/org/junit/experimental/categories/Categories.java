@@ -226,21 +226,17 @@ public class Categories extends Suite {
                     }
                 }
             }
-
-            // Couldn't be excluded, and with no suite's included categories treated as should run.
+            
             if (fIncluded.isEmpty()) {
+                // Couldn't be excluded, and with no suite's included categories treated as should run.
                 return true;
-            }
-
-            if (!fIncluded.isEmpty()) {
+            } else {
                 if (fIncludedAny) {
                     return matchesAnyParentCategories(childCategories, fIncluded);
                 } else {
                     return matchesAllParentCategories(childCategories, fIncluded);
                 }
             }
-
-            return false;
         }
 
         /**
