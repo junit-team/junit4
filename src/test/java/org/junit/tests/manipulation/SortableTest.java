@@ -1,6 +1,7 @@
 package org.junit.tests.manipulation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.util.Comparator;
 
@@ -80,6 +81,11 @@ public class SortableTest {
             Request randomly = Request.aClass(SortMe.class).sortWith(Sorter.RANDOM);
 
             new JUnitCore().run(randomly);
+            String s = log;
+            do {
+            	new JUnitCore().run(randomly);
+            } while (s.equals(log));
+            assertNotEquals(s, log);
         }
 
         @RunWith(Enclosed.class)
@@ -140,6 +146,11 @@ public class SortableTest {
             Request randomly = Request.aClass(Enclosing.class).sortWith(Sorter.RANDOM);
 
             new JUnitCore().run(randomly);
+            String s = log;
+            do {
+            	new JUnitCore().run(randomly);
+            } while (s.equals(log));
+            assertNotEquals(s, log);
         }
     }
 
@@ -193,6 +204,11 @@ public class SortableTest {
             Request randomly = Request.aClass(SortMe.class).sortWith(Sorter.RANDOM);
 
             new JUnitCore().run(randomly);
+            String s = log;
+            do {
+            	new JUnitCore().run(randomly);
+            } while (s.equals(log));
+            assertNotEquals(s, log);
         }
     }
 
