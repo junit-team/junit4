@@ -13,6 +13,7 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
+import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 
 @RunWith(Enclosed.class)
@@ -74,6 +75,13 @@ public class SortableTest {
             assertEquals("cba", log);
         }
 
+        @Test
+        public void sortingRandomlyWorksOnTestClassRunner() {
+            Request randomly = Request.aClass(SortMe.class).sortWith(Sorter.RANDOM);
+
+            new JUnitCore().run(randomly);
+        }
+
         @RunWith(Enclosed.class)
         public static class Enclosing {
             public static class A {
@@ -126,6 +134,13 @@ public class SortableTest {
             new JUnitCore().run(backward);
             assertEquals("BcBbBaAcAbAa", log);
         }
+        
+        @Test
+        public void sortingRandomlyWorksOnSuite() {
+            Request randomly = Request.aClass(Enclosing.class).sortWith(Sorter.RANDOM);
+
+            new JUnitCore().run(randomly);
+        }
     }
 
     public static class TestClassRunnerIsSortableWithSuiteMethod {
@@ -171,6 +186,13 @@ public class SortableTest {
 
             new JUnitCore().run(backward);
             assertEquals("cba", log);
+        }
+
+        @Test
+        public void sortingRandomlyWorksOnTestClassRunner() {
+            Request randomly = Request.aClass(SortMe.class).sortWith(Sorter.RANDOM);
+
+            new JUnitCore().run(randomly);
         }
     }
 

@@ -343,7 +343,11 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         for (T each : getFilteredChildren()) {
             sortChild(each);
         }
-        Collections.sort(getFilteredChildren(), comparator());
+        if (fSorter.equals(Sorter.RANDOM)) {
+        	Collections.shuffle(getFilteredChildren());
+        } else {
+        	Collections.sort(getFilteredChildren(), comparator());
+        }
     }
 
     //
