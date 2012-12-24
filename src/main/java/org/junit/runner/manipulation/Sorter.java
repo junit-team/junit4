@@ -27,7 +27,7 @@ public class Sorter implements Comparator<Description> {
      * <code>Comparator</code> and <code>Collections.sort()</code>. Therefore,
      * the comparison method in <code>Sorter.RANDOM</code> is not used. 
      */
-    public static Sorter RANDOM = new Sorter(new Comparator<Description>() {
+    public static final Sorter RANDOM = new Sorter(new Comparator<Description>() {
         public int compare(Description o1, Description o2) {
             return 0;
         }
