@@ -44,4 +44,14 @@ public class Sorter implements Comparator<Description> {
     public int compare(Description o1, Description o2) {
         return fComparator.compare(o1, o2);
     }
+    
+    @Override
+    public boolean equals(Object o) {
+    	return o == null ? fComparator == null : o.equals(fComparator);
+    }
+    
+    @Override
+    public int hashCode() {
+    	return fComparator == null ? 0 : fComparator.hashCode();
+    }
 }
