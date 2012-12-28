@@ -284,11 +284,11 @@ public class SortableTest {
 
 		/*
 		 * Default number of iterations to use. This should be a sufficiently
-		 * large number. Here the number of iterations chosen was (100 / (1/24)
+		 * large number. Here the number of iterations chosen was (17.36 / (1/24)
 		 * * 24), that is (<desired occurrences per observation> / <probability>
 		 * * <permutations possible>)
 		 */
-		private final long ITERATIONS= 57600;
+		private final long ITERATIONS= 10000;
 
 		/*
 		 * Default number of chi-square tests to run. This should be an odd
