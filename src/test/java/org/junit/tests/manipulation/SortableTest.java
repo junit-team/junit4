@@ -339,7 +339,7 @@ public class SortableTest {
 		private final double CHI_SQUARE_CV_ONE_MINUS_ALPHA= 18.13729674d;
 
 		/* Function performing the chi-square test. */
-		private boolean ChiSquareTest(Hashtable<String, Long> hashtable) {
+		private boolean chiSquareTest(Hashtable<String, Long> hashtable) {
 			double V= 0.0d;
 			Enumeration<String> keys= hashtable.keys();
 			while (keys.hasMoreElements()) {
@@ -373,7 +373,7 @@ public class SortableTest {
 					new JUnitCore().run(request);
 					hashtable.put(log, hashtable.get(log) + 1);
 				}
-				if (ChiSquareTest(hashtable)) {
+				if (chiSquareTest(hashtable)) {
 					passes+= 1.0d;
 				} else {
 					failures+= 1.0d;
