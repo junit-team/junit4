@@ -6,3 +6,5 @@ For more information, please visit:
 * [Download and Install guide](https://github.com/KentBeck/junit/wiki/Download-and-Install)
 * [Getting Started](https://github.com/KentBeck/junit/wiki/Getting-started)
 
+
+![Built on DEV@cloud](http://www.cloudbees.com/sites/default/files/Button-Built-on-CB-1.png)
