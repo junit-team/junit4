@@ -1,4 +1,4 @@
-# JUnit 4 ![Latest Build Status](https://junit.ci.cloudbees.com/job/JUnit/badge/icon)
+# JUnit 4
 JUnit is a simple framework to write repeatable tests. It is an instance of the xUnit architecture for unit testing frameworks.
 
 For more information, please visit:
@@ -6,3 +6,4 @@ For more information, please visit:
 * [Download and Install guide](https://github.com/KentBeck/junit/wiki/Download-and-Install)
 * [Getting Started](https://github.com/KentBeck/junit/wiki/Getting-started)
 
+[![Latest Build Status](https://junit.ci.cloudbees.com/job/JUnit/badge/icon)](https://junit.ci.cloudbees.com/)
