@@ -7,4 +7,4 @@ For more information, please visit:
 * [Getting Started](https://github.com/KentBeck/junit/wiki/Getting-started)
 
 
-![Built on DEV@cloud](http://www.cloudbees.com/sites/default/files/Button-Built-on-CB-1.png)
+[![Built on DEV@cloud](http://www.cloudbees.com/sites/default/files/Button-Built-on-CB-1.png)](http://www.cloudbees.com/foss/foss-dev.cb)
