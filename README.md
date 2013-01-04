@@ -6,3 +6,4 @@ For more information, please visit:
 * [Download and Install guide](https://github.com/KentBeck/junit/wiki/Download-and-Install)
 * [Getting Started](https://github.com/KentBeck/junit/wiki/Getting-started)
 
+[![Latest Build Status](https://junit.ci.cloudbees.com/job/JUnit/badge/icon)](https://junit.ci.cloudbees.com/)
