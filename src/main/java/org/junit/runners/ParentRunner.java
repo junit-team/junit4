@@ -10,12 +10,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.internal.AssumptionViolatedException;
+import org.junit.internal.Shuffler;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
@@ -26,6 +28,7 @@ import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
 import org.junit.runner.manipulation.NoTestsRemainException;
+import org.junit.runner.manipulation.Shufflable;
 import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
@@ -51,10 +54,12 @@ import org.junit.runners.model.TestClass;
  * @since 4.5
  */
 public abstract class ParentRunner<T> extends Runner implements Filterable,
-        Sortable {
+        Sortable, Shufflable {
     private final TestClass fTestClass;
 
     private Sorter fSorter = Sorter.NULL;
+    
+    private Shuffler fShuffler = null;
 
     private List<T> fFilteredChildren = null;
 
@@ -345,6 +350,18 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         }
         Collections.sort(getFilteredChildren(), comparator());
     }
+    
+    public void shuffle(Random random) {
+    	fShuffler = new Shuffler(random);
+    	for (T each : getFilteredChildren()) {
+    		shuffleChild(each);
+    	}
+    	if (random == null) {
+        	Collections.shuffle(getFilteredChildren());
+    	} else {
+        	Collections.shuffle(getFilteredChildren(), random);
+    	}
+    }
 
     //
     // Private implementation
@@ -367,6 +384,10 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
     private void sortChild(T child) {
         fSorter.apply(child);
+    }
+    
+    private void shuffleChild(T child) {
+    	fShuffler.apply(child);
     }
 
     private boolean shouldRun(Filter filter, T each) {
