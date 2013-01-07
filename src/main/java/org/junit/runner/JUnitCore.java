@@ -93,7 +93,7 @@ public class JUnitCore {
         }
         RunListener listener = new TextListener(system);
         addListener(listener);
-        Result result = run(classes.toArray(new Class[0]));
+        Result result = run(classes.toArray(new Class<?>[0]));
         for (Failure each : missingClasses) {
             result.getFailures().add(each);
         }

@@ -16,7 +16,7 @@
   <property name="testsrc" location="src/test/java" />
   <property name="testbin" location="${target}/test/java" />
   <property name="unjarred" 
-            value="**/*.jar, ${testfiles}, doc/**, README.html, .classpath, .project, cpl-v10.html" />
+            value="**/*.jar, ${testfiles}, doc/**, README.md, .classpath, .project, cpl-v10.html" />
 
   <property name="binjar" value="junit-${version}.jar" />
   <property name="srcjar" value="junit-${version}-src.jar" />
@@ -168,7 +168,7 @@
     <copy todir="${dist}/doc">
       <fileset dir="doc"/>
     </copy>
-    <copy file="README.html" tofile="${dist}/README.html" />
+    <copy file="README.md" tofile="${dist}/README.md" />
     <copy file="BUILDING" tofile="${dist}/BUILDING" />
     <copy file="cpl-v10.html" tofile="${dist}/cpl-v10.html" />
     <copy file="build.xml" tofile="${dist}/build.xml" />
