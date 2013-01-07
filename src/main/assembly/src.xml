@@ -43,7 +43,7 @@
             <lineEnding>unix</lineEnding>
             <fileMode>0644</fileMode>
             <includes>
-                <include>LICENSE</include>
+                <include>LICENSE.txt</include>
                 <include>cpl-v10.html</include>
                 <include>README.html</include>
                 <include>BUILDING</include>
