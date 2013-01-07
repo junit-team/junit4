@@ -73,19 +73,18 @@
 			the Snapshot Repository of the Maven Central.
 		-->
 		<snapshotRepository>
-			<id>sonatype-nexus-staging</id>
-			<name>upload.to.maven.central</name>
+			<id>maven-central-snapshots</id>
+			<name>upload.to.maven.central.snapshots</name>
 			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
 		</snapshotRepository>
 		<!--
-			The Release Repository is temporarily disabled until the Maven build process
-			is officially proved to deploy to the Maven Central.
+			Remote Release Repository.
+		-->
 		<repository>
-			<id>sonatype-nexus-staging</id>
+			<id>maven-central</id>
 			<name>upload.to.maven.central</name>
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
-		-->
 	</distributionManagement>
 	<build>
 		<resources>
@@ -261,36 +260,11 @@
 			</plugin>
 			<plugin>
 				<!--
-					This plugin fabricates a zip file including the traditional content
-					(sources, archives, Javadoc, and JUnit documentation)
-					before deploying.
-				-->
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.3</version>
-				<executions>
-					<execution>
-						<id>assembly ${project.artifactId}-${project.version}.zip</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<appendAssemblyId>false</appendAssemblyId>
-							<descriptors>
-								<descriptor>src/main/assembly/src.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<!--
 					The goal is to modify the SNAPSHOT version of development
 					to a release version. See the profile with id "checkSnapshot".
 					The plugin does not have a default phase to execute, thus you
 					can execute it in command line:
 					mvn -f pom.xml release:update-versions
-					See the Makefile.
 				-->
 				<artifactId>maven-release-plugin</artifactId>
 				<version>2.3.2</version>
