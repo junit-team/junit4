@@ -67,7 +67,7 @@
 		</dependency>
 	</dependencies>
 	<distributionManagement>
-		<downloadUrl>http://sourceforge.net/projects/junit/</downloadUrl>
+		<downloadUrl>https://github.com/KentBeck/junit/wiki/Download-and-Install</downloadUrl>
 		<!--
 			Currently the deployment is under development and enabled for
 			the Snapshot Repository of the Maven Central.
@@ -101,17 +101,12 @@
 		</resources>
 		<extensions>
 			<!--
-				Specify HTTP and FTP providers.
+				Specify HTTP providers.
 				The Maven Wagon is a transport abstraction.
 				For more information see http://maven.apache.org/wagon/index.html
 				and the guide
 				http://maven.apache.org/plugins/maven-deploy-plugin/examples/deploy-ssh-external.html
 			-->
-			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-ftp</artifactId>
-				<version>1.0</version>
-			</extension>
 			<extension>
 				<groupId>org.apache.maven.wagon</groupId>
 				<artifactId>wagon-http</artifactId>
@@ -268,13 +263,13 @@
 				<!--
 					This plugin fabricates a zip file including the traditional content
 					(sources, archives, Javadoc, and JUnit documentation)
-					before deploying to sourceforge.
+					before deploying.
 				-->
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.3</version>
 				<executions>
 					<execution>
-						<id>assembly ${project.artifactId}-${project.version}.zip for sourceforge</id>
+						<id>assembly ${project.artifactId}-${project.version}.zip</id>
 						<phase>package</phase>
 						<goals>
 							<goal>single</goal>
@@ -302,33 +297,6 @@
 				<configuration><!-- import release version without user's prompt if non-empty property value; otherwise prompt -->
 					<developmentVersion>${releaseVersion}</developmentVersion>
 				</configuration>
-			</plugin>
-			<plugin>
-				<!--
-					This wagon plugin uploads all jar archives and one zip file
-					to the sourceforge FTP server.
-					See the credentials for serve id "sourceforge-staging"
-					in src/main/config/settings.xml   .
-				-->
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>wagon-maven-plugin</artifactId>
-				<version>1.0-beta-4</version>
-				<executions>
-					<execution>
-						<id>upload-to-sourceforge</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>upload</goal>
-						</goals>
-						<configuration>
-							<serverId>sourceforge-staging</serverId>
-							<fromDir>${project.build.directory}</fromDir>
-							<includes>*.zip,*.jar</includes>
-							<url>ftp://upload.sourceforge.net/</url>
-							<toDir>incoming</toDir>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>

@@ -38,15 +38,5 @@
 			</httpConfiguration>
 		</configuration>
     </server>
-	<server>
-		<id>sourceforge-staging</id>
-		<username>anonymous</username>
-		<password>david@saff.net</password>
-		<filePermissions>664</filePermissions>
-		<directoryPermissions>775</directoryPermissions>
-		<configuration>
-			<timeout>15000</timeout> <!-- 15 seconds -->
-		</configuration>
-    </server>
   </servers>
 </settings>
