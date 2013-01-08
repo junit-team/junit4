@@ -221,7 +221,7 @@
             <plugin>
                 <!--
                 This plugin can package the main artifact's sources (src/main/java)
-                in to jar archive. See target/junit-*-sources.jar   .
+                in to jar archive. See target/junit-*-sources.jar.
                 -->
                 <artifactId>maven-source-plugin</artifactId>
                 <version>2.2</version>
