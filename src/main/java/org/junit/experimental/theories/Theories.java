@@ -96,8 +96,10 @@ public class Theories extends BlockJUnit4ClassRunner {
         public void evaluate() throws Throwable {
             runWithAssignment(Assignments.allUnassigned(
                     fTestMethod.getMethod(), getTestClass()));
-
-            if (successes == 0) {
+            
+            //if this test method is not annotated with Theory, then no successes is a valid case
+            boolean hasTheoryAnnotation = fTestMethod.getAnnotation(Theory.class) != null;
+            if (successes == 0 && hasTheoryAnnotation) {
                 Assert
                         .fail("Never found parameters that satisfied method assumptions.  Violated assumptions: "
                                 + fInvalidParameters);
