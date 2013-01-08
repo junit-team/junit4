@@ -238,8 +238,8 @@
             <plugin>
                 <!--
                 This plugin can generate Javadoc by a forked
-                process and then package the Javadoc in jar archive
-                target/junit-*-javadoc.jar    .
+                process and then package the Javadoc
+                in jar archive target/junit-*-javadoc.jar.
                 -->
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.8.1</version>
