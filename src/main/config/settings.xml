@@ -1,4 +1,10 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    The JUnit build system is using this file.
+    All users should ignore it.
+
+    Settings Reference: http://maven.apache.org/ref/3.0.4/maven-settings/settings.html
+-->
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" 
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
