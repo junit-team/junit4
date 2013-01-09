@@ -17,32 +17,29 @@ import org.junit.runners.model.InitializationError;
 public class AssumingInTheoriesTest {
 
 	@Test
-	public void noTheoryAnnotationMeansAssumeShouldIgnore(){
+	public void noTheoryAnnotationMeansAssumeShouldIgnore() {
 		Assume.assumeTrue(false);
 	}
 
 	@Test
-	public void theoryMeansOnlyAssumeShouldFail() throws InitializationError{
-		
+	public void theoryMeansOnlyAssumeShouldFail() throws InitializationError {
 		JUnitCore junitRunner = new JUnitCore();
 		Runner theoryRunner = new Theories(TheoryWithNoUnassumedParameters.class);
 		Request request = Request.runner(theoryRunner);
 		Result result = junitRunner.run(request);
-		Assert.assertEquals("A theory with no valid parameters did not fail.", 1, result.getFailureCount());
-		
+		Assert.assertEquals(1, result.getFailureCount());
 	}
 
 	/**
 	 * Simple class that SHOULD fail because no parameters are met.
 	 */
-	public static class TheoryWithNoUnassumedParameters{
+	public static class TheoryWithNoUnassumedParameters {
 		
 		@DataPoint 
 		public final static boolean FALSE = false;
 		
 		@Theory
-		public void theoryWithNoUnassumedParameters(boolean value)
-		{
+		public void theoryWithNoUnassumedParameters(boolean value) {
 			Assume.assumeTrue(value);
 		}
 	}
