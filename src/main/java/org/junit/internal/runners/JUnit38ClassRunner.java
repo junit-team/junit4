@@ -1,5 +1,7 @@
 package org.junit.internal.runners;
 
+import java.util.Random;
+
 import junit.extensions.TestDecorator;
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
@@ -13,12 +15,13 @@ import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
 import org.junit.runner.manipulation.NoTestsRemainException;
+import org.junit.runner.manipulation.Shufflable;
 import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
-public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
+public class JUnit38ClassRunner extends Runner implements Filterable, Sortable, Shufflable {
     private final class OldTestClassAdaptingListener implements
             TestListener {
         private final RunNotifier fNotifier;
@@ -147,6 +150,13 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
         if (getTest() instanceof Sortable) {
             Sortable adapter = (Sortable) getTest();
             adapter.sort(sorter);
+        }
+    }
+
+    public void shuffle(Random random) {
+        if (getTest() instanceof Shufflable) {
+            Shufflable adapter = (Shufflable) getTest();
+            adapter.shuffle(random);
         }
     }
 

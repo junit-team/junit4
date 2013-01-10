@@ -1,11 +1,13 @@
 package org.junit.runner;
 
 import java.util.Comparator;
+import java.util.Random;
 
 import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
 import org.junit.internal.requests.ClassRequest;
 import org.junit.internal.requests.FilterRequest;
 import org.junit.internal.requests.SortingRequest;
+import org.junit.internal.requests.ShufflingRequest;
 import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runners.model.InitializationError;
@@ -167,5 +169,27 @@ public abstract class Request {
      */
     public Request sortWith(Comparator<Description> comparator) {
         return new SortingRequest(this, comparator);
+    }
+
+    /**
+     * Returns a Request whose Tests are shuffled in a random order using a
+     * default source of randomness
+     * 
+     * @return a Request with shuffled Tests
+     */
+    public Request shuffled() {
+        return new ShufflingRequest(this, null);
+    }
+
+    /**
+     * Returns a Request whose Tests are shuffled in a random order using a
+     * given Random as a source of randomness.
+     * 
+     * @param source
+     *            of randomness
+     * @return a Request with shuffled Tests
+     */
+    public Request shuffled(Random random) {
+        return new ShufflingRequest(this, random);
     }
 }
