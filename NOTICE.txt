@@ -3,7 +3,7 @@
    ===================================================================================
 
  This product depends on software developed by Java Hamcrest
- (http://http://code.google.com/p/hamcrest/).
+ (http://code.google.com/p/hamcrest/).
 
 
 
