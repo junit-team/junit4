@@ -18,9 +18,12 @@ public abstract class PotentialAssignment {
             }
 
             @Override
-            public String getDescription()
-                    throws CouldNotGenerateValueException {
-                return name;
+            public String getDescription() throws CouldNotGenerateValueException {
+            	if (value.getClass().isEnum()) {
+            		return value.toString();
+            	} else {
+            		return name;
+            	}
             }
         };
     }
