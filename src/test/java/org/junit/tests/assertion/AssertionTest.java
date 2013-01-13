@@ -619,6 +619,8 @@ public class AssertionTest {
         assertNotEquals("The values should be different", 1L, 2L);
         assertNotEquals(1.0, 2.0, 0);
         assertNotEquals("The values should be different", 1.0, 2.0, 0);
+        assertNotEquals(1.0f, 2.0f, 0f);
+        assertNotEquals("The values should be different", 1.0f, 2.0f, 0f);
     }
 
     @Test(expected = AssertionError.class)
@@ -627,7 +629,17 @@ public class AssertionTest {
     }
 
     @Test(expected = AssertionError.class)
+    public void assertNotEqualsConsidersFloatDeltaCorrectly() {
+        assertNotEquals(1.0f, 0.75f, 0.25f);
+    }
+
+    @Test(expected = AssertionError.class)
     public void assertNotEqualsIgnoresDeltaOnNaN() {
         assertNotEquals(Double.NaN, Double.NaN, 1);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void assertNotEqualsIgnoresFloatDeltaOnNaN() {
+        assertNotEquals(Float.NaN, Float.NaN, 1f);
     }
 }
