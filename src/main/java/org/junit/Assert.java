@@ -147,32 +147,32 @@ public class Assert {
     /**
      * Asserts that two objects are <b>not</b> equals. If they are, an
      * {@link AssertionError} is thrown with the given message. If
-     * <code>first</code> and <code>second</code> are <code>null</code>,
+     * <code>unexpected</code> and <code>actual</code> are <code>null</code>,
      * they are considered equal.
      *
      * @param message the identifying message for the {@link AssertionError} (<code>null</code>
      * okay)
-     * @param first first value to check
-     * @param second the value to check against <code>first</code>
+     * @param unexpected unexpected value to check
+     * @param actual the value to check against <code>unexpected</code>
      */
-    static public void assertNotEquals(String message, Object first,
-            Object second) {
-        if (equalsRegardingNull(first, second)) {
-            failEquals(message, first);
+    static public void assertNotEquals(String message, Object unexpected,
+            Object actual) {
+        if (equalsRegardingNull(unexpected, actual)) {
+            failEquals(message, actual);
         }
     }
 
     /**
      * Asserts that two objects are <b>not</b> equals. If they are, an
      * {@link AssertionError} without a message is thrown. If
-     * <code>first</code> and <code>second</code> are <code>null</code>,
+     * <code>unexpected</code> and <code>actual</code> are <code>null</code>,
      * they are considered equal.
      *
-     * @param first first value to check
-     * @param second the value to check against <code>first</code>
+     * @param unexpected unexpected value to check
+     * @param actual the value to check against <code>unexpected</code>
      */
-    static public void assertNotEquals(Object first, Object second) {
-        assertNotEquals(null, first, second);
+    static public void assertNotEquals(Object unexpected, Object actual) {
+        assertNotEquals(null, unexpected, actual);
     }
 
     private static void failEquals(String message, Object actual) {
@@ -191,76 +191,76 @@ public class Assert {
      *
      * @param message the identifying message for the {@link AssertionError} (<code>null</code>
      * okay)
-     * @param first first value to check
-     * @param second the value to check against <code>first</code>
+     * @param unexpected unexpected value to check
+     * @param actual the value to check against <code>unexpected</code>
      */
-    static public void assertNotEquals(String message, long first, long second) {
-        assertNotEquals(message, (Long) first, (Long) second);
+    static public void assertNotEquals(String message, long unexpected, long actual) {
+        assertNotEquals(message, (Long) unexpected, (Long) actual);
     }
 
     /**
      * Asserts that two longs are <b>not</b> equals. If they are, an
      * {@link AssertionError} without a message is thrown.
      *
-     * @param first first value to check
-     * @param second the value to check against <code>first</code>
+     * @param unexpected unexpected value to check
+     * @param actual the value to check against <code>unexpected</code>
      */
-    static public void assertNotEquals(long first, long second) {
-        assertNotEquals(null, first, second);
+    static public void assertNotEquals(long unexpected, long actual) {
+        assertNotEquals(null, unexpected, actual);
     }
 
     /**
      * Asserts that two doubles are <b>not</b> equal to within a positive delta.
      * If they are, an {@link AssertionError} is thrown with the given
-     * message. If the expected value is infinity then the delta value is
+     * message. If the unexpected value is infinity then the delta value is
      * ignored. NaNs are considered equal:
      * <code>assertNotEquals(Double.NaN, Double.NaN, *)</code> fails
      *
      * @param message the identifying message for the {@link AssertionError} (<code>null</code>
      * okay)
-     * @param expected expected value
-     * @param actual the value to check against <code>expected</code>
-     * @param delta the maximum delta between <code>expected</code> and
+     * @param unexpected unexpected value
+     * @param actual the value to check against <code>unexpected</code>
+     * @param delta the maximum delta between <code>unexpected</code> and
      * <code>actual</code> for which both numbers are still
      * considered equal.
      */
-    static public void assertNotEquals(String message, double expected,
+    static public void assertNotEquals(String message, double unexpected,
             double actual, double delta) {
-        if (!doubleIsDifferent(expected, actual, delta)) {
-            failEquals(message, new Double(expected));
+        if (!doubleIsDifferent(unexpected, actual, delta)) {
+            failEquals(message, new Double(actual));
         }
     }
 
     /**
      * Asserts that two doubles are <b>not</b> equal to within a positive delta.
-     * If they are, an {@link AssertionError} is thrown. If the expected
+     * If they are, an {@link AssertionError} is thrown. If the unexpected
      * value is infinity then the delta value is ignored.NaNs are considered
      * equal: <code>assertNotEquals(Double.NaN, Double.NaN, *)</code> fails
      *
-     * @param expected expected value
-     * @param actual the value to check against <code>expected</code>
-     * @param delta the maximum delta between <code>expected</code> and
+     * @param unexpected unexpected value
+     * @param actual the value to check against <code>unexpected</code>
+     * @param delta the maximum delta between <code>unexpected</code> and
      * <code>actual</code> for which both numbers are still
      * considered equal.
      */
-    static public void assertNotEquals(double expected, double actual, double delta) {
-        assertNotEquals(null, expected, actual, delta);
+    static public void assertNotEquals(double unexpected, double actual, double delta) {
+        assertNotEquals(null, unexpected, actual, delta);
     }
 
     /**
      * Asserts that two floats are <b>not</b> equal to within a positive delta.
-     * If they are, an {@link AssertionError} is thrown. If the expected
+     * If they are, an {@link AssertionError} is thrown. If the unexpected
      * value is infinity then the delta value is ignored.NaNs are considered
      * equal: <code>assertNotEquals(Float.NaN, Float.NaN, *)</code> fails
      *
-     * @param expected expected value
-     * @param actual the value to check against <code>expected</code>
-     * @param delta the maximum delta between <code>expected</code> and
+     * @param unexpected unexpected value
+     * @param actual the value to check against <code>unexpected</code>
+     * @param delta the maximum delta between <code>unexpected</code> and
      * <code>actual</code> for which both numbers are still
      * considered equal.
      */
-    static public void assertNotEquals(float expected, float actual, float delta) {
-        assertNotEquals(null, expected, actual, delta);
+    static public void assertNotEquals(float unexpected, float actual, float delta) {
+        assertNotEquals(null, unexpected, actual, delta);
     }
 
     /**
@@ -536,22 +536,22 @@ public class Assert {
     /**
      * Asserts that two floats are <b>not</b> equal to within a positive delta.
      * If they are, an {@link AssertionError} is thrown with the given
-     * message. If the expected value is infinity then the delta value is
+     * message. If the unexpected value is infinity then the delta value is
      * ignored. NaNs are considered equal:
      * <code>assertNotEquals(Float.NaN, Float.NaN, *)</code> fails
      *
      * @param message the identifying message for the {@link AssertionError} (<code>null</code>
      * okay)
-     * @param expected expected value
-     * @param actual the value to check against <code>expected</code>
-     * @param delta the maximum delta between <code>expected</code> and
+     * @param unexpected unexpected value
+     * @param actual the value to check against <code>unexpected</code>
+     * @param delta the maximum delta between <code>unexpected</code> and
      * <code>actual</code> for which both numbers are still
      * considered equal.
      */
-    static public void assertNotEquals(String message, float expected,
+    static public void assertNotEquals(String message, float unexpected,
             float actual, float delta) {
-        if (!floatIsDifferent(expected, actual, delta)) {
-            failEquals(message, new Float(expected));
+        if (!floatIsDifferent(unexpected, actual, delta)) {
+            failEquals(message, new Float(actual));
         }
     }
 
