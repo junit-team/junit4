@@ -16,6 +16,17 @@ import org.junit.runners.model.InitializationError;
 public class TheoryFailureMessagesTest {
 	
 	@Test
+	public void failuresUseNameAndValueWithNullValues() throws InitializationError {
+		Result result = runTheoryTest(TestWithBadNullValue.class);
+		
+		Assert.assertEquals(1, result.getFailureCount());
+		
+		String errorMessage = result.getFailures().get(0).getException().getMessage();
+		Assert.assertThat(errorMessage, containsString("badDatapoint"));
+		Assert.assertThat(errorMessage, containsString("null"));
+	}	
+	
+	@Test
 	public void failuresUseNameAndValueWithSingleValues() throws InitializationError {
 		Result result = runTheoryTest(TestWithBadValue.class);
 		
@@ -53,6 +64,21 @@ public class TheoryFailureMessagesTest {
             throw new IllegalArgumentException("Bad param");
         }
     }
+    
+    public static class TestWithBadNullValue {
+		
+	    @DataPoint
+	    public static String oneDatapoint = "good value";
+	    
+	    @DataPoint 
+	    public static String badDatapoint = null;
+	
+	    @Theory
+	    public void theoryTest(String param) {
+	    	methodUnderTest(param);
+	    }
+	    
+	}	
 	
 	public static class TestWithBadValue {
 		
