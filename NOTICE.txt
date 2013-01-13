@@ -2,10 +2,4 @@
    ==  Notices and attributions required by libraries that the project depends on   ==
    ===================================================================================
 
- This product depends on software developed by Java Hamcrest
- (http://code.google.com/p/hamcrest/).
-
-
-
-Standard Directory Layout in Maven
-http://maven.apache.org/guides/introduction/introduction-to-the-standard-directory-layout.html
+ The JUnit depends on Java Hamcrest (http://hamcrest.org/JavaHamcrest/).
