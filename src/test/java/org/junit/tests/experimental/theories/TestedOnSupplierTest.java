@@ -21,7 +21,7 @@ public class TestedOnSupplierTest {
     public void descriptionStatesParameterName() throws Exception {
         TestedOnSupplier supplier = new TestedOnSupplier();
         List<PotentialAssignment> assignments = supplier.getValueSources(signatureOfFoo());
-        assertThat(assignments.get(0).getDescription(), is("ints"));
+        assertThat(assignments.get(0).getDescription(), is("ints: 1"));
     }
 
     private ParameterSignature signatureOfFoo() throws NoSuchMethodException {
