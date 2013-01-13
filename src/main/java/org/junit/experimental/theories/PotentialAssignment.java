@@ -19,7 +19,7 @@ public abstract class PotentialAssignment {
 
             @Override
             public String getDescription() throws CouldNotGenerateValueException {
-        		return String.format("%s: %s", name, (value != null ? value.toString() : "null"));
+            	return String.format("%s: %s", name, value);
             }
         };
     }
