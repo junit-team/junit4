@@ -1,1 +1,121 @@
-<h2>Summary of Changes in version 4.11 [unreleased!]</h2>
+<h2>Summary of changes in version 4.11</h2>
+
+<h3>Matchers: Upgrade to Hamcrest 1.3</h3>
+
+<p>JUnit now uses the latest version of Hamcrest. Thus, you can use all the available matchers and benefit from an improved <code>assertThat</code> which will now print the mismatch description from the matcher when an assertion fails.</p>
+
+<h4>Example</h4>
+
+<pre><code>assertThat(Long.valueOf(1), instanceOf(Integer.class));
+</code></pre>
+
+<p>Old error message:</p>
+
+<pre><code>Expected: an instance of java.lang.Integer
+     got: &lt;1L&gt;
+</code></pre>
+
+<p>New error message:</p>
+
+<pre><code>Expected: an instance of java.lang.Integer
+     but: &lt;1L&gt; is a java.lang.Long
+</code></pre>
+
+<p>Hamcrest's new <code>FeatureMatcher</code> makes writing custom matchers that make use of custom mismatch descriptions quite easy:</p>
+
+<pre><code>@Test
+public void featureMatcher() throws Exception {
+    assertThat("Hello World!", length(is(0)));
+}
+
+private Matcher&lt;String&gt; length(Matcher&lt;? super Integer&gt; matcher) {
+    return new FeatureMatcher&lt;String, Integer&gt;(matcher, "a String of length that", "length") {
+        @Override
+        protected Integer featureValueOf(String actual) {
+            return actual.length();
+        }
+    };
+}
+</code></pre>
+
+<p>Running this test will return the following failure message:</p>
+
+<pre><code>Expected: a String of length that is &lt;0&gt;
+     but: length was &lt;12&gt;
+</code></pre>
+
+<p>Most of the matchers in <code>JUnitMatchers</code> have been deprecated. Please use <code>org.hamcrest.CoreMatchers</code> directly.</p>
+
+<h3>Parameterized Tests</h3>
+
+<p>In order to easily identify the individual test cases in a Parameterized test, you may provide a name using the <code>@Parameters</code> annotation. This name is allowed to contain placeholders that are replaced at runtime:</p>
+
+<ul>
+<li><code>{index}</code>: the current parameter index</li>
+<li><code>{0}</code>, <code>{1}</code>, …: the first, second, and so on, parameter value</li>
+</ul>
+
+<h4>Example</h4>
+
+<pre><code>@RunWith(Parameterized.class)
+public class FibonacciTest {
+
+    @Parameters(name = "{index}: fib({0})={1}")
+    public static Iterable&lt;Object[]&gt; data() {
+        return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
+                { 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
+    }
+
+    private int input;
+    private int expected;
+
+    public FibonacciTest(int input, int expected) {
+        this.input = input;
+        this.expected = expected;
+    }
+
+    @Test
+    public void test() {
+        assertEquals(expected, Fibonacci.compute(input));
+    }
+}
+</code></pre>
+
+<p>In the example given above, the <code>Parameterized</code> runner creates names like <code>[1: fib(3)=2]</code>. If you don't specify a name, the current parameter index will be used by default.</p>
+
+<h3>Test execution order</h3>
+
+<p>By design, JUnit does not specify the execution order of test method invocations. Until now, the methods were simply invoked in the order returned by the reflection API. However, using the JVM order is unwise since the Java platform does not specify any particular order, and in fact JDK 7 returns a more or less random order. Of course, well-written test code would not assume any order, but some does, and a predictable failure is better than a random failure on certain platforms.</p>
+
+<p>From now on, JUnit will by default use a deterministic, but not predictable, order (<code>MethodSorters.DEFAULT</code>). To change the test execution order simply annotate your test class using <code>@FixMethodOrder</code> and specify one of the available <code>MethodSorters</code>:</p>
+
+<ul>
+<li><p><code>@FixMethodOrder(MethodSorters.JVM)</code>: Leaves the test methods in the order returned by the JVM. This order may vary from run to run.</p></li>
+<li><p><code>@FixMethodOrder(MethodSorters.NAME_ASCENDING)</code>: Sorts the test methods by method name, in lexicographic order.</p></li>
+</ul>
+
+<h3>Maven artifacts</h3>
+
+<p>Up until now there were two Maven artifacts for JUnit: <code>junit:junit-dep</code> and <code>junit:junit</code>. From a Maven point-of-view only the former made sense because it did not contain the Hamcrest classes but declared a dependency to the Hamcrest Maven artifact. The latter included the Hamcrest classes which was very un-Maven-like.</p>
+
+<p>From this release on, you should use <code>junit:junit</code> which will be what <code>junit:junit-dep</code> used to. If you still reference <code>junit:junit-dep</code>, Maven will automatically relocate you to the new <code>junit:junit</code> and issue a warning for you to fix.</p>
+
+<h3>Rules</h3>
+
+<p>A number of improvements have been made to Rules:</p>
+
+<ul>
+<li><code>MethodRule</code> is no longer deprecated.</li>
+<li>Both <code>@Rule</code> and <code>@ClassRule</code> can now be used on methods that return a <code>TestRule</code>.</li>
+<li><code>ExpectedException</code> now always prints the stacktrace of the actual exception in case of failure.</li>
+<li>A parent folder can be specified for <code>TemporaryFolder</code>. In addition, the <code>newFile</code>/<code>newFolder</code> methods will now fail when the file or folder could not be created.</li>
+<li><code>TestWatcher</code> has a new template method called <code>skipped</code> that is invoked when a test is skipped due to a failed assumption.</li>
+</ul>
+
+<h3>Improvements to Assert and Assume</h3>
+
+<ul>
+<li><code>assertNotEquals</code> has been added to <code>Assert</code>.</li>
+<li><code>assertEquals</code> has been overloaded in order to check whether two floats are equal given a certain float delta.</li>
+<li>Most methods in <code>Assume</code> now allow to pass a custom message.</li>
+</ul>

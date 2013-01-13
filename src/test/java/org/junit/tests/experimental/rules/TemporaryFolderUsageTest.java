@@ -1,14 +1,19 @@
 package org.junit.tests.experimental.rules;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 /**
@@ -17,145 +22,178 @@ import org.junit.rules.TemporaryFolder;
  */
 public class TemporaryFolderUsageTest {
 
-	private TemporaryFolder tempFolder;
+    private TemporaryFolder tempFolder;
 
-	@Before
-	public void setUp() {
-		tempFolder= new TemporaryFolder();
-	}
+    @Rule
+    public final ExpectedException thrown = ExpectedException.none();
 
-	@After
-	public void tearDown() {
-		tempFolder.delete();
-	}
+    @Before
+    public void setUp() {
+        tempFolder = new TemporaryFolder();
+    }
 
-	@Test(expected= IllegalStateException.class)
-	public void getRootShouldThrowIllegalStateExceptionIfCreateWasNotInvoked() {
-		new TemporaryFolder().getRoot();
-	}
+    @After
+    public void tearDown() {
+        tempFolder.delete();
+    }
 
-	@Test(expected= IllegalStateException.class)
-	public void newFileThrowsIllegalStateExceptionIfCreateWasNotInvoked()
-			throws IOException {
-		new TemporaryFolder().newFile();
-	}
+    @Test(expected = IllegalStateException.class)
+    public void getRootShouldThrowIllegalStateExceptionIfCreateWasNotInvoked() {
+        new TemporaryFolder().getRoot();
+    }
 
-	@Test(expected= IllegalStateException.class)
-	public void newFileWithGivenNameThrowsIllegalStateExceptionIfCreateWasNotInvoked()
-			throws IOException {
-		new TemporaryFolder().newFile("MyFile.txt");
-	}
+    @Test(expected = IllegalStateException.class)
+    public void newFileThrowsIllegalStateExceptionIfCreateWasNotInvoked()
+            throws IOException {
+        new TemporaryFolder().newFile();
+    }
 
-	@Test(expected= IllegalStateException.class)
-	public void newFolderThrowsIllegalStateExceptionIfCreateWasNotInvoked()
-			throws IOException {
-		new TemporaryFolder().newFolder();
-	}
+    @Test(expected = IllegalStateException.class)
+    public void newFileWithGivenNameThrowsIllegalStateExceptionIfCreateWasNotInvoked()
+            throws IOException {
+        new TemporaryFolder().newFile("MyFile.txt");
+    }
 
-	@Test(expected= IllegalStateException.class)
-	public void newFolderWithGivenPathThrowsIllegalStateExceptionIfCreateWasNotInvoked() {
-		new TemporaryFolder().newFolder("level1", "leve2", "leve3");
-	}
+    @Test
+    public void newFileWithGivenFilenameThrowsIllegalArgumentExceptionIfFileExists() throws IOException {
+        tempFolder.create();
+        tempFolder.newFile("MyFile.txt");
 
-	@Test
-	public void createInitializesRootFolder() throws IOException {
-		tempFolder.create();
-		assertFileExists(tempFolder.getRoot());
-	}
+        thrown.expect(IOException.class);
+        thrown.expectMessage("a file with the name 'MyFile.txt' already exists in the test folder");
+        tempFolder.newFile("MyFile.txt");
+    }
 
-	@Test
-	public void deleteShouldDoNothingIfRootFolderWasNotInitialized() {
-		tempFolder.delete();
-	}
+    @Test(expected = IllegalStateException.class)
+    public void newFolderThrowsIllegalStateExceptionIfCreateWasNotInvoked()
+            throws IOException {
+        new TemporaryFolder().newFolder();
+    }
 
-	@Test
-	public void deleteRemovesRootFolder() throws IOException {
-		tempFolder.create();
-		tempFolder.delete();
-		assertFileDoesNotExist(tempFolder.getRoot());
-	}
+    @Test(expected = IllegalStateException.class)
+    public void newFolderWithGivenPathThrowsIllegalStateExceptionIfCreateWasNotInvoked() throws IOException {
+        new TemporaryFolder().newFolder("level1", "level2", "level3");
+    }
 
-	@Test
-	public void newRandomFileIsCreatedUnderRootFolder() throws IOException {
-		tempFolder.create();
+    @Test
+    public void newFolderWithGivenFolderThrowsIllegalArgumentExceptionIfFolderExists() throws IOException {
+        tempFolder.create();
+        tempFolder.newFolder("level1");
 
-		File f= tempFolder.newFile();
-		assertFileExists(f);
-		assertFileCreatedUnderRootFolder("Random file", f);
-	}
+        thrown.expect(IOException.class);
+        thrown.expectMessage("a folder with the name 'level1' already exists");
+        tempFolder.newFolder("level1");
+    }
 
-	@Test
-	public void newNamedFileIsCreatedUnderRootFolder() throws IOException {
-		final String fileName= "SampleFile.txt";
-		tempFolder.create();
+    @Test
+    public void newFolderWithGivenPathThrowsIllegalArgumentExceptionIfPathExists() throws IOException {
+        tempFolder.create();
+        tempFolder.newFolder("level1", "level2", "level3");
 
-		File f= tempFolder.newFile(fileName);
+        thrown.expect(IOException.class);
+        thrown.expectMessage("a folder with the name 'level3' already exists");
+        tempFolder.newFolder("level1", "level2", "level3");
+    }
 
-		assertFileExists(f);
-		assertFileCreatedUnderRootFolder("Named file", f);
-		assertThat("file name", f.getName(), equalTo(fileName));
-	}
+    @Test
+    public void createInitializesRootFolder() throws IOException {
+        tempFolder.create();
+        assertFileExists(tempFolder.getRoot());
+    }
 
-	@Test
-	public void newRandomFolderIsCreatedUnderRootFolder() throws IOException {
-		tempFolder.create();
+    @Test
+    public void deleteShouldDoNothingIfRootFolderWasNotInitialized() {
+        tempFolder.delete();
+    }
 
-		File f= tempFolder.newFolder();
-		assertFileExists(f);
-		assertFileCreatedUnderRootFolder("Random folder", f);
-	}
+    @Test
+    public void deleteRemovesRootFolder() throws IOException {
+        tempFolder.create();
+        tempFolder.delete();
+        assertFileDoesNotExist(tempFolder.getRoot());
+    }
 
-	@Test
-	public void newNestedFoldersCreatedUnderRootFolder() throws IOException {
-		tempFolder.create();
+    @Test
+    public void newRandomFileIsCreatedUnderRootFolder() throws IOException {
+        tempFolder.create();
 
-		File f= tempFolder.newFolder("top", "middle", "bottom");
-		assertFileExists(f);
-		assertParentFolderForFileIs(f, new File(tempFolder.getRoot(),
-				"top/middle"));
-		assertParentFolderForFileIs(f.getParentFile(),
-				new File(tempFolder.getRoot(), "top"));
-		assertFileCreatedUnderRootFolder("top", f.getParentFile()
-				.getParentFile());
-	}
+        File f = tempFolder.newFile();
+        assertFileExists(f);
+        assertFileCreatedUnderRootFolder("Random file", f);
+    }
 
-        @Test
-        public void canSetTheBaseFileForATemporaryFolder() throws IOException {
-                File tempDir = createTemporaryFolder();
+    @Test
+    public void newNamedFileIsCreatedUnderRootFolder() throws IOException {
+        final String fileName = "SampleFile.txt";
+        tempFolder.create();
 
-                TemporaryFolder folder = new TemporaryFolder(tempDir);
-                folder.create();
+        File f = tempFolder.newFile(fileName);
 
-                assertThat(tempDir, is(folder.getRoot().getParentFile()));
-        }
+        assertFileExists(f);
+        assertFileCreatedUnderRootFolder("Named file", f);
+        assertThat("file name", f.getName(), equalTo(fileName));
+    }
 
-        private File createTemporaryFolder() throws IOException {
-                File tempDir = File.createTempFile("junit", "tempFolder");
-                assertTrue("Unable to delete temporary file", tempDir.delete());
-                assertTrue("Unable to create temp directory", tempDir.mkdir());
-                return tempDir;
-        }
+    @Test
+    public void newRandomFolderIsCreatedUnderRootFolder() throws IOException {
+        tempFolder.create();
 
-        private void assertFileDoesNotExist(File file) {
-		checkFileExists("exists", file, false);
-	}
+        File f = tempFolder.newFolder();
+        assertFileExists(f);
+        assertFileCreatedUnderRootFolder("Random folder", f);
+    }
 
-	private void checkFileExists(String msg, File file, boolean exists) {
-		assertThat("File is null", file, is(notNullValue()));
-		assertThat("File '" + file.getAbsolutePath() + "' " + msg,
-				file.exists(), is(exists));
-	}
+    @Test
+    public void newNestedFoldersCreatedUnderRootFolder() throws IOException {
+        tempFolder.create();
 
-	private void assertFileExists(File file) {
-		checkFileExists("does not exist", file, true);
-	}
+        File f = tempFolder.newFolder("top", "middle", "bottom");
+        assertFileExists(f);
+        assertParentFolderForFileIs(f, new File(tempFolder.getRoot(),
+                "top/middle"));
+        assertParentFolderForFileIs(f.getParentFile(),
+                new File(tempFolder.getRoot(), "top"));
+        assertFileCreatedUnderRootFolder("top", f.getParentFile()
+                .getParentFile());
+    }
 
-	private void assertFileCreatedUnderRootFolder(String msg, File f) {
-		assertParentFolderForFileIs(f, tempFolder.getRoot());
-	}
+    @Test
+    public void canSetTheBaseFileForATemporaryFolder() throws IOException {
+        File tempDir = createTemporaryFolder();
 
-	private void assertParentFolderForFileIs(File f, File parentFolder) {
-		assertThat("'" + f.getAbsolutePath() + "': not under root",
-				f.getParentFile(), is(parentFolder));
-	}
+        TemporaryFolder folder = new TemporaryFolder(tempDir);
+        folder.create();
+
+        assertThat(tempDir, is(folder.getRoot().getParentFile()));
+    }
+
+    private File createTemporaryFolder() throws IOException {
+        File tempDir = File.createTempFile("junit", "tempFolder");
+        assertTrue("Unable to delete temporary file", tempDir.delete());
+        assertTrue("Unable to create temp directory", tempDir.mkdir());
+        return tempDir;
+    }
+
+    private void assertFileDoesNotExist(File file) {
+        checkFileExists("exists", file, false);
+    }
+
+    private void checkFileExists(String msg, File file, boolean exists) {
+        assertThat("File is null", file, is(notNullValue()));
+        assertThat("File '" + file.getAbsolutePath() + "' " + msg,
+                file.exists(), is(exists));
+    }
+
+    private void assertFileExists(File file) {
+        checkFileExists("does not exist", file, true);
+    }
+
+    private void assertFileCreatedUnderRootFolder(String msg, File f) {
+        assertParentFolderForFileIs(f, tempFolder.getRoot());
+    }
+
+    private void assertParentFolderForFileIs(File f, File parentFolder) {
+        assertThat("'" + f.getAbsolutePath() + "': not under root",
+                f.getParentFile(), is(parentFolder));
+    }
 }

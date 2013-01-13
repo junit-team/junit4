@@ -14,72 +14,73 @@ import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 
 public class JUnit4TestAdapter implements Test, Filterable, Sortable, Describable {
-	private final Class<?> fNewTestClass;
+    private final Class<?> fNewTestClass;
 
-	private final Runner fRunner;
+    private final Runner fRunner;
 
-	private final JUnit4TestAdapterCache fCache;
+    private final JUnit4TestAdapterCache fCache;
 
-	public JUnit4TestAdapter(Class<?> newTestClass) {
-		this(newTestClass, JUnit4TestAdapterCache.getDefault());
-	}
+    public JUnit4TestAdapter(Class<?> newTestClass) {
+        this(newTestClass, JUnit4TestAdapterCache.getDefault());
+    }
 
-	public JUnit4TestAdapter(final Class<?> newTestClass,
-			JUnit4TestAdapterCache cache) {
-		fCache = cache;
-		fNewTestClass = newTestClass;
-		fRunner = Request.classWithoutSuiteMethod(newTestClass).getRunner();
-	}
+    public JUnit4TestAdapter(final Class<?> newTestClass, JUnit4TestAdapterCache cache) {
+        fCache = cache;
+        fNewTestClass = newTestClass;
+        fRunner = Request.classWithoutSuiteMethod(newTestClass).getRunner();
+    }
 
-	public int countTestCases() {
-		return fRunner.testCount();
-	}
+    public int countTestCases() {
+        return fRunner.testCount();
+    }
 
-	public void run(TestResult result) {
-		fRunner.run(fCache.getNotifier(result, this));
-	}
+    public void run(TestResult result) {
+        fRunner.run(fCache.getNotifier(result, this));
+    }
 
-	// reflective interface for Eclipse
-	public List<Test> getTests() {
-		return fCache.asTestList(getDescription());
-	}
+    // reflective interface for Eclipse
+    public List<Test> getTests() {
+        return fCache.asTestList(getDescription());
+    }
 
-	// reflective interface for Eclipse
-	public Class<?> getTestClass() {
-		return fNewTestClass;
-	}
-	
-	public Description getDescription() {
-		Description description= fRunner.getDescription();		
-		return removeIgnored(description);
-	}
+    // reflective interface for Eclipse
+    public Class<?> getTestClass() {
+        return fNewTestClass;
+    }
 
-	private Description removeIgnored(Description description) {
-		if (isIgnored(description))
-			return Description.EMPTY;
-		Description result = description.childlessCopy();
-		for (Description each : description.getChildren()) {
-			Description child= removeIgnored(each);
-			if (! child.isEmpty())
-				result.addChild(child);
-		}
-		return result;
-	}
+    public Description getDescription() {
+        Description description = fRunner.getDescription();
+        return removeIgnored(description);
+    }
 
-	private boolean isIgnored(Description description) {
-		return description.getAnnotation(Ignore.class) != null;
-	}
+    private Description removeIgnored(Description description) {
+        if (isIgnored(description)) {
+            return Description.EMPTY;
+        }
+        Description result = description.childlessCopy();
+        for (Description each : description.getChildren()) {
+            Description child = removeIgnored(each);
+            if (!child.isEmpty()) {
+                result.addChild(child);
+            }
+        }
+        return result;
+    }
 
-	@Override
-	public String toString() {
-		return fNewTestClass.getName();
-	}
+    private boolean isIgnored(Description description) {
+        return description.getAnnotation(Ignore.class) != null;
+    }
 
-	public void filter(Filter filter) throws NoTestsRemainException {
-		filter.apply(fRunner);
-	}
+    @Override
+    public String toString() {
+        return fNewTestClass.getName();
+    }
 
-	public void sort(Sorter sorter) {
-		sorter.apply(fRunner);
-	}
+    public void filter(Filter filter) throws NoTestsRemainException {
+        filter.apply(fRunner);
+    }
+
+    public void sort(Sorter sorter) {
+        sorter.apply(fRunner);
+    }
 }

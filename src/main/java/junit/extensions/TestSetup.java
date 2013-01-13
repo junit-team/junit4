@@ -11,32 +11,32 @@ import junit.framework.TestResult;
  */
 public class TestSetup extends TestDecorator {
 
-	public TestSetup(Test test) {
-		super(test);
-	}
+    public TestSetup(Test test) {
+        super(test);
+    }
 
-	@Override
-	public void run(final TestResult result) {
-		Protectable p= new Protectable() {
-			public void protect() throws Exception {
-				setUp();
-				basicRun(result);
-				tearDown();
-			}
-		};
-		result.runProtected(this, p);
-	}
+    @Override
+    public void run(final TestResult result) {
+        Protectable p = new Protectable() {
+            public void protect() throws Exception {
+                setUp();
+                basicRun(result);
+                tearDown();
+            }
+        };
+        result.runProtected(this, p);
+    }
 
-	/**
-	 * Sets up the fixture. Override to set up additional fixture state.
-	 */
-	protected void setUp() throws Exception {
-	}
+    /**
+     * Sets up the fixture. Override to set up additional fixture state.
+     */
+    protected void setUp() throws Exception {
+    }
 
-	/**
-	 * Tears down the fixture. Override to tear down the additional fixture
-	 * state.
-	 */
-	protected void tearDown() throws Exception {
-	}
+    /**
+     * Tears down the fixture. Override to tear down the additional fixture
+     * state.
+     */
+    protected void tearDown() throws Exception {
+    }
 }

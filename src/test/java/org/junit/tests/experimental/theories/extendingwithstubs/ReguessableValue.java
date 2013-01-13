@@ -7,10 +7,10 @@ import org.junit.internal.AssumptionViolatedException;
 
 public abstract class ReguessableValue extends PotentialAssignment {
 
-	public ReguessableValue() {
-		super();
-	}
+    public ReguessableValue() {
+        super();
+    }
 
-	public abstract List<ReguessableValue> reguesses(
-			AssumptionViolatedException e);
+    public abstract List<ReguessableValue> reguesses(
+            AssumptionViolatedException e);
 }
