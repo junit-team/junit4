@@ -210,7 +210,7 @@ public class Assert {
     }
 
     /**
-     * Asserts that two doubles or floats are <b>not</b> equal to within a positive delta.
+     * Asserts that two doubles are <b>not</b> equal to within a positive delta.
      * If they are, an {@link AssertionError} is thrown with the given
      * message. If the expected value is infinity then the delta value is
      * ignored. NaNs are considered equal:
@@ -218,33 +218,49 @@ public class Assert {
      *
      * @param message the identifying message for the {@link AssertionError} (<code>null</code>
      * okay)
-     * @param first first value to check
-     * @param second the value to check against <code>first</code>
+     * @param expected expected value
+     * @param actual the value to check against <code>expected</code>
      * @param delta the maximum delta between <code>expected</code> and
      * <code>actual</code> for which both numbers are still
      * considered equal.
      */
-    static public void assertNotEquals(String message, double first,
-            double second, double delta) {
-        if (!doubleIsDifferent(first, second, delta)) {
-            failEquals(message, new Double(first));
+    static public void assertNotEquals(String message, double expected,
+            double actual, double delta) {
+        if (!doubleIsDifferent(expected, actual, delta)) {
+            failEquals(message, new Double(expected));
         }
     }
 
     /**
-     * Asserts that two doubles or floats are <b>not</b> equal to within a positive delta.
+     * Asserts that two doubles are <b>not</b> equal to within a positive delta.
      * If they are, an {@link AssertionError} is thrown. If the expected
      * value is infinity then the delta value is ignored.NaNs are considered
      * equal: <code>assertNotEquals(Double.NaN, Double.NaN, *)</code> fails
      *
-     * @param first first value to check
-     * @param second the value to check against <code>first</code>
+     * @param expected expected value
+     * @param actual the value to check against <code>expected</code>
      * @param delta the maximum delta between <code>expected</code> and
      * <code>actual</code> for which both numbers are still
      * considered equal.
      */
-    static public void assertNotEquals(double first, double second, double delta) {
-        assertNotEquals(null, first, second, delta);
+    static public void assertNotEquals(double expected, double actual, double delta) {
+        assertNotEquals(null, expected, actual, delta);
+    }
+
+    /**
+     * Asserts that two floats are <b>not</b> equal to within a positive delta.
+     * If they are, an {@link AssertionError} is thrown. If the expected
+     * value is infinity then the delta value is ignored.NaNs are considered
+     * equal: <code>assertNotEquals(Float.NaN, Float.NaN, *)</code> fails
+     *
+     * @param expected expected value
+     * @param actual the value to check against <code>expected</code>
+     * @param delta the maximum delta between <code>expected</code> and
+     * <code>actual</code> for which both numbers are still
+     * considered equal.
+     */
+    static public void assertNotEquals(float expected, float actual, float delta) {
+        assertNotEquals(null, expected, actual, delta);
     }
 
     /**
@@ -512,11 +528,30 @@ public class Assert {
      */
     static public void assertEquals(String message, float expected,
             float actual, float delta) {
-        if (Float.compare(expected, actual) == 0) {
-            return;
-        }
-        if (!(Math.abs(expected - actual) <= delta)) {
+        if (floatIsDifferent(expected, actual, delta)) {
             failNotEquals(message, new Float(expected), new Float(actual));
+        }
+    }
+
+    /**
+     * Asserts that two floats are <b>not</b> equal to within a positive delta.
+     * If they are, an {@link AssertionError} is thrown with the given
+     * message. If the expected value is infinity then the delta value is
+     * ignored. NaNs are considered equal:
+     * <code>assertNotEquals(Float.NaN, Float.NaN, *)</code> fails
+     *
+     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
+     * okay)
+     * @param expected expected value
+     * @param actual the value to check against <code>expected</code>
+     * @param delta the maximum delta between <code>expected</code> and
+     * <code>actual</code> for which both numbers are still
+     * considered equal.
+     */
+    static public void assertNotEquals(String message, float expected,
+            float actual, float delta) {
+        if (!floatIsDifferent(expected, actual, delta)) {
+            failEquals(message, new Float(expected));
         }
     }
 
@@ -525,6 +560,17 @@ public class Assert {
             return false;
         }
         if ((Math.abs(d1 - d2) <= delta)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    static private boolean floatIsDifferent(float f1, float f2, float delta) {
+        if (Float.compare(f1, f2) == 0) {
+            return false;
+        }
+        if ((Math.abs(f1 - f2) <= delta)) {
             return false;
         }
 
