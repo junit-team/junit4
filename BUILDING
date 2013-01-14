@@ -3,7 +3,7 @@ BUILDING FROM GITHUB:
 
 git clone https://github.com/KentBeck/junit.git
 cd junit
-ant dist
+mvn install
 
 BUILDING FROM JARS OR ZIPS:
 ===========================
