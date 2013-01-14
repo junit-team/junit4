@@ -7,3 +7,6 @@ For more information, please visit:
 * [Getting Started](https://github.com/KentBeck/junit/wiki/Getting-started)
 
 [![Latest Build Status](https://junit.ci.cloudbees.com/job/JUnit/badge/icon)](https://junit.ci.cloudbees.com/)
+
+[![Built on DEV@cloud](http://www.cloudbees.com/sites/default/files/Button-Built-on-CB-1.png)](http://www.cloudbees.com/foss/foss-dev.cb)
+
