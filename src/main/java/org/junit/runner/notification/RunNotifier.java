@@ -188,4 +188,12 @@ public class RunNotifier {
     public void pleaseStop() {
         fPleaseStop = true;
     }
+
+    /**
+     * Internal use only. The Result's listener must be first.
+     */
+    @Deprecated
+    public void addFirstListener(RunListener listener) {
+        fListeners.add(0, listener);
+    }
 }
