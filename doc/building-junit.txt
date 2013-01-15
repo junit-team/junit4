@@ -12,7 +12,7 @@ Steps to build junit:
   - Perform Maven Release in Jenkins
     - (to deploy snapshot version) mvn clean deploy
     - (to deploy specified release version) mvn clean release:prepare release:perform
-    - Promote 
+  - Promote the maven artifacts and close staging repository if release successfully
 - Tedious:
   - Update SourceForge if major release
   - Update javadocs on github site (and "latest" link)
