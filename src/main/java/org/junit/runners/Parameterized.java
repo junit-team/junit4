@@ -5,7 +5,9 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -162,7 +164,13 @@ public class Parameterized extends Suite {
         int value() default 0;
     }
 
-    protected class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    public static @interface ParameterizedRunWith {
+        Class<? extends Runner> value();
+    }
+
+    protected static class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
         private final Object[] fParameters;
 
         private String fName;
@@ -272,6 +280,14 @@ public class Parameterized extends Suite {
         protected Annotation[] getRunnerAnnotations() {
             return new Annotation[0];
         }
+
+        private boolean fieldsAreAnnotated() {
+            return !getAnnotatedFieldsByParameter().isEmpty();
+        }
+
+        private List<FrameworkField> getAnnotatedFieldsByParameter() {
+            return getTestClass().getAnnotatedFields(Parameter.class);
+        }
     }
 
     private static final List<Runner> NO_RUNNERS = Collections.<Runner>emptyList();
@@ -294,7 +310,25 @@ public class Parameterized extends Suite {
     }
 
     protected Runner createRunner(String pattern, int index, Object[] parameters) throws InitializationError {
-        return new TestClassRunnerForParameters(getTestClass().getJavaClass(), pattern, index, parameters);
+        ParameterizedRunWith paramAnnotation = getTestClass().getClass().getAnnotation(ParameterizedRunWith.class);
+
+        if (paramAnnotation == null) {
+           return new TestClassRunnerForParameters(getTestClass().getJavaClass(), pattern, index, parameters);
+        } else {
+            Class<? extends Runner> runnerClass = paramAnnotation.value();
+            try {
+                Constructor<? extends Runner> runnerConstructor = runnerClass.getConstructor(Class.class, String.class, int.class, Object[].class);
+                return runnerConstructor.newInstance(getTestClass().getJavaClass(), pattern, index, parameters);
+            } catch (InstantiationException e) {
+                throw new InitializationError(e);
+            } catch (IllegalAccessException e) {
+                throw new InitializationError(e);
+            } catch (InvocationTargetException e) {
+                throw new InitializationError(e);
+            } catch (NoSuchMethodException e) {
+                throw new InitializationError(e);
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -340,11 +374,5 @@ public class Parameterized extends Suite {
         return new Exception(message);
     }
 
-    private List<FrameworkField> getAnnotatedFieldsByParameter() {
-        return getTestClass().getAnnotatedFields(Parameter.class);
-    }
 
-    private boolean fieldsAreAnnotated() {
-        return !getAnnotatedFieldsByParameter().isEmpty();
-    }
 }
