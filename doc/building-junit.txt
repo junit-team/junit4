@@ -2,13 +2,16 @@ Steps to build junit:
 
 - Must be manual
   - Write release notes
-  - Update version in pom.xml
+  - Update SNAPSHOT version in pom.xml
 - Not too tedious:
   - Push to github (dsaff _and_ KentBeck)
   - Run the mvn clean install
   - Upload stuff to github (including tag)
-  - Push to maven
-    - mvn -Dgpg.passphrase="<passphrase>" -Psign clean deploy
+  - If not done, update src/main/config/settings.xml in /private/.../settings.xml on CloudBees' webdav share.
+  - If not done, copy GnuPG keys in to ${gpg.homedir}. See settings.xml.
+  - Perform Maven Release in Jenkins
+    - (to deploy snapshot version) mvn clean deploy
+    - (to deploy specified release version) mvn clean release:prepare release:perform
     - Promote 
 - Tedious:
   - Update SourceForge if major release

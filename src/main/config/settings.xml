@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <!--
-    The JUnit build system is using this file.
+    The JUnit build system is using this file as a template.
     All users should ignore it.
 
     Settings Reference: http://maven.apache.org/ref/3.0.4/maven-settings/settings.html
@@ -21,36 +21,28 @@
         a unique name within the system (referred to by the 'id' attribute below).
         -->
         <server>
-            <id>maven-central</id>
-            <username>???</username>
-            <password>???</password>
-            <filePermissions>664</filePermissions>
-            <directoryPermissions>775</directoryPermissions>
-            <configuration>
-                <timeout>15000</timeout> <!-- 15 seconds -->
-                <httpConfiguration>
-                    <put>
-                        <connectionTimeout>15000</connectionTimeout> <!-- 15 seconds -->
-                        <readTimeout>15000</readTimeout> <!-- 15 seconds -->
-                    </put>
-                </httpConfiguration>
-            </configuration>
+            <id>junit-snapshot-repo</id>
+            <username><!--a username registered with Sonatype for deployment--></username>
+            <password><!--corresponding password--></password>
         </server>
         <server>
-            <id>maven-central-snapshots</id>
-            <username>???</username>
-            <password>???</password>
-            <filePermissions>664</filePermissions>
-            <directoryPermissions>775</directoryPermissions>
-            <configuration>
-                <timeout>15000</timeout> <!-- 15 seconds -->
-                <httpConfiguration>
-                    <put>
-                        <connectionTimeout>15000</connectionTimeout> <!-- 15 seconds -->
-                        <readTimeout>15000</readTimeout> <!-- 15 seconds -->
-                    </put>
-                </httpConfiguration>
-            </configuration>
+            <id>junit-releases-repo</id>
+            <username><!--a username registered with Sonatype for deployment--></username>
+            <password><!--corresponding password--></password>
         </server>
     </servers>
+    <profiles>
+        <profile>
+            <id>junit-release</id>
+            <properties>
+                <gpg.keyname>...</gpg.keyname>
+                <gpg.passphrase>...</gpg.passphrase>
+                <gpg.defaultKeyring>false</gpg.defaultKeyring>
+                <gpg.useagent>true</gpg.useagent>
+                <gpg.homedir>/private/.../.gnupg</gpg.homedir>
+                <gpg.publicKeyring>/private/.../.gnupg/pubring.gpg</gpg.publicKeyring>
+                <gpg.secretKeyring>/private/.../.gnupg/secring.gpg</gpg.secretKeyring>
+            </properties>
+        </profile>
+    </profiles>
 </settings>
