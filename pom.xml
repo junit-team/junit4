@@ -300,7 +300,7 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <keyname>junit</keyname>
+                            <keyname>67893CC4</keyname>
                         </configuration>
                     </plugin>
                 </plugins>
