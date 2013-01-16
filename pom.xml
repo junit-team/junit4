@@ -299,6 +299,9 @@
                                 </goals>
                             </execution>
                         </executions>
+                        <configuration>
+                            <keyname>junit</keyname>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

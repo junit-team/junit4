@@ -9,10 +9,13 @@ Steps to build junit:
   - Upload stuff to github (including tag)
   - If not done, update src/main/config/settings.xml in /private/.../settings.xml on CloudBees' webdav share.
   - If not done, copy GnuPG keys in to ${gpg.homedir}. See settings.xml.
-  - Perform Maven Release in Jenkins
-    - (to deploy snapshot version) mvn clean deploy
-    - (to deploy specified release version) mvn clean release:prepare release:perform
-  - Promote the maven artifacts and close staging repository if release successfully
+  - Perform Maven deployment of a snapshot or release version in Jenkins
+    - (to deploy snapshot version)
+     mvn clean deploy
+    - (to deploy specified release version in non-interactive mode -B)
+      An example with the next development version and deploying release version:
+      mvn -B -DreleaseVersion=4.12 -DdevelopmentVersion=4.13-SNAPSHOT clean release:prepare release:perform
+  - Promote the maven artifacts and close staging repository if released successfully
 - Tedious:
   - Update SourceForge if major release
   - Update javadocs on github site (and "latest" link)
@@ -20,3 +23,42 @@ Steps to build junit:
   - Put release notes on github.
   - Announce on blog, user list, dev list, announce list, junit.org, twitter 
 - Profit!
+
+
+===================================================================================
+==        Internal template of Maven settings used by JUnit build machine.       ==
+==                                 settings.xml                                  ==
+===================================================================================
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+    <servers>
+        <server>
+            <id>junit-snapshot-repo</id>
+            <username><!--a username registered with Sonatype for deployment--></username>
+            <password><!--corresponding password--></password>
+        </server>
+        <server>
+            <id>junit-releases-repo</id>
+            <username><!--a username registered with Sonatype for deployment--></username>
+            <password><!--corresponding password--></password>
+        </server>
+    </servers>
+    <profiles>
+        <profile>
+            <id>junit-release</id>
+            <properties>
+                <!-- NOTE: See keyname used by maven-gpg-plugin in pom.xml. -->
+                <!-- <gpg.keyname>...</gpg.keyname> -->
+                <gpg.passphrase>...</gpg.passphrase>
+                <gpg.defaultKeyring>false</gpg.defaultKeyring>
+                <gpg.useagent>true</gpg.useagent>
+                <gpg.homedir>/private/.../.gnupg</gpg.homedir>
+                <gpg.publicKeyring>/private/.../.gnupg/pubring.gpg</gpg.publicKeyring>
+                <gpg.secretKeyring>/private/.../.gnupg/secring.gpg</gpg.secretKeyring>
+            </properties>
+        </profile>
+    </profiles>
+</settings>
+===================================================================================
