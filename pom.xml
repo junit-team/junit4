@@ -301,7 +301,7 @@
                         <executions>
                             <execution>
                                 <id>gpg-sign</id>
-                                <phase>install</phase>
+                                <phase>verify</phase>
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
