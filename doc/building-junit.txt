@@ -14,7 +14,7 @@ Steps to build junit:
      mvn clean deploy
     - (to deploy specified release version in non-interactive mode -B)
       An example with the next development version and deploying release version:
-      mvn -B -DreleaseVersion=4.12 -DdevelopmentVersion=4.13-SNAPSHOT clean release:prepare release:perform
+      mvn -B -Dtag=4.12 -DreleaseVersion=4.12 -DdevelopmentVersion=4.13-SNAPSHOT clean release:prepare release:perform
   - Promote the maven artifacts and close staging repository if released successfully
 - Tedious:
   - Update SourceForge if major release
