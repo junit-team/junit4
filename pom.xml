@@ -76,6 +76,7 @@
         <jdkVersion>1.5</jdkVersion>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
         <arguments/>
+        <gpg.keyname>67893CC4</gpg.keyname>
     </properties>
 
     <dependencies>
@@ -308,9 +309,6 @@
                                 </goals>
                             </execution>
                         </executions>
-                        <configuration>
-                            <keyname>67893CC4</keyname>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
