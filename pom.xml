@@ -274,6 +274,7 @@
                     <mavenExecutorId>forked-path</mavenExecutorId>
                     <useReleaseProfile>false</useReleaseProfile>
                     <arguments>-Pjunit-release</arguments>
+                    <tagNameFormat>r@{project.version}</tagNameFormat>
                 </configuration>
             </plugin>
         </plugins>
