@@ -75,6 +75,7 @@
     <properties>
         <jdkVersion>1.5</jdkVersion>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+        <arguments/>
     </properties>
 
     <dependencies>
@@ -273,7 +274,7 @@
                 <configuration>
                     <mavenExecutorId>forked-path</mavenExecutorId>
                     <useReleaseProfile>false</useReleaseProfile>
-                    <arguments>-Pjunit-release</arguments>
+                    <arguments>-Pjunit-release ${arguments}</arguments>
                     <tagNameFormat>r@{project.version}</tagNameFormat>
                 </configuration>
             </plugin>
