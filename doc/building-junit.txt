@@ -8,11 +8,48 @@ Steps to build junit:
   - If not done, update src/main/config/settings.xml in /private/.../settings.xml on CloudBees' webdav share.
   - If not done, copy GnuPG keys in to ${gpg.homedir}. See settings.xml.
   - Perform Maven deployment of a snapshot or release version in Jenkins
-    - (to deploy snapshot version)
-     mvn clean deploy
-    - (to deploy specified release version in non-interactive mode -B)
+    Remember that the version specified in the pom.xml indicates the version
+    to be deployed, with -SNAPSHOT indicating that this is an unofficial
+    pre-release version towards the goal of the version without the -SNAPSHOT
+
+    - (to deploy gpg signed snapshot version)
+
+      $ mvn -Pjunit-release clean deploy
+
+    - (to cut a release of the current targetted version)
+
+      $ mvn -B release:prepare release:perform
+
+      This will result in the current pom.xml version having -SNAPSHOT removed
+      and the release cut from that version. The version will then be incremented
+      and -SNAPSHOT added back in anticipation of the next release version.
+
+    - (to cut a release of while changing the version from the current target)
+
+      $ mvn -B -DreleaseVersion=5.0 release:prepare release:perform
+
+      This will ignore the current version in the pom.xml, set it to 5.0 and
+      the release cut from that 5.0 version. Then 5.0 will be incremented (to 5.1)
+      and -SNAPSHOT added back in anticipation of the next release version.
+
+    - (to deploy specified release version and next target release in non-interactive mode -B)
       An example with the next development version and deploying release version:
-      mvn -B -Dtag=4.12 -DreleaseVersion=4.12 -DdevelopmentVersion=4.13-SNAPSHOT clean release:prepare release:perform
+
+      $ mvn -B -DreleaseVersion=4.12 -DdevelopmentVersion=4.13-SNAPSHOT release:prepare release:perform
+
+  - If you are not an official release manager, and you want to cut a release of
+    JUnit for use within your organization, use the following command
+
+      $ mvn -DpushChanges=false -DlocalCheckout '-Darguments=-Dgpg.skip=true -DaltDeploymentRepository=my-company-repo-id::default::my-company-repo-url' -B -DreleaseVersion=4.12-mycompany-1 release:prepare release:perform 
+
+    where 
+      - my-company-repo-id is the <id> of your company's <server> entry in your
+        settings.xml with the credentials to deploy to your company's Maven repository
+      - my-company-repo-url is the deployment URL of your company's Maven repository
+      - 4.12-mycompany-1 is the version you are deploying, be sure to namespace
+        the version so that you don't conflict with others, hence why the text "mycompany"
+        is included in the example version number.
+
   - Promote the maven artifacts and close staging repository if released successfully
 - Tedious:
   - Update SourceForge if major release
@@ -48,7 +85,6 @@ Steps to build junit:
             <id>junit-release</id>
             <properties>
                 <!-- NOTE: See keyname used by maven-gpg-plugin in pom.xml. -->
-                <!-- <gpg.keyname>...</gpg.keyname> -->
                 <gpg.passphrase>...</gpg.passphrase>
                 <gpg.defaultKeyring>false</gpg.defaultKeyring>
                 <gpg.useagent>true</gpg.useagent>
