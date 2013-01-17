@@ -257,7 +257,7 @@
                 <configuration>
                     <mavenExecutorId>forked-path</mavenExecutorId>
                     <useReleaseProfile>false</useReleaseProfile>
-                    <arguments>-Pjunit-release ${arguments}</arguments>
+                    <arguments>-Pgenerate-docs,junit-release ${arguments}</arguments>
                     <tagNameFormat>r@{project.version}</tagNameFormat>
                 </configuration>
             </plugin>
@@ -292,6 +292,18 @@
                             </execution>
                         </executions>
                     </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>generate-docs</id>
+            <!--
+            Generate the documentation artifacts. 
+            Note: this profile is also required to be active for release
+            builds due to the packaging requirements of the Central repo
+            -->
+            <build>
+                <plugins>
                     <plugin>
                         <artifactId>maven-source-plugin</artifactId>
                         <executions>
