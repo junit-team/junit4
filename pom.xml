@@ -230,6 +230,35 @@
                 -->
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.8.1</version>
+                <configuration>
+                    <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
+                    <show>protected</show>
+                    <author>false</author>
+                    <version>false</version>
+                    <detectLinks>false</detectLinks>
+                    <linksource>true</linksource>
+                    <keywords>true</keywords>
+                    <use>false</use>
+                    <windowtitle>JUnit API</windowtitle>
+                    <encoding>UTF-8</encoding>
+                    <locale>en</locale>
+                    <javadocVersion>1.5</javadocVersion>
+                    <javaApiLinks>
+                        <property>
+                            <name>api_1.5</name>
+                            <value>http://docs.oracle.com/javase/1.5.0/docs/api/index.html</value>
+                        </property>
+                    </javaApiLinks>
+                    <excludePackageNames>junit.*,*.internal,*.internal.*</excludePackageNames>
+                    <verbose>true</verbose>
+                    <minmemory>32m</minmemory>
+                    <maxmemory>128m</maxmemory>
+                    <failOnError>true</failOnError>
+                    <includeDependencySources>true</includeDependencySources>
+                    <dependencySourceIncludes>
+                        <dependencySourceInclude>org.hamcrest:hamcrest-core:*</dependencySourceInclude>
+                    </dependencySourceIncludes>
+                </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadoc</id>
@@ -237,35 +266,6 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
-                        <configuration>
-                            <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
-                            <show>protected</show>
-                            <author>false</author>
-                            <version>false</version>
-                            <detectLinks>false</detectLinks>
-                            <linksource>true</linksource>
-                            <keywords>true</keywords>
-                            <use>false</use>
-                            <windowtitle>JUnit API</windowtitle>
-                            <encoding>UTF-8</encoding>
-                            <locale>en</locale>
-                            <javadocVersion>1.5</javadocVersion>
-                            <javaApiLinks>
-                                <property>
-                                    <name>api_1.5</name>
-                                    <value>http://docs.oracle.com/javase/1.5.0/docs/api/index.html</value>
-                                </property>
-                            </javaApiLinks>
-                            <excludePackageNames>junit.*,*.internal,*.internal.*</excludePackageNames>
-                            <verbose>true</verbose>
-                            <minmemory>32m</minmemory>
-                            <maxmemory>128m</maxmemory>
-                            <failOnError>true</failOnError>
-                            <includeDependencySources>true</includeDependencySources>
-                            <dependencySourceIncludes>
-                                <dependencySourceInclude>org.hamcrest:hamcrest-core:*</dependencySourceInclude>
-                            </dependencySourceIncludes>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
