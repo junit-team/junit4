@@ -21,24 +21,24 @@ public abstract class PotentialAssignment {
 
             @Override
             public String getDescription() {
-            	String valueString;
-            	
-            	if (value == null) {
-            		valueString = "null"; 
-            	} else {
-                	try {
-                		valueString = format("\"%s\"", value);
-                	} catch (Throwable e) {
-                		valueString = format("[toString() threw %s: %s]", 
-                							 e.getClass().getSimpleName(), e.getMessage());
-                	}
-            	}
-            	
-            	return format("%s <from %s>", valueString, name);
+                String valueString;
+
+                if (value == null) {
+                    valueString = "null";
+                } else {
+                    try {
+                        valueString = format("\"%s\"", value);
+                    } catch (Throwable e) {
+                        valueString = format("[toString() threw %s: %s]", 
+                                             e.getClass().getSimpleName(), e.getMessage());
+                    }
+                }
+
+                return format("%s <from %s>", valueString, name);
             }
         };
     }
-    
+
     public abstract Object getValue() throws CouldNotGenerateValueException;
 
     public abstract String getDescription() throws CouldNotGenerateValueException;
