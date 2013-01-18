@@ -61,7 +61,7 @@ public class UnsuccessfulWithDataPointFields {
     @Test
     public void reportBadParams() throws Exception {
         assertThat(testResult(DoesntUseParams.class),
-                hasSingleFailureContaining("everythingIsZero(ONE, ONE)"));
+                hasSingleFailureContaining("everythingIsZero(\"1\" <from ONE>, \"1\" <from ONE>)"));
     }
 
     @RunWith(Theories.class)
