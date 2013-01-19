@@ -1,9 +1,12 @@
 package org.junit.runner.notification;
 
+import static java.util.Arrays.asList;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
@@ -22,17 +25,16 @@ public class RunNotifier {
             Collections.synchronizedList(new ArrayList<RunListener>());
     private volatile boolean fPleaseStop = false;
 
-    public RunNotifier() {
-    }
-
-    public RunNotifier(RunListener firstListener) {
-        fListeners.add(firstListener);
-    }
-
+    /**
+     * Internal use only
+     */
     public void addListener(RunListener listener) {
         fListeners.add(listener);
     }
 
+    /**
+     * Internal use only
+     */
     public void removeListener(RunListener listener) {
         fListeners.remove(listener);
     }
@@ -52,8 +54,10 @@ public class RunNotifier {
             synchronized (fListeners) {
                 List<RunListener> safeListeners = new ArrayList<RunListener>();
                 List<Failure> failures = new ArrayList<Failure>();
-                for (RunListener listener : fCurrentListeners) {
+                for (Iterator<RunListener> all = fCurrentListeners.iterator(); all
+                        .hasNext(); ) {
                     try {
+                        RunListener listener = all.next();
                         notifyListener(listener);
                         safeListeners.add(listener);
                     } catch (Exception e) {
@@ -76,6 +80,8 @@ public class RunNotifier {
             protected void notifyListener(RunListener each) throws Exception {
                 each.testRunStarted(description);
             }
+
+            ;
         }.run();
     }
 
@@ -88,6 +94,8 @@ public class RunNotifier {
             protected void notifyListener(RunListener each) throws Exception {
                 each.testRunFinished(result);
             }
+
+            ;
         }.run();
     }
 
@@ -106,6 +114,8 @@ public class RunNotifier {
             protected void notifyListener(RunListener each) throws Exception {
                 each.testStarted(description);
             }
+
+            ;
         }.run();
     }
 
@@ -115,7 +125,7 @@ public class RunNotifier {
      * @param failure the description of the test that failed and the exception thrown
      */
     public void fireTestFailure(Failure failure) {
-        fireTestFailures(fListeners, Arrays.asList(failure));
+        fireTestFailures(fListeners, asList(failure));
     }
 
     private void fireTestFailures(List<RunListener> listeners,
@@ -129,6 +139,8 @@ public class RunNotifier {
                         listener.testFailure(each);
                     }
                 }
+
+                ;
             }.run();
         }
     }
@@ -146,6 +158,8 @@ public class RunNotifier {
             protected void notifyListener(RunListener each) throws Exception {
                 each.testAssumptionFailure(failure);
             }
+
+            ;
         }.run();
     }
 
@@ -176,6 +190,8 @@ public class RunNotifier {
             protected void notifyListener(RunListener each) throws Exception {
                 each.testFinished(description);
             }
+
+            ;
         }.run();
     }
 
@@ -192,7 +208,6 @@ public class RunNotifier {
     /**
      * Internal use only. The Result's listener must be first.
      */
-    @Deprecated
     public void addFirstListener(RunListener listener) {
         fListeners.add(0, listener);
     }

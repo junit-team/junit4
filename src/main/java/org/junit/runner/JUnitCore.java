@@ -26,8 +26,7 @@ import org.junit.runner.notification.RunNotifier;
  * @since 4.0
  */
 public class JUnitCore {
-    private final ListenerDecorator firstListener = new ListenerDecorator();
-    private final RunNotifier fNotifier = new RunNotifier(firstListener);
+    private final RunNotifier fNotifier = new RunNotifier();
 
     /**
      * Run the tests contained in the classes named in the <code>args</code>.
@@ -92,8 +91,9 @@ public class JUnitCore {
                 missingClasses.add(failure);
             }
         }
-        addListener(new TextListener(system));
-        Result result = run(classes.toArray(new Class<?>[classes.size()]));
+        RunListener listener = new TextListener(system);
+        addListener(listener);
+        Result result = run(classes.toArray(new Class<?>[0]));
         for (Failure each : missingClasses) {
             result.getFailures().add(each);
         }
@@ -153,13 +153,14 @@ public class JUnitCore {
      */
     public Result run(Runner runner) {
         Result result = new Result();
-        firstListener.listener = result.createListener();
+        RunListener listener = result.createListener();
+        fNotifier.addFirstListener(listener);
         try {
             fNotifier.fireTestRunStarted(runner.getDescription());
             runner.run(fNotifier);
             fNotifier.fireTestRunFinished(result);
         } finally {
-            firstListener.listener = null;
+            removeListener(listener);
         }
         return result;
     }
@@ -187,42 +188,4 @@ public class JUnitCore {
         return new Computer();
     }
 
-    private static class ListenerDecorator extends RunListener {
-        private RunListener listener;
-
-        @Override
-        public void testRunStarted(Description description) throws Exception {
-            listener.testRunStarted(description);
-        }
-
-        @Override
-        public void testRunFinished(Result result) throws Exception {
-            listener.testRunFinished(result);
-        }
-
-        @Override
-        public void testStarted(Description description) throws Exception {
-            listener.testStarted(description);
-        }
-
-        @Override
-        public void testFinished(Description description) throws Exception {
-            listener.testFinished(description);
-        }
-
-        @Override
-        public void testFailure(Failure failure) throws Exception {
-            listener.testFailure(failure);
-        }
-
-        @Override
-        public void testAssumptionFailure(Failure failure) {
-            listener.testAssumptionFailure(failure);
-        }
-
-        @Override
-        public void testIgnored(Description description) throws Exception {
-            listener.testIgnored(description);
-        }
-    }
 }
