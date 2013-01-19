@@ -99,7 +99,33 @@ public class Result implements Serializable {
     }
 
     /**
-     * Internal use only.
+     * Used in a special case when <em>listening</em> to the test events fired
+     * by a custom runner.
+     * <p>
+     * The head of listeners in {@link org.junit.runner.notification.RunNotifier}
+     * properly reflects test <em>Result</em>.
+     * <p>
+     * Recommended usage:
+     * <pre>
+     * RunNotifier notifier = new RunNotifier();
+     *
+     * // Add all custom listeners and override their <tt>test*<tt> callback methods.
+     * RunListener customListener = new RunListener() {...};
+     * notifier.addListener(customListener);
+     *
+     * Result result = new Result();
+     *
+     * // Pass the head listener to the RunNotifier, and use the notifier in runner.
+     * notifier.addFirstListener(result.createListener());
+     *
+     * Runner#run(notifier);
+     * // Await result.
+     *
+     * // Remove custom listeners.
+     * notifier.removeListener(customListener);
+     * </pre>
+     *
+     * @see org.junit.runner.notification.RunNotifier#addFirstListener(RunListener)
      */
     public RunListener createListener() {
         return new Listener();

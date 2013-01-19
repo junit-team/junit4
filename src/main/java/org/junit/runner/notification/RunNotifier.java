@@ -26,14 +26,15 @@ public class RunNotifier {
     private volatile boolean fPleaseStop = false;
 
     /**
-     * Internal use only
+     * Aggregate <code>RunNotifier</code> passed to your custom runner
+     * {@link org.junit.runner.Runner#run(RunNotifier)}.
      */
     public void addListener(RunListener listener) {
         fListeners.add(listener);
     }
 
     /**
-     * Internal use only
+     * Remove an added listener.
      */
     public void removeListener(RunListener listener) {
         fListeners.remove(listener);
@@ -206,7 +207,15 @@ public class RunNotifier {
     }
 
     /**
-     * Internal use only. The Result's listener must be first.
+     * Used in very special circumstances:
+     * <ul>
+     * <li>by embedded {@link RunNotifier} in facade {@link org.junit.runner.JUnitCore}</li>
+     * <li>by passing {@link org.junit.runner.Result Result}'s listener to this method
+     * for proper <em>Result</em> handling.</li>
+     * </ul>
+     *
+     * @see org.junit.runner.Result
+     * @see org.junit.runner.Result#createListener()
      */
     public void addFirstListener(RunListener listener) {
         fListeners.add(0, listener);
