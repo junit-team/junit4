@@ -1,5 +1,6 @@
 package org.junit.runner.notification;
 
+import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
@@ -9,161 +10,59 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Test;
 import org.junit.runner.Description;
-import org.junit.runner.Result;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Testing RunNotifier with concurrent access.
+ * Testing RunNotifier in concurrent access.
  * <p/>
  *
  * @author tibor17
- * @since 4.11
+ * @version 4.12
+ * @since 4.12
  */
 public final class ConcurrentRunNotifierTest {
-    private static final long TIMEOUT= 15;
+    private static final long TIMEOUT = 3;
 
     private static class ConcurrentRunListener extends RunListener {
-        final AtomicInteger testRunStarted= new AtomicInteger(0);
-        final AtomicInteger testRunFinished= new AtomicInteger(0);
-        final AtomicInteger testStarted= new AtomicInteger(0);
-        final AtomicInteger testFinished= new AtomicInteger(0);
-        final AtomicInteger testFailure= new AtomicInteger(0);
-        final AtomicInteger testAssumptionFailure= new AtomicInteger(0);
-        final AtomicInteger testIgnored= new AtomicInteger(0);
-
-        public void testRunStarted(Description description) throws Exception {
-            testRunStarted.incrementAndGet();
-        }
-
-        public void testRunFinished(Result result) throws Exception {
-            testRunFinished.incrementAndGet();
-        }
+        final AtomicInteger testStarted = new AtomicInteger(0);
 
         public void testStarted(Description description) throws Exception {
             testStarted.incrementAndGet();
         }
-
-        public void testFinished(Description description) throws Exception {
-            testFinished.incrementAndGet();
-        }
-
-        public void testFailure(Failure failure) throws Exception {
-            testFailure.incrementAndGet();
-        }
-
-        public void testAssumptionFailure(Failure failure) {
-            testAssumptionFailure.incrementAndGet();
-        }
-
-        public void testIgnored(Description description) throws Exception {
-            testIgnored.incrementAndGet();
-        }
     }
 
     @Test
-    public void countDuplicatedListeners() throws InterruptedException {
-        final int listenerCountPerEvent = 10;
-        final ConcurrentRunListener examinedListener = new ConcurrentRunListener();
+    public void realUsage() throws InterruptedException {
         final RunNotifier notifier = new RunNotifier();
-        ExecutorService pool = Executors.newCachedThreadPool();
-        for (int i = 0; i < listenerCountPerEvent; ++i) {
+
+        ConcurrentRunListener listener1 = new ConcurrentRunListener();
+        ConcurrentRunListener listener2 = new ConcurrentRunListener();
+        notifier.addListener(listener1);
+        notifier.addListener(listener2);
+
+        final int numParallelTests = 4;
+        ExecutorService pool = Executors.newFixedThreadPool(numParallelTests);
+        for (int i = 0; i < numParallelTests; ++i) {
             pool.submit(new Runnable() {
                 public void run() {
-                    notifier.addListener(examinedListener);
+                    notifier.fireTestStarted(null);
                 }
             });
         }
         pool.shutdown();
         assertTrue(pool.awaitTermination(TIMEOUT, TimeUnit.SECONDS));
-        notifier.fireTestRunStarted(null);
-        notifier.fireTestRunFinished(null);
-        notifier.fireTestStarted(null);
-        notifier.fireTestFinished(null);
-        notifier.fireTestFailure(null);
-        notifier.fireTestAssumptionFailed(null);
-        notifier.fireTestIgnored(null);
-        assertThat(examinedListener.testRunStarted.get(), is(listenerCountPerEvent));
-        assertThat(examinedListener.testRunFinished.get(), is(listenerCountPerEvent));
-        assertThat(examinedListener.testStarted.get(), is(listenerCountPerEvent));
-        assertThat(examinedListener.testFinished.get(), is(listenerCountPerEvent));
-        assertThat(examinedListener.testFailure.get(), is(listenerCountPerEvent));
-        assertThat(examinedListener.testAssumptionFailure.get(), is(listenerCountPerEvent));
-        assertThat(examinedListener.testIgnored.get(), is(listenerCountPerEvent));
-    }
 
-    @Test
-    public void countUniqueListeners() throws InterruptedException {
-        final ConcurrentRunListener[] examinedListeners = new ConcurrentRunListener[10];
-        for (int i = 0; i < examinedListeners.length; ++i) {
-            examinedListeners[i] = new ConcurrentRunListener();
-        }
-        final RunNotifier notifier = new RunNotifier();
-        ExecutorService pool = Executors.newSingleThreadExecutor();
-        pool.submit(new Runnable() {
-            public void run() {
-                for (ConcurrentRunListener examinedListener : examinedListeners) {
-                    notifier.addListener(examinedListener);
-                }
-            }
-        });
-        pool.shutdown();
-        assertTrue(pool.awaitTermination(TIMEOUT, TimeUnit.SECONDS));
+        notifier.removeListener(listener1);
+        notifier.removeListener(listener2);
 
-        notifier.fireTestRunStarted(null);
-        notifier.fireTestRunStarted(null);
-
-        notifier.fireTestRunFinished(null);
-        notifier.fireTestRunFinished(null);
-
-        notifier.fireTestStarted(null);
-        notifier.fireTestStarted(null);
-
-        notifier.fireTestFinished(null);
-        notifier.fireTestFinished(null);
-
-        notifier.fireTestFailure(null);
-        notifier.fireTestFailure(null);
-
-        notifier.fireTestAssumptionFailed(null);
-        notifier.fireTestAssumptionFailed(null);
-
-        notifier.fireTestIgnored(null);
-        notifier.fireTestIgnored(null);
-
-        for (ConcurrentRunListener examinedListener : examinedListeners) {
-            assertThat(examinedListener.testRunStarted.get(), is(2));
-        }
-
-        for (ConcurrentRunListener examinedListener : examinedListeners) {
-            assertThat(examinedListener.testRunFinished.get(), is(2));
-        }
-
-        for (ConcurrentRunListener examinedListener : examinedListeners) {
-            assertThat(examinedListener.testStarted.get(), is(2));
-        }
-
-        for (ConcurrentRunListener examinedListener : examinedListeners) {
-            assertThat(examinedListener.testFinished.get(), is(2));
-        }
-
-        for (ConcurrentRunListener examinedListener : examinedListeners) {
-            assertThat(examinedListener.testFailure.get(), is(2));
-        }
-
-        for (ConcurrentRunListener examinedListener : examinedListeners) {
-            assertThat(examinedListener.testAssumptionFailure.get(), is(2));
-        }
-
-        for (ConcurrentRunListener examinedListener : examinedListeners) {
-            assertThat(examinedListener.testIgnored.get(), is(2));
-        }
+        assertThat(listener1.testStarted.get(), is(4));
+        assertThat(listener2.testStarted.get(), is(4));
     }
 
     private static class ExaminedListener extends RunListener {
-        final AtomicBoolean testRunStarted= new AtomicBoolean(false);
         volatile boolean useMe = false;
         volatile boolean hasTestFailure = false;
 
@@ -171,38 +70,20 @@ public final class ConcurrentRunNotifierTest {
             this.useMe = useMe;
         }
 
-        public void testRunStarted(Description description) throws Exception {
-            testRunStarted.set(true);
-            if (!useMe) throw new Exception();
-        }
-
-        public void testRunFinished(Result result) throws Exception {
-            if (!useMe) throw new Exception();
-        }
-
         public void testStarted(Description description) throws Exception {
-            if (!useMe) throw new Exception();
-        }
-
-        public void testFinished(Description description) throws Exception {
-            if (!useMe) throw new Exception();
+            if (!useMe) {
+                throw new Exception();
+            }
         }
 
         public void testFailure(Failure failure) throws Exception {
             hasTestFailure = true;
         }
-
-        public void testAssumptionFailure(Failure failure) {
-            if (!useMe) throw new RuntimeException();
-        }
-
-        public void testIgnored(Description description) throws Exception {
-            if (!useMe) throw new Exception();
-        }
     }
 
-    @Test @SuppressWarnings("unchecked")
-    public void reportConcurrentFailuresAfterAddListener() throws InterruptedException {
+    @Test
+    @SuppressWarnings("unchecked")
+    public void reportConcurrentFailuresAfterAddListener() throws InterruptedException, BrokenBarrierException {
         final RunNotifier notifier = new RunNotifier();
 
         int totalListenersFailures = 0;
@@ -210,15 +91,17 @@ public final class ConcurrentRunNotifierTest {
         final ExaminedListener[] examinedListeners = new ExaminedListener[1000];
         for (int i = 0; i < examinedListeners.length; ++i) {
             boolean fail = StrictMath.random() >= 0.5d;
-            if (fail) ++totalListenersFailures;
+            if (fail) {
+                ++totalListenersFailures;
+            }
             examinedListeners[i] = new ExaminedListener(!fail);
         }
 
         final CyclicBarrier trigger = new CyclicBarrier(2);
         final AtomicBoolean condition = new AtomicBoolean(true);
 
-        ExecutorService callbacksPool = Executors.newSingleThreadExecutor();
-        callbacksPool.submit(new Callable() {
+        ExecutorService notificationsPool = Executors.newFixedThreadPool(4);
+        notificationsPool.submit(new Callable() {
             public Object call() throws Exception {
                 trigger.await();
                 while (condition.get()) {
@@ -229,23 +112,15 @@ public final class ConcurrentRunNotifierTest {
             }
         });
 
-        ExecutorService listenersPool = Executors.newSingleThreadExecutor();
-        listenersPool.submit(new Callable() {
-            public Object call() throws Exception {
-                trigger.await();
-                for (ExaminedListener examinedListener : examinedListeners) {
-                    notifier.addListener(examinedListener);
-                }
-                return null;
-            }
-        });
+        trigger.await();
 
-        callbacksPool.shutdown();
-        listenersPool.shutdown();
+        for (ExaminedListener examinedListener : examinedListeners) {
+            notifier.addListener(examinedListener);
+        }
 
-        assertTrue(listenersPool.awaitTermination(TIMEOUT, TimeUnit.SECONDS));
+        notificationsPool.shutdown();
         condition.set(false);
-        assertTrue(callbacksPool.awaitTermination(TIMEOUT, TimeUnit.SECONDS));
+        assertTrue(notificationsPool.awaitTermination(TIMEOUT, TimeUnit.SECONDS));
 
         if (totalListenersFailures != 0) {
             // If no listener failures, then all the listeners do not report any failure.
@@ -254,24 +129,27 @@ public final class ConcurrentRunNotifierTest {
         }
     }
 
-    @Test @SuppressWarnings("unchecked")
-    public void reportConcurrentFailuresAfterAddFirstListener() throws InterruptedException {
+    @Test
+    @SuppressWarnings("unchecked")
+    public void reportConcurrentFailuresAfterAddFirstListener() throws InterruptedException, BrokenBarrierException {
         final RunNotifier notifier = new RunNotifier();
 
         int totalListenersFailures = 0;
 
-        final ExaminedListener[] examinedListeners = new ExaminedListener[100];
+        final ExaminedListener[] examinedListeners = new ExaminedListener[1000];
         for (int i = 0; i < examinedListeners.length; ++i) {
             boolean fail = StrictMath.random() >= 0.5d;
-            if (fail) ++totalListenersFailures;
+            if (fail) {
+                ++totalListenersFailures;
+            }
             examinedListeners[i] = new ExaminedListener(!fail);
         }
 
         final CyclicBarrier trigger = new CyclicBarrier(2);
         final AtomicBoolean condition = new AtomicBoolean(true);
 
-        ExecutorService callbacksPool = Executors.newSingleThreadExecutor();
-        callbacksPool.submit(new Callable() {
+        ExecutorService notificationsPool = Executors.newFixedThreadPool(4);
+        notificationsPool.submit(new Callable() {
             public Object call() throws Exception {
                 trigger.await();
                 while (condition.get()) {
@@ -282,23 +160,15 @@ public final class ConcurrentRunNotifierTest {
             }
         });
 
-        ExecutorService listenersPool = Executors.newSingleThreadExecutor();
-        listenersPool.submit(new Callable() {
-            public Object call() throws Exception {
-                trigger.await();
-                for (ExaminedListener examinedListener : examinedListeners) {
-                    notifier.addFirstListener(examinedListener);
-                }
-                return null;
-            }
-        });
+        trigger.await();
 
-        callbacksPool.shutdown();
-        listenersPool.shutdown();
+        for (ExaminedListener examinedListener : examinedListeners) {
+            notifier.addFirstListener(examinedListener);
+        }
 
-        assertTrue(listenersPool.awaitTermination(TIMEOUT, TimeUnit.SECONDS));
+        notificationsPool.shutdown();
         condition.set(false);
-        assertTrue(callbacksPool.awaitTermination(TIMEOUT, TimeUnit.SECONDS));
+        assertTrue(notificationsPool.awaitTermination(TIMEOUT, TimeUnit.SECONDS));
 
         if (totalListenersFailures != 0) {
             // If no listener failures, then all the listeners do not report any failure.
@@ -308,9 +178,12 @@ public final class ConcurrentRunNotifierTest {
     }
 
     private static int countReportedTestFailures(ExaminedListener[] listeners) {
-        int count= 0;
-        for (ExaminedListener listener : listeners)
-            if (listener.hasTestFailure) ++count;
+        int count = 0;
+        for (ExaminedListener listener : listeners) {
+            if (listener.hasTestFailure) {
+                ++count;
+            }
+        }
         return count;
     }
 }

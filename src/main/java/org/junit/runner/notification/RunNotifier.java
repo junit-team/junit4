@@ -3,9 +3,8 @@ package org.junit.runner.notification;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
@@ -20,7 +19,7 @@ import org.junit.runner.Result;
  * @since 4.0
  */
 public class RunNotifier {
-    private final ConcurrentLinkedQueue<RunListener> fListeners= new ConcurrentLinkedQueue<RunListener>();
+    private final CopyOnWriteArrayList<RunListener> fListeners= new CopyOnWriteArrayList<RunListener>();
     private volatile boolean fPleaseStop= false;
 
     /**
@@ -190,9 +189,6 @@ public class RunNotifier {
      * Internal use only. The Result's listener must be first.
      */
     public void addFirstListener(RunListener listener) {
-        LinkedList<RunListener> listeners= new LinkedList<RunListener>(fListeners);
-        listeners.addFirst(listener);
-        fListeners.clear();
-        fListeners.addAll(listeners);
+        fListeners.add(0, listener);
     }
 }
