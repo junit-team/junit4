@@ -105,9 +105,9 @@ public class StopwatchTest {
         @Test
         public void duration() throws InterruptedException {
             Thread.sleep(300L);
-            assertEquals(fStopwatch.runtime(MILLISECONDS), 300d, 100d);
+            assertEquals(300d, fStopwatch.runtime(MILLISECONDS), 100d);
             Thread.sleep(500L);
-            assertEquals(fStopwatch.runtime(MILLISECONDS), 800d, 250d);
+            assertEquals(800d, fStopwatch.runtime(MILLISECONDS), 250d);
         }
     }
 

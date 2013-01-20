@@ -87,7 +87,7 @@ public class TestSuite implements Test {
         } catch (NoSuchMethodException e) {
             // fall through
         }
-        return theClass.getConstructor(new Class[0]);
+        return theClass.getConstructor();
     }
 
     /**

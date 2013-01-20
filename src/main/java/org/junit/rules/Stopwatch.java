@@ -64,9 +64,9 @@ import java.util.concurrent.TimeUnit;
  * public void performanceTest() throws InterruptedException {
  *     long delta= 30;
  *     Thread.sleep(300L);
- *     assertEquals(stopwatch.runtime(MILLISECONDS), 300d, delta);
+ *     assertEquals(300d, stopwatch.runtime(MILLISECONDS), delta);
  *     Thread.sleep(500L);
- *     assertEquals(stopwatch.runtime(MILLISECONDS), 800d, delta);
+ *     assertEquals(800d, stopwatch.runtime(MILLISECONDS), delta);
  * }
  * </pre>
  *

@@ -2,13 +2,13 @@ Steps to build junit:
 
 - Must be manual
   - Write release notes
-  - Update version in build.xml
+  - Update version in pom.xml
 - Not too tedious:
   - Push to github (dsaff _and_ KentBeck)
-  - Run the ant zip task
+  - Run the mvn clean install
   - Upload stuff to github (including tag)
   - Push to maven
-    - ant -lib build/lib stage.maven
+    - mvn -Dgpg.passphrase="<passphrase>" -Psign clean deploy
     - Promote 
 - Tedious:
   - Update SourceForge if major release

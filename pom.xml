@@ -1,0 +1,319 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+    <version>4.12-SNAPSHOT</version>
+
+    <name>JUnit</name>
+    <url>http://junit.org</url>
+    <description>JUnit is a unit testing framework for Java, created by Erich Gamma and Kent Beck.</description>
+    <organization>
+        <name>JUnit</name>
+        <url>http://www.junit.org</url>
+    </organization>
+    <inceptionYear>2002</inceptionYear>
+    <mailingLists>
+        <mailingList>
+            <name>JUnit Mailing List</name>
+            <post>junit@yahoogroups.com</post>
+            <archive>http://tech.groups.yahoo.com/group/junit/</archive>
+        </mailingList>
+    </mailingLists>
+    <licenses>
+        <license>
+            <name>Common Public License Version 1.0</name>
+            <url>http://www.opensource.org/licenses/cpl1.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <scm>
+        <connection>scm:git:git://github.com/KentBeck/junit.git</connection>
+        <developerConnection>scm:git:git@github.com:KentBeck/junit.git</developerConnection>
+        <url>http://github.com/KentBeck/junit/tree/master</url>
+    </scm>
+    <developers>
+        <developer>
+            <id>dsaff</id>
+            <name>David Saff</name>
+            <email>david@saff.net</email>
+        </developer>
+    </developers>
+    <contributors>
+        <contributor>
+            <name>JUnit contributors</name>
+            <organization>JUnit</organization>
+            <email>junit@yahoogroups.com</email>
+            <url>https://github.com/KentBeck/junit/graphs/contributors</url>
+            <roles>
+                <role>developers</role>
+            </roles>
+        </contributor>
+    </contributors>
+    <properties>
+        <hamcrestVersion>1.3</hamcrestVersion>
+        <jdkVersion>1.5</jdkVersion>
+        <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+    </properties>
+    <prerequisites>
+        <maven>3.0.4</maven>
+    </prerequisites>
+    <dependencies>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <version>${hamcrestVersion}</version>
+        </dependency>
+    </dependencies>
+    <distributionManagement>
+        <downloadUrl>https://github.com/KentBeck/junit/wiki/Download-and-Install</downloadUrl>
+        <!--
+        Currently the deployment is under development and enabled for
+        the Snapshot Repository of the Maven Central.
+        -->
+        <snapshotRepository>
+            <id>maven-central-snapshots</id>
+            <name>upload.to.maven.central.snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <!--
+        Remote Release Repository.
+        -->
+        <repository>
+            <id>maven-central</id>
+            <name>upload.to.maven.central</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+    <build>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>${project.basedir}</directory>
+                <includes>
+                    <include>LICENSE.txt</include>
+                </includes>
+            </resource>
+        </resources>
+        <extensions>
+            <!--
+            Specify HTTP providers.
+            The Maven Wagon is a transport abstraction.
+            For more information see http://maven.apache.org/wagon/index.html
+            and the guide
+            http://maven.apache.org/plugins/maven-deploy-plugin/examples/deploy-ssh-external.html
+            -->
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-http</artifactId>
+                <version>1.0</version>
+            </extension>
+        </extensions>
+        <plugins>
+            <!--
+            Both "org.apache" and "org.codehaus" are default providers of MOJO plugins
+            which are especially dedicated to Maven projects.
+            The MOJO stands for "Maven plain Old Java Object".
+            Each mojo is an executable goal in Maven, and a plugin is a distribution of
+            one or more related mojos.
+            For more information see http://maven.apache.org/plugin-developers/index.html
+
+            The following plugins are ordered according the Maven build lifecycle.
+            http://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html
+            -->
+            <plugin>
+                <!--
+                Checks that the version of user's maven installation is 3.0.4,
+                the JDK is 1.5+, no non-standard repositories are specified in
+                the project, requires only release versions of dependencies of other artifacts.
+                -->
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.1.1</version>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <fail>true</fail>
+                            <rules>
+                                <requireMavenVersion>
+                                    <!-- Some plugin features require a recent Maven runtime to work properly -->
+                                    <message>Current version of Maven ${maven.version} required to build the project should be ${project.prerequisites.maven}, or higher!</message>
+                                    <version>[${project.prerequisites.maven},)</version>
+                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <message>Current JDK version ${java.version} should be ${jdkVersion}, or higher!</message>
+                                    <version>${jdkVersion}</version>
+                                </requireJavaVersion>
+                                <requireNoRepositories>
+                                    <message>Best Practice is to never define repositories in pom.xml (use a repository manager instead).</message>
+                                </requireNoRepositories>
+                                <requireReleaseDeps>
+                                    <message>No Snapshots Dependencies Allowed!</message>
+                                </requireReleaseDeps>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!--
+                Updates Version#id().
+                -->
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>maven-replacer-plugin</artifactId>
+                <version>1.3.8</version>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <ignoreMissingFile>false</ignoreMissingFile>
+                    <file>src/main/java/junit/runner/Version.java.template</file>
+                    <outputFile>src/main/java/junit/runner/Version.java</outputFile>
+                    <regex>false</regex>
+                    <token>@version@</token>
+                    <value>${project.version}</value>
+                </configuration>
+            </plugin>
+            <plugin><!-- Using jdk 1.5.0_22, package-info.java files are compiled correctly. -->
+                <!--
+                java compiler plugin forked in extra process
+                -->
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.5.1</version>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <source>${jdkVersion}</source>
+                    <target>${jdkVersion}</target>
+                    <compilerVersion>1.5</compilerVersion>
+                    <showDeprecation>true</showDeprecation>
+                    <showWarnings>true</showWarnings>
+                    <debug>true</debug>
+                    <fork>true</fork>
+                    <compilerArgument>-Xlint:unchecked</compilerArgument>
+                    <maxmem>128m</maxmem>
+                </configuration>
+            </plugin>
+            <plugin>
+                <!--
+                A plugin which uses the JUnit framework in order to start
+                our junit suite "AllTests" after the sources are compiled.
+                -->
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.12.3</version>
+                <configuration>
+                    <test>org/junit/tests/AllTests.java</test>
+                    <useSystemClassLoader>true</useSystemClassLoader>
+                    <enableAssertions>false</enableAssertions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <!--
+                This plugin can package the main artifact's sources (src/main/java)
+                in to jar archive. See target/junit-*-sources.jar.
+                -->
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!--
+                This plugin can generate Javadoc by a forked
+                process and then package the Javadoc
+                in jar archive target/junit-*-javadoc.jar.
+                -->
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.8.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadoc</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
+                            <show>protected</show>
+                            <author>false</author>
+                            <version>false</version>
+                            <detectLinks>false</detectLinks>
+                            <linksource>true</linksource>
+                            <keywords>true</keywords>
+                            <use>false</use>
+                            <windowtitle>JUnit API</windowtitle>
+                            <encoding>UTF-8</encoding>
+                            <locale>en</locale>
+                            <javadocVersion>1.5</javadocVersion>
+                            <javaApiLinks>
+                                <property>
+                                    <name>api_1.5</name>
+                                    <value>http://docs.oracle.com/javase/1.5.0/docs/api/index.html</value>
+                                </property>
+                            </javaApiLinks>
+                            <excludePackageNames>junit.*,*.internal,*.internal.*</excludePackageNames>
+                            <verbose>true</verbose>
+                            <minmemory>32m</minmemory>
+                            <maxmemory>128m</maxmemory>
+                            <failOnError>true</failOnError>
+                            <includeDependencySources>true</includeDependencySources>
+                            <dependencySourceIncludes>
+                                <dependencySourceInclude>org.hamcrest:hamcrest-core:*</dependencySourceInclude>
+                            </dependencySourceIncludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>sign</id>
+            <!--
+            Signs all artifacts before deploying to Maven Central.
+            -->
+            <build>
+                <plugins>
+                    <plugin>
+                        <!--
+                        The goal is to sign all artifacts so that the user may verify them before downloading.
+                        The automatic build system may reuire your key ID, and passphrase specified using system properties:
+                        -Dgpg.passphrase="<passphrase>" -Dgpg.keyname="<your key ID>"
+                        In order to create the key pair, use the command "gpg &ndash;&ndash;gen-key".
+                        (&ndash;&ndash; stands for double dash)
+                        -->
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.4</version>
+                        <executions>
+                            <execution>
+                                <id>gpg-sign</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

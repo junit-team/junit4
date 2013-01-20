@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    The JUnit build system is using this file.
+    All users should ignore it.
+
+    Settings Reference: http://maven.apache.org/ref/3.0.4/maven-settings/settings.html
+-->
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" 
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+    <!-- localRepository
+    The path to the local repository maven will use to store artifacts.
+    Default: ~/.m2/repository
+    <localRepository>${user.home}/.m2/repository</localRepository>
+    -->
+
+    <servers>
+        <!--
+        Specifies the authentication information to use when connecting to a particular server, identified by
+        a unique name within the system (referred to by the 'id' attribute below).
+        -->
+        <server>
+            <id>maven-central</id>
+            <username>???</username>
+            <password>???</password>
+            <filePermissions>664</filePermissions>
+            <directoryPermissions>775</directoryPermissions>
+            <configuration>
+                <timeout>15000</timeout> <!-- 15 seconds -->
+                <httpConfiguration>
+                    <put>
+                        <connectionTimeout>15000</connectionTimeout> <!-- 15 seconds -->
+                        <readTimeout>15000</readTimeout> <!-- 15 seconds -->
+                    </put>
+                </httpConfiguration>
+            </configuration>
+        </server>
+        <server>
+            <id>maven-central-snapshots</id>
+            <username>???</username>
+            <password>???</password>
+            <filePermissions>664</filePermissions>
+            <directoryPermissions>775</directoryPermissions>
+            <configuration>
+                <timeout>15000</timeout> <!-- 15 seconds -->
+                <httpConfiguration>
+                    <put>
+                        <connectionTimeout>15000</connectionTimeout> <!-- 15 seconds -->
+                        <readTimeout>15000</readTimeout> <!-- 15 seconds -->
+                    </put>
+                </httpConfiguration>
+            </configuration>
+        </server>
+    </servers>
+</settings>
