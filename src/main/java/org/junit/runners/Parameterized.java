@@ -164,9 +164,21 @@ public class Parameterized extends Suite {
         int value() default 0;
     }
 
+    /**
+     * Annotation for a class using parameterization to specify which
+     * Runner to use for each cycle of a test. If this annotation is
+     * not specified then the default {@link TestClassRunnerForParameters}
+     * is used.
+     */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
     public static @interface ParameterizedRunWith {
+        /**
+         * The class to use as a runner for executing each cycle of a test. The
+         * requested runner must have a constructor that accepts the same arguments
+         * as {@link TestClassRunnerForParameters}.
+         * @return the runner to use for executing each cycle of a parameterized test.
+         */
         Class<? extends Runner> value();
     }
 
@@ -313,8 +325,10 @@ public class Parameterized extends Suite {
         ParameterizedRunWith paramAnnotation = getTestClass().getClass().getAnnotation(ParameterizedRunWith.class);
 
         if (paramAnnotation == null) {
+            // Default to TestClassRunnerForParameters if no @ParameterizedRunWith has been specified
            return new TestClassRunnerForParameters(getTestClass().getJavaClass(), pattern, index, parameters);
         } else {
+            // use reflection to try and create the specified runner
             Class<? extends Runner> runnerClass = paramAnnotation.value();
             try {
                 Constructor<? extends Runner> runnerConstructor = runnerClass.getConstructor(Class.class, String.class, int.class, Object[].class);
