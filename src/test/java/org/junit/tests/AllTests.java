@@ -5,6 +5,8 @@ import junit.framework.Test;
 import org.junit.internal.MethodSorterTest;
 import org.junit.internal.matchers.StacktracePrintingMatcherTest;
 import org.junit.runner.RunWith;
+import org.junit.runner.notification.RunNotifierTest;
+import org.junit.runner.notification.ConcurrentRunNotifierTest;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.junit.tests.assertion.AssertionTest;
@@ -166,7 +168,9 @@ import org.junit.tests.validation.ValidationTest;
         MethodSorterTest.class,
         TestedOnSupplierTest.class,
         StacktracePrintingMatcherTest.class,
-        StopwatchTest.class
+        StopwatchTest.class,
+        RunNotifierTest.class,
+        ConcurrentRunNotifierTest.class
 })
 public class AllTests {
     public static Test suite() {
