@@ -41,9 +41,9 @@ abstract class AbstractThreadPoolStrategy<T extends ExecutorService> extends Sch
     }
 
     @Override
-    public void schedule(Runnable child) {
-        if (canScheduleChildren()) {
-            Future<?> futureResult = threadPool.submit(child);
+    public void schedule(Runnable task) {
+        if (canSchedule()) {
+            Future<?> futureResult = threadPool.submit(task);
             if (futureResults != null) {
                 futureResults.add(futureResult);
             }
@@ -73,7 +73,7 @@ abstract class AbstractThreadPoolStrategy<T extends ExecutorService> extends Sch
     }
 
     @Override
-    public boolean canScheduleChildren() {
+    public boolean canSchedule() {
         return canSchedule;
     }
 }

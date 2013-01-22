@@ -11,7 +11,7 @@ import org.junit.runners.model.RunnerScheduler;
  * <p/>
  * This instance of strategy is consumed by one executor {@link AbstractExecutor}.
  * <p/>
- * The strategy has methods to schedule children and await them to complete.
+ * The strategy has methods to schedule tasks and await them to complete.
  * Methods {@link #schedule(Runnable)} and {@link #finished()} should be used
  * in the same thread.
  *
@@ -63,26 +63,26 @@ public abstract class SchedulingStrategy {
     }
 
     /**
-     * Schedules children if {@link #canScheduleChildren()}.
+     * Schedules tasks if {@link #canSchedule()}.
      *
-     * @param child runnable to schedule in a thread pool or invoke
-     * @throws RejectedExecutionException if <tt>child</tt>
+     * @param task runnable to schedule in a thread pool or invoke
+     * @throws RejectedExecutionException if <tt>task</tt>
      *         cannot be scheduled for execution
-     * @throws NullPointerException if <tt>child</tt> is <tt>null</tt>
+     * @throws NullPointerException if <tt>task</tt> is <tt>null</tt>
      * @see RunnerScheduler#schedule(Runnable)
      * @see java.util.concurrent.Executor#execute(Runnable)
      */
-    public abstract void schedule(Runnable child);
+    public abstract void schedule(Runnable task);
 
     /**
-     * Waiting for scheduled children to finish.
+     * Waiting for scheduled tasks to finish.
      * New tasks will not be scheduled by calling this method.
      *
      * @return <tt>true</tt> if successfully stopped the scheduler, else
      *         <tt>false</tt> if already stopped (a <em>shared</em> thread
      *         pool was shutdown externally).
      * @throws InterruptedException if interrupted while waiting
-     *         for scheduled children to finish
+     *         for scheduled tasks to finish
      * @see RunnerScheduler#finished()
      */
     public boolean finished() throws InterruptedException {
@@ -92,7 +92,7 @@ public abstract class SchedulingStrategy {
     }
 
     /**
-     * Stops scheduling new children (e.g. by {@link ExecutorService#shutdown()}
+     * Stops scheduling new tasks (e.g. by {@link ExecutorService#shutdown()}
      * on a private thread pool which cannot be <em>shared</em> with other strategy).
      *
      * @return <tt>true</tt> if successfully stopped the scheduler, else
@@ -103,7 +103,7 @@ public abstract class SchedulingStrategy {
     protected abstract boolean stop();
 
     /**
-     * Stops scheduling new children and <em>interrupts</em> running children
+     * Stops scheduling new tasks and <em>interrupts</em> running tasks
      * (e.g. by {@link ExecutorService#shutdownNow()} on a private thread pool
      * which cannot be <em>shared</em> with other strategy).
      * <p>
@@ -119,7 +119,7 @@ public abstract class SchedulingStrategy {
     }
 
     /**
-     * Blocks until all children have completed execution after a stop
+     * Blocks until all tasks have completed execution after a stop
      * request, or the current thread is interrupted. Returns immediately
      * if already stopped.
      *
@@ -136,5 +136,5 @@ public abstract class SchedulingStrategy {
     /**
      * @return <tt>true</tt> unless stopped or finished.
      */
-    public abstract boolean canScheduleChildren();
+    public abstract boolean canSchedule();
 }

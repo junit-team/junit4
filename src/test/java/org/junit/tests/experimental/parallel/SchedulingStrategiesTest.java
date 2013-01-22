@@ -37,25 +37,25 @@ public class SchedulingStrategiesTest {
     public void invokerStrategy() throws InterruptedException {
         SchedulingStrategy strategy = SchedulingStrategy.createInvokerStrategy();
         assertFalse(strategy.hasSharedThreadPool());
-        assertTrue(strategy.canScheduleChildren());
+        assertTrue(strategy.canSchedule());
 
         Task task = new Task();
 
         strategy.schedule(task);
 
-        assertTrue(strategy.canScheduleChildren());
+        assertTrue(strategy.canSchedule());
 
         assertTrue(task.result);
 
         assertTrue(strategy.finished());
-        assertFalse(strategy.canScheduleChildren());
+        assertFalse(strategy.canSchedule());
     }
 
     @Test
     public void nonSharedPoolStrategy() throws InterruptedException {
         SchedulingStrategy strategy = SchedulingStrategy.createParallelStrategy(2);
         assertFalse(strategy.hasSharedThreadPool());
-        assertTrue(strategy.canScheduleChildren());
+        assertTrue(strategy.canSchedule());
 
         Task task1 = new Task();
         Task task2 = new Task();
@@ -63,10 +63,10 @@ public class SchedulingStrategiesTest {
         strategy.schedule(task1);
         strategy.schedule(task2);
 
-        assertTrue(strategy.canScheduleChildren());
+        assertTrue(strategy.canSchedule());
 
         assertTrue(strategy.finished());
-        assertFalse(strategy.canScheduleChildren());
+        assertFalse(strategy.canSchedule());
 
         assertTrue(task1.result);
         assertTrue(task2.result);
@@ -83,11 +83,11 @@ public class SchedulingStrategiesTest {
 
         SchedulingStrategy strategy1 = SchedulingStrategy.createParallelSharedStrategy(sharedPool);
         assertTrue(strategy1.hasSharedThreadPool());
-        assertTrue(strategy1.canScheduleChildren());
+        assertTrue(strategy1.canSchedule());
 
         SchedulingStrategy strategy2 = SchedulingStrategy.createParallelSharedStrategy(sharedPool);
         assertTrue(strategy2.hasSharedThreadPool());
-        assertTrue(strategy2.canScheduleChildren());
+        assertTrue(strategy2.canSchedule());
 
         Task task1 = new Task();
         Task task2 = new Task();
@@ -99,14 +99,14 @@ public class SchedulingStrategiesTest {
         strategy1.schedule(task3);
         strategy2.schedule(task4);
 
-        assertTrue(strategy1.canScheduleChildren());
-        assertTrue(strategy2.canScheduleChildren());
+        assertTrue(strategy1.canSchedule());
+        assertTrue(strategy2.canSchedule());
 
         assertTrue(strategy1.finished());
-        assertFalse(strategy1.canScheduleChildren());
+        assertFalse(strategy1.canSchedule());
 
         assertTrue(strategy2.finished());
-        assertFalse(strategy2.canScheduleChildren());
+        assertFalse(strategy2.canSchedule());
 
         assertTrue(task1.result);
         assertTrue(task2.result);
@@ -118,7 +118,7 @@ public class SchedulingStrategiesTest {
     public void infinitePoolStrategy() throws InterruptedException {
         SchedulingStrategy strategy = SchedulingStrategy.createParallelStrategyUnbounded();
         assertFalse(strategy.hasSharedThreadPool());
-        assertTrue(strategy.canScheduleChildren());
+        assertTrue(strategy.canSchedule());
 
         Task task1 = new Task();
         Task task2 = new Task();
@@ -126,10 +126,10 @@ public class SchedulingStrategiesTest {
         strategy.schedule(task1);
         strategy.schedule(task2);
 
-        assertTrue(strategy.canScheduleChildren());
+        assertTrue(strategy.canSchedule());
 
         assertTrue(strategy.finished());
-        assertFalse(strategy.canScheduleChildren());
+        assertFalse(strategy.canSchedule());
 
         assertTrue(task1.result);
         assertTrue(task2.result);

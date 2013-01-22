@@ -13,9 +13,9 @@ final class InvokerStrategy extends SchedulingStrategy {
     private volatile boolean canSchedule = true;
 
     @Override
-    public void schedule(Runnable child) {
-        if (canScheduleChildren()) {
-            child.run();
+    public void schedule(Runnable task) {
+        if (canSchedule()) {
+            task.run();
         }
     }
 
@@ -35,7 +35,7 @@ final class InvokerStrategy extends SchedulingStrategy {
     }
 
     @Override
-    public boolean canScheduleChildren() {
+    public boolean canSchedule() {
         return canSchedule;
     }
 }
