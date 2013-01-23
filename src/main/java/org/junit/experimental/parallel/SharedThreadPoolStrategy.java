@@ -15,8 +15,8 @@ import java.util.concurrent.Future;
  *
  * @see AbstractThreadPoolStrategy
  */
-final class SharedThreadPoolStrategy<T extends ExecutorService> extends AbstractThreadPoolStrategy<T> {
-    SharedThreadPoolStrategy(T threadPool) {
+final class SharedThreadPoolStrategy extends AbstractThreadPoolStrategy {
+    SharedThreadPoolStrategy(ExecutorService threadPool) {
         super(threadPool, new ArrayList<Future<?>>());
     }
 
@@ -28,7 +28,7 @@ final class SharedThreadPoolStrategy<T extends ExecutorService> extends Abstract
     @Override
     public boolean finished() throws InterruptedException {
         boolean wasRunningAll = stop();
-        for (Future<?> futureResult : futureResults) {
+        for (Future<?> futureResult : getFutureResults()) {
             try {
                 futureResult.get();
             } catch (InterruptedException e) {
@@ -51,8 +51,8 @@ final class SharedThreadPoolStrategy<T extends ExecutorService> extends Abstract
 
     @Override
     protected final boolean stop() {
-        boolean wasStopped = canSchedule;
-        canSchedule = false;
+        boolean wasStopped = canSchedule();
+        disable();
         return wasStopped;
     }
 

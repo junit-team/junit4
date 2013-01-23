@@ -1,9 +1,10 @@
 package org.junit.experimental.parallel;
 
+import org.junit.runners.model.RunnerScheduler;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
-import org.junit.runners.model.RunnerScheduler;
 
 /**
  * Specifies the strategy of scheduling whether sequential, or parallel.
@@ -33,14 +34,14 @@ public abstract class SchedulingStrategy {
      * @return parallel scheduling strategy
      */
     public static SchedulingStrategy createParallelStrategy(int nThreads) {
-        return new NonSharedThreadPoolStrategy<ExecutorService>(Executors.newFixedThreadPool(nThreads));
+        return new NonSharedThreadPoolStrategy(Executors.newFixedThreadPool(nThreads));
     }
 
     /**
      * @return parallel scheduling strategy with unbounded capacity
      */
     public static SchedulingStrategy createParallelStrategyUnbounded() {
-        return new NonSharedThreadPoolStrategy<ExecutorService>(Executors.newCachedThreadPool());
+        return new NonSharedThreadPoolStrategy(Executors.newCachedThreadPool());
     }
 
     /**
@@ -59,7 +60,7 @@ public abstract class SchedulingStrategy {
         if (threadPool == null) {
             throw new NullPointerException("null threadPool in #createParallelSharedStrategy");
         }
-        return new SharedThreadPoolStrategy<ExecutorService>(threadPool);
+        return new SharedThreadPoolStrategy(threadPool);
     }
 
     /**

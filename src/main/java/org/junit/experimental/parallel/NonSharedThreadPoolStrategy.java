@@ -12,8 +12,8 @@ import java.util.concurrent.TimeUnit;
  *
  * @see AbstractThreadPoolStrategy
  */
-final class NonSharedThreadPoolStrategy<T extends ExecutorService> extends AbstractThreadPoolStrategy<T> {
-    NonSharedThreadPoolStrategy(T threadPool) {
+final class NonSharedThreadPoolStrategy extends AbstractThreadPoolStrategy {
+    NonSharedThreadPoolStrategy(ExecutorService threadPool) {
         super(threadPool);
     }
 
@@ -24,6 +24,6 @@ final class NonSharedThreadPoolStrategy<T extends ExecutorService> extends Abstr
 
     @Override
     public void awaitStopped() throws InterruptedException {
-        threadPool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        getThreadPool().awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
     }
 }

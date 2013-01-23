@@ -18,9 +18,9 @@ import java.util.concurrent.Future;
  * @see NonSharedThreadPoolStrategy
  */
 abstract class AbstractThreadPoolStrategy extends SchedulingStrategy {
-    final ExecutorService threadPool;
-    final Collection<Future<?>> futureResults;
-    volatile boolean canSchedule;
+    private final ExecutorService threadPool;
+    private final Collection<Future<?>> futureResults;
+    private volatile boolean canSchedule;
 
     AbstractThreadPoolStrategy(ExecutorService threadPool) {
         this(threadPool, null);
@@ -30,6 +30,18 @@ abstract class AbstractThreadPoolStrategy extends SchedulingStrategy {
         canSchedule = true;
         this.threadPool = threadPool;
         this.futureResults = futureResults;
+    }
+
+    protected final ExecutorService getThreadPool() {
+        return threadPool;
+    }
+
+    protected final Collection<Future<?>> getFutureResults() {
+        return futureResults;
+    }
+
+    protected final void disable() {
+        canSchedule = false;
     }
 
     @Override
@@ -65,7 +77,7 @@ abstract class AbstractThreadPoolStrategy extends SchedulingStrategy {
     }
 
     @Override
-    public boolean canSchedule() {
+    public final boolean canSchedule() {
         return canSchedule;
     }
 }
