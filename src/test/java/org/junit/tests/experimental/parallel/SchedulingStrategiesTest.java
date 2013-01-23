@@ -1,9 +1,11 @@
 package org.junit.tests.experimental.parallel;
 
+import org.junit.Test;
+import org.junit.experimental.parallel.SchedulingStrategies;
+import org.junit.experimental.parallel.SchedulingStrategy;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.junit.Test;
-import org.junit.experimental.parallel.SchedulingStrategy;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -35,7 +37,7 @@ public class SchedulingStrategiesTest {
 
     @Test
     public void invokerStrategy() throws InterruptedException {
-        SchedulingStrategy strategy = SchedulingStrategy.createInvokerStrategy();
+        SchedulingStrategy strategy = SchedulingStrategies.createInvokerStrategy();
         assertFalse(strategy.hasSharedThreadPool());
         assertTrue(strategy.canSchedule());
 
@@ -53,7 +55,7 @@ public class SchedulingStrategiesTest {
 
     @Test
     public void nonSharedPoolStrategy() throws InterruptedException {
-        SchedulingStrategy strategy = SchedulingStrategy.createParallelStrategy(2);
+        SchedulingStrategy strategy = SchedulingStrategies.createParallelStrategy(2);
         assertFalse(strategy.hasSharedThreadPool());
         assertTrue(strategy.canSchedule());
 
@@ -116,7 +118,7 @@ public class SchedulingStrategiesTest {
 
     @Test
     public void infinitePoolStrategy() throws InterruptedException {
-        SchedulingStrategy strategy = SchedulingStrategy.createParallelStrategyUnbounded();
+        SchedulingStrategy strategy = SchedulingStrategies.createParallelStrategyUnbounded();
         assertFalse(strategy.hasSharedThreadPool());
         assertTrue(strategy.canSchedule());
 

@@ -3,7 +3,6 @@ package org.junit.experimental.parallel;
 import org.junit.runners.model.RunnerScheduler;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 
 /**
@@ -20,28 +19,6 @@ import java.util.concurrent.RejectedExecutionException;
  * @since 4.12
  */
 public abstract class SchedulingStrategy {
-
-    /**
-     * @return sequentially executing strategy
-     */
-    public static SchedulingStrategy createInvokerStrategy() {
-        return new InvokerStrategy();
-    }
-
-    /**
-     * @param nThreads fixed pool capacity
-     * @return parallel scheduling strategy
-     */
-    public static SchedulingStrategy createParallelStrategy(int nThreads) {
-        return new NonSharedThreadPoolStrategy(Executors.newFixedThreadPool(nThreads));
-    }
-
-    /**
-     * @return parallel scheduling strategy with unbounded capacity
-     */
-    public static SchedulingStrategy createParallelStrategyUnbounded() {
-        return new NonSharedThreadPoolStrategy(Executors.newCachedThreadPool());
-    }
 
     /**
      * The <tt>threadPool</tt> passed to this strategy can be shared in other strategies.
