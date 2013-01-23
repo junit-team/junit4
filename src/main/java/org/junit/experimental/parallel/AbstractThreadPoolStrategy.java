@@ -17,16 +17,16 @@ import java.util.concurrent.Future;
  * @see SharedThreadPoolStrategy
  * @see NonSharedThreadPoolStrategy
  */
-abstract class AbstractThreadPoolStrategy<T extends ExecutorService> extends SchedulingStrategy {
-    final T threadPool;
+abstract class AbstractThreadPoolStrategy extends SchedulingStrategy {
+    final ExecutorService threadPool;
     final Collection<Future<?>> futureResults;
     volatile boolean canSchedule;
 
-    AbstractThreadPoolStrategy(T threadPool) {
+    AbstractThreadPoolStrategy(ExecutorService threadPool) {
         this(threadPool, null);
     }
 
-    AbstractThreadPoolStrategy(T threadPool, Collection<Future<?>> futureResults) {
+    AbstractThreadPoolStrategy(ExecutorService threadPool, Collection<Future<?>> futureResults) {
         canSchedule = true;
         this.threadPool = threadPool;
         this.futureResults = futureResults;
