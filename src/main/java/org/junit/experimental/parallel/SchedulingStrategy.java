@@ -8,7 +8,7 @@ import java.util.concurrent.RejectedExecutionException;
 
 /**
  * Specifies the strategy of scheduling whether sequential, or parallel.
- * The strategy may use a thread pool been <em>shared</em> with other strategies.
+ * The strategy may use a thread pool <em>shared</em> with other strategies.
  * <p/>
  * This instance of strategy is consumed by one executor {@link AbstractExecutor}.
  * <p/>
