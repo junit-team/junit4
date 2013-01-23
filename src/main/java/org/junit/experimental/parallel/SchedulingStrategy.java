@@ -10,11 +10,10 @@ import java.util.concurrent.RejectedExecutionException;
  * Specifies the strategy of scheduling whether sequential, or parallel.
  * The strategy may use a thread pool <em>shared</em> with other strategies.
  * <p/>
- * This instance of strategy is consumed by one executor {@link AbstractExecutor}.
+ * One instance of strategy can be used just by one executor {@link AbstractExecutor}.
  * <p/>
- * The strategy has methods to schedule tasks and await them to complete.
- * Methods {@link #schedule(Runnable)} and {@link #finished()} should be used
- * in the same thread.
+ * The strategy is scheduling tasks in {@link #schedule(Runnable)} and awaiting them
+ * completed in {@link #finished()}. Both methods should be used in one thread.
  *
  * @author Tibor Digana (tibor17)
  * @version 4.12
