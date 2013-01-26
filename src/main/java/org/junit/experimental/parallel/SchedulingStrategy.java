@@ -21,25 +21,6 @@ import java.util.concurrent.RejectedExecutionException;
 public abstract class SchedulingStrategy {
 
     /**
-     * The <tt>threadPool</tt> passed to this strategy can be shared in other strategies.
-     * <p>
-     * The call {@link SchedulingStrategy#finished()} is waiting until own tasks have finished.
-     * New tasks will not be scheduled by this call in this strategy. This strategy is not
-     * waiting for other strategies to finish. The {@link RunnerScheduler#finished()} may
-     * freely use {@link SchedulingStrategy#finished()}.
-     *
-     * @param threadPool thread pool possibly shared with other strategies
-     * @return parallel strategy with shared thread pool
-     * @throws NullPointerException if <tt>threadPool</tt> is null
-     */
-    public static SchedulingStrategy createParallelSharedStrategy(ExecutorService threadPool) {
-        if (threadPool == null) {
-            throw new NullPointerException("null threadPool in #createParallelSharedStrategy");
-        }
-        return new SharedThreadPoolStrategy(threadPool);
-    }
-
-    /**
      * Schedules tasks if {@link #canSchedule()}.
      *
      * @param task runnable to schedule in a thread pool or invoke

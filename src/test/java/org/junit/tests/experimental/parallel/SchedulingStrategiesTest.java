@@ -76,18 +76,18 @@ public class SchedulingStrategiesTest {
 
     @Test(expected = NullPointerException.class)
     public void sharedPoolStrategyNullPool() {
-        SchedulingStrategy.createParallelSharedStrategy(null);
+        SchedulingStrategies.createParallelSharedStrategy(null);
     }
 
     @Test
     public void sharedPoolStrategy() throws InterruptedException {
         ExecutorService sharedPool = Executors.newCachedThreadPool();
 
-        SchedulingStrategy strategy1 = SchedulingStrategy.createParallelSharedStrategy(sharedPool);
+        SchedulingStrategy strategy1 = SchedulingStrategies.createParallelSharedStrategy(sharedPool);
         assertTrue(strategy1.hasSharedThreadPool());
         assertTrue(strategy1.canSchedule());
 
-        SchedulingStrategy strategy2 = SchedulingStrategy.createParallelSharedStrategy(sharedPool);
+        SchedulingStrategy strategy2 = SchedulingStrategies.createParallelSharedStrategy(sharedPool);
         assertTrue(strategy2.hasSharedThreadPool());
         assertTrue(strategy2.canSchedule());
 
