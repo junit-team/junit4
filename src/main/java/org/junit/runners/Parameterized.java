@@ -182,7 +182,7 @@ public class Parameterized extends Suite {
         Class<? extends Runner> value();
     }
 
-    protected static class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
+    public static class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
         private final Object[] fParameters;
 
         private String fName;
@@ -322,7 +322,7 @@ public class Parameterized extends Suite {
     }
 
     protected Runner createRunner(String pattern, int index, Object[] parameters) throws InitializationError {
-        ParameterizedRunWith paramAnnotation = getTestClass().getClass().getAnnotation(ParameterizedRunWith.class);
+        ParameterizedRunWith paramAnnotation = getTestClass().getJavaClass().getAnnotation(ParameterizedRunWith.class);
 
         if (paramAnnotation == null) {
             // Default to TestClassRunnerForParameters if no @ParameterizedRunWith has been specified
@@ -340,7 +340,7 @@ public class Parameterized extends Suite {
             } catch (InvocationTargetException e) {
                 throw new InitializationError(e);
             } catch (NoSuchMethodException e) {
-                throw new InitializationError(e);
+                throw new InitializationError("Required constructor not found. Parameterized runners need a public constructor with arguments: Class, String, int, Object[]");
             }
         }
     }
