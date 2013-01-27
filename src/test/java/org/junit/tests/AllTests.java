@@ -2,6 +2,7 @@ package org.junit.tests;
 
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
+import org.junit.experimental.theories.internal.SpecificDataPointsSupplier;
 import org.junit.internal.MethodSorterTest;
 import org.junit.internal.matchers.StacktracePrintingMatcherTest;
 import org.junit.runner.RunWith;
@@ -39,9 +40,12 @@ import org.junit.tests.experimental.rules.TemporaryFolderUsageTest;
 import org.junit.tests.experimental.rules.TestRuleTest;
 import org.junit.tests.experimental.rules.TimeoutRuleTest;
 import org.junit.tests.experimental.rules.VerifierRuleTest;
-import org.junit.tests.experimental.theories.AllMembersSupplierTest;
 import org.junit.tests.experimental.theories.TestedOnSupplierTest;
+import org.junit.tests.experimental.theories.internal.AllMembersSupplierTest;
+import org.junit.tests.experimental.theories.internal.ParameterizedAssertionErrorTest;
+import org.junit.tests.experimental.theories.internal.SpecificDataPointsSupplierTest;
 import org.junit.tests.experimental.theories.runner.TheoriesPerformanceTest;
+import org.junit.tests.experimental.theories.runner.WithDataPointMethod;
 import org.junit.tests.junit3compatibility.AllTestsTest;
 import org.junit.tests.junit3compatibility.ClassRequestTest;
 import org.junit.tests.junit3compatibility.ForwardCompatibilityTest;
@@ -132,6 +136,9 @@ import org.junit.tests.validation.ValidationTest;
         InheritedTestTest.class,
         TestClassTest.class,
         AllMembersSupplierTest.class,
+        SpecificDataPointsSupplierTest.class,
+        ParameterizedAssertionErrorTest.class,
+        WithDataPointMethod.class,
         MatcherTest.class,
         ObjectContractTest.class,
         TheoriesPerformanceTest.class,

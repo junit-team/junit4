@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.experimental.theories.DataPoint;
@@ -11,6 +12,7 @@ import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.ParameterSignature;
 import org.junit.experimental.theories.ParameterSupplier;
 import org.junit.experimental.theories.PotentialAssignment;
+import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
 
@@ -45,9 +47,9 @@ public class AllMembersSupplier extends ParameterSupplier {
         public String getDescription() throws CouldNotGenerateValueException {
             return fMethod.getName();
         }
-    }
-
-    private final TestClass fClass;
+    }   
+    
+    protected final TestClass fClass;
 
     /**
      * Constructs a new supplier for {@code type}
@@ -68,8 +70,7 @@ public class AllMembersSupplier extends ParameterSupplier {
     }
 
     private void addMultiPointMethods(ParameterSignature sig, List<PotentialAssignment> list) {
-        for (FrameworkMethod dataPointsMethod : fClass
-                .getAnnotatedMethods(DataPoints.class)) {
+        for (FrameworkMethod dataPointsMethod : getDataPointsMethods(sig)) {
             try {
                 addMultiPointArrayValues(sig, dataPointsMethod.getName(), list, dataPointsMethod.invokeExplosively(null));
             } catch (Throwable e) {
@@ -80,8 +81,7 @@ public class AllMembersSupplier extends ParameterSupplier {
 
     private void addSinglePointMethods(ParameterSignature sig,
             List<PotentialAssignment> list) {
-        for (FrameworkMethod dataPointMethod : fClass
-                .getAnnotatedMethods(DataPoint.class)) {
+        for (FrameworkMethod dataPointMethod : getSingleDataPointMethods(sig)) {
             if (sig.canAcceptType(dataPointMethod.getType())) {
                 list.add(new MethodParameterValue(dataPointMethod));
             }
@@ -90,21 +90,20 @@ public class AllMembersSupplier extends ParameterSupplier {
 
     private void addFields(ParameterSignature sig,
             List<PotentialAssignment> list) {
-        for (final Field field : fClass.getJavaClass().getFields()) {
-            if (Modifier.isStatic(field.getModifiers())) {
-                Class<?> type = field.getType();
-                if (sig.canAcceptArrayType(type)
-                        && field.getAnnotation(DataPoints.class) != null) {
-                    try {
-                        addArrayValues(field.getName(), list, getStaticFieldValue(field));
-                    } catch (Throwable e) {
-                        // ignore and move on
-                    }
-                } else if (sig.canAcceptType(type)
-                        && field.getAnnotation(DataPoint.class) != null) {
-                    list.add(PotentialAssignment
-                            .forValue(field.getName(), getStaticFieldValue(field)));
+        for (final Field field : getDataPointsFields(sig)) {
+            Class<?> type = field.getType();
+            if (sig.canAcceptArrayType(type)) {
+                try {
+                    addArrayValues(field.getName(), list, getStaticFieldValue(field));
+                } catch (Throwable e) {
+                    // ignore and move on
                 }
+            }
+        }
+        for (final Field field : getSingleDataPointFields(sig)) {
+            Class<?> type = field.getType();
+            if (sig.canAcceptType(type)) {
+                list.add(PotentialAssignment.forValue(field.getName(), getStaticFieldValue(field)));
             }
         }
     }
@@ -136,4 +135,41 @@ public class AllMembersSupplier extends ParameterSupplier {
                     "unexpected: getFields returned an inaccessible field");
         }
     }
+
+    protected Collection<FrameworkMethod> getDataPointsMethods(ParameterSignature sig) {
+        return fClass.getAnnotatedMethods(DataPoints.class);        
+    }
+    
+    protected Collection<Field> getSingleDataPointFields(ParameterSignature sig) {
+        List<FrameworkField> fields = fClass.getAnnotatedFields(DataPoint.class);
+        Collection<Field> validFields = new ArrayList<Field>();
+
+        for (FrameworkField frameworkField : fields) {
+            Field field = frameworkField.getField();
+            if (Modifier.isStatic(field.getModifiers())) {
+                validFields.add(field);
+            }
+        }
+
+        return validFields;
+    }
+    
+    protected Collection<Field> getDataPointsFields(ParameterSignature sig) {
+        List<FrameworkField> fields = fClass.getAnnotatedFields(DataPoints.class);
+        Collection<Field> validFields = new ArrayList<Field>();
+
+        for (FrameworkField frameworkField : fields) {
+            Field field = frameworkField.getField();
+            if (Modifier.isStatic(field.getModifiers())) {
+                validFields.add(field);
+            }
+        }
+
+        return validFields;
+    }
+    
+    protected Collection<FrameworkMethod> getSingleDataPointMethods(ParameterSignature sig) {
+        return fClass.getAnnotatedMethods(DataPoint.class);
+    }
+
 }

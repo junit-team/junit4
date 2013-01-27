@@ -1,4 +1,4 @@
-package org.junit.tests.experimental.theories;
+package org.junit.tests.experimental.theories.internal;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;

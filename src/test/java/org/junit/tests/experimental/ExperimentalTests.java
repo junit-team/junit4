@@ -1,13 +1,16 @@
 package org.junit.tests.experimental;
 
+import org.junit.experimental.theories.internal.AllMembersSupplier;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.junit.tests.experimental.results.PrintableResultTest;
 import org.junit.tests.experimental.results.ResultMatchersTest;
 import org.junit.tests.experimental.theories.ParameterSignatureTest;
-import org.junit.tests.experimental.theories.ParameterizedAssertionErrorTest;
 import org.junit.tests.experimental.theories.extendingwithstubs.StubbedTheoriesTest;
+import org.junit.tests.experimental.theories.internal.AllMembersSupplierTest;
+import org.junit.tests.experimental.theories.internal.ParameterizedAssertionErrorTest;
+import org.junit.tests.experimental.theories.internal.SpecificDataPointsSupplierTest;
 import org.junit.tests.experimental.theories.runner.SuccessfulWithDataPointFields;
 import org.junit.tests.experimental.theories.runner.UnsuccessfulWithDataPointFields;
 import org.junit.tests.experimental.theories.runner.WhenNoParametersMatch;
@@ -18,6 +21,8 @@ import org.junit.tests.experimental.theories.runner.WithUnresolvedGenericTypeVar
 
 @RunWith(Suite.class)
 @SuiteClasses({ParameterizedAssertionErrorTest.class,
+        AllMembersSupplierTest.class,
+        SpecificDataPointsSupplierTest.class,
         UnsuccessfulWithDataPointFields.class,
         SuccessfulWithDataPointFields.class, PrintableResultTest.class,
         ResultMatchersTest.class, WithDataPointMethod.class,

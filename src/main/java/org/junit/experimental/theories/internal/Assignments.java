@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.experimental.theories.FromDataPoints;
 import org.junit.experimental.theories.ParameterSignature;
 import org.junit.experimental.theories.ParameterSupplier;
 import org.junit.experimental.theories.ParametersSuppliedBy;
@@ -81,22 +82,28 @@ public class Assignments {
 
     public ParameterSupplier getSupplier(ParameterSignature unassigned)
             throws InstantiationException, IllegalAccessException {
-        ParameterSupplier supplier = getAnnotatedSupplier(unassigned);
+        ParameterSupplier supplier = getSupplierFromAnnotation(unassigned);
         if (supplier != null) {
             return supplier;
         }
-
+        
         return new AllMembersSupplier(fClass);
     }
 
-    public ParameterSupplier getAnnotatedSupplier(ParameterSignature unassigned)
+    private ParameterSupplier getSupplierFromAnnotation(ParameterSignature unassigned)
             throws InstantiationException, IllegalAccessException {
-        ParametersSuppliedBy annotation = unassigned
+        ParametersSuppliedBy parameterSupplierAnnotation = unassigned
                 .findDeepAnnotation(ParametersSuppliedBy.class);
-        if (annotation == null) {
-            return null;
+        if (parameterSupplierAnnotation != null) {
+            return parameterSupplierAnnotation.value().newInstance();
         }
-        return annotation.value().newInstance();
+        
+        FromDataPoints fromDataPointsAnnotation = unassigned.getAnnotation(FromDataPoints.class);
+        if (fromDataPointsAnnotation != null) {
+            return new SpecificDataPointsSupplier(fClass);
+        }
+        
+        return null;
     }
 
     public Object[] getConstructorArguments(boolean nullsOk)

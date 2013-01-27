@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.everyItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
@@ -17,6 +18,8 @@ import java.util.List;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoint;
+import org.junit.experimental.theories.DataPoints;
+import org.junit.experimental.theories.FromDataPoints;
 import org.junit.experimental.theories.PotentialAssignment;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
@@ -133,11 +136,63 @@ public class WithDataPointMethod {
                 HasDateMethod.class.getMethod("onlyDatesOk", Date.class))
                 .size(), is(0));
     }
+    
+    @RunWith(Theories.class)
+    public static class HasSpecificDatapointsParameters {
+        
+        @DataPoints
+        public static String[] badStrings = new String[] { "bad" };
+        
+        @DataPoint
+        public static String badString = "also bad";
+        
+        @DataPoints("named")
+        public static String[] goodStrings = new String[] { "expected", "also expected" };
+        
+        @DataPoint("named")
+        public static String goodString = "expected single value";
+        
+        @DataPoints("named")
+        public static String[] methodStrings() {
+            return new String[] { "expected method value" };
+        }
+        
+        @DataPoint("named")
+        public static String methodString() {
+            return "expected single method string";
+        }
+        
+        @DataPoints
+        public static String[] otherMethod() {
+            return new String[] { "other method value" };
+        }
+        
+        @DataPoint
+        public static String otherSingleValueMethod() {
+            return "other single value string";
+        }
+        
+        @Theory
+        public void testMethod(@FromDataPoints("named") String x) {
+        }
+        
+    }
+    
+    @Test
+    public void onlyUseSpecificDataPointsIfSpecified() throws Exception {
+        List<PotentialAssignment> assignments = potentialValues(HasSpecificDatapointsParameters.class
+                .getMethod("testMethod", String.class));
+        
+        assertEquals(5, assignments.size());
+        for (PotentialAssignment assignment : assignments) {
+            assertThat((String) assignment.getValue(), containsString("expected"));
+        }
+    }
 
     private List<PotentialAssignment> potentialValues(Method method)
             throws Exception {
         return Assignments.allUnassigned(method,
-                new TestClass(HasDateMethod.class))
+                new TestClass(method.getDeclaringClass()))
                 .potentialsForNextUnassigned();
     }
 
