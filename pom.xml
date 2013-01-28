@@ -58,6 +58,14 @@
         <developerConnection>scm:git:git@github.com:KentBeck/junit.git</developerConnection>
         <url>http://github.com/KentBeck/junit/tree/master</url>
     </scm>
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/KentBeck/junit/issues</url>
+    </issueManagement>
+    <ciManagement>
+        <system>jenkins</system>
+        <url>https://junit.ci.cloudbees.com/</url>
+    </ciManagement>
     <distributionManagement>
         <downloadUrl>https://github.com/KentBeck/junit/wiki/Download-and-Install</downloadUrl>
         <snapshotRepository>
