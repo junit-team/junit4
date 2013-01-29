@@ -2,6 +2,7 @@ package org.junit.experimental.theories;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,13 +27,14 @@ public class Theories extends BlockJUnit4ClassRunner {
     protected void collectInitializationErrors(List<Throwable> errors) {
         super.collectInitializationErrors(errors);
         validateDataPointFields(errors);
+        validateDataPointMethods(errors);
     }
 
     private void validateDataPointFields(List<Throwable> errors) {
         Field[] fields = getTestClass().getJavaClass().getDeclaredFields();
 
         for (Field field : fields) {
-            if (field.getAnnotation(DataPoint.class) == null) {
+            if (field.getAnnotation(DataPoint.class) == null && field.getAnnotation(DataPoints.class) == null) {
                 continue;
             }
             if (!Modifier.isStatic(field.getModifiers())) {
@@ -40,6 +42,22 @@ public class Theories extends BlockJUnit4ClassRunner {
             }
             if (!Modifier.isPublic(field.getModifiers())) {
                 errors.add(new Error("DataPoint field " + field.getName() + " must be public"));
+            }
+        }
+    }
+
+    private void validateDataPointMethods(List<Throwable> errors) {
+        Method[] methods = getTestClass().getJavaClass().getDeclaredMethods();
+        
+        for (Method method : methods) {
+            if (method.getAnnotation(DataPoint.class) == null && method.getAnnotation(DataPoints.class) == null) {
+                continue;
+            }
+            if (!Modifier.isStatic(method.getModifiers())) {
+                errors.add(new Error("DataPoint method " + method.getName() + " must be static"));
+            }
+            if (!Modifier.isPublic(method.getModifiers())) {
+                errors.add(new Error("DataPoint method " + method.getName() + " must be public"));
             }
         }
     }
