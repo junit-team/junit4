@@ -1,10 +1,10 @@
 package org.junit.experimental.theories.internal;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.experimental.theories.FromDataPoints;
 import org.junit.experimental.theories.ParameterSignature;
 import org.junit.experimental.theories.ParameterSupplier;
 import org.junit.experimental.theories.ParametersSuppliedBy;
@@ -75,35 +75,45 @@ public class Assignments {
     }
 
     public List<PotentialAssignment> potentialsForNextUnassigned()
-            throws InstantiationException, IllegalAccessException {
+            throws ReflectiveOperationException {
         ParameterSignature unassigned = nextUnassigned();
         return getSupplier(unassigned).getValueSources(unassigned);
     }
 
-    public ParameterSupplier getSupplier(ParameterSignature unassigned)
-            throws InstantiationException, IllegalAccessException {
-        ParameterSupplier supplier = getSupplierFromAnnotation(unassigned);
+    private ParameterSupplier getSupplier(ParameterSignature unassigned)
+            throws ReflectiveOperationException {
+        ParameterSupplier supplier = getAnnotatedSupplier(unassigned);
         if (supplier != null) {
             return supplier;
         }
-        
+
         return new AllMembersSupplier(fClass);
     }
 
-    private ParameterSupplier getSupplierFromAnnotation(ParameterSignature unassigned)
-            throws InstantiationException, IllegalAccessException {
-        ParametersSuppliedBy parameterSupplierAnnotation = unassigned
+    private ParameterSupplier getAnnotatedSupplier(ParameterSignature unassigned)
+            throws ReflectiveOperationException {
+        ParametersSuppliedBy annotation = unassigned
                 .findDeepAnnotation(ParametersSuppliedBy.class);
-        if (parameterSupplierAnnotation != null) {
-            return parameterSupplierAnnotation.value().newInstance();
+        if (annotation != null) {
+            return buildParameterSupplierFromClass(annotation.value());
+        } else {
+            return null;
         }
-        
-        FromDataPoints fromDataPointsAnnotation = unassigned.getAnnotation(FromDataPoints.class);
-        if (fromDataPointsAnnotation != null) {
-            return new SpecificDataPointsSupplier(fClass);
+    }
+
+    private ParameterSupplier buildParameterSupplierFromClass(Class<? extends ParameterSupplier> cls)
+            throws ReflectiveOperationException {
+        Constructor<?>[] supplierConstructors = cls.getConstructors();
+
+        for (Constructor<?> constructor : supplierConstructors) {
+            Class<?>[] parameterTypes = constructor.getParameterTypes();
+            if (parameterTypes.length == 1
+                    && parameterTypes[0].equals(TestClass.class)) {
+                return (ParameterSupplier) constructor.newInstance(fClass);
+            }
         }
-        
-        return null;
+
+        return cls.newInstance();
     }
 
     public Object[] getConstructorArguments(boolean nullsOk)

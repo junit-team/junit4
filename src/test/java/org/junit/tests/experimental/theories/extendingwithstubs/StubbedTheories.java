@@ -50,7 +50,7 @@ public class StubbedTheories extends Theories {
         }
 
         private GuesserQueue createGuesserQueue(Assignments incomplete)
-                throws InstantiationException, IllegalAccessException {
+                throws ReflectiveOperationException {
             ParameterSignature nextUnassigned = incomplete.nextUnassigned();
 
             if (nextUnassigned.hasAnnotation(Stub.class)) {
