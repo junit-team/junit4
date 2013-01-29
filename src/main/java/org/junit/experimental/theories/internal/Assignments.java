@@ -82,22 +82,13 @@ public class Assignments {
 
     private ParameterSupplier getSupplier(ParameterSignature unassigned)
             throws ReflectiveOperationException {
-        ParameterSupplier supplier = getAnnotatedSupplier(unassigned);
-        if (supplier != null) {
-            return supplier;
-        }
-
-        return new AllMembersSupplier(fClass);
-    }
-
-    private ParameterSupplier getAnnotatedSupplier(ParameterSignature unassigned)
-            throws ReflectiveOperationException {
         ParametersSuppliedBy annotation = unassigned
                 .findDeepAnnotation(ParametersSuppliedBy.class);
+        
         if (annotation != null) {
             return buildParameterSupplierFromClass(annotation.value());
         } else {
-            return null;
+            return new AllMembersSupplier(fClass);
         }
     }
 
