@@ -1,15 +1,12 @@
 package org.junit.runner.notification;
 
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
+import net.jcip.annotations.ThreadSafe;
 import org.junit.Test;
 import org.junit.runner.Description;
+
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -175,6 +172,74 @@ public final class ConcurrentRunNotifierTest {
             int countTestFailures = examinedListeners.length - countReportedTestFailures(examinedListeners);
             assertThat(totalListenersFailures, is(countTestFailures));
         }
+    }
+
+    @Test
+    public void keepContractOnEqualsNegative() {
+        RunNotifier notifier = new RunNotifier();
+        final ConcurrentRunListener listener = new ConcurrentRunListener();
+        ConcurrentRunListener wrappedListener = new ConcurrentRunListener() {
+            @Override
+            public boolean equals(Object o) {
+                return listener.equals(o);
+            }
+        };
+        notifier.addListener(wrappedListener);
+        assertThat(wrappedListener.testStarted.get(), is(0));
+        notifier.fireTestStarted(null);
+        assertThat(wrappedListener.testStarted.get(), is(1));
+        notifier.removeListener(listener);
+        notifier.fireTestStarted(null);
+        assertThat(wrappedListener.testStarted.get(), is(2));
+    }
+
+    @Test
+    public void keepContractOnEquals() {
+        RunNotifier notifier = new RunNotifier();
+        final ConcurrentRunListener listener = new ConcurrentRunListener();
+        ConcurrentRunListener wrappedListener = new ConcurrentRunListener() {
+            @Override
+            public boolean equals(Object o) {
+                return listener.equals(o);
+            }
+        };
+        notifier.addListener(listener);
+        assertThat(listener.testStarted.get(), is(0));
+        notifier.fireTestStarted(null);
+        assertThat(listener.testStarted.get(), is(1));
+        notifier.removeListener(wrappedListener);
+        notifier.fireTestStarted(null);
+        assertThat(listener.testStarted.get(), is(1));
+    }
+
+    @Test
+    public void wrapSynchronizedIfNotThreadSafe() {
+        RunNotifier notifier = new RunNotifier();
+        ConcurrentRunListener listener = new ConcurrentRunListener();
+        notifier.addListener(listener);
+        assertThat(listener.testStarted.get(), is(0));
+        notifier.fireTestStarted(null);
+        assertThat(listener.testStarted.get(), is(1));
+        notifier.removeListener(listener);
+        notifier.fireTestStarted(null);
+        assertThat(listener.testStarted.get(), is(1));
+    }
+
+    @ThreadSafe
+    private static class ThreadSafeRunListener extends ConcurrentRunListener {
+    }
+
+    @Test
+    public void doNotWrapIfThreadSafe() {
+        RunNotifier notifier = new RunNotifier();
+        ThreadSafeRunListener listener = new ThreadSafeRunListener();
+        notifier.addListener(listener);
+        assertThat(listener.testStarted.get(), is(0));
+        notifier.fireTestStarted(null);
+        assertThat(listener.testStarted.get(), is(1));
+        notifier.removeListener(listener);
+        notifier.fireTestStarted(null);
+        assertThat(listener.testStarted.get(), is(1));
     }
 
     private static int countReportedTestFailures(ExaminedListener[] listeners) {

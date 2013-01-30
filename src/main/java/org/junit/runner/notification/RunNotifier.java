@@ -1,13 +1,15 @@
 package org.junit.runner.notification;
 
+import net.jcip.annotations.ThreadSafe;
+import org.junit.internal.AssumptionViolatedException;
+import org.junit.runner.Description;
+import org.junit.runner.Result;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import org.junit.internal.AssumptionViolatedException;
-import org.junit.runner.Description;
-import org.junit.runner.Result;
 
 /**
  * If you write custom runners, you may need to notify JUnit of your progress running tests.
@@ -26,6 +28,7 @@ public class RunNotifier {
      * Internal use only
      */
     public void addListener(RunListener listener) {
+        listener = wrapSynchronizedIfNotThreadSafe(listener);
         fListeners.add(listener);
     }
 
@@ -33,7 +36,13 @@ public class RunNotifier {
      * Internal use only
      */
     public void removeListener(RunListener listener) {
+        listener = new EqualRunListener(listener);
         fListeners.remove(listener);
+    }
+
+    private static RunListener wrapSynchronizedIfNotThreadSafe(RunListener listener) {
+        boolean isThreadSafe = listener.getClass().isAnnotationPresent(ThreadSafe.class);
+        return isThreadSafe ? new EqualRunListener(listener) : new SynchronizedRunListener(listener);
     }
 
     private abstract class SafeNotifier {
