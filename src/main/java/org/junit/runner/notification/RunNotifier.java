@@ -8,8 +8,7 @@ import org.junit.runner.Result;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * If you write custom runners, you may need to notify JUnit of your progress running tests.
@@ -21,46 +20,103 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @since 4.0
  */
 public class RunNotifier {
-    private final CopyOnWriteArrayList<RunListener> fListeners= new CopyOnWriteArrayList<RunListener>();
-    private volatile boolean fPleaseStop= false;
+    private final ReentrantLock lock = new ReentrantLock();
+
+    private volatile RunListener[] listeners = new RunListener[0];
+    private volatile boolean pleaseStop = false;
+
+    private static RunListener wrapSynchronizedIfNotThreadSafe(RunListener listener) {
+        boolean isThreadSafe = listener.getClass().isAnnotationPresent(ThreadSafe.class);
+        return isThreadSafe ? listener : new SynchronizedRunListener(listener);
+    }
+
+    /**
+     * Satisfies <tt>(o == null ? e == null : o.equals(e)</tt>
+     * in {@link java.util.List#remove(Object)}.
+     *
+     * @param o listener to remove
+     * @param e element in <code>listeners</code> which was previously added
+     * @return {@code true} if <code>o</code> is equal with <code>e</code>
+     */
+    private static boolean equalListeners(Object o, Object e) {
+        if (o == null) {
+            return e == null;
+        } else {
+            return e.getClass() == SynchronizedRunListener.class ? e.equals(o) : o.equals(e);
+        }
+    }
 
     /**
      * Internal use only
      */
     public void addListener(RunListener listener) {
-        listener = wrapSynchronizedIfNotThreadSafe(listener);
-        fListeners.add(listener);
+        if (listener != null) {
+            listener = wrapSynchronizedIfNotThreadSafe(listener);
+            final ReentrantLock lock = this.lock;
+            lock.lock();
+            try {
+                // same behavior as List#add(Object)
+                RunListener[] elements = this.listeners;
+                int length = elements.length;
+                RunListener[] listeners = new RunListener[1 + length];
+                for (int i = 0; i < length; ++i) {
+                    listeners[i] = elements[i];
+                }
+                listeners[length] = listener;
+                this.listeners = listeners;
+            } finally {
+                lock.unlock();
+            }
+        }
     }
 
     /**
      * Internal use only
      */
     public void removeListener(RunListener listener) {
-        listener = new EqualRunListener(listener);
-        fListeners.remove(listener);
-    }
-
-    private static RunListener wrapSynchronizedIfNotThreadSafe(RunListener listener) {
-        boolean isThreadSafe = listener.getClass().isAnnotationPresent(ThreadSafe.class);
-        return isThreadSafe ? new EqualRunListener(listener) : new SynchronizedRunListener(listener);
+        if (listener != null) {
+            final ReentrantLock lock = this.lock;
+            lock.lock();
+            try {
+                // same behavior as List#remove(Object)
+                RunListener[] elements = this.listeners;
+                int length = elements.length;
+                if (length > 0) {
+                    RunListener[] listeners = new RunListener[length - 1];
+                    for (int i = 0, newLength = listeners.length; i < length; ++i) {
+                        if (equalListeners(listener, elements[i])) {
+                            for (int k = 1 + i; k != Integer.MAX_VALUE && k < length; ++k) {
+                                listeners[k - 1] = elements[k];
+                            }
+                            this.listeners = listeners;
+                            return;
+                        } else if (i < newLength) {
+                            listeners[i] = elements[i];
+                        }
+                    }
+                }
+            } finally {
+                lock.unlock();
+            }
+        }
     }
 
     private abstract class SafeNotifier {
-        private final Collection<RunListener> fCurrentListeners;
+        private final Collection<RunListener> currentListeners;
 
         SafeNotifier() {
-            this(fListeners);
+            this(Arrays.asList(listeners));
         }
 
         SafeNotifier(Collection<RunListener> currentListeners) {
-            fCurrentListeners= currentListeners;
+            this.currentListeners = currentListeners;
         }
 
         void run() {
-            int capacity= fCurrentListeners.size();
-            ArrayList<RunListener> safeListeners= new ArrayList<RunListener>(capacity);
-            ArrayList<Failure> failures= new ArrayList<Failure>(capacity);
-            for (RunListener listener : fCurrentListeners) {
+            int capacity = currentListeners.size();
+            ArrayList<RunListener> safeListeners = new ArrayList<RunListener>(capacity);
+            ArrayList<Failure> failures = new ArrayList<Failure>(capacity);
+            for (RunListener listener : currentListeners) {
                 try {
                     notifyListener(listener);
                     safeListeners.add(listener);
@@ -105,7 +161,7 @@ public class RunNotifier {
      * @throws StoppedByUserException thrown if a user has requested that the test run stop
      */
     public void fireTestStarted(final Description description) throws StoppedByUserException {
-        if (fPleaseStop) {
+        if (pleaseStop) {
             throw new StoppedByUserException();
         }
         new SafeNotifier() {
@@ -122,10 +178,10 @@ public class RunNotifier {
      * @param failure the description of the test that failed and the exception thrown
      */
     public void fireTestFailure(Failure failure) {
-        fireTestFailures(fListeners, Arrays.asList(failure));
+        fireTestFailures(Arrays.asList(listeners), Arrays.asList(failure));
     }
 
-    private void fireTestFailures(Collection<RunListener> listeners, final List<Failure> failures) {
+    private void fireTestFailures(Collection<RunListener> listeners, final Collection<Failure> failures) {
         if (!failures.isEmpty()) {
             new SafeNotifier(listeners) {
                 @Override
@@ -191,13 +247,29 @@ public class RunNotifier {
      * to be shared amongst the many runners involved.
      */
     public void pleaseStop() {
-        fPleaseStop= true;
+        pleaseStop = true;
     }
 
     /**
      * Internal use only. The Result's listener must be first.
      */
     public void addFirstListener(RunListener listener) {
-        fListeners.add(0, listener);
+        if (listener != null) {
+            listener = wrapSynchronizedIfNotThreadSafe(listener);
+            final ReentrantLock lock = this.lock;
+            lock.lock();
+            try {
+                // same behavior as List#add(0, Object)
+                RunListener[] elements = this.listeners;
+                RunListener[] listeners = new RunListener[1 + elements.length];
+                listeners[0] = listener;
+                for (int i = 0, length = elements.length; i < length; ++i) {
+                    listeners[1 + i] = elements[i];
+                }
+                this.listeners = listeners;
+            } finally {
+                lock.unlock();
+            }
+        }
     }
 }

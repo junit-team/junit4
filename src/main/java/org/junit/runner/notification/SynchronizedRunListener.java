@@ -15,9 +15,6 @@ final class SynchronizedRunListener extends RunListener {
     private final RunListener listener;
 
     SynchronizedRunListener(RunListener listener) {
-        if (listener == null) {
-            throw new NullPointerException("null listener");
-        }
         this.listener = listener;
     }
 
@@ -63,7 +60,7 @@ final class SynchronizedRunListener extends RunListener {
 
     @Override
     public boolean equals(Object o) {
-        return listener.equals(o);
+        return o.equals(listener);
     }
 
     @Override
