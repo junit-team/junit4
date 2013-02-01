@@ -2,7 +2,6 @@ package org.junit.tests;
 
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
-import org.junit.experimental.theories.internal.SpecificDataPointsSupplier;
 import org.junit.internal.MethodSorterTest;
 import org.junit.internal.matchers.StacktracePrintingMatcherTest;
 import org.junit.runner.RunWith;
@@ -46,6 +45,7 @@ import org.junit.tests.experimental.theories.internal.ParameterizedAssertionErro
 import org.junit.tests.experimental.theories.internal.SpecificDataPointsSupplierTest;
 import org.junit.tests.experimental.theories.runner.TheoriesPerformanceTest;
 import org.junit.tests.experimental.theories.runner.WithDataPointMethod;
+import org.junit.tests.experimental.theories.runner.WithNamedDataPoints;
 import org.junit.tests.junit3compatibility.AllTestsTest;
 import org.junit.tests.junit3compatibility.ClassRequestTest;
 import org.junit.tests.junit3compatibility.ForwardCompatibilityTest;
@@ -139,6 +139,7 @@ import org.junit.tests.validation.ValidationTest;
         SpecificDataPointsSupplierTest.class,
         ParameterizedAssertionErrorTest.class,
         WithDataPointMethod.class,
+        WithNamedDataPoints.class,
         MatcherTest.class,
         ObjectContractTest.class,
         TheoriesPerformanceTest.class,

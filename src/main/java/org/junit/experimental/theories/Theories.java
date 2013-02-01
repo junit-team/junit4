@@ -1,5 +1,6 @@
 package org.junit.experimental.theories;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -75,6 +76,28 @@ public class Theories extends BlockJUnit4ClassRunner {
                 each.validateNoTypeParametersOnArgs(errors);
             } else {
                 each.validatePublicVoidNoArg(false, errors);
+            }
+            
+            for (ParameterSignature signature : each.getParameterSignatures()) {
+                ParametersSuppliedBy annotation = signature.findDeepAnnotation(ParametersSuppliedBy.class);
+                if (annotation != null) {
+                    validateParameterSupplier(annotation.value(), errors);
+                }
+            }
+        }
+    }
+
+    private void validateParameterSupplier(Class<? extends ParameterSupplier> supplierClass, List<Throwable> errors) {
+        Constructor<?>[] constructors = supplierClass.getConstructors();
+        
+        if (constructors.length != 1) {
+            errors.add(new Error("ParameterSupplier " + supplierClass.getName() + 
+                                 " must have only one constructor (either empty or taking only a TestClass)"));
+        } else {
+            Class<?>[] paramTypes = constructors[0].getParameterTypes();
+            if (!(paramTypes.length == 0) && !paramTypes[0].equals(TestClass.class)) {
+                errors.add(new Error("ParameterSupplier " + supplierClass.getName() + 
+                                     " constructor must take either nothing or a single TestClass instance"));
             }
         }
     }

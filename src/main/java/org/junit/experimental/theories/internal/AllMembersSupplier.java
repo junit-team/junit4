@@ -2,7 +2,6 @@ package org.junit.experimental.theories.internal;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -49,7 +48,7 @@ public class AllMembersSupplier extends ParameterSupplier {
         }
     }   
     
-    protected final TestClass fClass;
+    private final TestClass fClass;
 
     /**
      * Constructs a new supplier for {@code type}
@@ -62,7 +61,8 @@ public class AllMembersSupplier extends ParameterSupplier {
     public List<PotentialAssignment> getValueSources(ParameterSignature sig) {
         List<PotentialAssignment> list = new ArrayList<PotentialAssignment>();
 
-        addFields(sig, list);
+        addSinglePointFields(sig, list);
+        addMultiPointFields(sig, list);
         addSinglePointMethods(sig, list);
         addMultiPointMethods(sig, list);
 
@@ -87,8 +87,8 @@ public class AllMembersSupplier extends ParameterSupplier {
             }
         }
     }
-
-    private void addFields(ParameterSignature sig,
+    
+    private void addMultiPointFields(ParameterSignature sig,
             List<PotentialAssignment> list) {
         for (final Field field : getDataPointsFields(sig)) {
             Class<?> type = field.getType();
@@ -100,6 +100,10 @@ public class AllMembersSupplier extends ParameterSupplier {
                 }
             }
         }
+    }    
+
+    private void addSinglePointFields(ParameterSignature sig,
+            List<PotentialAssignment> list) {
         for (final Field field : getSingleDataPointFields(sig)) {
             Class<?> type = field.getType();
             if (sig.canAcceptType(type)) {
@@ -145,10 +149,7 @@ public class AllMembersSupplier extends ParameterSupplier {
         Collection<Field> validFields = new ArrayList<Field>();
 
         for (FrameworkField frameworkField : fields) {
-            Field field = frameworkField.getField();
-            if (Modifier.isStatic(field.getModifiers())) {
-                validFields.add(field);
-            }
+            validFields.add(frameworkField.getField());
         }
 
         return validFields;
@@ -159,10 +160,7 @@ public class AllMembersSupplier extends ParameterSupplier {
         Collection<Field> validFields = new ArrayList<Field>();
 
         for (FrameworkField frameworkField : fields) {
-            Field field = frameworkField.getField();
-            if (Modifier.isStatic(field.getModifiers())) {
-                validFields.add(field);
-            }
+            validFields.add(frameworkField.getField());
         }
 
         return validFields;

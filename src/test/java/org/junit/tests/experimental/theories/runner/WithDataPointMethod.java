@@ -5,12 +5,11 @@ import static org.hamcrest.CoreMatchers.everyItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
+import static org.junit.tests.experimental.theories.TheoryTestUtils.potentialAssignments;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,16 +17,11 @@ import java.util.List;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoint;
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.FromDataPoints;
-import org.junit.experimental.theories.PotentialAssignment;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
-import org.junit.experimental.theories.internal.Assignments;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.Failure;
-import org.junit.runners.model.TestClass;
 
 public class WithDataPointMethod {
     @RunWith(Theories.class)
@@ -125,75 +119,16 @@ public class WithDataPointMethod {
 
     @Test
     public void ignoreDataPointMethodsWithWrongTypes() throws Exception {
-        assertThat(potentialValues(
+        assertThat(potentialAssignments(
                 HasDateMethod.class.getMethod("onlyStringsOk", String.class))
                 .toString(), not(containsString("100")));
     }
 
     @Test
     public void ignoreDataPointMethodsWithoutAnnotation() throws Throwable {
-        assertThat(potentialValues(
+        assertThat(potentialAssignments(
                 HasDateMethod.class.getMethod("onlyDatesOk", Date.class))
                 .size(), is(0));
-    }
-    
-    @RunWith(Theories.class)
-    public static class HasSpecificDatapointsParameters {
-        
-        @DataPoints
-        public static String[] badStrings = new String[] { "bad" };
-        
-        @DataPoint
-        public static String badString = "also bad";
-        
-        @DataPoints("named")
-        public static String[] goodStrings = new String[] { "expected", "also expected" };
-        
-        @DataPoint("named")
-        public static String goodString = "expected single value";
-        
-        @DataPoints("named")
-        public static String[] methodStrings() {
-            return new String[] { "expected method value" };
-        }
-        
-        @DataPoint("named")
-        public static String methodString() {
-            return "expected single method string";
-        }
-        
-        @DataPoints
-        public static String[] otherMethod() {
-            return new String[] { "other method value" };
-        }
-        
-        @DataPoint
-        public static String otherSingleValueMethod() {
-            return "other single value string";
-        }
-        
-        @Theory
-        public void testMethod(@FromDataPoints("named") String x) {
-        }
-        
-    }
-    
-    @Test
-    public void onlyUseSpecificDataPointsIfSpecified() throws Exception {
-        List<PotentialAssignment> assignments = potentialValues(HasSpecificDatapointsParameters.class
-                .getMethod("testMethod", String.class));
-        
-        assertEquals(5, assignments.size());
-        for (PotentialAssignment assignment : assignments) {
-            assertThat((String) assignment.getValue(), containsString("expected"));
-        }
-    }
-
-    private List<PotentialAssignment> potentialValues(Method method)
-            throws Exception {
-        return Assignments.allUnassigned(method,
-                new TestClass(method.getDeclaringClass()))
-                .potentialsForNextUnassigned();
     }
 
     private List<Failure> failures(Class<?> type) {

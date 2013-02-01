@@ -1,6 +1,5 @@
 package org.junit.tests.experimental;
 
-import org.junit.experimental.theories.internal.AllMembersSupplier;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -16,6 +15,7 @@ import org.junit.tests.experimental.theories.runner.UnsuccessfulWithDataPointFie
 import org.junit.tests.experimental.theories.runner.WhenNoParametersMatch;
 import org.junit.tests.experimental.theories.runner.WithDataPointMethod;
 import org.junit.tests.experimental.theories.runner.WithExtendedParameterSources;
+import org.junit.tests.experimental.theories.runner.WithNamedDataPoints;
 import org.junit.tests.experimental.theories.runner.WithOnlyTestAnnotations;
 import org.junit.tests.experimental.theories.runner.WithUnresolvedGenericTypeVariablesOnTheoryParms;
 
@@ -28,7 +28,7 @@ import org.junit.tests.experimental.theories.runner.WithUnresolvedGenericTypeVar
         ResultMatchersTest.class, WithDataPointMethod.class,
         ParameterSignatureTest.class, WhenNoParametersMatch.class,
         WithExtendedParameterSources.class, StubbedTheoriesTest.class,
-        WithOnlyTestAnnotations.class,
+        WithOnlyTestAnnotations.class, WithNamedDataPoints.class,
         WithUnresolvedGenericTypeVariablesOnTheoryParms.class})
 public class ExperimentalTests {
 
