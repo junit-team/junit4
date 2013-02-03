@@ -261,6 +261,7 @@
                     <includeDependencySources>true</includeDependencySources>
                     <dependencySourceIncludes>
                         <dependencySourceInclude>org.hamcrest:hamcrest-core:*</dependencySourceInclude>
+                        <dependencySourceInclude>net.jcip:jcip-annotations:*</dependencySourceInclude>
                     </dependencySourceIncludes>
                 </configuration>
             </plugin>
