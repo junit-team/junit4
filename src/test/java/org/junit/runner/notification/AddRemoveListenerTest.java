@@ -1,25 +1,29 @@
 package org.junit.runner.notification;
 
-import net.jcip.annotations.ThreadSafe;
-import org.junit.Test;
-import org.junit.runner.Description;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import net.jcip.annotations.ThreadSafe;
+import org.junit.Test;
+import org.junit.runner.Description;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @author Tibor Digana (tibor17)
  * @version 4.12
  * @since 4.12
  */
+@RunWith(JUnit4.class)
 public class AddRemoveListenerTest {
 
     public static class NormalListener extends RunListener {
         final AtomicInteger testStarted = new AtomicInteger(0);
 
-        public void testStarted(Description description) throws Exception {
+        @Override
+		public void testStarted(Description description) throws Exception {
             testStarted.incrementAndGet();
         }
     }
@@ -28,7 +32,8 @@ public class AddRemoveListenerTest {
     public static class ThreadSafeListener extends RunListener {
         final AtomicInteger testStarted = new AtomicInteger(0);
 
-        public void testStarted(Description description) throws Exception {
+        @Override
+		public void testStarted(Description description) throws Exception {
             testStarted.incrementAndGet();
         }
     }

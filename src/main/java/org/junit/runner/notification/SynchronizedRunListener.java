@@ -1,5 +1,6 @@
 package org.junit.runner.notification;
 
+import net.jcip.annotations.ThreadSafe;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 
@@ -13,6 +14,11 @@ import org.junit.runner.Result;
  */
 final class SynchronizedRunListener extends RunListener {
     private final RunListener listener;
+
+    public static RunListener wrapIfNotThreadSafe(RunListener listener) {
+        boolean isThreadSafe = listener.getClass().isAnnotationPresent(ThreadSafe.class);
+        return isThreadSafe ? listener : new SynchronizedRunListener(listener);
+    }
 
     SynchronizedRunListener(RunListener listener) {
         this.listener = listener;
@@ -59,8 +65,16 @@ final class SynchronizedRunListener extends RunListener {
     }
 
     @Override
-    public boolean equals(Object o) {
-        return o.equals(listener);
+    public boolean equals(Object other) {
+    	if (this == other) {
+    		return true;
+    	}
+    	if (!(other instanceof SynchronizedRunListener)) {
+    		return false;
+    	}
+    	SynchronizedRunListener that= (SynchronizedRunListener) other;
+    	
+        return this.listener.equals(that.listener);
     }
 
     @Override

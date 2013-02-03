@@ -31,6 +31,8 @@
   <property name="hamcrestlib" location="lib/hamcrest-core-1.3.jar" />
   <property name="hamcrestlibsources" location="lib/hamcrest-core-1.3-sources.jar" />
   <property name="hamcrestsrc" location="${dist}/temp.hamcrest.source" />
+  <property name="jciplib" location="lib/jcip-annotations-1.0.jar" />
+  <property name="jciplibsources" location="lib/jcip-annotations-1.0-sources.jar" />
 
   <property name="maven.deploy.goal" value="org.apache.maven.plugins:maven-gpg-plugin:1.1:sign-and-deploy-file" />
 
@@ -80,9 +82,10 @@
   </macrodef>
   
   <target name="build" depends="versiontag">
-    <junit_compilation srcdir="${src}" destdir="${bin}" classpath="${hamcrestlib}"/>
+    <junit_compilation srcdir="${src}" destdir="${bin}" classpath="${hamcrestlib};${jciplib}"/>
     <unjar src="${hamcrestlib}" dest="${bin}" />
-    <junit_compilation srcdir="${testsrc}" destdir="${testbin}" classpath="${hamcrestlib};${bin}"/>
+    <unjar src="${jciplib}" dest="${bin}" />
+    <junit_compilation srcdir="${testsrc}" destdir="${testbin}" classpath="${hamcrestlib};${jciplib};${bin}"/>
   </target>
 
   <target name="jars" depends="build">
@@ -125,8 +128,9 @@
     </copy>
   </target>
 
-  <target name="unjar.hamcrest">
+  <target name="unjar.deps">
     <unjar src="${hamcrestlibsources}" dest="${hamcrestsrc}" />
+    <unjar src="${jciplibsources}" dest="${jcipsrc}" />
   </target>
   
   <target name="release-notes">
@@ -138,13 +142,13 @@
     </exec>
   </target>
   
-  <target name="javadoc" depends="unjar.hamcrest">
+  <target name="javadoc" depends="unjar.deps">
     <javadoc destdir="${javadocdir}"
              author="false"
              version="false"
              use="false"
              windowtitle="JUnit API"
-             stylesheetfile="stylesheet.css"
+             stylesheetfile="src/main/javadoc/stylesheet.css"
              >
       <excludepackage name="junit.*" />
       <excludepackage name="org.junit.internal.*" />
@@ -152,6 +156,7 @@
       
       <sourcepath location="${src}" />
       <sourcepath location="${hamcrestsrc}" />
+      <sourcepath location="${jcipsrc}" />
       <link href="http://java.sun.com/javase/6/docs/api/" />
     </javadoc>
   </target>
@@ -198,6 +203,7 @@
           <pathelement location="${bin}" />
           <pathelement location="${testbin}" />
           <pathelement location="${hamcrestlib}" />
+          <pathelement location="${jciplib}" />
         </classpath>
       </java>    
     </sequential>
@@ -207,11 +213,13 @@
     <run-local-tests />
   </target>
 
-  <target name="dist" depends="populate-dist">
+  <target name="test-dist" depends="populate-dist">
     <run-dist-tests>
       <jvmarg value="-Dignore.this=ignored"/>
     </run-dist-tests>
   </target>
+
+  <target name="dist" depends="test-dist" />
 
   <target name="profile" depends="populate-dist">
     <run-dist-tests>
