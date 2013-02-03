@@ -6,18 +6,22 @@ import static org.junit.Assert.assertThat;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.jcip.annotations.ThreadSafe;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 /**
+ * TODO: Move these tests to {@link RunNotifierTest}?
+ *
  * @author Tibor Digana (tibor17)
  * @version 4.12
  * @since 4.12
  */
 @RunWith(JUnit4.class)
 public class AddRemoveListenerTest {
+    private final RunNotifier notifier = new RunNotifier();
 
     public static class NormalListener extends RunListener {
         final AtomicInteger testStarted = new AtomicInteger(0);
@@ -38,9 +42,14 @@ public class AddRemoveListenerTest {
         }
     }
 
-    @Test
+    /**
+     * Disabled for now because it uses a listener with an equals()
+     * method that violates the contract of equals().
+     * This does pass, but it's unclear whether we need it; the
+     * functionality appears to be tested in {@link SynchronizedRunListenerTest}.
+     */
+    @Test @Ignore
     public void keepContractOnEqualsNegative() {
-        RunNotifier notifier = new RunNotifier();
         final NormalListener listener = new NormalListener();
         NormalListener wrappedListener = new NormalListener() {
             @Override
@@ -57,9 +66,14 @@ public class AddRemoveListenerTest {
         assertThat(wrappedListener.testStarted.get(), is(2));
     }
 
-    @Test
+    /**
+     * Disabled for now because it uses a listener with an equals()
+     * method that violates the contract of equals().
+     * This does pass, but it's unclear whether we need it; the
+     * functionality appears to be tested in {@link SynchronizedRunListenerTest}.
+     */
+    @Test @Ignore
     public void keepContractOnEquals() {
-        RunNotifier notifier = new RunNotifier();
         final NormalListener listener = new NormalListener();
         NormalListener wrappedListener = new NormalListener() {
             @Override
@@ -78,7 +92,6 @@ public class AddRemoveListenerTest {
 
     @Test
     public void addRemoveNormalListener() {
-        RunNotifier notifier = new RunNotifier();
         NormalListener listener = new NormalListener();
         assertThat(listener.testStarted.get(), is(0));
         notifier.addListener(listener);
@@ -91,7 +104,6 @@ public class AddRemoveListenerTest {
 
     @Test
     public void addFirstRemoveNormalListener() {
-        RunNotifier notifier = new RunNotifier();
         NormalListener listener = new NormalListener();
         assertThat(listener.testStarted.get(), is(0));
         notifier.addFirstListener(listener);
@@ -104,7 +116,6 @@ public class AddRemoveListenerTest {
 
     @Test
     public void addRemoveThreadSafeListener() {
-        RunNotifier notifier = new RunNotifier();
         ThreadSafeListener listener = new ThreadSafeListener();
         assertThat(listener.testStarted.get(), is(0));
         notifier.addListener(listener);
@@ -117,7 +128,6 @@ public class AddRemoveListenerTest {
 
     @Test
     public void addFirstRemoveThreadSafeListener() {
-        RunNotifier notifier = new RunNotifier();
         ThreadSafeListener listener = new ThreadSafeListener();
         assertThat(listener.testStarted.get(), is(0));
         notifier.addFirstListener(listener);
@@ -130,8 +140,6 @@ public class AddRemoveListenerTest {
 
     @Test
     public void addRemoveBoth() {
-        RunNotifier notifier = new RunNotifier();
-
         NormalListener normalListener = new NormalListener();
         assertThat(normalListener.testStarted.get(), is(0));
         notifier.addListener(normalListener);
@@ -158,8 +166,6 @@ public class AddRemoveListenerTest {
 
     @Test
     public void addFirstRemoveBoth() {
-        RunNotifier notifier = new RunNotifier();
-
         NormalListener normalListener = new NormalListener();
         assertThat(normalListener.testStarted.get(), is(0));
         notifier.addListener(normalListener);

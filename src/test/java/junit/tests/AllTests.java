@@ -17,6 +17,7 @@ public class AllTests {
         suite.addTest(junit.tests.framework.AllTests.suite());
         suite.addTest(junit.tests.runner.AllTests.suite());
         suite.addTest(junit.tests.extensions.AllTests.suite());
+        suite.addTest(org.junit.tests.SmokeTests.suite());
         return suite;
     }
 }

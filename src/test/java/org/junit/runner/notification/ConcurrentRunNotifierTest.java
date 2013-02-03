@@ -20,19 +20,19 @@ import static org.junit.Assert.assertTrue;
  */
 public final class ConcurrentRunNotifierTest {
     private static final long TIMEOUT = 3;
+    private final RunNotifier notifier = new RunNotifier();
 
     private static class ConcurrentRunListener extends RunListener {
         final AtomicInteger testStarted = new AtomicInteger(0);
 
-        public void testStarted(Description description) throws Exception {
+        @Override
+		public void testStarted(Description description) throws Exception {
             testStarted.incrementAndGet();
         }
     }
 
     @Test
-    public void realUsage() throws InterruptedException {
-        final RunNotifier notifier = new RunNotifier();
-
+    public void realUsage() throws Exception {
         ConcurrentRunListener listener1 = new ConcurrentRunListener();
         ConcurrentRunListener listener2 = new ConcurrentRunListener();
         notifier.addListener(listener1);
@@ -65,22 +65,21 @@ public final class ConcurrentRunNotifierTest {
             this.useMe = useMe;
         }
 
-        public void testStarted(Description description) throws Exception {
+        @Override
+		public void testStarted(Description description) throws Exception {
             if (!useMe) {
                 throw new Exception();
             }
         }
 
-        public void testFailure(Failure failure) throws Exception {
+        @Override
+		public void testFailure(Failure failure) throws Exception {
             hasTestFailure = true;
         }
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    public void reportConcurrentFailuresAfterAddListener() throws InterruptedException, BrokenBarrierException {
-        final RunNotifier notifier = new RunNotifier();
-
+    public void reportConcurrentFailuresAfterAddListener() throws Exception {
         int totalListenersFailures = 0;
 
         final ExaminedListener[] examinedListeners = new ExaminedListener[1000];
@@ -96,8 +95,8 @@ public final class ConcurrentRunNotifierTest {
         final AtomicBoolean condition = new AtomicBoolean(true);
 
         ExecutorService notificationsPool = Executors.newFixedThreadPool(4);
-        notificationsPool.submit(new Callable() {
-            public Object call() throws Exception {
+        notificationsPool.submit(new Callable<Void>() {
+            public Void call() throws Exception {
                 trigger.await();
                 while (condition.get()) {
                     notifier.fireTestStarted(null);
@@ -125,10 +124,7 @@ public final class ConcurrentRunNotifierTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    public void reportConcurrentFailuresAfterAddFirstListener() throws InterruptedException, BrokenBarrierException {
-        final RunNotifier notifier = new RunNotifier();
-
+    public void reportConcurrentFailuresAfterAddFirstListener() throws Exception {
         int totalListenersFailures = 0;
 
         final ExaminedListener[] examinedListeners = new ExaminedListener[1000];
@@ -144,8 +140,8 @@ public final class ConcurrentRunNotifierTest {
         final AtomicBoolean condition = new AtomicBoolean(true);
 
         ExecutorService notificationsPool = Executors.newFixedThreadPool(4);
-        notificationsPool.submit(new Callable() {
-            public Object call() throws Exception {
+        notificationsPool.submit(new Callable<Void>() {
+            public Void call() throws Exception {
                 trigger.await();
                 while (condition.get()) {
                     notifier.fireTestStarted(null);

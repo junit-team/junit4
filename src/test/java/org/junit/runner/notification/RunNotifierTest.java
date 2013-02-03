@@ -1,14 +1,16 @@
 package org.junit.runner.notification;
 
-import static org.junit.Assert.assertNotNull;
-
-import org.junit.Test;
+import junit.framework.TestCase;
 import org.junit.runner.Result;
 
-public class RunNotifierTest {
+/**
+ * Tests for {@link RunNotifier}. These tests are written in JUnit3-style
+ * because bugs in {@code RunNotifier} can cause incorrect results when running
+ * other tests (including causing failed tests to appear to be passing).
+ */
+public class RunNotifierTest extends TestCase {
 
-    @Test
-    public void notifiesSecondListenerIfFirstThrowsException() {
+    public void testNotifiesSecondListenerIfFirstThrowsException() {
         FailureListener failureListener = new FailureListener();
         RunNotifier notifier = new RunNotifier();
         notifier.addListener(new CorruptListener());
@@ -18,8 +20,7 @@ public class RunNotifierTest {
                 failureListener.failure);
     }
 
-    @Test
-    public void hasNoProblemsWithFailingListeners() { // see issues 209 and 395
+    public void testHasNoProblemsWithFailingListeners() { // see issues 209 and 395
         RunNotifier notifier = new RunNotifier();
         notifier.addListener(new CorruptListener());
         notifier.addListener(new FailureListener());
