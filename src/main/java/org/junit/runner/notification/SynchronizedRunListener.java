@@ -134,7 +134,7 @@ final class SynchronizedRunListener extends RunListener {
      *
      * @return the annotation or {@code null} if it isn't on the classpath
      */
-       static Class<? extends Annotation> getThreadSafeAnnotationClass() {
-           return ThreadSafeAnnotationHolder.annotation;
-       }
+    static Class<? extends Annotation> getThreadSafeAnnotationClass() {
+        return ThreadSafeAnnotationHolder.annotation;
+    }
 }

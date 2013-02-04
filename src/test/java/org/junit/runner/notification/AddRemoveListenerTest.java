@@ -6,11 +6,8 @@ import static org.junit.Assert.assertThat;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.jcip.annotations.ThreadSafe;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Description;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * TODO: Move these tests to {@link RunNotifierTest}?
@@ -19,7 +16,6 @@ import org.junit.runners.JUnit4;
  * @version 4.12
  * @since 4.12
  */
-@RunWith(JUnit4.class)
 public class AddRemoveListenerTest {
     private final RunNotifier notifier = new RunNotifier();
 
@@ -42,13 +38,13 @@ public class AddRemoveListenerTest {
         }
     }
 
-    /**
-     * Disabled for now because it uses a listener with an equals()
-     * method that violates the contract of equals().
-     * This does pass, but it's unclear whether we need it; the
-     * functionality appears to be tested in {@link SynchronizedRunListenerTest}.
-     */
-    @Test @Ignore
+	/**
+	 * TODO: Replace with a better test. This test uses a listener with an
+	 * equals() method that violates the contract of equals(). This does pass,
+	 * but it's unclear whether we need it; the functionality appears to be
+	 * tested in {@link SynchronizedRunListenerTest} and {@link RunNotifierTest}.
+	 */
+    @Test
     public void keepContractOnEqualsNegative() {
         final NormalListener listener = new NormalListener();
         NormalListener wrappedListener = new NormalListener() {
@@ -66,13 +62,13 @@ public class AddRemoveListenerTest {
         assertThat(wrappedListener.testStarted.get(), is(2));
     }
 
-    /**
-     * Disabled for now because it uses a listener with an equals()
-     * method that violates the contract of equals().
-     * This does pass, but it's unclear whether we need it; the
-     * functionality appears to be tested in {@link SynchronizedRunListenerTest}.
-     */
-    @Test @Ignore
+	/**
+	 * TODO: Replace with a better test. This test uses a listener with an
+	 * equals() method that violates the contract of equals(). This does pass,
+	 * but it's unclear whether we need it; the functionality appears to be
+	 * tested in {@link SynchronizedRunListenerTest} and {@link RunNotifierTest}.
+	 */
+    @Test
     public void keepContractOnEquals() {
         final NormalListener listener = new NormalListener();
         NormalListener wrappedListener = new NormalListener() {
