@@ -2,6 +2,8 @@ package org.junit.runner.notification;
 
 import java.lang.annotation.Annotation;
 
+import net.jcip.annotations.ThreadSafe;
+
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 
@@ -13,8 +15,9 @@ import org.junit.runner.Result;
  * @version 4.12
  * @since 4.12
  */
+@ThreadSafe
 final class SynchronizedRunListener extends RunListener {
-    private static final Object fMonitor = new Object();
+    private static final Object sMonitor = new Object();
     private final RunListener fListener;
 
     public static RunListener wrapIfNotThreadSafe(RunListener listener) {
@@ -32,49 +35,49 @@ final class SynchronizedRunListener extends RunListener {
 
     @Override
     public void testRunStarted(Description description) throws Exception {
-        synchronized (fMonitor) {
+        synchronized (sMonitor) {
             fListener.testRunStarted(description);
         }
     }
 
     @Override
     public void testRunFinished(Result result) throws Exception {
-        synchronized (fMonitor) {
+        synchronized (sMonitor) {
             fListener.testRunFinished(result);
         }
     }
 
     @Override
     public void testStarted(Description description) throws Exception {
-        synchronized (fMonitor) {
+        synchronized (sMonitor) {
             fListener.testStarted(description);
         }
     }
 
     @Override
     public void testFinished(Description description) throws Exception {
-        synchronized (fMonitor) {
+        synchronized (sMonitor) {
             fListener.testFinished(description);
         }
     }
 
     @Override
     public void testFailure(Failure failure) throws Exception {
-        synchronized (fMonitor) {
+        synchronized (sMonitor) {
             fListener.testFailure(failure);
         }
     }
 
     @Override
     public void testAssumptionFailure(Failure failure) {
-        synchronized (fMonitor) {
+        synchronized (sMonitor) {
             fListener.testAssumptionFailure(failure);
         }
     }
 
     @Override
     public void testIgnored(Description description) throws Exception {
-        synchronized (fMonitor) {
+        synchronized (sMonitor) {
             fListener.testIgnored(description);
         }
     }

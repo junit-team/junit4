@@ -1,5 +1,6 @@
 package org.junit.runner;
 
+import net.jcip.annotations.ThreadSafe;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 
@@ -65,6 +66,7 @@ public class Result implements Serializable {
         return getFailureCount() == 0;
     }
 
+    @ThreadSafe
     private class Listener extends RunListener {
         @Override
         public void testRunStarted(Description description) throws Exception {

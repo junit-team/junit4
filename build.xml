@@ -33,6 +33,8 @@
   <property name="hamcrestsrc" location="${dist}/temp.hamcrest.source" />
   <property name="jciplib" location="lib/jcip-annotations-1.0.jar" />
   <property name="jciplibsources" location="lib/jcip-annotations-1.0-sources.jar" />
+  <property name="jciplib" location="lib/jcip-annotations-1.0.jar" />
+  <property name="jciplibsources" location="lib/jcip-annotations-1.0-sources.jar" />
 
   <property name="maven.deploy.goal" value="org.apache.maven.plugins:maven-gpg-plugin:1.1:sign-and-deploy-file" />
 

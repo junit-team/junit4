@@ -77,7 +77,7 @@ public class RunNotifier {
      * Do not invoke.
      */
     public void fireTestRunStarted(final Description description) {
-        new SafeNotifier(fListeners) {
+        new SafeNotifier() {
             @Override
             protected void notifyListener(RunListener each) throws Exception {
                 each.testRunStarted(description);
