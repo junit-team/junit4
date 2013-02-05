@@ -6,7 +6,6 @@ import static org.junit.Assert.assertThat;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.TestCase;
-import net.jcip.annotations.ThreadSafe;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 
@@ -114,7 +113,7 @@ public class RunNotifierTest extends TestCase {
         }
     }
     
-    @ThreadSafe
+    @Concurrent
     private static class ThreadSafeListener extends CountingListener {
     }
 

@@ -1,9 +1,5 @@
 package org.junit.runner.notification;
 
-import java.lang.annotation.Annotation;
-
-import net.jcip.annotations.ThreadSafe;
-
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 
@@ -15,17 +11,13 @@ import org.junit.runner.Result;
  * @version 4.12
  * @since 4.12
  */
-@ThreadSafe
+@Concurrent
 final class SynchronizedRunListener extends RunListener {
     private static final Object sMonitor = new Object();
     private final RunListener fListener;
 
     public static RunListener wrapIfNotThreadSafe(RunListener listener) {
-        Class<? extends Annotation> annotation= getThreadSafeAnnotationClass();
-        if (annotation == null) {
-            return listener;
-        }
-        boolean isThreadSafe = listener.getClass().isAnnotationPresent(annotation);
+        boolean isThreadSafe = listener.getClass().isAnnotationPresent(Concurrent.class);
         return isThreadSafe ? listener : new SynchronizedRunListener(listener);
     }
 
@@ -103,38 +95,5 @@ final class SynchronizedRunListener extends RunListener {
     @Override
     public String toString() {
         return fListener.toString();
-    }
-    
-    /**
-     * Loads {@link net.jcip.annotations.ThreadSafe} via reflection. Uses the
-     * Initialization on Demand Holder pattern (see
-     * http://www.cs.umd.edu/~pugh/java/memoryModel/jsr-133-faq.html#dcl for details).
-     */
-    private static class ThreadSafeAnnotationHolder {
-        private static Class<? extends Annotation> annotation = loadThreadSafeAnnotation();
-        
-
-        private static Class<? extends Annotation> loadThreadSafeAnnotation() {
-            try {
-                ClassLoader classLoader= Thread.currentThread().getContextClassLoader();
-                Class<?> loadedAnnotation= classLoader.loadClass(
-                        "net.jcip.annotations.ThreadSafe");
-                return loadedAnnotation.asSubclass(Annotation.class);
-            } catch (ClassNotFoundException e) {
-                return null;
-            } catch (ClassCastException e) {
-                return null;
-            }
-        }
-    }
- 
-    /**
-     * Gets the {@link net.jcip.annotations.ThreadSafe} annotation if it is on
-     * the classpath
-     *
-     * @return the annotation or {@code null} if it isn't on the classpath
-     */
-    static Class<? extends Annotation> getThreadSafeAnnotationClass() {
-        return ThreadSafeAnnotationHolder.annotation;
     }
 }
