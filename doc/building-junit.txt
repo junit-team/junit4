@@ -3,7 +3,7 @@ Steps to build junit:
 - Must be manual
   - Write release notes
 - Not too tedious:
-  - Push to github (dsaff _and_ KentBeck)
+  - Push to github (junit-team)
   - Run the mvn clean install
   - If not done, update src/main/config/settings.xml in /private/.../settings.xml on CloudBees' webdav share.
   - If not done, copy GnuPG keys in to ${gpg.homedir}. See settings.xml.
