@@ -5,7 +5,6 @@ import static org.junit.Assert.assertThat;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import net.jcip.annotations.ThreadSafe;
 import org.junit.Test;
 import org.junit.runner.Description;
 
@@ -28,7 +27,7 @@ public class AddRemoveListenerTest {
         }
     }
 
-    @ThreadSafe
+    @Concurrent
     public static class ThreadSafeListener extends RunListener {
         final AtomicInteger testStarted = new AtomicInteger(0);
 

@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.jcip.annotations.ThreadSafe;
 import org.junit.Test;
 
 /**
@@ -100,7 +99,7 @@ public class SynchronizedRunListenerTest {
         }
     }
 
-    @ThreadSafe
+    @Concurrent
     private static class ThreadSafeRunListener extends RunListener {
     }
 
@@ -164,10 +163,5 @@ public class SynchronizedRunListenerTest {
         NamedListener listener= new NamedListener("name");
         RunListener wrappedListener= SynchronizedRunListener.wrapIfNotThreadSafe(listener);
         assertThat(wrappedListener, instanceOf(SynchronizedRunListener.class));
-    }
-
-    @Test
-    public void dynamicallyLoadsThreadSafeAnnotatoin() {
-        assertEquals(ThreadSafe.class, SynchronizedRunListener.getThreadSafeAnnotationClass());
     }
 }
