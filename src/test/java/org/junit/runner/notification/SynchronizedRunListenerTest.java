@@ -1,5 +1,3 @@
-// Copyright 2013 Google Inc. All Rights Reserved.
-
 package org.junit.runner.notification;
 
 import static org.hamcrest.CoreMatchers.instanceOf;

@@ -173,8 +173,8 @@ import org.junit.tests.validation.ValidationTest;
         StopwatchTest.class,
         RunNotifierTest.class,
         ConcurrentRunNotifierTest.class,
-        SynchronizedRunListenerTest.class,
-        AddRemoveListenerTest.class
+        AddRemoveListenerTest.class,
+        SynchronizedRunListenerTest.class
 })
 public class AllTests {
     public static Test suite() {
