@@ -5,9 +5,9 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * <p>
- * Annotating an array-typed field or method with &#064;DataPoints will cause the
- * values in the array (or returned array) to be used as potential parameters
- * for theories in that class, when run with the
+ * Annotating an array-typed field or method with &#064;DataPoints will cause
+ * the values in the array (or returned array) to be used as potential
+ * parameters for theories in that class, when run with the
  * {@link org.junit.experimental.theories.Theories Theories} runner.
  * </p>
  * <p>
@@ -19,6 +19,13 @@ import java.lang.annotation.RetentionPolicy;
  * which named set to consider as potential values for each parameter using the
  * {@link org.junit.experimental.theories.FromDataPoints &#064;FromDataPoints}
  * annotation.
+ * </p>
+ * <p>
+ * Parameters with no specified source (i.e. without &#064;FromDataPoints or
+ * other {@link org.junit.experimental.theories.ParametersSuppliedBy
+ * &#064;ParameterSuppliedBy} annotations) will use all DataPoints that are
+ * assignable to the parameter type as potential values, including named sets of
+ * DataPoints.
  * </p>
  * 
  * <pre>

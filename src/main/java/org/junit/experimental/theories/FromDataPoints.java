@@ -12,8 +12,13 @@ import org.junit.experimental.theories.internal.SpecificDataPointsSupplier;
  * Annotating a parameter of a {@link org.junit.experimental.theories.Theory
  * &#064Theory} method with <code>&#064;FromDataPoints</code> will limit the
  * datapoints considered as potential values for that parameter to just the
- * {@link org.junit.experimental.theories.DataPoints DataPoints} with the 
- * given name. For example:
+ * {@link org.junit.experimental.theories.DataPoints DataPoints} with the given
+ * name. DataPoint names can be given as the value parameter of the
+ * &#064DataPoints annotation.
+ * </p>
+ * <p>
+ * DataPoints without names will not be considered as values for any parameters
+ * annotated with &#064FromDataPoints.
  * </p>
  * 
  * <pre>
@@ -38,7 +43,8 @@ import org.junit.experimental.theories.internal.SpecificDataPointsSupplier;
  *     // This will be called with only the values in 'regexStrings' as 
  *     // regex, only the values in 'testStrings' as value, and none 
  *     // of the values in 'unnamed'.
- * }</pre>
+ * }
+ * </pre>
  * 
  * @see org.junit.experimental.theories.Theory
  * @see org.junit.experimental.theories.DataPoint
