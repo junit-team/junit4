@@ -57,8 +57,8 @@ public class Assignments {
                 fAssigned);
         assigned.add(source);
 
-        return new Assignments(assigned, fUnassigned.subList(1, fUnassigned
-                .size()), fClass);
+        return new Assignments(assigned, fUnassigned.subList(1,
+                fUnassigned.size()), fClass);
     }
 
     public Object[] getActualValues(int start, int stop, boolean nullsOk)
@@ -75,16 +75,16 @@ public class Assignments {
     }
 
     public List<PotentialAssignment> potentialsForNextUnassigned()
-            throws ReflectiveOperationException {
+            throws Exception {
         ParameterSignature unassigned = nextUnassigned();
         return getSupplier(unassigned).getValueSources(unassigned);
     }
 
     private ParameterSupplier getSupplier(ParameterSignature unassigned)
-            throws ReflectiveOperationException {
+            throws Exception {
         ParametersSuppliedBy annotation = unassigned
                 .findDeepAnnotation(ParametersSuppliedBy.class);
-        
+
         if (annotation != null) {
             return buildParameterSupplierFromClass(annotation.value());
         } else {
@@ -92,8 +92,8 @@ public class Assignments {
         }
     }
 
-    private ParameterSupplier buildParameterSupplierFromClass(Class<? extends ParameterSupplier> cls)
-            throws ReflectiveOperationException {
+    private ParameterSupplier buildParameterSupplierFromClass(
+            Class<? extends ParameterSupplier> cls) throws Exception {
         Constructor<?>[] supplierConstructors = cls.getConstructors();
 
         for (Constructor<?> constructor : supplierConstructors) {
