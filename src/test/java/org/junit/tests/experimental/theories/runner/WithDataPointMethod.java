@@ -8,8 +8,8 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
+import static org.junit.tests.experimental.theories.TheoryTestUtils.potentialAssignments;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,14 +17,11 @@ import java.util.List;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoint;
-import org.junit.experimental.theories.PotentialAssignment;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
-import org.junit.experimental.theories.internal.Assignments;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.Failure;
-import org.junit.runners.model.TestClass;
 
 public class WithDataPointMethod {
     @RunWith(Theories.class)
@@ -122,23 +119,16 @@ public class WithDataPointMethod {
 
     @Test
     public void ignoreDataPointMethodsWithWrongTypes() throws Exception {
-        assertThat(potentialValues(
+        assertThat(potentialAssignments(
                 HasDateMethod.class.getMethod("onlyStringsOk", String.class))
                 .toString(), not(containsString("100")));
     }
 
     @Test
     public void ignoreDataPointMethodsWithoutAnnotation() throws Throwable {
-        assertThat(potentialValues(
+        assertThat(potentialAssignments(
                 HasDateMethod.class.getMethod("onlyDatesOk", Date.class))
                 .size(), is(0));
-    }
-
-    private List<PotentialAssignment> potentialValues(Method method)
-            throws Exception {
-        return Assignments.allUnassigned(method,
-                new TestClass(HasDateMethod.class))
-                .potentialsForNextUnassigned();
     }
 
     private List<Failure> failures(Class<?> type) {
