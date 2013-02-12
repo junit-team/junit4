@@ -151,6 +151,7 @@ public class AssertionTest {
 
     @Test
     public void oneDimensionalPrimitiveArraysAreEqual() {
+        assertArrayEquals(new boolean[]{true}, new boolean[]{true});
         assertArrayEquals(new byte[]{1}, new byte[]{1});
         assertArrayEquals(new char[]{1}, new char[]{1});
         assertArrayEquals(new short[]{1}, new short[]{1});
@@ -168,6 +169,11 @@ public class AssertionTest {
     @Test(expected = AssertionError.class)
     public void oneDimensionalFloatArraysAreNotEqual() {
         assertArrayEquals(new float[]{1.0f}, new float[]{2.5f}, 1.0f);
+    }
+    
+    @Test(expected = AssertionError.class)
+    public void oneDimensionalBooleanArraysAreNotEqual() {
+        assertArrayEquals(new boolean[]{true}, new boolean[]{false});
     }
 
     @Test(expected = AssertionError.class)
