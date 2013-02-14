@@ -4,4 +4,4 @@
 
  The JUnit depends on Java Hamcrest (http://hamcrest.org/JavaHamcrest).
 
- The JUnit depends on net.jcip:jcip-annotations:1.0 (http://jcip.net).
+ The JUnit depends on com.github.stephenc.jcip:jcip-annotations:1.0-1 (Apache License, Version 2.0).

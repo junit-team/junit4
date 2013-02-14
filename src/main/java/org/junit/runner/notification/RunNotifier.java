@@ -1,10 +1,10 @@
 package org.junit.runner.notification;
 
-import net.jcip.annotations.ThreadSafe;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,7 +25,14 @@ public class RunNotifier {
     private volatile boolean pleaseStop = false;
 
     private static RunListener wrapSynchronizedIfNotThreadSafe(RunListener listener) {
-        boolean isThreadSafe = listener.getClass().isAnnotationPresent(ThreadSafe.class);
+        boolean isThreadSafe = false;
+        for (Annotation annotation : listener.getClass().getDeclaredAnnotations()) {
+            if ("net.jcip.annotations.ThreadSafe"
+                    .equals(annotation.getClass().getName())) {
+                isThreadSafe = true;
+                break;
+            }
+        }
         return isThreadSafe ? listener : new SynchronizedRunListener(listener);
     }
 
