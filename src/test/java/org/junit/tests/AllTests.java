@@ -5,7 +5,6 @@ import junit.framework.Test;
 import org.junit.internal.MethodSorterTest;
 import org.junit.internal.matchers.StacktracePrintingMatcherTest;
 import org.junit.runner.RunWith;
-import org.junit.runner.notification.AddRemoveListenerTest;
 import org.junit.runner.notification.ConcurrentRunNotifierTest;
 import org.junit.runner.notification.RunNotifierTest;
 import org.junit.runner.notification.SynchronizedRunListenerTest;
@@ -173,7 +172,6 @@ import org.junit.tests.validation.ValidationTest;
         StopwatchTest.class,
         RunNotifierTest.class,
         ConcurrentRunNotifierTest.class,
-        AddRemoveListenerTest.class,
         SynchronizedRunListenerTest.class
 })
 public class AllTests {

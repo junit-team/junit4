@@ -1,13 +1,20 @@
 package org.junit.runner.notification;
 
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 
 /**
- * <p>If you need to respond to the events during a test run, extend <code>RunListener</code>
- * and override the appropriate methods. If a listener throws an exception while processing a
- * test event, it will be removed for the remainder of the test run.</p>
+ * Register an instance of this class with {@link RunNotifier} to be notified
+ * of events that occur during a test run. All of the methods in this class
+ * are abstract and have no implementation; override one or more methods to
+ * receive events.
  *
  * <p>For example, suppose you have a <code>Cowbell</code>
  * class that you want to make a noise whenever a test fails. You could write:
@@ -18,7 +25,6 @@ import org.junit.runner.Result;
  *    }
  * }
  * </pre>
- * </p>
  *
  * <p>To invoke your listener, you need to run your tests through <code>JUnitCore</code>.
  * <pre>
@@ -28,7 +34,18 @@ import org.junit.runner.Result;
  *    core.run(MyTestClass.class);
  * }
  * </pre>
- * </p>
+ *
+ * <p>If a listener throws an exception for a test event, the other listeners will
+ * have their {@link RunListener#testFailure(Failure)} called with a {@code Description}
+ * of {@link Description#TEST_MECHANISM} to indicate the failure.
+ *
+ * <p>By default, JUnit will synchronize calls to your listener. If your listener
+ * is thread-safe and you want to allow JUnit to call your listener from
+ * multiple threads when tests are run in parallel, you can annotate your
+ * test class with {@link RunListener.ThreadSafe}.
+ *
+ * <p>Listener methods will be called from the same thread as is running
+ * the test, unless otherwise indicated by the method Javadoc
  *
  * @see org.junit.runner.JUnitCore
  * @since 4.0
@@ -36,7 +53,8 @@ import org.junit.runner.Result;
 public class RunListener {
 
     /**
-     * Called before any tests have been run.
+     * Called before any tests have been run. This may not necessarily
+     * be called by the same thread as started the test run.
      *
      * @param description describes the tests to be run
      */
@@ -44,7 +62,8 @@ public class RunListener {
     }
 
     /**
-     * Called when all tests have finished
+     * Called when all tests have finished. This may not necessarily
+     * be called by the same thread as started the test run.
      *
      * @param result the summary of the test run, including all the tests that failed
      */
@@ -69,7 +88,17 @@ public class RunListener {
     }
 
     /**
-     * Called when an atomic test fails.
+     * Called when an atomic test fails, or when a listener throws an exception.
+     *
+     * <p>In the case of a failure of an atomic test, this method will be called
+     * with the same {@code Description} passed to
+     * {@link #testStarted(Description)}, from the same thread that called
+     * {@link #testStarted(Description)}.
+     *
+     * <p>In the case of a listener throwing an exception, this will be called with
+     * a {@code Description} of {@link Description#TEST_MECHANISM}. This call
+     * may or may not be called in the same thread as the failing listener was
+     * called
      *
      * @param failure describes the test that failed and the exception that was thrown
      */
@@ -94,6 +123,20 @@ public class RunListener {
      */
     public void testIgnored(Description description) throws Exception {
     }
+
+
+    /**
+     * Indicates a {@code RunListener} that can have its methods called
+     * concurrently. This implies that the class is thread-safe (i.e. no set of
+     * listener calls can put the listener into an invalid state, even if those
+     * listener calls are being made by multiple threads without
+     * synchronization).
+     *
+     * @since 4.12
+     */
+    @Documented
+    @Target(ElementType.TYPE)
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface ThreadSafe {
+    }
 }
-
-

@@ -6,24 +6,29 @@ import org.junit.runner.Result;
 /**
  * SynchronizedRunListener decorates {@link RunListener}, has all methods
  * synchronized and is <em>not</em> public.
- * <p>
- * Due to backward compatibility, this synchronized listener behaves thread
+ * 
+ * <p>Due to backward compatibility, this synchronized listener behaves thread
  * safe as {@link RunListener} in the old synchronized {@link RunNotifier}.
  *
  * @author Tibor Digana (tibor17)
+ * @author Kevin Cooney (kcooney)
  * @version 4.12
  * @since 4.12
  *
  * @see RunNotifier
  */
-@Concurrent
+@RunListener.ThreadSafe
 final class SynchronizedRunListener extends RunListener {
     private static final Object sMonitor = new Object();
     private final RunListener fListener;
 
+    /**
+     * Wraps the given listener with {@link SynchronizedRunListener} if
+     * it is not annotated with {@link RunListener.ThreadSafe}.
+     */
     public static RunListener wrapIfNotThreadSafe(RunListener listener) {
-        boolean isThreadSafe = listener.getClass().isAnnotationPresent(Concurrent.class);
-        return isThreadSafe ? listener : new SynchronizedRunListener(listener);
+        return listener.getClass().isAnnotationPresent(RunListener.ThreadSafe.class) ?
+                listener : new SynchronizedRunListener(listener);
     }
 
     SynchronizedRunListener(RunListener listener) {

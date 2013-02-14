@@ -113,7 +113,7 @@ public class RunNotifierTest extends TestCase {
         }
     }
     
-    @Concurrent
+    @RunListener.ThreadSafe
     private static class ThreadSafeListener extends CountingListener {
     }
 

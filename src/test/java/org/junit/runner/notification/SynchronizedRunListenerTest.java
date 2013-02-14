@@ -99,7 +99,7 @@ public class SynchronizedRunListenerTest {
         }
     }
 
-    @Concurrent
+    @RunListener.ThreadSafe
     private static class ThreadSafeRunListener extends RunListener {
     }
 

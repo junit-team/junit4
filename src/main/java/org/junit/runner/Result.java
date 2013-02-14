@@ -6,7 +6,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.junit.runner.notification.Concurrent;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 
@@ -66,7 +65,7 @@ public class Result implements Serializable {
         return getFailureCount() == 0;
     }
 
-    @Concurrent
+    @RunListener.ThreadSafe
     private class Listener extends RunListener {
         @Override
         public void testRunStarted(Description description) throws Exception {
