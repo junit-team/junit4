@@ -21,37 +21,37 @@ import org.junit.runner.Result;
  * @since 4.0
  */
 public class RunNotifier {
-	private final List<RunListener> fListeners = new CopyOnWriteArrayList<RunListener>();
+    private final List<RunListener> fListeners = new CopyOnWriteArrayList<RunListener>();
     private volatile boolean fPleaseStop = false;
 
     /**
      * Internal use only
      */
     public void addListener(RunListener listener) {
-    	if (listener == null) {
-    		throw new NullPointerException("Cannot add a null listener");
-    	}
-    	fListeners.add(SynchronizedRunListener.wrapIfNotThreadSafe(listener));
+        if (listener == null) {
+            throw new NullPointerException("Cannot add a null listener");
+        }
+        fListeners.add(SynchronizedRunListener.wrapIfNotThreadSafe(listener));
     }
 
     /**
      * Internal use only
      */
     public void removeListener(RunListener listener) {
-    	if (listener == null) {
-    		throw new NullPointerException("Cannot remove a null listener");
-    	}
-    	fListeners.remove(SynchronizedRunListener.wrapIfNotThreadSafe(listener));
+        if (listener == null) {
+            throw new NullPointerException("Cannot remove a null listener");
+        }
+        fListeners.remove(SynchronizedRunListener.wrapIfNotThreadSafe(listener));
     }
 
     private abstract class SafeNotifier {
         private final List<RunListener> currentListeners;
 
-        public SafeNotifier() {
+        SafeNotifier() {
             this(fListeners);
         }
 
-        public SafeNotifier(List<RunListener> currentListeners) {
+        SafeNotifier(List<RunListener> currentListeners) {
             this.currentListeners = currentListeners;
         }
 
@@ -124,7 +124,8 @@ public class RunNotifier {
         fireTestFailures(fListeners, asList(failure));
     }
 
-    private void fireTestFailures(List<RunListener> listeners, final Collection<Failure> failures) {
+    private void fireTestFailures(List<RunListener> listeners,
+            final List<Failure> failures) {
         if (!failures.isEmpty()) {
             new SafeNotifier(listeners) {
                 @Override
@@ -198,8 +199,8 @@ public class RunNotifier {
      */
     public void addFirstListener(RunListener listener) {
         if (listener == null) {
-        	throw new NullPointerException("Cannot remove a null listener");
-    	}
-    	fListeners.add(0, SynchronizedRunListener.wrapIfNotThreadSafe(listener));
+            throw new NullPointerException("Cannot remove a null listener");
+        }
+        fListeners.add(0, SynchronizedRunListener.wrapIfNotThreadSafe(listener));
     }
 }

@@ -4,15 +4,11 @@ import org.junit.runner.Description;
 import org.junit.runner.Result;
 
 /**
- * SynchronizedRunListener decorates {@link RunListener}, has all methods
- * synchronized and is <em>not</em> public.
- * 
- * <p>Due to backward compatibility, this synchronized listener behaves thread
- * safe as {@link RunListener} in the old synchronized {@link RunNotifier}.
+ * Thread-safe decorator for {@link RunListener} implementations that synchronizes
+ * calls to the delegate.
  *
  * @author Tibor Digana (tibor17)
  * @author Kevin Cooney (kcooney)
- * @version 4.12
  * @since 4.12
  *
  * @see RunNotifier

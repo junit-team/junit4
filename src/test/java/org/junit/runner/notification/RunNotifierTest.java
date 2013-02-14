@@ -15,7 +15,7 @@ import org.junit.runner.Result;
  * other tests (including causing failed tests to appear to be passing).
  */
 public class RunNotifierTest extends TestCase {
-	private RunNotifier notifier;
+    private RunNotifier notifier;
 
     @Override
     protected void setUp() throws Exception {
@@ -108,7 +108,7 @@ public class RunNotifierTest extends TestCase {
         final AtomicInteger testStarted = new AtomicInteger(0);
 
         @Override
-		public void testStarted(Description description) throws Exception {
+        public void testStarted(Description description) throws Exception {
             testStarted.incrementAndGet();
         }
     }

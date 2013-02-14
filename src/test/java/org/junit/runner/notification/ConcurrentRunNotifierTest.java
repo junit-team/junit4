@@ -26,7 +26,7 @@ public final class ConcurrentRunNotifierTest {
         final AtomicInteger testStarted = new AtomicInteger(0);
 
         @Override
-		public void testStarted(Description description) throws Exception {
+        public void testStarted(Description description) throws Exception {
             testStarted.incrementAndGet();
         }
     }
@@ -66,14 +66,14 @@ public final class ConcurrentRunNotifierTest {
         }
 
         @Override
-		public void testStarted(Description description) throws Exception {
+        public void testStarted(Description description) throws Exception {
             if (!useMe) {
                 throw new Exception();
             }
         }
 
         @Override
-		public void testFailure(Failure failure) throws Exception {
+        public void testFailure(Failure failure) throws Exception {
             hasTestFailure = true;
         }
     }
