@@ -1,5 +1,3 @@
-// Copyright 2010 Google Inc. All Rights Reserved.
-
 package org.junit.tests.assertion;
 
 import static org.hamcrest.CoreMatchers.equalTo;
