@@ -144,7 +144,7 @@
              version="false"
              use="false"
              windowtitle="JUnit API"
-             stylesheetfile="src/main/javadoc/stylesheet.css"
+             stylesheetfile="stylesheet.css"
              >
       <excludepackage name="junit.*" />
       <excludepackage name="org.junit.internal.*" />
@@ -207,13 +207,11 @@
     <run-local-tests />
   </target>
 
-  <target name="test-dist" depends="populate-dist">
+  <target name="dist" depends="populate-dist">
     <run-dist-tests>
       <jvmarg value="-Dignore.this=ignored"/>
     </run-dist-tests>
   </target>
-
-  <target name="dist" depends="test-dist" />
 
   <target name="profile" depends="populate-dist">
     <run-dist-tests>

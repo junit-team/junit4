@@ -1,13 +1,13 @@
 package org.junit.runner;
 
+import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.RunListener;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-
-import org.junit.runner.notification.Failure;
-import org.junit.runner.notification.RunListener;
 
 /**
  * A <code>Result</code> collects and summarizes information from running multiple tests.

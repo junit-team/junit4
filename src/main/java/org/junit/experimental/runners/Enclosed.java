@@ -23,6 +23,7 @@ import org.junit.runners.model.RunnerBuilder;
  * }
  * </pre>
  *
+ * @see org.junit.tests.manipulation.SortableTest
  */
 public class Enclosed extends Suite {
     /**
