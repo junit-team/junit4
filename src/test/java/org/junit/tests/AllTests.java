@@ -42,9 +42,13 @@ import org.junit.tests.experimental.rules.TemporaryFolderUsageTest;
 import org.junit.tests.experimental.rules.TestRuleTest;
 import org.junit.tests.experimental.rules.TimeoutRuleTest;
 import org.junit.tests.experimental.rules.VerifierRuleTest;
-import org.junit.tests.experimental.theories.AllMembersSupplierTest;
 import org.junit.tests.experimental.theories.TestedOnSupplierTest;
+import org.junit.tests.experimental.theories.internal.AllMembersSupplierTest;
+import org.junit.tests.experimental.theories.internal.ParameterizedAssertionErrorTest;
+import org.junit.tests.experimental.theories.internal.SpecificDataPointsSupplierTest;
 import org.junit.tests.experimental.theories.runner.TheoriesPerformanceTest;
+import org.junit.tests.experimental.theories.runner.WithDataPointMethod;
+import org.junit.tests.experimental.theories.runner.WithNamedDataPoints;
 import org.junit.tests.junit3compatibility.AllTestsTest;
 import org.junit.tests.junit3compatibility.ClassRequestTest;
 import org.junit.tests.junit3compatibility.ForwardCompatibilityTest;
@@ -135,6 +139,10 @@ import org.junit.tests.validation.ValidationTest;
         InheritedTestTest.class,
         TestClassTest.class,
         AllMembersSupplierTest.class,
+        SpecificDataPointsSupplierTest.class,
+        ParameterizedAssertionErrorTest.class,
+        WithDataPointMethod.class,
+        WithNamedDataPoints.class,
         MatcherTest.class,
         ObjectContractTest.class,
         TheoriesPerformanceTest.class,

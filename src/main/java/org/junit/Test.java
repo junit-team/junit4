@@ -59,8 +59,8 @@ public @interface Test {
     }
 
     /**
-     * Optionally specify <code>expected</code>, a Throwable, to cause a test method to succeed iff
-     * an exception of the specified class is thrown by the method.
+     * Optionally specify <code>expected</code>, a Throwable, to cause a test method to succeed if
+     * and only if an exception of the specified class is thrown by the method.
      */
     Class<? extends Throwable> expected() default None.class;
 

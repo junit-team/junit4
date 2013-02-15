@@ -1,5 +1,6 @@
 package org.junit.experimental.theories.internal;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,8 +57,8 @@ public class Assignments {
                 fAssigned);
         assigned.add(source);
 
-        return new Assignments(assigned, fUnassigned.subList(1, fUnassigned
-                .size()), fClass);
+        return new Assignments(assigned, fUnassigned.subList(1,
+                fUnassigned.size()), fClass);
     }
 
     public Object[] getActualValues(int start, int stop, boolean nullsOk)
@@ -74,29 +75,36 @@ public class Assignments {
     }
 
     public List<PotentialAssignment> potentialsForNextUnassigned()
-            throws InstantiationException, IllegalAccessException {
+            throws Exception {
         ParameterSignature unassigned = nextUnassigned();
         return getSupplier(unassigned).getValueSources(unassigned);
     }
 
-    public ParameterSupplier getSupplier(ParameterSignature unassigned)
-            throws InstantiationException, IllegalAccessException {
-        ParameterSupplier supplier = getAnnotatedSupplier(unassigned);
-        if (supplier != null) {
-            return supplier;
-        }
-
-        return new AllMembersSupplier(fClass);
-    }
-
-    public ParameterSupplier getAnnotatedSupplier(ParameterSignature unassigned)
-            throws InstantiationException, IllegalAccessException {
+    private ParameterSupplier getSupplier(ParameterSignature unassigned)
+            throws Exception {
         ParametersSuppliedBy annotation = unassigned
                 .findDeepAnnotation(ParametersSuppliedBy.class);
-        if (annotation == null) {
-            return null;
+
+        if (annotation != null) {
+            return buildParameterSupplierFromClass(annotation.value());
+        } else {
+            return new AllMembersSupplier(fClass);
         }
-        return annotation.value().newInstance();
+    }
+
+    private ParameterSupplier buildParameterSupplierFromClass(
+            Class<? extends ParameterSupplier> cls) throws Exception {
+        Constructor<?>[] supplierConstructors = cls.getConstructors();
+
+        for (Constructor<?> constructor : supplierConstructors) {
+            Class<?>[] parameterTypes = constructor.getParameterTypes();
+            if (parameterTypes.length == 1
+                    && parameterTypes[0].equals(TestClass.class)) {
+                return (ParameterSupplier) constructor.newInstance(fClass);
+            }
+        }
+
+        return cls.newInstance();
     }
 
     public Object[] getConstructorArguments(boolean nullsOk)
