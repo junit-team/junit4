@@ -5,14 +5,19 @@ import static org.junit.Assert.assertThat;
 
 import java.util.List;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.ParameterSignature;
 import org.junit.experimental.theories.PotentialAssignment;
 import org.junit.experimental.theories.internal.AllMembersSupplier;
+import org.junit.rules.ExpectedException;
 import org.junit.runners.model.TestClass;
 
 public class AllMembersSupplierTest {
+    @Rule
+    public ExpectedException expected = ExpectedException.none();
+    
     public static class HasDataPoints {
         @DataPoints
         public static Object[] objects = {1, 2};
@@ -22,13 +27,9 @@ public class AllMembersSupplierTest {
     }
 
     @Test
-    public void dataPointsAnnotationMeansTreatAsArrayOnly()
-            throws SecurityException, NoSuchMethodException {
-        List<PotentialAssignment> valueSources = new AllMembersSupplier(
-                new TestClass(HasDataPoints.class))
-                .getValueSources(ParameterSignature.signatures(
-                        HasDataPoints.class.getConstructor(Object.class))
-                        .get(0));
+    public void dataPointsAnnotationMeansTreatAsArrayOnly() throws Throwable {
+        List<PotentialAssignment> valueSources = allMemberValuesFor(
+                HasDataPoints.class, Object.class);
         assertThat(valueSources.size(), is(2));
     }
 
@@ -41,13 +42,9 @@ public class AllMembersSupplierTest {
     }
 
     @Test
-    public void dataPointsArrayFieldMayContainNullValue()
-            throws SecurityException, NoSuchMethodException {
-        List<PotentialAssignment> valueSources = new AllMembersSupplier(
-                new TestClass(HasDataPointsFieldWithNullValue.class))
-                .getValueSources(ParameterSignature.signatures(
-                        HasDataPointsFieldWithNullValue.class.getConstructor(Object.class))
-                        .get(0));
+    public void dataPointsArrayFieldMayContainNullValue() throws Throwable {
+        List<PotentialAssignment> valueSources = allMemberValuesFor(
+                HasDataPointsFieldWithNullValue.class, Object.class);
         assertThat(valueSources.size(), is(2));
     }
 
@@ -62,13 +59,34 @@ public class AllMembersSupplierTest {
     }
 
     @Test
-    public void dataPointsArrayMethodMayContainNullValue()
-            throws SecurityException, NoSuchMethodException {
-        List<PotentialAssignment> valueSources = new AllMembersSupplier(
-                new TestClass(HasDataPointsMethodWithNullValue.class))
-                .getValueSources(ParameterSignature.signatures(
-                        HasDataPointsMethodWithNullValue.class.getConstructor(Integer.class))
-                        .get(0));
+    public void dataPointsArrayMethodMayContainNullValue() throws Throwable {
+        List<PotentialAssignment> valueSources = allMemberValuesFor(
+                HasDataPointsMethodWithNullValue.class, Integer.class);
         assertThat(valueSources.size(), is(2));
+    }
+    
+    public static class HasFailingDataPointsArrayMethod {
+        @DataPoints
+        public static Object[] objects() {
+            throw new RuntimeException("failing method");
+        }
+
+        public HasFailingDataPointsArrayMethod(Object obj) {
+        }
+    }
+
+    @Test
+    public void allMembersFailsOnFailingDataPointsArrayMethod() throws Throwable {
+        expected.expect(RuntimeException.class);
+        expected.expectMessage("failing method");
+        allMemberValuesFor(HasFailingDataPointsArrayMethod.class, Object.class);
+    }
+
+    private List<PotentialAssignment> allMemberValuesFor(Class<?> testClass,
+            Class<?>... constructorParameterTypes) throws Throwable {
+        return new AllMembersSupplier(new TestClass(testClass))
+                .getValueSources(ParameterSignature.signatures(
+                        testClass.getConstructor(constructorParameterTypes))
+                        .get(0));
     }
 }

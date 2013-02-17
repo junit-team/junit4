@@ -58,7 +58,7 @@ public class AllMembersSupplier extends ParameterSupplier {
     }
 
     @Override
-    public List<PotentialAssignment> getValueSources(ParameterSignature sig) {
+    public List<PotentialAssignment> getValueSources(ParameterSignature sig) throws Throwable {
         List<PotentialAssignment> list = new ArrayList<PotentialAssignment>();
 
         addSinglePointFields(sig, list);
@@ -69,13 +69,9 @@ public class AllMembersSupplier extends ParameterSupplier {
         return list;
     }
 
-    private void addMultiPointMethods(ParameterSignature sig, List<PotentialAssignment> list) {
+    private void addMultiPointMethods(ParameterSignature sig, List<PotentialAssignment> list) throws Throwable {
         for (FrameworkMethod dataPointsMethod : getDataPointsMethods(sig)) {
-            try {
-                addMultiPointArrayValues(sig, dataPointsMethod.getName(), list, dataPointsMethod.invokeExplosively(null));
-            } catch (Throwable e) {
-                // ignore and move on
-            }
+            addMultiPointArrayValues(sig, dataPointsMethod.getName(), list, dataPointsMethod.invokeExplosively(null));
         }
     }
 

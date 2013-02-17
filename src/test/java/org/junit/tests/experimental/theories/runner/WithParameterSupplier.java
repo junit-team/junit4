@@ -73,7 +73,7 @@ public class WithParameterSupplier {
     }
 
     @Test
-    public void shouldPickUpDataPointsFromParameterSupplier() throws Exception {
+    public void shouldPickUpDataPointsFromParameterSupplier() throws Throwable {
         List<PotentialAssignment> assignments = potentialAssignments(TestClassUsingParameterSupplier.class
                 .getMethod("theoryMethod", String.class));
 

@@ -17,6 +17,7 @@ import java.util.List;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoint;
+import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.JUnitCore;
@@ -33,25 +34,6 @@ public class WithDataPointMethod {
 
         @Theory
         public void allIntsOk(int x) {
-
-        }
-    }
-
-    @RunWith(Theories.class)
-    public static class HasUglyDataPointMethod {
-        @DataPoint
-        public static int oneHundred() {
-            return 100;
-        }
-
-        @DataPoint
-        public static int oneUglyHundred() {
-            throw new RuntimeException();
-        }
-
-        @Theory
-        public void allIntsOk(int x) {
-
         }
     }
 
@@ -60,9 +42,44 @@ public class WithDataPointMethod {
         assertThat(testResult(HasDataPointMethod.class), isSuccessful());
     }
 
+    @RunWith(Theories.class)
+    public static class HasFailingSingleDataPointMethod {
+        @DataPoint
+        public static int num = 10;
+
+        @DataPoint
+        public static int failingDataPoint() {
+            throw new RuntimeException();
+        }
+
+        @Theory
+        public void allIntsOk(int x) {
+        }
+    }
+
     @Test
-    public void ignoreExceptionsFromDataPointMethods() {
-        assertThat(testResult(HasUglyDataPointMethod.class), isSuccessful());
+    public void shouldFailFromExceptionsInSingleDataPointMethods() {
+        assertThat(testResult(HasFailingSingleDataPointMethod.class), not(isSuccessful()));
+    }
+    
+    @RunWith(Theories.class)
+    public static class HasFailingDataPointArrayMethod {
+        @DataPoints
+        public static int[] num = { 1, 2, 3 };
+
+        @DataPoints
+        public static int[] failingDataPoints() {
+            throw new RuntimeException();
+        }
+
+        @Theory
+        public void allIntsOk(int x) {
+        }
+    }
+
+    @Test
+    public void shouldFailFromExceptionsInDataPointArrayMethods() {
+        assertThat(testResult(HasFailingDataPointArrayMethod.class), not(isSuccessful()));
     }
 
     @RunWith(Theories.class)
@@ -93,32 +110,29 @@ public class WithDataPointMethod {
     @RunWith(Theories.class)
     public static class HasDateMethod {
         @DataPoint
-        public int oneHundred() {
+        public static int oneHundred() {
             return 100;
         }
 
-        public Date notADataPoint() {
+        public static Date notADataPoint() {
             return new Date();
         }
 
         @Theory
         public void allIntsOk(int x) {
-
         }
 
         @Theory
         public void onlyStringsOk(String s) {
-
         }
 
         @Theory
         public void onlyDatesOk(Date d) {
-
         }
     }
 
     @Test
-    public void ignoreDataPointMethodsWithWrongTypes() throws Exception {
+    public void ignoreDataPointMethodsWithWrongTypes() throws Throwable {
         assertThat(potentialAssignments(
                 HasDateMethod.class.getMethod("onlyStringsOk", String.class))
                 .toString(), not(containsString("100")));

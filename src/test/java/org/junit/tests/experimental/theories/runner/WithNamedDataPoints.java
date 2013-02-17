@@ -60,7 +60,7 @@ public class WithNamedDataPoints {
     }
     
     @Test
-    public void onlyUseSpecificDataPointsIfSpecified() throws Exception {
+    public void onlyUseSpecificDataPointsIfSpecified() throws Throwable {
         List<PotentialAssignment> assignments = potentialAssignments(HasSpecificDatapointsParameters.class
                 .getMethod("theory", String.class));
         
