@@ -4,6 +4,12 @@ import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * <p>If you need to respond to the events during a test run, extend <code>RunListener</code>
  * and override the appropriate methods. If a listener throws an exception while processing a
@@ -28,12 +34,30 @@ import org.junit.runner.Result;
  *    core.run(MyTestClass.class);
  * }
  * </pre>
- * </p>
+ *
+ * </p> By default, listeners are synchronized in {@link RunNotifier}.
+ * </p> If your listener is thread-safe and all methods can be called asynchronously in
+ * multiple threads (e.g. tests are run in parallel), you can annotate the class of your
+ * listener with {@link RunListener.ThreadSafe}.
  *
  * @see org.junit.runner.JUnitCore
  * @since 4.0
  */
 public class RunListener {
+
+    /**
+     * Indicates a {@code RunListener} that can have its methods called
+     * concurrently. This implies that the class is thread-safe (i.e. no set of
+     * listener calls can put the listener into an invalid state, even if those
+     * listener calls are being made by multiple threads without synchronization).
+     *
+     * @since 4.12
+     */
+    @Documented
+    @Target(ElementType.TYPE)
+    @Retention(RetentionPolicy.RUNTIME)
+    public static @interface ThreadSafe {
+    }
 
     /**
      * Called before any tests have been run.
