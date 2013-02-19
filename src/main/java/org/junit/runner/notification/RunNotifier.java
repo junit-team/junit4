@@ -1,15 +1,15 @@
 package org.junit.runner.notification;
 
-import static java.util.Arrays.asList;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
+
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * If you write custom runners, you may need to notify JUnit of your progress running tests.
@@ -21,51 +21,61 @@ import org.junit.runner.Result;
  * @since 4.0
  */
 public class RunNotifier {
-    private final List<RunListener> fListeners =
-            Collections.synchronizedList(new ArrayList<RunListener>());
-    private volatile boolean fPleaseStop = false;
+    private final CopyOnWriteArrayList<RunListener> listeners = new CopyOnWriteArrayList<RunListener>();
+    private volatile boolean pleaseStop = false;
+
+    private static RunListener wrapSynchronizedIfNotThreadSafe(RunListener listener) {
+        boolean isThreadSafe = false;
+        for (Annotation annotation : listener.getClass().getDeclaredAnnotations()) {
+            if ("net.jcip.annotations.ThreadSafe"
+                    .equals(annotation.getClass().getName())) {
+                isThreadSafe = true;
+                break;
+            }
+        }
+        return isThreadSafe ? listener : new SynchronizedRunListener(listener);
+    }
 
     /**
      * Internal use only
      */
     public void addListener(RunListener listener) {
-        fListeners.add(listener);
+        listener = wrapSynchronizedIfNotThreadSafe(listener);
+        listeners.add(listener);
     }
 
     /**
      * Internal use only
      */
     public void removeListener(RunListener listener) {
-        fListeners.remove(listener);
+        listener = wrapSynchronizedIfNotThreadSafe(listener);
+        listeners.remove(listener);
     }
 
     private abstract class SafeNotifier {
-        private final List<RunListener> fCurrentListeners;
+        private final Collection<RunListener> currentListeners;
 
         SafeNotifier() {
-            this(fListeners);
+            this(listeners);
         }
 
-        SafeNotifier(List<RunListener> currentListeners) {
-            fCurrentListeners = currentListeners;
+        SafeNotifier(Collection<RunListener> currentListeners) {
+            this.currentListeners = currentListeners;
         }
 
         void run() {
-            synchronized (fListeners) {
-                List<RunListener> safeListeners = new ArrayList<RunListener>();
-                List<Failure> failures = new ArrayList<Failure>();
-                for (Iterator<RunListener> all = fCurrentListeners.iterator(); all
-                        .hasNext(); ) {
-                    try {
-                        RunListener listener = all.next();
-                        notifyListener(listener);
-                        safeListeners.add(listener);
-                    } catch (Exception e) {
-                        failures.add(new Failure(Description.TEST_MECHANISM, e));
-                    }
+            int capacity = currentListeners.size();
+            ArrayList<RunListener> safeListeners = new ArrayList<RunListener>(capacity);
+            ArrayList<Failure> failures = new ArrayList<Failure>(capacity);
+            for (RunListener listener : currentListeners) {
+                try {
+                    notifyListener(listener);
+                    safeListeners.add(listener);
+                } catch (Exception e) {
+                    failures.add(new Failure(Description.TEST_MECHANISM, e));
                 }
-                fireTestFailures(safeListeners, failures);
             }
+            fireTestFailures(safeListeners, failures);
         }
 
         abstract protected void notifyListener(RunListener each) throws Exception;
@@ -80,8 +90,6 @@ public class RunNotifier {
             protected void notifyListener(RunListener each) throws Exception {
                 each.testRunStarted(description);
             }
-
-            ;
         }.run();
     }
 
@@ -94,8 +102,6 @@ public class RunNotifier {
             protected void notifyListener(RunListener each) throws Exception {
                 each.testRunFinished(result);
             }
-
-            ;
         }.run();
     }
 
@@ -106,7 +112,7 @@ public class RunNotifier {
      * @throws StoppedByUserException thrown if a user has requested that the test run stop
      */
     public void fireTestStarted(final Description description) throws StoppedByUserException {
-        if (fPleaseStop) {
+        if (pleaseStop) {
             throw new StoppedByUserException();
         }
         new SafeNotifier() {
@@ -114,8 +120,6 @@ public class RunNotifier {
             protected void notifyListener(RunListener each) throws Exception {
                 each.testStarted(description);
             }
-
-            ;
         }.run();
     }
 
@@ -125,22 +129,18 @@ public class RunNotifier {
      * @param failure the description of the test that failed and the exception thrown
      */
     public void fireTestFailure(Failure failure) {
-        fireTestFailures(fListeners, asList(failure));
+        fireTestFailures(listeners, Arrays.asList(failure));
     }
 
-    private void fireTestFailures(List<RunListener> listeners,
-            final List<Failure> failures) {
+    private void fireTestFailures(Collection<RunListener> listeners, final List<Failure> failures) {
         if (!failures.isEmpty()) {
             new SafeNotifier(listeners) {
                 @Override
-                protected void notifyListener(RunListener listener)
-                        throws Exception {
+                protected void notifyListener(RunListener listener) throws Exception {
                     for (Failure each : failures) {
                         listener.testFailure(each);
                     }
                 }
-
-                ;
             }.run();
         }
     }
@@ -158,8 +158,6 @@ public class RunNotifier {
             protected void notifyListener(RunListener each) throws Exception {
                 each.testAssumptionFailure(failure);
             }
-
-            ;
         }.run();
     }
 
@@ -190,8 +188,6 @@ public class RunNotifier {
             protected void notifyListener(RunListener each) throws Exception {
                 each.testFinished(description);
             }
-
-            ;
         }.run();
     }
 
@@ -202,13 +198,13 @@ public class RunNotifier {
      * to be shared amongst the many runners involved.
      */
     public void pleaseStop() {
-        fPleaseStop = true;
+        pleaseStop = true;
     }
 
     /**
      * Internal use only. The Result's listener must be first.
      */
     public void addFirstListener(RunListener listener) {
-        fListeners.add(0, listener);
+        listeners.add(0, listener);
     }
 }
