@@ -49,7 +49,7 @@ import org.junit.runners.model.Statement;
  * @since 4.5
  */
 public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
-    private ConcurrentHashMap<FrameworkMethod, Description> fMethodDescriptions = new ConcurrentHashMap<FrameworkMethod, Description>();
+    private final ConcurrentHashMap<FrameworkMethod, Description> fMethodDescriptions = new ConcurrentHashMap<FrameworkMethod, Description>();
     /**
      * Creates a BlockJUnit4ClassRunner to run {@code klass}
      *
@@ -80,7 +80,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
         if (description == null) {
             description = Description.createTestDescription(getTestClass().getJavaClass(),
                     testName(method), method.getAnnotations());
-            fMethodDescriptions.put(method, description);
+            fMethodDescriptions.putIfAbsent(method, description);
         }
 
         return description;
