@@ -3,20 +3,40 @@ package org.junit.internal.builders;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.filters.IgnoreFilter;
+import org.junit.runner.Description;
+import org.junit.runners.FilteredClassRunner;
 import org.junit.runner.Runner;
+import org.junit.runner.manipulation.Filter;
+import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.RunnerBuilder;
 
 public class AllDefaultPossibilitiesBuilder extends RunnerBuilder {
     private final boolean fCanUseSuiteMethod;
+    private final Filter fFilter;
 
     public AllDefaultPossibilitiesBuilder(boolean canUseSuiteMethod) {
+        this(canUseSuiteMethod, new IgnoreFilter());
+    }
+
+    public AllDefaultPossibilitiesBuilder(Filter filter) {
+        this(true, filter);
+    }
+
+    public AllDefaultPossibilitiesBuilder(boolean canUseSuiteMethod, Filter filter) {
         fCanUseSuiteMethod = canUseSuiteMethod;
+        fFilter = filter;
     }
 
     @Override
     public Runner runnerForClass(Class<?> testClass) throws Throwable {
+        final Description description = Description.createSuiteDescription(testClass);
+
+        if (!fFilter.shouldRun(description)) {
+            return new IgnoredClassRunner(testClass);
+        }
+
         List<RunnerBuilder> builders = Arrays.asList(
-                ignoredBuilder(),
                 annotatedBuilder(),
                 suiteMethodBuilder(),
                 junit3Builder(),
@@ -25,9 +45,14 @@ public class AllDefaultPossibilitiesBuilder extends RunnerBuilder {
         for (RunnerBuilder each : builders) {
             Runner runner = each.safeRunnerForClass(testClass);
             if (runner != null) {
-                return runner;
+                if (runner instanceof BlockJUnit4ClassRunner) {
+                    return new FilteredClassRunner((BlockJUnit4ClassRunner) runner, testClass, fFilter);
+                } else {
+                    return runner;
+                }
             }
         }
+
         return null;
     }
 

@@ -2,9 +2,12 @@ package org.junit.experimental.categories;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.Set;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.NoTestsRemainException;
@@ -303,6 +306,56 @@ public class Categories extends Suite {
                 }
             }
             return false;
+        }
+
+        private static class CategoryFilterWrapper extends Filter {
+            private CategoryFilter categoryFilter;
+
+            public CategoryFilterWrapper(CategoryFilter categoryFilter) {
+                this.categoryFilter = categoryFilter;
+            }
+
+            public static Class<?>[] parseCategories(String categories) throws ClassNotFoundException {
+                List<Class<?>> categoryClasses = new ArrayList<Class<?>>();
+
+                for (String category : categories.split(",")) {
+                    Class<?> categoryClass = Class.forName(category);
+
+                    categoryClasses.add(categoryClass);
+                }
+
+                return categoryClasses.toArray(new Class[]{});
+            }
+
+            @Override
+            public boolean shouldRun(Description description) {
+                return categoryFilter.shouldRun(description);
+            }
+
+            @Override
+            public String describe() {
+                return categoryFilter.describe();
+            }
+        }
+
+        public static class IncludesAny extends CategoryFilterWrapper {
+            public IncludesAny(String categories) throws ClassNotFoundException {
+                this(parseCategories(categories));
+            }
+
+            public IncludesAny(Class<?>... categories) {
+                super(CategoryFilter.include(categories));
+            }
+        }
+
+        public static class ExcludesAny extends CategoryFilterWrapper {
+            public ExcludesAny(String categories) throws ClassNotFoundException {
+                this(parseCategories(categories));
+            }
+
+            public ExcludesAny(Class<?>... categories) {
+                super(CategoryFilter.exclude(categories));
+            }
         }
     }
 
