@@ -29,9 +29,9 @@ public class SynchronizedRunListenerTest {
         private final List<Class<?>> parameterTypes;
 
         public MethodSignature(Method method) {
-            this.method= method;
-            name= method.getName();
-            parameterTypes= Arrays.asList(method.getParameterTypes());
+            this.method = method;
+            name = method.getName();
+            parameterTypes = Arrays.asList(method.getParameterTypes());
         }
         
         @Override
@@ -67,8 +67,8 @@ public class SynchronizedRunListenerTest {
     
     @Test
     public void overridesAllMethodsInRunListener() {
-        Set<MethodSignature> runListenerMethods= getAllDeclaredMethods(RunListener.class);
-        Set<MethodSignature> synchronizedRunListenerMethods= getAllDeclaredMethods(
+        Set<MethodSignature> runListenerMethods = getAllDeclaredMethods(RunListener.class);
+        Set<MethodSignature> synchronizedRunListenerMethods = getAllDeclaredMethods(
                 SynchronizedRunListener.class);
 
         assertTrue(synchronizedRunListenerMethods.containsAll(runListenerMethods));
@@ -78,7 +78,7 @@ public class SynchronizedRunListenerTest {
         private final String name;
 
         public NamedListener(String name) {
-            this.name= name;
+            this.name = name;
         }
 
         @Override
@@ -94,7 +94,7 @@ public class SynchronizedRunListenerTest {
             if (!(obj instanceof NamedListener)) {
                 return false;
             }
-            NamedListener that= (NamedListener) obj;
+            NamedListener that = (NamedListener) obj;
             return this.name.equals(that.name);
         }
     }
@@ -149,7 +149,7 @@ public class SynchronizedRunListenerTest {
 
     @Test
     public void wrapIfNotThreadSafeShouldNotWrapThreadSafeListeners() {
-        ThreadSafeRunListener listener= new ThreadSafeRunListener();;
+        ThreadSafeRunListener listener = new ThreadSafeRunListener();;
         assertSame(listener, SynchronizedRunListener.wrapIfNotThreadSafe(listener));
     }
 
@@ -160,8 +160,8 @@ public class SynchronizedRunListenerTest {
      */
     @Test
     public void wrapIfNotThreadSafeShouldWrapNonThreadSafeListeners() {
-        NamedListener listener= new NamedListener("name");
-        RunListener wrappedListener= SynchronizedRunListener.wrapIfNotThreadSafe(listener);
+        NamedListener listener = new NamedListener("name");
+        RunListener wrappedListener = SynchronizedRunListener.wrapIfNotThreadSafe(listener);
         assertThat(wrappedListener, instanceOf(SynchronizedRunListener.class));
     }
 }

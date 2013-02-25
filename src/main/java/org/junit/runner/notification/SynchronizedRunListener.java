@@ -7,6 +7,12 @@ import org.junit.runner.Result;
  * Thread-safe decorator for {@link RunListener} implementations that synchronizes
  * calls to the delegate.
  *
+ * <p>This class synchronizes all listener calls on a global monitor. This is done because
+ * prior to JUnit 4.12, all listeners were called in a synchronized block in RunNotifier,
+ * so no two listeners were ever called concurrently. If we instead made the methods here
+ * sychronized, clients that added multiple listeners that called common code might see
+ * issues due to the reduced synchronization.
+ *
  * @author Tibor Digana (tibor17)
  * @author Kevin Cooney (kcooney)
  * @since 4.12

@@ -199,7 +199,7 @@ public class RunNotifier {
      */
     public void addFirstListener(RunListener listener) {
         if (listener == null) {
-            throw new NullPointerException("Cannot remove a null listener");
+            throw new NullPointerException("Cannot add a null listener");
         }
         fListeners.add(0, SynchronizedRunListener.wrapIfNotThreadSafe(listener));
     }

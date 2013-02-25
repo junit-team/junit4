@@ -53,8 +53,8 @@ import org.junit.runner.Result;
 public class RunListener {
 
     /**
-     * Called before any tests have been run. This may not necessarily
-     * be called by the same thread as started the test run.
+     * Called before any tests have been run. This may be called on an
+     * arbitrary thread.
      *
      * @param description describes the tests to be run
      */
@@ -62,8 +62,8 @@ public class RunListener {
     }
 
     /**
-     * Called when all tests have finished. This may not necessarily
-     * be called by the same thread as started the test run.
+     * Called when all tests have finished. This may be called on an
+     * arbitrary thread.
      *
      * @param result the summary of the test run, including all the tests that failed
      */
@@ -96,9 +96,8 @@ public class RunListener {
      * {@link #testStarted(Description)}.
      *
      * <p>In the case of a listener throwing an exception, this will be called with
-     * a {@code Description} of {@link Description#TEST_MECHANISM}. This call
-     * may or may not be called in the same thread as the failing listener was
-     * called
+     * a {@code Description} of {@link Description#TEST_MECHANISM}, and may be called
+     * on an arbitrary thread.
      *
      * @param failure describes the test that failed and the exception that was thrown
      */
