@@ -1,5 +1,10 @@
 package org.junit;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.junit.internal.ArrayComparisonFailure;
@@ -939,4 +944,33 @@ public class Assert {
             Matcher<? super T> matcher) {
         MatcherAssert.assertThat(reason, actual, matcher);
     }
+
+	/**
+	 * Verifies that a utility class is well defined. Primarily that it has only
+	 * one private constructor and no non-static methods and it is final.
+	 * 
+	 * @param clazz
+	 *            utility class to verify.
+	 */
+	public static void utilityClassWellDefined(final Class<?> clazz)
+			throws NoSuchMethodException, InvocationTargetException,
+			InstantiationException, IllegalAccessException {
+		assertTrue("class must be final",
+				Modifier.isFinal(clazz.getModifiers()));
+		assertEquals("There must be only one constructor", 1,
+				clazz.getDeclaredConstructors().length);
+		final Constructor<?> constructor= clazz.getDeclaredConstructor();
+		if (constructor.isAccessible()) {
+			fail("constructor is not private");
+		}
+		constructor.setAccessible(true);
+		constructor.newInstance();
+		constructor.setAccessible(false);
+		for (final Method method : clazz.getMethods()) {
+			if (!Modifier.isStatic(method.getModifiers())
+					&& method.getDeclaringClass().equals(clazz)) {
+				Assert.fail("there exists a non-static method:" + method);
+			}
+		}
+	}
 }
