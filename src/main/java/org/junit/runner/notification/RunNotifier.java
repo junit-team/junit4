@@ -45,21 +45,21 @@ public class RunNotifier {
     }
 
     private abstract class SafeNotifier {
-        private final List<RunListener> currentListeners;
+        private final List<RunListener> fCurrentListeners;
 
         SafeNotifier() {
             this(fListeners);
         }
 
         SafeNotifier(List<RunListener> currentListeners) {
-            this.currentListeners = currentListeners;
+            this.fCurrentListeners = currentListeners;
         }
 
         void run() {
-            int capacity = currentListeners.size();
+            int capacity = fCurrentListeners.size();
             ArrayList<RunListener> safeListeners = new ArrayList<RunListener>(capacity);
             ArrayList<Failure> failures = new ArrayList<Failure>(capacity);
-            for (RunListener listener : currentListeners) {
+            for (RunListener listener : fCurrentListeners) {
                 try {
                     notifyListener(listener);
                     safeListeners.add(listener);

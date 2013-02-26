@@ -11,24 +11,24 @@ import org.junit.runner.Description;
 import org.junit.runner.Result;
 
 public class RunNotifierTest {
-    private final RunNotifier notifier = new RunNotifier();
+    private final RunNotifier fNotifier = new RunNotifier();
 
     @Test
     public void notifiesSecondListenerIfFirstThrowsException() {
         FailureListener failureListener = new FailureListener();
-        notifier.addListener(new CorruptListener());
-        notifier.addListener(failureListener);
-        notifier.fireTestFailure(new Failure(null, null));
+        fNotifier.addListener(new CorruptListener());
+        fNotifier.addListener(failureListener);
+        fNotifier.fireTestFailure(new Failure(null, null));
         assertNotNull("The FailureListener registered no failure.",
                 failureListener.failure);
     }
 
     @Test
     public void hasNoProblemsWithFailingListeners() { // see issues 209 and 395
-        notifier.addListener(new CorruptListener());
-        notifier.addListener(new FailureListener());
-        notifier.addListener(new CorruptListener());
-        notifier.fireTestRunFinished(new Result());
+        fNotifier.addListener(new CorruptListener());
+        fNotifier.addListener(new FailureListener());
+        fNotifier.addListener(new CorruptListener());
+        fNotifier.fireTestRunFinished(new Result());
     }
 
     private static class CorruptListener extends RunListener {
@@ -46,49 +46,49 @@ public class RunNotifierTest {
     @Test
     public void addAndRemoveWithNonThreadSafeListener() {
         CountingListener listener = new CountingListener();
-        assertThat(listener.testStarted.get(), is(0));
-        notifier.addListener(listener);
-        notifier.fireTestStarted(null);
-        assertThat(listener.testStarted.get(), is(1));
-        notifier.removeListener(listener);
-        notifier.fireTestStarted(null);
-        assertThat(listener.testStarted.get(), is(1));
+        assertThat(listener.fTestStarted.get(), is(0));
+        fNotifier.addListener(listener);
+        fNotifier.fireTestStarted(null);
+        assertThat(listener.fTestStarted.get(), is(1));
+        fNotifier.removeListener(listener);
+        fNotifier.fireTestStarted(null);
+        assertThat(listener.fTestStarted.get(), is(1));
     }
 
     @Test
     public void addFirstAndRemoveWithNonThreadSafeListener() {
         CountingListener listener = new CountingListener();
-        assertThat(listener.testStarted.get(), is(0));
-        notifier.addFirstListener(listener);
-        notifier.fireTestStarted(null);
-        assertThat(listener.testStarted.get(), is(1));
-        notifier.removeListener(listener);
-        notifier.fireTestStarted(null);
-        assertThat(listener.testStarted.get(), is(1));
+        assertThat(listener.fTestStarted.get(), is(0));
+        fNotifier.addFirstListener(listener);
+        fNotifier.fireTestStarted(null);
+        assertThat(listener.fTestStarted.get(), is(1));
+        fNotifier.removeListener(listener);
+        fNotifier.fireTestStarted(null);
+        assertThat(listener.fTestStarted.get(), is(1));
     }
     
     @Test
     public void addAndRemoveWithThreadSafeListener() {
         ThreadSafeListener listener = new ThreadSafeListener();
-        assertThat(listener.testStarted.get(), is(0));
-        notifier.addListener(listener);
-        notifier.fireTestStarted(null);
-        assertThat(listener.testStarted.get(), is(1));
-        notifier.removeListener(listener);
-        notifier.fireTestStarted(null);
-        assertThat(listener.testStarted.get(), is(1));
+        assertThat(listener.fTestStarted.get(), is(0));
+        fNotifier.addListener(listener);
+        fNotifier.fireTestStarted(null);
+        assertThat(listener.fTestStarted.get(), is(1));
+        fNotifier.removeListener(listener);
+        fNotifier.fireTestStarted(null);
+        assertThat(listener.fTestStarted.get(), is(1));
     }
 
     @Test
     public void addFirstAndRemoveWithThreadSafeListener() {
         ThreadSafeListener listener = new ThreadSafeListener();
-        assertThat(listener.testStarted.get(), is(0));
-        notifier.addFirstListener(listener);
-        notifier.fireTestStarted(null);
-        assertThat(listener.testStarted.get(), is(1));
-        notifier.removeListener(listener);
-        notifier.fireTestStarted(null);
-        assertThat(listener.testStarted.get(), is(1));
+        assertThat(listener.fTestStarted.get(), is(0));
+        fNotifier.addFirstListener(listener);
+        fNotifier.fireTestStarted(null);
+        assertThat(listener.fTestStarted.get(), is(1));
+        fNotifier.removeListener(listener);
+        fNotifier.fireTestStarted(null);
+        assertThat(listener.fTestStarted.get(), is(1));
     }
 
     private static class FailureListener extends RunListener {
@@ -101,11 +101,11 @@ public class RunNotifierTest {
     }
     
     private static class CountingListener extends RunListener {
-        final AtomicInteger testStarted = new AtomicInteger(0);
+        final AtomicInteger fTestStarted = new AtomicInteger(0);
 
         @Override
         public void testStarted(Description description) throws Exception {
-            testStarted.incrementAndGet();
+            fTestStarted.incrementAndGet();
         }
     }
     

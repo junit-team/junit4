@@ -99,7 +99,7 @@ final class SynchronizedRunListener extends RunListener {
         if (!(other instanceof SynchronizedRunListener)) {
             return false;
         }
-        SynchronizedRunListener that= (SynchronizedRunListener) other;
+        SynchronizedRunListener that = (SynchronizedRunListener) other;
         
         return this.fListener.equals(that.fListener);
     }
