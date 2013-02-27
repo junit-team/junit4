@@ -2,6 +2,7 @@ package org.junit.runner;
 
 import java.util.Comparator;
 
+import org.junit.filters.IgnoreFilter;
 import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
 import org.junit.internal.requests.ClassRequest;
 import org.junit.internal.requests.FilterRequest;
@@ -9,6 +10,7 @@ import org.junit.internal.requests.SortingRequest;
 import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.RunnerBuilder;
 
 /**
  * <p>A <code>Request</code> is an abstract description of tests to be run. Older versions of
@@ -70,9 +72,23 @@ public abstract class Request {
      * @return a <code>Request</code> that will cause all tests in the classes to be run
      */
     public static Request classes(Computer computer, Class<?>... classes) {
+        return filteredClasses(computer, new IgnoreFilter(), classes);
+    }
+
+    /**
+     * Create a <code>Request</code> that, when processed, will run all the tests
+     * in a set of classes.
+     *
+     * @param computer Helps construct Runners from classes
+     * @param filter Filter to apply to tests
+     * @param classes the classes containing the tests
+     * @return a <code>Request</code> that will cause all tests in the classes to be run
+     */
+    public static Request filteredClasses(Computer computer, Filter filter, Class<?>... classes) {
         try {
-            AllDefaultPossibilitiesBuilder builder = new AllDefaultPossibilitiesBuilder(true);
-            Runner suite = computer.getSuite(builder, classes);
+            RunnerBuilder runnerBuilder = new AllDefaultPossibilitiesBuilder(filter);
+            Runner suite = computer.getSuite(runnerBuilder, classes);
+
             return runner(suite);
         } catch (InitializationError e) {
             throw new RuntimeException(

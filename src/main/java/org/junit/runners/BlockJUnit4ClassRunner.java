@@ -1,16 +1,13 @@
 package org.junit.runners;
 
-import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_METHOD_VALIDATOR;
-import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_VALIDATOR;
-
 import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.Test.None;
+import org.junit.filters.IgnoreFilter;
 import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.internal.runners.statements.ExpectException;
 import org.junit.internal.runners.statements.Fail;
@@ -21,11 +18,15 @@ import org.junit.internal.runners.statements.RunBefores;
 import org.junit.rules.RunRules;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
+import org.junit.runner.manipulation.Filter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
+
+import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_METHOD_VALIDATOR;
+import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_VALIDATOR;
 
 /**
  * Implements the JUnit 4 standard test case class model, as defined by the
@@ -48,13 +49,21 @@ import org.junit.runners.model.Statement;
  * @since 4.5
  */
 public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
+    private final Filter filter;
+
     /**
      * Creates a BlockJUnit4ClassRunner to run {@code klass}
      *
      * @throws InitializationError if the test class is malformed.
      */
     public BlockJUnit4ClassRunner(Class<?> klass) throws InitializationError {
+        this(klass, new IgnoreFilter());
+    }
+
+    public BlockJUnit4ClassRunner(Class<?> klass, Filter filter) throws InitializationError {
         super(klass);
+
+        this.filter = filter;
     }
 
     //
@@ -63,8 +72,9 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 
     @Override
     protected void runChild(final FrameworkMethod method, RunNotifier notifier) {
-        Description description = describeChild(method);
-        if (method.getAnnotation(Ignore.class) != null) {
+        final Description description = describeChild(method);
+
+        if (!filter.shouldRun(description)) {
             notifier.fireTestIgnored(description);
         } else {
             runLeaf(methodBlock(method), description, notifier);

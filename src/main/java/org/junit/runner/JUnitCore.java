@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import junit.runner.Version;
+import org.junit.filters.IgnoreFilter;
 import org.junit.internal.JUnitSystem;
 import org.junit.internal.RealSystem;
 import org.junit.internal.TextListener;
 import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.runner.manipulation.Filter;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
@@ -27,6 +29,7 @@ import org.junit.runner.notification.RunNotifier;
  */
 public class JUnitCore {
     private final RunNotifier fNotifier = new RunNotifier();
+    private Filter filter = new IgnoreFilter();
 
     /**
      * Run the tests contained in the classes named in the <code>args</code>.
@@ -77,24 +80,48 @@ public class JUnitCore {
      * @param system
      * @args args from main()
      */
-    private Result runMain(JUnitSystem system, String... args) {
+    Result runMain(JUnitSystem system, String... args) {
         system.out().println("JUnit version " + Version.id());
         List<Class<?>> classes = new ArrayList<Class<?>>();
-        List<Failure> missingClasses = new ArrayList<Failure>();
+        List<Failure> failures = new ArrayList<Failure>();
+        FilterFactory filterFactory = new FilterFactory();
         for (String each : args) {
             try {
-                classes.add(Class.forName(each));
+                if (each.startsWith("--")) {
+                    if (each.startsWith("--filter")) {
+                        String filterSpec = each.substring(each.indexOf('=') + 1);
+
+                        addFilter(filterFactory.createFilter(filterSpec));
+                    } else {
+                        system.out().println("JUnit knows nothing about the " + each + " option");
+
+                        return new Result() {
+                            @Override
+                            public boolean wasSuccessful() {
+                                return false;
+                            }
+                        };
+                    }
+                } else {
+                    classes.add(Class.forName(each));
+                }
+            } catch (FilterFactory.FilterNotFoundException e) {
+                system.out().println("Could not create filter: " + each.substring(each.indexOf('=') + 1));
+                system.out().println(e.getMessage());
+                Description description = Description.createSuiteDescription(each);
+                Failure failure = new Failure(description, e);
+                failures.add(failure);
             } catch (ClassNotFoundException e) {
                 system.out().println("Could not find class: " + each);
                 Description description = Description.createSuiteDescription(each);
                 Failure failure = new Failure(description, e);
-                missingClasses.add(failure);
+                failures.add(failure);
             }
         }
         RunListener listener = new TextListener(system);
         addListener(listener);
         Result result = run(classes.toArray(new Class<?>[0]));
-        for (Failure each : missingClasses) {
+        for (Failure each : failures) {
             result.getFailures().add(each);
         }
         return result;
@@ -114,7 +141,7 @@ public class JUnitCore {
      * @return a {@link Result} describing the details of the test run and the failed tests.
      */
     public Result run(Class<?>... classes) {
-        return run(Request.classes(defaultComputer(), classes));
+        return run(Request.filteredClasses(defaultComputer(), filter, classes));
     }
 
     /**
@@ -125,7 +152,7 @@ public class JUnitCore {
      * @return a {@link Result} describing the details of the test run and the failed tests.
      */
     public Result run(Computer computer, Class<?>... classes) {
-        return run(Request.classes(computer, classes));
+        return run(Request.filteredClasses(computer, filter, classes));
     }
 
     /**
@@ -184,8 +211,17 @@ public class JUnitCore {
         fNotifier.removeListener(listener);
     }
 
+    /**
+     * Add a Filter to be used to filter tests to be run.
+     *
+     * @param filter the Filter to add
+     * @see org.junit.runner.JUnitCore
+     */
+    public void addFilter(Filter filter) {
+        this.filter = this.filter.intersect(filter);
+    }
+
     static Computer defaultComputer() {
         return new Computer();
     }
-
 }
