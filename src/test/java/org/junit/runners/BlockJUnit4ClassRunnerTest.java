@@ -13,14 +13,14 @@ import org.junit.runners.model.FrameworkMethod;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class FilteredClassRunnerTest {
+public class BlockJUnit4ClassRunnerTest {
     @Test
     public void filteredOutTestShouldFireTestIgnored() throws Exception {
         final NotifierSpy notifierSpy = new NotifierSpy();
 
         final Class<DummyTest> dummyTestClass = DummyTest.class;
-        final FilteredClassRunner filteredClassRunner =
-                new FilteredClassRunner(null, dummyTestClass, new IgnoreFilter());
+        final BlockJUnit4ClassRunner filteredClassRunner =
+                new BlockJUnit4ClassRunner(dummyTestClass, new IgnoreFilter());
         final Method dummyTest = dummyTestClass.getMethod("dummyTest");
 
         filteredClassRunner.runChild(new FrameworkMethod(dummyTest), notifierSpy);
@@ -33,8 +33,7 @@ public class FilteredClassRunnerTest {
         final NotifierSpy notifierSpy = new NotifierSpy();
 
         final Class<DummyTest> dummyTestClass = DummyTest.class;
-        final FilteredClassRunner filteredClassRunner = new FilteredClassRunner(
-                new BlockJUnit4ClassRunner(dummyTestClass),
+        final BlockJUnit4ClassRunner filteredClassRunner = new BlockJUnit4ClassRunner(
                 dummyTestClass,
                 new PassThroughFilter());
         final Method dummyTest = dummyTestClass.getMethod("dummyTest");

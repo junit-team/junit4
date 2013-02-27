@@ -4,7 +4,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.internal.runners.SuiteMethod;
 import org.junit.runner.Runner;
-import org.junit.runners.FilteredClassRunner;
 
 import static org.junit.Assert.assertEquals;
 
@@ -16,15 +15,6 @@ public class AllDefaultPossibilitiesBuilderTest {
         final Runner runner = builder.runnerForClass(IgnoredTestClass.class);
 
         assertEquals(IgnoredClassRunner.class, runner.getClass());
-    }
-
-    @Test
-    public void runnerShouldBeWrappedInFilteredClassRunner() throws Throwable {
-        final AllDefaultPossibilitiesBuilder builder = new AllDefaultPossibilitiesBuilder(true);
-
-        final Runner runner = builder.runnerForClass(BlockJUnit4TestClass.class);
-
-        assertEquals(FilteredClassRunner.class, runner.getClass());
     }
 
     @Test

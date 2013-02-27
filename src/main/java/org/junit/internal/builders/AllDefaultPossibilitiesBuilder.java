@@ -5,10 +5,8 @@ import java.util.List;
 
 import org.junit.filters.IgnoreFilter;
 import org.junit.runner.Description;
-import org.junit.runners.FilteredClassRunner;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
-import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.RunnerBuilder;
 
 public class AllDefaultPossibilitiesBuilder extends RunnerBuilder {
@@ -45,11 +43,7 @@ public class AllDefaultPossibilitiesBuilder extends RunnerBuilder {
         for (RunnerBuilder each : builders) {
             Runner runner = each.safeRunnerForClass(testClass);
             if (runner != null) {
-                if (runner instanceof BlockJUnit4ClassRunner) {
-                    return new FilteredClassRunner((BlockJUnit4ClassRunner) runner, testClass, fFilter);
-                } else {
-                    return runner;
-                }
+                return runner;
             }
         }
 
@@ -57,7 +51,7 @@ public class AllDefaultPossibilitiesBuilder extends RunnerBuilder {
     }
 
     protected JUnit4Builder junit4Builder() {
-        return new JUnit4Builder();
+        return new JUnit4Builder(fFilter);
     }
 
     protected JUnit3Builder junit3Builder() {

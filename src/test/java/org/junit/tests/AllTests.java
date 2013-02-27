@@ -9,7 +9,6 @@ import org.junit.internal.matchers.StacktracePrintingMatcherTest;
 import org.junit.runner.FilterFactoryTest;
 import org.junit.runner.FilterIntegrationTest;
 import org.junit.runner.RunWith;
-import org.junit.runners.FilteredClassRunnerTest;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.junit.tests.assertion.AssertionTest;
@@ -175,7 +174,7 @@ import org.junit.tests.validation.ValidationTest;
         IgnoreFilterTest.class,
         FilterFactoryTest.class,
         FilterIntegrationTest.class,
-        FilteredClassRunnerTest.class,
+        BlockJUnit4ClassRunnerTest.class,
         AllDefaultPossibilitiesBuilderTest.class
 })
 public class AllTests {
