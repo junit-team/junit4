@@ -2,10 +2,14 @@ package org.junit.experimental.categories;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.Set;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.junit.runner.Description;
+import org.junit.runner.FilterFactory;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runners.Suite;
@@ -303,6 +307,63 @@ public class Categories extends Suite {
                 }
             }
             return false;
+        }
+
+        private static class CategoryFilterWrapper extends Filter {
+            private CategoryFilter categoryFilter;
+
+            public CategoryFilterWrapper(CategoryFilter categoryFilter) {
+                this.categoryFilter = categoryFilter;
+            }
+
+            @Override
+            public boolean shouldRun(Description description) {
+                return categoryFilter.shouldRun(description);
+            }
+
+            @Override
+            public String describe() {
+                return categoryFilter.describe();
+            }
+        }
+
+        private static abstract class CategoriesFilterFactory extends FilterFactory {
+            @Override
+            public Filter createFilter(String categories) throws FilterNotFoundException {
+                try {
+                    return createFilter(parseCategories(categories));
+                } catch (Exception e) {
+                    throw new FilterNotFoundException("Could not create IncludesAny filter.", e);
+                }
+            }
+
+            protected abstract Filter createFilter(Class<?>[] categories) throws Exception;
+
+            public Class<?>[] parseCategories(String categories) throws ClassNotFoundException {
+                List<Class<?>> categoryClasses = new ArrayList<Class<?>>();
+
+                for (String category : categories.split(",")) {
+                    Class<?> categoryClass = Class.forName(category);
+
+                    categoryClasses.add(categoryClass);
+                }
+
+                return categoryClasses.toArray(new Class[]{});
+            }
+        }
+
+        public static class IncludesAnyFilterFactory extends CategoriesFilterFactory {
+            @Override
+            public Filter createFilter(Class<?>[] categories) throws FilterNotFoundException {
+                return new CategoryFilterWrapper(CategoryFilter.include(categories));
+            }
+        }
+
+        public static class ExcludesAnyFilterFactory extends CategoriesFilterFactory {
+            @Override
+            public Filter createFilter(Class<?>[] categories) throws ClassNotFoundException {
+                return new CategoryFilterWrapper(CategoryFilter.exclude(categories));
+            }
         }
     }
 
