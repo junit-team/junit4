@@ -5,10 +5,11 @@ import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Categories;
 import org.junit.experimental.categories.Category;
-import org.junit.internal.RealSystem;
+import org.junit.experimental.categories.ExcludeCategories;
+import org.junit.experimental.categories.IncludeCategories;
 import org.junit.runner.notification.RunListener;
+import org.junit.tests.TestSystem;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
@@ -17,18 +18,15 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class FilterOptionIntegrationTest {
     private static final String INCLUDES_DUMMY_CATEGORY_0 = "--filter=" +
-            Categories.CategoryFilter.IncludesAnyFilterFactory.class.getName() + "=" + DummyCategory0.class.getName();
+            IncludeCategories.class.getName() + "=" + DummyCategory0.class.getName();
     private static final String EXCLUDES_DUMMY_CATEGORY_1 = "--filter=" +
-            Categories.CategoryFilter.ExcludesAnyFilterFactory.class.getName() + "=" + DummyCategory1.class.getName();
+            ExcludeCategories.class.getName() + "=" + DummyCategory1.class.getName();
 
-    private JUnitCore jUnitCore;
-    private TestListener testListener;
+    private JUnitCore jUnitCore = new JUnitCore();
+    private TestListener testListener = new TestListener();
 
     @Before
     public void setUp() {
-        jUnitCore = new JUnitCore();
-        testListener = new TestListener();
-
         jUnitCore.addListener(testListener);
     }
 
@@ -109,7 +107,7 @@ public class FilterOptionIntegrationTest {
     }
 
     private Result runJUnit(final String... args) {
-        return jUnitCore.runMain(new RealSystem(), args);
+        return jUnitCore.runMain(new TestSystem(), args);
     }
 
     private void assertFinished(Class<?> testClass) {

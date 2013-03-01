@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import junit.runner.Version;
-import org.junit.filters.PassThroughFilter;
 import org.junit.internal.JUnitSystem;
 import org.junit.internal.RealSystem;
 import org.junit.internal.TextListener;
@@ -29,7 +28,7 @@ import org.junit.runner.notification.RunNotifier;
  */
 public class JUnitCore {
     private final RunNotifier fNotifier = new RunNotifier();
-    private Filter filter = new PassThroughFilter();
+    private Filter filter = Filter.ALL;
 
     /**
      * Run the tests contained in the classes named in the <code>args</code>.
@@ -80,7 +79,7 @@ public class JUnitCore {
      * @param system
      * @args args from main()
      */
-    public Result runMain(JUnitSystem system, String... args) {
+    Result runMain(JUnitSystem system, String... args) {
         system.out().println("JUnit version " + Version.id());
         List<Class<?>> classes = new ArrayList<Class<?>>();
         List<Failure> failures = new ArrayList<Failure>();
@@ -91,7 +90,7 @@ public class JUnitCore {
                     if (each.startsWith("--filter")) {
                         String filterSpec = each.substring(each.indexOf('=') + 1);
 
-                        Filter filter = filterFactoryFactory.apply(filterSpec);
+                        Filter filter = filterFactoryFactory.createFilterFromFilterSpec(filterSpec);
 
                         addFilter(filter);
                     } else {
@@ -107,7 +106,7 @@ public class JUnitCore {
                 } else {
                     classes.add(Class.forName(each));
                 }
-            } catch (FilterFactory.FilterNotFoundException e) {
+            } catch (FilterFactory.FilterNotCreatedException e) {
                 system.out().println("Could not find filter: " + e.getMessage());
                 Description description = Description.createSuiteDescription(each);
                 Failure failure = new Failure(description, e);

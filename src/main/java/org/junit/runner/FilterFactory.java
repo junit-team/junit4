@@ -3,17 +3,17 @@ package org.junit.runner;
 import org.junit.runner.manipulation.Filter;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-public class FilterFactory {
-    public Filter createFilter() throws FilterNotFoundException {
+public abstract class FilterFactory {
+    public Filter createFilter() throws FilterNotCreatedException {
         throw new NotImplementedException();
     }
 
-    public Filter createFilter(final String args) throws FilterNotFoundException {
+    public Filter createFilter(String args) throws FilterNotCreatedException {
         throw new NotImplementedException();
     }
 
-    public static class FilterNotFoundException extends ClassNotFoundException {
-        public FilterNotFoundException(final String message, final Exception exception) {
+    public static class FilterNotCreatedException extends ClassNotFoundException {
+        public FilterNotCreatedException(String message, Exception exception) {
             super(message, exception);
         }
     }

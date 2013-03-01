@@ -3,6 +3,7 @@ package org.junit.experimental.categories;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -158,7 +159,7 @@ public class Categories extends Suite {
             return new CategoryFilter(matchAnyInclusions, inclusions, matchAnyExclusions, exclusions);
         }
 
-        private CategoryFilter(boolean matchAnyIncludes, Set<Class<?>> includes,
+        protected CategoryFilter(boolean matchAnyIncludes, Set<Class<?>> includes,
                                boolean matchAnyExcludes, Set<Class<?>> excludes) {
             fIncludedAny= matchAnyIncludes;
             fExcludedAny= matchAnyExcludes;
@@ -309,31 +310,33 @@ public class Categories extends Suite {
             return false;
         }
 
-        private static class CategoryFilterWrapper extends Filter {
-            private CategoryFilter categoryFilter;
-
-            public CategoryFilterWrapper(CategoryFilter categoryFilter) {
-                this.categoryFilter = categoryFilter;
+        public static class IncludesAny extends CategoryFilter {
+            public IncludesAny(Class<?>[] categories) {
+                this(new HashSet<Class<?>>(Arrays.asList(categories)));
             }
 
-            @Override
-            public boolean shouldRun(Description description) {
-                return categoryFilter.shouldRun(description);
-            }
-
-            @Override
-            public String describe() {
-                return categoryFilter.describe();
+            public IncludesAny(Set<Class<?>> categories) {
+                super(true, categories, true, null);
             }
         }
 
-        private static abstract class CategoriesFilterFactory extends FilterFactory {
+        public static class ExcludesAny extends CategoryFilter {
+            public ExcludesAny(Class<?>[] categories) {
+                this(new HashSet<Class<?>>(Arrays.asList(categories)));
+            }
+
+            public ExcludesAny(Set<Class<?>> categories) {
+                super(true, null, true, categories);
+            }
+        }
+
+        static abstract class CategoriesFilterFactory extends FilterFactory {
             @Override
-            public Filter createFilter(String categories) throws FilterNotFoundException {
+            public Filter createFilter(String categories) throws FilterNotCreatedException {
                 try {
                     return createFilter(parseCategories(categories));
                 } catch (Exception e) {
-                    throw new FilterNotFoundException("Could not create IncludesAny filter.", e);
+                    throw new FilterNotCreatedException("Could not create IncludesAny filter.", e);
                 }
             }
 
@@ -349,20 +352,6 @@ public class Categories extends Suite {
                 }
 
                 return categoryClasses.toArray(new Class[]{});
-            }
-        }
-
-        public static class IncludesAnyFilterFactory extends CategoriesFilterFactory {
-            @Override
-            public Filter createFilter(Class<?>[] categories) throws FilterNotFoundException {
-                return new CategoryFilterWrapper(CategoryFilter.include(categories));
-            }
-        }
-
-        public static class ExcludesAnyFilterFactory extends CategoriesFilterFactory {
-            @Override
-            public Filter createFilter(Class<?>[] categories) throws ClassNotFoundException {
-                return new CategoryFilterWrapper(CategoryFilter.exclude(categories));
             }
         }
     }

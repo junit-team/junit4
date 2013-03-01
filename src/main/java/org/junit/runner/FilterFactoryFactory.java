@@ -2,36 +2,37 @@ package org.junit.runner;
 
 import org.junit.runner.manipulation.Filter;
 
-public class FilterFactoryFactory {
-    public Filter apply(final String filterSpec)
-            throws FilterFactoryNotFoundException, FilterFactory.FilterNotFoundException {
+class FilterFactoryFactory {
+    public Filter createFilterFromFilterSpec(String filterSpec)
+            throws FilterFactoryNotFoundException, FilterFactory.FilterNotCreatedException {
+        String filterFactoryFqcn;
+        FilterFactoryParams args;
+
         if (filterSpec.contains("=")) {
-            final String[] tuple = filterSpec.split("=", 2);
+            String[] tuple = filterSpec.split("=", 2);
 
-            final FilterFactory filterFactory = create(tuple[0]);
-            final String args = tuple[1];
-
-            return filterFactory.createFilter(args);
+            filterFactoryFqcn = tuple[0];
+            args = new FilterFactoryParams.OneArg(tuple[1]);
         } else {
-            final FilterFactory filterFactory = create(filterSpec);
-
-            return filterFactory.createFilter();
+            filterFactoryFqcn = filterSpec;
+            args = new FilterFactoryParams.ZeroArg();
         }
+
+        return createFilter(filterFactoryFqcn, args);
     }
 
-    private FilterFactory create(final String filterFactoryFqcn) throws FilterFactoryNotFoundException {
-        try {
-            final Class<? extends FilterFactory> filterFactoryClass =
-                    (Class<? extends FilterFactory>) Class.forName(filterFactoryFqcn);
+    public Filter createFilter(Class<? extends FilterFactory> filterFactoryClass, FilterFactoryParams args)
+            throws FilterFactory.FilterNotCreatedException, FilterFactoryNotFoundException {
+        return createFilter(filterFactoryClass.getName(), args);
+    }
 
-            return filterFactoryClass.getConstructor().newInstance();
-        } catch (final Exception e) {
-            throw new FilterFactoryNotFoundException(e.getMessage());
-        }
+    public Filter createFilter(String filterFactoryFqcn, FilterFactoryParams args)
+            throws FilterFactory.FilterNotCreatedException, FilterFactoryNotFoundException {
+        return args.apply(filterFactoryFqcn);
     }
 
     public static class FilterFactoryNotFoundException extends ClassNotFoundException {
-        public FilterFactoryNotFoundException(final String message) {
+        public FilterFactoryNotFoundException(String message) {
             super(message);
         }
     }
