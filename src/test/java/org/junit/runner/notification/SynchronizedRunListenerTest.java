@@ -82,6 +82,11 @@ public class SynchronizedRunListenerTest {
         }
 
         @Override
+        public String toString() {
+          return "NamedListener";
+        }
+ 
+        @Override
         public int hashCode() {
             return fName.hashCode();
         }
@@ -124,7 +129,15 @@ public class SynchronizedRunListenerTest {
         assertEquals(listener1.hashCode(), listener2.hashCode());
         assertNotEquals(listener1.hashCode(), listener3.hashCode());
     }
-    
+
+    @Test
+    public void toStringDelegates() {
+        NamedListener listener = new NamedListener("blue");
+        
+        assertEquals("NamedListener", listener.toString());
+        assertEquals("NamedListener (with synchronization wrapper)", new SynchronizedRunListener(listener).toString());
+    }
+
     @Test
     public void equalsDelegates() {
         NamedListener listener1 = new NamedListener("blue");

@@ -59,8 +59,8 @@ public final class ConcurrentRunNotifierTest {
         fNotifier.removeListener(listener1);
         fNotifier.removeListener(listener2);
 
-        assertThat(listener1.fTestStarted.get(), is(4));
-        assertThat(listener2.fTestStarted.get(), is(4));
+        assertThat(listener1.fTestStarted.get(), is(numParallelTests));
+        assertThat(listener2.fTestStarted.get(), is(numParallelTests));
     }
 
     private static class ExaminedListener extends RunListener {
