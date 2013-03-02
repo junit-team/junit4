@@ -1,10 +1,8 @@
 package org.junit.runner.notification;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -104,10 +102,6 @@ public class SynchronizedRunListenerTest {
         }
     }
 
-    @RunListener.ThreadSafe
-    private static class ThreadSafeRunListener extends RunListener {
-    }
-
     @Test
     public void namedListenerCorrectlyImplementsEqualsAndHashCode() {
         NamedListener listener1 = new NamedListener("blue");
@@ -135,7 +129,7 @@ public class SynchronizedRunListenerTest {
         NamedListener listener = new NamedListener("blue");
         
         assertEquals("NamedListener", listener.toString());
-        assertEquals("NamedListener (with synchronization wrapper)", new SynchronizedRunListener(listener).toString());
+        assertEquals("NamedListener (with synchronization wrapper)", wrap(listener).toString());
     }
 
     @Test
@@ -144,37 +138,20 @@ public class SynchronizedRunListenerTest {
         NamedListener listener2 = new NamedListener("blue");
         NamedListener listener3 = new NamedListener("red");
         
-        assertEquals(new SynchronizedRunListener(listener1),
-                new SynchronizedRunListener(listener1));
-        assertEquals(new SynchronizedRunListener(listener1),
-                new SynchronizedRunListener(listener2));
-        assertNotEquals(new SynchronizedRunListener(listener1),
-                new SynchronizedRunListener(listener3));
-        assertNotEquals(new SynchronizedRunListener(listener1), listener1);
-        assertNotEquals(listener1, new SynchronizedRunListener(listener1));
+        assertEquals(wrap(listener1), wrap(listener1));
+        assertEquals(wrap(listener1), wrap(listener2));
+        assertNotEquals(wrap(listener1), wrap(listener3));
+        assertNotEquals(wrap(listener1), listener1);
+        assertNotEquals(listener1, wrap(listener1));
     }
 
     @Test
     public void hashCodeDelegates() {
         NamedListener listener = new NamedListener("blue");
-        assertEquals(listener.hashCode(), new SynchronizedRunListener(listener).hashCode());
+        assertEquals(listener.hashCode(), wrap(listener).hashCode());
     }
 
-    @Test
-    public void wrapIfNotThreadSafeShouldNotWrapThreadSafeListeners() {
-        ThreadSafeRunListener listener = new ThreadSafeRunListener();;
-        assertSame(listener, SynchronizedRunListener.wrapIfNotThreadSafe(listener));
-    }
-
-    /**
-     * Tests that {@link SynchronizedRunListener#wrapIfNotThreadSafe(RunListener)}
-     * wraps listeners that are not thread-safe. This does not check if the
-     * listener is synchronized; that is tested with the tests for {@link RunNotifier}.
-     */
-    @Test
-    public void wrapIfNotThreadSafeShouldWrapNonThreadSafeListeners() {
-        NamedListener listener = new NamedListener("name");
-        RunListener wrappedListener = SynchronizedRunListener.wrapIfNotThreadSafe(listener);
-        assertThat(wrappedListener, instanceOf(SynchronizedRunListener.class));
+    private SynchronizedRunListener wrap(RunListener listener) {
+        return new SynchronizedRunListener(listener, this);
     }
 }

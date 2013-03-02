@@ -1,7 +1,9 @@
 package org.junit.runner.notification;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -89,6 +91,19 @@ public class RunNotifierTest {
         fNotifier.removeListener(listener);
         fNotifier.fireTestStarted(null);
         assertThat(listener.fTestStarted.get(), is(1));
+    }
+
+    @Test
+    public void wrapIfNotThreadSafeShouldNotWrapThreadSafeListeners() {
+        ThreadSafeListener listener = new ThreadSafeListener();;
+        assertSame(listener, new RunNotifier().wrapIfNotThreadSafe(listener));
+    }
+
+    @Test
+    public void wrapIfNotThreadSafeShouldWrapNonThreadSafeListeners() {
+        CountingListener listener = new CountingListener();
+        RunListener wrappedListener = new RunNotifier().wrapIfNotThreadSafe(listener);
+        assertThat(wrappedListener, instanceOf(SynchronizedRunListener.class));
     }
 
     private static class FailureListener extends RunListener {

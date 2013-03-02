@@ -7,7 +7,7 @@ import org.junit.runner.Result;
  * Thread-safe decorator for {@link RunListener} implementations that synchronizes
  * calls to the delegate.
  *
- * <p>This class synchronizes all listener calls on a global monitor. This is done because
+ * <p>This class synchronizes all listener calls on a RunNotifier instance. This is done because
  * prior to JUnit 4.12, all listeners were called in a synchronized block in RunNotifier,
  * so no two listeners were ever called concurrently. If we instead made the methods here
  * sychronized, clients that added multiple listeners that called common code might see
@@ -21,67 +21,59 @@ import org.junit.runner.Result;
  */
 @RunListener.ThreadSafe
 final class SynchronizedRunListener extends RunListener {
-    private static final Object sMonitor = new Object();
     private final RunListener fListener;
+    private final Object fMonitor;
 
-    /**
-     * Wraps the given listener with {@link SynchronizedRunListener} if
-     * it is not annotated with {@link RunListener.ThreadSafe}.
-     */
-    public static RunListener wrapIfNotThreadSafe(RunListener listener) {
-        return listener.getClass().isAnnotationPresent(RunListener.ThreadSafe.class) ?
-                listener : new SynchronizedRunListener(listener);
-    }
-
-    SynchronizedRunListener(RunListener listener) {
-        this.fListener = listener;
+    SynchronizedRunListener(RunListener listener, Object monitor) {
+        fListener = listener;
+        fMonitor = monitor;
     }
 
     @Override
     public void testRunStarted(Description description) throws Exception {
-        synchronized (sMonitor) {
+        synchronized (fMonitor) {
             fListener.testRunStarted(description);
         }
     }
 
     @Override
     public void testRunFinished(Result result) throws Exception {
-        synchronized (sMonitor) {
+        synchronized (fMonitor) {
             fListener.testRunFinished(result);
         }
     }
 
     @Override
     public void testStarted(Description description) throws Exception {
-        synchronized (sMonitor) {
+        synchronized (fMonitor) {
             fListener.testStarted(description);
         }
     }
 
     @Override
     public void testFinished(Description description) throws Exception {
-        synchronized (sMonitor) {
+        synchronized (fMonitor) {
             fListener.testFinished(description);
         }
     }
 
     @Override
     public void testFailure(Failure failure) throws Exception {
-        synchronized (sMonitor) {
+        synchronized (fMonitor) {
             fListener.testFailure(failure);
         }
     }
 
     @Override
     public void testAssumptionFailure(Failure failure) {
-        synchronized (sMonitor) {
+        synchronized (fMonitor) {
             fListener.testAssumptionFailure(failure);
         }
     }
 
     @Override
     public void testIgnored(Description description) throws Exception {
-        synchronized (sMonitor) {
+        synchronized (fMonitor) {
             fListener.testIgnored(description);
         }
     }
@@ -101,7 +93,7 @@ final class SynchronizedRunListener extends RunListener {
         }
         SynchronizedRunListener that = (SynchronizedRunListener) other;
         
-        return this.fListener.equals(that.fListener);
+        return fListener.equals(that.fListener);
     }
 
     @Override

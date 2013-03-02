@@ -31,7 +31,7 @@ public class RunNotifier {
         if (listener == null) {
             throw new NullPointerException("Cannot add a null listener");
         }
-        fListeners.add(SynchronizedRunListener.wrapIfNotThreadSafe(listener));
+        fListeners.add(wrapIfNotThreadSafe(listener));
     }
 
     /**
@@ -41,8 +41,18 @@ public class RunNotifier {
         if (listener == null) {
             throw new NullPointerException("Cannot remove a null listener");
         }
-        fListeners.remove(SynchronizedRunListener.wrapIfNotThreadSafe(listener));
+        fListeners.remove(wrapIfNotThreadSafe(listener));
     }
+
+    /**
+     * Wraps the given listener with {@link SynchronizedRunListener} if
+     * it is not annotated with {@link RunListener.ThreadSafe}.
+     */
+    RunListener wrapIfNotThreadSafe(RunListener listener) {
+        return listener.getClass().isAnnotationPresent(RunListener.ThreadSafe.class) ?
+                listener : new SynchronizedRunListener(listener, this);
+    }
+
 
     private abstract class SafeNotifier {
         private final List<RunListener> fCurrentListeners;
@@ -52,7 +62,7 @@ public class RunNotifier {
         }
 
         SafeNotifier(List<RunListener> currentListeners) {
-            this.fCurrentListeners = currentListeners;
+            fCurrentListeners = currentListeners;
         }
 
         void run() {
@@ -201,6 +211,6 @@ public class RunNotifier {
         if (listener == null) {
             throw new NullPointerException("Cannot add a null listener");
         }
-        fListeners.add(0, SynchronizedRunListener.wrapIfNotThreadSafe(listener));
+        fListeners.add(0, wrapIfNotThreadSafe(listener));
     }
 }
