@@ -2,10 +2,10 @@ package org.junit.runners;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.internal.builders.ParameterRunnerBuilder;
+import org.junit.rules.ParameterRule;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkField;
@@ -169,17 +171,14 @@ public class Parameterized extends Suite {
      * Runner to use for each cycle of a test. If this annotation is
      * not specified then the default {@link TestClassRunnerForParameters}
      * is used.
+     *
+     * A ParameterRule can also perform functions to filter out parameters
+     * or modify the value of parameters being passed through it.
      */
     @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE)
-    public static @interface ParameterizedRunWith {
-        /**
-         * The class to use as a runner for executing each cycle of a test. The
-         * requested runner must have a constructor that accepts the same arguments
-         * as {@link TestClassRunnerForParameters}.
-         * @return the runner to use for executing each cycle of a parameterized test.
-         */
-        Class<? extends Runner> value();
+    @Target(ElementType.FIELD)
+    @Inherited
+    public static @interface UseParameterRule {
     }
 
     public static class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
@@ -195,7 +194,7 @@ public class Parameterized extends Suite {
         }
 
         @Override
-        public Object createTest() throws Exception {
+        public Object createTest() throws InitializationError {
             if (fieldsAreAnnotated()) {
                 return createTestUsingFieldInjection();
             } else {
@@ -203,17 +202,32 @@ public class Parameterized extends Suite {
             }
         }
 
-        private Object createTestUsingConstructorInjection() throws Exception {
-            return getTestClass().getOnlyConstructor().newInstance(fParameters);
+        private Object createTestUsingConstructorInjection() throws InitializationError {
+            try {
+                return getTestClass().getOnlyConstructor().newInstance(fParameters);
+            } catch (InstantiationException e) {
+                throw new InitializationError(e);
+            } catch (IllegalAccessException e) {
+                throw new InitializationError(e);
+            } catch (InvocationTargetException e) {
+                throw new InitializationError(e);
+            }
         }
 
-        private Object createTestUsingFieldInjection() throws Exception {
+        private Object createTestUsingFieldInjection() throws InitializationError {
             List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter();
             if (annotatedFieldsByParameter.size() != fParameters.length) {
-                throw new Exception("Wrong number of parameters and @Parameter fields." +
-                        " @Parameter fields counted: " + annotatedFieldsByParameter.size() + ", available parameters: " + fParameters.length + ".");
+                throw new InitializationError(new Exception("Wrong number of parameters and @Parameter fields." +
+                        " @Parameter fields counted: " + annotatedFieldsByParameter.size() + ", available parameters: " + fParameters.length + "."));
             }
-            Object testClassInstance = getTestClass().getJavaClass().newInstance();
+            Object testClassInstance;
+            try {
+                testClassInstance = getTestClass().getJavaClass().newInstance();
+            } catch (InstantiationException e) {
+                throw new InitializationError(e);
+            } catch (IllegalAccessException e) {
+                throw new InitializationError(e);
+            }
             for (FrameworkField each : annotatedFieldsByParameter) {
                 Field field = each.getField();
                 Parameter annotation = field.getAnnotation(Parameter.class);
@@ -221,10 +235,12 @@ public class Parameterized extends Suite {
                 try {
                     field.set(testClassInstance, fParameters[index]);
                 } catch (IllegalArgumentException iare) {
-                    throw new Exception(getTestClass().getName() + ": Trying to set " + field.getName() +
+                    throw new InitializationError(new Exception(getTestClass().getName() + ": Trying to set " + field.getName() +
                             " with the value " + fParameters[index] +
                             " that is not the right type (" + fParameters[index].getClass().getSimpleName() + " instead of " +
-                            field.getType().getSimpleName() + ").", iare);
+                            field.getType().getSimpleName() + ").", iare));
+                } catch (IllegalAccessException e) {
+                    throw new InitializationError(e);
                 }
             }
             return testClassInstance;
@@ -302,14 +318,14 @@ public class Parameterized extends Suite {
         }
     }
 
-    private static final List<Runner> NO_RUNNERS = Collections.<Runner>emptyList();
+    private static final List<Runner> NO_RUNNERS = Collections.emptyList();
 
     private final ArrayList<Runner> runners = new ArrayList<Runner>();
 
     /**
      * Only called reflectively. Do not use programmatically.
      */
-    public Parameterized(Class<?> klass) throws Throwable {
+    public Parameterized(Class<?> klass) throws InitializationError {
         super(klass, NO_RUNNERS);
         Parameters parameters = getParametersMethod().getAnnotation(
                 Parameters.class);
@@ -322,40 +338,56 @@ public class Parameterized extends Suite {
     }
 
     protected Runner createRunner(String pattern, int index, Object[] parameters) throws InitializationError {
-        ParameterizedRunWith paramAnnotation = getTestClass().getJavaClass().getAnnotation(ParameterizedRunWith.class);
 
-        if (paramAnnotation == null) {
-            // Default to TestClassRunnerForParameters if no @ParameterizedRunWith has been specified
-           return new TestClassRunnerForParameters(getTestClass().getJavaClass(), pattern, index, parameters);
-        } else {
-            // use reflection to try and create the specified runner
-            Class<? extends Runner> runnerClass = paramAnnotation.value();
-            try {
-                Constructor<? extends Runner> runnerConstructor = runnerClass.getConstructor(Class.class, String.class, int.class, Object[].class);
-                return runnerConstructor.newInstance(getTestClass().getJavaClass(), pattern, index, parameters);
-            } catch (InstantiationException e) {
-                throw new InitializationError(e);
-            } catch (IllegalAccessException e) {
-                throw new InitializationError(e);
-            } catch (InvocationTargetException e) {
-                throw new InitializationError(e);
-            } catch (NoSuchMethodException e) {
-                throw new InitializationError("Required constructor not found. Parameterized runners need a public constructor with arguments: Class, String, int, Object[]");
+        final List<ParameterRule> rules = new ArrayList<ParameterRule>();
+
+        // get a list of all rules for the current test class
+        try {
+            rules.addAll(getTestClass().getAnnotatedFieldValues(new TestClassRunnerForParameters(getTestClass().getJavaClass(), pattern, 0, parameters).createTest(), UseParameterRule.class, ParameterRule.class));
+        }
+        catch(RuntimeException ex) {
+            //we have to have this horrible cludge since getAnnotateFieldValues assumes it can never have an
+            // IllegalAccessException show throws an unhelpful exception in its place.
+            if (ex.getCause() == null || !(ex.getCause() instanceof IllegalAccessException)) {
+                throw ex;
             }
+            throw new InitializationError(new RuntimeException("ParameterRules must be public", ex.getCause()));
+        }
+        // create an initial builder for starting the chain. This defaults to using the existing runner for parameters to maintain backwards compatibility
+        ParameterRunnerBuilder builder = new DefaultBuilder();
+
+        // chain the builders together
+        for (ParameterRule rule : rules) {
+            builder = rule.apply(builder);
+        }
+
+        // execute the final builder
+        return builder.build(getTestClass().getJavaClass(), pattern, index, parameters);
+
+    }
+
+    public static class DefaultBuilder implements ParameterRunnerBuilder {
+        public Runner build(Class<?> type, String pattern, int index, Object[] parameters) throws InitializationError {
+            return new TestClassRunnerForParameters(type, pattern, index, parameters);
         }
     }
 
     @SuppressWarnings("unchecked")
-    private Iterable<Object[]> allParameters() throws Throwable {
-        Object parameters = getParametersMethod().invokeExplosively(null);
+    private Iterable<Object[]> allParameters() throws InitializationError {
+        Object parameters;
+        try {
+            parameters = getParametersMethod().invokeExplosively(null);
+        } catch (Throwable throwable) {
+            throw new InitializationError(throwable);
+        }
         if (parameters instanceof Iterable) {
             return (Iterable<Object[]>) parameters;
         } else {
-            throw parametersMethodReturnedWrongType();
+            throw new InitializationError(parametersMethodReturnedWrongType());
         }
     }
 
-    private FrameworkMethod getParametersMethod() throws Exception {
+    private FrameworkMethod getParametersMethod() throws InitializationError {
         List<FrameworkMethod> methods = getTestClass().getAnnotatedMethods(
                 Parameters.class);
         for (FrameworkMethod each : methods) {
@@ -364,22 +396,22 @@ public class Parameterized extends Suite {
             }
         }
 
-        throw new Exception("No public static parameters method on class "
-                + getTestClass().getName());
+        throw new InitializationError(new Exception("No public static parameters method on class "
+                + getTestClass().getName()));
     }
 
-    private void createRunnersForParameters(Iterable<Object[]> allParameters, String namePattern) throws Exception {
+    private void createRunnersForParameters(Iterable<Object[]> allParameters, String namePattern) throws InitializationError {
         try {
             int i = 0;
             for (Object[] parametersOfSingleTest : allParameters) {
                 runners.add(createRunner(namePattern, i++, parametersOfSingleTest));
             }
         } catch (ClassCastException e) {
-            throw parametersMethodReturnedWrongType();
+            throw new InitializationError(parametersMethodReturnedWrongType());
         }
     }
 
-    private Exception parametersMethodReturnedWrongType() throws Exception {
+    private Exception parametersMethodReturnedWrongType() throws InitializationError {
         String className = getTestClass().getName();
         String methodName = getParametersMethod().getName();
         String message = MessageFormat.format(
@@ -387,6 +419,8 @@ public class Parameterized extends Suite {
                 className, methodName);
         return new Exception(message);
     }
+
+
 
 
 }
