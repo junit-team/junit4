@@ -63,7 +63,7 @@ import org.junit.runners.model.RunnerBuilder;
  *     // Will run A.b and B.d, but not A.a and A.c
  * }
  * </pre>
- *
+ * <p>
  * Example to run multiple categories:
  * <pre>
  * &#064;RunWith(Categories.class)

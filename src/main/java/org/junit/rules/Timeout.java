@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * The Timeout Rule applies the same timeout to all test methods in a class:
- *
  * <pre>
  * public static class HasGlobalLongTimeout {
  *
@@ -26,7 +25,7 @@ import java.util.concurrent.TimeUnit;
  *  }
  * }
  * </pre>
- *
+ * <p>
  * Each test is run in a new thread. If the specified timeout elapses before
  * the test completes, its execution is interrupted via {@link Thread#interrupt()}.
  * This happens in interruptable I/O and locks, and methods in {@link Object}
@@ -41,8 +40,10 @@ public class Timeout implements TestRule {
     /**
      * Create a {@code Timeout} instance with the timeout specified
      * in milliseconds.
-     * <p> This constructor is deprecated.
-     * <p> Instead use {@link #Timeout(long, java.util.concurrent.TimeUnit)},
+     * <p>
+     * This constructor is deprecated.
+     * <p>
+     * Instead use {@link #Timeout(long, java.util.concurrent.TimeUnit)},
      * {@link Timeout#millis(long)}, or {@link Timeout#seconds(long)}.
      *
      * @param millis the maximum time in milliseconds to allow the

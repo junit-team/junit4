@@ -5,11 +5,11 @@ import org.junit.runner.Description;
 import org.junit.runner.Result;
 
 /**
- * <p>If you need to respond to the events during a test run, extend <code>RunListener</code>
+ * If you need to respond to the events during a test run, extend <code>RunListener</code>
  * and override the appropriate methods. If a listener throws an exception while processing a
- * test event, it will be removed for the remainder of the test run.</p>
- *
- * <p>For example, suppose you have a <code>Cowbell</code>
+ * test event, it will be removed for the remainder of the test run.
+ * <p>
+ * For example, suppose you have a <code>Cowbell</code>
  * class that you want to make a noise whenever a test fails. You could write:
  * <pre>
  * public class RingingListener extends RunListener {
@@ -18,9 +18,8 @@ import org.junit.runner.Result;
  *    }
  * }
  * </pre>
- * </p>
- *
- * <p>To invoke your listener, you need to run your tests through <code>JUnitCore</code>.
+ * <p>
+ * To invoke your listener, you need to run your tests through <code>JUnitCore</code>.
  * <pre>
  * public void main(String... args) {
  *    JUnitCore core= new JUnitCore();
@@ -28,7 +27,6 @@ import org.junit.runner.Result;
  *    core.run(MyTestClass.class);
  * }
  * </pre>
- * </p>
  *
  * @see org.junit.runner.JUnitCore
  * @since 4.0

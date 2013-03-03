@@ -6,13 +6,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>Sometimes several tests need to share computationally expensive setup
+ * Sometimes several tests need to share computationally expensive setup
  * (like logging into a database). While this can compromise the independence of
  * tests, sometimes it is a necessary optimization. Annotating a <code>public static void</code> no-arg method
  * with <code>@BeforeClass</code> causes it to be run once before any of
  * the test methods in the class. The <code>@BeforeClass</code> methods of superclasses
- * will be run before those the current class, unless they are shadowed in the current class.</p>
- *
+ * will be run before those the current class, unless they are shadowed in the current class.
+ * <p>
  * For example:
  * <pre>
  * public class Example {
