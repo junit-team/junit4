@@ -2,9 +2,13 @@ package org.junit.tests;
 
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
+import org.junit.experimental.categories.CategoryFilterFactoryTest;
 import org.junit.internal.MethodSorterTest;
 import org.junit.internal.matchers.StacktracePrintingMatcherTest;
+import org.junit.runner.FilterFactoryFactoryTest;
+import org.junit.runner.FilterFactoryParamsTest;
 import org.junit.runner.FilterOptionIntegrationTest;
+import org.junit.runner.JUnitCommandLineParserTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -168,7 +172,11 @@ import org.junit.tests.validation.ValidationTest;
         TestedOnSupplierTest.class,
         StacktracePrintingMatcherTest.class,
         StopwatchTest.class,
-        FilterOptionIntegrationTest.class
+        FilterOptionIntegrationTest.class,
+        JUnitCommandLineParserTest.class,
+        FilterFactoryFactoryTest.class,
+        FilterFactoryParamsTest.class,
+        CategoryFilterFactoryTest.class
 })
 public class AllTests {
     public static Test suite() {

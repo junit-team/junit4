@@ -2,9 +2,22 @@ package org.junit.runner;
 
 import org.junit.runner.manipulation.Filter;
 
+/**
+ * Extend this class to create a factory that creates a factory that creates a {@link Filter}.
+ */
 class FilterFactoryFactory {
+    /**
+     * Creates a {@link Filter}.
+     *
+     * A filter specification is of the form "package.of.FilterFactory=args-to-filter-factory" or
+     * "package.of.FilterFactory".
+     *
+     * @param filterSpec The filter specification
+     * @throws FilterFactoryNotCreatedException
+     * @throws FilterFactory.FilterNotCreatedException
+     */
     public Filter createFilterFromFilterSpec(String filterSpec)
-            throws FilterFactoryNotFoundException, FilterFactory.FilterNotCreatedException {
+            throws FilterFactoryNotCreatedException, FilterFactory.FilterNotCreatedException {
         String filterFactoryFqcn;
         FilterFactoryParams args;
 
@@ -21,18 +34,37 @@ class FilterFactoryFactory {
         return createFilter(filterFactoryFqcn, args);
     }
 
+    /**
+     * Creates a {@link Filter}.
+     *
+     * @param filterFactoryClass The class of the {@link FilterFactory}
+     * @param args The arguments to the {@link FilterFactory}
+     * @throws FilterFactory.FilterNotCreatedException
+     * @throws FilterFactoryNotCreatedException
+     */
     public Filter createFilter(Class<? extends FilterFactory> filterFactoryClass, FilterFactoryParams args)
-            throws FilterFactory.FilterNotCreatedException, FilterFactoryNotFoundException {
+            throws FilterFactory.FilterNotCreatedException, FilterFactoryNotCreatedException {
         return createFilter(filterFactoryClass.getName(), args);
     }
 
+    /**
+     * Creates a {@link Filter}.
+     *
+     * @param filterFactoryFqcn The fully qualified class name of the {@link FilterFactory}
+     * @param args The arguments to the {@link FilterFactory}
+     * @throws FilterFactory.FilterNotCreatedException
+     * @throws FilterFactoryNotCreatedException
+     */
     public Filter createFilter(String filterFactoryFqcn, FilterFactoryParams args)
-            throws FilterFactory.FilterNotCreatedException, FilterFactoryNotFoundException {
+            throws FilterFactory.FilterNotCreatedException, FilterFactoryNotCreatedException {
         return args.apply(filterFactoryFqcn);
     }
 
-    public static class FilterFactoryNotFoundException extends ClassNotFoundException {
-        public FilterFactoryNotFoundException(String message) {
+    /**
+     * Exception thrown if the {@link FilterFactory} cannot be created.
+     */
+    public static class FilterFactoryNotCreatedException extends ClassNotFoundException {
+        public FilterFactoryNotCreatedException(String message) {
             super(message);
         }
     }

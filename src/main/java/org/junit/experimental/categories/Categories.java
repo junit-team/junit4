@@ -2,15 +2,11 @@ package org.junit.experimental.categories;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.junit.runner.Description;
-import org.junit.runner.FilterFactory;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runners.Suite;
@@ -308,51 +304,6 @@ public class Categories extends Suite {
                 }
             }
             return false;
-        }
-
-        public static class IncludesAny extends CategoryFilter {
-            public IncludesAny(Class<?>[] categories) {
-                this(new HashSet<Class<?>>(Arrays.asList(categories)));
-            }
-
-            public IncludesAny(Set<Class<?>> categories) {
-                super(true, categories, true, null);
-            }
-        }
-
-        public static class ExcludesAny extends CategoryFilter {
-            public ExcludesAny(Class<?>[] categories) {
-                this(new HashSet<Class<?>>(Arrays.asList(categories)));
-            }
-
-            public ExcludesAny(Set<Class<?>> categories) {
-                super(true, null, true, categories);
-            }
-        }
-
-        static abstract class CategoriesFilterFactory extends FilterFactory {
-            @Override
-            public Filter createFilter(String categories) throws FilterNotCreatedException {
-                try {
-                    return createFilter(parseCategories(categories));
-                } catch (Exception e) {
-                    throw new FilterNotCreatedException("Could not create IncludesAny filter.", e);
-                }
-            }
-
-            protected abstract Filter createFilter(Class<?>[] categories) throws Exception;
-
-            public Class<?>[] parseCategories(String categories) throws ClassNotFoundException {
-                List<Class<?>> categoryClasses = new ArrayList<Class<?>>();
-
-                for (String category : categories.split(",")) {
-                    Class<?> categoryClass = Class.forName(category);
-
-                    categoryClasses.add(categoryClass);
-                }
-
-                return categoryClasses.toArray(new Class[]{});
-            }
         }
     }
 

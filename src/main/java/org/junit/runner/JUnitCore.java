@@ -1,6 +1,5 @@
 package org.junit.runner;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import junit.runner.Version;
@@ -81,54 +80,22 @@ public class JUnitCore {
      */
     Result runMain(JUnitSystem system, String... args) {
         system.out().println("JUnit version " + Version.id());
-        List<Class<?>> classes = new ArrayList<Class<?>>();
-        List<Failure> failures = new ArrayList<Failure>();
-        FilterFactoryFactory filterFactoryFactory = new FilterFactoryFactory();
-        for (String each : args) {
-            try {
-                if (each.startsWith("--")) {
-                    if (each.startsWith("--filter")) {
-                        String filterSpec = each.substring(each.indexOf('=') + 1);
 
-                        Filter filter = filterFactoryFactory.createFilterFromFilterSpec(filterSpec);
+        JUnitCommandLineParser jUnitCommandLineParser = new JUnitCommandLineParser(system);
+        jUnitCommandLineParser.parseArgs(args);
 
-                        addFilter(filter);
-                    } else {
-                        system.out().println("JUnit knows nothing about the " + each + " option");
+        filter = filter.intersect(jUnitCommandLineParser.getFilter());
+        List<Class<?>> classes = jUnitCommandLineParser.getClasses();
+        List<Failure> failures = jUnitCommandLineParser.getFailures();
 
-                        return new Result() {
-                            @Override
-                            public boolean wasSuccessful() {
-                                return false;
-                            }
-                        };
-                    }
-                } else {
-                    classes.add(Class.forName(each));
-                }
-            } catch (FilterFactory.FilterNotCreatedException e) {
-                system.out().println("Could not find filter: " + e.getMessage());
-                Description description = Description.createSuiteDescription(each);
-                Failure failure = new Failure(description, e);
-                failures.add(failure);
-            } catch (FilterFactoryFactory.FilterFactoryNotFoundException e) {
-                system.out().println("Could not find filter factory: " + e.getMessage());
-                Description description = Description.createSuiteDescription(each);
-                Failure failure = new Failure(description, e);
-                failures.add(failure);
-            } catch (ClassNotFoundException e) {
-                system.out().println("Could not find class: " + each);
-                Description description = Description.createSuiteDescription(each);
-                Failure failure = new Failure(description, e);
-                failures.add(failure);
-            }
-        }
         RunListener listener = new TextListener(system);
         addListener(listener);
+
         Result result = run(classes.toArray(new Class<?>[0]));
         for (Failure each : failures) {
             result.getFailures().add(each);
         }
+
         return result;
     }
 
