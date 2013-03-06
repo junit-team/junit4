@@ -1,7 +1,9 @@
 package org.junit.experimental.theories;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,13 +28,14 @@ public class Theories extends BlockJUnit4ClassRunner {
     protected void collectInitializationErrors(List<Throwable> errors) {
         super.collectInitializationErrors(errors);
         validateDataPointFields(errors);
+        validateDataPointMethods(errors);
     }
 
     private void validateDataPointFields(List<Throwable> errors) {
         Field[] fields = getTestClass().getJavaClass().getDeclaredFields();
 
         for (Field field : fields) {
-            if (field.getAnnotation(DataPoint.class) == null) {
+            if (field.getAnnotation(DataPoint.class) == null && field.getAnnotation(DataPoints.class) == null) {
                 continue;
             }
             if (!Modifier.isStatic(field.getModifiers())) {
@@ -40,6 +43,22 @@ public class Theories extends BlockJUnit4ClassRunner {
             }
             if (!Modifier.isPublic(field.getModifiers())) {
                 errors.add(new Error("DataPoint field " + field.getName() + " must be public"));
+            }
+        }
+    }
+
+    private void validateDataPointMethods(List<Throwable> errors) {
+        Method[] methods = getTestClass().getJavaClass().getDeclaredMethods();
+        
+        for (Method method : methods) {
+            if (method.getAnnotation(DataPoint.class) == null && method.getAnnotation(DataPoints.class) == null) {
+                continue;
+            }
+            if (!Modifier.isStatic(method.getModifiers())) {
+                errors.add(new Error("DataPoint method " + method.getName() + " must be static"));
+            }
+            if (!Modifier.isPublic(method.getModifiers())) {
+                errors.add(new Error("DataPoint method " + method.getName() + " must be public"));
             }
         }
     }
@@ -57,6 +76,28 @@ public class Theories extends BlockJUnit4ClassRunner {
                 each.validateNoTypeParametersOnArgs(errors);
             } else {
                 each.validatePublicVoidNoArg(false, errors);
+            }
+            
+            for (ParameterSignature signature : each.getParameterSignatures()) {
+                ParametersSuppliedBy annotation = signature.findDeepAnnotation(ParametersSuppliedBy.class);
+                if (annotation != null) {
+                    validateParameterSupplier(annotation.value(), errors);
+                }
+            }
+        }
+    }
+
+    private void validateParameterSupplier(Class<? extends ParameterSupplier> supplierClass, List<Throwable> errors) {
+        Constructor<?>[] constructors = supplierClass.getConstructors();
+        
+        if (constructors.length != 1) {
+            errors.add(new Error("ParameterSupplier " + supplierClass.getName() + 
+                                 " must have only one constructor (either empty or taking only a TestClass)"));
+        } else {
+            Class<?>[] paramTypes = constructors[0].getParameterTypes();
+            if (!(paramTypes.length == 0) && !paramTypes[0].equals(TestClass.class)) {
+                errors.add(new Error("ParameterSupplier " + supplierClass.getName() + 
+                                     " constructor must take either nothing or a single TestClass instance"));
             }
         }
     }
