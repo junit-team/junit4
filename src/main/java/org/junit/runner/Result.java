@@ -65,6 +65,7 @@ public class Result implements Serializable {
         return getFailureCount() == 0;
     }
 
+    @RunListener.ThreadSafe
     private class Listener extends RunListener {
         @Override
         public void testRunStarted(Description description) throws Exception {
