@@ -8,19 +8,15 @@ import java.lang.annotation.Target;
 import org.junit.experimental.theories.internal.SpecificDataPointsSupplier;
 
 /**
- * <p>
  * Annotating a parameter of a {@link org.junit.experimental.theories.Theory
  * &#064Theory} method with <code>&#064;FromDataPoints</code> will limit the
  * datapoints considered as potential values for that parameter to just the
  * {@link org.junit.experimental.theories.DataPoints DataPoints} with the given
  * name. DataPoint names can be given as the value parameter of the
  * &#064DataPoints annotation.
- * </p>
  * <p>
  * DataPoints without names will not be considered as values for any parameters
  * annotated with &#064FromDataPoints.
- * </p>
- * 
  * <pre>
  * &#064;DataPoints
  * public static String[] unnamed = new String[] { ... };
