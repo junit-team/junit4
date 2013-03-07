@@ -295,6 +295,35 @@ public class Assert {
     public static void assertArrayEquals(Object[] expecteds, Object[] actuals) {
         assertArrayEquals(null, expecteds, actuals);
     }
+    
+    /**
+     * Asserts that two boolean arrays are equal. If they are not, an
+     * {@link AssertionError} is thrown with the given message. If
+     * <code>expecteds</code> and <code>actuals</code> are <code>null</code>,
+     * they are considered equal.
+     *
+     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
+     * okay)
+     * @param expecteds boolean array with expected values.
+     * @param actuals boolean array with expected values.
+     */
+    public static void assertArrayEquals(String message, boolean[] expecteds,
+            boolean[] actuals) throws ArrayComparisonFailure {
+        internalArrayEquals(message, expecteds, actuals);
+    }    
+    
+    /**
+     * Asserts that two boolean arrays are equal. If they are not, an
+     * {@link AssertionError} is thrown. If <code>expected</code> and
+     * <code>actual</code> are <code>null</code>, they are considered
+     * equal.
+     *
+     * @param expecteds boolean array with expected values.
+     * @param actuals boolean array with expected values.
+     */
+    public static void assertArrayEquals(boolean[] expecteds, boolean[] actuals) {
+        assertArrayEquals(null, expecteds, actuals);
+    }
 
     /**
      * Asserts that two byte arrays are equal. If they are not, an

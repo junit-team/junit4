@@ -1,5 +1,3 @@
-// Copyright 2010 Google Inc. All Rights Reserved.
-
 package org.junit.runners.model;
 
 import java.util.ArrayList;
