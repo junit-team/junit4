@@ -3,6 +3,8 @@ package org.junit.experimental.parallel;
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Abstract parallel scheduling strategy in private package.
@@ -73,6 +75,14 @@ abstract class AbstractThreadPoolStrategy extends SchedulingStrategy {
         } else {
             threadPool.shutdownNow();
             return true;
+        }
+    }
+
+    void setDefaultShutdownHandler(Scheduler.ShutdownHandler handler) {
+        if (threadPool instanceof ThreadPoolExecutor) {
+            ThreadPoolExecutor pool = (ThreadPoolExecutor) threadPool;
+            handler.setRejectedExecutionHandler(pool.getRejectedExecutionHandler());
+            pool.setRejectedExecutionHandler(handler);
         }
     }
 

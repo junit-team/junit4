@@ -4,12 +4,13 @@ import org.junit.runners.model.RunnerScheduler;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.RejectedExecutionHandler;
 
 /**
  * Specifies the strategy of scheduling whether sequential, or parallel.
  * The strategy may use a thread pool <em>shared</em> with other strategies.
  * <p/>
- * One instance of strategy can be used just by one executor {@link AbstractExecutor}.
+ * One instance of strategy can be used just by one {@link Scheduler}.
  * <p/>
  * The strategy is scheduling tasks in {@link #schedule(Runnable)} and awaiting them
  * completed in {@link #finished()}. Both methods should be used in one thread.
@@ -74,6 +75,9 @@ public abstract class SchedulingStrategy {
      */
     protected boolean stopNow() {
         return stop();
+    }
+
+    void setDefaultShutdownHandler(RejectedExecutionHandler handler) {
     }
 
     /**
