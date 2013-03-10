@@ -19,34 +19,6 @@ import org.junit.runners.model.TestClass;
  * Supplies Theory parameters based on all public members of the target class.
  */
 public class AllMembersSupplier extends ParameterSupplier {
-    static class MethodParameterValue extends PotentialAssignment {
-        private final FrameworkMethod fMethod;
-
-        private MethodParameterValue(FrameworkMethod dataPointMethod) {
-            fMethod = dataPointMethod;
-        }
-
-        @Override
-        public Object getValue() throws CouldNotGenerateValueException {
-            try {
-                return fMethod.invokeExplosively(null);
-            } catch (IllegalArgumentException e) {
-                throw new RuntimeException(
-                        "unexpected: argument length is checked");
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(
-                        "unexpected: getMethods returned an inaccessible method");
-            } catch (Throwable e) {
-                throw new CouldNotGenerateValueException();
-                // do nothing, just look for more values
-            }
-        }
-
-        @Override
-        public String getDescription() throws CouldNotGenerateValueException {
-            return fMethod.getName();
-        }
-    }   
     
     private final TestClass fClass;
 
@@ -83,7 +55,11 @@ public class AllMembersSupplier extends ParameterSupplier {
             List<PotentialAssignment> list) {
         for (FrameworkMethod dataPointMethod : getSingleDataPointMethods(sig)) {
             if (sig.canAcceptType(dataPointMethod.getType())) {
-                list.add(new MethodParameterValue(dataPointMethod));
+                try {
+                    list.add(PotentialAssignment.forValue(dataPointMethod.getName(), dataPointMethod.invokeExplosively(null)));
+                } catch (Throwable e) {
+                    // ignore and move on
+                }
             }
         }
     }
