@@ -44,63 +44,52 @@ public class AllMembersSupplier extends ParameterSupplier {
     private void addMultiPointMethods(ParameterSignature sig, List<PotentialAssignment> list) {
         for (FrameworkMethod dataPointsMethod : getDataPointsMethods(sig)) {
             try {
-                addMultiPointArrayValues(sig, dataPointsMethod.getName(), list, dataPointsMethod.invokeExplosively(null));
+                addArrayValues(sig, dataPointsMethod.getName(), list, dataPointsMethod.invokeExplosively(null));
             } catch (Throwable e) {
                 // ignore and move on
             }
         }
     }
 
-    private void addSinglePointMethods(ParameterSignature sig,
-            List<PotentialAssignment> list) {
+    private void addSinglePointMethods(ParameterSignature sig, List<PotentialAssignment> list) {
         for (FrameworkMethod dataPointMethod : getSingleDataPointMethods(sig)) {
-            if (sig.canAcceptType(dataPointMethod.getType())) {
-                try {
-                    list.add(PotentialAssignment.forValue(dataPointMethod.getName(), dataPointMethod.invokeExplosively(null)));
-                } catch (Throwable e) {
-                    // ignore and move on
-                }
+            Object value;
+            
+            try {
+                value = dataPointMethod.invokeExplosively(null);
+            } catch (Throwable e) {
+                // ignore and move on
+                continue;
+            }
+                
+            if (sig.canAcceptValue(value)) {
+                list.add(PotentialAssignment.forValue(dataPointMethod.getName(), value));
             }
         }
     }
     
-    private void addMultiPointFields(ParameterSignature sig,
-            List<PotentialAssignment> list) {
+    private void addMultiPointFields(ParameterSignature sig, List<PotentialAssignment> list) {
         for (final Field field : getDataPointsFields(sig)) {
-            Class<?> type = field.getType();
-            if (sig.canAcceptArrayType(type)) {
-                try {
-                    addArrayValues(field.getName(), list, getStaticFieldValue(field));
-                } catch (Throwable e) {
-                    // ignore and move on
-                }
-            }
+            addArrayValues(sig, field.getName(), list, getStaticFieldValue(field));
         }
-    }    
+    }
 
-    private void addSinglePointFields(ParameterSignature sig,
-            List<PotentialAssignment> list) {
+    private void addSinglePointFields(ParameterSignature sig, List<PotentialAssignment> list) {
         for (final Field field : getSingleDataPointFields(sig)) {
-            Class<?> type = field.getType();
-            if (sig.canAcceptType(type)) {
-                list.add(PotentialAssignment.forValue(field.getName(), getStaticFieldValue(field)));
+            Object value = getStaticFieldValue(field);
+            
+            if (sig.canAcceptValue(value)) {
+                list.add(PotentialAssignment.forValue(field.getName(), value));
             }
         }
     }
 
-    private void addArrayValues(String name, List<PotentialAssignment> list, Object array) {
+    private void addArrayValues(ParameterSignature sig, String name, List<PotentialAssignment> list, Object array) {
         for (int i = 0; i < Array.getLength(array); i++) {
-            list.add(PotentialAssignment.forValue(name + "[" + i + "]", Array.get(array, i)));
-        }
-    }
-
-    private void addMultiPointArrayValues(ParameterSignature sig, String name, List<PotentialAssignment> list,
-            Object array) throws Throwable {
-        for (int i = 0; i < Array.getLength(array); i++) {
-            if (!sig.canAcceptValue(Array.get(array, i))) {
-                return;
+            Object value = Array.get(array, i);
+            if (sig.canAcceptValue(value)) {
+                list.add(PotentialAssignment.forValue(name + "[" + i + "]", value));
             }
-            list.add(PotentialAssignment.forValue(name + "[" + i + "]", Array.get(array, i)));
         }
     }
 
