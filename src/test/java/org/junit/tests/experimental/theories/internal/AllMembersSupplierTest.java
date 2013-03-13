@@ -9,6 +9,7 @@ import static org.junit.tests.experimental.theories.TheoryTestUtils.potentialAss
 import java.util.List;
 
 import org.junit.Test;
+import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.ParameterSignature;
 import org.junit.experimental.theories.PotentialAssignment;
@@ -50,6 +51,44 @@ public class AllMembersSupplierTest {
                 HasDataPointsArrayWithMatchingButInaccurateTypes.class.getMethod("theory", Integer.class));
         
         assertEquals(2, assignments.size());
+    }
+    
+    public static class HasDataPointMethodWithMatchingButInaccurateTypes {
+        @DataPoint
+        public static Object object() {
+            return 1;
+        }
+
+        @Theory
+        public void theory(Integer param) {
+        }
+    }
+
+    @Test
+    public void dataPointMethodShouldBeRecognizedOnValueTypeNotFieldType() throws Exception {
+        List<PotentialAssignment> assignments = potentialAssignments(
+                HasDataPointMethodWithMatchingButInaccurateTypes.class.getMethod("theory", Integer.class));
+        
+        assertEquals(1, assignments.size());
+    }
+    
+    public static class HasDataPointMethodWithOverlyGeneralTypes {
+        @DataPoint
+        public static Integer object() {
+            return 1;
+        }
+
+        @Theory
+        public void theory(Object param) {
+        }
+    }
+
+    @Test
+    public void dataPointMethodShouldBeRecognizedForOverlyGeneralParameters() throws Exception {
+        List<PotentialAssignment> assignments = potentialAssignments(
+                HasDataPointMethodWithOverlyGeneralTypes.class.getMethod("theory", Object.class));
+        
+        assertEquals(1, assignments.size());
     }
     
     public static class HasDataPointsWithObjectParameter {

@@ -53,17 +53,19 @@ public class AllMembersSupplier extends ParameterSupplier {
 
     private void addSinglePointMethods(ParameterSignature sig, List<PotentialAssignment> list) {
         for (FrameworkMethod dataPointMethod : getSingleDataPointMethods(sig)) {
-            Object value;
-            
-            try {
-                value = dataPointMethod.invokeExplosively(null);
-            } catch (Throwable e) {
-                // ignore and move on
-                continue;
-            }
+            if (sig.canPotentiallyAcceptType(dataPointMethod.getReturnType())) {
+                Object value;
                 
-            if (sig.canAcceptValue(value)) {
-                list.add(PotentialAssignment.forValue(dataPointMethod.getName(), value));
+                try {
+                    value = dataPointMethod.invokeExplosively(null);
+                } catch (Throwable e) {
+                    // ignore and move on
+                    continue;
+                }
+                    
+                if (sig.canAcceptValue(value)) {
+                    list.add(PotentialAssignment.forValue(dataPointMethod.getName(), value));
+                }
             }
         }
     }

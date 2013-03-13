@@ -79,7 +79,7 @@ public class ParameterSignatureTest {
         ParameterSignature numberSignature = signatures.get(0);
 
         assertTrue(numberSignature.canAcceptType(int.class));
-    }    
+    }
     
     @Test
     public void wrapperTypesShouldBeAcceptedAsPrimitiveTypes() throws Exception {

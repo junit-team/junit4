@@ -2,19 +2,19 @@ package org.junit.experimental.theories;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public class ParameterSignature {
     
     @SuppressWarnings("serial")
-    private static final Map<Class<?>, Class<?>> primitivesBoxingMap = new HashMap<Class<?>, Class<?>>() {{
+    private static final Map<Class<?>, Class<?>> convertableTypesMap = new HashMap<Class<?>, Class<?>>() {{
         put(boolean.class, Boolean.class);
         put(byte.class, Byte.class);
         put(short.class, Short.class);
@@ -23,6 +23,12 @@ public class ParameterSignature {
         put(long.class, Long.class);
         put(float.class, Float.class);
         put(double.class, Double.class);
+        
+        // Make all type conversions symmetric        
+        Iterable<Entry<Class<?>, Class<?>>> initialEntries = new HashSet<Entry<Class<?>, Class<?>>>(entrySet());
+        for (Entry<Class<?>, Class<?>> entry : initialEntries) {
+            this.put(entry.getValue(), entry.getKey());
+        }
     }};
     
     public static ArrayList<ParameterSignature> signatures(Method method) {
@@ -60,36 +66,21 @@ public class ParameterSignature {
 
     public boolean canAcceptType(Class<?> candidate) {
         return type.isAssignableFrom(candidate) ||
-                canAcceptBoxed(candidate) ||
-                canAcceptUnboxed(candidate);
+                isAssignableViaTypeConversion(type, candidate);
+    }
+    
+    public boolean canPotentiallyAcceptType(Class<?> candidate) {
+        return candidate.isAssignableFrom(type) ||
+                isAssignableViaTypeConversion(candidate, type) ||
+                canAcceptType(candidate);
     }
 
-    private boolean canAcceptBoxed(Class<?> candidate) {
-        if (primitivesBoxingMap.containsKey(candidate)) {
-            Class<?> wrapperClass = primitivesBoxingMap.get(candidate);
-            return type.isAssignableFrom(wrapperClass);
+    private boolean isAssignableViaTypeConversion(Class<?> targetType, Class<?> candidate) {
+        if (convertableTypesMap.containsKey(candidate)) {
+            Class<?> wrapperClass = convertableTypesMap.get(candidate);
+            return targetType.isAssignableFrom(wrapperClass);
         } else {
             return false;
-        }
-    }
-
-    private boolean canAcceptUnboxed(Class<?> candidate) {
-        Field primitiveClassField = null;
-        try {
-            primitiveClassField = candidate.getDeclaredField("TYPE");
-        } catch (NoSuchFieldException e) {
-            return false;
-        }
-        
-        try {
-            if (Modifier.isStatic(primitiveClassField.getModifiers())) {
-                Class<?> primitiveClass = (Class<?>) primitiveClassField.get(null);
-                return type.isAssignableFrom(primitiveClass);
-            } else {
-                return false;
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 
