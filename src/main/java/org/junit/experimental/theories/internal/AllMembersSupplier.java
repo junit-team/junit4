@@ -43,10 +43,14 @@ public class AllMembersSupplier extends ParameterSupplier {
 
     private void addMultiPointMethods(ParameterSignature sig, List<PotentialAssignment> list) {
         for (FrameworkMethod dataPointsMethod : getDataPointsMethods(sig)) {
-            try {
-                addArrayValues(sig, dataPointsMethod.getName(), list, dataPointsMethod.invokeExplosively(null));
-            } catch (Throwable e) {
-                // ignore and move on
+            Class<?> returnType = dataPointsMethod.getReturnType();
+            
+            if (returnType.isArray() && sig.canPotentiallyAcceptType(returnType.getComponentType())) {
+                try {
+                    addArrayValues(sig, dataPointsMethod.getName(), list, dataPointsMethod.invokeExplosively(null));
+                } catch (Throwable e) {
+                    // ignore and move on
+                }
             }
         }
     }
