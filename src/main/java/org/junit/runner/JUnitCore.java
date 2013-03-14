@@ -1,13 +1,10 @@
 package org.junit.runner;
 
-import java.util.List;
-
 import junit.runner.Version;
 import org.junit.internal.JUnitSystem;
 import org.junit.internal.RealSystem;
 import org.junit.internal.TextListener;
 import org.junit.internal.runners.JUnit38ClassRunner;
-import org.junit.runner.manipulation.Filter;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
@@ -27,7 +24,6 @@ import org.junit.runner.notification.RunNotifier;
  */
 public class JUnitCore {
     private final RunNotifier fNotifier = new RunNotifier();
-    private Filter filter = Filter.ALL;
 
     /**
      * Run the tests contained in the classes named in the <code>args</code>.
@@ -54,12 +50,11 @@ public class JUnitCore {
      * are running and write stack traces for all failed tests after all tests complete. This is
      * similar to {@link #main(String[])}, but intended to be used programmatically.
      *
-     * @param computer Helps construct Runners from classes
      * @param classes Classes in which to find tests
      * @return a {@link Result} describing the details of the test run and the failed tests.
      */
-    public static Result runClasses(Computer computer, Class<?>... classes) {
-        return new JUnitCore().run(computer, classes);
+    public static Result runClasses(Class<?>... classes) {
+        return runClasses(defaultComputer(), classes);
     }
 
     /**
@@ -67,11 +62,12 @@ public class JUnitCore {
      * are running and write stack traces for all failed tests after all tests complete. This is
      * similar to {@link #main(String[])}, but intended to be used programmatically.
      *
-     * @param classes Classes in which to find tests
+     * @param computer Helps construct Runners from classes
+     * @param classes  Classes in which to find tests
      * @return a {@link Result} describing the details of the test run and the failed tests.
      */
-    public static Result runClasses(Class<?>... classes) {
-        return runClasses(defaultComputer(), classes);
+    public static Result runClasses(Computer computer, Class<?>... classes) {
+        return new JUnitCore().run(computer, classes);
     }
 
     /**
@@ -84,15 +80,11 @@ public class JUnitCore {
         JUnitCommandLineParser jUnitCommandLineParser = new JUnitCommandLineParser(system);
         jUnitCommandLineParser.parseArgs(args);
 
-        filter = filter.intersect(jUnitCommandLineParser.getFilter());
-        List<Class<?>> classes = jUnitCommandLineParser.getClasses();
-        List<Failure> failures = jUnitCommandLineParser.getFailures();
-
         RunListener listener = new TextListener(system);
         addListener(listener);
 
-        Result result = run(classes.toArray(new Class<?>[0]));
-        for (Failure each : failures) {
+        Result result = run(jUnitCommandLineParser.createRequest(defaultComputer()));
+        for (Failure each : jUnitCommandLineParser.getFailures()) {
             result.getFailures().add(each);
         }
 
@@ -124,7 +116,7 @@ public class JUnitCore {
      * @return a {@link Result} describing the details of the test run and the failed tests.
      */
     public Result run(Computer computer, Class<?>... classes) {
-        final Request request = Request.classes(computer, classes).filterWith(filter);
+        Request request = Request.classes(computer, classes);
 
         return run(request);
     }
@@ -167,16 +159,6 @@ public class JUnitCore {
     }
 
     /**
-     * Add a Filter to be used to filter tests to be run.
-     *
-     * @param filter the Filter to add
-     * @see org.junit.runner.JUnitCore
-     */
-    public void addFilter(Filter filter) {
-        this.filter = this.filter.intersect(filter);
-    }
-
-    /**
      * Add a listener to be notified as the tests run.
      *
      * @param listener the listener to add
@@ -198,5 +180,4 @@ public class JUnitCore {
     static Computer defaultComputer() {
         return new Computer();
     }
-
 }

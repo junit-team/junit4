@@ -6,7 +6,6 @@ import org.junit.experimental.categories.CategoryFilterFactoryTest;
 import org.junit.internal.MethodSorterTest;
 import org.junit.internal.matchers.StacktracePrintingMatcherTest;
 import org.junit.runner.FilterFactoryFactoryTest;
-import org.junit.runner.FilterFactoryParamsTest;
 import org.junit.runner.FilterOptionIntegrationTest;
 import org.junit.runner.JUnitCommandLineParserTest;
 import org.junit.runner.RunWith;
@@ -186,7 +185,6 @@ import org.junit.tests.validation.ValidationTest;
         FilterOptionIntegrationTest.class,
         JUnitCommandLineParserTest.class,
         FilterFactoryFactoryTest.class,
-        FilterFactoryParamsTest.class,
         CategoryFilterFactoryTest.class,
         RunNotifierTest.class,
         ConcurrentRunNotifierTest.class,

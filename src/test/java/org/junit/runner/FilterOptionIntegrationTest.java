@@ -11,10 +11,10 @@ import org.junit.experimental.categories.IncludeCategories;
 import org.junit.runner.notification.RunListener;
 import org.junit.tests.TestSystem;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class FilterOptionIntegrationTest {
     private static final String INCLUDES_DUMMY_CATEGORY_0 = "--filter=" +
@@ -32,25 +32,25 @@ public class FilterOptionIntegrationTest {
 
     @Test
     public void shouldRunAllTests() {
-        final Result result = runJUnit(
+        Result result = runJUnit(
                 DummyTestClass.class.getName(),
                 DummyTestClass0.class.getName(),
                 DummyTestClass1.class.getName(),
                 DummyTestClass01.class.getName(),
                 DummyTestClass0TestMethod1.class.getName());
 
-        assertFinished(DummyTestClass.class);
-        assertFinished(DummyTestClass0.class);
-        assertFinished(DummyTestClass1.class);
-        assertFinished(DummyTestClass01.class);
-        assertFinished(DummyTestClass0TestMethod1.class);
+        assertWasRun(DummyTestClass.class);
+        assertWasRun(DummyTestClass0.class);
+        assertWasRun(DummyTestClass1.class);
+        assertWasRun(DummyTestClass01.class);
+        assertWasRun(DummyTestClass0TestMethod1.class);
         assertThat("runCount does not match", result.getRunCount(), is(5));
         assertThat("failureCount does not match", result.getFailureCount(), is(0));
     }
 
     @Test
     public void shouldExcludeSomeTests() {
-        final Result result = runJUnit(
+        Result result = runJUnit(
                 EXCLUDES_DUMMY_CATEGORY_1,
                 DummyTestClass.class.getName(),
                 DummyTestClass0.class.getName(),
@@ -58,18 +58,18 @@ public class FilterOptionIntegrationTest {
                 DummyTestClass01.class.getName(),
                 DummyTestClass0TestMethod1.class.getName());
 
-        assertFinished(DummyTestClass.class);
-        assertFinished(DummyTestClass0.class);
-        assertNotStarted(DummyTestClass1.class);
-        assertNotStarted(DummyTestClass01.class);
-        assertNotStarted(DummyTestClass0TestMethod1.class);
+        assertWasRun(DummyTestClass.class);
+        assertWasRun(DummyTestClass0.class);
+        assertWasNotRun(DummyTestClass1.class);
+        assertWasNotRun(DummyTestClass01.class);
+        assertWasNotRun(DummyTestClass0TestMethod1.class);
         assertThat("runCount does not match", result.getRunCount(), is(2));
         assertThat("failureCount does not match", result.getFailureCount(), is(0));
     }
 
     @Test
     public void shouldIncludeSomeTests() {
-        final Result result = runJUnit(
+        Result result = runJUnit(
                 INCLUDES_DUMMY_CATEGORY_0,
                 DummyTestClass.class.getName(),
                 DummyTestClass0.class.getName(),
@@ -77,18 +77,18 @@ public class FilterOptionIntegrationTest {
                 DummyTestClass01.class.getName(),
                 DummyTestClass0TestMethod1.class.getName());
 
-        assertNotStarted(DummyTestClass.class);
-        assertFinished(DummyTestClass0.class);
-        assertNotStarted(DummyTestClass1.class);
-        assertFinished(DummyTestClass01.class);
-        assertFinished(DummyTestClass0TestMethod1.class);
+        assertWasNotRun(DummyTestClass.class);
+        assertWasRun(DummyTestClass0.class);
+        assertWasNotRun(DummyTestClass1.class);
+        assertWasRun(DummyTestClass01.class);
+        assertWasRun(DummyTestClass0TestMethod1.class);
         assertThat("runCount does not match", result.getRunCount(), is(3));
         assertThat("failureCount does not match", result.getFailureCount(), is(0));
     }
 
     @Test
     public void shouldCombineFilters() {
-        final Result result = runJUnit(
+        Result result = runJUnit(
                 INCLUDES_DUMMY_CATEGORY_0,
                 EXCLUDES_DUMMY_CATEGORY_1,
                 DummyTestClass.class.getName(),
@@ -97,11 +97,11 @@ public class FilterOptionIntegrationTest {
                 DummyTestClass01.class.getName(),
                 DummyTestClass0TestMethod1.class.getName());
 
-        assertNotStarted(DummyTestClass.class);
-        assertFinished(DummyTestClass0.class);
-        assertNotStarted(DummyTestClass1.class);
-        assertNotStarted(DummyTestClass01.class);
-        assertNotStarted(DummyTestClass0TestMethod1.class);
+        assertWasNotRun(DummyTestClass.class);
+        assertWasRun(DummyTestClass0.class);
+        assertWasNotRun(DummyTestClass1.class);
+        assertWasNotRun(DummyTestClass01.class);
+        assertWasNotRun(DummyTestClass0TestMethod1.class);
         assertThat("runCount does not match", result.getRunCount(), is(1));
         assertThat("failureCount does not match", result.getFailureCount(), is(0));
     }
@@ -110,14 +110,14 @@ public class FilterOptionIntegrationTest {
         return jUnitCore.runMain(new TestSystem(), args);
     }
 
-    private void assertFinished(Class<?> testClass) {
-        assertTrue(testClass.getName() + " expected to finish but did not", testListener.testFinished(testClass));
+    private void assertWasRun(Class<?> testClass) {
+        assertTrue(testClass.getName() + " expected to finish but did not", testListener.wasRun(testClass));
     }
 
-    private void assertNotStarted(Class<?> testClass) {
+    private void assertWasNotRun(Class<?> testClass) {
         assertFalse(
                 testClass.getName() + " expected not to have been started but was",
-                testListener.testStarted(testClass));
+                testListener.wasRun(testClass));
     }
 
     private static class TestListener extends RunListener {
@@ -129,7 +129,7 @@ public class FilterOptionIntegrationTest {
             finishedTests.add(description.getClassName());
         }
 
-        public boolean testFinished(final Class<?> testClass) {
+        private boolean testFinished(final Class<?> testClass) {
             return finishedTests.contains(testClass.getName());
         }
 
@@ -138,8 +138,12 @@ public class FilterOptionIntegrationTest {
             startedTests.add(description.getClassName());
         }
 
-        public boolean testStarted(final Class<?> testClass) {
+        private boolean testStarted(final Class<?> testClass) {
             return startedTests.contains(testClass.getName());
+        }
+
+        public boolean wasRun(final Class<?> testClass) {
+            return testStarted(testClass) && testFinished(testClass);
         }
     }
 

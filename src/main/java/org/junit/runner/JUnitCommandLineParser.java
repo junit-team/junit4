@@ -59,7 +59,7 @@ class JUnitCommandLineParser {
                     } else {
                         Description description = Description.createSuiteDescription(arg);
                         Failure failure =
-                                new Failure(description, new Error("JUnit knows nothing about the " + arg + " option"));
+                                new Failure(description, new CommandLineParserError("JUnit knows nothing about the " + arg + " option"));
 
                         failures.add(failure);
                     }
@@ -95,8 +95,14 @@ class JUnitCommandLineParser {
         }
     }
 
-    public static class Error extends Exception {
-        public Error(String message) {
+    public Request createRequest(Computer computer) {
+        return Request
+                .classes(computer, classes.toArray(new Class<?>[0]))
+                .filterWith(filter);
+    }
+
+    public static class CommandLineParserError extends Exception {
+        public CommandLineParserError(String message) {
             super(message);
         }
     }

@@ -1,6 +1,10 @@
 package org.junit.runner;
 
+import org.junit.internal.ClassUtil;
 import org.junit.runner.manipulation.Filter;
+
+import static org.junit.runner.FilterFactory.FilterNotCreatedException;
+import static org.junit.runner.FilterFactory.NoFilterFactoryParams;
 
 /**
  * Extend this class to create a factory that creates a factory that creates a {@link Filter}.
@@ -14,50 +18,81 @@ class FilterFactoryFactory {
      *
      * @param filterSpec The filter specification
      * @throws FilterFactoryNotCreatedException
-     * @throws FilterFactory.FilterNotCreatedException
+     * @throws FilterNotCreatedException
      */
     public Filter createFilterFromFilterSpec(String filterSpec)
-            throws FilterFactoryNotCreatedException, FilterFactory.FilterNotCreatedException {
-        String filterFactoryFqcn;
-        FilterFactoryParams args;
+            throws FilterFactoryNotCreatedException {
+        FilterFactory filterFactory;
+        FilterFactoryParams params;
 
         if (filterSpec.contains("=")) {
             String[] tuple = filterSpec.split("=", 2);
 
-            filterFactoryFqcn = tuple[0];
-            args = new FilterFactoryParams.OneArg(tuple[1]);
-        } else {
-            filterFactoryFqcn = filterSpec;
-            args = new FilterFactoryParams.ZeroArg();
-        }
+            String filterFactoryFqcn = tuple[0];
+            String args = tuple[1];
 
-        return createFilter(filterFactoryFqcn, args);
+            filterFactory = createFilterFactory(filterFactoryFqcn);
+            params = filterFactory.parseArgs(args);
+
+            return filterFactory.createFilter(params);
+        } else {
+            String filterFactoryFqcn = filterSpec;
+
+            return createFilter(filterFactoryFqcn, new NoFilterFactoryParams());
+        }
     }
 
     /**
      * Creates a {@link Filter}.
      *
      * @param filterFactoryClass The class of the {@link FilterFactory}
-     * @param args The arguments to the {@link FilterFactory}
-     * @throws FilterFactory.FilterNotCreatedException
+     * @param params The arguments to the {@link FilterFactory}
+     * @throws FilterNotCreatedException
      * @throws FilterFactoryNotCreatedException
      */
-    public Filter createFilter(Class<? extends FilterFactory> filterFactoryClass, FilterFactoryParams args)
-            throws FilterFactory.FilterNotCreatedException, FilterFactoryNotCreatedException {
-        return createFilter(filterFactoryClass.getName(), args);
+    public Filter createFilter(Class<? extends FilterFactory> filterFactoryClass, FilterFactoryParams params)
+            throws FilterFactoryNotCreatedException {
+        FilterFactory filterFactory = createFilterFactory(filterFactoryClass);
+
+        return filterFactory.createFilter(params);
     }
 
     /**
      * Creates a {@link Filter}.
      *
      * @param filterFactoryFqcn The fully qualified class name of the {@link FilterFactory}
-     * @param args The arguments to the {@link FilterFactory}
-     * @throws FilterFactory.FilterNotCreatedException
+     * @param params The arguments to the {@link FilterFactory}
+     * @throws FilterNotCreatedException
      * @throws FilterFactoryNotCreatedException
      */
-    public Filter createFilter(String filterFactoryFqcn, FilterFactoryParams args)
-            throws FilterFactory.FilterNotCreatedException, FilterFactoryNotCreatedException {
-        return args.apply(filterFactoryFqcn);
+    public Filter createFilter(String filterFactoryFqcn, FilterFactoryParams params)
+            throws FilterFactoryNotCreatedException {
+        FilterFactory filterFactory = createFilterFactory(filterFactoryFqcn);
+
+        return filterFactory.createFilter(params);
+    }
+
+    FilterFactory createFilterFactory(String filterFactoryFqcn) throws FilterFactoryNotCreatedException {
+        Class<? extends FilterFactory> filterFactoryClass;
+
+        try {
+            filterFactoryClass = ClassUtil.getClass(filterFactoryFqcn).asSubclass(FilterFactory.class);
+        } catch (Exception e) {
+            throw new FilterFactoryNotCreatedException(e.getMessage());
+        }
+
+        return createFilterFactory(filterFactoryClass);
+    }
+
+    FilterFactory createFilterFactory(Class<? extends FilterFactory> filterFactoryClass)
+            throws FilterFactoryNotCreatedException {
+        try {
+            return filterFactoryClass
+                    .getConstructor()
+                    .newInstance();
+        } catch (Exception e) {
+            throw new FilterFactoryNotCreatedException(e.getMessage());
+        }
     }
 
     /**

@@ -5,21 +5,27 @@ import java.util.List;
 
 import org.junit.internal.ClassUtil;
 import org.junit.runner.FilterFactory;
+import org.junit.runner.FilterFactoryParams;
 import org.junit.runner.manipulation.Filter;
 
 abstract class CategoryFilterFactory extends FilterFactory {
     @Override
-    public Filter createFilter(String categories) throws FilterNotCreatedException {
+    public FilterFactoryParams parseArgs(String args) throws FilterNotCreatedException {
         try {
-            return createFilter(parseCategories(categories));
-        } catch (Exception e) {
-            throw new FilterNotCreatedException("Could not create filter.", e);
+            return new CategoryFilterFactoryParams(parseCategories(args));
+        } catch (ClassNotFoundException e) {
+            throw new FilterNotCreatedException(e.getMessage());
         }
+    }
+
+    @Override
+    public Filter createFilter(FilterFactoryParams params) {
+        return createFilter(((CategoryFilterFactoryParams) params).getCategories());
     }
 
     protected abstract Filter createFilter(Class<?>[] categories);
 
-    Class<?>[] parseCategories(String categories) throws ClassNotFoundException {
+    private Class<?>[] parseCategories(String categories) throws ClassNotFoundException {
         List<Class<?>> categoryClasses = new ArrayList<Class<?>>();
 
         for (String category : categories.split(",")) {
@@ -29,5 +35,17 @@ abstract class CategoryFilterFactory extends FilterFactory {
         }
 
         return categoryClasses.toArray(new Class[]{});
+    }
+
+    public class CategoryFilterFactoryParams implements FilterFactoryParams {
+        private final Class<?>[] categories;
+
+        public CategoryFilterFactoryParams(Class<?>[] categories) {
+            this.categories = categories;
+        }
+
+        public Class<?>[] getCategories() {
+            return categories;
+        }
     }
 }

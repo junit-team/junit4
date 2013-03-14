@@ -28,17 +28,22 @@ import static org.junit.experimental.categories.Categories.CategoryFilter;
  */
 public final class IncludeCategories extends CategoryFilterFactory {
     @Override
-    public Filter createFilter(Class<?>[] categories) {
+    public Filter createFilter(Class<?>... categories) {
         return new IncludesAny(categories);
     }
 
-    public static class IncludesAny extends CategoryFilter {
-        public IncludesAny(Class<?>[] categories) {
+    private static class IncludesAny extends CategoryFilter {
+        public IncludesAny(Class<?>... categories) {
             this(new HashSet<Class<?>>(Arrays.asList(categories)));
         }
 
         public IncludesAny(Set<Class<?>> categories) {
             super(true, categories, true, null);
+        }
+
+        @Override
+        public String describe() {
+            return "includes " + super.describe();
         }
     }
 }

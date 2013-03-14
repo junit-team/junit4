@@ -12,6 +12,7 @@ import org.junit.tests.TestSystem;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class JUnitCommandLineParserTest {
@@ -37,7 +38,7 @@ public class JUnitCommandLineParserTest {
 
         Filter filter = jUnitCommandLineParser.getFilter();
 
-        assertThat(filter, instanceOf(IncludeCategories.IncludesAny.class));
+        assertThat(filter.describe(), startsWith("includes "));
     }
 
     @Test
@@ -49,7 +50,7 @@ public class JUnitCommandLineParserTest {
 
         Filter filter = jUnitCommandLineParser.getFilter();
 
-        assertThat(filter, instanceOf(IncludeCategories.IncludesAny.class));
+        assertThat(filter.describe(), startsWith("includes "));
     }
 
     @Test
@@ -70,7 +71,7 @@ public class JUnitCommandLineParserTest {
         List<Failure> failures = jUnitCommandLineParser.getFailures();
         Throwable exception = failures.get(0).getException();
 
-        assertThat(exception, instanceOf(JUnitCommandLineParser.Error.class));
+        assertThat(exception, instanceOf(JUnitCommandLineParser.CommandLineParserError.class));
     }
 
     @Test
@@ -122,8 +123,9 @@ public class JUnitCommandLineParserTest {
     }
 
     public static class FilterFactoryStub extends FilterFactory {
-        public Filter createFilter() throws FilterNotCreatedException {
-            throw new FilterNotCreatedException("stub", new Exception());
+        @Override
+        public Filter createFilter(FilterFactoryParams params) throws FilterNotCreatedException {
+            throw new FilterNotCreatedException("stub");
         }
     }
 
