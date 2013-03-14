@@ -5,6 +5,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,23 +14,28 @@ import java.util.Map.Entry;
 
 public class ParameterSignature {
     
-    @SuppressWarnings("serial")
-    private static final Map<Class<?>, Class<?>> convertableTypesMap = new HashMap<Class<?>, Class<?>>() {{
-        put(boolean.class, Boolean.class);
-        put(byte.class, Byte.class);
-        put(short.class, Short.class);
-        put(char.class, Character.class);
-        put(int.class, Integer.class);
-        put(long.class, Long.class);
-        put(float.class, Float.class);
-        put(double.class, Double.class);
-        
-        // Make all type conversions symmetric        
-        Iterable<Entry<Class<?>, Class<?>>> initialEntries = new HashSet<Entry<Class<?>, Class<?>>>(entrySet());
+    private static final Map<Class<?>, Class<?>> CONVERTABLE_TYPES_MAP = buildConvertableTypesMap();
+    
+    private static Map<Class<?>, Class<?>> buildConvertableTypesMap() {
+        Map<Class<?>, Class<?>> map = new HashMap<Class<?>, Class<?>>();
+
+        map.put(boolean.class, Boolean.class);
+        map.put(byte.class, Byte.class);
+        map.put(short.class, Short.class);
+        map.put(char.class, Character.class);
+        map.put(int.class, Integer.class);
+        map.put(long.class, Long.class);
+        map.put(float.class, Float.class);
+        map.put(double.class, Double.class);
+
+        // Make all type conversions symmetric
+        Iterable<Entry<Class<?>, Class<?>>> initialEntries = new HashSet<Entry<Class<?>, Class<?>>>(map.entrySet());
         for (Entry<Class<?>, Class<?>> entry : initialEntries) {
-            this.put(entry.getValue(), entry.getKey());
+            map.put(entry.getValue(), entry.getKey());
         }
-    }};
+
+        return Collections.unmodifiableMap(map);
+    }
     
     public static ArrayList<ParameterSignature> signatures(Method method) {
         return signatures(method.getParameterTypes(), method
@@ -76,8 +82,8 @@ public class ParameterSignature {
     }
 
     private boolean isAssignableViaTypeConversion(Class<?> targetType, Class<?> candidate) {
-        if (convertableTypesMap.containsKey(candidate)) {
-            Class<?> wrapperClass = convertableTypesMap.get(candidate);
+        if (CONVERTABLE_TYPES_MAP.containsKey(candidate)) {
+            Class<?> wrapperClass = CONVERTABLE_TYPES_MAP.get(candidate);
             return targetType.isAssignableFrom(wrapperClass);
         } else {
             return false;
