@@ -7,10 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 public class ParameterSignature {
     
@@ -19,22 +17,21 @@ public class ParameterSignature {
     private static Map<Class<?>, Class<?>> buildConvertableTypesMap() {
         Map<Class<?>, Class<?>> map = new HashMap<Class<?>, Class<?>>();
 
-        map.put(boolean.class, Boolean.class);
-        map.put(byte.class, Byte.class);
-        map.put(short.class, Short.class);
-        map.put(char.class, Character.class);
-        map.put(int.class, Integer.class);
-        map.put(long.class, Long.class);
-        map.put(float.class, Float.class);
-        map.put(double.class, Double.class);
-
-        // Make all type conversions symmetric
-        Iterable<Entry<Class<?>, Class<?>>> initialEntries = new HashSet<Entry<Class<?>, Class<?>>>(map.entrySet());
-        for (Entry<Class<?>, Class<?>> entry : initialEntries) {
-            map.put(entry.getValue(), entry.getKey());
-        }
+        putSymmetrically(map, boolean.class, Boolean.class);
+        putSymmetrically(map, byte.class, Byte.class);
+        putSymmetrically(map, short.class, Short.class);
+        putSymmetrically(map, char.class, Character.class);
+        putSymmetrically(map, int.class, Integer.class);
+        putSymmetrically(map, long.class, Long.class);
+        putSymmetrically(map, float.class, Float.class);
+        putSymmetrically(map, double.class, Double.class);
 
         return Collections.unmodifiableMap(map);
+    }
+    
+    private static <T> void putSymmetrically(Map<T, T> map, T a, T b) {
+        map.put(a, b);
+        map.put(b, a);
     }
     
     public static ArrayList<ParameterSignature> signatures(Method method) {
