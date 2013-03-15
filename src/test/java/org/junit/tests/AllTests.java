@@ -8,6 +8,7 @@ import org.junit.internal.matchers.StacktracePrintingMatcherTest;
 import org.junit.runner.FilterFactoryFactoryTest;
 import org.junit.runner.FilterOptionIntegrationTest;
 import org.junit.runner.JUnitCommandLineParserTest;
+import org.junit.runner.JUnitCoreTest;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.ConcurrentRunNotifierTest;
 import org.junit.runner.notification.RunNotifierTest;
@@ -188,7 +189,8 @@ import org.junit.tests.validation.ValidationTest;
         CategoryFilterFactoryTest.class,
         RunNotifierTest.class,
         ConcurrentRunNotifierTest.class,
-        SynchronizedRunListenerTest.class
+        SynchronizedRunListenerTest.class,
+        JUnitCoreTest.class
 })
 public class AllTests {
     public static Test suite() {
