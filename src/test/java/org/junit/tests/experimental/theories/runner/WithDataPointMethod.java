@@ -10,6 +10,7 @@ import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 import static org.junit.tests.experimental.theories.TheoryTestUtils.potentialAssignments;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -62,6 +63,31 @@ public class WithDataPointMethod {
     @Test
     public void ignoreExceptionsFromDataPointMethods() {
         assertThat(testResult(HasUglyDataPointMethod.class), isSuccessful());
+    }
+
+    @RunWith(Theories.class)
+    public static class DataPointMethodReturnsMutableObject {
+        @DataPoint
+        public static List<Object> empty() {
+            return new ArrayList<Object>();
+        }
+
+        @DataPoint
+        public static int ONE = 1;
+
+        @DataPoint
+        public static int TWO = 2;
+
+        @Theory
+        public void everythingsEmpty(List<Object> first, int number) {
+            assertThat(first.size(), is(0));
+            first.add("a");
+        }
+    }
+
+    @Test
+    public void mutableObjectsAreCreatedAfresh() {
+        assertThat(failures(DataPointMethodReturnsMutableObject.class), empty());
     }
 
     @RunWith(Theories.class)

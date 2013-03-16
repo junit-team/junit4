@@ -53,25 +53,6 @@ public class AllMembersSupplierTest {
         assertEquals(2, assignments.size());
     }
     
-    public static class HasDataPointMethodWithMatchingButInaccurateTypes {
-        @DataPoint
-        public static Object object() {
-            return 1;
-        }
-
-        @Theory
-        public void theory(Integer param) {
-        }
-    }
-
-    @Test
-    public void dataPointMethodShouldBeRecognizedOnValueTypeNotFieldType() throws Exception {
-        List<PotentialAssignment> assignments = potentialAssignments(
-                HasDataPointMethodWithMatchingButInaccurateTypes.class.getMethod("theory", Integer.class));
-        
-        assertEquals(1, assignments.size());
-    }
-    
     public static class HasDataPointMethodWithOverlyGeneralTypes {
         @DataPoint
         public static Integer object() {
