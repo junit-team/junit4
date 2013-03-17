@@ -40,15 +40,15 @@ public class AllMembersSupplier extends ParameterSupplier {
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(
                         "unexpected: getMethods returned an inaccessible method");
-            } catch (Throwable e) {
+            } catch (Throwable t) {
                 DataPoint annotation = fMethod.getAnnotation(DataPoint.class); 
                 if (annotation != null) {
                     for (Class<? extends Throwable> ignorable : annotation.ignoredExceptions()) {
-                        Assume.assumeThat(e, not(instanceOf(ignorable)));
+                        Assume.assumeThat(t, not(instanceOf(ignorable)));
                     }
                 }
                 
-                throw new CouldNotGenerateValueException();
+                throw new CouldNotGenerateValueException(t);
             }
         }
 
