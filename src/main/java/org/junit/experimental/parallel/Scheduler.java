@@ -28,7 +28,7 @@ public class Scheduler implements RunnerScheduler {
     private final Description description;
     private volatile boolean shutdown = false;
     private volatile boolean started = false;
-    private volatile ExecutionController masterController;
+    private volatile Controller masterController;
 
     /**
      * Use e.g. parallel classes have own non-shared thread pool, and methods another pool.
@@ -68,7 +68,7 @@ public class Scheduler implements RunnerScheduler {
         this.description = description;
         this.strategy = strategy;
         this.balancer = balancer;
-        masterController = ExecutionController.DEFAULT;
+        masterController = null;
     }
 
     /**
@@ -107,8 +107,8 @@ public class Scheduler implements RunnerScheduler {
         return concurrency <= 0 ? new Balancer() : new Balancer(concurrency);
     }
 
-    void setController(ExecutionController masterController) {
-        if (this.masterController == null) {
+    void setController(Controller masterController) {
+        if (masterController == null) {
             throw new NullPointerException("null ExecutionController");
         }
         this.masterController = masterController;
@@ -147,7 +147,7 @@ public class Scheduler implements RunnerScheduler {
      * @return <tt>true</tt> if new tasks can be scheduled.
      */
     protected boolean canSchedule() {
-        return !shutdown && masterController.canSchedule();
+        return !shutdown && (masterController == null || masterController.canSchedule());
     }
 
     protected SchedulingStrategy getSchedulingStrategy() {
@@ -246,26 +246,47 @@ public class Scheduler implements RunnerScheduler {
         } catch (InterruptedException e) {
             logQuietly(e);
         } finally {
-            ExecutionController controller = masterController;
+            /*for (Controller slave : slaves) {
+                slave.waitQuietlyIfActive();
+            }*/
+            Controller controller = masterController;
             if (controller != null) {
                 controller.resourceReleased();
             }
         }
     }
 
-    private class Controller implements ExecutionController {
+    /**
+     * Used if has shared scheduling strategy.
+     */
+    private class Controller {
         private final Scheduler slave;
 
         Controller(Scheduler slave) {
             this.slave = slave;
         }
 
+        /**
+         * Notifies the ancestor {@link Scheduler} as soon as the follower's thread has finished in
+         * {@link Scheduler#finished()}.
+         */
         public void resourceReleased() {
             Scheduler.this.getBalancer().releasePermit();
         }
 
+        /**
+         * @return <tt>true</tt> if new children can be scheduled.
+         */
         public boolean canSchedule() {
             return Scheduler.this.canSchedule();
+        }
+
+        public void waitQuietlyIfActive() {
+            try {
+                slave.finished();
+            } catch(Throwable t) {
+                slave.logQuietly(t);
+            }
         }
 
         Collection<Description> shutdown(boolean shutdownNow) {
