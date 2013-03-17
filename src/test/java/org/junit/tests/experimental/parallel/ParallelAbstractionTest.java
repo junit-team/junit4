@@ -180,7 +180,7 @@ public class ParallelAbstractionTest {
     }
 
     /**
-     * Behavior as Hamcrest configuration would expect:
+     * Behavior as maven-surefire configuration would expect:
      * CPU Core = 8: totally 8 threads in one common thread pool.
      * 2 parallel classes in one suite.
      * 6 parallel methods across all classes.
@@ -224,7 +224,7 @@ public class ParallelAbstractionTest {
      * The rest is 10 parallel methods across all classes.
      *
      * 3 suite runners, 5 class runners, 5 methods in each class.
-     * The side effect (expected in Hamcrest) is that the number of threads per methods is not limited and so
+     * The side effect (expected in maven-surefire) is that the number of threads per methods is not limited and so
      * the previous threads (finished suite, or classes) may be reused and the execution will speed up at the end.
      */
     @Test(timeout = 500)

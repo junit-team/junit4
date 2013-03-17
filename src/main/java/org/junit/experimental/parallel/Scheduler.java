@@ -24,11 +24,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class Scheduler implements RunnerScheduler {
     private final Balancer balancer;
     private final SchedulingStrategy strategy;
-    private final Set<Controller> controllers = new CopyOnWriteArraySet<Controller>();
+    private final Set<Controller> slaves = new CopyOnWriteArraySet<Controller>();
     private final Description description;
     private volatile boolean shutdown = false;
     private volatile boolean started = false;
-    private volatile ExecutionController controller;
+    private volatile ExecutionController masterController;
 
     /**
      * Use e.g. parallel classes have own non-shared thread pool, and methods another pool.
@@ -68,7 +68,7 @@ public class Scheduler implements RunnerScheduler {
         this.description = description;
         this.strategy = strategy;
         this.balancer = balancer;
-        controller = ExecutionController.DEFAULT;
+        masterController = ExecutionController.DEFAULT;
     }
 
     /**
@@ -107,11 +107,11 @@ public class Scheduler implements RunnerScheduler {
         return concurrency <= 0 ? new Balancer() : new Balancer(concurrency);
     }
 
-    void setController(ExecutionController controller) {
-        if (controller == null) {
+    void setController(ExecutionController masterController) {
+        if (this.masterController == null) {
             throw new NullPointerException("null ExecutionController");
         }
-        this.controller = controller;
+        this.masterController = masterController;
     }
 
     /**
@@ -125,8 +125,8 @@ public class Scheduler implements RunnerScheduler {
 
         if (canRegister) {
             Controller controller = new Controller(slave);
-            if (!controllers.contains(controller)) {
-                controllers.add(controller);
+            if (!slaves.contains(controller)) {
+                slaves.add(controller);
                 slave.setController(controller);
             }
         }
@@ -147,7 +147,7 @@ public class Scheduler implements RunnerScheduler {
      * @return <tt>true</tt> if new tasks can be scheduled.
      */
     protected boolean canSchedule() {
-        return !shutdown && controller.canSchedule();
+        return !shutdown && masterController.canSchedule();
     }
 
     protected SchedulingStrategy getSchedulingStrategy() {
@@ -176,14 +176,14 @@ public class Scheduler implements RunnerScheduler {
         shutdown = true;
         ArrayList<Description> activeChildren = new ArrayList<Description>();
 
-        if (started) {
+        if (started && description != null) {
             activeChildren.add(description);
         }
 
         if (hasSharedStrategyPool()) {
-            for (Controller controller : controllers) {
+            for (Controller slave : slaves) {
                 try {
-                    activeChildren.addAll(controller.shutdown(shutdownNow));
+                    activeChildren.addAll(slave.shutdown(shutdownNow));
                 } catch (Throwable t) {
                     logQuietly(t);
                 }
@@ -246,7 +246,7 @@ public class Scheduler implements RunnerScheduler {
         } catch (InterruptedException e) {
             logQuietly(e);
         } finally {
-            ExecutionController controller = this.controller;
+            ExecutionController controller = masterController;
             if (controller != null) {
                 controller.resourceReleased();
             }
@@ -279,7 +279,7 @@ public class Scheduler implements RunnerScheduler {
 
         @Override
         public boolean equals(Object o) {
-            return o == this || (o instanceof Scheduler) && o.equals(this);
+            return o == this || (o instanceof Controller) && slave.equals(((Controller) o).slave);
         }
     }
 

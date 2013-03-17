@@ -7,7 +7,7 @@ package org.junit.experimental.parallel;
  * @since 4.12
  */
 interface ExecutionController {
-    public static final ExecutionController DEFAULT = new ExecutionController() {
+    static final ExecutionController DEFAULT = new ExecutionController() {
         public void resourceReleased() {
         }
 
