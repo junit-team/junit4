@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.parallel.Scheduler;
-import org.junit.experimental.parallel.Balancer;
 import org.junit.experimental.parallel.SchedulingStrategies;
 import org.junit.experimental.parallel.SchedulingStrategy;
 import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
@@ -160,25 +159,6 @@ public class ParallelAbstractionTest {
         suite.run(new RunNotifier());
     }
 
-    private static class Barrier extends Balancer {
-        private final AtomicInteger concurrentChildren;
-        private volatile int maxConcurrency;
-
-        Barrier(int permits, AtomicInteger concurrentChildren) {
-            super(permits);
-            this.concurrentChildren = concurrentChildren;
-        }
-
-        int maxConcurrentChildren() {
-            return maxConcurrency;
-        }
-
-        public synchronized void releasePermit() {
-            maxConcurrency = Math.max(maxConcurrency, concurrentChildren.getAndDecrement());
-            super.releasePermit();
-        }
-    }
-
     /**
      * Behavior as maven-surefire configuration would expect:
      * CPU Core = 8: totally 8 threads in one common thread pool.
@@ -191,15 +171,21 @@ public class ParallelAbstractionTest {
     public void classesAndMethodsInCommonPool() throws Throwable {
         final int maxConcurrentClasses = 2;
         final AtomicInteger concurrentClasses = new AtomicInteger(0);
-        final Barrier parallelClassesLimit = new Barrier(maxConcurrentClasses, concurrentClasses);
+        final AtomicInteger maxConcurrency = new AtomicInteger(0);
 
         final ExecutorService pool = Executors.newFixedThreadPool(8);
 
         Scheduler suiteScheduler =
-                new Scheduler(createSuiteDescription(Suite.class), createParallelSharedStrategy(pool), parallelClassesLimit) {
+                new Scheduler(createSuiteDescription(Suite.class), createParallelSharedStrategy(pool), maxConcurrentClasses) {
 
-                    @Override protected void beforeScheduling() {
+                    @Override
+                    protected void beforeExecute() {
                         concurrentClasses.incrementAndGet();
+                    }
+
+                    @Override
+                    protected synchronized void afterExecute() {
+                        maxConcurrency.set(Math.max(maxConcurrency.get(), concurrentClasses.getAndDecrement()));
                     }
                 };
 
@@ -211,7 +197,7 @@ public class ParallelAbstractionTest {
         assertThat(concurrentClasses.get(), is(0));
 
         // one or two classes executed a time
-        assertThat(parallelClassesLimit.maxConcurrentChildren(), anyOf(is(1), is(2)));
+        assertThat(maxConcurrency.get(), anyOf(is(1), is(2)));
 
         // In total, three classes initialized.
         assertThat(counter.get(), is(3));
@@ -230,28 +216,23 @@ public class ParallelAbstractionTest {
     @Test(timeout = 500)
     public void suitesClassesMethodsInCommonPool() throws Throwable {
         final int classesPerSuite = 5;
-
         final int maxConcurrentSuites = 2;
-        final Balancer parallelSuitesLimit = new Balancer(maxConcurrentSuites);
-
         final int maxConcurrentClasses = 4;
-        final Balancer parallelClassesLimit = new Balancer(maxConcurrentClasses);
-
         final ExecutorService pool = Executors.newFixedThreadPool(16);
 
         Description desc = createSuiteDescription(Suite.class);
 
         Scheduler suitesScheduler =
-                new Scheduler(desc, createParallelSharedStrategy(pool), parallelSuitesLimit);
+                new Scheduler(desc, createParallelSharedStrategy(pool), maxConcurrentSuites);
 
         Scheduler suiteScheduler1 =
-                new Scheduler(desc, suitesScheduler, createParallelSharedStrategy(pool), parallelClassesLimit);
+                new Scheduler(desc, suitesScheduler, createParallelSharedStrategy(pool), maxConcurrentClasses);
 
         Scheduler suiteScheduler2 =
-                new Scheduler(desc, suitesScheduler, createParallelSharedStrategy(pool), parallelClassesLimit);
+                new Scheduler(desc, suitesScheduler, createParallelSharedStrategy(pool), maxConcurrentClasses);
 
         Scheduler suiteScheduler3 =
-                new Scheduler(desc, suitesScheduler, createParallelSharedStrategy(pool), parallelClassesLimit);
+                new Scheduler(desc, suitesScheduler, createParallelSharedStrategy(pool), maxConcurrentClasses);
 
         Runner suite1 = createSuiteRunner(suiteScheduler1, createClassRunners(suiteScheduler1, pool, classesPerSuite));
         Runner suite2 = createSuiteRunner(suiteScheduler2, createClassRunners(suiteScheduler2, pool, classesPerSuite));

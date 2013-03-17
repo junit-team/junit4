@@ -8,12 +8,12 @@ import java.util.concurrent.Semaphore;
  * <p>
  * If a permit is available, {@link #acquirePermit()} simply returns and a new test is scheduled
  * by {@link Scheduler#schedule(Runnable)} in the current runner. Otherwise waiting for a release.
- * If child runner has finished, one permit is released in its scheduler {@link Scheduler#finished()}.
+ * One permit is released as soon as the child thread has finished.
  *
  * @author Tibor Digana (tibor17)
  * @since 4.12
  */
-public class Balancer {
+final class Balancer {
     private final Semaphore balancer;
     private final int maxPermits;
 
@@ -35,10 +35,6 @@ public class Balancer {
         }
         balancer = new Semaphore(numPermits);
         maxPermits = numPermits;
-    }
-
-    public final int getInitialPermits() {
-        return maxPermits;
     }
 
     /**
