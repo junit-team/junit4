@@ -1,5 +1,7 @@
 package org.junit.experimental.theories.internal;
 
+import static java.util.Collections.emptyList;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -77,14 +79,32 @@ public class Assignments {
     public List<PotentialAssignment> potentialsForNextUnassigned()
             throws Exception {
         ParameterSignature unassigned = nextUnassigned();
-        return getSupplier(unassigned).getValueSources(unassigned);
+        List<PotentialAssignment> assignments = getSupplier(unassigned).getValueSources(unassigned);
+        
+        if (assignments.size() == 0) {
+            assignments = generateAssignmentsFromTypeAlone(unassigned);
+        }
+        
+        return assignments;
+    }
+
+    private List<PotentialAssignment> generateAssignmentsFromTypeAlone(ParameterSignature unassigned) {
+        Class<?> paramType = unassigned.getType();
+        
+        if (paramType.isEnum()) {
+            return new EnumSupplier(paramType).getValueSources(unassigned);  
+        } else if (paramType.equals(Boolean.class) || paramType.equals(boolean.class)) {
+            return new BooleanSupplier().getValueSources(unassigned);
+        } else {
+            return emptyList();
+        }
     }
 
     private ParameterSupplier getSupplier(ParameterSignature unassigned)
             throws Exception {
         ParametersSuppliedBy annotation = unassigned
                 .findDeepAnnotation(ParametersSuppliedBy.class);
-
+        
         if (annotation != null) {
             return buildParameterSupplierFromClass(annotation.value());
         } else {
