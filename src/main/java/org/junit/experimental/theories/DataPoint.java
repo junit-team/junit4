@@ -10,5 +10,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({FIELD, METHOD})
 public @interface DataPoint {
-    String[] value() default {}; 
+    String[] value() default {};
+    Class<? extends Throwable>[] ignoredExceptions() default {};
 }

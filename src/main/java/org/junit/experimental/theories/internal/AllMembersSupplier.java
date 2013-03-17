@@ -1,11 +1,15 @@
 package org.junit.experimental.theories.internal;
 
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.junit.Assume;
 import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.ParameterSignature;
@@ -37,8 +41,14 @@ public class AllMembersSupplier extends ParameterSupplier {
                 throw new RuntimeException(
                         "unexpected: getMethods returned an inaccessible method");
             } catch (Throwable e) {
+                DataPoint annotation = fMethod.getAnnotation(DataPoint.class); 
+                if (annotation != null) {
+                    for (Class<? extends Throwable> ignorable : annotation.ignoredExceptions()) {
+                        Assume.assumeThat(e, not(instanceOf(ignorable)));
+                    }
+                }
+                
                 throw new CouldNotGenerateValueException();
-                // do nothing, just look for more values
             }
         }
 
@@ -71,7 +81,19 @@ public class AllMembersSupplier extends ParameterSupplier {
 
     private void addMultiPointMethods(ParameterSignature sig, List<PotentialAssignment> list) throws Throwable {
         for (FrameworkMethod dataPointsMethod : getDataPointsMethods(sig)) {
-            addMultiPointArrayValues(sig, dataPointsMethod.getName(), list, dataPointsMethod.invokeExplosively(null));
+            try {
+                addMultiPointArrayValues(sig, dataPointsMethod.getName(), list, dataPointsMethod.invokeExplosively(null));
+            } catch (Throwable t) {
+                DataPoints annotation = dataPointsMethod.getAnnotation(DataPoints.class);
+                if (annotation != null) {
+                    for (Class<? extends Throwable> ignored : annotation.ignoredExceptions()) {
+                        if (ignored.isAssignableFrom(t.getClass())) {
+                            return;
+                        }
+                    }
+                }
+                throw t;
+            }
         }
     }
 

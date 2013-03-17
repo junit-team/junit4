@@ -17,7 +17,6 @@ import java.util.List;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoint;
-import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.JUnitCore;
@@ -40,46 +39,6 @@ public class WithDataPointMethod {
     @Test
     public void pickUpDataPointMethods() {
         assertThat(testResult(HasDataPointMethod.class), isSuccessful());
-    }
-
-    @RunWith(Theories.class)
-    public static class HasFailingSingleDataPointMethod {
-        @DataPoint
-        public static int num = 10;
-
-        @DataPoint
-        public static int failingDataPoint() {
-            throw new RuntimeException();
-        }
-
-        @Theory
-        public void allIntsOk(int x) {
-        }
-    }
-
-    @Test
-    public void shouldFailFromExceptionsInSingleDataPointMethods() {
-        assertThat(testResult(HasFailingSingleDataPointMethod.class), not(isSuccessful()));
-    }
-    
-    @RunWith(Theories.class)
-    public static class HasFailingDataPointArrayMethod {
-        @DataPoints
-        public static int[] num = { 1, 2, 3 };
-
-        @DataPoints
-        public static int[] failingDataPoints() {
-            throw new RuntimeException();
-        }
-
-        @Theory
-        public void allIntsOk(int x) {
-        }
-    }
-
-    @Test
-    public void shouldFailFromExceptionsInDataPointArrayMethods() {
-        assertThat(testResult(HasFailingDataPointArrayMethod.class), not(isSuccessful()));
     }
 
     @RunWith(Theories.class)
