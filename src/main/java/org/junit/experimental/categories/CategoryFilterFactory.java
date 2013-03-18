@@ -8,7 +8,10 @@ import org.junit.runner.FilterFactory;
 import org.junit.runner.FilterFactoryParams;
 import org.junit.runner.manipulation.Filter;
 
-abstract class CategoryFilterFactory extends FilterFactory {
+/**
+ * Implementation of FilterFactory for Category filtering.
+ */
+public abstract class CategoryFilterFactory extends FilterFactory {
     @Override
     public FilterFactoryParams parseArgs(String args) throws FilterNotCreatedException {
         try {
