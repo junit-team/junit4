@@ -13,10 +13,10 @@ import java.lang.annotation.Target;
  * theories in that class, when run with the
  * {@link org.junit.experimental.theories.Theories Theories} runner.
  * <p>
- * DataPoints will only be considered as potential values for parameters for
- * which their types are assignable. When multiple sets of DataPoints exist with
- * overlapping types more control can be obtained by naming the DataPoints using
- * the value of this annotation, e.g. with
+ * A DataPoint is only considered as a potential value for parameters for
+ * which its type is assignable. When multiple {@code DataPoint}s exist 
+ * with overlapping types more control can be obtained by naming each DataPoint 
+ * using the value of this annotation, e.g. with
  * <code>&#064;DataPoint({"dataset1", "dataset2"})</code>, and then specifying
  * which named set to consider as potential values for each parameter using the
  * {@link org.junit.experimental.theories.FromDataPoints &#064;FromDataPoints}
@@ -24,9 +24,9 @@ import java.lang.annotation.Target;
  * <p>
  * Parameters with no specified source (i.e. without &#064;FromDataPoints or
  * other {@link org.junit.experimental.theories.ParametersSuppliedBy
- * &#064;ParameterSuppliedBy} annotations) will use all DataPoints that are
+ * &#064;ParameterSuppliedBy} annotations) will use all {@code DataPoint}s that are
  * assignable to the parameter type as potential values, including named sets of
- * DataPoints.
+ * {@code DataPoint}s.
  * 
  * <pre>
  * &#064;DataPoint
