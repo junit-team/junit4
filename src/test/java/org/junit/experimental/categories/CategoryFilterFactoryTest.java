@@ -3,8 +3,8 @@ package org.junit.experimental.categories;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.rules.TestName;
 import org.junit.runner.Description;
-import org.junit.runner.FilterFactory;
 import org.junit.runner.FilterFactoryParams;
 import org.junit.runner.manipulation.Filter;
 
@@ -15,22 +15,18 @@ public class CategoryFilterFactoryTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
+    @Rule
+    public TestName testName = new TestName();
+
     @Test
     public void shouldCreateFilter() throws Exception {
         CategoryFilterFactory categoryFilterFactory = new CategoryFilterFactoryStub();
-        FilterFactoryParams params = categoryFilterFactory.parseArgs(CategoryFilterFactoryStub.class.getName());
+        FilterFactoryParams params = new FilterFactoryParams(
+                Description.createSuiteDescription(testName.getMethodName()),
+                CategoryFilterFactoryStub.class.getName());
         Filter filter = categoryFilterFactory.createFilter(params);
 
         assertThat(filter, instanceOf(DummyFilter.class));
-    }
-
-    @Test
-    public void shouldThrowException() throws Exception {
-        CategoryFilterFactory categoryFilterFactory = new CategoryFilterFactoryStub();
-
-        expectedException.expect(FilterFactory.FilterNotCreatedException.class);
-
-        categoryFilterFactory.parseArgs("NonExistentFilter");
     }
 
     private static class CategoryFilterFactoryStub extends CategoryFilterFactory {

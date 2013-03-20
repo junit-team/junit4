@@ -4,7 +4,6 @@ import org.junit.internal.ClassUtil;
 import org.junit.runner.manipulation.Filter;
 
 import static org.junit.runner.FilterFactory.FilterNotCreatedException;
-import static org.junit.runner.FilterFactory.NoFilterFactoryParams;
 
 /**
  * Extend this class to create a factory that creates a factory that creates a {@link Filter}.
@@ -20,41 +19,22 @@ class FilterFactoryFactory {
      * @throws FilterFactoryNotCreatedException
      * @throws FilterNotCreatedException
      */
-    public Filter createFilterFromFilterSpec(String filterSpec)
+    public Filter createFilterFromFilterSpec(Description description, String filterSpec)
             throws FilterFactoryNotCreatedException {
-        FilterFactory filterFactory;
+        String filterFactoryFqcn;
         FilterFactoryParams params;
 
         if (filterSpec.contains("=")) {
             String[] tuple = filterSpec.split("=", 2);
 
-            String filterFactoryFqcn = tuple[0];
-            String args = tuple[1];
-
-            filterFactory = createFilterFactory(filterFactoryFqcn);
-            params = filterFactory.parseArgs(args);
-
-            return filterFactory.createFilter(params);
+            filterFactoryFqcn = tuple[0];
+            params = new FilterFactoryParams(description, tuple[1]);
         } else {
-            String filterFactoryFqcn = filterSpec;
-
-            return createFilter(filterFactoryFqcn, new NoFilterFactoryParams());
+            filterFactoryFqcn = filterSpec;
+            params = new FilterFactoryParams(description);
         }
-    }
 
-    /**
-     * Creates a {@link Filter}.
-     *
-     * @param filterFactoryClass The class of the {@link FilterFactory}
-     * @param params The arguments to the {@link FilterFactory}
-     * @throws FilterNotCreatedException
-     * @throws FilterFactoryNotCreatedException
-     */
-    public Filter createFilter(Class<? extends FilterFactory> filterFactoryClass, FilterFactoryParams params)
-            throws FilterFactoryNotCreatedException {
-        FilterFactory filterFactory = createFilterFactory(filterFactoryClass);
-
-        return filterFactory.createFilter(params);
+        return createFilter(filterFactoryFqcn, params);
     }
 
     /**
@@ -68,6 +48,22 @@ class FilterFactoryFactory {
     public Filter createFilter(String filterFactoryFqcn, FilterFactoryParams params)
             throws FilterFactoryNotCreatedException {
         FilterFactory filterFactory = createFilterFactory(filterFactoryFqcn);
+
+        return filterFactory.createFilter(params);
+    }
+
+    /**
+     * Creates a {@link Filter}.
+     *
+     * @param filterFactoryClass The class of the {@link FilterFactory}
+     * @param params             The arguments to the {@link FilterFactory}
+     * @throws FilterNotCreatedException
+     * @throws FilterFactoryNotCreatedException
+     *
+     */
+    public Filter createFilter(Class<? extends FilterFactory> filterFactoryClass, FilterFactoryParams params)
+            throws FilterFactoryNotCreatedException {
+        FilterFactory filterFactory = createFilterFactory(filterFactoryClass);
 
         return filterFactory.createFilter(params);
     }

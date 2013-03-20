@@ -9,6 +9,8 @@ import org.junit.internal.JUnitSystem;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.notification.Failure;
 
+import static org.junit.runner.Description.createSuiteDescription;
+
 class JUnitCommandLineParser {
     private final JUnitSystem system;
 
@@ -55,11 +57,13 @@ class JUnitCommandLineParser {
                             filterSpec = arg.substring(arg.indexOf('=') + 1);
                         }
 
-                        filter = filter.intersect(filterFactoryFactory.createFilterFromFilterSpec(filterSpec));
+                        filter = filter.intersect(filterFactoryFactory.createFilterFromFilterSpec(
+                                createSuiteDescription(arg), filterSpec));
                     } else {
-                        Description description = Description.createSuiteDescription(arg);
-                        Failure failure =
-                                new Failure(description, new CommandLineParserError("JUnit knows nothing about the " + arg + " option"));
+                        Description description = createSuiteDescription(arg);
+                        Failure failure = new Failure(
+                                description,
+                                new CommandLineParserError("JUnit knows nothing about the " + arg + " option"));
 
                         failures.add(failure);
                     }
@@ -68,12 +72,12 @@ class JUnitCommandLineParser {
                 }
             } catch (FilterFactory.FilterNotCreatedException e) {
                 system.out().println("Could not find filter: " + e.getMessage());
-                Description description = Description.createSuiteDescription(arg);
+                Description description = createSuiteDescription(arg);
                 Failure failure = new Failure(description, e);
                 failures.add(failure);
             } catch(FilterFactoryFactory.FilterFactoryNotCreatedException e) {
                 system.out().println("Could not find filter factory: " + e.getMessage());
-                Description description = Description.createSuiteDescription(arg);
+                Description description = createSuiteDescription(arg);
                 Failure failure = new Failure(description, e);
                 failures.add(failure);
             }
@@ -88,7 +92,7 @@ class JUnitCommandLineParser {
                 classes.add(ClassUtil.getClass(arg));
             } catch (ClassNotFoundException e) {
                 system.out().println("Could not find class: " + arg);
-                Description description = Description.createSuiteDescription(arg);
+                Description description = createSuiteDescription(arg);
                 Failure failure = new Failure(description, e);
                 failures.add(failure);
             }

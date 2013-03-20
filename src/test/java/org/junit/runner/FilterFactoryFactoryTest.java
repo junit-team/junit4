@@ -4,22 +4,27 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.ExcludeCategories;
 import org.junit.rules.ExpectedException;
+import org.junit.rules.TestName;
 import org.junit.runner.manipulation.Filter;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.runner.FilterFactory.NoFilterFactoryParams;
+import static org.junit.runner.Description.createSuiteDescription;
 
 public class FilterFactoryFactoryTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
+
+    @Rule
+    public TestName testName = new TestName();
 
     private FilterFactoryFactory filterFactoryFactory = new FilterFactoryFactory();
 
     @Test
     public void shouldCreateFilterWithArguments() throws Exception {
         Filter filter = filterFactoryFactory.createFilterFromFilterSpec(
+                createSuiteDescription(testName.getMethodName()),
                 ExcludeCategories.class.getName() + "=" + DummyCategory.class.getName());
 
         assertThat(filter.describe(), startsWith("excludes "));
@@ -27,14 +32,16 @@ public class FilterFactoryFactoryTest {
 
     @Test
     public void shouldCreateFilterWithNoArguments() throws Exception {
-        Filter filter = filterFactoryFactory.createFilterFromFilterSpec(FilterFactoryStub.class.getName());
+        Filter filter = filterFactoryFactory.createFilterFromFilterSpec(
+                createSuiteDescription(testName.getMethodName()), FilterFactoryStub.class.getName());
 
         assertThat(filter, instanceOf(DummyFilter.class));
     }
 
     @Test
     public void shouldCreateFilter() throws Exception {
-        Filter filter = filterFactoryFactory.createFilter(FilterFactoryStub.class, new NoFilterFactoryParams());
+        Filter filter = filterFactoryFactory.createFilter(
+                FilterFactoryStub.class, new FilterFactoryParams(createSuiteDescription(testName.getMethodName())));
 
         assertThat(filter, instanceOf(DummyFilter.class));
     }

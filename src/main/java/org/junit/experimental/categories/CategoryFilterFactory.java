@@ -13,17 +13,12 @@ import org.junit.runner.manipulation.Filter;
  */
 public abstract class CategoryFilterFactory extends FilterFactory {
     @Override
-    public FilterFactoryParams parseArgs(String args) throws FilterNotCreatedException {
+    public Filter createFilter(FilterFactoryParams params) throws FilterNotCreatedException {
         try {
-            return new CategoryFilterFactoryParams(parseCategories(args));
+            return createFilter(parseCategories(params.getArgs()));
         } catch (ClassNotFoundException e) {
             throw new FilterNotCreatedException(e.getMessage());
         }
-    }
-
-    @Override
-    public Filter createFilter(FilterFactoryParams params) {
-        return createFilter(((CategoryFilterFactoryParams) params).getCategories());
     }
 
     protected abstract Filter createFilter(Class<?>[] categories);
@@ -38,17 +33,5 @@ public abstract class CategoryFilterFactory extends FilterFactory {
         }
 
         return categoryClasses.toArray(new Class[]{});
-    }
-
-    public class CategoryFilterFactoryParams implements FilterFactoryParams {
-        private final Class<?>[] categories;
-
-        public CategoryFilterFactoryParams(Class<?>[] categories) {
-            this.categories = categories;
-        }
-
-        public Class<?>[] getCategories() {
-            return categories;
-        }
     }
 }
