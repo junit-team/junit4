@@ -7,7 +7,7 @@ import org.junit.runner.manipulation.Filter;
  */
 public interface FilterFactory {
     /**
-     * Creates a {@link Filter} using a ${FilterFactoryParams} argument.
+     * Creates a {@link Filter} given a ${FilterFactoryParams} argument.
      *
      * @param params Parameters needed to create the {@link Filter}
      * @throws FilterNotCreatedException

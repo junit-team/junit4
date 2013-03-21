@@ -17,6 +17,11 @@ class JUnitCommandLineParser {
     private List<Class<?>> classes = new ArrayList<Class<?>>();
     private List<Failure> failures = new ArrayList<Failure>();
 
+    /**
+     * Constructs a {@link JUnitCommandLineParser}.
+     *
+     * @param system {@link JUnitSystem} to be used.
+     */
     public JUnitCommandLineParser(JUnitSystem system) {
         this.system = system;
     }
@@ -35,10 +40,18 @@ class JUnitCommandLineParser {
         return classes;
     }
 
+    /**
+     * Returns the list of failures.
+     */
     public List<Failure> getFailures() {
         return failures;
     }
 
+    /**
+     * Parses the arguments.
+     *
+     * @param args Arguments
+     */
     public void parseArgs(String[] args) {
         parseParameters(parseOptions(args));
     }
@@ -125,12 +138,20 @@ class JUnitCommandLineParser {
         }
     }
 
+    /**
+     * Creates a {@link Request}.
+     *
+     * @param computer {@link Computer} to be used.
+     */
     public Request createRequest(Computer computer) {
         return Request
                 .classes(computer, classes.toArray(new Class<?>[0]))
                 .filterWith(filter);
     }
 
+    /**
+     * Exception used if there's a problem parsing the command line.
+     */
     public static class CommandLineParserError extends Exception {
         public CommandLineParserError(String message) {
             super(message);

@@ -12,6 +12,13 @@ import org.junit.runner.manipulation.Filter;
  * Implementation of FilterFactory for Category filtering.
  */
 public abstract class CategoryFilterFactory implements FilterFactory {
+    /**
+     * Creates a {@link org.junit.experimental.categories.Categories.CategoryFilter} given a
+     * ${FilterFactoryParams} argument.
+     *
+     * @param params Parameters needed to create the {@link Filter}
+     * @throws FilterNotCreatedException
+     */
     @Override
     public Filter createFilter(FilterFactoryParams params) throws FilterNotCreatedException {
         try {
@@ -21,7 +28,14 @@ public abstract class CategoryFilterFactory implements FilterFactory {
         }
     }
 
-    protected abstract Filter createFilter(Class<?>[] categories);
+    /**
+     * Creates a {@link org.junit.experimental.categories.Categories.CategoryFilter} given an array of classes used as
+     * {@link Category} values.
+     *
+     * @param categories Category classes.
+     * @return
+     */
+    protected abstract Filter createFilter(Class<?>... categories);
 
     private Class<?>[] parseCategories(String categories) throws ClassNotFoundException {
         List<Class<?>> categoryClasses = new ArrayList<Class<?>>();

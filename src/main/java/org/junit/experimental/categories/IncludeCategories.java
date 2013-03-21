@@ -25,8 +25,15 @@ import static org.junit.experimental.categories.Categories.CategoryFilter;
  * </code>
  */
 public final class IncludeCategories extends CategoryFilterFactory {
+    /**
+     * Creates an {@link IncludesAny} {@link CategoryFilter} given an array of classes used as
+     * {@link Category} values.
+     *
+     * @param categories Category classes.
+     * @return
+     */
     @Override
-    public Filter createFilter(Class<?>... categories) {
+    protected Filter createFilter(Class<?>... categories) {
         return new IncludesAny(categories);
     }
 
