@@ -18,7 +18,7 @@ public final class TheoryTestUtils {
     private TheoryTestUtils() { }
     
     public static List<PotentialAssignment> potentialAssignments(Method method)
-            throws Exception {
+            throws Throwable {
         return Assignments.allUnassigned(method,
                 new TestClass(method.getDeclaringClass()))
                 .potentialsForNextUnassigned();
