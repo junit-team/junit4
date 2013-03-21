@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TestName;
 import org.junit.runner.Description;
+import org.junit.runner.FilterFactory;
 import org.junit.runner.FilterFactoryParams;
 import org.junit.runner.manipulation.Filter;
 
@@ -18,15 +19,27 @@ public class CategoryFilterFactoryTest {
     @Rule
     public TestName testName = new TestName();
 
+    private CategoryFilterFactory categoryFilterFactory = new CategoryFilterFactoryStub();
+
     @Test
     public void shouldCreateFilter() throws Exception {
-        CategoryFilterFactory categoryFilterFactory = new CategoryFilterFactoryStub();
         FilterFactoryParams params = new FilterFactoryParams(
                 Description.createSuiteDescription(testName.getMethodName()),
                 CategoryFilterFactoryStub.class.getName());
         Filter filter = categoryFilterFactory.createFilter(params);
 
         assertThat(filter, instanceOf(DummyFilter.class));
+    }
+
+    @Test
+    public void shouldThrowException() throws Exception {
+        FilterFactoryParams params = new FilterFactoryParams(
+                Description.createSuiteDescription(testName.getMethodName()),
+                "NonExistentFilter");
+
+        expectedException.expect(FilterFactory.FilterNotCreatedException.class);
+
+        categoryFilterFactory.createFilter(params);
     }
 
     private static class CategoryFilterFactoryStub extends CategoryFilterFactory {
