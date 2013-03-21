@@ -11,13 +11,13 @@ import org.junit.runner.manipulation.Filter;
 /**
  * Implementation of FilterFactory for Category filtering.
  */
-public abstract class CategoryFilterFactory extends FilterFactory {
+public abstract class CategoryFilterFactory implements FilterFactory {
     @Override
     public Filter createFilter(FilterFactoryParams params) throws FilterNotCreatedException {
         try {
             return createFilter(parseCategories(params.getArgs()));
         } catch (ClassNotFoundException e) {
-            throw new FilterNotCreatedException(e.getMessage());
+            throw new FilterNotCreatedException(e);
         }
     }
 

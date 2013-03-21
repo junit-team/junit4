@@ -21,20 +21,14 @@ class FilterFactoryFactory {
      */
     public Filter createFilterFromFilterSpec(Description description, String filterSpec)
             throws FilterFactoryNotCreatedException {
-        String filterFactoryFqcn;
-        FilterFactoryParams params;
 
         if (filterSpec.contains("=")) {
             String[] tuple = filterSpec.split("=", 2);
 
-            filterFactoryFqcn = tuple[0];
-            params = new FilterFactoryParams(description, tuple[1]);
+            return createFilter(tuple[0], new FilterFactoryParams(description, tuple[1]));
         } else {
-            filterFactoryFqcn = filterSpec;
-            params = new FilterFactoryParams(description);
+            return createFilter(filterSpec, new FilterFactoryParams(description));
         }
-
-        return createFilter(filterFactoryFqcn, params);
     }
 
     /**
@@ -74,7 +68,7 @@ class FilterFactoryFactory {
         try {
             filterFactoryClass = ClassUtil.getClass(filterFactoryFqcn).asSubclass(FilterFactory.class);
         } catch (Exception e) {
-            throw new FilterFactoryNotCreatedException(e.getMessage());
+            throw new FilterFactoryNotCreatedException(e);
         }
 
         return createFilterFactory(filterFactoryClass);
@@ -83,11 +77,9 @@ class FilterFactoryFactory {
     FilterFactory createFilterFactory(Class<? extends FilterFactory> filterFactoryClass)
             throws FilterFactoryNotCreatedException {
         try {
-            return filterFactoryClass
-                    .getConstructor()
-                    .newInstance();
+            return filterFactoryClass.getConstructor().newInstance();
         } catch (Exception e) {
-            throw new FilterFactoryNotCreatedException(e.getMessage());
+            throw new FilterFactoryNotCreatedException(e);
         }
     }
 
@@ -95,8 +87,8 @@ class FilterFactoryFactory {
      * Exception thrown if the {@link FilterFactory} cannot be created.
      */
     public static class FilterFactoryNotCreatedException extends ClassNotFoundException {
-        public FilterFactoryNotCreatedException(String message) {
-            super(message);
+        public FilterFactoryNotCreatedException(Exception exception) {
+            super(exception.getMessage(), exception);
         }
     }
 }

@@ -63,17 +63,17 @@ public class FilterFactoryFactoryTest {
     public static class NonFilterFactory {
     }
 
-    public static class NonInstantiableFilterFactory extends FilterFactory {
+    public static class NonInstantiableFilterFactory implements FilterFactory {
         private NonInstantiableFilterFactory() {
         }
 
         @Override
         public Filter createFilter(FilterFactoryParams params) throws FilterNotCreatedException {
-            throw new FilterNotCreatedException("not implemented");
+            throw new FilterNotCreatedException(new Exception("not implemented"));
         }
     }
 
-    public static class FilterFactoryStub extends FilterFactory {
+    public static class FilterFactoryStub implements FilterFactory {
         @Override
         public Filter createFilter(FilterFactoryParams unused) {
             return new DummyFilter();

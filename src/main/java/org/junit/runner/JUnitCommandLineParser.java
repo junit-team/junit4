@@ -1,7 +1,6 @@
 package org.junit.runner;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.internal.ClassUtil;
@@ -22,11 +21,17 @@ class JUnitCommandLineParser {
         this.system = system;
     }
 
-    public Filter getFilter() {
+    /**
+     * Do not use. Testing purposes only.
+     */
+    Filter getFilter() {
         return filter;
     }
 
-    public List<Class<?>> getClasses() {
+    /**
+     * Do not use. Testing purposes only.
+     */
+    List<Class<?>> getClasses() {
         return classes;
     }
 
@@ -46,13 +51,24 @@ class JUnitCommandLineParser {
 
             try {
                 if (arg.equals("--")) {
-                    return Arrays.copyOfRange(args, i + 1, args.length);
+                    return copyArray(args, i + 1, args.length);
                 } else if (arg.startsWith("--")) {
                     if (arg.startsWith("--filter=") || arg.equals("--filter")) {
                         String filterSpec;
                         if (arg.equals("--filter")) {
                             ++i;
-                            filterSpec = args[i];
+
+                            if (i < args.length) {
+                                filterSpec = args[i];
+                            } else {
+                                Description description = createSuiteDescription(arg);
+                                Failure failure = new Failure(
+                                        description,
+                                        new CommandLineParserError(arg + " value not specified"));
+                                failures.add(failure);
+
+                                break;
+                            }
                         } else {
                             filterSpec = arg.substring(arg.indexOf('=') + 1);
                         }
@@ -68,7 +84,7 @@ class JUnitCommandLineParser {
                         failures.add(failure);
                     }
                 } else {
-                    return Arrays.copyOfRange(args, i, args.length);
+                    return copyArray(args, i, args.length);
                 }
             } catch (FilterFactory.FilterNotCreatedException e) {
                 system.out().println("Could not find filter: " + e.getMessage());
@@ -84,6 +100,16 @@ class JUnitCommandLineParser {
         }
 
         return null;
+    }
+
+    private String[] copyArray(String[] args, int from, int to) {
+        ArrayList<String> result = new ArrayList<String>();
+
+        for (int j = from; j != to; ++j) {
+            result.add(args[j]);
+        }
+
+        return result.toArray(new String[]{});
     }
 
     void parseParameters(String[] args) {

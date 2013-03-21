@@ -42,6 +42,18 @@ public class JUnitCommandLineParserTest {
     }
 
     @Test
+    public void shouldCreateFailureUponBaldFilterOptionNotFollowedByValue() {
+        jUnitCommandLineParser.parseOptions(new String[]{
+                "--filter"
+        });
+
+        List<Failure> failures = jUnitCommandLineParser.getFailures();
+        Throwable exception = failures.get(0).getException();
+
+        assertThat(exception, instanceOf(JUnitCommandLineParser.CommandLineParserError.class));
+    }
+
+    @Test
     public void shouldParseFilterArgInWhichValueIsASeparateArg() throws Exception {
         jUnitCommandLineParser.parseOptions(new String[]{
                 "--filter",
@@ -122,10 +134,10 @@ public class JUnitCommandLineParserTest {
         assertThat(exception, instanceOf(ClassNotFoundException.class));
     }
 
-    public static class FilterFactoryStub extends FilterFactory {
+    public static class FilterFactoryStub implements FilterFactory {
         @Override
         public Filter createFilter(FilterFactoryParams params) throws FilterNotCreatedException {
-            throw new FilterNotCreatedException("stub");
+            throw new FilterNotCreatedException(new Exception("stub"));
         }
     }
 

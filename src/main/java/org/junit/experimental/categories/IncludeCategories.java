@@ -11,19 +11,17 @@ import static org.junit.experimental.categories.Categories.CategoryFilter;
 /**
  * {@link org.junit.runner.FilterFactory} to include categories.
  *
- * The {@link Filter} that is created will filter out tests that are categorized with any of the given categories.
+ * The {@link Filter} that is created will filter out tests that are categorized with any of the
+ * given categories.
  *
  * Usage from command line:
  * <code>
- *     --filter=org.junit.experimental.categories.IncludeCategories=package.of.FirstCategory,package.of.SecondCategory
+ *     --filter=org.junit.experimental.categories.IncludeCategories=pkg.of.Cat1,pkg.of.Cat2
  * </code>
  *
  * Usage from API:
  * <code>
- *     new IncludeCategories().createFilter(new Class[]{
- *         FirstCategory.class,
- *         SecondCategory.class
- *     });
+ *     new IncludeCategories().createFilter(Cat1.class, Cat2.class);
  * </code>
  */
 public final class IncludeCategories extends CategoryFilterFactory {
