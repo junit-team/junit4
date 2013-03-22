@@ -1,8 +1,5 @@
 package org.junit.experimental.theories.internal;
 
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -40,15 +37,11 @@ public class AllMembersSupplier extends ParameterSupplier {
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(
                         "unexpected: getMethods returned an inaccessible method");
-            } catch (Throwable t) {
-                DataPoint annotation = fMethod.getAnnotation(DataPoint.class); 
-                if (annotation != null) {
-                    for (Class<? extends Throwable> ignorable : annotation.ignoredExceptions()) {
-                        Assume.assumeThat(t, not(instanceOf(ignorable)));
-                    }
-                }
+            } catch (Throwable throwable) {
+                DataPoint annotation = fMethod.getAnnotation(DataPoint.class);
+                Assume.assumeTrue(annotation == null || !isAssignableToAnyOf(annotation.ignoredExceptions(), throwable));
                 
-                throw new CouldNotGenerateValueException(t);
+                throw new CouldNotGenerateValueException(throwable);
             }
         }
 
@@ -56,7 +49,7 @@ public class AllMembersSupplier extends ParameterSupplier {
         public String getDescription() throws CouldNotGenerateValueException {
             return fMethod.getName();
         }
-    }   
+    }
     
     private final TestClass fClass;
 
@@ -86,16 +79,13 @@ public class AllMembersSupplier extends ParameterSupplier {
             if (returnType.isArray() && sig.canPotentiallyAcceptType(returnType.getComponentType())) {
                 try {
                     addArrayValues(sig, dataPointsMethod.getName(), list, dataPointsMethod.invokeExplosively(null));
-                } catch (Throwable t) {
+                } catch (Throwable throwable) {
                     DataPoints annotation = dataPointsMethod.getAnnotation(DataPoints.class);
-                    if (annotation != null) {
-                        for (Class<? extends Throwable> ignored : annotation.ignoredExceptions()) {
-                            if (ignored.isAssignableFrom(t.getClass())) {
-                                return;
-                            }
-                        }
+                    if (annotation != null && isAssignableToAnyOf(annotation.ignoredExceptions(), throwable)) {
+                        return;
+                    } else {
+                        throw throwable;
                     }
-                    throw t;
                 }
             }
         }
@@ -144,6 +134,15 @@ public class AllMembersSupplier extends ParameterSupplier {
             throw new RuntimeException(
                     "unexpected: getFields returned an inaccessible field");
         }
+    }
+    
+    private static boolean isAssignableToAnyOf(Class<?>[] typeArray, Object target) {
+        for (Class<?> type : typeArray) {
+            if (type.isAssignableFrom(target.getClass())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected Collection<FrameworkMethod> getDataPointsMethods(ParameterSignature sig) {
