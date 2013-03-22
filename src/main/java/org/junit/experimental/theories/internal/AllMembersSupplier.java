@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.junit.Assume;
 import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.ParameterSignature;
@@ -36,17 +37,20 @@ public class AllMembersSupplier extends ParameterSupplier {
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(
                         "unexpected: getMethods returned an inaccessible method");
-            } catch (Throwable e) {
-                throw new CouldNotGenerateValueException();
-                // do nothing, just look for more values
+            } catch (Throwable throwable) {
+                DataPoint annotation = fMethod.getAnnotation(DataPoint.class);
+                Assume.assumeTrue(annotation == null || !isAssignableToAnyOf(annotation.ignoredExceptions(), throwable));
+                
+                throw new CouldNotGenerateValueException(throwable);
             }
-        }    
-    
+        }
+
         @Override
         public String getDescription() throws CouldNotGenerateValueException {
             return fMethod.getName();
         }
-    }           
+    }
+    
     private final TestClass fClass;
 
     /**
@@ -57,7 +61,7 @@ public class AllMembersSupplier extends ParameterSupplier {
     }
 
     @Override
-    public List<PotentialAssignment> getValueSources(ParameterSignature sig) {
+    public List<PotentialAssignment> getValueSources(ParameterSignature sig) throws Throwable {
         List<PotentialAssignment> list = new ArrayList<PotentialAssignment>();
 
         addSinglePointFields(sig, list);
@@ -68,15 +72,20 @@ public class AllMembersSupplier extends ParameterSupplier {
         return list;
     }
 
-    private void addMultiPointMethods(ParameterSignature sig, List<PotentialAssignment> list) {
+    private void addMultiPointMethods(ParameterSignature sig, List<PotentialAssignment> list) throws Throwable {
         for (FrameworkMethod dataPointsMethod : getDataPointsMethods(sig)) {
             Class<?> returnType = dataPointsMethod.getReturnType();
             
             if (returnType.isArray() && sig.canPotentiallyAcceptType(returnType.getComponentType())) {
                 try {
                     addArrayValues(sig, dataPointsMethod.getName(), list, dataPointsMethod.invokeExplosively(null));
-                } catch (Throwable e) {
-                    // ignore and move on
+                } catch (Throwable throwable) {
+                    DataPoints annotation = dataPointsMethod.getAnnotation(DataPoints.class);
+                    if (annotation != null && isAssignableToAnyOf(annotation.ignoredExceptions(), throwable)) {
+                        return;
+                    } else {
+                        throw throwable;
+                    }
                 }
             }
         }
@@ -94,7 +103,7 @@ public class AllMembersSupplier extends ParameterSupplier {
         for (final Field field : getDataPointsFields(sig)) {
             addArrayValues(sig, field.getName(), list, getStaticFieldValue(field));
         }
-    }
+    }    
 
     private void addSinglePointFields(ParameterSignature sig, List<PotentialAssignment> list) {
         for (final Field field : getSingleDataPointFields(sig)) {
@@ -125,6 +134,15 @@ public class AllMembersSupplier extends ParameterSupplier {
             throw new RuntimeException(
                     "unexpected: getFields returned an inaccessible field");
         }
+    }
+    
+    private static boolean isAssignableToAnyOf(Class<?>[] typeArray, Object target) {
+        for (Class<?> type : typeArray) {
+            if (type.isAssignableFrom(target.getClass())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected Collection<FrameworkMethod> getDataPointsMethods(ParameterSignature sig) {

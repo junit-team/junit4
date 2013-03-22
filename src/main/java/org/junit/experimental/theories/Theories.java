@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.experimental.theories.PotentialAssignment.CouldNotGenerateValueException;
+import org.junit.Assume;
 import org.junit.experimental.theories.internal.Assignments;
 import org.junit.experimental.theories.internal.ParameterizedAssertionError;
 import org.junit.internal.AssumptionViolatedException;
@@ -202,8 +202,13 @@ public class Theories extends BlockJUnit4ClassRunner {
 
                 @Override
                 public Object createTest() throws Exception {
-                    return getTestClass().getOnlyConstructor().newInstance(
-                            complete.getConstructorArguments(nullsOk()));
+                    Object[] params = complete.getConstructorArguments();
+                    
+                    if (!nullsOk()) {
+                        Assume.assumeNotNull(params);
+                    }
+                    
+                    return getTestClass().getOnlyConstructor().newInstance(params);
                 }
             }.methodBlock(fTestMethod).evaluate();
         }
@@ -213,13 +218,13 @@ public class Theories extends BlockJUnit4ClassRunner {
             return new Statement() {
                 @Override
                 public void evaluate() throws Throwable {
-                    try {
-                        final Object[] values = complete.getMethodArguments(
-                                nullsOk());
-                        method.invokeExplosively(freshInstance, values);
-                    } catch (CouldNotGenerateValueException e) {
-                        // ignore
+                    final Object[] values = complete.getMethodArguments();
+                    
+                    if (!nullsOk()) {
+                        Assume.assumeNotNull(values);
                     }
+                    
+                    method.invokeExplosively(freshInstance, values);
                 }
             };
         }

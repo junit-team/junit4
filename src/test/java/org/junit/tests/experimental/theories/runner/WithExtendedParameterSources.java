@@ -1,6 +1,7 @@
 package org.junit.tests.experimental.theories.runner;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
@@ -33,12 +34,13 @@ public class WithExtendedParameterSources {
     }
 
     @RunWith(Theories.class)
-    public static class ShouldFilterNull {
-        @DataPoint
-        public static String NULL = null;
+    public static class ShouldFilterOutNullSingleDataPoints {
 
         @DataPoint
         public static String A = "a";
+        
+        @DataPoint
+        public static String NULL = null;
 
         @Theory(nullsAccepted = false)
         public void allStringsAreNonNull(String s) {
@@ -47,9 +49,40 @@ public class WithExtendedParameterSources {
     }
 
     @Test
-    public void shouldFilterNull() {
-        assertThat(testResult(ShouldFilterNull.class), isSuccessful());
+    public void shouldFilterOutNullSingleDataPoints() {
+        assertThat(testResult(ShouldFilterOutNullSingleDataPoints.class), isSuccessful());
     }
+
+    @RunWith(Theories.class)
+    public static class ShouldFilterOutNullElementsFromDataPointArrays {
+        @DataPoints
+        public static String[] SOME_NULLS = { "non-null", null };
+
+        @Theory(nullsAccepted = false)
+        public void allStringsAreNonNull(String s) {
+            assertThat(s, notNullValue());
+        }
+    }
+
+    @Test
+    public void shouldFilterOutNullElementsFromDataPointArrays() {
+        assertThat(testResult(ShouldFilterOutNullElementsFromDataPointArrays.class), isSuccessful());
+    }
+    
+    @RunWith(Theories.class)
+    public static class ShouldRejectTheoriesWithOnlyDisallowedNullData {
+        @DataPoints
+        public static String value = null;
+
+        @Theory(nullsAccepted = false)
+        public void allStringsAreNonNull(String s) {
+        }
+    }
+
+    @Test
+    public void ShouldRejectTheoriesWithOnlyDisallowedNullData() {
+        assertThat(testResult(ShouldRejectTheoriesWithOnlyDisallowedNullData.class), not(isSuccessful()));
+    }    
 
     @RunWith(Theories.class)
     public static class DataPointArrays {
