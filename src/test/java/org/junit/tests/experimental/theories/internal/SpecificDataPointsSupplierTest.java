@@ -56,7 +56,7 @@ public class SpecificDataPointsSupplierTest {
     }
 
     @Test
-    public void shouldReturnOnlyTheNamedDataPoints() throws Exception {
+    public void shouldReturnOnlyTheNamedDataPoints() throws Throwable {
         SpecificDataPointsSupplier supplier = new SpecificDataPointsSupplier(new TestClass(TestClassWithNamedDataPoints.class));
 
         List<PotentialAssignment> assignments = supplier.getValueSources(signature("methodWantingAllNamedStrings"));
@@ -67,7 +67,7 @@ public class SpecificDataPointsSupplierTest {
     }
     
     @Test
-    public void shouldReturnOnlyTheNamedFieldDataPoints() throws Exception {
+    public void shouldReturnOnlyTheNamedFieldDataPoints() throws Throwable {
         SpecificDataPointsSupplier supplier = new SpecificDataPointsSupplier(new TestClass(TestClassWithNamedDataPoints.class));
 
         List<PotentialAssignment> assignments = supplier.getValueSources(signature("methodWantingNamedFieldString"));
@@ -78,7 +78,7 @@ public class SpecificDataPointsSupplierTest {
     }
 
     @Test
-    public void shouldReturnOnlyTheNamedMethodDataPoints() throws Exception {
+    public void shouldReturnOnlyTheNamedMethodDataPoints() throws Throwable {
         SpecificDataPointsSupplier supplier = new SpecificDataPointsSupplier(new TestClass(TestClassWithNamedDataPoints.class));
 
         List<PotentialAssignment> assignments = supplier.getValueSources(signature("methodWantingNamedMethodString"));
@@ -89,7 +89,7 @@ public class SpecificDataPointsSupplierTest {
     }
     
     @Test
-    public void shouldReturnOnlyTheNamedSingleFieldDataPoints() throws Exception {
+    public void shouldReturnOnlyTheNamedSingleFieldDataPoints() throws Throwable {
         SpecificDataPointsSupplier supplier = new SpecificDataPointsSupplier(new TestClass(TestClassWithNamedDataPoints.class));
 
         List<PotentialAssignment> assignments = supplier.getValueSources(signature("methodWantingNamedSingleFieldString"));
@@ -100,7 +100,7 @@ public class SpecificDataPointsSupplierTest {
     }
 
     @Test
-    public void shouldReturnOnlyTheNamedSingleMethodDataPoints() throws Exception {
+    public void shouldReturnOnlyTheNamedSingleMethodDataPoints() throws Throwable {
         SpecificDataPointsSupplier supplier = new SpecificDataPointsSupplier(new TestClass(TestClassWithNamedDataPoints.class));
 
         List<PotentialAssignment> assignments = supplier.getValueSources(signature("methodWantingNamedSingleMethodString"));
@@ -111,7 +111,7 @@ public class SpecificDataPointsSupplierTest {
     }    
     
     @Test
-    public void shouldReturnNothingIfTheNamedDataPointsAreMissing() throws Exception {
+    public void shouldReturnNothingIfTheNamedDataPointsAreMissing() throws Throwable {
         SpecificDataPointsSupplier supplier = new SpecificDataPointsSupplier(new TestClass(TestClassWithNamedDataPoints.class));
 
         List<PotentialAssignment> assignments = supplier.getValueSources(signature("methodWantingWrongNamedString"));
