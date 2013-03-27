@@ -51,4 +51,5 @@ import java.lang.annotation.Target;
 @Target({FIELD, METHOD})
 public @interface DataPoints {
     String[] value() default {};
+    Class<? extends Throwable>[] ignoredExceptions() default {};
 }

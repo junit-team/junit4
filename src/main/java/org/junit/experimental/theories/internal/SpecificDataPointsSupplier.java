@@ -33,7 +33,7 @@ public class SpecificDataPointsSupplier extends AllMembersSupplier {
             }
         }
         
-        return fieldsWithMatchingNames;        
+        return fieldsWithMatchingNames;
     }
     
     @Override
