@@ -5,7 +5,7 @@ import static java.lang.Thread.currentThread;
 /**
  * Miscellaneous functions dealing with classes.
  */
-public class ClassUtil {
+public class Classes {
     /**
      * Returns Class.forName for {@code className} using the current thread's class loader.
      *

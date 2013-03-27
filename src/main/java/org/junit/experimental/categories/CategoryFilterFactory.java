@@ -3,7 +3,7 @@ package org.junit.experimental.categories;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.internal.ClassUtil;
+import org.junit.internal.Classes;
 import org.junit.runner.FilterFactory;
 import org.junit.runner.FilterFactoryParams;
 import org.junit.runner.manipulation.Filter;
@@ -33,7 +33,6 @@ public abstract class CategoryFilterFactory implements FilterFactory {
      * {@link Category} values.
      *
      * @param categories Category classes.
-     * @return
      */
     protected abstract Filter createFilter(Class<?>... categories);
 
@@ -41,7 +40,7 @@ public abstract class CategoryFilterFactory implements FilterFactory {
         List<Class<?>> categoryClasses = new ArrayList<Class<?>>();
 
         for (String category : categories.split(",")) {
-            Class<?> categoryClass = ClassUtil.getClass(category);
+            Class<?> categoryClass = Classes.getClass(category);
 
             categoryClasses.add(categoryClass);
         }

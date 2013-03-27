@@ -107,7 +107,7 @@ public class JUnitCommandLineParserTest {
         List<Failure> failures = jUnitCommandLineParser.getFailures();
         Throwable exception = failures.get(0).getException();
 
-        assertThat(exception, instanceOf(FilterFactoryFactory.FilterFactoryNotCreatedException.class));
+        assertThat(exception, instanceOf(FilterFactories.FilterFactoryNotCreatedException.class));
     }
 
     @Test

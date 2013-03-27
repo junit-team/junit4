@@ -12,18 +12,16 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.runner.Description.createSuiteDescription;
 
-public class FilterFactoryFactoryTest {
+public class FilterFactoriesTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
     @Rule
     public TestName testName = new TestName();
 
-    private FilterFactoryFactory filterFactoryFactory = new FilterFactoryFactory();
-
     @Test
     public void shouldCreateFilterWithArguments() throws Exception {
-        Filter filter = filterFactoryFactory.createFilterFromFilterSpec(
+        Filter filter = FilterFactories.createFilterFromFilterSpec(
                 createSuiteDescription(testName.getMethodName()),
                 ExcludeCategories.class.getName() + "=" + DummyCategory.class.getName());
 
@@ -32,7 +30,7 @@ public class FilterFactoryFactoryTest {
 
     @Test
     public void shouldCreateFilterWithNoArguments() throws Exception {
-        Filter filter = filterFactoryFactory.createFilterFromFilterSpec(
+        Filter filter = FilterFactories.createFilterFromFilterSpec(
                 createSuiteDescription(testName.getMethodName()), FilterFactoryStub.class.getName());
 
         assertThat(filter, instanceOf(DummyFilter.class));
@@ -40,7 +38,7 @@ public class FilterFactoryFactoryTest {
 
     @Test
     public void shouldCreateFilter() throws Exception {
-        Filter filter = filterFactoryFactory.createFilter(
+        Filter filter = FilterFactories.createFilter(
                 FilterFactoryStub.class, new FilterFactoryParams(createSuiteDescription(testName.getMethodName())));
 
         assertThat(filter, instanceOf(DummyFilter.class));
@@ -48,16 +46,16 @@ public class FilterFactoryFactoryTest {
 
     @Test
     public void shouldThrowExceptionIfNotFilterFactory() throws Exception {
-        expectedException.expect(FilterFactoryFactory.FilterFactoryNotCreatedException.class);
+        expectedException.expect(FilterFactories.FilterFactoryNotCreatedException.class);
 
-        filterFactoryFactory.createFilterFactory(NonFilterFactory.class.getName());
+        FilterFactories.createFilterFactory(NonFilterFactory.class.getName());
     }
 
     @Test
     public void shouldThrowExceptionIfNotInstantiable() throws Exception {
-        expectedException.expect(FilterFactoryFactory.FilterFactoryNotCreatedException.class);
+        expectedException.expect(FilterFactories.FilterFactoryNotCreatedException.class);
 
-        filterFactoryFactory.createFilterFactory(NonInstantiableFilterFactory.class);
+        FilterFactories.createFilterFactory(NonInstantiableFilterFactory.class);
     }
 
     public static class NonFilterFactory {

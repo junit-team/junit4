@@ -3,7 +3,7 @@ package org.junit.runner;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.internal.ClassUtil;
+import org.junit.internal.Classes;
 import org.junit.internal.JUnitSystem;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.notification.Failure;
@@ -57,8 +57,6 @@ class JUnitCommandLineParser {
     }
 
     String[] parseOptions(String[] args) {
-        FilterFactoryFactory filterFactoryFactory = new FilterFactoryFactory();
-
         for (int i = 0; i != args.length; ++i) {
             String arg = args[i];
 
@@ -86,7 +84,7 @@ class JUnitCommandLineParser {
                             filterSpec = arg.substring(arg.indexOf('=') + 1);
                         }
 
-                        filter = filter.intersect(filterFactoryFactory.createFilterFromFilterSpec(
+                        filter = filter.intersect(FilterFactories.createFilterFromFilterSpec(
                                 createSuiteDescription(arg), filterSpec));
                     } else {
                         Description description = createSuiteDescription(arg);
@@ -104,7 +102,7 @@ class JUnitCommandLineParser {
                 Description description = createSuiteDescription(arg);
                 Failure failure = new Failure(description, e);
                 failures.add(failure);
-            } catch(FilterFactoryFactory.FilterFactoryNotCreatedException e) {
+            } catch(FilterFactories.FilterFactoryNotCreatedException e) {
                 system.out().println("Could not find filter factory: " + e.getMessage());
                 Description description = createSuiteDescription(arg);
                 Failure failure = new Failure(description, e);
@@ -128,7 +126,7 @@ class JUnitCommandLineParser {
     void parseParameters(String[] args) {
         for (String arg : args) {
             try {
-                classes.add(ClassUtil.getClass(arg));
+                classes.add(Classes.getClass(arg));
             } catch (ClassNotFoundException e) {
                 system.out().println("Could not find class: " + arg);
                 Description description = createSuiteDescription(arg);

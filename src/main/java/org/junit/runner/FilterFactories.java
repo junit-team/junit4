@@ -1,14 +1,14 @@
 package org.junit.runner;
 
-import org.junit.internal.ClassUtil;
+import org.junit.internal.Classes;
 import org.junit.runner.manipulation.Filter;
 
 import static org.junit.runner.FilterFactory.FilterNotCreatedException;
 
 /**
- * Extend this class to create a factory that creates a factory that creates a {@link Filter}.
+ * Utility class whose methods create a {@link FilterFactory}.
  */
-class FilterFactoryFactory {
+public class FilterFactories {
     /**
      * Creates a {@link Filter}.
      *
@@ -19,7 +19,7 @@ class FilterFactoryFactory {
      * @throws FilterFactoryNotCreatedException
      * @throws FilterNotCreatedException
      */
-    public Filter createFilterFromFilterSpec(Description description, String filterSpec)
+    public static Filter createFilterFromFilterSpec(Description description, String filterSpec)
             throws FilterFactoryNotCreatedException {
 
         if (filterSpec.contains("=")) {
@@ -39,7 +39,7 @@ class FilterFactoryFactory {
      * @throws FilterNotCreatedException
      * @throws FilterFactoryNotCreatedException
      */
-    public Filter createFilter(String filterFactoryFqcn, FilterFactoryParams params)
+    public static Filter createFilter(String filterFactoryFqcn, FilterFactoryParams params)
             throws FilterFactoryNotCreatedException {
         FilterFactory filterFactory = createFilterFactory(filterFactoryFqcn);
 
@@ -55,18 +55,18 @@ class FilterFactoryFactory {
      * @throws FilterFactoryNotCreatedException
      *
      */
-    public Filter createFilter(Class<? extends FilterFactory> filterFactoryClass, FilterFactoryParams params)
+    public static Filter createFilter(Class<? extends FilterFactory> filterFactoryClass, FilterFactoryParams params)
             throws FilterFactoryNotCreatedException {
         FilterFactory filterFactory = createFilterFactory(filterFactoryClass);
 
         return filterFactory.createFilter(params);
     }
 
-    FilterFactory createFilterFactory(String filterFactoryFqcn) throws FilterFactoryNotCreatedException {
+    static FilterFactory createFilterFactory(String filterFactoryFqcn) throws FilterFactoryNotCreatedException {
         Class<? extends FilterFactory> filterFactoryClass;
 
         try {
-            filterFactoryClass = ClassUtil.getClass(filterFactoryFqcn).asSubclass(FilterFactory.class);
+            filterFactoryClass = Classes.getClass(filterFactoryFqcn).asSubclass(FilterFactory.class);
         } catch (Exception e) {
             throw new FilterFactoryNotCreatedException(e);
         }
@@ -74,7 +74,7 @@ class FilterFactoryFactory {
         return createFilterFactory(filterFactoryClass);
     }
 
-    FilterFactory createFilterFactory(Class<? extends FilterFactory> filterFactoryClass)
+    static FilterFactory createFilterFactory(Class<? extends FilterFactory> filterFactoryClass)
             throws FilterFactoryNotCreatedException {
         try {
             return filterFactoryClass.getConstructor().newInstance();
