@@ -3,8 +3,8 @@ package org.junit.experimental.parallel;
 import java.util.concurrent.Semaphore;
 
 /**
- * If {@link Scheduler} shares own threads with child Scheduler, the Balancer is used to control the peak
- * number of active threads in current Scheduler and prevents from own thread resources exhaustion.
+ * The Balancer controls the maximum of concurrent threads in the current Scheduler(s) and prevents
+ * from own thread resources exhaustion if other group of schedulers share the same pool of threads.
  * <p>
  * If a permit is available, {@link #acquirePermit()} simply returns and a new test is scheduled
  * by {@link Scheduler#schedule(Runnable)} in the current runner. Otherwise waiting for a release.
@@ -13,7 +13,7 @@ import java.util.concurrent.Semaphore;
  * @author Tibor Digana (tibor17)
  * @since 4.12
  */
-final class Balancer {
+public class Balancer {
     private final Semaphore balancer;
     private final int maxPermits;
 
@@ -27,14 +27,23 @@ final class Balancer {
 
     /**
      * @param numPermits number of permits to acquire
+     * @param fair <tt>true</tt> guarantees the waiting schedulers to wake up in order they acquired a permit
      * @throws IllegalArgumentException if <tt>numPermits</tt> is not positive
      */
-    public Balancer(int numPermits) {
+    public Balancer(int numPermits, boolean fair) {
         if (numPermits <= 0) {
             throw new IllegalArgumentException(numPermits + " permits should be positive");
         }
-        balancer = new Semaphore(numPermits);
+        balancer = new Semaphore(numPermits, fair);
         maxPermits = numPermits;
+    }
+
+    /**
+     * <tt>fair</tt> set false.
+     * @see #Balancer(int, boolean)
+     */
+    public Balancer(int numPermits) {
+        this(numPermits, false);
     }
 
     /**

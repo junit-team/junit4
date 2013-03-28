@@ -2,6 +2,7 @@ package org.junit.tests;
 
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
+import org.junit.experimental.parallel.ParallelComputerBuilderTest;
 import org.junit.internal.MethodSorterTest;
 import org.junit.internal.matchers.StacktracePrintingMatcherTest;
 import org.junit.runner.RunWith;
@@ -23,8 +24,10 @@ import org.junit.tests.experimental.categories.JavadocTest;
 import org.junit.tests.experimental.categories.MultiCategoryTest;
 import org.junit.tests.experimental.max.JUnit38SortingTest;
 import org.junit.tests.experimental.max.MaxStarterTest;
+import org.junit.tests.experimental.parallel.ParallelAbstractionTest;
 import org.junit.tests.experimental.parallel.ParallelClassTest;
 import org.junit.tests.experimental.parallel.ParallelMethodTest;
+import org.junit.tests.experimental.parallel.SchedulingStrategiesTest;
 import org.junit.tests.experimental.rules.BlockJUnit4ClassRunnerOverrideTest;
 import org.junit.tests.experimental.rules.ClassRulesTest;
 import org.junit.tests.experimental.rules.ExpectedExceptionTest;
@@ -166,7 +169,10 @@ import org.junit.tests.validation.ValidationTest;
         MethodSorterTest.class,
         TestedOnSupplierTest.class,
         StacktracePrintingMatcherTest.class,
-        StopwatchTest.class
+        StopwatchTest.class,
+        SchedulingStrategiesTest.class,
+        ParallelAbstractionTest.class,
+        ParallelComputerBuilderTest.class
 })
 public class AllTests {
     public static Test suite() {

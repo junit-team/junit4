@@ -13,10 +13,13 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  *
- * Schedules tests and controls shared thread resources.
+ * Schedules tests, controls thread resources, awaiting tests and other schedulers finished, and
+ * a master scheduler can shutdown slaves.
  * <p>
- * The scheduler objects should be first created (and wired if share common threads) and set in runners
+ * The scheduler objects should be first created (and wired) and set in runners
  * {@link org.junit.runners.ParentRunner#setScheduler(org.junit.runners.model.RunnerScheduler)}.
+ * <p>
+ * A new instance of scheduling strategy should be passed to the constructor of this scheduler.
  *
  * @author Tibor Digana (tibor17)
  * @since 4.12
@@ -41,30 +44,55 @@ public class Scheduler implements RunnerScheduler {
     }
 
     /**
-     * Should be used if schedulers in parallel children and this use one instance of bounded thread pool.
+     * Should be used if schedulers in parallel children and parent use one instance of bounded thread pool.
      * <p>
-     * Set this scheduler in a e.g. one suite of classes, and every individual class runner should
-     * reference {@link #Scheduler(org.junit.runner.Description, Scheduler, SchedulingStrategy)}
+     * Set this scheduler in a e.g. one suite of classes, then every individual class runner should reference
+     * {@link #Scheduler(org.junit.runner.Description, Scheduler, SchedulingStrategy)}
      * or {@link #Scheduler(org.junit.runner.Description, Scheduler, SchedulingStrategy, int)}.
      *
      * @param description description of current runner
-     * @param strategy scheduling strategy with a shared thread pool used only by this scheduler
+     * @param strategy scheduling strategy with a shared thread pool
      * @param concurrency determines maximum concurrent children scheduled a time via {@link #schedule(Runnable)}
-     * @throws IllegalArgumentException if <tt>scheduler</tt> does not share own thread resources
      * @throws NullPointerException if null <tt>strategy</tt>
      */
     public Scheduler(Description description, SchedulingStrategy strategy, int concurrency) {
-        if (strategy == null) {
-            throw new NullPointerException("null strategy");
-        }
-        if (!strategy.hasSharedThreadPool() && concurrency > 0) {
-            throw new IllegalArgumentException("expects scheduling strategy with a shared thread pool");
-        }
+        this(description, strategy, createBalancer(concurrency));
+    }
+
+    /**
+     * New instances should be used by schedulers with limited concurrency by <tt>balancer</tt>
+     * against other groups of schedulers. The schedulers share one pool.
+     * <p>
+     * Unlike in {@link #Scheduler(org.junit.runner.Description, SchedulingStrategy, int)} which was limiting
+     * the <tt>concurrency</tt> of children of a runner where this scheduler was set, <em>this</em> <tt>balancer</tt>
+     * is limiting the concurrency of all children in runners having schedulers created by this constructor.
+     *
+     * @param description description of current runner
+     * @param strategy scheduling strategy which may share threads with other strategy
+     * @param balancer determines maximum concurrent children scheduled a time via {@link #schedule(Runnable)}
+     * @throws NullPointerException if null <tt>strategy</tt> or <tt>balancer</tt>
+     */
+    public Scheduler(Description description, SchedulingStrategy strategy, Balancer balancer) {
         strategy.setDefaultShutdownHandler(new ShutdownHandler());
         this.description = description;
         this.strategy = strategy;
-        this.balancer = createBalancer(concurrency);
+        this.balancer = balancer;
         masterController = null;
+    }
+    /**
+     * Can be used by e.g. a runner having parallel classes in use case with parallel
+     * suites, classes and methods sharing the same thread pool.
+     *
+     * @param description description of current runner
+     * @param masterScheduler scheduler sharing own threads with this slave
+     * @param strategy scheduling strategy for this scheduler
+     * @param balancer determines maximum concurrent children scheduled a time via {@link #schedule(Runnable)}
+     * @throws NullPointerException if null <tt>masterScheduler</tt>, <tt>strategy</tt> or <tt>balancer</tt>
+     */
+    public Scheduler(Description description, Scheduler masterScheduler, SchedulingStrategy strategy, Balancer balancer) {
+        this(description, strategy, balancer);
+        strategy.setDefaultShutdownHandler(new ShutdownHandler());
+        masterScheduler.register(this);
     }
 
     /**
@@ -75,17 +103,15 @@ public class Scheduler implements RunnerScheduler {
      */
     public Scheduler(Description description, Scheduler masterScheduler, SchedulingStrategy strategy, int concurrency) {
         this(description, strategy, concurrency);
-        if (!masterScheduler.strategy.hasSharedThreadPool()) {
-            throw new IllegalArgumentException("the scheduler does not share threads");
-        }
         strategy.setDefaultShutdownHandler(new ShutdownHandler());
-        masterScheduler.shareWith(this);
+        masterScheduler.register(this);
     }
 
     /**
-     * Should be used only with infinite thread pool, otherwise would not prevent from thread resources exhaustion.
-     *
-     * @see #Scheduler(org.junit.runner.Description, Scheduler, SchedulingStrategy, int)
+     * Should be used with individual pools on suites, classes and methods, see
+     * {@link org.junit.experimental.parallel.ParallelComputerBuilder#useSeparatePools()}.
+     * <p>
+     * Cached thread pool is infinite and can be always shared.
      */
     public Scheduler(Description description, Scheduler masterScheduler, SchedulingStrategy strategy) {
         this(description, masterScheduler, strategy, -1);
@@ -104,13 +130,10 @@ public class Scheduler implements RunnerScheduler {
 
     /**
      * @param slave a slave scheduler to register
-     * @return <tt>true</tt> if successfully registered the <tt>slave</tt> using
-     * <em>shared</em> thread resources in this scheduler
+     * @return <tt>true</tt> if successfully registered the <tt>slave</tt>.
      */
-    private boolean shareWith(Scheduler slave) {
-        boolean canRegister = slave != null && slave != this
-                && strategy.hasSharedThreadPool() && slave.strategy.hasSharedThreadPool();
-
+    private boolean register(Scheduler slave) {
+        boolean canRegister = slave != null && slave != this;
         if (canRegister) {
             Controller controller = new Controller(slave);
             canRegister = !slaves.contains(controller);
@@ -119,7 +142,6 @@ public class Scheduler implements RunnerScheduler {
                 slave.setController(controller);
             }
         }
-
         return canRegister;
     }
 
@@ -140,9 +162,9 @@ public class Scheduler implements RunnerScheduler {
 
     /**
      * Attempts to stop all actively executing tasks and immediately returns a collection
-     * of descriptions of those tasks which have completed prior to this call.
+     * of descriptions of those tasks which have started prior to this call.
      * <p>
-     * If has a strategy with shared thread pool, the children will shutdown as well.
+     * This scheduler and other registered schedulers will shutdown, see {@link #register(Scheduler)}.
      * If <tt>shutdownNow</tt> is set, waiting methods will cancel via {@link Thread#interrupt}.
      *
      * @param shutdownNow if <tt>true</tt> interrupts waiting methods
@@ -156,13 +178,11 @@ public class Scheduler implements RunnerScheduler {
             activeChildren.add(description);
         }
 
-        if (strategy.hasSharedThreadPool()) {
-            for (Controller slave : slaves) {
-                try {
-                    activeChildren.addAll(slave.shutdown(shutdownNow));
-                } catch (Throwable t) {
-                    logQuietly(t);
-                }
+        for (Controller slave : slaves) {
+            try {
+                activeChildren.addAll(slave.shutdown(shutdownNow));
+            } catch (Throwable t) {
+                logQuietly(t);
             }
         }
 
@@ -186,11 +206,14 @@ public class Scheduler implements RunnerScheduler {
             logQuietly("cannot schedule null");
         } else if (canSchedule() && strategy.canSchedule()) {
             try {
-                strategy.schedule(wrapTask(childStatement));
+                balancer.acquirePermit();
+                Runnable task = wrapTask(childStatement);
+                strategy.schedule(task);
                 started = true;
             } catch (RejectedExecutionException e) {
                 shutdown(false);
             } catch (Throwable t) {
+                balancer.releasePermit();
                 logQuietly(t);
             }
         }
@@ -212,7 +235,6 @@ public class Scheduler implements RunnerScheduler {
         return new Runnable() {
             public void run() {
                 try {
-                    balancer.acquirePermit();
                     beforeExecute();
                     task.run();
                 } finally {
@@ -227,7 +249,7 @@ public class Scheduler implements RunnerScheduler {
     }
 
     /**
-     * Used if has scheduling strategy with a shared thread pool.
+     * If this is a master scheduler, the slaves can stop scheduling by the master through the controller.
      */
     private final class Controller {
         private final Scheduler slave;
@@ -239,11 +261,11 @@ public class Scheduler implements RunnerScheduler {
         /**
          * @return <tt>true</tt> if new children can be scheduled.
          */
-        public boolean canSchedule() {
+        boolean canSchedule() {
             return Scheduler.this.canSchedule();
         }
 
-        public void awaitFinishedQuietly() {
+        void awaitFinishedQuietly() {
             try {
                 slave.finished();
             } catch(Throwable t) {
