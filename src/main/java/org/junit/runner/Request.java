@@ -11,16 +11,16 @@ import org.junit.runner.manipulation.Filter;
 import org.junit.runners.model.InitializationError;
 
 /**
- * <p>A <code>Request</code> is an abstract description of tests to be run. Older versions of
+ * A <code>Request</code> is an abstract description of tests to be run. Older versions of
  * JUnit did not need such a concept--tests to be run were described either by classes containing
  * tests or a tree of {@link  org.junit.Test}s. However, we want to support filtering and sorting,
  * so we need a more abstract specification than the tests themselves and a richer
- * specification than just the classes.</p>
- *
- * <p>The flow when JUnit runs tests is that a <code>Request</code> specifies some tests to be run ->
+ * specification than just the classes.
+ * <p>
+ * The flow when JUnit runs tests is that a <code>Request</code> specifies some tests to be run ->
  * a {@link org.junit.runner.Runner} is created for each class implied by the <code>Request</code> ->
  * the {@link org.junit.runner.Runner} returns a detailed {@link org.junit.runner.Description}
- * which is a tree structure of the tests to be run.</p>
+ * which is a tree structure of the tests to be run.
  *
  * @since 4.0
  */
@@ -145,9 +145,8 @@ public abstract class Request {
     /**
      * Returns a Request whose Tests can be run in a certain order, defined by
      * <code>comparator</code>
-     *
+     * <p>
      * For example, here is code to run a test suite in alphabetical order:
-     *
      * <pre>
      * private static Comparator<Description> forward() {
      * return new Comparator<Description>() {

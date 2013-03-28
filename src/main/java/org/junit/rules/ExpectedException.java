@@ -179,21 +179,20 @@ public class ExpectedException implements TestRule {
         public void evaluate() throws Throwable {
             try {
                 fNext.evaluate();
-                if (fMatcherBuilder.expectsThrowable()) {
-                    failDueToMissingException();
-                }
             } catch (AssumptionViolatedException e) {
                 optionallyHandleException(e, handleAssumptionViolatedExceptions);
+                return;
             } catch (AssertionError e) {
                 optionallyHandleException(e, handleAssertionErrors);
+                return;
             } catch (Throwable e) {
                 handleException(e);
+                return;
+            }
+            if (fMatcherBuilder.expectsThrowable()) {
+                failDueToMissingException();
             }
         }
-    }
-
-    private void failDueToMissingException() throws AssertionError {
-        fail(missingExceptionMessage());
     }
 
     private void optionallyHandleException(Throwable e, boolean handleException)
@@ -211,6 +210,10 @@ public class ExpectedException implements TestRule {
         } else {
             throw e;
         }
+    }
+
+    private void failDueToMissingException() throws AssertionError {
+        fail(missingExceptionMessage());
     }
     
     private String missingExceptionMessage() {

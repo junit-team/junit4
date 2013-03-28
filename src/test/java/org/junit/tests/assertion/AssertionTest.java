@@ -151,6 +151,7 @@ public class AssertionTest {
 
     @Test
     public void oneDimensionalPrimitiveArraysAreEqual() {
+        assertArrayEquals(new boolean[]{true}, new boolean[]{true});
         assertArrayEquals(new byte[]{1}, new byte[]{1});
         assertArrayEquals(new char[]{1}, new char[]{1});
         assertArrayEquals(new short[]{1}, new short[]{1});
@@ -168,6 +169,11 @@ public class AssertionTest {
     @Test(expected = AssertionError.class)
     public void oneDimensionalFloatArraysAreNotEqual() {
         assertArrayEquals(new float[]{1.0f}, new float[]{2.5f}, 1.0f);
+    }
+    
+    @Test(expected = AssertionError.class)
+    public void oneDimensionalBooleanArraysAreNotEqual() {
+        assertArrayEquals(new boolean[]{true}, new boolean[]{false});
     }
 
     @Test(expected = AssertionError.class)
@@ -619,6 +625,8 @@ public class AssertionTest {
         assertNotEquals("The values should be different", 1L, 2L);
         assertNotEquals(1.0, 2.0, 0);
         assertNotEquals("The values should be different", 1.0, 2.0, 0);
+        assertNotEquals(1.0f, 2.0f, 0f);
+        assertNotEquals("The values should be different", 1.0f, 2.0f, 0f);
     }
 
     @Test(expected = AssertionError.class)
@@ -627,7 +635,17 @@ public class AssertionTest {
     }
 
     @Test(expected = AssertionError.class)
+    public void assertNotEqualsConsidersFloatDeltaCorrectly() {
+        assertNotEquals(1.0f, 0.75f, 0.25f);
+    }
+
+    @Test(expected = AssertionError.class)
     public void assertNotEqualsIgnoresDeltaOnNaN() {
         assertNotEquals(Double.NaN, Double.NaN, 1);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void assertNotEqualsIgnoresFloatDeltaOnNaN() {
+        assertNotEquals(Float.NaN, Float.NaN, 1f);
     }
 }

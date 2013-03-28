@@ -4,6 +4,7 @@ import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_METHOD_VA
 import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_VALIDATOR;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.junit.After;
 import org.junit.Before;
@@ -48,6 +49,7 @@ import org.junit.runners.model.Statement;
  * @since 4.5
  */
 public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
+    private final ConcurrentHashMap<FrameworkMethod, Description> fMethodDescriptions = new ConcurrentHashMap<FrameworkMethod, Description>();
     /**
      * Creates a BlockJUnit4ClassRunner to run {@code klass}
      *
@@ -73,8 +75,15 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 
     @Override
     protected Description describeChild(FrameworkMethod method) {
-        return Description.createTestDescription(getTestClass().getJavaClass(),
-                testName(method), method.getAnnotations());
+        Description description = fMethodDescriptions.get(method);
+
+        if (description == null) {
+            description = Description.createTestDescription(getTestClass().getJavaClass(),
+                    testName(method), method.getAnnotations());
+            fMethodDescriptions.putIfAbsent(method, description);
+        }
+
+        return description;
     }
 
     @Override
