@@ -25,11 +25,9 @@ import java.util.concurrent.Executors;
  * Executing suites, classes and methods with defined concurrency. In this example the threads which completed
  * the suites and classes can be reused in parallel methods.
  * <pre>
- * ParallelComputerBuilder parallelComputerBuilder = new ParallelComputerBuilder().useOnePool(8);
- * parallelComputerBuilder.parallel(2, Type.SUITES);
- * parallelComputerBuilder.parallel(4, Type.CLASSES);
- * parallelComputerBuilder.parallel(Type.METHODS);
- * ParallelComputerBuilder.ParallelComputer computer = parallelComputerBuilder.build();
+ * ParallelComputerBuilder parallelComputerBuilder = new ParallelComputerBuilder()
+ * .useOnePool(8).parallel(2, Type.SUITES).parallel(4, Type.CLASSES).parallel(Type.METHODS);
+ * ParallelComputerBuilder.ParallelComputer computer = parallelComputerBuilder.buildComputer();
  * Class<?>[] tests = {...};
  * new JUnitCore().run(computer, tests);
  * </pre>
@@ -89,10 +87,7 @@ public class ParallelComputerBuilder {
         return this;
     }
 
-    /**
-     * @return <tt>true</tt> if a type was not already set parallel
-     */
-    public boolean parallel(int nThreads, Type parallelType) {
+    public ParallelComputerBuilder parallel(int nThreads, Type parallelType) {
         if (nThreads < 1) {
             throw new IllegalArgumentException("parallel nThreads=" + nThreads);
         }
@@ -101,19 +96,15 @@ public class ParallelComputerBuilder {
             throw new NullPointerException("null parallelType");
         }
 
-        if (parallelGroups.containsKey(parallelType)) {
-            return false;
-        } else {
-            parallelGroups.put(parallelType, nThreads);
-            return true;
-        }
+        parallelGroups.put(parallelType, nThreads);
+        return this;
     }
 
-    public boolean parallel(Type parallelType) {
+    public ParallelComputerBuilder parallel(Type parallelType) {
         return parallel(Integer.MAX_VALUE, parallelType);
     }
 
-    public ParallelComputer build() {
+    public ParallelComputer buildComputer() {
         return new ParallelComputer();
     }
 
