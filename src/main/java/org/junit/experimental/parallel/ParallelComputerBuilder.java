@@ -44,13 +44,11 @@ import java.util.concurrent.Executors;
  */
 public class ParallelComputerBuilder {
     public static enum Type {
-        SUITES, CLASSES, METHODS;
-
-        public static final int size = Type.values().length;
+        SUITES, CLASSES, METHODS
     }
 
     static final int TOTAL_POOL_SIZE_UNDEFINED = 0;
-    private final Map<Type, Integer> parallelGroups = new LinkedHashMap<Type, Integer>(Type.size);
+    private final Map<Type, Integer> parallelGroups = new LinkedHashMap<Type, Integer>(3);
     private boolean useSeparatePools;
     private int totalPoolSize;
 
@@ -59,6 +57,9 @@ public class ParallelComputerBuilder {
      */
     public ParallelComputerBuilder() {
         useSeparatePools();
+        parallelGroups.put(Type.SUITES, 0);
+        parallelGroups.put(Type.CLASSES, 0);
+        parallelGroups.put(Type.METHODS, 0);
     }
 
     public ParallelComputerBuilder useSeparatePools() {
@@ -75,12 +76,11 @@ public class ParallelComputerBuilder {
 
     /**
      * @param totalPoolSize Pool size where suites, classes and methods are executed in parallel.
-     * @throws IllegalArgumentException If <tt>totalPoolSize</tt> is &lt; 3.
+     * @throws IllegalArgumentException If <tt>totalPoolSize</tt> is &lt; 1.
      */
     public ParallelComputerBuilder useOnePool(int totalPoolSize) {
-        if (totalPoolSize < Type.size) {
-            String msg = String.format("Size '%d' of common pool is less than %d threads.", totalPoolSize, Type.size);
-            throw new IllegalArgumentException(msg);
+        if (totalPoolSize < 1) {
+            throw new IllegalArgumentException("Size of common pool is less than 1.");
         }
         this.totalPoolSize = totalPoolSize;
         useSeparatePools = false;
@@ -88,8 +88,8 @@ public class ParallelComputerBuilder {
     }
 
     public ParallelComputerBuilder parallel(int nThreads, Type parallelType) {
-        if (nThreads < 1) {
-            throw new IllegalArgumentException("parallel nThreads=" + nThreads);
+        if (nThreads < 0) {
+            throw new IllegalArgumentException("negative nThreads " + nThreads);
         }
 
         if (parallelType == null) {
@@ -130,12 +130,6 @@ public class ParallelComputerBuilder {
 
         private ParallelComputer() {
             allGroups = new LinkedHashMap<Type, Integer>(ParallelComputerBuilder.this.parallelGroups);
-            Collection<Type> remaining = new ArrayList<Type>();
-            Collections.addAll(remaining, Type.values());
-            remaining.removeAll(allGroups.keySet());
-            for (Type singleThreadType : remaining) {
-                allGroups.put(singleThreadType, 1);
-            }
             poolCapacity = ParallelComputerBuilder.this.totalPoolSize;
             splitPool = ParallelComputerBuilder.this.useSeparatePools;
         }
@@ -148,17 +142,8 @@ public class ParallelComputerBuilder {
         @Override
         public Runner getSuite(RunnerBuilder builder, Class<?>[] cls) throws InitializationError {
             super.getSuite(builder, cls);
-
             populateChildrenFromSuites();
-            Suite suiteSuites = new RunnersSuite(suites);
-            Suite suiteClasses = new RunnersSuite(classes);
-            Suite all = new RunnersSuite(suiteSuites, suiteClasses);
-            int poolSize = totalPoolSize();
-            ExecutorService commonPool = splitPool ? null : createPool(poolSize);
-            master = createMaster(commonPool, poolSize);
-            setSchedulers(commonPool, suiteSuites, suiteClasses);
-            all.setScheduler(master);
-            return all;
+            return setSchedulers();
         }
 
         @Override
@@ -201,17 +186,17 @@ public class ParallelComputerBuilder {
         }
 
         private Scheduler createMaster(ExecutorService pool, int poolSize) {
-            if (!areSuitesAndClassesParallel()) {
-                return new Scheduler(null, SchedulingStrategies.createInvokerStrategy());
+            if (!areSuitesAndClassesParallel() || poolSize <= 1) {
+                return new Scheduler(null, new InvokerStrategy());
             } else if (pool != null && poolSize == Integer.MAX_VALUE) {
-                return new Scheduler(null, SchedulingStrategies.createParallelSharedStrategy(pool));
+                return new Scheduler(null, new SharedThreadPoolStrategy(pool));
             } else {
                 return new Scheduler(null, SchedulingStrategies.createParallelStrategy(2));
             }
         }
 
         private boolean areSuitesAndClassesParallel() {
-            return !suites.isEmpty() && !classes.isEmpty();
+            return !suites.isEmpty() && allGroups.get(Type.SUITES) > 0 && !classes.isEmpty() && allGroups.get(Type.CLASSES) > 0;
         }
 
         private void populateChildrenFromSuites() {
@@ -229,75 +214,89 @@ public class ParallelComputerBuilder {
         private int totalPoolSize() {
             if (poolCapacity == TOTAL_POOL_SIZE_UNDEFINED) {
                 int total = 0;
-                boolean isMoreThanOneThread = false;
                 for (int nThreads : allGroups.values()) {
-                    isMoreThanOneThread |= nThreads > 1;
                     total += nThreads;
                     if (total < 0) {
                         total = Integer.MAX_VALUE;
                         break;
                     }
                 }
-                return isMoreThanOneThread ? total : 1;
+                return total;
             } else {
                 return poolCapacity;
             }
         }
 
-        private void setSchedulers(ExecutorService pool, Suite suiteSuites, Suite suiteClasses) {
-            boolean isSharingPool = pool != null;
+        private Runner setSchedulers() throws InitializationError {
             int parallelSuites = allGroups.get(Type.SUITES);
             int parallelClasses = allGroups.get(Type.CLASSES);
             int parallelMethods = allGroups.get(Type.METHODS);
+            int poolSize = totalPoolSize();
+            ExecutorService commonPool = splitPool || poolSize == 0 ? null : createPool(poolSize);
+            master = createMaster(commonPool, poolSize);
 
-            Scheduler suitesScheduler =
-                    isSharingPool ? createScheduler(master, pool, parallelSuites) : createScheduler(master, parallelSuites);
+            // a scheduler for parallel suites
+            final Scheduler suitesScheduler;
+            if (commonPool != null && parallelSuites > 0) {
+                suitesScheduler = createScheduler(null, commonPool, true, new Balancer(parallelSuites, true));
+            } else {
+                suitesScheduler = createScheduler(parallelSuites);
+            }
+            Suite suiteSuites = new RunnersSuite(suites);
             suiteSuites.setScheduler(suitesScheduler);
+
+            // schedulers for parallel classes
+            Suite suiteClasses = new RunnersSuite(classes);
             ArrayList<Suite> allSuites = new ArrayList<Suite>(suites);
             allSuites.addAll(nestedSuites);
             allSuites.add(suiteClasses);
-            setChildScheduler(allSuites, parallelClasses, isSharingPool, pool);
+            setSchedulers(allSuites, parallelClasses, commonPool);
 
+            // schedulers for parallel methods
             ArrayList<ParentRunner> allClasses = new ArrayList<ParentRunner>(classes);
             allClasses.addAll(nestedClasses);
-            setChildScheduler(allClasses, parallelMethods, isSharingPool, pool);
+            setSchedulers(allClasses, parallelMethods, commonPool);
+
+            // resulting runner for Computer#getSuite() scheduled by master scheduler
+            Suite all = new RunnersSuite(suiteSuites, suiteClasses);
+            all.setScheduler(master);
+            return all;
         }
 
-        private void setChildScheduler(Iterable<? extends ParentRunner> children, int permits, boolean isSharingPool, ExecutorService pool) {
-            if (isSharingPool) {
-                Balancer concurrency = permits == Integer.MAX_VALUE ? new Balancer() : new Balancer(permits, true);
-                for (ParentRunner child : children) {
-                    child.setScheduler(createScheduler(child.getDescription(), master, pool, concurrency));
+        private void setSchedulers(Iterable<? extends ParentRunner> runners, int poolSize, ExecutorService commonPool) {
+            if (commonPool != null) {
+                Balancer concurrencyLimit = new Balancer(poolSize, true);
+                boolean doParallel = poolSize > 0;
+                for (ParentRunner runner : runners) {
+                    runner.setScheduler(createScheduler(runner.getDescription(), commonPool, doParallel, concurrencyLimit));
                 }
             } else {
-                pool = Executors.newFixedThreadPool(permits);
-                for (ParentRunner child : children) {
-                    SchedulingStrategy strategy = SchedulingStrategies.createParallelSharedStrategy(pool);
-                    child.setScheduler(new Scheduler(child.getDescription(), master, strategy));
+                ExecutorService pool = null;
+                if (poolSize == Integer.MAX_VALUE) {
+                    pool = Executors.newCachedThreadPool();
+                } else if (poolSize > 0) {
+                    pool = Executors.newFixedThreadPool(poolSize);
+                }
+                boolean doParallel = pool != null;
+                for (ParentRunner runner : runners) {
+                    runner.setScheduler(createScheduler(runner.getDescription(), pool, doParallel, new Balancer()));
                 }
             }
         }
 
-        private Scheduler createScheduler(Description desc, Scheduler parent, ExecutorService pool, Balancer concurrency) {
-            final SchedulingStrategy strategy = SchedulingStrategies.createParallelSharedStrategy(pool);
-            return parent == null ? new Scheduler(desc, strategy, concurrency) : new Scheduler(desc, parent, strategy, concurrency);
+        private Scheduler createScheduler(Description desc, ExecutorService pool, boolean doParallel, Balancer concurrency) {
+            doParallel &= pool != null;
+            SchedulingStrategy strategy = doParallel ? new SharedThreadPoolStrategy(pool) : new InvokerStrategy();
+            return new Scheduler(desc, master, strategy, concurrency);
         }
 
-        private Scheduler createScheduler(Scheduler parent, ExecutorService pool, int concurrency) {
-            final SchedulingStrategy strategy = SchedulingStrategies.createParallelSharedStrategy(pool);
-            final boolean isInfinite = concurrency == Integer.MAX_VALUE;
-            if (parent == null) {
-                return isInfinite ? new Scheduler(null, strategy) : new Scheduler(null, strategy, concurrency);
-            } else {
-                return isInfinite ? new Scheduler(null, parent, strategy) : new Scheduler(null, parent, strategy, concurrency);
-            }
-        }
-
-        private Scheduler createScheduler(Scheduler parent, int poolSize) {
+        private Scheduler createScheduler(int poolSize) {
             if (poolSize == Integer.MAX_VALUE) {
-                return new Scheduler(null, parent, SchedulingStrategies.createParallelStrategyUnbounded());
+                return new Scheduler(null, master, SchedulingStrategies.createParallelStrategyUnbounded());
+            } else if (poolSize == 0) {
+                return new Scheduler(null, master, new InvokerStrategy());
             } else {
-                return new Scheduler(null, parent, SchedulingStrategies.createParallelStrategy(poolSize));
+                return new Scheduler(null, master, SchedulingStrategies.createParallelStrategy(poolSize));
             }
         }
 

@@ -7,7 +7,6 @@ import java.util.concurrent.Executors;
  * The factory of {@link SchedulingStrategy}.
  *
  * @author Tibor Digana (tibor17)
- * @version 4.12
  * @since 4.12
  */
 public class SchedulingStrategies {

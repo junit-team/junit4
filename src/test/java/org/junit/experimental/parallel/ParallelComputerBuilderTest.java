@@ -38,7 +38,6 @@ public class ParallelComputerBuilderTest {
         Class1.maxConcurrentMethods = 0;
         Class1.concurrentMethods = 0;
         shutdownTask = null;
-        afterShutdown = false;
     }
 
     @Test
@@ -96,7 +95,7 @@ public class ParallelComputerBuilderTest {
         assertThat(computer.poolCapacity, is(5));
         assertTrue(result.wasSuccessful());
         assertThat(Class1.maxConcurrentMethods, is(2));
-        assertThat(timeSpent, anyOf(between(1450, 1750), between(1950, 2250)));
+        assertThat(timeSpent, anyOf(between(1450, 1750), between(1950, 2250), between(2450, 2750)));
     }
 
     @Test
@@ -221,31 +220,71 @@ public class ParallelComputerBuilderTest {
         assertThat(timeSpent, between(1450, 1750));
     }
 
+    private static class ShutdownTest {
+        Result run(final boolean useInterrupt) {
+            ParallelComputerBuilder parallelComputerBuilder = new ParallelComputerBuilder().useOnePool(8);
+            parallelComputerBuilder.parallel(2, Type.SUITES);
+            parallelComputerBuilder.parallel(3, Type.CLASSES);
+            parallelComputerBuilder.parallel(3, Type.METHODS);
+
+            final ParallelComputerBuilder.ParallelComputer computer = parallelComputerBuilder.buildComputer();
+            shutdownTask = new Runnable() {
+                public void run() {
+                    Collection<org.junit.runner.Description> startedTests = computer.shutdown(useInterrupt);
+                    assertThat(startedTests.size(), is(not(0)));
+                }
+            };
+            return new JUnitCore().run(computer, TestSuite.class, Class2.class, Class3.class);
+        }
+    }
+
     @Test(timeout = 2000)
-    public void shutdownWithInterrupt() {
-        ParallelComputerBuilder parallelComputerBuilder = new ParallelComputerBuilder().useOnePool(8);
-        parallelComputerBuilder.parallel(2, Type.SUITES);
-        parallelComputerBuilder.parallel(3, Type.CLASSES);
-        parallelComputerBuilder.parallel(3, Type.METHODS);
-
-        final ParallelComputerBuilder.ParallelComputer computer = parallelComputerBuilder.buildComputer();
-        shutdownTask = new Runnable() {
-            public void run() {
-                Collection<org.junit.runner.Description> startedTests = computer.shutdown(true);
-                assertThat(startedTests.size(), is(not(0)));
-            }
-        };
-        Result result = new JUnitCore().run(computer, TestSuite.class, Class2.class, Class3.class);
+    public void shutdown() {
+        Result result = new ShutdownTest().run(false);
         long timeSpent = runtime.runtime(MILLISECONDS);
-
         assertTrue(result.wasSuccessful());
         assertTrue(beforeShutdown);
-        assertTrue(afterShutdown);
-        assertThat(timeSpent, between(450, 1750));
+        assertThat(timeSpent, between(450, 1250));
+    }
+
+    @Test(timeout = 2000)
+    public void shutdownWithInterrupt() {
+        new ShutdownTest().run(true);
+        long timeSpent = runtime.runtime(MILLISECONDS);
+        assertTrue(beforeShutdown);
+        assertThat(timeSpent, between(450, 1250));
+    }
+
+    @Test
+    public void nothingParallel() {
+        JUnitCore core = new JUnitCore();
+        ParallelComputerBuilder builder = new ParallelComputerBuilder();
+
+        Result result = core.run(builder.buildComputer(), NothingDoingTest1.class, NothingDoingTest2.class);
+        assertTrue(result.wasSuccessful());
+
+        result = core.run(builder.buildComputer(), NothingDoingTest1.class, NothingDoingSuite.class);
+        assertTrue(result.wasSuccessful());
+
+        result = core.run(builder.useOnePool(1).buildComputer(), NothingDoingTest1.class, NothingDoingTest2.class);
+        assertTrue(result.wasSuccessful());
+
+        result = core.run(builder.useOnePool(1).buildComputer(), NothingDoingTest1.class, NothingDoingSuite.class);
+        assertTrue(result.wasSuccessful());
+
+        result = core.run(builder.useOnePool(2).buildComputer(), NothingDoingTest1.class, NothingDoingSuite.class);
+        assertTrue(result.wasSuccessful());
+
+        result = core.run(builder.useOnePool(2).parallel(1, Type.SUITES).parallel(1, Type.CLASSES).buildComputer(),
+                NothingDoingTest1.class, NothingDoingSuite.class);
+        assertTrue(result.wasSuccessful());
+
+        result = core.run(builder.useOnePool(2).parallel(1, Type.SUITES).parallel(Type.CLASSES).buildComputer(),
+                NothingDoingTest1.class, NothingDoingSuite.class);
+        assertTrue(result.wasSuccessful());
     }
 
     private static volatile boolean beforeShutdown;
-    private static volatile boolean afterShutdown;
     private static volatile Runnable shutdownTask;
 
     public static class Class1 {
@@ -268,7 +307,6 @@ public class ParallelComputerBuilderTest {
             if (shutdownTask != null) {
                 beforeShutdown = true;
                 shutdownTask.run();
-                afterShutdown = true;
             }
         }
     }
@@ -282,6 +320,24 @@ public class ParallelComputerBuilderTest {
     @RunWith(Suite.class)
     @Suite.SuiteClasses({Class2.class, Class1.class})
     public class TestSuite {
+    }
+
+    public static class NothingDoingTest1 {
+        @Test
+        public void a() {
+        }
+
+        @Test
+        public void b() {
+        }
+    }
+
+    public static class NothingDoingTest2 extends NothingDoingTest1 {
+    }
+
+    @RunWith(Suite.class)
+    @Suite.SuiteClasses({NothingDoingTest1.class, NothingDoingTest2.class})
+    public static class NothingDoingSuite {
     }
 
     static class RangeMatcher extends TypeSafeMatcher<Long> {

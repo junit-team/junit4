@@ -1,7 +1,7 @@
 package org.junit.experimental.parallel;
 
-import java.util.ArrayList;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -10,14 +10,13 @@ import java.util.concurrent.Future;
  * Parallel strategy for shared thread pool in private package.
  *
  * @author Tibor Digana (tibor17)
- * @version 4.12
  * @since 4.12
  *
  * @see AbstractThreadPoolStrategy
  */
 final class SharedThreadPoolStrategy extends AbstractThreadPoolStrategy {
     SharedThreadPoolStrategy(ExecutorService threadPool) {
-        super(threadPool, new ArrayList<Future<?>>());
+        super(threadPool, new ConcurrentLinkedQueue<Future<?>>());
     }
 
     @Override
@@ -27,7 +26,7 @@ final class SharedThreadPoolStrategy extends AbstractThreadPoolStrategy {
 
     @Override
     public boolean finished() throws InterruptedException {
-        boolean wasRunningAll = stop();
+        boolean wasRunningAll = canSchedule();
         for (Future<?> futureResult : getFutureResults()) {
             try {
                 futureResult.get();
@@ -41,23 +40,26 @@ final class SharedThreadPoolStrategy extends AbstractThreadPoolStrategy {
                 // cannot happen because not calling Future#cancel()
             }
         }
+        disable();
         return wasRunningAll;
     }
 
     @Override
-    protected void awaitStopped() throws InterruptedException {
-        finished();
-    }
-
-    @Override
     protected final boolean stop() {
-        boolean wasStopped = canSchedule();
-        disable();
-        return wasStopped;
+        return stop(false);
     }
 
     @Override
     protected final boolean stopNow() {
-        return stop();
+        return stop(true);
+    }
+
+    private boolean stop(boolean interrupt) {
+        final boolean wasRunning = canSchedule();
+        for (Future<?> futureResult : getFutureResults()) {
+            futureResult.cancel(interrupt);
+        }
+        disable();
+        return wasRunning;
     }
 }

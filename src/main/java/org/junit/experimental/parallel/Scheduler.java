@@ -56,7 +56,7 @@ public class Scheduler implements RunnerScheduler {
      * @throws NullPointerException if null <tt>strategy</tt>
      */
     public Scheduler(Description description, SchedulingStrategy strategy, int concurrency) {
-        this(description, strategy, createBalancer(concurrency));
+        this(description, strategy, new Balancer(concurrency));
     }
 
     /**
@@ -73,7 +73,7 @@ public class Scheduler implements RunnerScheduler {
      * @throws NullPointerException if null <tt>strategy</tt> or <tt>balancer</tt>
      */
     public Scheduler(Description description, SchedulingStrategy strategy, Balancer balancer) {
-        strategy.setDefaultShutdownHandler(new ShutdownHandler());
+        strategy.setDefaultShutdownHandler(newShutdownHandler());
         this.description = description;
         this.strategy = strategy;
         this.balancer = balancer;
@@ -91,7 +91,7 @@ public class Scheduler implements RunnerScheduler {
      */
     public Scheduler(Description description, Scheduler masterScheduler, SchedulingStrategy strategy, Balancer balancer) {
         this(description, strategy, balancer);
-        strategy.setDefaultShutdownHandler(new ShutdownHandler());
+        strategy.setDefaultShutdownHandler(newShutdownHandler());
         masterScheduler.register(this);
     }
 
@@ -103,7 +103,7 @@ public class Scheduler implements RunnerScheduler {
      */
     public Scheduler(Description description, Scheduler masterScheduler, SchedulingStrategy strategy, int concurrency) {
         this(description, strategy, concurrency);
-        strategy.setDefaultShutdownHandler(new ShutdownHandler());
+        strategy.setDefaultShutdownHandler(newShutdownHandler());
         masterScheduler.register(this);
     }
 
@@ -114,11 +114,7 @@ public class Scheduler implements RunnerScheduler {
      * Cached thread pool is infinite and can be always shared.
      */
     public Scheduler(Description description, Scheduler masterScheduler, SchedulingStrategy strategy) {
-        this(description, masterScheduler, strategy, -1);
-    }
-
-    private static Balancer createBalancer(int concurrency) {
-        return concurrency <= 0 ? new Balancer() : new Balancer(concurrency);
+        this(description, masterScheduler, strategy, 0);
     }
 
     private void setController(Controller masterController) {
@@ -189,7 +185,11 @@ public class Scheduler implements RunnerScheduler {
         try {
             balancer.releaseAllPermits();
         } finally {
-            strategy.stopNow();
+            if (shutdownNow) {
+                strategy.stopNow();
+            } else {
+                strategy.stop();
+            }
         }
 
         return activeChildren;
@@ -248,6 +248,10 @@ public class Scheduler implements RunnerScheduler {
         };
     }
 
+    protected ShutdownHandler newShutdownHandler() {
+        return new ShutdownHandler();
+    }
+
     /**
      * If this is a master scheduler, the slaves can stop scheduling by the master through the controller.
      */
@@ -288,14 +292,14 @@ public class Scheduler implements RunnerScheduler {
         }
     }
 
-    public final class ShutdownHandler implements RejectedExecutionHandler {
+    public class ShutdownHandler implements RejectedExecutionHandler {
         private volatile RejectedExecutionHandler poolHandler;
 
-        private ShutdownHandler() {
+        protected ShutdownHandler() {
             poolHandler = null;
         }
 
-        void setRejectedExecutionHandler(RejectedExecutionHandler poolHandler) {
+        public void setRejectedExecutionHandler(RejectedExecutionHandler poolHandler) {
             this.poolHandler = poolHandler;
         }
 

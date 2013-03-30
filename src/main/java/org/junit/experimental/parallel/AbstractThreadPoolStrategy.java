@@ -3,8 +3,8 @@ package org.junit.experimental.parallel;
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Abstract parallel scheduling strategy in private package.
@@ -12,7 +12,6 @@ import java.util.concurrent.ThreadPoolExecutor;
  * depending if the thread pool is shared with other strategies or not.
  *
  * @author Tibor Digana (tibor17)
- * @version 4.12
  * @since 4.12
  *
  * @see SchedulingStrategy
@@ -22,14 +21,13 @@ import java.util.concurrent.ThreadPoolExecutor;
 abstract class AbstractThreadPoolStrategy extends SchedulingStrategy {
     private final ExecutorService threadPool;
     private final Collection<Future<?>> futureResults;
-    private volatile boolean canSchedule;
+    private final AtomicBoolean canSchedule = new AtomicBoolean(true);
 
     AbstractThreadPoolStrategy(ExecutorService threadPool) {
         this(threadPool, null);
     }
 
     AbstractThreadPoolStrategy(ExecutorService threadPool, Collection<Future<?>> futureResults) {
-        canSchedule = true;
         this.threadPool = threadPool;
         this.futureResults = futureResults;
     }
@@ -43,7 +41,7 @@ abstract class AbstractThreadPoolStrategy extends SchedulingStrategy {
     }
 
     protected final void disable() {
-        canSchedule = false;
+        canSchedule.set(false);
     }
 
     @Override
@@ -58,27 +56,28 @@ abstract class AbstractThreadPoolStrategy extends SchedulingStrategy {
 
     @Override
     protected boolean stop() {
-        canSchedule = false;
+        boolean wasRunning = canSchedule.getAndSet(false);
         if (threadPool.isShutdown()) {
-            return false;
+            wasRunning = false;
         } else {
             threadPool.shutdown();
-            return true;
         }
+        return wasRunning;
     }
 
     @Override
     protected boolean stopNow() {
-        canSchedule = false;
+        boolean wasRunning = canSchedule.getAndSet(false);
         if (threadPool.isShutdown()) {
-            return false;
+            wasRunning = false;
         } else {
             threadPool.shutdownNow();
-            return true;
         }
+        return wasRunning;
     }
 
-    void setDefaultShutdownHandler(Scheduler.ShutdownHandler handler) {
+    @Override
+    protected void setDefaultShutdownHandler(Scheduler.ShutdownHandler handler) {
         if (threadPool instanceof ThreadPoolExecutor) {
             ThreadPoolExecutor pool = (ThreadPoolExecutor) threadPool;
             handler.setRejectedExecutionHandler(pool.getRejectedExecutionHandler());
@@ -88,6 +87,6 @@ abstract class AbstractThreadPoolStrategy extends SchedulingStrategy {
 
     @Override
     public final boolean canSchedule() {
-        return canSchedule;
+        return canSchedule.get();
     }
 }

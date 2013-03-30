@@ -21,7 +21,6 @@ import static org.junit.Assert.assertTrue;
  * Then {@link Task#result} should be asserted that is <code>true</code>.
  *
  * @author Tibor Digana (tibor17)
- * @version 4.12
  * @since 4.12
  *
  * @see SchedulingStrategy

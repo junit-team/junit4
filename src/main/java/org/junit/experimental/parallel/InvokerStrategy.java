@@ -1,16 +1,17 @@
 package org.junit.experimental.parallel;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * The sequentially executing strategy in private package.
  *
  * @author Tibor Digana (tibor17)
- * @version 4.12
  * @since 4.12
  *
  * @see SchedulingStrategy
  */
 final class InvokerStrategy extends SchedulingStrategy {
-    private volatile boolean canSchedule = true;
+    private final AtomicBoolean canSchedule = new AtomicBoolean(true);
 
     @Override
     public void schedule(Runnable task) {
@@ -21,12 +22,7 @@ final class InvokerStrategy extends SchedulingStrategy {
 
     @Override
     protected boolean stop() {
-        canSchedule = false;
-        return true;
-    }
-
-    @Override
-    protected void awaitStopped() throws InterruptedException {
+        return canSchedule.getAndSet(false);
     }
 
     @Override
@@ -36,6 +32,11 @@ final class InvokerStrategy extends SchedulingStrategy {
 
     @Override
     public boolean canSchedule() {
-        return canSchedule;
+        return canSchedule.get();
+    }
+
+    @Override
+    public boolean finished() throws InterruptedException {
+        return stop();
     }
 }

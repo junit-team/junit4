@@ -2,9 +2,7 @@ package org.junit.experimental.parallel;
 
 import org.junit.runners.model.RunnerScheduler;
 
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.RejectedExecutionHandler;
 
 /**
  * Specifies the strategy of scheduling whether sequential, or parallel.
@@ -16,7 +14,6 @@ import java.util.concurrent.RejectedExecutionHandler;
  * completed in {@link #finished()}. Both methods should be used in one thread.
  *
  * @author Tibor Digana (tibor17)
- * @version 4.12
  * @since 4.12
  */
 public abstract class SchedulingStrategy {
@@ -44,26 +41,22 @@ public abstract class SchedulingStrategy {
      *         for scheduled tasks to finish
      * @see RunnerScheduler#finished()
      */
-    public boolean finished() throws InterruptedException {
-        boolean wasRunning = stop();
-        awaitStopped();
-        return wasRunning;
-    }
+    public abstract boolean finished() throws InterruptedException;
 
     /**
-     * Stops scheduling new tasks (e.g. by {@link ExecutorService#shutdown()}
+     * Stops scheduling new tasks (e.g. by {@link java.util.concurrent.ExecutorService#shutdown()}
      * on a private thread pool which cannot be <em>shared</em> with other strategy).
      *
      * @return <tt>true</tt> if successfully stopped the scheduler, else
      *         <tt>false</tt> if already stopped (a <em>shared</em> thread
      *         pool was shutdown externally).
-     * @see ExecutorService#shutdown()
+     * @see java.util.concurrent.ExecutorService#shutdown()
      */
     protected abstract boolean stop();
 
     /**
      * Stops scheduling new tasks and <em>interrupts</em> running tasks
-     * (e.g. by {@link ExecutorService#shutdownNow()} on a private thread pool
+     * (e.g. by {@link java.util.concurrent.ExecutorService#shutdownNow()} on a private thread pool
      * which cannot be <em>shared</em> with other strategy).
      * <p>
      * This method calls {@link #stop()} by default.
@@ -71,23 +64,14 @@ public abstract class SchedulingStrategy {
      * @return <tt>true</tt> if successfully stopped the scheduler, else
      *         <tt>false</tt> if already stopped (a <em>shared</em> thread
      *         pool was shutdown externally).
-     * @see ExecutorService#shutdownNow()
+     * @see java.util.concurrent.ExecutorService#shutdownNow()
      */
     protected boolean stopNow() {
         return stop();
     }
 
-    void setDefaultShutdownHandler(RejectedExecutionHandler handler) {
+    protected void setDefaultShutdownHandler(Scheduler.ShutdownHandler handler) {
     }
-
-    /**
-     * Blocks until all tasks have completed execution after a stop
-     * request, or the current thread is interrupted. Returns immediately
-     * if already stopped.
-     *
-     * @throws InterruptedException if interrupted while waiting
-     */
-    protected abstract void awaitStopped() throws InterruptedException;
 
     /**
      * @return <tt>true</tt> if a thread pool associated with this strategy

@@ -20,30 +20,26 @@ public class Balancer {
     /**
      * Infinite permits.
      */
-    public Balancer() {
-        balancer = null;
-        maxPermits = 0;
+    protected Balancer() {
+        this(0);
     }
 
     /**
-     * @param numPermits number of permits to acquire
-     * @param fair <tt>true</tt> guarantees the waiting schedulers to wake up in order they acquired a permit
-     * @throws IllegalArgumentException if <tt>numPermits</tt> is not positive
-     */
-    public Balancer(int numPermits, boolean fair) {
-        if (numPermits <= 0) {
-            throw new IllegalArgumentException(numPermits + " permits should be positive");
-        }
-        balancer = new Semaphore(numPermits, fair);
-        maxPermits = numPermits;
-    }
-
-    /**
-     * <tt>fair</tt> set false.
+     * <tt>fair</tt> set to false.
      * @see #Balancer(int, boolean)
      */
     public Balancer(int numPermits) {
         this(numPermits, false);
+    }
+
+    /**
+     * @param numPermits number of permits to acquire when maintaining concurrency on tests
+     * @param fair <tt>true</tt> guarantees the waiting schedulers to wake up in order they acquired a permit
+     */
+    public Balancer(int numPermits, boolean fair) {
+        boolean maintainTests = numPermits > 0 && numPermits < Integer.MAX_VALUE;
+        balancer = maintainTests ? new Semaphore(numPermits, fair) : null;
+        maxPermits = numPermits;
     }
 
     /**
