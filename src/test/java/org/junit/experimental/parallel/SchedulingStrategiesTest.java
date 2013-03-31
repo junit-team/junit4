@@ -1,8 +1,6 @@
-package org.junit.tests.experimental.parallel;
+package org.junit.experimental.parallel;
 
 import org.junit.Test;
-import org.junit.experimental.parallel.SchedulingStrategies;
-import org.junit.experimental.parallel.SchedulingStrategy;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

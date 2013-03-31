@@ -28,7 +28,7 @@ public abstract class SchedulingStrategy {
      * @see RunnerScheduler#schedule(Runnable)
      * @see java.util.concurrent.Executor#execute(Runnable)
      */
-    public abstract void schedule(Runnable task);
+    protected abstract void schedule(Runnable task);
 
     /**
      * Waiting for scheduled tasks to finish.
@@ -41,7 +41,7 @@ public abstract class SchedulingStrategy {
      *         for scheduled tasks to finish
      * @see RunnerScheduler#finished()
      */
-    public abstract boolean finished() throws InterruptedException;
+    protected abstract boolean finished() throws InterruptedException;
 
     /**
      * Stops scheduling new tasks (e.g. by {@link java.util.concurrent.ExecutorService#shutdown()}
@@ -77,10 +77,10 @@ public abstract class SchedulingStrategy {
      * @return <tt>true</tt> if a thread pool associated with this strategy
      * can be shared with other strategies.
      */
-    public abstract boolean hasSharedThreadPool();
+    protected abstract boolean hasSharedThreadPool();
 
     /**
      * @return <tt>true</tt> unless stopped or finished.
      */
-    public abstract boolean canSchedule();
+    protected abstract boolean canSchedule();
 }

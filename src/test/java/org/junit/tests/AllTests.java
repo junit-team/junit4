@@ -30,7 +30,7 @@ import org.junit.tests.experimental.max.MaxStarterTest;
 import org.junit.tests.experimental.parallel.ParallelAbstractionTest;
 import org.junit.tests.experimental.parallel.ParallelClassTest;
 import org.junit.tests.experimental.parallel.ParallelMethodTest;
-import org.junit.tests.experimental.parallel.SchedulingStrategiesTest;
+import org.junit.experimental.parallel.SchedulingStrategiesTest;
 import org.junit.tests.experimental.rules.BlockJUnit4ClassRunnerOverrideTest;
 import org.junit.tests.experimental.rules.ClassRulesTest;
 import org.junit.tests.experimental.rules.ExpectedExceptionTest;
