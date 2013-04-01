@@ -5,7 +5,6 @@ import org.junit.internal.JUnitSystem;
 import org.junit.internal.RealSystem;
 import org.junit.internal.TextListener;
 import org.junit.internal.runners.JUnit38ClassRunner;
-import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 
@@ -83,12 +82,7 @@ public class JUnitCore {
         RunListener listener = new TextListener(system);
         addListener(listener);
 
-        Result result = run(jUnitCommandLineParser.createRequest(defaultComputer()));
-        for (Failure each : jUnitCommandLineParser.getFailures()) {
-            result.getFailures().add(each);
-        }
-
-        return result;
+        return run(jUnitCommandLineParser.createRequest(defaultComputer()));
     }
 
     /**

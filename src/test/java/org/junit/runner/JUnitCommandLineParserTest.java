@@ -1,5 +1,6 @@
 package org.junit.runner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Rule;
@@ -8,9 +9,11 @@ import org.junit.experimental.categories.IncludeCategories;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.RunNotifier;
 import org.junit.tests.TestSystem;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -47,10 +50,13 @@ public class JUnitCommandLineParserTest {
                 "--filter"
         });
 
-        List<Failure> failures = jUnitCommandLineParser.getFailures();
-        Throwable exception = failures.get(0).getException();
+        Runner runner = jUnitCommandLineParser.createRequest(new Computer()).getRunner();
+        Description description = runner.getDescription().getChildren().get(0);
 
-        assertThat(exception, instanceOf(JUnitCommandLineParser.CommandLineParserError.class));
+        assertThat(description.toString(), allOf(
+                containsString("initializationError: "),
+                containsString(JUnitCommandLineParser.CommandLineParserError.class.getName()),
+                containsString("--filter value not specified")));
     }
 
     @Test
@@ -76,14 +82,18 @@ public class JUnitCommandLineParserTest {
 
     @Test
     public void shouldCreateFailureUponUnknownOption() throws Exception {
+        String unknownOption = "--unknown-option";
         jUnitCommandLineParser.parseOptions(new String[]{
-                "--unknown-option"
+                unknownOption
         });
 
-        List<Failure> failures = jUnitCommandLineParser.getFailures();
-        Throwable exception = failures.get(0).getException();
+        Runner runner = jUnitCommandLineParser.createRequest(new Computer()).getRunner();
+        Description description = runner.getDescription().getChildren().get(0);
 
-        assertThat(exception, instanceOf(JUnitCommandLineParser.CommandLineParserError.class));
+        assertThat(description.toString(), allOf(
+                containsString("initializationError: "),
+                containsString(JUnitCommandLineParser.CommandLineParserError.class.getName()),
+                containsString(unknownOption)));
     }
 
     @Test
@@ -92,22 +102,29 @@ public class JUnitCommandLineParserTest {
                 "--filter=" + FilterFactoryStub.class.getName()
         });
 
-        List<Failure> failures = jUnitCommandLineParser.getFailures();
-        Throwable exception = failures.get(0).getException();
+        Runner runner = jUnitCommandLineParser.createRequest(new Computer()).getRunner();
+        Description description = runner.getDescription().getChildren().get(0);
 
-        assertThat(exception, instanceOf(FilterFactory.FilterNotCreatedException.class));
+        assertThat(description.toString(), allOf(
+                containsString("initializationError: "),
+                containsString(FilterFactory.FilterNotCreatedException.class.getName()),
+                containsString("stub")));
     }
 
     @Test
     public void shouldCreateFailureUponUnfoundFilterFactory() throws Exception {
+        String nonExistentFilterFactory = "NonExistentFilterFactory";
         jUnitCommandLineParser.parseOptions(new String[]{
-                "--filter=NonExistentFilterFactory"
+                "--filter=" + nonExistentFilterFactory
         });
 
-        List<Failure> failures = jUnitCommandLineParser.getFailures();
-        Throwable exception = failures.get(0).getException();
+        Runner runner = jUnitCommandLineParser.createRequest(new Computer()).getRunner();
+        Description description = runner.getDescription().getChildren().get(0);
 
-        assertThat(exception, instanceOf(FilterFactories.FilterFactoryNotCreatedException.class));
+        assertThat(description.toString(), allOf(
+                containsString("initializationError: "),
+                containsString(FilterFactories.FilterFactoryNotCreatedException.class.getName()),
+                containsString(nonExistentFilterFactory)));
     }
 
     @Test
@@ -124,14 +141,31 @@ public class JUnitCommandLineParserTest {
 
     @Test
     public void shouldCreateFailureUponUnknownTestClass() throws Exception {
+        String unknownTestClass = "UnknownTestClass";
         jUnitCommandLineParser.parseParameters(new String[]{
-                "UnknownTestClass"
+                unknownTestClass
         });
 
-        List<Failure> failures = jUnitCommandLineParser.getFailures();
-        Throwable exception = failures.get(0).getException();
+        Runner runner = jUnitCommandLineParser.createRequest(new Computer()).getRunner();
+        Description description = runner.getDescription().getChildren().get(0);
 
-        assertThat(exception, instanceOf(ClassNotFoundException.class));
+        assertThat(description.toString(), allOf(
+                containsString("initializationError: "),
+                containsString(ClassNotFoundException.class.getName()),
+                containsString(unknownTestClass)));
+    }
+
+    private static class RunNotifierSpy extends RunNotifier {
+        private List<Failure> failures = new ArrayList<Failure>();
+
+        @Override
+        public void fireTestFailure(Failure failure) {
+            failures.add(failure);
+        }
+
+        public List<Failure> getFailures() {
+            return failures;
+        }
     }
 
     public static class FilterFactoryStub implements FilterFactory {

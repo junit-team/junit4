@@ -5,8 +5,9 @@ import java.util.List;
 
 import org.junit.internal.Classes;
 import org.junit.internal.JUnitSystem;
+import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.manipulation.Filter;
-import org.junit.runner.notification.Failure;
+import org.junit.runners.model.InitializationError;
 
 import static org.junit.runner.Description.createSuiteDescription;
 
@@ -15,7 +16,7 @@ class JUnitCommandLineParser {
 
     private Filter filter = Filter.ALL;
     private List<Class<?>> classes = new ArrayList<Class<?>>();
-    private List<Failure> failures = new ArrayList<Failure>();
+    private List<Throwable> parserErrors = new ArrayList<Throwable>();
 
     /**
      * Constructs a {@link JUnitCommandLineParser}.
@@ -38,13 +39,6 @@ class JUnitCommandLineParser {
      */
     List<Class<?>> getClasses() {
         return classes;
-    }
-
-    /**
-     * Returns the list of failures.
-     */
-    public List<Failure> getFailures() {
-        return failures;
     }
 
     /**
@@ -72,11 +66,7 @@ class JUnitCommandLineParser {
                             if (i < args.length) {
                                 filterSpec = args[i];
                             } else {
-                                Description description = createSuiteDescription(arg);
-                                Failure failure = new Failure(
-                                        description,
-                                        new CommandLineParserError(arg + " value not specified"));
-                                failures.add(failure);
+                                parserErrors.add(new CommandLineParserError(arg + " value not specified"));
 
                                 break;
                             }
@@ -87,26 +77,17 @@ class JUnitCommandLineParser {
                         filter = filter.intersect(FilterFactories.createFilterFromFilterSpec(
                                 createSuiteDescription(arg), filterSpec));
                     } else {
-                        Description description = createSuiteDescription(arg);
-                        Failure failure = new Failure(
-                                description,
-                                new CommandLineParserError("JUnit knows nothing about the " + arg + " option"));
-
-                        failures.add(failure);
+                        parserErrors.add(new CommandLineParserError("JUnit knows nothing about the " + arg + " option"));
                     }
                 } else {
                     return copyArray(args, i, args.length);
                 }
             } catch (FilterFactory.FilterNotCreatedException e) {
                 system.out().println("Could not find filter: " + e.getMessage());
-                Description description = createSuiteDescription(arg);
-                Failure failure = new Failure(description, e);
-                failures.add(failure);
+                parserErrors.add(e);
             } catch(FilterFactories.FilterFactoryNotCreatedException e) {
                 system.out().println("Could not find filter factory: " + e.getMessage());
-                Description description = createSuiteDescription(arg);
-                Failure failure = new Failure(description, e);
-                failures.add(failure);
+                parserErrors.add(e);
             }
         }
 
@@ -129,9 +110,7 @@ class JUnitCommandLineParser {
                 classes.add(Classes.getClass(arg));
             } catch (ClassNotFoundException e) {
                 system.out().println("Could not find class: " + arg);
-                Description description = createSuiteDescription(arg);
-                Failure failure = new Failure(description, e);
-                failures.add(failure);
+                parserErrors.add(e);
             }
         }
     }
@@ -142,9 +121,20 @@ class JUnitCommandLineParser {
      * @param computer {@link Computer} to be used.
      */
     public Request createRequest(Computer computer) {
-        return Request
-                .classes(computer, classes.toArray(new Class<?>[0]))
-                .filterWith(filter);
+        if (parserErrors.isEmpty()) {
+            return Request
+                    .classes(computer, classes.toArray(new Class<?>[0]))
+                    .filterWith(filter);
+        } else {
+            return new Request() {
+                @Override
+                public Runner getRunner() {
+                    return new ErrorReportingRunner(
+                            JUnitCommandLineParser.class,
+                            new InitializationError(parserErrors));
+                }
+            };
+        }
     }
 
     /**

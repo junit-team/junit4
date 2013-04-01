@@ -185,14 +185,14 @@ import org.junit.tests.validation.ValidationTest;
         TestedOnSupplierTest.class,
         StacktracePrintingMatcherTest.class,
         StopwatchTest.class,
+        RunNotifierTest.class,
+        ConcurrentRunNotifierTest.class,
+        SynchronizedRunListenerTest.class,
         FilterOptionIntegrationTest.class,
         JUnitCommandLineParserTest.class,
         FilterFactoriesTest.class,
         CategoryFilterFactoryTest.class,
-        JUnitCoreTest.class,
-        RunNotifierTest.class,
-        ConcurrentRunNotifierTest.class,
-        SynchronizedRunListenerTest.class
+        JUnitCoreTest.class
 })
 public class AllTests {
     public static Test suite() {
