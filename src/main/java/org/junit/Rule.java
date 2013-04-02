@@ -10,8 +10,8 @@ import java.lang.annotation.Target;
  * static, and a subtype of {@link org.junit.rules.TestRule} (preferred) or
  * {@link org.junit.rules.MethodRule}. A method must be public, not static,
  * and must return a subtype of {@link org.junit.rules.TestRule} (preferred) or
- * {@link org.junit.rules.MethodRule}.<p>
- *
+ * {@link org.junit.rules.MethodRule}.
+ * <p>
  * The {@link org.junit.runners.model.Statement} passed
  * to the {@link org.junit.rules.TestRule} will run any {@link Before} methods,
  * then the {@link Test} method, and finally any {@link After} methods,
@@ -20,11 +20,10 @@ import java.lang.annotation.Target;
  * However, if there are mutliple fields (or methods) they will be applied in an order
  * that depends on your JVM's implementation of the reflection API, which is
  * undefined, in general. Rules defined by fields will always be applied
- * before Rules defined by methods.<p>
- *
+ * before Rules defined by methods.
+ * <p>
  * For example, here is a test class that creates a temporary folder before
  * each test method, and deletes it after each:
- *
  * <pre>
  * public static class HasTempFolder {
  *     &#064;Rule
@@ -38,9 +37,8 @@ import java.lang.annotation.Target;
  *     }
  * }
  * </pre>
- *
+ * <p>
  * And the same using a method.
- *
  * <pre>
  * public static class HasTempFolder {
  *     private TemporaryFolder folder= new TemporaryFolder();
@@ -58,7 +56,7 @@ import java.lang.annotation.Target;
  *     }
  * }
  * </pre>
- *
+ * <p>
  * For more information and more examples, see
  * {@link org.junit.rules.TestRule}.
  *

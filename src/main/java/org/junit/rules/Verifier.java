@@ -9,7 +9,7 @@ import org.junit.runners.model.Statement;
  * failed
  *
  * <pre>
- *     public static class ErrorLogVerifier() {
+ *     public static class ErrorLogVerifier {
  *        private ErrorLog errorLog = new ErrorLog();
  *
  *        &#064;Rule
