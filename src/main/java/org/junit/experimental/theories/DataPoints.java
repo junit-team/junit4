@@ -8,9 +8,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotating an array-typed field or method with &#064;DataPoints will cause
- * the values in the array (or returned array) to be used as potential
- * parameters for theories in that class, when run with the
+ * Annotating an array or iterable-typed field or method with &#064;DataPoints
+ * will cause the values in the array or iterable given to be used as potential
+ * parameters for theories in that class when run with the
  * {@link org.junit.experimental.theories.Theories Theories} runner.
  * <p>
  * DataPoints will only be considered as potential values for parameters for
@@ -27,6 +27,14 @@ import java.lang.annotation.Target;
  * &#064;ParameterSuppliedBy} annotations) will use all DataPoints that are
  * assignable to the parameter type as potential values, including named sets of
  * DataPoints.
+ * <p>
+ * DataPoints methods whose array types aren't assignable from the target
+ * parameter type (and so can't possibly return relevant values) will not be
+ * called when generating values for that parameter. Iterable-typed datapoints
+ * methods must always be called though, as this information is not available
+ * here after generic type erasure, so expensive methods returning iterable
+ * datapoints are a bad idea.
+ * 
  * <pre>
  * &#064;DataPoints
  * public static String[] dataPoints = new String[] { ... };
@@ -48,8 +56,9 @@ import java.lang.annotation.Target;
  * @see org.junit.experimental.theories.FromDataPoints
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({FIELD, METHOD})
+@Target({ FIELD, METHOD })
 public @interface DataPoints {
     String[] value() default {};
+
     Class<? extends Throwable>[] ignoredExceptions() default {};
 }
