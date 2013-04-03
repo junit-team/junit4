@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-Name: consumer
+Created-By: 1.5.0_22
+Bundle-Version: 4.12
+Bundle-Activator: org.junit.it.osgi.TestActivator
+Bundle-ManifestVersion: 2
+Import-Package: org.junit;version="[4.0,5.0)",org.junit.runner;version="[4.0,5.0)",org.osgi.framework;version="[1.6,2.0)",org.hamcrest,org.hamcrest.core
+Bundle-SymbolicName: org.junit.it.osgi
+

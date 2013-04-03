@@ -84,6 +84,7 @@
     <properties>
         <jdkVersion>1.5</jdkVersion>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>ISO-8859-1</project.reporting.outputEncoding>
         <arguments/>
         <gpg.keyname>67893CC4</gpg.keyname>
     </properties>
@@ -93,6 +94,18 @@
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
             <version>1.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>4.3.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.framework</artifactId>
+            <version>4.0.3</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -182,26 +195,38 @@
                     <value>${project.version}</value>
                 </configuration>
             </plugin>
-            <plugin><!-- Using jdk 1.5.0_22, package-info.java files are compiled correctly. -->
-                <!--
-                java compiler plugin forked in extra process
-                -->
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.5.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeGroupIds>org.hamcrest</includeGroupIds>
+                            <includeArtifactIds>hamcrest-core</includeArtifactIds>
+                            <outputDirectory>${project.build.directory}/bundles</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- java compiler -->
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.5.1</version>
                 <configuration>
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <source>${jdkVersion}</source>
                     <target>${jdkVersion}</target>
-                    <compilerVersion>1.5</compilerVersion>
+                    <testSource>${jdkVersion}</testSource>
+                    <testTarget>${jdkVersion}</testTarget>
                     <showDeprecation>true</showDeprecation>
                     <showWarnings>true</showWarnings>
-                    <debug>true</debug>
-                    <fork>true</fork>
-                    <compilerArgument>-Xlint:unchecked</compilerArgument>
-                    <maxmem>128m</maxmem>
                 </configuration>
             </plugin>
             <plugin>
+                <!-- OSGi bundle in JAR archive -->
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <version>2.3.7</version>
@@ -215,14 +240,33 @@
                         <Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
                         <Bundle-DocURL>${project.organization.url}</Bundle-DocURL>
                         <Bundle-Version>${project.version}</Bundle-Version>
-                        <Export-Package>!org.junit.internal.*,!org.junit.experimental.theories.internal.*,org.hamcrest.*;version="${hamcrestVersion}",junit.*;version="${project.version}",org.junit.*;version="${project.version}"</Export-Package>
+                        <Export-Package>!org.junit.internal.*,!org.junit.experimental.theories.internal.*,junit.*;version="${project.version}",org.junit.*;version="${project.version}"</Export-Package>
                         <Private-Package>org.junit.internal.*,org.junit.experimental.theories.internal.*</Private-Package>
                         <Bundle-Description>${project.description}</Bundle-Description>
                         <Bundle-License>Common Public License Version 1.0</Bundle-License>
-                        <Import-Package>org.osgi.framework.*;version="[1.6,2.0)";resolution:=optional</Import-Package>
-                        <!--Bundle-Activator>org.junit.osgi.JunitActivator</Bundle-Activator-->
+                        <Import-Package>org.osgi.framework.*;version="[1.6,2.0)";resolution:=optional,org.hamcrest.*</Import-Package>
+                        <Bundle-Activator>org.junit.osgi.Activator</Bundle-Activator>
                     </instructions>
                 </configuration>
+            </plugin>
+            <plugin>
+                <!-- The archive produced by maven-jar-plugin is deployed even if cleaned. -->
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <id>package-test-bundle</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <jar basedir="target/test-classes" jarfile="target/bundles/${project.build.finalName}-tests.jar" manifest="src/test/resources/META-INF/MANIFEST.MF"/>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <!--
@@ -230,12 +274,44 @@
                 our junit suite "AllTests" after the sources are compiled.
                 -->
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.12.3</version>
+                <version>2.14</version>
                 <configuration>
                     <test>org/junit/tests/AllTests.java</test>
-                    <useSystemClassLoader>true</useSystemClassLoader>
                     <enableAssertions>false</enableAssertions>
                 </configuration>
+            </plugin>
+            <plugin>
+                <!-- integration tests for OSGi bundle -->
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.14</version>
+                <executions>
+                    <execution>
+                        <id>integration-tests</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/OSGiITCase.java</include>
+                            </includes>
+                            <systemPropertyVariables>
+                                <bundles>file:target/${project.build.finalName}.jar,file:target/bundles/${project.build.finalName}-tests.jar</bundles>
+                            </systemPropertyVariables>
+                            <classpathDependencyExcludes>
+                                <classpathDependencyExclude>org.osgi:org.osgi.core</classpathDependencyExclude>
+                            </classpathDependencyExcludes>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-junit47</artifactId>
+                        <version>2.14</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <!--
@@ -265,11 +341,11 @@
                     <windowtitle>JUnit API</windowtitle>
                     <encoding>UTF-8</encoding>
                     <locale>en</locale>
-                    <javadocVersion>1.5</javadocVersion>
+                    <javadocVersion>${jdkVersion}</javadocVersion>
                     <javaApiLinks>
                         <property>
-                            <name>api_1.5</name>
-                            <value>http://docs.oracle.com/javase/1.5.0/docs/api/index.html</value>
+                            <name>api_${jdkVersion}</name>
+                            <value>http://docs.oracle.com/javase/${jdkVersion}.0/docs/api/</value>
                         </property>
                     </javaApiLinks>
                     <excludePackageNames>junit.*,*.internal,*.internal.*</excludePackageNames>
