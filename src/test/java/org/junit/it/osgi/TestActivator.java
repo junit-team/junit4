@@ -41,7 +41,6 @@ public final class TestActivator implements BundleActivator {
 
         JUnitCore core = new JUnitCore();
 
-        assertNotNull(core);
         assertThat(core.getClass().getClassLoader(), is(not(sameInstance(ClassLoader.getSystemClassLoader()))));
         assertThat(core.getClass().getClassLoader(), is(not(sameInstance(Thread.currentThread().getContextClassLoader()))));
         assertNull(core.getClass().getClassLoader().getParent());
