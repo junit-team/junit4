@@ -96,12 +96,6 @@
             <version>1.3</version>
         </dependency>
         <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <version>4.3.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.framework</artifactId>
             <version>4.0.3</version>
@@ -196,22 +190,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.5.1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <includeGroupIds>org.hamcrest</includeGroupIds>
-                            <includeArtifactIds>hamcrest-core</includeArtifactIds>
-                            <outputDirectory>${project.build.directory}/bundles</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <!-- java compiler -->
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.5.1</version>
@@ -244,8 +222,7 @@
                         <Private-Package>org.junit.internal.*,org.junit.experimental.theories.internal.*</Private-Package>
                         <Bundle-Description>${project.description}</Bundle-Description>
                         <Bundle-License>Common Public License Version 1.0</Bundle-License>
-                        <Import-Package>org.osgi.framework.*;version="[1.6,2.0)";resolution:=optional,org.hamcrest.*</Import-Package>
-                        <Bundle-Activator>org.junit.osgi.Activator</Bundle-Activator>
+                        <Import-Package>!org.hamcrest.internal.*,org.hamcrest.*</Import-Package>
                     </instructions>
                 </configuration>
             </plugin>
@@ -299,9 +276,6 @@
                             <systemPropertyVariables>
                                 <bundles>file:target/${project.build.finalName}.jar,file:target/bundles/${project.build.finalName}-tests.jar</bundles>
                             </systemPropertyVariables>
-                            <classpathDependencyExcludes>
-                                <classpathDependencyExclude>org.osgi:org.osgi.core</classpathDependencyExclude>
-                            </classpathDependencyExcludes>
                         </configuration>
                     </execution>
                 </executions>
