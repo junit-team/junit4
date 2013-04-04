@@ -1,21 +1,24 @@
 package org.junit.it.osgi;
 
 import org.hamcrest.Matcher;
-import org.junit.Assert;
+import org.junit.Test;
 import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsAnything.anything;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsSame.sameInstance;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Tibor Digana (tibor17)
@@ -28,11 +31,13 @@ public final class TestActivator implements BundleActivator {
 
         String providerBundleSymbolicName = "org.junit";
         String consumerBundleSymbolicName = "org.junit.it.osgi";
-        ArrayList<String> symbolicNames = new ArrayList<String>();
+        HashMap<String, Bundle> bundles = new HashMap<String, Bundle>();
         for (Bundle bundle : bundleContext.getBundles()) {
-            symbolicNames.add(bundle.getSymbolicName());
+            bundles.put(bundle.getSymbolicName(), bundle);
         }
-        Assert.assertThat(symbolicNames, hasItems(providerBundleSymbolicName, consumerBundleSymbolicName));
+        assertThat(bundles.keySet(), hasItems(providerBundleSymbolicName, consumerBundleSymbolicName));
+
+        assertNotNull(bundles.get("org.junit").getEntry("junit/runner/logo.gif"));
 
         JUnitCore core = new JUnitCore();
 
@@ -40,8 +45,20 @@ public final class TestActivator implements BundleActivator {
         assertThat(core.getClass().getClassLoader(), is(not(sameInstance(ClassLoader.getSystemClassLoader()))));
         assertThat(core.getClass().getClassLoader(), is(not(sameInstance(Thread.currentThread().getContextClassLoader()))));
         assertNull(core.getClass().getClassLoader().getParent());
+
+        Result result = core.run(TestClass.class);
+        assertTrue(result.wasSuccessful());
+        assertThat(result.getRunCount(), is(1));
     }
 
     public void stop(BundleContext bundleContext) throws Exception {
+    }
+
+    public static class TestClass {
+        @Test
+        public void test() {
+            // bundle works with Hamcrest
+            assertThat("", is(anything()));
+        }
     }
 }
