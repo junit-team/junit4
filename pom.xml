@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -241,14 +241,14 @@
                     <windowtitle>JUnit API</windowtitle>
                     <encoding>UTF-8</encoding>
                     <locale>en</locale>
-                    <javadocVersion>1.5</javadocVersion>
+                    <javadocVersion>${jdkVersion}</javadocVersion>
                     <javaApiLinks>
                         <property>
-                            <name>api_1.5</name>
-                            <value>http://docs.oracle.com/javase/1.5.0/docs/api/index.html</value>
+                            <name>api_${jdkVersion}</name>
+                            <value>http://docs.oracle.com/javase/${jdkVersion}.0/docs/api/</value>
                         </property>
                     </javaApiLinks>
-                    <excludePackageNames>junit.*,*.internal,*.internal.*</excludePackageNames>
+                    <excludePackageNames>junit.*,*.internal.*</excludePackageNames>
                     <verbose>true</verbose>
                     <minmemory>32m</minmemory>
                     <maxmemory>128m</maxmemory>

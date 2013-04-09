@@ -1,5 +1,7 @@
 package org.junit.experimental.theories.internal;
 
+import static java.util.Collections.emptyList;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -61,30 +63,44 @@ public class Assignments {
                 fUnassigned.size()), fClass);
     }
 
-    public Object[] getActualValues(int start, int stop, boolean nullsOk)
+    public Object[] getActualValues(int start, int stop) 
             throws CouldNotGenerateValueException {
         Object[] values = new Object[stop - start];
         for (int i = start; i < stop; i++) {
-            Object value = fAssigned.get(i).getValue();
-            if (value == null && !nullsOk) {
-                throw new CouldNotGenerateValueException();
-            }
-            values[i - start] = value;
+            values[i - start] = fAssigned.get(i).getValue();
         }
         return values;
     }
 
     public List<PotentialAssignment> potentialsForNextUnassigned()
-            throws Exception {
+            throws Throwable {
         ParameterSignature unassigned = nextUnassigned();
-        return getSupplier(unassigned).getValueSources(unassigned);
+        List<PotentialAssignment> assignments = getSupplier(unassigned).getValueSources(unassigned);
+        
+        if (assignments.size() == 0) {
+            assignments = generateAssignmentsFromTypeAlone(unassigned);
+        }
+        
+        return assignments;
+    }
+
+    private List<PotentialAssignment> generateAssignmentsFromTypeAlone(ParameterSignature unassigned) {
+        Class<?> paramType = unassigned.getType();
+        
+        if (paramType.isEnum()) {
+            return new EnumSupplier(paramType).getValueSources(unassigned);  
+        } else if (paramType.equals(Boolean.class) || paramType.equals(boolean.class)) {
+            return new BooleanSupplier().getValueSources(unassigned);
+        } else {
+            return emptyList();
+        }
     }
 
     private ParameterSupplier getSupplier(ParameterSignature unassigned)
             throws Exception {
         ParametersSuppliedBy annotation = unassigned
                 .findDeepAnnotation(ParametersSuppliedBy.class);
-
+        
         if (annotation != null) {
             return buildParameterSupplierFromClass(annotation.value());
         } else {
@@ -107,20 +123,17 @@ public class Assignments {
         return cls.newInstance();
     }
 
-    public Object[] getConstructorArguments(boolean nullsOk)
+    public Object[] getConstructorArguments()
             throws CouldNotGenerateValueException {
-        return getActualValues(0, getConstructorParameterCount(), nullsOk);
+        return getActualValues(0, getConstructorParameterCount());
     }
 
-    public Object[] getMethodArguments(boolean nullsOk)
-            throws CouldNotGenerateValueException {
-        return getActualValues(getConstructorParameterCount(),
-                fAssigned.size(), nullsOk);
+    public Object[] getMethodArguments() throws CouldNotGenerateValueException {
+        return getActualValues(getConstructorParameterCount(), fAssigned.size());
     }
 
-    public Object[] getAllArguments(boolean nullsOk)
-            throws CouldNotGenerateValueException {
-        return getActualValues(0, fAssigned.size(), nullsOk);
+    public Object[] getAllArguments() throws CouldNotGenerateValueException {
+        return getActualValues(0, fAssigned.size());
     }
 
     private int getConstructorParameterCount() {

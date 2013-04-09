@@ -9,18 +9,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * <p>A <code>Description</code> describes a test which is to be run or has been run. <code>Descriptions</code>
+ * A <code>Description</code> describes a test which is to be run or has been run. <code>Descriptions</code>
  * can be atomic (a single test) or compound (containing children tests). <code>Descriptions</code> are used
  * to provide feedback about the tests that are about to run (for example, the tree view
- * visible in many IDEs) or tests that have been run (for example, the failures view).</p>
- *
- * <p><code>Descriptions</code> are implemented as a single class rather than a Composite because
- * they are entirely informational. They contain no logic aside from counting their tests.</p>
- *
- * <p>In the past, we used the raw {@link junit.framework.TestCase}s and {@link junit.framework.TestSuite}s
+ * visible in many IDEs) or tests that have been run (for example, the failures view).
+ * <p>
+ * <code>Descriptions</code> are implemented as a single class rather than a Composite because
+ * they are entirely informational. They contain no logic aside from counting their tests.
+ * <p>
+ * In the past, we used the raw {@link junit.framework.TestCase}s and {@link junit.framework.TestSuite}s
  * to display the tree of tests. This was no longer viable in JUnit 4 because atomic tests no longer have
  * a superclass below {@link Object}. We needed a way to pass a class and name together. Description
- * emerged from this.</p>
+ * emerged from this.
  *
  * @see org.junit.runner.Request
  * @see org.junit.runner.Runner
