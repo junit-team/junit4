@@ -15,8 +15,7 @@
   <property name="zipfile"  value="${dist}/${dist}.zip" />
   <property name="testsrc" location="src/test/java" />
   <property name="testbin" location="${target}/test/java" />
-  <property name="unjarred" 
-            value="**/*.jar, ${testfiles}, doc/**, README.md, .classpath, .project, cpl-v10.html" />
+  <property name="unjarred" value="**/*.jar, ${testfiles}, doc/**, README.md, .classpath, .project, cpl-v10.html" />
 
   <property name="binjar" value="junit-${version}.jar" />
   <property name="srcjar" value="junit-${version}-src.jar" />
@@ -31,6 +30,7 @@
   <property name="hamcrestlib" location="lib/hamcrest-core-1.3.jar" />
   <property name="hamcrestlibsources" location="lib/hamcrest-core-1.3-sources.jar" />
   <property name="hamcrestsrc" location="${dist}/temp.hamcrest.source" />
+  <property name="osgicorelib" location="lib/org.osgi.core-5.0.0.jar" />
 
   <property name="maven.deploy.goal" value="org.apache.maven.plugins:maven-gpg-plugin:1.1:sign-and-deploy-file" />
 
@@ -82,7 +82,7 @@
   <target name="build" depends="versiontag">
     <junit_compilation srcdir="${src}" destdir="${bin}" classpath="${hamcrestlib}"/>
     <unjar src="${hamcrestlib}" dest="${bin}" />
-    <junit_compilation srcdir="${testsrc}" destdir="${testbin}" classpath="${hamcrestlib};${bin}"/>
+    <junit_compilation srcdir="${testsrc}" destdir="${testbin}" classpath="${osgicorelib};${hamcrestlib};${bin}"/>
   </target>
 
   <target name="jars" depends="build">
@@ -144,7 +144,7 @@
              version="false"
              use="false"
              windowtitle="JUnit API"
-             stylesheetfile="stylesheet.css"
+             stylesheetfile="src/main/javadoc/stylesheet.css"
              >
       <excludepackage name="junit.*" />
       <excludepackage name="org.junit.internal.*" />
