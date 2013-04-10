@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.tests.experimental.theories.TheoryTestUtils.potentialAssignments;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Rule;
@@ -22,7 +23,6 @@ import org.junit.runners.model.TestClass;
 public class AllMembersSupplierTest {
     @Rule
     public ExpectedException expected = ExpectedException.none();
-    
     
     public static class HasDataPointsArrayField {
         @DataPoints
@@ -152,5 +152,58 @@ public class AllMembersSupplierTest {
                 .getValueSources(ParameterSignature.signatures(
                         testClass.getConstructor(constructorParameterTypes))
                         .get(0));
+    }
+    
+    public static class HasDataPointsListField {
+        @DataPoints
+        public static List<String> list = Arrays.asList("one", "two");
+
+        @Theory
+        public void theory(String param) {
+        }
+    }
+
+    @Test
+    public void dataPointsCollectionFieldsShouldBeRecognized() throws Throwable {
+        List<PotentialAssignment> assignments = potentialAssignments(
+            HasDataPointsListField.class.getMethod("theory", String.class));
+
+        assertEquals(2, assignments.size());
+    }
+    
+    public static class HasDataPointsListMethod {
+        @DataPoints
+        public static List<String> getList() {
+            return Arrays.asList("one", "two");
+        }
+
+        @Theory
+        public void theory(String param) {
+        }
+    }
+
+    @Test
+    public void dataPointsCollectionMethodShouldBeRecognized() throws Throwable {
+        List<PotentialAssignment> assignments = potentialAssignments(
+            HasDataPointsListMethod.class.getMethod("theory", String.class));
+
+        assertEquals(2, assignments.size());
+    }
+    
+    public static class HasDataPointsListFieldWithOverlyGenericTypes {
+        @DataPoints
+        public static List<Object> list = Arrays.asList("string", new Object());
+
+        @Theory
+        public void theory(String param) {
+        }
+    }
+
+    @Test
+    public void dataPointsCollectionShouldBeRecognizedIgnoringStrangeTypes() throws Throwable {
+        List<PotentialAssignment> assignments = potentialAssignments(
+            HasDataPointsListFieldWithOverlyGenericTypes.class.getMethod("theory", String.class));
+
+        assertEquals(1, assignments.size());
     }
 }
