@@ -19,8 +19,7 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
 public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
-    private final class OldTestClassAdaptingListener implements
-            TestListener {
+    private static final class OldTestClassAdaptingListener implements TestListener {
         private final RunNotifier fNotifier;
 
         private OldTestClassAdaptingListener(RunNotifier notifier) {
@@ -66,7 +65,7 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
         }
     }
 
-    private Test fTest;
+    private volatile Test fTest;
 
     public JUnit38ClassRunner(Class<?> klass) {
         this(new TestSuite(klass.asSubclass(TestCase.class)));
@@ -126,11 +125,12 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
     }
 
     public void filter(Filter filter) throws NoTestsRemainException {
-        if (getTest() instanceof Filterable) {
-            Filterable adapter = (Filterable) getTest();
+        final Test thisTest = getTest();
+        if (thisTest instanceof Filterable) {
+            Filterable adapter = (Filterable) thisTest;
             adapter.filter(filter);
-        } else if (getTest() instanceof TestSuite) {
-            TestSuite suite = (TestSuite) getTest();
+        } else if (thisTest instanceof TestSuite) {
+            TestSuite suite = (TestSuite) thisTest;
             TestSuite filtered = new TestSuite(suite.getName());
             int n = suite.testCount();
             for (int i = 0; i < n; i++) {
@@ -144,8 +144,9 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
     }
 
     public void sort(Sorter sorter) {
-        if (getTest() instanceof Sortable) {
-            Sortable adapter = (Sortable) getTest();
+        final Test thisTest = getTest();
+        if (thisTest instanceof Sortable) {
+            Sortable adapter = (Sortable) thisTest;
             adapter.sort(sorter);
         }
     }

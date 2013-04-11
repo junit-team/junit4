@@ -5,6 +5,7 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -135,11 +136,11 @@ public class Description implements Serializable {
      */
     public static final Description TEST_MECHANISM = new Description(null, "Test mechanism");
 
-    private final ArrayList<Description> fChildren = new ArrayList<Description>();
+    private final Collection<Description> fChildren= new ConcurrentLinkedQueue<Description>();
     private final String fDisplayName;
     private final Serializable fUniqueId;
     private final Annotation[] fAnnotations;
-    private /* write-once */ Class<?> fTestClass;
+    private volatile /* write-once */ Class<?> fTestClass;
 
     private Description(Class<?> clazz, String displayName, Annotation... annotations) {
         this(clazz, displayName, displayName, annotations);
@@ -147,12 +148,10 @@ public class Description implements Serializable {
 
     private Description(Class<?> clazz, String displayName, Serializable uniqueId, Annotation... annotations) {
         if ((displayName == null) || (displayName.length() == 0)) {
-            throw new IllegalArgumentException(
-                    "The display name must not be empty.");
+            throw new IllegalArgumentException("The display name must not be empty.");
         }
         if ((uniqueId == null)) {
-            throw new IllegalArgumentException(
-                    "The unique id must not be null.");
+            throw new IllegalArgumentException("The unique id must not be null.");
         }
         fTestClass = clazz;
         fDisplayName = displayName;
@@ -173,14 +172,14 @@ public class Description implements Serializable {
      * @param description the soon-to-be child.
      */
     public void addChild(Description description) {
-        getChildren().add(description);
+        fChildren.add(description);
     }
 
     /**
      * @return the receiver's children, if any
      */
     public ArrayList<Description> getChildren() {
-        return fChildren;
+        return new ArrayList<Description>(fChildren);
     }
 
     /**
@@ -194,7 +193,7 @@ public class Description implements Serializable {
      * @return <code>true</code> if the receiver is an atomic test
      */
     public boolean isTest() {
-        return getChildren().isEmpty();
+        return fChildren.isEmpty();
     }
 
     /**
@@ -205,7 +204,7 @@ public class Description implements Serializable {
             return 1;
         }
         int result = 0;
-        for (Description child : getChildren()) {
+        for (Description child : fChildren) {
             result += child.testCount();
         }
         return result;
@@ -301,8 +300,7 @@ public class Description implements Serializable {
         return methodAndClassNamePatternGroupOrDefault(1, null);
     }
 
-    private String methodAndClassNamePatternGroupOrDefault(int group,
-            String defaultString) {
+    private String methodAndClassNamePatternGroupOrDefault(int group, String defaultString) {
         Matcher matcher = METHOD_AND_CLASS_NAME_PATTERN.matcher(toString());
         return matcher.matches() ? matcher.group(group) : defaultString;
     }
