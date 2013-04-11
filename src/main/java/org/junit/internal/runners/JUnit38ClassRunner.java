@@ -19,7 +19,7 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
 public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
-    private final class OldTestClassAdaptingListener implements
+    private static final class OldTestClassAdaptingListener implements
             TestListener {
         private final RunNotifier fNotifier;
 
@@ -66,7 +66,7 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
         }
     }
 
-    private Test fTest;
+    private volatile Test fTest;
 
     public JUnit38ClassRunner(Class<?> klass) {
         this(new TestSuite(klass.asSubclass(TestCase.class)));

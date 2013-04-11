@@ -6,10 +6,12 @@ import static org.junit.internal.runners.rules.RuleFieldValidator.CLASS_RULE_VAL
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -54,11 +56,9 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         Sortable {
     private final TestClass fTestClass;
 
-    private Sorter fSorter = Sorter.NULL;
+    private volatile Collection<T> fFilteredChildren = null;
 
-    private List<T> fFilteredChildren = null;
-
-    private RunnerScheduler fScheduler = new RunnerScheduler() {
+    private volatile RunnerScheduler fScheduler = new RunnerScheduler() {
         public void schedule(Runnable childStatement) {
             childStatement.run();
         }
@@ -232,14 +232,18 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     }
 
     private void runChildren(final RunNotifier notifier) {
-        for (final T each : getFilteredChildren()) {
-            fScheduler.schedule(new Runnable() {
-                public void run() {
-                    ParentRunner.this.runChild(each, notifier);
-                }
-            });
+        final RunnerScheduler scheduler = fScheduler;
+        try {
+            for (final T each : getFilteredChildren()) {
+                scheduler.schedule(new Runnable() {
+                    public void run() {
+                        ParentRunner.this.runChild(each, notifier);
+                    }
+                });
+            }
+        } finally {
+            scheduler.finished();
         }
-        fScheduler.finished();
     }
 
     /**
@@ -339,11 +343,13 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     }
 
     public void sort(Sorter sorter) {
-        fSorter = sorter;
         for (T each : getFilteredChildren()) {
-            sortChild(each);
+            sortChild(each, sorter);
         }
-        Collections.sort(getFilteredChildren(), comparator());
+        List<T> sortedChildren = new ArrayList<T>(getFilteredChildren());
+        Collections.sort(sortedChildren, comparator(sorter));
+        getFilteredChildren().clear();
+        getFilteredChildren().addAll(sortedChildren);
     }
 
     //
@@ -358,25 +364,25 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         }
     }
 
-    private List<T> getFilteredChildren() {
+    private Collection<T> getFilteredChildren() {
         if (fFilteredChildren == null) {
-            fFilteredChildren = new ArrayList<T>(getChildren());
+            fFilteredChildren = new ConcurrentLinkedQueue<T>(getChildren());
         }
         return fFilteredChildren;
     }
 
-    private void sortChild(T child) {
-        fSorter.apply(child);
+    private void sortChild(T child, Sorter sorter) {
+        sorter.apply(child);
     }
 
     private boolean shouldRun(Filter filter, T each) {
         return filter.shouldRun(describeChild(each));
     }
 
-    private Comparator<? super T> comparator() {
+    private Comparator<? super T> comparator(final Sorter sorter) {
         return new Comparator<T>() {
             public int compare(T o1, T o2) {
-                return fSorter.compare(describeChild(o1), describeChild(o2));
+                return sorter.compare(describeChild(o1), describeChild(o2));
             }
         };
     }

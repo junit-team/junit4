@@ -7,9 +7,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,9 +25,11 @@ import org.junit.internal.MethodSorter;
 public class TestClass {
     private final Class<?> fClass;
 
-    private Map<Class<?>, List<FrameworkMethod>> fMethodsForAnnotations = new HashMap<Class<?>, List<FrameworkMethod>>();
+    private final Map<Class<?>, List<FrameworkMethod>> fMethodsForAnnotations
+            = new ConcurrentHashMap<Class<?>, List<FrameworkMethod>>();
 
-    private Map<Class<?>, List<FrameworkField>> fFieldsForAnnotations = new HashMap<Class<?>, List<FrameworkField>>();
+    private final Map<Class<?>, List<FrameworkField>> fFieldsForAnnotations
+            = new ConcurrentHashMap<Class<?>, List<FrameworkField>>();
 
     /**
      * Creates a {@code TestClass} wrapping {@code klass}. Each time this
@@ -53,7 +56,7 @@ public class TestClass {
         }
     }
 
-    private <T extends FrameworkMember<T>> void addToAnnotationLists(T member,
+    private static <T extends FrameworkMember<T>> void addToAnnotationLists(T member,
             Map<Class<?>, List<T>> map) {
         for (Annotation each : member.getAnnotations()) {
             Class<? extends Annotation> type = each.annotationType();
@@ -87,20 +90,20 @@ public class TestClass {
         return getAnnotatedMembers(fFieldsForAnnotations, annotationClass);
     }
 
-    private <T> List<T> getAnnotatedMembers(Map<Class<?>, List<T>> map,
+    private static <T> List<T> getAnnotatedMembers(Map<Class<?>, List<T>> map,
             Class<? extends Annotation> type) {
         if (!map.containsKey(type)) {
-            map.put(type, new ArrayList<T>());
+            map.put(type, new CopyOnWriteArrayList<T>());
         }
         return map.get(type);
     }
 
-    private boolean runsTopToBottom(Class<? extends Annotation> annotation) {
+    private static boolean runsTopToBottom(Class<? extends Annotation> annotation) {
         return annotation.equals(Before.class)
                 || annotation.equals(BeforeClass.class);
     }
 
-    private List<Class<?>> getSuperClasses(Class<?> testClass) {
+    private static List<Class<?>> getSuperClasses(Class<?> testClass) {
         ArrayList<Class<?>> results = new ArrayList<Class<?>>();
         Class<?> current = testClass;
         while (current != null) {
@@ -150,7 +153,7 @@ public class TestClass {
 
     public <T> List<T> getAnnotatedFieldValues(Object test,
             Class<? extends Annotation> annotationClass, Class<T> valueClass) {
-        List<T> results = new ArrayList<T>();
+        List<T> results = new CopyOnWriteArrayList<T>();
         for (FrameworkField each : getAnnotatedFields(annotationClass)) {
             try {
                 Object fieldValue = each.get(test);
@@ -167,7 +170,7 @@ public class TestClass {
 
     public <T> List<T> getAnnotatedMethodValues(Object test,
             Class<? extends Annotation> annotationClass, Class<T> valueClass) {
-        List<T> results = new ArrayList<T>();
+        List<T> results = new CopyOnWriteArrayList<T>();
         for (FrameworkMethod each : getAnnotatedMethods(annotationClass)) {
             try {
                 Object fieldValue = each.invokeExplosively(test, new Object[]{});
