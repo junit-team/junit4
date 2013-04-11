@@ -10,6 +10,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
@@ -152,12 +153,10 @@ public class Parameterized extends Suite {
 
     protected class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
         private final Object[] fParameters;
-
-        private String fName;
+        private final String fName;
 
         protected TestClassRunnerForParameters(Class<?> type, String pattern, int index, Object[] parameters) throws InitializationError {
             super(type);
-
             fParameters = parameters;
             fName = nameFor(pattern, index, parameters);
         }
@@ -264,15 +263,14 @@ public class Parameterized extends Suite {
 
     private static final List<Runner> NO_RUNNERS = Collections.<Runner>emptyList();
 
-    private final ArrayList<Runner> runners = new ArrayList<Runner>();
+    private final List<Runner> runners = new CopyOnWriteArrayList<Runner>();
 
     /**
      * Only called reflectively. Do not use programmatically.
      */
     public Parameterized(Class<?> klass) throws Throwable {
         super(klass, NO_RUNNERS);
-        Parameters parameters = getParametersMethod().getAnnotation(
-                Parameters.class);
+        Parameters parameters = getParametersMethod().getAnnotation(Parameters.class);
         createRunnersForParameters(allParameters(), parameters.name());
     }
 

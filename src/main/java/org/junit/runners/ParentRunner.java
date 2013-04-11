@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -50,15 +51,12 @@ import org.junit.runners.model.TestClass;
  *
  * @since 4.5
  */
-public abstract class ParentRunner<T> extends Runner implements Filterable,
-        Sortable {
+public abstract class ParentRunner<T> extends Runner implements Filterable, Sortable {
     private final TestClass fTestClass;
 
-    private Sorter fSorter = Sorter.NULL;
+    private volatile List<T> fFilteredChildren = null;
 
-    private List<T> fFilteredChildren = null;
-
-    private RunnerScheduler fScheduler = new RunnerScheduler() {
+    private volatile RunnerScheduler fScheduler = new RunnerScheduler() {
         public void schedule(Runnable childStatement) {
             childStatement.run();
         }
@@ -170,10 +168,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * Exception, stop execution and pass the exception on.
      */
     protected Statement withBeforeClasses(Statement statement) {
-        List<FrameworkMethod> befores = fTestClass
-                .getAnnotatedMethods(BeforeClass.class);
-        return befores.isEmpty() ? statement :
-                new RunBefores(statement, befores, null);
+        List<FrameworkMethod> befores = fTestClass.getAnnotatedMethods(BeforeClass.class);
+        return befores.isEmpty() ? statement : new RunBefores(statement, befores, null);
     }
 
     /**
@@ -184,10 +180,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * {@link MultipleFailureException}.
      */
     protected Statement withAfterClasses(Statement statement) {
-        List<FrameworkMethod> afters = fTestClass
-                .getAnnotatedMethods(AfterClass.class);
-        return afters.isEmpty() ? statement :
-                new RunAfters(statement, afters, null);
+        List<FrameworkMethod> afters = fTestClass.getAnnotatedMethods(AfterClass.class);
+        return afters.isEmpty() ? statement : new RunAfters(statement, afters, null);
     }
 
     /**
@@ -201,8 +195,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      */
     private Statement withClassRules(Statement statement) {
         List<TestRule> classRules = classRules();
-        return classRules.isEmpty() ? statement :
-                new RunRules(statement, classRules, getDescription());
+        return classRules.isEmpty() ? statement : new RunRules(statement, classRules, getDescription());
     }
 
     /**
@@ -211,9 +204,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      */
     protected List<TestRule> classRules() {
         List<TestRule> result = fTestClass.getAnnotatedMethodValues(null, ClassRule.class, TestRule.class);
-
         result.addAll(fTestClass.getAnnotatedFieldValues(null, ClassRule.class, TestRule.class));
-
         return result;
     }
 
@@ -232,14 +223,18 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     }
 
     private void runChildren(final RunNotifier notifier) {
-        for (final T each : getFilteredChildren()) {
-            fScheduler.schedule(new Runnable() {
-                public void run() {
-                    ParentRunner.this.runChild(each, notifier);
-                }
-            });
+        final RunnerScheduler scheduler = fScheduler;
+        try {
+            for (final T each : getFilteredChildren()) {
+                scheduler.schedule(new Runnable() {
+                    public void run() {
+                        ParentRunner.this.runChild(each, notifier);
+                    }
+                });
+            }
+        } finally {
+            scheduler.finished();
         }
-        fScheduler.finished();
     }
 
     /**
@@ -263,8 +258,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     /**
      * Runs a {@link Statement} that represents a leaf (aka atomic) test.
      */
-    protected final void runLeaf(Statement statement, Description description,
-            RunNotifier notifier) {
+    protected final void runLeaf(Statement statement, Description description, RunNotifier notifier) {
         EachTestNotifier eachNotifier = new EachTestNotifier(notifier, description);
         eachNotifier.fireTestStarted();
         try {
@@ -292,8 +286,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
     @Override
     public Description getDescription() {
-        Description description = Description.createSuiteDescription(getName(),
-                getRunnerAnnotations());
+        Description description = Description.createSuiteDescription(getName(), getRunnerAnnotations());
         for (T child : getFilteredChildren()) {
             description.addChild(describeChild(child));
         }
@@ -339,11 +332,10 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     }
 
     public void sort(Sorter sorter) {
-        fSorter = sorter;
         for (T each : getFilteredChildren()) {
-            sortChild(each);
+            sortChild(each, sorter);
         }
-        Collections.sort(getFilteredChildren(), comparator());
+        Collections.sort(getFilteredChildren(), comparator(sorter));
     }
 
     //
@@ -360,23 +352,23 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
     private List<T> getFilteredChildren() {
         if (fFilteredChildren == null) {
-            fFilteredChildren = new ArrayList<T>(getChildren());
+            fFilteredChildren = new CopyOnWriteArrayList<T>(getChildren());
         }
         return fFilteredChildren;
     }
 
-    private void sortChild(T child) {
-        fSorter.apply(child);
+    private void sortChild(T child, Sorter sorter) {
+        sorter.apply(child);
     }
 
     private boolean shouldRun(Filter filter, T each) {
         return filter.shouldRun(describeChild(each));
     }
 
-    private Comparator<? super T> comparator() {
+    private Comparator<? super T> comparator(final Sorter sorter) {
         return new Comparator<T>() {
             public int compare(T o1, T o2) {
-                return fSorter.compare(describeChild(o1), describeChild(o2));
+                return sorter.compare(describeChild(o1), describeChild(o2));
             }
         };
     }

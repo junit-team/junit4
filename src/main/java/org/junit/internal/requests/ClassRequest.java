@@ -8,7 +8,7 @@ public class ClassRequest extends Request {
     private final Object fRunnerLock = new Object();
     private final Class<?> fTestClass;
     private final boolean fCanUseSuiteMethod;
-    private Runner fRunner;
+    private volatile Runner fRunner;
 
     public ClassRequest(Class<?> testClass, boolean canUseSuiteMethod) {
         fTestClass = testClass;
