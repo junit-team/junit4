@@ -15,7 +15,8 @@
   <property name="zipfile"  value="${dist}/${dist}.zip" />
   <property name="testsrc" location="src/test/java" />
   <property name="testbin" location="${target}/test/java" />
-  <property name="unjarred" value="**/*.jar, ${testfiles}, doc/**, README.md, .classpath, .project, cpl-v10.html" />
+  <property name="unjarred"
+            value="**/*.jar, ${testfiles}, doc/**, README.md, .classpath, .project, cpl-v10.html" />
 
   <property name="binjar" value="junit-${version}.jar" />
   <property name="srcjar" value="junit-${version}-src.jar" />
