@@ -191,17 +191,22 @@
                 </configuration>
             </plugin>
             <plugin>
-                <!-- java compiler -->
+                <!-- forked java compiler -->
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.5.1</version>
                 <configuration>
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <source>${jdkVersion}</source>
                     <target>${jdkVersion}</target>
+                    <compilerVersion>1.5</compilerVersion>
                     <testSource>${jdkVersion}</testSource>
                     <testTarget>${jdkVersion}</testTarget>
                     <showDeprecation>true</showDeprecation>
                     <showWarnings>true</showWarnings>
+                    <debug>true</debug>
+                    <fork>true</fork>
+                    <compilerArgument>-Xlint:unchecked</compilerArgument>
+                    <maxmem>128m</maxmem>
                 </configuration>
             </plugin>
             <plugin>
