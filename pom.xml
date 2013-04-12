@@ -288,7 +288,7 @@
                         </goals>
                         <configuration>
                             <includes>
-                                <include>**/OSGiITCase.java</include>
+                                <include>**/IntegrationTestCase.java</include>
                             </includes>
                             <systemPropertyVariables>
                                 <bundles>file:target/${project.build.finalName}.jar,file:target/bundles/${project.build.finalName}-tests.jar</bundles>

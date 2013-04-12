@@ -19,7 +19,7 @@ import java.util.Map;
  * @author Tibor Digana (tibor17)
  * @since 4.12
  */
-public class OSGiITCase {
+public class IntegrationTestCase {
     private final Collection<Bundle> bundles = new ArrayList<Bundle>();
     private Framework framework;
 

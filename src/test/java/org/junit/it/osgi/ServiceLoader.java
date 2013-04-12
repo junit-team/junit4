@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 /**
- * Substitutes Java 1.6 ServiceLoader. Used in integration test {@link OSGiITCase}.
+ * Substitutes Java 1.6 ServiceLoader. Used in integration test {@link IntegrationTestCase}.
  * Loads OSGi framework as a service implemented by some OSGi vendor - currently Felix.
  * The vendor is specified in pom.xml dependencies.
  * Current dependency is selected by groupId: org.apache.felix and artifactId: org.apache.felix.framework.
