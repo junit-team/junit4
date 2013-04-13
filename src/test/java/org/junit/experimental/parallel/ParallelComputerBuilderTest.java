@@ -15,7 +15,6 @@ import org.junit.runners.Suite;
 import java.util.Collection;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.junit.experimental.parallel.ParallelComputerBuilder.Type;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -46,14 +45,14 @@ public class ParallelComputerBuilderTest {
         parallelComputerBuilder.useOnePool(4);
 
         // One thread because one suite: TestSuite, however the capacity is 5.
-        parallelComputerBuilder.parallel(5, Type.SUITES);
+        parallelComputerBuilder.parallelSuites(5);
 
         // Two threads because TestSuite has two classes, however the capacity is 5.
-        parallelComputerBuilder.parallel(5, Type.CLASSES);
+        parallelComputerBuilder.parallelClasses(5);
 
         // One or two threads because one threads comes from '#useOnePool(4)'
         // and next thread may be reused from finished class, however the capacity is 3.
-        parallelComputerBuilder.parallel(3, Type.METHODS);
+        parallelComputerBuilder.parallelMethods(3);
 
         ParallelComputerBuilder.ParallelComputer computer = parallelComputerBuilder.buildComputer();
         Result result = new JUnitCore().run(computer, TestSuite.class);
@@ -79,9 +78,9 @@ public class ParallelComputerBuilderTest {
     public void suiteAndClassInOnePool() {
         ParallelComputerBuilder parallelComputerBuilder = new ParallelComputerBuilder();
         parallelComputerBuilder.useOnePool(5);
-        parallelComputerBuilder.parallel(5, Type.SUITES);
-        parallelComputerBuilder.parallel(5, Type.CLASSES);
-        parallelComputerBuilder.parallel(3, Type.METHODS);
+        parallelComputerBuilder.parallelSuites(5);
+        parallelComputerBuilder.parallelClasses(5);
+        parallelComputerBuilder.parallelMethods(3);
 
         ParallelComputerBuilder.ParallelComputer computer = parallelComputerBuilder.buildComputer();
         Result result = new JUnitCore().run(computer, TestSuite.class, Class1.class);
@@ -103,9 +102,9 @@ public class ParallelComputerBuilderTest {
         // see ParallelComputerBuilder Javadoc
         ParallelComputerBuilder parallelComputerBuilder = new ParallelComputerBuilder();
         parallelComputerBuilder.useOnePool(8);
-        parallelComputerBuilder.parallel(2, Type.SUITES);
-        parallelComputerBuilder.parallel(4, Type.CLASSES);
-        parallelComputerBuilder.parallel(Type.METHODS);
+        parallelComputerBuilder.parallelSuites(2);
+        parallelComputerBuilder.parallelClasses(4);
+        parallelComputerBuilder.parallelMethods();
 
         ParallelComputerBuilder.ParallelComputer computer = parallelComputerBuilder.buildComputer();
         Result result = new JUnitCore().run(computer, TestSuite.class, Class1.class);
@@ -128,13 +127,13 @@ public class ParallelComputerBuilderTest {
         parallelComputerBuilder.useOnePool(3);
 
         // One thread because one suite: TestSuite.
-        parallelComputerBuilder.parallel(5, Type.SUITES);
+        parallelComputerBuilder.parallelSuites(5);
 
         // One thread because of the limitation which is bottleneck.
-        parallelComputerBuilder.parallel(1, Type.CLASSES);
+        parallelComputerBuilder.parallelClasses(1);
 
         // One thread remains from '#useOnePool(3)'.
-        parallelComputerBuilder.parallel(3, Type.METHODS);
+        parallelComputerBuilder.parallelMethods(3);
 
         ParallelComputerBuilder.ParallelComputer computer = parallelComputerBuilder.buildComputer();
         Result result = new JUnitCore().run(computer, TestSuite.class);
@@ -154,9 +153,9 @@ public class ParallelComputerBuilderTest {
     @Test
     public void separatePoolsWithSuite() {
         ParallelComputerBuilder parallelComputerBuilder = new ParallelComputerBuilder();
-        parallelComputerBuilder.parallel(5, Type.SUITES);
-        parallelComputerBuilder.parallel(5, Type.CLASSES);
-        parallelComputerBuilder.parallel(3, Type.METHODS);
+        parallelComputerBuilder.parallelSuites(5);
+        parallelComputerBuilder.parallelClasses(5);
+        parallelComputerBuilder.parallelMethods(3);
 
         ParallelComputerBuilder.ParallelComputer computer = parallelComputerBuilder.buildComputer();
         Result result = new JUnitCore().run(computer, TestSuite.class);
@@ -176,9 +175,9 @@ public class ParallelComputerBuilderTest {
     @Test
     public void separatePoolsWithSuiteAndClass() {
         ParallelComputerBuilder parallelComputerBuilder = new ParallelComputerBuilder();
-        parallelComputerBuilder.parallel(5, Type.SUITES);
-        parallelComputerBuilder.parallel(5, Type.CLASSES);
-        parallelComputerBuilder.parallel(3, Type.METHODS);
+        parallelComputerBuilder.parallelSuites(5);
+        parallelComputerBuilder.parallelClasses(5);
+        parallelComputerBuilder.parallelMethods(3);
 
         // 6 methods altogether.
         // 2 groups with 3 threads.
@@ -201,9 +200,9 @@ public class ParallelComputerBuilderTest {
     @Test
     public void separatePoolsWithSuiteAndSequentialClasses() {
         ParallelComputerBuilder parallelComputerBuilder = new ParallelComputerBuilder();
-        parallelComputerBuilder.parallel(5, Type.SUITES);
-        parallelComputerBuilder.parallel(1, Type.CLASSES);
-        parallelComputerBuilder.parallel(3, Type.METHODS);
+        parallelComputerBuilder.parallelSuites(5);
+        parallelComputerBuilder.parallelClasses(1);
+        parallelComputerBuilder.parallelMethods(3);
 
         ParallelComputerBuilder.ParallelComputer computer = parallelComputerBuilder.buildComputer();
         Result result = new JUnitCore().run(computer, TestSuite.class, Class1.class);
@@ -223,9 +222,9 @@ public class ParallelComputerBuilderTest {
     private static class ShutdownTest {
         Result run(final boolean useInterrupt) {
             ParallelComputerBuilder parallelComputerBuilder = new ParallelComputerBuilder().useOnePool(8);
-            parallelComputerBuilder.parallel(2, Type.SUITES);
-            parallelComputerBuilder.parallel(3, Type.CLASSES);
-            parallelComputerBuilder.parallel(3, Type.METHODS);
+            parallelComputerBuilder.parallelSuites(2);
+            parallelComputerBuilder.parallelClasses(3);
+            parallelComputerBuilder.parallelMethods(3);
 
             final ParallelComputerBuilder.ParallelComputer computer = parallelComputerBuilder.buildComputer();
             shutdownTask = new Runnable() {
@@ -275,12 +274,12 @@ public class ParallelComputerBuilderTest {
         result = core.run(builder.useOnePool(2).buildComputer(), NothingDoingTest1.class, NothingDoingSuite.class);
         assertTrue(result.wasSuccessful());
 
-        result = core.run(builder.useOnePool(2).parallel(1, Type.SUITES).parallel(1, Type.CLASSES).buildComputer(),
-                NothingDoingTest1.class, NothingDoingSuite.class);
+        Class<?>[] classes = {NothingDoingTest1.class, NothingDoingSuite.class};
+
+        result = core.run(builder.useOnePool(2).parallelSuites(1).parallelClasses(1).buildComputer(), classes);
         assertTrue(result.wasSuccessful());
 
-        result = core.run(builder.useOnePool(2).parallel(1, Type.SUITES).parallel(Type.CLASSES).buildComputer(),
-                NothingDoingTest1.class, NothingDoingSuite.class);
+        result = core.run(builder.useOnePool(2).parallelSuites(1).parallelClasses().buildComputer(), classes);
         assertTrue(result.wasSuccessful());
     }
 

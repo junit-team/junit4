@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -25,9 +25,9 @@ import java.util.concurrent.Executors;
  * Executing suites, classes and methods with defined concurrency. In this example the threads which completed
  * the suites and classes can be reused in parallel methods.
  * <pre>
- * ParallelComputerBuilder parallelComputerBuilder = new ParallelComputerBuilder()
- * .useOnePool(8).parallel(2, Type.SUITES).parallel(4, Type.CLASSES).parallel(Type.METHODS);
- * ParallelComputerBuilder.ParallelComputer computer = parallelComputerBuilder.buildComputer();
+ * ParallelComputerBuilder builder = new ParallelComputerBuilder();
+ * builder.useOnePool(8).parallelSuites(2).parallelClasses(4).parallelMethods();
+ * ParallelComputerBuilder.ParallelComputer computer = builder.buildComputer();
  * Class<?>[] tests = {...};
  * new JUnitCore().run(computer, tests);
  * </pre>
@@ -43,12 +43,12 @@ import java.util.concurrent.Executors;
  * @since 4.12
  */
 public class ParallelComputerBuilder {
-    public static enum Type {
+    private static enum Type {
         SUITES, CLASSES, METHODS
     }
 
     static final int TOTAL_POOL_SIZE_UNDEFINED = 0;
-    private final Map<Type, Integer> parallelGroups = new LinkedHashMap<Type, Integer>(3);
+    private final Map<Type, Integer> parallelGroups = new HashMap<Type, Integer>(3);
     private boolean useSeparatePools;
     private int totalPoolSize;
 
@@ -87,7 +87,31 @@ public class ParallelComputerBuilder {
         return this;
     }
 
-    public ParallelComputerBuilder parallel(int nThreads, Type parallelType) {
+    public ParallelComputerBuilder parallelSuites() {
+        return parallel(Type.SUITES);
+    }
+
+    public ParallelComputerBuilder parallelSuites(int nThreads) {
+        return parallel(nThreads, Type.SUITES);
+    }
+
+    public ParallelComputerBuilder parallelClasses() {
+        return parallel(Type.CLASSES);
+    }
+
+    public ParallelComputerBuilder parallelClasses(int nThreads) {
+        return parallel(nThreads, Type.CLASSES);
+    }
+
+    public ParallelComputerBuilder parallelMethods() {
+        return parallel(Type.METHODS);
+    }
+
+    public ParallelComputerBuilder parallelMethods(int nThreads) {
+        return parallel(nThreads, Type.METHODS);
+    }
+
+    private ParallelComputerBuilder parallel(int nThreads, Type parallelType) {
         if (nThreads < 0) {
             throw new IllegalArgumentException("negative nThreads " + nThreads);
         }
@@ -100,7 +124,7 @@ public class ParallelComputerBuilder {
         return this;
     }
 
-    public ParallelComputerBuilder parallel(Type parallelType) {
+    private ParallelComputerBuilder parallel(Type parallelType) {
         return parallel(Integer.MAX_VALUE, parallelType);
     }
 
@@ -129,7 +153,7 @@ public class ParallelComputerBuilder {
         private volatile Scheduler master;
 
         private ParallelComputer() {
-            allGroups = new LinkedHashMap<Type, Integer>(ParallelComputerBuilder.this.parallelGroups);
+            allGroups = new HashMap<Type, Integer>(ParallelComputerBuilder.this.parallelGroups);
             poolCapacity = ParallelComputerBuilder.this.totalPoolSize;
             splitPool = ParallelComputerBuilder.this.useSeparatePools;
         }
