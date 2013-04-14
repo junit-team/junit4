@@ -3,7 +3,9 @@ package org.junit.experimental.parallel;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Stopwatch;
@@ -12,7 +14,11 @@ import org.junit.runner.Result;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.junit.Assert.assertFalse;
@@ -283,6 +289,52 @@ public class ParallelComputerBuilderTest {
         assertTrue(result.wasSuccessful());
     }
 
+    private static void testKeepBeforeAfter(ParallelComputerBuilder builder, Class<?>... classes) {
+        JUnitCore core = new JUnitCore();
+        for (int round = 0; round < 5; round++) {
+            NothingDoingTest1.methods.clear();
+            Result result = core.run(builder.buildComputer(), classes);
+            assertTrue(result.wasSuccessful());
+            Iterator<String> methods = NothingDoingTest1.methods.iterator();
+            for (Class<?> clazz : classes) {
+                String a = clazz.getName() + "#a()";
+                String b = clazz.getName() + "#b()";
+                assertThat(methods.next(), is("init"));
+                assertThat(methods.next(), anyOf(is(a), is(b)));
+                assertThat(methods.next(), anyOf(is(a), is(b)));
+                assertThat(methods.next(), is("deinit"));
+            }
+        }
+    }
+
+    @Test
+    public void keepBeforeAfterOneClass() {
+        ParallelComputerBuilder builder = new ParallelComputerBuilder();
+        builder.parallelMethods();
+        testKeepBeforeAfter(builder, NothingDoingTest1.class);
+    }
+
+    @Test
+    public void keepBeforeAfterTwoClasses() {
+        ParallelComputerBuilder builder = new ParallelComputerBuilder();
+        builder.useOnePool(5).parallelClasses(1).parallelMethods(2);
+        testKeepBeforeAfter(builder, NothingDoingTest1.class, NothingDoingTest2.class);
+    }
+
+    @Test
+    public void keepBeforeAfterTwoParallelClasses() {
+        ParallelComputerBuilder builder = new ParallelComputerBuilder();
+        builder.useOnePool(8).parallelClasses(2).parallelMethods(2);
+        JUnitCore core = new JUnitCore();
+        NothingDoingTest1.methods.clear();
+        Class<?>[] classes = {NothingDoingTest1.class, NothingDoingTest2.class, NothingDoingTest3.class};
+        Result result = core.run(builder.buildComputer(), classes);
+        assertTrue(result.wasSuccessful());
+        ArrayList<String> methods = new ArrayList<String>(NothingDoingTest1.methods);
+        assertThat(methods.size(), is(12));
+        assertThat(methods.subList(9, 12), is(not(Arrays.asList("deinit", "deinit", "deinit"))));
+    }
+
     private static volatile boolean beforeShutdown;
     private static volatile Runnable shutdownTask;
 
@@ -322,16 +374,35 @@ public class ParallelComputerBuilderTest {
     }
 
     public static class NothingDoingTest1 {
-        @Test
-        public void a() {
+        static final Collection<String> methods = new ConcurrentLinkedQueue<String>();
+
+        @BeforeClass
+        public static void init() {
+            methods.add("init");
         }
 
         @Test
-        public void b() {
+        public void a() throws InterruptedException {
+            Thread.sleep(5);
+            methods.add(getClass().getName() + "#a()");
+        }
+
+        @Test
+        public void b() throws InterruptedException {
+            Thread.sleep(5);
+            methods.add(getClass().getName() + "#b()");
+        }
+
+        @AfterClass
+        public static void deinit() {
+            methods.add("deinit");
         }
     }
 
     public static class NothingDoingTest2 extends NothingDoingTest1 {
+    }
+
+    public static class NothingDoingTest3 extends NothingDoingTest1 {
     }
 
     @RunWith(Suite.class)
