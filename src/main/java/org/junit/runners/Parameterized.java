@@ -2,7 +2,6 @@ package org.junit.runners;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -177,7 +176,6 @@ public class Parameterized extends Suite {
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
-    @Inherited
     public static @interface UseParameterRule {
     }
 
