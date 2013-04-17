@@ -1,20 +1,24 @@
 package org.junit.tests.running.classes;
 
+import org.junit.Assert;
 import org.junit.Test;
-import org.junit.internal.builders.ParameterRunnerBuilder;
-import org.junit.rules.ParameterRule;
+import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.UseParameterRule;
 import org.junit.runners.model.InitializationError;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
+import static org.junit.Assert.assertTrue;
+import static org.junit.experimental.results.PrintableResult.testResult;
 
 public class ParameterizedRuleTest {
 
@@ -51,12 +55,12 @@ public class ParameterizedRuleTest {
 
     public static class CustomParameterRuleTestClass extends  NoParameterRuleTestClass {
 
-        @UseParameterRule public ParameterRule rule = new ParameterRule() {
-            public ParameterRunnerBuilder apply(ParameterRunnerBuilder builder) {
+        @UseParameterRule public Parameterized.ParameterRule rule = new Parameterized.ParameterRule() {
+            public Parameterized.ParameterRunnerBuilder apply(Parameterized.ParameterRunnerBuilder builder) {
                 if (!(builder instanceof Parameterized.DefaultBuilder)) {
                     return builder;
                 }
-                return new ParameterRunnerBuilder() {
+                return new Parameterized.ParameterRunnerBuilder() {
                     public Runner build(Class<?> type, String pattern, int index, Object[] parameters) throws InitializationError {
                         return new CustomParameterRunner(type);
                     }
@@ -99,9 +103,9 @@ public class ParameterizedRuleTest {
     public static class CustomChainedParameterRuleTestClass extends CustomParameterRuleTestClass {
 
 
-        @UseParameterRule public ParameterRule rule2 = new ParameterRule() {
-            public ParameterRunnerBuilder apply(final ParameterRunnerBuilder builder) {
-                return new ParameterRunnerBuilder() {
+        @UseParameterRule public Parameterized.ParameterRule rule2 = new Parameterized.ParameterRule() {
+            public Parameterized.ParameterRunnerBuilder apply(final Parameterized.ParameterRunnerBuilder builder) {
+                return new Parameterized.ParameterRunnerBuilder() {
                     public Runner build(Class<?> type, String pattern, int index, Object[] parameters) throws InitializationError {
                         return new CustomParameterRunner2(type);
                     }
@@ -146,9 +150,9 @@ public class ParameterizedRuleTest {
     public static class PrivateParameterRuleTestClass extends CustomParameterRuleTestClass {
 
 
-        @UseParameterRule private ParameterRule rule = new ParameterRule() {
-            public ParameterRunnerBuilder apply(final ParameterRunnerBuilder builder) {
-                return new ParameterRunnerBuilder() {
+        @UseParameterRule private Parameterized.ParameterRule rule = new Parameterized.ParameterRule() {
+            public Parameterized.ParameterRunnerBuilder apply(final Parameterized.ParameterRunnerBuilder builder) {
+                return new Parameterized.ParameterRunnerBuilder() {
                     public Runner build(Class<?> type, String pattern, int index, Object[] parameters) throws InitializationError {
                         return new CustomParameterRunner2(type);
                     }
@@ -189,4 +193,50 @@ public class ParameterizedRuleTest {
     }
 
 
+    public static class ParameterRuleChainTest {
+        private static final List<String> LOG = new ArrayList<String>();
+
+        private static class LoggingRule implements Parameterized.ParameterRule {
+            private final String message;
+
+            public LoggingRule(String message) {
+                this.message = message;
+            }
+
+            public Parameterized.ParameterRunnerBuilder apply(Parameterized.ParameterRunnerBuilder builder) {
+                LOG.add(message);
+                return builder;
+            }
+        }
+
+        @RunWith(Parameterized.class)
+        public static class UseParameterRuleChain {
+
+            @Parameterized.Parameter(0) public int param1;
+
+            @UseParameterRule
+            public static final Parameterized.ParameterRuleChain chain = Parameterized.ParameterRuleChain.outerRule(new LoggingRule("outer rule"))
+                    .around(new LoggingRule("middle rule")).around(
+                            new LoggingRule("inner rule"));
+
+            @Parameterized.Parameters
+            public static Collection<Object[]> parameters() {
+                return Arrays.asList(new Object[][]{new Object[]{1}});
+            }
+
+            @Test
+            public void example() {
+                assertTrue(true);
+            }
+        }
+
+    }
+
+    @Test
+    public void executeRulesInCorrectOrder() throws Exception {
+        testResult(ParameterRuleChainTest.UseParameterRuleChain.class).toString();
+        List<String> expectedLog = asList("inner rule", "middle rule",
+                "outer rule");
+        Assert.assertEquals(expectedLog, ParameterRuleChainTest.LOG);
+    }
 }

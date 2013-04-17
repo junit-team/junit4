@@ -12,8 +12,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.internal.builders.ParameterRunnerBuilder;
-import org.junit.rules.ParameterRule;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkField;
@@ -419,6 +417,95 @@ public class Parameterized extends Suite {
     }
 
 
+    /**
+     * <tt>ParameterRunnerBuilder</tt>s perform the work within a {@link org.junit.runners.Parameterized.ParameterRule}
+     * by providing the runner that will execute the test class the containing rule is in, as well as any
+     * other actions it wants to perform on the input values.
+     *
+     * @since 4.12
+     */
+    public static interface ParameterRunnerBuilder {
 
+        Runner build(Class<?> type, String pattern, int index, Object[] parameters) throws InitializationError;
 
+    }
+
+    /**
+     * A ParameterRule allows Parameterized tests to customize how they're
+     * run and allows the developer to specify logic around their parameters
+     * by either modifying them in the rule, or by getting the rule to return
+     * a builder that generates a custom runner.
+     *
+     * @see ParameterRunnerBuilder
+     *
+     * @since 4.12
+     */
+    public static interface ParameterRule {
+
+       ParameterRunnerBuilder apply(ParameterRunnerBuilder builder);
+
+    }
+
+    /**
+     * The ParameterRuleChain parameter rule allows ordering of ParameterRules. You create a
+     * {@code ParameterRuleChain} with {@link #outerRule(org.junit.runners.Parameterized.ParameterRule)} and subsequent calls of
+     * {@link #around(org.junit.runners.Parameterized.ParameterRule)}:
+     *
+     * @since 4.13
+     */
+    public static class ParameterRuleChain implements ParameterRule {
+        private static final ParameterRuleChain EMPTY_CHAIN = new ParameterRuleChain(
+                Collections.<ParameterRule>emptyList());
+
+        private List<ParameterRule> rulesStartingWithInnerMost;
+
+        /**
+         * Returns a {@code ParameterRuleChain} without a {@link org.junit.runners.Parameterized.ParameterRule}. This method may
+         * be the starting point of a {@code ParameterRuleChain}.
+         *
+         * @return a {@code ParameterRuleChain} without a {@link org.junit.runners.Parameterized.ParameterRule}.
+         */
+        public static ParameterRuleChain emptyRuleChain() {
+            return EMPTY_CHAIN;
+        }
+
+        /**
+         * Returns a {@code ParmeterRuleChain} with a single {@link org.junit.runners.Parameterized.ParameterRule}. This method
+         * is the usual starting point of a {@code ParameterRuleChain}.
+         *
+         * @param outerRule the outer parameter rule of the {@code ParameterRuleChain}.
+         * @return a {@code ParameterRuleChain} with a single {@link org.junit.runners.Parameterized.ParameterRule}.
+         */
+        public static ParameterRuleChain outerRule(ParameterRule outerRule) {
+            return emptyRuleChain().around(outerRule);
+        }
+
+        private ParameterRuleChain(List<ParameterRule> rules) {
+            this.rulesStartingWithInnerMost = rules;
+        }
+
+        /**
+         * Create a new {@code ParameterRuleChain}, which encloses the {@code nextRule} with
+         * the rules of the current {@code ParamterRuleChain}.
+         *
+         * @param enclosedRule the rule to enclose.
+         * @return a new {@code ParameterRuleChain}.
+         */
+        public ParameterRuleChain around(ParameterRule enclosedRule) {
+            List<ParameterRule> rulesOfNewChain = new ArrayList<ParameterRule>();
+            rulesOfNewChain.add(enclosedRule);
+            rulesOfNewChain.addAll(rulesStartingWithInnerMost);
+            return new ParameterRuleChain(rulesOfNewChain);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public ParameterRunnerBuilder apply(ParameterRunnerBuilder base) {
+            for (ParameterRule each : rulesStartingWithInnerMost) {
+                base = each.apply(base);
+            }
+            return base;
+        }
+    }
 }
