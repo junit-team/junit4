@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -54,6 +53,7 @@ import org.junit.runners.model.TestClass;
  */
 public abstract class ParentRunner<T> extends Runner implements Filterable,
         Sortable {
+    private final Object fLock = new Object();
     private final TestClass fTestClass;
 
     private volatile Collection<T> fFilteredChildren = null;
@@ -325,31 +325,40 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     //
 
     public void filter(Filter filter) throws NoTestsRemainException {
-        for (Iterator<T> iter = getFilteredChildren().iterator(); iter.hasNext(); ) {
-            T each = iter.next();
-            if (shouldRun(filter, each)) {
-                try {
-                    filter.apply(each);
-                } catch (NoTestsRemainException e) {
-                    iter.remove();
+        synchronized (fLock) {
+            List<T> sortedChildren = new ArrayList<T>(getFilteredChildren());
+            try {
+                for (Iterator<T> iter = sortedChildren.iterator(); iter.hasNext(); ) {
+                    T each = iter.next();
+                    if (shouldRun(filter, each)) {
+                        try {
+                            filter.apply(each);
+                        } catch (NoTestsRemainException e) {
+                            iter.remove();
+                        }
+                    } else {
+                        iter.remove();
+                    }
                 }
-            } else {
-                iter.remove();
+            } finally {
+                setFilteredChildren(sortedChildren);
             }
         }
+
         if (getFilteredChildren().isEmpty()) {
             throw new NoTestsRemainException();
         }
     }
 
     public void sort(Sorter sorter) {
-        for (T each : getFilteredChildren()) {
-            sortChild(each, sorter);
+        synchronized (fLock) {
+            for (T each : getFilteredChildren()) {
+                sortChild(each, sorter);
+            }
+            List<T> sortedChildren = new ArrayList<T>(getFilteredChildren());
+            Collections.sort(sortedChildren, comparator(sorter));
+            setFilteredChildren(sortedChildren);
         }
-        List<T> sortedChildren = new ArrayList<T>(getFilteredChildren());
-        Collections.sort(sortedChildren, comparator(sorter));
-        getFilteredChildren().clear();
-        getFilteredChildren().addAll(sortedChildren);
     }
 
     //
@@ -364,9 +373,15 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         }
     }
 
+    private void setFilteredChildren(Collection<T> filteredChildren) {
+        fFilteredChildren = Collections.unmodifiableCollection(filteredChildren);
+    }
+
     private Collection<T> getFilteredChildren() {
         if (fFilteredChildren == null) {
-            fFilteredChildren = new ConcurrentLinkedQueue<T>(getChildren());
+            synchronized (fLock) {
+                setFilteredChildren(getChildren());
+            }
         }
         return fFilteredChildren;
     }
