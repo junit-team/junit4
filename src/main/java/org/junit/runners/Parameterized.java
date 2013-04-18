@@ -451,7 +451,7 @@ public class Parameterized extends Suite {
      * {@code ParameterRuleChain} with {@link #outerRule(org.junit.runners.Parameterized.ParameterRule)} and subsequent calls of
      * {@link #around(org.junit.runners.Parameterized.ParameterRule)}:
      *
-     * @since 4.13
+     * @since 4.12
      */
     public static class ParameterRuleChain implements ParameterRule {
         private static final ParameterRuleChain EMPTY_CHAIN = new ParameterRuleChain(
