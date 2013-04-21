@@ -95,13 +95,6 @@
             <artifactId>hamcrest-core</artifactId>
             <version>1.3</version>
         </dependency>
-        <dependency>
-            <!-- Test dependency. Implementation of OSGi framework. -->
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.framework</artifactId>
-            <version>4.0.3</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
@@ -196,9 +189,9 @@
                 <version>2.5.1</version>
                 <configuration>
                     <encoding>${project.build.sourceEncoding}</encoding>
+                    <compilerVersion>${jdkVersion}</compilerVersion>
                     <source>${jdkVersion}</source>
                     <target>${jdkVersion}</target>
-                    <compilerVersion>1.5</compilerVersion>
                     <testSource>${jdkVersion}</testSource>
                     <testTarget>${jdkVersion}</testTarget>
                     <showDeprecation>true</showDeprecation>
@@ -224,7 +217,6 @@
                         <Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
                         <Bundle-DocURL>${project.organization.url}</Bundle-DocURL>
                         <Bundle-Version>${project.version}</Bundle-Version>
-                        <Bundle-Description>${project.description}</Bundle-Description>
                         <Bundle-License>Common Public License Version 1.0</Bundle-License>
                         <Export-Package>
                             !org.junit.internal.*,
@@ -244,25 +236,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <!-- The archive produced by maven-jar-plugin is deployed even if cleaned. -->
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
-                <executions>
-                    <execution>
-                        <id>package-test-bundle</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <tasks>
-                                <jar basedir="target/test-classes" jarfile="target/bundles/${project.build.finalName}-tests.jar" manifest="src/test/resources/META-INF/MANIFEST.MF"/>
-                            </tasks>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <!--
                 A plugin which uses the JUnit framework in order to start
                 our junit suite "AllTests" after the sources are compiled.
@@ -273,36 +246,6 @@
                     <test>org/junit/tests/AllTests.java</test>
                     <enableAssertions>false</enableAssertions>
                 </configuration>
-            </plugin>
-            <plugin>
-                <!-- integration tests for OSGi bundle -->
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.14</version>
-                <executions>
-                    <execution>
-                        <id>integration-tests</id>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                        <configuration>
-                            <includes>
-                                <include>**/IntegrationTestCase.java</include>
-                            </includes>
-                            <systemPropertyVariables>
-                                <bundles>file:target/${project.build.finalName}.jar,file:target/bundles/${project.build.finalName}-tests.jar</bundles>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.maven.surefire</groupId>
-                        <artifactId>surefire-junit47</artifactId>
-                        <version>2.14</version>
-                    </dependency>
-                </dependencies>
             </plugin>
             <plugin>
                 <!--
@@ -424,6 +367,30 @@
                                 <goals>
                                     <goal>jar</goal>
                                 </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>integration-tests</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-invoker-plugin</artifactId>
+                        <version>1.7</version>
+                        <executions>
+                            <execution>
+                                <id>integration-tests</id>
+                                <goals>
+                                    <goal>install</goal>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                                    <localRepositoryPath>${maven.repo.local}</localRepositoryPath>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

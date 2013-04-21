@@ -31,7 +31,6 @@
   <property name="hamcrestlib" location="lib/hamcrest-core-1.3.jar" />
   <property name="hamcrestlibsources" location="lib/hamcrest-core-1.3-sources.jar" />
   <property name="hamcrestsrc" location="${dist}/temp.hamcrest.source" />
-  <property name="osgicorelib" location="lib/org.osgi.core-5.0.0.jar" />
 
   <property name="maven.deploy.goal" value="org.apache.maven.plugins:maven-gpg-plugin:1.1:sign-and-deploy-file" />
 
@@ -83,7 +82,7 @@
   <target name="build" depends="versiontag">
     <junit_compilation srcdir="${src}" destdir="${bin}" classpath="${hamcrestlib}"/>
     <unjar src="${hamcrestlib}" dest="${bin}" />
-    <junit_compilation srcdir="${testsrc}" destdir="${testbin}" classpath="${osgicorelib};${hamcrestlib};${bin}"/>
+    <junit_compilation srcdir="${testsrc}" destdir="${testbin}" classpath="${hamcrestlib};${bin}"/>
   </target>
 
   <target name="jars" depends="build">

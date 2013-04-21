@@ -1,8 +1,11 @@
-package org.junit.it.osgi;
+package org.junit.it;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.junitconsumer.Service;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -11,22 +14,42 @@ import org.osgi.framework.launch.FrameworkFactory;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.it.BundlesUtil.MAIN_MVN_JAR_NAME_PATTERN;
+import static org.junit.it.BundlesUtil.relativePathFiles;
+import static org.junit.runners.Parameterized.Parameter;
+import static org.junit.runners.Parameterized.Parameters;
+import static org.junit.Assert.assertNotNull;
+
 /**
+ * Using the pure OSGi framework API, the JUnit bundle is tested.
+ * If the consumer's Activator fails, the start method on consumer bundle throws BundleException.
+ * Log file is target/it/osgi/build.log.
+ *
  * @author Tibor Digana (tibor17)
  * @since 4.12
  */
-public class IntegrationTestCase {
-    private final Collection<Bundle> bundles = new ArrayList<Bundle>();
+@RunWith(Parameterized.class)
+public class FrameworkIT {
+
+    @Parameters
+    public static Iterable<FrameworkFactory[]> factories() throws Exception {
+        ArrayList<FrameworkFactory[]> factories = new ArrayList<FrameworkFactory[]>();
+        for (FrameworkFactory factory : ServiceLoader.load(FrameworkFactory.class)) {
+            factories.add(new FrameworkFactory[] {factory});
+        }
+        return factories;
+    }
+
+    @Parameter
+    public FrameworkFactory frameworkFactory;
+
     private Framework framework;
 
     @Before
     public void init() throws Exception {
-        // Load a framework factory
-        FrameworkFactory frameworkFactory = ServiceLoader.loadFirst(FrameworkFactory.class);
         // Create a framework
         Map<String, String> config = new HashMap<String, String>();
         // OSGi stores its persistent data:
@@ -40,7 +63,8 @@ public class IntegrationTestCase {
 
     @After
     public void deinit() throws Exception {
-        for (Bundle bundle : bundles) {
+        BundleContext context = framework.getBundleContext();
+        for (Bundle bundle : context.getBundles()) {
             bundle.stop();
         }
 
@@ -51,13 +75,17 @@ public class IntegrationTestCase {
     @Test
     public void testOSGi() throws Exception {
         BundleContext context = framework.getBundleContext();
-        for (String bundle : System.getProperty("bundles").split(",")) {
-            bundles.add(context.installBundle(bundle.trim()));
+        for (String bundle : relativePathFiles(MAIN_MVN_JAR_NAME_PATTERN, "target/bundles", "target")) {
+            context.installBundle("file:" + bundle);
         }
+
         framework.start();
-        for (Bundle bundle : bundles) {
+
+        for (Bundle bundle : context.getBundles()) {
             bundle.start();
         }
+
+        assertNotNull("The consumer's Activator is missing.", context.getServiceReference(Service.class));
     }
 
     /**

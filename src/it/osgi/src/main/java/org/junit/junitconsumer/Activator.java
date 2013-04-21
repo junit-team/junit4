@@ -1,4 +1,4 @@
-package org.junit.it.osgi;
+package org.junit.junitconsumer;
 
 import org.hamcrest.Matcher;
 import org.junit.Test;
@@ -7,12 +7,16 @@ import org.junit.runner.Result;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsAnything.anything;
@@ -20,14 +24,18 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsSame.sameInstance;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Tibor Digana (tibor17)
  * @since 4.12
  */
-public final class TestActivator implements BundleActivator {
+public final class Activator implements BundleActivator {
+    private final AtomicReference<ServiceRegistration> registration
+            = new AtomicReference<ServiceRegistration>();
+
     public void start(BundleContext bundleContext) throws Exception {
+        registration.set(bundleContext.registerService(Service.class, new Service() {}, null));
+
         HashMap<String, Bundle> bundles = new HashMap<String, Bundle>();
         for (Bundle bundle : bundleContext.getBundles()) {
             bundles.put(bundle.getSymbolicName(), bundle);
@@ -41,6 +49,10 @@ public final class TestActivator implements BundleActivator {
     }
 
     public void stop(BundleContext bundleContext) throws Exception {
+        ServiceRegistration registration = this.registration.getAndSet(null);
+        if (registration != null) {
+            registration.unregister();
+        }
     }
 
     private void testHamcrest() {
@@ -50,7 +62,7 @@ public final class TestActivator implements BundleActivator {
 
     private void testSymbolicNames(Map<String, Bundle> bundles) {
         String providerBundleSymbolicName = "org.junit";
-        String consumerBundleSymbolicName = "org.junit.it.osgi";
+        String consumerBundleSymbolicName = "consumer";
         assertThat(bundles.keySet(), hasItems(providerBundleSymbolicName, consumerBundleSymbolicName));
     }
 
