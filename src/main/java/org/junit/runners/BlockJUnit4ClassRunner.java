@@ -402,7 +402,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 
     /**
      * @return a list of TestRules that could be instantiated from the
-     *          junit.global.rules system-property
+     *          'junit.global.rules' system-property
      */
     private List<TestRule> getGlobalTestRules() {
         List<TestRule> globalTestRules = new ArrayList<TestRule>();
