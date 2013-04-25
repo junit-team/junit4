@@ -155,7 +155,7 @@ end
 # setup
 login = `git config github.user`.chomp  # your login for github
 token = `git config github.token`.chomp # your token for github
-repos = 'KentBeck/junit'               # your repos name (like 'taberareloo')
+repos = 'junit-team/junit'              # your repos name (like 'taberareloo')
 gh = Net::GitHub::Upload.new(
   :login => login,
   :token => token

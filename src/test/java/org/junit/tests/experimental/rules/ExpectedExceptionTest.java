@@ -72,6 +72,9 @@ public class ExpectedExceptionTest {
                         hasSingleAssumptionFailure()},
                 {ThrowExpectedAssertionError.class, everyTestRunSuccessful()},
                 {
+                        DontThrowAssertionErrorButExpectOne.class,
+                        hasSingleFailureWithMessage("Expected test to throw an instance of java.lang.AssertionError")},
+                {
                         ThrowUnexpectedAssertionError.class,
                         hasSingleFailureWithMessage(startsWith("\nExpected: an instance of java.lang.NullPointerException"))},
                 {FailAndDontHandleAssertinErrors.class,
@@ -286,6 +289,17 @@ public class ExpectedExceptionTest {
             thrown.handleAssertionErrors();
             thrown.expect(AssertionError.class);
             throw new AssertionError("the expected assertion error");
+        }
+    }
+
+    public static class DontThrowAssertionErrorButExpectOne {
+        @Rule
+        public ExpectedException thrown = none();
+
+        @Test
+        public void assertionErrorExpectedButNonIsThrown() {
+            thrown.handleAssertionErrors();
+            thrown.expect(AssertionError.class);
         }
     }
 

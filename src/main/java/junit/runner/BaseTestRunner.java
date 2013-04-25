@@ -111,7 +111,7 @@ public abstract class BaseTestRunner implements TestListener {
         }
         Method suiteMethod = null;
         try {
-            suiteMethod = testClass.getMethod(SUITE_METHODNAME, new Class[0]);
+            suiteMethod = testClass.getMethod(SUITE_METHODNAME);
         } catch (Exception e) {
             // try to extract a test suite automatically
             clearStatus();
@@ -123,7 +123,7 @@ public abstract class BaseTestRunner implements TestListener {
         }
         Test test = null;
         try {
-            test = (Test) suiteMethod.invoke(null, (Object[]) new Class[0]); // static method
+            test = (Test) suiteMethod.invoke(null); // static method
             if (test == null) {
                 return test;
             }
