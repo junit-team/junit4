@@ -85,13 +85,10 @@ class JUnitCommandLineParser {
             } catch (FilterFactory.FilterNotCreatedException e) {
                 system.out().println("Could not find filter: " + e.getMessage());
                 parserErrors.add(e);
-            } catch(FilterFactories.FilterFactoryNotCreatedException e) {
-                system.out().println("Could not find filter factory: " + e.getMessage());
-                parserErrors.add(e);
             }
         }
 
-        return null;
+        return new String[]{};
     }
 
     private String[] copyArray(String[] args, int from, int to) {
@@ -110,7 +107,7 @@ class JUnitCommandLineParser {
                 classes.add(Classes.getClass(arg));
             } catch (ClassNotFoundException e) {
                 system.out().println("Could not find class: " + arg);
-                parserErrors.add(e);
+                parserErrors.add(new IllegalArgumentException("Could not find class [" + arg + "]", e));
             }
         }
     }

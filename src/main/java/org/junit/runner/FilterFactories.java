@@ -20,14 +20,14 @@ public class FilterFactories {
      * @throws FilterNotCreatedException
      */
     public static Filter createFilterFromFilterSpec(Description description, String filterSpec)
-            throws FilterFactoryNotCreatedException {
+            throws FilterNotCreatedException {
 
         if (filterSpec.contains("=")) {
             String[] tuple = filterSpec.split("=", 2);
 
-            return createFilter(tuple[0], new FilterFactoryParams(description, tuple[1]));
+            return createFilter(tuple[0], new FilterFactoryParams(tuple[1]));
         } else {
-            return createFilter(filterSpec, new FilterFactoryParams(description));
+            return createFilter(filterSpec, new FilterFactoryParams());
         }
     }
 
@@ -40,7 +40,7 @@ public class FilterFactories {
      * @throws FilterFactoryNotCreatedException
      */
     public static Filter createFilter(String filterFactoryFqcn, FilterFactoryParams params)
-            throws FilterFactoryNotCreatedException {
+            throws FilterNotCreatedException {
         FilterFactory filterFactory = createFilterFactory(filterFactoryFqcn);
 
         return filterFactory.createFilter(params);
@@ -56,7 +56,7 @@ public class FilterFactories {
      *
      */
     public static Filter createFilter(Class<? extends FilterFactory> filterFactoryClass, FilterFactoryParams params)
-            throws FilterFactoryNotCreatedException {
+            throws FilterNotCreatedException {
         FilterFactory filterFactory = createFilterFactory(filterFactoryClass);
 
         return filterFactory.createFilter(params);
@@ -86,9 +86,9 @@ public class FilterFactories {
     /**
      * Exception thrown if the {@link FilterFactory} cannot be created.
      */
-    public static class FilterFactoryNotCreatedException extends ClassNotFoundException {
+    public static class FilterFactoryNotCreatedException extends FilterNotCreatedException {
         public FilterFactoryNotCreatedException(Exception exception) {
-            super(exception.getMessage(), exception);
+            super(exception);
         }
     }
 }

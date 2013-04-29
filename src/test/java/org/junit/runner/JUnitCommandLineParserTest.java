@@ -54,7 +54,7 @@ public class JUnitCommandLineParserTest {
         Description description = runner.getDescription().getChildren().get(0);
 
         assertThat(description.toString(), allOf(
-                containsString("initializationError: "),
+                containsString("initializationError:"),
                 containsString(JUnitCommandLineParser.CommandLineParserError.class.getName()),
                 containsString("--filter value not specified")));
     }
@@ -91,7 +91,7 @@ public class JUnitCommandLineParserTest {
         Description description = runner.getDescription().getChildren().get(0);
 
         assertThat(description.toString(), allOf(
-                containsString("initializationError: "),
+                containsString("initializationError:"),
                 containsString(JUnitCommandLineParser.CommandLineParserError.class.getName()),
                 containsString(unknownOption)));
     }
@@ -106,7 +106,7 @@ public class JUnitCommandLineParserTest {
         Description description = runner.getDescription().getChildren().get(0);
 
         assertThat(description.toString(), allOf(
-                containsString("initializationError: "),
+                containsString("initializationError:"),
                 containsString(FilterFactory.FilterNotCreatedException.class.getName()),
                 containsString("stub")));
     }
@@ -122,7 +122,7 @@ public class JUnitCommandLineParserTest {
         Description description = runner.getDescription().getChildren().get(0);
 
         assertThat(description.toString(), allOf(
-                containsString("initializationError: "),
+                containsString("initializationError:"),
                 containsString(FilterFactories.FilterFactoryNotCreatedException.class.getName()),
                 containsString(nonExistentFilterFactory)));
     }
@@ -150,8 +150,8 @@ public class JUnitCommandLineParserTest {
         Description description = runner.getDescription().getChildren().get(0);
 
         assertThat(description.toString(), allOf(
-                containsString("initializationError: "),
-                containsString(ClassNotFoundException.class.getName()),
+                containsString("initializationError:"),
+                containsString(IllegalArgumentException.class.getName()),
                 containsString(unknownTestClass)));
     }
 

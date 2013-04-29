@@ -17,9 +17,9 @@ public interface FilterFactory {
     /**
      * Exception thrown if the {@link Filter} cannot be created.
      */
-    static class FilterNotCreatedException extends FilterFactories.FilterFactoryNotCreatedException {
+    public static class FilterNotCreatedException extends ClassNotFoundException {
         public FilterNotCreatedException(Exception exception) {
-            super(exception);
+            super(exception.getMessage(), exception);
         }
     }
 }

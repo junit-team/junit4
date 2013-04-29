@@ -15,6 +15,6 @@ public class JUnitCoreTest {
         Result result = jUnitCore.runMain(new TestSystem(), "NonExistentTest");
 
         assertThat(result.getFailureCount(), is(1));
-        assertThat(result.getFailures().get(0).getException(), instanceOf(ClassNotFoundException.class));
+        assertThat(result.getFailures().get(0).getException(), instanceOf(IllegalArgumentException.class));
     }
 }

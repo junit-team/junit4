@@ -39,7 +39,7 @@ public class FilterFactoriesTest {
     @Test
     public void shouldCreateFilter() throws Exception {
         Filter filter = FilterFactories.createFilter(
-                FilterFactoryStub.class, new FilterFactoryParams(createSuiteDescription(testName.getMethodName())));
+                FilterFactoryStub.class, new FilterFactoryParams());
 
         assertThat(filter, instanceOf(DummyFilter.class));
     }
