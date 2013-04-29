@@ -2,7 +2,6 @@ package org.junit.test;
 
 import org.junit.Test;
 import org.junit.it.ServiceLoader;
-import org.junit.junitconsumer.Service;
 
 import java.util.Iterator;
 

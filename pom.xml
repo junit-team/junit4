@@ -239,12 +239,15 @@
                 <!--
                 A plugin which uses the JUnit framework in order to start
                 our junit suite "AllTests" after the sources are compiled.
+                Short GC periods due to test using timeout.
                 -->
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.14</version>
+                <version>2.14.1</version>
                 <configuration>
                     <test>org/junit/tests/AllTests.java</test>
                     <enableAssertions>false</enableAssertions>
+                    <forkCount>1</forkCount>
+                    <argLine>-XX:+UseAdaptiveSizePolicy -XX:+UseParallelGC -XX:MaxGCPauseMillis=50 -XX:GCTimeRatio=9</argLine>
                 </configuration>
             </plugin>
             <plugin>
@@ -375,14 +378,17 @@
         </profile>
         <profile>
             <id>integration-tests</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <build>
                 <plugins>
                     <plugin>
                         <artifactId>maven-invoker-plugin</artifactId>
-                        <version>1.7</version>
+                        <version>1.8</version>
                         <executions>
                             <execution>
-                                <id>integration-tests</id>
+                                <id>integration-tests-framework</id>
                                 <goals>
                                     <goal>install</goal>
                                     <goal>run</goal>
@@ -390,6 +396,8 @@
                                 <configuration>
                                     <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
                                     <localRepositoryPath>${maven.repo.local}</localRepositoryPath>
+                                    <streamLogs>true</streamLogs>
+                                    <showErrors>true</showErrors>
                                 </configuration>
                             </execution>
                         </executions>

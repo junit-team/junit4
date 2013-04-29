@@ -7,15 +7,11 @@ import org.junit.runner.Result;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceRegistration;
-
-import java.util.concurrent.atomic.AtomicReference;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -30,11 +26,9 @@ import static org.hamcrest.core.IsSame.sameInstance;
  * @since 4.12
  */
 public final class Activator implements BundleActivator {
-    private final AtomicReference<ServiceRegistration> registration
-            = new AtomicReference<ServiceRegistration>();
 
     public void start(BundleContext bundleContext) throws Exception {
-        registration.set(bundleContext.registerService(Service.class, new Service() {}, null));
+        System.setProperty("activatorFinishedSuccessfully", "false");
 
         HashMap<String, Bundle> bundles = new HashMap<String, Bundle>();
         for (Bundle bundle : bundleContext.getBundles()) {
@@ -46,18 +40,18 @@ public final class Activator implements BundleActivator {
         testResources(bundles);
         testWithJunitCore();
         testInternalPackages();
+
+        System.setProperty("activatorFinishedSuccessfully", "true");
     }
 
     public void stop(BundleContext bundleContext) throws Exception {
-        ServiceRegistration registration = this.registration.getAndSet(null);
-        if (registration != null) {
-            registration.unregister();
-        }
     }
 
     private void testHamcrest() {
-        // The hamcrest-core:1.3 is not yet OSGi bundle, thus the library has to appear in application ClassLoader.
-        assertThat(Matcher.class.getClassLoader(), is(sameInstance(ClassLoader.getSystemClassLoader())));
+        if (Boolean.getBoolean("FrameworkIT")) {
+            // The hamcrest-core:1.3 is not yet OSGi bundle, thus the library has to appear in application ClassLoader.
+            assertThat(Matcher.class.getClassLoader(), is(sameInstance(ClassLoader.getSystemClassLoader())));
+        }
     }
 
     private void testSymbolicNames(Map<String, Bundle> bundles) {
@@ -75,7 +69,6 @@ public final class Activator implements BundleActivator {
 
         assertThat(core.getClass().getClassLoader(), is(not(sameInstance(ClassLoader.getSystemClassLoader()))));
         assertThat(core.getClass().getClassLoader(), is(not(sameInstance(Thread.currentThread().getContextClassLoader()))));
-        assertNull(core.getClass().getClassLoader().getParent());
 
         Result result = core.run(TestClass.class);
         assertTrue(result.wasSuccessful());

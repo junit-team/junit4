@@ -1,4 +1,4 @@
-package org.junit.junitconsumer;
+package org.junit.test;
 
 /**
  * @author Tibor Digana (tibor17)

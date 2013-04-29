@@ -1,9 +1,10 @@
 package org.junit.it;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.junitconsumer.Service;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.osgi.framework.Bundle;
@@ -17,11 +18,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.it.BundlesUtil.MAIN_MVN_JAR_NAME_PATTERN;
 import static org.junit.it.BundlesUtil.relativePathFiles;
 import static org.junit.runners.Parameterized.Parameter;
 import static org.junit.runners.Parameterized.Parameters;
-import static org.junit.Assert.assertNotNull;
 
 /**
  * Using the pure OSGi framework API, the JUnit bundle is tested.
@@ -33,6 +34,15 @@ import static org.junit.Assert.assertNotNull;
  */
 @RunWith(Parameterized.class)
 public class FrameworkIT {
+    @BeforeClass
+    public static void beforeClass() {
+        System.setProperty("FrameworkIT", "true");
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        System.setProperty("FrameworkIT", "false");
+    }
 
     @Parameters
     public static Iterable<FrameworkFactory[]> factories() throws Exception {
@@ -74,6 +84,7 @@ public class FrameworkIT {
 
     @Test
     public void testOSGi() throws Exception {
+        System.setProperty("activatorFinishedSuccessfully", "false");
         BundleContext context = framework.getBundleContext();
         for (String bundle : relativePathFiles(MAIN_MVN_JAR_NAME_PATTERN, "target/bundles", "target")) {
             context.installBundle("file:" + bundle);
@@ -85,7 +96,7 @@ public class FrameworkIT {
             bundle.start();
         }
 
-        assertNotNull("The consumer's Activator is missing.", context.getServiceReference(Service.class));
+        assertTrue("Activator failed in a test.", Boolean.getBoolean("activatorFinishedSuccessfully"));
     }
 
     /**
