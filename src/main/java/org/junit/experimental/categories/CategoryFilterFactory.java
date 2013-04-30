@@ -14,7 +14,7 @@ import org.junit.runner.manipulation.Filter;
 abstract class CategoryFilterFactory implements FilterFactory {
     /**
      * Creates a {@link org.junit.experimental.categories.Categories.CategoryFilter} given a
-     * ${FilterFactoryParams} argument.
+     * {@link FilterFactoryParams} argument.
      *
      * @param params Parameters needed to create the {@link Filter}
      * @throws FilterNotCreatedException
