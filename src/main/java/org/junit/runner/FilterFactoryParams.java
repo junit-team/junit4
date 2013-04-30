@@ -11,7 +11,7 @@ public final class FilterFactoryParams {
      *
      */
     public FilterFactoryParams() {
-        this(null);
+        this("");
     }
 
     /**
@@ -20,6 +20,10 @@ public final class FilterFactoryParams {
      * @param args Arguments
      */
     public FilterFactoryParams(String args) {
+        if (args == null) {
+            throw new NullPointerException();
+        }
+
         this.args = args;
     }
 
