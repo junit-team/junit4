@@ -326,9 +326,9 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
     public void filter(Filter filter) throws NoTestsRemainException {
         synchronized (fLock) {
-            List<T> sortedChildren = new ArrayList<T>(getFilteredChildren());
+            List<T> filteredChildren = new ArrayList<T>(getFilteredChildren());
             try {
-                for (Iterator<T> iter = sortedChildren.iterator(); iter.hasNext(); ) {
+                for (Iterator<T> iter = filteredChildren.iterator(); iter.hasNext(); ) {
                     T each = iter.next();
                     if (shouldRun(filter, each)) {
                         try {
@@ -341,7 +341,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
                     }
                 }
             } finally {
-                setFilteredChildren(sortedChildren);
+                fFilteredChildren = Collections.unmodifiableCollection(filteredChildren);
             }
         }
 
@@ -357,7 +357,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             }
             List<T> sortedChildren = new ArrayList<T>(getFilteredChildren());
             Collections.sort(sortedChildren, comparator(sorter));
-            setFilteredChildren(sortedChildren);
+            fFilteredChildren = Collections.unmodifiableCollection(sortedChildren);
         }
     }
 
@@ -373,14 +373,12 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         }
     }
 
-    private void setFilteredChildren(Collection<T> filteredChildren) {
-        fFilteredChildren = Collections.unmodifiableCollection(filteredChildren);
-    }
-
     private Collection<T> getFilteredChildren() {
         if (fFilteredChildren == null) {
             synchronized (fLock) {
-                setFilteredChildren(getChildren());
+                if (fFilteredChildren == null) {
+                    fFilteredChildren = Collections.unmodifiableCollection(getChildren());
+                }
             }
         }
         return fFilteredChildren;
