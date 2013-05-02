@@ -192,15 +192,15 @@ public class Parameterized extends Suite {
         @Override
         public Object createTest() throws InitializationError {
             if (fieldsAreAnnotated()) {
-                return createTestUsingFieldInjection();
+                return createTestUsingFieldInjection(fParameters);
             } else {
-                return createTestUsingConstructorInjection();
+                return createTestUsingConstructorInjection(fParameters);
             }
         }
 
-        private Object createTestUsingConstructorInjection() throws InitializationError {
+        private Object createTestUsingConstructorInjection(Object... params) throws InitializationError {
             try {
-                return getTestClass().getOnlyConstructor().newInstance(fParameters);
+                return getTestClass().getOnlyConstructor().newInstance(params);
             } catch (InstantiationException e) {
                 throw new InitializationError(e);
             } catch (IllegalAccessException e) {
@@ -210,20 +210,14 @@ public class Parameterized extends Suite {
             }
         }
 
-        private Object createTestUsingFieldInjection() throws InitializationError {
+        private Object createTestUsingFieldInjection(Object... params) throws InitializationError {
             List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter();
-            if (annotatedFieldsByParameter.size() != fParameters.length) {
+            if (annotatedFieldsByParameter.size() != params.length) {
                 throw new InitializationError(new Exception("Wrong number of parameters and @Parameter fields." +
                         " @Parameter fields counted: " + annotatedFieldsByParameter.size() + ", available parameters: " + fParameters.length + "."));
             }
-            Object testClassInstance;
-            try {
-                testClassInstance = getTestClass().getJavaClass().newInstance();
-            } catch (InstantiationException e) {
-                throw new InitializationError(e);
-            } catch (IllegalAccessException e) {
-                throw new InitializationError(e);
-            }
+            Object testClassInstance = createTestUsingConstructorInjection();
+
             for (FrameworkField each : annotatedFieldsByParameter) {
                 Field field = each.getField();
                 Parameter annotation = field.getAnnotation(Parameter.class);
