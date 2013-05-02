@@ -46,14 +46,14 @@ public class FilterFactoriesTest {
 
     @Test
     public void shouldThrowExceptionIfNotFilterFactory() throws Exception {
-        expectedException.expect(FilterFactories.FilterFactoryNotCreatedException.class);
+        expectedException.expect(FilterFactory.FilterNotCreatedException.class);
 
         FilterFactories.createFilterFactory(NonFilterFactory.class.getName());
     }
 
     @Test
     public void shouldThrowExceptionIfNotInstantiable() throws Exception {
-        expectedException.expect(FilterFactories.FilterFactoryNotCreatedException.class);
+        expectedException.expect(FilterFactory.FilterNotCreatedException.class);
 
         FilterFactories.createFilterFactory(NonInstantiableFilterFactory.class);
     }
