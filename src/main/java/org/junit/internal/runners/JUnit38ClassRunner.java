@@ -99,7 +99,7 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
         if (test instanceof TestCase) {
             TestCase tc = (TestCase) test;
             return Description.createTestDescription(tc.getClass(), tc.getName(),
-					getAnnotations(tc));
+                    getAnnotations(tc));
         } else if (test instanceof TestSuite) {
             TestSuite ts = (TestSuite) test;
             String name = ts.getName() == null ? createSuiteDescription(ts) : ts.getName();
@@ -122,20 +122,20 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
         }
     }
 
-	/**
-	 * Get the annotations associated with given TestCase.
-	 * @param test
-	 * @return
-	 */
-	private static Annotation[] getAnnotations(TestCase test) {
-		try {
-			Method m = test.getClass().getDeclaredMethod(test.getName());
-			return m.getDeclaredAnnotations();
-		} catch (SecurityException e) {
-		} catch (NoSuchMethodException e) {
-		}
-		return new Annotation[0];
-	}
+    /**
+     * Get the annotations associated with given TestCase.
+     * @param test
+     * @return
+     */
+    private static Annotation[] getAnnotations(TestCase test) {
+        try {
+            Method m = test.getClass().getDeclaredMethod(test.getName());
+            return m.getDeclaredAnnotations();
+        } catch (SecurityException e) {
+        } catch (NoSuchMethodException e) {
+        }
+        return new Annotation[0];
+    }
 
     private static String createSuiteDescription(TestSuite ts) {
         int count = ts.countTestCases();
