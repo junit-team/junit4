@@ -30,7 +30,6 @@ public final class IncludeCategories extends CategoryFilterFactory {
      * {@link Category} values.
      *
      * @param categories Category classes.
-     * @return
      */
     @Override
     protected Filter createFilter(Class<?>... categories) {

@@ -20,14 +20,15 @@ public class FilterFactories {
      */
     public static Filter createFilterFromFilterSpec(Description description, String filterSpec)
             throws FilterFactory.FilterNotCreatedException {
+        String[] tuple;
 
         if (filterSpec.contains("=")) {
-            String[] tuple = filterSpec.split("=", 2);
-
-            return createFilter(tuple[0], new FilterFactoryParams(tuple[1]));
+            tuple = filterSpec.split("=", 2);
         } else {
-            return createFilter(filterSpec, new FilterFactoryParams());
+            tuple = new String[]{ filterSpec, "" };
         }
+
+        return createFilter(tuple[0], new FilterFactoryParams(tuple[1]));
     }
 
     /**

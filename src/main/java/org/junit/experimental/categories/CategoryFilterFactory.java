@@ -29,8 +29,7 @@ abstract class CategoryFilterFactory implements FilterFactory {
     }
 
     /**
-     * Creates a {@link org.junit.experimental.categories.Categories.CategoryFilter} given an array of classes used as
-     * {@link Category} values.
+     * Creates a {@link org.junit.experimental.categories.Categories.CategoryFilter} given an array of classes.
      *
      * @param categories Category classes.
      */
