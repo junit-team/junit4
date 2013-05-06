@@ -73,8 +73,14 @@ public class ComparisonFailure extends AssertionError {
          * is exceeded, the Strings are shortened
          */
         private int fContextLength;
+        
         private String fExpected;
         private String fActual;
+        
+        /**
+         * The length of the shared prefix / suffix of the expected and actual strings.
+         * Equals to zero if the strings do not share a common prefix/suffix.
+         */
         private int fPrefix;
         private int fSuffix;
 
@@ -103,7 +109,7 @@ public class ComparisonFailure extends AssertionError {
         }
 
         private String compactString(String source) {
-            String result = DELTA_START + source.substring(fPrefix, source.length() - fSuffix + 1) + DELTA_END;
+            String result = DELTA_START + source.substring(fPrefix, source.length() - fSuffix) + DELTA_END;
             if (fPrefix > 0) {
                 result = computeCommonPrefix() + result;
             }
@@ -131,7 +137,7 @@ public class ComparisonFailure extends AssertionError {
                     break;
                 }
             }
-            fSuffix = fExpected.length() - expectedSuffix;
+            fSuffix = fExpected.length() - expectedSuffix - 1;
         }
 
         private String computeCommonPrefix() {
@@ -139,8 +145,8 @@ public class ComparisonFailure extends AssertionError {
         }
 
         private String computeCommonSuffix() {
-            int end = Math.min(fExpected.length() - fSuffix + 1 + fContextLength, fExpected.length());
-            return fExpected.substring(fExpected.length() - fSuffix + 1, end) + (fExpected.length() - fSuffix + 1 < fExpected.length() - fContextLength ? ELLIPSIS : "");
+            int end = Math.min(fExpected.length() - fSuffix + fContextLength, fExpected.length());
+            return fExpected.substring(fExpected.length() - fSuffix, end) + (fExpected.length() - fSuffix < fExpected.length() - fContextLength ? ELLIPSIS : "");
         }
 
         private boolean areStringsEqual() {
