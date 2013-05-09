@@ -31,10 +31,10 @@ public class ComparisonFailureTest {
 			// common prefix
 			{ "ba", "bc", "expected:<b[a]> but was:<b[c]>" },
 				
-			// common postfix
+			// common suffix
 			{ "ab", "cb", "expected:<[a]b> but was:<[c]b>" },
 				
-			// common pre and postfix
+			// common pre and suffix
 			{ "abc", "adc", "expected:<a[b]c> but was:<a[d]c>" },
 			
 			// expected is subset of actual
@@ -51,7 +51,7 @@ public class ComparisonFailureTest {
 				"01234567890123456789PRE:world:POST",
 				"expected:<...4567890123456789PRE:[hello]:POST> but was:<...4567890123456789PRE:[world]:POST>" },
 					
-			// long postfix	yielding "..."
+			// long suffix	yielding "..."
 			{ "PRE:hello:01234567890123456789POST",
 				"PRE:world:01234567890123456789POST",
 				"expected:<PRE:[hello]:0123456789012345678...> but was:<PRE:[world]:0123456789012345678...>"	
