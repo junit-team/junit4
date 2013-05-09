@@ -11,6 +11,7 @@ import org.junit.runner.notification.SynchronizedRunListenerTest;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.junit.tests.assertion.AssertionTest;
+import org.junit.tests.assertion.ComparisonFailureTest;
 import org.junit.tests.assertion.MultipleFailureExceptionTest;
 import org.junit.tests.deprecated.JUnit4ClassRunnerTest;
 import org.junit.tests.description.AnnotatedDescriptionTest;
@@ -108,6 +109,7 @@ import org.junit.tests.validation.ValidationTest;
         AssertionTest.class,
         CommandLineTest.class,
         ExpectedTest.class,
+        ComparisonFailureTest.class,
         MultipleFailureExceptionTest.class,
         ForwardCompatibilityTest.class,
         OldTests.class,
