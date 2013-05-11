@@ -56,6 +56,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     private final Object fLock = new Object();
     private final TestClass fTestClass;
 
+    // Guarded by fLock
     private volatile Collection<T> fFilteredChildren = null;
 
     private volatile RunnerScheduler fScheduler = new RunnerScheduler() {
