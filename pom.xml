@@ -5,6 +5,7 @@
     <groupId>junit</groupId>
     <artifactId>junit</artifactId>
     <version>4.12-SNAPSHOT</version>
+    <packaging>bundle</packaging>
 
     <name>JUnit</name>
     <description>JUnit is a unit testing framework for Java, created by Erich Gamma and Kent Beck.</description>
@@ -83,6 +84,7 @@
     <properties>
         <jdkVersion>1.5</jdkVersion>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>ISO-8859-1</project.reporting.outputEncoding>
         <arguments/>
         <gpg.keyname>67893CC4</gpg.keyname>
     </properties>
@@ -181,17 +183,17 @@
                     <value>${project.version}</value>
                 </configuration>
             </plugin>
-            <plugin><!-- Using jdk 1.5.0_22, package-info.java files are compiled correctly. -->
-                <!--
-                java compiler plugin forked in extra process
-                -->
+            <plugin>
+                <!-- forked java compiler -->
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.5.1</version>
                 <configuration>
                     <encoding>${project.build.sourceEncoding}</encoding>
+                    <compilerVersion>${jdkVersion}</compilerVersion>
                     <source>${jdkVersion}</source>
                     <target>${jdkVersion}</target>
-                    <compilerVersion>1.5</compilerVersion>
+                    <testSource>${jdkVersion}</testSource>
+                    <testTarget>${jdkVersion}</testTarget>
                     <showDeprecation>true</showDeprecation>
                     <showWarnings>true</showWarnings>
                     <debug>true</debug>
@@ -201,16 +203,51 @@
                 </configuration>
             </plugin>
             <plugin>
+                <!-- OSGi bundle in JAR archive -->
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.3.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Main-Class>org.junit.runner.JUnitCore</Main-Class>
+                        <Bundle-SymbolicName>org.${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Name>${project.name}</Bundle-Name>
+                        <Bundle-Description>${project.description}</Bundle-Description>
+                        <Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
+                        <Bundle-DocURL>${project.organization.url}</Bundle-DocURL>
+                        <Bundle-Version>${project.version}</Bundle-Version>
+                        <Bundle-License>Common Public License Version 1.0</Bundle-License>
+                        <Export-Package>
+                            !org.junit.internal.*,
+                            !org.junit.experimental.theories.internal.*,
+                            junit.*; version="${project.version}",
+                            org.junit.*; version="${project.version}"
+                        </Export-Package>
+                        <Private-Package>
+                            org.junit.internal.*,
+                            org.junit.experimental.theories.internal.*
+                        </Private-Package>
+                        <Import-Package>
+                            !org.hamcrest.internal.*,
+                            org.hamcrest.*; resolution:=optional
+                        </Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
                 <!--
                 A plugin which uses the JUnit framework in order to start
                 our junit suite "AllTests" after the sources are compiled.
+                Short GC periods due to test using timeout.
                 -->
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.12.3</version>
+                <version>2.14.1</version>
                 <configuration>
                     <test>org/junit/tests/AllTests.java</test>
-                    <useSystemClassLoader>true</useSystemClassLoader>
                     <enableAssertions>false</enableAssertions>
+                    <forkCount>1</forkCount>
+                    <argLine>-XX:+UseAdaptiveSizePolicy -XX:+UseParallelGC -XX:MaxGCPauseMillis=50 -XX:GCTimeRatio=9</argLine>
                 </configuration>
             </plugin>
             <plugin>
@@ -333,6 +370,35 @@
                                 <goals>
                                     <goal>jar</goal>
                                 </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>integration-tests</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-invoker-plugin</artifactId>
+                        <version>1.8</version>
+                        <executions>
+                            <execution>
+                                <id>integration-tests-framework</id>
+                                <goals>
+                                    <goal>install</goal>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                                    <localRepositoryPath>${maven.repo.local}</localRepositoryPath>
+                                    <streamLogs>true</streamLogs>
+                                    <showErrors>true</showErrors>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

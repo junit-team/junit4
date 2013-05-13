@@ -15,7 +15,7 @@
   <property name="zipfile"  value="${dist}/${dist}.zip" />
   <property name="testsrc" location="src/test/java" />
   <property name="testbin" location="${target}/test/java" />
-  <property name="unjarred" 
+  <property name="unjarred"
             value="**/*.jar, ${testfiles}, doc/**, README.md, .classpath, .project, cpl-v10.html" />
 
   <property name="binjar" value="junit-${version}.jar" />
@@ -144,7 +144,7 @@
              version="false"
              use="false"
              windowtitle="JUnit API"
-             stylesheetfile="stylesheet.css"
+             stylesheetfile="src/main/javadoc/stylesheet.css"
              >
       <excludepackage name="junit.*" />
       <excludepackage name="org.junit.internal.*" />
