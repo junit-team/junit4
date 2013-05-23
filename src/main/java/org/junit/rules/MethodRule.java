@@ -36,7 +36,7 @@ public interface MethodRule {
      *
      * @param base The {@link Statement} to be modified
      * @param method The method to be run
-     * @param target The object on with the method will be run.
+     * @param target The object on which the method will be run.
      * @return a new statement, which may be the same as {@code base},
      *         a wrapper around {@code base}, or a completely new Statement.
      */
