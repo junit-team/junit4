@@ -34,8 +34,8 @@
     </mailingLists>
     <licenses>
         <license>
-            <name>Common Public License Version 1.0</name>
-            <url>http://www.opensource.org/licenses/cpl1.0.txt</url>
+            <name>Eclipse Public License Version 1.0</name>
+            <url>http://opensource.org/licenses/eclipse-1.0.txt</url>
         </license>
     </licenses>
     <scm>
