@@ -95,12 +95,10 @@ public class JUnit38ClassRunnerTest {
     }
 
     public static class JUnit3ClassWithAnnotatedMethod extends TestCase {
-        @SuppressWarnings("unused")
         @MyAnnotation
         public void testAnnotated() {
         }
 
-        @SuppressWarnings("unused")
         public void testNotAnnotated() {
         }
     }
@@ -109,12 +107,12 @@ public class JUnit38ClassRunnerTest {
     public void getDescriptionWithAnnotation() {
         JUnit38ClassRunner runner = new JUnit38ClassRunner(JUnit3ClassWithAnnotatedMethod.class);
         Description d = runner.getDescription();
-        Assert.assertEquals(2, d.testCount());
+        assertEquals(2, d.testCount());
         for (Description methodDesc : d.getChildren()) {
             if (methodDesc.getMethodName().equals("testAnnotated")) {
                 assertNotNull(methodDesc.getAnnotation(MyAnnotation.class));
             } else {
-                assertNull( methodDesc.getAnnotation(MyAnnotation.class));
+                assertNull(methodDesc.getAnnotation(MyAnnotation.class));
             }
         }
     }
