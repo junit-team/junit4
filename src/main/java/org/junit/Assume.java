@@ -1,10 +1,10 @@
 package org.junit;
 
 import static java.util.Arrays.asList;
-import static org.hamcrest.CoreMatchers.everyItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.core.Every.everyItem;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.core.IsNull.nullValue;
 
 import org.hamcrest.Matcher;
 import org.junit.internal.AssumptionViolatedException;
@@ -87,7 +87,7 @@ public class Assume {
      * @param <T> the static type accepted by the matcher (this can flag obvious compile-time problems such as {@code assumeThat(1, is("a"))}
      * @param actual the computed value being compared
      * @param matcher an expression, built of {@link Matcher}s, specifying allowed values
-     * @see org.hamcrest.CoreMatchers
+     * @see org.hamcrest.core
      * @see org.junit.matchers.JUnitMatchers
      */
     public static <T> void assumeThat(T actual, Matcher<T> matcher) {
@@ -110,7 +110,7 @@ public class Assume {
      * @param <T> the static type accepted by the matcher (this can flag obvious compile-time problems such as {@code assumeThat(1, is("a"))}
      * @param actual the computed value being compared
      * @param matcher an expression, built of {@link Matcher}s, specifying allowed values
-     * @see org.hamcrest.CoreMatchers
+     * @see org.hamcrest.core
      * @see org.junit.matchers.JUnitMatchers
      */
     public static <T> void assumeThat(String message, T actual, Matcher<T> matcher) {

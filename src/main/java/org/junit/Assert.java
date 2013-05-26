@@ -900,7 +900,7 @@ public class Assert {
      * @param actual the computed value being compared
      * @param matcher an expression, built of {@link Matcher}s, specifying allowed
      * values
-     * @see org.hamcrest.CoreMatchers
+     * @see org.hamcrest.core
      * @see org.hamcrest.MatcherAssert
      */
     public static <T> void assertThat(T actual, Matcher<? super T> matcher) {
@@ -932,7 +932,7 @@ public class Assert {
      * @param actual the computed value being compared
      * @param matcher an expression, built of {@link Matcher}s, specifying allowed
      * values
-     * @see org.hamcrest.CoreMatchers
+     * @see org.hamcrest.core
      * @see org.hamcrest.MatcherAssert
      */
     public static <T> void assertThat(String reason, T actual,
