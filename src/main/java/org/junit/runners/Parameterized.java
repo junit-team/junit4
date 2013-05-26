@@ -19,14 +19,11 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
 /**
- * <p>
  * The custom runner <code>Parameterized</code> implements parameterized tests.
  * When running a parameterized test class, instances are created for the
  * cross-product of the test methods and the test data elements.
- * </p>
- *
+ * <p>
  * For example, to test a Fibonacci function, write:
- *
  * <pre>
  * &#064;RunWith(Parameterized.class)
  * public class FibonacciTest {
@@ -51,12 +48,10 @@ import org.junit.runners.model.Statement;
  *     }
  * }
  * </pre>
- *
  * <p>
  * Each instance of <code>FibonacciTest</code> will be constructed using the
  * two-argument constructor and the data values in the
  * <code>&#064;Parameters</code> method.
- *
  * <p>
  * In order that you can easily identify the individual tests, you may provide a
  * name for the <code>&#064;Parameters</code> annotation. This name is allowed
@@ -71,13 +66,12 @@ import org.junit.runners.model.Statement;
  * <dt>...</dt>
  * <dd></dd>
  * </dl>
+ * <p>
  * In the example given above, the <code>Parameterized</code> runner creates
  * names like <code>[1: fib(3)=2]</code>. If you don't use the name parameter,
  * then the current parameter index is used as name.
- * </p>
- *
+ * <p>
  * You can also write:
- *
  * <pre>
  * &#064;RunWith(Parameterized.class)
  * public class FibonacciTest {
@@ -99,12 +93,10 @@ import org.junit.runners.model.Statement;
  *  }
  * }
  * </pre>
- *
  * <p>
  * Each instance of <code>FibonacciTest</code> will be constructed with the default constructor
  * and fields annotated by <code>&#064;Parameter</code>  will be initialized
  * with the data values in the <code>&#064;Parameters</code> method.
- * </p>
  *
  * @since 4.0
  */
@@ -117,12 +109,9 @@ public class Parameterized extends Suite {
     @Target(ElementType.METHOD)
     public static @interface Parameters {
         /**
-         * <p>
          * Optional pattern to derive the test's name from the parameters. Use
          * numbers in braces to refer to the parameters or the additional data
          * as follows:
-         * </p>
-         *
          * <pre>
          * {index} - the current parameter index
          * {0} - the first parameter value
@@ -132,7 +121,6 @@ public class Parameterized extends Suite {
          * <p>
          * Default value is "{index}" for compatibility with previous JUnit
          * versions.
-         * </p>
          *
          * @return {@link MessageFormat} pattern string, except the index
          *         placeholder.

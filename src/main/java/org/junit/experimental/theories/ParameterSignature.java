@@ -5,9 +5,35 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ParameterSignature {
+    
+    private static final Map<Class<?>, Class<?>> CONVERTABLE_TYPES_MAP = buildConvertableTypesMap();
+    
+    private static Map<Class<?>, Class<?>> buildConvertableTypesMap() {
+        Map<Class<?>, Class<?>> map = new HashMap<Class<?>, Class<?>>();
+
+        putSymmetrically(map, boolean.class, Boolean.class);
+        putSymmetrically(map, byte.class, Byte.class);
+        putSymmetrically(map, short.class, Short.class);
+        putSymmetrically(map, char.class, Character.class);
+        putSymmetrically(map, int.class, Integer.class);
+        putSymmetrically(map, long.class, Long.class);
+        putSymmetrically(map, float.class, Float.class);
+        putSymmetrically(map, double.class, Double.class);
+
+        return Collections.unmodifiableMap(map);
+    }
+    
+    private static <T> void putSymmetrically(Map<T, T> map, T a, T b) {
+        map.put(a, b);
+        map.put(b, a);
+    }
+    
     public static ArrayList<ParameterSignature> signatures(Method method) {
         return signatures(method.getParameterTypes(), method
                 .getParameterAnnotations());
@@ -42,7 +68,23 @@ public class ParameterSignature {
     }
 
     public boolean canAcceptType(Class<?> candidate) {
-        return type.isAssignableFrom(candidate);
+        return type.isAssignableFrom(candidate) ||
+                isAssignableViaTypeConversion(type, candidate);
+    }
+    
+    public boolean canPotentiallyAcceptType(Class<?> candidate) {
+        return candidate.isAssignableFrom(type) ||
+                isAssignableViaTypeConversion(candidate, type) ||
+                canAcceptType(candidate);
+    }
+
+    private boolean isAssignableViaTypeConversion(Class<?> targetType, Class<?> candidate) {
+        if (CONVERTABLE_TYPES_MAP.containsKey(candidate)) {
+            Class<?> wrapperClass = CONVERTABLE_TYPES_MAP.get(candidate);
+            return targetType.isAssignableFrom(wrapperClass);
+        } else {
+            return false;
+        }
     }
 
     public Class<?> getType() {
@@ -51,10 +93,6 @@ public class ParameterSignature {
 
     public List<Annotation> getAnnotations() {
         return Arrays.asList(annotations);
-    }
-
-    public boolean canAcceptArrayType(Class<?> type) {
-        return type.isArray() && canAcceptType(type.getComponentType());
     }
 
     public boolean hasAnnotation(Class<? extends Annotation> type) {

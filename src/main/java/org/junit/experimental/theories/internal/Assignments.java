@@ -1,5 +1,8 @@
 package org.junit.experimental.theories.internal;
 
+import static java.util.Collections.emptyList;
+
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,63 +59,81 @@ public class Assignments {
                 fAssigned);
         assigned.add(source);
 
-        return new Assignments(assigned, fUnassigned.subList(1, fUnassigned
-                .size()), fClass);
+        return new Assignments(assigned, fUnassigned.subList(1,
+                fUnassigned.size()), fClass);
     }
 
-    public Object[] getActualValues(int start, int stop, boolean nullsOk)
+    public Object[] getActualValues(int start, int stop) 
             throws CouldNotGenerateValueException {
         Object[] values = new Object[stop - start];
         for (int i = start; i < stop; i++) {
-            Object value = fAssigned.get(i).getValue();
-            if (value == null && !nullsOk) {
-                throw new CouldNotGenerateValueException();
-            }
-            values[i - start] = value;
+            values[i - start] = fAssigned.get(i).getValue();
         }
         return values;
     }
 
     public List<PotentialAssignment> potentialsForNextUnassigned()
-            throws InstantiationException, IllegalAccessException {
+            throws Throwable {
         ParameterSignature unassigned = nextUnassigned();
-        return getSupplier(unassigned).getValueSources(unassigned);
-    }
-
-    public ParameterSupplier getSupplier(ParameterSignature unassigned)
-            throws InstantiationException, IllegalAccessException {
-        ParameterSupplier supplier = getAnnotatedSupplier(unassigned);
-        if (supplier != null) {
-            return supplier;
+        List<PotentialAssignment> assignments = getSupplier(unassigned).getValueSources(unassigned);
+        
+        if (assignments.size() == 0) {
+            assignments = generateAssignmentsFromTypeAlone(unassigned);
         }
-
-        return new AllMembersSupplier(fClass);
+        
+        return assignments;
     }
 
-    public ParameterSupplier getAnnotatedSupplier(ParameterSignature unassigned)
-            throws InstantiationException, IllegalAccessException {
+    private List<PotentialAssignment> generateAssignmentsFromTypeAlone(ParameterSignature unassigned) {
+        Class<?> paramType = unassigned.getType();
+        
+        if (paramType.isEnum()) {
+            return new EnumSupplier(paramType).getValueSources(unassigned);  
+        } else if (paramType.equals(Boolean.class) || paramType.equals(boolean.class)) {
+            return new BooleanSupplier().getValueSources(unassigned);
+        } else {
+            return emptyList();
+        }
+    }
+
+    private ParameterSupplier getSupplier(ParameterSignature unassigned)
+            throws Exception {
         ParametersSuppliedBy annotation = unassigned
                 .findDeepAnnotation(ParametersSuppliedBy.class);
-        if (annotation == null) {
-            return null;
+        
+        if (annotation != null) {
+            return buildParameterSupplierFromClass(annotation.value());
+        } else {
+            return new AllMembersSupplier(fClass);
         }
-        return annotation.value().newInstance();
     }
 
-    public Object[] getConstructorArguments(boolean nullsOk)
-            throws CouldNotGenerateValueException {
-        return getActualValues(0, getConstructorParameterCount(), nullsOk);
+    private ParameterSupplier buildParameterSupplierFromClass(
+            Class<? extends ParameterSupplier> cls) throws Exception {
+        Constructor<?>[] supplierConstructors = cls.getConstructors();
+
+        for (Constructor<?> constructor : supplierConstructors) {
+            Class<?>[] parameterTypes = constructor.getParameterTypes();
+            if (parameterTypes.length == 1
+                    && parameterTypes[0].equals(TestClass.class)) {
+                return (ParameterSupplier) constructor.newInstance(fClass);
+            }
+        }
+
+        return cls.newInstance();
     }
 
-    public Object[] getMethodArguments(boolean nullsOk)
+    public Object[] getConstructorArguments()
             throws CouldNotGenerateValueException {
-        return getActualValues(getConstructorParameterCount(),
-                fAssigned.size(), nullsOk);
+        return getActualValues(0, getConstructorParameterCount());
     }
 
-    public Object[] getAllArguments(boolean nullsOk)
-            throws CouldNotGenerateValueException {
-        return getActualValues(0, fAssigned.size(), nullsOk);
+    public Object[] getMethodArguments() throws CouldNotGenerateValueException {
+        return getActualValues(getConstructorParameterCount(), fAssigned.size());
+    }
+
+    public Object[] getAllArguments() throws CouldNotGenerateValueException {
+        return getActualValues(0, fAssigned.size());
     }
 
     private int getConstructorParameterCount() {

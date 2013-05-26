@@ -1,8 +1,8 @@
 JUnit
 
-Common Public License - v 1.0
+Eclipse Public License - v 1.0
 
-THE ACCOMPANYING PROGRAM IS PROVIDED UNDER THE TERMS OF THIS COMMON PUBLIC
+THE ACCOMPANYING PROGRAM IS PROVIDED UNDER THE TERMS OF THIS ECLIPSE PUBLIC
 LICENSE ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THE PROGRAM
 CONSTITUTES RECIPIENT'S ACCEPTANCE OF THIS AGREEMENT.
 
@@ -173,11 +173,7 @@ terms of this Agreement, and without further action by the parties hereto, such
 provision shall be reformed to the minimum extent necessary to make such
 provision valid and enforceable.
 
-If Recipient institutes patent litigation against a Contributor with respect to
-a patent applicable to software (including a cross-claim or counterclaim in a
-lawsuit), then any patent licenses granted by that Contributor to such
-Recipient under this Agreement shall terminate as of the date such litigation
-is filed. In addition, if Recipient institutes patent litigation against any
+If Recipient institutes patent litigation against any
 entity (including a cross-claim or counterclaim in a lawsuit) alleging that the
 Program itself (excluding combinations of the Program with other software or
 hardware) infringes such Recipient's patent(s), then such Recipient's rights
@@ -198,7 +194,7 @@ order to avoid inconsistency the Agreement is copyrighted and may only be
 modified in the following manner. The Agreement Steward reserves the right to
 publish new versions (including revisions) of this Agreement from time to time.
 No one other than the Agreement Steward has the right to modify this Agreement.
-IBM is the initial Agreement Steward. IBM may assign the responsibility to
+The Eclipse Foundation is the initial Agreement Steward. The Eclipse Foundation may assign the responsibility to
 serve as the Agreement Steward to a suitable separate entity. Each new version
 of the Agreement will be given a distinguishing version number. The Program
 (including Contributions) may always be distributed subject to the version of

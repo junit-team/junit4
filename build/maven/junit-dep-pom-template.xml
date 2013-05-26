@@ -34,14 +34,14 @@
     </mailingLists>
     <licenses>
         <license>
-            <name>Common Public License Version 1.0</name>
-            <url>http://www.opensource.org/licenses/cpl1.0.txt</url>
+            <name>Eclipse Public License Version 1.0</name>
+            <url>http://opensource.org/licenses/eclipse-1.0.txt</url>
         </license>
     </licenses>
     <scm>
-        <connection>scm:git:git://github.com/KentBeck/junit.git</connection>
-        <developerConnection>scm:git:git@github.com:KentBeck/junit.git</developerConnection>
-        <url>http://github.com/KentBeck/junit/tree/master</url>
+        <connection>scm:git:git://github.com/junit-team/junit.git</connection>
+        <developerConnection>scm:git:git@github.com:junit-team/junit.git</developerConnection>
+        <url>http://github.com/junit-team/junit/tree/master</url>
     </scm>
     <developers>
       <developer>
