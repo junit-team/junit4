@@ -53,7 +53,7 @@ public class ErrorReportingRunner extends Runner {
 
     private Description describeCause(Throwable child) {
         return Description.createTestDescription(fTestClass,
-                "initializationError:");
+                "initializationError");
     }
 
     private void runCause(Throwable child, RunNotifier notifier) {

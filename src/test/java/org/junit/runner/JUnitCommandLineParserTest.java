@@ -7,7 +7,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.IncludeCategories;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.manipulation.Filter;
-import org.junit.tests.TestSystem;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
@@ -18,7 +17,7 @@ public class JUnitCommandLineParserTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
-    private JUnitCommandLineParser jUnitCommandLineParser = new JUnitCommandLineParser(new TestSystem());
+    private JUnitCommandLineParser jUnitCommandLineParser = new JUnitCommandLineParser();
 
     @Test
     public void shouldStopParsingOptionsUponDoubleHyphenArg() throws Exception {
@@ -49,7 +48,7 @@ public class JUnitCommandLineParserTest {
         Runner runner = jUnitCommandLineParser.createRequest(new Computer()).getRunner();
         Description description = runner.getDescription().getChildren().get(0);
 
-        assertThat(description.toString(), containsString("initializationError:"));
+        assertThat(description.toString(), containsString("initializationError"));
     }
 
     @Test
@@ -83,7 +82,7 @@ public class JUnitCommandLineParserTest {
         Runner runner = jUnitCommandLineParser.createRequest(new Computer()).getRunner();
         Description description = runner.getDescription().getChildren().get(0);
 
-        assertThat(description.toString(), containsString("initializationError:"));
+        assertThat(description.toString(), containsString("initializationError"));
     }
 
     @Test
@@ -95,7 +94,7 @@ public class JUnitCommandLineParserTest {
         Runner runner = jUnitCommandLineParser.createRequest(new Computer()).getRunner();
         Description description = runner.getDescription().getChildren().get(0);
 
-        assertThat(description.toString(), containsString("initializationError:"));
+        assertThat(description.toString(), containsString("initializationError"));
     }
 
     @Test
@@ -108,7 +107,7 @@ public class JUnitCommandLineParserTest {
         Runner runner = jUnitCommandLineParser.createRequest(new Computer()).getRunner();
         Description description = runner.getDescription().getChildren().get(0);
 
-        assertThat(description.toString(), containsString("initializationError:"));
+        assertThat(description.toString(), containsString("initializationError"));
     }
 
     @Test
@@ -133,7 +132,7 @@ public class JUnitCommandLineParserTest {
         Runner runner = jUnitCommandLineParser.createRequest(new Computer()).getRunner();
         Description description = runner.getDescription().getChildren().get(0);
 
-        assertThat(description.toString(), containsString("initializationError:"));
+        assertThat(description.toString(), containsString("initializationError"));
     }
 
     public static class FilterFactoryStub implements FilterFactory {

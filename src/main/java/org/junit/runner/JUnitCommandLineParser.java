@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.internal.Classes;
-import org.junit.internal.JUnitSystem;
 import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runners.model.InitializationError;
@@ -12,20 +11,9 @@ import org.junit.runners.model.InitializationError;
 import static org.junit.runner.Description.createSuiteDescription;
 
 class JUnitCommandLineParser {
-    private final JUnitSystem system;
-
     private Filter filter = Filter.ALL;
     private List<Class<?>> classes = new ArrayList<Class<?>>();
     private List<Throwable> parserErrors = new ArrayList<Throwable>();
-
-    /**
-     * Constructs a {@link JUnitCommandLineParser}.
-     *
-     * @param system {@link JUnitSystem} to be used.
-     */
-    public JUnitCommandLineParser(JUnitSystem system) {
-        this.system = system;
-    }
 
     /**
      * Do not use. Testing purposes only.
@@ -83,7 +71,6 @@ class JUnitCommandLineParser {
                     return copyArray(args, i, args.length);
                 }
             } catch (FilterFactory.FilterNotCreatedException e) {
-                system.out().println("Could not find filter: " + e.getMessage());
                 parserErrors.add(e);
             }
         }
@@ -106,7 +93,6 @@ class JUnitCommandLineParser {
             try {
                 classes.add(Classes.getClass(arg));
             } catch (ClassNotFoundException e) {
-                system.out().println("Could not find class: " + arg);
                 parserErrors.add(new IllegalArgumentException("Could not find class [" + arg + "]", e));
             }
         }

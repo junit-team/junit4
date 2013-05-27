@@ -76,7 +76,7 @@ public class JUnitCore {
     Result runMain(JUnitSystem system, String... args) {
         system.out().println("JUnit version " + Version.id());
 
-        JUnitCommandLineParser jUnitCommandLineParser = new JUnitCommandLineParser(system);
+        JUnitCommandLineParser jUnitCommandLineParser = new JUnitCommandLineParser();
         jUnitCommandLineParser.parseArgs(args);
 
         RunListener listener = new TextListener(system);
