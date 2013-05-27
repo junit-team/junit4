@@ -7,7 +7,7 @@ import org.junit.internal.MethodSorterTest;
 import org.junit.internal.matchers.StacktracePrintingMatcherTest;
 import org.junit.runner.FilterFactoriesTest;
 import org.junit.runner.FilterOptionIntegrationTest;
-import org.junit.runner.JUnitCommandLineParserTest;
+import org.junit.runner.JUnitCommandLineParseResultTest;
 import org.junit.runner.JUnitCoreTest;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.ConcurrentRunNotifierTest;
@@ -189,7 +189,7 @@ import org.junit.tests.validation.ValidationTest;
         ConcurrentRunNotifierTest.class,
         SynchronizedRunListenerTest.class,
         FilterOptionIntegrationTest.class,
-        JUnitCommandLineParserTest.class,
+        JUnitCommandLineParseResultTest.class,
         FilterFactoriesTest.class,
         CategoryFilterFactoryTest.class,
         JUnitCoreTest.class

@@ -76,13 +76,12 @@ public class JUnitCore {
     Result runMain(JUnitSystem system, String... args) {
         system.out().println("JUnit version " + Version.id());
 
-        JUnitCommandLineParser jUnitCommandLineParser = new JUnitCommandLineParser();
-        jUnitCommandLineParser.parseArgs(args);
+        JUnitCommandLineParseResult jUnitCommandLineParseResult = JUnitCommandLineParseResult.parse(args);
 
         RunListener listener = new TextListener(system);
         addListener(listener);
 
-        return run(jUnitCommandLineParser.createRequest(defaultComputer()));
+        return run(jUnitCommandLineParseResult.createRequest(defaultComputer()));
     }
 
     /**

@@ -10,7 +10,7 @@ import org.junit.runners.model.InitializationError;
 
 import static org.junit.runner.Description.createSuiteDescription;
 
-class JUnitCommandLineParser {
+class JUnitCommandLineParseResult {
     private Filter filter = Filter.ALL;
     private List<Class<?>> classes = new ArrayList<Class<?>>();
     private List<Throwable> parserErrors = new ArrayList<Throwable>();
@@ -18,14 +18,19 @@ class JUnitCommandLineParser {
     /**
      * Do not use. Testing purposes only.
      */
-    Filter getFilter() {
+    JUnitCommandLineParseResult() {}
+
+    /**
+     * Returns filters parsed from command line.
+     */
+    public Filter getFilter() {
         return filter;
     }
 
     /**
-     * Do not use. Testing purposes only.
+     * Returns test classes parsed from command line.
      */
-    List<Class<?>> getClasses() {
+    public List<Class<?>> getClasses() {
         return classes;
     }
 
@@ -34,7 +39,15 @@ class JUnitCommandLineParser {
      *
      * @param args Arguments
      */
-    public void parseArgs(String[] args) {
+    public static JUnitCommandLineParseResult parse(String[] args) {
+        JUnitCommandLineParseResult result = new JUnitCommandLineParseResult();
+
+        result.parseArgs(args);
+
+        return result;
+    }
+
+    void parseArgs(String[] args) {
         parseParameters(parseOptions(args));
     }
 
@@ -113,7 +126,7 @@ class JUnitCommandLineParser {
                 @Override
                 public Runner getRunner() {
                     return new ErrorReportingRunner(
-                            JUnitCommandLineParser.class,
+                            JUnitCommandLineParseResult.class,
                             new InitializationError(parserErrors));
                 }
             };

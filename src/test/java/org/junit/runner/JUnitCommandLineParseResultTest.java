@@ -13,15 +13,15 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class JUnitCommandLineParserTest {
+public class JUnitCommandLineParseResultTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
-    private JUnitCommandLineParser jUnitCommandLineParser = new JUnitCommandLineParser();
+    private JUnitCommandLineParseResult jUnitCommandLineParseResult = new JUnitCommandLineParseResult();
 
     @Test
     public void shouldStopParsingOptionsUponDoubleHyphenArg() throws Exception {
-        String[] restOfArgs = jUnitCommandLineParser.parseOptions(new String[]{
+        String[] restOfArgs = jUnitCommandLineParseResult.parseOptions(new String[]{
                 "--0", "--1", "--", "--2", "--3"
         });
 
@@ -30,22 +30,22 @@ public class JUnitCommandLineParserTest {
 
     @Test
     public void shouldParseFilterArgWithEqualsSyntax() throws Exception {
-        jUnitCommandLineParser.parseOptions(new String[]{
+        jUnitCommandLineParseResult.parseOptions(new String[]{
                 "--filter=" + IncludeCategories.class.getName() + "=" + DummyCategory0.class.getName()
         });
 
-        Filter filter = jUnitCommandLineParser.getFilter();
+        Filter filter = jUnitCommandLineParseResult.getFilter();
 
         assertThat(filter.describe(), startsWith("includes "));
     }
 
     @Test
     public void shouldCreateFailureUponBaldFilterOptionNotFollowedByValue() {
-        jUnitCommandLineParser.parseOptions(new String[]{
+        jUnitCommandLineParseResult.parseOptions(new String[]{
                 "--filter"
         });
 
-        Runner runner = jUnitCommandLineParser.createRequest(new Computer()).getRunner();
+        Runner runner = jUnitCommandLineParseResult.createRequest(new Computer()).getRunner();
         Description description = runner.getDescription().getChildren().get(0);
 
         assertThat(description.toString(), containsString("initializationError"));
@@ -53,19 +53,19 @@ public class JUnitCommandLineParserTest {
 
     @Test
     public void shouldParseFilterArgInWhichValueIsASeparateArg() throws Exception {
-        jUnitCommandLineParser.parseOptions(new String[]{
+        jUnitCommandLineParseResult.parseOptions(new String[]{
                 "--filter",
                 IncludeCategories.class.getName() + "=" + DummyCategory0.class.getName()
         });
 
-        Filter filter = jUnitCommandLineParser.getFilter();
+        Filter filter = jUnitCommandLineParseResult.getFilter();
 
         assertThat(filter.describe(), startsWith("includes "));
     }
 
     @Test
     public void shouldStopParsingOptionsUponNonOption() throws Exception {
-        String[] restOfArgs = jUnitCommandLineParser.parseOptions(new String[]{
+        String[] restOfArgs = jUnitCommandLineParseResult.parseOptions(new String[]{
                 "--0", "--1", "2", "3"
         });
 
@@ -75,11 +75,11 @@ public class JUnitCommandLineParserTest {
     @Test
     public void shouldCreateFailureUponUnknownOption() throws Exception {
         String unknownOption = "--unknown-option";
-        jUnitCommandLineParser.parseOptions(new String[]{
+        jUnitCommandLineParseResult.parseOptions(new String[]{
                 unknownOption
         });
 
-        Runner runner = jUnitCommandLineParser.createRequest(new Computer()).getRunner();
+        Runner runner = jUnitCommandLineParseResult.createRequest(new Computer()).getRunner();
         Description description = runner.getDescription().getChildren().get(0);
 
         assertThat(description.toString(), containsString("initializationError"));
@@ -87,11 +87,11 @@ public class JUnitCommandLineParserTest {
 
     @Test
     public void shouldCreateFailureUponUncreatedFilter() throws Exception {
-        jUnitCommandLineParser.parseOptions(new String[]{
+        jUnitCommandLineParseResult.parseOptions(new String[]{
                 "--filter=" + FilterFactoryStub.class.getName()
         });
 
-        Runner runner = jUnitCommandLineParser.createRequest(new Computer()).getRunner();
+        Runner runner = jUnitCommandLineParseResult.createRequest(new Computer()).getRunner();
         Description description = runner.getDescription().getChildren().get(0);
 
         assertThat(description.toString(), containsString("initializationError"));
@@ -100,11 +100,11 @@ public class JUnitCommandLineParserTest {
     @Test
     public void shouldCreateFailureUponUnfoundFilterFactory() throws Exception {
         String nonExistentFilterFactory = "NonExistentFilterFactory";
-        jUnitCommandLineParser.parseOptions(new String[]{
+        jUnitCommandLineParseResult.parseOptions(new String[]{
                 "--filter=" + nonExistentFilterFactory
         });
 
-        Runner runner = jUnitCommandLineParser.createRequest(new Computer()).getRunner();
+        Runner runner = jUnitCommandLineParseResult.createRequest(new Computer()).getRunner();
         Description description = runner.getDescription().getChildren().get(0);
 
         assertThat(description.toString(), containsString("initializationError"));
@@ -112,11 +112,11 @@ public class JUnitCommandLineParserTest {
 
     @Test
     public void shouldAddToClasses() {
-        jUnitCommandLineParser.parseParameters(new String[]{
+        jUnitCommandLineParseResult.parseParameters(new String[]{
                 DummyTest.class.getName()
         });
 
-        List<Class<?>> classes = jUnitCommandLineParser.getClasses();
+        List<Class<?>> classes = jUnitCommandLineParseResult.getClasses();
         Class<?> testClass = classes.get(0);
 
         assertThat(testClass.getName(), is(DummyTest.class.getName()));
@@ -125,11 +125,11 @@ public class JUnitCommandLineParserTest {
     @Test
     public void shouldCreateFailureUponUnknownTestClass() throws Exception {
         String unknownTestClass = "UnknownTestClass";
-        jUnitCommandLineParser.parseParameters(new String[]{
+        jUnitCommandLineParseResult.parseParameters(new String[]{
                 unknownTestClass
         });
 
-        Runner runner = jUnitCommandLineParser.createRequest(new Computer()).getRunner();
+        Runner runner = jUnitCommandLineParseResult.createRequest(new Computer()).getRunner();
         Description description = runner.getDescription().getChildren().get(0);
 
         assertThat(description.toString(), containsString("initializationError"));
