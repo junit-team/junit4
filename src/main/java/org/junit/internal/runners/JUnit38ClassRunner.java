@@ -17,6 +17,8 @@ import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
 public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
     private final class OldTestClassAdaptingListener implements
@@ -96,7 +98,8 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
     private static Description makeDescription(Test test) {
         if (test instanceof TestCase) {
             TestCase tc = (TestCase) test;
-            return Description.createTestDescription(tc.getClass(), tc.getName());
+            return Description.createTestDescription(tc.getClass(), tc.getName(),
+                    getAnnotations(tc));
         } else if (test instanceof TestSuite) {
             TestSuite ts = (TestSuite) test;
             String name = ts.getName() == null ? createSuiteDescription(ts) : ts.getName();
@@ -117,6 +120,21 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
             // This is the best we can do in this case
             return Description.createSuiteDescription(test.getClass());
         }
+    }
+
+    /**
+     * Get the annotations associated with given TestCase.
+     * @param test
+     * @return
+     */
+    private static Annotation[] getAnnotations(TestCase test) {
+        try {
+            Method m = test.getClass().getDeclaredMethod(test.getName());
+            return m.getDeclaredAnnotations();
+        } catch (SecurityException e) {
+        } catch (NoSuchMethodException e) {
+        }
+        return new Annotation[0];
     }
 
     private static String createSuiteDescription(TestSuite ts) {
