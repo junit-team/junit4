@@ -11,11 +11,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
+import org.junit.experimental.validator.AnnotationValidator;
+import org.junit.experimental.validator.Validator;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.statements.RunAfters;
@@ -31,12 +32,7 @@ import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
-import org.junit.runners.model.FrameworkMethod;
-import org.junit.runners.model.InitializationError;
-import org.junit.runners.model.MultipleFailureException;
-import org.junit.runners.model.RunnerScheduler;
-import org.junit.runners.model.Statement;
-import org.junit.runners.model.TestClass;
+import org.junit.runners.model.*;
 
 /**
  * Provides most of the functionality specific to a Runner that implements a
@@ -114,6 +110,95 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         validatePublicVoidNoArgMethods(BeforeClass.class, true, errors);
         validatePublicVoidNoArgMethods(AfterClass.class, true, errors);
         validateClassRules(errors);
+        invokeValidators(errors);
+    }
+
+    private void invokeValidators(List<Throwable> errors) {
+        invokeValidatorsOnClass(errors);
+        invokeValidatorsOnMethods(errors);
+        invokeValidatorsOnFields(errors);
+    }
+
+    private void invokeValidatorsOnClass(List<Throwable> errors) {
+        Annotation[] annotations = getTestClass().getAnnotations();
+        for (Annotation annotation : annotations) {
+            if (hasValidatorAnnotation(annotation)) {
+                invokeValidatorsOnClass(annotation, errors);
+            }
+        }
+    }
+
+    private void invokeValidatorsOnClass(Annotation annotation, List<Throwable> errors) {
+        List<AnnotationValidator> annotationValidators = createAnnotationValidators(annotation);
+        for (AnnotationValidator annotationValidator : annotationValidators) {
+            annotationValidator.validateAnnotatedClass(getTestClass().getJavaClass(), errors);
+        }
+    }
+
+    private void invokeValidatorsOnMethods(List<Throwable> errors) {
+        Set<FrameworkMethod> annotatedMethods = getTestClass().getAnnotatedMethods();
+        for (FrameworkMethod frameworkMethod : annotatedMethods) {
+            for (Annotation annotation : frameworkMethod.getAnnotations()) {
+                if (hasValidatorAnnotation(annotation)) {
+                    invokeValidatorsOnMethod(annotation, frameworkMethod, errors);
+                }
+            }
+        }
+    }
+
+    private void invokeValidatorsOnMethod(Annotation annotation,
+                                          FrameworkMethod frameworkMethod,
+                                          List<Throwable> errors) {
+        List<AnnotationValidator> annotationValidators = createAnnotationValidators(annotation);
+        for (AnnotationValidator annotationValidator : annotationValidators) {
+            annotationValidator.validateAnnotatedMethod(frameworkMethod.getMethod(), errors);
+        }
+    }
+
+    private void invokeValidatorsOnFields(List<Throwable> errors) {
+        Set<FrameworkField> annotatedFields = getTestClass().getAnnotatedFields();
+        for (FrameworkField frameworkField : annotatedFields) {
+            for (Annotation annotation : frameworkField.getAnnotations()) {
+                if (hasValidatorAnnotation(annotation)) {
+                    invokeValidatorsOnField(annotation, frameworkField, errors);
+                }
+            }
+        }
+    }
+
+    private void invokeValidatorsOnField(Annotation annotation,
+                                         FrameworkField frameworkField,
+                                         List<Throwable> errors) {
+        List<AnnotationValidator> annotationValidators = createAnnotationValidators(annotation);
+        for (AnnotationValidator annotationValidator : annotationValidators) {
+            annotationValidator.validateAnnotatedField(frameworkField.getField(), errors);
+        }
+    }
+
+    private boolean hasValidatorAnnotation(Annotation annotation) {
+        Annotation[] annotations = annotation.annotationType().getAnnotations();
+        for (Annotation current : annotations) {
+            if (Validator.class.isAssignableFrom(current.getClass())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private List<AnnotationValidator> createAnnotationValidators(Annotation annotation) {
+        List<AnnotationValidator> validators = new ArrayList<AnnotationValidator>();
+        Class<? extends Annotation> annotationType = annotation.annotationType();
+        Validator validatorAnnotation = annotationType.getAnnotation(Validator.class);
+        Class<?>[] classes = validatorAnnotation.value();
+        for (Class clazz : classes) {
+            try {
+                AnnotationValidator annotationValidator = (AnnotationValidator) clazz.newInstance();
+                validators.add(annotationValidator);
+            } catch (Exception e) {
+                throw new RuntimeException("Could not create AnnotationValidator class " + clazz.getName(), e);
+            }
+        }
+        return validators;
     }
 
     /**

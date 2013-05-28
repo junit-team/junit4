@@ -1,5 +1,8 @@
 package org.junit.experimental.categories;
 
+import org.junit.experimental.validator.CategoryValidator;
+import org.junit.experimental.validator.Validator;
+
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -40,6 +43,7 @@ import java.lang.annotation.RetentionPolicy;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
+@Validator(CategoryValidator.class)
 public @interface Category {
     Class<?>[] value();
 }

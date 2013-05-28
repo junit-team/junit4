@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -80,6 +79,18 @@ public class TestClass {
     }
 
     /**
+     * Returns, efficiently, all the non-overridden methods in this class and
+     * its superclasses.
+     */
+    public Set<FrameworkMethod> getAnnotatedMethods() {
+        Set<FrameworkMethod> annotatedMethods = new HashSet<FrameworkMethod>();
+        for (List<FrameworkMethod> currentMethods : fMethodsForAnnotations.values()) {
+            annotatedMethods.addAll(currentMethods);
+        }
+        return annotatedMethods;
+    }
+
+    /**
      * Returns, efficiently, all the non-overridden fields in this class and its
      * superclasses that are annotated with {@code annotationClass}.
      */
@@ -88,9 +99,27 @@ public class TestClass {
         return Collections.unmodifiableList(getAnnotatedMembers(fFieldsForAnnotations, annotationClass, false));
     }
 
+<<<<<<< HEAD
     private static <T> List<T> getAnnotatedMembers(Map<Class<?>, List<T>> map,
             Class<? extends Annotation> type, boolean fillIfAbsent) {
         if (!map.containsKey(type) && fillIfAbsent) {
+=======
+    /**
+     * Returns, efficiently, all the non-overridden fields in this class and
+     * its superclasses.
+     */
+    public Set<FrameworkField> getAnnotatedFields() {
+        Set<FrameworkField> annotatedFields = new HashSet<FrameworkField>();
+        for (List<FrameworkField> fields : fFieldsForAnnotations.values()) {
+            annotatedFields.addAll(fields);
+        }
+        return annotatedFields;
+    }
+
+    private <T> List<T> getAnnotatedMembers(Map<Class<?>, List<T>> map,
+            Class<? extends Annotation> type) {
+        if (!map.containsKey(type)) {
+>>>>>>> adding annotation validators functionality
             map.put(type, new ArrayList<T>());
         }
         List<T> members = map.get(type);
