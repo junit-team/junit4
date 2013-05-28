@@ -11,3 +11,5 @@ MaxCore.max
 out
 java.hprof.txt
 .gitattributes
+# OS-specific junk #
+.DS_Store
