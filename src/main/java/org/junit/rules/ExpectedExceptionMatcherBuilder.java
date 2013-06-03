@@ -1,6 +1,6 @@
 package org.junit.rules;
 
-import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.core.AllOf.allOf;
 import static org.junit.matchers.JUnitMatchers.isThrowable;
 
 import java.util.ArrayList;

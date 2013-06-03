@@ -1,9 +1,12 @@
 package org.junit.matchers;
 
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
+import org.hamcrest.core.CombinableMatcher;
 import org.hamcrest.core.CombinableMatcher.CombinableBothMatcher;
 import org.hamcrest.core.CombinableMatcher.CombinableEitherMatcher;
+import org.hamcrest.core.Every;
+import org.hamcrest.core.IsCollectionContaining;
+import org.hamcrest.core.StringContains;
 import org.junit.internal.matchers.StacktracePrintingMatcher;
 
 /**
@@ -15,58 +18,58 @@ import org.junit.internal.matchers.StacktracePrintingMatcher;
 public class JUnitMatchers {
     /**
      * @return A matcher matching any collection containing element
-     * @deprecated Please use {@link CoreMatchers#hasItem(Object)} instead.
+     * @deprecated Please use {@link IsCollectionContaining#hasItem(Object)} instead.
      */
     @Deprecated
     public static <T> Matcher<Iterable<? super T>> hasItem(T element) {
-        return CoreMatchers.hasItem(element);
+        return IsCollectionContaining.<T>hasItem(element);
     }
 
     /**
      * @return A matcher matching any collection containing an element matching elementMatcher
-     * @deprecated Please use {@link CoreMatchers#hasItem(Matcher)} instead.
+     * @deprecated Please use {@link IsCollectionContaining#hasItem(Matcher)} instead.
      */
     @Deprecated
     public static <T> Matcher<Iterable<? super T>> hasItem(Matcher<? super T> elementMatcher) {
-        return CoreMatchers.<T>hasItem(elementMatcher);
+        return IsCollectionContaining.<T>hasItem(elementMatcher);
     }
 
     /**
      * @return A matcher matching any collection containing every element in elements
-     * @deprecated Please use {@link CoreMatchers#hasItems(Object...)} instead.
+     * @deprecated Please use {@link IsCollectionContaining#hasItems(Object[])} instead.
      */
     @Deprecated
     public static <T> Matcher<Iterable<T>> hasItems(T... elements) {
-        return CoreMatchers.hasItems(elements);
+        return IsCollectionContaining.<T>hasItems(elements);
     }
 
     /**
      * @return A matcher matching any collection containing at least one element that matches
      *         each matcher in elementMatcher (this may be one element matching all matchers,
      *         or different elements matching each matcher)
-     * @deprecated Please use {@link CoreMatchers#hasItems(Matcher...)} instead.
+     * @deprecated Please use {@link IsCollectionContaining#hasItems(org.hamcrest.Matcher[])} instead.
      */
     @Deprecated
     public static <T> Matcher<Iterable<T>> hasItems(Matcher<? super T>... elementMatchers) {
-        return CoreMatchers.hasItems(elementMatchers);
+        return IsCollectionContaining.<T>hasItems(elementMatchers);
     }
 
     /**
      * @return A matcher matching any collection in which every element matches elementMatcher
-     * @deprecated Please use {@link CoreMatchers#everyItem(Matcher)} instead.
+     * @deprecated Please use {@link Every#everyItem(Matcher)} instead.
      */
     @Deprecated
     public static <T> Matcher<Iterable<T>> everyItem(final Matcher<T> elementMatcher) {
-        return CoreMatchers.everyItem(elementMatcher);
+        return Every.<T>everyItem(elementMatcher);
     }
 
     /**
      * @return a matcher matching any string that contains substring
-     * @deprecated Please use {@link CoreMatchers#containsString(String)} instead.
+     * @deprecated Please use {@link StringContains#containsString(String)} instead.
      */
     @Deprecated
     public static Matcher<java.lang.String> containsString(java.lang.String substring) {
-        return CoreMatchers.containsString(substring);
+        return StringContains.containsString(substring);
     }
 
     /**
@@ -75,11 +78,11 @@ public class JUnitMatchers {
      *   assertThat(string, both(containsString("a")).and(containsString("b")));
      * </pre>
      *
-     * @deprecated Please use {@link CoreMatchers#both(Matcher)} instead.
+     * @deprecated Please use {@link CombinableMatcher#both(Matcher)} instead.
      */
     @Deprecated
     public static <T> CombinableBothMatcher<T> both(Matcher<? super T> matcher) {
-        return CoreMatchers.both(matcher);
+        return CombinableMatcher.<T>both(matcher);
     }
 
     /**
@@ -88,11 +91,11 @@ public class JUnitMatchers {
      *   assertThat(string, either(containsString("a")).or(containsString("b")));
      * </pre>
      *
-     * @deprecated Please use {@link CoreMatchers#either(Matcher)} instead.
+     * @deprecated Please use {@link CombinableMatcher#either(Matcher)} instead.
      */
     @Deprecated
     public static <T> CombinableEitherMatcher<T> either(Matcher<? super T> matcher) {
-        return CoreMatchers.either(matcher);
+        return CombinableMatcher.<T>either(matcher);
     }
 
     /**
