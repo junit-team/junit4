@@ -11,6 +11,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -23,8 +28,8 @@ import org.junit.internal.MethodSorter;
  */
 public class TestClass {
     private final Class<?> fClass;
-    private final Map<Class<?>, List<FrameworkMethod>> fMethodsForAnnotations;
-    private final Map<Class<?>, List<FrameworkField>> fFieldsForAnnotations;
+    private final Map<Class<? extends Annotation>, List<FrameworkMethod>> fMethodsForAnnotations = new HashMap<Class<? extends Annotation>, List<FrameworkMethod>>();
+    private final Map<Class<? extends Annotation>, List<FrameworkField>> fFieldsForAnnotations = new HashMap<Class<? extends Annotation>, List<FrameworkField>>();
 
     /**
      * Creates a {@code TestClass} wrapping {@code klass}. Each time this
@@ -39,22 +44,18 @@ public class TestClass {
                     "Test class can only have one constructor");
         }
 
-        Map<Class<?>, List<FrameworkMethod>> methodsForAnnotations = new HashMap<Class<?>, List<FrameworkMethod>>();
-        Map<Class<?>, List<FrameworkField>> fieldsForAnnotations = new HashMap<Class<?>, List<FrameworkField>>();
         for (Class<?> eachClass : getSuperClasses(fClass)) {
             for (Method eachMethod : MethodSorter.getDeclaredMethods(eachClass)) {
-                addToAnnotationLists(new FrameworkMethod(eachMethod), methodsForAnnotations);
+                addToAnnotationLists(new FrameworkMethod(eachMethod), fMethodsForAnnotations);
             }
             for (Field eachField : eachClass.getDeclaredFields()) {
-                addToAnnotationLists(new FrameworkField(eachField), fieldsForAnnotations);
+                addToAnnotationLists(new FrameworkField(eachField), fFieldsForAnnotations);
             }
         }
-        fMethodsForAnnotations = Collections.unmodifiableMap(methodsForAnnotations);
-        fFieldsForAnnotations = Collections.unmodifiableMap(fieldsForAnnotations);
     }
 
-    private static <T extends FrameworkMember<T>> void addToAnnotationLists(T member,
-            Map<Class<?>, List<T>> map) {
+    private <T extends FrameworkMember<T>> void addToAnnotationLists(T member,
+            Map<Class<? extends Annotation>, List<T>> map) {
         for (Annotation each : member.getAnnotations()) {
             Class<? extends Annotation> type = each.annotationType();
             List<T> members = getAnnotatedMembers(map, type, true);
@@ -79,18 +80,6 @@ public class TestClass {
     }
 
     /**
-     * Returns, efficiently, all the non-overridden methods in this class and
-     * its superclasses.
-     */
-    public Set<FrameworkMethod> getAnnotatedMethods() {
-        Set<FrameworkMethod> annotatedMethods = new HashSet<FrameworkMethod>();
-        for (List<FrameworkMethod> currentMethods : fMethodsForAnnotations.values()) {
-            annotatedMethods.addAll(currentMethods);
-        }
-        return annotatedMethods;
-    }
-
-    /**
      * Returns, efficiently, all the non-overridden fields in this class and its
      * superclasses that are annotated with {@code annotationClass}.
      */
@@ -99,27 +88,17 @@ public class TestClass {
         return Collections.unmodifiableList(getAnnotatedMembers(fFieldsForAnnotations, annotationClass, false));
     }
 
-<<<<<<< HEAD
-    private static <T> List<T> getAnnotatedMembers(Map<Class<?>, List<T>> map,
-            Class<? extends Annotation> type, boolean fillIfAbsent) {
-        if (!map.containsKey(type) && fillIfAbsent) {
-=======
-    /**
-     * Returns, efficiently, all the non-overridden fields in this class and
-     * its superclasses.
-     */
-    public Set<FrameworkField> getAnnotatedFields() {
-        Set<FrameworkField> annotatedFields = new HashSet<FrameworkField>();
-        for (List<FrameworkField> fields : fFieldsForAnnotations.values()) {
-            annotatedFields.addAll(fields);
-        }
-        return annotatedFields;
+    public Map<Class<? extends Annotation>, List<FrameworkMethod>> getAnnotationToMethods() {
+        return fMethodsForAnnotations;
     }
 
-    private <T> List<T> getAnnotatedMembers(Map<Class<?>, List<T>> map,
-            Class<? extends Annotation> type) {
-        if (!map.containsKey(type)) {
->>>>>>> adding annotation validators functionality
+    public Map<Class<? extends Annotation>, List<FrameworkField>> getAnnotationToFields() {
+        return fFieldsForAnnotations;
+    }
+
+    private <T> List<T> getAnnotatedMembers(Map<Class<? extends Annotation>, List<T>> map,
+            Class<? extends Annotation> type, boolean fillIfAbsent) {
+        if (!map.containsKey(type) && fillIfAbsent) {
             map.put(type, new ArrayList<T>());
         }
         List<T> members = map.get(type);

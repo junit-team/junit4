@@ -21,6 +21,8 @@ import java.util.Set;
  */
 public class CategoryValidator implements AnnotationValidator {
 
+    private static Set<Class<?>> fIncompatibleAnnotations = null;
+
     public void validateAnnotatedClass(Class<?> type, List<Throwable> errors) {
     }
 
@@ -36,8 +38,7 @@ public class CategoryValidator implements AnnotationValidator {
      * @param errors any errors detected are added to this list
      */
     public void validateAnnotatedMethod(Method method, List<Throwable> errors) {
-        final Set<Class<?>> incompatibleAnnotations =
-                buildIncompatibleAnnotationsSet();
+        final Set<Class<?>> incompatibleAnnotations = buildIncompatibleAnnotationsSet();
 
         Annotation[] declaredAnnotations = method.getDeclaredAnnotations();
         for (Annotation annotation : declaredAnnotations) {
@@ -50,12 +51,14 @@ public class CategoryValidator implements AnnotationValidator {
     }
 
     private Set<Class<?>> buildIncompatibleAnnotationsSet() {
-        final Set<Class<?>> incompatibleAnnotations = new HashSet<Class<?>>();
-        incompatibleAnnotations.add(BeforeClass.class);
-        incompatibleAnnotations.add(AfterClass.class);
-        incompatibleAnnotations.add(Before.class);
-        incompatibleAnnotations.add(After.class);
-        return incompatibleAnnotations;
+        if (fIncompatibleAnnotations == null) {
+            fIncompatibleAnnotations = new HashSet<Class<?>>();
+            fIncompatibleAnnotations.add(BeforeClass.class);
+            fIncompatibleAnnotations.add(AfterClass.class);
+            fIncompatibleAnnotations.add(Before.class);
+            fIncompatibleAnnotations.add(After.class);
+        }
+        return fIncompatibleAnnotations;
     }
 
     private void addErrorMessage(List<Throwable> errors, Class clazz) {

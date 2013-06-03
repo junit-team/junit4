@@ -11,12 +11,19 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.experimental.validator.AnnotationValidator;
-import org.junit.experimental.validator.Validator;
+import org.junit.experimental.validator.ValidateWith;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.statements.RunAfters;
@@ -54,6 +61,9 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
     // Guarded by fChildrenLock
     private volatile Collection<T> fFilteredChildren = null;
+
+    private static Map<Class<? extends Annotation>, AnnotationValidator> fAnnotationTypeToValidatorMap =
+            new HashMap<Class<? extends Annotation>, AnnotationValidator>();
 
     private volatile RunnerScheduler fScheduler = new RunnerScheduler() {
         public void schedule(Runnable childStatement) {
@@ -123,82 +133,85 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         Annotation[] annotations = getTestClass().getAnnotations();
         for (Annotation annotation : annotations) {
             if (hasValidatorAnnotation(annotation)) {
-                invokeValidatorsOnClass(annotation, errors);
+                AnnotationValidator annotationValidator =
+                        getAnnotationValidator(annotation.annotationType());
+                annotationValidator.validateAnnotatedClass(getTestClass().getJavaClass(), errors);
             }
-        }
-    }
-
-    private void invokeValidatorsOnClass(Annotation annotation, List<Throwable> errors) {
-        List<AnnotationValidator> annotationValidators = createAnnotationValidators(annotation);
-        for (AnnotationValidator annotationValidator : annotationValidators) {
-            annotationValidator.validateAnnotatedClass(getTestClass().getJavaClass(), errors);
         }
     }
 
     private void invokeValidatorsOnMethods(List<Throwable> errors) {
-        Set<FrameworkMethod> annotatedMethods = getTestClass().getAnnotatedMethods();
-        for (FrameworkMethod frameworkMethod : annotatedMethods) {
-            for (Annotation annotation : frameworkMethod.getAnnotations()) {
-                if (hasValidatorAnnotation(annotation)) {
-                    invokeValidatorsOnMethod(annotation, frameworkMethod, errors);
+        Map<Class<? extends Annotation>, List<FrameworkMethod>> annotationMap =
+                getTestClass().getAnnotationToMethods();
+        for (Class<? extends Annotation> annotation : annotationMap.keySet()) {
+            if (hasValidatorAnnotation(annotation)) {
+                for (FrameworkMethod frameworkMethod : annotationMap.get(annotation)) {
+                    AnnotationValidator annotationValidator =
+                            getAnnotationValidator(annotation);
+                    annotationValidator.validateAnnotatedMethod(frameworkMethod.getMethod(), errors);
                 }
             }
-        }
-    }
-
-    private void invokeValidatorsOnMethod(Annotation annotation,
-                                          FrameworkMethod frameworkMethod,
-                                          List<Throwable> errors) {
-        List<AnnotationValidator> annotationValidators = createAnnotationValidators(annotation);
-        for (AnnotationValidator annotationValidator : annotationValidators) {
-            annotationValidator.validateAnnotatedMethod(frameworkMethod.getMethod(), errors);
         }
     }
 
     private void invokeValidatorsOnFields(List<Throwable> errors) {
-        Set<FrameworkField> annotatedFields = getTestClass().getAnnotatedFields();
-        for (FrameworkField frameworkField : annotatedFields) {
-            for (Annotation annotation : frameworkField.getAnnotations()) {
+        Map<Class<? extends Annotation>, List<FrameworkField>> annotationMap =
+                getTestClass().getAnnotationToFields();
+        for (Class<? extends Annotation> annotation : annotationMap.keySet()) {
                 if (hasValidatorAnnotation(annotation)) {
-                    invokeValidatorsOnField(annotation, frameworkField, errors);
+                    for (FrameworkField frameworkField : annotationMap.get(annotation)) {
+                        AnnotationValidator annotationValidator =
+                                getAnnotationValidator(annotation);
+                        annotationValidator.validateAnnotatedField(frameworkField.getField(), errors);
+                    }
                 }
-            }
-        }
-    }
-
-    private void invokeValidatorsOnField(Annotation annotation,
-                                         FrameworkField frameworkField,
-                                         List<Throwable> errors) {
-        List<AnnotationValidator> annotationValidators = createAnnotationValidators(annotation);
-        for (AnnotationValidator annotationValidator : annotationValidators) {
-            annotationValidator.validateAnnotatedField(frameworkField.getField(), errors);
         }
     }
 
     private boolean hasValidatorAnnotation(Annotation annotation) {
-        Annotation[] annotations = annotation.annotationType().getAnnotations();
+        Class<? extends Annotation> annotationType = annotation.annotationType();
+        boolean hasValidatorAnnotation;
+        if (fAnnotationTypeToValidatorMap.containsKey(annotationType)) {
+            hasValidatorAnnotation = fAnnotationTypeToValidatorMap.get(annotationType) != null;
+        } else {
+            hasValidatorAnnotation = hasValidatorAnnotation(annotationType);
+            if (!hasValidatorAnnotation) {
+                fAnnotationTypeToValidatorMap.put(annotationType, null);
+            }
+        }
+
+        return hasValidatorAnnotation;
+    }
+
+    private boolean hasValidatorAnnotation(Class<? extends Annotation> annotationType) {
+        Annotation[] annotations = annotationType.getAnnotations();
         for (Annotation current : annotations) {
-            if (Validator.class.isAssignableFrom(current.getClass())) {
+            if (ValidateWith.class.isAssignableFrom(current.getClass())) {
                 return true;
             }
         }
         return false;
     }
 
-    private List<AnnotationValidator> createAnnotationValidators(Annotation annotation) {
-        List<AnnotationValidator> validators = new ArrayList<AnnotationValidator>();
-        Class<? extends Annotation> annotationType = annotation.annotationType();
-        Validator validatorAnnotation = annotationType.getAnnotation(Validator.class);
-        Class<?>[] classes = validatorAnnotation.value();
-        for (Class clazz : classes) {
-            try {
-                AnnotationValidator annotationValidator = (AnnotationValidator) clazz.newInstance();
-                validators.add(annotationValidator);
-            } catch (Exception e) {
-                throw new RuntimeException("Could not create AnnotationValidator class " + clazz.getName(), e);
-            }
+    private AnnotationValidator getAnnotationValidator(Class<? extends Annotation> annotationType) {
+        if (fAnnotationTypeToValidatorMap.containsKey(annotationType)) {
+            return fAnnotationTypeToValidatorMap.get(annotationType);
         }
-        return validators;
+        AnnotationValidator annotationValidator = createAnnotationValidator(annotationType);
+        fAnnotationTypeToValidatorMap.put(annotationType, annotationValidator);
+        return annotationValidator;
+    }
+
+    private AnnotationValidator createAnnotationValidator(Class<? extends Annotation> annotationType) {
+        ValidateWith validateWithAnnotation = annotationType.getAnnotation(ValidateWith.class);
+        Class<?> clazz = validateWithAnnotation.value();
+        try {
+            AnnotationValidator annotationValidator = (AnnotationValidator) clazz.newInstance();
+            fAnnotationTypeToValidatorMap.put(annotationType, annotationValidator);
+            return annotationValidator;
+        } catch (Exception e) {
+            throw new RuntimeException("Could not create AnnotationValidator class " + clazz.getName(), e);
+        }
     }
 
     /**

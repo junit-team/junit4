@@ -3,11 +3,10 @@ package org.junit.tests.running.classes;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.experimental.validator.AnnotationValidator;
-import org.junit.experimental.validator.Validator;
+import org.junit.experimental.validator.ValidateWith;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
@@ -127,12 +126,14 @@ public class ParentRunnerTest {
 
     @Test
     public void failWithHelpfulMessageForProtectedClassRule() {
+        //the second failure is no runnable methods
         assertClassHasFailureMessage(TestWithProtectedClassRule.class, 2,
                 "The @ClassRule 'temporaryFolder' must be public.");
     }
 
     @Test
     public void failWithHelpfulMessageForNonStaticClassRule() {
+        //the second failure is no runnable methods
         assertClassHasFailureMessage(TestWithNonStaticClassRule.class, 2,
                 "The @ClassRule 'temporaryFolder' must be static.");
     }
@@ -141,7 +142,7 @@ public class ParentRunnerTest {
         JUnitCore junitCore = new JUnitCore();
         Request request = Request.aClass(klass);
         Result result = junitCore.run(request);
-        assertThat(result.getFailureCount(), is(failureCount)); //the second failure is no runnable methods
+        assertThat(result.getFailureCount(), is(failureCount));
         assertThat(result.getFailures().get(0).getMessage(),
                 is(equalTo(message)));
 
@@ -167,7 +168,7 @@ public class ParentRunnerTest {
 
     @Retention(RetentionPolicy.RUNTIME)
     @Inherited
-    @Validator(ExampleAnnotationValidator.class)
+    @ValidateWith(ExampleAnnotationValidator.class)
     public @interface ExampleAnnotationWithValidator {
     }
 
