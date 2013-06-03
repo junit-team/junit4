@@ -33,7 +33,7 @@ import org.junit.runners.model.Statement;
  * annotations in the org.junit package. Many users will never notice this
  * class: it is now the default test class runner, but it should have exactly
  * the same behavior as the old test class runner ({@code JUnit4ClassRunner}).
- *
+ * <p>
  * BlockJUnit4ClassRunner has advantages for writers of custom JUnit runners
  * that are slight changes to the default behavior, however:
  *
@@ -45,6 +45,10 @@ import org.junit.runners.model.Statement;
  * <li>It is published, and extension and reuse are encouraged, whereas {@code
  * JUnit4ClassRunner} was in an internal package, and is now deprecated.
  * </ul>
+ * <p>
+ * In turn, in 2009 we introduced {@link Rule}s.  In many cases where extending
+ * BlockJUnit4ClassRunner was necessary to add new behavior, {@link Rule}s can
+ * be used, which makes the extension more reusable and composable.
  *
  * @since 4.5
  */
@@ -165,8 +169,6 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      * Adds to {@code errors} for each method annotated with {@code @Test},
      * {@code @Before}, or {@code @After} that is not a public, void instance
      * method with no arguments.
-     *
-     * @deprecated unused API, will go away in future version
      */
     @Deprecated
     protected void validateInstanceMethods(List<Throwable> errors) {
@@ -282,10 +284,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      * has the {@code expecting} attribute, return normally only if {@code next}
      * throws an exception of the correct type, and throw an exception
      * otherwise.
-     *
-     * @deprecated Will be private soon: use Rules instead
      */
-    @Deprecated
     protected Statement possiblyExpectingExceptions(FrameworkMethod method,
             Object test, Statement next) {
         Test annotation = method.getAnnotation(Test.class);
@@ -297,8 +296,6 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      * Returns a {@link Statement}: if {@code method}'s {@code @Test} annotation
      * has the {@code timeout} attribute, throw an exception if {@code next}
      * takes more than the specified number of milliseconds.
-     *
-     * @deprecated Will be private soon: use Rules instead
      */
     @Deprecated
     protected Statement withPotentialTimeout(FrameworkMethod method,
