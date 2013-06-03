@@ -2,9 +2,10 @@ package org.junit.experimental.categories;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.Set;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.NoTestsRemainException;
@@ -154,7 +155,7 @@ public class Categories extends Suite {
             return new CategoryFilter(matchAnyInclusions, inclusions, matchAnyExclusions, exclusions);
         }
 
-        private CategoryFilter(boolean matchAnyIncludes, Set<Class<?>> includes,
+        protected CategoryFilter(boolean matchAnyIncludes, Set<Class<?>> includes,
                                boolean matchAnyExcludes, Set<Class<?>> excludes) {
             fIncludedAny= matchAnyIncludes;
             fExcludedAny= matchAnyExcludes;
