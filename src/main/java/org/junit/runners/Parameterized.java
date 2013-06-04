@@ -7,9 +7,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
@@ -264,7 +264,7 @@ public class Parameterized extends Suite {
 
     private static final List<Runner> NO_RUNNERS = Collections.<Runner>emptyList();
 
-    private final List<Runner> runners = new CopyOnWriteArrayList<Runner>();
+    private final List<Runner> runners;
 
     /**
      * Only called reflectively. Do not use programmatically.
@@ -273,7 +273,7 @@ public class Parameterized extends Suite {
         super(klass, NO_RUNNERS);
         Parameters parameters = getParametersMethod().getAnnotation(
                 Parameters.class);
-        createRunnersForParameters(allParameters(), parameters.name());
+        runners = Collections.unmodifiableList(createRunnersForParameters(allParameters(), parameters.name()));
     }
 
     @Override
@@ -308,12 +308,14 @@ public class Parameterized extends Suite {
                 + getTestClass().getName());
     }
 
-    private void createRunnersForParameters(Iterable<Object[]> allParameters, String namePattern) throws Exception {
+    private List<Runner> createRunnersForParameters(Iterable<Object[]> allParameters, String namePattern) throws Exception {
         try {
             int i = 0;
+            List<Runner> runners = new ArrayList<Runner>();
             for (Object[] parametersOfSingleTest : allParameters) {
                 runners.add(createRunner(namePattern, i++, parametersOfSingleTest));
             }
+            return runners;
         } catch (ClassCastException e) {
             throw parametersMethodReturnedWrongType();
         }

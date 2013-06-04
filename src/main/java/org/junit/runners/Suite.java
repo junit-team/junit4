@@ -5,8 +5,8 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
 import org.junit.runner.Description;
@@ -58,7 +58,7 @@ public class Suite extends ParentRunner<Runner> {
         return annotation.value();
     }
 
-    private final List<Runner> fRunners = new CopyOnWriteArrayList<Runner>();
+    private final List<Runner> fRunners;
 
     /**
      * Called reflectively on classes annotated with <code>@RunWith(Suite.class)</code>
@@ -110,7 +110,7 @@ public class Suite extends ParentRunner<Runner> {
      */
     protected Suite(Class<?> klass, List<Runner> runners) throws InitializationError {
         super(klass);
-        fRunners.addAll(runners);
+        fRunners = Collections.unmodifiableList(runners);
     }
 
     @Override

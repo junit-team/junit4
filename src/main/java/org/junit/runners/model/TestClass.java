@@ -7,10 +7,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,12 +24,8 @@ import org.junit.internal.MethodSorter;
  */
 public class TestClass {
     private final Class<?> fClass;
-
-    private final Map<Class<?>, List<FrameworkMethod>> fMethodsForAnnotations
-            = new ConcurrentHashMap<Class<?>, List<FrameworkMethod>>();
-
-    private final Map<Class<?>, List<FrameworkField>> fFieldsForAnnotations
-            = new ConcurrentHashMap<Class<?>, List<FrameworkField>>();
+    private final Map<Class<?>, List<FrameworkMethod>> fMethodsForAnnotations;
+    private final Map<Class<?>, List<FrameworkField>> fFieldsForAnnotations;
 
     /**
      * Creates a {@code TestClass} wrapping {@code klass}. Each time this
@@ -44,23 +40,25 @@ public class TestClass {
                     "Test class can only have one constructor");
         }
 
+        Map<Class<?>, List<FrameworkMethod>> methodsForAnnotations = new HashMap<Class<?>, List<FrameworkMethod>>();
+        Map<Class<?>, List<FrameworkField>> fieldsForAnnotations = new HashMap<Class<?>, List<FrameworkField>>();
         for (Class<?> eachClass : getSuperClasses(fClass)) {
             for (Method eachMethod : MethodSorter.getDeclaredMethods(eachClass)) {
-                addToAnnotationLists(new FrameworkMethod(eachMethod),
-                        fMethodsForAnnotations);
+                addToAnnotationLists(new FrameworkMethod(eachMethod), methodsForAnnotations);
             }
             for (Field eachField : eachClass.getDeclaredFields()) {
-                addToAnnotationLists(new FrameworkField(eachField),
-                        fFieldsForAnnotations);
+                addToAnnotationLists(new FrameworkField(eachField), fieldsForAnnotations);
             }
         }
+        fMethodsForAnnotations = Collections.unmodifiableMap(methodsForAnnotations);
+        fFieldsForAnnotations = Collections.unmodifiableMap(fieldsForAnnotations);
     }
 
     private static <T extends FrameworkMember<T>> void addToAnnotationLists(T member,
             Map<Class<?>, List<T>> map) {
         for (Annotation each : member.getAnnotations()) {
             Class<? extends Annotation> type = each.annotationType();
-            List<T> members = getAnnotatedMembers(map, type);
+            List<T> members = getAnnotatedMembers(map, type, true);
             if (member.isShadowedBy(members)) {
                 return;
             }
@@ -78,7 +76,7 @@ public class TestClass {
      */
     public List<FrameworkMethod> getAnnotatedMethods(
             Class<? extends Annotation> annotationClass) {
-        return getAnnotatedMembers(fMethodsForAnnotations, annotationClass);
+        return Collections.unmodifiableList(getAnnotatedMembers(fMethodsForAnnotations, annotationClass, false));
     }
 
     /**
@@ -87,15 +85,16 @@ public class TestClass {
      */
     public List<FrameworkField> getAnnotatedFields(
             Class<? extends Annotation> annotationClass) {
-        return getAnnotatedMembers(fFieldsForAnnotations, annotationClass);
+        return Collections.unmodifiableList(getAnnotatedMembers(fFieldsForAnnotations, annotationClass, false));
     }
 
     private static <T> List<T> getAnnotatedMembers(Map<Class<?>, List<T>> map,
-            Class<? extends Annotation> type) {
-        if (!map.containsKey(type)) {
-            map.put(type, new CopyOnWriteArrayList<T>());
+            Class<? extends Annotation> type, boolean canFill) {
+        if (!map.containsKey(type) && canFill) {
+            map.put(type, new ArrayList<T>());
         }
-        return map.get(type);
+        List<T> members = map.get(type);
+        return members == null ? Collections.<T>emptyList() : members;
     }
 
     private static boolean runsTopToBottom(Class<? extends Annotation> annotation) {
@@ -153,7 +152,7 @@ public class TestClass {
 
     public <T> List<T> getAnnotatedFieldValues(Object test,
             Class<? extends Annotation> annotationClass, Class<T> valueClass) {
-        List<T> results = new CopyOnWriteArrayList<T>();
+        List<T> results = new ArrayList<T>();
         for (FrameworkField each : getAnnotatedFields(annotationClass)) {
             try {
                 Object fieldValue = each.get(test);
@@ -165,12 +164,12 @@ public class TestClass {
                         "How did getFields return a field we couldn't access?", e);
             }
         }
-        return results;
+        return Collections.unmodifiableList(results);
     }
 
     public <T> List<T> getAnnotatedMethodValues(Object test,
             Class<? extends Annotation> annotationClass, Class<T> valueClass) {
-        List<T> results = new CopyOnWriteArrayList<T>();
+        List<T> results = new ArrayList<T>();
         for (FrameworkMethod each : getAnnotatedMethods(annotationClass)) {
             try {
                 Object fieldValue = each.invokeExplosively(test, new Object[]{});
@@ -182,7 +181,7 @@ public class TestClass {
                         "Exception in " + each.getName(), e);
             }
         }
-        return results;
+        return Collections.unmodifiableList(results);
     }
 
     public boolean isANonStaticInnerClass() {

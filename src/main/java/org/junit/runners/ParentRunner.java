@@ -211,7 +211,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      *         each method in the tested class.
      */
     protected List<TestRule> classRules() {
-        List<TestRule> result = fTestClass.getAnnotatedMethodValues(null, ClassRule.class, TestRule.class);
+        List<TestRule> result = new ArrayList<TestRule>(fTestClass.getAnnotatedMethodValues(null, ClassRule.class, TestRule.class));
 
         result.addAll(fTestClass.getAnnotatedFieldValues(null, ClassRule.class, TestRule.class));
 
@@ -354,7 +354,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     public void sort(Sorter sorter) {
         synchronized (fLock) {
             for (T each : getFilteredChildren()) {
-                sortChild(each, sorter);
+                sorter.apply(each);
             }
             List<T> sortedChildren = new ArrayList<T>(getFilteredChildren());
             Collections.sort(sortedChildren, comparator(sorter));
@@ -383,10 +383,6 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             }
         }
         return fFilteredChildren;
-    }
-
-    private void sortChild(T child, Sorter sorter) {
-        sorter.apply(child);
     }
 
     private boolean shouldRun(Filter filter, T each) {
