@@ -169,6 +169,8 @@ public class Parameterized extends Suite {
      * not specified then the default {@link TestClassRunnerForParameters}
      * is used.
      *
+     * This annotation is only applicable for fields extending {@link ParameterRule}.
+     *
      * A ParameterRule can also perform functions to filter out parameters
      * or modify the value of parameters being passed through it.
      */
