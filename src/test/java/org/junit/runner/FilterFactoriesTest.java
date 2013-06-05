@@ -65,14 +65,12 @@ public class FilterFactoriesTest {
         private NonInstantiableFilterFactory() {
         }
 
-        @Override
         public Filter createFilter(FilterFactoryParams params) throws FilterNotCreatedException {
             throw new FilterNotCreatedException(new Exception("not implemented"));
         }
     }
 
     public static class FilterFactoryStub implements FilterFactory {
-        @Override
         public Filter createFilter(FilterFactoryParams unused) {
             return new DummyFilter();
         }

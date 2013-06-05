@@ -136,7 +136,6 @@ public class JUnitCommandLineParseResultTest {
     }
 
     public static class FilterFactoryStub implements FilterFactory {
-        @Override
         public Filter createFilter(FilterFactoryParams params) throws FilterNotCreatedException {
             throw new FilterNotCreatedException(new Exception("stub"));
         }
