@@ -172,7 +172,7 @@ public class TestClass {
         List<T> results = new ArrayList<T>();
         for (FrameworkMethod each : getAnnotatedMethods(annotationClass)) {
             try {
-                Object fieldValue = each.invokeExplosively(test, new Object[]{});
+                Object fieldValue = each.invokeExplosively(test);
                 if (valueClass.isInstance(fieldValue)) {
                     results.add(valueClass.cast(fieldValue));
                 }

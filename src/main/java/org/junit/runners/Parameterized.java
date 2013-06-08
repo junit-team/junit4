@@ -311,11 +311,11 @@ public class Parameterized extends Suite {
     private List<Runner> createRunnersForParameters(Iterable<Object[]> allParameters, String namePattern) throws Exception {
         try {
             int i = 0;
-            List<Runner> runners = new ArrayList<Runner>();
+            List<Runner> children = new ArrayList<Runner>();
             for (Object[] parametersOfSingleTest : allParameters) {
-                runners.add(createRunner(namePattern, i++, parametersOfSingleTest));
+                children.add(createRunner(namePattern, i++, parametersOfSingleTest));
             }
-            return runners;
+            return children;
         } catch (ClassCastException e) {
             throw parametersMethodReturnedWrongType();
         }
