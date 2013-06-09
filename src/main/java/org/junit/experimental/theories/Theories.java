@@ -186,6 +186,9 @@ public class Theories extends BlockJUnit4ClassRunner {
                                 handleDataPointSuccess();
                             } catch (AssumptionViolatedException e) {
                                 handleAssumptionViolation(e);
+                            } catch(AssertionError e) {
+                            	handleAssertionError(e, complete
+                                        .getArgumentStrings(nullsOk()));
                             } catch (Throwable e) {
                                 reportParameterizedError(e, complete
                                         .getArgumentStrings(nullsOk()));
@@ -231,6 +234,10 @@ public class Theories extends BlockJUnit4ClassRunner {
 
         protected void handleAssumptionViolation(AssumptionViolatedException e) {
             fInvalidParameters.add(e);
+        }
+        
+        protected void handleAssertionError(AssertionError e, Object... params) {
+        	throw new AssertionError(String.format("%s(%s)%s", fTestMethod.getName(), ParameterizedAssertionError.join(",", params), e.getMessage()));
         }
 
         protected void reportParameterizedError(Throwable e, Object... params)
