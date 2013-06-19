@@ -3,7 +3,6 @@ package org.junit.runners;
 import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_METHOD_VALIDATOR;
 import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_VALIDATOR;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -390,8 +389,8 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      *         test
      */
     protected List<TestRule> getTestRules(Object target) {
-        List<TestRule> result = new ArrayList<TestRule>(getTestClass().getAnnotatedMethodValues(target,
-                Rule.class, TestRule.class));
+        List<TestRule> result = getTestClass().getAnnotatedMethodValues(target,
+                Rule.class, TestRule.class);
 
         result.addAll(getTestClass().getAnnotatedFieldValues(target,
                 Rule.class, TestRule.class));

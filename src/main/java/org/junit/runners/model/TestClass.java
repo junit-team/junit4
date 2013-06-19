@@ -164,7 +164,7 @@ public class TestClass {
                         "How did getFields return a field we couldn't access?", e);
             }
         }
-        return Collections.unmodifiableList(results);
+        return results;
     }
 
     public <T> List<T> getAnnotatedMethodValues(Object test,
@@ -181,7 +181,7 @@ public class TestClass {
                         "Exception in " + each.getName(), e);
             }
         }
-        return Collections.unmodifiableList(results);
+        return results;
     }
 
     public boolean isANonStaticInnerClass() {

@@ -212,7 +212,6 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      */
     protected List<TestRule> classRules() {
         List<TestRule> result = fTestClass.getAnnotatedMethodValues(null, ClassRule.class, TestRule.class);
-        result = new ArrayList<TestRule>(result);
         result.addAll(fTestClass.getAnnotatedFieldValues(null, ClassRule.class, TestRule.class));
         return result;
     }
