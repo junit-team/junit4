@@ -26,13 +26,11 @@ public class AnnotatedBuilder extends RunnerBuilder {
     public Runner buildRunner(Class<? extends Runner> runnerClass,
             Class<?> testClass) throws Exception {
         try {
-            return runnerClass.getConstructor(Class.class).newInstance(
-                    new Object[]{testClass});
+            return runnerClass.getConstructor(Class.class).newInstance(testClass);
         } catch (NoSuchMethodException e) {
             try {
                 return runnerClass.getConstructor(Class.class,
-                        RunnerBuilder.class).newInstance(
-                        new Object[]{testClass, fSuiteBuilder});
+                        RunnerBuilder.class).newInstance(testClass, fSuiteBuilder);
             } catch (NoSuchMethodException e2) {
                 String simpleName = runnerClass.getSimpleName();
                 throw new InitializationError(String.format(
