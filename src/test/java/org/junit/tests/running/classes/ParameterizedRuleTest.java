@@ -55,7 +55,7 @@ public class ParameterizedRuleTest {
 
     public static class CustomParameterRuleTestClass extends  NoParameterRuleTestClass {
 
-        @UseParameterRule public Parameterized.ParameterRule rule = new Parameterized.ParameterRule() {
+        @UseParameterRule public static Parameterized.ParameterRule rule = new Parameterized.ParameterRule() {
             public Parameterized.ParameterRunnerBuilder apply(Parameterized.ParameterRunnerBuilder builder) {
                 if (!(builder instanceof Parameterized.DefaultBuilder)) {
                     return builder;
@@ -103,7 +103,8 @@ public class ParameterizedRuleTest {
     public static class CustomChainedParameterRuleTestClass extends CustomParameterRuleTestClass {
 
 
-        @UseParameterRule public Parameterized.ParameterRule rule2 = new Parameterized.ParameterRule() {
+        @UseParameterRule public static Parameterized.ParameterRule rule2 = new Parameterized
+                .ParameterRule() {
             public Parameterized.ParameterRunnerBuilder apply(final Parameterized.ParameterRunnerBuilder builder) {
                 return new Parameterized.ParameterRunnerBuilder() {
                     public Runner build(Class<?> type, String pattern, int index, Object[] parameters) throws InitializationError {
@@ -143,7 +144,9 @@ public class ParameterizedRuleTest {
             new ParameterisedRunnerAccessorClass(PrivateParameterRuleTestClass.class);
             fail("Initialization error should have been thrown due to non public ParamterRule");
         }  catch(InitializationError err) {
-            assertEquals("Incorrect error thrown whilst creating parameter rule", "ParameterRules must be public", err.getCauses().get(0).getMessage());
+            assertEquals("Incorrect error thrown whilst creating parameter rule",
+                    "UseParameterRule annotated field 'rule' must be public",
+                    err.getCauses().get(0).getMessage());
         }
     }
 
@@ -215,7 +218,8 @@ public class ParameterizedRuleTest {
             @Parameterized.Parameter(0) public int param1;
 
             @UseParameterRule
-            public static final Parameterized.ParameterRuleChain chain = Parameterized.ParameterRuleChain.outerRule(new LoggingRule("outer rule"))
+            public static final Parameterized.ParameterRuleChain chain = Parameterized
+                    .ParameterRuleChain.outerRule(new LoggingRule("outer rule"))
                     .around(new LoggingRule("middle rule")).around(
                             new LoggingRule("inner rule"));
 

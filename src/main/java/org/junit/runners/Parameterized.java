@@ -169,7 +169,7 @@ public class Parameterized extends Suite {
      * not specified then the default {@link TestClassRunnerForParameters}
      * is used.
      *
-     * This annotation is only applicable for fields extending {@link ParameterRule}.
+     * This annotation is only applicable for static fields extending {@link ParameterRule}.
      *
      * A ParameterRule can also perform functions to filter out parameters
      * or modify the value of parameters being passed through it.
@@ -342,23 +342,24 @@ public class Parameterized extends Suite {
     protected Runner createRunner(String pattern,
                                        int index, Object[] parameters) throws InitializationError {
 
-        final List<ParameterRule> rules = new ArrayList<ParameterRule>();
-
-        // get a list of all rules for the current test class
-        try {
-            rules.addAll(getTestClass().getAnnotatedFieldValues(
-                    new TestClassRunnerForParameters(
-                            getTestClass().getJavaClass(), pattern, 0, parameters
-                    ).createTest(), UseParameterRule.class, ParameterRule.class));
-        } catch (RuntimeException ex) {
-             //we have to have this horrible cludge since getAnnotateFieldValues assumes it can
-             // never have an IllegalAccessException so throws an unhelpful exception in its place.
-            if (ex.getCause() == null || !(ex.getCause() instanceof IllegalAccessException)) {
-                throw ex;
+        //validate all the @UseParameterRule fields are public and static
+        for (FrameworkField field : getTestClass().getAnnotatedFields(UseParameterRule.class)) {
+            if (!field.isPublic()) {
+                throw new InitializationError(
+                        String.format("UseParameterRule annotated field '%s' must be public",
+                        field.getName()));
             }
-            throw new InitializationError(new RuntimeException("ParameterRules must be public",
-                     ex.getCause()));
+            if (!field.isStatic()) {
+                throw new InitializationError(
+                        String.format("UseParameterRule annotated field '%s' must be static",
+                        field.getName()));
+            }
         }
+
+        // retrieve values of fields annotated with UseParameterRules and marked as static
+        List<ParameterRule> rules = getTestClass().getAnnotatedFieldValues(
+                    null, UseParameterRule.class, ParameterRule.class);
+
         // create an initial builder for starting the chain. This defaults to using the existing
         // runner for parameters to maintain backwards compatibility
         ParameterRunnerBuilder builder = new DefaultBuilder();
