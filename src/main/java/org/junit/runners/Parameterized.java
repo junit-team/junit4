@@ -264,7 +264,7 @@ public class Parameterized extends Suite {
 
     private static final List<Runner> NO_RUNNERS = Collections.<Runner>emptyList();
 
-    private final List<Runner> runners;
+    private final List<Runner> fRunners;
 
     /**
      * Only called reflectively. Do not use programmatically.
@@ -273,12 +273,12 @@ public class Parameterized extends Suite {
         super(klass, NO_RUNNERS);
         Parameters parameters = getParametersMethod().getAnnotation(
                 Parameters.class);
-        runners = Collections.unmodifiableList(createRunnersForParameters(allParameters(), parameters.name()));
+        fRunners = Collections.unmodifiableList(createRunnersForParameters(allParameters(), parameters.name()));
     }
 
     @Override
     protected List<Runner> getChildren() {
-        return runners;
+        return fRunners;
     }
 
     protected Runner createRunner(String pattern, int index, Object[] parameters) throws InitializationError {

@@ -53,7 +53,7 @@ import org.junit.runners.model.TestClass;
  */
 public abstract class ParentRunner<T> extends Runner implements Filterable,
         Sortable {
-    private final Object fLock = new Object();
+    private final Object fChildrenLock = new Object();
     private final TestClass fTestClass;
 
     // Guarded by fLock
@@ -324,33 +324,29 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     //
 
     public void filter(Filter filter) throws NoTestsRemainException {
-        synchronized (fLock) {
+        synchronized (fChildrenLock) {
             List<T> filteredChildren = new ArrayList<T>(getFilteredChildren());
-            try {
-                for (Iterator<T> iter = filteredChildren.iterator(); iter.hasNext(); ) {
-                    T each = iter.next();
-                    if (shouldRun(filter, each)) {
-                        try {
-                            filter.apply(each);
-                        } catch (NoTestsRemainException e) {
-                            iter.remove();
-                        }
-                    } else {
+            for (Iterator<T> iter = filteredChildren.iterator(); iter.hasNext(); ) {
+                T each = iter.next();
+                if (shouldRun(filter, each)) {
+                    try {
+                        filter.apply(each);
+                    } catch (NoTestsRemainException e) {
                         iter.remove();
                     }
+                } else {
+                    iter.remove();
                 }
-            } finally {
-                fFilteredChildren = Collections.unmodifiableCollection(filteredChildren);
             }
-        }
-
-        if (getFilteredChildren().isEmpty()) {
-            throw new NoTestsRemainException();
+            fFilteredChildren = Collections.unmodifiableCollection(filteredChildren);
+            if (fFilteredChildren.isEmpty()) {
+                throw new NoTestsRemainException();
+            }
         }
     }
 
     public void sort(Sorter sorter) {
-        synchronized (fLock) {
+        synchronized (fChildrenLock) {
             for (T each : getFilteredChildren()) {
                 sorter.apply(each);
             }
@@ -374,7 +370,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
     private Collection<T> getFilteredChildren() {
         if (fFilteredChildren == null) {
-            synchronized (fLock) {
+            synchronized (fChildrenLock) {
                 if (fFilteredChildren == null) {
                     fFilteredChildren = Collections.unmodifiableCollection(getChildren());
                 }
