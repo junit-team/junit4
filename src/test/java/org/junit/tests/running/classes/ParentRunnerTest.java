@@ -212,25 +212,4 @@ public class ParentRunnerTest {
         assertClassHasFailureMessage(AnnotationValidatorFieldTest.class, 1,
                 ExampleAnnotationValidator.ANNOTATED_FIELD_CALLED);
     }
-
-
-    public static class SampleCategory {
-    }
-
-    public static class SampleTest {
-        @Category(SampleCategory.class)
-        @Before
-        public void before() {
-        }
-
-        @Test
-        public void hello() {
-        }
-    }
-
-    @Test
-    public void categoryCannotBeCombinedWithBefore() {
-        assertClassHasFailureMessage(SampleTest.class, 1,
-                "@Before can not be combined with @Category");
-    }
 }

@@ -39,7 +39,12 @@ import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
-import org.junit.runners.model.*;
+import org.junit.runners.model.FrameworkField;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.RunnerScheduler;
+import org.junit.runners.model.Statement;
+import org.junit.runners.model.TestClass;
 
 /**
  * Provides most of the functionality specific to a Runner that implements a
@@ -132,7 +137,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     private void invokeValidatorsOnClass(List<Throwable> errors) {
         Annotation[] annotations = getTestClass().getAnnotations();
         for (Annotation annotation : annotations) {
-            if (hasValidatorAnnotation(annotation)) {
+            if (hasValidatorAnnotation(annotation.annotationType())) {
                 AnnotationValidator annotationValidator =
                         getAnnotationValidator(annotation.annotationType());
                 annotationValidator.validateAnnotatedClass(getTestClass().getJavaClass(), errors);
@@ -141,13 +146,11 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     }
 
     private void invokeValidatorsOnMethods(List<Throwable> errors) {
-        Map<Class<? extends Annotation>, List<FrameworkMethod>> annotationMap =
-                getTestClass().getAnnotationToMethods();
+        Map<Class<? extends Annotation>, List<FrameworkMethod>> annotationMap = getTestClass().getAnnotationToMethods();
         for (Class<? extends Annotation> annotation : annotationMap.keySet()) {
             if (hasValidatorAnnotation(annotation)) {
                 for (FrameworkMethod frameworkMethod : annotationMap.get(annotation)) {
-                    AnnotationValidator annotationValidator =
-                            getAnnotationValidator(annotation);
+                    AnnotationValidator annotationValidator = getAnnotationValidator(annotation);
                     annotationValidator.validateAnnotatedMethod(frameworkMethod.getMethod(), errors);
                 }
             }
@@ -155,42 +158,19 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     }
 
     private void invokeValidatorsOnFields(List<Throwable> errors) {
-        Map<Class<? extends Annotation>, List<FrameworkField>> annotationMap =
-                getTestClass().getAnnotationToFields();
+        Map<Class<? extends Annotation>, List<FrameworkField>> annotationMap = getTestClass().getAnnotationToFields();
         for (Class<? extends Annotation> annotation : annotationMap.keySet()) {
                 if (hasValidatorAnnotation(annotation)) {
                     for (FrameworkField frameworkField : annotationMap.get(annotation)) {
-                        AnnotationValidator annotationValidator =
-                                getAnnotationValidator(annotation);
+                        AnnotationValidator annotationValidator = getAnnotationValidator(annotation);
                         annotationValidator.validateAnnotatedField(frameworkField.getField(), errors);
                     }
                 }
         }
     }
 
-    private boolean hasValidatorAnnotation(Annotation annotation) {
-        Class<? extends Annotation> annotationType = annotation.annotationType();
-        boolean hasValidatorAnnotation;
-        if (fAnnotationTypeToValidatorMap.containsKey(annotationType)) {
-            hasValidatorAnnotation = fAnnotationTypeToValidatorMap.get(annotationType) != null;
-        } else {
-            hasValidatorAnnotation = hasValidatorAnnotation(annotationType);
-            if (!hasValidatorAnnotation) {
-                fAnnotationTypeToValidatorMap.put(annotationType, null);
-            }
-        }
-
-        return hasValidatorAnnotation;
-    }
-
     private boolean hasValidatorAnnotation(Class<? extends Annotation> annotationType) {
-        Annotation[] annotations = annotationType.getAnnotations();
-        for (Annotation current : annotations) {
-            if (ValidateWith.class.isAssignableFrom(current.getClass())) {
-                return true;
-            }
-        }
-        return false;
+        return getAnnotationValidator(annotationType) != null;
     }
 
     private AnnotationValidator getAnnotationValidator(Class<? extends Annotation> annotationType) {
@@ -204,6 +184,9 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
     private AnnotationValidator createAnnotationValidator(Class<? extends Annotation> annotationType) {
         ValidateWith validateWithAnnotation = annotationType.getAnnotation(ValidateWith.class);
+        if (validateWithAnnotation == null) {
+            return null;
+        }
         Class<?> clazz = validateWithAnnotation.value();
         try {
             AnnotationValidator annotationValidator = (AnnotationValidator) clazz.newInstance();
