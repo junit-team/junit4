@@ -89,8 +89,8 @@ public class TestClass {
     }
 
     private static <T> List<T> getAnnotatedMembers(Map<Class<?>, List<T>> map,
-            Class<? extends Annotation> type, boolean canFill) {
-        if (!map.containsKey(type) && canFill) {
+            Class<? extends Annotation> type, boolean fillIfAbsent) {
+        if (!map.containsKey(type) && fillIfAbsent) {
             map.put(type, new ArrayList<T>());
         }
         List<T> members = map.get(type);
