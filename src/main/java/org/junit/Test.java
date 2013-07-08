@@ -40,6 +40,16 @@ import java.lang.annotation.Target;
  *       while(true);
  *    }
  * </pre>
+ * <b>Warning</b>: while <code>timeout</code> is useful to catch and terminate
+ * infinite loops, it should <em>not</em> be considered deterministic. The
+ * following test may or may not fail depending on how the operating system
+ * schedules threads:
+ * <pre>
+ *    &#064;Test(<b>timeout=100</b>) public void sleep100() {
+ *       Thread.sleep(100);
+ *    }
+ * </pre>
+ *
  *
  * @since 4.0
  */
