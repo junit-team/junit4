@@ -153,7 +153,7 @@ public class Parameterized extends Suite {
     protected class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
         private final Object[] fParameters;
 
-        private String fName;
+        private final String fName;
 
         protected TestClassRunnerForParameters(Class<?> type, String pattern, int index, Object[] parameters) throws InitializationError {
             super(type);
@@ -264,7 +264,7 @@ public class Parameterized extends Suite {
 
     private static final List<Runner> NO_RUNNERS = Collections.<Runner>emptyList();
 
-    private final ArrayList<Runner> runners = new ArrayList<Runner>();
+    private final List<Runner> fRunners;
 
     /**
      * Only called reflectively. Do not use programmatically.
@@ -273,12 +273,12 @@ public class Parameterized extends Suite {
         super(klass, NO_RUNNERS);
         Parameters parameters = getParametersMethod().getAnnotation(
                 Parameters.class);
-        createRunnersForParameters(allParameters(), parameters.name());
+        fRunners = Collections.unmodifiableList(createRunnersForParameters(allParameters(), parameters.name()));
     }
 
     @Override
     protected List<Runner> getChildren() {
-        return runners;
+        return fRunners;
     }
 
     protected Runner createRunner(String pattern, int index, Object[] parameters) throws InitializationError {
@@ -308,12 +308,14 @@ public class Parameterized extends Suite {
                 + getTestClass().getName());
     }
 
-    private void createRunnersForParameters(Iterable<Object[]> allParameters, String namePattern) throws Exception {
+    private List<Runner> createRunnersForParameters(Iterable<Object[]> allParameters, String namePattern) throws Exception {
         try {
             int i = 0;
+            List<Runner> children = new ArrayList<Runner>();
             for (Object[] parametersOfSingleTest : allParameters) {
-                runners.add(createRunner(namePattern, i++, parametersOfSingleTest));
+                children.add(createRunner(namePattern, i++, parametersOfSingleTest));
             }
+            return children;
         } catch (ClassCastException e) {
             throw parametersMethodReturnedWrongType();
         }
