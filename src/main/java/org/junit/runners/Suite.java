@@ -5,6 +5,7 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
@@ -109,7 +110,7 @@ public class Suite extends ParentRunner<Runner> {
      */
     protected Suite(Class<?> klass, List<Runner> runners) throws InitializationError {
         super(klass);
-        fRunners = runners;
+        fRunners = Collections.unmodifiableList(runners);
     }
 
     @Override
