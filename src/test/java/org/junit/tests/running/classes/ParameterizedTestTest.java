@@ -1,5 +1,6 @@
 package org.junit.tests.running.classes;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -315,25 +316,6 @@ public class ParameterizedTestTest {
     }
 
     @RunWith(Parameterized.class)
-    static public class WrongElementType {
-        @Parameters
-        public static Iterable<String> data() {
-            return Arrays.asList("a", "b", "c");
-        }
-
-        @Test
-        public void aTest() {
-        }
-    }
-
-    @Test
-    public void meaningfulFailureWhenParametersAreNotArrays() {
-        assertThat(
-                testResult(WrongElementType.class).toString(),
-                containsString("WrongElementType.data() must return an Iterable of arrays."));
-    }
-
-    @RunWith(Parameterized.class)
     static public class ParametersNotIterable {
         @Parameters
         public static String data() {
@@ -371,5 +353,81 @@ public class ParameterizedTestTest {
     @Test(expected = InitializationError.class)
     public void exceptionWhenPrivateConstructor() throws Throwable {
         new Parameterized(PrivateConstructor.class);
+    }
+
+    @RunWith(Parameterized.class)
+    static public class FibonacciTestWithArray {
+        @Parameters(name= "{index}: fib({0})={1}")
+        public static Object[][] data() {
+            return new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
+                { 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } };
+        }
+
+        private final int fInput;
+
+        private final int fExpected;
+
+        public FibonacciTestWithArray(int input, int expected) {
+            fInput= input;
+            fExpected= expected;
+        }
+
+        @Test
+        public void test() {
+            assertEquals(fExpected, fib(fInput));
+        }
+
+        private int fib(int x) {
+            return 0;
+        }
+    }
+
+    @Test
+    public void runsEveryTestOfArray() {
+        Result result= JUnitCore.runClasses(FibonacciTestWithArray.class);
+        assertEquals(7, result.getRunCount());
+    }
+
+    @RunWith(Parameterized.class)
+    static public class SingleArgumentTestWithArray {
+        @Parameters
+        public static Object[] data() {
+            return new Object[] { "first test", "second test" };
+        }
+
+        public SingleArgumentTestWithArray(Object argument) {
+        }
+
+        @Test
+        public void aTest() {
+        }
+    }
+
+    @Test
+    public void runsForEverySingleArgumentOfArray() {
+        Result result= JUnitCore.runClasses(SingleArgumentTestWithArray.class);
+        assertEquals(2, result.getRunCount());
+    }
+
+    @RunWith(Parameterized.class)
+    static public class SingleArgumentTestWithIterable {
+        @Parameters
+        public static Iterable<? extends Object> data() {
+            return asList("first test", "second test");
+        }
+
+        public SingleArgumentTestWithIterable(Object argument) {
+        }
+
+        @Test
+        public void aTest() {
+        }
+  	}
+
+    @Test
+    public void runsForEverySingleArgumentOfIterable() {
+        Result result= JUnitCore
+                .runClasses(SingleArgumentTestWithIterable.class);
+        assertEquals(2, result.getRunCount());
     }
 }
