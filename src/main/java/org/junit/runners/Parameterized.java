@@ -8,6 +8,7 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -97,6 +98,37 @@ import org.junit.runners.model.Statement;
  * Each instance of <code>FibonacciTest</code> will be constructed with the default constructor
  * and fields annotated by <code>&#064;Parameter</code>  will be initialized
  * with the data values in the <code>&#064;Parameters</code> method.
+ *
+ * <p>
+ * The parameters can be provided as an array, too:
+ * 
+ * <pre>
+ * &#064;Parameters
+ * public static Object[][] data() {
+ * 	return new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 }, { 3, 2 }, { 4, 3 },
+ * 			{ 5, 5 }, { 6, 8 } };
+ * }
+ * </pre>
+ * 
+ * <h3>Tests with single parameter</h3>
+ * <p>
+ * If your test needs a single parameter only, you don't have to wrap it with an
+ * array. Instead you can provide an <code>Iterable</code> or an array of
+ * objects.
+ * <pre>
+ * &#064;Parameters
+ * public static Iterable&lt;? extends Object&gt; data() {
+ * 	return Arrays.asList(&quot;first test&quot;, &quot;second test&quot;);
+ * }
+ * </pre>
+ * <p>
+ * or
+ * <pre>
+ * &#064;Parameters
+ * public static Object[] data() {
+ * 	return new Object[] { &quot;first test&quot;, &quot;second test&quot; };
+ * }
+ * </pre>
  *
  * @since 4.0
  */
@@ -281,15 +313,25 @@ public class Parameterized extends Suite {
         return fRunners;
     }
 
+    private Runner createRunnerWithNotNormalizedParameters(String pattern,
+            int index, Object parametersOrSingleParameter)
+            throws InitializationError {
+        Object[] parameters= (parametersOrSingleParameter instanceof Object[]) ? (Object[]) parametersOrSingleParameter
+            : new Object[] { parametersOrSingleParameter };
+        return createRunner(pattern, index, parameters);
+    }
+
     protected Runner createRunner(String pattern, int index, Object[] parameters) throws InitializationError {
         return new TestClassRunnerForParameters(getTestClass().getJavaClass(), pattern, index, parameters);
     }
 
     @SuppressWarnings("unchecked")
-    private Iterable<Object[]> allParameters() throws Throwable {
+    private Iterable<Object> allParameters() throws Throwable {
         Object parameters = getParametersMethod().invokeExplosively(null);
         if (parameters instanceof Iterable) {
-            return (Iterable<Object[]>) parameters;
+            return (Iterable<Object>) parameters;
+        } else if (parameters instanceof Object[]) {
+            return Arrays.asList((Object[]) parameters);
         } else {
             throw parametersMethodReturnedWrongType();
         }
@@ -308,12 +350,13 @@ public class Parameterized extends Suite {
                 + getTestClass().getName());
     }
 
-    private List<Runner> createRunnersForParameters(Iterable<Object[]> allParameters, String namePattern) throws Exception {
+    private List<Runner> createRunnersForParameters(Iterable<Object> allParameters, String namePattern) throws Exception {
         try {
             int i = 0;
             List<Runner> children = new ArrayList<Runner>();
-            for (Object[] parametersOfSingleTest : allParameters) {
-                children.add(createRunner(namePattern, i++, parametersOfSingleTest));
+            for (Object parametersOfSingleTest : allParameters) {
+                children.add(createRunnerWithNotNormalizedParameters(
+                    namePattern, i++, parametersOfSingleTest));
             }
             return children;
         } catch (ClassCastException e) {
