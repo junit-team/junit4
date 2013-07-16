@@ -14,6 +14,9 @@ import java.util.List;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.rules.ExternalResource;
+import org.junit.rules.TestRule;
+import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
@@ -23,6 +26,7 @@ import org.junit.runner.Runner;
 import org.junit.runner.notification.Failure;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.ParameterRule;
 import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.model.InitializationError;
 
@@ -371,5 +375,108 @@ public class ParameterizedTestTest {
     @Test(expected = InitializationError.class)
     public void exceptionWhenPrivateConstructor() throws Throwable {
         new Parameterized(PrivateConstructor.class);
+    }
+    
+    @RunWith(Parameterized.class)
+    static public class StaticParameterFieldRule {
+        @Parameters
+        public static Collection<Object[]> data() {
+            return Arrays.asList(new Object[][]{{3}});
+        }
+        
+        private final int fInput;
+
+        public StaticParameterFieldRule(int input) {
+            fInput = input;
+        }
+        
+        @ParameterRule
+        public static TestRule watchman = new TestWatcher() { };
+        
+        @Test
+        public void aTest() {
+        }    	
+    }
+    
+    @Test
+    public void parameterFieldRuleCannotBeStatic() throws Exception {
+        Result result = JUnitCore.runClasses(StaticParameterFieldRule.class);
+        String expected = String.format(
+                "Fields annotated with @ParameterRule must not be static %s",
+                StaticParameterFieldRule.class.getName());
+        assertEquals(expected, result.getFailures().get(0).getMessage());
+    }   
+    
+    @RunWith(Parameterized.class)
+    static public class StaticParameterMethodRule {
+        @Parameters
+        public static Collection<Object[]> data() {
+            return Arrays.asList(new Object[][]{{3}});
+        }
+        
+        private final int fInput;
+
+        public StaticParameterMethodRule(int input) {
+            fInput = input;
+        }
+        
+        @ParameterRule
+        public static TestRule newRule() {
+            return new TestWatcher() {};
+        }
+        
+        @Test
+        public void aTest() {
+        }
+    }
+    
+    @Test
+    public void parameterMethodRuleCannotBeStatic() throws Exception {
+        Result result = JUnitCore.runClasses(StaticParameterMethodRule.class);
+        String expected = String.format(
+                "Methods annotated with @ParameterRule must not be static %s",
+                StaticParameterMethodRule.class.getName());
+        assertEquals(expected, result.getFailures().get(0).getMessage());
+    } 
+    
+    @RunWith(Parameterized.class)
+    static public class ParameterRuleExecutions {
+        public static int counter;
+        
+        @Parameters
+        public static Collection<Object[]> data() {
+            return Arrays.asList(new Object[][]{{0}, {1}});
+        }
+        
+        private final int fInput;
+
+        public ParameterRuleExecutions(int input) {
+            fInput = input;
+        }
+        
+        @ParameterRule
+        public ExternalResource counterWorking = new ExternalResource() {
+            @Override
+            public void before() {
+                counter++;
+            }
+        };
+        
+        @Test
+        public void aTest() {
+        }
+
+        @Test
+        public void aSecondTest() {
+        }
+    }
+    
+    @Test
+    public void parameterRuleExecuteOncePerParameter() throws Exception {
+        ParameterRuleExecutions.counter = 0;
+        
+        JUnitCore.runClasses(ParameterRuleExecutions.class);
+
+        assertEquals(2, ParameterRuleExecutions.counter);
     }
 }

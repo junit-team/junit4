@@ -11,6 +11,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.internal.runners.model.ReflectiveCallable;
+import org.junit.internal.runners.statements.Fail;
+import org.junit.rules.RunRules;
+import org.junit.rules.TestRule;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkField;
@@ -150,6 +154,23 @@ public class Parameterized extends Suite {
         int value() default 0;
     }
 
+    /** 
+     * Annotates fields that reference rules or methods that return a rule. A field must be public, not
+     * static, and a subtype of {@link org.junit.rules.TestRule} (preferred) or
+     * {@link org.junit.rules.MethodRule}. A method must be public, not static,
+     * and must return a subtype of {@link org.junit.rules.TestRule} (preferred) or
+     * {@link org.junit.rules.MethodRule}.<p>
+     * 
+     * Methods or fields annotated with @{code ParameterRule} alter the instantiation behavior
+     * of @{code Parameterized}. When using this annotation a Java class is created for each item
+     * in the collection returned from the method annotated with {@code Parameters} and not per
+     * test method.
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.METHOD})
+    public @interface ParameterRule {
+    }
+
     protected class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
         private final Object[] fParameters;
 
@@ -261,6 +282,55 @@ public class Parameterized extends Suite {
             return new Annotation[0];
         }
     }
+    
+    protected class SingleInstanceTestClassRunnerForParameters extends TestClassRunnerForParameters {
+        private Object fTestInstance;
+
+        protected SingleInstanceTestClassRunnerForParameters(Class<?> type, String pattern, int index, Object[] parameters) throws InitializationError {
+            super(type,pattern,index,parameters);
+        }
+        
+        @Override
+        protected Statement classBlock(final RunNotifier notifier) {
+            Statement statement = childrenInvoker(notifier);
+            
+            try {
+                fTestInstance = superCreateTest();
+            } catch (Throwable e) {
+                return new Fail(e);
+            }
+            
+            statement = withParameterRules(statement,fTestInstance);
+            
+            return statement;
+        }
+        
+
+        @Override
+        public Object createTest() throws Exception {
+        	return fTestInstance;
+        }
+        
+        private Object superCreateTest() throws Exception {
+        	return super.createTest();
+        }
+        
+        private List<TestRule> getParameterRules(Object target) {
+            List<TestRule> result = getTestClass().getAnnotatedMethodValues(target,
+                    ParameterRule.class, TestRule.class);
+
+            result.addAll(getTestClass().getAnnotatedFieldValues(target,
+                    ParameterRule.class, TestRule.class));
+
+            return result;
+        }
+        
+        private Statement withParameterRules(Statement statement, Object target) {
+            List<TestRule> parameterRules = getParameterRules(target);
+            return parameterRules.isEmpty() ? statement :
+                    new RunRules(statement, parameterRules, getDescription());
+        }
+    }
 
     private static final List<Runner> NO_RUNNERS = Collections.<Runner>emptyList();
 
@@ -281,8 +351,13 @@ public class Parameterized extends Suite {
         return fRunners;
     }
 
-    protected Runner createRunner(String pattern, int index, Object[] parameters) throws InitializationError {
-        return new TestClassRunnerForParameters(getTestClass().getJavaClass(), pattern, index, parameters);
+    protected Runner createRunner(String pattern, int index, Object[] parameters) throws InitializationError, Exception {
+        if (parameterRuleExists()) {
+            return new SingleInstanceTestClassRunnerForParameters(getTestClass().getJavaClass(), pattern, index, parameters);
+        } else {
+            return new TestClassRunnerForParameters(getTestClass().getJavaClass(), pattern, index, parameters);
+        }
+        
     }
 
     @SuppressWarnings("unchecked")
@@ -336,5 +411,37 @@ public class Parameterized extends Suite {
 
     private boolean fieldsAreAnnotated() {
         return !getAnnotatedFieldsByParameter().isEmpty();
+    }
+    
+    private List<FrameworkField> getAnnotatedFieldsByParameterRule() throws Exception {   	
+        List<FrameworkField> fields = getTestClass().getAnnotatedFields(ParameterRule.class);
+        
+        for (FrameworkField each : fields) {
+            if ( each.isStatic()) {
+                throw new Exception("Fields annotated with @ParameterRule must not be static "
+                        + getTestClass().getName());
+            }
+        }
+        
+        return fields;
+    }
+    
+    private List<FrameworkMethod> getAnnotatedMethodsByParameterRule() throws Exception {
+        List<FrameworkMethod> methods = getTestClass().getAnnotatedMethods(
+                ParameterRule.class);
+        
+        for (FrameworkMethod each : methods) {
+            if ( each.isStatic()) {
+                throw new Exception("Methods annotated with @ParameterRule must not be static "
+                        + getTestClass().getName());
+            }
+        }
+        
+        return methods;
+    }
+    
+    private boolean parameterRuleExists() throws Exception {
+        return ! getAnnotatedFieldsByParameterRule().isEmpty() ||
+                ! getAnnotatedMethodsByParameterRule().isEmpty();
     }
 }
