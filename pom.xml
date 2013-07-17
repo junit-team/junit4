@@ -5,6 +5,7 @@
     <groupId>junit</groupId>
     <artifactId>junit</artifactId>
     <version>4.12-SNAPSHOT</version>
+    <packaging>bundle</packaging>
 
     <name>JUnit</name>
     <description>JUnit is a unit testing framework for Java, created by Erich Gamma and Kent Beck.</description>
@@ -191,13 +192,46 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <source>${jdkVersion}</source>
                     <target>${jdkVersion}</target>
-                    <compilerVersion>1.5</compilerVersion>
+                    <compilerVersion>${jdkVersion}</compilerVersion>
                     <showDeprecation>true</showDeprecation>
                     <showWarnings>true</showWarnings>
                     <debug>true</debug>
                     <fork>true</fork>
                     <compilerArgument>-Xlint:unchecked</compilerArgument>
                     <maxmem>128m</maxmem>
+                </configuration>
+            </plugin>
+            <plugin>
+                <!-- OSGi bundle in JAR archive -->
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.3.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Main-Class>org.junit.runner.JUnitCore</Main-Class>
+                        <Bundle-SymbolicName>org.${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Name>${project.name}</Bundle-Name>
+                        <Bundle-Description>${project.description}</Bundle-Description>
+                        <Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
+                        <Bundle-DocURL>${project.organization.url}</Bundle-DocURL>
+                        <Bundle-Version>${project.version}</Bundle-Version>
+                        <Bundle-License>Eclipse Public License 1.0</Bundle-License>
+                        <Export-Package>
+                            !org.junit.internal.*,
+                            !org.junit.experimental.theories.internal.*,
+                            junit.*; version="${project.version}",
+                            org.junit.*; version="${project.version}"
+                        </Export-Package>
+                        <Private-Package>
+                            org.junit.internal.*,
+                            org.junit.experimental.theories.internal.*
+                        </Private-Package>
+                        <Import-Package>
+                            !org.hamcrest.internal.*,
+                            org.hamcrest.*; resolution:=optional
+                        </Import-Package>
+                    </instructions>
                 </configuration>
             </plugin>
             <plugin>
