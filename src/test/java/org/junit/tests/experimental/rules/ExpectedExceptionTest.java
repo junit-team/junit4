@@ -77,7 +77,7 @@ public class ExpectedExceptionTest {
                 {
                         ThrowUnexpectedAssertionError.class,
                         hasSingleFailureWithMessage(startsWith("\nExpected: an instance of java.lang.NullPointerException"))},
-                {FailAndDontHandleAssertinErrors.class,
+                {FailAndDontHandleAssertionErrors.class,
                         hasSingleFailureWithMessage(ARBITRARY_MESSAGE)},
                 {
                         ExpectsMultipleMatchers.class,
@@ -257,13 +257,14 @@ public class ExpectedExceptionTest {
         }
     }
 
-    public static class FailAndDontHandleAssertinErrors {
+    public static class FailAndDontHandleAssertionErrors {
         @Rule
         public ExpectedException thrown = none();
 
         @Test
         public void violatedAssumption() {
             thrown.expect(IllegalArgumentException.class);
+            thrown.doNotHandleAssertionErrors();
             fail(ARBITRARY_MESSAGE);
         }
     }
@@ -286,7 +287,6 @@ public class ExpectedExceptionTest {
 
         @Test
         public void wrongException() {
-            thrown.handleAssertionErrors();
             thrown.expect(AssertionError.class);
             throw new AssertionError("the expected assertion error");
         }

@@ -95,8 +95,8 @@ public class ExpectedException implements TestRule {
 
     private boolean handleAssumptionViolatedExceptions = false;
 
-    private boolean handleAssertionErrors = false;
-    
+    private boolean handleAssertionErrors = true;
+
     private String missingExceptionMessage;
 
     private ExpectedException() {
@@ -104,6 +104,11 @@ public class ExpectedException implements TestRule {
 
     public ExpectedException handleAssertionErrors() {
         handleAssertionErrors = true;
+        return this;
+    }
+
+    public ExpectedException doNotHandleAssertionErrors() {
+        handleAssertionErrors = false;
         return this;
     }
 
