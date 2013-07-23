@@ -383,7 +383,7 @@ public class ExpectedExceptionTest {
             throw new IllegalArgumentException("Ack!", new NullPointerException("an unexpected cause"));
         }
     }
-    
+
     public static class CustomMessageWithoutExpectedException {
 
         @Rule
