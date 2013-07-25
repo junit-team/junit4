@@ -11,9 +11,9 @@ import java.util.Iterator;
 
 /**
  * Substitutes Java 1.6 ServiceLoader. Used in integration test {@link FrameworkIT}.
- * Loads OSGi framework as a service implemented by some OSGi vendor - currently Felix.
+ * Loads OSGi framework as a service implemented by some OSGi vendor.
  * The vendor is specified in pom.xml dependencies.
- * Current dependency is selected by groupId: org.apache.felix and artifactId: org.apache.felix.framework.
+ * Current dependency is selected by groupId:artifactId, e.g. org.apache.felix:org.apache.felix.framework.
  *
  * @author Tibor Digana (tibor17)
  * @since 4.12
