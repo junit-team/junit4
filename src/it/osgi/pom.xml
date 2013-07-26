@@ -15,6 +15,9 @@
     </prerequisites>
 
     <properties>
+        <felixVersion>4.2.1</felixVersion>
+        <equinoxVersion>3.9.0.v20130305-2200</equinoxVersion>
+        <knopflerfishVersion>5.3.3</knopflerfishVersion>
         <junitVersion>${project.version}</junitVersion>
         <jdkVersion>1.5</jdkVersion>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
@@ -26,32 +29,6 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junitVersion}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <version>5.0.0</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- The vendor's implementation of OSGi framework. -->
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.framework</artifactId>
-            <version>4.2.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.tycho</groupId>
-            <artifactId>org.eclipse.osgi</artifactId>
-            <version>3.9.0.v20130305-2200</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.knopflerfish</groupId>
-            <artifactId>framework</artifactId>
-            <version>5.3.3</version>
-            <scope>test</scope>
         </dependency>
 
         <!-- The rest of dependencies for PaxIT. -->
@@ -198,88 +175,117 @@
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.14.1</version>
-                <executions>
-                    <execution>
-                        <id>it-bundles</id>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                        <configuration>
-                            <includes>
-                                <include>**/BundlesIT.java</include>
-                            </includes>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>it-osgi</id>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                        <configuration>
-                            <forkCount>1</forkCount>
-                            <includes>
-                                <include>**/FrameworkIT.java</include>
-                            </includes>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>it-felix</id>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                        <configuration>
-                            <forkCount>1</forkCount>
-                            <includes>
-                                <include>**/PaxIT.java</include>
-                            </includes>
-                            <classpathDependencyExcludes>
-                                <classpathDependencyExclude>org.eclipse.tycho:org.eclipse.osgi</classpathDependencyExclude>
-                                <classpathDependencyExclude>org.knopflerfish:framework</classpathDependencyExclude>
-                            </classpathDependencyExcludes>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>it-equinox</id>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                        <configuration>
-                            <forkCount>1</forkCount>
-                            <includes>
-                                <include>**/PaxIT.java</include>
-                            </includes>
-                            <classpathDependencyExcludes>
-                                <classpathDependencyExclude>org.apache.felix:org.apache.felix.framework</classpathDependencyExclude>
-                                <classpathDependencyExclude>org.knopflerfish:framework</classpathDependencyExclude>
-                            </classpathDependencyExcludes>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>it-knopflerfish</id>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                        <configuration>
-                            <forkCount>1</forkCount>
-                            <includes>
-                                <include>**/PaxIT.java</include>
-                            </includes>
-                            <classpathDependencyExcludes>
-                                <classpathDependencyExclude>org.apache.felix:org.apache.felix.framework</classpathDependencyExclude>
-                                <classpathDependencyExclude>org.eclipse.tycho:org.eclipse.osgi</classpathDependencyExclude>
-                            </classpathDependencyExcludes>
-                        </configuration>
-                    </execution>
-                </executions>
+                <version>2.15</version>
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>felix</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>org.apache.felix.framework</artifactId>
+                    <version>${felixVersion}</version>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>it-felix-framework</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <includes>
+                                        <include>**/BundlesIT.java</include>
+                                        <include>**/FrameworkIT.java</include>
+                                        <include>**/PaxIT.java</include>
+                                    </includes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>equinox</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.eclipse.tycho</groupId>
+                    <artifactId>org.eclipse.osgi</artifactId>
+                    <version>${equinoxVersion}</version>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>it-equinox-framework</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <includes>
+                                        <include>**/BundlesIT.java</include>
+                                        <include>**/FrameworkIT.java</include>
+                                        <include>**/PaxIT.java</include>
+                                    </includes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>knopflerfish</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.knopflerfish</groupId>
+                    <artifactId>framework</artifactId>
+                    <version>${knopflerfishVersion}</version>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>it-knopflerfish-framework</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <!-- The PaxIT must be executed first otherwise URL Handler throws exception. -->
+                                    <runOrder>reversealphabetical</runOrder>
+                                    <includes>
+                                        <include>**/BundlesIT.java</include>
+                                        <include>**/FrameworkIT.java</include>
+                                        <include>**/PaxIT.java</include>
+                                    </includes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <repositories>
         <repository>
