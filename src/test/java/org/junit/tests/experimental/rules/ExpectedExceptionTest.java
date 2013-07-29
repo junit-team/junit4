@@ -299,7 +299,7 @@ public class ExpectedExceptionTest {
         public ExpectedException thrown = none();
 
         @Test
-        public void wrongException() {
+        public void passes() {
             thrown.expect(AssertionError.class);
             throw new AssertionError("the expected assertion error");
         }
