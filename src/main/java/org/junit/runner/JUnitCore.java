@@ -64,7 +64,7 @@ public class JUnitCore {
 
     /**
      * @param system
-     * @args args from main()
+     * @param args from main()
      */
     Result runMain(JUnitSystem system, String... args) {
         system.out().println("JUnit version " + Version.id());
