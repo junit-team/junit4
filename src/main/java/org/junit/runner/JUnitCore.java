@@ -33,14 +33,7 @@ public class JUnitCore {
      * @param args names of classes in which to find tests to run
      */
     public static void main(String... args) {
-        runMainAndExit(new RealSystem(), args);
-    }
-
-    /**
-     * Runs main and exits
-     */
-    private static void runMainAndExit(JUnitSystem system, String... args) {
-        Result result = new JUnitCore().runMain(system, args);
+        Result result = new JUnitCore().runMain(new RealSystem(), args);
         System.exit(result.wasSuccessful() ? 0 : 1);
     }
 
