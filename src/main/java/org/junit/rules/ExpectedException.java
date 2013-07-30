@@ -93,7 +93,7 @@ public class ExpectedException implements TestRule {
 
     private final ExpectedExceptionMatcherBuilder fMatcherBuilder = new ExpectedExceptionMatcherBuilder();
 
-    private boolean handleAssumptionViolatedExceptions = false;
+    private boolean handleAssumptionViolatedExceptions = true;
 
     private boolean handleAssertionErrors = true;
 
@@ -114,6 +114,11 @@ public class ExpectedException implements TestRule {
 
     public ExpectedException handleAssumptionViolatedExceptions() {
         handleAssumptionViolatedExceptions = true;
+        return this;
+    }
+
+    public ExpectedException doNotHandleAssumptionViolatedExceptions() {
+        handleAssumptionViolatedExceptions = false;
         return this;
     }
 

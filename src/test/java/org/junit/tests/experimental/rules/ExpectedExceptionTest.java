@@ -63,13 +63,15 @@ public class ExpectedExceptionTest {
                 {ExpectsMatcher.class, everyTestRunSuccessful()},
                 {ThrowExpectedAssumptionViolatedException.class,
                         everyTestRunSuccessful()},
+                {HandlesAssumptionViolatedExceptionByDefault.class,
+                        everyTestRunSuccessful()},
                 {ThrowAssumptionViolatedExceptionButExpectOtherType.class,
                         hasSingleFailure()},
                 {
                         ThrowAssumptionViolatedExceptionButExpectOtherType.class,
                         hasSingleFailureWithMessage(containsString("Stacktrace was: org.junit.internal.AssumptionViolatedException"))},
-                {ViolateAssumptionAndExpectException.class,
-                        hasSingleAssumptionFailure()},
+                {DoNotHandleAssumptionViolatedExceptionAndExpectException.class, hasSingleAssumptionFailure()},
+                {HandleAssumptionViolatedExceptionAndExpectException.class, hasSingleFailure()},
                 {ThrowExpectedAssertionError.class, everyTestRunSuccessful()},
                 {
                         DontThrowAssertionErrorButExpectOne.class,
@@ -316,13 +318,25 @@ public class ExpectedExceptionTest {
         }
     }
 
-    public static class ViolateAssumptionAndExpectException {
+    public static class DoNotHandleAssumptionViolatedExceptionAndExpectException {
         @Rule
         public ExpectedException thrown = none();
 
         @Test
-        public void violatedAssumption() {
-            // expect an exception, which is not an AssumptionViolatedException
+        public void expectExceptionWhichIsNotAnAssumptionViolatedException() {
+            thrown.doNotHandleAssumptionViolatedExceptions();
+            thrown.expect(NullPointerException.class);
+            assumeTrue(false);
+        }
+    }
+
+    public static class HandleAssumptionViolatedExceptionAndExpectException {
+        @Rule
+        public ExpectedException thrown = none();
+
+        @Test
+        public void expectExceptionWhichIsNotAnAssumptionViolatedException() {
+            thrown.handleAssumptionViolatedExceptions();
             thrown.expect(NullPointerException.class);
             assumeTrue(false);
         }
@@ -347,6 +361,17 @@ public class ExpectedExceptionTest {
         @Test
         public void throwExpectAssumptionViolatedException() {
             thrown.handleAssumptionViolatedExceptions();
+            thrown.expect(AssumptionViolatedException.class);
+            throw new AssumptionViolatedException("");
+        }
+    }
+
+    public static class HandlesAssumptionViolatedExceptionByDefault {
+        @Rule
+        public ExpectedException thrown = none();
+
+        @Test
+        public void noNeedToCallHandleAssumptionViolatedExceptions() {
             thrown.expect(AssumptionViolatedException.class);
             throw new AssumptionViolatedException("");
         }
