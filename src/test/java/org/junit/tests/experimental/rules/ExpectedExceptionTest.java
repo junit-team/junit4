@@ -277,7 +277,7 @@ public class ExpectedExceptionTest {
         public ExpectedException thrown = none();
 
         @Test
-        public void violatedAssumption() {
+        public void expectExceptionButThrowAssertionErrorNotHandled() {
             thrown.expect(IllegalArgumentException.class);
             thrown.doNotHandleAssertionErrors();
             fail(ARBITRARY_MESSAGE);
