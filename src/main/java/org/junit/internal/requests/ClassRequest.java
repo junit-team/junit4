@@ -8,7 +8,7 @@ public class ClassRequest extends Request {
     private final Object fRunnerLock = new Object();
     private final Class<?> fTestClass;
     private final boolean fCanUseSuiteMethod;
-    private Runner fRunner;
+    private volatile Runner fRunner;
 
     public ClassRequest(Class<?> testClass, boolean canUseSuiteMethod) {
         fTestClass = testClass;
@@ -21,11 +21,13 @@ public class ClassRequest extends Request {
 
     @Override
     public Runner getRunner() {
-        synchronized (fRunnerLock) {
-            if (fRunner == null) {
-                fRunner = new AllDefaultPossibilitiesBuilder(fCanUseSuiteMethod).safeRunnerForClass(fTestClass);
+        if (fRunner == null) {
+            synchronized (fRunnerLock) {
+                if (fRunner == null) {
+                    fRunner = new AllDefaultPossibilitiesBuilder(fCanUseSuiteMethod).safeRunnerForClass(fTestClass);
+                }
             }
-            return fRunner;
         }
+        return fRunner;
     }
 }

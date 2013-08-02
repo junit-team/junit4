@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,14 +21,11 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
 /**
- * <p>
  * The custom runner <code>Parameterized</code> implements parameterized tests.
  * When running a parameterized test class, instances are created for the
  * cross-product of the test methods and the test data elements.
- * </p>
- *
+ * <p>
  * For example, to test a Fibonacci function, write:
- *
  * <pre>
  * &#064;RunWith(Parameterized.class)
  * public class FibonacciTest {
@@ -52,12 +50,10 @@ import org.junit.runners.model.Statement;
  *     }
  * }
  * </pre>
- *
  * <p>
  * Each instance of <code>FibonacciTest</code> will be constructed using the
  * two-argument constructor and the data values in the
  * <code>&#064;Parameters</code> method.
- *
  * <p>
  * In order that you can easily identify the individual tests, you may provide a
  * name for the <code>&#064;Parameters</code> annotation. This name is allowed
@@ -72,13 +68,12 @@ import org.junit.runners.model.Statement;
  * <dt>...</dt>
  * <dd></dd>
  * </dl>
+ * <p>
  * In the example given above, the <code>Parameterized</code> runner creates
  * names like <code>[1: fib(3)=2]</code>. If you don't use the name parameter,
  * then the current parameter index is used as name.
- * </p>
- *
+ * <p>
  * You can also write:
- *
  * <pre>
  * &#064;RunWith(Parameterized.class)
  * public class FibonacciTest {
@@ -100,12 +95,41 @@ import org.junit.runners.model.Statement;
  *  }
  * }
  * </pre>
- *
  * <p>
  * Each instance of <code>FibonacciTest</code> will be constructed with the default constructor
  * and fields annotated by <code>&#064;Parameter</code>  will be initialized
  * with the data values in the <code>&#064;Parameters</code> method.
- * </p>
+ *
+ * <p>
+ * The parameters can be provided as an array, too:
+ *
+ * <pre>
+ * &#064;Parameters
+ * public static Object[][] data() {
+ * 	return new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 }, { 3, 2 }, { 4, 3 },
+ * 			{ 5, 5 }, { 6, 8 } };
+ * }
+ * </pre>
+ *
+ * <h3>Tests with single parameter</h3>
+ * <p>
+ * If your test needs a single parameter only, you don't have to wrap it with an
+ * array. Instead you can provide an <code>Iterable</code> or an array of
+ * objects.
+ * <pre>
+ * &#064;Parameters
+ * public static Iterable&lt;? extends Object&gt; data() {
+ * 	return Arrays.asList(&quot;first test&quot;, &quot;second test&quot;);
+ * }
+ * </pre>
+ * <p>
+ * or
+ * <pre>
+ * &#064;Parameters
+ * public static Object[] data() {
+ * 	return new Object[] { &quot;first test&quot;, &quot;second test&quot; };
+ * }
+ * </pre>
  *
  * @since 4.0
  */
@@ -118,12 +142,9 @@ public class Parameterized extends Suite {
     @Target(ElementType.METHOD)
     public static @interface Parameters {
         /**
-         * <p>
          * Optional pattern to derive the test's name from the parameters. Use
          * numbers in braces to refer to the parameters or the additional data
          * as follows:
-         * </p>
-         *
          * <pre>
          * {index} - the current parameter index
          * {0} - the first parameter value
@@ -133,7 +154,6 @@ public class Parameterized extends Suite {
          * <p>
          * Default value is "{index}" for compatibility with previous JUnit
          * versions.
-         * </p>
          *
          * @return {@link MessageFormat} pattern string, except the index
          *         placeholder.
@@ -179,13 +199,13 @@ public class Parameterized extends Suite {
     public static @interface UseParameterRule {
     }
 
+
     public static class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
         private final Object[] fParameters;
 
-        private String fName;
+        private final String fName;
 
-        protected TestClassRunnerForParameters(Class<?> type, String pattern, int index,
-                                                  Object[] parameters) throws InitializationError {
+        protected TestClassRunnerForParameters(Class<?> type, String pattern, int index, Object[] parameters) throws InitializationError {
             super(type);
 
             fParameters = parameters;
@@ -201,8 +221,7 @@ public class Parameterized extends Suite {
             }
         }
 
-        private Object createTestUsingConstructorInjection(Object... params)
-                                                                        throws InitializationError {
+        private Object createTestUsingConstructorInjection(Object... params) throws InitializationError {
             try {
                 return getTestClass().getOnlyConstructor().newInstance(params);
             } catch (InstantiationException e) {
@@ -217,13 +236,18 @@ public class Parameterized extends Suite {
         private Object createTestUsingFieldInjection(Object... params) throws InitializationError {
             List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter();
             if (annotatedFieldsByParameter.size() != params.length) {
-                throw new InitializationError(
-                        new Exception("Wrong number of parameters and @Parameter fields." +
-                        " @Parameter fields counted: " + annotatedFieldsByParameter.size()
-                                + ", available parameters: " + fParameters.length + ".")
-                );
+                throw new RuntimeException("Wrong number of parameters and @Parameter fields." +
+                        " @Parameter fields counted: " + annotatedFieldsByParameter.size() + ", available parameters: " + fParameters.length + ".");
+
+
             }
-            Object testClassInstance = createTestUsingConstructorInjection();
+            Object testClassInstance = null;
+            try {
+                testClassInstance = createTestUsingConstructorInjection();
+            } catch (InitializationError e) {
+                e.printStackTrace();
+                throw e;
+            }
 
             for (FrameworkField each : annotatedFieldsByParameter) {
                 Field field = each.getField();
@@ -232,6 +256,7 @@ public class Parameterized extends Suite {
                 try {
                     field.set(testClassInstance, fParameters[index]);
                 } catch (IllegalArgumentException iare) {
+                    iare.printStackTrace();
                     throw new InitializationError(new Exception(getTestClass().getName()
                             + ": Trying to set " + field.getName()
                             + " with the value " + fParameters[index]
@@ -239,6 +264,7 @@ public class Parameterized extends Suite {
                             + fParameters[index].getClass().getSimpleName() + " instead of " +
                             field.getType().getSimpleName() + ").", iare));
                 } catch (IllegalAccessException e) {
+                    e.printStackTrace();
                     throw new InitializationError(e);
                 }
             }
@@ -279,11 +305,9 @@ public class Parameterized extends Suite {
                     int index = each.getField().getAnnotation(Parameter.class).value();
                     if (index < 0 || index > annotatedFieldsByParameter.size() - 1) {
                         errors.add(
-                                new Exception("Invalid @Parameter value: " + index
-                                        + ". @Parameter fields counted: "
-                                        + annotatedFieldsByParameter.size() + ". Please use an "
-                                        + "index between 0 and "
-                                        + (annotatedFieldsByParameter.size() - 1) + ".")
+                                new Exception("Invalid @Parameter value: " + index + ". @Parameter fields counted: " +
+                                        annotatedFieldsByParameter.size() + ". Please use an index between 0 and " +
+                                        (annotatedFieldsByParameter.size() - 1) + ".")
                         );
                     } else {
                         usedIndices[index]++;
@@ -294,8 +318,7 @@ public class Parameterized extends Suite {
                     if (numberOfUse == 0) {
                         errors.add(new Exception("@Parameter(" + index + ") is never used."));
                     } else if (numberOfUse > 1) {
-                        errors.add(new Exception("@Parameter(" + index
-                                            + ") is used more than once (" + numberOfUse + ")."));
+                        errors.add(new Exception("@Parameter(" + index + ") is used more than once (" + numberOfUse + ")."));
                     }
                 }
             }
@@ -311,6 +334,7 @@ public class Parameterized extends Suite {
             return new Annotation[0];
         }
 
+
         private boolean fieldsAreAnnotated() {
             return !getAnnotatedFieldsByParameter().isEmpty();
         }
@@ -318,11 +342,16 @@ public class Parameterized extends Suite {
         private List<FrameworkField> getAnnotatedFieldsByParameter() {
             return getTestClass().getAnnotatedFields(Parameter.class);
         }
+
     }
 
-    private static final List<Runner> NO_RUNNERS = Collections.emptyList();
 
-    private final ArrayList<Runner> runners = new ArrayList<Runner>();
+
+
+
+    private static final List<Runner> NO_RUNNERS = Collections.<Runner>emptyList();
+
+    private final List<Runner> fRunners;
 
     /**
      * Only called reflectively. Do not use programmatically.
@@ -331,34 +360,42 @@ public class Parameterized extends Suite {
         super(klass, NO_RUNNERS);
         Parameters parameters = getParametersMethod().getAnnotation(
                 Parameters.class);
-        createRunnersForParameters(allParameters(), parameters.name());
+        fRunners = Collections.unmodifiableList(createRunnersForParameters(allParameters(), parameters.name()));
     }
 
     @Override
     protected List<Runner> getChildren() {
-        return runners;
+        return fRunners;
+    }
+
+    private Runner createRunnerWithNotNormalizedParameters(String pattern,
+                                                           int index, Object parametersOrSingleParameter)
+            throws InitializationError {
+        Object[] parameters= (parametersOrSingleParameter instanceof Object[]) ? (Object[]) parametersOrSingleParameter
+                : new Object[] { parametersOrSingleParameter };
+        return createRunner(pattern, index, parameters);
     }
 
     protected Runner createRunner(String pattern,
-                                       int index, Object[] parameters) throws InitializationError {
+                                  int index, Object[] parameters) throws InitializationError {
 
         //validate all the @UseParameterRule fields are public and static
         for (FrameworkField field : getTestClass().getAnnotatedFields(UseParameterRule.class)) {
             if (!field.isPublic()) {
                 throw new InitializationError(
                         String.format("UseParameterRule annotated field '%s' must be public",
-                        field.getName()));
+                                field.getName()));
             }
             if (!field.isStatic()) {
                 throw new InitializationError(
                         String.format("UseParameterRule annotated field '%s' must be static",
-                        field.getName()));
+                                field.getName()));
             }
         }
 
         // retrieve values of fields annotated with UseParameterRules and marked as static
         List<ParameterRule> rules = getTestClass().getAnnotatedFieldValues(
-                    null, UseParameterRule.class, ParameterRule.class);
+                null, UseParameterRule.class, ParameterRule.class);
 
         // create an initial builder for starting the chain. This defaults to using the existing
         // runner for parameters to maintain backwards compatibility
@@ -376,24 +413,26 @@ public class Parameterized extends Suite {
 
     public static class DefaultBuilder implements ParameterRunnerBuilder {
         public Runner build(Class<?> type, String pattern, int index,
-                                        Object[] parameters) throws InitializationError {
+                            Object[] parameters) throws InitializationError {
             return new TestClassRunnerForParameters(type, pattern, index, parameters);
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private Iterable<Object[]> allParameters() throws InitializationError {
+
+ private Iterable<Object> allParameters() throws InitializationError {
         Object parameters;
         try {
             parameters = getParametersMethod().invokeExplosively(null);
         } catch (Throwable throwable) {
             throw new InitializationError(throwable);
         }
-        if (parameters instanceof Iterable) {
-            return (Iterable<Object[]>) parameters;
-        } else {
-            throw new InitializationError(parametersMethodReturnedWrongType());
-        }
+     if (parameters instanceof Iterable) {
+         return (Iterable<Object>) parameters;
+     } else if (parameters instanceof Object[]) {
+         return Arrays.asList((Object[]) parameters);
+     } else {
+         throw new InitializationError(parametersMethodReturnedWrongType());
+     }
     }
 
     private FrameworkMethod getParametersMethod() throws InitializationError {
@@ -409,13 +448,15 @@ public class Parameterized extends Suite {
                 + getTestClass().getName()));
     }
 
-    private void createRunnersForParameters(Iterable<Object[]> allParameters,
-                                                String namePattern) throws InitializationError {
+    private List<Runner> createRunnersForParameters(Iterable<Object> allParameters, String namePattern) throws InitializationError {
         try {
             int i = 0;
-            for (Object[] parametersOfSingleTest : allParameters) {
-                runners.add(createRunner(namePattern, i++, parametersOfSingleTest));
+            List<Runner> children = new ArrayList<Runner>();
+            for (Object parametersOfSingleTest : allParameters) {
+                children.add(createRunnerWithNotNormalizedParameters(
+                        namePattern, i++, parametersOfSingleTest));
             }
+            return children;
         } catch (ClassCastException e) {
             throw new InitializationError(parametersMethodReturnedWrongType());
         }
@@ -430,7 +471,6 @@ public class Parameterized extends Suite {
         return new Exception(message);
     }
 
-
     /**
      * <tt>ParameterRunnerBuilder</tt>s perform the work within a
      * {@link org.junit.runners.Parameterized.ParameterRule} by providing the runner that will
@@ -442,7 +482,7 @@ public class Parameterized extends Suite {
     public static interface ParameterRunnerBuilder {
 
         Runner build(Class<?> type, String pattern, int index,
-                                                Object[] parameters) throws InitializationError;
+                     Object[] parameters) throws InitializationError;
 
     }
 

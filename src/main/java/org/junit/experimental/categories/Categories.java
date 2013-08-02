@@ -2,9 +2,10 @@ package org.junit.experimental.categories;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.Set;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.NoTestsRemainException;
@@ -63,7 +64,7 @@ import org.junit.runners.model.RunnerBuilder;
  *     // Will run A.b and B.d, but not A.a and A.c
  * }
  * </pre>
- *
+ * <p>
  * Example to run multiple categories:
  * <pre>
  * &#064;RunWith(Categories.class)
@@ -75,13 +76,13 @@ import org.junit.runners.model.RunnerBuilder;
  * </pre>
  *
  * @version 4.12
- * @see <a href="https://github.com/KentBeck/junit/wiki/Categories">Categories at JUnit wiki</a>
+ * @see <a href="https://github.com/junit-team/junit/wiki/Categories">Categories at JUnit wiki</a>
  */
 public class Categories extends Suite {
     // the way filters are implemented makes this unnecessarily complicated,
     // buggy, and difficult to specify.  A new way of handling filters could
     // someday enable a better new implementation.
-    // https://github.com/KentBeck/junit/issues/issue/172
+    // https://github.com/junit-team/junit/issues/issue/172
 
     @Retention(RetentionPolicy.RUNTIME)
     public @interface IncludeCategory {
@@ -154,7 +155,7 @@ public class Categories extends Suite {
             return new CategoryFilter(matchAnyInclusions, inclusions, matchAnyExclusions, exclusions);
         }
 
-        private CategoryFilter(boolean matchAnyIncludes, Set<Class<?>> includes,
+        protected CategoryFilter(boolean matchAnyIncludes, Set<Class<?>> includes,
                                boolean matchAnyExcludes, Set<Class<?>> excludes) {
             fIncludedAny= matchAnyIncludes;
             fExcludedAny= matchAnyExcludes;

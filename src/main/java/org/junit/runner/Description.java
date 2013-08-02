@@ -5,22 +5,23 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * <p>A <code>Description</code> describes a test which is to be run or has been run. <code>Descriptions</code>
+ * A <code>Description</code> describes a test which is to be run or has been run. <code>Descriptions</code>
  * can be atomic (a single test) or compound (containing children tests). <code>Descriptions</code> are used
  * to provide feedback about the tests that are about to run (for example, the tree view
- * visible in many IDEs) or tests that have been run (for example, the failures view).</p>
- *
- * <p><code>Descriptions</code> are implemented as a single class rather than a Composite because
- * they are entirely informational. They contain no logic aside from counting their tests.</p>
- *
- * <p>In the past, we used the raw {@link junit.framework.TestCase}s and {@link junit.framework.TestSuite}s
+ * visible in many IDEs) or tests that have been run (for example, the failures view).
+ * <p>
+ * <code>Descriptions</code> are implemented as a single class rather than a Composite because
+ * they are entirely informational. They contain no logic aside from counting their tests.
+ * <p>
+ * In the past, we used the raw {@link junit.framework.TestCase}s and {@link junit.framework.TestSuite}s
  * to display the tree of tests. This was no longer viable in JUnit 4 because atomic tests no longer have
  * a superclass below {@link Object}. We needed a way to pass a class and name together. Description
- * emerged from this.</p>
+ * emerged from this.
  *
  * @see org.junit.runner.Request
  * @see org.junit.runner.Runner
@@ -135,11 +136,11 @@ public class Description implements Serializable {
      */
     public static final Description TEST_MECHANISM = new Description(null, "Test mechanism");
 
-    private final ArrayList<Description> fChildren = new ArrayList<Description>();
+    private final Collection<Description> fChildren = new ConcurrentLinkedQueue<Description>();
     private final String fDisplayName;
     private final Serializable fUniqueId;
     private final Annotation[] fAnnotations;
-    private /* write-once */ Class<?> fTestClass;
+    private volatile /* write-once */ Class<?> fTestClass;
 
     private Description(Class<?> clazz, String displayName, Annotation... annotations) {
         this(clazz, displayName, displayName, annotations);
@@ -173,14 +174,15 @@ public class Description implements Serializable {
      * @param description the soon-to-be child.
      */
     public void addChild(Description description) {
-        getChildren().add(description);
+        fChildren.add(description);
     }
 
     /**
-     * @return the receiver's children, if any
+     * Gets the copy of the children of this {@code Description}.
+     * Returns an empty list if there are no children.
      */
     public ArrayList<Description> getChildren() {
-        return fChildren;
+        return new ArrayList<Description>(fChildren);
     }
 
     /**
@@ -194,7 +196,7 @@ public class Description implements Serializable {
      * @return <code>true</code> if the receiver is an atomic test
      */
     public boolean isTest() {
-        return getChildren().isEmpty();
+        return fChildren.isEmpty();
     }
 
     /**
@@ -205,7 +207,7 @@ public class Description implements Serializable {
             return 1;
         }
         int result = 0;
-        for (Description child : getChildren()) {
+        for (Description child : fChildren) {
             result += child.testCount();
         }
         return result;
