@@ -70,7 +70,7 @@ public class ExpectedExceptionTest {
                 {
                         ThrowAssumptionViolatedExceptionButExpectOtherType.class,
                         hasSingleFailureWithMessage(containsString("Stacktrace was: org.junit.internal.AssumptionViolatedException"))},
-                {DoNotHandleAssumptionViolatedExceptionAndExpectException.class, hasSingleAssumptionFailure()},
+                {ViolateAssumptionAndExpectException.class, hasSingleAssumptionFailure()},
                 {HandleAssumptionViolatedExceptionAndExpectException.class, hasSingleFailure()},
                 {ThrowExpectedAssertionError.class, everyTestRunSuccessful()},
                 {
@@ -318,7 +318,7 @@ public class ExpectedExceptionTest {
         }
     }
 
-    public static class DoNotHandleAssumptionViolatedExceptionAndExpectException {
+    public static class ViolateAssumptionAndExpectException {
         @Rule
         public ExpectedException thrown = none();
 
