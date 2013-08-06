@@ -26,8 +26,8 @@ import static org.junit.experimental.categories.Categories.CategoryFilter;
  */
 public final class ExcludeCategories extends CategoryFilterFactory {
     /**
-     * Creates an {@link ExcludesAny} {@link CategoryFilter} given an array of classes used as
-     * {@link Category} values.
+     * Creates a {@link Filter} which is only passed by tests that are
+     * not categorized with any of the specified categories.
      *
      * @param categories Category classes.
      */
