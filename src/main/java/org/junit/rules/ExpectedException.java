@@ -13,45 +13,58 @@ import org.junit.internal.AssumptionViolatedException;
 import org.junit.runners.model.Statement;
 
 /**
- * The ExpectedException rule allows in-test specification of expected exception
- * types and messages:
+ * The {@code ExpectedException} rule allows you to verify that your code
+ * throws a specific exception.
  *
- * <pre>
- * // These tests all pass.
- * public static class HasExpectedException {
- * 	&#064;Rule
- * 	public ExpectedException thrown= ExpectedException.none();
+ * <h3>Usage</h3>
  *
- * 	&#064;Test
- * 	public void throwsNothing() {
- * 		// no exception expected, none thrown: passes.
+ * <pre> public class SimpleExpectedExceptionTest {
+ *     &#064;Rule
+ *     public ExpectedException thrown= ExpectedException.none();
+ *
+ *     &#064;Test
+ *     public void throwsNothing() {
+ *         // no exception expected, none thrown: passes.
  *     }
  *
- * 	&#064;Test
- * 	public void throwsNullPointerException() {
- * 		thrown.expect(NullPointerException.class);
- * 		throw new NullPointerException();
+ *     &#064;Test
+ *     public void throwsExceptionWithSpecificType() {
+ *         thrown.expect(NullPointerException.class);
+ *         throw new NullPointerException();
  *     }
+ * }</pre>
+ * 
+ * <p>
+ * You have to add the {@code ExpectedException} rule to your test.
+ * This doesn't affect your existing tests (see {@code throwsNothing()}).
+ * After specifiying the type of the expected exception your test is
+ * successful when such an exception is thrown and it fails if a
+ * different or no exception is thrown.
  *
- * 	&#064;Test
- * 	public void throwsNullPointerExceptionWithMessage() {
- * 		thrown.expect(NullPointerException.class);
- * 		thrown.expectMessage(&quot;happened?&quot;);
- * 		thrown.expectMessage(startsWith(&quot;What&quot;));
- * 		throw new NullPointerException(&quot;What happened?&quot;);
- *     }
+ * <p>
+ * Instead of specifying the exception's type you can characterize the
+ * expected exception based on other criterias, too:
  *
- * 	&#064;Test
- * 	public void throwsIllegalArgumentExceptionWithMessageAndCause() {
- * 		NullPointerException expectedCause = new NullPointerException();
- * 		thrown.expect(IllegalArgumentException.class);
- * 		thrown.expectMessage(&quot;What&quot;);
- * 		thrown.expectCause(is(expectedCause));
- * 		throw new IllegalArgumentException(&quot;What happened?&quot;, cause);
- *     }
- * }
- * </pre>
+ * <ul>
+ *   <li>The exception's message contains a specific text: {@link #expectMessage(String)}</li>
+ *   <li>The exception's message complies with a Hamcrest matcher: {@link #expectMessage(Matcher)}</li>
+ *   <li>The exception's cause complies with a Hamcrest matcher: {@link #expectCause(Matcher)}</li>
+ *   <li>The exception itself complies with a Hamcrest matcher: {@link #expect(Matcher)}</li>
+ * </ul>
  *
+ * <p>
+ * You can combine any of the presented expect-methods. The test is
+ * successful if all specifications are met.
+ * <pre> &#064;Test
+ * public void throwsException() {
+ *     thrown.expect(NullPointerException.class);
+ *     thrown.expectMessage(&quot;happened&quot;);
+ *     throw new NullPointerException(&quot;What happened?&quot;);
+ * }</pre>
+ *
+ * <h3>Verify AssertionErrors and AssumptionViolatedExceptions</h3>
+ *
+ * <p>
  * By default ExpectedException rule doesn't handle AssertionErrors and
  * AssumptionViolatedExceptions, because such exceptions are used by JUnit. If
  * you want to handle such exceptions you have to call @link
@@ -80,12 +93,18 @@ import org.junit.runners.model.Statement;
  * }
  * </pre>
  *
+ * <h3>Missing Exceptions</h3>
+ * <p>
+ * By default missing exceptions are reported with an error message
+ * like "Expected test to throw foo.". You can configure a different
+ * message by means of {@link #reportMissingExceptionWithMessage(String)}.
+ *
  * @since 4.7
  */
 public class ExpectedException implements TestRule {
     /**
-     * @return a Rule that expects no exception to be thrown (identical to
-     *         behavior without this Rule)
+     * Returns a {@linkplain TestRule rule} that expects no exception to
+     * be thrown (identical to behavior without this rule).
      */
     public static ExpectedException none() {
         return new ExpectedException();
@@ -102,11 +121,21 @@ public class ExpectedException implements TestRule {
     private ExpectedException() {
     }
 
+    /**
+     * {@code AssertionErrors} are only considered by the rule if you call
+     * this method.
+     * @return the rule itself
+     */
     public ExpectedException handleAssertionErrors() {
         handleAssertionErrors = true;
         return this;
     }
 
+    /**
+     * {@code AssumptionViolatedExceptions} are only considered by the rule
+     * if you call this method.
+     * @return the rule itself
+     */
     public ExpectedException handleAssumptionViolatedExceptions() {
         handleAssumptionViolatedExceptions = true;
         return this;
@@ -116,7 +145,7 @@ public class ExpectedException implements TestRule {
      * Specifies the failure message for tests that are expected to throw 
      * an exception but do not throw any.
      * @param message exception detail message
-     * @return self
+     * @return the rule itself
      */
     public ExpectedException reportMissingExceptionWithMessage(String message) {
         missingExceptionMessage = message;
@@ -129,40 +158,67 @@ public class ExpectedException implements TestRule {
     }
 
     /**
-     * Adds {@code matcher} to the list of requirements for any thrown
-     * exception.
+     * Verify that your code throws an exception that is matched by
+     * a Hamcrest matcher.
+     * <pre> &#064;Test
+     * public void throwsExceptionThatCompliesWithMatcher() {
+     *     NullPointerException e = new NullPointerException();
+     *     thrown.expect(is(e));
+     *     throw e;
+     * }</pre>
      */
     public void expect(Matcher<?> matcher) {
         fMatcherBuilder.add(matcher);
     }
 
     /**
-     * Adds to the list of requirements for any thrown exception that it should
-     * be an instance of {@code type}
+     * Verify that your code throws an exception that is an
+     * instance of specific {@code type}.
+     * <pre> &#064;Test
+     * public void throwsExceptionWithSpecificType() {
+     *     thrown.expect(NullPointerException.class);
+     *     throw new NullPointerException();
+     * }
      */
     public void expect(Class<? extends Throwable> type) {
         expect(instanceOf(type));
     }
 
     /**
-     * Adds to the list of requirements for any thrown exception that it should
-     * <em>contain</em> string {@code substring}
+     * Verify that your code throws an exception whose message contains
+     * a specific text.
+     * <pre> &#064;Test
+     * public void throwsExceptionWhoseMessageContainsSpecificText() {
+     *     thrown.expectMessage(&quot;happened&quot;);
+     *     throw new NullPointerException(&quot;What happened?&quot;);
+     * }</pre>
      */
     public void expectMessage(String substring) {
         expectMessage(containsString(substring));
     }
 
     /**
-     * Adds {@code matcher} to the list of requirements for the message returned
-     * from any thrown exception.
+     * Verify that your code throws an exception whose message is matched 
+     * by a Hamcrest matcher.
+     * <pre> &#064;Test
+     * public void throwsExceptionWhoseMessageCompliesWithMatcher() {
+     *     thrown.expectMessage(startsWith(&quot;What&quot;));
+     *     throw new NullPointerException(&quot;What happened?&quot;);
+     * }</pre>
      */
     public void expectMessage(Matcher<String> matcher) {
         expect(hasMessage(matcher));
     }
 
     /**
-     * Adds {@code matcher} to the list of requirements for the cause of
-     * any thrown exception.
+     * Verify that your code throws an exception whose cause is matched by 
+     * a Hamcrest matcher.
+     * <pre> &#064;Test
+     * public void throwsExceptionWhoseCauseCompliesWithMatcher() {
+     *     NullPointerException expectedCause = new NullPointerException();
+     *     thrown.expectCause(is(expectedCause));
+     *     throw new IllegalArgumentException(&quot;What happened?&quot;, cause);
+     * }</pre>
      */
     public void expectCause(Matcher<? extends Throwable> expectedCause) {
         expect(hasCause(expectedCause));
