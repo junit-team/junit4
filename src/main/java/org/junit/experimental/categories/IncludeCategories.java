@@ -26,8 +26,8 @@ import static org.junit.experimental.categories.Categories.CategoryFilter;
  */
 public final class IncludeCategories extends CategoryFilterFactory {
     /**
-     * Creates an {@link IncludesAny} {@link CategoryFilter} given an array of classes used as
-     * {@link Category} values.
+     * Creates a {@link Filter} which is only passed by tests that are
+     * categorized with any of the specified categories.
      *
      * @param categories Category classes.
      */
