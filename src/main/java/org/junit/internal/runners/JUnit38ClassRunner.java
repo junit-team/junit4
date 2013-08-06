@@ -124,8 +124,7 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
 
     /**
      * Get the annotations associated with given TestCase.
-     * @param test
-     * @return
+     * @param test the TestCase.
      */
     private static Annotation[] getAnnotations(TestCase test) {
         try {
