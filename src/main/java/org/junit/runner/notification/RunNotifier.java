@@ -3,7 +3,6 @@ package org.junit.runner.notification;
 import static java.util.Arrays.asList;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -180,7 +179,7 @@ public class RunNotifier {
 
     /**
      * Invoke to tell listeners that an atomic test finished. Always invoke
-     * {@link #fireTestFinished(Description)} if you invoke {@link #fireTestStarted(Description)}
+     * this method if you invoke {@link #fireTestStarted(Description)}
      * as listeners are likely to expect them to come in pairs.
      *
      * @param description the description of the test that finished

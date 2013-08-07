@@ -22,8 +22,6 @@ import org.junit.runners.model.RunnerBuilder;
  *     abstract public static class Ignored {...}
  * }
  * </pre>
- *
- * @see org.junit.tests.manipulation.SortableTest
  */
 public class Enclosed extends Suite {
     /**
