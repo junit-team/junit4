@@ -144,7 +144,7 @@
              version="false"
              use="false"
              windowtitle="JUnit API"
-             stylesheetfile="stylesheet.css"
+             stylesheetfile="src/main/javadoc/stylesheet.css"
              >
       <excludepackage name="junit.*" />
       <excludepackage name="org.junit.internal.*" />
