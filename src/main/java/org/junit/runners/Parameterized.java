@@ -241,13 +241,7 @@ public class Parameterized extends Suite {
 
 
             }
-            Object testClassInstance = null;
-            try {
-                testClassInstance = createTestUsingConstructorInjection();
-            } catch (InitializationError e) {
-                e.printStackTrace();
-                throw e;
-            }
+            Object testClassInstance = createTestUsingConstructorInjection();
 
             for (FrameworkField each : annotatedFieldsByParameter) {
                 Field field = each.getField();
@@ -256,7 +250,6 @@ public class Parameterized extends Suite {
                 try {
                     field.set(testClassInstance, fParameters[index]);
                 } catch (IllegalArgumentException iare) {
-                    iare.printStackTrace();
                     throw new InitializationError(new Exception(getTestClass().getName()
                             + ": Trying to set " + field.getName()
                             + " with the value " + fParameters[index]
@@ -264,7 +257,6 @@ public class Parameterized extends Suite {
                             + fParameters[index].getClass().getSimpleName() + " instead of " +
                             field.getType().getSimpleName() + ").", iare));
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
                     throw new InitializationError(e);
                 }
             }
@@ -419,20 +411,20 @@ public class Parameterized extends Suite {
     }
 
 
- private Iterable<Object> allParameters() throws InitializationError {
+    private Iterable<Object> allParameters() throws InitializationError {
         Object parameters;
         try {
             parameters = getParametersMethod().invokeExplosively(null);
         } catch (Throwable throwable) {
             throw new InitializationError(throwable);
         }
-     if (parameters instanceof Iterable) {
-         return (Iterable<Object>) parameters;
-     } else if (parameters instanceof Object[]) {
-         return Arrays.asList((Object[]) parameters);
-     } else {
-         throw new InitializationError(parametersMethodReturnedWrongType());
-     }
+        if (parameters instanceof Iterable) {
+            return (Iterable<Object>) parameters;
+        } else if (parameters instanceof Object[]) {
+            return Arrays.asList((Object[]) parameters);
+        } else {
+            throw new InitializationError(parametersMethodReturnedWrongType());
+        }
     }
 
     private FrameworkMethod getParametersMethod() throws InitializationError {
