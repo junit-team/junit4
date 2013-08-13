@@ -49,7 +49,11 @@ import java.lang.annotation.Target;
  *       Thread.sleep(100);
  *    }
  * </pre>
- *
+ * <b>THREAD SAFETY WARNING:</b> Test methods with a timeout parameter are run in a thread other than the
+ * thread which runs the fixture's @Before and @After methods. This may yield different behavior for
+ * code that is not thread safe when compared to the same test method without a timeout parameter.
+ * <b>Consider using the {@link org.junit.rules.Timeout} rule instead</b>, which ensures a test method is run on the
+ * same thread as the fixture's @Before and @After methods.
  *
  * @since 4.0
  */
@@ -76,6 +80,13 @@ public @interface Test {
     /**
      * Optionally specify <code>timeout</code> in milliseconds to cause a test method to fail if it
      * takes longer than that number of milliseconds.
+     * <p>
+     * <b>THREAD SAFETY WARNING:</b> Test methods with a timeout parameter are run in a thread other than the
+     * thread which runs the fixture's @Before and @After methods. This may yield different behavior for
+     * code that is not thread safe when compared to the same test method without a timeout parameter.
+     * <b>Consider using the {@link org.junit.rules.Timeout} rule instead</b>, which ensures a test method is run on the
+     * same thread as the fixture's @Before and @After methods.
+     * </p>
      */
     long timeout() default 0L;
 }
