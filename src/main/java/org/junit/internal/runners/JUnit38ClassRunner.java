@@ -129,7 +129,7 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
      */
     private static Annotation[] getAnnotations(TestCase test) {
         try {
-            Method m = test.getClass().getDeclaredMethod(test.getName());
+            Method m = test.getClass().getMethod(test.getName());
             return m.getDeclaredAnnotations();
         } catch (SecurityException e) {
         } catch (NoSuchMethodException e) {
