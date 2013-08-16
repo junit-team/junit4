@@ -952,10 +952,11 @@ public class Assert {
             block.execute();
         } catch (Throwable t) {
             if (!clazz.isInstance(t))
-                throw new AssertionError("Expected test to throw " + clazz + ", but caught " + t);
+                throw new AssertionError("Expected test to throw " + clazz.getName() + ", but caught "
+                        + t.getClass().getName());
             return clazz.cast(t);
         }
-        throw new AssertionError("Expected test to throw " + clazz + ", but caught nothing");
+        throw new AssertionError("Expected test to throw " + clazz.getName() + ", but caught nothing");
     }
 
     public static <T extends Throwable> void assertThrows(ThrowingBlock block, Class<T> clazz,

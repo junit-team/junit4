@@ -669,7 +669,7 @@ public class AssertionTest {
                 }
             }, NullPointerException.class);
         } catch (AssertionError e) {
-            assertEquals("Expected test to throw NullPointerException, but caught nothing", e.getMessage());
+            assertEquals("Expected test to throw java.lang.NullPointerException, but caught nothing", e.getMessage());
             return;
         }
         fail();
@@ -685,7 +685,7 @@ public class AssertionTest {
                 }
             }, NullPointerException.class);
         } catch (AssertionError e) {
-            assertEquals("Expected test to throw NullPointerException, but caught IllegalArgumentException", e.getMessage());
+            assertEquals("Expected test to throw java.lang.NullPointerException, but caught java.lang.IllegalArgumentException", e.getMessage());
             return;
         }
         fail();
