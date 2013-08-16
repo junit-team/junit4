@@ -1,5 +1,6 @@
 package org.junit;
 
+import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.junit.internal.ArrayComparisonFailure;
@@ -295,7 +296,7 @@ public class Assert {
     public static void assertArrayEquals(Object[] expecteds, Object[] actuals) {
         assertArrayEquals(null, expecteds, actuals);
     }
-    
+
     /**
      * Asserts that two boolean arrays are equal. If they are not, an
      * {@link AssertionError} is thrown with the given message. If
@@ -310,8 +311,8 @@ public class Assert {
     public static void assertArrayEquals(String message, boolean[] expecteds,
             boolean[] actuals) throws ArrayComparisonFailure {
         internalArrayEquals(message, expecteds, actuals);
-    }    
-    
+    }
+
     /**
      * Asserts that two boolean arrays are equal. If they are not, an
      * {@link AssertionError} is thrown. If <code>expected</code> and
@@ -938,5 +939,32 @@ public class Assert {
     public static <T> void assertThat(String reason, T actual,
             Matcher<? super T> matcher) {
         MatcherAssert.assertThat(reason, actual, matcher);
+    }
+
+    public static <T extends Throwable> void assertThrows(ThrowingBlock block, Class<T> clazz) {
+        assertThrows(block, clazz, CoreMatchers.any(clazz));
+    }
+
+    public static <T extends Throwable> T assertThrowsAndReturn(ThrowingBlock block, Class<T> clazz) {
+        checkNotNull(block, "block is null");
+        checkNotNull(clazz, "clazz is null");
+        try {
+            block.execute();
+        } catch (Throwable t) {
+            if (!clazz.isInstance(t))
+                throw new AssertionError("Expected test to throw " + clazz + ", but caught " + t);
+            return clazz.cast(t);
+        }
+        throw new AssertionError("Expected test to throw " + clazz + ", but caught nothing");
+    }
+
+    public static <T extends Throwable> void assertThrows(ThrowingBlock block, Class<T> clazz,
+                                                          Matcher<? super T> matcher) {
+        assertThat(assertThrowsAndReturn(block, clazz), matcher);
+    }
+
+    private static void checkNotNull(Object obj, String message) {
+        if (obj == null)
+            throw new NullPointerException(message);
     }
 }

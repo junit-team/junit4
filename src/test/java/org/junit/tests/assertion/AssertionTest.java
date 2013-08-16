@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import org.junit.Assert;
 import org.junit.ComparisonFailure;
 import org.junit.Test;
+import org.junit.ThrowingBlock;
 import org.junit.internal.ArrayComparisonFailure;
 
 /**
@@ -647,5 +648,46 @@ public class AssertionTest {
     @Test(expected = AssertionError.class)
     public void assertNotEqualsIgnoresFloatDeltaOnNaN() {
         assertNotEquals(Float.NaN, Float.NaN, 1f);
+    }
+
+    @Test
+    public void assertThrowsPassesOnException() {
+        Assert.assertThrows(new ThrowingBlock() {
+            @Override
+            public void execute() {
+                throw new NullPointerException();
+            }
+        }, NullPointerException.class);
+    }
+
+    @Test
+    public void assertThrowsFailsOnNoException() {
+        try {
+            Assert.assertThrows(new ThrowingBlock() {
+                @Override
+                public void execute() {
+                }
+            }, NullPointerException.class);
+        } catch (AssertionError e) {
+            assertEquals("Expected test to throw NullPointerException, but caught nothing", e.getMessage());
+            return;
+        }
+        fail();
+    }
+
+    @Test
+    public void assertThrowsFailsOnDifferentException() {
+        try {
+            Assert.assertThrows(new ThrowingBlock() {
+                @Override
+                public void execute() {
+                    throw new IllegalArgumentException();
+                }
+            }, NullPointerException.class);
+        } catch (AssertionError e) {
+            assertEquals("Expected test to throw NullPointerException, but caught IllegalArgumentException", e.getMessage());
+            return;
+        }
+        fail();
     }
 }
