@@ -651,7 +651,7 @@ public class AssertionTest {
     }
 
     @Test
-    public void assertThrowsAndReturn() {
+    public void assertThrowsAndReturnOnException() {
         NullPointerException caught = Assert.assertThrowsAndReturn(new ThrowingBlock() {
             @Override
             public void execute() {
@@ -660,6 +660,37 @@ public class AssertionTest {
         }, NullPointerException.class);
 
         assertThat(caught, instanceOf(NullPointerException.class));
+    }
+
+    @Test
+    public void assertThrowsAndReturnOnNoException() {
+        try {
+            Assert.assertThrowsAndReturn(new ThrowingBlock() {
+                @Override
+                public void execute() {
+                }
+            }, NullPointerException.class);
+        } catch (AssertionError e) {
+            assertEquals("Expected block to throw java.lang.NullPointerException, but caught nothing", e.getMessage());
+            return;
+        }
+        fail();
+    }
+
+    @Test
+    public void assertThrowsAndReturnOnDifferentException() {
+        try {
+            Assert.assertThrowsAndReturn(new ThrowingBlock() {
+                @Override
+                public void execute() {
+                    throw new IllegalArgumentException();
+                }
+            }, NullPointerException.class);
+        } catch (AssertionError e) {
+            assertEquals("Expected block to throw java.lang.NullPointerException, but caught java.lang.IllegalArgumentException", e.getMessage());
+            return;
+        }
+        fail();
     }
 
     @Test
@@ -701,5 +732,28 @@ public class AssertionTest {
             return;
         }
         fail();
+    }
+
+    @Test
+    public void assertNotThrowsOnNoException() {
+        Assert.assertNotThrows(new ThrowingBlock() {
+            @Override
+            public void execute() {
+            }
+        });
+    }
+
+    @Test
+    public void assertNotThrowsOnException() {
+        try {
+            Assert.assertNotThrows(new ThrowingBlock() {
+                @Override
+                public void execute() {
+                    throw new NullPointerException();
+                }
+            });
+        } catch (AssertionError e) {
+            assertEquals("Expected block not to throw anything but caught java.lang.NullPointerException" , e.getMessage());
+        }
     }
 }

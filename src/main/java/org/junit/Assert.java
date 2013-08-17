@@ -962,7 +962,8 @@ public class Assert {
         checkNotNull(block, "block is null");
 
         Throwable t = catchAndReturn(block);
-        assertNull("Expected block not to throw anything but caught " + t, t);
+        if (t != null)
+            throw new AssertionError("Expected block not to throw anything but caught " + t.getClass().getName());
     }
 
     public static <T extends Throwable> void assertThrows(ThrowingBlock block, Class<T> clazz,
