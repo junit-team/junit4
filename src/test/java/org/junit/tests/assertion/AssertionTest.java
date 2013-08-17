@@ -652,7 +652,8 @@ public class AssertionTest {
 
     @Test
     public void assertThrowsAndReturnOnException() {
-        NullPointerException caught = Assert.assertThrowsAndReturn(npeBlock(), NullPointerException.class);
+        NullPointerException caught =
+                Assert.assertThrowsAndReturn(throwOnExecute(new NullPointerException()), NullPointerException.class);
 
         assertThat(caught, instanceOf(NullPointerException.class));
     }
@@ -671,7 +672,7 @@ public class AssertionTest {
     @Test
     public void assertThrowsAndReturnOnDifferentException() {
         try {
-            Assert.assertThrowsAndReturn(iaeBlock(), NullPointerException.class);
+            Assert.assertThrowsAndReturn(throwOnExecute(new IllegalArgumentException()), NullPointerException.class);
         } catch (AssertionError e) {
             assertEquals("Expected block to throw java.lang.NullPointerException, but caught java.lang.IllegalArgumentException", e.getMessage());
             return;
@@ -681,7 +682,7 @@ public class AssertionTest {
 
     @Test
     public void assertThrowsPassesOnException() {
-        Assert.assertThrows(npeBlock(), NullPointerException.class);
+        Assert.assertThrows(throwOnExecute(new NullPointerException()), NullPointerException.class);
     }
 
     @Test
@@ -698,7 +699,7 @@ public class AssertionTest {
     @Test
     public void assertThrowsFailsOnDifferentException() {
         try {
-            Assert.assertThrows(iaeBlock(), NullPointerException.class);
+            Assert.assertThrows(throwOnExecute(new IllegalArgumentException()), NullPointerException.class);
         } catch (AssertionError e) {
             assertEquals("Expected block to throw java.lang.NullPointerException, but caught java.lang.IllegalArgumentException", e.getMessage());
             return;
@@ -714,26 +715,17 @@ public class AssertionTest {
     @Test
     public void assertNotThrowsOnException() {
         try {
-            Assert.assertNotThrows(npeBlock());
+            Assert.assertNotThrows(throwOnExecute(new NullPointerException()));
         } catch (AssertionError e) {
             assertEquals("Expected block not to throw anything but caught java.lang.NullPointerException" , e.getMessage());
         }
     }
 
-    static ThrowingBlock npeBlock() {
+    static ThrowingBlock throwOnExecute(final Throwable whatToThrow) {
         return new ThrowingBlock() {
             @Override
-            public void execute() {
-                throw new NullPointerException();
-            }
-        };
-    }
-
-    static ThrowingBlock iaeBlock() {
-        return new ThrowingBlock() {
-            @Override
-            public void execute() {
-                throw new IllegalArgumentException();
+            public void execute() throws Throwable{
+                throw whatToThrow;
             }
         };
     }
