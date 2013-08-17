@@ -651,6 +651,18 @@ public class AssertionTest {
     }
 
     @Test
+    public void assertThrowsAndReturn() {
+        NullPointerException caught = Assert.assertThrowsAndReturn(new ThrowingBlock() {
+            @Override
+            public void execute() {
+                throw new NullPointerException();
+            }
+        }, NullPointerException.class);
+
+        assertThat(caught, instanceOf(NullPointerException.class));
+    }
+
+    @Test
     public void assertThrowsPassesOnException() {
         Assert.assertThrows(new ThrowingBlock() {
             @Override
@@ -669,7 +681,7 @@ public class AssertionTest {
                 }
             }, NullPointerException.class);
         } catch (AssertionError e) {
-            assertEquals("Expected test to throw java.lang.NullPointerException, but caught nothing", e.getMessage());
+            assertEquals("Expected block to throw java.lang.NullPointerException, but caught nothing", e.getMessage());
             return;
         }
         fail();
@@ -685,7 +697,7 @@ public class AssertionTest {
                 }
             }, NullPointerException.class);
         } catch (AssertionError e) {
-            assertEquals("Expected test to throw java.lang.NullPointerException, but caught java.lang.IllegalArgumentException", e.getMessage());
+            assertEquals("Expected block to throw java.lang.NullPointerException, but caught java.lang.IllegalArgumentException", e.getMessage());
             return;
         }
         fail();

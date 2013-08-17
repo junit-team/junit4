@@ -942,21 +942,27 @@ public class Assert {
     }
 
     public static <T extends Throwable> void assertThrows(ThrowingBlock block, Class<T> clazz) {
-        assertThrows(block, clazz, CoreMatchers.any(clazz));
+        assertThrowsAndReturn(block, clazz);
     }
 
     public static <T extends Throwable> T assertThrowsAndReturn(ThrowingBlock block, Class<T> clazz) {
         checkNotNull(block, "block is null");
         checkNotNull(clazz, "clazz is null");
-        try {
-            block.execute();
-        } catch (Throwable t) {
-            if (!clazz.isInstance(t))
-                throw new AssertionError("Expected test to throw " + clazz.getName() + ", but caught "
-                        + t.getClass().getName());
-            return clazz.cast(t);
-        }
-        throw new AssertionError("Expected test to throw " + clazz.getName() + ", but caught nothing");
+
+        Throwable actual = catchAndReturn(block);
+        if (clazz.isInstance(actual))
+            return clazz.cast(actual);
+
+        String message = String.format("Expected block to throw %s, but caught %s", clazz.getName(),
+                actual != null ? actual.getClass().getName() : "nothing");
+        throw new AssertionError(message);
+    }
+
+    public static void assertNotThrows(ThrowingBlock block) {
+        checkNotNull(block, "block is null");
+
+        Throwable t = catchAndReturn(block);
+        assertNull("Expected block not to throw anything but caught " + t, t);
     }
 
     public static <T extends Throwable> void assertThrows(ThrowingBlock block, Class<T> clazz,
@@ -964,7 +970,16 @@ public class Assert {
         assertThat(assertThrowsAndReturn(block, clazz), matcher);
     }
 
-    private static void checkNotNull(Object obj, String message) {
+    static Throwable catchAndReturn(ThrowingBlock code) {
+        try {
+            code.execute();
+        } catch (Throwable t) {
+            return t;
+        }
+        return null;
+    }
+
+    static void checkNotNull(Object obj, String message) {
         if (obj == null)
             throw new NullPointerException(message);
     }
