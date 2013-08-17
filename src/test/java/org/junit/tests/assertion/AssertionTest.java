@@ -1,8 +1,10 @@
 package org.junit.tests.assertion;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -12,6 +14,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
 
 import java.math.BigDecimal;
 
@@ -719,6 +722,50 @@ public class AssertionTest {
         } catch (AssertionError e) {
             assertEquals("Expected block not to throw anything but caught java.lang.NullPointerException" , e.getMessage());
         }
+    }
+
+    @Test
+    public void assertThrowsWithMatcherOnException() {
+        Assert.assertThrows(
+                throwOnExecute(new NullPointerException("x")), NullPointerException.class, hasMessage(startsWith("x"))
+        );
+    }
+
+    @Test
+    public void assertThrowsWithMatcherOnDifferentException() {
+        try {
+            Assert.assertThrows(
+                    throwOnExecute(new IllegalArgumentException("x")), NullPointerException.class, hasMessage(startsWith("x"))
+            );
+        } catch (AssertionError e) {
+            assertEquals("Expected block to throw java.lang.NullPointerException, but caught java.lang.IllegalArgumentException", e.getMessage());
+            return;
+        }
+        fail();
+    }
+
+    @Test
+    public void assertThrowsWithMatcherOnNonMatchingException() {
+        try {
+            Assert.assertThrows(
+                    throwOnExecute(new NullPointerException("x")), NullPointerException.class, hasMessage(startsWith("y"))
+            );
+        } catch (AssertionError e) {
+            assertThat(e.getMessage(), containsString("Expected: exception with message a string starting with \"y\""));
+            return;
+        }
+        fail();
+    }
+
+    @Test
+    public void assertThrowsWithMatcherOnNoException() {
+        try {
+            Assert.assertThrows(emptyBlock(), NullPointerException.class, hasMessage(startsWith("x")));
+        } catch (AssertionError e) {
+            assertEquals("Expected block to throw java.lang.NullPointerException, but caught nothing", e.getMessage());
+            return;
+        }
+        fail();
     }
 
     static ThrowingBlock throwOnExecute(final Throwable whatToThrow) {
