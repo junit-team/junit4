@@ -299,6 +299,8 @@
                 <artifactId>maven-invoker-plugin</artifactId>
                 <version>1.8</version>
                 <configuration>
+                    <skipInstallation>${skipTests}</skipInstallation>
+                    <skipInvocation>${skipTests}</skipInvocation>
                     <streamLogs>true</streamLogs>
                     <showErrors>true</showErrors>
                     <localRepositoryPath>${maven.repo.local}</localRepositoryPath>
@@ -410,7 +412,6 @@
                             <execution>
                                 <id>integration-tests-equinox</id>
                                 <goals>
-                                    <goal>install</goal>
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
@@ -423,7 +424,6 @@
                             <execution>
                                 <id>integration-tests-knopflerfish</id>
                                 <goals>
-                                    <goal>install</goal>
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>

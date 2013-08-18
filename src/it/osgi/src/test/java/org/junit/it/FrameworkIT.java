@@ -34,15 +34,6 @@ import static org.junit.runners.Parameterized.Parameters;
  */
 @RunWith(Parameterized.class)
 public class FrameworkIT {
-    @BeforeClass
-    public static void beforeClass() {
-        System.setProperty("FrameworkIT", "true");
-    }
-
-    @AfterClass
-    public static void afterClass() {
-        System.setProperty("FrameworkIT", "false");
-    }
 
     @Parameters
     public static Iterable<FrameworkFactory[]> factories() throws Exception {

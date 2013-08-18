@@ -48,10 +48,8 @@ public final class Activator implements BundleActivator {
     }
 
     private void testHamcrest() {
-        if (Boolean.getBoolean("FrameworkIT")) {
-            // The hamcrest-core:1.3 is not yet OSGi bundle, thus the library has to appear in application ClassLoader.
-            assertThat(Matcher.class.getClassLoader(), is(sameInstance(ClassLoader.getSystemClassLoader())));
-        }
+    // The hamcrest-core:1.3 is not yet OSGi bundle, thus the library has to appear in application ClassLoader.
+    assertThat(Matcher.class.getClassLoader(), is(sameInstance(ClassLoader.getSystemClassLoader())));
     }
 
     private void testSymbolicNames(Map<String, Bundle> bundles) {
