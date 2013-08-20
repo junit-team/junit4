@@ -103,9 +103,22 @@ public class JUnit38ClassRunnerTest {
         }
     }
 
+    public static class DerivedAnnotatedMethod extends JUnit3ClassWithAnnotatedMethod {
+    }
+
     @Test
     public void getDescriptionWithAnnotation() {
         JUnit38ClassRunner runner = new JUnit38ClassRunner(JUnit3ClassWithAnnotatedMethod.class);
+        assertAnnotationFiltering(runner);
+    }
+    
+    @Test
+    public void getDescriptionWithAnnotationInSuper() {
+        JUnit38ClassRunner runner = new JUnit38ClassRunner(DerivedAnnotatedMethod.class);
+        assertAnnotationFiltering(runner);
+    }
+
+    private void assertAnnotationFiltering(JUnit38ClassRunner runner) {
         Description d = runner.getDescription();
         assertEquals(2, d.testCount());
         for (Description methodDesc : d.getChildren()) {
