@@ -1,5 +1,6 @@
 package org.junit;
 
+import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.junit.internal.ArrayComparisonFailure;
@@ -295,7 +296,7 @@ public class Assert {
     public static void assertArrayEquals(Object[] expecteds, Object[] actuals) {
         assertArrayEquals(null, expecteds, actuals);
     }
-    
+
     /**
      * Asserts that two boolean arrays are equal. If they are not, an
      * {@link AssertionError} is thrown with the given message. If
@@ -310,8 +311,8 @@ public class Assert {
     public static void assertArrayEquals(String message, boolean[] expecteds,
             boolean[] actuals) throws ArrayComparisonFailure {
         internalArrayEquals(message, expecteds, actuals);
-    }    
-    
+    }
+
     /**
      * Asserts that two boolean arrays are equal. If they are not, an
      * {@link AssertionError} is thrown. If <code>expected</code> and
@@ -938,5 +939,49 @@ public class Assert {
     public static <T> void assertThat(String reason, T actual,
             Matcher<? super T> matcher) {
         MatcherAssert.assertThat(reason, actual, matcher);
+    }
+
+    public static <T extends Throwable> void assertThrows(ThrowingBlock block, Class<T> clazz) {
+        assertThrowsAndReturn(block, clazz);
+    }
+
+    public static <T extends Throwable> T assertThrowsAndReturn(ThrowingBlock block, Class<T> clazz) {
+        checkNotNull(block, "block is null");
+        checkNotNull(clazz, "clazz is null");
+
+        Throwable actual = catchAndReturn(block);
+        if (clazz.isInstance(actual))
+            return clazz.cast(actual);
+
+        String message = String.format("Expected block to throw %s, but caught %s", clazz.getName(),
+                actual != null ? actual.getClass().getName() : "nothing");
+        throw new AssertionError(message);
+    }
+
+    public static void assertNotThrows(ThrowingBlock block) {
+        checkNotNull(block, "block is null");
+
+        Throwable t = catchAndReturn(block);
+        if (t != null)
+            throw new AssertionError("Expected block not to throw anything but caught " + t.getClass().getName());
+    }
+
+    public static <T extends Throwable> void assertThrows(ThrowingBlock block, Class<T> clazz,
+                                                          Matcher<? super T> matcher) {
+        assertThat(assertThrowsAndReturn(block, clazz), matcher);
+    }
+
+    static Throwable catchAndReturn(ThrowingBlock code) {
+        try {
+            code.execute();
+        } catch (Throwable t) {
+            return t;
+        }
+        return null;
+    }
+
+    static void checkNotNull(Object obj, String message) {
+        if (obj == null)
+            throw new NullPointerException(message);
     }
 }

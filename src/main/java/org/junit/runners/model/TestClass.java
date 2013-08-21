@@ -30,7 +30,7 @@ public class TestClass {
     /**
      * Creates a {@code TestClass} wrapping {@code klass}. Each time this
      * constructor executes, the class is scanned for annotations, which can be
-     * an expensive process (we hope in future JDK's it will not be.) Therefore,
+     * an expensive process (we hope in future JDKs it will not be.) Therefore,
      * try to share instances of {@code TestClass} where possible.
      */
     public TestClass(Class<?> klass) {

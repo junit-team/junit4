@@ -268,7 +268,7 @@ public class MainRunner {
      * in runnable.run(), the value is returned. If System.exit()
      * is not called, null is returned.
      *
-     * @return null if System.exit() is not called, Integer.valueof(status) if not
+     * @return null if System.exit() is not called, Integer.valueOf(status) if not
      */
     public Integer runWithCheckForSystemExit(Runnable runnable) {
         SecurityManager oldSecurityManager = System.getSecurityManager();

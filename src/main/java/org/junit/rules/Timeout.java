@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
  * <p>
  * Each test is run in a new thread. If the specified timeout elapses before
  * the test completes, its execution is interrupted via {@link Thread#interrupt()}.
- * This happens in interruptable I/O and locks, and methods in {@link Object}
+ * This happens in interruptible I/O and locks, and methods in {@link Object}
  * and {@link Thread} throwing {@link InterruptedException}.
  *
  * @since 4.7
