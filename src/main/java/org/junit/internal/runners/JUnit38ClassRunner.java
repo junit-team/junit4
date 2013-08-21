@@ -158,6 +158,9 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
                 }
             }
             setTest(filtered);
+            if (filtered.testCount() == 0) {
+                throw new NoTestsRemainException();
+            }
         }
     }
 
