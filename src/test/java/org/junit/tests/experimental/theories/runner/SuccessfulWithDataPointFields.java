@@ -80,7 +80,7 @@ public class SuccessfulWithDataPointFields {
         }
 
         @Theory
-        public void haveAPostiveSquare() {
+        public void haveAPositiveSquare() {
             assertTrue(x * x > 0);
         }
     }
@@ -100,7 +100,7 @@ public class SuccessfulWithDataPointFields {
         }
 
         @Theory
-        public void haveAPostiveSquare() {
+        public void haveAPositiveSquare() {
             assertTrue(x > 0);
         }
     }
@@ -118,7 +118,7 @@ public class SuccessfulWithDataPointFields {
         }
 
         @Theory
-        public void haveAPostiveSquare(int y) {
+        public void haveAPositiveSquare(int y) {
             assumeTrue(y > 0);
             assertTrue(x * y > 0);
         }

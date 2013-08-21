@@ -31,7 +31,7 @@ public class MultipleFailureExceptionTest {
     }
 
     @Test
-    public void assertEmptyThrowsMutipleFailureExceptionForManyThrowables() throws Throwable {
+    public void assertEmptyThrowsMultipleFailureExceptionForManyThrowables() throws Throwable {
         List<Throwable> errors = new ArrayList<Throwable>();
         errors.add(new ExpectedException("basil"));
         errors.add(new RuntimeException("garlic"));
