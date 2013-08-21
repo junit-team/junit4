@@ -20,6 +20,8 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
+import org.junit.runner.manipulation.Filter;
+import org.junit.runner.manipulation.NoTestsRemainException;
 
 public class JUnit38ClassRunnerTest {
     public static class MyTest extends TestCase {
@@ -128,5 +130,27 @@ public class JUnit38ClassRunnerTest {
                 assertNull(methodDesc.getAnnotation(MyAnnotation.class));
             }
         }
+    }
+
+    public static class RejectAllFilter extends Filter {
+        @Override
+	    public boolean shouldRun(Description description) {
+            return false;
+        }
+
+        @Override
+	    public String describe() {
+            return "filter all";
+        }
+    }
+
+    /**
+     * Test that NoTestsRemainException is thrown when description is returned when all methods
+     * have been filtered.
+     */
+    @Test(expected = NoTestsRemainException.class) 
+    public void filter_noTestsRemain() throws NoTestsRemainException {
+        JUnit38ClassRunner runner = new JUnit38ClassRunner(OneTest.class);
+        runner.filter(new RejectAllFilter());  
     }
 }
