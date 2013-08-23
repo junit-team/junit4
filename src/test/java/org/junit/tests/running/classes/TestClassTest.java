@@ -1,7 +1,7 @@
 package org.junit.tests.running.classes;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
 
 import java.util.List;
