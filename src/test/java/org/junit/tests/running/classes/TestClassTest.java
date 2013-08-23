@@ -1,12 +1,11 @@
 package org.junit.tests.running.classes;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import java.util.List;
+
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -26,49 +25,7 @@ public class TestClassTest {
     public void complainIfMultipleConstructors() {
         new TestClass(TwoConstructors.class);
     }
-
-    public static class ManyMethods {
-        @Test
-        public void a() {
-        }
-
-        @Before
-        public void b() {
-        }
-
-        @Ignore
-        @Test
-        public void c() {
-        }
-
-        @Ignore
-        @After
-        public void d() {
-        }
-
-        public void e() {
-        }
-
-        @BeforeClass
-        public void f() {
-        }
-
-        public void g() {
-        }
-
-        @AfterClass
-        public void h() {
-        }
-
-        @Test
-        public void i() {
-        }
-
-        @Test
-        public void j() {
-        }
-    }
-
+    
     public static class SuperclassWithField {
         @Rule
         public TestRule x;
@@ -118,5 +75,43 @@ public class TestClassTest {
     public void dontMarkNonInnerClassAsInnerClass() {
         assertThat(new TestClass(SimpleClass.class).isANonStaticInnerClass(),
                 is(false));
+    }
+        
+    public static class FieldAnnotated {
+    	@Rule
+    	public String fieldThatShouldBeMatched = "andromeda";
+    	
+    	@Rule
+    	public boolean fieldThatShouldNotBeMachted;
+    }
+    
+    @Test
+    public void annotatedFieldValues() {
+    	TestClass tc = new TestClass(FieldAnnotated.class);
+    	List<String> values = tc.getAnnotatedFieldValues(new FieldAnnotated(), Rule.class, String.class);
+    	assertThat(values, hasItem("andromeda"));
+    	assertThat(values.size(), is(1));
+    }
+    
+    public static class MethodsAnnotated {
+    	@Ignore
+    	@Test
+    	public String methodToBeMatched() { 
+    		return "jupiter";
+    	}
+    	
+    	@Ignore
+    	@Test
+    	public int methodOfWrongType() {
+    		return 0;
+    	}
+    }
+    
+    @Test
+    public void annotatedMethodValues() {
+    	TestClass tc = new TestClass(MethodsAnnotated.class);
+    	List<String> values = tc.getAnnotatedMethodValues(new MethodsAnnotated(), Ignore.class, String.class);
+    	assertThat(values, hasItem("jupiter"));
+    	assertThat(values.size(), is(1));
     }
 }
