@@ -6,8 +6,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,15 +19,9 @@ import java.util.Set;
  *
  * @since 4.12
  */
-public class CategoryValidator implements AnnotationValidator {
+public class CategoryValidator extends AnnotationValidator {
 
-    private static Set<Class<?>> fIncompatibleAnnotations = null;
-
-    public void validateAnnotatedClass(Class<?> type, List<Throwable> errors) {
-    }
-
-    public void validateAnnotatedField(Field field, List<Throwable> errors) {
-    }
+    private static Set<Class<? extends Annotation>> fIncompatibleAnnotations = buildIncompatibleAnnotationsSet();
 
     /**
      * Adds to {@code errors} a throwable for each problem detected. Looks for
@@ -37,12 +31,11 @@ public class CategoryValidator implements AnnotationValidator {
      * @param method the method that is being validated
      * @param errors any errors detected are added to this list
      */
+    @Override
     public void validateAnnotatedMethod(Method method, List<Throwable> errors) {
-        final Set<Class<?>> incompatibleAnnotations = buildIncompatibleAnnotationsSet();
-
         Annotation[] declaredAnnotations = method.getDeclaredAnnotations();
         for (Annotation annotation : declaredAnnotations) {
-            for (Class clazz : incompatibleAnnotations) {
+            for (Class clazz : fIncompatibleAnnotations) {
                 if (annotation.annotationType().isAssignableFrom(clazz)) {
                     addErrorMessage(errors, clazz);
                 }
@@ -50,15 +43,13 @@ public class CategoryValidator implements AnnotationValidator {
         }
     }
 
-    private Set<Class<?>> buildIncompatibleAnnotationsSet() {
-        if (fIncompatibleAnnotations == null) {
-            fIncompatibleAnnotations = new HashSet<Class<?>>();
-            fIncompatibleAnnotations.add(BeforeClass.class);
-            fIncompatibleAnnotations.add(AfterClass.class);
-            fIncompatibleAnnotations.add(Before.class);
-            fIncompatibleAnnotations.add(After.class);
-        }
-        return fIncompatibleAnnotations;
+    private static Set<Class<? extends Annotation>> buildIncompatibleAnnotationsSet() {
+        Set<Class<? extends Annotation>> incompatibleAnnotations = new HashSet<Class<? extends Annotation>>();
+        incompatibleAnnotations.add(BeforeClass.class);
+        incompatibleAnnotations.add(AfterClass.class);
+        incompatibleAnnotations.add(Before.class);
+        incompatibleAnnotations.add(After.class);
+        return Collections.unmodifiableSet(incompatibleAnnotations);
     }
 
     private void addErrorMessage(List<Throwable> errors, Class clazz) {

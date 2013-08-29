@@ -148,19 +148,22 @@ public class ParentRunnerTest {
 
     }
 
-    public static class ExampleAnnotationValidator implements AnnotationValidator {
+    public static class ExampleAnnotationValidator extends AnnotationValidator {
         private static final String ANNOTATED_METHOD_CALLED = "annotated method called";
         private static final String ANNOTATED_FIELD_CALLED = "annotated field called";
         private static final String ANNOTATED_CLASS_CALLED = "annotated class called";
 
+        @Override
         public void validateAnnotatedClass(Class<?> type, List<Throwable> errors) {
             errors.add(new Throwable(ANNOTATED_CLASS_CALLED));
         }
 
+        @Override
         public void validateAnnotatedField(Field field, List<Throwable> errors) {
             errors.add(new Throwable(ANNOTATED_FIELD_CALLED));
         }
 
+        @Override
         public void validateAnnotatedMethod(Method method, List<Throwable> errors) {
             errors.add(new Throwable(ANNOTATED_METHOD_CALLED));
         }

@@ -11,11 +11,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -89,11 +84,11 @@ public class TestClass {
     }
 
     public Map<Class<? extends Annotation>, List<FrameworkMethod>> getAnnotationToMethods() {
-        return fMethodsForAnnotations;
+        return Collections.unmodifiableMap(fMethodsForAnnotations);
     }
 
     public Map<Class<? extends Annotation>, List<FrameworkField>> getAnnotationToFields() {
-        return fFieldsForAnnotations;
+        return Collections.unmodifiableMap(fFieldsForAnnotations);
     }
 
     private <T> List<T> getAnnotatedMembers(Map<Class<? extends Annotation>, List<T>> map,

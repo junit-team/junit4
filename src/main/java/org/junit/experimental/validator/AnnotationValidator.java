@@ -9,14 +9,16 @@ import java.util.List;
  * Implementations are attached to the {@code org.junit.experimental.validator.ValidateWith}
  * annotation.
  */
-public interface AnnotationValidator {
+public class AnnotationValidator {
     /**
      * Validates annotation on the given class.
      *
      * @param type that is being validated
      * @param errors A throwable will be added for each error
      */
-    void validateAnnotatedClass(Class<?> type, List<Throwable> errors);
+    public void validateAnnotatedClass(Class<?> type, List<Throwable> errors) {
+
+    }
 
     /**
      * Validates annotation on the given field.
@@ -24,7 +26,9 @@ public interface AnnotationValidator {
      * @param field that is being validated
      * @param errors A throwable will be added for each error
      */
-    void validateAnnotatedField(Field field,  List<Throwable> errors);
+    public void validateAnnotatedField(Field field,  List<Throwable> errors) {
+
+    }
 
     /**
      * Validates annotation on the given method.
@@ -32,5 +36,7 @@ public interface AnnotationValidator {
      * @param method that is being validated
      * @param errors A throwable will be added for each error
      */
-    void validateAnnotatedMethod(Method method, List<Throwable> errors);
+    public void validateAnnotatedMethod(Method method, List<Throwable> errors) {
+
+    }
 }
