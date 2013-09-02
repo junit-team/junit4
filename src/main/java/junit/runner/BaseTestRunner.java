@@ -232,7 +232,8 @@ public abstract class BaseTestRunner implements TestListener {
             is = new FileInputStream(getPreferencesFile());
             setPreferences(new Properties(getPreferences()));
             getPreferences().load(is);
-        } catch (IOException e) {
+        } catch (IOException ignored) {
+        } finally {
             try {
                 if (is != null) {
                     is.close();
