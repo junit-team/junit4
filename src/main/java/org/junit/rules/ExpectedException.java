@@ -6,7 +6,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.internal.matchers.ThrowableCauseMatcher.hasCause;
 import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
-
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.junit.internal.AssumptionViolatedException;
@@ -62,36 +61,34 @@ import org.junit.runners.model.Statement;
  *     throw new NullPointerException(&quot;What happened?&quot;);
  * }</pre>
  *
- * <h3>Verify AssertionErrors and AssumptionViolatedExceptions</h3>
+ * <h3>AssumptionViolatedExceptions</h3>
+ * <p>
+ * JUnit uses {@link AssumptionViolatedException}s for indicating that a test
+ * provides no useful information. (See {@link org.junit.Assume} for more
+ * information.) You have to call {@code assume} methods before you set
+ * expectations of the {@code ExpectedException} rule. In this case the rule
+ * will not handle consume the exceptions and it can be handled by the
+ * framework. E.g. the following test is ignored by JUnit's default runner.
+ *
+ * <pre> &#064;Test
+ * public void ignoredBecauseOfFailedAssumption() {
+ *     assumeTrue(false); // throws AssumptionViolatedException
+ *     thrown.expect(NullPointerException.class);
+ * }</pre>
+ *
+ * <h3>AssertionErrors</h3>
  *
  * <p>
- * By default ExpectedException rule doesn't handle AssertionErrors and
- * AssumptionViolatedExceptions, because such exceptions are used by JUnit. If
- * you want to handle such exceptions you have to call @link
- * {@link #handleAssertionErrors()} or @link
- * {@link #handleAssumptionViolatedExceptions()}.
+ * JUnit uses {@link AssertionError}s for indicating that a test is failing. You
+ * have to call {@code assert} methods before you set expectations of the
+ * {@code ExpectedException} rule, if they should be handled by the framework.
+ * E.g. the following test fails because of the {@code assertTrue} statement.
  *
- * <pre>
- * // These tests all pass.
- * public static class HasExpectedException {
- * 	&#064;Rule
- * 	public ExpectedException thrown= ExpectedException.none();
- *
- * 	&#064;Test
- * 	public void throwExpectedAssertionError() {
- * 		thrown.handleAssertionErrors();
- * 		thrown.expect(AssertionError.class);
- * 		throw new AssertionError();
- *     }
- *
- *  &#064;Test
- *  public void throwExpectAssumptionViolatedException() {
- *      thrown.handleAssumptionViolatedExceptions();
- *      thrown.expect(AssumptionViolatedException.class);
- *      throw new AssumptionViolatedException(&quot;&quot;);
- *     }
- * }
- * </pre>
+ * <pre> &#064;Test
+ * public void throwsUnhandled() {
+ *     assertTrue(false); // throws AssertionError
+ *     thrown.expect(NullPointerException.class);
+ * }</pre>
  *
  * <h3>Missing Exceptions</h3>
  * <p>
@@ -112,35 +109,31 @@ public class ExpectedException implements TestRule {
 
     private final ExpectedExceptionMatcherBuilder fMatcherBuilder = new ExpectedExceptionMatcherBuilder();
 
-    private boolean handleAssumptionViolatedExceptions = false;
-
-    private boolean handleAssertionErrors = false;
-    
     private String missingExceptionMessage;
 
     private ExpectedException() {
     }
 
     /**
-     * {@code AssertionErrors} are only considered by the rule if you call
-     * this method.
-     * @return the rule itself
+     * This method does nothing. Don't use it.
+     * @deprecated AssertionErrors are handled by default since JUnit 4.12. Just
+     *             like in JUnit <= 4.10.
      */
+    @Deprecated
     public ExpectedException handleAssertionErrors() {
-        handleAssertionErrors = true;
         return this;
     }
 
     /**
-     * {@code AssumptionViolatedExceptions} are only considered by the rule
-     * if you call this method.
-     * @return the rule itself
+     * This method does nothing. Don't use it.
+     * @deprecated AssumptionViolatedExceptions are handled by default since
+     *             JUnit 4.12. Just like in JUnit <= 4.10.
      */
+    @Deprecated
     public ExpectedException handleAssumptionViolatedExceptions() {
-        handleAssumptionViolatedExceptions = true;
         return this;
     }
-    
+
     /**
      * Specifies the failure message for tests that are expected to throw 
      * an exception but do not throw any.
@@ -235,12 +228,6 @@ public class ExpectedException implements TestRule {
         public void evaluate() throws Throwable {
             try {
                 fNext.evaluate();
-            } catch (AssumptionViolatedException e) {
-                optionallyHandleException(e, handleAssumptionViolatedExceptions);
-                return;
-            } catch (AssertionError e) {
-                optionallyHandleException(e, handleAssertionErrors);
-                return;
             } catch (Throwable e) {
                 handleException(e);
                 return;
@@ -248,15 +235,6 @@ public class ExpectedException implements TestRule {
             if (fMatcherBuilder.expectsThrowable()) {
                 failDueToMissingException();
             }
-        }
-    }
-
-    private void optionallyHandleException(Throwable e, boolean handleException)
-            throws Throwable {
-        if (handleException) {
-            handleException(e);
-        } else {
-            throw e;
         }
     }
 
