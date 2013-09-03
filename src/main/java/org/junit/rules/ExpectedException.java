@@ -232,18 +232,22 @@ public class ExpectedException implements TestRule {
                 handleException(e);
                 return;
             }
-            if (fMatcherBuilder.expectsThrowable()) {
+            if (isAnyExceptionExpected()) {
                 failDueToMissingException();
             }
         }
     }
 
     private void handleException(Throwable e) throws Throwable {
-        if (fMatcherBuilder.expectsThrowable()) {
+        if (isAnyExceptionExpected()) {
             assertThat(e, fMatcherBuilder.build());
         } else {
             throw e;
         }
+    }
+
+    private boolean isAnyExceptionExpected() {
+        return fMatcherBuilder.expectsThrowable();
     }
 
     private void failDueToMissingException() throws AssertionError {
