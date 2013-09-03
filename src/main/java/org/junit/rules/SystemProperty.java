@@ -30,6 +30,18 @@ public class SystemProperty extends ExternalResource {
         this.propertyValue = propertyValue;
     }
 
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    public String getPropertyValue() {
+        return propertyValue;
+    }
+
+    public String getOriginalPropertyValue() {
+        return originalPropertyValue;
+    }
+
     @Override
     protected void before() throws Throwable {
         originalPropertyValue = System.setProperty(propertyName, propertyValue);

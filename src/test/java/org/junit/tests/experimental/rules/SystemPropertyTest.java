@@ -37,7 +37,7 @@ public class SystemPropertyTest {
 
     @Test
     public void testPropertySetAsRule() throws Exception {
-        assertEquals(PROPERTY_VALUE, System.getProperty(PROPERTY_NAME));
+        assertEquals(systemProperty.getPropertyValue(), System.getProperty(systemProperty.getPropertyName()));
 
     }
 
@@ -48,13 +48,13 @@ public class SystemPropertyTest {
         final SystemPropertyWithPublicBeforeAndAfter systemPropertyRule = new SystemPropertyWithPublicBeforeAndAfter(
                 PROPERTY_NAME,
                 anotherValue);
-        assertEquals(PROPERTY_VALUE, System.getProperty(PROPERTY_NAME));
+        assertEquals(systemProperty.getPropertyValue(), System.getProperty(PROPERTY_NAME));
 
         systemPropertyRule.before();
         assertEquals(anotherValue, System.getProperty(PROPERTY_NAME));
         systemPropertyRule.after();
 
-        assertEquals(PROPERTY_VALUE, System.getProperty(PROPERTY_NAME));
+        assertEquals(systemPropertyRule.getOriginalPropertyValue(), System.getProperty(PROPERTY_NAME));
     }
 
 }
