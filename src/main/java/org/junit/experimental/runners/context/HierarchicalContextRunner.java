@@ -72,7 +72,7 @@ public class HierarchicalContextRunner extends ParentRunner<Class<?>> {
             runner = null;
         }
 
-        final Description description = (runner != null && false) ? runner.getDescription() :
+        final Description description = (runner != null) ? runner.getDescription() :
                 Description.createSuiteDescription(getName(), getRunnerAnnotations());
         for (Class<?> child : getChildren())
             description.addChild(describeChild(child));
