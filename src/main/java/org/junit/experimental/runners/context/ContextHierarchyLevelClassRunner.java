@@ -2,7 +2,6 @@ package org.junit.experimental.runners.context;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.experimental.runners.context.statements.RunHierarchicalAfters;
 import org.junit.experimental.runners.context.statements.RunHierarchicalBefores;
 import org.junit.internal.runners.model.ReflectiveCallable;
@@ -60,11 +59,6 @@ class ContextHierarchyLevelClassRunner extends BlockJUnit4ClassRunner {
     @Override
     protected String getName() {
         return getTestClass().getJavaClass().getSimpleName();
-    }
-
-    @Override
-    protected List<FrameworkMethod> getChildren() {
-        return getTestClass().getAnnotatedMethods(Test.class);
     }
 
     @Override
