@@ -134,12 +134,12 @@ public class JUnit38ClassRunnerTest {
 
     public static class RejectAllFilter extends Filter {
         @Override
-	    public boolean shouldRun(Description description) {
+        public boolean shouldRun(Description description) {
             return false;
         }
 
         @Override
-	    public String describe() {
+        public String describe() {
             return "filter all";
         }
     }
@@ -148,7 +148,7 @@ public class JUnit38ClassRunnerTest {
      * Test that NoTestsRemainException is thrown when all methods have been filtered.
      */
     @Test(expected = NoTestsRemainException.class) 
-    public void filter_noTestsRemain() throws NoTestsRemainException {
+    public void filterNoTestsRemain() throws NoTestsRemainException {
         JUnit38ClassRunner runner = new JUnit38ClassRunner(OneTest.class);
         runner.filter(new RejectAllFilter());  
     }
