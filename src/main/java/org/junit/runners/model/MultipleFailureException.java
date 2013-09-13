@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.internal.Throwables;
+
 /**
  * Collects multiple {@code Throwable}s into one exception.
  *
@@ -39,15 +41,15 @@ public class MultipleFailureException extends Exception {
      * (if there is only one element).
      *
      * @param errors list to check
-     * @throws Throwable if the list is not empty
+     * @throws Exception or Error if the list is not empty
      */
     @SuppressWarnings("deprecation")
-    public static void assertEmpty(List<Throwable> errors) throws Throwable {
+    public static void assertEmpty(List<Throwable> errors) throws Exception {
         if (errors.isEmpty()) {
             return;
         }
         if (errors.size() == 1) {
-            throw errors.get(0);
+            throw Throwables.rethrowAsException(errors.get(0));
         }
 
         /*
