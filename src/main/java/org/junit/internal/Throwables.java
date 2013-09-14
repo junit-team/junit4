@@ -15,7 +15,7 @@ public final class Throwables {
      * Rethrows the given {@code Throwable}, allowing the caller to
      * declare that it throws {@code Exception}. This is useful when
      * your callers have nothing reasonable they can do when a
-     * {@code Throwable} is thrown. This is declared to throw {@code Exception}
+     * {@code Throwable} is thrown. This is declared to return {@code Exception}
      * so it can be used in a {@code throw} clause:
      * <pre>
      * try {
@@ -25,8 +25,6 @@ public final class Throwables {
      * }
      * doSomethingLater();
      * </pre>
-     *
-     *
      *
      * @param e exception to rethrow
      * @return does not return anything
