@@ -54,6 +54,4 @@ public class AnnotationValidatorFactoryTest {
 
     public static class Validator extends AnnotationValidator {
     }
-
-
 }
