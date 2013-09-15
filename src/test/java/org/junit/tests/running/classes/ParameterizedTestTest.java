@@ -119,7 +119,7 @@ public class ParameterizedTestTest {
         public int fInput;
 
         @Parameter(1)
-        public int fExpected;
+        protected int fExpected;
 
         @Test
         public void test() {
