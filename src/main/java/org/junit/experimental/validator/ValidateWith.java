@@ -7,8 +7,8 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * Allows for an {@link AnnotationValidator} to be attached to an annotation.
  *
- * When attached to an annotation, the validator will be instantiated and invoked
- * by the {@link org.junit.runners.ParentRunner}.
+ * <p>When attached to an annotation, the validator will be instantiated and invoked
+ * by the {@link org.junit.runners.ParentRunner}.</p>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited

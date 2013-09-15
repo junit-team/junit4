@@ -5,9 +5,11 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 /**
- * Provides an interface with callback methods to validate annotations.
- * Implementations are attached to the {@code org.junit.experimental.validator.ValidateWith}
- * annotation.
+ * Validates annotations on classes and methods. To be validated,
+ * an annotation should be annotated with {@link ValidateWith}
+ *
+ * Instances of this class are shared by multiple test runners, so they should
+ * be immutable and thread-safe.
  */
 public class AnnotationValidator {
     /**
