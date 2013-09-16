@@ -7,10 +7,13 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -40,23 +43,40 @@ public class TestClass {
                     "Test class can only have one constructor");
         }
 
-        Map<Class<? extends Annotation>, List<FrameworkMethod>> methodsForAnnotations = new HashMap<Class<? extends Annotation>, List<FrameworkMethod>>();
-        Map<Class<? extends Annotation>, List<FrameworkField>> fieldsForAnnotations = new HashMap<Class<? extends Annotation>, List<FrameworkField>>();
+        Map<Class<? extends Annotation>, List<FrameworkMethod>> methodsForAnnotations =
+                new LinkedHashMap<Class<? extends Annotation>, List<FrameworkMethod>>();
+        Map<Class<? extends Annotation>, List<FrameworkField>> fieldsForAnnotations =
+                new LinkedHashMap<Class<? extends Annotation>, List<FrameworkField>>();
 
         for (Class<?> eachClass : getSuperClasses(fClass)) {
             for (Method eachMethod : MethodSorter.getDeclaredMethods(eachClass)) {
                 addToAnnotationLists(new FrameworkMethod(eachMethod), methodsForAnnotations);
             }
-            for (Field eachField : eachClass.getDeclaredFields()) {
+            for (Field eachField : getSortedDeclaredFields(eachClass)) {
                 addToAnnotationLists(new FrameworkField(eachField), fieldsForAnnotations);
             }
         }
 
-        convertListValuesToBeUnmodifiable(methodsForAnnotations);
-        convertListValuesToBeUnmodifiable(fieldsForAnnotations);
+        Map<Class<? extends Annotation>, List<FrameworkMethod>> methodsForAnnotationsWithUnmodifiableLists =
+                new LinkedHashMap<Class<? extends Annotation>, List<FrameworkMethod>>();
+        convertListValuesToBeUnmodifiable(methodsForAnnotations, methodsForAnnotationsWithUnmodifiableLists);
 
-        fMethodsForAnnotations = Collections.unmodifiableMap(methodsForAnnotations);
-        fFieldsForAnnotations = Collections.unmodifiableMap(fieldsForAnnotations);
+        Map<Class<? extends Annotation>, List<FrameworkField>> fieldsForAnnotationsWithUnmodifiableLists =
+                new LinkedHashMap<Class<? extends Annotation>, List<FrameworkField>>();
+        convertListValuesToBeUnmodifiable(fieldsForAnnotations, fieldsForAnnotationsWithUnmodifiableLists);
+
+        fMethodsForAnnotations = Collections.unmodifiableMap(methodsForAnnotationsWithUnmodifiableLists);
+        fFieldsForAnnotations = Collections.unmodifiableMap(fieldsForAnnotationsWithUnmodifiableLists);
+    }
+
+    private static Field[] getSortedDeclaredFields(Class<?> clazz) {
+        Field[] declaredFields = clazz.getDeclaredFields();
+        Arrays.sort(declaredFields, new Comparator<Field>() {
+            public int compare(Field field1, Field field2) {
+                return field1.getName().compareTo(field2.getName());
+            }
+        });
+        return declaredFields;
     }
 
     private static <T extends FrameworkMember<T>> void addToAnnotationLists(T member,
@@ -75,10 +95,11 @@ public class TestClass {
         }
     }
 
-    private static <T extends FrameworkMember<T>>  void convertListValuesToBeUnmodifiable(
-            Map<Class<? extends Annotation>, List<T>> methodsForAnnotations) {
-        for (Class<? extends Annotation> clazz : methodsForAnnotations.keySet()) {
-            methodsForAnnotations.put(clazz, Collections.unmodifiableList(methodsForAnnotations.get(clazz)));
+    private static <T extends FrameworkMember<T>> void convertListValuesToBeUnmodifiable(
+            Map<Class<? extends Annotation>, List<T>> source, Map<Class<? extends Annotation>, List<T>> target) {
+        Set<Class<? extends Annotation>> classes = source.keySet();
+        for (Class<? extends Annotation> clazz : classes) {
+            target.put(clazz, Collections.unmodifiableList(source.get(clazz)));
         }
     }
 
@@ -105,7 +126,7 @@ public class TestClass {
      * the annotation in this class or its superclasses.
      */
     public Map<Class<? extends Annotation>, List<FrameworkMethod>> getAnnotationToMethods() {
-        return Collections.unmodifiableMap(fMethodsForAnnotations);
+        return fMethodsForAnnotations;
     }
 
     /**
@@ -113,7 +134,7 @@ public class TestClass {
      * the annotation in this class or its superclasses.
      */
     public Map<Class<? extends Annotation>, List<FrameworkField>> getAnnotationToFields() {
-        return Collections.unmodifiableMap(fFieldsForAnnotations);
+        return fFieldsForAnnotations;
     }
 
     private static <T> List<T> getAnnotatedMembers(Map<Class<? extends Annotation>, List<T>> map,

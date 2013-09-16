@@ -7,12 +7,15 @@ import static org.junit.Assert.assertThat;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.theories.DataPoint;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TestRule;
 import org.junit.runners.model.FrameworkField;
@@ -150,7 +153,7 @@ public class TestClassTest {
         exception.expect(UnsupportedOperationException.class);
         methods.add(null);
     }
-
+    
     @Test
     public void annotationToFields() {
         TestClass tc = new TestClass(FieldAnnotated.class);
@@ -174,5 +177,31 @@ public class TestClassTest {
         List<FrameworkField> fields = annotationToFields.get(Rule.class);
         exception.expect(UnsupportedOperationException.class);
         fields.add(null);
+    }
+
+    public static class MultipleFieldsAnnotated {
+        @DataPoint
+        public String a = "testing a";
+
+        @Rule
+        public boolean b;
+
+        @DataPoint
+        public String c = "testing c";
+
+        @Rule
+        public boolean d;
+    }
+
+    @Test
+    public void annotationToFieldsReturnsKeysInADeterministicOrder() {
+        TestClass tc = new TestClass(MultipleFieldsAnnotated.class);
+        Map<Class<? extends Annotation>, List<FrameworkField>> annotationToFields = tc.getAnnotationToFields();
+        List<Class<? extends Annotation>> keys = new ArrayList<Class<? extends Annotation>>();
+        for (Class<? extends Annotation> annotation : annotationToFields.keySet()) {
+            keys.add(annotation);
+        }
+        assertThat(keys.get(0), CoreMatchers.<Class<? extends Annotation>>is(DataPoint.class));
+        assertThat(keys.get(1), CoreMatchers.<Class<? extends Annotation>>is(Rule.class));
     }
 }
