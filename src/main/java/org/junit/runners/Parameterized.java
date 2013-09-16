@@ -216,6 +216,7 @@ public class Parameterized extends Suite {
             Object testClassInstance = getTestClass().getJavaClass().newInstance();
             for (FrameworkField each : annotatedFieldsByParameter) {
                 Field field = each.getField();
+                field.setAccessible(true);
                 Parameter annotation = field.getAnnotation(Parameter.class);
                 int index = annotation.value();
                 try {
