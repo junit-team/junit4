@@ -136,20 +136,19 @@ public class TestClassTest {
 
     @Test
     public void annotationToMethodsReturnsUnmodifiableMap() {
-        exception.expect(UnsupportedOperationException.class);
-
         TestClass tc = new TestClass(MethodsAnnotated.class);
         Map<Class<? extends Annotation>, List<FrameworkMethod>> annotationToMethods = tc.getAnnotationToMethods();
+        exception.expect(UnsupportedOperationException.class);
         annotationToMethods.put(Ignore.class, null);
     }
 
     @Test
     public void annotationToMethodsReturnsValuesInTheMapThatAreUnmodifiable() {
-        exception.expect(UnsupportedOperationException.class);
-
         TestClass tc = new TestClass(MethodsAnnotated.class);
         Map<Class<? extends Annotation>, List<FrameworkMethod>> annotationToMethods = tc.getAnnotationToMethods();
-        annotationToMethods.put(Ignore.class, null);
+        List<FrameworkMethod> methods = annotationToMethods.get(Ignore.class);
+        exception.expect(UnsupportedOperationException.class);
+        methods.add(null);
     }
 
     @Test
@@ -162,20 +161,18 @@ public class TestClassTest {
 
     @Test
     public void annotationToFieldsReturnsUnmodifiableMap() {
-        exception.expect(UnsupportedOperationException.class);
-
         TestClass tc = new TestClass(FieldAnnotated.class);
         Map<Class<? extends Annotation>, List<FrameworkField>> annotationToFields = tc.getAnnotationToFields();
+        exception.expect(UnsupportedOperationException.class);
         annotationToFields.put(Rule.class, null);
     }
 
     @Test
     public void annotationToFieldsReturnsValuesInTheMapThatAreUnmodifiable() {
-        exception.expect(UnsupportedOperationException.class);
-
         TestClass tc = new TestClass(FieldAnnotated.class);
         Map<Class<? extends Annotation>, List<FrameworkField>> annotationToFields = tc.getAnnotationToFields();
         List<FrameworkField> fields = annotationToFields.get(Rule.class);
+        exception.expect(UnsupportedOperationException.class);
         fields.add(null);
     }
 }

@@ -51,11 +51,10 @@ public class AnnotationValidatorFactoryTest {
 
     @Test
     public void exceptionWhenAnnotationValidatorCantBeCreated() {
+        ValidateWith validateWith = SampleTestWithValidatorThatThrowsException.class.getAnnotation(ValidateWith.class);
         exception.expect(RuntimeException.class);
         exception.expectMessage("Exception received when creating AnnotationValidator class " +
                 "org.junit.experimental.validator.AnnotationValidatorFactoryTest$ValidatorThatThrowsException");
-
-        ValidateWith validateWith = SampleTestWithValidatorThatThrowsException.class.getAnnotation(ValidateWith.class);
         new AnnotationValidatorFactory().createAnnotationValidator(validateWith);
     }
 

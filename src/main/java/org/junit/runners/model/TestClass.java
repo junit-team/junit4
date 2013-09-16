@@ -101,7 +101,7 @@ public class TestClass {
     }
 
     /**
-     * @return a Map between annotations and non-overridden methods that have
+     * Gets a {@code Map} between annotations and methods that have
      * the annotation in this class or its superclasses.
      */
     public Map<Class<? extends Annotation>, List<FrameworkMethod>> getAnnotationToMethods() {
@@ -109,7 +109,7 @@ public class TestClass {
     }
 
     /**
-     * @return a Map between annotations and fields that have
+     * Gets a {@code Map} between annotations and fields that have
      * the annotation in this class or its superclasses.
      */
     public Map<Class<? extends Annotation>, List<FrameworkField>> getAnnotationToFields() {
