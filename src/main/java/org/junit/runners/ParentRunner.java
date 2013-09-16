@@ -135,8 +135,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         for (Annotation annotation : annotations) {
             Class<? extends Annotation> annotationType = annotation.annotationType();
             ValidateWith validateWithAnnotation = annotationType.getAnnotation(ValidateWith.class);
-            AnnotationValidator annotationValidator =
-                    fAnnotationValidatorFactory.createAnnotationValidator(validateWithAnnotation);
+            AnnotationValidator annotationValidator = createAnnotationValidator(validateWithAnnotation);
             errors.addAll(annotationValidator.validateAnnotatedClass(getTestClass().getJavaClass()));
         }
     }
@@ -146,7 +145,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         for (Class<? extends Annotation> annotationType : annotationMap.keySet()) {
             ValidateWith validateWithAnnotation = annotationType.getAnnotation(ValidateWith.class);
             for (FrameworkMethod frameworkMethod : annotationMap.get(annotationType)) {
-                AnnotationValidator annotationValidator = fAnnotationValidatorFactory.createAnnotationValidator(validateWithAnnotation);
+                AnnotationValidator annotationValidator = createAnnotationValidator(validateWithAnnotation);
                 errors.addAll(annotationValidator.validateAnnotatedMethod(frameworkMethod.getMethod()));
             }
         }
@@ -157,10 +156,18 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         for (Class<? extends Annotation> annotationType : annotationMap.keySet()) {
             ValidateWith validateWithAnnotation = annotationType.getAnnotation(ValidateWith.class);
             for (FrameworkField frameworkField : annotationMap.get(annotationType)) {
-                AnnotationValidator annotationValidator = fAnnotationValidatorFactory.createAnnotationValidator(validateWithAnnotation);
+                AnnotationValidator annotationValidator = createAnnotationValidator(validateWithAnnotation);
                 errors.addAll(annotationValidator.validateAnnotatedField(frameworkField.getField()));
             }
         }
+    }
+
+    private AnnotationValidator createAnnotationValidator(ValidateWith validateWithAnnotation) {
+        if (validateWithAnnotation == null) {
+            return new AnnotationValidator() {
+            };
+        }
+        return fAnnotationValidatorFactory.createAnnotationValidator(validateWithAnnotation);
     }
 
     /**

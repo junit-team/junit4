@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -50,6 +51,10 @@ public class TestClass {
                 addToAnnotationLists(new FrameworkField(eachField), fieldsForAnnotations);
             }
         }
+
+        convertListValuesToBeUnmodifiable(methodsForAnnotations);
+        convertListValuesToBeUnmodifiable(fieldsForAnnotations);
+
         fMethodsForAnnotations = Collections.unmodifiableMap(methodsForAnnotations);
         fFieldsForAnnotations = Collections.unmodifiableMap(fieldsForAnnotations);
     }
@@ -67,6 +72,13 @@ public class TestClass {
             } else {
                 members.add(member);
             }
+        }
+    }
+
+    private static <T extends FrameworkMember<T>>  void convertListValuesToBeUnmodifiable(
+            Map<Class<? extends Annotation>, List<T>> methodsForAnnotations) {
+        for (Class<? extends Annotation> clazz : methodsForAnnotations.keySet()) {
+            methodsForAnnotations.put(clazz, Collections.unmodifiableList(methodsForAnnotations.get(clazz)));
         }
     }
 
@@ -88,10 +100,18 @@ public class TestClass {
         return Collections.unmodifiableList(getAnnotatedMembers(fFieldsForAnnotations, annotationClass, false));
     }
 
+    /**
+     * @return a Map between annotations and non-overridden methods that have
+     * the annotation in this class or its superclasses.
+     */
     public Map<Class<? extends Annotation>, List<FrameworkMethod>> getAnnotationToMethods() {
         return Collections.unmodifiableMap(fMethodsForAnnotations);
     }
 
+    /**
+     * @return a Map between annotations and fields that have
+     * the annotation in this class or its superclasses.
+     */
     public Map<Class<? extends Annotation>, List<FrameworkField>> getAnnotationToFields() {
         return Collections.unmodifiableMap(fFieldsForAnnotations);
     }

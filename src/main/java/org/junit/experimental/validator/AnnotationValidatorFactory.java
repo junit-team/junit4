@@ -13,29 +13,27 @@ public class AnnotationValidatorFactory {
     /**
      * Creates the AnnotationValidator specified by the value in
      * {@link org.junit.experimental.validator.ValidateWith}. Instances are
-     * cached. A null parameter return a default no-args {@link AnnotationValidator}.
+     * cached.
      *
      * @param validateWithAnnotation
      * @return An instance of the AnnotationValidator.
      */
     public AnnotationValidator createAnnotationValidator(ValidateWith validateWithAnnotation) {
-        if (validateWithAnnotation == null) {
-            return new AnnotationValidator() {
-            };
-        }
-
         AnnotationValidator validator = fAnnotationTypeToValidatorMap.get(validateWithAnnotation);
         if (validator != null) {
             return validator;
         }
 
         Class<? extends AnnotationValidator> clazz = validateWithAnnotation.value();
+        if (clazz == null) {
+            throw new IllegalArgumentException("Can't create validator, value is null in annotation " + validateWithAnnotation.getClass().getName());
+        }
         try {
             AnnotationValidator annotationValidator = clazz.newInstance();
             fAnnotationTypeToValidatorMap.putIfAbsent(validateWithAnnotation, annotationValidator);
-            return annotationValidator;
+            return fAnnotationTypeToValidatorMap.get(validateWithAnnotation);
         } catch (Exception e) {
-            throw new RuntimeException("Error when creating AnnotationValidator class " + clazz.getName(), e);
+            throw new RuntimeException("Exception received when creating AnnotationValidator class " + clazz.getName(), e);
         }
     }
 
