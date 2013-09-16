@@ -22,7 +22,6 @@ public class AnnotationValidatorFactoryTest {
         assertThat(annotationValidator, is(instanceOf(Validator.class)));
     }
 
-
     @Test
     public void exceptionWhenAnnotationWithNullClassIsPassedIn() {
         exception.expect(IllegalArgumentException.class);
@@ -46,7 +45,6 @@ public class AnnotationValidatorFactoryTest {
     @ValidateWith(value = Validator.class)
     public static class SampleTestWithValidator {
     }
-
 
     public static class Validator extends AnnotationValidator {
     }
