@@ -1,12 +1,14 @@
-package org.junit.experimental.validator;
+package org.junit.experimental.categories;
 
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.experimental.validator.AnnotationValidator;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -19,7 +21,7 @@ import java.util.Set;
  *
  * @since 4.12
  */
-public class CategoryValidator extends AnnotationValidator {
+public final class CategoryValidator extends AnnotationValidator {
 
     private static Set<Class<? extends Annotation>> fIncompatibleAnnotations = buildIncompatibleAnnotationsSet();
 
@@ -29,10 +31,11 @@ public class CategoryValidator extends AnnotationValidator {
      * annotations.
      *
      * @param method the method that is being validated
-     * @param errors any errors detected are added to this list
+     * @return A list of errors detected
      */
     @Override
-    public void validateAnnotatedMethod(Method method, List<Throwable> errors) {
+    public List<Throwable> validateAnnotatedMethod(Method method) {
+        List<Throwable> errors = new ArrayList<Throwable>();
         Annotation[] declaredAnnotations = method.getDeclaredAnnotations();
         for (Annotation annotation : declaredAnnotations) {
             for (Class clazz : fIncompatibleAnnotations) {
@@ -41,6 +44,7 @@ public class CategoryValidator extends AnnotationValidator {
                 }
             }
         }
+        return Collections.unmodifiableList(errors);
     }
 
     private static Set<Class<? extends Annotation>> buildIncompatibleAnnotationsSet() {

@@ -2,9 +2,7 @@ package org.junit.tests.running.classes;
 
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.experimental.validator.AnnotationValidator;
 import org.junit.experimental.validator.ValidateWith;
 import org.junit.runner.Description;
@@ -12,6 +10,7 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.Result;
 import org.junit.runner.manipulation.Filter;
+import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.ParentRunner;
@@ -25,10 +24,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -126,25 +126,25 @@ public class ParentRunnerTest {
 
     @Test
     public void failWithHelpfulMessageForProtectedClassRule() {
-        //the second failure is no runnable methods
-        assertClassHasFailureMessage(TestWithProtectedClassRule.class, 2,
+        assertClassHasFailureMessage(TestWithProtectedClassRule.class,
                 "The @ClassRule 'temporaryFolder' must be public.");
     }
 
     @Test
     public void failWithHelpfulMessageForNonStaticClassRule() {
-        //the second failure is no runnable methods
-        assertClassHasFailureMessage(TestWithNonStaticClassRule.class, 2,
+        assertClassHasFailureMessage(TestWithNonStaticClassRule.class,
                 "The @ClassRule 'temporaryFolder' must be static.");
     }
 
-    private void assertClassHasFailureMessage(Class<?> klass, int failureCount, String message) {
+    private void assertClassHasFailureMessage(Class<?> klass, String message) {
         JUnitCore junitCore = new JUnitCore();
         Request request = Request.aClass(klass);
         Result result = junitCore.run(request);
-        assertThat(result.getFailureCount(), is(failureCount));
-        assertThat(result.getFailures().get(0).getMessage(),
-                is(equalTo(message)));
+        List<String> messages = new ArrayList<String>();
+        for (Failure failure : result.getFailures()) {
+            messages.add(failure.getMessage());
+        }
+        assertThat(messages, hasItem(message));
 
     }
 
@@ -154,18 +154,18 @@ public class ParentRunnerTest {
         private static final String ANNOTATED_CLASS_CALLED = "annotated class called";
 
         @Override
-        public void validateAnnotatedClass(Class<?> type, List<Throwable> errors) {
-            errors.add(new Throwable(ANNOTATED_CLASS_CALLED));
+        public List<Throwable> validateAnnotatedClass(Class<?> type) {
+            return Arrays.asList(new Throwable(ANNOTATED_CLASS_CALLED));
         }
 
         @Override
-        public void validateAnnotatedField(Field field, List<Throwable> errors) {
-            errors.add(new Throwable(ANNOTATED_FIELD_CALLED));
+        public List<Throwable> validateAnnotatedField(Field field) {
+            return Arrays.asList(new Throwable(ANNOTATED_FIELD_CALLED));
         }
 
         @Override
-        public void validateAnnotatedMethod(Method method, List<Throwable> errors) {
-            errors.add(new Throwable(ANNOTATED_METHOD_CALLED));
+        public List<Throwable> validateAnnotatedMethod(Method method) {
+            return Arrays.asList(new Throwable(ANNOTATED_METHOD_CALLED));
         }
     }
 
@@ -200,19 +200,19 @@ public class ParentRunnerTest {
 
     @Test
     public void validatorIsCalledForAClass() {
-        assertClassHasFailureMessage(AnnotationValidatorClassTest.class, 1,
+        assertClassHasFailureMessage(AnnotationValidatorClassTest.class,
                 ExampleAnnotationValidator.ANNOTATED_CLASS_CALLED);
     }
 
     @Test
     public void validatorIsCalledForAMethod() throws InitializationError {
-        assertClassHasFailureMessage(AnnotationValidatorMethodTest.class, 1,
+        assertClassHasFailureMessage(AnnotationValidatorMethodTest.class,
                 ExampleAnnotationValidator.ANNOTATED_METHOD_CALLED);
     }
 
     @Test
     public void validatorIsCalledForAField() {
-        assertClassHasFailureMessage(AnnotationValidatorFieldTest.class, 1,
+        assertClassHasFailureMessage(AnnotationValidatorFieldTest.class,
                 ExampleAnnotationValidator.ANNOTATED_FIELD_CALLED);
     }
 }

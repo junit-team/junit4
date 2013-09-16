@@ -1,6 +1,5 @@
 package org.junit.experimental.categories;
 
-import org.junit.experimental.validator.CategoryValidator;
 import org.junit.experimental.validator.ValidateWith;
 
 import java.lang.annotation.Inherited;

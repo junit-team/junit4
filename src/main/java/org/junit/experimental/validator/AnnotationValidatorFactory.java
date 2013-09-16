@@ -1,6 +1,5 @@
 package org.junit.experimental.validator;
 
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -8,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class AnnotationValidatorFactory {
 
-    private static Map<ValidateWith, AnnotationValidator> fAnnotationTypeToValidatorMap =
+    private static ConcurrentHashMap<ValidateWith, AnnotationValidator> fAnnotationTypeToValidatorMap =
             new ConcurrentHashMap<ValidateWith, AnnotationValidator>();
 
     /**
@@ -21,17 +20,19 @@ public class AnnotationValidatorFactory {
      */
     public AnnotationValidator createAnnotationValidator(ValidateWith validateWithAnnotation) {
         if (validateWithAnnotation == null) {
-            return new AnnotationValidator();
+            return new AnnotationValidator() {
+            };
         }
 
-        if (fAnnotationTypeToValidatorMap.containsKey(validateWithAnnotation)) {
-            return fAnnotationTypeToValidatorMap.get(validateWithAnnotation);
+        AnnotationValidator validator = fAnnotationTypeToValidatorMap.get(validateWithAnnotation);
+        if (validator != null) {
+            return validator;
         }
 
-        Class<?> clazz = validateWithAnnotation.value();
+        Class<? extends AnnotationValidator> clazz = validateWithAnnotation.value();
         try {
-            AnnotationValidator annotationValidator = (AnnotationValidator) clazz.newInstance();
-            fAnnotationTypeToValidatorMap.put(validateWithAnnotation, annotationValidator);
+            AnnotationValidator annotationValidator = clazz.newInstance();
+            fAnnotationTypeToValidatorMap.putIfAbsent(validateWithAnnotation, annotationValidator);
             return annotationValidator;
         } catch (Exception e) {
             throw new RuntimeException("Error when creating AnnotationValidator class " + clazz.getName(), e);

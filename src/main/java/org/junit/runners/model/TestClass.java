@@ -23,8 +23,8 @@ import org.junit.internal.MethodSorter;
  */
 public class TestClass {
     private final Class<?> fClass;
-    private final Map<Class<? extends Annotation>, List<FrameworkMethod>> fMethodsForAnnotations = new HashMap<Class<? extends Annotation>, List<FrameworkMethod>>();
-    private final Map<Class<? extends Annotation>, List<FrameworkField>> fFieldsForAnnotations = new HashMap<Class<? extends Annotation>, List<FrameworkField>>();
+    private final Map<Class<? extends Annotation>, List<FrameworkMethod>> fMethodsForAnnotations;
+    private final Map<Class<? extends Annotation>, List<FrameworkField>> fFieldsForAnnotations;
 
     /**
      * Creates a {@code TestClass} wrapping {@code klass}. Each time this
@@ -39,17 +39,22 @@ public class TestClass {
                     "Test class can only have one constructor");
         }
 
+        Map<Class<? extends Annotation>, List<FrameworkMethod>> methodsForAnnotations = new HashMap<Class<? extends Annotation>, List<FrameworkMethod>>();
+        Map<Class<? extends Annotation>, List<FrameworkField>> fieldsForAnnotations = new HashMap<Class<? extends Annotation>, List<FrameworkField>>();
+
         for (Class<?> eachClass : getSuperClasses(fClass)) {
             for (Method eachMethod : MethodSorter.getDeclaredMethods(eachClass)) {
-                addToAnnotationLists(new FrameworkMethod(eachMethod), fMethodsForAnnotations);
+                addToAnnotationLists(new FrameworkMethod(eachMethod), methodsForAnnotations);
             }
             for (Field eachField : eachClass.getDeclaredFields()) {
-                addToAnnotationLists(new FrameworkField(eachField), fFieldsForAnnotations);
+                addToAnnotationLists(new FrameworkField(eachField), fieldsForAnnotations);
             }
         }
+        fMethodsForAnnotations = Collections.unmodifiableMap(methodsForAnnotations);
+        fFieldsForAnnotations = Collections.unmodifiableMap(fieldsForAnnotations);
     }
 
-    private <T extends FrameworkMember<T>> void addToAnnotationLists(T member,
+    private static <T extends FrameworkMember<T>> void addToAnnotationLists(T member,
             Map<Class<? extends Annotation>, List<T>> map) {
         for (Annotation each : member.getAnnotations()) {
             Class<? extends Annotation> type = each.annotationType();
@@ -91,7 +96,7 @@ public class TestClass {
         return Collections.unmodifiableMap(fFieldsForAnnotations);
     }
 
-    private <T> List<T> getAnnotatedMembers(Map<Class<? extends Annotation>, List<T>> map,
+    private static <T> List<T> getAnnotatedMembers(Map<Class<? extends Annotation>, List<T>> map,
             Class<? extends Annotation> type, boolean fillIfAbsent) {
         if (!map.containsKey(type) && fillIfAbsent) {
             map.put(type, new ArrayList<T>());

@@ -1,9 +1,9 @@
-package org.junit.tests.experimental.validation;
+package org.junit.tests.experimental.categories;
 
 
 import org.junit.*;
 import org.junit.experimental.categories.Category;
-import org.junit.experimental.validator.CategoryValidator;
+import org.junit.experimental.categories.CategoryValidator;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -68,8 +68,7 @@ public class CategoryValidatorTest {
     }
 
     private void testAndAssertErrrorMessage(Method method, String expectedErrorMessage) throws NoSuchMethodException {
-        List<Throwable> errors = new ArrayList<Throwable>();
-        new CategoryValidator().validateAnnotatedMethod(method, errors);
+        List<Throwable> errors = new CategoryValidator().validateAnnotatedMethod(method);
 
         assertThat(errors.size(), is(1));
         Throwable throwable = errors.get(0);
@@ -78,10 +77,9 @@ public class CategoryValidatorTest {
 
     @Test
     public void errorIsNotAddedWhenCategoryIsNotCombinedWithIllegalCombination() throws NoSuchMethodException {
-        List<Throwable> errors = new ArrayList<Throwable>();
         Method beforeClass = CategoryTest.class.getMethod("methodWithCategory");
-        new CategoryValidator().validateAnnotatedMethod(beforeClass, errors);
+        List<Throwable> errors = new CategoryValidator().validateAnnotatedMethod(beforeClass);
 
-        assertThat(errors.isEmpty(), is(true));
+        assertThat(errors.size(), is(0));
     }
 }

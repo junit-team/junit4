@@ -2,6 +2,7 @@ package org.junit.experimental.validator;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -11,24 +12,25 @@ import java.util.List;
  * Instances of this class are shared by multiple test runners, so they should
  * be immutable and thread-safe.
  */
-public class AnnotationValidator {
+public abstract class AnnotationValidator {
     /**
      * Validates annotation on the given class.
      *
      * @param type that is being validated
-     * @param errors A throwable will be added for each error
+     * @return A list of throwables. Default behavior is to return an empty list.
      */
-    public void validateAnnotatedClass(Class<?> type, List<Throwable> errors) {
-
+    public List<Throwable> validateAnnotatedClass(Class<?> type) {
+        return Collections.emptyList();
     }
 
     /**
      * Validates annotation on the given field.
      *
      * @param field that is being validated
-     * @param errors A throwable will be added for each error
+     * @return A list of throwables. Default behavior is to return an empty list.
      */
-    public void validateAnnotatedField(Field field,  List<Throwable> errors) {
+    public List<Throwable> validateAnnotatedField(Field field) {
+        return Collections.emptyList();
 
     }
 
@@ -36,9 +38,9 @@ public class AnnotationValidator {
      * Validates annotation on the given method.
      *
      * @param method that is being validated
-     * @param errors A throwable will be added for each error
+     * @return A list of throwables. Default behavior is to return an empty list.
      */
-    public void validateAnnotatedMethod(Method method, List<Throwable> errors) {
-
+    public List<Throwable> validateAnnotatedMethod(Method method) {
+        return Collections.emptyList();
     }
 }
