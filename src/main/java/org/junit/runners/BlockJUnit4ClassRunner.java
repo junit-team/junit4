@@ -27,6 +27,7 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
+import org.junit.runners.model.TestClass;
 
 /**
  * Implements the JUnit 4 standard test case class model, as defined by the
@@ -311,7 +312,8 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      */
     protected Statement withBefores(FrameworkMethod method, Object target,
             Statement statement) {
-        List<FrameworkMethod> befores = getTestClass().getAnnotatedMethods(
+        TestClass tClass = new TestClass(target.getClass());
+        List<FrameworkMethod> befores = tClass.getAnnotatedMethods(
                 Before.class);
         return befores.isEmpty() ? statement : new RunBefores(statement,
                 befores, target);
@@ -326,7 +328,8 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      */
     protected Statement withAfters(FrameworkMethod method, Object target,
             Statement statement) {
-        List<FrameworkMethod> afters = getTestClass().getAnnotatedMethods(
+        TestClass tClass = new TestClass(target.getClass());
+        List<FrameworkMethod> afters = tClass.getAnnotatedMethods(
                 After.class);
         return afters.isEmpty() ? statement : new RunAfters(statement, afters,
                 target);

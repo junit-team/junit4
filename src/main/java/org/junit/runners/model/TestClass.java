@@ -184,7 +184,11 @@ public class TestClass {
         return results;
     }
 
+    public boolean isMemberClass() {
+        return fClass.isMemberClass();
+    }
+
     public boolean isANonStaticInnerClass() {
-        return fClass.isMemberClass() && !isStatic(fClass.getModifiers());
+        return isMemberClass() && !isStatic(fClass.getModifiers());
     }
 }
