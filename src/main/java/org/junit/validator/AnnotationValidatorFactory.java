@@ -1,4 +1,4 @@
-package org.junit.experimental.validator;
+package org.junit.validator;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -12,7 +12,7 @@ public class AnnotationValidatorFactory {
 
     /**
      * Creates the AnnotationValidator specified by the value in
-     * {@link org.junit.experimental.validator.ValidateWith}. Instances are
+     * {@link org.junit.validator.ValidateWith}. Instances are
      * cached.
      *
      * @param validateWithAnnotation

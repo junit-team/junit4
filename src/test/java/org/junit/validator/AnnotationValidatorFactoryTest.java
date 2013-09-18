@@ -1,4 +1,4 @@
-package org.junit.experimental.validator;
+package org.junit.validator;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -26,7 +26,7 @@ public class AnnotationValidatorFactoryTest {
     public void exceptionWhenAnnotationWithNullClassIsPassedIn() {
         exception.expect(IllegalArgumentException.class);
         exception.expectMessage("Can't create validator, value is null in " +
-                "annotation org.junit.experimental.validator.AnnotationValidatorFactoryTest$ValidatorWithNullValue");
+                "annotation org.junit.validator.AnnotationValidatorFactoryTest$ValidatorWithNullValue");
 
         new AnnotationValidatorFactory().createAnnotationValidator(new ValidatorWithNullValue());
     }
@@ -54,7 +54,7 @@ public class AnnotationValidatorFactoryTest {
         ValidateWith validateWith = SampleTestWithValidatorThatThrowsException.class.getAnnotation(ValidateWith.class);
         exception.expect(RuntimeException.class);
         exception.expectMessage("Exception received when creating AnnotationValidator class " +
-                "org.junit.experimental.validator.AnnotationValidatorFactoryTest$ValidatorThatThrowsException");
+                "org.junit.validator.AnnotationValidatorFactoryTest$ValidatorThatThrowsException");
         new AnnotationValidatorFactory().createAnnotationValidator(validateWith);
     }
 

@@ -1,10 +1,10 @@
 package org.junit.experimental.categories;
 
-import org.junit.experimental.validator.ValidateWith;
-
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
+import org.junit.validator.ValidateWith;
 
 /**
  * Marks a test class or test method as belonging to one or more categories of tests.

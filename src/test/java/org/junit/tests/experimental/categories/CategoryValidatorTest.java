@@ -1,13 +1,16 @@
 package org.junit.tests.experimental.categories;
 
 
-import org.junit.*;
+import java.lang.reflect.Method;
+import java.util.List;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.experimental.categories.CategoryValidator;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;

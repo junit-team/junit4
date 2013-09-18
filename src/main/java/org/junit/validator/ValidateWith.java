@@ -1,4 +1,4 @@
-package org.junit.experimental.validator;
+package org.junit.validator;
 
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
