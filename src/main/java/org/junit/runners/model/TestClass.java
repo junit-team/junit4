@@ -13,7 +13,6 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -52,6 +51,8 @@ public class TestClass {
             for (Method eachMethod : MethodSorter.getDeclaredMethods(eachClass)) {
                 addToAnnotationLists(new FrameworkMethod(eachMethod), methodsForAnnotations);
             }
+            // ensuring fields are sorted to make sure that entries are inserted
+            // and read from fieldForAnnotations in a deterministic order
             for (Field eachField : getSortedDeclaredFields(eachClass)) {
                 addToAnnotationLists(new FrameworkField(eachField), fieldsForAnnotations);
             }
@@ -97,9 +98,8 @@ public class TestClass {
 
     private static <T extends FrameworkMember<T>> void convertListValuesToBeUnmodifiable(
             Map<Class<? extends Annotation>, List<T>> source, Map<Class<? extends Annotation>, List<T>> target) {
-        Set<Class<? extends Annotation>> classes = source.keySet();
-        for (Class<? extends Annotation> clazz : classes) {
-            target.put(clazz, Collections.unmodifiableList(source.get(clazz)));
+        for (Map.Entry<Class<? extends Annotation>, List<T>> entry : source.entrySet()) {
+            target.put(entry.getKey(), Collections.unmodifiableList(entry.getValue()));
         }
     }
 
