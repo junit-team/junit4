@@ -312,11 +312,9 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      */
     protected Statement withBefores(FrameworkMethod method, Object target,
             Statement statement) {
-        TestClass tClass = new TestClass(target.getClass());
-        List<FrameworkMethod> befores = tClass.getAnnotatedMethods(
-                Before.class);
-        return befores.isEmpty() ? statement : new RunBefores(statement,
-                befores, target);
+        TestClass tClass = TestClass.forClass(target.getClass());
+        List<FrameworkMethod> befores = tClass.getAnnotatedMethods(Before.class);
+        return befores.isEmpty() ? statement : new RunBefores(statement, befores, target);
     }
 
     /**
@@ -328,11 +326,9 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      */
     protected Statement withAfters(FrameworkMethod method, Object target,
             Statement statement) {
-        TestClass tClass = new TestClass(target.getClass());
-        List<FrameworkMethod> afters = tClass.getAnnotatedMethods(
-                After.class);
-        return afters.isEmpty() ? statement : new RunAfters(statement, afters,
-                target);
+        TestClass tClass = TestClass.forClass(target.getClass());
+        List<FrameworkMethod> afters = tClass.getAnnotatedMethods(After.class);
+        return afters.isEmpty() ? statement : new RunAfters(statement, afters, target);
     }
 
     private Statement withRules(FrameworkMethod method, Object target,
@@ -365,7 +361,8 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      *         test
      */
     protected List<org.junit.rules.MethodRule> rules(Object target) {
-        return getTestClass().getAnnotatedFieldValues(target, Rule.class,
+        TestClass testClass = TestClass.forClass(target.getClass());
+        return testClass.getAnnotatedFieldValues(target, Rule.class,
                 org.junit.rules.MethodRule.class);
     }
 
@@ -389,7 +386,8 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      *         test
      */
     protected List<TestRule> getTestRules(Object target) {
-        List<TestRule> result = getTestClass().getAnnotatedMethodValues(target,
+        TestClass testClass = TestClass.forClass(target.getClass());
+        List<TestRule> result = testClass.getAnnotatedMethodValues(target,
                 Rule.class, TestRule.class);
 
         result.addAll(getTestClass().getAnnotatedFieldValues(target,

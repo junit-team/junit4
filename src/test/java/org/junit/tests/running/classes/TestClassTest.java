@@ -23,7 +23,7 @@ public class TestClassTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void complainIfMultipleConstructors() {
-        new TestClass(TwoConstructors.class);
+        TestClass.forClass(TwoConstructors.class);
     }
     
     public static class SuperclassWithField {
@@ -38,8 +38,8 @@ public class TestClassTest {
 
     @Test
     public void fieldsOnSubclassesShadowSuperclasses() {
-        assertThat(new TestClass(SubclassWithField.class).getAnnotatedFields(
-                Rule.class).size(), is(1));
+        TestClass testClass = TestClass.forClass(SubclassWithField.class);
+        assertThat(testClass.getAnnotatedFields(Rule.class).size(), is(1));
     }
 
     public static class OuterClass {
@@ -49,10 +49,8 @@ public class TestClassTest {
 
     @Test
     public void identifyNonStaticInnerClass() {
-        assertThat(
-                new TestClass(OuterClass.NonStaticInnerClass.class)
-                        .isANonStaticInnerClass(),
-                is(true));
+        TestClass testClass = TestClass.forClass(OuterClass.NonStaticInnerClass.class);
+        assertThat(testClass.isANonStaticInnerClass(), is(true));
     }
 
     public static class OuterClass2 {
@@ -62,10 +60,8 @@ public class TestClassTest {
 
     @Test
     public void dontMarkStaticInnerClassAsNonStatic() {
-        assertThat(
-                new TestClass(OuterClass2.StaticInnerClass.class)
-                        .isANonStaticInnerClass(),
-                is(false));
+        TestClass testClass = TestClass.forClass(OuterClass2.StaticInnerClass.class);
+        assertThat(testClass.isANonStaticInnerClass(), is(false));
     }
 
     public static class SimpleClass {
@@ -73,8 +69,8 @@ public class TestClassTest {
 
     @Test
     public void dontMarkNonInnerClassAsInnerClass() {
-        assertThat(new TestClass(SimpleClass.class).isANonStaticInnerClass(),
-                is(false));
+        TestClass testClass = TestClass.forClass(SimpleClass.class);
+        assertThat(testClass.isANonStaticInnerClass(), is(false));
     }
         
     public static class FieldAnnotated {
@@ -87,8 +83,8 @@ public class TestClassTest {
     
     @Test
     public void annotatedFieldValues() {
-    	TestClass tc = new TestClass(FieldAnnotated.class);
-    	List<String> values = tc.getAnnotatedFieldValues(new FieldAnnotated(), Rule.class, String.class);
+    	TestClass testClass = TestClass.forClass(FieldAnnotated.class);
+    	List<String> values = testClass.getAnnotatedFieldValues(new FieldAnnotated(), Rule.class, String.class);
     	assertThat(values, hasItem("andromeda"));
     	assertThat(values.size(), is(1));
     }
@@ -109,8 +105,8 @@ public class TestClassTest {
     
     @Test
     public void annotatedMethodValues() {
-    	TestClass tc = new TestClass(MethodsAnnotated.class);
-    	List<String> values = tc.getAnnotatedMethodValues(new MethodsAnnotated(), Ignore.class, String.class);
+    	TestClass testClass = TestClass.forClass(MethodsAnnotated.class);
+    	List<String> values = testClass.getAnnotatedMethodValues(new MethodsAnnotated(), Ignore.class, String.class);
     	assertThat(values, hasItem("jupiter"));
     	assertThat(values.size(), is(1));
     }
