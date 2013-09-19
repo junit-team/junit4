@@ -58,16 +58,8 @@ public class TestClass {
             }
         }
 
-        Map<Class<? extends Annotation>, List<FrameworkMethod>> methodsForAnnotationsWithUnmodifiableLists =
-                new LinkedHashMap<Class<? extends Annotation>, List<FrameworkMethod>>();
-        convertListValuesToBeUnmodifiable(methodsForAnnotations, methodsForAnnotationsWithUnmodifiableLists);
-
-        Map<Class<? extends Annotation>, List<FrameworkField>> fieldsForAnnotationsWithUnmodifiableLists =
-                new LinkedHashMap<Class<? extends Annotation>, List<FrameworkField>>();
-        convertListValuesToBeUnmodifiable(fieldsForAnnotations, fieldsForAnnotationsWithUnmodifiableLists);
-
-        fMethodsForAnnotations = Collections.unmodifiableMap(methodsForAnnotationsWithUnmodifiableLists);
-        fFieldsForAnnotations = Collections.unmodifiableMap(fieldsForAnnotationsWithUnmodifiableLists);
+        fMethodsForAnnotations = makeDeeplyUnmodifiable(methodsForAnnotations);
+        fFieldsForAnnotations = makeDeeplyUnmodifiable(fieldsForAnnotations);
     }
 
     private static Field[] getSortedDeclaredFields(Class<?> clazz) {
@@ -96,12 +88,16 @@ public class TestClass {
         }
     }
 
-    private static <T extends FrameworkMember<T>> void convertListValuesToBeUnmodifiable(
-            Map<Class<? extends Annotation>, List<T>> source, Map<Class<? extends Annotation>, List<T>> target) {
+    private static <T extends FrameworkMember<T>> Map<Class<? extends Annotation>, List<T>>
+            makeDeeplyUnmodifiable(Map<Class<? extends Annotation>, List<T>> source) {
+        LinkedHashMap<Class<? extends Annotation>, List<T>> copy =
+                new LinkedHashMap<Class<? extends Annotation>, List<T>>();
         for (Map.Entry<Class<? extends Annotation>, List<T>> entry : source.entrySet()) {
-            target.put(entry.getKey(), Collections.unmodifiableList(entry.getValue()));
+            copy.put(entry.getKey(), Collections.unmodifiableList(entry.getValue()));
         }
+        return Collections.unmodifiableMap(copy);
     }
+
 
     /**
      * Returns, efficiently, all the non-overridden methods in this class and
