@@ -135,7 +135,10 @@ public class JUnit38ClassRunnerTest {
     public static class RejectAllFilter extends Filter {
         @Override
         public boolean shouldRun(Description description) {
-            return false;
+            if (description.isTest()) {
+                return false;
+            }
+            return true;
         }
 
         @Override
