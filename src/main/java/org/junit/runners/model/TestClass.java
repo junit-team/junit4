@@ -23,32 +23,16 @@ import org.junit.internal.MethodSorter;
  * @since 4.5
  */
 public class TestClass {
-    private static final Map<Class<?>, TestClass> testClasses = Collections.synchronizedMap(new HashMap<Class<?>, TestClass>());
-
     private final Class<?> fClass;
     private final Map<Class<?>, List<FrameworkMethod>> fMethodsForAnnotations;
     private final Map<Class<?>, List<FrameworkField>> fFieldsForAnnotations;
-
-    /**
-     * Returns a {@code TestClass} wrapping {@code klass}. {@code TestClass}es
-     * will be shared and help within a pool, to avoid the expensive process
-     * that is performed during construction.
-     */
-    public static TestClass forClass(Class<?> klass) {
-        if (!testClasses.containsKey(klass))
-            testClasses.put(klass, new TestClass(klass));
-        return testClasses.get(klass);
-    }
 
     /**
      * Creates a {@code TestClass} wrapping {@code klass}. Each time this
      * constructor executes, the class is scanned for annotations, which can be
      * an expensive process (we hope in future JDK's it will not be.) Therefore,
      * try to share instances of {@code TestClass} where possible.
-     *
-     * @deprecated Please use {@link #forClass(Class)} to create new instances.
      */
-    @Deprecated
     public TestClass(Class<?> klass) {
         fClass = klass;
         if (klass != null && klass.getConstructors().length > 1) {
