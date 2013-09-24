@@ -1,8 +1,9 @@
 package org.junit.validator;
 
+import static java.util.Collections.emptyList;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -15,28 +16,31 @@ import java.util.List;
  * @since 4.12
  */
 public abstract class AnnotationValidator {
+
+    private static final List<Exception> NO_VALIDATION_ERRORS = emptyList();
+
     /**
      * Validates annotation on the given class.
      *
      * @param type that is being validated
-     * @return A list of throwables. Default behavior is to return an empty list.
+     * @return A list of exceptions. Default behavior is to return an empty list.
      *
      * @since 4.12
      */
-    public List<Throwable> validateAnnotatedClass(Class<?> type) {
-        return Collections.emptyList();
+    public List<Exception> validateAnnotatedClass(Class<?> type) {
+        return NO_VALIDATION_ERRORS;
     }
 
     /**
      * Validates annotation on the given field.
      *
      * @param field that is being validated
-     * @return A list of throwables. Default behavior is to return an empty list.
+     * @return A list of exceptions. Default behavior is to return an empty list.
      *
      * @since 4.12
      */
-    public List<Throwable> validateAnnotatedField(Field field) {
-        return Collections.emptyList();
+    public List<Exception> validateAnnotatedField(Field field) {
+        return NO_VALIDATION_ERRORS;
 
     }
 
@@ -44,11 +48,11 @@ public abstract class AnnotationValidator {
      * Validates annotation on the given method.
      *
      * @param method that is being validated
-     * @return A list of throwables. Default behavior is to return an empty list.
+     * @return A list of exceptions. Default behavior is to return an empty list.
      *
      * @since 4.12
      */
-    public List<Throwable> validateAnnotatedMethod(Method method) {
-        return Collections.emptyList();
+    public List<Exception> validateAnnotatedMethod(Method method) {
+        return NO_VALIDATION_ERRORS;
     }
 }

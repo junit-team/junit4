@@ -1,9 +1,12 @@
 package org.junit.experimental.categories;
 
+import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableSet;
+import static java.util.Arrays.asList;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,7 +26,8 @@ import org.junit.validator.AnnotationValidator;
  */
 public final class CategoryValidator extends AnnotationValidator {
 
-    private static Set<Class<? extends Annotation>> fIncompatibleAnnotations = buildIncompatibleAnnotationsSet();
+    private static final Set<Class<? extends Annotation>> INCOMPATIBLE_ANNOTATIONS = unmodifiableSet(new HashSet<Class<? extends Annotation>>(
+            asList(BeforeClass.class, AfterClass.class, Before.class, After.class)));
 
     /**
      * Adds to {@code errors} a throwable for each problem detected. Looks for
@@ -31,36 +35,27 @@ public final class CategoryValidator extends AnnotationValidator {
      * annotations.
      *
      * @param method the method that is being validated
-     * @return A list of errors detected
+     * @return A list of exceptions detected
      *
      * @since 4.12
      */
     @Override
-    public List<Throwable> validateAnnotatedMethod(Method method) {
-        List<Throwable> errors = new ArrayList<Throwable>();
+    public List<Exception> validateAnnotatedMethod(Method method) {
+        List<Exception> errors = new ArrayList<Exception>();
         Annotation[] declaredAnnotations = method.getDeclaredAnnotations();
         for (Annotation annotation : declaredAnnotations) {
-            for (Class clazz : fIncompatibleAnnotations) {
+            for (Class clazz : INCOMPATIBLE_ANNOTATIONS) {
                 if (annotation.annotationType().isAssignableFrom(clazz)) {
                     addErrorMessage(errors, clazz);
                 }
             }
         }
-        return Collections.unmodifiableList(errors);
+        return unmodifiableList(errors);
     }
 
-    private static Set<Class<? extends Annotation>> buildIncompatibleAnnotationsSet() {
-        Set<Class<? extends Annotation>> incompatibleAnnotations = new HashSet<Class<? extends Annotation>>();
-        incompatibleAnnotations.add(BeforeClass.class);
-        incompatibleAnnotations.add(AfterClass.class);
-        incompatibleAnnotations.add(Before.class);
-        incompatibleAnnotations.add(After.class);
-        return Collections.unmodifiableSet(incompatibleAnnotations);
-    }
-
-    private void addErrorMessage(List<Throwable> errors, Class clazz) {
+    private void addErrorMessage(List<Exception> errors, Class clazz) {
         String message = String.format("@%s can not be combined with @Category",
                 clazz.getSimpleName());
-        errors.add(new Throwable(message));
+        errors.add(new Exception(message));
     }
 }

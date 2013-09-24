@@ -1,6 +1,9 @@
 package org.junit.tests.experimental.categories;
 
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -11,9 +14,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.experimental.categories.CategoryValidator;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 
 public class CategoryValidatorTest {
 
@@ -71,17 +71,17 @@ public class CategoryValidatorTest {
     }
 
     private void testAndAssertErrrorMessage(Method method, String expectedErrorMessage) throws NoSuchMethodException {
-        List<Throwable> errors = new CategoryValidator().validateAnnotatedMethod(method);
+        List<Exception> errors = new CategoryValidator().validateAnnotatedMethod(method);
 
         assertThat(errors.size(), is(1));
-        Throwable throwable = errors.get(0);
-        assertThat(throwable.getMessage(), is(expectedErrorMessage));
+        Exception exception = errors.get(0);
+        assertThat(exception.getMessage(), is(expectedErrorMessage));
     }
 
     @Test
     public void errorIsNotAddedWhenCategoryIsNotCombinedWithIllegalCombination() throws NoSuchMethodException {
         Method beforeClass = CategoryTest.class.getMethod("methodWithCategory");
-        List<Throwable> errors = new CategoryValidator().validateAnnotatedMethod(beforeClass);
+        List<Exception> errors = new CategoryValidator().validateAnnotatedMethod(beforeClass);
 
         assertThat(errors.size(), is(0));
     }

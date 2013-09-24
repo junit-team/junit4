@@ -25,9 +25,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -154,18 +154,18 @@ public class ParentRunnerTest {
         private static final String ANNOTATED_CLASS_CALLED = "annotated class called";
 
         @Override
-        public List<Throwable> validateAnnotatedClass(Class<?> type) {
-            return Arrays.asList(new Throwable(ANNOTATED_CLASS_CALLED));
+        public List<Exception> validateAnnotatedClass(Class<?> type) {
+            return asList(new Exception(ANNOTATED_CLASS_CALLED));
         }
 
         @Override
-        public List<Throwable> validateAnnotatedField(Field field) {
-            return Arrays.asList(new Throwable(ANNOTATED_FIELD_CALLED));
+        public List<Exception> validateAnnotatedField(Field field) {
+            return asList(new Exception(ANNOTATED_FIELD_CALLED));
         }
 
         @Override
-        public List<Throwable> validateAnnotatedMethod(Method method) {
-            return Arrays.asList(new Throwable(ANNOTATED_METHOD_CALLED));
+        public List<Exception> validateAnnotatedMethod(Method method) {
+            return asList(new Exception(ANNOTATED_METHOD_CALLED));
         }
     }
 
