@@ -1,4 +1,4 @@
-package org.junit.internal.runners.statements;
+package org.junit.runners.statements;
 
 import java.util.List;
 
