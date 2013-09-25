@@ -1,9 +1,11 @@
 package org.junit.validator;
 
+import org.junit.runners.model.FrameworkField;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.TestClass;
+
 import static java.util.Collections.emptyList;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -22,12 +24,12 @@ public abstract class AnnotationValidator {
     /**
      * Validates annotation on the given class.
      *
-     * @param type that is being validated
+     * @param testClass that is being validated
      * @return A list of exceptions. Default behavior is to return an empty list.
      *
      * @since 4.12
      */
-    public List<Exception> validateAnnotatedClass(Class<?> type) {
+    public List<Exception> validateAnnotatedClass(TestClass testClass) {
         return NO_VALIDATION_ERRORS;
     }
 
@@ -39,7 +41,7 @@ public abstract class AnnotationValidator {
      *
      * @since 4.12
      */
-    public List<Exception> validateAnnotatedField(Field field) {
+    public List<Exception> validateAnnotatedField(FrameworkField field) {
         return NO_VALIDATION_ERRORS;
 
     }
@@ -52,7 +54,7 @@ public abstract class AnnotationValidator {
      *
      * @since 4.12
      */
-    public List<Exception> validateAnnotatedMethod(Method method) {
+    public List<Exception> validateAnnotatedMethod(FrameworkMethod method) {
         return NO_VALIDATION_ERRORS;
     }
 }

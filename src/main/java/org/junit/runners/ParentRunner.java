@@ -138,7 +138,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             if (validateWithAnnotation != null) {
                 AnnotationValidator annotationValidator =
                         fAnnotationValidatorFactory.createAnnotationValidator(validateWithAnnotation);
-                errors.addAll(annotationValidator.validateAnnotatedClass(getTestClass().getJavaClass()));
+                errors.addAll(annotationValidator.validateAnnotatedClass(getTestClass()));
             }
         }
     }
@@ -151,7 +151,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
                 for (FrameworkMethod frameworkMethod : annotationMap.get(annotationType)) {
                     AnnotationValidator annotationValidator =
                             fAnnotationValidatorFactory.createAnnotationValidator(validateWithAnnotation);
-                    errors.addAll(annotationValidator.validateAnnotatedMethod(frameworkMethod.getMethod()));
+                    errors.addAll(annotationValidator.validateAnnotatedMethod(frameworkMethod));
                 }
             }
         }
@@ -165,7 +165,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
                 for (FrameworkField frameworkField : annotationMap.get(annotationType)) {
                     AnnotationValidator annotationValidator =
                             fAnnotationValidatorFactory.createAnnotationValidator(validateWithAnnotation);
-                    errors.addAll(annotationValidator.validateAnnotatedField(frameworkField.getField()));
+                    errors.addAll(annotationValidator.validateAnnotatedField(frameworkField));
                 }
             }
         }

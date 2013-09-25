@@ -5,7 +5,6 @@ import static java.util.Collections.unmodifiableSet;
 import static java.util.Arrays.asList;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -15,6 +14,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.runners.model.FrameworkMethod;
 import org.junit.validator.AnnotationValidator;
 
 /**
@@ -40,10 +40,10 @@ public final class CategoryValidator extends AnnotationValidator {
      * @since 4.12
      */
     @Override
-    public List<Exception> validateAnnotatedMethod(Method method) {
+    public List<Exception> validateAnnotatedMethod(FrameworkMethod method) {
         List<Exception> errors = new ArrayList<Exception>();
-        Annotation[] declaredAnnotations = method.getDeclaredAnnotations();
-        for (Annotation annotation : declaredAnnotations) {
+        Annotation[] annotations = method.getAnnotations();
+        for (Annotation annotation : annotations) {
             for (Class clazz : INCOMPATIBLE_ANNOTATIONS) {
                 if (annotation.annotationType().isAssignableFrom(clazz)) {
                     addErrorMessage(errors, clazz);

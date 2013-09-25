@@ -3,6 +3,9 @@ package org.junit.tests.running.classes;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Test;
+import org.junit.runners.model.FrameworkField;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.TestClass;
 import org.junit.validator.AnnotationValidator;
 import org.junit.validator.ValidateWith;
 import org.junit.runner.Description;
@@ -22,8 +25,6 @@ import org.junit.tests.experimental.rules.RuleFieldValidatorTest.TestWithProtect
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -154,17 +155,17 @@ public class ParentRunnerTest {
         private static final String ANNOTATED_CLASS_CALLED = "annotated class called";
 
         @Override
-        public List<Exception> validateAnnotatedClass(Class<?> type) {
+        public List<Exception> validateAnnotatedClass(TestClass testClass) {
             return asList(new Exception(ANNOTATED_CLASS_CALLED));
         }
 
         @Override
-        public List<Exception> validateAnnotatedField(Field field) {
+        public List<Exception> validateAnnotatedField(FrameworkField field) {
             return asList(new Exception(ANNOTATED_FIELD_CALLED));
         }
 
         @Override
-        public List<Exception> validateAnnotatedMethod(Method method) {
+        public List<Exception> validateAnnotatedMethod(FrameworkMethod method) {
             return asList(new Exception(ANNOTATED_METHOD_CALLED));
         }
     }
