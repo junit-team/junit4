@@ -8,8 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 4.12
  */
 public class AnnotationValidatorFactory {
-
-    private static ConcurrentHashMap<ValidateWith, AnnotationValidator> fAnnotationTypeToValidatorMap =
+    private static final ConcurrentHashMap<ValidateWith, AnnotationValidator> VALIDATORS_FOR_ANNOTATION_TYPES =
             new ConcurrentHashMap<ValidateWith, AnnotationValidator>();
 
     /**
@@ -23,7 +22,7 @@ public class AnnotationValidatorFactory {
      * @since 4.12
      */
     public AnnotationValidator createAnnotationValidator(ValidateWith validateWithAnnotation) {
-        AnnotationValidator validator = fAnnotationTypeToValidatorMap.get(validateWithAnnotation);
+        AnnotationValidator validator = VALIDATORS_FOR_ANNOTATION_TYPES.get(validateWithAnnotation);
         if (validator != null) {
             return validator;
         }
@@ -34,8 +33,8 @@ public class AnnotationValidatorFactory {
         }
         try {
             AnnotationValidator annotationValidator = clazz.newInstance();
-            fAnnotationTypeToValidatorMap.putIfAbsent(validateWithAnnotation, annotationValidator);
-            return fAnnotationTypeToValidatorMap.get(validateWithAnnotation);
+            VALIDATORS_FOR_ANNOTATION_TYPES.putIfAbsent(validateWithAnnotation, annotationValidator);
+            return VALIDATORS_FOR_ANNOTATION_TYPES.get(validateWithAnnotation);
         } catch (Exception e) {
             throw new RuntimeException("Exception received when creating AnnotationValidator class " + clazz.getName(), e);
         }

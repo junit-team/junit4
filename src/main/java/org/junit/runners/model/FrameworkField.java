@@ -27,7 +27,6 @@ public class FrameworkField extends FrameworkMember<FrameworkField> {
         return getField().getName();
     }
 
-    @Override
     public Annotation[] getAnnotations() {
         return fField.getAnnotations();
     }
