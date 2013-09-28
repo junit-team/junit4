@@ -100,6 +100,7 @@ public class SuiteTest extends TestCase {
         TestSuite suite = new TestSuite(OverrideTestCase.class);
         suite.run(fResult);
         assertEquals(1, fResult.runCount());
+        assertNotNull(fResult);
     }
 
     public void testAddTestSuite() {
