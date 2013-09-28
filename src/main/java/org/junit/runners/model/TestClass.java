@@ -184,7 +184,17 @@ public class TestClass {
         return results;
     }
 
+    /**
+     * Returns {@code true} if and only if the underlying test class
+     * is a member class.
+     *
+     * @return {@code true} if and only if this class is a member class.
+     */
+    public boolean isMemberClass() {
+        return fClass.isMemberClass();
+    }
+
     public boolean isANonStaticInnerClass() {
-        return fClass.isMemberClass() && !isStatic(fClass.getModifiers());
+        return isMemberClass() && !isStatic(fClass.getModifiers());
     }
 }

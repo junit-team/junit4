@@ -18,8 +18,8 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.EachTestNotifier;
-import org.junit.internal.runners.statements.RunAfters;
-import org.junit.internal.runners.statements.RunBefores;
+import org.junit.runners.statements.RunAfters;
+import org.junit.runners.statements.RunBefores;
 import org.junit.rules.RunRules;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -200,7 +200,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * @return a RunRules statement if any class-level {@link Rule}s are
      *         found, or the base statement
      */
-    private Statement withClassRules(Statement statement) {
+    protected Statement withClassRules(Statement statement) {
         List<TestRule> classRules = classRules();
         return classRules.isEmpty() ? statement :
                 new RunRules(statement, classRules, getDescription());
