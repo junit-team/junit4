@@ -4,7 +4,6 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
 
-import org.junit.internal.runners.ExceptionWithThread;
 import org.junit.runner.Description;
 
 /**
@@ -69,20 +68,7 @@ public class Failure implements Serializable {
     public String getTrace() {
         StringWriter stringWriter = new StringWriter();
         PrintWriter writer = new PrintWriter(stringWriter);
-        Throwable exc = getException();
-        exc.printStackTrace(writer);
-        if (exc instanceof ExceptionWithThread) {
-        	ExceptionWithThread ewt = (ExceptionWithThread) exc;
-        	if (ewt.getDescription() == null)  {
-        	    writer.println("Stack for thread " + ewt.getThread().getName() + ":");
-        	} else {
-        		writer.println(ewt.getDescription() + ":");
-        	}
-        	StackTraceElement[] threadTrace = ewt.getThreadStackTrace();
-        	for (StackTraceElement traceElement : threadTrace) {
-        		writer.println("\tat " + traceElement);
-        	}
-        }
+        getException().printStackTrace(writer);
         StringBuffer buffer = stringWriter.getBuffer();
         return buffer.toString();
     }
