@@ -172,7 +172,7 @@ public class TimeoutTest {
                 if (fStall)
                     for (; ; ) ;   
                 try {
-                    Thread.sleep (50);
+                    Thread.sleep (500);
                 } catch (InterruptedException e) {
                 }
             }
