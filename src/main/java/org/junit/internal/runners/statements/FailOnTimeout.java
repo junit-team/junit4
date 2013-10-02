@@ -31,13 +31,13 @@ public class FailOnTimeout extends Statement {
     @Override
     public void evaluate() throws Throwable {
         FutureTask<Throwable> task = new FutureTask<Throwable>(new CallableStatement());
-		fThreadGroup = new ThreadGroup ("FailOnTimeoutGroup");
+        fThreadGroup = new ThreadGroup("FailOnTimeoutGroup");
         Thread thread = new Thread(fThreadGroup, task, "Time-limited test");
         thread.setDaemon(true);
         thread.start();
         Throwable throwable = getResult(task, thread);
         if (throwable != null) {
-        	throw throwable;
+            throw throwable;
         }
     }
 
@@ -60,29 +60,42 @@ public class FailOnTimeout extends Statement {
     }
 
     private Exception createTimeoutException(Thread thread) {
+        Exception resultException;
         StackTraceElement[] stackTrace = thread.getStackTrace();
-        final Thread stuckThread = getStuckThread (thread);
-        Exception exception = new Exception(String.format(
+        final Thread stuckThread = getStuckThread(thread);
+        Exception currThreadException = new Exception(String.format(
                 "test timed out after %d %s", fTimeout, fTimeUnit.name().toLowerCase()));
         if (stuckThread != null) {
             Exception stuckThreadException = 
                 new Exception ("Appears to be stuck in thread " +
                                stuckThread.getName());
-            StackTraceElement[] threadStack;
-            try {
-                threadStack = stuckThread.getStackTrace();
-            } catch (SecurityException e) {
-                threadStack = new StackTraceElement[0];
-            }
-            stuckThreadException.setStackTrace (threadStack);
-            exception = new MultipleFailureException    
-                (Arrays.<Throwable>asList (exception, stuckThreadException));
+            stuckThreadException.setStackTrace(getStackTrace(stuckThread));
+            resultException = new MultipleFailureException    
+                (Arrays.<Throwable>asList(currThreadException, stuckThreadException));
+        } else {
+            resultException = currThreadException;
         }
         if (stackTrace != null) {
-            exception.setStackTrace(stackTrace);
+            currThreadException.setStackTrace(stackTrace);
             thread.interrupt();
         }
-        return exception;
+        return resultException;
+    }
+
+    /**
+     * Retrieves the stack trace for a given thread.
+     * @param thread The thread whose stack is to be retrieved.
+     * @return The stack trace; returns a zero-length array if the thread has 
+     * terminated or the stack cannot be retrieved for some other reason.
+     */
+    private StackTraceElement[] getStackTrace(Thread thread) {
+        StackTraceElement[] threadStack;
+        try {
+            threadStack = thread.getStackTrace();
+        } catch (SecurityException e) {
+            threadStack = new StackTraceElement[0];
+        }
+        return threadStack;
     }
 
     /**
@@ -95,42 +108,56 @@ public class FailOnTimeout extends Statement {
      * to {@code mainThread}.
      */
     private Thread getStuckThread (Thread mainThread) {
-    	if (fThreadGroup == null) return null;
-    	final int count = fThreadGroup.activeCount(); // this is just an estimate
-    	int enumSize = Math.max (count * 2, 100);
-    	int enumCount;
-    	Thread[] threads;
-		int loopCount = 0;
-    	while (true) {
-    		threads = new Thread[enumSize];
-    		enumCount = fThreadGroup.enumerate (threads);
-    		if (enumCount < enumSize) break;
+        if (fThreadGroup == null) return null;
+        Thread[] threadsInGroup = getThreadArray(fThreadGroup);
+        if (threadsInGroup == null) return null;
+        
+        // Now that we have all the threads in the test's thread group: Assume that
+        // any thread we're "stuck" in is RUNNABLE.  Look for all RUNNABLE threads. 
+        // If just one, we return that (unless it equals threadMain).  If there's more
+        // than one, pick the one that's using the most CPU time, if this feature is
+        // supported.
+        Thread stuckThread = null;
+        long maxCpuTime = 0;
+        for (Thread thread : threadsInGroup) {
+            if (thread.getState() == Thread.State.RUNNABLE) {
+                long threadCpuTime = cpuTime(thread);
+                if (stuckThread == null || threadCpuTime > maxCpuTime) {
+                    stuckThread = thread;
+                    maxCpuTime = threadCpuTime;
+                }
+            }               
+        }
+        return (stuckThread == mainThread) ? null : stuckThread;
+    }
+
+    /**
+     * Returns all active threads belonging to a thread group.  
+     * @param group The thread group.
+     * @return The active threads in the thread group.  The result should be a
+     * complete list of the active threads at some point in time.  Returns {@code null}
+     * if this cannot be determined, e.g. because new threads are being created at an
+     * extremely fast rate.
+     */
+    private Thread[] getThreadArray(ThreadGroup group) {
+        final int count = group.activeCount(); // this is just an estimate
+        int enumSize = Math.max(count * 2, 100);
+        int enumCount;
+        Thread[] threads;
+        int loopCount = 0;
+        while (true) {
+            threads = new Thread[enumSize];
+            enumCount = group.enumerate(threads);
+            if (enumCount < enumSize) break;
             // if there are too many threads to fit into the array, enumerate's result
             // is >= the array's length; therefore we can't trust that it returned all
             // the threads.  Try again.
-    		enumSize += 100;
-    		if (++loopCount >= 5) return null;
-    		// threads are proliferating too fast for us.  Bail before we get into 
-    		// trouble.
-    	} 
-    	
-    	// Now that we have all the threads in the test's thread group: Assume that
-    	// any thread we're "stuck" in is RUNNABLE.  Look for all RUNNABLE threads. 
-    	// If just one, we return that (unless it equals threadMain).  If there's more
-    	// than one, pick the one that's using the most CPU time, if this feature is
-    	// supported.
-    	Thread stuckThread = null;
-    	long maxCpuTime = 0;
-    	for (int i = 0; i < enumCount; i++) {
-    		if (threads[i].getState() == Thread.State.RUNNABLE) {
-                long threadCpuTime = cpuTime (threads [i]);
-                if (stuckThread == null || threadCpuTime > maxCpuTime) {
-                    stuckThread = threads[i];
-                    maxCpuTime = threadCpuTime;
-                }
-    		}   			
-    	}
-    	return (stuckThread == mainThread) ? null : stuckThread;
+            enumSize += 100;
+            if (++loopCount >= 5) return null;
+            // threads are proliferating too fast for us.  Bail before we get into 
+            // trouble.
+        }
+        return Arrays.copyOf(threads, enumCount);
     }
 
     /**
@@ -139,7 +166,7 @@ public class FailOnTimeout extends Statement {
      * @return The CPU time used by {@code thr}, or 0 if it cannot be determined.
      */
     private long cpuTime (Thread thr) {
-		ThreadMXBean mxBean = ManagementFactory.getThreadMXBean();
+        ThreadMXBean mxBean = ManagementFactory.getThreadMXBean();
         if (mxBean.isThreadCpuTimeSupported()) {
             try {
                 return mxBean.getThreadCpuTime(thr.getId());
@@ -149,7 +176,7 @@ public class FailOnTimeout extends Statement {
         return 0;
     }
 
-	private class CallableStatement implements Callable<Throwable> {
+    private class CallableStatement implements Callable<Throwable> {
         public Throwable call() throws Exception {
             try {
                 fOriginalStatement.evaluate();

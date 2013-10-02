@@ -1,6 +1,7 @@
 package org.junit.tests.running.methods;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -141,6 +142,13 @@ public class TimeoutTest {
         return totalTime;
     }
 
+    private String stackForException (Throwable exception) {
+        Writer buffer = new StringWriter();
+        PrintWriter writer = new PrintWriter(buffer);
+        exception.printStackTrace(writer);
+        return buffer.toString();
+    }
+    
     @Test
     public void stalledThreadAppearsInStackTrace() throws Exception {
         JUnitCore core = new JUnitCore();
@@ -148,10 +156,80 @@ public class TimeoutTest {
         assertEquals(1, result.getRunCount());
         assertEquals(1, result.getFailureCount());
         Throwable exception = result.getFailures().get(0).getException();
-        Writer buffer = new StringWriter();
-        PrintWriter writer = new PrintWriter(buffer);
-        exception.printStackTrace(writer);
-        assertThat(buffer.toString(), containsString("infiniteLoop")); // Make sure we have the stalled frame on the stack somewhere
+        assertThat(stackForException(exception), containsString("infiniteLoop")); // Make sure we have the stalled frame on the stack somewhere
+    }
+
+    static public class InfiniteLoopMultithreaded {
+        
+        static private class threadTest implements Runnable {
+            private boolean fStall;
+
+            public threadTest (boolean stall) {
+                fStall = stall;
+            }
+
+            public void run() {
+                if (fStall)
+                    for (; ; ) ;   
+                try {
+                    Thread.sleep (50);
+                } catch (InterruptedException e) {
+                }
+            }
+        }
+        
+        public void failure(boolean mainThreadStalls) throws Exception {
+            Thread t1 = new Thread (new threadTest (false), "timeout-thr1");
+            Thread t2 = new Thread (new threadTest (!mainThreadStalls), "timeout-thr2");
+            Thread t3 = new Thread (new threadTest (false), "timeout-thr3");
+            t1.start();
+            t2.start();
+            t3.start();
+            if (mainThreadStalls)
+                for (; ; ) ;
+            t1.join();
+            t2.join();
+            t3.join();
+        }
+   }
+    
+    static public class InfiniteLoopWithStuckThreadTest {
+        @Test(timeout=100)
+        public void failure() throws Exception {
+            (new InfiniteLoopMultithreaded()).failure(false);
+        }
+    }
+    
+    static public class InfiniteLoopStuckInMainThreadTest {
+        @Test(timeout=100)
+        public void failure() throws Exception {
+            (new InfiniteLoopMultithreaded()).failure(true);
+        }
+    }
+
+    @Test
+    public void timeoutFailureMultithreaded() throws Exception {
+        JUnitCore core = new JUnitCore();
+        Result result = core.run(InfiniteLoopWithStuckThreadTest.class);
+        assertEquals(1, result.getRunCount());
+        assertEquals(2, result.getFailureCount());
+        Throwable exception[] = new Throwable[2];
+        for (int i = 0; i < 2; i++)
+            exception[i] = result.getFailures().get(i).getException();
+        assertThat(exception[0].getMessage(), containsString("test timed out after 100 milliseconds"));
+        assertThat(stackForException(exception[0]), containsString("Thread.join"));
+        assertThat(exception[1].getMessage(), containsString("Appears to be stuck in thread timeout-thr2"));
+    }
+
+    @Test
+    public void timeoutFailureMultithreadedStuckInMain() throws Exception {
+        JUnitCore core = new JUnitCore();
+        Result result = core.run(InfiniteLoopStuckInMainThreadTest.class);
+        assertEquals(1, result.getRunCount());
+        assertEquals(1, result.getFailureCount());
+        Throwable exception = result.getFailures().get(0).getException();
+        assertThat(exception.getMessage(), containsString("test timed out after 100 milliseconds"));
+        assertThat(exception.getMessage(), not(containsString("Appears to be stuck")));
     }
 
     @Test
