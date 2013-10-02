@@ -29,8 +29,7 @@ import java.util.regex.Pattern;
  */
 public class Description implements Serializable {
     private static final long serialVersionUID = 1L;
-
-    private static final Pattern METHOD_AND_CLASS_NAME_PATTERN = Pattern
+    static final Pattern METHOD_AND_CLASS_NAME_PATTERN = Pattern
             .compile("(.*)\\((.*)\\)");
 
     /**
@@ -40,7 +39,9 @@ public class Description implements Serializable {
      * @param name the name of the <code>Description</code>
      * @param annotations meta-data about the test, for downstream interpreters
      * @return a <code>Description</code> named <code>name</code>
+     * @deprecated Please use the {@link DescriptionBuilder} class to create {@code Description} instances.
      */
+    @Deprecated
     public static Description createSuiteDescription(String name, Annotation... annotations) {
         return new Description(null, name, annotations);
     }
@@ -53,7 +54,9 @@ public class Description implements Serializable {
      * @param uniqueId an arbitrary object used to define uniqueness (in {@link #equals(Object)}
      * @param annotations meta-data about the test, for downstream interpreters
      * @return a <code>Description</code> named <code>name</code>
+     * @deprecated Please use the {@link DescriptionBuilder} class to create {@code Description} instances.
      */
+    @Deprecated
     public static Description createSuiteDescription(String name, Serializable uniqueId, Annotation... annotations) {
         return new Description(null, name, uniqueId, annotations);
     }
@@ -68,7 +71,9 @@ public class Description implements Serializable {
      * @param name the name of the test (a method name for test annotated with {@link org.junit.Test})
      * @param annotations meta-data about the test, for downstream interpreters
      * @return a <code>Description</code> named <code>name</code>
+     * @deprecated Please use the {@link DescriptionBuilder} class to create {@code Description} instances.
      */
+    @Deprecated
     public static Description createTestDescription(String className, String name, Annotation... annotations) {
         return new Description(null, formatDisplayName(name, className), annotations);
     }
@@ -81,7 +86,9 @@ public class Description implements Serializable {
      * @param name the name of the test (a method name for test annotated with {@link org.junit.Test})
      * @param annotations meta-data about the test, for downstream interpreters
      * @return a <code>Description</code> named <code>name</code>
+     * @deprecated Please use the {@link DescriptionBuilder} class to create {@code Description} instances.
      */
+    @Deprecated
     public static Description createTestDescription(Class<?> clazz, String name, Annotation... annotations) {
         return new Description(clazz, formatDisplayName(name, clazz.getName()), annotations);
     }
@@ -94,7 +101,9 @@ public class Description implements Serializable {
      * @param clazz the class of the test
      * @param name the name of the test (a method name for test annotated with {@link org.junit.Test})
      * @return a <code>Description</code> named <code>name</code>
+     * @deprecated Please use the {@link DescriptionBuilder} class to create {@code Description} instances.
      */
+    @Deprecated
     public static Description createTestDescription(Class<?> clazz, String name) {
         return new Description(clazz, formatDisplayName(name, clazz.getName()));
     }
@@ -103,14 +112,18 @@ public class Description implements Serializable {
      * Create a <code>Description</code> of a single test named <code>name</code> in the class <code>clazz</code>.
      * Generally, this will be a leaf <code>Description</code>.
      *
+     * @param className the class name of the test
      * @param name the name of the test (a method name for test annotated with {@link org.junit.Test})
+     * @param uniqueId an arbitrary object used to define uniqueness (in {@link #equals(Object)}
      * @return a <code>Description</code> named <code>name</code>
+     * @deprecated Please use the {@link DescriptionBuilder} class to create {@code Description} instances.
      */
+    @Deprecated
     public static Description createTestDescription(String className, String name, Serializable uniqueId) {
         return new Description(null, formatDisplayName(name, className), uniqueId);
     }
 
-    private static String formatDisplayName(String name, String className) {
+    protected static String formatDisplayName(String name, String className) {
         return String.format("%s(%s)", name, className);
     }
 
@@ -119,7 +132,9 @@ public class Description implements Serializable {
      *
      * @param testClass A {@link Class} containing tests
      * @return a <code>Description</code> of <code>testClass</code>
+     * @deprecated Please use the {@link DescriptionBuilder} class to create {@code Description} instances.
      */
+    @Deprecated
     public static Description createSuiteDescription(Class<?> testClass) {
         return new Description(testClass, testClass.getName(), testClass.getAnnotations());
     }
@@ -136,17 +151,17 @@ public class Description implements Serializable {
      */
     public static final Description TEST_MECHANISM = new Description(null, "Test mechanism");
 
-    private final Collection<Description> fChildren = new ConcurrentLinkedQueue<Description>();
-    private final String fDisplayName;
-    private final Serializable fUniqueId;
-    private final Annotation[] fAnnotations;
-    private volatile /* write-once */ Class<?> fTestClass;
+    final Collection<Description> fChildren = new ConcurrentLinkedQueue<Description>();
+    final String fDisplayName;
+    final Serializable fUniqueId;
+    final Annotation[] fAnnotations;
+    volatile /* write-once */ Class<?> fTestClass;
 
-    private Description(Class<?> clazz, String displayName, Annotation... annotations) {
+    Description(Class<?> clazz, String displayName, Annotation... annotations) {
         this(clazz, displayName, displayName, annotations);
     }
 
-    private Description(Class<?> clazz, String displayName, Serializable uniqueId, Annotation... annotations) {
+    Description(Class<?> clazz, String displayName, Serializable uniqueId, Annotation... annotations) {
         if ((displayName == null) || (displayName.length() == 0)) {
             throw new IllegalArgumentException(
                     "The display name must not be empty.");
@@ -172,6 +187,10 @@ public class Description implements Serializable {
      * Add <code>Description</code> as a child of the receiver.
      *
      * @param description the soon-to-be child.
+     * @deprecated this method only works for the {@code Description} class itself and should no longer be used. Instead
+     * use the {@link DescriptionBuilder} to generate immutable {@code Description} instances that are passed their
+     * children during initialization.
+     * @see DescriptionBuilder#createSuiteDescription(java.util.List)
      */
     public void addChild(Description description) {
         fChildren.add(description);
@@ -242,7 +261,10 @@ public class Description implements Serializable {
     /**
      * @return a copy of this description, with no children (on the assumption that some of the
      *         children will be added back)
+     * @deprecated with this introduction of immutable {@code Description} instances, this method should no longer be
+     *         used, as there is no need to copy immutable instances. One can use the instance that is referenced to.
      */
+    @Deprecated
     public Description childlessCopy() {
         return new Description(fTestClass, fDisplayName, fAnnotations);
     }
@@ -303,8 +325,7 @@ public class Description implements Serializable {
         return methodAndClassNamePatternGroupOrDefault(1, null);
     }
 
-    private String methodAndClassNamePatternGroupOrDefault(int group,
-            String defaultString) {
+    private String methodAndClassNamePatternGroupOrDefault(int group, String defaultString) {
         Matcher matcher = METHOD_AND_CLASS_NAME_PATTERN.matcher(toString());
         return matcher.matches() ? matcher.group(group) : defaultString;
     }
