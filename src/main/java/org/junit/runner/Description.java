@@ -29,31 +29,7 @@ import java.util.regex.Pattern;
  */
 public class Description implements Serializable {
     private static final long serialVersionUID = 1L;
-    private static final Pattern METHOD_AND_CLASS_NAME_PATTERN = Pattern
-            .compile("(.*)\\((.*)\\)");
-
-    /**
-     * Create a <code>Description</code> named after <code>testClass</code>.
-     * Generally, you will add children to this <code>Description</code>.
-     *
-     * @param testClass A {@link Class} containing tests
-     * @return a <code>Description</code> of <code>testClass</code>
-     */
-    public static Description createSuiteDescription(Class<?> testClass) {
-        return new Description(testClass, testClass.getName(), testClass.getAnnotations());
-    }
-
-    /**
-     * Create a <code>Description</code> for <code>testClass</code> named <code>name</code>.
-     * Generally, you will add children to this <code>Description</code>.
-     *
-     * @param testClass A {@link Class} containing tests
-     * @param className an alternative class name for the <code>Description</code>
-     * @return a <code>Description</code> of <code>testClass</code> named <code>name</code>
-     */
-    public static Description createSuiteDescription(Class<?> testClass, String className) {
-        return new Description(testClass, className, testClass.getCanonicalName(), testClass.getAnnotations());
-    }
+    private static final Pattern METHOD_AND_CLASS_NAME_PATTERN = Pattern.compile("(.*)\\((.*)\\)");
 
     /**
      * Create a <code>Description</code> named <code>name</code>.
@@ -81,43 +57,15 @@ public class Description implements Serializable {
     }
 
     /**
-     * Create a <code>Description</code> of a single test named <code>name</code> in the class <code>clazz</code>.
-     * Generally, this will be a leaf <code>Description</code>.
-     * (This remains for binary compatibility with clients of JUnit 4.3)
+     * Create a <code>Description</code> for <code>testClass</code> named <code>name</code>.
+     * Generally, you will add children to this <code>Description</code>.
      *
-     * @param clazz the class of the test
-     * @param name the name of the test (a method name for test annotated with {@link org.junit.Test})
-     * @return a <code>Description</code> named <code>name</code>
-     */
-    public static Description createTestDescription(Class<?> clazz, String name) {
-        return new Description(clazz, formatDisplayName(name, clazz.getName()));
-    }
-
-    /**
-     * Create a <code>Description</code> of a single test named <code>name</code> in the class <code>clazz</code>.
-     * Generally, this will be a leaf <code>Description</code>.
-     * (This remains for binary compatibility with clients of JUnit 4.3)
-     *
-     * @param clazz the class of the test
+     * @param testClass A {@link Class} containing tests
      * @param className an alternative class name for the <code>Description</code>
-     * @param name the name of the test (a method name for test annotated with {@link org.junit.Test})
-     * @return a <code>Description</code> named <code>name</code>
+     * @return a <code>Description</code> of <code>testClass</code> named <code>name</code>
      */
-    public static Description createTestDescription(Class<?> clazz, String className, String name) {
-        return new Description(clazz, formatDisplayName(name, className), formatDisplayName(name, clazz.getName()));
-    }
-
-    /**
-     * Create a <code>Description</code> of a single test named <code>name</code> in the class <code>clazz</code>.
-     * Generally, this will be a leaf <code>Description</code>.
-     *
-     * @param clazz the class of the test
-     * @param name the name of the test (a method name for test annotated with {@link org.junit.Test})
-     * @param annotations meta-data about the test, for downstream interpreters
-     * @return a <code>Description</code> named <code>name</code>
-     */
-    public static Description createTestDescription(Class<?> clazz, String name, Annotation... annotations) {
-        return new Description(clazz, formatDisplayName(name, clazz.getName()), annotations);
+    public static Description createSuiteDescription(Class<?> testClass, String className) {
+        return new Description(testClass, className, testClass.getCanonicalName(), testClass.getAnnotations());
     }
 
     /**
@@ -139,6 +87,32 @@ public class Description implements Serializable {
      * Create a <code>Description</code> of a single test named <code>name</code> in the class <code>clazz</code>.
      * Generally, this will be a leaf <code>Description</code>.
      *
+     * @param clazz the class of the test
+     * @param name the name of the test (a method name for test annotated with {@link org.junit.Test})
+     * @param annotations meta-data about the test, for downstream interpreters
+     * @return a <code>Description</code> named <code>name</code>
+     */
+    public static Description createTestDescription(Class<?> clazz, String name, Annotation... annotations) {
+        return new Description(clazz, formatDisplayName(name, clazz.getName()), annotations);
+    }
+
+    /**
+     * Create a <code>Description</code> of a single test named <code>name</code> in the class <code>clazz</code>.
+     * Generally, this will be a leaf <code>Description</code>.
+     * (This remains for binary compatibility with clients of JUnit 4.3)
+     *
+     * @param clazz the class of the test
+     * @param name the name of the test (a method name for test annotated with {@link org.junit.Test})
+     * @return a <code>Description</code> named <code>name</code>
+     */
+    public static Description createTestDescription(Class<?> clazz, String name) {
+        return new Description(clazz, formatDisplayName(name, clazz.getName()));
+    }
+
+    /**
+     * Create a <code>Description</code> of a single test named <code>name</code> in the class <code>clazz</code>.
+     * Generally, this will be a leaf <code>Description</code>.
+     *
      * @param className the class name of the test
      * @param name the name of the test (a method name for test annotated with {@link org.junit.Test})
      * @param uniqueId an arbitrary object used to define uniqueness (in {@link #equals(Object)}
@@ -148,8 +122,32 @@ public class Description implements Serializable {
         return new Description(null, formatDisplayName(name, className), uniqueId);
     }
 
+    /**
+     * Create a <code>Description</code> of a single test named <code>name</code> in the class <code>clazz</code>.
+     * Generally, this will be a leaf <code>Description</code>.
+     * (This remains for binary compatibility with clients of JUnit 4.3)
+     *
+     * @param clazz the class of the test
+     * @param className an alternative class name for the <code>Description</code>
+     * @param name the name of the test (a method name for test annotated with {@link org.junit.Test})
+     * @return a <code>Description</code> named <code>name</code>
+     */
+    public static Description createTestDescription(Class<?> clazz, String className, String name) {
+        return new Description(clazz, formatDisplayName(name, className), formatDisplayName(name, clazz.getName()));
+    }
+
     private static String formatDisplayName(String name, String className) {
         return String.format("%s(%s)", name, className);
+    }
+
+    /**
+     * Create a <code>Description</code> named after <code>testClass</code>
+     *
+     * @param testClass A {@link Class} containing tests
+     * @return a <code>Description</code> of <code>testClass</code>
+     */
+    public static Description createSuiteDescription(Class<?> testClass) {
+        return new Description(testClass, testClass.getName(), testClass.getAnnotations());
     }
 
     /**
@@ -331,8 +329,7 @@ public class Description implements Serializable {
         return methodAndClassNamePatternGroupOrDefault(1, null);
     }
 
-    private String methodAndClassNamePatternGroupOrDefault(int group,
-            String defaultString) {
+    private String methodAndClassNamePatternGroupOrDefault(int group, String defaultString) {
         Matcher matcher = METHOD_AND_CLASS_NAME_PATTERN.matcher(toString());
         return matcher.matches() ? matcher.group(group) : defaultString;
     }
