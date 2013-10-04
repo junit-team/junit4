@@ -60,26 +60,24 @@ public class FailOnTimeout extends Statement {
     }
 
     private Exception createTimeoutException(Thread thread) {
-        Exception resultException;
         StackTraceElement[] stackTrace = thread.getStackTrace();
         final Thread stuckThread = getStuckThread(thread);
         Exception currThreadException = new Exception(String.format(
                 "test timed out after %d %s", fTimeout, fTimeUnit.name().toLowerCase()));
+        if (stackTrace != null) {
+            currThreadException.setStackTrace(stackTrace);
+            thread.interrupt();
+        }
         if (stuckThread != null) {
             Exception stuckThreadException = 
                 new Exception ("Appears to be stuck in thread " +
                                stuckThread.getName());
             stuckThreadException.setStackTrace(getStackTrace(stuckThread));
-            resultException = new MultipleFailureException    
+            return new MultipleFailureException    
                 (Arrays.<Throwable>asList(currThreadException, stuckThreadException));
         } else {
-            resultException = currThreadException;
+            return currThreadException;
         }
-        if (stackTrace != null) {
-            currThreadException.setStackTrace(stackTrace);
-            thread.interrupt();
-        }
-        return resultException;
     }
 
     /**
@@ -89,13 +87,11 @@ public class FailOnTimeout extends Statement {
      * terminated or the stack cannot be retrieved for some other reason.
      */
     private StackTraceElement[] getStackTrace(Thread thread) {
-        StackTraceElement[] threadStack;
         try {
-            threadStack = thread.getStackTrace();
+            return thread.getStackTrace();
         } catch (SecurityException e) {
-            threadStack = new StackTraceElement[0];
+            return new StackTraceElement[0];
         }
-        return threadStack;
     }
 
     /**
@@ -108,9 +104,11 @@ public class FailOnTimeout extends Statement {
      * to {@code mainThread}.
      */
     private Thread getStuckThread (Thread mainThread) {
-        if (fThreadGroup == null) return null;
+        if (fThreadGroup == null) 
+            return null;
         Thread[] threadsInGroup = getThreadArray(fThreadGroup);
-        if (threadsInGroup == null) return null;
+        if (threadsInGroup == null) 
+            return null;
         
         // Now that we have all the threads in the test's thread group: Assume that
         // any thread we're "stuck" in is RUNNABLE.  Look for all RUNNABLE threads. 
@@ -153,7 +151,8 @@ public class FailOnTimeout extends Statement {
             // is >= the array's length; therefore we can't trust that it returned all
             // the threads.  Try again.
             enumSize += 100;
-            if (++loopCount >= 5) return null;
+            if (++loopCount >= 5) 
+                return null;
             // threads are proliferating too fast for us.  Bail before we get into 
             // trouble.
         }

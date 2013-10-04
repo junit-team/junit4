@@ -22,7 +22,7 @@ import org.junit.runner.Result;
 
 public class TimeoutTest {
 
-    static public class FailureWithTimeoutTest {
+    public static class FailureWithTimeoutTest {
         @Test(timeout = 1000)
         public void failure() {
             fail();
@@ -38,7 +38,7 @@ public class TimeoutTest {
         assertEquals(AssertionError.class, result.getFailures().get(0).getException().getClass());
     }
 
-    static public class FailureWithTimeoutRunTimeExceptionTest {
+    public static class FailureWithTimeoutRunTimeExceptionTest {
         @Test(timeout = 1000)
         public void failure() {
             throw new NullPointerException();
@@ -54,7 +54,7 @@ public class TimeoutTest {
         assertEquals(NullPointerException.class, result.getFailures().get(0).getException().getClass());
     }
 
-    static public class SuccessWithTimeoutTest {
+    public static class SuccessWithTimeoutTest {
         @Test(timeout = 1000)
         public void success() {
         }
@@ -68,7 +68,7 @@ public class TimeoutTest {
         assertEquals(0, result.getFailureCount());
     }
 
-    static public class TimeoutFailureTest {
+    public static class TimeoutFailureTest {
         @Test(timeout = 100)
         public void success() throws InterruptedException {
             Thread.sleep(40000);
@@ -85,7 +85,7 @@ public class TimeoutTest {
         assertEquals(InterruptedException.class, result.getFailures().get(0).getException().getClass());
     }
 
-    static public class InfiniteLoopTest {
+    public static class InfiniteLoopTest {
         @Test(timeout = 100)
         public void failure() {
             infiniteLoop();
@@ -111,7 +111,7 @@ public class TimeoutTest {
         assertTrue(exception.getMessage().contains("test timed out after 100 milliseconds"));
     }
 
-    static public class ImpatientLoopTest {
+    public static class ImpatientLoopTest {
         @Test(timeout = 1)
         public void failure() {
             infiniteLoop();
@@ -142,7 +142,7 @@ public class TimeoutTest {
         return totalTime;
     }
 
-    private String stackForException (Throwable exception) {
+    private String stackForException(Throwable exception) {
         Writer buffer = new StringWriter();
         PrintWriter writer = new PrintWriter(buffer);
         exception.printStackTrace(writer);
@@ -159,12 +159,12 @@ public class TimeoutTest {
         assertThat(stackForException(exception), containsString("infiniteLoop")); // Make sure we have the stalled frame on the stack somewhere
     }
 
-    static public class InfiniteLoopMultithreaded {
+    public static class InfiniteLoopMultithreaded {
         
-        static private class threadTest implements Runnable {
+        private static class ThreadTest implements Runnable {
             private boolean fStall;
 
-            public threadTest (boolean stall) {
+            public ThreadTest(boolean stall) {
                 fStall = stall;
             }
 
@@ -172,16 +172,16 @@ public class TimeoutTest {
                 if (fStall)
                     for (; ; ) ;   
                 try {
-                    Thread.sleep (500);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                 }
             }
         }
         
         public void failure(boolean mainThreadStalls) throws Exception {
-            Thread t1 = new Thread (new threadTest (false), "timeout-thr1");
-            Thread t2 = new Thread (new threadTest (!mainThreadStalls), "timeout-thr2");
-            Thread t3 = new Thread (new threadTest (false), "timeout-thr3");
+            Thread t1 = new Thread(new ThreadTest(false), "timeout-thr1");
+            Thread t2 = new Thread(new ThreadTest(!mainThreadStalls), "timeout-thr2");
+            Thread t3 = new Thread(new ThreadTest(false), "timeout-thr3");
             t1.start();
             t2.start();
             t3.start();
@@ -193,14 +193,14 @@ public class TimeoutTest {
         }
    }
     
-    static public class InfiniteLoopWithStuckThreadTest {
+    public static class InfiniteLoopWithStuckThreadTest {
         @Test(timeout=100)
         public void failure() throws Exception {
             (new InfiniteLoopMultithreaded()).failure(false);
         }
     }
     
-    static public class InfiniteLoopStuckInMainThreadTest {
+    public static class InfiniteLoopStuckInMainThreadTest {
         @Test(timeout=100)
         public void failure() throws Exception {
             (new InfiniteLoopMultithreaded()).failure(true);
