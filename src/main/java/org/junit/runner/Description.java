@@ -61,11 +61,11 @@ public class Description implements Serializable {
      * Generally, you will add children to this <code>Description</code>.
      *
      * @param testClass A {@link Class} containing tests
-     * @param className an alternative class name for the <code>Description</code>
+     * @param displayName a display name for the <code>Description</code>
      * @return a <code>Description</code> of <code>testClass</code> named <code>name</code>
      */
-    public static Description createSuiteDescription(Class<?> testClass, String className) {
-        return new Description(testClass, className, testClass.getCanonicalName(), testClass.getAnnotations());
+    public static Description createSuiteDescription(Class<?> testClass, String displayName) {
+        return new Description(testClass, displayName, testClass.getCanonicalName(), testClass.getAnnotations());
     }
 
     /**
