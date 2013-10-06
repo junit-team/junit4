@@ -120,6 +120,8 @@ public class TestClass {
     /**
      * Gets a {@code Map} between annotations and methods that have
      * the annotation in this class or its superclasses.
+     *
+     * @since 4.12
      */
     public Map<Class<? extends Annotation>, List<FrameworkMethod>> getAnnotationToMethods() {
         return fMethodsForAnnotations;
@@ -128,6 +130,8 @@ public class TestClass {
     /**
      * Gets a {@code Map} between annotations and fields that have
      * the annotation in this class or its superclasses.
+     *
+     * @since 4.12
      */
     public Map<Class<? extends Annotation>, List<FrameworkField>> getAnnotationToFields() {
         return fFieldsForAnnotations;

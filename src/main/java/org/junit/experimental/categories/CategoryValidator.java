@@ -32,6 +32,8 @@ public final class CategoryValidator extends AnnotationValidator {
      *
      * @param method the method that is being validated
      * @return A list of errors detected
+     *
+     * @since 4.12
      */
     @Override
     public List<Throwable> validateAnnotatedMethod(Method method) {

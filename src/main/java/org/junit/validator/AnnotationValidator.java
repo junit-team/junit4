@@ -11,6 +11,8 @@ import java.util.List;
  *
  * Instances of this class are shared by multiple test runners, so they should
  * be immutable and thread-safe.
+ *
+ * @since 4.12
  */
 public abstract class AnnotationValidator {
     /**
@@ -18,6 +20,8 @@ public abstract class AnnotationValidator {
      *
      * @param type that is being validated
      * @return A list of throwables. Default behavior is to return an empty list.
+     *
+     * @since 4.12
      */
     public List<Throwable> validateAnnotatedClass(Class<?> type) {
         return Collections.emptyList();
@@ -28,6 +32,8 @@ public abstract class AnnotationValidator {
      *
      * @param field that is being validated
      * @return A list of throwables. Default behavior is to return an empty list.
+     *
+     * @since 4.12
      */
     public List<Throwable> validateAnnotatedField(Field field) {
         return Collections.emptyList();
@@ -39,6 +45,8 @@ public abstract class AnnotationValidator {
      *
      * @param method that is being validated
      * @return A list of throwables. Default behavior is to return an empty list.
+     *
+     * @since 4.12
      */
     public List<Throwable> validateAnnotatedMethod(Method method) {
         return Collections.emptyList();

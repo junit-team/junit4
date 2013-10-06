@@ -4,6 +4,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Creates instances of Annotation Validators.
+ *
+ * @since 4.12
  */
 public class AnnotationValidatorFactory {
 
@@ -17,6 +19,8 @@ public class AnnotationValidatorFactory {
      *
      * @param validateWithAnnotation
      * @return An instance of the AnnotationValidator.
+     *
+     * @since 4.12
      */
     public AnnotationValidator createAnnotationValidator(ValidateWith validateWithAnnotation) {
         AnnotationValidator validator = fAnnotationTypeToValidatorMap.get(validateWithAnnotation);
