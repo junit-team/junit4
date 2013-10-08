@@ -195,7 +195,9 @@ public class Assert {
      * @param actual the value to check against <code>unexpected</code>
      */
     static public void assertNotEquals(String message, long unexpected, long actual) {
-        assertNotEquals(message, (Long) unexpected, (Long) actual);
+        if (unexpected == actual) {
+            failEquals(message, actual);
+        }
     }
 
     /**
@@ -227,7 +229,7 @@ public class Assert {
     static public void assertNotEquals(String message, double unexpected,
             double actual, double delta) {
         if (!doubleIsDifferent(unexpected, actual, delta)) {
-            failEquals(message, new Double(actual));
+            failEquals(message, actual);
         }
     }
 
@@ -536,7 +538,7 @@ public class Assert {
     static public void assertEquals(String message, double expected,
             double actual, double delta) {
         if (doubleIsDifferent(expected, actual, delta)) {
-            failNotEquals(message, new Double(expected), new Double(actual));
+            failNotEquals(message, expected, actual);
         }
     }
 
@@ -558,7 +560,7 @@ public class Assert {
     static public void assertEquals(String message, float expected,
             float actual, float delta) {
         if (floatIsDifferent(expected, actual, delta)) {
-            failNotEquals(message, new Float(expected), new Float(actual));
+            failNotEquals(message, expected, actual);
         }
     }
 
@@ -580,7 +582,7 @@ public class Assert {
     static public void assertNotEquals(String message, float unexpected,
             float actual, float delta) {
         if (!floatIsDifferent(unexpected, actual, delta)) {
-            failEquals(message, new Float(actual));
+            failEquals(message, actual);
         }
     }
 
@@ -627,7 +629,9 @@ public class Assert {
      * @param actual long actual value
      */
     static public void assertEquals(String message, long expected, long actual) {
-        assertEquals(message, (Long) expected, (Long) actual);
+        if (expected != actual) {
+            failNotEquals(message, expected, actual);
+        }
     }
 
     /**
