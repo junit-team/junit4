@@ -81,7 +81,7 @@ public class Assert {
      * okay)
      * @see AssertionError
      */
-    static public void fail(String message) {
+    static public AssertionError fail(String message) {
         if (message == null) {
             throw new AssertionError();
         }
@@ -91,8 +91,8 @@ public class Assert {
     /**
      * Fails a test with no message.
      */
-    static public void fail() {
-        fail(null);
+    static public AssertionError fail() {
+        return fail(null);
     }
 
     /**
@@ -295,7 +295,7 @@ public class Assert {
     public static void assertArrayEquals(Object[] expecteds, Object[] actuals) {
         assertArrayEquals(null, expecteds, actuals);
     }
-    
+
     /**
      * Asserts that two boolean arrays are equal. If they are not, an
      * {@link AssertionError} is thrown with the given message. If
@@ -310,8 +310,8 @@ public class Assert {
     public static void assertArrayEquals(String message, boolean[] expecteds,
             boolean[] actuals) throws ArrayComparisonFailure {
         internalArrayEquals(message, expecteds, actuals);
-    }    
-    
+    }
+
     /**
      * Asserts that two boolean arrays are equal. If they are not, an
      * {@link AssertionError} is thrown. If <code>expected</code> and
