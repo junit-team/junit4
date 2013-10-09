@@ -132,13 +132,10 @@ public class JUnit38ClassRunnerTest {
         }
     }
 
-    public static class RejectAllFilter extends Filter {
+    public static class RejectAllTestsFilter extends Filter {
         @Override
         public boolean shouldRun(Description description) {
-            if (description.isTest()) {
-                return false;
-            }
-            return true;
+            return description.isSuite();
         }
 
         @Override
@@ -153,6 +150,6 @@ public class JUnit38ClassRunnerTest {
     @Test(expected = NoTestsRemainException.class) 
     public void filterNoTestsRemain() throws NoTestsRemainException {
         JUnit38ClassRunner runner = new JUnit38ClassRunner(OneTest.class);
-        runner.filter(new RejectAllFilter());  
+        runner.filter(new RejectAllTestsFilter());  
     }
 }
