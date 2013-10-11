@@ -16,6 +16,7 @@ public class FailOnTimeout extends Statement {
     private final Statement fOriginalStatement;
     private final TimeUnit fTimeUnit;
     private final long fTimeout;
+    private final boolean fLookForStuckThread;
     private ThreadGroup fThreadGroup = null;
 
     public FailOnTimeout(Statement originalStatement, long millis) {
@@ -23,9 +24,14 @@ public class FailOnTimeout extends Statement {
     }
 
     public FailOnTimeout(Statement originalStatement, long timeout, TimeUnit unit) {
+        this(originalStatement, timeout, unit, false);
+    }
+
+    public FailOnTimeout(Statement originalStatement, long timeout, TimeUnit unit, boolean lookForStuckThread) {
         fOriginalStatement = originalStatement;
         fTimeout = timeout;
         fTimeUnit = unit;
+        fLookForStuckThread = lookForStuckThread;
     }
 
     @Override
@@ -61,7 +67,7 @@ public class FailOnTimeout extends Statement {
 
     private Exception createTimeoutException(Thread thread) {
         StackTraceElement[] stackTrace = thread.getStackTrace();
-        final Thread stuckThread = getStuckThread(thread);
+        final Thread stuckThread = fLookForStuckThread ? getStuckThread(thread) : null;
         Exception currThreadException = new Exception(String.format(
                 "test timed out after %d %s", fTimeout, fTimeUnit.name().toLowerCase()));
         if (stackTrace != null) {

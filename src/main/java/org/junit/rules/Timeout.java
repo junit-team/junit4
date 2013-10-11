@@ -36,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 public class Timeout implements TestRule {
     private final long fTimeout;
     private final TimeUnit fTimeUnit;
+    private boolean fLookForStuckThread;
 
     /**
      * Create a {@code Timeout} instance with the timeout specified
@@ -66,6 +67,7 @@ public class Timeout implements TestRule {
     public Timeout(long timeout, TimeUnit unit) {
         fTimeout = timeout;
         fTimeUnit = unit;
+        fLookForStuckThread = false;
     }
 
     /**
@@ -84,8 +86,12 @@ public class Timeout implements TestRule {
         return new Timeout(seconds, TimeUnit.SECONDS);
     }
 
+    public Timeout lookForStuckThread(boolean enable) {
+        fLookForStuckThread = enable;
+        return this;
+    }
 
     public Statement apply(Statement base, Description description) {
-        return new FailOnTimeout(base, fTimeout, fTimeUnit);
+        return new FailOnTimeout(base, fTimeout, fTimeUnit, fLookForStuckThread);
     }
 }

@@ -11,12 +11,16 @@ import static org.junit.Assert.fail;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.concurrent.TimeUnit;
 
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.TestResult;
 import org.junit.After;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
+import org.junit.rules.Timeout;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 
@@ -194,14 +198,20 @@ public class TimeoutTest {
    }
     
     public static class InfiniteLoopWithStuckThreadTest {
-        @Test(timeout=100)
+        @Rule
+        public TestRule globalTimeout = new Timeout(100, TimeUnit.MILLISECONDS).lookForStuckThread(true);
+
+        @Test
         public void failure() throws Exception {
             (new InfiniteLoopMultithreaded()).failure(false);
         }
     }
     
     public static class InfiniteLoopStuckInMainThreadTest {
-        @Test(timeout=100)
+        @Rule
+        public TestRule globalTimeout = new Timeout(100, TimeUnit.MILLISECONDS).lookForStuckThread(true);
+
+        @Test
         public void failure() throws Exception {
             (new InfiniteLoopMultithreaded()).failure(true);
         }
