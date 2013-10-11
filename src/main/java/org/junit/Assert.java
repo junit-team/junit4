@@ -196,7 +196,7 @@ public class Assert {
      */
     static public void assertNotEquals(String message, long unexpected, long actual) {
         if (unexpected == actual) {
-            failEquals(message, actual);
+            failEquals(message, Long.valueOf(actual));
         }
     }
 
@@ -229,7 +229,7 @@ public class Assert {
     static public void assertNotEquals(String message, double unexpected,
             double actual, double delta) {
         if (!doubleIsDifferent(unexpected, actual, delta)) {
-            failEquals(message, actual);
+            failEquals(message, Double.valueOf(actual));
         }
     }
 
@@ -538,7 +538,7 @@ public class Assert {
     static public void assertEquals(String message, double expected,
             double actual, double delta) {
         if (doubleIsDifferent(expected, actual, delta)) {
-            failNotEquals(message, expected, actual);
+            failNotEquals(message, Double.valueOf(expected), Double.valueOf(actual));
         }
     }
 
@@ -560,7 +560,7 @@ public class Assert {
     static public void assertEquals(String message, float expected,
             float actual, float delta) {
         if (floatIsDifferent(expected, actual, delta)) {
-            failNotEquals(message, expected, actual);
+            failNotEquals(message, Float.valueOf(expected), Float.valueOf(actual));
         }
     }
 
@@ -582,7 +582,7 @@ public class Assert {
     static public void assertNotEquals(String message, float unexpected,
             float actual, float delta) {
         if (!floatIsDifferent(unexpected, actual, delta)) {
-            failEquals(message, actual);
+            failEquals(message, Float.valueOf(actual));
         }
     }
 
@@ -630,7 +630,7 @@ public class Assert {
      */
     static public void assertEquals(String message, long expected, long actual) {
         if (expected != actual) {
-            failNotEquals(message, expected, actual);
+            failNotEquals(message, Long.valueOf(expected), Long.valueOf(actual));
         }
     }
 
