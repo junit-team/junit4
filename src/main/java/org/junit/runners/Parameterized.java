@@ -553,11 +553,11 @@ public class Parameterized extends Suite {
         /**
          * {@inheritDoc}
          */
-        public ParameterRunnerBuilder apply(ParameterRunnerBuilder base) {
+        public ParameterRunnerBuilder apply(ParameterRunnerBuilder builder) {
             for (ParameterRule each : rulesStartingWithInnerMost) {
-                base = each.apply(base);
+                builder = each.apply(builder);
             }
-            return base;
+            return builder;
         }
     }
 }
