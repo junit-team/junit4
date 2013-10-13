@@ -3,6 +3,7 @@ package org.junit.internal.runners;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -50,6 +51,17 @@ public class TestClass {
                 }
             }
         }
+        for (Class<?> eachInterface : getInterfaces(fClass)) {
+            Method[] methods = MethodSorter.getDeclaredMethods(eachInterface);
+            for (Method eachMethod : methods) {
+                if (!Modifier.isAbstract(eachMethod.getModifiers())) {
+                    Annotation annotation = eachMethod.getAnnotation(annotationClass);
+                    if (annotation != null && !isShadowed(eachMethod, results)) {
+                        results.add(eachMethod);
+                    }
+                }
+            }
+        }
         if (runsTopToBottom(annotationClass)) {
             Collections.reverse(results);
         }
@@ -90,6 +102,14 @@ public class TestClass {
         while (current != null) {
             results.add(current);
             current = current.getSuperclass();
+        }
+        return results;
+    }
+
+    private List<Class<?>> getInterfaces(Class<?> testClass) {
+        ArrayList<Class<?>> results = new ArrayList<Class<?>>();
+        for (Class<?> anInterface : testClass.getInterfaces()) {
+            results.add(anInterface);
         }
         return results;
     }

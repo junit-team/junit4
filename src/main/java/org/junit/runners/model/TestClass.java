@@ -6,6 +6,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -58,6 +59,9 @@ public class TestClass {
             }
         }
 
+        if (fClass!=null) {
+            getInterfaceMethodsForAnnotations(methodsForAnnotations, fClass);
+        }
         fMethodsForAnnotations = makeDeeplyUnmodifiable(methodsForAnnotations);
         fFieldsForAnnotations = makeDeeplyUnmodifiable(fieldsForAnnotations);
     }
@@ -70,6 +74,21 @@ public class TestClass {
             }
         });
         return declaredFields;
+    }
+
+    private void getInterfaceMethodsForAnnotations(Map<Class<? extends Annotation>, List<FrameworkMethod>> methodsForAnnotations, Class<?> clazz)
+    {
+        Class<?>[] interfaces = clazz.getInterfaces();
+        for (Class<?> eachInterface : interfaces) {
+            for (Method eachMethod : MethodSorter.getDeclaredMethods(eachInterface)) {
+                if (!Modifier.isAbstract(eachMethod.getModifiers())) {
+                    addToAnnotationLists(new FrameworkMethod(eachMethod), methodsForAnnotations);
+                }
+            }
+        }
+        for (Class<?> eachInterface : interfaces) {
+            getInterfaceMethodsForAnnotations(methodsForAnnotations, eachInterface);
+        }
     }
 
     private static <T extends FrameworkMember<T>> void addToAnnotationLists(T member,
