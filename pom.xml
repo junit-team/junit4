@@ -81,7 +81,7 @@
     </distributionManagement>
 
     <properties>
-        <jdkVersion>1.5</jdkVersion>
+        <jdkVersion>1.8</jdkVersion>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
         <arguments/>
         <gpg.keyname>67893CC4</gpg.keyname>
@@ -191,7 +191,7 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <source>${jdkVersion}</source>
                     <target>${jdkVersion}</target>
-                    <compilerVersion>1.5</compilerVersion>
+                    <compilerVersion>1.8</compilerVersion>
                     <showDeprecation>true</showDeprecation>
                     <showWarnings>true</showWarnings>
                     <debug>true</debug>
@@ -306,7 +306,7 @@
         <profile>
             <id>generate-docs</id>
             <!--
-            Generate the documentation artifacts. 
+            Generate the documentation artifacts.
             Note: this profile is also required to be active for release
             builds due to the packaging requirements of the Central repo
             -->
