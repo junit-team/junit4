@@ -22,7 +22,6 @@ import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.internal.AssumptionViolatedException;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
@@ -61,23 +60,10 @@ public class ExpectedExceptionTest {
                         ExpectedMessageMatcherFails.class,
                         hasSingleFailureWithMessage(startsWith("\nExpected: exception with message \"Wrong start\""))},
                 {ExpectsMatcher.class, everyTestRunSuccessful()},
-                {ThrowExpectedAssumptionViolatedException.class,
-                        everyTestRunSuccessful()},
-                {ThrowAssumptionViolatedExceptionButExpectOtherType.class,
-                        hasSingleFailure()},
-                {
-                        ThrowAssumptionViolatedExceptionButExpectOtherType.class,
-                        hasSingleFailureWithMessage(containsString("Stacktrace was: org.junit.internal.AssumptionViolatedException"))},
-                {ViolateAssumptionAndExpectException.class,
+                {ExpectAssertionErrorWhichIsNotThrown.class, hasSingleFailure()},
+                {FailedAssumptionAndExpectException.class,
                         hasSingleAssumptionFailure()},
-                {ThrowExpectedAssertionError.class, everyTestRunSuccessful()},
-                {
-                        DontThrowAssertionErrorButExpectOne.class,
-                        hasSingleFailureWithMessage("Expected test to throw an instance of java.lang.AssertionError")},
-                {
-                        ThrowUnexpectedAssertionError.class,
-                        hasSingleFailureWithMessage(startsWith("\nExpected: an instance of java.lang.NullPointerException"))},
-                {FailAndDontHandleAssertinErrors.class,
+                {FailBeforeExpectingException.class,
                         hasSingleFailureWithMessage(ARBITRARY_MESSAGE)},
                 {
                         ExpectsMultipleMatchers.class,
@@ -257,85 +243,36 @@ public class ExpectedExceptionTest {
         }
     }
 
-    public static class FailAndDontHandleAssertinErrors {
+    //https://github.com/junit-team/junit/pull/583
+    public static class ExpectAssertionErrorWhichIsNotThrown {
         @Rule
         public ExpectedException thrown = none();
 
         @Test
-        public void violatedAssumption() {
-            thrown.expect(IllegalArgumentException.class);
+        public void fails() {
+            thrown.expect(AssertionError.class);
+        }
+    }
+
+    public static class FailBeforeExpectingException {
+        @Rule
+        public ExpectedException thrown = none();
+
+        @Test
+        public void fails() {
             fail(ARBITRARY_MESSAGE);
+            thrown.expect(IllegalArgumentException.class);
         }
     }
 
-    public static class ThrowUnexpectedAssertionError {
+    public static class FailedAssumptionAndExpectException {
         @Rule
         public ExpectedException thrown = none();
 
         @Test
-        public void wrongException() {
-            thrown.handleAssertionErrors();
-            thrown.expect(NullPointerException.class);
-            throw new AssertionError("the unexpected assertion error");
-        }
-    }
-
-    public static class ThrowExpectedAssertionError {
-        @Rule
-        public ExpectedException thrown = none();
-
-        @Test
-        public void wrongException() {
-            thrown.handleAssertionErrors();
-            thrown.expect(AssertionError.class);
-            throw new AssertionError("the expected assertion error");
-        }
-    }
-
-    public static class DontThrowAssertionErrorButExpectOne {
-        @Rule
-        public ExpectedException thrown = none();
-
-        @Test
-        public void assertionErrorExpectedButNonIsThrown() {
-            thrown.handleAssertionErrors();
-            thrown.expect(AssertionError.class);
-        }
-    }
-
-    public static class ViolateAssumptionAndExpectException {
-        @Rule
-        public ExpectedException thrown = none();
-
-        @Test
-        public void violatedAssumption() {
-            // expect an exception, which is not an AssumptionViolatedException
-            thrown.expect(NullPointerException.class);
+        public void failedAssumption() {
             assumeTrue(false);
-        }
-    }
-
-    public static class ThrowAssumptionViolatedExceptionButExpectOtherType {
-        @Rule
-        public ExpectedException thrown = none();
-
-        @Test
-        public void wrongException() {
-            thrown.handleAssumptionViolatedExceptions();
             thrown.expect(NullPointerException.class);
-            throw new AssumptionViolatedException("");
-        }
-    }
-
-    public static class ThrowExpectedAssumptionViolatedException {
-        @Rule
-        public ExpectedException thrown = none();
-
-        @Test
-        public void throwExpectAssumptionViolatedException() {
-            thrown.handleAssumptionViolatedExceptions();
-            thrown.expect(AssumptionViolatedException.class);
-            throw new AssumptionViolatedException("");
         }
     }
 
