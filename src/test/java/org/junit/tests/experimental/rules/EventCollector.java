@@ -31,6 +31,13 @@ class EventCollector extends RunListener {
                 description.appendValue(numberOfFailures);
                 description.appendText(" failures");
             }
+
+            @Override
+            protected void describeMismatchSafely(EventCollector item,
+                    org.hamcrest.Description description) {
+                description.appendValue(item.fFailures.size());
+                description.appendText(" failures");
+            }
         };
     }
 
@@ -83,6 +90,24 @@ class EventCollector extends RunListener {
             public void describeTo(org.hamcrest.Description description) {
                 description.appendText("has single failure with message ");
                 messageMatcher.describeTo(description);
+            }
+
+            @Override
+            protected void describeMismatchSafely(EventCollector item,
+                    org.hamcrest.Description description) {
+                description.appendText("was ");
+                hasSingleFailure().describeMismatch(item, description);
+                description.appendText(": ");
+                boolean first= true;
+                for (Failure f : item.fFailures) {
+                    if (!first) {
+                        description.appendText(" ,");
+                    }
+                    description.appendText("'");
+                    description.appendText(f.getMessage());
+                    description.appendText("'");
+                    first= false;
+                }
             }
         };
     }
