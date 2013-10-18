@@ -32,7 +32,7 @@ import org.junit.runners.Parameterized.Parameters;
 public class ExpectedExceptionTest {
     private static final String ARBITRARY_MESSAGE = "arbitrary message";
 
-    @Parameters
+    @Parameters(name= "{0}")
     public static Collection<Object[]> testsWithEventMatcher() {
         return asList(new Object[][]{
                 {EmptyTestExpectingNoException.class, everyTestRunSuccessful()},
@@ -78,7 +78,16 @@ public class ExpectedExceptionTest {
                                 containsString("cause was <java.lang.NullPointerException: an unexpected cause>"),
                                 containsString("Stacktrace was: java.lang.IllegalArgumentException: Ack!"),
                                 containsString("Caused by: java.lang.NullPointerException: an unexpected cause")))},
-                { CustomMessageWithoutExpectedException.class, hasSingleFailureWithMessage(ARBITRARY_MESSAGE) }
+                {
+                        UseNoCustomMessage.class,
+                        hasSingleFailureWithMessage("Expected test to throw an instance of java.lang.IllegalArgumentException") },
+                {
+                        UseCustomMessageWithoutPlaceHolder.class,
+                        hasSingleFailureWithMessage(ARBITRARY_MESSAGE) },
+                {
+                        UseCustomMessageWithPlaceHolder.class,
+                        hasSingleFailureWithMessage(ARBITRARY_MESSAGE
+                                + " - an instance of java.lang.IllegalArgumentException") }
         });
     }
 
@@ -321,10 +330,34 @@ public class ExpectedExceptionTest {
         }
     }
     
-    public static class CustomMessageWithoutExpectedException {
+    public static class UseNoCustomMessage {
+
+        @Rule
+        public ExpectedException thrown= ExpectedException.none();
+
+        @Test
+        public void noThrow() {
+            thrown.expect(IllegalArgumentException.class);
+        }
+    }
+
+    public static class UseCustomMessageWithPlaceHolder {
 
         @Rule
         public ExpectedException thrown = ExpectedException.none();
+
+        @Test
+        public void noThrow() {
+            thrown.expect(IllegalArgumentException.class);
+            thrown.reportMissingExceptionWithMessage(ARBITRARY_MESSAGE
+                    + " - %s");
+        }
+    }
+
+    public static class UseCustomMessageWithoutPlaceHolder {
+
+        @Rule
+        public ExpectedException thrown= ExpectedException.none();
 
         @Test
         public void noThrow() {

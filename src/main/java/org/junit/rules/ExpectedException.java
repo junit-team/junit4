@@ -1,5 +1,6 @@
 package org.junit.rules;
 
+import static java.lang.String.format;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
@@ -93,8 +94,11 @@ import org.junit.runners.model.Statement;
  * <h3>Missing Exceptions</h3>
  * <p>
  * By default missing exceptions are reported with an error message
- * like "Expected test to throw foo.". You can configure a different
- * message by means of {@link #reportMissingExceptionWithMessage(String)}.
+ * like "Expected test to throw an instance of foo". You can configure a different
+ * message by means of {@link #reportMissingExceptionWithMessage(String)}. You
+ * can use a {@code %s} placeholder for the description of the expected
+ * exception. E.g. "Test doesn't throw %s." will fail with the error message
+ * "Test doesn't throw an instance of foo.".
  *
  * @since 4.7
  */
@@ -109,7 +113,7 @@ public class ExpectedException implements TestRule {
 
     private final ExpectedExceptionMatcherBuilder fMatcherBuilder = new ExpectedExceptionMatcherBuilder();
 
-    private String missingExceptionMessage;
+    private String missingExceptionMessage= "Expected test to throw %s";
 
     private ExpectedException() {
     }
@@ -136,7 +140,11 @@ public class ExpectedException implements TestRule {
 
     /**
      * Specifies the failure message for tests that are expected to throw 
-     * an exception but do not throw any.
+     * an exception but do not throw any. You can use a {@code %s} placeholder for
+     * the description of the expected exception. E.g. "Test doesn't throw %s."
+     * will fail with the error message
+     * "Test doesn't throw an instance of foo.".
+     *
      * @param message exception detail message
      * @return the rule itself
      */
@@ -255,15 +263,7 @@ public class ExpectedException implements TestRule {
     }
     
     private String missingExceptionMessage() {
-        if (isMissingExceptionMessageEmpty()) {
-            String expectation = StringDescription.toString(fMatcherBuilder.build());
-            return "Expected test to throw " + expectation;
-        } else {
-            return missingExceptionMessage;
-        }        
-    }
-    
-    private boolean isMissingExceptionMessageEmpty() {
-        return missingExceptionMessage == null || missingExceptionMessage.length() == 0;
+        String expectation= StringDescription.toString(fMatcherBuilder.build());
+        return format(missingExceptionMessage, expectation);
     }
 }
