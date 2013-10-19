@@ -86,6 +86,15 @@ public class Timeout implements TestRule {
         return new Timeout(seconds, TimeUnit.SECONDS);
     }
 
+    /**
+     * Specifies whether to look for a stuck thread.  If a timeout occurs and this
+     * feature is enabled, the test will look for a thread that appears to be stuck
+     * and dump its backtrace.  This feature is experimental.  Behavior may change
+     * after the 4.12 release in response to feedback.
+     * @param enable {@code true} to enable the feature
+     * @return This object
+     * @since 4.12
+     */
     public Timeout lookForStuckThread(boolean enable) {
         fLookForStuckThread = enable;
         return this;

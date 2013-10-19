@@ -102,7 +102,8 @@ public class FailOnTimeout extends Statement {
 
     /**
      * Determines whether the test appears to be stuck in some thread other than
-     * the "main thread" (the one created to run the test).
+     * the "main thread" (the one created to run the test).  This feature is experimental.
+     * Behavior may change after the 4.12 release in response to feedback.
      * @param mainThread The main thread created by {@code evaluate()}
      * @return The thread which appears to be causing the problem, if different from
      * {@code mainThread}, or {@code null} if the main thread appears to be the
