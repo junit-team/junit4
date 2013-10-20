@@ -121,12 +121,7 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
      * Returns true if this method is ignored, false if not
      */
     public boolean isIgnored() {
-        for (Annotation annotation : getAnnotations()) {
-            if (annotation instanceof Ignore) {
-                return true;
-            }
-        }
-        return false;
+        return fMethod.getAnnotation(Ignore.class) != null;
     }
 
     /**
