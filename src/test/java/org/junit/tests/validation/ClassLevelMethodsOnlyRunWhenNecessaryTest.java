@@ -57,6 +57,12 @@ public class ClassLevelMethodsOnlyRunWhenNecessaryTest {
                 .filterWith(CategoryFilter.exclude(FilteredTests.class)));
         analyseResult(result, "der fail");
     }
+    
+    @Test
+    public void brokenRuleButTestMethodIsIgnored() {
+        runClassAndVerifyNoFailures(HasBrokenRuleButTestIsIgnored.class,
+                "The rule should have been executed because the test method is ignored!");
+    }
 
     private void runClassAndVerifyNoFailures(Class<?> klass,
             String testFailureDescription) {
@@ -78,11 +84,4 @@ public class ClassLevelMethodsOnlyRunWhenNecessaryTest {
         }
         fail("Unexpected failure : " + actualFailureMsg);
     }
-
-    @Test
-    public void brokenRuleButTestMethodIsIgnored() {
-        runClassAndVerifyNoFailures(HasBrokenRuleButTestIsIgnored.class,
-                "The rule should have been executed because the test method is ignored!");
-    }
-
 }
