@@ -165,12 +165,16 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      */
     protected Statement classBlock(final RunNotifier notifier) {
         Statement statement= childrenInvoker(notifier);
-        if (statement instanceof ParentRunner.EmptyStatement == false) {
+        if (statementHasTestsToRun(statement)) {
             statement= withBeforeClasses(statement);
             statement= withAfterClasses(statement);
             statement= withClassRules(statement);
         }
         return statement;
+    }
+
+    private boolean statementHasTestsToRun(Statement statement) {
+        return statement instanceof ParentRunner.EmptyStatement == false;
     }
 
     /**
