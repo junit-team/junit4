@@ -276,7 +276,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             Collection<T> filteredChildren) {
         final RunnerScheduler scheduler= fScheduler;
         try {
-            for (final T each : getFilteredChildren()) {
+            for (final T each : filteredChildren) {
                 scheduler.schedule(new Runnable() {
                     public void run() {
                         ParentRunner.this.runChild(each, notifier);
