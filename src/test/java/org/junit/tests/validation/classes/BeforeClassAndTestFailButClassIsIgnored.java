@@ -1,17 +1,17 @@
 package org.junit.tests.validation.classes;
 
 import static org.junit.Assert.fail;
+import static org.junit.tests.validation.ClassLevelMethodsOnlyRunWhenNecessaryTest.OUR_FAILURE_MSG;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.tests.validation.ClassLevelMethodsOnlyRunWhenNecessaryTest;
 
 @Ignore
 public class BeforeClassAndTestFailButClassIsIgnored {
 
     @BeforeClass
-    public static void setUpClass() {
-        fail(ClassLevelMethodsOnlyRunWhenNecessaryTest.OUR_FAILURE_MSG);
+    public static void beforeClass() {
+        fail(OUR_FAILURE_MSG);
     }
 
     @Test

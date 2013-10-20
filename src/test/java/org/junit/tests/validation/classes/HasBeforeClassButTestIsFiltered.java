@@ -5,9 +5,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.tests.validation.ClassLevelMethodsOnlyRunWhenNecessaryTest;
-import org.junit.tests.validation.ClassLevelMethodsOnlyRunWhenNecessaryTest.FilteredTests;
 
 public class HasBeforeClassButTestIsFiltered {
+    
+    public interface FilteredTests {
+    }
 
     @BeforeClass
     public static void setUpClass() {

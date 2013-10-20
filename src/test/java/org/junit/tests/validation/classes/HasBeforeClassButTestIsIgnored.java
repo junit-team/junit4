@@ -9,7 +9,7 @@ import org.junit.tests.validation.ClassLevelMethodsOnlyRunWhenNecessaryTest;
 public class HasBeforeClassButTestIsIgnored {
 
     @BeforeClass
-    public static void setUpClass() {
+    public static void beforeClass() {
         fail(ClassLevelMethodsOnlyRunWhenNecessaryTest.OUR_FAILURE_MSG);
     }
 

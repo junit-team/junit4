@@ -1,10 +1,10 @@
 package org.junit.tests.validation.classes;
 
 import static org.junit.Assert.fail;
+import static org.junit.tests.validation.ClassLevelMethodsOnlyRunWhenNecessaryTest.OUR_FAILURE_MSG;
 import org.junit.AfterClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.tests.validation.ClassLevelMethodsOnlyRunWhenNecessaryTest;
 
 public class HasAfterClassButTestIsIgnored {
 
@@ -15,7 +15,7 @@ public class HasAfterClassButTestIsIgnored {
     }
 
     @AfterClass
-    public static void setUpClass() {
-        fail(ClassLevelMethodsOnlyRunWhenNecessaryTest.OUR_FAILURE_MSG);
+    public static void afterClass() {
+        fail(OUR_FAILURE_MSG);
     }
 }
