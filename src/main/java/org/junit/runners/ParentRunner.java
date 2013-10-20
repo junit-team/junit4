@@ -15,7 +15,6 @@ import java.util.List;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.EachTestNotifier;
@@ -233,6 +232,22 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * filter and sort)
      */
     protected Statement childrenInvoker(final RunNotifier notifier) {
+        final Collection<T> filteredChildrenWithoutIgnores= getFilteredChildrenWithoutIgnores(notifier);
+
+        if (filteredChildrenWithoutIgnores.isEmpty()) {
+            return new EmptyStatement();
+        }
+
+        return new Statement() {
+            @Override
+            public void evaluate() {
+                runChildren(notifier, filteredChildrenWithoutIgnores);
+            }
+        };
+    }
+
+    private Collection<T> getFilteredChildrenWithoutIgnores(
+            final RunNotifier notifier) {
         final Collection<T> filteredChildren= getFilteredChildren();
         Collection<T> filteredChildrenCopy= new ArrayList<T>(filteredChildren);
 
@@ -245,19 +260,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
         }
 
-        final Collection<T> filteredChildrenWithoutIgnores= Collections
+        return Collections
                 .unmodifiableCollection(filteredChildrenCopy);
-
-        if (filteredChildrenWithoutIgnores.isEmpty()) {
-            return new EmptyStatement();
-        }
-
-        return new Statement() {
-            @Override
-            public void evaluate() {
-                runChildren(notifier, filteredChildrenWithoutIgnores);
-            }
-        };
     }
 
     private boolean isIgnoredMethod(T child) {
