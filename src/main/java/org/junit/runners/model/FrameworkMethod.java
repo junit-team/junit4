@@ -7,8 +7,10 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.experimental.theories.ParameterSignature;
 import org.junit.internal.runners.model.ReflectiveCallable;
+import org.junit.runner.Description;
 
 /**
  * Represents a method on a test class to be invoked at the appropriate point in
@@ -113,6 +115,18 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
     @Override
     public boolean isPublic() {
         return Modifier.isPublic(fMethod.getModifiers());
+    }
+    
+    /**
+     * Returns true if this method is ignored, false if not
+     */
+    public boolean isIgnored() {
+        for (Annotation annotation : getAnnotations()) {
+            if (annotation instanceof Ignore) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
