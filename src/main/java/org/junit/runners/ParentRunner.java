@@ -69,6 +69,17 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             // do nothing
         }
     };
+    
+    /**
+     * Special case object signaling that all tests in a class have been ignored.
+     *
+     */
+    private static final Statement ALL_TESTS_IGNORED = new Statement() {
+        @Override
+        public void evaluate() throws Throwable {
+         // do nothing
+        }
+    };
 
     /**
      * Constructs a new {@code ParentRunner} that will run {@code @TestClass}
@@ -174,7 +185,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     }
 
     private boolean statementHasTestsToRun(Statement statement) {
-        return statement instanceof ParentRunner.EmptyStatement == false;
+        return statement != ALL_TESTS_IGNORED;
     }
 
     /**
@@ -236,10 +247,10 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * filter and sort)
      */
     protected Statement childrenInvoker(final RunNotifier notifier) {
-        final Collection<T> filteredChildrenWithoutIgnores= getFilteredChildrenWithoutIgnores(notifier);
+        final Collection<T> filteredChildrenWithoutIgnores = getFilteredChildrenWithoutIgnored(notifier);
 
         if (filteredChildrenWithoutIgnores.isEmpty()) {
-            return new EmptyStatement();
+            return ALL_TESTS_IGNORED;
         }
 
         return new Statement() {
@@ -249,8 +260,10 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             }
         };
     }
+    
 
-    private Collection<T> getFilteredChildrenWithoutIgnores(
+
+    private Collection<T> getFilteredChildrenWithoutIgnored(
             final RunNotifier notifier) {
         final Collection<T> filteredChildren= getFilteredChildren();
         Collection<T> filteredChildrenCopy= new ArrayList<T>(filteredChildren);
@@ -271,13 +284,6 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     private boolean isIgnoredMethod(T child) {
         return child instanceof FrameworkMethod
                 && ((FrameworkMethod) child).isIgnored();
-    }
-
-    class EmptyStatement extends Statement {
-        @Override
-        public void evaluate() throws Throwable {
-            // empty implementation
-        }
     }
 
     private void runChildren(final RunNotifier notifier,
