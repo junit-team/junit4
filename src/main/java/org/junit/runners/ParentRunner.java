@@ -74,7 +74,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * Special case object signaling that all tests in a class have been ignored.
      *
      */
-    private static final Statement ALL_TESTS_IGNORED = new Statement() {
+    protected static final Statement ALL_TESTS_IGNORED = new Statement() {
         @Override
         public void evaluate() throws Throwable {
          // do nothing
@@ -159,18 +159,24 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * Constructs a {@code Statement} to run all of the tests in the test class.
      * Override to add pre-/post-processing. Here is an outline of the
      * implementation:
-     * <ul>
-     * <li>Call {@link #runChild(Object, RunNotifier)} on each object returned
-     * by {@link #getChildren()} (subject to any imposed filter and sort).</li>
-     * <li>ALWAYS run all non-overridden {@code @BeforeClass} methods on this
-     * class and superclasses before the previous step; if any throws an
-     * Exception, stop execution and pass the exception on.
-     * <li>ALWAYS run all non-overridden {@code @AfterClass} methods on this
-     * class and superclasses before any of the previous steps; all AfterClass
-     * methods are always executed: exceptions thrown by previous steps are
-     * combined, if necessary, with exceptions from AfterClass methods into a
-     * {@link MultipleFailureException}.
-     * </ul>
+     * <ol>
+     * <li>Determine the children to be run using {@link #getChildren()}
+     * (subject to any imposed filter and sort).</li>
+     * <li>If there are any children remaining after filtering and ignoring,
+     * construct a statement that will:
+     * <ol>
+     * <li>Apply all {@code ClassRule}s on the test-class and superclasses.</li>
+     * <li>Run all non-overridden {@code @BeforeClass} methods on the test-class
+     * and superclasses; if any throws an Exception, stop execution and pass the
+     * exception on.</li>
+     * <li>Run all remaining tests on the test-class.</li>
+     * <li>Run all non-overridden {@code @AfterClass} methods on the test-class
+     * and superclasses: exceptions thrown by previous steps are combined, if
+     * necessary, with exceptions from AfterClass methods into a
+     * {@link MultipleFailureException}.</li>
+     * </ol>
+     * </li>
+     * </ol>
      * 
      * @return {@code Statement}
      */
@@ -244,7 +250,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     /**
      * Returns a {@link Statement}: Call {@link #runChild(Object, RunNotifier)}
      * on each object returned by {@link #getChildren()} (subject to any imposed
-     * filter and sort)
+     * filter and sort). Filters ignored methods - in case no tests remain, {@link #ALL_TESTS_IGNORED} is returned.
      */
     protected Statement childrenInvoker(final RunNotifier notifier) {
         final Collection<T> filteredChildrenWithoutIgnores = getFilteredChildrenWithoutIgnored(notifier);
@@ -261,16 +267,14 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         };
     }
     
-
-
     private Collection<T> getFilteredChildrenWithoutIgnored(
             final RunNotifier notifier) {
-        final Collection<T> filteredChildren= getFilteredChildren();
-        Collection<T> filteredChildrenCopy= new ArrayList<T>(filteredChildren);
+        final Collection<T> filteredChildren = getFilteredChildren();
+        Collection<T> filteredChildrenCopy = new ArrayList<T>(filteredChildren);
 
         for (T child : filteredChildren) {
             if (isIgnoredMethod(child)) {
-                Description childDescription= describeChild(child);
+                Description childDescription = describeChild(child);
                 notifier.fireTestIgnored(childDescription);
                 filteredChildrenCopy.remove(child);
             }
