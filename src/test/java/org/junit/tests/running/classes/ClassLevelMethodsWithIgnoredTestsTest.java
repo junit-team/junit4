@@ -25,14 +25,13 @@ import org.junit.runners.model.Statement;
  * are no test methods to be run in a test class because they have been ignored.
  * 
  */
-public class ClassLevelMethodsWithIgnoreTest {
-    // TODO: inheritance problems?
+public class ClassLevelMethodsWithIgnoredTestsTest {
     private static final String FAILURE_MESSAGE = "This should not have happened!";
 
     public static class BeforeClassWithIgnoredTest {
         @BeforeClass
         public static void beforeClass() {
-            fail(ClassLevelMethodsWithIgnoreTest.FAILURE_MESSAGE);
+            fail(FAILURE_MESSAGE);
         }
 
         @Ignore
@@ -43,7 +42,7 @@ public class ClassLevelMethodsWithIgnoreTest {
     }
 
     @Test
-    public void beforeFailsButTestMethodIsIgnored() {
+    public void beforeClassShouldNotRunWhenAllTestsAreIgnored() {
         runClassAndVerifyNoFailures(BeforeClassWithIgnoredTest.class,
                 "BeforeClass should not have been executed because the test method is ignored!");
     }
@@ -52,7 +51,7 @@ public class ClassLevelMethodsWithIgnoreTest {
     public static class BeforeClassWithIgnoredClass {
         @BeforeClass
         public static void beforeClass() {
-            fail(ClassLevelMethodsWithIgnoreTest.FAILURE_MESSAGE);
+            fail(FAILURE_MESSAGE);
         }
 
         @Test
@@ -62,7 +61,7 @@ public class ClassLevelMethodsWithIgnoreTest {
     }
 
     @Test
-    public void wholeClassIsIgnored() {
+    public void beforeClassShouldNotRunWhenWholeClassIsIgnored() {
         runClassAndVerifyNoFailures(
                 BeforeClassWithIgnoredClass.class,
                 "BeforeClass should not have been executed because the whole test class is ignored!");
@@ -77,15 +76,15 @@ public class ClassLevelMethodsWithIgnoreTest {
 
         @AfterClass
         public static void afterClass() {
-            fail(ClassLevelMethodsWithIgnoreTest.FAILURE_MESSAGE);
+            fail(FAILURE_MESSAGE);
         }
     }
 
     @Test
-    public void afterFailsButTestMethodIsIgnored() {
+    public void afterClassShouldNotRunWhenAllTestsAreIgnored() {
         runClassAndVerifyNoFailures(
                 AfterClassWithIgnoredTest.class,
-                "There should not be any failures because the only test method of the test class is ignored!");
+                "AfterClass should not have been executed because the test method is ignored!");
     }
 
     public interface FilteredTests {
@@ -94,7 +93,7 @@ public class ClassLevelMethodsWithIgnoreTest {
     public static class BeforeClassWithFilteredTest {
         @BeforeClass
         public static void setUpClass() {
-            fail(ClassLevelMethodsWithIgnoreTest.FAILURE_MESSAGE);
+            fail(FAILURE_MESSAGE);
         }
 
         @Category(FilteredTests.class)
@@ -112,11 +111,11 @@ public class ClassLevelMethodsWithIgnoreTest {
     }
 
     @Test
-    public void beforeFailsButTestIsFiltered() {
+    public void beforeClassShouldNotRunWhenAllTestsAreFiltered() {
         Result result = new JUnitCore().run(Request.classes(
                 BeforeClassWithFilteredTest.class, HasUnfilteredTest.class)
                 .filterWith(CategoryFilter.exclude(FilteredTests.class)));
-        analyseResult(result, "der fail");
+        analyseResult(result, "BeforeClass should not have been executed because the test method is filtered!");
     }
 
     public static class BrokenRule implements TestRule {
@@ -137,9 +136,9 @@ public class ClassLevelMethodsWithIgnoreTest {
     }
 
     @Test
-    public void brokenRuleButTestMethodIsIgnored() {
+    public void classRuleShouldNotBeAppliedWhenAllTestsAreIgnored() {
         runClassAndVerifyNoFailures(ClassRuleWithIgnoredTest.class,
-                "The rule should have been executed because the test method is ignored!");
+                "The class rule should have been applied because the test method is ignored!");
     }
 
     private void runClassAndVerifyNoFailures(Class<?> klass,
