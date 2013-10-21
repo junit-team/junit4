@@ -10,7 +10,6 @@ import java.util.List;
 import org.junit.Ignore;
 import org.junit.experimental.theories.ParameterSignature;
 import org.junit.internal.runners.model.ReflectiveCallable;
-import org.junit.runner.Description;
 
 /**
  * Represents a method on a test class to be invoked at the appropriate point in
