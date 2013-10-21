@@ -93,7 +93,7 @@ import org.junit.tests.running.methods.ParameterizedTestMethodTest;
 import org.junit.tests.running.methods.TestMethodTest;
 import org.junit.tests.running.methods.TimeoutTest;
 import org.junit.tests.validation.BadlyFormedClassesTest;
-import org.junit.tests.validation.ClassLevelMethodsOnlyRunWhenNecessaryTest;
+import org.junit.tests.validation.ClassLevelMethodsWithIgnoreTest;
 import org.junit.tests.validation.FailedConstructionTest;
 import org.junit.tests.validation.InaccessibleBaseClassTest;
 import org.junit.tests.validation.ValidationTest;
@@ -131,7 +131,7 @@ import org.junit.tests.validation.ValidationTest;
         ParameterizedTestMethodTest.class,
         InitializationErrorForwardCompatibilityTest.class,
         SingleMethodTest.class,
-        ClassLevelMethodsOnlyRunWhenNecessaryTest.class,
+        ClassLevelMethodsWithIgnoreTest.class,
         ValidationTest.class,
         UserStopTest.class,
         SortableTest.class,
