@@ -1,4 +1,4 @@
-package org.junit.tests.validation;
+package org.junit.tests.running.classes;
 
 import static org.junit.Assert.fail;
 
