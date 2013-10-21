@@ -33,7 +33,7 @@ public class ClassLevelMethodsWithIgnoredTestsTest {
         public static void beforeClass() {
             fail(FAILURE_MESSAGE);
         }
-
+        
         @Ignore
         @Test
         public void test() throws Exception {
@@ -82,8 +82,7 @@ public class ClassLevelMethodsWithIgnoredTestsTest {
 
     @Test
     public void afterClassShouldNotRunWhenAllTestsAreIgnored() {
-        runClassAndVerifyNoFailures(
-                AfterClassWithIgnoredTest.class,
+        runClassAndVerifyNoFailures(AfterClassWithIgnoredTest.class,
                 "AfterClass should not have been executed because the test method is ignored!");
     }
 
@@ -115,7 +114,9 @@ public class ClassLevelMethodsWithIgnoredTestsTest {
         Result result = new JUnitCore().run(Request.classes(
                 BeforeClassWithFilteredTest.class, HasUnfilteredTest.class)
                 .filterWith(CategoryFilter.exclude(FilteredTests.class)));
-        analyseResult(result, "BeforeClass should not have been executed because the test method is filtered!");
+        analyseResult(
+                result,
+                "BeforeClass should not have been executed because the test method is filtered!");
     }
 
     public static class BrokenRule implements TestRule {
