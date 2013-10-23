@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.Test.None;
@@ -69,11 +70,20 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
     @Override
     protected void runChild(final FrameworkMethod method, RunNotifier notifier) {
         Description description = describeChild(method);
-        if (method.isIgnored()) {
+        if (isIgnored(method)) {
             notifier.fireTestIgnored(description);
         } else {
             runLeaf(methodBlock(method), description, notifier);
         }
+    }
+    
+    /**
+     * Evaluates whether {@link FrameworkMethod}s are ignored based on the
+     * {@link Ignore} annotation.
+     */
+    @Override
+    protected boolean isIgnored(FrameworkMethod child) {
+        return child.getAnnotation(Ignore.class) != null;
     }
 
     @Override

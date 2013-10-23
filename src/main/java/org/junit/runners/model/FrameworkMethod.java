@@ -7,7 +7,6 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.experimental.theories.ParameterSignature;
 import org.junit.internal.runners.model.ReflectiveCallable;
 
@@ -116,13 +115,6 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
         return Modifier.isPublic(fMethod.getModifiers());
     }
     
-    /**
-     * Returns true if this method is ignored, false if not
-     */
-    public boolean isIgnored() {
-        return fMethod.getAnnotation(Ignore.class) != null;
-    }
-
     /**
      * Returns the return type of the method
      */

@@ -267,7 +267,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         Collection<T> filteredChildrenCopy = new ArrayList<T>(filteredChildren);
 
         for (T child : filteredChildren) {
-            if (isIgnoredMethod(child)) {
+            if (isIgnored(child)) {
                 Description childDescription = describeChild(child);
                 notifier.fireTestIgnored(childDescription);
                 filteredChildrenCopy.remove(child);
@@ -278,9 +278,14 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
                 .unmodifiableCollection(filteredChildrenCopy);
     }
 
-    private boolean isIgnoredMethod(T child) {
-        return child instanceof FrameworkMethod
-                && ((FrameworkMethod) child).isIgnored();
+    /**
+     * Evaluates whether a child is ignored. The default implementation always
+     * returns <code>false</code>. </p>{@link BlockJUnit4ClassRunner}, for
+     * example, overrides this method to filter tests based on the
+     * {@link Ignore} annotation.
+     */
+    protected boolean isIgnored(T child) {
+        return false;
     }
 
     private void runChildren(final RunNotifier notifier,
