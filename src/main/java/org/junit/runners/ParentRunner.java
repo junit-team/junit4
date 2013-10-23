@@ -15,6 +15,7 @@ import java.util.List;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.EachTestNotifier;
@@ -70,15 +71,21 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     };
     
     /**
-     * Special case object signaling that all tests in a class have been ignored.
-     *
+     * Abstract implementation of {@link Statement} that is aware of the
+     * children that will be run once the statement is evaluated.
+     * 
      */
-    protected static final Statement ALL_TESTS_IGNORED = new Statement() {
-        @Override
-        public void evaluate() throws Throwable {
-         // do nothing
+    protected abstract class ChildrenAwareStatement extends Statement {
+        private final Collection<T> children;
+
+        public ChildrenAwareStatement(Collection<T> children) {
+            this.children = children;
         }
-    };
+
+        public Collection<T> getChildren() {
+            return children;
+        }
+    }
 
     /**
      * Constructs a new {@code ParentRunner} that will run {@code @TestClass}
@@ -187,7 +194,24 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     }
 
     private boolean statementHasTestsToRun(Statement statement) {
-        return statement != ALL_TESTS_IGNORED;
+        if(statement instanceof ParentRunner.ChildrenAwareStatement == false) {
+            return true;
+        }
+        
+        @SuppressWarnings("unchecked")
+        Collection<T> children= ((ParentRunner<T>.ChildrenAwareStatement)statement).getChildren();
+        
+        return isAnyChildNotIgnored(children);
+    }
+
+    private boolean isAnyChildNotIgnored(Collection<T> children) {
+        for (T child : children) {
+            if(isIgnored(child) == false) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     /**
@@ -244,38 +268,16 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     /**
      * Returns a {@link Statement}: Call {@link #runChild(Object, RunNotifier)}
      * on each object returned by {@link #getChildren()} (subject to any imposed
-     * filter and sort). Filters ignored methods - in case no tests remain, {@link #ALL_TESTS_IGNORED} is returned.
+     * filter and sort).
      */
     protected Statement childrenInvoker(final RunNotifier notifier) {
-        final Collection<T> filteredChildrenWithoutIgnores = getFilteredChildrenWithoutIgnored(notifier);
-
-        if (filteredChildrenWithoutIgnores.isEmpty()) {
-            return ALL_TESTS_IGNORED;
-        }
-
-        return new Statement() {
+        return new ChildrenAwareStatement(getFilteredChildren()) {
+            
             @Override
             public void evaluate() {
-                runChildren(notifier, filteredChildrenWithoutIgnores);
+                runChildren(notifier, getChildren());
             }
         };
-    }
-    
-    private Collection<T> getFilteredChildrenWithoutIgnored(
-            final RunNotifier notifier) {
-        final Collection<T> filteredChildren = getFilteredChildren();
-        Collection<T> filteredChildrenCopy = new ArrayList<T>(filteredChildren);
-
-        for (T child : filteredChildren) {
-            if (isIgnored(child)) {
-                Description childDescription = describeChild(child);
-                notifier.fireTestIgnored(childDescription);
-                filteredChildrenCopy.remove(child);
-            }
-        }
-
-        return Collections
-                .unmodifiableCollection(filteredChildrenCopy);
     }
 
     /**
