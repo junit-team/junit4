@@ -30,16 +30,14 @@ public class TestClass {
     private final Map<Class<? extends Annotation>, List<FrameworkField>> fFieldsForAnnotations;
 
     /**
-     * Creates a {@code TestClass} wrapping {@code klass}. Each time this
-     * constructor executes, the class is scanned for annotations, which can be
-     * an expensive process (we hope in future JDK's it will not be.) Therefore,
-     * try to share instances of {@code TestClass} where possible.
+     * Creates a {@code TestClass} wrapping {@code klass}. Each time this constructor executes, the
+     * class is scanned for annotations, which can be an expensive process (we hope in future JDK's
+     * it will not be.) Therefore, try to share instances of {@code TestClass} where possible.
      */
     public TestClass(Class<?> klass) {
         fClass = klass;
         if (klass != null && klass.getConstructors().length > 1) {
-            throw new IllegalArgumentException(
-                    "Test class can only have one constructor");
+            throw new IllegalArgumentException("Test class can only have one constructor");
         }
 
         Map<Class<? extends Annotation>, List<FrameworkMethod>> methodsForAnnotations =
@@ -88,8 +86,8 @@ public class TestClass {
         }
     }
 
-    private static <T extends FrameworkMember<T>> Map<Class<? extends Annotation>, List<T>>
-            makeDeeplyUnmodifiable(Map<Class<? extends Annotation>, List<T>> source) {
+    private static <T extends FrameworkMember<T>> Map<Class<? extends Annotation>, List<T>> makeDeeplyUnmodifiable(
+            Map<Class<? extends Annotation>, List<T>> source) {
         LinkedHashMap<Class<? extends Annotation>, List<T>> copy =
                 new LinkedHashMap<Class<? extends Annotation>, List<T>>();
         for (Map.Entry<Class<? extends Annotation>, List<T>> entry : source.entrySet()) {
@@ -98,29 +96,28 @@ public class TestClass {
         return Collections.unmodifiableMap(copy);
     }
 
-
     /**
-     * Returns, efficiently, all the non-overridden methods in this class and
-     * its superclasses that are annotated with {@code annotationClass}.
+     * Returns, efficiently, all the non-overridden methods in this class and its superclasses that
+     * are annotated with {@code annotationClass}.
      */
-    public List<FrameworkMethod> getAnnotatedMethods(
-            Class<? extends Annotation> annotationClass) {
-        return Collections.unmodifiableList(getAnnotatedMembers(fMethodsForAnnotations, annotationClass, false));
+    public List<FrameworkMethod> getAnnotatedMethods(Class<? extends Annotation> annotationClass) {
+        return Collections.unmodifiableList(getAnnotatedMembers(fMethodsForAnnotations,
+                annotationClass, false));
     }
 
     /**
-     * Returns, efficiently, all the non-overridden fields in this class and its
-     * superclasses that are annotated with {@code annotationClass}.
+     * Returns, efficiently, all the non-overridden fields in this class and its superclasses that
+     * are annotated with {@code annotationClass}.
      */
-    public List<FrameworkField> getAnnotatedFields(
-            Class<? extends Annotation> annotationClass) {
-        return Collections.unmodifiableList(getAnnotatedMembers(fFieldsForAnnotations, annotationClass, false));
+    public List<FrameworkField> getAnnotatedFields(Class<? extends Annotation> annotationClass) {
+        return Collections.unmodifiableList(getAnnotatedMembers(fFieldsForAnnotations,
+                annotationClass, false));
     }
 
     /**
-     * Gets a {@code Map} between annotations and methods that have
-     * the annotation in this class or its superclasses.
-     *
+     * Gets a {@code Map} between annotations and methods that have the annotation in this class or
+     * its superclasses.
+     * 
      * @since 4.12
      */
     public Map<Class<? extends Annotation>, List<FrameworkMethod>> getAnnotationToMethods() {
@@ -128,9 +125,9 @@ public class TestClass {
     }
 
     /**
-     * Gets a {@code Map} between annotations and fields that have
-     * the annotation in this class or its superclasses.
-     *
+     * Gets a {@code Map} between annotations and fields that have the annotation in this class or
+     * its superclasses.
+     * 
      * @since 4.12
      */
     public Map<Class<? extends Annotation>, List<FrameworkField>> getAnnotationToFields() {
@@ -147,8 +144,7 @@ public class TestClass {
     }
 
     private static boolean runsTopToBottom(Class<? extends Annotation> annotation) {
-        return annotation.equals(Before.class)
-                || annotation.equals(BeforeClass.class);
+        return annotation.equals(Before.class) || annotation.equals(BeforeClass.class);
     }
 
     private static List<Class<?>> getSuperClasses(Class<?> testClass) {
@@ -179,10 +175,9 @@ public class TestClass {
     }
 
     /**
-     * Returns the only public constructor in the class, or throws an {@code
-     * AssertionError} if there are more or less than one.
+     * Returns the only public constructor in the class, or throws an {@code AssertionError} if
+     * there are more or less than one.
      */
-
     public Constructor<?> getOnlyConstructor() {
         Constructor<?>[] constructors = fClass.getConstructors();
         Assert.assertEquals(1, constructors.length);
@@ -209,8 +204,8 @@ public class TestClass {
                     results.add(valueClass.cast(fieldValue));
                 }
             } catch (IllegalAccessException e) {
-                throw new RuntimeException(
-                        "How did getFields return a field we couldn't access?", e);
+                throw new RuntimeException("How did getFields return a field we couldn't access?",
+                        e);
             }
         }
         return results;
@@ -226,8 +221,7 @@ public class TestClass {
                     results.add(valueClass.cast(fieldValue));
                 }
             } catch (Throwable e) {
-                throw new RuntimeException(
-                        "Exception in " + each.getName(), e);
+                throw new RuntimeException("Exception in " + each.getName(), e);
             }
         }
         return results;
