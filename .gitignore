@@ -1,0 +1,13 @@
+MaxCore.ser
+bin
+junit4.*
+target
+MaxCore.max
+# IntelliJ
+.idea
+*.ipr
+*.iml
+*.iws
+out
+java.hprof.txt
+.gitattributes
