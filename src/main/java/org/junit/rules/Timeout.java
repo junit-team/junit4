@@ -36,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 public class Timeout implements TestRule {
     private final long fTimeout;
     private final TimeUnit fTimeUnit;
+    private boolean fLookForStuckThread;
 
     /**
      * Create a {@code Timeout} instance with the timeout specified
@@ -66,6 +67,7 @@ public class Timeout implements TestRule {
     public Timeout(long timeout, TimeUnit unit) {
         fTimeout = timeout;
         fTimeUnit = unit;
+        fLookForStuckThread = false;
     }
 
     /**
@@ -84,8 +86,21 @@ public class Timeout implements TestRule {
         return new Timeout(seconds, TimeUnit.SECONDS);
     }
 
+    /**
+     * Specifies whether to look for a stuck thread.  If a timeout occurs and this
+     * feature is enabled, the test will look for a thread that appears to be stuck
+     * and dump its backtrace.  This feature is experimental.  Behavior may change
+     * after the 4.12 release in response to feedback.
+     * @param enable {@code true} to enable the feature
+     * @return This object
+     * @since 4.12
+     */
+    public Timeout lookForStuckThread(boolean enable) {
+        fLookForStuckThread = enable;
+        return this;
+    }
 
     public Statement apply(Statement base, Description description) {
-        return new FailOnTimeout(base, fTimeout, fTimeUnit);
+        return new FailOnTimeout(base, fTimeout, fTimeUnit, fLookForStuckThread);
     }
 }
