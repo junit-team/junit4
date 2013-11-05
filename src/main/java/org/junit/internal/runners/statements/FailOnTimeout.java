@@ -163,7 +163,22 @@ public class FailOnTimeout extends Statement {
             // threads are proliferating too fast for us.  Bail before we get into 
             // trouble.
         }
-        return Arrays.copyOf(threads, enumCount);
+        return copyThreads(threads, enumCount);
+    }
+
+    /**
+     * Returns an array of the first {@code count} Threads in {@code threads}. 
+     * (Use instead of Arrays.copyOf to maintain compatibility with Java 1.5.)
+     * @param threads The source array.
+     * @param count The maximum length of the result array.
+     * @return The first {@count} (at most) elements of {@code threads}.
+     */
+    private Thread[] copyThreads(Thread[] threads, int count) {
+        int length = Math.min(count, threads.length);
+        Thread[] result = new Thread[length];
+        for (int i = 0; i < length; i++)
+            result[i] = threads[i];
+        return result;
     }
 
     /**
