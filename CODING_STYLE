@@ -71,6 +71,8 @@ Other
 ----------------------------------
 Wrapping and Braces
 ----------------------------------
+* Line length: 100
+
 Braces placement
 * In class declaration : End of line
 * In method declaration : End of line
