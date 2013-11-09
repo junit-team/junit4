@@ -71,23 +71,6 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     };
     
     /**
-     * Abstract implementation of {@link Statement} that is aware of the
-     * children that will be run once the statement is evaluated.
-     * 
-     */
-    protected abstract class ChildrenAwareStatement extends Statement {
-        private final Collection<T> children;
-
-        public ChildrenAwareStatement(Collection<T> children) {
-            this.children = children;
-        }
-
-        public Collection<T> getChildren() {
-            return children;
-        }
-    }
-
-    /**
      * Constructs a new {@code ParentRunner} that will run {@code @TestClass}
      */
     protected ParentRunner(Class<?> testClass) throws InitializationError {
@@ -184,34 +167,22 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * @return {@code Statement}
      */
     protected Statement classBlock(final RunNotifier notifier) {
-        Statement statement= childrenInvoker(notifier);
-        if (statementHasTestsToRun(statement)) {
-            statement= withBeforeClasses(statement);
-            statement= withAfterClasses(statement);
-            statement= withClassRules(statement);
+        Statement statement = childrenInvoker(notifier);
+        if (areAllChildrenIgnored() == false) {
+            statement = withBeforeClasses(statement);
+            statement = withAfterClasses(statement);
+            statement = withClassRules(statement);
         }
         return statement;
     }
 
-    private boolean statementHasTestsToRun(Statement statement) {
-        if(statement instanceof ParentRunner.ChildrenAwareStatement == false) {
-            return true;
-        }
-        
-        @SuppressWarnings("unchecked")
-        Collection<T> children= ((ParentRunner<T>.ChildrenAwareStatement)statement).getChildren();
-        
-        return isAnyChildNotIgnored(children);
-    }
-
-    private boolean isAnyChildNotIgnored(Collection<T> children) {
-        for (T child : children) {
+    private boolean areAllChildrenIgnored() {
+        for (T child : getFilteredChildren()) {
             if(isIgnored(child) == false) {
-                return true;
+                return false;
             }
         }
-        
-        return false;
+        return true;
     }
 
     /**
@@ -268,33 +239,32 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     /**
      * Returns a {@link Statement}: Call {@link #runChild(Object, RunNotifier)}
      * on each object returned by {@link #getChildren()} (subject to any imposed
-     * filter and sort).
+     * filter and sort)
      */
     protected Statement childrenInvoker(final RunNotifier notifier) {
-        return new ChildrenAwareStatement(getFilteredChildren()) {
-            
+        return new Statement() {
             @Override
             public void evaluate() {
-                runChildren(notifier, getChildren());
+                runChildren(notifier);
             }
         };
     }
 
     /**
      * Evaluates whether a child is ignored. The default implementation always
-     * returns <code>false</code>. </p>{@link BlockJUnit4ClassRunner}, for
-     * example, overrides this method to filter tests based on the
-     * {@link Ignore} annotation.
+     * returns <code>false</code>.
+     * <p/>
+     * {@link BlockJUnit4ClassRunner}, for example, overrides this method to
+     * filter tests based on the {@link Ignore} annotation.
      */
     protected boolean isIgnored(T child) {
         return false;
     }
 
-    private void runChildren(final RunNotifier notifier,
-            Collection<T> filteredChildren) {
-        final RunnerScheduler scheduler= fScheduler;
+    private void runChildren(final RunNotifier notifier) {
+        final RunnerScheduler scheduler = fScheduler;
         try {
-            for (final T each : filteredChildren) {
+            for (final T each : getFilteredChildren()) {
                 scheduler.schedule(new Runnable() {
                     public void run() {
                         ParentRunner.this.runChild(each, notifier);
