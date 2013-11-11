@@ -1,4 +1,5 @@
 We love pull requests. Here is a quick guide:
+
 1. You need to have `ant` and a JDK (at least version 1.5) installed.
 2. Fork the repo.
 3. Ensure that you have a clean state by running `ant test`.
