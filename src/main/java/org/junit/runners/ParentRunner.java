@@ -16,6 +16,7 @@ import java.util.Map;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.validator.AnnotationValidator;
 import org.junit.validator.AnnotationValidatorFactory;
@@ -75,7 +76,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             // do nothing
         }
     };
-
+    
     /**
      * Constructs a new {@code ParentRunner} that will run {@code @TestClass}
      */
@@ -196,28 +197,47 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     }
 
     /**
-     * Constructs a {@code Statement} to run all of the tests in the test class. Override to add pre-/post-processing.
-     * Here is an outline of the implementation:
-     * <ul>
-     * <li>Call {@link #runChild(Object, RunNotifier)} on each object returned by {@link #getChildren()} (subject to any imposed filter and sort).</li>
-     * <li>ALWAYS run all non-overridden {@code @BeforeClass} methods on this class
-     * and superclasses before the previous step; if any throws an
-     * Exception, stop execution and pass the exception on.
-     * <li>ALWAYS run all non-overridden {@code @AfterClass} methods on this class
-     * and superclasses before any of the previous steps; all AfterClass methods are
-     * always executed: exceptions thrown by previous steps are combined, if
+     * Constructs a {@code Statement} to run all of the tests in the test class.
+     * Override to add pre-/post-processing. Here is an outline of the
+     * implementation:
+     * <ol>
+     * <li>Determine the children to be run using {@link #getChildren()}
+     * (subject to any imposed filter and sort).</li>
+     * <li>If there are any children remaining after filtering and ignoring,
+     * construct a statement that will:
+     * <ol>
+     * <li>Apply all {@code ClassRule}s on the test-class and superclasses.</li>
+     * <li>Run all non-overridden {@code @BeforeClass} methods on the test-class
+     * and superclasses; if any throws an Exception, stop execution and pass the
+     * exception on.</li>
+     * <li>Run all remaining tests on the test-class.</li>
+     * <li>Run all non-overridden {@code @AfterClass} methods on the test-class
+     * and superclasses: exceptions thrown by previous steps are combined, if
      * necessary, with exceptions from AfterClass methods into a
-     * {@link MultipleFailureException}.
-     * </ul>
-     *
+     * {@link MultipleFailureException}.</li>
+     * </ol>
+     * </li>
+     * </ol>
+     * 
      * @return {@code Statement}
      */
     protected Statement classBlock(final RunNotifier notifier) {
         Statement statement = childrenInvoker(notifier);
-        statement = withBeforeClasses(statement);
-        statement = withAfterClasses(statement);
-        statement = withClassRules(statement);
+        if (!areAllChildrenIgnored()) {
+            statement = withBeforeClasses(statement);
+            statement = withAfterClasses(statement);
+            statement = withClassRules(statement);
+        }
         return statement;
+    }
+
+    private boolean areAllChildrenIgnored() {
+        for (T child : getFilteredChildren()) {
+            if (!isIgnored(child)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -283,6 +303,17 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
                 runChildren(notifier);
             }
         };
+    }
+
+    /**
+     * Evaluates whether a child is ignored. The default implementation always
+     * returns <code>false</code>.
+     * <p/>
+     * {@link BlockJUnit4ClassRunner}, for example, overrides this method to
+     * filter tests based on the {@link Ignore} annotation.
+     */
+    protected boolean isIgnored(T child) {
+        return false;
     }
 
     private void runChildren(final RunNotifier notifier) {

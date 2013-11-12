@@ -114,7 +114,7 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
     public boolean isPublic() {
         return Modifier.isPublic(fMethod.getModifiers());
     }
-
+    
     /**
      * Returns the return type of the method
      */
