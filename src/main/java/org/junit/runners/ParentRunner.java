@@ -168,7 +168,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      */
     protected Statement classBlock(final RunNotifier notifier) {
         Statement statement = childrenInvoker(notifier);
-        if (areAllChildrenIgnored() == false) {
+        if (!areAllChildrenIgnored()) {
             statement = withBeforeClasses(statement);
             statement = withAfterClasses(statement);
             statement = withClassRules(statement);
@@ -178,7 +178,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
     private boolean areAllChildrenIgnored() {
         for (T child : getFilteredChildren()) {
-            if(isIgnored(child) == false) {
+            if (!isIgnored(child)) {
                 return false;
             }
         }
