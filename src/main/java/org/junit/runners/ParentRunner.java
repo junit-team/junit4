@@ -76,13 +76,17 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             // do nothing
         }
     };
-    
+
     /**
      * Constructs a new {@code ParentRunner} that will run {@code @TestClass}
      */
     protected ParentRunner(Class<?> testClass) throws InitializationError {
-        fTestClass = new TestClass(testClass);
+        fTestClass = createTestClass(testClass);
         validate();
+    }
+
+    protected TestClass createTestClass(Class<?> testClass) {
+        return new TestClass(testClass);
     }
 
     //
@@ -218,7 +222,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * </ol>
      * </li>
      * </ol>
-     * 
+     *
      * @return {@code Statement}
      */
     protected Statement classBlock(final RunNotifier notifier) {
