@@ -47,6 +47,13 @@ public class TestClass {
         Map<Class<? extends Annotation>, List<FrameworkField>> fieldsForAnnotations =
                 new LinkedHashMap<Class<? extends Annotation>, List<FrameworkField>>();
 
+        scanAnnotatedMembers(methodsForAnnotations, fieldsForAnnotations);
+
+        fMethodsForAnnotations = makeDeeplyUnmodifiable(methodsForAnnotations);
+        fFieldsForAnnotations = makeDeeplyUnmodifiable(fieldsForAnnotations);
+    }
+
+    protected void scanAnnotatedMembers(Map<Class<? extends Annotation>, List<FrameworkMethod>> methodsForAnnotations, Map<Class<? extends Annotation>, List<FrameworkField>> fieldsForAnnotations) {
         for (Class<?> eachClass : getSuperClasses(fClass)) {
             for (Method eachMethod : MethodSorter.getDeclaredMethods(eachClass)) {
                 addToAnnotationLists(new FrameworkMethod(eachMethod), methodsForAnnotations);
@@ -57,9 +64,6 @@ public class TestClass {
                 addToAnnotationLists(new FrameworkField(eachField), fieldsForAnnotations);
             }
         }
-
-        fMethodsForAnnotations = makeDeeplyUnmodifiable(methodsForAnnotations);
-        fFieldsForAnnotations = makeDeeplyUnmodifiable(fieldsForAnnotations);
     }
 
     private static Field[] getSortedDeclaredFields(Class<?> clazz) {
@@ -72,7 +76,7 @@ public class TestClass {
         return declaredFields;
     }
 
-    private static <T extends FrameworkMember<T>> void addToAnnotationLists(T member,
+    protected static <T extends FrameworkMember<T>> void addToAnnotationLists(T member,
             Map<Class<? extends Annotation>, List<T>> map) {
         for (Annotation each : member.getAnnotations()) {
             Class<? extends Annotation> type = each.annotationType();
