@@ -10,7 +10,7 @@ import java.util.List;
  */
 public abstract class FrameworkMember<T extends FrameworkMember<T>> {
     /**
-     * Returns the annotations on this method
+     * Returns the annotations on this member
      */
     abstract Annotation[] getAnnotations();
 
@@ -32,4 +32,6 @@ public abstract class FrameworkMember<T extends FrameworkMember<T>> {
     public abstract String getName();
 
     public abstract Class<?> getType();
+
+    public abstract Class<?> getDeclaringClass();
 }

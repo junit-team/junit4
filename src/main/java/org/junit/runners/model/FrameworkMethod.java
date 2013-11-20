@@ -84,14 +84,14 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
      * <li>is not static (given {@code isStatic is true}).
      */
     public void validatePublicVoid(boolean isStatic, List<Throwable> errors) {
-        if (Modifier.isStatic(fMethod.getModifiers()) != isStatic) {
+        if (isStatic() != isStatic) {
             String state = isStatic ? "should" : "should not";
             errors.add(new Exception("Method " + fMethod.getName() + "() " + state + " be static"));
         }
-        if (!Modifier.isPublic(fMethod.getDeclaringClass().getModifiers())) {
-            errors.add(new Exception("Class " + fMethod.getDeclaringClass().getName() + " should be public"));
+        if (!Modifier.isPublic(getDeclaringClass().getModifiers())) {
+            errors.add(new Exception("Class " + getDeclaringClass().getName() + " should be public"));
         }
-        if (!Modifier.isPublic(fMethod.getModifiers())) {
+        if (!isPublic()) {
             errors.add(new Exception("Method " + fMethod.getName() + "() should be public"));
         }
         if (fMethod.getReturnType() != Void.TYPE) {
@@ -128,6 +128,14 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
     @Override
     public Class<?> getType() {
         return getReturnType();
+    }
+
+    /**
+     * Returns the class where the method is actually declared
+     */
+    @Override
+    public Class<?> getDeclaringClass() {
+        return fMethod.getDeclaringClass();
     }
 
     public void validateNoTypeParametersOnArgs(List<Throwable> errors) {
@@ -197,7 +205,7 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
     public <T extends Annotation> T getAnnotation(Class<T> annotationType) {
         return fMethod.getAnnotation(annotationType);
     }
-    
+
     public List<ParameterSignature> getParameterSignatures() {
         return ParameterSignature.signatures(fMethod);
     }

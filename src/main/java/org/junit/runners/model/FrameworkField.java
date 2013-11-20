@@ -61,6 +61,11 @@ public class FrameworkField extends FrameworkMember<FrameworkField> {
     public Class<?> getType() {
         return fField.getType();
     }
+    
+    @Override
+    public Class<?> getDeclaringClass() {
+        return fField.getDeclaringClass();
+    }
 
     /**
      * Attempts to retrieve the value of this field on {@code target}
