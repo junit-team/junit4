@@ -1,6 +1,7 @@
 package org.junit.runners;
 
-import static org.junit.internal.runners.rules.RuleFieldValidator.*;
+import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_METHOD_VALIDATOR;
+import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_VALIDATOR;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -43,12 +44,12 @@ import org.junit.runners.model.Statement;
  * <li>It has a much simpler implementation based on {@link Statement}s,
  * allowing new operations to be inserted into the appropriate point in the
  * execution flow.
- * 
- * <li>It is published, and extension and reuse are encouraged, whereas
- * {@code JUnit4ClassRunner} was in an internal package, and is now deprecated.
+ *
+ * <li>It is published, and extension and reuse are encouraged, whereas {@code
+ * JUnit4ClassRunner} was in an internal package, and is now deprecated.
  * </ul>
  * <p>
- * In turn, in 2009 we introduced {@link Rule}s. In many cases where extending
+ * In turn, in 2009 we introduced {@link Rule}s.  In many cases where extending
  * BlockJUnit4ClassRunner was necessary to add new behavior, {@link Rule}s can
  * be used, which makes the extension more reusable and composable.
  * 
@@ -61,9 +62,8 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 
     /**
      * Creates a BlockJUnit4ClassRunner to run {@code klass}
-     * 
-     * @throws InitializationError
-     *             if the test class is malformed.
+     *
+     * @throws InitializationError if the test class is malformed.
      */
     public BlockJUnit4ClassRunner(Class<?> klass) throws InitializationError {
         super(klass);
@@ -127,8 +127,8 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
         Description description = fMethodDescriptions.get(method);
 
         if (description == null) {
-            description = Description.createTestDescription(getTestClass()
-                    .getJavaClass(), testName(method), method.getAnnotations());
+            description = Description.createTestDescription(getTestClass().getJavaClass(),
+                    testName(method), method.getAnnotations());
             fMethodDescriptions.putIfAbsent(method, description);
         }
 
@@ -264,16 +264,16 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      * {@code method} passes, or throws an exception if {@code method} fails.
      * 
      * Here is an outline of the default implementation:
-     * 
+     *
      * <ul>
      * <li>Invoke {@code method} on the result of {@code createTest()}, and
      * throw any exceptions thrown by either operation.
-     * <li>HOWEVER, if {@code method}'s {@code @Test} annotation has the
-     * {@code expecting} attribute, return normally only if the previous step
-     * threw an exception of the correct type, and throw an exception otherwise.
-     * <li>HOWEVER, if {@code method}'s {@code @Test} annotation has the
-     * {@code timeout} attribute, throw an exception if the previous step takes
-     * more than the specified number of milliseconds.
+     * <li>HOWEVER, if {@code method}'s {@code @Test} annotation has the {@code
+     * expecting} attribute, return normally only if the previous step threw an
+     * exception of the correct type, and throw an exception otherwise.
+     * <li>HOWEVER, if {@code method}'s {@code @Test} annotation has the {@code
+     * timeout} attribute, throw an exception if the previous step takes more
+     * than the specified number of milliseconds.
      * <li>ALWAYS run all non-overridden {@code @Before} methods on this class
      * and superclasses before any of the previous steps; if any throws an
      * Exception, stop execution and pass the exception on.
@@ -388,8 +388,8 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
         return result;
     }
 
-    private Statement withMethodRules(FrameworkMethod method,
-            List<TestRule> testRules, Object target, Statement result) {
+    private Statement withMethodRules(FrameworkMethod method, List<TestRule> testRules,
+            Object target, Statement result) {
         for (org.junit.rules.MethodRule each : getMethodRules(target)) {
             if (!testRules.contains(each)) {
                 result = each.apply(result, method, target);
@@ -403,8 +403,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
     }
 
     /**
-     * @param target
-     *            the test case instance
+     * @param target the test case instance
      * @return a list of MethodRules that should be applied when executing this
      *         test
      */
@@ -416,21 +415,19 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
     /**
      * Returns a {@link Statement}: apply all non-static {@link Value} fields
      * annotated with {@link Rule}.
-     * 
-     * @param statement
-     *            The base statement
-     * @return a RunRules statement if any class-level {@link Rule}s are found,
-     *         or the base statement
+     *
+     * @param statement The base statement
+     * @return a RunRules statement if any class-level {@link Rule}s are
+     *         found, or the base statement
      */
-    private Statement withTestRules(FrameworkMethod method,
-            List<TestRule> testRules, Statement statement) {
-        return testRules.isEmpty() ? statement : new RunRules(statement,
-                testRules, describeChild(method));
+    private Statement withTestRules(FrameworkMethod method, List<TestRule> testRules,
+            Statement statement) {
+        return testRules.isEmpty() ? statement :
+                new RunRules(statement, testRules, describeChild(method));
     }
 
     /**
-     * @param target
-     *            the test case instance
+     * @param target the test case instance
      * @return a list of TestRules that should be applied when executing this
      *         test
      */
