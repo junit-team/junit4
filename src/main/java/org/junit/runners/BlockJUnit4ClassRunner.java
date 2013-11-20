@@ -39,7 +39,7 @@ import org.junit.runners.model.Statement;
  * <p>
  * BlockJUnit4ClassRunner has advantages for writers of custom JUnit runners
  * that are slight changes to the default behavior, however:
- * 
+ *
  * <ul>
  * <li>It has a much simpler implementation based on {@link Statement}s,
  * allowing new operations to be inserted into the appropriate point in the
@@ -52,7 +52,7 @@ import org.junit.runners.model.Statement;
  * In turn, in 2009 we introduced {@link Rule}s.  In many cases where extending
  * BlockJUnit4ClassRunner was necessary to add new behavior, {@link Rule}s can
  * be used, which makes the extension more reusable and composable.
- * 
+ *
  * @since 4.5
  */
 public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
@@ -112,7 +112,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
             runLeaf(methodBlock(method), description, notifier);
         }
     }
-
+    
     /**
      * Evaluates whether {@link FrameworkMethod}s are ignored based on the
      * {@link Ignore} annotation.
@@ -262,7 +262,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
     /**
      * Returns a Statement that, when executed, either returns normally if
      * {@code method} passes, or throws an exception if {@code method} fails.
-     * 
+     *
      * Here is an outline of the default implementation:
      *
      * <ul>
@@ -287,7 +287,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      * or add additional behavior before and after, or modify thrown exceptions.
      * For more information, see {@link TestRule}
      * </ul>
-     * 
+     *
      * This can be overridden in subclasses, either by overriding this method,
      * or the implementations creating each sub-statement.
      */
