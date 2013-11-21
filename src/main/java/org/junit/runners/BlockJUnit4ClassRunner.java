@@ -19,6 +19,9 @@ import org.junit.internal.runners.statements.FailOnTimeout;
 import org.junit.internal.runners.statements.InvokeMethod;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
+import org.junit.plugin.Plug;
+import org.junit.plugin.Plugin;
+import org.junit.plugin.PluginStatement;
 import org.junit.rules.RunRules;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -54,6 +57,9 @@ import org.junit.runners.model.Statement;
  */
 public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
     private final ConcurrentHashMap<FrameworkMethod, Description> fMethodDescriptions = new ConcurrentHashMap<FrameworkMethod, Description>();
+
+    private final Plugin[] plugins;
+
     /**
      * Creates a BlockJUnit4ClassRunner to run {@code klass}
      *
@@ -61,6 +67,36 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      */
     public BlockJUnit4ClassRunner(Class<?> klass) throws InitializationError {
         super(klass);
+        plugins = constructPlugins(klass);
+    }
+
+    private Plugin[] constructPlugins(Class<?> klass)
+            throws InitializationError {
+        Plug annotation = klass.getAnnotation(Plug.class);
+        if (annotation == null) {
+            return null;
+        }
+
+        Class<? extends Plugin>[] pluginClasses = annotation.value();
+        if (pluginClasses == null || pluginClasses.length == 0) {
+            return null;
+        }
+
+        Plugin[] plugins = new Plugin[pluginClasses.length];
+        for (int i = 0; i < pluginClasses.length; ++i) {
+            Class<? extends Plugin> pluginClass = pluginClasses[i];
+            Plugin plugin;
+            try {
+                plugin = pluginClass.newInstance();
+            } catch (ReflectiveOperationException e) {
+                throw new InitializationError(
+                        String.format(
+                                "Plugin class %s should have a public constructor with no parameters",
+                                pluginClass.getSimpleName()));
+            }
+            plugins[i] = plugin;
+        }
+        return plugins;
     }
 
     //
@@ -274,6 +310,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
         statement = withBefores(method, test, statement);
         statement = withAfters(method, test, statement);
         statement = withRules(method, test, statement);
+        statement = withPlugins(method, test, statement);
         return statement;
     }
 
@@ -421,5 +458,17 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
             return 0;
         }
         return annotation.timeout();
+    }
+
+    private Statement withPlugins(FrameworkMethod method, Object test,
+            Statement statement) {
+
+        if (plugins != null) {
+            for (int i = plugins.length - 1; i >= 0; --i) {
+                statement = new PluginStatement(plugins[i], test,
+                        method.getMethod(), statement);
+            }
+        }
+        return statement;
     }
 }

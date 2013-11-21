@@ -80,6 +80,7 @@ import org.junit.tests.running.classes.IgnoreClassTest;
 import org.junit.tests.running.classes.ParameterizedTestTest;
 import org.junit.tests.running.classes.ParentRunnerFilteringTest;
 import org.junit.tests.running.classes.ParentRunnerTest;
+import org.junit.tests.running.classes.PluginTest;
 import org.junit.tests.running.classes.RunWithTest;
 import org.junit.tests.running.classes.SuiteTest;
 import org.junit.tests.running.classes.TestClassTest;
@@ -196,7 +197,8 @@ import org.junit.tests.validation.ValidationTest;
         JUnitCommandLineParseResultTest.class,
         FilterFactoriesTest.class,
         CategoryFilterFactoryTest.class,
-        JUnitCoreTest.class
+        JUnitCoreTest.class,
+        PluginTest.class
 })
 public class AllTests {
     public static Test suite() {
