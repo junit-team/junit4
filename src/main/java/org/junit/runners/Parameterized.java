@@ -18,6 +18,8 @@ import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
+import org.junit.runners.model.TestClass;
+import org.junit.runners.parameterized.TestWithParameters;
 
 /**
  * The custom runner <code>Parameterized</code> implements parameterized tests.
@@ -188,11 +190,21 @@ public class Parameterized extends Suite {
 
         private final String fName;
 
+        /**
+         * @deprecated please use
+         *             {@code TestClassRunnerForParameters(TestWithParameters)}
+         */
+        @Deprecated
         protected TestClassRunnerForParameters(Class<?> type, String pattern, int index, Object[] parameters) throws InitializationError {
-            super(type);
+            this(createTestWithParameters(new TestClass(type), pattern, index,
+                    parameters));
+        }
 
-            fParameters = parameters;
-            fName = nameFor(pattern, index, parameters);
+        protected TestClassRunnerForParameters(TestWithParameters test)
+                throws InitializationError {
+            super(test.getTestClass().getJavaClass());
+            fParameters = test.getParameters().toArray();
+            fName = test.getName();
         }
 
         @Override
@@ -229,12 +241,6 @@ public class Parameterized extends Suite {
                 }
             }
             return testClassInstance;
-        }
-
-        protected String nameFor(String pattern, int index, Object[] parameters) {
-            String finalPattern = pattern.replaceAll("\\{index\\}", Integer.toString(index));
-            String name = MessageFormat.format(finalPattern, parameters);
-            return "[" + name + "]";
         }
 
         @Override
@@ -319,11 +325,14 @@ public class Parameterized extends Suite {
             throws InitializationError {
         Object[] parameters= (parametersOrSingleParameter instanceof Object[]) ? (Object[]) parametersOrSingleParameter
             : new Object[] { parametersOrSingleParameter };
-        return createRunner(pattern, index, parameters);
+        TestWithParameters test = createTestWithParameters(getTestClass(),
+                pattern, index, parameters);
+        return createRunnerForTest(test);
     }
 
-    protected Runner createRunner(String pattern, int index, Object[] parameters) throws InitializationError {
-        return new TestClassRunnerForParameters(getTestClass().getJavaClass(), pattern, index, parameters);
+    protected Runner createRunnerForTest(TestWithParameters test)
+            throws InitializationError {
+        return new TestClassRunnerForParameters(test);
     }
 
     @SuppressWarnings("unchecked")
@@ -380,5 +389,14 @@ public class Parameterized extends Suite {
 
     private boolean fieldsAreAnnotated() {
         return !getAnnotatedFieldsByParameter().isEmpty();
+    }
+
+    private static TestWithParameters createTestWithParameters(
+            TestClass testClass, String pattern, int index, Object[] parameters) {
+        String finalPattern = pattern.replaceAll("\\{index\\}",
+                Integer.toString(index));
+        String name = MessageFormat.format(finalPattern, parameters);
+        return new TestWithParameters("[" + name + "]", testClass,
+                Arrays.asList(parameters));
     }
 }

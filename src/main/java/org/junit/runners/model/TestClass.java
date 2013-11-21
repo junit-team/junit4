@@ -252,6 +252,26 @@ public class TestClass implements Annotatable {
         return fClass.isMemberClass() && !isStatic(fClass.getModifiers());
     }
 
+    @Override
+    public int hashCode() {
+        return (fClass == null) ? 0 : fClass.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        TestClass other = (TestClass) obj;
+        return fClass == other.fClass;
+    }
+
     /**
      * Compares two fields by its name.
      */

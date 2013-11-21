@@ -18,6 +18,7 @@ import org.junit.runners.Suite.SuiteClasses;
 import org.junit.runners.model.FrameworkFieldTest;
 import org.junit.runners.model.FrameworkMethodTest;
 import org.junit.runners.model.TestClassTest;
+import org.junit.runners.parameterized.TestWithParametersTest;
 import org.junit.tests.assertion.AssertionTest;
 import org.junit.tests.assertion.ComparisonFailureTest;
 import org.junit.tests.assertion.MultipleFailureExceptionTest;
@@ -202,7 +203,8 @@ import org.junit.tests.validation.ValidationTest;
         FrameworkFieldTest.class,
         FrameworkMethodTest.class,
         FailOnTimeoutTest.class,
-        JUnitCoreTest.class
+        JUnitCoreTest.class,
+        TestWithParametersTest.class
 })
 public class AllTests {
     public static Test suite() {
