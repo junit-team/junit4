@@ -1,11 +1,9 @@
 package org.junit.runners;
 
-import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.reflect.Field;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,12 +11,10 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.runner.Runner;
-import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
-import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
+import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParameters;
 import org.junit.runners.parameterized.TestWithParameters;
 
 /**
@@ -185,122 +181,6 @@ public class Parameterized extends Suite {
         int value() default 0;
     }
 
-    protected class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
-        private final Object[] fParameters;
-
-        private final String fName;
-
-        /**
-         * @deprecated please use
-         *             {@code TestClassRunnerForParameters(TestWithParameters)}
-         */
-        @Deprecated
-        protected TestClassRunnerForParameters(Class<?> type, String pattern, int index, Object[] parameters) throws InitializationError {
-            this(createTestWithParameters(new TestClass(type), pattern, index,
-                    parameters));
-        }
-
-        protected TestClassRunnerForParameters(TestWithParameters test)
-                throws InitializationError {
-            super(test.getTestClass().getJavaClass());
-            fParameters = test.getParameters().toArray();
-            fName = test.getName();
-        }
-
-        @Override
-        public Object createTest() throws Exception {
-            if (fieldsAreAnnotated()) {
-                return createTestUsingFieldInjection();
-            } else {
-                return createTestUsingConstructorInjection();
-            }
-        }
-
-        private Object createTestUsingConstructorInjection() throws Exception {
-            return getTestClass().getOnlyConstructor().newInstance(fParameters);
-        }
-
-        private Object createTestUsingFieldInjection() throws Exception {
-            List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter();
-            if (annotatedFieldsByParameter.size() != fParameters.length) {
-                throw new Exception("Wrong number of parameters and @Parameter fields." +
-                        " @Parameter fields counted: " + annotatedFieldsByParameter.size() + ", available parameters: " + fParameters.length + ".");
-            }
-            Object testClassInstance = getTestClass().getJavaClass().newInstance();
-            for (FrameworkField each : annotatedFieldsByParameter) {
-                Field field = each.getField();
-                Parameter annotation = field.getAnnotation(Parameter.class);
-                int index = annotation.value();
-                try {
-                    field.set(testClassInstance, fParameters[index]);
-                } catch (IllegalArgumentException iare) {
-                    throw new Exception(getTestClass().getName() + ": Trying to set " + field.getName() +
-                            " with the value " + fParameters[index] +
-                            " that is not the right type (" + fParameters[index].getClass().getSimpleName() + " instead of " +
-                            field.getType().getSimpleName() + ").", iare);
-                }
-            }
-            return testClassInstance;
-        }
-
-        @Override
-        protected String getName() {
-            return fName;
-        }
-
-        @Override
-        protected String testName(FrameworkMethod method) {
-            return method.getName() + getName();
-        }
-
-        @Override
-        protected void validateConstructor(List<Throwable> errors) {
-            validateOnlyOneConstructor(errors);
-            if (fieldsAreAnnotated()) {
-                validateZeroArgConstructor(errors);
-            }
-        }
-
-        @Override
-        protected void validateFields(List<Throwable> errors) {
-            super.validateFields(errors);
-            if (fieldsAreAnnotated()) {
-                List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter();
-                int[] usedIndices = new int[annotatedFieldsByParameter.size()];
-                for (FrameworkField each : annotatedFieldsByParameter) {
-                    int index = each.getField().getAnnotation(Parameter.class).value();
-                    if (index < 0 || index > annotatedFieldsByParameter.size() - 1) {
-                        errors.add(
-                                new Exception("Invalid @Parameter value: " + index + ". @Parameter fields counted: " +
-                                        annotatedFieldsByParameter.size() + ". Please use an index between 0 and " +
-                                        (annotatedFieldsByParameter.size() - 1) + ".")
-                        );
-                    } else {
-                        usedIndices[index]++;
-                    }
-                }
-                for (int index = 0; index < usedIndices.length; index++) {
-                    int numberOfUse = usedIndices[index];
-                    if (numberOfUse == 0) {
-                        errors.add(new Exception("@Parameter(" + index + ") is never used."));
-                    } else if (numberOfUse > 1) {
-                        errors.add(new Exception("@Parameter(" + index + ") is used more than once (" + numberOfUse + ")."));
-                    }
-                }
-            }
-        }
-
-        @Override
-        protected Statement classBlock(RunNotifier notifier) {
-            return childrenInvoker(notifier);
-        }
-
-        @Override
-        protected Annotation[] getRunnerAnnotations() {
-            return new Annotation[0];
-        }
-    }
-
     private static final List<Runner> NO_RUNNERS = Collections.<Runner>emptyList();
 
     private final List<Runner> fRunners;
@@ -332,7 +212,7 @@ public class Parameterized extends Suite {
 
     protected Runner createRunnerForTest(TestWithParameters test)
             throws InitializationError {
-        return new TestClassRunnerForParameters(test);
+        return new BlockJUnit4ClassRunnerWithParameters(test);
     }
 
     @SuppressWarnings("unchecked")
@@ -381,14 +261,6 @@ public class Parameterized extends Suite {
                 "{0}.{1}() must return an Iterable of arrays.",
                 className, methodName);
         return new Exception(message);
-    }
-
-    private List<FrameworkField> getAnnotatedFieldsByParameter() {
-        return getTestClass().getAnnotatedFields(Parameter.class);
-    }
-
-    private boolean fieldsAreAnnotated() {
-        return !getAnnotatedFieldsByParameter().isEmpty();
     }
 
     private static TestWithParameters createTestWithParameters(
