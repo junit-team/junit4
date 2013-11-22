@@ -10,6 +10,7 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.junit.rules.Timeout;
 import org.junit.rules.TimeoutHandler;
 import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
@@ -90,9 +91,14 @@ public class FailOnTimeout extends Statement {
             exceptions.add(stuckThreadException);
         }
 
-        if (fTimeoutHandler != null) {
+        // Specifically set timeout handler takes precedence
+        TimeoutHandler timeoutHandler = fTimeoutHandler;
+        if (timeoutHandler == null) {
+            timeoutHandler = lookForGlobalTimeoutHandler();
+        }
+        if (timeoutHandler != null) {
             // For the sake of convenience just allow adding another exception by the custom timeout handler
-            Exception timeoutHandlerException = fTimeoutHandler.handleTimeout(thread);
+            Exception timeoutHandlerException = timeoutHandler.handleTimeout(thread);
             if (timeoutHandlerException != null) {
                 exceptions.add(timeoutHandlerException);
             }
@@ -103,6 +109,39 @@ public class FailOnTimeout extends Statement {
         } else {
             return currThreadException;
         }
+    }
+
+    /**
+     * Note: Before this was in {@link Timeout} and called from
+     * {@link Timeout#apply(Statement, org.junit.runner.Description)}, but this would not have
+     * been used for timeouts specified for single test cases.
+     */
+    private TimeoutHandler lookForGlobalTimeoutHandler() {
+        //TODO: due to using reflection, the global timeout handler should be cached once it is
+        // there, and used as long as the system property is still set?
+        TimeoutHandler handler = null;
+        String timeoutHandlerClassName = System.getProperty(Timeout.TIMEOUT_HANDLER_CLASS_NAME_PROPERTY_NAME);
+        if (timeoutHandlerClassName != null) {
+            try {
+System.err.println("FOUND");
+                Class<?> timeoutHandlerClass = Class.forName(timeoutHandlerClassName);
+                Object handlerInstance = timeoutHandlerClass.newInstance();
+                handler = TimeoutHandler.class.cast(handlerInstance);
+            } catch (ClassNotFoundException e) {
+                //TODO: or throw InitializationError?
+                throw new RuntimeException(String.format("Failed to find timeout handler class '%s' specified via system property", timeoutHandlerClassName), e);
+            } catch (InstantiationException e) {
+                //TODO: or throw InitializationError?
+                throw new RuntimeException(String.format("Failed to instantiate timeout handler class '%s'", timeoutHandlerClassName), e);
+            } catch (IllegalAccessException e) {
+                //TODO: or throw InitializationError?
+                throw new RuntimeException(String.format("Failed to access timeout handler class '%s' during instantion", timeoutHandlerClassName), e);
+            } catch (ClassCastException e) {
+                //TODO: or throw InitializationError?
+                throw new RuntimeException(String.format("Failed to cast timeout handler class '%s' to '%s'", timeoutHandlerClassName, TimeoutHandler.class), e);
+            }
+        }
+        return handler;
     }
 
     /**

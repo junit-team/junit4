@@ -34,6 +34,9 @@ import java.util.concurrent.TimeUnit;
  * @since 4.7
  */
 public class Timeout implements TestRule {
+
+    public static final String TIMEOUT_HANDLER_CLASS_NAME_PROPERTY_NAME = "org.junit.rules.timeout.handler";
+
     private final long fTimeout;
     private final TimeUnit fTimeUnit;
     private boolean fLookForStuckThread;

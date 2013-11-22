@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.TestResult;
 import org.junit.After;
+import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,6 +32,7 @@ import org.junit.rules.Timeout;
 import org.junit.rules.TimeoutHandler;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
+import org.junit.runners.MethodSorters;
 
 public class TimeoutTest {
 
@@ -160,7 +162,7 @@ public class TimeoutTest {
         exception.printStackTrace(writer);
         return buffer.toString();
     }
-    
+
     @Test
     public void stalledThreadAppearsInStackTrace() throws Exception {
         JUnitCore core = new JUnitCore();
@@ -172,7 +174,7 @@ public class TimeoutTest {
     }
 
     public static class InfiniteLoopMultithreaded {
-        
+
         private static class ThreadTest implements Runnable {
             private boolean fStall;
 
@@ -182,14 +184,14 @@ public class TimeoutTest {
 
             public void run() {
                 if (fStall)
-                    for (; ; ) ;   
+                    for (; ; ) ;
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
                 }
             }
         }
-        
+
         public void failure(boolean mainThreadStalls) throws Exception {
             Thread t1 = new Thread(new ThreadTest(false), "timeout-thr1");
             Thread t2 = new Thread(new ThreadTest(!mainThreadStalls), "timeout-thr2");
@@ -204,7 +206,7 @@ public class TimeoutTest {
             t3.join();
         }
    }
-    
+
     public static class InfiniteLoopWithStuckThreadTest {
         @Rule
         public TestRule globalTimeout = new Timeout(100, TimeUnit.MILLISECONDS).lookForStuckThread(true);
@@ -214,7 +216,7 @@ public class TimeoutTest {
             (new InfiniteLoopMultithreaded()).failure(false);
         }
     }
-    
+
     public static class InfiniteLoopStuckInMainThreadTest {
         @Rule
         public TestRule globalTimeout = new Timeout(100, TimeUnit.MILLISECONDS).lookForStuckThread(true);
@@ -251,13 +253,15 @@ public class TimeoutTest {
     }
 
 
-    private static class MyTimeoutHandler implements TimeoutHandler {
+// --- Below are deadlock tests ---
+    public static class MyTimeoutHandler implements TimeoutHandler {
 
         private static Logger log = Logger.getLogger("MyTimeoutHandler");
 
         public Exception handleTimeout(Thread thread) {
-            log.warning("Test ran into timeout, here is a full thread dump:\n" + getFullThreadDump());
-            return new Exception("[MyTimeoutHandler] Appears to be stuck => Full thread dump is logged as warning");
+            String prefix = "[" + getClass().getSimpleName() + "] ";
+            log.warning(prefix + "Test ran into timeout, here is a full thread dump:\n" + getFullThreadDump());
+            return new Exception(prefix + "Appears to be stuck => Full thread dump is logged as warning");
         }
 
         private String getFullThreadDump() {
@@ -315,6 +319,8 @@ public class TimeoutTest {
         }
 
     }
+
+    public static class MyGlobalTimeoutHandler extends MyTimeoutHandler { }
 
     public static class LockedWithDeadlockTest {
         @Rule
@@ -387,6 +393,193 @@ public class TimeoutTest {
         assertThat(exception[1].getMessage(), containsString("[MyTimeoutHandler] Appears to be stuck => Full thread dump is logged as warning"));
     }
 
+
+    public static class LockedWithDeadlockWithNoDedicatedTimeoutHandlerTest {
+        @Rule
+        public TestRule globalTimeout = new Timeout(100, TimeUnit.MILLISECONDS);
+
+        final ReentrantLock lock1 = new ReentrantLock();
+        final ReentrantLock lock2 = new ReentrantLock();
+
+        private class LockedThread1 extends Thread {
+
+            public LockedThread1() {
+                super("Thread-locked-1");
+            }
+
+            @Override
+            public void run() {
+                lock1.lock();
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    // Ignore
+                }
+                lock2.lock();
+            }
+        }
+
+        private class LockedThread2 extends Thread {
+
+            public LockedThread2() {
+                super("Thread-locked-2");
+            }
+
+            @Override
+            public void run() {
+                lock2.lock();
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    // Ignore
+                }
+                lock1.lock();
+            }
+        }
+
+        @Test
+        public void failure() throws Exception {
+            LockedThread1 thread1 = new LockedThread1();
+            LockedThread2 thread2 = new LockedThread2();
+
+            thread1.start();
+            thread2.start();
+
+            thread1.join();
+            thread2.join();
+        }
+    }
+
+
+    @Test
+    public void timeoutFailureMultithreadedDeadlockWithFullDumpDueToGlobalTimeoutHandler() throws Exception {
+        try {
+            System.setProperty(Timeout.TIMEOUT_HANDLER_CLASS_NAME_PROPERTY_NAME, "org.junit.tests.running.methods.TimeoutTest$MyGlobalTimeoutHandler");
+
+            JUnitCore core = new JUnitCore();
+            Result result = core.run(LockedWithDeadlockWithNoDedicatedTimeoutHandlerTest.class);
+            assertEquals(1, result.getRunCount());
+            assertEquals(2, result.getFailureCount());
+            Throwable exception[] = new Throwable[2];
+            for (int i = 0; i < 2; i++)
+                exception[i] = result.getFailures().get(i).getException();
+            assertThat(exception[0].getMessage(), containsString("test timed out after 100 milliseconds"));
+            assertThat(stackForException(exception[0]), containsString("Thread.join"));
+            assertThat(exception[1].getMessage(), containsString("[MyGlobalTimeoutHandler] Appears to be stuck => Full thread dump is logged as warning"));
+        } finally {
+            System.clearProperty(Timeout.TIMEOUT_HANDLER_CLASS_NAME_PROPERTY_NAME);
+        }
+    }
+
+
+    @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+    public static class LockedWithDeadlockWithPartiallyDedicatedTimeoutHandlerTest {
+        @Rule
+        public TestRule globalTimeout = new Timeout(100, TimeUnit.MILLISECONDS);
+
+        final ReentrantLock lock1 = new ReentrantLock();
+        final ReentrantLock lock2 = new ReentrantLock();
+
+        private class LockedThread1 extends Thread {
+
+            public LockedThread1() {
+                super("Thread-locked-1");
+            }
+
+            @Override
+            public void run() {
+                lock1.lock();
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    // Ignore
+                }
+                lock2.lock();
+            }
+        }
+
+        private class LockedThread2 extends Thread {
+
+            public LockedThread2() {
+                super("Thread-locked-2");
+            }
+
+            @Override
+            public void run() {
+                lock2.lock();
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    // Ignore
+                }
+                lock1.lock();
+            }
+        }
+
+        @Test
+        public void failure() throws Exception {
+            LockedThread1 thread1 = new LockedThread1();
+            LockedThread2 thread2 = new LockedThread2();
+
+            thread1.start();
+            thread2.start();
+
+            thread1.join();
+            thread2.join();
+        }
+
+        @Test(timeout = 70)
+        public void failure2() throws Exception {
+            LockedThread1 thread1 = new LockedThread1();
+            LockedThread2 thread2 = new LockedThread2();
+
+            thread1.start();
+            thread2.start();
+
+            thread1.join();
+            thread2.join();
+        }
+
+    }
+
+
+    /**
+     * Because test case {@link LockedWithDeadlockWithPartiallyDedicatedTimeoutHandlerTest#failure2()}
+     * has a test method timeout, it gets a specific timeout rule
+     */
+    @Test
+    public void timeoutFailureMultithreadedDeadlockWithPartiallyFullDumpDueToGlobalTimeoutHandler() throws Exception {
+        try {
+            System.setProperty(Timeout.TIMEOUT_HANDLER_CLASS_NAME_PROPERTY_NAME, "org.junit.tests.running.methods.TimeoutTest$MyGlobalTimeoutHandler");
+
+            JUnitCore core = new JUnitCore();
+            Result result = core.run(LockedWithDeadlockWithPartiallyDedicatedTimeoutHandlerTest.class);
+            assertEquals(2, result.getRunCount());
+            assertEquals(4, result.getFailureCount());
+            Throwable exception[] = new Throwable[4];
+            //TODO: in Ant execution this always fails; and there are quite some deadlocked threads surviving/around
+            // this is just some debug output
+            for (int i = 0; i < 4; i++) {
+                System.err.println(i + ":" + result.getFailures().get(i));
+            }
+            // end of debug output
+
+            for (int i = 0; i < 4; i++)
+                exception[i] = result.getFailures().get(i).getException();
+
+            assertThat(exception[0].getMessage(), containsString("test timed out after 100 milliseconds"));
+            assertThat(stackForException(exception[0]), containsString("Thread.join"));
+            assertThat(exception[1].getMessage(), containsString("[MyGlobalTimeoutHandler] Appears to be stuck => Full thread dump is logged as warning"));
+
+            assertThat(exception[2].getMessage(), containsString("test timed out after 70 milliseconds"));
+            assertThat(stackForException(exception[2]), containsString("Thread.join"));
+            assertThat(exception[3].getMessage(), containsString("[MyGlobalTimeoutHandler] Appears to be stuck => Full thread dump is logged as warning"));
+
+        } finally {
+            System.clearProperty(Timeout.TIMEOUT_HANDLER_CLASS_NAME_PROPERTY_NAME);
+        }
+    }
+// --- Above are deadlock tests ---
 
     @Test
     public void compatibility() {
