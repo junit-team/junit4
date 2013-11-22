@@ -1,13 +1,19 @@
 package org.junit.tests.running.classes;
 
+import static java.util.Arrays.asList;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Test;
-import org.junit.runners.model.FrameworkField;
-import org.junit.runners.model.FrameworkMethod;
-import org.junit.runners.model.TestClass;
-import org.junit.validator.AnnotationValidator;
-import org.junit.validator.ValidateWith;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
@@ -17,21 +23,15 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.ParentRunner;
+import org.junit.runners.model.FrameworkField;
+import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerScheduler;
+import org.junit.runners.model.TestClass;
 import org.junit.tests.experimental.rules.RuleFieldValidatorTest.TestWithNonStaticClassRule;
 import org.junit.tests.experimental.rules.RuleFieldValidatorTest.TestWithProtectedClassRule;
-
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.util.Arrays.asList;
-import static org.hamcrest.core.IsCollectionContaining.hasItem;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import org.junit.validator.AnnotationValidator;
+import org.junit.validator.ValidateWith;
 
 public class ParentRunnerTest {
     public static String log = "";
@@ -206,7 +206,7 @@ public class ParentRunnerTest {
     }
 
     @Test
-    public void validatorIsCalledForAMethod() throws InitializationError {
+    public void validatorIsCalledForAMethod() {
         assertClassHasFailureMessage(AnnotationValidatorMethodTest.class,
                 ExampleAnnotationValidator.ANNOTATED_METHOD_CALLED);
     }

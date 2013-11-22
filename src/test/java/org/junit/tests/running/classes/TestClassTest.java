@@ -1,13 +1,11 @@
 package org.junit.tests.running.classes;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +37,7 @@ public class TestClassTest {
     public void complainIfMultipleConstructors() {
         new TestClass(TwoConstructors.class);
     }
-    
+
     public static class SuperclassWithField {
         @Rule
         public TestRule x;
@@ -90,15 +88,15 @@ public class TestClassTest {
         assertThat(new TestClass(SimpleClass.class).isANonStaticInnerClass(),
                 is(false));
     }
-        
+
     public static class FieldAnnotated {
     	@Rule
     	public String fieldThatShouldBeMatched = "andromeda";
-    	
+
     	@Rule
     	public boolean fieldThatShouldNotBeMachted;
     }
-    
+
     @Test
     public void annotatedFieldValues() {
     	TestClass tc = new TestClass(FieldAnnotated.class);
@@ -106,21 +104,21 @@ public class TestClassTest {
     	assertThat(values, hasItem("andromeda"));
     	assertThat(values.size(), is(1));
     }
-    
+
     public static class MethodsAnnotated {
     	@Ignore
     	@Test
-    	public String methodToBeMatched() { 
+    	public String methodToBeMatched() {
     		return "jupiter";
     	}
-    	
+
     	@Ignore
     	@Test
     	public int methodOfWrongType() {
     		return 0;
     	}
     }
-    
+
     @Test
     public void annotatedMethodValues() {
     	TestClass tc = new TestClass(MethodsAnnotated.class);
@@ -153,7 +151,7 @@ public class TestClassTest {
         exception.expect(UnsupportedOperationException.class);
         methods.add(null);
     }
-    
+
     @Test
     public void annotationToFields() {
         TestClass tc = new TestClass(FieldAnnotated.class);
