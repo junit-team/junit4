@@ -1,8 +1,8 @@
 package org.junit.tests.running.methods;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -12,6 +12,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.TestResult;
@@ -152,7 +153,7 @@ public class TimeoutTest {
         exception.printStackTrace(writer);
         return buffer.toString();
     }
-    
+
     @Test
     public void stalledThreadAppearsInStackTrace() throws Exception {
         JUnitCore core = new JUnitCore();
@@ -164,7 +165,7 @@ public class TimeoutTest {
     }
 
     public static class InfiniteLoopMultithreaded {
-        
+
         private static class ThreadTest implements Runnable {
             private boolean fStall;
 
@@ -174,14 +175,14 @@ public class TimeoutTest {
 
             public void run() {
                 if (fStall)
-                    for (; ; ) ;   
+                    for (; ; ) ;
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
                 }
             }
         }
-        
+
         public void failure(boolean mainThreadStalls) throws Exception {
             Thread t1 = new Thread(new ThreadTest(false), "timeout-thr1");
             Thread t2 = new Thread(new ThreadTest(!mainThreadStalls), "timeout-thr2");
@@ -196,7 +197,7 @@ public class TimeoutTest {
             t3.join();
         }
    }
-    
+
     public static class InfiniteLoopWithStuckThreadTest {
         @Rule
         public TestRule globalTimeout = new Timeout(100, TimeUnit.MILLISECONDS).lookForStuckThread(true);
@@ -206,7 +207,7 @@ public class TimeoutTest {
             (new InfiniteLoopMultithreaded()).failure(false);
         }
     }
-    
+
     public static class InfiniteLoopStuckInMainThreadTest {
         @Rule
         public TestRule globalTimeout = new Timeout(100, TimeUnit.MILLISECONDS).lookForStuckThread(true);
@@ -241,6 +242,84 @@ public class TimeoutTest {
         assertThat(exception.getMessage(), containsString("test timed out after 100 milliseconds"));
         assertThat(exception.getMessage(), not(containsString("Appears to be stuck")));
     }
+
+
+    public static class LockedWithDeadlockTest {
+        @Rule
+        public TestRule globalTimeout = new Timeout(100, TimeUnit.MILLISECONDS).lookForStuckThread(true).printFullThreadStackDump(true);
+
+        final ReentrantLock lock1 = new ReentrantLock();
+        final ReentrantLock lock2 = new ReentrantLock();
+
+        private class LockedThread1 extends Thread {
+
+            public LockedThread1() {
+                super("Thread-locked-1");
+            }
+
+            @Override
+            public void run() {
+                lock1.lock();
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    // Ignore
+                }
+                lock2.lock();
+            }
+        }
+
+        private class LockedThread2 extends Thread {
+
+            public LockedThread2() {
+                super("Thread-locked-2");
+            }
+
+            @Override
+            public void run() {
+                lock2.lock();
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    // Ignore
+                }
+                lock1.lock();
+            }
+        }
+
+        @Test
+        public void failure() throws Exception {
+            LockedThread1 thread1 = new LockedThread1();
+            LockedThread2 thread2 = new LockedThread2();
+
+            thread1.start();
+            thread2.start();
+
+            thread1.join();
+            thread2.join();
+        }
+    }
+
+
+    @Test
+    public void timeoutFailureMultithreadedDeadlockWithFullDump() throws Exception {
+        JUnitCore core = new JUnitCore();
+        Result result = core.run(LockedWithDeadlockTest.class);
+        assertEquals(1, result.getRunCount());
+        assertEquals(2, result.getFailureCount());
+        Throwable exception[] = new Throwable[2];
+        for (int i = 0; i < 2; i++)
+            exception[i] = result.getFailures().get(i).getException();
+        assertThat(exception[0].getMessage(), containsString("test timed out after 100 milliseconds"));
+        assertThat(stackForException(exception[0]), containsString("Thread.join"));
+        assertThat(exception[1].getMessage(), containsString("Appears to be stuck => Full thread dump"));
+        // TODO: this is really not nice and safe
+        assertTrue("Failed to find Thread-locked-1 information in full thread dump:\n" + exception[1].getMessage(),
+                exception[1].getMessage().matches("(?s).*\"Thread-locked-1\".*State=WAITING.*at .*ReentrantLock\\.lock.*at org\\.junit\\.tests\\.running\\.methods\\.TimeoutTest\\$LockedWithDeadlockTest\\$LockedThread1\\.run.*"));
+        assertTrue("Failed to find Thread-locked-2 information in full thread dump:\n" + exception[1].getMessage(),
+                exception[1].getMessage().matches("(?s).*\"Thread-locked-2\".*State=WAITING.*at .*ReentrantLock\\.lock.*at org\\.junit\\.tests\\.running\\.methods\\.TimeoutTest\\$LockedWithDeadlockTest\\$LockedThread2\\.run.*"));
+    }
+
 
     @Test
     public void compatibility() {
