@@ -2,13 +2,15 @@ package org.junit.internal.runners.statements;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.junit.rules.TimeoutHandler;
 import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
 
@@ -17,6 +19,7 @@ public class FailOnTimeout extends Statement {
     private final TimeUnit fTimeUnit;
     private final long fTimeout;
     private final boolean fLookForStuckThread;
+    private final TimeoutHandler fTimeoutHandler;
     private ThreadGroup fThreadGroup = null;
 
     public FailOnTimeout(Statement originalStatement, long millis) {
@@ -24,14 +27,15 @@ public class FailOnTimeout extends Statement {
     }
 
     public FailOnTimeout(Statement originalStatement, long timeout, TimeUnit unit) {
-        this(originalStatement, timeout, unit, false);
+        this(originalStatement, timeout, unit, false, null);
     }
 
-    public FailOnTimeout(Statement originalStatement, long timeout, TimeUnit unit, boolean lookForStuckThread) {
+    public FailOnTimeout(Statement originalStatement, long timeout, TimeUnit unit, boolean lookForStuckThread, TimeoutHandler timeoutHandler) {
         fOriginalStatement = originalStatement;
         fTimeout = timeout;
         fTimeUnit = unit;
         fLookForStuckThread = lookForStuckThread;
+        fTimeoutHandler = timeoutHandler;
     }
 
     @Override
@@ -74,13 +78,29 @@ public class FailOnTimeout extends Statement {
             currThreadException.setStackTrace(stackTrace);
             thread.interrupt();
         }
+
+        List<Throwable> exceptions = new ArrayList<Throwable>();
+        exceptions.add(currThreadException);
+
         if (stuckThread != null) {
             Exception stuckThreadException = 
                 new Exception ("Appears to be stuck in thread " +
                                stuckThread.getName());
             stuckThreadException.setStackTrace(getStackTrace(stuckThread));
-            return new MultipleFailureException    
-                (Arrays.<Throwable>asList(currThreadException, stuckThreadException));
+            exceptions.add(stuckThreadException);
+        }
+
+        // TODO: would it make sense to make this optional, i.e. if stuckThread != null, then skip the full thread dump?
+        if (fTimeoutHandler != null) {
+            // For the sake of convenience just allow adding another exception by the custom timeout handler
+            Exception timeoutHandlerException = fTimeoutHandler.handleTimeout(thread);
+            if (timeoutHandlerException != null) {
+                exceptions.add(timeoutHandlerException);
+            }
+        }
+
+        if (exceptions.size() > 1) {
+            return new MultipleFailureException(exceptions);
         } else {
             return currThreadException;
         }

@@ -37,6 +37,7 @@ public class Timeout implements TestRule {
     private final long fTimeout;
     private final TimeUnit fTimeUnit;
     private boolean fLookForStuckThread;
+    private TimeoutHandler fTimeoutHandler;
 
     /**
      * Create a {@code Timeout} instance with the timeout specified
@@ -68,6 +69,7 @@ public class Timeout implements TestRule {
         fTimeout = timeout;
         fTimeUnit = unit;
         fLookForStuckThread = false;
+        fTimeoutHandler = null;
     }
 
     /**
@@ -100,7 +102,12 @@ public class Timeout implements TestRule {
         return this;
     }
 
+    public Timeout customTimeoutHandler(TimeoutHandler handler) {
+        fTimeoutHandler = handler;
+        return this;
+    }
+
     public Statement apply(Statement base, Description description) {
-        return new FailOnTimeout(base, fTimeout, fTimeUnit, fLookForStuckThread);
+        return new FailOnTimeout(base, fTimeout, fTimeUnit, fLookForStuckThread, fTimeoutHandler);
     }
 }
