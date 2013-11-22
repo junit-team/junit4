@@ -1,8 +1,12 @@
 package org.junit.internal.runners.statements;
 
 import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -17,6 +21,7 @@ public class FailOnTimeout extends Statement {
     private final TimeUnit fTimeUnit;
     private final long fTimeout;
     private final boolean fLookForStuckThread;
+    private final boolean fFullThreadStackDump;
     private ThreadGroup fThreadGroup = null;
 
     public FailOnTimeout(Statement originalStatement, long millis) {
@@ -24,14 +29,15 @@ public class FailOnTimeout extends Statement {
     }
 
     public FailOnTimeout(Statement originalStatement, long timeout, TimeUnit unit) {
-        this(originalStatement, timeout, unit, false);
+        this(originalStatement, timeout, unit, false, false);
     }
 
-    public FailOnTimeout(Statement originalStatement, long timeout, TimeUnit unit, boolean lookForStuckThread) {
+    public FailOnTimeout(Statement originalStatement, long timeout, TimeUnit unit, boolean lookForStuckThread, boolean fullThreadStackDump) {
         fOriginalStatement = originalStatement;
         fTimeout = timeout;
         fTimeUnit = unit;
         fLookForStuckThread = lookForStuckThread;
+        fFullThreadStackDump = fullThreadStackDump;
     }
 
     @Override
@@ -74,16 +80,87 @@ public class FailOnTimeout extends Statement {
             currThreadException.setStackTrace(stackTrace);
             thread.interrupt();
         }
+
+        List<Throwable> exceptions = new ArrayList<Throwable>();
+        exceptions.add(currThreadException);
+
         if (stuckThread != null) {
-            Exception stuckThreadException = 
+            Exception stuckThreadException =
                 new Exception ("Appears to be stuck in thread " +
                                stuckThread.getName());
             stuckThreadException.setStackTrace(getStackTrace(stuckThread));
-            return new MultipleFailureException    
-                (Arrays.<Throwable>asList(currThreadException, stuckThreadException));
+            exceptions.add(stuckThreadException);
+        }
+
+        // TODO: would it make sense to make this optional, i.e. if stuckThread != null, then skip the full thread dump?
+        if (fFullThreadStackDump) {
+            // For the sake of convenience just add the full thread dump directly to the failure message: this can really
+            // hurt when getting long :-(
+            Exception fullThreadDumpException = new Exception(
+            		"Appears to be stuck => Full thread dump:\n"
+            		+ getFullThreadDump());
+            exceptions.add(fullThreadDumpException);
+        }
+
+        if (exceptions.size() > 1) {
+            return new MultipleFailureException(exceptions);
         } else {
             return currThreadException;
         }
+    }
+
+    private String getFullThreadDump() {
+        StringBuilder sb = new StringBuilder();
+
+    	// TODO: ThreadMXBean provides interesting thread dump information (locks, monitors, synchronizers) only with Java >= 1.6
+
+        // First try ThreadMXBean#findMonitorDeadlockedThreads():
+        ThreadMXBean threadMxBean = ManagementFactory.getThreadMXBean();
+        long[] deadlockedThreadIds = threadMxBean.findMonitorDeadlockedThreads();
+        if (deadlockedThreadIds != null) {
+            sb.append("Found deadlocked threads:");
+            ThreadInfo[] threadInfos = threadMxBean.getThreadInfo(deadlockedThreadIds);
+            for (ThreadInfo threadInfo : threadInfos) {
+                sb.append("\n\t" + threadInfo.getThreadName() + " Id=" + threadInfo.getThreadId()
+                        + " Lock name=" + threadInfo.getLockName() + " Lock owner Id=" + threadInfo.getLockOwnerId()
+                        + " Lock owner name=" + threadInfo.getLockOwnerName());
+            }
+        }
+
+        // Then just the full thread dump:
+        Map<Thread, StackTraceElement[]> allStackTraces = Thread.getAllStackTraces();
+        sb.append("Thread dump (total threads=" + allStackTraces.size() + ")");
+        for (Thread thread : allStackTraces.keySet()) {
+            sb.append("\n\t" + thread.getName());
+        }
+        sb.append("\n");
+        for (Entry<Thread, StackTraceElement[]> threadEntry : allStackTraces.entrySet()) {
+            sb.append("\n" + threadToHeaderString(threadEntry.getKey()));
+
+            StackTraceElement[] stackTraces = threadEntry.getValue();
+            for (int i = 0; i < stackTraces.length; i++) {
+                StackTraceElement ste = stackTraces[i];
+                sb.append("\tat " + ste.toString());
+                sb.append('\n');
+            }
+        }
+
+        return sb.toString();
+    }
+
+    private String threadToHeaderString(Thread thread) {
+        StringBuilder sb = new StringBuilder("\"" + thread.getName() + "\""
+                + " Id=" + thread.getId() + " Daemon=" + thread.isDaemon()
+                + " State=" + thread.getState() + " Priority=" + thread.getPriority()
+                + " Group=" + thread.getThreadGroup().getName());
+        if (thread.isAlive()) {
+            sb.append(" (alive)");
+        }
+        if (thread.isInterrupted()) {
+            sb.append(" (interrupted)");
+        }
+        sb.append('\n');
+        return sb.toString();
     }
 
     /**

@@ -1,10 +1,10 @@
 package org.junit.rules;
 
+import java.util.concurrent.TimeUnit;
+
 import org.junit.internal.runners.statements.FailOnTimeout;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * The Timeout Rule applies the same timeout to all test methods in a class:
@@ -37,6 +37,7 @@ public class Timeout implements TestRule {
     private final long fTimeout;
     private final TimeUnit fTimeUnit;
     private boolean fLookForStuckThread;
+    private boolean fFullThreadStackDump;
 
     /**
      * Create a {@code Timeout} instance with the timeout specified
@@ -68,6 +69,7 @@ public class Timeout implements TestRule {
         fTimeout = timeout;
         fTimeUnit = unit;
         fLookForStuckThread = false;
+        fFullThreadStackDump = false;
     }
 
     /**
@@ -100,7 +102,12 @@ public class Timeout implements TestRule {
         return this;
     }
 
+    public Timeout printFullThreadStackDump(boolean enable) {
+        fFullThreadStackDump = enable;
+        return this;
+    }
+
     public Statement apply(Statement base, Description description) {
-        return new FailOnTimeout(base, fTimeout, fTimeUnit, fLookForStuckThread);
+        return new FailOnTimeout(base, fTimeout, fTimeUnit, fLookForStuckThread, fFullThreadStackDump);
     }
 }
