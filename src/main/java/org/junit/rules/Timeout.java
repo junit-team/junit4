@@ -34,9 +34,13 @@ import java.util.concurrent.TimeUnit;
  * @since 4.7
  */
 public class Timeout implements TestRule {
+
+    public static final String TIMEOUT_HANDLER_CLASS_NAME_PROPERTY_NAME = "org.junit.rules.timeout.handler";
+
     private final long fTimeout;
     private final TimeUnit fTimeUnit;
     private boolean fLookForStuckThread;
+    private TimeoutHandler fTimeoutHandler;
 
     /**
      * Create a {@code Timeout} instance with the timeout specified
@@ -68,6 +72,7 @@ public class Timeout implements TestRule {
         fTimeout = timeout;
         fTimeUnit = unit;
         fLookForStuckThread = false;
+        fTimeoutHandler = null;
     }
 
     /**
@@ -100,7 +105,12 @@ public class Timeout implements TestRule {
         return this;
     }
 
+    public Timeout customTimeoutHandler(TimeoutHandler handler) {
+        fTimeoutHandler = handler;
+        return this;
+    }
+
     public Statement apply(Statement base, Description description) {
-        return new FailOnTimeout(base, fTimeout, fTimeUnit, fLookForStuckThread);
+        return new FailOnTimeout(base, fTimeout, fTimeUnit, fLookForStuckThread, fTimeoutHandler);
     }
 }
