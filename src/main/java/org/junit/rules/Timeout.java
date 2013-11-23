@@ -1,10 +1,10 @@
 package org.junit.rules;
 
+import java.util.concurrent.TimeUnit;
+
 import org.junit.internal.runners.statements.FailOnTimeout;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * The Timeout Rule applies the same timeout to all test methods in a class:
@@ -34,6 +34,12 @@ import java.util.concurrent.TimeUnit;
  * @since 4.7
  */
 public class Timeout implements TestRule {
+
+    /**
+     * Optional system property with global timeout in milliseconds.
+     */
+    public static final String GLOBAL_TIMEOUT_PROPERTY_NAME = "org.junit.rules.timeout.global";
+
     private final long fTimeout;
     private final TimeUnit fTimeUnit;
     private boolean fLookForStuckThread;
@@ -102,5 +108,27 @@ public class Timeout implements TestRule {
 
     public Statement apply(Statement base, Description description) {
         return new FailOnTimeout(base, fTimeout, fTimeUnit, fLookForStuckThread);
+    }
+
+    /**
+     * Returns global timeout set via system property, or 0 if none is set.
+     */
+    public static long getGlobalTimeoutInMillis() {
+        return Long.getLong(GLOBAL_TIMEOUT_PROPERTY_NAME, 0);
+    }
+
+    public static Timeout newTimeoutFromGlobalTimeout() {
+        return getGlobalTimeoutInMillis() > 0 ? new Timeout(getGlobalTimeoutInMillis(), TimeUnit.MILLISECONDS) : null;
+    }
+
+    public Timeout newTimeoutFromGlobalTimeoutIfLessThanThisTimeout() {
+        Timeout timeout = this;
+        if (getGlobalTimeoutInMillis() > 0) {
+            if (getGlobalTimeoutInMillis() < fTimeUnit.toMillis(fTimeout)) {
+                timeout = new Timeout(getGlobalTimeoutInMillis(), TimeUnit.MILLISECONDS)
+                        .lookForStuckThread(fLookForStuckThread);
+            }
+        }
+        return timeout;
     }
 }
