@@ -77,7 +77,6 @@ public class FailOnTimeout extends Statement {
                 "test timed out after %d %s", fTimeout, fTimeUnit.name().toLowerCase()));
         if (stackTrace != null) {
             currThreadException.setStackTrace(stackTrace);
-            thread.interrupt();
         }
 
         List<Throwable> exceptions = new ArrayList<Throwable>();
@@ -103,6 +102,8 @@ public class FailOnTimeout extends Statement {
                 exceptions.add(timeoutHandlerException);
             }
         }
+
+        thread.interrupt();
 
         if (exceptions.size() > 1) {
             return new MultipleFailureException(exceptions);
