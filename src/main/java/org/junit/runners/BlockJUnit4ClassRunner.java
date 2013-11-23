@@ -1,5 +1,6 @@
 package org.junit.runners;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_METHOD_VALIDATOR;
 import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_VALIDATOR;
 
@@ -21,6 +22,7 @@ import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
 import org.junit.rules.RunRules;
 import org.junit.rules.TestRule;
+import org.junit.rules.Timeout;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkMethod;
@@ -76,7 +78,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
             runLeaf(methodBlock(method), description, notifier);
         }
     }
-    
+
     /**
      * Evaluates whether {@link FrameworkMethod}s are ignored based on the
      * {@link Ignore} annotation.
@@ -310,6 +312,8 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
     protected Statement withPotentialTimeout(FrameworkMethod method,
             Object test, Statement next) {
         long timeout = getTimeout(method.getAnnotation(Test.class));
+        //TODO: maybe do something depending on global timeout strategies from #withPotentialGlobalTimeout
+//        long globalTimeout = Timeout.getGlobalTimeout();
         return timeout > 0 ? new FailOnTimeout(next, timeout) : next;
     }
 
@@ -344,9 +348,18 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
     private Statement withRules(FrameworkMethod method, Object target,
             Statement statement) {
         List<TestRule> testRules = getTestRules(target);
+
+        // In order to allow potentially global timeout rule, find a specific one and take it out, but remember it: 
+        Timeout specificTimeoutRule = findTimeoutRule(testRules);
+        if (specificTimeoutRule != null) {
+            assertTrue(testRules.remove(specificTimeoutRule));
+        }
+
         Statement result = statement;
         result = withMethodRules(method, testRules, target, result);
         result = withTestRules(method, testRules, result);
+
+        result = withPotentialGlobalTimeout(method, specificTimeoutRule, result);
 
         return result;
     }
@@ -387,6 +400,39 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
             Statement statement) {
         return testRules.isEmpty() ? statement :
                 new RunRules(statement, testRules, describeChild(method));
+    }
+
+    private Statement withPotentialGlobalTimeout(FrameworkMethod method, Timeout specificTimeoutRule,
+            Statement statement) {
+        //TODO: different global timeout strategy variants can be useful:
+        // (a) should the global timeout conditionally override specific test timeouts that are higher then the global timeout: to make sure a maximum test duration is not exceeded; also allows to test that something really must be very quick
+        // (b) should a specific timeout always override the global timeout: e.g. to avoid the need to increase the global timeout, just because a single test takes longer
+        Timeout timeoutRule = Timeout.newTimeoutFromGlobalTimeout();
+
+        if (specificTimeoutRule != null) {
+            // For (a):
+            timeoutRule = specificTimeoutRule.newTimeoutFromGlobalTimeoutIfLessThanThisTimeout();
+            // Or for (b):
+//            timeoutRule = specificTimeoutRule;
+        }
+
+        // TODO: if instantiating FailOnTimeout here, than the fields of Timeout need to be opened:
+//        new FailOnTimeout(statement, timeoutRule.getTimeout(), ...)
+        return timeoutRule == null ? statement : timeoutRule.apply(statement, describeChild(method));
+    }
+
+    /**
+     * Returns {@link Timeout} rule, if found in <tt>testRules</tt>; or null otherwise.
+     * <p>
+     * TODO: In theory there can be more than a single Timeout rule!
+     */
+    private Timeout findTimeoutRule(List<TestRule> testRules) {
+        for (TestRule rule : testRules) {
+            if (rule instanceof Timeout) {
+                return (Timeout) rule;
+            }
+        }
+        return null;
     }
 
     /**

@@ -1,8 +1,8 @@
 package org.junit.tests.running.methods;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -12,7 +12,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.concurrent.TimeUnit;
-
+import java.util.concurrent.locks.ReentrantLock;
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.TestResult;
 import org.junit.After;
@@ -152,7 +152,7 @@ public class TimeoutTest {
         exception.printStackTrace(writer);
         return buffer.toString();
     }
-    
+
     @Test
     public void stalledThreadAppearsInStackTrace() throws Exception {
         JUnitCore core = new JUnitCore();
@@ -164,7 +164,7 @@ public class TimeoutTest {
     }
 
     public static class InfiniteLoopMultithreaded {
-        
+
         private static class ThreadTest implements Runnable {
             private boolean fStall;
 
@@ -174,14 +174,14 @@ public class TimeoutTest {
 
             public void run() {
                 if (fStall)
-                    for (; ; ) ;   
+                    for (; ; ) ;
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
                 }
             }
         }
-        
+
         public void failure(boolean mainThreadStalls) throws Exception {
             Thread t1 = new Thread(new ThreadTest(false), "timeout-thr1");
             Thread t2 = new Thread(new ThreadTest(!mainThreadStalls), "timeout-thr2");
@@ -196,7 +196,7 @@ public class TimeoutTest {
             t3.join();
         }
    }
-    
+
     public static class InfiniteLoopWithStuckThreadTest {
         @Rule
         public TestRule globalTimeout = new Timeout(100, TimeUnit.MILLISECONDS).lookForStuckThread(true);
@@ -206,7 +206,7 @@ public class TimeoutTest {
             (new InfiniteLoopMultithreaded()).failure(false);
         }
     }
-    
+
     public static class InfiniteLoopStuckInMainThreadTest {
         @Rule
         public TestRule globalTimeout = new Timeout(100, TimeUnit.MILLISECONDS).lookForStuckThread(true);
@@ -241,6 +241,110 @@ public class TimeoutTest {
         assertThat(exception.getMessage(), containsString("test timed out after 100 milliseconds"));
         assertThat(exception.getMessage(), not(containsString("Appears to be stuck")));
     }
+
+
+ // --- Below are deadlock tests ---
+    public static abstract class AbstractLockedWithDeadlockTest {
+
+        private final ReentrantLock lock1 = new ReentrantLock();
+        private final ReentrantLock lock2 = new ReentrantLock();
+
+        protected LockedThread1 thread1;
+        protected LockedThread2 thread2;
+
+        @After
+        public void teardown() throws InterruptedException {
+            thread1.interrupt();
+            thread2.interrupt();
+
+            thread1.join();
+            thread2.join();
+        }
+
+        protected class LockedThread1 extends Thread {
+
+            public LockedThread1() {
+                super("Thread-locked-1");
+            }
+
+            @Override
+            public void run() {
+                try {
+                    lock1.lockInterruptibly();
+                    Thread.sleep(50);
+                    lock2.lockInterruptibly();
+                } catch (InterruptedException e) {
+                    // Ignore
+                }
+            }
+        }
+
+        protected class LockedThread2 extends Thread {
+
+            public LockedThread2() {
+                super("Thread-locked-2");
+            }
+
+            @Override
+            public void run() {
+                try {
+                    lock2.lockInterruptibly();
+                    Thread.sleep(50);
+                    lock1.lockInterruptibly();
+                } catch (InterruptedException e) {
+                    // Ignore
+                }
+            }
+        }
+
+        @Test
+        public void failure() throws Exception {
+            thread1 = new LockedThread1();
+            thread2 = new LockedThread2();
+
+            thread1.start();
+            thread2.start();
+
+            thread1.join();
+            thread2.join();
+        }
+    }
+
+    public static class LockedWithDeadlockTest extends AbstractLockedWithDeadlockTest {
+        @Rule
+        public TestRule globalTimeout = new Timeout(150, TimeUnit.MILLISECONDS);
+    }
+
+
+    @Test
+    public void timeoutFailureMultithreadedDeadlockWithNoGlobalTimeout() throws Exception {
+        JUnitCore core = new JUnitCore();
+        Result result = core.run(LockedWithDeadlockTest.class);
+        assertEquals(1, result.getRunCount());
+        assertEquals(1, result.getFailureCount());
+        Throwable exception = result.getFailures().get(0).getException();
+        assertThat(exception.getMessage(), containsString("test timed out after 150 milliseconds"));
+        assertThat(stackForException(exception), containsString("Thread.join"));
+    }
+
+    @Test
+    public void timeoutFailureMultithreadedDeadlockWithGlobalTimeoutOverridingTheGreaterTestClassTimeout() throws Exception {
+        try {
+            System.setProperty(Timeout.GLOBAL_TIMEOUT_PROPERTY_NAME, "100");
+
+            JUnitCore core = new JUnitCore();
+            Result result = core.run(LockedWithDeadlockTest.class);
+            assertEquals(1, result.getRunCount());
+            assertEquals(1, result.getFailureCount());
+            Throwable exception = result.getFailures().get(0).getException();
+            assertThat(exception.getMessage(), containsString("test timed out after 100 milliseconds"));
+            assertThat(stackForException(exception), containsString("Thread.join"));
+        } finally {
+            System.clearProperty(Timeout.GLOBAL_TIMEOUT_PROPERTY_NAME);
+        }
+    }
+// --- Above are deadlock tests ---
+
 
     @Test
     public void compatibility() {
