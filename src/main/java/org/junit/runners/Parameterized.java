@@ -14,7 +14,8 @@ import org.junit.runner.Runner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.TestClass;
-import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParameters;
+import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParametersFactory;
+import org.junit.runners.parameterized.ParametersRunnerFactory;
 import org.junit.runners.parameterized.TestWithParameters;
 
 /**
@@ -128,6 +129,36 @@ import org.junit.runners.parameterized.TestWithParameters;
  * }
  * </pre>
  *
+ * <h3>Create different runners</h3>
+ * <p>
+ * By default the {@code Parameterized} runner creates a slightly modified
+ * {@link BlockJUnit4ClassRunner} for each set of parameters. You can build an
+ * own {@code Parameterized} runner that creates another runner for each set of
+ * parameters. Therefore you have to build a {@link ParametersRunnerFactory}
+ * that creates a runner for each {@link TestWithParameters}. (
+ * {@code TestWithParameters} are bundling the parameters and the test name.)
+ * The factory must have a public zero-arg constructor.
+ *
+ * <pre>
+ * public class YourRunnerFactory implements ParameterizedRunnerFactory {
+ *     public Runner createRunnerForTestWithParameters(TestWithParameters test)
+ *             throws InitializationError {
+ *         return YourRunner(test);
+ *     }
+ * }
+ * </pre>
+ * <p>
+ * Use the {@link UseParametersRunnerFactory} to tell the {@code Parameterized}
+ * runner that it should use your factory.
+ *
+ * <pre>
+ * &#064;RunWith(Parameterized.class)
+ * &#064;UseParametersRunnerFactory(YourRunnerFactory.class)
+ * public class YourTest {
+ *     ...
+ * }
+ * </pre>
+ *
  * @since 4.0
  */
 public class Parameterized extends Suite {
@@ -181,6 +212,24 @@ public class Parameterized extends Suite {
         int value() default 0;
     }
 
+    /**
+     * Add this annotation to your test class if you want to generate a special
+     * runner. You have to specify a {@link ParametersRunnerFactory} class that
+     * creates such runners. The factory must have a public zero-arg
+     * constructor.
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    public @interface UseParametersRunnerFactory {
+        /**
+         * @return a {@link ParametersRunnerFactory} class (must have a default
+         *         constructor)
+         */
+        Class<? extends ParametersRunnerFactory> value() default BlockJUnit4ClassRunnerWithParametersFactory.class;
+    }
+
+    private static final ParametersRunnerFactory DEFAULT_FACTORY = new BlockJUnit4ClassRunnerWithParametersFactory();
+
     private static final List<Runner> NO_RUNNERS = Collections.<Runner>emptyList();
 
     private final List<Runner> fRunners;
@@ -190,9 +239,25 @@ public class Parameterized extends Suite {
      */
     public Parameterized(Class<?> klass) throws Throwable {
         super(klass, NO_RUNNERS);
+        ParametersRunnerFactory runnerFactory = getParametersRunnerFactory(
+                klass);
         Parameters parameters = getParametersMethod().getAnnotation(
                 Parameters.class);
-        fRunners = Collections.unmodifiableList(createRunnersForParameters(allParameters(), parameters.name()));
+        fRunners = Collections.unmodifiableList(createRunnersForParameters(
+                allParameters(), parameters.name(), runnerFactory));
+    }
+
+    private ParametersRunnerFactory getParametersRunnerFactory(Class<?> klass)
+            throws InstantiationException, IllegalAccessException {
+        UseParametersRunnerFactory annotation = klass
+                .getAnnotation(UseParametersRunnerFactory.class);
+        if (annotation == null) {
+            return DEFAULT_FACTORY;
+        } else {
+            Class<? extends ParametersRunnerFactory> factoryClass = annotation
+                    .value();
+            return factoryClass.newInstance();
+        }
     }
 
     @Override
@@ -200,19 +265,12 @@ public class Parameterized extends Suite {
         return fRunners;
     }
 
-    private Runner createRunnerWithNotNormalizedParameters(String pattern,
-            int index, Object parametersOrSingleParameter)
-            throws InitializationError {
+    private TestWithParameters createTestWithNotNormalizedParameters(
+            String pattern, int index, Object parametersOrSingleParameter) {
         Object[] parameters= (parametersOrSingleParameter instanceof Object[]) ? (Object[]) parametersOrSingleParameter
             : new Object[] { parametersOrSingleParameter };
-        TestWithParameters test = createTestWithParameters(getTestClass(),
-                pattern, index, parameters);
-        return createRunnerForTest(test);
-    }
-
-    protected Runner createRunnerForTest(TestWithParameters test)
-            throws InitializationError {
-        return new BlockJUnit4ClassRunnerWithParameters(test);
+        return createTestWithParameters(getTestClass(), pattern, index,
+                parameters);
     }
 
     @SuppressWarnings("unchecked")
@@ -240,18 +298,35 @@ public class Parameterized extends Suite {
                 + getTestClass().getName());
     }
 
-    private List<Runner> createRunnersForParameters(Iterable<Object> allParameters, String namePattern) throws Exception {
+    private List<Runner> createRunnersForParameters(
+            Iterable<Object> allParameters, String namePattern,
+            ParametersRunnerFactory runnerFactory)
+            throws InitializationError,
+            Exception {
         try {
-            int i = 0;
-            List<Runner> children = new ArrayList<Runner>();
-            for (Object parametersOfSingleTest : allParameters) {
-                children.add(createRunnerWithNotNormalizedParameters(
-                    namePattern, i++, parametersOfSingleTest));
+            List<TestWithParameters> tests = createTestsForParameters(
+                    allParameters, namePattern);
+            List<Runner> runners = new ArrayList<Runner>();
+            for (TestWithParameters test : tests) {
+                runners.add(runnerFactory
+                        .createRunnerForTestWithParameters(test));
             }
-            return children;
+            return runners;
         } catch (ClassCastException e) {
             throw parametersMethodReturnedWrongType();
         }
+    }
+
+    private List<TestWithParameters> createTestsForParameters(
+            Iterable<Object> allParameters, String namePattern)
+            throws Exception {
+        int i = 0;
+        List<TestWithParameters> children = new ArrayList<TestWithParameters>();
+        for (Object parametersOfSingleTest : allParameters) {
+            children.add(createTestWithNotNormalizedParameters(namePattern,
+                    i++, parametersOfSingleTest));
+        }
+        return children;
     }
 
     private Exception parametersMethodReturnedWrongType() throws Exception {
