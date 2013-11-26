@@ -144,7 +144,6 @@
              version="false"
              use="false"
              windowtitle="JUnit API"
-             stylesheetfile="src/main/javadoc/stylesheet.css"
              >
       <excludepackage name="junit.*" />
       <excludepackage name="org.junit.internal.*" />
@@ -154,6 +153,18 @@
       <sourcepath location="${hamcrestsrc}" />
       <link href="http://java.sun.com/javase/6/docs/api/" />
     </javadoc>
+    <replace file="${javadocdir}/stylesheet.css" token="#4c6b87" value="red"/>
+    <replace file="${javadocdir}/stylesheet.css" token="#a88834" value="#006400"/>
+    <replace file="${javadocdir}/stylesheet.css" token="#bb7a2a" value="black"/>
+    <replace file="${javadocdir}/stylesheet.css" token="#c9aa44" value="#006400"/>
+    <replace file="${javadocdir}/stylesheet.css" token="#dee3e9" value="#03d579"/>
+    <replace file="${javadocdir}/stylesheet.css" token="background-image:url(resources/background.gif);" value="background-color:#03a35d;"/>
+    <replace file="${javadocdir}/stylesheet.css" token="background-repeat:repeat-x;" value=""/>
+    <replace file="${javadocdir}/stylesheet.css" token="background-image:url(resources/titlebar.gif);" value="background-color:#006400;"/>
+    <replace file="${javadocdir}/stylesheet.css" token="background-image:url(resources/titlebar_end.gif);" value="background-color:#006400;"/>
+    <replace file="${javadocdir}/stylesheet.css" token="background-repeat:no-repeat;" value=""/>
+    <replace file="${javadocdir}/stylesheet.css" token="background-image:url(resources/tab.gif);" value=""/>
+    <delete dir="${javadocdir}/resources"/>
   </target>
 
   <target name="javadoczip">
