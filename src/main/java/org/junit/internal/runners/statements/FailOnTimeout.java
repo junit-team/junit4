@@ -68,7 +68,7 @@ public class FailOnTimeout extends Statement {
     private Exception createTimeoutException(Thread thread) {
         StackTraceElement[] stackTrace = thread.getStackTrace();
         final Thread stuckThread = fLookForStuckThread ? getStuckThread(thread) : null;
-        Exception currThreadException = new Exception(String.format(
+        Exception currThreadException = new TestFailedOnTimeoutException(String.format(
                 "test timed out after %d %s", fTimeout, fTimeUnit.name().toLowerCase()));
         if (stackTrace != null) {
             currThreadException.setStackTrace(stackTrace);

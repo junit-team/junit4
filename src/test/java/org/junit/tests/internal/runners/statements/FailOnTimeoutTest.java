@@ -12,6 +12,7 @@ import static org.junit.Assert.fail;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.internal.runners.statements.FailOnTimeout;
+import org.junit.internal.runners.statements.TestFailedOnTimeoutException;
 import org.junit.rules.ExpectedException;
 import org.junit.runners.model.Statement;
 
@@ -58,6 +59,13 @@ public class FailOnTimeoutTest {
             evaluateWithException(new RuntimeException());
         } catch (Throwable expected) {
         }
+        evaluateWithWaitDuration(TIMEOUT + 50);
+    }
+
+    @Test
+    public void throwsTestFailedWithTimeoutException()
+            throws Throwable {
+        thrown.expect(TestFailedOnTimeoutException.class);
         evaluateWithWaitDuration(TIMEOUT + 50);
     }
 
