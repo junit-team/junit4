@@ -12,9 +12,9 @@ import static org.junit.Assert.fail;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.internal.runners.statements.FailOnTimeout;
-import org.junit.internal.runners.statements.TestFailedOnTimeoutException;
 import org.junit.rules.ExpectedException;
 import org.junit.runners.model.Statement;
+import org.junit.runners.model.TestFailedOnTimeoutException;
 
 /**
  * @author Asaf Ary, Stefan Birkner
