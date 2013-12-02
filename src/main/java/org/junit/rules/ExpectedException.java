@@ -7,9 +7,11 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.internal.matchers.ThrowableCauseMatcher.hasCause;
 import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
+import static org.junit.internal.matchers.ThrowableRootCauseMatcher.hasRootCause;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.junit.internal.AssumptionViolatedException;
+import org.junit.internal.matchers.ThrowableRootCauseMatcher;
 import org.junit.runners.model.Statement;
 
 /**
@@ -212,17 +214,33 @@ public class ExpectedException implements TestRule {
     }
 
     /**
-     * Verify that your code throws an exception whose cause is matched by 
-     * a Hamcrest matcher.
+     * Verify that your code throws an exception whose immediate cause is
+     * matched by the given Hamcrest matcher.
      * <pre> &#064;Test
      * public void throwsExceptionWhoseCauseCompliesWithMatcher() {
-     *     NullPointerException expectedCause = new NullPointerException();
-     *     thrown.expectCause(is(expectedCause));
-     *     throw new IllegalArgumentException(&quot;What happened?&quot;, cause);
+     *     NullPointerException rootCause = new NullPointerException();
+     *     IllegalStateException immediateCause = new IllegalStateException(rootCause);
+     *     thrown.expectCause(isA(NullPointerException.class));
+     *     throw new IllegalArgumentException(immediateCause);
      * }</pre>
      */
     public void expectCause(Matcher<? extends Throwable> expectedCause) {
         expect(hasCause(expectedCause));
+    }
+    
+    /**
+     * Verify that you code throws an exception whose root cause is matched
+     * by the given Hamcrest matcher
+     * <pre> &#064;Test
+     * public void throwsExceptionWhoseRootCauseCompliesWithMatcher() {
+     *     NullPointerException rootCause = new NullPointerException();
+     *     IllegalStateException immediateCause = new IllegalStateException(rootCause);
+     *     thrown.expectRootCause(isA(NullPointerException.class));
+     *     throw new IllegalArgumentException(immediateCause);
+     * }</pre>
+     */
+    public void expectRootCause(Matcher<? extends Throwable> expectedCause) {
+        expect(hasRootCause(expectedCause));
     }
 
     private class ExpectedExceptionStatement extends Statement {
