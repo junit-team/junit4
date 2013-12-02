@@ -12,18 +12,18 @@ public class TestFailedOnTimeoutException extends Exception {
 
     private static final long serialVersionUID = 31935685163547539L;
 
-    private TimeUnit fTimeUnit;
-    private long fTimeout;
+    private final TimeUnit fTimeUnit;
+    private final long fTimeout;
 
     /**
      * Creates exception with a standard message "test timed out after [timeout] [timeUnit]"
      * 
-     * @param timeout The amount of time passed before the test was interrupted
-     * @param timeUnit The time unit for the timeout value
+     * @param timeout the amount of time passed before the test was interrupted
+     * @param timeUnit the time unit for the timeout value
      */
     public TestFailedOnTimeoutException(long timeout, TimeUnit timeUnit) {
-        super(String.format("test timed out after %d %s", timeout, timeUnit
-                .name().toLowerCase()));
+        super(String.format("test timed out after %d %s", 
+                timeout, timeUnit.name().toLowerCase()));
         fTimeUnit = timeUnit;
         fTimeout = timeout;
     }
