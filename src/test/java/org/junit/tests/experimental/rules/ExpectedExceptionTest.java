@@ -73,14 +73,18 @@ public class ExpectedExceptionTest {
                 {ThrowExpectedNullCause.class, everyTestRunSuccessful()},
                 {ThrowExpectedRootException.class, everyTestRunSuccessful()},
                 {ThrowExpectedRootExceptionStandalone.class, everyTestRunSuccessful()},
-                {ThrowExpectedExceptionWithWrongRoot.class, hasSingleFailure()},
+                {ThrowExpectedExceptionWithWrongRoot.class, 
+                    hasSingleFailureWithMessage(CoreMatchers.<String>allOf(
+                            startsWith("\nExpected:"),
+                            containsString("exception with root cause is an instance of java.lang.IllegalStateException"),
+                            containsString("root cause <java.lang.ClassCastException> is a java.lang.ClassCastException")))},
                 {ThrowNothingWhenExpectingSpecificExceptionRoot.class, hasSingleFailure()},
                 {
                         ThrowUnexpectedImmediateCause.class,
                         hasSingleFailureWithMessage(CoreMatchers.<String>allOf(
                                 startsWith("\nExpected: ("),
-                                containsString("exception with cause is <java.lang.NullPointerException: expected cause>"),
-                                containsString("cause was <java.lang.NullPointerException: an unexpected cause>"),
+                                containsString("exception with immediate cause is <java.lang.NullPointerException: expected cause>"),
+                                containsString("immediate cause was <java.lang.NullPointerException: an unexpected cause>"),
                                 containsString("Stacktrace was: java.lang.IllegalArgumentException: Ack!"),
                                 containsString("Caused by: java.lang.NullPointerException: an unexpected cause")))},
                 {

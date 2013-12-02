@@ -15,23 +15,26 @@ public class ThrowableRootCauseMatcher<T extends Throwable> extends
     }
 
     public void describeTo(Description description) {
-        description.appendText("exception with cause ");
+        description.appendText("exception with root cause ");
         description.appendDescriptionOf(fMatcher);
+    }
+    
+    private Throwable getRoot(Throwable throwable) {
+        while (throwable.getCause() != null) {
+            throwable = throwable.getCause();
+        }
+        return throwable;
     }
 
     @Override
     protected boolean matchesSafely(T item) {
-        Throwable exception = item;
-        while (exception.getCause() != null) {
-            exception = exception.getCause();
-        }
-        return fMatcher.matches(exception);
+        return fMatcher.matches(getRoot(item));
     }
 
     @Override
     protected void describeMismatchSafely(T item, Description description) {
-        description.appendText("cause ");
-        fMatcher.describeMismatch(item.getCause(), description);
+        description.appendText("root cause ");
+        fMatcher.describeMismatch(getRoot(item), description);
     }
 
     @Factory

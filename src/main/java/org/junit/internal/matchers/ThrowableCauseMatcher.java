@@ -15,7 +15,7 @@ public class ThrowableCauseMatcher<T extends Throwable> extends
     }
 
     public void describeTo(Description description) {
-        description.appendText("exception with cause ");
+        description.appendText("exception with immediate cause ");
         description.appendDescriptionOf(fMatcher);
     }
 
@@ -26,7 +26,7 @@ public class ThrowableCauseMatcher<T extends Throwable> extends
 
     @Override
     protected void describeMismatchSafely(T item, Description description) {
-        description.appendText("cause ");
+        description.appendText("immediate cause ");
         fMatcher.describeMismatch(item.getCause(), description);
     }
 
