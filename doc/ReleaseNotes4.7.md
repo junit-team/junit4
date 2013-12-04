@@ -14,12 +14,12 @@
   
         public static class HasTempFolder {
             @Rule
-            public TemporaryFolder folder= new TemporaryFolder();
+            public TemporaryFolder folder = new TemporaryFolder();
 
             @Test
             public void testUsingTempFolder() throws IOException {
-                File createdFile= folder.newFile("myfile.txt");
-                File createdFolder= folder.newFolder("subfolder");
+                File createdFile = folder.newFile("myfile.txt");
+                File createdFolder = folder.newFolder("subfolder");
                 // ...
             }
         }
@@ -54,7 +54,7 @@
 
         public static class UsesErrorCollectorTwice {
             @Rule
-            public ErrorCollector collector= new ErrorCollector();
+            public ErrorCollector collector = new ErrorCollector();
             
             @Test public void example() {
                 collector.addError(new Throwable("first thing went wrong"));
@@ -90,16 +90,16 @@
             private static String watchedLog;
 
             @Rule
-            public MethodRule watchman= new TestWatchman() {
+            public MethodRule watchman = new TestWatchman() {
                 @Override
                 public void failed(Throwable e, FrameworkMethod method) {
-                    watchedLog+= method.getName() + " "
+                    watchedLog += method.getName() + " "
                             + e.getClass().getSimpleName() + "\n";
                 }
 
                 @Override
                 public void succeeded(FrameworkMethod method) {
-                    watchedLog+= method.getName() + " " + "success!\n";
+                    watchedLog += method.getName() + " " + "success!\n";
                 }
             };
 
@@ -135,12 +135,12 @@
             @Rule public MethodRule globalTimeout = new Timeout(20);
             
             @Test public void testInfiniteLoop1() {
-                log+= "ran1";
+                log += "ran1";
                 for(;;) {}
             }
             
             @Test public void testInfiniteLoop2() {
-                log+= "ran2";
+                log += "ran2";
                 for(;;) {}
             }
         }
@@ -150,7 +150,7 @@
   
         public static class HasExpectedException {
             @Rule
-            public ExpectedException thrown= ExpectedException.none();
+            public ExpectedException thrown = ExpectedException.none();
 
             @Test
             public void throwsNothing() {
