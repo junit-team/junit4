@@ -5,14 +5,13 @@ import static java.lang.Math.atan;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.sleep;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.concurrent.TimeUnit;
 
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.internal.runners.statements.FailOnTimeout;
@@ -76,31 +75,13 @@ public class FailOnTimeoutTest {
     @Test
     public void throwsExceptionWithTimeoutValueAndTimeUnitSet()
             throws Throwable {
-        thrown.expect(exceptionWithTimeout(100, TimeUnit.MILLISECONDS));
-        evaluateWithWaitDuration(TIMEOUT + 50);
-    }
-
-    private BaseMatcher<TestFailedOnTimeoutException> exceptionWithTimeout(final long timeout, final TimeUnit unit) {
-        return new BaseMatcher<TestFailedOnTimeoutException>() {
-
-            public boolean matches(Object item) {
-                TestFailedOnTimeoutException exception = (TestFailedOnTimeoutException)item;
-                return exception.getTimeout() == timeout
-                        && exception.getTimeUnit().equals(unit);
-            }
-
-            public void describeTo(Description description) {
-                description.appendText(String.format("timeout value of %d %s",
-                        timeout, unit.name().toLowerCase()));
-            }
-            
-            @Override
-            public void describeMismatch(Object item, Description description) {
-                TestFailedOnTimeoutException exception = (TestFailedOnTimeoutException)item;
-                description.appendText(String.format("was timeout value of %d %s", 
-                        exception.getTimeout(), exception.getTimeUnit().name().toLowerCase()));
-            }
-        };
+        try {
+            evaluateWithWaitDuration(TIMEOUT + 50);
+            fail("No exception was thrown when test timed out");
+        } catch (TestFailedOnTimeoutException e) {
+            assertEquals(TIMEOUT, e.getTimeout());
+            assertEquals(TimeUnit.MILLISECONDS, e.getTimeUnit());
+        }
     }
 
     private void evaluateWithException(Exception exception) throws Throwable {
