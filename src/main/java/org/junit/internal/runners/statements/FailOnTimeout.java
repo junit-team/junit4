@@ -65,7 +65,7 @@ public class FailOnTimeout extends Statement {
         }
     }
 
-    private Exception createTimeoutException(Thread thread) {
+    protected Exception createTimeoutException(Thread thread) {
         StackTraceElement[] stackTrace = thread.getStackTrace();
         final Thread stuckThread = fLookForStuckThread ? getStuckThread(thread) : null;
         Exception currThreadException = new Exception(String.format(

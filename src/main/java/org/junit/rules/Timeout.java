@@ -34,9 +34,9 @@ import java.util.concurrent.TimeUnit;
  * @since 4.7
  */
 public class Timeout implements TestRule {
-    private final long fTimeout;
-    private final TimeUnit fTimeUnit;
-    private boolean fLookForStuckThread;
+    protected final long fTimeout;
+    protected final TimeUnit fTimeUnit;
+    protected boolean fLookForStuckThread;
 
     /**
      * Create a {@code Timeout} instance with the timeout specified
