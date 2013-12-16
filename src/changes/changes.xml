@@ -1,0 +1,38 @@
+<document xmlns="http://maven.apache.org/changes/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
+  <body>
+    <release version="4.12">
+    </release>
+
+    <release version="4.11" date="2012-11-14">
+    </release>
+
+    <release version="4.10">
+    </release>
+
+    <release version="4.9.1">
+    </release>
+
+    <release version="4.9">
+    </release>
+
+    <release version="4.8.2">
+    </release>
+
+    <release version="4.8.1">
+    </release>
+
+    <release version="4.8">
+    </release>
+
+    <release version="4.7">
+    </release>
+
+    <release version="4.6">
+    </release>
+
+    <release version="4.5">
+    </release>
+  </body>
+</document>
