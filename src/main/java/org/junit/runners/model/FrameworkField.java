@@ -77,4 +77,9 @@ public class FrameworkField extends FrameworkMember<FrameworkField> {
     public Object get(Object target) throws IllegalArgumentException, IllegalAccessException {
         return fField.get(target);
     }
+
+    @Override
+    public String toString() {
+        return fField.toString();
+    }
 }

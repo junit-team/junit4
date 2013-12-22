@@ -213,4 +213,9 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
     public List<ParameterSignature> getParameterSignatures() {
         return ParameterSignature.signatures(fMethod);
     }
+
+    @Override
+    public String toString() {
+        return fMethod.toString();
+    }
 }
