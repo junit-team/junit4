@@ -16,6 +16,10 @@ public class FrameworkField extends FrameworkMember<FrameworkField> {
     private final Field fField;
 
     FrameworkField(Field field) {
+        if (field == null) {
+            throw new NullPointerException(
+                    "FrameworkField cannot be created without an underlying field.");
+        }
         fField = field;
     }
 

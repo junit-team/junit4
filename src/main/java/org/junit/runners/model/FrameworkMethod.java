@@ -25,6 +25,10 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
      * Returns a new {@code FrameworkMethod} for {@code method}
      */
     public FrameworkMethod(Method method) {
+        if (method == null) {
+            throw new NullPointerException(
+                    "FrameworkMethod cannot be created without an underlying method.");
+        }
         fMethod = method;
     }
 
