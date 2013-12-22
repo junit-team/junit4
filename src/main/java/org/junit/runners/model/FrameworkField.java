@@ -2,7 +2,6 @@ package org.junit.runners.model;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 
 import org.junit.runners.BlockJUnit4ClassRunner;
 
@@ -34,20 +33,13 @@ public class FrameworkField extends FrameworkMember<FrameworkField> {
     }
 
     @Override
-    public boolean isPublic() {
-        int modifiers = fField.getModifiers();
-        return Modifier.isPublic(modifiers);
-    }
-
-    @Override
     public boolean isShadowedBy(FrameworkField otherMember) {
         return otherMember.getName().equals(getName());
     }
 
     @Override
-    public boolean isStatic() {
-        int modifiers = fField.getModifiers();
-        return Modifier.isStatic(modifiers);
+    protected int getModifiers() {
+        return fField.getModifiers();
     }
 
     /**

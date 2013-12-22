@@ -103,22 +103,11 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
         }
     }
 
-    /**
-     * Returns true if this method is static, false if not
-     */
     @Override
-    public boolean isStatic() {
-        return Modifier.isStatic(fMethod.getModifiers());
+    protected int getModifiers() {
+        return fMethod.getModifiers();
     }
 
-    /**
-     * Returns true if this method is public, false if not
-     */
-    @Override
-    public boolean isPublic() {
-        return Modifier.isPublic(fMethod.getModifiers());
-    }
-    
     /**
      * Returns the return type of the method
      */
