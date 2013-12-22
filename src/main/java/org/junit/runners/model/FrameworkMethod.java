@@ -19,7 +19,7 @@ import org.junit.internal.runners.model.ReflectiveCallable;
  * @since 4.5
  */
 public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
-    final Method fMethod;
+    private final Method fMethod;
 
     /**
      * Returns a new {@code FrameworkMethod} for {@code method}
