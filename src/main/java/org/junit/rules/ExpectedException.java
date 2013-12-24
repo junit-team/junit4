@@ -225,6 +225,21 @@ public class ExpectedException implements TestRule {
         expect(hasCause(expectedCause));
     }
 
+    /**
+     * Verify that your code throws an exception whose cause is an instance of
+     * specific {@code type}.
+     * <pre> &#064;Test
+     * public void throwsExceptionWhoseCauseIsASpecificType() {
+     *     NullPointerException expectedCause = new NullPointerException();
+     *     thrown.expectCause(NullPointerException.class);
+     *     throw new IllegalArgumentException(&quot;What happened?&quot;, cause);
+     * }</pre>
+     */
+    public void expectCause(Class<? extends Throwable> type) {
+        Matcher<Throwable> instanceOfType = instanceOf(type);
+        expectCause(instanceOfType);
+    }
+
     private class ExpectedExceptionStatement extends Statement {
         private final Statement fNext;
 

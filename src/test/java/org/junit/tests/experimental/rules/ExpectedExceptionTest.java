@@ -69,6 +69,7 @@ public class ExpectedExceptionTest {
                         ExpectsMultipleMatchers.class,
                         hasSingleFailureWithMessage(startsWith("\nExpected: (an instance of java.lang.IllegalArgumentException and exception with message a string containing \"Ack!\")"))},
                 {ThrowExceptionWithMatchingCause.class, everyTestRunSuccessful()},
+                {ThrowsExceptionWithExpectedCauseType.class, everyTestRunSuccessful()},
                 {ThrowExpectedNullCause.class, everyTestRunSuccessful()},
                 {
                         ThrowUnexpectedCause.class,
@@ -327,6 +328,21 @@ public class ExpectedExceptionTest {
             thrown.expectCause(is(new NullPointerException("expected cause")));
 
             throw new IllegalArgumentException("Ack!", new NullPointerException("an unexpected cause"));
+        }
+    }
+
+    public static class ThrowsExceptionWithExpectedCauseType {
+
+        @Rule
+        public ExpectedException thrown = none();
+
+        @Test
+        public void throwExceptionWithMatchingCause() {
+            NullPointerException expectedCause = new NullPointerException("expected cause");
+
+            thrown.expectCause(NullPointerException.class);
+
+            throw new IllegalArgumentException("Ack!", expectedCause);
         }
     }
     
