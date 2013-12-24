@@ -17,7 +17,7 @@ public class FailOnTimeout extends Statement {
     private final TimeUnit fTimeUnit;
     private final long fTimeout;
     private final boolean fLookForStuckThread;
-    private ThreadGroup fThreadGroup = null;
+    private volatile ThreadGroup fThreadGroup = null;
 
     public FailOnTimeout(Statement originalStatement, long millis) {
         this(originalStatement, millis, TimeUnit.MILLISECONDS);
