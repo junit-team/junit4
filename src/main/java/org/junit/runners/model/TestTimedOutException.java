@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
  * @since 4.12
  * 
  */
-public class TestFailedOnTimeoutException extends Exception {
+public class TestTimedOutException extends Exception {
 
     private static final long serialVersionUID = 31935685163547539L;
 
@@ -21,7 +21,7 @@ public class TestFailedOnTimeoutException extends Exception {
      * @param timeout the amount of time passed before the test was interrupted
      * @param timeUnit the time unit for the timeout value
      */
-    public TestFailedOnTimeoutException(long timeout, TimeUnit timeUnit) {
+    public TestTimedOutException(long timeout, TimeUnit timeUnit) {
         super(String.format("test timed out after %d %s", 
                 timeout, timeUnit.name().toLowerCase()));
         fTimeUnit = timeUnit;

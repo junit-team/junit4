@@ -17,7 +17,7 @@ import org.junit.Test;
 import org.junit.internal.runners.statements.FailOnTimeout;
 import org.junit.rules.ExpectedException;
 import org.junit.runners.model.Statement;
-import org.junit.runners.model.TestFailedOnTimeoutException;
+import org.junit.runners.model.TestTimedOutException;
 
 /**
  * @author Asaf Ary, Stefan Birkner
@@ -34,9 +34,9 @@ public class FailOnTimeoutTest {
             TIMEOUT);
 
     @Test
-    public void throwsTestFailedWithTimeoutException()
+    public void throwsTestTimedOutException()
             throws Throwable {
-        thrown.expect(TestFailedOnTimeoutException.class);
+        thrown.expect(TestTimedOutException.class);
         evaluateWithWaitDuration(TIMEOUT + 50);
     }
 
@@ -56,7 +56,7 @@ public class FailOnTimeoutTest {
     @Test
     public void throwExceptionIfTheSecondCallToEvaluateNeedsTooMuchTime()
             throws Throwable {
-        thrown.expect(TestFailedOnTimeoutException.class);
+        thrown.expect(TestTimedOutException.class);
         evaluateWithWaitDuration(0);
         evaluateWithWaitDuration(TIMEOUT + 50);
     }
@@ -78,7 +78,7 @@ public class FailOnTimeoutTest {
         try {
             evaluateWithWaitDuration(TIMEOUT + 50);
             fail("No exception was thrown when test timed out");
-        } catch (TestFailedOnTimeoutException e) {
+        } catch (TestTimedOutException e) {
             assertEquals(TIMEOUT, e.getTimeout());
             assertEquals(TimeUnit.MILLISECONDS, e.getTimeUnit());
         }

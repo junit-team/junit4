@@ -11,7 +11,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
-import org.junit.runners.model.TestFailedOnTimeoutException;
+import org.junit.runners.model.TestTimedOutException;
 
 public class FailOnTimeout extends Statement {
     private final Statement fOriginalStatement;
@@ -69,7 +69,7 @@ public class FailOnTimeout extends Statement {
     private Exception createTimeoutException(Thread thread) {
         StackTraceElement[] stackTrace = thread.getStackTrace();
         final Thread stuckThread = fLookForStuckThread ? getStuckThread(thread) : null;
-        Exception currThreadException = new TestFailedOnTimeoutException(fTimeout, fTimeUnit);
+        Exception currThreadException = new TestTimedOutException(fTimeout, fTimeUnit);
         if (stackTrace != null) {
             currThreadException.setStackTrace(stackTrace);
             thread.interrupt();
