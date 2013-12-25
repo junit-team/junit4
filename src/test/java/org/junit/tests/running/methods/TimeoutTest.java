@@ -199,7 +199,7 @@ public class TimeoutTest {
     
     public static class InfiniteLoopWithStuckThreadTest {
         @Rule
-        public TestRule globalTimeout = new Timeout(100, TimeUnit.MILLISECONDS).lookForStuckThread(true);
+        public TestRule globalTimeout = new Timeout(100, TimeUnit.MILLISECONDS).lookingForStuckThread(true);
 
         @Test
         public void failure() throws Exception {
@@ -209,7 +209,7 @@ public class TimeoutTest {
     
     public static class InfiniteLoopStuckInMainThreadTest {
         @Rule
-        public TestRule globalTimeout = new Timeout(100, TimeUnit.MILLISECONDS).lookForStuckThread(true);
+        public TestRule globalTimeout = new Timeout(100, TimeUnit.MILLISECONDS).lookingForStuckThread(true);
 
         @Test
         public void failure() throws Exception {
