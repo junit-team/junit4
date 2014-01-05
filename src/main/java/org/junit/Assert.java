@@ -195,7 +195,9 @@ public class Assert {
      * @param actual the value to check against <code>unexpected</code>
      */
     static public void assertNotEquals(String message, long unexpected, long actual) {
-        assertNotEquals(message, (Long) unexpected, (Long) actual);
+        if (unexpected == actual) {
+            failEquals(message, Long.valueOf(actual));
+        }
     }
 
     /**
@@ -227,7 +229,7 @@ public class Assert {
     static public void assertNotEquals(String message, double unexpected,
             double actual, double delta) {
         if (!doubleIsDifferent(unexpected, actual, delta)) {
-            failEquals(message, new Double(actual));
+            failEquals(message, Double.valueOf(actual));
         }
     }
 
@@ -458,6 +460,9 @@ public class Assert {
      * okay)
      * @param expecteds double array with expected values.
      * @param actuals double array with actual values
+     * @param delta the maximum delta between <code>expecteds[i]</code> and
+     * <code>actuals[i]</code> for which both numbers are still
+     * considered equal.
      */
     public static void assertArrayEquals(String message, double[] expecteds,
             double[] actuals, double delta) throws ArrayComparisonFailure {
@@ -470,6 +475,9 @@ public class Assert {
      *
      * @param expecteds double array with expected values.
      * @param actuals double array with actual values
+     * @param delta the maximum delta between <code>expecteds[i]</code> and
+     * <code>actuals[i]</code> for which both numbers are still
+     * considered equal.
      */
     public static void assertArrayEquals(double[] expecteds, double[] actuals, double delta) {
         assertArrayEquals(null, expecteds, actuals, delta);
@@ -483,6 +491,9 @@ public class Assert {
      * okay)
      * @param expecteds float array with expected values.
      * @param actuals float array with actual values
+     * @param delta the maximum delta between <code>expecteds[i]</code> and
+     * <code>actuals[i]</code> for which both numbers are still
+     * considered equal.
      */
     public static void assertArrayEquals(String message, float[] expecteds,
             float[] actuals, float delta) throws ArrayComparisonFailure {
@@ -495,6 +506,9 @@ public class Assert {
      *
      * @param expecteds float array with expected values.
      * @param actuals float array with actual values
+     * @param delta the maximum delta between <code>expecteds[i]</code> and
+     * <code>actuals[i]</code> for which both numbers are still
+     * considered equal.
      */
     public static void assertArrayEquals(float[] expecteds, float[] actuals, float delta) {
         assertArrayEquals(null, expecteds, actuals, delta);
@@ -536,7 +550,7 @@ public class Assert {
     static public void assertEquals(String message, double expected,
             double actual, double delta) {
         if (doubleIsDifferent(expected, actual, delta)) {
-            failNotEquals(message, new Double(expected), new Double(actual));
+            failNotEquals(message, Double.valueOf(expected), Double.valueOf(actual));
         }
     }
 
@@ -558,7 +572,7 @@ public class Assert {
     static public void assertEquals(String message, float expected,
             float actual, float delta) {
         if (floatIsDifferent(expected, actual, delta)) {
-            failNotEquals(message, new Float(expected), new Float(actual));
+            failNotEquals(message, Float.valueOf(expected), Float.valueOf(actual));
         }
     }
 
@@ -580,7 +594,7 @@ public class Assert {
     static public void assertNotEquals(String message, float unexpected,
             float actual, float delta) {
         if (!floatIsDifferent(unexpected, actual, delta)) {
-            failEquals(message, new Float(actual));
+            failEquals(message, Float.valueOf(actual));
         }
     }
 
@@ -627,7 +641,9 @@ public class Assert {
      * @param actual long actual value
      */
     static public void assertEquals(String message, long expected, long actual) {
-        assertEquals(message, (Long) expected, (Long) actual);
+        if (expected != actual) {
+            failNotEquals(message, Long.valueOf(expected), Long.valueOf(actual));
+        }
     }
 
     /**

@@ -11,11 +11,16 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Rule;
+import org.junit.validator.AnnotationValidator;
+import org.junit.validator.AnnotationValidatorFactory;
+import org.junit.validator.ValidateWith;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.statements.RunAfters;
@@ -31,9 +36,9 @@ import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
+import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
-import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.RunnerScheduler;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
@@ -59,6 +64,9 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     // Guarded by fChildrenLock
     private volatile Collection<T> fFilteredChildren = null;
 
+    private final AnnotationValidatorFactory fAnnotationValidatorFactory =
+            new AnnotationValidatorFactory();
+
     private volatile RunnerScheduler fScheduler = new RunnerScheduler() {
         public void schedule(Runnable childStatement) {
             childStatement.run();
@@ -73,8 +81,12 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * Constructs a new {@code ParentRunner} that will run {@code @TestClass}
      */
     protected ParentRunner(Class<?> testClass) throws InitializationError {
-        fTestClass = new TestClass(testClass);
+        fTestClass = createTestClass(testClass);
         validate();
+    }
+
+    protected TestClass createTestClass(Class<?> testClass) {
+        return new TestClass(testClass);
     }
 
     //
@@ -114,6 +126,54 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         validatePublicVoidNoArgMethods(BeforeClass.class, true, errors);
         validatePublicVoidNoArgMethods(AfterClass.class, true, errors);
         validateClassRules(errors);
+        invokeValidators(errors);
+    }
+
+    private void invokeValidators(List<Throwable> errors) {
+        invokeValidatorsOnClass(errors);
+        invokeValidatorsOnMethods(errors);
+        invokeValidatorsOnFields(errors);
+    }
+
+    private void invokeValidatorsOnClass(List<Throwable> errors) {
+        Annotation[] annotations = getTestClass().getAnnotations();
+        for (Annotation annotation : annotations) {
+            Class<? extends Annotation> annotationType = annotation.annotationType();
+            ValidateWith validateWithAnnotation = annotationType.getAnnotation(ValidateWith.class);
+            if (validateWithAnnotation != null) {
+                AnnotationValidator annotationValidator =
+                        fAnnotationValidatorFactory.createAnnotationValidator(validateWithAnnotation);
+                errors.addAll(annotationValidator.validateAnnotatedClass(getTestClass()));
+            }
+        }
+    }
+
+    private void invokeValidatorsOnMethods(List<Throwable> errors) {
+        Map<Class<? extends Annotation>, List<FrameworkMethod>> annotationMap = getTestClass().getAnnotationToMethods();
+        for (Class<? extends Annotation> annotationType : annotationMap.keySet()) {
+            ValidateWith validateWithAnnotation = annotationType.getAnnotation(ValidateWith.class);
+            if (validateWithAnnotation != null) {
+                for (FrameworkMethod frameworkMethod : annotationMap.get(annotationType)) {
+                    AnnotationValidator annotationValidator =
+                            fAnnotationValidatorFactory.createAnnotationValidator(validateWithAnnotation);
+                    errors.addAll(annotationValidator.validateAnnotatedMethod(frameworkMethod));
+                }
+            }
+        }
+    }
+
+    private void invokeValidatorsOnFields(List<Throwable> errors) {
+        Map<Class<? extends Annotation>, List<FrameworkField>> annotationMap = getTestClass().getAnnotationToFields();
+        for (Class<? extends Annotation> annotationType : annotationMap.keySet()) {
+            ValidateWith validateWithAnnotation = annotationType.getAnnotation(ValidateWith.class);
+            if (validateWithAnnotation != null) {
+                for (FrameworkField frameworkField : annotationMap.get(annotationType)) {
+                    AnnotationValidator annotationValidator =
+                            fAnnotationValidatorFactory.createAnnotationValidator(validateWithAnnotation);
+                    errors.addAll(annotationValidator.validateAnnotatedField(frameworkField));
+                }
+            }
+        }
     }
 
     /**
@@ -141,28 +201,47 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     }
 
     /**
-     * Constructs a {@code Statement} to run all of the tests in the test class. Override to add pre-/post-processing.
-     * Here is an outline of the implementation:
-     * <ul>
-     * <li>Call {@link #runChild(Object, RunNotifier)} on each object returned by {@link #getChildren()} (subject to any imposed filter and sort).</li>
-     * <li>ALWAYS run all non-overridden {@code @BeforeClass} methods on this class
-     * and superclasses before the previous step; if any throws an
-     * Exception, stop execution and pass the exception on.
-     * <li>ALWAYS run all non-overridden {@code @AfterClass} methods on this class
-     * and superclasses before any of the previous steps; all AfterClass methods are
-     * always executed: exceptions thrown by previous steps are combined, if
+     * Constructs a {@code Statement} to run all of the tests in the test class.
+     * Override to add pre-/post-processing. Here is an outline of the
+     * implementation:
+     * <ol>
+     * <li>Determine the children to be run using {@link #getChildren()}
+     * (subject to any imposed filter and sort).</li>
+     * <li>If there are any children remaining after filtering and ignoring,
+     * construct a statement that will:
+     * <ol>
+     * <li>Apply all {@code ClassRule}s on the test-class and superclasses.</li>
+     * <li>Run all non-overridden {@code @BeforeClass} methods on the test-class
+     * and superclasses; if any throws an Exception, stop execution and pass the
+     * exception on.</li>
+     * <li>Run all remaining tests on the test-class.</li>
+     * <li>Run all non-overridden {@code @AfterClass} methods on the test-class
+     * and superclasses: exceptions thrown by previous steps are combined, if
      * necessary, with exceptions from AfterClass methods into a
-     * {@link MultipleFailureException}.
-     * </ul>
+     * {@link MultipleFailureException}.</li>
+     * </ol>
+     * </li>
+     * </ol>
      *
      * @return {@code Statement}
      */
     protected Statement classBlock(final RunNotifier notifier) {
         Statement statement = childrenInvoker(notifier);
-        statement = withBeforeClasses(statement);
-        statement = withAfterClasses(statement);
-        statement = withClassRules(statement);
+        if (!areAllChildrenIgnored()) {
+            statement = withBeforeClasses(statement);
+            statement = withAfterClasses(statement);
+            statement = withClassRules(statement);
+        }
         return statement;
+    }
+
+    private boolean areAllChildrenIgnored() {
+        for (T child : getFilteredChildren()) {
+            if (!isIgnored(child)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -228,6 +307,17 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
                 runChildren(notifier);
             }
         };
+    }
+
+    /**
+     * Evaluates whether a child is ignored. The default implementation always
+     * returns <code>false</code>.
+     * <p/>
+     * {@link BlockJUnit4ClassRunner}, for example, overrides this method to
+     * filter tests based on the {@link Ignore} annotation.
+     */
+    protected boolean isIgnored(T child) {
+        return false;
     }
 
     private void runChildren(final RunNotifier notifier) {

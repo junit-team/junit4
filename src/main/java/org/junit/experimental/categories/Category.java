@@ -4,6 +4,8 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import org.junit.validator.ValidateWith;
+
 /**
  * Marks a test class or test method as belonging to one or more categories of tests.
  * The value is an array of arbitrary classes.
@@ -40,6 +42,7 @@ import java.lang.annotation.RetentionPolicy;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
+@ValidateWith(CategoryValidator.class)
 public @interface Category {
     Class<?>[] value();
 }
