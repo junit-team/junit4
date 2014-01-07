@@ -29,14 +29,14 @@ public class TestTimedOutException extends Exception {
     }
 
     /**
-     * @return the time passed before the test was interrupted
+     * Gets the time passed before the test was interrupted
      */
     public long getTimeout() {
         return fTimeout;
     }
 
     /**
-     * @return The time unit for the timeout value
+     * Gets the time unit for the timeout value
      */
     public TimeUnit getTimeUnit() {
         return fTimeUnit;
