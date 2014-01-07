@@ -34,8 +34,7 @@ public class FailOnTimeoutTest {
             TIMEOUT);
 
     @Test
-    public void throwsTestTimedOutException()
-            throws Throwable {
+    public void throwsTestTimedOutException() throws Throwable {
         thrown.expect(TestTimedOutException.class);
         evaluateWithWaitDuration(TIMEOUT + 50);
     }
