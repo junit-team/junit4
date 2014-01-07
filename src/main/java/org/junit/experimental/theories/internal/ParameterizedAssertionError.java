@@ -4,13 +4,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
-public class ParameterizedAssertionError extends RuntimeException {
+public class ParameterizedAssertionError extends AssertionError {
     private static final long serialVersionUID = 1L;
 
     public ParameterizedAssertionError(Throwable targetException,
             String methodName, Object... params) {
-        super(String.format("%s(%s)", methodName, join(", ", params)),
-                targetException);
+        super(String.format("%s(%s)", methodName, join(", ", params)));
+        this.initCause(targetException);
     }
 
     @Override
