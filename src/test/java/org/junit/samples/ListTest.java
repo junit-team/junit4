@@ -12,7 +12,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * A sample test case, testing {@link java.util.Vector}.
+ * A sample test case, testing {@link java.util.ArrayList}.
  */
 public class ListTest {
     protected List<Integer> fEmpty;
