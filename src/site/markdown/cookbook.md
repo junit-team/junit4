@@ -1,6 +1,5 @@
-title: JUnit Cookbook
-author: Kent Beck
-        Erich Gamma
+Title: JUnit Cookbook
+Author: Kent Beck, Erich Gamma
 
 
 Here is a short cookbook showing you the steps you can follow in writing
