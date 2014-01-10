@@ -80,7 +80,7 @@
         </repository>
         <site>
             <id>junit.github.io</id>
-            <url>gitsite:git@github.com/junit-team/junit</url>
+            <url>gitsite:git@github.com/junit-team/junit.git</url>
         </site>
     </distributionManagement>
 
