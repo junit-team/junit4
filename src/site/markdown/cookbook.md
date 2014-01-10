@@ -1,8 +1,7 @@
-# JUnit Cookbook
+title: JUnit Cookbook
+author: Kent Beck
+        Erich Gamma
 
-Kent Beck, Erich Gamma
-
-* * *
 
 Here is a short cookbook showing you the steps you can follow in writing
 and organizing your own tests using JUnit.
