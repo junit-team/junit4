@@ -76,7 +76,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
             runLeaf(methodBlock(method), description, notifier);
         }
     }
-    
+
     /**
      * Evaluates whether {@link FrameworkMethod}s are ignored based on the
      * {@link Ignore} annotation.
@@ -298,7 +298,8 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
             Object test, Statement next) {
         Test annotation = method.getAnnotation(Test.class);
         return expectsException(annotation) ? new ExpectException(next,
-                getExpectedException(annotation)) : next;
+                getExpectedException(annotation),
+                getExpectedMessage(annotation)) : next;
     }
 
     /**
@@ -412,8 +413,17 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
         }
     }
 
+    private String getExpectedMessage(final Test annotation) {
+        if (annotation == null || "".equals(annotation.expectedMessage())) {
+            return null;
+        } else {
+            return annotation.expectedMessage();
+        }
+    }
+
     private boolean expectsException(Test annotation) {
-        return getExpectedException(annotation) != null;
+        return getExpectedException(annotation) != null ||
+               getExpectedMessage(annotation) != null;
     }
 
     private long getTimeout(Test annotation) {

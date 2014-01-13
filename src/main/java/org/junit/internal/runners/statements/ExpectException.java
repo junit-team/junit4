@@ -4,12 +4,17 @@ import org.junit.internal.AssumptionViolatedException;
 import org.junit.runners.model.Statement;
 
 public class ExpectException extends Statement {
+
     private Statement fNext;
     private final Class<? extends Throwable> fExpected;
+    private final String fExpectedMessage;
 
-    public ExpectException(Statement next, Class<? extends Throwable> expected) {
+    public ExpectException(Statement next,
+                           Class<? extends Throwable> expected,
+                           String expectedMessage) {
         fNext = next;
         fExpected = expected;
+        fExpectedMessage = expectedMessage;
     }
 
     @Override
@@ -21,10 +26,17 @@ public class ExpectException extends Statement {
         } catch (AssumptionViolatedException e) {
             throw e;
         } catch (Throwable e) {
-            if (!fExpected.isAssignableFrom(e.getClass())) {
+            if (fExpected != null && !fExpected.isAssignableFrom(e.getClass())) {
                 String message = "Unexpected exception, expected<"
                         + fExpected.getName() + "> but was<"
                         + e.getClass().getName() + ">";
+                throw new Exception(message, e);
+            }
+
+            if (fExpectedMessage != null && !e.getMessage().contains(fExpectedMessage)) {
+                String message = String.format("Unexpected message, " +
+                         "expected it to contain <%s> but was <%s>",
+                         fExpectedMessage, e.getMessage());
                 throw new Exception(message, e);
             }
         }

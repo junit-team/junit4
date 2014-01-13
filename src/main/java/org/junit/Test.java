@@ -78,6 +78,12 @@ public @interface Test {
     Class<? extends Throwable> expected() default None.class;
 
     /**
+     * Optionally specify <code>expectedMessage</code>, a String, to cause a test method to succeed if
+     * and only if an exception containing the specified string is thrown by the method.
+     */
+    String expectedMessage() default "";
+
+    /**
      * Optionally specify <code>timeout</code> in milliseconds to cause a test method to fail if it
      * takes longer than that number of milliseconds.
      * <p>
