@@ -67,7 +67,7 @@
         </div>
       </div>
       <p  class="pagination-centered">
-        <a class="btn btn-primary btn-large" href="javascript:hopscotch.startTour(tour);">Let's take a tour »</a>
+        <a class="btn btn-primary btn-large" href="javascript:startSiteTour()">Let's take a tour »</a>
       </p>
 
       <div class="container">
@@ -170,6 +170,10 @@
             }
           ]
         }
+        window.startSiteTour = function(){
+            hopscotch.startTour(tour);
+            return undefined;
+        };
     //]]></script>
   </body>
 </document>
