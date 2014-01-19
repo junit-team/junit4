@@ -54,12 +54,12 @@ public class AssertionTest {
         }
     }
 
-    @Test(expected = AssertionError.class)
+    @Test(expected = ArrayComparisonFailure.class)
     public void arraysNotEqual() {
         assertArrayEquals((new Object[]{new Object()}), (new Object[]{new Object()}));
     }
 
-    @Test(expected = AssertionError.class)
+    @Test(expected = ArrayComparisonFailure.class)
     public void arraysNotEqualWithMessage() {
         assertArrayEquals("not equal", (new Object[]{new Object()}), (new Object[]{new Object()}));
     }
@@ -83,6 +83,11 @@ public class AssertionTest {
     }
 
     @Test
+    public void arraysBothNull() {
+        assertArrayEquals("not equal", (Object[]) null, (Object[]) null);
+    }
+
+    @Test
     public void arraysDifferentLengthMessage() {
         try {
             assertArrayEquals("not equal", (new Object[0]), (new Object[1]));
@@ -94,6 +99,26 @@ public class AssertionTest {
     @Test(expected = ArrayComparisonFailure.class)
     public void arraysElementsDiffer() {
         assertArrayEquals("not equal", (new Object[]{"this is a very long string in the middle of an array"}), (new Object[]{"this is another very long string in the middle of an array"}));
+    }
+
+    @Test
+    public void arraysExpectedContainsNull() {
+        try {
+            assertArrayEquals((new Object[]{null}), (new Object[]{true}));
+        } catch (AssertionError exception) {
+            assertEquals("arrays first differed at element [0]; expected:<null> but was:<true>", exception
+                    .getMessage());
+        }
+    }
+    
+    @Test
+    public void arraysActualContainsNull() {
+        try {
+            assertArrayEquals((new Object[]{true}), (new Object[]{null}));
+        } catch (AssertionError exception) {
+            assertEquals("arrays first differed at element [0]; expected:<true> but was:<null>", exception
+                    .getMessage());
+        }
     }
 
     @Test
@@ -150,6 +175,46 @@ public class AssertionTest {
     }
 
     @Test
+    public void multiDimensionalExpectedContainsNull() {
+        try {
+            assertArrayEquals((new Object[][]{{true, null}, {true, true}}), (new Object[][]{{true, true}, {true, true}}));
+        } catch (AssertionError exception) {
+            assertEquals("arrays first differed at element [0][1]; expected:<null> but was:<true>", exception
+                    .getMessage());
+        }
+    }
+
+    @Test
+    public void multiDimensionalActualContainsNull() {
+        try {
+            assertArrayEquals((new Object[][]{{true, true}, {true, true}}), (new Object[][]{{true, null}, {true, true}}));
+        } catch (AssertionError exception) {
+            assertEquals("arrays first differed at element [0][1]; expected:<true> but was:<null>", exception
+                    .getMessage());
+        }
+    }
+
+    @Test
+    public void multiDimensionalBothContainNull() {
+        assertArrayEquals((new Object[][]{{true, null}, {true, true}}), (new Object[][]{{true, null}, {true, true}}));
+    }
+
+    @Test(expected = ArrayComparisonFailure.class)
+    public void multiDimensionalExpectedContainsNull2() {
+        assertArrayEquals((new Object[][]{null, {true, true}}), (new Object[][]{{true, true}, {true, true}}));
+    }
+
+    @Test(expected = ArrayComparisonFailure.class)
+    public void multiDimensionalActualContainsNull2() {
+        assertArrayEquals((new Object[][]{{true, true}, {true, true}}), (new Object[][]{null, {true, true}}));
+    }
+
+    @Test
+    public void multiDimensionalBothContainNull2() {
+        assertArrayEquals((new Object[][]{null, {true, true}}), (new Object[][]{null, {true, true}}));
+    }
+
+    @Test
     public void oneDimensionalPrimitiveArraysAreEqual() {
         assertArrayEquals(new boolean[]{true}, new boolean[]{true});
         assertArrayEquals(new byte[]{1}, new byte[]{1});
@@ -161,17 +226,17 @@ public class AssertionTest {
         assertArrayEquals(new float[]{1.0f}, new float[]{1.0f}, 1.0f);
     }
 
-    @Test(expected = AssertionError.class)
+    @Test(expected = ArrayComparisonFailure.class)
     public void oneDimensionalDoubleArraysAreNotEqual() {
         assertArrayEquals(new double[]{1.0}, new double[]{2.5}, 1.0);
     }
 
-    @Test(expected = AssertionError.class)
+    @Test(expected = ArrayComparisonFailure.class)
     public void oneDimensionalFloatArraysAreNotEqual() {
         assertArrayEquals(new float[]{1.0f}, new float[]{2.5f}, 1.0f);
     }
     
-    @Test(expected = AssertionError.class)
+    @Test(expected = ArrayComparisonFailure.class)
     public void oneDimensionalBooleanArraysAreNotEqual() {
         assertArrayEquals(new boolean[]{true}, new boolean[]{false});
     }
@@ -208,6 +273,15 @@ public class AssertionTest {
             fail();
         } catch (AssertionError exception) {
             assertEquals("arrays first differed at element [1][0]; expected:<false> but was:<true>", exception.getMessage());
+        }
+    }
+
+    @Test
+    public void multiDimensionalArraysDifferentLengthMessage() {
+        try {
+            assertArrayEquals("not equal", (new Object[1][3]), (new Object[1][4]));
+        } catch (AssertionError exception) {
+            assertEquals("not equal: array lengths differed, expected.length=3 actual.length=4", exception.getMessage());
         }
     }
 
@@ -266,6 +340,10 @@ public class AssertionTest {
     @Test(expected = AssertionError.class)
     public void notEqualsNullWithObject() {
         assertEquals(null, new Object());
+    }
+
+    public void notEqualsBothNullWithObject() {
+        assertEquals((Object) null, (Object) null);
     }
 
     @Test
@@ -483,11 +561,18 @@ public class AssertionTest {
         }
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void arraysDeclaredAsObjectAreComparedAsObjects() {
         Object a1 = new Object[]{"abc"};
         Object a2 = new Object[]{"abc"};
-        assertEquals(a1, a2);
+        try {
+            assertEquals(a1, a2);
+        } catch (ArrayComparisonFailure e) {
+            fail("Arrays declared as objects should be compared as objects.");
+        } catch (AssertionError e) {
+            return;
+        }
+        fail("Failed on assertion.");
     }
 
     @Test
