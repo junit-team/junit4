@@ -1,6 +1,7 @@
 package org.junit.runners.model;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Modifier;
 import java.util.List;
 
 /**
@@ -25,9 +26,21 @@ public abstract class FrameworkMember<T extends FrameworkMember<T>> {
         return false;
     }
 
-    public abstract boolean isPublic();
+    protected abstract int getModifiers();
 
-    public abstract boolean isStatic();
+    /**
+     * Returns true if this member is static, false if not.
+     */
+    public boolean isStatic() {
+        return Modifier.isStatic(getModifiers());
+    }
+
+    /**
+     * Returns true if this member is public, false if not.
+     */
+    public boolean isPublic() {
+        return Modifier.isPublic(getModifiers());
+    }
 
     public abstract String getName();
 
