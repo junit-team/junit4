@@ -8,7 +8,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * A sample test case, testing {@link java.util.Vector}.
+ * A sample test case, testing {@link java.util.ArrayList}.
  */
 public class ListTest extends TestCase {
     protected List<Integer> fEmpty;
