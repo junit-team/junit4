@@ -199,7 +199,6 @@ import org.junit.tests.validation.ValidationTest;
         JUnitCommandLineParseResultTest.class,
         FilterFactoriesTest.class,
         CategoryFilterFactoryTest.class,
-        JUnitCoreTest.class,
         FrameworkFieldTest.class,
         FrameworkMethodTest.class,
         JUnitCoreTest.class,
