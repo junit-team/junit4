@@ -1,6 +1,7 @@
 package org.junit.runners.model;
 
 import static java.lang.reflect.Modifier.isStatic;
+import static org.junit.internal.MethodSorter.NAME_ASCENDING;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -11,8 +12,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,7 +27,10 @@ import org.junit.internal.MethodSorter;
  *
  * @since 4.5
  */
-public class TestClass {
+public class TestClass implements Annotatable {
+    private static final FieldComparator FIELD_COMPARATOR = new FieldComparator();
+    private static final MethodComparator METHOD_COMPARATOR = new MethodComparator();
+
     private final Class<?> fClass;
     private final Map<Class<? extends Annotation>, List<FrameworkMethod>> fMethodsForAnnotations;
     private final Map<Class<? extends Annotation>, List<FrameworkField>> fFieldsForAnnotations;
@@ -68,11 +74,7 @@ public class TestClass {
 
     private static Field[] getSortedDeclaredFields(Class<?> clazz) {
         Field[] declaredFields = clazz.getDeclaredFields();
-        Arrays.sort(declaredFields, new Comparator<Field>() {
-            public int compare(Field field1, Field field2) {
-                return field1.getName().compareTo(field2.getName());
-            }
-        });
+        Arrays.sort(declaredFields, FIELD_COMPARATOR);
         return declaredFields;
     }
 
@@ -102,6 +104,17 @@ public class TestClass {
         return Collections.unmodifiableMap(copy);
     }
 
+    /**
+     * Returns, efficiently, all the non-overridden methods in this class and
+     * its superclasses that are annotated}.
+     * 
+     * @since 4.12
+     */
+    public List<FrameworkMethod> getAnnotatedMethods() {
+        List<FrameworkMethod> methods = collectValues(fMethodsForAnnotations);
+        Collections.sort(methods, METHOD_COMPARATOR);
+        return methods;
+    }
 
     /**
      * Returns, efficiently, all the non-overridden methods in this class and
@@ -114,6 +127,16 @@ public class TestClass {
 
     /**
      * Returns, efficiently, all the non-overridden fields in this class and its
+     * superclasses that are annotated.
+     * 
+     * @since 4.12
+     */
+    public List<FrameworkField> getAnnotatedFields() {
+        return collectValues(fFieldsForAnnotations);
+    }
+
+    /**
+     * Returns, efficiently, all the non-overridden fields in this class and its
      * superclasses that are annotated with {@code annotationClass}.
      */
     public List<FrameworkField> getAnnotatedFields(
@@ -121,24 +144,12 @@ public class TestClass {
         return Collections.unmodifiableList(getAnnotatedMembers(fFieldsForAnnotations, annotationClass, false));
     }
 
-    /**
-     * Gets a {@code Map} between annotations and methods that have
-     * the annotation in this class or its superclasses.
-     *
-     * @since 4.12
-     */
-    public Map<Class<? extends Annotation>, List<FrameworkMethod>> getAnnotationToMethods() {
-        return fMethodsForAnnotations;
-    }
-
-    /**
-     * Gets a {@code Map} between annotations and fields that have
-     * the annotation in this class or its superclasses.
-     *
-     * @since 4.12
-     */
-    public Map<Class<? extends Annotation>, List<FrameworkField>> getAnnotationToFields() {
-        return fFieldsForAnnotations;
+    private <T> List<T> collectValues(Map<?, List<T>> map) {
+        Set<T> values = new LinkedHashSet<T>();
+        for (List<T> additionalValues : map.values()) {
+            values.addAll(additionalValues);
+        }
+        return new ArrayList<T>(values);
     }
 
     private static <T> List<T> getAnnotatedMembers(Map<Class<? extends Annotation>, List<T>> map,
@@ -239,5 +250,24 @@ public class TestClass {
 
     public boolean isANonStaticInnerClass() {
         return fClass.isMemberClass() && !isStatic(fClass.getModifiers());
+    }
+
+    /**
+     * Compares two fields by its name.
+     */
+    private static class FieldComparator implements Comparator<Field> {
+        public int compare(Field left, Field right) {
+            return left.getName().compareTo(right.getName());
+        }
+    }
+
+    /**
+     * Compares two methods by its name.
+     */
+    private static class MethodComparator implements
+            Comparator<FrameworkMethod> {
+        public int compare(FrameworkMethod left, FrameworkMethod right) {
+            return NAME_ASCENDING.compare(left.getMethod(), right.getMethod());
+        }
     }
 }
