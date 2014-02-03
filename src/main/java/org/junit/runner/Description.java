@@ -29,9 +29,7 @@ import java.util.regex.Pattern;
  */
 public class Description implements Serializable {
     private static final long serialVersionUID = 1L;
-
-    private static final Pattern METHOD_AND_CLASS_NAME_PATTERN = Pattern
-            .compile("(.*)\\((.*)\\)");
+    private static final Pattern METHOD_AND_CLASS_NAME_PATTERN = Pattern.compile("(.*)\\((.*)\\)");
 
     /**
      * Create a <code>Description</code> named <code>name</code>.
@@ -56,6 +54,18 @@ public class Description implements Serializable {
      */
     public static Description createSuiteDescription(String name, Serializable uniqueId, Annotation... annotations) {
         return new Description(null, name, uniqueId, annotations);
+    }
+
+    /**
+     * Create a <code>Description</code> for <code>testClass</code> named <code>name</code>.
+     * Generally, you will add children to this <code>Description</code>.
+     *
+     * @param testClass A {@link Class} containing tests
+     * @param displayName a display name for the <code>Description</code>
+     * @return a <code>Description</code> of <code>testClass</code> named <code>name</code>
+     */
+    public static Description createSuiteDescription(Class<?> testClass, String displayName) {
+        return new Description(testClass, displayName, testClass.getCanonicalName(), testClass.getAnnotations());
     }
 
     /**
@@ -103,11 +113,27 @@ public class Description implements Serializable {
      * Create a <code>Description</code> of a single test named <code>name</code> in the class <code>clazz</code>.
      * Generally, this will be a leaf <code>Description</code>.
      *
+     * @param className the class name of the test
      * @param name the name of the test (a method name for test annotated with {@link org.junit.Test})
+     * @param uniqueId an arbitrary object used to define uniqueness (in {@link #equals(Object)}
      * @return a <code>Description</code> named <code>name</code>
      */
     public static Description createTestDescription(String className, String name, Serializable uniqueId) {
         return new Description(null, formatDisplayName(name, className), uniqueId);
+    }
+
+    /**
+     * Create a <code>Description</code> of a single test named <code>name</code> in the class <code>clazz</code>.
+     * Generally, this will be a leaf <code>Description</code>.
+     * (This remains for binary compatibility with clients of JUnit 4.3)
+     *
+     * @param clazz the class of the test
+     * @param className an alternative class name for the <code>Description</code>
+     * @param name the name of the test (a method name for test annotated with {@link org.junit.Test})
+     * @return a <code>Description</code> named <code>name</code>
+     */
+    public static Description createTestDescription(Class<?> clazz, String className, String name) {
+        return new Description(clazz, formatDisplayName(name, className), formatDisplayName(name, clazz.getName()));
     }
 
     private static String formatDisplayName(String name, String className) {
@@ -303,8 +329,7 @@ public class Description implements Serializable {
         return methodAndClassNamePatternGroupOrDefault(1, null);
     }
 
-    private String methodAndClassNamePatternGroupOrDefault(int group,
-            String defaultString) {
+    private String methodAndClassNamePatternGroupOrDefault(int group, String defaultString) {
         Matcher matcher = METHOD_AND_CLASS_NAME_PATTERN.matcher(toString());
         return matcher.matches() ? matcher.group(group) : defaultString;
     }
