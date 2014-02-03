@@ -135,7 +135,8 @@ import org.junit.runners.model.Statement;
 public class Parameterized extends Suite {
     /**
      * Annotation for a method which provides parameters to be injected into the
-     * test class constructor by <code>Parameterized</code>
+     * test class constructor by <code>Parameterized</code>. The method has to
+     * be public and static.
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
