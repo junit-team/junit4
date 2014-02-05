@@ -15,6 +15,7 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
+import org.junit.runners.model.TestTimedOutException;
 
 /**
  * @deprecated Included for backwards compatibility with JUnit 4.4. Will be
@@ -74,7 +75,7 @@ public class MethodRoadie {
                     }
                     result.get(0, TimeUnit.MILLISECONDS); // throws the exception if one occurred during the invocation
                 } catch (TimeoutException e) {
-                    addFailure(new Exception(String.format("test timed out after %d milliseconds", timeout)));
+                    addFailure(new TestTimedOutException(timeout, TimeUnit.MILLISECONDS));
                 } catch (Exception e) {
                     addFailure(e);
                 }
