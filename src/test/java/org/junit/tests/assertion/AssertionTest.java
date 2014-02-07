@@ -12,8 +12,12 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assert.assertNotEmpty;
+import static org.junit.Assert.assertEmpty;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.junit.Assert;
 import org.junit.ComparisonFailure;
@@ -170,7 +174,7 @@ public class AssertionTest {
     public void oneDimensionalFloatArraysAreNotEqual() {
         assertArrayEquals(new float[]{1.0f}, new float[]{2.5f}, 1.0f);
     }
-    
+
     @Test(expected = AssertionError.class)
     public void oneDimensionalBooleanArraysAreNotEqual() {
         assertArrayEquals(new boolean[]{true}, new boolean[]{false});
@@ -647,5 +651,35 @@ public class AssertionTest {
     @Test(expected = AssertionError.class)
     public void assertNotEqualsIgnoresFloatDeltaOnNaN() {
         assertNotEquals(Float.NaN, Float.NaN, 1f);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void assertCollectionNotEmptyErrorOnEmpty() {
+        assertNotEmpty(new ArrayList<Object>());
+    }
+
+    @Test(expected = AssertionError.class)
+    public void assertCollectionNotEmptyErrorOnNullCollection() {
+        assertNotEmpty(null);
+    }
+
+    @Test
+    public void assertCollectionNotEmptyValid() {
+        assertNotEmpty(Arrays.asList("an entry"));
+    }
+
+    @Test(expected = AssertionError.class)
+    public void assertCollectionEmptyErrorOnNotEmpty() {
+        assertEmpty(Arrays.asList("an entry"));
+    }
+
+    @Test(expected = AssertionError.class)
+    public void assertCollectionEmptyErrorOnNullCollection() {
+        assertEmpty(null);
+    }
+
+    @Test
+    public void assertCollectionEmptyOnEmpty() {
+        assertEmpty(new ArrayList<Object>());
     }
 }

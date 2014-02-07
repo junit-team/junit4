@@ -1,5 +1,7 @@
 package org.junit;
 
+import java.util.Collection;
+
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.junit.internal.ArrayComparisonFailure;
@@ -297,7 +299,7 @@ public class Assert {
     public static void assertArrayEquals(Object[] expecteds, Object[] actuals) {
         assertArrayEquals(null, expecteds, actuals);
     }
-    
+
     /**
      * Asserts that two boolean arrays are equal. If they are not, an
      * {@link AssertionError} is thrown with the given message. If
@@ -312,8 +314,8 @@ public class Assert {
     public static void assertArrayEquals(String message, boolean[] expecteds,
             boolean[] actuals) throws ArrayComparisonFailure {
         internalArrayEquals(message, expecteds, actuals);
-    }    
-    
+    }
+
     /**
      * Asserts that two boolean arrays are equal. If they are not, an
      * {@link AssertionError} is thrown. If <code>expected</code> and
@@ -954,5 +956,67 @@ public class Assert {
     public static <T> void assertThat(String reason, T actual,
             Matcher<? super T> matcher) {
         MatcherAssert.assertThat(reason, actual, matcher);
+    }
+
+    /**
+     * Asserts that collection <code>c</value> is not empty. If <code>c</code> is <code>null</code> or empty,
+     * an {@link AssertionError} is thrown.
+     *
+     * @param c the collection to check for not being empty
+     */
+    public static void assertNotEmpty(Collection<?> c) {
+        assertNotEmpty(null, c);
+    }
+
+    /**
+     * Asserts that collection <code>c</value> is not empty. If <code>c</code> is <code>null</code> or empty,
+     * an {@link AssertionError} is thrown.
+     *
+     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
+     * okay)
+     * @param c the collection to check for not being empty
+     */
+    public static void assertNotEmpty(String message, Collection<?> c) {
+        if (null ==c) {
+            failWithMessageOrDefault(message, "Collection is null but should not be empty.");
+        }
+        if (c.isEmpty()) {
+            failWithMessageOrDefault(message, "Collection should not be empty.");
+        }
+    }
+
+    /**
+     * Asserts that collection <code>c</value> is empty. If <code>c</code> is <code>null</code> or not empty,
+     * an {@link AssertionError} is thrown.
+     *
+     * @param c the collection to check for being empty
+     */
+    public static void assertEmpty(Collection<?> c) {
+        assertEmpty(null, c);
+    }
+
+    /**
+     * Asserts that collection <code>c</value> is empty. If <code>c</code> is <code>null</code> or not empty,
+     * an {@link AssertionError} is thrown.
+     *
+     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
+     * okay)
+     * @param c the collection to check for being empty
+     */
+    public static void assertEmpty(String message, Collection<?> c) {
+        if (null == c) {
+            failWithMessageOrDefault(message, "Collection is null but should just be empty.");
+        }
+        if (!c.isEmpty()) {
+            failWithMessageOrDefault(message, "Collection should be empty.");
+        }
+    }
+
+    static private void failWithMessageOrDefault(String message, String defaultMessage) {
+        if (null == message) {
+            fail(defaultMessage);
+        } else {
+            fail(message);
+        }
     }
 }
