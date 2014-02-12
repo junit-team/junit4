@@ -2,6 +2,9 @@ package org.junit.experimental.categories;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
+
+import java.util.List;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -41,7 +44,7 @@ public class CategoryFilterFactoryTest {
 
     private static class CategoryFilterFactoryStub extends CategoryFilterFactory {
         @Override
-        protected Filter createFilter(Class<?>... categories) {
+        protected Filter createFilter(List<Class<?>> categories) {
             return new DummyFilter();
         }
     }

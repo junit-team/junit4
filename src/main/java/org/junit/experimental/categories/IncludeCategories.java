@@ -1,12 +1,11 @@
 package org.junit.experimental.categories;
 
-import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import org.junit.experimental.categories.Categories.CategoryFilter;
 import org.junit.runner.manipulation.Filter;
-
-import static org.junit.experimental.categories.Categories.CategoryFilter;
 
 /**
  * {@link org.junit.runner.FilterFactory} to include categories.
@@ -32,13 +31,13 @@ public final class IncludeCategories extends CategoryFilterFactory {
      * @param categories Category classes.
      */
     @Override
-    protected Filter createFilter(Class<?>... categories) {
+    protected Filter createFilter(List<Class<?>> categories) {
         return new IncludesAny(categories);
     }
 
     private static class IncludesAny extends CategoryFilter {
-        public IncludesAny(Class<?>... categories) {
-            this(new HashSet<Class<?>>(Arrays.asList(categories)));
+        public IncludesAny(List<Class<?>> categories) {
+            this(new HashSet<Class<?>>(categories));
         }
 
         public IncludesAny(Set<Class<?>> categories) {
