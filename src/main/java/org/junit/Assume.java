@@ -7,7 +7,6 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 
 import org.hamcrest.Matcher;
-import org.junit.internal.AssumptionViolatedException;
 
 /**
  * A set of methods useful for stating assumptions about the conditions in which a test is meaningful.
