@@ -15,6 +15,8 @@ import org.junit.runner.notification.RunNotifierTest;
 import org.junit.runner.notification.SynchronizedRunListenerTest;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+import org.junit.runners.model.FrameworkFieldTest;
+import org.junit.runners.model.FrameworkMethodTest;
 import org.junit.tests.assertion.AssertionTest;
 import org.junit.tests.assertion.ComparisonFailureTest;
 import org.junit.tests.assertion.MultipleFailureExceptionTest;
@@ -196,6 +198,8 @@ import org.junit.tests.validation.ValidationTest;
         JUnitCommandLineParseResultTest.class,
         FilterFactoriesTest.class,
         CategoryFilterFactoryTest.class,
+        FrameworkFieldTest.class,
+        FrameworkMethodTest.class,
         JUnitCoreTest.class
 })
 public class AllTests {
