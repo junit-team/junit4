@@ -1,8 +1,8 @@
 package org.junit.experimental.categories;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
-import static java.util.Arrays.asList;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -26,6 +26,7 @@ import org.junit.validator.AnnotationValidator;
  */
 public final class CategoryValidator extends AnnotationValidator {
 
+    @SuppressWarnings("unchecked")
     private static final Set<Class<? extends Annotation>> INCOMPATIBLE_ANNOTATIONS = unmodifiableSet(new HashSet<Class<? extends Annotation>>(
             asList(BeforeClass.class, AfterClass.class, Before.class, After.class)));
 
@@ -44,7 +45,7 @@ public final class CategoryValidator extends AnnotationValidator {
         List<Exception> errors = new ArrayList<Exception>();
         Annotation[] annotations = method.getAnnotations();
         for (Annotation annotation : annotations) {
-            for (Class clazz : INCOMPATIBLE_ANNOTATIONS) {
+            for (Class<?> clazz : INCOMPATIBLE_ANNOTATIONS) {
                 if (annotation.annotationType().isAssignableFrom(clazz)) {
                     addErrorMessage(errors, clazz);
                 }
@@ -53,7 +54,7 @@ public final class CategoryValidator extends AnnotationValidator {
         return unmodifiableList(errors);
     }
 
-    private void addErrorMessage(List<Exception> errors, Class clazz) {
+    private void addErrorMessage(List<Exception> errors, Class<?> clazz) {
         String message = String.format("@%s can not be combined with @Category",
                 clazz.getSimpleName());
         errors.add(new Exception(message));

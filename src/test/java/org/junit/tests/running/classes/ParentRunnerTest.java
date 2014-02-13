@@ -134,6 +134,5 @@ public class ParentRunnerTest {
         assertThat(result.getFailureCount(), is(2)); //the second failure is no runnable methods
         assertThat(result.getFailures().get(0).getMessage(),
                 is(equalTo(message)));
-
     }
 }

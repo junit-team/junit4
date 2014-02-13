@@ -32,7 +32,7 @@ public class TestClassTest {
     public void complainIfMultipleConstructors() {
         new TestClass(TwoConstructors.class);
     }
-    
+
     public static class SuperclassWithField {
         @Rule
         public TestRule x;
@@ -83,18 +83,18 @@ public class TestClassTest {
         assertThat(new TestClass(SimpleClass.class).isANonStaticInnerClass(),
                 is(false));
     }
-        
+
     public static class FieldAnnotated {
         @Rule
         public String fieldC= "andromeda";
 
         @Rule
         public boolean fieldA;
-    	
+
         @Rule
         public boolean fieldB;
     }
-    
+
     @Test
     public void providesAnnotatedFieldsSortedByName() {
         TestClass tc= new TestClass(FieldAnnotated.class);
@@ -111,7 +111,7 @@ public class TestClassTest {
         assertThat(values, hasItem("andromeda"));
         assertThat(values.size(), is(1));
     }
-    
+
     public static class MethodsAnnotated {
         @Ignore
         @Test
@@ -124,14 +124,14 @@ public class TestClassTest {
         public String methodA() {
             return "jupiter";
         }
-    	
+
         @Ignore
         @Test
         public int methodB() {
             return 0;
     	}
     }
-    
+
     @Test
     public void providesAnnotatedMethodsSortedByName() {
     	TestClass tc = new TestClass(MethodsAnnotated.class);

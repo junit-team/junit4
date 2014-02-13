@@ -19,7 +19,6 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
 
-@SuppressWarnings("deprecation")
 public class RuleFieldValidatorTest {
     private final List<Throwable> errors = new ArrayList<Throwable>();
 
