@@ -117,7 +117,7 @@ public class Assert {
             return;
         }
         if (!(Math.abs(expected - actual) <= delta)) {
-            failNotEquals(message, Double.valueOf(expected), Double.valueOf(actual));
+            failNotEquals(message, new Double(expected), new Double(actual));
         }
     }
 
@@ -139,7 +139,7 @@ public class Assert {
             return;
         }
         if (!(Math.abs(expected - actual) <= delta)) {
-            failNotEquals(message, Float.valueOf(expected), Float.valueOf(actual));
+            failNotEquals(message, new Float(expected), new Float(actual));
         }
     }
 
