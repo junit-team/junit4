@@ -86,7 +86,7 @@ Annotations
 * Class annotations : Wrap always
 * Method annotations : Wrap always
 * Field annotations : Wrap always
-* Paramater annotations : Do not wrap
+* Parameter annotations : Do not wrap
 * Local variable annotations : Do not wrap
 
 ----------------------------------

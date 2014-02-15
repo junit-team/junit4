@@ -19,12 +19,16 @@ import org.junit.internal.runners.model.ReflectiveCallable;
  * @since 4.5
  */
 public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
-    final Method fMethod;
+    private final Method fMethod;
 
     /**
      * Returns a new {@code FrameworkMethod} for {@code method}
      */
     public FrameworkMethod(Method method) {
+        if (method == null) {
+            throw new NullPointerException(
+                    "FrameworkMethod cannot be created without an underlying method.");
+        }
         fMethod = method;
     }
 
@@ -99,22 +103,11 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
         }
     }
 
-    /**
-     * Returns true if this method is static, false if not
-     */
     @Override
-    public boolean isStatic() {
-        return Modifier.isStatic(fMethod.getModifiers());
+    protected int getModifiers() {
+        return fMethod.getModifiers();
     }
 
-    /**
-     * Returns true if this method is public, false if not
-     */
-    @Override
-    public boolean isPublic() {
-        return Modifier.isPublic(fMethod.getModifiers());
-    }
-    
     /**
      * Returns the return type of the method
      */
@@ -193,7 +186,6 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
     /**
      * Returns the annotations on this method
      */
-    @Override
     public Annotation[] getAnnotations() {
         return fMethod.getAnnotations();
     }
@@ -208,5 +200,10 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
 
     public List<ParameterSignature> getParameterSignatures() {
         return ParameterSignature.signatures(fMethod);
+    }
+
+    @Override
+    public String toString() {
+        return fMethod.toString();
     }
 }

@@ -3,7 +3,6 @@ package org.junit.runner.notification;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
@@ -16,7 +15,7 @@ import org.junit.Test;
 
 /**
  * Tests for {@link SynchronizedRunListener}.
- * 
+ *
  * @author kcooney (Kevin Cooney)
  */
 public class SynchronizedRunListenerTest {
@@ -31,7 +30,7 @@ public class SynchronizedRunListenerTest {
             fName = method.getName();
             fParameterTypes = Arrays.asList(method.getParameterTypes());
         }
-        
+
         @Override
         public String toString() {
             return fMethod.toString();
@@ -62,7 +61,7 @@ public class SynchronizedRunListenerTest {
         }
         return methods;
     }
-    
+
     @Test
     public void overridesAllMethodsInRunListener() {
         Set<MethodSignature> runListenerMethods = getAllDeclaredMethods(RunListener.class);
@@ -83,7 +82,7 @@ public class SynchronizedRunListenerTest {
         public String toString() {
           return "NamedListener";
         }
- 
+
         @Override
         public int hashCode() {
             return fName.hashCode();
@@ -107,11 +106,11 @@ public class SynchronizedRunListenerTest {
         NamedListener listener1 = new NamedListener("blue");
         NamedListener listener2 = new NamedListener("blue");
         NamedListener listener3 = new NamedListener("red");
-        
+
         assertTrue(listener1.equals(listener1));
         assertTrue(listener2.equals(listener2));
         assertTrue(listener3.equals(listener3));
-        
+
         assertFalse(listener1.equals(null));
         assertFalse(listener1.equals(new Object()));
 
@@ -127,7 +126,7 @@ public class SynchronizedRunListenerTest {
     @Test
     public void toStringDelegates() {
         NamedListener listener = new NamedListener("blue");
-        
+
         assertEquals("NamedListener", listener.toString());
         assertEquals("NamedListener (with synchronization wrapper)", wrap(listener).toString());
     }
@@ -137,7 +136,7 @@ public class SynchronizedRunListenerTest {
         NamedListener listener1 = new NamedListener("blue");
         NamedListener listener2 = new NamedListener("blue");
         NamedListener listener3 = new NamedListener("red");
-        
+
         assertEquals(wrap(listener1), wrap(listener1));
         assertEquals(wrap(listener1), wrap(listener2));
         assertNotEquals(wrap(listener1), wrap(listener3));

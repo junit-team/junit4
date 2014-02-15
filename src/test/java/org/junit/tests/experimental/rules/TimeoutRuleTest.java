@@ -1,14 +1,8 @@
 package org.junit.tests.experimental.rules;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.rules.TestRule;
-import org.junit.rules.Timeout;
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Result;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,9 +14,15 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.junit.rules.TestRule;
+import org.junit.rules.Timeout;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
 
 public class TimeoutRuleTest {
     private static final ReentrantLock run1Lock = new ReentrantLock();
@@ -68,12 +68,16 @@ public class TimeoutRuleTest {
             byte[] data = new byte[1024];
             File tmp = tmpFile.newFile();
             while (true) {
-                FileChannel channel = new RandomAccessFile(tmp, "rw").getChannel();
-                rnd.nextBytes(data);
-                ByteBuffer buffer = ByteBuffer.wrap(data);
-                // Interrupted thread closes channel and throws ClosedByInterruptException.
-                channel.write(buffer);
-                channel.close();
+                RandomAccessFile randomAccessFile = new RandomAccessFile(tmp, "rw");
+                try {
+                    FileChannel channel = randomAccessFile.getChannel();
+                    rnd.nextBytes(data);
+                    ByteBuffer buffer = ByteBuffer.wrap(data);
+                    // Interrupted thread closes channel and throws ClosedByInterruptException.
+                    channel.write(buffer);
+                } finally {
+                    randomAccessFile.close();
+                }
                 tmp.delete();
             }
         }
@@ -112,7 +116,7 @@ public class TimeoutRuleTest {
     }
 
     @Test
-    public void timeUnitTimeout() throws InterruptedException {
+    public void timeUnitTimeout() {
         HasGlobalTimeUnitTimeout.logger.setLength(0);
         Result result = JUnitCore.runClasses(HasGlobalTimeUnitTimeout.class);
         assertEquals(6, result.getFailureCount());
@@ -125,7 +129,7 @@ public class TimeoutRuleTest {
     }
 
     @Test
-    public void longTimeout() throws InterruptedException {
+    public void longTimeout() {
         HasGlobalLongTimeout.logger.setLength(0);
         Result result = JUnitCore.runClasses(HasGlobalLongTimeout.class);
         assertEquals(6, result.getFailureCount());
