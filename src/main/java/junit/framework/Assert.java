@@ -156,7 +156,7 @@ public class Assert {
      * an AssertionFailedError is thrown with the given message.
      */
     static public void assertEquals(String message, long expected, long actual) {
-        assertEquals(message, new Long(expected), new Long(actual));
+        assertEquals(message, Long.valueOf(expected), Long.valueOf(actual));
     }
 
     /**
@@ -186,7 +186,7 @@ public class Assert {
      * an AssertionFailedError is thrown with the given message.
      */
     static public void assertEquals(String message, byte expected, byte actual) {
-        assertEquals(message, new Byte(expected), new Byte(actual));
+        assertEquals(message, Byte.valueOf(expected), Byte.valueOf(actual));
     }
 
     /**
@@ -201,7 +201,7 @@ public class Assert {
      * an AssertionFailedError is thrown with the given message.
      */
     static public void assertEquals(String message, char expected, char actual) {
-        assertEquals(message, new Character(expected), new Character(actual));
+        assertEquals(message, Character.valueOf(expected), Character.valueOf(actual));
     }
 
     /**
@@ -216,7 +216,7 @@ public class Assert {
      * an AssertionFailedError is thrown with the given message.
      */
     static public void assertEquals(String message, short expected, short actual) {
-        assertEquals(message, new Short(expected), new Short(actual));
+        assertEquals(message, Short.valueOf(expected), Short.valueOf(actual));
     }
 
     /**
@@ -231,7 +231,7 @@ public class Assert {
      * an AssertionFailedError is thrown with the given message.
      */
     static public void assertEquals(String message, int expected, int actual) {
-        assertEquals(message, new Integer(expected), new Integer(actual));
+        assertEquals(message, Integer.valueOf(expected), Integer.valueOf(actual));
     }
 
     /**
