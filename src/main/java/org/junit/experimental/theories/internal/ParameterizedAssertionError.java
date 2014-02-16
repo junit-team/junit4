@@ -22,18 +22,17 @@ public class ParameterizedAssertionError extends AssertionError {
         return join(delimiter, Arrays.asList(params));
     }
 
-    public static String join(String delimiter,
-            Collection<Object> values) {
-        StringBuffer buffer = new StringBuffer();
+    public static String join(String delimiter, Collection<Object> values) {
+        StringBuilder sb = new StringBuilder();
         Iterator<Object> iter = values.iterator();
         while (iter.hasNext()) {
             Object next = iter.next();
-            buffer.append(stringValueOf(next));
+            sb.append(stringValueOf(next));
             if (iter.hasNext()) {
-                buffer.append(delimiter);
+                sb.append(delimiter);
             }
         }
-        return buffer.toString();
+        return sb.toString();
     }
 
     private static String stringValueOf(Object next) {

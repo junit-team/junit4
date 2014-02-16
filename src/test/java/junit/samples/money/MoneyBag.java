@@ -140,13 +140,13 @@ public class MoneyBag implements IMoney {
 
     @Override
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("{");
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
         for (Money each : fMonies) {
-            buffer.append(each);
+            sb.append(each);
         }
-        buffer.append("}");
-        return buffer.toString();
+        sb.append("}");
+        return sb.toString();
     }
 
     public void appendTo(MoneyBag m) {
