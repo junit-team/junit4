@@ -38,19 +38,19 @@ public class ArrayComparisonFailure extends AssertionError {
 
     @Override
     public String getMessage() {
-        StringBuilder builder = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         if (fMessage != null) {
-            builder.append(fMessage);
+            sb.append(fMessage);
         }
-        builder.append("arrays first differed at element ");
+        sb.append("arrays first differed at element ");
         for (int each : fIndices) {
-            builder.append("[");
-            builder.append(each);
-            builder.append("]");
+            sb.append("[");
+            sb.append(each);
+            sb.append("]");
         }
-        builder.append("; ");
-        builder.append(fCause.getMessage());
-        return builder.toString();
+        sb.append("; ");
+        sb.append(fCause.getMessage());
+        return sb.toString();
     }
 
     /**

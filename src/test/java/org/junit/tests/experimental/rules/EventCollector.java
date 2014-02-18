@@ -180,22 +180,12 @@ class EventCollector extends RunListener {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(fTestRunsStarted.size());
-        sb.append(" test runs started, ");
-        sb.append(fTestRunsFinished.size());
-        sb.append(" test runs finished, ");
-        sb.append(fTestsStarted.size());
-        sb.append(" tests started, ");
-        sb.append(fTestsFinished.size());
-        sb.append(" tests finished, ");
-        sb.append(fFailures.size());
-        sb.append(" failures, ");
-        sb.append(fAssumptionFailures.size());
-        sb.append(" assumption failures, ");
-        sb.append(fTestsIgnored.size());
-        sb.append(" tests ignored");
-
-        return sb.toString();
+        return fTestRunsStarted.size() + " test runs started, "
+            + fTestRunsFinished.size() + " test runs finished, "
+            + fTestsStarted.size() + " tests started, "
+            + fTestsFinished.size() + " tests finished, "
+            + fFailures.size() + " failures, "
+            + fAssumptionFailures.size() + " assumption failures, "
+            + fTestsIgnored.size() + " tests ignored";
     }
 }

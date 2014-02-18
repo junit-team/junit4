@@ -267,8 +267,7 @@ public abstract class BaseTestRunner implements TestListener {
         StringWriter stringWriter = new StringWriter();
         PrintWriter writer = new PrintWriter(stringWriter);
         t.printStackTrace(writer);
-        StringBuffer buffer = stringWriter.getBuffer();
-        String trace = buffer.toString();
+        String trace = stringWriter.toString();
         return BaseTestRunner.getFilteredTrace(trace);
     }
 
