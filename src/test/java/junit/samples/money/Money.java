@@ -83,9 +83,7 @@ public class Money implements IMoney {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("[" + amount() + " " + currency() + "]");
-        return sb.toString();
+        return "[" + amount() + " " + currency() + "]";
     }
 
     public /*this makes no sense*/ void appendTo(MoneyBag m) {
