@@ -7,7 +7,7 @@ JUnit now uses the latest version of Hamcrest. Thus, you can use all the availab
 #### Example
 
 ```java
-    assertThat(Long.valueOf(1), instanceOf(Integer.class));
+assertThat(Long.valueOf(1), instanceOf(Integer.class));
 ```
 
 Old error message:
@@ -23,19 +23,19 @@ New error message:
 Hamcrest's new `FeatureMatcher` makes writing custom matchers that make use of custom mismatch descriptions quite easy:
 
 ```java
-	@Test
-	public void featureMatcher() throws Exception {
-		assertThat("Hello World!", length(is(0)));
-	}
+@Test
+public void featureMatcher() throws Exception {
+    assertThat("Hello World!", length(is(0)));
+}
 
-	private Matcher<String> length(Matcher<? super Integer> matcher) {
-		return new FeatureMatcher<String, Integer>(matcher, "a String of length that", "length") {
-			@Override
-			protected Integer featureValueOf(String actual) {
-				return actual.length();
-			}
-		};
+private Matcher<String> length(Matcher<? super Integer> matcher) {
+    return new FeatureMatcher<String, Integer>(matcher, "a String of length that", "length") {
+        @Override
+	protected Integer featureValueOf(String actual) {
+	    return actual.length();
 	}
+    };
+}
 ```
 
 Running this test will return the following failure message:
@@ -56,28 +56,28 @@ In order to easily identify the individual test cases in a Parameterized test, y
 #### Example
 
 ```java
-    @RunWith(Parameterized.class)
-    public class FibonacciTest {
+@RunWith(Parameterized.class)
+public class FibonacciTest {
     
-    	@Parameters(name = "{index}: fib({0})={1}")
-    	public static Iterable<Object[]> data() {
-    		return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
-    				{ 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
-    	}
-    
-    	private int input;
-    	private int expected;
-    
-    	public FibonacciTest(int input, int expected) {
-    		this.input = input;
-    		this.expected = expected;
-    	}
-    
-    	@Test
-    	public void test() {
-    		assertEquals(expected, Fibonacci.compute(input));
-    	}
+    @Parameters(name = "{index}: fib({0})={1}")
+    public static Iterable<Object[]> data() {
+        return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
+    		{ 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
     }
+    
+    private int input;
+    private int expected;
+    
+    public FibonacciTest(int input, int expected) {
+        this.input = input;
+    	this.expected = expected;
+    }
+    
+    @Test
+    public void test() {
+        assertEquals(expected, Fibonacci.compute(input));
+    }
+}
 ```
 
 In the example given above, the `Parameterized` runner creates names like `[1: fib(3)=2]`. If you don't specify a name, the current parameter index will be used by default.
