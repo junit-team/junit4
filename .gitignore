@@ -3,6 +3,12 @@ bin
 junit4.*
 target
 MaxCore.max
+
+# Eclipse
+.settings
+.classpath
+.project
+
 # IntelliJ
 .idea
 *.ipr
