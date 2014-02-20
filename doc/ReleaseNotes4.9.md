@@ -12,24 +12,26 @@ and `Suite` classes, will support `ClassRule`s.
 For example, here is a test suite that connects to a server once before
 all the test classes run, and disconnects after they are finished:
 
-	@RunWith(Suite.class)
-	@SuiteClasses({A.class, B.class, C.class})
-	public class UsesExternalResource {
-		public static Server myServer= new Server();
-	
-		@ClassRule
-		public static ExternalResource resource= new ExternalResource() {
-			@Override
-			protected void before() throws Throwable {
-				myServer.connect();
-			};
-	
-			@Override
-			protected void after() {
-				myServer.disconnect();
-			};
+```java
+@RunWith(Suite.class)
+@SuiteClasses({A.class, B.class, C.class})
+public class UsesExternalResource {
+	public static Server myServer= new Server();
+
+	@ClassRule
+	public static ExternalResource resource= new ExternalResource() {
+		@Override
+		protected void before() throws Throwable {
+			myServer.connect();
 		};
-	}
+	
+		@Override
+		protected void after() {
+			myServer.disconnect();
+		};
+	};
+}
+```
 
 ### TestRule ###
 
