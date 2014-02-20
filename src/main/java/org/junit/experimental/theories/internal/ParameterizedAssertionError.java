@@ -15,7 +15,7 @@ public class ParameterizedAssertionError extends AssertionError {
 
     @Override
     public boolean equals(Object obj) {
-        return toString().equals(obj.toString());
+        return obj instanceof ParameterizedAssertionError && toString().equals(obj.toString());
     }
 
     public static String join(String delimiter, Object... params) {
