@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assume.assumeThat;
 
 import org.junit.Test;
@@ -62,6 +63,11 @@ public class ParameterizedAssertionErrorTest {
     public void buildParameterizedAssertionError(String methodName, String param) {
         assertThat(new ParameterizedAssertionError(new RuntimeException(),
                 methodName, param).toString(), containsString(methodName));
+    }
+
+    @Theory
+    public void isNotEqualToNull(ParameterizedAssertionError a) {
+        assertFalse(a.equals(null));
     }
 
     @Test
