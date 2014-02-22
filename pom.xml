@@ -85,6 +85,16 @@
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
         <arguments/>
         <gpg.keyname>67893CC4</gpg.keyname>
+
+        <maven.cobertura.plugin.version>2.6</maven.cobertura.plugin.version>
+        <maven.javadoc.plugin.version>2.9.1</maven.javadoc.plugin.version>
+        <maven.release.plugin.version>2.3.2</maven.release.plugin.version>
+        <maven.gpg.plugin.version>1.4</maven.gpg.plugin.version>
+        <maven.source.plugin.version>2.2</maven.source.plugin.version>
+        <maven.surefire.plugin.version>2.16</maven.surefire.plugin.version>
+        <maven.compiler.plugin.version>2.5.1</maven.compiler.plugin.version>
+        <maven.replacer.plugin.version>1.3.8</maven.replacer.plugin.version>
+        <maven.enforcer.plugin.version>1.1.1</maven.enforcer.plugin.version>
     </properties>
 
     <dependencies>
@@ -126,7 +136,7 @@
                 the project, requires only release versions of dependencies of other artifacts.
                 -->
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>1.1.1</version>
+                <version>${maven.enforcer.plugin.version}</version>
                 <executions>
                     <execution>
                         <id>enforce-versions</id>
@@ -163,7 +173,7 @@
                 -->
                 <groupId>com.google.code.maven-replacer-plugin</groupId>
                 <artifactId>maven-replacer-plugin</artifactId>
-                <version>1.3.8</version>
+                <version>${maven.replacer.plugin.version}</version>
                 <executions>
                     <execution>
                         <phase>process-sources</phase>
@@ -186,7 +196,7 @@
                 java compiler plugin forked in extra process
                 -->
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.5.1</version>
+                <version>${maven.compiler.plugin.version}</version>
                 <configuration>
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <source>${jdkVersion}</source>
@@ -206,7 +216,7 @@
                 our junit suite "AllTests" after the sources are compiled.
                 -->
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.16</version>
+                <version>${maven.surefire.plugin.version}</version>
                 <configuration>
                     <test>org/junit/tests/AllTests.java</test>
                     <useSystemClassLoader>true</useSystemClassLoader>
@@ -219,7 +229,7 @@
                 in to jar archive. See target/junit-*-sources.jar.
                 -->
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.2</version>
+                <version>${maven.source.plugin.version}</version>
             </plugin>
             <plugin>
                 <!--
@@ -228,7 +238,7 @@
                 in jar archive target/junit-*-javadoc.jar.
                 -->
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
+                <version>${maven.javadoc.plugin.version}</version>
                 <configuration>
                     <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
                     <show>protected</show>
@@ -261,7 +271,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>${maven.release.plugin.version}</version>
                 <configuration>
                     <mavenExecutorId>forked-path</mavenExecutorId>
                     <useReleaseProfile>false</useReleaseProfile>
@@ -289,7 +299,7 @@
                         (&ndash;&ndash; stands for double dash)
                         -->
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.4</version>
+                        <version>${maven.gpg.plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>gpg-sign</id>
@@ -332,6 +342,30 @@
                                 <phase>package</phase>
                                 <goals>
                                     <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>code-coverage</id>
+            <!--
+            Calculate code coverage using Cobertura project
+            Result report is available here: ${build.directory}/site/cobertura
+            -->
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>cobertura-maven-plugin</artifactId>
+                        <version>${maven.cobertura.plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>cobertura</goal>
                                 </goals>
                             </execution>
                         </executions>
