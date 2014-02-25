@@ -130,7 +130,7 @@ public class TestWatcherTest {
         @Rule
         public TestRule watcher = new TestWatcher() {
             @Override
-            protected void failed(Throwable t, Description description) {
+            protected void failed(Throwable e, Description description) {
                 throw new RuntimeException("watcher failed failure");
             }
 

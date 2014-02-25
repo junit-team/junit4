@@ -38,8 +38,8 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
         }
 
         // Implement junit.framework.TestListener
-        public void addError(Test test, Throwable t) {
-            Failure failure = new Failure(asDescription(test), t);
+        public void addError(Test test, Throwable e) {
+            Failure failure = new Failure(asDescription(test), e);
             fNotifier.fireTestFailure(failure);
         }
 

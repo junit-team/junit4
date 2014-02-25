@@ -63,7 +63,7 @@ public class InitializationErrorForwardCompatibilityTest {
     private final class ErrorRememberingListener implements TestListener {
         private junit.framework.Test fError;
 
-        public void addError(junit.framework.Test test, Throwable t) {
+        public void addError(junit.framework.Test test, Throwable e) {
             fError = test;
         }
 

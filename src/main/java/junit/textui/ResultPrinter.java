@@ -106,7 +106,7 @@ public class ResultPrinter implements TestListener {
     /**
      * @see junit.framework.TestListener#addError(Test, Throwable)
      */
-    public void addError(Test test, Throwable t) {
+    public void addError(Test test, Throwable e) {
         getWriter().print("E");
     }
 
