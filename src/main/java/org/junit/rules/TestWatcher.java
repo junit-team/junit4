@@ -57,9 +57,9 @@ public abstract class TestWatcher implements TestRule {
                 } catch (AssumptionViolatedException e) {
                     errors.add(e);
                     skippedQuietly(e, description, errors);
-                } catch (Throwable t) {
-                    errors.add(t);
-                    failedQuietly(t, description, errors);
+                } catch (Throwable e) {
+                    errors.add(e);
+                    failedQuietly(e, description, errors);
                 } finally {
                     finishedQuietly(description, errors);
                 }
@@ -73,17 +73,17 @@ public abstract class TestWatcher implements TestRule {
             List<Throwable> errors) {
         try {
             succeeded(description);
-        } catch (Throwable t) {
-            errors.add(t);
+        } catch (Throwable e) {
+            errors.add(e);
         }
     }
 
-    private void failedQuietly(Throwable t, Description description,
+    private void failedQuietly(Throwable e, Description description,
             List<Throwable> errors) {
         try {
-            failed(t, description);
-        } catch (Throwable t1) {
-            errors.add(t1);
+            failed(e, description);
+        } catch (Throwable e1) {
+            errors.add(e1);
         }
     }
 
@@ -91,8 +91,8 @@ public abstract class TestWatcher implements TestRule {
             List<Throwable> errors) {
         try {
             skipped(e, description);
-        } catch (Throwable t) {
-            errors.add(t);
+        } catch (Throwable e1) {
+            errors.add(e1);
         }
     }
 
@@ -100,8 +100,8 @@ public abstract class TestWatcher implements TestRule {
             List<Throwable> errors) {
         try {
             starting(description);
-        } catch (Throwable t) {
-            errors.add(t);
+        } catch (Throwable e) {
+            errors.add(e);
         }
     }
 
@@ -109,8 +109,8 @@ public abstract class TestWatcher implements TestRule {
             List<Throwable> errors) {
         try {
             finished(description);
-        } catch (Throwable t) {
-            errors.add(t);
+        } catch (Throwable e) {
+            errors.add(e);
         }
     }
 

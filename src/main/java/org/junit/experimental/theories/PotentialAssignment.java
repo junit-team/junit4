@@ -9,8 +9,8 @@ public abstract class PotentialAssignment {
         public CouldNotGenerateValueException() {
         }
         
-        public CouldNotGenerateValueException(Throwable t) {
-            super(t);
+        public CouldNotGenerateValueException(Throwable e) {
+            super(e);
         }
     }
 

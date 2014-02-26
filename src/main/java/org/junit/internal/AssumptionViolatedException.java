@@ -56,8 +56,8 @@ public class AssumptionViolatedException extends RuntimeException implements Sel
     /**
      * An assumption exception with the given message and a cause.
      */
-    public AssumptionViolatedException(String assumption, Throwable t) {
-        this(assumption, false, t, null);
+    public AssumptionViolatedException(String assumption, Throwable e) {
+        this(assumption, false, e, null);
     }
 
     @Override

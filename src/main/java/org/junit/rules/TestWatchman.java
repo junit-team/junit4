@@ -54,9 +54,9 @@ public class TestWatchman implements MethodRule {
                     succeeded(method);
                 } catch (AssumptionViolatedException e) {
                     throw e;
-                } catch (Throwable t) {
-                    failed(t, method);
-                    throw t;
+                } catch (Throwable e) {
+                    failed(e, method);
+                    throw e;
                 } finally {
                     finished(method);
                 }

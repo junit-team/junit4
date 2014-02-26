@@ -194,7 +194,7 @@ public class AssumptionTest {
     }
 
     final static String message = "Some random message string.";
-    final static Throwable t = new Throwable();
+    final static Throwable e = new Throwable();
 
     /**
      * @see AssumptionTest#assumptionsWithMessage()
@@ -220,7 +220,7 @@ public class AssumptionTest {
     public static class HasAssumeWithMessageAndCause {
         @Test
         public void testMethod() {
-            assumeNoException(message, t);
+            assumeNoException(message, e);
         }
     }
 
@@ -229,7 +229,7 @@ public class AssumptionTest {
         final List<Failure> failures =
                 runAndGetAssumptionFailures(HasAssumeWithMessageAndCause.class);
         assertTrue(failures.get(0).getMessage().contains(message));
-        assertSame(failures.get(0).getException().getCause(), t);
+        assertSame(failures.get(0).getException().getCause(), e);
     }
 
     public static class HasFailingAssumptionWithMessage {

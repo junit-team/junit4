@@ -87,7 +87,7 @@ public class TestRunner extends BaseTestRunner {
     }
 
     @Override
-    public void testFailed(int status, Test test, Throwable t) {
+    public void testFailed(int status, Test test, Throwable e) {
     }
 
     @Override
