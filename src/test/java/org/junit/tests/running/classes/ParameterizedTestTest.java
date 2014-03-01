@@ -116,10 +116,10 @@ public class ParameterizedTestTest {
         }
 
         @Parameter(0)
-        public int fInput;
+        private int fInput;
 
         @Parameter(1)
-        public int fExpected;
+        private int fExpected;
 
         @Test
         public void test() {
