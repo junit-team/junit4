@@ -218,13 +218,21 @@ public class Parameterized extends Suite {
                 Field field = each.getField();
                 Parameter annotation = field.getAnnotation(Parameter.class);
                 int index = annotation.value();
+                boolean accessible = field.isAccessible();
                 try {
+                    if (!accessible) {
+                        field.setAccessible(true);
+                    }
                     field.set(testClassInstance, fParameters[index]);
                 } catch (IllegalArgumentException iare) {
                     throw new Exception(getTestClass().getName() + ": Trying to set " + field.getName() +
                             " with the value " + fParameters[index] +
                             " that is not the right type (" + fParameters[index].getClass().getSimpleName() + " instead of " +
                             field.getType().getSimpleName() + ").", iare);
+                } finally {
+                    if (!accessible) {
+                        field.setAccessible(false);
+                    }
                 }
             }
             return testClassInstance;
