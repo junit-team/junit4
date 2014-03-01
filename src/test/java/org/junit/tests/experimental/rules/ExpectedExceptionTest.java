@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.isA;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -70,12 +71,20 @@ public class ExpectedExceptionTest {
                         hasSingleFailureWithMessage(startsWith("\nExpected: (an instance of java.lang.IllegalArgumentException and exception with message a string containing \"Ack!\")"))},
                 {ThrowExceptionWithMatchingCause.class, everyTestRunSuccessful()},
                 {ThrowExpectedNullCause.class, everyTestRunSuccessful()},
+                {ThrowExpectedRootException.class, everyTestRunSuccessful()},
+                {ThrowExpectedRootExceptionStandalone.class, everyTestRunSuccessful()},
+                {ThrowExpectedExceptionWithWrongRoot.class, 
+                    hasSingleFailureWithMessage(CoreMatchers.<String>allOf(
+                            startsWith("\nExpected:"),
+                            containsString("exception with root cause is an instance of java.lang.IllegalStateException"),
+                            containsString("root cause <java.lang.ClassCastException> is a java.lang.ClassCastException")))},
+                {ThrowNothingWhenExpectingSpecificExceptionRoot.class, hasSingleFailure()},
                 {
-                        ThrowUnexpectedCause.class,
+                        ThrowUnexpectedImmediateCause.class,
                         hasSingleFailureWithMessage(CoreMatchers.<String>allOf(
                                 startsWith("\nExpected: ("),
-                                containsString("exception with cause is <java.lang.NullPointerException: expected cause>"),
-                                containsString("cause was <java.lang.NullPointerException: an unexpected cause>"),
+                                containsString("exception with immediate cause is <java.lang.NullPointerException: expected cause>"),
+                                containsString("immediate cause was <java.lang.NullPointerException: an unexpected cause>"),
                                 containsString("Stacktrace was: java.lang.IllegalArgumentException: Ack!"),
                                 containsString("Caused by: java.lang.NullPointerException: an unexpected cause")))},
                 {
@@ -314,8 +323,57 @@ public class ExpectedExceptionTest {
             throw new IllegalArgumentException("Ack!");
         }
     }
+    
+    public static class ThrowExpectedRootException {
+        @Rule
+        public ExpectedException thrown = none();
 
-    public static class ThrowUnexpectedCause {
+        @Test
+        public void throwExpectedRootException() {
+            NullPointerException rootCause = new NullPointerException();
+            IllegalStateException immediateCause = new IllegalStateException(rootCause);
+            thrown.expectRootCause(isA(NullPointerException.class));
+            throw new IllegalArgumentException(immediateCause);
+        }
+    }
+    
+    public static class ThrowExpectedRootExceptionStandalone {
+        @Rule
+        public ExpectedException thrown = none();
+
+        @Test
+        public void throwStandaloneExceptionAsRootCause() {
+            NullPointerException exception = new NullPointerException();
+            thrown.expectRootCause(isA(NullPointerException.class));
+            throw exception;
+        }
+    }
+    
+    public static class ThrowExpectedExceptionWithWrongRoot {
+        @Rule
+        public ExpectedException thrown = none();
+
+        @Test
+        public void throwIncorrectRoot() {
+            ClassCastException rootCause = new ClassCastException();
+            IllegalStateException immediateCause = new IllegalStateException(rootCause);
+            thrown.expectRootCause(isA(IllegalStateException.class));
+            throw new IllegalArgumentException(immediateCause);
+        }
+    }
+    
+    public static class ThrowNothingWhenExpectingSpecificExceptionRoot {
+        @Rule
+        public ExpectedException thrown = none();
+
+        @Test
+        public void throwIncorrectRoot() {
+            thrown.expectRootCause(isA(IllegalStateException.class));
+            return;
+        }
+    }    
+
+    public static class ThrowUnexpectedImmediateCause {
 
         @Rule
         public ExpectedException thrown = ExpectedException.none();
