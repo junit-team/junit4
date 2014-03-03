@@ -16,7 +16,6 @@ public class ArrayComparisonFailure extends AssertionError {
 
     private List<Integer> fIndices = new ArrayList<Integer>();
     private final String fMessage;
-    private final AssertionError fCause;
 
     /**
      * Construct a new <code>ArrayComparisonFailure</code> with an error text and the array's
@@ -28,7 +27,7 @@ public class ArrayComparisonFailure extends AssertionError {
      */
     public ArrayComparisonFailure(String message, AssertionError cause, int index) {
         fMessage = message;
-        fCause = cause;
+        initCause(cause);
         addDimension(index);
     }
 
@@ -49,7 +48,7 @@ public class ArrayComparisonFailure extends AssertionError {
             sb.append("]");
         }
         sb.append("; ");
-        sb.append(fCause.getMessage());
+        sb.append(getCause().getMessage());
         return sb.toString();
     }
 
