@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 
@@ -152,7 +151,7 @@ public class RunNotifier {
      * something false.
      *
      * @param failure the description of the test that failed and the
-     * {@link AssumptionViolatedException} thrown
+     * {@link org.junit.AssumptionViolatedException} thrown
      */
     public void fireTestAssumptionFailed(final Failure failure) {
         new SafeNotifier() {
