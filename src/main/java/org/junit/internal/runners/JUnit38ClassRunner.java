@@ -148,7 +148,7 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
             adapter.filter(filter);
         } else if (getTest() instanceof TestSuite) {
             TestSuite suite = (TestSuite) getTest();
-            TestSuite filtered = new TestSuite(suite.getName());
+            TestSuite filtered = createCopyOfSuite(suite);
             int n = suite.testCount();
             for (int i = 0; i < n; i++) {
                 Test test = suite.testAt(i);
@@ -174,7 +174,14 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
         fTest = test;
     }
 
-    private Test getTest() {
+    protected Test getTest() {
         return fTest;
+    }
+    
+	/**
+	 * Creates a shallow copy of given {@link TestSuite}.
+	 */
+    protected TestSuite createCopyOfSuite(TestSuite suite) {
+        return new TestSuite(suite.getName());
     }
 }
