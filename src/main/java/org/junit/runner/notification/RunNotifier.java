@@ -8,6 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.junit.runner.Description;
 import org.junit.runner.Result;
+import org.junit.runner.stats.TestStatsMutant;
 
 /**
  * If you write custom runners, you may need to notify JUnit of your progress running tests.
@@ -193,6 +194,38 @@ public class RunNotifier {
     }
 
     /**
+     * Invoke to tell listeners that an atomic test flagged that it assumed
+     * something false.
+     *
+     * @param failure the description of the test that failed and the
+     * {@link org.junit.AssumptionViolatedException} thrown
+     */
+    public void fireAssertionCompleted() {
+        new SafeNotifier() {
+            @Override
+            protected void notifyListener(RunListener each) throws Exception {
+                each.assertionCompeted();
+            }
+        }.run();
+    }
+    
+    
+    /**
+     * Invoke to tell listeners that an atomic test flagged that it assumed
+     * something false.
+     *
+     * @param failure the description of the test that failed and the
+     * {@link org.junit.AssumptionViolatedException} thrown
+     */
+    public void fireTestScope(final String scope) {
+        new SafeNotifier() {
+            @Override
+            protected void notifyListener(RunListener each) throws Exception {
+                each.testScope(scope);
+            }
+        }.run();
+    }
+    /**
      * Ask that the tests run stop before starting the next test. Phrased politely because
      * the test currently running will not be interrupted. It seems a little odd to put this
      * functionality here, but the <code>RunNotifier</code> is the only object guaranteed
@@ -211,4 +244,6 @@ public class RunNotifier {
         }
         fListeners.add(0, wrapIfNotThreadSafe(listener));
     }
+    
+    
 }

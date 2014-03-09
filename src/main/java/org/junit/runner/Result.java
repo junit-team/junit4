@@ -1,13 +1,16 @@
 package org.junit.runner;
 
-import org.junit.runner.notification.Failure;
-import org.junit.runner.notification.RunListener;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+
+import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.RunListener;
+import org.junit.runner.stats.I_TestStats;
+import org.junit.runner.stats.TestStats;
+import org.junit.runner.stats.TestStatsMutant;
 
 /**
  * A <code>Result</code> collects and summarizes information from running multiple tests.
@@ -20,6 +23,8 @@ public class Result implements Serializable {
     private final AtomicInteger fCount = new AtomicInteger();
     private final AtomicInteger fIgnoreCount = new AtomicInteger();
     private final CopyOnWriteArrayList<Failure> fFailures = new CopyOnWriteArrayList<Failure>();
+    private final CopyOnWriteArrayList<TestStats> testStats = new CopyOnWriteArrayList<TestStats>();
+    
     private final AtomicLong fRunTime = new AtomicLong();
     private final AtomicLong fStartTime = new AtomicLong();
 
@@ -67,6 +72,8 @@ public class Result implements Serializable {
 
     @RunListener.ThreadSafe
     private class Listener extends RunListener {
+        private TestStatsMutant currentTestStats;
+        
         @Override
         public void testRunStarted(Description description) throws Exception {
             fStartTime.set(System.currentTimeMillis());
@@ -78,14 +85,12 @@ public class Result implements Serializable {
             fRunTime.addAndGet(endTime - fStartTime.get());
         }
 
-        @Override
-        public void testFinished(Description description) throws Exception {
-            fCount.getAndIncrement();
-        }
 
         @Override
         public void testFailure(Failure failure) throws Exception {
             fFailures.add(failure);
+            TestStatsMutant stats = getCurrentTestStats(failure.getDescription());
+            stats.setFailure(failure);
         }
 
         @Override
@@ -97,6 +102,39 @@ public class Result implements Serializable {
         public void testAssumptionFailure(Failure failure) {
             // do nothing: same as passing (for 4.5; may change in 4.6)
         }
+
+
+        @Override
+        public void testStarted(Description description) throws Exception {
+            getCurrentTestStats(description);
+        }
+
+        private TestStatsMutant getCurrentTestStats(Description description) {
+            if (currentTestStats == null) {
+                currentTestStats = new TestStatsMutant(description.getTestClass(),
+                        description.getMethodName(), fStartTime.longValue());
+            }
+            return currentTestStats;
+        }
+        
+        @Override
+        public void assertionCompeted() {
+            currentTestStats.incrementAssertCount();
+        }
+
+        @Override
+        public void testScope(String scope) {
+            currentTestStats.setScope(scope);
+        }
+        
+        @Override
+        public void testFinished(Description description) throws Exception {
+            fCount.getAndIncrement();
+            //note if it has already failed, this will not change the value
+            currentTestStats.setPass(true);
+            testStats.add(new TestStats(currentTestStats));
+            currentTestStats = null;
+        }
     }
 
     /**
@@ -104,5 +142,17 @@ public class Result implements Serializable {
      */
     public RunListener createListener() {
         return new Listener();
+    }
+
+    public List<TestStats> getTestStats() {
+        return testStats;
+    }
+    
+    public int getAssertionCount() {
+        int count = 0;
+        for (TestStats ts: testStats) {
+            count = count + ts.getAssertCount();
+        }
+        return count;
     }
 }

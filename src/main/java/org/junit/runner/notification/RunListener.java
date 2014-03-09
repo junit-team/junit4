@@ -8,6 +8,7 @@ import java.lang.annotation.Target;
 
 import org.junit.runner.Description;
 import org.junit.runner.Result;
+import org.junit.runner.stats.TestStatsMutant;
 
 /**
  * Register an instance of this class with {@link RunNotifier} to be notified
@@ -50,6 +51,8 @@ import org.junit.runner.Result;
  * @since 4.0
  */
 public class RunListener {
+
+    public static final String THIS_LISTENER_IS_NOT_RECORDING_STATS_SEE_IS_RECORDING_STATS = "This listener is not recording stats, see isRecordingStats()";
 
     /**
      * Called before any tests have been run. This may be called on an
@@ -121,8 +124,19 @@ public class RunListener {
      */
     public void testIgnored(Description description) throws Exception {
     }
-
-
+    
+    /**
+     * record a assertion ie assertEquals();
+     * @param stats
+     */
+    public void assertionCompeted() {}
+    
+    /**
+     * if the test class implements TestClassScope
+     * pass the scope along to the results
+     */
+    public void testScope(String scope) {}
+    
     /**
      * Indicates a {@code RunListener} that can have its methods called
      * concurrently. This implies that the class is thread-safe (i.e. no set of
