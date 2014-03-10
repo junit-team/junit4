@@ -87,7 +87,8 @@ public class SingleMethodTest {
         List<TestStats> allStats = result.getTestStats();
         assertEquals(1, allStats.size());
         TestStats stat = allStats.get(0);
-        assertEquals(ParameterizedOneTimeSetup.class, stat.getTestClass());
+        assertEquals(ParameterizedOneTimeSetup.class.getName(), 
+                stat.getTestClassName());
         assertEquals("one[0]", stat.getMethodName());
         assertEquals(0, stat.getAssertCount());
         assertEquals(null, stat.getFailure());

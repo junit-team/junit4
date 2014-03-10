@@ -38,7 +38,7 @@ public interface I_TestStats {
      * or extends TestCase from the older JUnit 3 api)
      * Assert methods directly outside of a test method scope
      */
-    public Class<?> getTestClass();
+    public String getTestClassName();
     /**
      * if this test method passed
      * @return

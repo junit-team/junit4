@@ -12,9 +12,9 @@ public class TestStats implements I_TestStats, Serializable {
 
     private static final long serialVersionUID = 1L;
     /**
-     * @see I_TestStats#getTestClass()
+     * @see I_TestStats#getTestClassName()
      */
-    private Class<?> testClass;
+    private String testClassName;
     /**
      * @see I_TestStats#getMethodName()
      */
@@ -44,15 +44,15 @@ public class TestStats implements I_TestStats, Serializable {
     */
     private String scope;
     
-    public TestStats(Class<?> pTestClass, String pMethodName, long pStartTime) {
-        testClass = pTestClass;
+    public TestStats(String pTestClassName, String pMethodName, long pStartTime) {
+        testClassName = pTestClassName;
         methodName = pMethodName;
         startTime = pStartTime;
         scope = "";
     }
 
     public TestStats(I_TestStats stats) {
-        testClass = stats.getTestClass();
+        testClassName = stats.getTestClassName();
         methodName = stats.getMethodName();
         startTime = stats.getStartTime();
         runTime = stats.getRunTime();
@@ -78,8 +78,8 @@ public class TestStats implements I_TestStats, Serializable {
         return methodName;
     }
     
-    public Class<?> getTestClass() {
-        return testClass;
+    public String getTestClassName() {
+        return testClassName;
     }
 
     public boolean isPass() {

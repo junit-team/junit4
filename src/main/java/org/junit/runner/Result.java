@@ -111,7 +111,12 @@ public class Result implements Serializable {
 
         private TestStatsMutant getCurrentTestStats(Description description) {
             if (currentTestStats == null) {
-                currentTestStats = new TestStatsMutant(description.getTestClass(),
+                Class<?> testClass = description.getTestClass();
+                String testClassName = "";
+                if (testClass != null) {
+                    testClassName = testClass.getName();
+                }
+                currentTestStats = new TestStatsMutant(testClassName,
                         description.getMethodName(), fStartTime.longValue());
             }
             return currentTestStats;

@@ -44,9 +44,9 @@ public class TestStatsMutant implements I_TestStats{
      */
     private final String methodName;
    /**
-    * @see I_TestStats#getTestClass()
+    * @see I_TestStats#getTestClassName()
     */
-    private Class<?> clazz;
+    private String testClassName;
     /**
      * @see I_TestStats#getFailure()
      */
@@ -56,15 +56,15 @@ public class TestStatsMutant implements I_TestStats{
      */
      private String scope;
      
-    public TestStatsMutant(Class<?> pTestClass, String pMethodName, long pStartTime) {
-        clazz = pTestClass;
+    public TestStatsMutant(String pTestClassName, String pMethodName, long pStartTime) {
+        testClassName = pTestClassName;
         methodName = pMethodName;
         startTime.set(pStartTime);
         scope = "";
     }
     
     public TestStatsMutant(I_TestStats other) {
-        clazz = other.getTestClass();
+        testClassName = other.getTestClassName();
         methodName = other.getMethodName();
         runTime.set(other.getRunTime());
         startTime.set(other.getStartTime());
@@ -86,8 +86,8 @@ public class TestStatsMutant implements I_TestStats{
     public String getMethodName() {
         return methodName;
     }
-    public Class<?> getTestClass() {
-        return clazz;
+    public String getTestClassName() {
+        return testClassName;
     }
     
     public void finishTest() {
