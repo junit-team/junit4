@@ -3,7 +3,17 @@ package org.junit;
 /**
  * This interface is used to identify the scope 
  * of what is being tested by a Test Class (class with @Test annotated methods),
- * which should usually be a Java Class name, but may sometimes
+ * The scope of a test could be one of the following;
+ * 
+ * A Java Class (getScope would return the class name)
+ * A Java Package (getScope would return the package name)
+ * A Functional Test for a Use Case 
+ *      getScope would return 'functional:useCaseName#useCaseCondition')
+ *      ie functional:UserAuthenticate#badUserId
+ *      functional:UserAuthenticate#badPassword
+ *      functional:UserAuthenticate#success
+ * 
+ * name, but may sometimes
  * be a Java Package name.  This way tools like EclEmma can
  * provide a more accurate regression of what is getting tested.
  * In example we have a class;
