@@ -13,9 +13,8 @@ package org.junit;
  *      functional:UserAuthenticate#badPassword
  *      functional:UserAuthenticate#success
  * 
- * name, but may sometimes
- * be a Java Package name.  This way tools like EclEmma can
- * provide a more accurate regression of what is getting tested.
+ * This way external tools/users could provide
+ * a more accurate regression of what is getting tested.
  * In example we have a class;
  * public class Foo() {
  *  public String bar() {
