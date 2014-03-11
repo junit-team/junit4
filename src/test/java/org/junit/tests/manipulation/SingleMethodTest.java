@@ -1,8 +1,7 @@
 package org.junit.tests.manipulation;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -66,6 +65,12 @@ public class SingleMethodTest {
 
         @Test
         public void one() {
+            assertEquals("a","a");
+            assertTrue(true);
+            assertNull(null);
+            assertNotNull("a");
+            assertNotEquals("a", "b");
+            
         }
 
         public String getScope() {
@@ -82,7 +87,7 @@ public class SingleMethodTest {
         Result result = new JUnitCore().run(runner);
 
         assertEquals(1, result.getRunCount());
-        assertEquals(0, result.getAssertionCount());
+        assertEquals(5, result.getAssertionCount());
         
         List<TestStats> allStats = result.getTestStats();
         assertEquals(1, allStats.size());
@@ -90,7 +95,7 @@ public class SingleMethodTest {
         assertEquals(ParameterizedOneTimeSetup.class.getName(), 
                 stat.getTestClassName());
         assertEquals("one[0]", stat.getMethodName());
-        assertEquals(0, stat.getAssertCount());
+        assertEquals(5, stat.getAssertCount());
         assertEquals(null, stat.getFailure());
         assertEquals(true, stat.isPass());
         assertEquals(ParameterizedOneTimeSetup.class.getName(), stat.getScope());

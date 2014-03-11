@@ -163,6 +163,7 @@ public class Assert {
         if (equalsRegardingNull(unexpected, actual)) {
             failEquals(message, actual);
         }
+        CurrentRunNotifier.getNotifier().fireAssertionCompleted();
     }
 
     /**
