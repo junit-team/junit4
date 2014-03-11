@@ -2,6 +2,7 @@ package org.junit.runner.notification;
 
 import org.junit.runner.Description;
 import org.junit.runner.Result;
+import org.junit.runner.stats.TestStatsMutant;
 
 /**
  * Thread-safe decorator for {@link RunListener} implementations that synchronizes
@@ -100,4 +101,17 @@ final class SynchronizedRunListener extends RunListener {
     public String toString() {
         return fListener.toString() + " (with synchronization wrapper)";
     }
+
+    @Override
+    public synchronized void assertionCompeted() {
+        // TODO Auto-generated method stub
+        fListener.assertionCompeted();
+    }
+
+    @Override
+    public synchronized void testScope(String scope) {
+        // TODO Auto-generated method stub
+        super.testScope(scope);
+    }
+
 }

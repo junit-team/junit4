@@ -1,8 +1,7 @@
 package org.junit.tests.manipulation;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -10,6 +9,7 @@ import java.util.List;
 import junit.framework.JUnit4TestAdapter;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.TestClassScope;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
@@ -19,6 +19,7 @@ import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
 import org.junit.runner.manipulation.NoTestsRemainException;
+import org.junit.runner.stats.TestStats;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.Suite;
@@ -53,7 +54,7 @@ public class SingleMethodTest {
     }
 
     @RunWith(Parameterized.class)
-    static public class ParameterizedOneTimeSetup {
+    static public class ParameterizedOneTimeSetup implements TestClassScope {
         @Parameters
         public static List<Object[]> params() {
             return Arrays.asList(new Object[]{1}, new Object[]{2});
@@ -64,7 +65,18 @@ public class SingleMethodTest {
 
         @Test
         public void one() {
+            assertEquals("a","a");
+            assertTrue(true);
+            assertNull(null);
+            assertNotNull("a");
+            assertNotEquals("a", "b");
+            
         }
+
+        public String getScope() {
+            return ParameterizedOneTimeSetup.class.getName();
+        }
+        
     }
 
     @Test
@@ -75,6 +87,18 @@ public class SingleMethodTest {
         Result result = new JUnitCore().run(runner);
 
         assertEquals(1, result.getRunCount());
+        assertEquals(5, result.getAssertionCount());
+        
+        List<TestStats> allStats = result.getTestStats();
+        assertEquals(1, allStats.size());
+        TestStats stat = allStats.get(0);
+        assertEquals(ParameterizedOneTimeSetup.class.getName(), 
+                stat.getTestClassName());
+        assertEquals("one[0]", stat.getMethodName());
+        assertEquals(5, stat.getAssertCount());
+        assertEquals(null, stat.getFailure());
+        assertEquals(true, stat.isPass());
+        assertEquals(ParameterizedOneTimeSetup.class.getName(), stat.getScope());
     }
 
     @RunWith(Parameterized.class)
