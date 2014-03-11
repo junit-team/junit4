@@ -5,6 +5,7 @@ import org.junit.internal.JUnitSystem;
 import org.junit.internal.RealSystem;
 import org.junit.internal.TextListener;
 import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.runner.notification.CurrentRunNotifier;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 
@@ -22,8 +23,10 @@ import org.junit.runner.notification.RunNotifier;
  * @since 4.0
  */
 public class JUnitCore {
-    private final RunNotifier fNotifier = new RunNotifier();
-
+    @SuppressWarnings("unused")
+    private CurrentRunNotifier fcurrent = new CurrentRunNotifier();
+    private RunNotifier fNotifier = CurrentRunNotifier.getNotifier();
+    
     /**
      * Run the tests contained in the classes named in the <code>args</code>.
      * If all tests run successfully, exit with a status of 0. Otherwise exit with a status of 1.

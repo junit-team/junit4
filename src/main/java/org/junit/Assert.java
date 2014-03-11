@@ -5,6 +5,7 @@ import org.hamcrest.MatcherAssert;
 import org.junit.internal.ArrayComparisonFailure;
 import org.junit.internal.ExactComparisonCriteria;
 import org.junit.internal.InexactComparisonCriteria;
+import org.junit.runner.notification.CurrentRunNotifier;
 
 /**
  * A set of assertion methods useful for writing tests. Only failed assertions
@@ -40,6 +41,7 @@ public class Assert {
         if (!condition) {
             fail(message);
         }
+        CurrentRunNotifier.getNotifier().fireAssertionCompleted();
     }
 
     /**
@@ -109,6 +111,7 @@ public class Assert {
     static public void assertEquals(String message, Object expected,
             Object actual) {
         if (equalsRegardingNull(expected, actual)) {
+            CurrentRunNotifier.getNotifier().fireAssertionCompleted();
             return;
         } else if (expected instanceof String && actual instanceof String) {
             String cleanMessage = message == null ? "" : message;
@@ -732,6 +735,7 @@ public class Assert {
      */
     static public void assertNull(String message, Object object) {
         if (object == null) {
+            CurrentRunNotifier.getNotifier().fireAssertionCompleted();
             return;
         }
         failNotNull(message, object);
@@ -766,6 +770,7 @@ public class Assert {
      */
     static public void assertSame(String message, Object expected, Object actual) {
         if (expected == actual) {
+            CurrentRunNotifier.getNotifier().fireAssertionCompleted();
             return;
         }
         failNotSame(message, expected, actual);
@@ -796,6 +801,8 @@ public class Assert {
             Object actual) {
         if (unexpected == actual) {
             failSame(message);
+        } else {
+            CurrentRunNotifier.getNotifier().fireAssertionCompleted();
         }
     }
 
@@ -954,5 +961,6 @@ public class Assert {
     public static <T> void assertThat(String reason, T actual,
             Matcher<? super T> matcher) {
         MatcherAssert.assertThat(reason, actual, matcher);
+        CurrentRunNotifier.getNotifier().fireAssertionCompleted();
     }
 }

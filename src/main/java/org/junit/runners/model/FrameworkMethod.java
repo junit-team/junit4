@@ -7,8 +7,10 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import org.junit.TestClassScope;
 import org.junit.experimental.theories.ParameterSignature;
 import org.junit.internal.runners.model.ReflectiveCallable;
+import org.junit.runner.notification.CurrentRunNotifier;
 
 /**
  * Represents a method on a test class to be invoked at the appropriate point in
@@ -49,6 +51,10 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
         return new ReflectiveCallable() {
             @Override
             protected Object runReflectiveCall() throws Throwable {
+                if (target instanceof TestClassScope) {
+                    CurrentRunNotifier.getNotifier().fireTestScope(
+                            ((TestClassScope) target).getScope());
+                }
                 return fMethod.invoke(target, params);
             }
         }.run();
