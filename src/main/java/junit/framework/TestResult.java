@@ -14,7 +14,7 @@ import java.util.List;
  *
  * @see Test
  */
-public class TestResult extends Object {
+public class TestResult {
     protected List<TestFailure> fFailures;
     protected List<TestFailure> fErrors;
     protected List<TestListener> fListeners;
