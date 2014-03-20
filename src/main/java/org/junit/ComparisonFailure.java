@@ -11,15 +11,15 @@ package org.junit;
  */
 public class ComparisonFailure extends AssertionError {
     /**
-     * The maximum length for fExpected and fActual. If it is exceeded, the strings should be shortened.
+     * The maximum length for expected and actual strings. If it is exceeded, the strings should be shortened.
      *
      * @see ComparisonCompactor
      */
     private static final int MAX_CONTEXT_LENGTH = 20;
     private static final long serialVersionUID = 1L;
 
-    private String fExpected;
-    private String fActual;
+    private String expected;
+    private String actual;
 
     /**
      * Constructs a comparison failure.
@@ -30,8 +30,8 @@ public class ComparisonFailure extends AssertionError {
      */
     public ComparisonFailure(String message, String expected, String actual) {
         super(message);
-        fExpected = expected;
-        fActual = actual;
+        this.expected = expected;
+        this.actual = actual;
     }
 
     /**
@@ -42,7 +42,7 @@ public class ComparisonFailure extends AssertionError {
      */
     @Override
     public String getMessage() {
-        return new ComparisonCompactor(MAX_CONTEXT_LENGTH, fExpected, fActual).compact(super.getMessage());
+        return new ComparisonCompactor(MAX_CONTEXT_LENGTH, expected, actual).compact(super.getMessage());
     }
 
     /**
@@ -51,7 +51,7 @@ public class ComparisonFailure extends AssertionError {
      * @return the actual string value
      */
     public String getActual() {
-        return fActual;
+        return actual;
     }
 
     /**
@@ -60,7 +60,7 @@ public class ComparisonFailure extends AssertionError {
      * @return the expected string value
      */
     public String getExpected() {
-        return fExpected;
+        return expected;
     }
 
     private static class ComparisonCompactor {
@@ -69,88 +69,88 @@ public class ComparisonFailure extends AssertionError {
         private static final String DELTA_START = "[";
 
         /**
-         * The maximum length for <code>expected</code> and <code>actual</code>. When <code>contextLength</code>
-         * is exceeded, the Strings are shortened
+         * The maximum length for <code>expected</code> and <code>actual</code> strings to show. When <code>contextLength</code>
+         * is exceeded, the Strings are shortened.
          */
-        private int fContextLength;
+        private int contextLength;
         
-        private String fExpected;
-        private String fActual;
+        private String expected;
+        private String actual;
         
         /**
          * The length of the shared prefix / suffix of the expected and actual strings.
          * Equals to zero if the strings do not share a common prefix/suffix.
          */
-        private int fPrefix;
-        private int fSuffix;
+        private int prefix;
+        private int suffix;
 
         /**
-         * @param contextLength the maximum length for <code>expected</code> and <code>actual</code>. When contextLength
-         * is exceeded, the Strings are shortened
+         * @param contextLength the maximum length for <code>expected</code> and <code>actual</code> strings. When contextLength
+         * is exceeded, the Strings are shortened.
          * @param expected the expected string value
          * @param actual the actual string value
          */
         public ComparisonCompactor(int contextLength, String expected, String actual) {
-            fContextLength = contextLength;
-            fExpected = expected;
-            fActual = actual;
+            this.contextLength = contextLength;
+            this.expected = expected;
+            this.actual = actual;
         }
 
         private String compact(String message) {
-            if (fExpected == null || fActual == null || areStringsEqual()) {
-                return Assert.format(message, fExpected, fActual);
+            if (expected == null || actual == null || areStringsEqual()) {
+                return Assert.format(message, expected, actual);
             }
 
             findCommonPrefix();
             findCommonSuffix();
-            String expected = compactString(fExpected);
-            String actual = compactString(fActual);
+            String expected = compactString(this.expected);
+            String actual = compactString(this.actual);
             return Assert.format(message, expected, actual);
         }
 
         private String compactString(String source) {
-            String result = DELTA_START + source.substring(fPrefix, source.length() - fSuffix) + DELTA_END;
-            if (fPrefix > 0) {
+            String result = DELTA_START + source.substring(prefix, source.length() - suffix) + DELTA_END;
+            if (prefix > 0) {
                 result = computeCommonPrefix() + result;
             }
-            if (fSuffix > 0) {
+            if (suffix > 0) {
                 result = result + computeCommonSuffix();
             }
             return result;
         }
 
         private void findCommonPrefix() {
-            fPrefix = 0;
-            int end = Math.min(fExpected.length(), fActual.length());
-            for (; fPrefix < end; fPrefix++) {
-                if (fExpected.charAt(fPrefix) != fActual.charAt(fPrefix)) {
+            prefix = 0;
+            int end = Math.min(expected.length(), actual.length());
+            for (; prefix < end; prefix++) {
+                if (expected.charAt(prefix) != actual.charAt(prefix)) {
                     break;
                 }
             }
         }
 
         private void findCommonSuffix() {
-            int expectedSuffix = fExpected.length() - 1;
-            int actualSuffix = fActual.length() - 1;
-            for (; actualSuffix >= fPrefix && expectedSuffix >= fPrefix; actualSuffix--, expectedSuffix--) {
-                if (fExpected.charAt(expectedSuffix) != fActual.charAt(actualSuffix)) {
+            int expectedSuffix = expected.length() - 1;
+            int actualSuffix = actual.length() - 1;
+            for (; actualSuffix >= prefix && expectedSuffix >= prefix; actualSuffix--, expectedSuffix--) {
+                if (expected.charAt(expectedSuffix) != actual.charAt(actualSuffix)) {
                     break;
                 }
             }
-            fSuffix = fExpected.length() - expectedSuffix - 1;
+            suffix = expected.length() - expectedSuffix - 1;
         }
 
         private String computeCommonPrefix() {
-            return (fPrefix > fContextLength ? ELLIPSIS : "") + fExpected.substring(Math.max(0, fPrefix - fContextLength), fPrefix);
+            return (prefix > contextLength ? ELLIPSIS : "") + expected.substring(Math.max(0, prefix - contextLength), prefix);
         }
 
         private String computeCommonSuffix() {
-            int end = Math.min(fExpected.length() - fSuffix + fContextLength, fExpected.length());
-            return fExpected.substring(fExpected.length() - fSuffix, end) + (fExpected.length() - fSuffix < fExpected.length() - fContextLength ? ELLIPSIS : "");
+            int end = Math.min(expected.length() - suffix + contextLength, expected.length());
+            return expected.substring(expected.length() - suffix, end) + (expected.length() - suffix < expected.length() - contextLength ? ELLIPSIS : "");
         }
 
         private boolean areStringsEqual() {
-            return fExpected.equals(fActual);
+            return expected.equals(actual);
         }
     }
 }
