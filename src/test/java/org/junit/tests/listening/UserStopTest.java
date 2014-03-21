@@ -7,17 +7,17 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
 
 public class UserStopTest {
-    private RunNotifier fNotifier;
+    private RunNotifier notifier;
 
     @Before
     public void createNotifier() {
-        fNotifier = new RunNotifier();
-        fNotifier.pleaseStop();
+        notifier = new RunNotifier();
+        notifier.pleaseStop();
     }
 
     @Test(expected = StoppedByUserException.class)
     public void userStop() {
-        fNotifier.fireTestStarted(null);
+        notifier.fireTestStarted(null);
     }
 
     public static class OneTest {
@@ -28,6 +28,6 @@ public class UserStopTest {
 
     @Test(expected = StoppedByUserException.class)
     public void stopClassRunner() throws Exception {
-        Request.aClass(OneTest.class).getRunner().run(fNotifier);
+        Request.aClass(OneTest.class).getRunner().run(notifier);
     }
 }

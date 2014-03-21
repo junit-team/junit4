@@ -38,23 +38,23 @@ public class InitializationErrorForwardCompatibilityTest {
     public static class CantInitializeTests {
     }
 
-    private JUnit4TestAdapter fAdapter;
+    private JUnit4TestAdapter adapter;
 
     @Before
     public void createAdapter() {
-        fAdapter = new JUnit4TestAdapter(
+        adapter = new JUnit4TestAdapter(
                 CantInitializeTests.class);
     }
 
     @Test
     public void initializationErrorsShowUpAsWarnings() {
-        assertEquals(1, fAdapter.getTests().size());
+        assertEquals(1, adapter.getTests().size());
     }
 
     @Test
     public void initializationErrorsAreThrownAtRuntime() {
         TestResult result = new TestResult();
-        fAdapter.run(result);
+        adapter.run(result);
         assertEquals(1, result.errorCount());
         assertEquals(CantInitialize.UNIQUE_ERROR_MESSAGE, result.errors()
                 .nextElement().exceptionMessage());
@@ -84,11 +84,11 @@ public class InitializationErrorForwardCompatibilityTest {
 
     @Test
     public void generatedErrorTestsMatchUp() {
-        junit.framework.Test shouldFail = fAdapter.getTests().get(0);
+        junit.framework.Test shouldFail = adapter.getTests().get(0);
         TestResult result = new TestResult();
         ErrorRememberingListener listener = new ErrorRememberingListener();
         result.addListener(listener);
-        fAdapter.run(result);
+        adapter.run(result);
         assertNotNull(listener.getError());
         assertTrue(shouldFail == listener.getError());
     }

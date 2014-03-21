@@ -24,13 +24,13 @@ import static org.junit.Assert.assertNotEquals;
  */
 public class StopwatchTest {
     private static enum TestStatus { SUCCEEDED, FAILED, SKIPPED }
-    private static Record fRecord;
-    private static Record fFinishedRecord;
+    private static Record record;
+    private static Record finishedRecord;
 
     private static class Record {
-        final long fDuration;
-        final String fName;
-        final TestStatus fStatus;
+        final long duration;
+        final String name;
+        final TestStatus status;
 
         Record() {
             this(0, null, null);
@@ -41,34 +41,34 @@ public class StopwatchTest {
         }
 
         Record(long duration, TestStatus status, String name) {
-            fDuration= duration;
-            fStatus= status;
-            fName= name;
+            this.duration = duration;
+            this.status = status;
+            this.name = name;
         }
     }
 
     public static abstract class AbstractStopwatchTest {
 
         @Rule
-        public final Stopwatch fStopwatch= new Stopwatch() {
+        public final Stopwatch stopwatch = new Stopwatch() {
             @Override
             protected void succeeded(long nanos, Description description) {
-                StopwatchTest.fRecord= new Record(nanos, TestStatus.SUCCEEDED, description.getMethodName());
+                StopwatchTest.record = new Record(nanos, TestStatus.SUCCEEDED, description.getMethodName());
             }
 
             @Override
             protected void failed(long nanos, Throwable e, Description description) {
-                StopwatchTest.fRecord= new Record(nanos, TestStatus.FAILED, description.getMethodName());
+                StopwatchTest.record = new Record(nanos, TestStatus.FAILED, description.getMethodName());
             }
 
             @Override
             protected void skipped(long nanos, AssumptionViolatedException e, Description description) {
-                StopwatchTest.fRecord= new Record(nanos, TestStatus.SKIPPED, description.getMethodName());
+                StopwatchTest.record = new Record(nanos, TestStatus.SKIPPED, description.getMethodName());
             }
 
             @Override
             protected void finished(long nanos, Description description) {
-                StopwatchTest.fFinishedRecord= new Record(nanos, description.getMethodName());
+                StopwatchTest.finishedRecord = new Record(nanos, description.getMethodName());
             }
         };
     }
@@ -97,7 +97,7 @@ public class StopwatchTest {
         @Test
         public void wrongDuration() throws InterruptedException {
             Thread.sleep(500L);
-            assertNotEquals(fStopwatch.runtime(MILLISECONDS), 300d, 100d);
+            assertNotEquals(stopwatch.runtime(MILLISECONDS), 300d, 100d);
         }
     }
 
@@ -105,49 +105,49 @@ public class StopwatchTest {
         @Test
         public void duration() throws InterruptedException {
             Thread.sleep(300L);
-            assertEquals(300d, fStopwatch.runtime(MILLISECONDS), 100d);
+            assertEquals(300d, stopwatch.runtime(MILLISECONDS), 100d);
             Thread.sleep(500L);
-            assertEquals(800d, fStopwatch.runtime(MILLISECONDS), 250d);
+            assertEquals(800d, stopwatch.runtime(MILLISECONDS), 250d);
         }
     }
 
     @Before
     public void init() {
-        fRecord= new Record();
-        fFinishedRecord= new Record();
+        record = new Record();
+        finishedRecord = new Record();
     }
 
     @Test
     public void succeeded() {
         Result result= JUnitCore.runClasses(SuccessfulTest.class);
         assertEquals(0, result.getFailureCount());
-        assertThat(fRecord.fName, is("successfulTest"));
-        assertThat(fRecord.fName, is(fFinishedRecord.fName));
-        assertThat(fRecord.fStatus, is(TestStatus.SUCCEEDED));
-        assertTrue("timeSpent > 0", fRecord.fDuration > 0);
-        assertThat(fRecord.fDuration, is(fFinishedRecord.fDuration));
+        assertThat(record.name, is("successfulTest"));
+        assertThat(record.name, is(finishedRecord.name));
+        assertThat(record.status, is(TestStatus.SUCCEEDED));
+        assertTrue("timeSpent > 0", record.duration > 0);
+        assertThat(record.duration, is(finishedRecord.duration));
     }
 
     @Test
     public void failed() {
         Result result= JUnitCore.runClasses(FailedTest.class);
         assertEquals(1, result.getFailureCount());
-        assertThat(fRecord.fName, is("failedTest"));
-        assertThat(fRecord.fName, is(fFinishedRecord.fName));
-        assertThat(fRecord.fStatus, is(TestStatus.FAILED));
-        assertTrue("timeSpent > 0", fRecord.fDuration > 0);
-        assertThat(fRecord.fDuration, is(fFinishedRecord.fDuration));
+        assertThat(record.name, is("failedTest"));
+        assertThat(record.name, is(finishedRecord.name));
+        assertThat(record.status, is(TestStatus.FAILED));
+        assertTrue("timeSpent > 0", record.duration > 0);
+        assertThat(record.duration, is(finishedRecord.duration));
     }
 
     @Test
     public void skipped() {
         Result result= JUnitCore.runClasses(SkippedTest.class);
         assertEquals(0, result.getFailureCount());
-        assertThat(fRecord.fName, is("skippedTest"));
-        assertThat(fRecord.fName, is(fFinishedRecord.fName));
-        assertThat(fRecord.fStatus, is(TestStatus.SKIPPED));
-        assertTrue("timeSpent > 0", fRecord.fDuration > 0);
-        assertThat(fRecord.fDuration, is(fFinishedRecord.fDuration));
+        assertThat(record.name, is("skippedTest"));
+        assertThat(record.name, is(finishedRecord.name));
+        assertThat(record.status, is(TestStatus.SKIPPED));
+        assertTrue("timeSpent > 0", record.duration > 0);
+        assertThat(record.duration, is(finishedRecord.duration));
     }
 
     @Test

@@ -10,7 +10,7 @@ import junit.framework.TestSuite;
  * Testing the RepeatedTest support.
  */
 public class RepeatedTestTest extends TestCase {
-    private TestSuite fSuite;
+    private TestSuite suite;
 
     public static class SuccessTest extends TestCase {
 
@@ -21,13 +21,13 @@ public class RepeatedTestTest extends TestCase {
 
     public RepeatedTestTest(String name) {
         super(name);
-        fSuite = new TestSuite();
-        fSuite.addTest(new SuccessTest());
-        fSuite.addTest(new SuccessTest());
+        suite = new TestSuite();
+        suite.addTest(new SuccessTest());
+        suite.addTest(new SuccessTest());
     }
 
     public void testRepeatedOnce() {
-        Test test = new RepeatedTest(fSuite, 1);
+        Test test = new RepeatedTest(suite, 1);
         assertEquals(2, test.countTestCases());
         TestResult result = new TestResult();
         test.run(result);
@@ -35,7 +35,7 @@ public class RepeatedTestTest extends TestCase {
     }
 
     public void testRepeatedMoreThanOnce() {
-        Test test = new RepeatedTest(fSuite, 3);
+        Test test = new RepeatedTest(suite, 3);
         assertEquals(6, test.countTestCases());
         TestResult result = new TestResult();
         test.run(result);
@@ -43,7 +43,7 @@ public class RepeatedTestTest extends TestCase {
     }
 
     public void testRepeatedZero() {
-        Test test = new RepeatedTest(fSuite, 0);
+        Test test = new RepeatedTest(suite, 0);
         assertEquals(0, test.countTestCases());
         TestResult result = new TestResult();
         test.run(result);
@@ -52,7 +52,7 @@ public class RepeatedTestTest extends TestCase {
 
     public void testRepeatedNegative() {
         try {
-            new RepeatedTest(fSuite, -1);
+            new RepeatedTest(suite, -1);
         } catch (IllegalArgumentException e) {
             assertTrue(e.getMessage().contains(">="));
             return;

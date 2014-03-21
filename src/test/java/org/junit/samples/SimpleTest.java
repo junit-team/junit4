@@ -10,13 +10,13 @@ import org.junit.Test;
  * Some simple tests.
  */
 public class SimpleTest {
-    protected int fValue1;
-    protected int fValue2;
+    protected int value1;
+    protected int value2;
 
     @Before
     public void setUp() {
-        fValue1 = 2;
-        fValue2 = 3;
+        value1 = 2;
+        value2 = 3;
     }
 
     public static junit.framework.Test suite() {

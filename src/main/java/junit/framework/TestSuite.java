@@ -109,9 +109,9 @@ public class TestSuite implements Test {
         return stringWriter.toString();
     }
 
-    private String fName;
+    private String name;
 
-    private Vector<Test> fTests = new Vector<Test>(10); // Cannot convert this to List because it is used directly by some test runners
+    private Vector<Test> tests = new Vector<Test>(10); // Cannot convert this to List because it is used directly by some test runners
 
     /**
      * Constructs an empty TestSuite.
@@ -130,7 +130,7 @@ public class TestSuite implements Test {
     }
 
     private void addTestsFromTestCase(final Class<?> theClass) {
-        fName = theClass.getName();
+        name = theClass.getName();
         try {
             getTestConstructor(theClass); // Avoid generating multiple error messages
         } catch (NoSuchMethodException e) {
@@ -151,7 +151,7 @@ public class TestSuite implements Test {
             }
             superClass = superClass.getSuperclass();
         }
-        if (fTests.size() == 0) {
+        if (tests.size() == 0) {
             addTest(warning("No tests found in " + theClass.getName()));
         }
     }
@@ -206,7 +206,7 @@ public class TestSuite implements Test {
      * Adds a test to the suite.
      */
     public void addTest(Test test) {
-        fTests.add(test);
+        tests.add(test);
     }
 
     /**
@@ -221,7 +221,7 @@ public class TestSuite implements Test {
      */
     public int countTestCases() {
         int count = 0;
-        for (Test each : fTests) {
+        for (Test each : tests) {
             count += each.countTestCases();
         }
         return count;
@@ -233,14 +233,14 @@ public class TestSuite implements Test {
      * can return null.
      */
     public String getName() {
-        return fName;
+        return name;
     }
 
     /**
      * Runs the tests and collects their result in a TestResult.
      */
     public void run(TestResult result) {
-        for (Test each : fTests) {
+        for (Test each : tests) {
             if (result.shouldStop()) {
                 break;
             }
@@ -258,28 +258,28 @@ public class TestSuite implements Test {
      * @param name the name to set
      */
     public void setName(String name) {
-        fName = name;
+        this.name = name;
     }
 
     /**
      * Returns the test at the given index
      */
     public Test testAt(int index) {
-        return fTests.get(index);
+        return tests.get(index);
     }
 
     /**
      * Returns the number of tests in this suite
      */
     public int testCount() {
-        return fTests.size();
+        return tests.size();
     }
 
     /**
      * Returns the tests as an enumeration
      */
     public Enumeration<Test> tests() {
-        return fTests.elements();
+        return tests.elements();
     }
 
     /**

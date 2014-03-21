@@ -4,10 +4,10 @@ import org.junit.runner.Describable;
 import org.junit.runner.Description;
 
 public class JUnit4TestCaseFacade implements Test, Describable {
-    private final Description fDescription;
+    private final Description description;
 
     JUnit4TestCaseFacade(Description description) {
-        fDescription = description;
+        this.description = description;
     }
 
     @Override
@@ -25,6 +25,6 @@ public class JUnit4TestCaseFacade implements Test, Describable {
     }
 
     public Description getDescription() {
-        return fDescription;
+        return description;
     }
 }

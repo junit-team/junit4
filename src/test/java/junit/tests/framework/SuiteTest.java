@@ -11,7 +11,7 @@ import junit.framework.TestSuite;
  * A fixture for testing the "auto" test suite feature.
  */
 public class SuiteTest extends TestCase {
-    protected TestResult fResult;
+    protected TestResult result;
 
     public SuiteTest(String name) {
         super(name);
@@ -19,7 +19,7 @@ public class SuiteTest extends TestCase {
 
     @Override
     protected void setUp() {
-        fResult = new TestResult();
+        result = new TestResult();
     }
 
     public static Test suite() {
@@ -43,32 +43,32 @@ public class SuiteTest extends TestCase {
 
     public void testInheritedTests() {
         TestSuite suite = new TestSuite(InheritedTestCase.class);
-        suite.run(fResult);
-        assertTrue(fResult.wasSuccessful());
-        assertEquals(2, fResult.runCount());
+        suite.run(result);
+        assertTrue(result.wasSuccessful());
+        assertEquals(2, result.runCount());
     }
 
     public void testNoTestCaseClass() {
         Test t = new TestSuite(NoTestCaseClass.class);
-        t.run(fResult);
-        assertEquals(1, fResult.runCount());  // warning test
-        assertTrue(!fResult.wasSuccessful());
+        t.run(result);
+        assertEquals(1, result.runCount());  // warning test
+        assertTrue(!result.wasSuccessful());
     }
 
     public void testNoTestCases() {
         Test t = new TestSuite(NoTestCases.class);
-        t.run(fResult);
-        assertTrue(fResult.runCount() == 1);  // warning test
-        assertTrue(fResult.failureCount() == 1);
-        assertTrue(!fResult.wasSuccessful());
+        t.run(result);
+        assertTrue(result.runCount() == 1);  // warning test
+        assertTrue(result.failureCount() == 1);
+        assertTrue(!result.wasSuccessful());
     }
 
     public void testNotExistingTestCase() {
         Test t = new SuiteTest("notExistingMethod");
-        t.run(fResult);
-        assertTrue(fResult.runCount() == 1);
-        assertTrue(fResult.failureCount() == 1);
-        assertTrue(fResult.errorCount() == 0);
+        t.run(result);
+        assertTrue(result.runCount() == 1);
+        assertTrue(result.failureCount() == 1);
+        assertTrue(result.errorCount() == 0);
     }
 
     public void testNotPublicTestCase() {
@@ -84,11 +84,11 @@ public class SuiteTest extends TestCase {
 
     public void testOneTestCase() {
         TestSuite t = new TestSuite(OneTestCase.class);
-        t.run(fResult);
-        assertTrue(fResult.runCount() == 1);
-        assertTrue(fResult.failureCount() == 0);
-        assertTrue(fResult.errorCount() == 0);
-        assertTrue(fResult.wasSuccessful());
+        t.run(result);
+        assertTrue(result.runCount() == 1);
+        assertTrue(result.failureCount() == 0);
+        assertTrue(result.errorCount() == 0);
+        assertTrue(result.wasSuccessful());
     }
 
     public void testOneTestCaseEclipseSeesSameStructureAs381() {
@@ -98,15 +98,15 @@ public class SuiteTest extends TestCase {
 
     public void testShadowedTests() {
         TestSuite suite = new TestSuite(OverrideTestCase.class);
-        suite.run(fResult);
-        assertEquals(1, fResult.runCount());
+        suite.run(result);
+        assertEquals(1, result.runCount());
     }
 
     public void testAddTestSuite() {
         TestSuite suite = new TestSuite();
         suite.addTestSuite(OneTestCase.class);
-        suite.run(fResult);
-        assertEquals(1, fResult.runCount());
+        suite.run(result);
+        assertEquals(1, result.runCount());
     }
 
     public void testCreateSuiteFromArray() {

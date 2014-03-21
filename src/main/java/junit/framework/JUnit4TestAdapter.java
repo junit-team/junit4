@@ -14,42 +14,42 @@ import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 
 public class JUnit4TestAdapter implements Test, Filterable, Sortable, Describable {
-    private final Class<?> fNewTestClass;
+    private final Class<?> newTestClass;
 
-    private final Runner fRunner;
+    private final Runner runner;
 
-    private final JUnit4TestAdapterCache fCache;
+    private final JUnit4TestAdapterCache cache;
 
     public JUnit4TestAdapter(Class<?> newTestClass) {
         this(newTestClass, JUnit4TestAdapterCache.getDefault());
     }
 
     public JUnit4TestAdapter(final Class<?> newTestClass, JUnit4TestAdapterCache cache) {
-        fCache = cache;
-        fNewTestClass = newTestClass;
-        fRunner = Request.classWithoutSuiteMethod(newTestClass).getRunner();
+        this.cache = cache;
+        this.newTestClass = newTestClass;
+        runner = Request.classWithoutSuiteMethod(newTestClass).getRunner();
     }
 
     public int countTestCases() {
-        return fRunner.testCount();
+        return runner.testCount();
     }
 
     public void run(TestResult result) {
-        fRunner.run(fCache.getNotifier(result, this));
+        runner.run(cache.getNotifier(result, this));
     }
 
     // reflective interface for Eclipse
     public List<Test> getTests() {
-        return fCache.asTestList(getDescription());
+        return cache.asTestList(getDescription());
     }
 
     // reflective interface for Eclipse
     public Class<?> getTestClass() {
-        return fNewTestClass;
+        return newTestClass;
     }
 
     public Description getDescription() {
-        Description description = fRunner.getDescription();
+        Description description = runner.getDescription();
         return removeIgnored(description);
     }
 
@@ -73,14 +73,14 @@ public class JUnit4TestAdapter implements Test, Filterable, Sortable, Describabl
 
     @Override
     public String toString() {
-        return fNewTestClass.getName();
+        return newTestClass.getName();
     }
 
     public void filter(Filter filter) throws NoTestsRemainException {
-        filter.apply(fRunner);
+        filter.apply(runner);
     }
 
     public void sort(Sorter sorter) {
-        sorter.apply(fRunner);
+        sorter.apply(runner);
     }
 }

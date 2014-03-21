@@ -6,23 +6,23 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
 public class RunBefores extends Statement {
-    private final Statement fNext;
+    private final Statement next;
 
-    private final Object fTarget;
+    private final Object target;
 
-    private final List<FrameworkMethod> fBefores;
+    private final List<FrameworkMethod> befores;
 
     public RunBefores(Statement next, List<FrameworkMethod> befores, Object target) {
-        fNext = next;
-        fBefores = befores;
-        fTarget = target;
+        this.next = next;
+        this.befores = befores;
+        this.target = target;
     }
 
     @Override
     public void evaluate() throws Throwable {
-        for (FrameworkMethod before : fBefores) {
-            before.invokeExplosively(fTarget);
+        for (FrameworkMethod before : befores) {
+            before.invokeExplosively(target);
         }
-        fNext.evaluate();
+        next.evaluate();
     }
 }

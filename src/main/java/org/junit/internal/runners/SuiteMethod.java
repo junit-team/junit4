@@ -20,17 +20,17 @@ import junit.framework.Test;
  * </pre>
  */
 public class SuiteMethod extends JUnit38ClassRunner {
-    public SuiteMethod(Class<?> klass) throws Throwable {
-        super(testFromSuiteMethod(klass));
+    public SuiteMethod(Class<?> clazz) throws Throwable {
+        super(testFromSuiteMethod(clazz));
     }
 
-    public static Test testFromSuiteMethod(Class<?> klass) throws Throwable {
+    public static Test testFromSuiteMethod(Class<?> clazz) throws Throwable {
         Method suiteMethod = null;
         Test suite = null;
         try {
-            suiteMethod = klass.getMethod("suite");
+            suiteMethod = clazz.getMethod("suite");
             if (!Modifier.isStatic(suiteMethod.getModifiers())) {
-                throw new Exception(klass.getName() + ".suite() must be static");
+                throw new Exception(clazz.getName() + ".suite() must be static");
             }
             suite = (Test) suiteMethod.invoke(null); // static method
         } catch (InvocationTargetException e) {

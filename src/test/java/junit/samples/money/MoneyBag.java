@@ -15,7 +15,7 @@ import java.util.List;
  * different constructors to create a MoneyBag.
  */
 public class MoneyBag implements IMoney {
-    private List<Money> fMonies = new ArrayList<Money>(5);
+    private List<Money> monies = new ArrayList<Money>(5);
 
     public static IMoney create(IMoney m1, IMoney m2) {
         MoneyBag result = new MoneyBag();
@@ -37,7 +37,7 @@ public class MoneyBag implements IMoney {
     }
 
     void appendBag(MoneyBag aBag) {
-        for (Money each : aBag.fMonies) {
+        for (Money each : aBag.monies) {
             appendMoney(each);
         }
     }
@@ -46,15 +46,15 @@ public class MoneyBag implements IMoney {
         if (aMoney.isZero()) return;
         IMoney old = findMoney(aMoney.currency());
         if (old == null) {
-            fMonies.add(aMoney);
+            monies.add(aMoney);
             return;
         }
-        fMonies.remove(old);
+        monies.remove(old);
         Money sum = (Money) old.add(aMoney);
         if (sum.isZero()) {
             return;
         }
-        fMonies.add(sum);
+        monies.add(sum);
     }
 
     @Override
@@ -67,11 +67,11 @@ public class MoneyBag implements IMoney {
 
         if (anObject instanceof MoneyBag) {
             MoneyBag aMoneyBag = (MoneyBag) anObject;
-            if (aMoneyBag.fMonies.size() != fMonies.size()) {
+            if (aMoneyBag.monies.size() != monies.size()) {
                 return false;
             }
 
-            for (Money each : fMonies) {
+            for (Money each : monies) {
                 if (!aMoneyBag.contains(each)) {
                     return false;
                 }
@@ -82,7 +82,7 @@ public class MoneyBag implements IMoney {
     }
 
     private Money findMoney(String currency) {
-        for (Money each : fMonies) {
+        for (Money each : monies) {
             if (each.currency().equals(currency)) {
                 return each;
             }
@@ -99,20 +99,20 @@ public class MoneyBag implements IMoney {
     @Override
     public int hashCode() {
         int hash = 0;
-        for (Money each : fMonies) {
+        for (Money each : monies) {
             hash ^= each.hashCode();
         }
         return hash;
     }
 
     public boolean isZero() {
-        return fMonies.size() == 0;
+        return monies.size() == 0;
     }
 
     public IMoney multiply(int factor) {
         MoneyBag result = new MoneyBag();
         if (factor != 0) {
-            for (Money each : fMonies) {
+            for (Money each : monies) {
                 result.appendMoney((Money) each.multiply(factor));
             }
         }
@@ -121,15 +121,15 @@ public class MoneyBag implements IMoney {
 
     public IMoney negate() {
         MoneyBag result = new MoneyBag();
-        for (Money each : fMonies) {
+        for (Money each : monies) {
             result.appendMoney((Money) each.negate());
         }
         return result;
     }
 
     private IMoney simplify() {
-        if (fMonies.size() == 1) {
-            return fMonies.iterator().next();
+        if (monies.size() == 1) {
+            return monies.iterator().next();
         }
         return this;
     }
@@ -142,7 +142,7 @@ public class MoneyBag implements IMoney {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
-        for (Money each : fMonies) {
+        for (Money each : monies) {
             sb.append(each);
         }
         sb.append("}");

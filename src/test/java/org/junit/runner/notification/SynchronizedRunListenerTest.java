@@ -21,24 +21,24 @@ import org.junit.Test;
 public class SynchronizedRunListenerTest {
 
     private static class MethodSignature {
-        private final Method fMethod;
-        private final String fName;
-        private final List<Class<?>> fParameterTypes;
+        private final Method method;
+        private final String name;
+        private final List<Class<?>> parameterTypes;
 
         public MethodSignature(Method method) {
-            fMethod = method;
-            fName = method.getName();
-            fParameterTypes = Arrays.asList(method.getParameterTypes());
+            this.method = method;
+            name = method.getName();
+            parameterTypes = Arrays.asList(method.getParameterTypes());
         }
 
         @Override
         public String toString() {
-            return fMethod.toString();
+            return method.toString();
         }
 
         @Override
         public int hashCode() {
-            return fName.hashCode();
+            return name.hashCode();
         }
 
         @Override
@@ -50,7 +50,7 @@ public class SynchronizedRunListenerTest {
                 return false;
             }
             MethodSignature that = (MethodSignature) obj;
-            return fName.equals(that.fName) && fParameterTypes.equals(that.fParameterTypes);
+            return name.equals(that.name) && parameterTypes.equals(that.parameterTypes);
         }
     }
 
@@ -72,10 +72,10 @@ public class SynchronizedRunListenerTest {
     }
 
     private static class NamedListener extends RunListener {
-        private final String fName;
+        private final String name;
 
         public NamedListener(String name) {
-            fName = name;
+            this.name = name;
         }
 
         @Override
@@ -85,7 +85,7 @@ public class SynchronizedRunListenerTest {
 
         @Override
         public int hashCode() {
-            return fName.hashCode();
+            return name.hashCode();
         }
 
         @Override
@@ -97,7 +97,7 @@ public class SynchronizedRunListenerTest {
                 return false;
             }
             NamedListener that = (NamedListener) obj;
-            return this.fName.equals(that.fName);
+            return this.name.equals(that.name);
         }
     }
 

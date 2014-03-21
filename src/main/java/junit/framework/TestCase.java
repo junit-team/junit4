@@ -77,21 +77,21 @@ public abstract class TestCase extends Assert implements Test {
     /**
      * the name of the test case
      */
-    private String fName;
+    private String name;
 
     /**
      * No-arg constructor to enable serialization. This method
      * is not intended to be used by mere mortals without calling setName().
      */
     public TestCase() {
-        fName = null;
+        name = null;
     }
 
     /**
      * Constructs a test case with the given name.
      */
     public TestCase(String name) {
-        fName = name;
+        this.name = name;
     }
 
     /**
@@ -157,19 +157,19 @@ public abstract class TestCase extends Assert implements Test {
      * @throws Throwable if any exception is thrown
      */
     protected void runTest() throws Throwable {
-        assertNotNull("TestCase.fName cannot be null", fName); // Some VMs crash when calling getMethod(null,null);
+        assertNotNull("TestCase.name cannot be null", name); // Some VMs crash when calling getMethod(null,null);
         Method runMethod = null;
         try {
             // use getMethod to get all public inherited
             // methods. getDeclaredMethods returns all
             // methods of this class but excludes the
             // inherited ones.
-            runMethod = getClass().getMethod(fName, (Class[]) null);
+            runMethod = getClass().getMethod(name, (Class[]) null);
         } catch (NoSuchMethodException e) {
-            fail("Method \"" + fName + "\" not found");
+            fail("Method \"" + name + "\" not found");
         }
         if (!Modifier.isPublic(runMethod.getModifiers())) {
-            fail("Method \"" + fName + "\" should be public");
+            fail("Method \"" + name + "\" should be public");
         }
 
         try {
@@ -532,7 +532,7 @@ public abstract class TestCase extends Assert implements Test {
      * @return the name of the TestCase
      */
     public String getName() {
-        return fName;
+        return name;
     }
 
     /**
@@ -541,6 +541,6 @@ public abstract class TestCase extends Assert implements Test {
      * @param name the name to set
      */
     public void setName(String name) {
-        fName = name;
+        this.name = name;
     }
 }

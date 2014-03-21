@@ -13,14 +13,14 @@ import org.hamcrest.Matcher;
  */
 class ExpectedExceptionMatcherBuilder {
 
-    private final List<Matcher<?>> fMatchers = new ArrayList<Matcher<?>>();
+    private final List<Matcher<?>> matchers = new ArrayList<Matcher<?>>();
 
     void add(Matcher<?> matcher) {
-        fMatchers.add(matcher);
+        matchers.add(matcher);
     }
 
     boolean expectsThrowable() {
-        return !fMatchers.isEmpty();
+        return !matchers.isEmpty();
     }
 
     Matcher<Throwable> build() {
@@ -28,15 +28,15 @@ class ExpectedExceptionMatcherBuilder {
     }
 
     private Matcher<Throwable> allOfTheMatchers() {
-        if (fMatchers.size() == 1) {
-            return cast(fMatchers.get(0));
+        if (matchers.size() == 1) {
+            return cast(matchers.get(0));
         }
         return allOf(castedMatchers());
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private List<Matcher<? super Throwable>> castedMatchers() {
-        return new ArrayList<Matcher<? super Throwable>>((List) fMatchers);
+        return new ArrayList<Matcher<? super Throwable>>((List) matchers);
     }
 
     @SuppressWarnings("unchecked")

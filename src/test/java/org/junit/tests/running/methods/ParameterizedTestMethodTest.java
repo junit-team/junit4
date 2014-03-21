@@ -133,8 +133,8 @@ public class ParameterizedTestMethodTest {
         }
     }
 
-    private Class<?> fClass;
-    private int fErrorCount;
+    private Class<?> clazz;
+    private int errorCount;
 
     static public class SuperWrong {
         @Test
@@ -155,9 +155,9 @@ public class ParameterizedTestMethodTest {
         }
     }
 
-    public ParameterizedTestMethodTest(Class<?> class1, int errorCount) {
-        fClass = class1;
-        fErrorCount = errorCount;
+    public ParameterizedTestMethodTest(Class<?> clazz, int errorCount) {
+        this.clazz = clazz;
+        this.errorCount = errorCount;
     }
 
     @Parameters
@@ -178,8 +178,8 @@ public class ParameterizedTestMethodTest {
 
     @Test
     public void testFailures() throws Exception {
-        List<Throwable> problems = validateAllMethods(fClass);
-        assertEquals(fErrorCount, problems.size());
+        List<Throwable> problems = validateAllMethods(clazz);
+        assertEquals(errorCount, problems.size());
     }
 
     public static junit.framework.Test suite() {

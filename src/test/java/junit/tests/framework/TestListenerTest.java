@@ -10,37 +10,37 @@ import junit.framework.TestResult;
  * Test class used in SuiteTest
  */
 public class TestListenerTest extends TestCase implements TestListener {
-    private TestResult fResult;
-    private int fStartCount;
-    private int fEndCount;
-    private int fFailureCount;
-    private int fErrorCount;
+    private TestResult result;
+    private int startCount;
+    private int endCount;
+    private int failureCount;
+    private int errorCount;
 
     public void addError(Test test, Throwable e) {
-        fErrorCount++;
+        errorCount++;
     }
 
     public void addFailure(Test test, AssertionFailedError t) {
-        fFailureCount++;
+        failureCount++;
     }
 
     public void endTest(Test test) {
-        fEndCount++;
+        endCount++;
     }
 
     @Override
     protected void setUp() {
-        fResult = new TestResult();
-        fResult.addListener(this);
+        result = new TestResult();
+        result.addListener(this);
 
-        fStartCount = 0;
-        fEndCount = 0;
-        fFailureCount = 0;
-        fErrorCount = 0;
+        startCount = 0;
+        endCount = 0;
+        failureCount = 0;
+        errorCount = 0;
     }
 
     public void startTest(Test test) {
-        fStartCount++;
+        startCount++;
     }
 
     public void testError() {
@@ -50,9 +50,9 @@ public class TestListenerTest extends TestCase implements TestListener {
                 throw new Error();
             }
         };
-        test.run(fResult);
-        assertEquals(1, fErrorCount);
-        assertEquals(1, fEndCount);
+        test.run(result);
+        assertEquals(1, errorCount);
+        assertEquals(1, endCount);
     }
 
     public void testFailure() {
@@ -62,9 +62,9 @@ public class TestListenerTest extends TestCase implements TestListener {
                 fail();
             }
         };
-        test.run(fResult);
-        assertEquals(1, fFailureCount);
-        assertEquals(1, fEndCount);
+        test.run(result);
+        assertEquals(1, failureCount);
+        assertEquals(1, endCount);
     }
 
     public void testStartStop() {
@@ -73,8 +73,8 @@ public class TestListenerTest extends TestCase implements TestListener {
             public void runTest() {
             }
         };
-        test.run(fResult);
-        assertEquals(1, fStartCount);
-        assertEquals(1, fEndCount);
+        test.run(result);
+        assertEquals(1, startCount);
+        assertEquals(1, endCount);
     }
 }

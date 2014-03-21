@@ -53,26 +53,26 @@ public class CommandLineTest {
         assertTrue(testWasRun);
     }
 
-    private static int fCount;
+    private static int count;
 
     static public class Count {
         @Test
         public void increment() {
-            fCount++;
+            count++;
         }
     }
 
     @Test
     public void runTwoClassesAsArray() {
-        fCount = 0;
+        count = 0;
         JUnitCore.runClasses(new Class[]{Count.class, Count.class});
-        assertEquals(2, fCount);
+        assertEquals(2, count);
     }
 
     @Test
     public void runTwoClasses() {
-        fCount = 0;
+        count = 0;
         JUnitCore.runClasses(Count.class, Count.class);
-        assertEquals(2, fCount);
+        assertEquals(2, count);
     }
 }

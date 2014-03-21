@@ -8,11 +8,11 @@ import org.junit.internal.JUnitSystem;
 
 public class TestSystem implements JUnitSystem {
     private PrintStream out;
-    private ByteArrayOutputStream fOutContents;
+    private ByteArrayOutputStream outContents;
 
     public TestSystem() {
-        fOutContents = new ByteArrayOutputStream();
-        out = new PrintStream(fOutContents);
+        outContents = new ByteArrayOutputStream();
+        out = new PrintStream(outContents);
     }
 
     public PrintStream out() {
@@ -20,7 +20,7 @@ public class TestSystem implements JUnitSystem {
     }
 
     public OutputStream outContents() {
-        return fOutContents;
+        return outContents;
     }
 
 }

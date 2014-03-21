@@ -14,21 +14,21 @@ import org.junit.runner.Description;
 import org.junit.runner.Request;
 
 public class JUnit38SortingTest {
-    private MaxCore fMax;
-    private File fMaxFile;
+    private MaxCore max;
+    private File maxFile;
 
     @Before
     public void createMax() {
-        fMaxFile = new File("MaxCore.ser");
-        if (fMaxFile.exists()) {
-            fMaxFile.delete();
+        maxFile = new File("MaxCore.ser");
+        if (maxFile.exists()) {
+            maxFile.delete();
         }
-        fMax = MaxCore.storedLocally(fMaxFile);
+        max = MaxCore.storedLocally(maxFile);
     }
 
     @After
     public void forgetMax() {
-        fMaxFile.delete();
+        maxFile.delete();
     }
 
     public static class JUnit4Test {
@@ -52,8 +52,8 @@ public class JUnit38SortingTest {
     @Test
     public void preferRecentlyFailed38Test() {
         Request request = Request.classes(JUnit4Test.class, JUnit38Test.class);
-        fMax.run(request);
-        List<Description> tests = fMax.sortedLeavesForTest(request);
+        max.run(request);
+        List<Description> tests = max.sortedLeavesForTest(request);
         Description dontSucceed = Description.createTestDescription(
                 JUnit38Test.class, "testFails");
         assertEquals(dontSucceed, tests.get(0));

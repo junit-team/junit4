@@ -23,7 +23,7 @@ class EventCollector extends RunListener {
         return new TypeSafeMatcher<EventCollector>() {
             @Override
             public boolean matchesSafely(EventCollector item) {
-                return item.fFailures.size() == numberOfFailures;
+                return item.failures.size() == numberOfFailures;
             }
 
             public void describeTo(org.hamcrest.Description description) {
@@ -35,7 +35,7 @@ class EventCollector extends RunListener {
             @Override
             protected void describeMismatchSafely(EventCollector item,
                     org.hamcrest.Description description) {
-                description.appendValue(item.fFailures.size());
+                description.appendValue(item.failures.size());
                 description.appendText(" failures");
             }
         };
@@ -54,7 +54,7 @@ class EventCollector extends RunListener {
         return new TypeSafeMatcher<EventCollector>() {
             @Override
             public boolean matchesSafely(EventCollector item) {
-                return item.fAssumptionFailures.size() == numberOfFailures;
+                return item.assumptionFailures.size() == numberOfFailures;
             }
 
             public void describeTo(org.hamcrest.Description description) {
@@ -83,7 +83,7 @@ class EventCollector extends RunListener {
             @Override
             public boolean matchesSafely(EventCollector item) {
                 return hasSingleFailure().matches(item)
-                        && messageMatcher.matches(item.fFailures.get(0)
+                        && messageMatcher.matches(item.failures.get(0)
                         .getMessage());
             }
 
@@ -99,7 +99,7 @@ class EventCollector extends RunListener {
                 hasSingleFailure().describeMismatch(item, description);
                 description.appendText(": ");
                 boolean first= true;
-                for (Failure f : item.fFailures) {
+                for (Failure f : item.failures) {
                     if (!first) {
                         description.appendText(" ,");
                     }
@@ -116,7 +116,7 @@ class EventCollector extends RunListener {
         return new TypeSafeMatcher<EventCollector>() {
             @Override
             public boolean matchesSafely(EventCollector item) {
-                for (Failure f : item.fFailures) {
+                for (Failure f : item.failures) {
                     return exceptionMatcher.matches(f.getException());
                 }
                 return false;
@@ -129,63 +129,63 @@ class EventCollector extends RunListener {
         };
     }
 
-    private final List<Description> fTestRunsStarted = new ArrayList<Description>();
+    private final List<Description> testRunsStarted = new ArrayList<Description>();
 
-    private final List<Result> fTestRunsFinished = new ArrayList<Result>();
+    private final List<Result> testRunsFinished = new ArrayList<Result>();
 
-    private final List<Description> fTestsStarted = new ArrayList<Description>();
+    private final List<Description> testsStarted = new ArrayList<Description>();
 
-    private final List<Description> fTestsFinished = new ArrayList<Description>();
+    private final List<Description> testsFinished = new ArrayList<Description>();
 
-    private final List<Failure> fFailures = new ArrayList<Failure>();
+    private final List<Failure> failures = new ArrayList<Failure>();
 
-    private final List<Failure> fAssumptionFailures = new ArrayList<Failure>();
+    private final List<Failure> assumptionFailures = new ArrayList<Failure>();
 
-    private final List<Description> fTestsIgnored = new ArrayList<Description>();
+    private final List<Description> testsIgnored = new ArrayList<Description>();
 
     @Override
     public void testRunStarted(Description description) throws Exception {
-        fTestRunsStarted.add(description);
+        testRunsStarted.add(description);
     }
 
     @Override
     public void testRunFinished(Result result) throws Exception {
-        fTestRunsFinished.add(result);
+        testRunsFinished.add(result);
     }
 
     @Override
     public void testStarted(Description description) throws Exception {
-        fTestsStarted.add(description);
+        testsStarted.add(description);
     }
 
     @Override
     public void testFinished(Description description) throws Exception {
-        fTestsFinished.add(description);
+        testsFinished.add(description);
     }
 
     @Override
     public void testFailure(Failure failure) throws Exception {
-        fFailures.add(failure);
+        failures.add(failure);
     }
 
     @Override
     public void testAssumptionFailure(Failure failure) {
-        fAssumptionFailures.add(failure);
+        assumptionFailures.add(failure);
     }
 
     @Override
     public void testIgnored(Description description) throws Exception {
-        fTestsIgnored.add(description);
+        testsIgnored.add(description);
     }
 
     @Override
     public String toString() {
-        return fTestRunsStarted.size() + " test runs started, "
-            + fTestRunsFinished.size() + " test runs finished, "
-            + fTestsStarted.size() + " tests started, "
-            + fTestsFinished.size() + " tests finished, "
-            + fFailures.size() + " failures, "
-            + fAssumptionFailures.size() + " assumption failures, "
-            + fTestsIgnored.size() + " tests ignored";
+        return testRunsStarted.size() + " test runs started, "
+            + testRunsFinished.size() + " test runs finished, "
+            + testsStarted.size() + " tests started, "
+            + testsFinished.size() + " tests finished, "
+            + failures.size() + " failures, "
+            + assumptionFailures.size() + " assumption failures, "
+            + testsIgnored.size() + " tests ignored";
     }
 }

@@ -28,7 +28,7 @@ import junit.runner.Version;
  * summary at the end.
  */
 public class TestRunner extends BaseTestRunner {
-    private ResultPrinter fPrinter;
+    private ResultPrinter printer;
 
     public static final int SUCCESS_EXIT = 0;
     public static final int FAILURE_EXIT = 1;
@@ -52,7 +52,7 @@ public class TestRunner extends BaseTestRunner {
      * Constructs a TestRunner using the given ResultPrinter all the output
      */
     public TestRunner(ResultPrinter printer) {
-        fPrinter = printer;
+        this.printer = printer;
     }
 
     /**
@@ -111,12 +111,12 @@ public class TestRunner extends BaseTestRunner {
 
     public TestResult doRun(Test suite, boolean wait) {
         TestResult result = createTestResult();
-        result.addListener(fPrinter);
+        result.addListener(printer);
         long startTime = System.currentTimeMillis();
         suite.run(result);
         long endTime = System.currentTimeMillis();
         long runTime = endTime - startTime;
-        fPrinter.print(result, runTime);
+        printer.print(result, runTime);
 
         pause(wait);
         return result;
@@ -124,7 +124,7 @@ public class TestRunner extends BaseTestRunner {
 
     protected void pause(boolean wait) {
         if (!wait) return;
-        fPrinter.printWaitPrompt();
+        printer.printWaitPrompt();
         try {
             System.in.read();
         } catch (Exception e) {
@@ -199,7 +199,7 @@ public class TestRunner extends BaseTestRunner {
     }
 
     public void setPrinter(ResultPrinter printer) {
-        fPrinter = printer;
+        this.printer = printer;
     }
 
 

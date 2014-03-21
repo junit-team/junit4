@@ -12,12 +12,12 @@ import junit.textui.TestRunner;
  */
 public class TextRunnerSingleMethodTest extends TestCase {
 
-    static boolean fgWasInvoked;
+    static boolean wasInvoked;
 
     public static class InvocationTest extends TestCase {
 
         public void testWasInvoked() {
-            TextRunnerSingleMethodTest.fgWasInvoked = true;
+            TextRunnerSingleMethodTest.wasInvoked = true;
         }
 
         public void testNotInvoked() {
@@ -31,9 +31,9 @@ public class TextRunnerSingleMethodTest extends TestCase {
         String[] args = {
                 "-m", "junit.tests.runner.TextRunnerSingleMethodTest$InvocationTest.testWasInvoked"
         };
-        fgWasInvoked = false;
+        wasInvoked = false;
         t.start(args);
-        assertTrue(fgWasInvoked);
+        assertTrue(wasInvoked);
     }
 
 }

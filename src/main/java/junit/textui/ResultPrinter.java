@@ -12,11 +12,11 @@ import junit.framework.TestResult;
 import junit.runner.BaseTestRunner;
 
 public class ResultPrinter implements TestListener {
-    PrintStream fWriter;
-    int fColumn = 0;
+    PrintStream writer;
+    int column = 0;
 
     public ResultPrinter(PrintStream writer) {
-        fWriter = writer;
+        this.writer = writer;
     }
 
     /* API for use by textui.TestRunner */
@@ -100,7 +100,7 @@ public class ResultPrinter implements TestListener {
     }
 
     public PrintStream getWriter() {
-        return fWriter;
+        return writer;
     }
 
     /**
@@ -128,9 +128,9 @@ public class ResultPrinter implements TestListener {
      */
     public void startTest(Test test) {
         getWriter().print(".");
-        if (fColumn++ >= 40) {
+        if (column++ >= 40) {
             getWriter().println();
-            fColumn = 0;
+            column = 0;
         }
     }
 

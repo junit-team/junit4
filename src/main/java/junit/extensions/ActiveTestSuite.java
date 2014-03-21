@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  * -- Aarhus Radisson Scandinavian Center 11th floor
  */
 public class ActiveTestSuite extends TestSuite {
-    private volatile int fActiveTestDeathCount;
+    private volatile int activeTestDeathCount;
 
     public ActiveTestSuite() {
     }
@@ -31,7 +31,7 @@ public class ActiveTestSuite extends TestSuite {
 
     @Override
     public void run(TestResult result) {
-        fActiveTestDeathCount = 0;
+        activeTestDeathCount = 0;
         super.run(result);
         waitUntilFinished();
     }
@@ -54,7 +54,7 @@ public class ActiveTestSuite extends TestSuite {
     }
 
     synchronized void waitUntilFinished() {
-        while (fActiveTestDeathCount < testCount()) {
+        while (activeTestDeathCount < testCount()) {
             try {
                 wait();
             } catch (InterruptedException e) {
@@ -64,7 +64,7 @@ public class ActiveTestSuite extends TestSuite {
     }
 
     synchronized public void runFinished() {
-        fActiveTestDeathCount++;
+        activeTestDeathCount++;
         notifyAll();
     }
 }

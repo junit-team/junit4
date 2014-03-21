@@ -15,9 +15,9 @@ import org.junit.Test;
  * A sample test case, testing {@link java.util.ArrayList}.
  */
 public class ListTest {
-    protected List<Integer> fEmpty;
-    protected List<Integer> fFull;
-    protected static List<Integer> fgHeavy;
+    protected List<Integer> empty;
+    protected List<Integer> full;
+    protected static List<Integer> heavy;
 
     public static void main(String... args) {
         junit.textui.TestRunner.run(suite());
@@ -25,19 +25,19 @@ public class ListTest {
 
     @BeforeClass
     public static void setUpOnce() {
-        fgHeavy = new ArrayList<Integer>();
+        heavy = new ArrayList<Integer>();
         for (int i = 0; i < 1000; i++) {
-            fgHeavy.add(i);
+            heavy.add(i);
         }
     }
 
     @Before
     public void setUp() {
-        fEmpty = new ArrayList<Integer>();
-        fFull = new ArrayList<Integer>();
-        fFull.add(1);
-        fFull.add(2);
-        fFull.add(3);
+        empty = new ArrayList<Integer>();
+        full = new ArrayList<Integer>();
+        full.add(1);
+        full.add(2);
+        full.add(3);
     }
 
     public static junit.framework.Test suite() {
@@ -47,45 +47,45 @@ public class ListTest {
     @Ignore("not today")
     @Test
     public void capacity() {
-        int size = fFull.size();
+        int size = full.size();
         for (int i = 0; i < 100; i++) {
-            fFull.add(i);
+            full.add(i);
         }
-        assertTrue(fFull.size() == 100 + size);
+        assertTrue(full.size() == 100 + size);
     }
 
     @Test
     public void testCopy() {
-        List<Integer> copy = new ArrayList<Integer>(fFull.size());
-        copy.addAll(fFull);
-        assertTrue(copy.size() == fFull.size());
+        List<Integer> copy = new ArrayList<Integer>(full.size());
+        copy.addAll(full);
+        assertTrue(copy.size() == full.size());
         assertTrue(copy.contains(1));
     }
 
     @Test
     public void contains() {
-        assertTrue(fFull.contains(1));
-        assertTrue(!fEmpty.contains(1));
+        assertTrue(full.contains(1));
+        assertTrue(!empty.contains(1));
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void elementAt() {
-        int i = fFull.get(0);
+        int i = full.get(0);
         assertTrue(i == 1);
-        fFull.get(fFull.size()); // Should throw IndexOutOfBoundsException
+        full.get(full.size()); // Should throw IndexOutOfBoundsException
     }
 
     @Test
     public void removeAll() {
-        fFull.removeAll(fFull);
-        fEmpty.removeAll(fEmpty);
-        assertTrue(fFull.isEmpty());
-        assertTrue(fEmpty.isEmpty());
+        full.removeAll(full);
+        empty.removeAll(empty);
+        assertTrue(full.isEmpty());
+        assertTrue(empty.isEmpty());
     }
 
     @Test
     public void removeElement() {
-        fFull.remove(new Integer(3));
-        assertTrue(!fFull.contains(3));
+        full.remove(new Integer(3));
+        assertTrue(!full.contains(3));
     }
 }

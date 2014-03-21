@@ -10,8 +10,8 @@ import org.junit.runner.manipulation.NoTestsRemainException;
  * A filtered {@link Request}.
  */
 public final class FilterRequest extends Request {
-    private final Request fRequest;
-    private final Filter fFilter;
+    private final Request request;
+    private final Filter filter;
 
     /**
      * Creates a filtered Request
@@ -21,20 +21,20 @@ public final class FilterRequest extends Request {
      * <code>classRequest</code>
      */
     public FilterRequest(Request classRequest, Filter filter) {
-        fRequest = classRequest;
-        fFilter = filter;
+        request = classRequest;
+        this.filter = filter;
     }
 
     @Override
     public Runner getRunner() {
         try {
-            Runner runner = fRequest.getRunner();
-            fFilter.apply(runner);
+            Runner runner = request.getRunner();
+            filter.apply(runner);
             return runner;
         } catch (NoTestsRemainException e) {
             return new ErrorReportingRunner(Filter.class, new Exception(String
-                    .format("No tests found matching %s from %s", fFilter
-                            .describe(), fRequest.toString())));
+                    .format("No tests found matching %s from %s", filter
+                            .describe(), request.toString())));
         }
     }
 }

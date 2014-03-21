@@ -184,15 +184,15 @@ public class Parameterized extends Suite {
     }
 
     protected class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
-        private final Object[] fParameters;
+        private final Object[] parameters;
 
-        private final String fName;
+        private final String name;
 
         protected TestClassRunnerForParameters(Class<?> type, String pattern, int index, Object[] parameters) throws InitializationError {
             super(type);
 
-            fParameters = parameters;
-            fName = nameFor(pattern, index, parameters);
+            this.parameters = parameters;
+            name = nameFor(pattern, index, parameters);
         }
 
         @Override
@@ -205,14 +205,14 @@ public class Parameterized extends Suite {
         }
 
         private Object createTestUsingConstructorInjection() throws Exception {
-            return getTestClass().getOnlyConstructor().newInstance(fParameters);
+            return getTestClass().getOnlyConstructor().newInstance(parameters);
         }
 
         private Object createTestUsingFieldInjection() throws Exception {
             List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter();
-            if (annotatedFieldsByParameter.size() != fParameters.length) {
+            if (annotatedFieldsByParameter.size() != parameters.length) {
                 throw new Exception("Wrong number of parameters and @Parameter fields." +
-                        " @Parameter fields counted: " + annotatedFieldsByParameter.size() + ", available parameters: " + fParameters.length + ".");
+                        " @Parameter fields counted: " + annotatedFieldsByParameter.size() + ", available parameters: " + parameters.length + ".");
             }
             Object testClassInstance = getTestClass().getJavaClass().newInstance();
             for (FrameworkField each : annotatedFieldsByParameter) {
@@ -220,11 +220,11 @@ public class Parameterized extends Suite {
                 Parameter annotation = field.getAnnotation(Parameter.class);
                 int index = annotation.value();
                 try {
-                    field.set(testClassInstance, fParameters[index]);
+                    field.set(testClassInstance, parameters[index]);
                 } catch (IllegalArgumentException iare) {
                     throw new Exception(getTestClass().getName() + ": Trying to set " + field.getName() +
-                            " with the value " + fParameters[index] +
-                            " that is not the right type (" + fParameters[index].getClass().getSimpleName() + " instead of " +
+                            " with the value " + parameters[index] +
+                            " that is not the right type (" + parameters[index].getClass().getSimpleName() + " instead of " +
                             field.getType().getSimpleName() + ").", iare);
                 }
             }
@@ -239,7 +239,7 @@ public class Parameterized extends Suite {
 
         @Override
         protected String getName() {
-            return fName;
+            return name;
         }
 
         @Override
@@ -297,7 +297,7 @@ public class Parameterized extends Suite {
 
     private static final List<Runner> NO_RUNNERS = Collections.<Runner>emptyList();
 
-    private final List<Runner> fRunners;
+    private final List<Runner> runners;
 
     /**
      * Only called reflectively. Do not use programmatically.
@@ -306,12 +306,12 @@ public class Parameterized extends Suite {
         super(klass, NO_RUNNERS);
         Parameters parameters = getParametersMethod().getAnnotation(
                 Parameters.class);
-        fRunners = Collections.unmodifiableList(createRunnersForParameters(allParameters(), parameters.name()));
+        runners = Collections.unmodifiableList(createRunnersForParameters(allParameters(), parameters.name()));
     }
 
     @Override
     protected List<Runner> getChildren() {
-        return fRunners;
+        return runners;
     }
 
     private Runner createRunnerWithNotNormalizedParameters(String pattern,

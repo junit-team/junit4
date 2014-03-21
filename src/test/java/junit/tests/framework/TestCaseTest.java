@@ -13,11 +13,11 @@ import junit.tests.WasRun;
 public class TestCaseTest extends TestCase {
 
     static class TornDown extends TestCase {
-        boolean fTornDown = false;
+        boolean tornDown = false;
 
         @Override
         protected void tearDown() {
-            fTornDown = true;
+            tornDown = true;
         }
 
         @Override
@@ -57,7 +57,7 @@ public class TestCaseTest extends TestCase {
             }
         };
         verifyError(fails);
-        assertTrue(fails.fTornDown);
+        assertTrue(fails.tornDown);
     }
 
     public void testSetupFails() {
@@ -96,7 +96,7 @@ public class TestCaseTest extends TestCase {
     public void testTearDownAfterError() {
         TornDown fails = new TornDown();
         verifyError(fails);
-        assertTrue(fails.fTornDown);
+        assertTrue(fails.tornDown);
     }
 
     public void testTearDownFails() {
@@ -121,13 +121,13 @@ public class TestCaseTest extends TestCase {
             }
         };
         verifyError(fails);
-        assertTrue(!fails.fTornDown);
+        assertTrue(!fails.tornDown);
     }
 
     public void testWasRun() {
         WasRun test = new WasRun();
         test.run();
-        assertTrue(test.fWasRun);
+        assertTrue(test.wasRun);
     }
 
     public void testExceptionRunningAndTearDown() {

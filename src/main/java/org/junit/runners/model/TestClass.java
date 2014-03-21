@@ -31,9 +31,9 @@ public class TestClass implements Annotatable {
     private static final FieldComparator FIELD_COMPARATOR = new FieldComparator();
     private static final MethodComparator METHOD_COMPARATOR = new MethodComparator();
 
-    private final Class<?> fClass;
-    private final Map<Class<? extends Annotation>, List<FrameworkMethod>> fMethodsForAnnotations;
-    private final Map<Class<? extends Annotation>, List<FrameworkField>> fFieldsForAnnotations;
+    private final Class<?> clazz;
+    private final Map<Class<? extends Annotation>, List<FrameworkMethod>> methodsForAnnotations;
+    private final Map<Class<? extends Annotation>, List<FrameworkField>> fieldsForAnnotations;
 
     /**
      * Creates a {@code TestClass} wrapping {@code klass}. Each time this
@@ -42,7 +42,7 @@ public class TestClass implements Annotatable {
      * try to share instances of {@code TestClass} where possible.
      */
     public TestClass(Class<?> klass) {
-        fClass = klass;
+        clazz = klass;
         if (klass != null && klass.getConstructors().length > 1) {
             throw new IllegalArgumentException(
                     "Test class can only have one constructor");
@@ -55,12 +55,12 @@ public class TestClass implements Annotatable {
 
         scanAnnotatedMembers(methodsForAnnotations, fieldsForAnnotations);
 
-        fMethodsForAnnotations = makeDeeplyUnmodifiable(methodsForAnnotations);
-        fFieldsForAnnotations = makeDeeplyUnmodifiable(fieldsForAnnotations);
+        this.methodsForAnnotations = makeDeeplyUnmodifiable(methodsForAnnotations);
+        this.fieldsForAnnotations = makeDeeplyUnmodifiable(fieldsForAnnotations);
     }
 
     protected void scanAnnotatedMembers(Map<Class<? extends Annotation>, List<FrameworkMethod>> methodsForAnnotations, Map<Class<? extends Annotation>, List<FrameworkField>> fieldsForAnnotations) {
-        for (Class<?> eachClass : getSuperClasses(fClass)) {
+        for (Class<?> eachClass : getSuperClasses(clazz)) {
             for (Method eachMethod : MethodSorter.getDeclaredMethods(eachClass)) {
                 addToAnnotationLists(new FrameworkMethod(eachMethod), methodsForAnnotations);
             }
@@ -111,7 +111,7 @@ public class TestClass implements Annotatable {
      * @since 4.12
      */
     public List<FrameworkMethod> getAnnotatedMethods() {
-        List<FrameworkMethod> methods = collectValues(fMethodsForAnnotations);
+        List<FrameworkMethod> methods = collectValues(methodsForAnnotations);
         Collections.sort(methods, METHOD_COMPARATOR);
         return methods;
     }
@@ -122,7 +122,7 @@ public class TestClass implements Annotatable {
      */
     public List<FrameworkMethod> getAnnotatedMethods(
             Class<? extends Annotation> annotationClass) {
-        return Collections.unmodifiableList(getAnnotatedMembers(fMethodsForAnnotations, annotationClass, false));
+        return Collections.unmodifiableList(getAnnotatedMembers(methodsForAnnotations, annotationClass, false));
     }
 
     /**
@@ -132,7 +132,7 @@ public class TestClass implements Annotatable {
      * @since 4.12
      */
     public List<FrameworkField> getAnnotatedFields() {
-        return collectValues(fFieldsForAnnotations);
+        return collectValues(fieldsForAnnotations);
     }
 
     /**
@@ -141,7 +141,7 @@ public class TestClass implements Annotatable {
      */
     public List<FrameworkField> getAnnotatedFields(
             Class<? extends Annotation> annotationClass) {
-        return Collections.unmodifiableList(getAnnotatedMembers(fFieldsForAnnotations, annotationClass, false));
+        return Collections.unmodifiableList(getAnnotatedMembers(fieldsForAnnotations, annotationClass, false));
     }
 
     private <T> List<T> collectValues(Map<?, List<T>> map) {
@@ -180,17 +180,17 @@ public class TestClass implements Annotatable {
      * Returns the underlying Java class.
      */
     public Class<?> getJavaClass() {
-        return fClass;
+        return clazz;
     }
 
     /**
      * Returns the class's name.
      */
     public String getName() {
-        if (fClass == null) {
+        if (clazz == null) {
             return "null";
         }
-        return fClass.getName();
+        return clazz.getName();
     }
 
     /**
@@ -199,7 +199,7 @@ public class TestClass implements Annotatable {
      */
 
     public Constructor<?> getOnlyConstructor() {
-        Constructor<?>[] constructors = fClass.getConstructors();
+        Constructor<?>[] constructors = clazz.getConstructors();
         Assert.assertEquals(1, constructors.length);
         return constructors[0];
     }
@@ -208,10 +208,10 @@ public class TestClass implements Annotatable {
      * Returns the annotations on this class
      */
     public Annotation[] getAnnotations() {
-        if (fClass == null) {
+        if (clazz == null) {
             return new Annotation[0];
         }
-        return fClass.getAnnotations();
+        return clazz.getAnnotations();
     }
 
     public <T> List<T> getAnnotatedFieldValues(Object test,
@@ -249,7 +249,7 @@ public class TestClass implements Annotatable {
     }
 
     public boolean isANonStaticInnerClass() {
-        return fClass.isMemberClass() && !isStatic(fClass.getModifiers());
+        return clazz.isMemberClass() && !isStatic(clazz.getModifiers());
     }
 
     /**

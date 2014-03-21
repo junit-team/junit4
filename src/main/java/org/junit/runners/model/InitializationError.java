@@ -10,14 +10,14 @@ import java.util.List;
  */
 public class InitializationError extends Exception {
     private static final long serialVersionUID = 1L;
-    private final List<Throwable> fErrors;
+    private final List<Throwable> errors;
 
     /**
      * Construct a new {@code InitializationError} with one or more
      * errors {@code errors} as causes
      */
     public InitializationError(List<Throwable> errors) {
-        fErrors = errors;
+        this.errors = errors;
     }
 
     public InitializationError(Throwable error) {
@@ -36,6 +36,6 @@ public class InitializationError extends Exception {
      * Returns one or more Throwables that led to this initialization error.
      */
     public List<Throwable> getCauses() {
-        return fErrors;
+        return errors;
     }
 }

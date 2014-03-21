@@ -26,14 +26,14 @@ import static org.junit.Assert.assertTrue;
  */
 public final class ConcurrentRunNotifierTest {
     private static final long TIMEOUT = 3;
-    private final RunNotifier fNotifier = new RunNotifier();
+    private final RunNotifier notifier = new RunNotifier();
 
     private static class ConcurrentRunListener extends RunListener {
-        final AtomicInteger fTestStarted = new AtomicInteger(0);
+        final AtomicInteger testStarted = new AtomicInteger(0);
 
         @Override
         public void testStarted(Description description) throws Exception {
-            fTestStarted.incrementAndGet();
+            testStarted.incrementAndGet();
         }
     }
 
@@ -41,26 +41,26 @@ public final class ConcurrentRunNotifierTest {
     public void realUsage() throws Exception {
         ConcurrentRunListener listener1 = new ConcurrentRunListener();
         ConcurrentRunListener listener2 = new ConcurrentRunListener();
-        fNotifier.addListener(listener1);
-        fNotifier.addListener(listener2);
+        notifier.addListener(listener1);
+        notifier.addListener(listener2);
 
         final int numParallelTests = 4;
         ExecutorService pool = Executors.newFixedThreadPool(numParallelTests);
         for (int i = 0; i < numParallelTests; ++i) {
             pool.submit(new Runnable() {
                 public void run() {
-                    fNotifier.fireTestStarted(null);
+                    notifier.fireTestStarted(null);
                 }
             });
         }
         pool.shutdown();
         assertTrue(pool.awaitTermination(TIMEOUT, TimeUnit.SECONDS));
 
-        fNotifier.removeListener(listener1);
-        fNotifier.removeListener(listener2);
+        notifier.removeListener(listener1);
+        notifier.removeListener(listener2);
 
-        assertThat(listener1.fTestStarted.get(), is(numParallelTests));
-        assertThat(listener2.fTestStarted.get(), is(numParallelTests));
+        assertThat(listener1.testStarted.get(), is(numParallelTests));
+        assertThat(listener2.testStarted.get(), is(numParallelTests));
     }
 
     private static class ExaminedListener extends RunListener {
@@ -110,10 +110,10 @@ public final class ConcurrentRunNotifierTest {
                 public Void call() throws Exception {
                     trigger.await();
                     while (condition.get()) {
-                        fNotifier.fireTestStarted(null);
+                        notifier.fireTestStarted(null);
                         latch.countDown();
                     }
-                    fNotifier.fireTestStarted(null);
+                    notifier.fireTestStarted(null);
                     return null;
                 }
             });
@@ -149,7 +149,7 @@ public final class ConcurrentRunNotifierTest {
         new AbstractConcurrentFailuresTest() {
             @Override
             protected void addListener(ExaminedListener listener) {
-                fNotifier.addListener(listener);
+                notifier.addListener(listener);
             }
         }.test();
     }
@@ -163,7 +163,7 @@ public final class ConcurrentRunNotifierTest {
         new AbstractConcurrentFailuresTest() {
             @Override
             protected void addListener(ExaminedListener listener) {
-                fNotifier.addFirstListener(listener);
+                notifier.addFirstListener(listener);
             }
         }.test();
     }

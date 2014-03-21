@@ -12,10 +12,10 @@ import org.junit.runner.notification.RunNotifier;
 
 public class JUnit4TestAdapterCache extends HashMap<Description, Test> {
     private static final long serialVersionUID = 1L;
-    private static final JUnit4TestAdapterCache fInstance = new JUnit4TestAdapterCache();
+    private static final JUnit4TestAdapterCache instance = new JUnit4TestAdapterCache();
 
     public static JUnit4TestAdapterCache getDefault() {
-        return fInstance;
+        return instance;
     }
 
     public Test asTest(Description description) {

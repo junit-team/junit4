@@ -10,21 +10,21 @@ import junit.framework.TestResult;
  * before or after a test is run.
  */
 public class TestDecorator extends Assert implements Test {
-    protected Test fTest;
+    protected Test test;
 
     public TestDecorator(Test test) {
-        fTest = test;
+        this.test = test;
     }
 
     /**
      * The basic run behaviour.
      */
     public void basicRun(TestResult result) {
-        fTest.run(result);
+        test.run(result);
     }
 
     public int countTestCases() {
-        return fTest.countTestCases();
+        return test.countTestCases();
     }
 
     public void run(TestResult result) {
@@ -33,10 +33,10 @@ public class TestDecorator extends Assert implements Test {
 
     @Override
     public String toString() {
-        return fTest.toString();
+        return test.toString();
     }
 
     public Test getTest() {
-        return fTest;
+        return test;
     }
 }

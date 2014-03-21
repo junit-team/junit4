@@ -22,7 +22,7 @@ import org.junit.runner.notification.RunNotifier;
  * @since 4.0
  */
 public class JUnitCore {
-    private final RunNotifier fNotifier = new RunNotifier();
+    private final RunNotifier notifier = new RunNotifier();
 
     /**
      * Run the tests contained in the classes named in the <code>args</code>.
@@ -131,11 +131,11 @@ public class JUnitCore {
     public Result run(Runner runner) {
         Result result = new Result();
         RunListener listener = result.createListener();
-        fNotifier.addFirstListener(listener);
+        notifier.addFirstListener(listener);
         try {
-            fNotifier.fireTestRunStarted(runner.getDescription());
-            runner.run(fNotifier);
-            fNotifier.fireTestRunFinished(result);
+            notifier.fireTestRunStarted(runner.getDescription());
+            runner.run(notifier);
+            notifier.fireTestRunFinished(result);
         } finally {
             removeListener(listener);
         }
@@ -149,7 +149,7 @@ public class JUnitCore {
      * @see org.junit.runner.notification.RunListener
      */
     public void addListener(RunListener listener) {
-        fNotifier.addListener(listener);
+        notifier.addListener(listener);
     }
 
     /**
@@ -158,7 +158,7 @@ public class JUnitCore {
      * @param listener the listener to remove
      */
     public void removeListener(RunListener listener) {
-        fNotifier.removeListener(listener);
+        notifier.removeListener(listener);
     }
 
     static Computer defaultComputer() {

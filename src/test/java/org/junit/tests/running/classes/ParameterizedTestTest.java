@@ -36,18 +36,18 @@ public class ParameterizedTestTest {
                     {3, 2}, {4, 3}, {5, 5}, {6, 8}});
         }
 
-        private final int fInput;
+        private final int input;
 
-        private final int fExpected;
+        private final int expected;
 
         public FibonacciTest(int input, int expected) {
-            fInput = input;
-            fExpected = expected;
+            this.input = input;
+            this.expected = expected;
         }
 
         @Test
         public void test() {
-            assertEquals(fExpected, fib(fInput));
+            assertEquals(expected, fib(input));
         }
 
         private int fib(int x) {
@@ -167,13 +167,13 @@ public class ParameterizedTestTest {
         }
 
         @Parameter(2)
-        public int fInput;
+        public int input;
 
-        public int fExpected;
+        public int expected;
 
         @Test
         public void test() {
-            assertEquals(fExpected, fib(fInput));
+            assertEquals(expected, fib(input));
         }
 
         private int fib(int x) {
@@ -199,13 +199,13 @@ public class ParameterizedTestTest {
         }
 
         @Parameter(0)
-        public int fInput;
+        public int input;
 
-        public int fExpected;
+        public int expected;
 
         @Test
         public void test() {
-            assertEquals(fExpected, fib(fInput));
+            assertEquals(expected, fib(input));
         }
 
         private int fib(int x) {
@@ -221,18 +221,18 @@ public class ParameterizedTestTest {
         assertTrue(failures.get(0).getException().getMessage().contains("Wrong number of parameters and @Parameter fields. @Parameter fields counted: 1, available parameters: 2."));
     }
 
-    private static String fLog;
+    private static String log;
 
     @RunWith(Parameterized.class)
     static public class BeforeAndAfter {
         @BeforeClass
         public static void before() {
-            fLog += "before ";
+            log += "before ";
         }
 
         @AfterClass
         public static void after() {
-            fLog += "after ";
+            log += "after ";
         }
 
         public BeforeAndAfter(int x) {
@@ -251,21 +251,21 @@ public class ParameterizedTestTest {
 
     @Test
     public void beforeAndAfterClassAreRun() {
-        fLog = "";
+        log = "";
         JUnitCore.runClasses(BeforeAndAfter.class);
-        assertEquals("before after ", fLog);
+        assertEquals("before after ", log);
     }
 
     @RunWith(Parameterized.class)
     static public class EmptyTest {
         @BeforeClass
         public static void before() {
-            fLog += "before ";
+            log += "before ";
         }
 
         @AfterClass
         public static void after() {
-            fLog += "after ";
+            log += "after ";
         }
     }
 
@@ -363,18 +363,18 @@ public class ParameterizedTestTest {
                 { 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } };
         }
 
-        private final int fInput;
+        private final int input;
 
-        private final int fExpected;
+        private final int expected;
 
         public FibonacciTestWithArray(int input, int expected) {
-            fInput= input;
-            fExpected= expected;
+            this.input = input;
+            this.expected = expected;
         }
 
         @Test
         public void test() {
-            assertEquals(fExpected, fib(fInput));
+            assertEquals(expected, fib(input));
         }
 
         private int fib(int x) {

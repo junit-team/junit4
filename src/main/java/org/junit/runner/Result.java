@@ -17,45 +17,45 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class Result implements Serializable {
     private static final long serialVersionUID = 2L;
-    private final AtomicInteger fCount = new AtomicInteger();
-    private final AtomicInteger fIgnoreCount = new AtomicInteger();
-    private final CopyOnWriteArrayList<Failure> fFailures = new CopyOnWriteArrayList<Failure>();
-    private final AtomicLong fRunTime = new AtomicLong();
-    private final AtomicLong fStartTime = new AtomicLong();
+    private final AtomicInteger count = new AtomicInteger();
+    private final AtomicInteger ignoreCount = new AtomicInteger();
+    private final CopyOnWriteArrayList<Failure> failures = new CopyOnWriteArrayList<Failure>();
+    private final AtomicLong runTime = new AtomicLong();
+    private final AtomicLong startTime = new AtomicLong();
 
     /**
      * @return the number of tests run
      */
     public int getRunCount() {
-        return fCount.get();
+        return count.get();
     }
 
     /**
      * @return the number of tests that failed during the run
      */
     public int getFailureCount() {
-        return fFailures.size();
+        return failures.size();
     }
 
     /**
      * @return the number of milliseconds it took to run the entire suite to run
      */
     public long getRunTime() {
-        return fRunTime.get();
+        return runTime.get();
     }
 
     /**
      * @return the {@link Failure}s describing tests that failed and the problems they encountered
      */
     public List<Failure> getFailures() {
-        return fFailures;
+        return failures;
     }
 
     /**
      * @return the number of tests ignored during the run
      */
     public int getIgnoreCount() {
-        return fIgnoreCount.get();
+        return ignoreCount.get();
     }
 
     /**
@@ -69,28 +69,28 @@ public class Result implements Serializable {
     private class Listener extends RunListener {
         @Override
         public void testRunStarted(Description description) throws Exception {
-            fStartTime.set(System.currentTimeMillis());
+            startTime.set(System.currentTimeMillis());
         }
 
         @Override
         public void testRunFinished(Result result) throws Exception {
             long endTime = System.currentTimeMillis();
-            fRunTime.addAndGet(endTime - fStartTime.get());
+            runTime.addAndGet(endTime - startTime.get());
         }
 
         @Override
         public void testFinished(Description description) throws Exception {
-            fCount.getAndIncrement();
+            count.getAndIncrement();
         }
 
         @Override
         public void testFailure(Failure failure) throws Exception {
-            fFailures.add(failure);
+            failures.add(failure);
         }
 
         @Override
         public void testIgnored(Description description) throws Exception {
-            fIgnoreCount.getAndIncrement();
+            ignoreCount.getAndIncrement();
         }
 
         @Override

@@ -27,10 +27,10 @@ import junit.framework.TestSuite;
 public abstract class BaseTestRunner implements TestListener {
     public static final String SUITE_METHODNAME = "suite";
 
-    private static Properties fPreferences;
-    static int fgMaxMessageLength = 500;
-    static boolean fgFilterStack = true;
-    boolean fLoading = true;
+    private static Properties preferences;
+    static int maxMessageLength = 500;
+    static boolean filterStack = true;
+    boolean loading = true;
 
     /*
     * Implementation of TestListener
@@ -40,17 +40,17 @@ public abstract class BaseTestRunner implements TestListener {
     }
 
     protected static void setPreferences(Properties preferences) {
-        fPreferences = preferences;
+        BaseTestRunner.preferences = preferences;
     }
 
     protected static Properties getPreferences() {
-        if (fPreferences == null) {
-            fPreferences = new Properties();
-            fPreferences.put("loading", "true");
-            fPreferences.put("filterstack", "true");
+        if (preferences == null) {
+            preferences = new Properties();
+            preferences.put("loading", "true");
+            preferences.put("filterstack", "true");
             readPreferences();
         }
-        return fPreferences;
+        return preferences;
     }
 
     public static void savePreferences() throws IOException {
@@ -156,7 +156,7 @@ public abstract class BaseTestRunner implements TestListener {
             if (args[i].equals("-noloading")) {
                 setLoading(false);
             } else if (args[i].equals("-nofilterstack")) {
-                fgFilterStack = false;
+                filterStack = false;
             } else if (args[i].equals("-c")) {
                 if (args.length > i + 1) {
                     suiteName = extractClassName(args[i + 1]);
@@ -175,7 +175,7 @@ public abstract class BaseTestRunner implements TestListener {
      * Sets the loading behaviour of the test runner
      */
     public void setLoading(boolean enable) {
-        fLoading = enable;
+        loading = enable;
     }
 
     /**
@@ -192,8 +192,8 @@ public abstract class BaseTestRunner implements TestListener {
      * Truncates a String to the maximum length.
      */
     public static String truncate(String s) {
-        if (fgMaxMessageLength != -1 && s.length() > fgMaxMessageLength) {
-            s = s.substring(0, fgMaxMessageLength) + "...";
+        if (maxMessageLength != -1 && s.length() > maxMessageLength) {
+            s = s.substring(0, maxMessageLength) + "...";
         }
         return s;
     }
@@ -218,7 +218,7 @@ public abstract class BaseTestRunner implements TestListener {
     }
 
     protected boolean useReloadingTestSuiteLoader() {
-        return getPreference("loading").equals("true") && fLoading;
+        return getPreference("loading").equals("true") && loading;
     }
 
     private static File getPreferencesFile() {
@@ -298,7 +298,7 @@ public abstract class BaseTestRunner implements TestListener {
     }
 
     protected static boolean showStackRaw() {
-        return !getPreference("filterstack").equals("true") || fgFilterStack == false;
+        return !getPreference("filterstack").equals("true") || filterStack == false;
     }
 
     static boolean filterLine(String line) {
@@ -321,7 +321,7 @@ public abstract class BaseTestRunner implements TestListener {
     }
 
     static {
-        fgMaxMessageLength = getPreference("maxmessage", fgMaxMessageLength);
+        maxMessageLength = getPreference("maxmessage", maxMessageLength);
     }
 
 }

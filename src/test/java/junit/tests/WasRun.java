@@ -7,10 +7,10 @@ import junit.framework.TestCase;
  * is run.
  */
 public class WasRun extends TestCase {
-    public boolean fWasRun = false;
+    public boolean wasRun = false;
 
     @Override
     protected void runTest() {
-        fWasRun = true;
+        wasRun = true;
     }
 }

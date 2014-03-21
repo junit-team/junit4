@@ -34,9 +34,9 @@ import java.util.concurrent.TimeUnit;
  * @since 4.7
  */
 public class Timeout implements TestRule {
-    private final long fTimeout;
-    private final TimeUnit fTimeUnit;
-    private final boolean fLookForStuckThread;
+    private final long timeout;
+    private final TimeUnit timeUnit;
+    private final boolean lookForStuckThread;
 
     /**
      * Create a {@code Timeout} instance with the timeout specified
@@ -65,23 +65,23 @@ public class Timeout implements TestRule {
      * @since 4.12
      */
     public Timeout(long timeout, TimeUnit unit) {
-        fTimeout = timeout;
-        fTimeUnit = unit;
-        fLookForStuckThread = false;
+        this.timeout = timeout;
+        timeUnit = unit;
+        lookForStuckThread = false;
     }
 
     /**
      * Create a {@code Timeout} instance with the same fields as {@code t}
-     * except for {@code fLookForStuckThread}.
+     * except for {@code lookForStuckThread}.
      *
      * @param t the {@code Timeout} instance to copy
      * @param lookForStuckThread whether to look for a stuck thread
      * @since 4.12
      */
     protected Timeout(Timeout t, boolean lookForStuckThread) {
-        fTimeout = t.fTimeout;
-        fTimeUnit = t.fTimeUnit;
-        fLookForStuckThread = lookForStuckThread;
+        timeout = t.timeout;
+        timeUnit = t.timeUnit;
+        this.lookForStuckThread = lookForStuckThread;
     }
 
     /**
@@ -114,6 +114,6 @@ public class Timeout implements TestRule {
     }
 
     public Statement apply(Statement base, Description description) {
-        return new FailOnTimeout(base, fTimeout, fTimeUnit, fLookForStuckThread);
+        return new FailOnTimeout(base, timeout, timeUnit, lookForStuckThread);
     }
 }

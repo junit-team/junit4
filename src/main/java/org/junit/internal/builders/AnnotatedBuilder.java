@@ -8,10 +8,10 @@ import org.junit.runners.model.RunnerBuilder;
 public class AnnotatedBuilder extends RunnerBuilder {
     private static final String CONSTRUCTOR_ERROR_FORMAT = "Custom runner class %s should have a public constructor with signature %s(Class testClass)";
 
-    private final RunnerBuilder fSuiteBuilder;
+    private final RunnerBuilder suiteBuilder;
 
     public AnnotatedBuilder(RunnerBuilder suiteBuilder) {
-        fSuiteBuilder = suiteBuilder;
+        this.suiteBuilder = suiteBuilder;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class AnnotatedBuilder extends RunnerBuilder {
         } catch (NoSuchMethodException e) {
             try {
                 return runnerClass.getConstructor(Class.class,
-                        RunnerBuilder.class).newInstance(testClass, fSuiteBuilder);
+                        RunnerBuilder.class).newInstance(testClass, suiteBuilder);
             } catch (NoSuchMethodException e2) {
                 String simpleName = runnerClass.getSimpleName();
                 throw new InitializationError(String.format(

@@ -10,10 +10,10 @@ import junit.framework.TestResult;
  */
 public class TestImplementorTest extends TestCase {
     public static class DoubleTestCase implements Test {
-        private TestCase fTestCase;
+        private TestCase testCase;
 
         public DoubleTestCase(TestCase testCase) {
-            fTestCase = testCase;
+            this.testCase = testCase;
         }
 
         public int countTestCases() {
@@ -24,8 +24,8 @@ public class TestImplementorTest extends TestCase {
             result.startTest(this);
             Protectable p = new Protectable() {
                 public void protect() throws Throwable {
-                    fTestCase.runBare();
-                    fTestCase.runBare();
+                    testCase.runBare();
+                    testCase.runBare();
                 }
             };
             result.runProtected(this, p);
@@ -33,7 +33,7 @@ public class TestImplementorTest extends TestCase {
         }
     }
 
-    private DoubleTestCase fTest;
+    private DoubleTestCase test;
 
     public TestImplementorTest() {
         TestCase testCase = new TestCase() {
@@ -41,13 +41,13 @@ public class TestImplementorTest extends TestCase {
             public void runTest() {
             }
         };
-        fTest = new DoubleTestCase(testCase);
+        test = new DoubleTestCase(testCase);
     }
 
     public void testSuccessfulRun() {
         TestResult result = new TestResult();
-        fTest.run(result);
-        assertEquals(fTest.countTestCases(), result.runCount());
+        test.run(result);
+        assertEquals(test.countTestCases(), result.runCount());
         assertEquals(0, result.errorCount());
         assertEquals(0, result.failureCount());
     }

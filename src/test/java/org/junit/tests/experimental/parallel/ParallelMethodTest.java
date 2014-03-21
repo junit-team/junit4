@@ -18,44 +18,44 @@ import org.junit.runner.Result;
 
 public class ParallelMethodTest {
     private static final long TIMEOUT = 15;
-    private static volatile Thread fOne = null;
-    private static volatile Thread fTwo = null;
+    private static volatile Thread one = null;
+    private static volatile Thread two = null;
 
     public static class Example {
-        private static volatile CountDownLatch fSynchronizer;
+        private static volatile CountDownLatch synchronizer;
 
         @BeforeClass
         public static void init() {
-            fSynchronizer = new CountDownLatch(2);
+            synchronizer = new CountDownLatch(2);
         }
 
         @Test
         public void one() throws InterruptedException {
-            fSynchronizer.countDown();
-            assertTrue(fSynchronizer.await(TIMEOUT, TimeUnit.SECONDS));
-            fOne = Thread.currentThread();
+            synchronizer.countDown();
+            assertTrue(synchronizer.await(TIMEOUT, TimeUnit.SECONDS));
+            one = Thread.currentThread();
         }
 
         @Test
         public void two() throws InterruptedException {
-            fSynchronizer.countDown();
-            assertTrue(fSynchronizer.await(TIMEOUT, TimeUnit.SECONDS));
-            fTwo = Thread.currentThread();
+            synchronizer.countDown();
+            assertTrue(synchronizer.await(TIMEOUT, TimeUnit.SECONDS));
+            two = Thread.currentThread();
         }
     }
 
     @Before
     public void init() {
-        fOne = null;
-        fTwo = null;
+        one = null;
+        two = null;
     }
 
     @Test
     public void testsRunInParallel() {
         Result result = JUnitCore.runClasses(ParallelComputer.methods(), Example.class);
         assertTrue(result.wasSuccessful());
-        assertNotNull(fOne);
-        assertNotNull(fTwo);
-        assertThat(fOne, is(not(fTwo)));
+        assertNotNull(one);
+        assertNotNull(two);
+        assertThat(one, is(not(two)));
     }
 }

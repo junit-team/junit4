@@ -7,11 +7,11 @@ import junit.runner.BaseTestRunner;
 
 public class BaseTestRunnerTest extends TestCase {
     public static class MockRunner extends BaseTestRunner {
-        private boolean fRunFailed = false;
+        private boolean runFailed = false;
 
         @Override
         protected void runFailed(String message) {
-            fRunFailed = true;
+            runFailed = true;
         }
 
         @Override
@@ -47,6 +47,6 @@ public class BaseTestRunnerTest extends TestCase {
     public void testInvokeSuiteOnNonSubclassOfTestCase() {
         MockRunner runner = new MockRunner();
         runner.getTest(DoesntExtendTestCase.class.getName());
-        assertFalse(runner.fRunFailed);
+        assertFalse(runner.runFailed);
     }
 }

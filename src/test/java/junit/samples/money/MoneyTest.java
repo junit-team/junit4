@@ -3,13 +3,13 @@ package junit.samples.money;
 import junit.framework.TestCase;
 
 public class MoneyTest extends TestCase {
-    private Money f12CHF;
-    private Money f14CHF;
-    private Money f7USD;
-    private Money f21USD;
+    private Money money12CHF;
+    private Money money14CHF;
+    private Money money7USD;
+    private Money money21USD;
 
-    private IMoney fMB1;
-    private IMoney fMB2;
+    private IMoney moneyBag1;
+    private IMoney moneyBag2;
 
     public static void main(String args[]) {
         junit.textui.TestRunner.run(MoneyTest.class);
@@ -17,92 +17,92 @@ public class MoneyTest extends TestCase {
 
     @Override
     protected void setUp() {
-        f12CHF = new Money(12, "CHF");
-        f14CHF = new Money(14, "CHF");
-        f7USD = new Money(7, "USD");
-        f21USD = new Money(21, "USD");
+        money12CHF = new Money(12, "CHF");
+        money14CHF = new Money(14, "CHF");
+        money7USD = new Money(7, "USD");
+        money21USD = new Money(21, "USD");
 
-        fMB1 = MoneyBag.create(f12CHF, f7USD);
-        fMB2 = MoneyBag.create(f14CHF, f21USD);
+        moneyBag1 = MoneyBag.create(money12CHF, money7USD);
+        moneyBag2 = MoneyBag.create(money14CHF, money21USD);
     }
 
     public void testBagMultiply() {
         // {[12 CHF][7 USD]} *2 == {[24 CHF][14 USD]}
         IMoney expected = MoneyBag.create(new Money(24, "CHF"), new Money(14, "USD"));
-        assertEquals(expected, fMB1.multiply(2));
-        assertEquals(fMB1, fMB1.multiply(1));
-        assertTrue(fMB1.multiply(0).isZero());
+        assertEquals(expected, moneyBag1.multiply(2));
+        assertEquals(moneyBag1, moneyBag1.multiply(1));
+        assertTrue(moneyBag1.multiply(0).isZero());
     }
 
     public void testBagNegate() {
         // {[12 CHF][7 USD]} negate == {[-12 CHF][-7 USD]}
         IMoney expected = MoneyBag.create(new Money(-12, "CHF"), new Money(-7, "USD"));
-        assertEquals(expected, fMB1.negate());
+        assertEquals(expected, moneyBag1.negate());
     }
 
     public void testBagSimpleAdd() {
         // {[12 CHF][7 USD]} + [14 CHF] == {[26 CHF][7 USD]}
         IMoney expected = MoneyBag.create(new Money(26, "CHF"), new Money(7, "USD"));
-        assertEquals(expected, fMB1.add(f14CHF));
+        assertEquals(expected, moneyBag1.add(money14CHF));
     }
 
     public void testBagSubtract() {
         // {[12 CHF][7 USD]} - {[14 CHF][21 USD] == {[-2 CHF][-14 USD]}
         IMoney expected = MoneyBag.create(new Money(-2, "CHF"), new Money(-14, "USD"));
-        assertEquals(expected, fMB1.subtract(fMB2));
+        assertEquals(expected, moneyBag1.subtract(moneyBag2));
     }
 
     public void testBagSumAdd() {
         // {[12 CHF][7 USD]} + {[14 CHF][21 USD]} == {[26 CHF][28 USD]}
         IMoney expected = MoneyBag.create(new Money(26, "CHF"), new Money(28, "USD"));
-        assertEquals(expected, fMB1.add(fMB2));
+        assertEquals(expected, moneyBag1.add(moneyBag2));
     }
 
     public void testIsZero() {
-        assertTrue(fMB1.subtract(fMB1).isZero());
+        assertTrue(moneyBag1.subtract(moneyBag1).isZero());
         assertTrue(MoneyBag.create(new Money(0, "CHF"), new Money(0, "USD")).isZero());
     }
 
     public void testMixedSimpleAdd() {
         // [12 CHF] + [7 USD] == {[12 CHF][7 USD]}
-        IMoney expected = MoneyBag.create(f12CHF, f7USD);
-        assertEquals(expected, f12CHF.add(f7USD));
+        IMoney expected = MoneyBag.create(money12CHF, money7USD);
+        assertEquals(expected, money12CHF.add(money7USD));
     }
 
     public void testBagNotEquals() {
-        IMoney bag = MoneyBag.create(f12CHF, f7USD);
-        assertFalse(bag.equals(new Money(12, "DEM").add(f7USD)));
+        IMoney bag = MoneyBag.create(money12CHF, money7USD);
+        assertFalse(bag.equals(new Money(12, "DEM").add(money7USD)));
     }
 
     public void testMoneyBagEquals() {
-        assertTrue(!fMB1.equals(null));
+        assertTrue(!moneyBag1.equals(null));
 
-        assertEquals(fMB1, fMB1);
+        assertEquals(moneyBag1, moneyBag1);
         IMoney equal = MoneyBag.create(new Money(12, "CHF"), new Money(7, "USD"));
-        assertTrue(fMB1.equals(equal));
-        assertTrue(!fMB1.equals(f12CHF));
-        assertTrue(!f12CHF.equals(fMB1));
-        assertTrue(!fMB1.equals(fMB2));
+        assertTrue(moneyBag1.equals(equal));
+        assertTrue(!moneyBag1.equals(money12CHF));
+        assertTrue(!money12CHF.equals(moneyBag1));
+        assertTrue(!moneyBag1.equals(moneyBag2));
     }
 
     public void testMoneyBagHash() {
         IMoney equal = MoneyBag.create(new Money(12, "CHF"), new Money(7, "USD"));
-        assertEquals(fMB1.hashCode(), equal.hashCode());
+        assertEquals(moneyBag1.hashCode(), equal.hashCode());
     }
 
     public void testMoneyEquals() {
-        assertTrue(!f12CHF.equals(null));
+        assertTrue(!money12CHF.equals(null));
         Money equalMoney = new Money(12, "CHF");
-        assertEquals(f12CHF, f12CHF);
-        assertEquals(f12CHF, equalMoney);
-        assertEquals(f12CHF.hashCode(), equalMoney.hashCode());
-        assertTrue(!f12CHF.equals(f14CHF));
+        assertEquals(money12CHF, money12CHF);
+        assertEquals(money12CHF, equalMoney);
+        assertEquals(money12CHF.hashCode(), equalMoney.hashCode());
+        assertTrue(!money12CHF.equals(money14CHF));
     }
 
     public void testMoneyHash() {
-        assertTrue(!f12CHF.equals(null));
+        assertTrue(!money12CHF.equals(null));
         Money equal = new Money(12, "CHF");
-        assertEquals(f12CHF.hashCode(), equal.hashCode());
+        assertEquals(money12CHF.hashCode(), equal.hashCode());
     }
 
     public void testSimplify() {
@@ -113,54 +113,54 @@ public class MoneyTest extends TestCase {
     public void testNormalize2() {
         // {[12 CHF][7 USD]} - [12 CHF] == [7 USD]
         Money expected = new Money(7, "USD");
-        assertEquals(expected, fMB1.subtract(f12CHF));
+        assertEquals(expected, moneyBag1.subtract(money12CHF));
     }
 
     public void testNormalize3() {
         // {[12 CHF][7 USD]} - {[12 CHF][3 USD]} == [4 USD]
         IMoney ms1 = MoneyBag.create(new Money(12, "CHF"), new Money(3, "USD"));
         Money expected = new Money(4, "USD");
-        assertEquals(expected, fMB1.subtract(ms1));
+        assertEquals(expected, moneyBag1.subtract(ms1));
     }
 
     public void testNormalize4() {
         // [12 CHF] - {[12 CHF][3 USD]} == [-3 USD]
         IMoney ms1 = MoneyBag.create(new Money(12, "CHF"), new Money(3, "USD"));
         Money expected = new Money(-3, "USD");
-        assertEquals(expected, f12CHF.subtract(ms1));
+        assertEquals(expected, money12CHF.subtract(ms1));
     }
 
     public void testPrint() {
-        assertEquals("[12 CHF]", f12CHF.toString());
+        assertEquals("[12 CHF]", money12CHF.toString());
     }
 
     public void testSimpleAdd() {
         // [12 CHF] + [14 CHF] == [26 CHF]
         Money expected = new Money(26, "CHF");
-        assertEquals(expected, f12CHF.add(f14CHF));
+        assertEquals(expected, money12CHF.add(money14CHF));
     }
 
     public void testSimpleBagAdd() {
         // [14 CHF] + {[12 CHF][7 USD]} == {[26 CHF][7 USD]}
         IMoney expected = MoneyBag.create(new Money(26, "CHF"), new Money(7, "USD"));
-        assertEquals(expected, f14CHF.add(fMB1));
+        assertEquals(expected, money14CHF.add(moneyBag1));
     }
 
     public void testSimpleMultiply() {
         // [14 CHF] *2 == [28 CHF]
         Money expected = new Money(28, "CHF");
-        assertEquals(expected, f14CHF.multiply(2));
+        assertEquals(expected, money14CHF.multiply(2));
     }
 
     public void testSimpleNegate() {
         // [14 CHF] negate == [-14 CHF]
         Money expected = new Money(-14, "CHF");
-        assertEquals(expected, f14CHF.negate());
+        assertEquals(expected, money14CHF.negate());
     }
 
     public void testSimpleSubtract() {
         // [14 CHF] - [12 CHF] == [2 CHF]
         Money expected = new Money(2, "CHF");
-        assertEquals(expected, f14CHF.subtract(f12CHF));
+        assertEquals(expected, money14CHF.subtract(money12CHF));
     }
 }

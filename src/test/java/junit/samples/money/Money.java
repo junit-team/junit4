@@ -5,15 +5,15 @@ package junit.samples.money;
  */
 public class Money implements IMoney {
 
-    private int fAmount;
-    private String fCurrency;
+    private int amount;
+    private String currency;
 
     /**
      * Constructs a money from the given amount and currency.
      */
     public Money(int amount, String currency) {
-        fAmount = amount;
-        fCurrency = currency;
+        this.amount = amount;
+        this.currency = currency;
     }
 
     /**
@@ -35,11 +35,11 @@ public class Money implements IMoney {
     }
 
     public int amount() {
-        return fAmount;
+        return amount;
     }
 
     public String currency() {
-        return fCurrency;
+        return currency;
     }
 
     @Override
@@ -59,10 +59,10 @@ public class Money implements IMoney {
 
     @Override
     public int hashCode() {
-        if (fAmount == 0) {
+        if (amount == 0) {
             return 0;
         }
-        return fCurrency.hashCode() + fAmount;
+        return currency.hashCode() + amount;
     }
 
     public boolean isZero() {

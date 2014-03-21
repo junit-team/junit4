@@ -20,8 +20,8 @@ import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
 
 public class Theories extends BlockJUnit4ClassRunner {
-    public Theories(Class<?> klass) throws InitializationError {
-        super(klass);
+    public Theories(Class<?> clazz) throws InitializationError {
+        super(clazz);
     }
 
     @Override

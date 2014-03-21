@@ -17,8 +17,8 @@ import org.junit.runner.Description;
  */
 public class Failure implements Serializable {
     private static final long serialVersionUID = 1L;
-    private final Description fDescription;
-    private final Throwable fThrownException;
+    private final Description description;
+    private final Throwable thrownException;
 
     /**
      * Constructs a <code>Failure</code> with the given description and exception.
@@ -27,22 +27,22 @@ public class Failure implements Serializable {
      * @param thrownException the exception that was thrown while running the test
      */
     public Failure(Description description, Throwable thrownException) {
-        fThrownException = thrownException;
-        fDescription = description;
+        this.thrownException = thrownException;
+        this.description = description;
     }
 
     /**
      * @return a user-understandable label for the test
      */
     public String getTestHeader() {
-        return fDescription.getDisplayName();
+        return description.getDisplayName();
     }
 
     /**
      * @return the raw description of the context of the failure.
      */
     public Description getDescription() {
-        return fDescription;
+        return description;
     }
 
     /**
@@ -50,12 +50,12 @@ public class Failure implements Serializable {
      */
 
     public Throwable getException() {
-        return fThrownException;
+        return thrownException;
     }
 
     @Override
     public String toString() {
-        return getTestHeader() + ": " + fThrownException.getMessage();
+        return getTestHeader() + ": " + thrownException.getMessage();
     }
 
     /**

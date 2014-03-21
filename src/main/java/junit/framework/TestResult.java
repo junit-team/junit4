@@ -15,18 +15,18 @@ import java.util.List;
  * @see Test
  */
 public class TestResult extends Object {
-    protected List<TestFailure> fFailures;
-    protected List<TestFailure> fErrors;
-    protected List<TestListener> fListeners;
-    protected int fRunTests;
-    private boolean fStop;
+    protected List<TestFailure> failures;
+    protected List<TestFailure> errors;
+    protected List<TestListener> listeners;
+    protected int runTests;
+    private boolean stop;
 
     public TestResult() {
-        fFailures = new ArrayList<TestFailure>();
-        fErrors = new ArrayList<TestFailure>();
-        fListeners = new ArrayList<TestListener>();
-        fRunTests = 0;
-        fStop = false;
+        failures = new ArrayList<TestFailure>();
+        errors = new ArrayList<TestFailure>();
+        listeners = new ArrayList<TestListener>();
+        runTests = 0;
+        stop = false;
     }
 
     /**
@@ -34,7 +34,7 @@ public class TestResult extends Object {
      * caused the error.
      */
     public synchronized void addError(Test test, Throwable e) {
-        fErrors.add(new TestFailure(test, e));
+        errors.add(new TestFailure(test, e));
         for (TestListener each : cloneListeners()) {
             each.addError(test, e);
         }
@@ -45,7 +45,7 @@ public class TestResult extends Object {
      * caused the failure.
      */
     public synchronized void addFailure(Test test, AssertionFailedError e) {
-        fFailures.add(new TestFailure(test, e));
+        failures.add(new TestFailure(test, e));
         for (TestListener each : cloneListeners()) {
             each.addFailure(test, e);
         }
@@ -55,14 +55,14 @@ public class TestResult extends Object {
      * Registers a TestListener
      */
     public synchronized void addListener(TestListener listener) {
-        fListeners.add(listener);
+        listeners.add(listener);
     }
 
     /**
      * Unregisters a TestListener
      */
     public synchronized void removeListener(TestListener listener) {
-        fListeners.remove(listener);
+        listeners.remove(listener);
     }
 
     /**
@@ -70,7 +70,7 @@ public class TestResult extends Object {
      */
     private synchronized List<TestListener> cloneListeners() {
         List<TestListener> result = new ArrayList<TestListener>();
-        result.addAll(fListeners);
+        result.addAll(listeners);
         return result;
     }
 
@@ -87,14 +87,14 @@ public class TestResult extends Object {
      * Gets the number of detected errors.
      */
     public synchronized int errorCount() {
-        return fErrors.size();
+        return errors.size();
     }
 
     /**
      * Returns an Enumeration for the errors
      */
     public synchronized Enumeration<TestFailure> errors() {
-        return Collections.enumeration(fErrors);
+        return Collections.enumeration(errors);
     }
 
 
@@ -102,14 +102,14 @@ public class TestResult extends Object {
      * Gets the number of detected failures.
      */
     public synchronized int failureCount() {
-        return fFailures.size();
+        return failures.size();
     }
 
     /**
      * Returns an Enumeration for the failures
      */
     public synchronized Enumeration<TestFailure> failures() {
-        return Collections.enumeration(fFailures);
+        return Collections.enumeration(failures);
     }
 
     /**
@@ -131,7 +131,7 @@ public class TestResult extends Object {
      * Gets the number of run tests.
      */
     public synchronized int runCount() {
-        return fRunTests;
+        return runTests;
     }
 
     /**
@@ -153,7 +153,7 @@ public class TestResult extends Object {
      * Checks whether the test run should stop
      */
     public synchronized boolean shouldStop() {
-        return fStop;
+        return stop;
     }
 
     /**
@@ -162,7 +162,7 @@ public class TestResult extends Object {
     public void startTest(Test test) {
         final int count = test.countTestCases();
         synchronized (this) {
-            fRunTests += count;
+            runTests += count;
         }
         for (TestListener each : cloneListeners()) {
             each.startTest(test);
@@ -173,7 +173,7 @@ public class TestResult extends Object {
      * Marks that the test run should stop.
      */
     public synchronized void stop() {
-        fStop = true;
+        stop = true;
     }
 
     /**

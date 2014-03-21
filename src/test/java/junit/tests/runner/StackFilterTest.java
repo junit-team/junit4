@@ -7,8 +7,8 @@ import junit.framework.TestCase;
 import junit.runner.BaseTestRunner;
 
 public class StackFilterTest extends TestCase {
-    String fFiltered;
-    String fUnfiltered;
+    String filtered;
+    String unfiltered;
 
     @Override
     protected void setUp() {
@@ -30,17 +30,17 @@ public class StackFilterTest extends TestCase {
         pwin.println("	at junit.framework.TestSuite.runTest(TestSuite.java:157)");
         pwin.println("	at junit.framework.TestSuite.run(TestSuite.java, Compiled Code)");
         pwin.println("	at junit.swingui.TestRunner$17.run(TestRunner.java:669)");
-        fUnfiltered = swin.toString();
+        unfiltered = swin.toString();
 
         StringWriter swout = new StringWriter();
         PrintWriter pwout = new PrintWriter(swout);
         pwout.println("junit.framework.AssertionFailedError");
         pwout.println("	at MyTest.f(MyTest.java:13)");
         pwout.println("	at MyTest.testStackTrace(MyTest.java:8)");
-        fFiltered = swout.toString();
+        filtered = swout.toString();
     }
 
     public void testFilter() {
-        assertEquals(fFiltered, BaseTestRunner.getFilteredTrace(fUnfiltered));
+        assertEquals(filtered, BaseTestRunner.getFilteredTrace(unfiltered));
     }
 }
