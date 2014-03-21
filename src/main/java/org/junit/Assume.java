@@ -16,7 +16,7 @@ import org.hamcrest.Matcher;
  * For example:
  * <pre>
  * // only provides information if database is reachable.
- * \@Test public void calculateTotalSalary() {
+ * &#064;Test public void calculateTotalSalary() {
  *    DBConnection dbc = Database.connect();
  *    assumeNotNull(dbc);
  *    // ...
