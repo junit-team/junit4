@@ -9,7 +9,6 @@ import static org.junit.Assert.fail;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -251,7 +250,6 @@ public class MethodRulesTest {
     }
 
     public static class PrivateRule {
-        @SuppressWarnings("unused")
         @Rule
         private TestRule rule = new TestName();
 

@@ -55,9 +55,7 @@ public class Failure implements Serializable {
 
     @Override
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append(getTestHeader() + ": " + fThrownException.getMessage());
-        return buffer.toString();
+        return getTestHeader() + ": " + fThrownException.getMessage();
     }
 
     /**
@@ -69,8 +67,7 @@ public class Failure implements Serializable {
         StringWriter stringWriter = new StringWriter();
         PrintWriter writer = new PrintWriter(stringWriter);
         getException().printStackTrace(writer);
-        StringBuffer buffer = stringWriter.getBuffer();
-        return buffer.toString();
+        return stringWriter.toString();
     }
 
     /**

@@ -227,7 +227,7 @@ public class Categories extends Suite {
                     }
                 }
             }
-            
+
             if (fIncluded.isEmpty()) {
                 // Couldn't be excluded, and with no suite's included categories treated as should run.
                 return true;
@@ -318,13 +318,11 @@ public class Categories extends Suite {
             filter(CategoryFilter.categoryFilter(isAnyIncluded, included, isAnyExcluded, excluded));
         } catch (NoTestsRemainException e) {
             throw new InitializationError(e);
-        } catch (ClassNotFoundException e) {
-            throw new InitializationError(e);
         }
         assertNoCategorizedDescendentsOfUncategorizeableParents(getDescription());
     }
 
-    private static Set<Class<?>> getIncludedCategory(Class<?> klass) throws ClassNotFoundException {
+    private static Set<Class<?>> getIncludedCategory(Class<?> klass) {
         IncludeCategory annotation= klass.getAnnotation(IncludeCategory.class);
         return createSet(annotation == null ? null : annotation.value());
     }
@@ -334,7 +332,7 @@ public class Categories extends Suite {
         return annotation == null || annotation.matchAny();
     }
 
-    private static Set<Class<?>> getExcludedCategory(Class<?> klass) throws ClassNotFoundException {
+    private static Set<Class<?>> getExcludedCategory(Class<?> klass) {
         ExcludeCategory annotation= klass.getAnnotation(ExcludeCategory.class);
         return createSet(annotation == null ? null : annotation.value());
     }

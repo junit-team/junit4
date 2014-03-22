@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
@@ -59,7 +60,7 @@ public class ClassRoadie {
             } catch (InvocationTargetException e) {
                 throw e.getTargetException();
             }
-        } catch (org.junit.internal.AssumptionViolatedException e) {
+        } catch (AssumptionViolatedException e) {
             throw new FailedBefore();
         } catch (Throwable e) {
             addFailure(e);

@@ -10,7 +10,7 @@ import java.io.StringWriter;
  *
  * @see TestResult
  */
-public class TestFailure extends Object {
+public class TestFailure {
     protected Test fFailedTest;
     protected Throwable fThrownException;
 
@@ -42,17 +42,14 @@ public class TestFailure extends Object {
      */
     @Override
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append(fFailedTest + ": " + fThrownException.getMessage());
-        return buffer.toString();
+        return fFailedTest + ": " + fThrownException.getMessage();
     }
 
     public String trace() {
         StringWriter stringWriter = new StringWriter();
         PrintWriter writer = new PrintWriter(stringWriter);
         thrownException().printStackTrace(writer);
-        StringBuffer buffer = stringWriter.getBuffer();
-        return buffer.toString();
+        return stringWriter.toString();
     }
 
     public String exceptionMessage() {

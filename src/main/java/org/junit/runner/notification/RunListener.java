@@ -6,7 +6,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 
@@ -109,7 +108,7 @@ public class RunListener {
      * false
      *
      * @param failure describes the test that failed and the
-     * {@link AssumptionViolatedException} that was thrown
+     * {@link org.junit.AssumptionViolatedException} that was thrown
      */
     public void testAssumptionFailure(Failure failure) {
     }

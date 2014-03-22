@@ -10,8 +10,11 @@ import org.hamcrest.StringDescription;
  * is meaningful and should or should not be executed). A test for which an assumption
  * fails should not generate a test case failure.
  *
- * @see Assume
+ * @see org.junit.Assume
+ *
+ * @deprecated Please use {@link org.junit.AssumptionViolatedException} instead.
  */
+@Deprecated
 public class AssumptionViolatedException extends RuntimeException implements SelfDescribing {
     private static final long serialVersionUID = 2L;
 
@@ -56,8 +59,8 @@ public class AssumptionViolatedException extends RuntimeException implements Sel
     /**
      * An assumption exception with the given message and a cause.
      */
-    public AssumptionViolatedException(String assumption, Throwable t) {
-        this(assumption, false, t, null);
+    public AssumptionViolatedException(String assumption, Throwable e) {
+        this(assumption, false, e, null);
     }
 
     @Override

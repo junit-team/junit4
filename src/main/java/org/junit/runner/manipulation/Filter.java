@@ -18,7 +18,7 @@ public abstract class Filter {
     /**
      * A null <code>Filter</code> that passes all tests through.
      */
-    public static Filter ALL = new Filter() {
+    public static final Filter ALL = new Filter() {
         @Override
         public boolean shouldRun(Description description) {
             return true;

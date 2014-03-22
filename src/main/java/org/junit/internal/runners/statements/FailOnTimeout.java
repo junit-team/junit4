@@ -11,13 +11,14 @@ import java.util.concurrent.TimeoutException;
 
 import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
+import org.junit.runners.model.TestTimedOutException;
 
 public class FailOnTimeout extends Statement {
     private final Statement fOriginalStatement;
     private final TimeUnit fTimeUnit;
     private final long fTimeout;
     private final boolean fLookForStuckThread;
-    private ThreadGroup fThreadGroup = null;
+    private volatile ThreadGroup fThreadGroup = null;
 
     public FailOnTimeout(Statement originalStatement, long millis) {
         this(originalStatement, millis, TimeUnit.MILLISECONDS);
@@ -68,8 +69,7 @@ public class FailOnTimeout extends Statement {
     protected Exception createTimeoutException(Thread thread) {
         StackTraceElement[] stackTrace = thread.getStackTrace();
         final Thread stuckThread = fLookForStuckThread ? getStuckThread(thread) : null;
-        Exception currThreadException = new Exception(String.format(
-                "test timed out after %d %s", fTimeout, fTimeUnit.name().toLowerCase()));
+        Exception currThreadException = new TestTimedOutException(fTimeout, fTimeUnit);
         if (stackTrace != null) {
             currThreadException.setStackTrace(stackTrace);
             thread.interrupt();

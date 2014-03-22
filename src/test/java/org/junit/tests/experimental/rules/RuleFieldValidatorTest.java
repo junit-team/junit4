@@ -19,7 +19,6 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
 
-@SuppressWarnings("deprecation")
 public class RuleFieldValidatorTest {
     private final List<Throwable> errors = new ArrayList<Throwable>();
 
@@ -48,6 +47,18 @@ public class RuleFieldValidatorTest {
     }
 
     @Test
+    public void rejectClassRuleInNonPublicClass() {
+        TestClass target = new TestClass(NonPublicTestWithClassRule.class);
+        CLASS_RULE_VALIDATOR.validate(target, errors);
+        assertOneErrorWithMessage("The @ClassRule 'temporaryFolder'  must be declared in a public class.");
+    }
+
+    static class NonPublicTestWithClassRule {
+        @ClassRule
+        public static TestRule temporaryFolder = new TemporaryFolder();
+    }
+
+    @Test
     public void acceptNonStaticTestRule() {
         TestClass target = new TestClass(TestWithNonStaticTestRule.class);
         RULE_VALIDATOR.validate(target, errors);
@@ -70,7 +81,7 @@ public class RuleFieldValidatorTest {
         @Rule
         public static TestRule temporaryFolder = new TemporaryFolder();
     }
-
+    
     @Test
     public void acceptMethodRule() throws Exception {
         TestClass target = new TestClass(TestWithMethodRule.class);

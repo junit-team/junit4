@@ -18,7 +18,6 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
-@SuppressWarnings("deprecation")
 public class BlockJUnit4ClassRunnerOverrideTest {
     public static class FlipBitRule implements MethodRule {
         public Statement apply(final Statement base, FrameworkMethod method,

@@ -5,15 +5,19 @@ import static java.lang.Math.atan;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.sleep;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.internal.runners.statements.FailOnTimeout;
 import org.junit.rules.ExpectedException;
 import org.junit.runners.model.Statement;
+import org.junit.runners.model.TestTimedOutException;
 
 /**
  * @author Asaf Ary, Stefan Birkner
@@ -28,6 +32,12 @@ public class FailOnTimeoutTest {
 
     private final FailOnTimeout failOnTimeout = new FailOnTimeout(statement,
             TIMEOUT);
+
+    @Test
+    public void throwsTestTimedOutException() throws Throwable {
+        thrown.expect(TestTimedOutException.class);
+        evaluateWithWaitDuration(TIMEOUT + 50);
+    }
 
     @Test
     public void throwExceptionWithNiceMessageOnTimeout() throws Throwable {
@@ -45,7 +55,7 @@ public class FailOnTimeoutTest {
     @Test
     public void throwExceptionIfTheSecondCallToEvaluateNeedsTooMuchTime()
             throws Throwable {
-        thrown.expect(Exception.class);
+        thrown.expect(TestTimedOutException.class);
         evaluateWithWaitDuration(0);
         evaluateWithWaitDuration(TIMEOUT + 50);
     }
@@ -59,6 +69,18 @@ public class FailOnTimeoutTest {
         } catch (Throwable expected) {
         }
         evaluateWithWaitDuration(TIMEOUT + 50);
+    }
+
+    @Test
+    public void throwsExceptionWithTimeoutValueAndTimeUnitSet()
+            throws Throwable {
+        try {
+            evaluateWithWaitDuration(TIMEOUT + 50);
+            fail("No exception was thrown when test timed out");
+        } catch (TestTimedOutException e) {
+            assertEquals(TIMEOUT, e.getTimeout());
+            assertEquals(TimeUnit.MILLISECONDS, e.getTimeUnit());
+        }
     }
 
     private void evaluateWithException(Exception exception) throws Throwable {

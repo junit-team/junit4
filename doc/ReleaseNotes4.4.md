@@ -3,24 +3,28 @@
 ### Categories ###
 Each test method and test class can be annotated as belonging to a _category_:
 
-    public static class SomeUITests {
-        @Category(UserAvailable.class)
-        @Test
-        public void askUserToPressAKey() { }
-        
-        @Test
-        public void simulatePressingKey() { }
-    }
+```java
+public static class SomeUITests {
+    @Category(UserAvailable.class)
+    @Test
+    public void askUserToPressAKey() { }
     
-    @Category(InternetConnected.class)
-    public static class InternetTests {
-        @Test
-        public void pingServer() { }
-    } 
+    @Test
+    public void simulatePressingKey() { }
+}
+    
+@Category(InternetConnected.class)
+public static class InternetTests {
+    @Test
+    public void pingServer() { }
+}
+```
 
 To run all of the tests in a particular category, you must currently explicitly create a custom request:
 
-    new JUnitCore().run(Request.aClass(SomeUITests.class).inCategories(UserAvailable.class));
+```java
+new JUnitCore().run(Request.aClass(SomeUITests.class).inCategories(UserAvailable.class));
+```
   
 This feature will very likely be improved before the final release of JUnit 4.5
 
@@ -64,14 +68,18 @@ then [JMock 1][].  The method name was `assertThat`, and the syntax looked like 
 [walnes]: http://joe.truemesh.com/blog/000511.html
 [JMock 1]: http://www.jmock.org/download.html
 
-    assertThat(x, is(3));
-    assertThat(x, is(not(4)));
-    assertThat(responseString, either(containsString("color")).or(containsString("colour")));
-    assertThat(myList, hasItem("3"));
+```java
+assertThat(x, is(3));
+assertThat(x, is(not(4)));
+assertThat(responseString, either(containsString("color")).or(containsString("colour")));
+assertThat(myList, hasItem("3"));
+```
 
 More generally:
 
-    assertThat([value], [matcher statement]);
+```java
+assertThat([value], [matcher statement]);
+```
 
 Advantages of this assertion syntax include:
 
@@ -83,15 +91,17 @@ Advantages of this assertion syntax include:
 
 - Readable failure messages.  Compare
 
-        assertTrue(responseString.contains("color") || responseString.contains("colour"));
-        // ==> failure message: 
-        // java.lang.AssertionError:
+```java
+assertTrue(responseString.contains("color") || responseString.contains("colour"));
+// ==> failure message: 
+// java.lang.AssertionError:
 
-        assertThat(responseString, anyOf(containsString("color"), containsString("colour")));
-        // ==> failure message:
-        // java.lang.AssertionError: 
-        // Expected: (a string containing "color" or a string containing "colour")
-        //      got: "Please choose a font"
+assertThat(responseString, anyOf(containsString("color"), containsString("colour")));
+// ==> failure message:
+// java.lang.AssertionError: 
+// Expected: (a string containing "color" or a string containing "colour")
+//      got: "Please choose a font"
+```
 
 - Custom Matchers.  By implementing the `Matcher` interface yourself, you can get all of the
   above benefits for your own custom assertions.
@@ -113,11 +123,15 @@ Some notes:
 - The second parameter of an `assertThat` statement is a `Matcher`.
   We include the Matchers we want as static imports, like this:
 
-        import static org.hamcrest.CoreMatchers.is;
+```java
+import static org.hamcrest.CoreMatchers.is;
+```
 
   or:
 
-        import static org.hamcrest.CoreMatchers.*;
+```java
+import static org.hamcrest.CoreMatchers.*;
+```
 
 - Manually importing `Matcher` methods can be frustrating.  [Eclipse 3.3][] includes the ability to 
   define
@@ -158,17 +172,19 @@ It's good to be able to run a test against the code as it is currently written,
 implicit assumptions and all, or to write a test that exposes a known bug.
 For these situations, JUnit now includes the ability to express "assumptions":
 
-    import static org.junit.Assume.*
+```java
+import static org.junit.Assume.*
 
-    @Test public void filenameIncludesUsername() {
-       assumeThat(File.separatorChar, is('/'));
-       assertThat(new User("optimus").configFileName(), is("configfiles/optimus.cfg"));
-    }
+@Test public void filenameIncludesUsername() {
+    assumeThat(File.separatorChar, is('/'));
+    assertThat(new User("optimus").configFileName(), is("configfiles/optimus.cfg"));
+}
 
-    @Test public void correctBehaviorWhenFilenameIsNull() {
-       assumeTrue(bugFixed("13356"));  // bugFixed is not included in JUnit
-       assertThat(parse(null), is(new NullDocument()));
-    }
+@Test public void correctBehaviorWhenFilenameIsNull() {
+    assumeTrue(bugFixed("13356"));  // bugFixed is not included in JUnit
+    assertThat(parse(null), is(new NullDocument()));
+}
+```
 
 With this release, a failed assumption will lead to the test being marked as passing,
 regardless of what the code below the assumption may assert.
@@ -194,16 +210,18 @@ one particular scenario.  A theory captures some aspect of the
 intended behavior in possibly
 infinite numbers of potential scenarios.  For example:
 
-    @RunWith(Theories.class)
-    public class UserTest {
-      @DataPoint public static String GOOD_USERNAME = "optimus";
-      @DataPoint public static String USERNAME_WITH_SLASH = "optimus/prime";
+```java
+@RunWith(Theories.class)
+public class UserTest {
+    @DataPoint public static String GOOD_USERNAME = "optimus";
+    @DataPoint public static String USERNAME_WITH_SLASH = "optimus/prime";
 
-      @Theory public void filenameIncludesUsername(String username) {
+    @Theory public void filenameIncludesUsername(String username) {
         assumeThat(username, not(containsString("/")));
         assertThat(new User(username).configFileName(), containsString(username));
-      }
     }
+}
+```
 
 This makes it clear that the user's filename should be included in the
 config file name, only if it doesn't contain a slash.  Another test
@@ -245,7 +263,9 @@ This release contains other bug fixes and new features.  Among them:
   native implementation of `equals`.  This assertion, which passed in
   4.3, will now fail:
 
-        assertEquals(new Integer(1), new Long(1));
+```java
+assertEquals(new Integer(1), new Long(1));
+```
 
   Non-integer Numbers (Floats, Doubles, BigDecimals, etc),
   which were compared incorrectly in 4.3, are now fixed.
@@ -254,7 +274,9 @@ This release contains other bug fixes and new features.  Among them:
   been re-introduced to the `Assert` class, to take advantage of
   Java's native widening conversions.  Therefore, this still passes:
 
-        assertEquals(1, 1L);
+```java
+assertEquals(1, 1L);
+```
 
 - The default runner for JUnit 4 test classes has been refactored.
   The old version was named `TestClassRunner`, and the new is named
@@ -286,9 +308,11 @@ This release contains other bug fixes and new features.  Among them:
 - Bug fix (1739095): Filters and Sorters work correctly on test
   classes that contain a `suite` method like:
 
-        public static junit.framework.Test suite() {
-          return new JUnit4TestAdapter(MyTest.class);
-        }
+```java
+public static junit.framework.Test suite() {
+    return new JUnit4TestAdapter(MyTest.class);
+}
+```
 
 - Bug fix (1745048): @After methods are now correctly called 
   after a test method times out.

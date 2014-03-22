@@ -17,7 +17,7 @@
     <licenses>
         <license>
             <name>Eclipse Public License 1.0</name>
-            <url>http://opensource.org/licenses/eclipse-1.0.txt</url>
+            <url>http://www.eclipse.org/legal/epl-v10.html</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
@@ -78,6 +78,10 @@
             <name>Nexus Release Repository</name>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
+        <site>
+            <id>junit.github.io</id>
+            <url>gitsite:git@github.com/junit-team/junit.git</url>
+        </site>
     </distributionManagement>
 
     <properties>
@@ -206,7 +210,7 @@
                 our junit suite "AllTests" after the sources are compiled.
                 -->
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.12.3</version>
+                <version>2.16</version>
                 <configuration>
                     <test>org/junit/tests/AllTests.java</test>
                     <useSystemClassLoader>true</useSystemClassLoader>
@@ -228,7 +232,7 @@
                 in jar archive target/junit-*-javadoc.jar.
                 -->
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.8.1</version>
+                <version>2.9.1</version>
                 <configuration>
                     <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
                     <show>protected</show>
@@ -261,7 +265,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>2.5</version>
                 <configuration>
                     <mavenExecutorId>forked-path</mavenExecutorId>
                     <useReleaseProfile>false</useReleaseProfile>
@@ -269,8 +273,124 @@
                     <tagNameFormat>r@{project.version}</tagNameFormat>
                 </configuration>
             </plugin>
+            <plugin>
+               <artifactId>maven-site-plugin</artifactId>
+               <version>3.3</version>
+               <dependencies>
+                   <dependency>
+                       <groupId>com.github.stephenc.wagon</groupId>
+                       <artifactId>wagon-gitsite</artifactId>
+                       <version>0.4.1</version>
+                   </dependency>
+                   <dependency>
+                       <groupId>org.apache.maven.doxia</groupId>
+                       <artifactId>doxia-module-markdown</artifactId>
+                       <version>1.5</version>
+                   </dependency>
+               </dependencies>
+           </plugin>
         </plugins>
     </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+                    <!-- waiting for MPIR-267 -->
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>index</report>
+                            <report>summary</report>
+                            <report>dependency-info</report>
+                            <report>modules</report>
+                            <report>license</report>
+                            <report>project-team</report>
+                            <report>scm</report>
+                            <report>issue-tracking</report>
+                            <report>mailing-list</report>
+                            <report>dependency-management</report>
+                            <report>dependencies</report>
+                            <report>dependency-convergence</report>
+                            <report>cim</report>
+                            <report>plugin-management</report>
+                            <report>plugins</report>
+                            <report>distribution-management</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-changes-plugin</artifactId>
+                <version>2.9</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>changes-report</report>
+                            <report>github-report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <configuration>
+                    <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
+                    <show>protected</show>
+                    <author>false</author>
+                    <version>false</version>
+                    <detectLinks>false</detectLinks>
+                    <linksource>true</linksource>
+                    <keywords>true</keywords>
+                    <use>false</use>
+                    <windowtitle>JUnit API</windowtitle>
+                    <encoding>UTF-8</encoding>
+                    <locale>en</locale>
+                    <javadocVersion>${jdkVersion}</javadocVersion>
+                    <javaApiLinks>
+                        <property>
+                            <name>api_${jdkVersion}</name>
+                            <value>http://docs.oracle.com/javase/${jdkVersion}.0/docs/api/</value>
+                        </property>
+                    </javaApiLinks>
+                    <excludePackageNames>junit.*,*.internal.*</excludePackageNames>
+                    <verbose>true</verbose>
+                    <minmemory>32m</minmemory>
+                    <maxmemory>128m</maxmemory>
+                    <failOnError>true</failOnError>
+                    <includeDependencySources>true</includeDependencySources>
+                    <dependencySourceIncludes>
+                        <dependencySourceInclude>org.hamcrest:hamcrest-core:*</dependencySourceInclude>
+                    </dependencySourceIncludes>
+                </configuration>
+              <reportSets>
+                <reportSet>
+                  <reports>
+                    <report>javadoc</report>
+                  </reports>
+                </reportSet>
+              </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+                <version>2.3</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.16</version>
+            </plugin>
+        </plugins>
+    </reporting>
 
     <profiles>
         <profile>
@@ -289,7 +409,7 @@
                         (&ndash;&ndash; stands for double dash)
                         -->
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.4</version>
+                        <version>1.5</version>
                         <executions>
                             <execution>
                                 <id>gpg-sign</id>

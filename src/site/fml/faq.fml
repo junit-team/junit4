@@ -1,320 +1,57 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
-<head>
-  <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-  <title>JUnit FAQ</title>
-
-  <style type="text/css">
-
-    body {
-      font-style: normal;
-      font-weight: normal;
-      margin-left: 10pt;
-      margin-right: 10pt;
-    }
-
-    a {
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    .header {
-      color: black;
-      font-size: 125%;
-      font-weight: bold;
-      background: #33ff33;
-      padding-top: 2px;
-      padding-bottom: 2px;
-      padding-left: 5px;
-      margin-top: 25px;
-    }
-
-    .code {
-      background: white;
-      border-left: 5px solid #33ff33;
-    }
-
-    .code-red {
-      background: white;
-      border-left: 5px solid #cc0000;
-    }
-
-  </style>
-
-</head>
-
-<body>
-
-<h1>
-  <font color="#33ff33">J</font><font color="#cc0000">U</font>nit FAQ
-</h1>
-<hr size="1"/>
-
-
-<!--
-
-    Summary
-
--->
-<p>
-<i>
-JUnit is a simple, open source framework to write and run repeatable
-tests. It is an instance of the xUnit architecture for unit testing
-frameworks.
-</i>
-</p>
-<hr size="1"/>
-<p>
-Edited by <a href="mailto:mike@clarkware.com">Mike Clark</a>
-(<a href="http://www.clarkware.com">http://clarkware.com</a>)
-</p>
-<p>
-Last modified on February 20, 2006
-</p>
-
-<hr/>
-
-<!-- 
-
-     Table of Contents 
-	
--->
-
-<div class="header">
-Table of Contents
-</div>
-<ol>
-  <li>
-    <p>
-      <b><a href="#faqinfo">FAQ Info</a></b>
-    </p>
-    <ol>
-      <li><a href="#faqinfo_1">Who is responsible for this FAQ?</a></li>
-      <li><a href="#faqinfo_2">How can I contribute to this FAQ?</a></li>
-      <li><a href="#faqinfo_3">Where do I get the latest version of
-      this FAQ?</a></li>
-    </ol>
-  </li>
-  <li>
-    <p>
-      <b><a href="#overview">Overview</a></b>
-    </p>
-    <ol>
-      <li><a href="#overview_1">What is JUnit?</a></li>
-      <li><a href="#overview_2">Where is the JUnit home page?</a></li>
-      <li><a href="#overview_3">Where are the JUnit mailing lists and
-      forums?</a></li>
-      <li><a href="#overview_4">Where is the JUnit documentation?</a></li>
-      <li><a href="#overview_5">Where can I find articles on JUnit?</a></li>
-      <li><a href="#overview_6">What's the latest news on JUnit?</a></li>
-      <li><a href="#overview_7">How is JUnit licensed?</a></li>
-      <li><a href="#overview_8">What awards has JUnit won?</a></li>
-    </ol>
-  </li>
-  <li>
-    <p>
-      <b><a href="#started">Getting Started</a></b>
-    </p>
-    <ol>
-      <li><a href="#started_1">Where do I download JUnit?</a></li>
-      <li><a href="#started_2">How do I install JUnit?</a></li>
-      <li><a href="#started_3">How do I uninstall JUnit?</a></li>
-      <li><a href="#started_4">How do I ask questions?</a></li>
-      <li><a href="#started_5">How do I submit bugs, patches, or
-      feature requests?</a></li>
-    </ol>
-  </li>
-  <li>
-    <p>
-      <b><a href="#tests">Writing Tests</a></b>
-    </p>
-    <ol>
-      <li><a href="#tests_1">How do I write and run a simple test?</a></li>
-      <li><a href="#tests_2">How do I use a test fixture?</a></li>
-      <li><a href="#tests_4">How do I test a method that doesn't
-      return anything?</a></li>
-      <li><a href="#tests_5">Under what conditions should I test get()
-      and set() methods?</a></li>
-      <li><a href="#tests_6">Under what conditions should I not test
-      get() and set() methods?</a></li>
-      <li><a href="#tests_7">How do I write a test that passes when an
-      expected exception is thrown?</a></li>
-      <li><a href="#tests_8">How do I write a test that fails when an
-      unexpected exception is thrown?</a></li>
-      <li><a href="#tests_10">How do I test protected methods?</a></li>
-      <li><a href="#tests_11">How do I test private methods?</a></li>
-      <li><a href="#tests_12">Why does JUnit only report the first
-      failure in a single test?</a></li>
-      <li><a href="#tests_13">In Java 1.4, 'assert' is a
-      keyword. Won't this conflict with JUnit's assert()
-      method?</a></li>
-      <li><a href="#tests_14">How do I test things that must be run in
-      a J2EE container (e.g. servlets, EJBs)?</a></li>
-      <li><a href="#tests_15">Do I need to write a test class for
-      every class I need to test?</a></li>
-      <li><a href="#tests_16">Is there a basic template I can use to
-      create a test?</a></li>
-      <li><a href="#tests_17">How do I write a test for an abstract
-      class?</a></li>
-      <li><a href="#tests_18">When are tests garbage collected?</a></li>
-    </ol>
-  </li>
-  <li>
-    <p>
-      <b><a href="#organize">Organizing Tests</a></b>
-    </p>
-    <ol>
-      <li><a href="#organize_1">Where should I put my test files?</a></li>
-      <li><a href="#organize_3">How can I run setUp() and tearDown()
-      code once for all of my tests?</a></li>
-    </ol>
-  </li>
-  <li>
-    <p>
-      <b><a href="#running">Running Tests</a></b>
-    </p>
-    <ol>
-      <li><a href="#running_1">What CLASSPATH settings are needed to
-      run JUnit?</a></li>
-      <li><a href="#running_2">Why do I get a NoClassDefFoundError 
-	  when trying to test JUnit or run the samples?</a>
-      </li>
-      <li><a href="#running_4">How do I run JUnit from my command window?</a>
-      </li>		
-      <li><a href="#running_5">How do I run JUnit using Ant?</a>
-      </li>		
-      <li><a href="#running_6">How do I use Ant to create HTML test reports?</a>
-      </li>				
-      <li><a href="#running_7">How do I pass command-line arguments to a test execution?</a>
-      </li>
-      <li><a href="#running_9">Why do I get a LinkageError when using 
-	  XML interfaces in my test class?</a>
-      </li>
-      <li><a href="#running_11">Why do I get the warning "AssertionFailedError: No 
-	  tests found in XXX" when I run my test?</a>
-      </li>
-      <li><a href="#running_12">Why do I see "Unknown Source" in the stack trace of
-	  a test failure, rather than the source file's line number?</a>
-      </li>
-      <li><a href="#running_15">How do I organize all test classes in a TestSuite 
-	  automatically and not use or manage a TestSuite explicitly?</a>
-      </li>
-    </ol>
-  </li>
-  <li>
-    <p>
-      <b><a href="#best">Best Practices</a></b>
-    </p>
-    <ol>
-	<li><a href="#best_1">When should tests be written?</a></li>
-	<li><a href="#best_2">Do I have to write a test for
-	everything?</a></li>
-	<li><a href="#best_3">How simple is 'too simple to break'?</a></li>
-	<li><a href="#best_4">How often should I run my tests?</a></li>
-	<li><a href="#best_5">What do I do when a defect is reported?</a></li>
-	<li><a href="#best_6">Why not just use System.out.println()?</a></li>
-	<li><a href="#best_7">Why not just use a debugger?</a></li>
-      </ol>
-    </li>
-    <li>
-      <p>
-	<b><a href="#misc">Miscellaneous</a></b>
-      </p>
-      <ol>
-	<li><a href="#misc_1">How do I integrate JUnit with my IDE?</a></li>
-	<li><a href="#misc_2">How do I launch a debugger when a test
-	fails?</a></li>
-	<li><a href="#misc_3">Where can I find unit testing frameworks
-	similar to JUnit for other languages?</a></li>
-      </ol>
-    </li>
-  </ol>
-  
-<!--
-
-    FAQ Info
-
--->
-<div class="header">
-<a name="faqinfo">FAQ Info</a>
-</div>
-<ol>
-  <li>
-    <p>
-      <b><a name="faqinfo_1">Who is responsible for this FAQ?</a></b>
-    </p>
-    <p>
-      The current version of this FAQ is maintained
-      by <a href="mailto:mike@clarkware.com">Mike Clark</a>.
-    </p>
-    <p>
-      Most of the wisdom contained in this FAQ comes from the
+<faqs title="Frequently Asked Questions" xmlns="http://maven.apache.org/FML/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/FML/1.0 http://maven.apache.org/xsd/fml-1.0.xsd">
+    <part id="faqinfo">
+        <title>About this frequently asked questions list</title>
+        <faq id="faqinfo_1">
+            <question>Who is responsible for this FAQ?</question>
+            <answer>
+                <p>The current version of this FAQ is maintained
+      by <a href="mailto:mike@clarkware.com">Mike Clark</a>.</p>
+                <p>Most of the wisdom contained in this FAQ comes from the
       collective insights and hard-won experiences of the many good
       folks who participate on the JUnit mailing list and the JUnit
-      community at large.
-    </p>
-    <p>
-      If you see your genius represented anywhere in this FAQ without
+      community at large.</p>
+                <p>If you see your genius represented anywhere in this FAQ without
       due credit to you, please send me an email and I'll make things
-      right.
-    </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="faqinfo_2">How can I contribute to this FAQ?</a></b>
-    </p>
-    <p>
-      Your contributions to this FAQ are greatly appreciated!  The
-      JUnit community thanks you in advance.
-    </p>
-    <p>
-      To contribute to this FAQ, simply write a JUnit-related question
+      right.</p>
+            </answer>
+        </faq>
+        <faq id="faqinfo_2">
+            <question>How can I contribute to this FAQ?</question>
+            <answer>
+                <p>Your contributions to this FAQ are greatly appreciated!  The
+      JUnit community thanks you in advance.</p>
+                <p>To contribute to this FAQ, simply write a JUnit-related question
       and answer, then send the unformatted text
-      to <a href="mailto:mike@clarkware.com">Mike Clark</a>.
-      Corrections to this FAQ are always appreciated, as well.
-    </p>
-    <p>
-      No reasonable contribution will be denied.  Your name will
-      always appear along with any contribution you make.
-    </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="faqinfo_3">Where do I get the latest version of this
-      FAQ?</a></b>
-    </p>
-    <p>
-      The master copy of this FAQ is available
-      at <a
-      href="http://junit.sourceforge.net/doc/faq/faq.htm">http://junit.sourceforge.net/doc/faq/faq.htm</a>.
-    </p>
-    <p>
-      The JUnit distribution also includes this FAQ in
-      the <code>doc</code> directory.
-    </p>
-  </li>
-  
-</ol>
-
-
-<!--
-
-    Overview
-
--->
-<div class="header">
-<a name="overview">Overview</a>
-</div>
-<ol>
-  <li>
-    <p>
-      <b><a name="overview_1">What is JUnit?</a></b>
-    </p>    
-    <p>
+      to 
+                    
+                    <a href="mailto:mike@clarkware.com">
+                        Mike Clark</a>.
+      Corrections to this FAQ are always appreciated, as well.</p>
+                <p>No reasonable contribution will be denied.  Your name will
+      always appear along with any contribution you make.</p>
+            </answer>
+        </faq>
+        <faq id="faqinfo_3">
+            <question>Where do I get the latest version of this
+      FAQ?</question>
+            <answer>
+                <p>The master copy of this FAQ is available
+      at 
+                    
+                    <a href="http://junit.sourceforge.net/doc/faq/faq.htm">
+                        http://junit.sourceforge.net/doc/faq/faq.htm</a>.</p>
+                <p>The JUnit distribution also includes this FAQ in
+      the 
+                    
+                    <code>
+                        doc</code>directory.</p>
+            </answer>
+        </faq>
+    </part>
+    <part id="overview">
+        <title>Overview</title>
+  <faq id="overview_1"><question>What is JUnit?</question>    
+    <answer><p>
       JUnit is a simple, open source framework to write and run
       repeatable tests. It is an instance of the xUnit architecture
       for unit testing frameworks.  JUnit features include:
@@ -327,98 +64,91 @@ Table of Contents
     <p>
       JUnit was originally written by Erich Gamma and Kent Beck.
     </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="overview_2">Where is the JUnit home page?</a></b>
-    </p>
+</answer>
+  </faq>
+  <faq id="overview_2"><question>Where is the JUnit home page?</question>
+  <answer>
     <p>
       The official JUnit home page is <a
       href="http://junit.org">http://junit.org</a>.
     </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="overview_3">Where are the JUnit mailing lists and
-	  forums?</a></b>
-    </p>
+</answer>
+</faq>
+<faq id="overview_3"><question>Where are the JUnit mailing lists and
+      forums?</question>
+    <answer>
     <p>
       There are 3 mailing lists dedicated to everything JUnit:
     </p>
     <ul>
       <li>
-	<a href="http://groups.yahoo.com/group/junit/">JUnit user
-	list</a>.  (Search it for answers to frequently asked
-	questions not included here.)
+    <a href="http://groups.yahoo.com/group/junit/">JUnit user
+    list</a>.  (Search it for answers to frequently asked
+    questions not included here.)
       </li>
       <li>
-	<a
-	href="http://lists.sourceforge.net/lists/listinfo/junit-announce">JUnit
-	announcements</a>
+    <a
+    href="http://lists.sourceforge.net/lists/listinfo/junit-announce">JUnit
+    announcements</a>
       </li>
       <li>
-	<a
-	href="http://lists.sourceforge.net/lists/listinfo/junit-devel">JUnit
-	developer list</a>
+    <a
+    href="http://lists.sourceforge.net/lists/listinfo/junit-devel">JUnit
+    developer list</a>
       </li>
     </ul>
-  </li>
-  <li>
-    <p>
-      <b><a name="overview_4">Where is the JUnit
-      documentation?</a></b>
-    </p>
+</answer>
+</faq>
+<faq id="overview_4"><question>Where is the JUnit
+      documentation?</question>
+<answer>
     <p>
       The following documents are included in the JUnit distribution
       in the <code>doc</code> directory:
     </p>
     <ul>
       <li>
-	<a
-	href="http://junit.sourceforge.net/doc/testinfected/testing.htm">JUnit
-	Test Infected: Programmers Love Writing Tests</a>
+    <a
+    href="http://junit.sourceforge.net/doc/testinfected/testing.htm">JUnit
+    Test Infected: Programmers Love Writing Tests</a>
       </li> 
       <li>
-	<a
-	href="http://junit.sourceforge.net/doc/cookbook/cookbook.htm">JUnit
-	  Cookbook</a>
+    <a
+    href="http://junit.sourceforge.net/doc/cookbook/cookbook.htm">JUnit
+      Cookbook</a>
       </li>
       <li>
-	<a
-	href="http://junit.sourceforge.net/doc/cookstour/cookstour.htm">JUnit
-	- A Cook's Tour</a>
+    <a
+    href="http://junit.sourceforge.net/doc/cookstour/cookstour.htm">JUnit
+    - A Cook's Tour</a>
       </li>
       <li>
-	<a href="http://junit.sourceforge.net/doc/faq/faq.htm">JUnit
-	FAQ</a>
+    <a href="http://junit.sourceforge.net/doc/faq/faq.htm">JUnit
+    FAQ</a>
       </li>
     </ul>
-  </li>
-  <li>
-    <p>
-      <b><a name="overview_5">Where can I find articles on
-      JUnit?</a></b>
-    </p>
+</answer>
+</faq>
+<faq id="overview_5"><question>Where can I find articles on
+      JUnit?</question><answer>
     <p>
       The JUnit home page maintains a list
       of <a href="http://www.junit.org/news/article/index.htm">JUnit
       articles</a>.
     </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="overview_6">What's the latest news on JUnit?</a></b>
-    </p>
+</answer>
+</faq>
+  <faq id="overview_6"><question>What's the latest news on JUnit?</question>
+  <answer>
     <p>
       The JUnit home page publishes
       the <a href="http://www.junit.org/news/index.htm">latest JUnit
       news</a>.
     </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="overview_7">How is JUnit licensed?</a></b>
-    </p>
+</answer>
+</faq>
+      <faq id="overview_7"><question>How is JUnit licensed?</question>
+      <answer>
     <p>
       JUnit is <a href="http://www.opensource.org/">Open Source
       Software</a>, released
@@ -428,179 +158,158 @@ Table of Contents
       on <a
       href="http://sourceforge.net/projects/junit/">SourceForge</a>.
     </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="overview_8">What awards has JUnit won?</a></b>
-    </p>
+</answer>
+</faq>
+  <faq id="overview_8"><question>What awards has JUnit won?</question>
+<answer>
     <ul>
       <li>
-	<p> <a
-	href="http://www.javaworld.com/javaworld/jw-03-2002/jw-0326-awards.html">2002
-	JavaWorld Editors' Choice Awards (ECA)</a>
-	</p>
-	<p>
-	  Best Java Performance Monitoring/Testing Tool
-	</p>
-      </li>
-      <li>
-	<p>
-	  <a
-	  href="http://www.javaworld.com/javaworld/jw-06-2001/j1-01-awards.html">2001
-	  JavaWorld Editors' Choice Awards (ECA)</a>
-	</p>
-	<p>
-	  Best Java Performance Monitoring/Testing Tool
-	</p>
-      </li>
-    </ul>
-  </li>
-</ol>
-
-
-<!--
-
-    Getting Started
-
--->
-<div class="header">
-<a name="started">Getting Started</a>
-</div>
-<ol>
-  <li>
-    <p>
-      <b><a name="started_1">Where do I download JUnit?</a></b>
+    <p> <a
+    href="http://www.javaworld.com/javaworld/jw-03-2002/jw-0326-awards.html">2002
+    JavaWorld Editors' Choice Awards (ECA)</a>
     </p>
     <p>
+      Best Java Performance Monitoring/Testing Tool
+    </p>
+      </li>
+      <li>
+    <p>
+      <a
+      href="http://www.javaworld.com/javaworld/jw-06-2001/j1-01-awards.html">2001
+      JavaWorld Editors' Choice Awards (ECA)</a>
+    </p>
+    <p>
+      Best Java Performance Monitoring/Testing Tool
+    </p>
+      </li>
+    </ul>
+</answer>
+</faq>
+    </part>
+    <part id="started">
+        <title>Getting Started</title>
+        <faq id="started_1">
+            <question>Where do I download JUnit?</question>
+            <answer><p>
       The latest version of JUnit is available
       on <a
       href="http://sourceforge.net/project/showfiles.php?group_id=15278">SourceForge</a>.
-    </p>
-  </li>
-  <li>
+    </p></answer>
+        </faq>
+        <faq id="started_2">
+            <question>How do I install JUnit?</question>
+            <answer><ol>
+      <li>
     <p>
-      <b><a name="started_2">How do I install JUnit?</a></b>
+      First, <a
+            href="http://sourceforge.net/project/showfiles.php?group_id=15278">download</a>
+      the
+      latest version of JUnit, referred to below
+      as <code>junit.zip</code>. 
+    </p>
+      </li>
+      <li>
+    <p>
+      Then install JUnit on your platform of choice:
+    </p>
+    <p>
+      <u>Windows</u>
+    </p>
+    <p>
+      To install JUnit on Windows, follow these steps:
     </p>
     <ol>
       <li>
-	<p>
-	  First, <a
-		    href="http://sourceforge.net/project/showfiles.php?group_id=15278">download</a>
-	  the
-	  latest version of JUnit, referred to below
-	  as <code>junit.zip</code>. 
-	</p>
+        <p>
+          Unzip the <code>junit.zip</code> distribution file to
+          a directory referred to as <code>%JUNIT_HOME%</code>.
+        </p>
       </li>
-      <li>
-	<p>
-	  Then install JUnit on your platform of choice:
-	</p>
-	<p>
-	  <u>Windows</u>
-	</p>
-	<p>
-	  To install JUnit on Windows, follow these steps:
-	</p>
-	<ol>
-	  <li>
-	    <p>
-	      Unzip the <code>junit.zip</code> distribution file to
-	      a directory referred to as <code>%JUNIT_HOME%</code>.
-	    </p>
-	  </li>
-	  <li>Add JUnit to the classpath:
-	    <p>
-	      <code>set CLASSPATH=%CLASSPATH%;%JUNIT_HOME%\junit.jar</code>
-	    </p>
-	  </li>
-	</ol>
-	<p>
-	  <u>Unix (bash)</u>
-	</p>
-	<p>
-	  To install JUnit on Unix, follow these steps:
-	</p>
-	<ol>
-	  <li>
-	    <p>
-	      Unzip the <code>junit.zip</code> distribution file to
-	      a directory referred to as <code>$JUNIT_HOME</code>.
-	    </p>	
-	  </li>
-	  <li>
-	    <p>
-	      Add JUnit to the classpath:
-	    </p>
-	    <p>
-	      <code>export CLASSPATH=$CLASSPATH:$JUNIT_HOME/junit.jar</code>
-	    </p>
-	  </li>
-	</ol>
-      </li>
-      <li>
-	<p>
-	  <i>(Optional)</i> Unzip
-	  the <code>$JUNIT_HOME/src.jar</code> file.
-	</p>
-      </li>
-      <li>
-	<p>
-	  Test the installation by running the sample tests
-	  distributed with JUnit.  Note that the sample tests are
-	  located in the installation directory directly, not
-	  the <code>junit.jar</code> file.  Therefore, make sure that
-	  the JUnit installation directory is on your CLASSPATH.  Then
-	  simply type:
-	</p>
-	<div>
-	  <blockquote><code>
-	  java org.junit.runner.JUnitCore org.junit.tests.AllTests 
-	  </code></blockquote>
-	</div>
-	<p>
-	  All the tests should pass with an "OK" message.
-	</p>
-	<p>
-	  <i> 
-	    If the tests don't pass, verify
-	    that <code>junit.jar</code> is in the CLASSPATH.
-	  </i>
-	</p>
-      </li>
-      <li>
-	<p>
-	  Finally, <a href="#overview_4">read</a> the documentation.
-	</p>
+      <li>Add JUnit to the classpath:
+        <p>
+          <code>set CLASSPATH=%CLASSPATH%;%JUNIT_HOME%\junit.jar</code>
+        </p>
       </li>
     </ol>
-  </li>
-  <li>
     <p>
-      <b><a name="started_3">How do I uninstall JUnit?</a></b>
+      <u>Unix (bash)</u>
+    </p>
+    <p>
+      To install JUnit on Unix, follow these steps:
     </p>
     <ol>
       <li>
-	<p> 
-	  Delete the directory structure where you unzipped the JUnit
-	  distribution.
-	</p>
+        <p>
+          Unzip the <code>junit.zip</code> distribution file to
+          a directory referred to as <code>$JUNIT_HOME</code>.
+        </p>    
       </li>
       <li>
-	<p>
-	  Remove <code>junit.jar</code> from the CLASSPATH.
-	</p>
+        <p>
+          Add JUnit to the classpath:
+        </p>
+        <p>
+          <code>export CLASSPATH=$CLASSPATH:$JUNIT_HOME/junit.jar</code>
+        </p>
+      </li>
+    </ol>
+      </li>
+      <li>
+    <p>
+      <i>(Optional)</i> Unzip
+      the <code>$JUNIT_HOME/src.jar</code> file.
+    </p>
+      </li>
+      <li>
+    <p>
+      Test the installation by running the sample tests
+      distributed with JUnit.  Note that the sample tests are
+      located in the installation directory directly, not
+      the <code>junit.jar</code> file.  Therefore, make sure that
+      the JUnit installation directory is on your CLASSPATH.  Then
+      simply type:
+    </p>
+    <pre>java org.junit.runner.JUnitCore org.junit.tests.AllTests</pre>
+    <p>
+      All the tests should pass with an "OK" message.
+    </p>
+    <p>
+      <i> 
+        If the tests don't pass, verify
+        that <code>junit.jar</code> is in the CLASSPATH.
+      </i>
+    </p>
+      </li>
+      <li>
+    <p>
+      Finally, <a href="#overview_4">read</a> the documentation.
+    </p>
+      </li>
+    </ol></answer>
+        </faq>
+        <faq id="started_3">
+            <question>How do I uninstall JUnit?</question>
+            <answer><ol>
+      <li>
+    <p> 
+      Delete the directory structure where you unzipped the JUnit
+      distribution.
+    </p>
+      </li>
+      <li>
+    <p>
+      Remove <code>junit.jar</code> from the CLASSPATH.
+    </p>
       </li>
     </ol>
     <p>
       JUnit does not modify the registry so simply removing all the
       files will fully uninstall it.
-    </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="started_4">How do I ask questions?</a></b>
-    </p>
-    <p>
+    </p></answer>
+        </faq>
+        <faq id="started_4">
+            <question>How do I ask questions?</question>
+            <answer><p>
       Questions that are not answered in
       the <a
       href="http://junit.sourceforge.net/doc/faq/faq.htm">FAQ</a> or
@@ -608,9 +317,9 @@ Table of Contents
       to
       the <a
       href="http://www.jguru.com/forums/home.jsp?topic=JUnit">jGuru
-	discussion forum</a> or the <a
-	href="http://groups.yahoo.com/group/junit/">JUnit user mailing
-	list</a>.
+    discussion forum</a> or the <a
+    href="http://groups.yahoo.com/group/junit/">JUnit user mailing
+    list</a>.
     </p>
     <p>
       Please stick to technical issues on the discussion forum and
@@ -627,19 +336,17 @@ Table of Contents
     </p>
     <p>
       <i> 
-	NOTE: <br/> Please do NOT submit bugs, patches, or feature
-	requests to the discussion forum or mailing lists.  <br/>
-	Refer instead to <a href="#started_5">"How do I submit bugs,
-	patches, or feature requests?"</a>.
+    NOTE: <br/> Please do NOT submit bugs, patches, or feature
+    requests to the discussion forum or mailing lists.  <br/>
+    Refer instead to <a href="#started_5">"How do I submit bugs,
+    patches, or feature requests?"</a>.
       </i>
-    </p>
-  </li>
-  <li>
-    <p>
-       <b><a name="started_5">How do I submit bugs, patches, or
-       feature requests?</a></b>
-    </p>
-    <p>
+    </p></answer>
+        </faq>
+        <faq id="started_5">
+            <question>How do I submit bugs, patches, or
+       feature requests?</question>
+            <answer>    <p>
       JUnit celebrates programmers testing their own software. In this
       spirit, bugs, patches, and feature requests that include JUnit
       tests have a better chance of being addressed than those
@@ -648,142 +355,92 @@ Table of Contents
     <p>
       JUnit is hosted
       on <a
-      href="http://sourceforge.net/projects/junit">SourceForge</a>.
-      Please use the tools provided by SourceForge for your
+      href="http://github/junit-team/junit">GitHub</a>.
+      Please use the tools provided by GitHub for your
       submissions.
     </p>
-  </li>
-</ol>
-
-
-<!--
-
-    Writing Tests
-
--->
-<div class="header">
-<a name="tests">Writing Tests</a>
-</div>
-<ol>
-  <li>
-    <p>
-      <b><a name="tests_1"></a>How do I write and run a simple test?</b>
-    </p>
-    <ol>
+</answer>
+        </faq>
+    </part>
+    <part id="tests">
+        <title>Writing Tests</title>
+      <faq id="#tests_1"><question>How do I write and run a simple test?</question><answer>    <ol>
       <li>
-	<p>
-	  Create a class:
-	</p>
-	<div class="code">
-	  <pre><code>
-	      
-  package junitfaq;
-	      
-  import org.junit.*;
-  import static org.junit.Assert.*;
+    <p>
+      Create a class:
+    </p>
+<pre class="prettyprint linenums">package junitfaq;
+      
+import org.junit.*;
+import static org.junit.Assert.*;
 
-  import java.util.*;
-  
-  public class SimpleTest {
-	  </code></pre>
-	</div>      
+import java.util.*;
+
+public class SimpleTest {</pre>      
       </li>
       <li>
-	<p>
-	  Write a test method (annotated with <code>@Test</code>) that
-	  asserts expected results on the object under test:
-	</p>
-	<div class="code">
-	  <pre><code>
-
-    @Test
+    <p>
+      Write a test method (annotated with <code>@Test</code>) that
+      asserts expected results on the object under test:
+    </p>
+    <pre class="prettyprint linenums">    @Test
     public void testEmptyCollection() {
         Collection collection = new ArrayList();
         assertTrue(collection.isEmpty());
-    }
-	  </code></pre>
-	</div>
+    }</pre>
       </li>
       <li>
-	<p>
-	  If you are running your JUnit 4 tests with a JUnit 3.x runner,
-	  write a <code>suite()</code> method that uses the 
-	  <code>JUnit4TestAdapter</code> class to create a suite
-	  containing all of your test methods:
-	</p>
-	<div class="code">
-	  <pre><code>
-
-    public static junit.framework.Test suite() {
+    <p>
+      If you are running your JUnit 4 tests with a JUnit 3.x runner,
+      write a <code>suite()</code> method that uses the 
+      <code>JUnit4TestAdapter</code> class to create a suite
+      containing all of your test methods:
+    </p>
+    <pre class="prettyprint linenums">    public static junit.framework.Test suite() {
         return new junit.framework.JUnit4TestAdapter(SimpleTest.class);
-    }
-	  </code></pre>
-	</div>
+    }</pre>
       </li>
       <li>
-	<p>
-	  Although writing a <code>main()</code> method to run the
-	  test is much less important with the advent of IDE runners,
-	  it's still possible:
-	</p>
-	<div class="code">
-	  <pre><code>
-
-    public static void main(String args[]) {
+    <p>
+      Although writing a <code>main()</code> method to run the
+      test is much less important with the advent of IDE runners,
+      it's still possible:
+    </p>
+    <pre class="prettyprint linenums">    public static void main(String args[]) {
       org.junit.runner.JUnitCore.main("junitfaq.SimpleTest");
     }
-  }
-	  </code></pre>
-	</div>
+}</pre>
       </li>
       <li>
-	<p>
-	  Run the test:
-	</p>
-	<ul>
-	  <li>
-	    <p>
-	      To run the test from the console, type:
-	    </p>
-	    <div>
-	      <blockquote><code>
-java org.junit.runner.JUnitCore junitfaq.SimpleTest
-	      </code></blockquote>
-	    </div>
-	  </li>
-	  <li>
-	    <p>
-	      To run the test with the test runner used
-	      in <code>main()</code>, type:
-	    </p>
-	    <div>
-	      <blockquote><code>
-java junitfaq.SimpleTest 
-	      </code></blockquote>
-	    </div>
-	  </li>
-	</ul>
-	<p>
-	  The passing test results in the following textual output:
-	</p>
-	<div>
-	  <blockquote>
-	    <pre><code>
-		.
+    <p>
+      Run the test:
+    </p>
+    <ul>
+      <li>
+        <p>
+          To run the test from the console, type:
+        </p>
+        <pre>java org.junit.runner.JUnitCore junitfaq.SimpleTest</pre>
+      </li>
+      <li>
+        <p>
+          To run the test with the test runner used
+          in <code>main()</code>, type:
+        </p>
+        <pre>java junitfaq.SimpleTest</pre> 
+      </li>
+    </ul>
+    <p>
+      The passing test results in the following textual output:
+    </p>
+    <pre>.
 Time: 0
 
-OK (1 tests)
-	    </code></pre>
-	  </blockquote>
-	</div>
+OK (1 tests)</pre>
       </li>
     </ol>
-  </li>
-  <li>
-    <p>
-      <b><a name="tests_2"></a>How do I use a test fixture?</b>
-    </p>
-    <p>
+</answer></faq>
+      <faq id="#tests_2"><question>How do I use a test fixture?</question><answer><p>
       <i>(Submitted by: Jeff Nielsen)</i>
     </p>
     <p>
@@ -812,48 +469,42 @@ OK (1 tests)
       The following example shows a test fixture with a common
       <code>Collection</code> object.
     </p>
-    <div class="code">
-      <pre><code>
-    package junitfaq;
+    <pre class="prettyprint linenums">package junitfaq;
 
-    import org.junit.*;
-    import static org.junit.Assert.*;
-    import java.util.*;
+import org.junit.*;
+import static org.junit.Assert.*;
+import java.util.*;
 
-    public class SimpleTest {
+public class SimpleTest {
 
-        private Collection&lt;Object&gt; collection;
+    private Collection&lt;Object&gt; collection;
 
-        @Before
-        public void setUp() {
-            collection = new ArrayList&lt;Object&gt;();
-        }
-
-        @Test
-        public void testEmptyCollection() {
-            assertTrue(collection.isEmpty());
-        }
-
-
-        @Test
-        public void testOneItemCollection() {
-            collection.add("itemA");
-            assertEquals(1, collection.size());
-        }
+    @Before
+    public void setUp() {
+        collection = new ArrayList&lt;Object&gt;();
     }
-      </code></pre>
-    </div>
+
+    @Test
+    public void testEmptyCollection() {
+        assertTrue(collection.isEmpty());
+    }
+
+
+    @Test
+    public void testOneItemCollection() {
+        collection.add("itemA");
+        assertEquals(1, collection.size());
+    }
+}</pre>
 
     <p>
       Given this test, the methods might execute in the following
       order:
     </p>
-      <blockquote>
-        <pre><code>setUp()
+      <pre class="prettyprint linenums">setUp()
 testEmptyCollection()
 setUp()
-testOneItemCollection()</code></pre>
-      </blockquote>
+testOneItemCollection()</pre>
     <p>
       The ordering of test-method invocations is not guaranteed, so
       <code>testOneItemCollection()</code> might be executed before
@@ -872,55 +523,40 @@ testOneItemCollection()</code></pre>
       example:
     </p>
 
-    <div class="code">
-      <pre><code>
-    package junitfaq;
+    <pre class="prettyprint linenums">package junitfaq;
 
-    import org.junit.*;
-    import static org.junit.Assert.*;
-    import java.io.*;
+import org.junit.*;
+import static org.junit.Assert.*;
+import java.io.*;
 
-    public class OutputTest {
+public class OutputTest {
 
-        private File output;
+    private File output;
 
-        @Before
-        public void createOutputFile() {
-            output = new File(...);
-        }
-
-        @After
-        public void deleteOutputFile() {
-            output.delete();
-        }
-
-        @Test
-        public void testSomethingWithFile() {
-            ...
-        }
+    @Before
+    public void createOutputFile() {
+        output = new File(...);
     }
-      </code></pre>
-    </div>
+
+    @After
+    public void deleteOutputFile() {
+        output.delete();
+    }
+
+    @Test
+    public void testSomethingWithFile() {
+        ...
+    }
+}</pre>
     <p>
       With this test, the methods will execute in the following order:
     </p>
-    <div>
-      <blockquote>
-        <pre><code>
+    <pre class="prettyprint linenums">
 createOutputFile()
 testSomethingWithFile()
-deleteOutputFile()
-        </code></pre>
-      </blockquote>
-    </div>
-    
-  </li>
-  <li>
-    <p>
-      <b><a name="tests_4"></a>How do I test a method that doesn't
-      return anything?</b>
-    </p>
-    <p>
+deleteOutputFile()</pre></answer></faq>
+      <faq id="#tests_4"><question>How do I test a method that doesn't
+      return anything?</question><answer><p>
       <i>(Submitted by: Dave Astels)</i>
     </p>
     <p>
@@ -936,9 +572,7 @@ deleteOutputFile()
       object was added). You can check the size and assert that it is
       what is expected:
     </p>
-    <div class="code">
-      <pre><code>
-
+    <pre class="prettyprint linenums">
     @Test
     public void testCollectionAdd() {
         Collection collection = new ArrayList();
@@ -947,9 +581,7 @@ deleteOutputFile()
         assertEquals(1, collection.size());
         collection.add("itemB");
         assertEquals(2, collection.size());
-    }
-      </code></pre>
-    </div>
+    }</pre>
     <p>
       Another approach is to make use of <a
       href="http://www.mockobjects.com">MockObjects</a>.
@@ -963,14 +595,9 @@ deleteOutputFile()
       purposes. Then you can add a method
       (e.g. <code>writeToFileNamed(String filename)</code>) to
       encapsulate the <code>FileWriter</code> creation.
-    </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="tests_5"></a>Under what conditions should I test
-      get() and set() methods?</b>
-    </p>
-    <p>
+    </p></answer></faq>
+      <faq id="#tests_5"><question>Under what conditions should I test get()
+      and set() methods?</question><answer><p>
       Unit tests are intended to alleviate fear that something might
       break.  If you think a <code>get()</code> or <code>set()</code>
       method could reasonably break, or has in fact contributed to a
@@ -984,14 +611,9 @@ deleteOutputFile()
     <p>  
       Refer also to <a href="#best_3">"How simple is 'too simple to
       break'?"</a>.
-    </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="tests_6"></a>Under what conditions should I not test
-      get() and set() methods?</b>
-    </p>
-    <p>
+    </p></answer></faq>
+      <faq id="#tests_6"><question>Under what conditions should I not test
+      get() and set() methods?</question><answer><p>
       <i>(Submitted by: J. B. Rainsberger)</i>
     </p>
     <p>
@@ -1006,38 +628,27 @@ deleteOutputFile()
       and that the <code>setX()</code> method only does "this.x =
       x;". If you write this test:
     </p>
-    <div>
-      <blockquote><pre>
-@Test
+    <pre class="prettyprint linenums">@Test
 public void testGetSetX() {
     setX(23);
     assertEquals(23, getX());
-}
-      </pre></blockquote>
-    </div>
+}</pre>
     <p>
       then you are testing the equivalent of the following:
     </p>
-    <div>
-      <blockquote><pre>
+    <pre class="prettyprint linenums">
 @Test
 public void testGetSetX() {
     x = 23;
     assertEquals(23, x);
-}
-</pre></blockquote>
-    </div>
+}</pre>
     <p>
       or, if you prefer,
     </p>
-    <div>
-      <blockquote><pre>
-@Test
+    <pre class="prettyprint linenums">@Test
 public void testGetSetX() {
     assertEquals(23, 23);
-}
-</pre></blockquote>
-    </div>
+}</pre>
     <p>
       At this point, you are testing the Java compiler, or possibly
       the interpreter, and not your component or application. There is
@@ -1050,43 +661,26 @@ public void testGetSetX() {
       method. This kind of test is especially useful if you have
       multiple constructors:
     </p>
-    <div>
-      <blockquote><pre>
-@Test
+    <pre class="prettyprint linenums">@Test
 public void testCreate() {
     assertEquals(23, new MyClass(23).getX());
-}
-      </pre></blockquote>
-    </div>
-  </li>
-  <li>
-    <p>
-      <b><a name="tests_7"></a>How do I write a test that passes when
-      an expected exception is thrown?</b>
-    </p>
-    <p>
+}</pre>
+</answer></faq>
+      <faq id="#tests_7"><question>How do I write a test that passes when an
+      expected exception is thrown?</question><answer><p>
       Add the optional <code>expected</code> attribute to
       the <code>@Test</code> annotation.  The following is an example
       test that passes when the
       expected <code>IndexOutOfBoundsException</code> is raised:
     </p>
-    <div class="code">
-      <pre><code>
-
-    @Test(expected=IndexOutOfBoundsException.class)
-    public void testIndexOutOfBoundsException() {
-        ArrayList emptyList = new ArrayList();
-	Object o = emptyList.get(0);
-    }
-      </code></pre>
-    </div>
-  </li>
-  <li>
-    <p>
-      <b><a name="tests_8"></a>How do I write a test that fails when
-      an unexpected exception is thrown?</b>
-    </p>
-    <p>
+    <pre class="prettyprint linenums">@Test(expected=IndexOutOfBoundsException.class)
+public void testIndexOutOfBoundsException() {
+    ArrayList emptyList = new ArrayList();
+    Object o = emptyList.get(0);
+}</pre>
+    </answer></faq>
+      <faq id="#tests_8"><question>How do I write a test that fails when an
+      unexpected exception is thrown?</question><answer><p>
       Declare the exception in the <code>throws</code> clause of the
       test method and don't catch the exception within the test
       method.  Uncaught exceptions will cause the test to fail with an
@@ -1096,37 +690,22 @@ public void testCreate() {
       The following is an example test that fails when
       the <code>IndexOutOfBoundsException</code> is raised:
     </p>
-    <div class="code-red">
-      <pre><code>
+    <pre class="prettyprint linenums">@Test
+public void testIndexOutOfBoundsExceptionNotRaised() 
+    throws IndexOutOfBoundsException {
 
-    @Test
-    public void testIndexOutOfBoundsExceptionNotRaised() 
-        throws IndexOutOfBoundsException {
-    
-        ArrayList emptyList = new ArrayList();
-        Object o = emptyList.get(0);
-    }
-      </code></pre>
-    </div>
-  </li>
-  <li>
-    <p>
-      <b><a name="tests_10"></a>How do I test protected methods?</b>
-    </p>
-    <p>
+    ArrayList emptyList = new ArrayList();
+    Object o = emptyList.get(0);
+}</pre></answer></faq>
+      <faq id="#tests_10"><question>How do I test protected methods?</question><answer><p>
       Place your tests in the same package as the classes under test.
     </p>
     <p>
       Refer to <a href="#organize_1">"Where should I put my test
       files?"</a> for examples of how to organize tests for protected
       method access.
-    </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="tests_11"></a>How do I test private methods?</b>
-    </p>
-    <p>
+    </p></answer></faq>
+      <faq id="#tests_11"><question>How do I test private methods?</question><answer><p>
       Testing private methods may be an indication that those methods
       should be moved into another class to promote reusability.
     </p>
@@ -1142,14 +721,9 @@ public void testCreate() {
       read <a
       href="http://www.onjava.com/pub/a/onjava/2003/11/12/reflection.html">this
       article</a>.
-    </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="tests_12"></a>Why does JUnit only report the first
-      failure in a single test?</b>
-    </p>
-    <p>
+    </p></answer></faq>
+      <faq id="#tests_12"><question>Why does JUnit only report the first
+      failure in a single test?</question><answer><p>
       <i>(Submitted by: J. B. Rainsberger)</i>
     </p>
     <p>
@@ -1182,9 +756,7 @@ public void testCreate() {
     <p>
       One test method, three assertions:
     </p>
-    <div>
-      <blockquote><pre><code>
-public class MyTestCase {
+    <pre class="prettyprint linenums">public class MyTestCase {
     @Test
     public void testSomething() {
         // Set up for the test, manipulating local variables
@@ -1192,14 +764,11 @@ public class MyTestCase {
         assertTrue(condition2);
         assertTrue(condition3);
     }
-}
-      </code></pre></blockquote>
-    </div>
+}</pre>
     <p>
       Three test methods, one assertion each:
     </p>
-    <div>
-      <blockquote><pre><code>
+    <pre class="prettyprint linenums">
 public class MyTestCase {
     // Local variables become instance variables
 
@@ -1222,23 +791,16 @@ public class MyTestCase {
     public void testCondition3() {
         assertTrue(condition3);
     }
-}
-      </code></pre></blockquote>
-    </div>
+}</pre>
     <p>
       The resulting tests use JUnit's natural execution and reporting
       mechanism and, failure in one test does not affect the execution
       of the other tests.  You generally want exactly one test to fail
       for any given bug, if you can manage it.
-    </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="tests_13"></a>In Java 1.4, <code>assert</code> is a
-	keyword. Won't this conflict
-	with JUnit's <code>assert()</code> method?</b>
-    </p>
-    <p>
+    </p></answer></faq>
+      <faq id="#tests_13"><question>In Java 1.4, 'assert' is a
+      keyword. Won't this conflict with JUnit's assert()
+      method?</question><answer><p>
       JUnit 3.7 deprecated <code>assert()</code> and replaced it
       with <code>assertTrue()</code>, which works exactly the same
       way.
@@ -1247,14 +809,9 @@ public class MyTestCase {
       JUnit 4 is compatible with the <code>assert</code> keyword.  If
       you run with the <code>-ea</code> JVM switch, assertions that
       fail will be reported by JUnit.
-    </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="tests_14"></a>How do I test things that must be run
-      in a J2EE container (e.g. servlets, EJBs)?</b>
-    </p>
-    <p>
+    </p></answer></faq>
+      <faq id="#tests_14"><question>How do I test things that must be run in
+      a J2EE container (e.g. servlets, EJBs)?</question><answer><p>
       Refactoring J2EE components to delegate functionality to other
       objects that don't have to be run in a J2EE container will
       improve the design and testability of the software.
@@ -1263,15 +820,9 @@ public class MyTestCase {
       <a href="http://jakarta.apache.org/cactus/index.html">Cactus</a>
       is an open source JUnit extension that can be used to test J2EE
       components in their natural environment.
-    </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="tests_15"></a>Do I need to write
-      a test class for every class I need to
-      test?</b>
-    </p>
-    <p>
+    </p></answer></faq>
+      <faq id="#tests_15"><question>Do I need to write a test class for
+      every class I need to test?</question><answer><p>
       <i>(Submitted by: J. B. Rainsberger)</i>
     </p>
     <p>
@@ -1299,18 +850,13 @@ public class MyTestCase {
     </p>
     <p>
       <i>
-	[1] A test fixture is a common set of test data and
-	collaborating objects shared by many tests. Generally they are
-	implemented as instance variables in the test class.
+    [1] A test fixture is a common set of test data and
+    collaborating objects shared by many tests. Generally they are
+    implemented as instance variables in the test class.
       </i>
-    </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="tests_16"></a>Is there a basic template I can use to
-      create a test?</b>
-    </p>
-    <p>
+    </p></answer></faq>
+      <faq id="#tests_16"><question>Is there a basic template I can use to
+      create a test?</question><answer><p>
       <i>(Submitted by: Eric Armstrong)</i>
     </p>
     <p>
@@ -1320,9 +866,7 @@ public class MyTestCase {
     <p>
       SampleTest is a basic test template:
     </p>
-    <div>
-      <blockquote><pre><code>
-import org.junit.*;
+    <pre class="prettyprint linenums">import org.junit.*;
 import static org.junit.Assert.*;
 
 public class SampleTest {
@@ -1356,25 +900,13 @@ public class SampleTest {
     public void testForException() {
         Object o = emptyList.get(0);
     }
-}
-      </code></pre></blockquote>
-    </div>
-  </li>
-  <li>
-    <p>
-      <b><a name="tests_17"></a>How do I write a test for an abstract
-      class?</b>
-    </p>
-    <p>
+}</pre></answer></faq>
+      <faq id="#tests_17"><question>How do I write a test for an abstract
+      class?</question><answer><p>
       Refer to <a
       href="http://c2.com/cgi/wiki?AbstractTestCases">http://c2.com/cgi/wiki?AbstractTestCases</a>.
-    </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="tests_18"></a>When are tests garbage collected?</b>
-    </p>
-    <p>
+    </p></answer></faq>
+      <faq id="#tests_18"><question>When are tests garbage collected?</question><answer><p>
       <i>(Submitted by: Timothy Wall and Kent Beck)</i>
     </p>
     <p>
@@ -1391,40 +923,24 @@ public class SampleTest {
       Explicitly setting an object to <code>null</code> in
       the <code>tearDown()</code> method, for example, allows it to be
       garbage collected before the end of the entire test run.
-    </p>
-  </li>
-</ol>
-
-
-<!--
-
-    Organizing Tests
-
--->
-<div class="header">
-<a name="organize">Organizing Tests</a>
-</div>
-<ol>
-  <li>
-    <p>
-      <b><a name="organize_1"></a>Where should I put my test files?</b>
-    </p>
-    <p>
+    </p></answer></faq>
+    </part>
+    <part id="organize">
+        <title>Organizing Tests</title>
+        <faq id="organize_1">
+            <question>Where should I put my test files?</question>
+            <answer><p>
       You can place your tests in the same package and directory as
       the classes under test.
     </p>
     <p>
       For example:
     </p>
-    <div>
-      <blockquote><pre>
-src
+    <pre>src
    com
       xyz
          SomeClass.java
-         SomeClassTest.java	 
-      </pre></blockquote>
-    </div>
+         SomeClassTest.java</pre>
     <p> 
       While adequate for small projects, many developers feel that
       this approach clutters the source directory, and makes it hard
@@ -1439,18 +955,14 @@ src
     <p>
       For example:
     </p>
-    <div>
-      <blockquote><pre>
-src
+    <pre>src
    com
       xyz
          SomeClass.java
 test
    com
       xyz
-         SomeClassTest.java	 
-      </pre></blockquote>
-    </div>
+         SomeClassTest.java</pre>
     <p>
       These approaches allow the tests to access to all the public and
       package visible methods of the classes under test.
@@ -1461,14 +973,12 @@ test
       author of this FAQ sees no clear advantage to adopting this
       approach and believes that said developers also put their curly
       braces on the wrong line.  :-)
-    </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="organize_3"></a>How can I run setUp() and tearDown()
-      code once for all of my tests?</b>
-    </p>
-    <p>
+    </p></answer>
+        </faq>
+        <faq id="organize_3">
+            <question>How can I run setUp() and tearDown()
+      code once for all of my tests?</question>
+            <answer><p>
       The desire to do this is usually a symptom of excessive coupling
       in your design.  If two or more tests must share the same test
       fixture state, then the tests may be trying to tell you that the
@@ -1488,90 +998,68 @@ test
       a <code>@AfterClass</code> annotation to a method to be run
       after all the tests in a class.  Here's an example:
     </p>
-    <div class="code">
-      <pre><code>
+    <pre class="prettyprint linenums">package junitfaq;
 
-    package junitfaq;
+import org.junit.*;
+import static org.junit.Assert.*;
+import java.util.*;
 
-    import org.junit.*;
-    import static org.junit.Assert.*;
-    import java.util.*;
+public class SimpleTest {
+
+    private Collection collection;
     
-    public class SimpleTest {
-    
-        private Collection collection;
-	
-        @BeforeClass
-        public static void oneTimeSetUp() {
-            // one-time initialization code        
-        }
-
-        @AfterClass
-        public static void oneTimeTearDown() {
-            // one-time cleanup code
-        }
-
-        @Before
-        public void setUp() {
-            collection = new ArrayList();
-        }
-	
-        @After
-        public void tearDown() {
-            collection.clear();
-        }
-
-        @Test
-        public void testEmptyCollection() {
-            assertTrue(collection.isEmpty());
-        }
-	
-        @Test
-        public void testOneItemCollection() {
-            collection.add("itemA");
-            assertEquals(1, collection.size());
-        }
+    @BeforeClass
+    public static void oneTimeSetUp() {
+        // one-time initialization code        
     }
-      </code></pre>
-    </div>
+
+    @AfterClass
+    public static void oneTimeTearDown() {
+        // one-time cleanup code
+    }
+
+    @Before
+    public void setUp() {
+        collection = new ArrayList();
+    }
+    
+    @After
+    public void tearDown() {
+        collection.clear();
+    }
+
+    @Test
+    public void testEmptyCollection() {
+        assertTrue(collection.isEmpty());
+    }
+    
+    @Test
+    public void testOneItemCollection() {
+        collection.add("itemA");
+        assertEquals(1, collection.size());
+    }
+}</pre>
     <p>
       Given this test, the methods will execute in the following
       order:
     </p>
-    <div>
-      <blockquote>
-	<pre><code>
-oneTimeSetUp()
+    <pre class="prettyprint linenums">oneTimeSetUp()
 setUp()
 testEmptyCollection()
 tearDown()
 setUp()
 testOneItemCollection()
 tearDown()
-oneTimeTearDown()
-	</code></pre>
-      </blockquote>
-    </div>
-
-  </li>
-</ol>
-
-
-<!--
-
-    Running Tests
-
--->
-<div class="header">
-<a name="running">Running Tests</a>
-</div>
-<ol>
-  <li>
-    <p>
-      <b><a name="running_1"></a>What CLASSPATH settings are needed to
-      run JUnit?</b>
-    </p>
-    <p>
+oneTimeTearDown()</pre>
+</answer>
+        </faq>
+    </part>
+    <part id="running-tests">
+        <title>Running Tests</title>
+        <faq id="running_1">
+            <question>What CLASSPATH settings are needed to
+      run JUnit?</question>
+            <answer><p>
       <i>(Submitted by: Eric Armstrong)</i>
     </p>
     <p>
@@ -1591,24 +1079,18 @@ oneTimeTearDown()
     <p>
       <u>Windows Example:</u>
     </p>
-    <p>
-      <code>set
-      CLASSPATH=%JUNIT_HOME%\junit.jar;c:\myproject\classes;c:\myproject\lib\something.jar</code>
-    </p>
+    <pre>set CLASSPATH=%JUNIT_HOME%\junit.jar;c:\myproject\classes;c:\myproject\lib\something.jar</pre>
     <p>
       <u>Unix (bash) Example:</u>
     </p>
-    <p>
-      <code>export CLASSPATH=$JUNIT_HOME/junit.jar:/myproject/classes:/myproject/lib/something.jar</code>
-    </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="running_2"></a>Why do I get
-	a <code>NoClassDefFoundError</code> when trying to test JUnit
-	or run the samples?</b>
-    </p>
-    <p>
+    <pre>export CLASSPATH=$JUNIT_HOME/junit.jar:/myproject/classes:/myproject/lib/something.jar</pre>
+</answer>
+        </faq>
+        <faq id="running_2">
+            <question>Why do I get
+        a <code>NoClassDefFoundError</code> when trying to test JUnit
+        or run the samples?</question>
+            <answer><p>
       <i>(Submitted by: J.B. Rainsberger and Jason Rogers)</i>
     </p>
     <p>
@@ -1621,143 +1103,115 @@ oneTimeTearDown()
     </p>
     <p>
       Also consider running <a
-			       href="http://www.clarkware.com/software/WhichJUnit.zip">WhichJunit</a>
+                               href="http://www.clarkware.com/software/WhichJUnit.zip">WhichJunit</a>
       to print the absolute location of the JUnit class files required
       to run and test JUnit and its samples.
     </p>
     <p>
       If the CLASSPATH seems mysterious, read <a
       href="http://java.sun.com/j2se/1.4/docs/tooldocs/findingclasses.html">this</a>!
-    </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="running_4"></a>How do I run JUnit from my command window?</b>
-    </p>
-    <p>
+    </p></answer>
+        </faq>
+        <faq id="running_4">
+            <question>How do I run JUnit from my command window?</question>
+            <answer><p>
       <i>(Submitted by: Eric Armstrong)</i>
     </p>
     <ol>
       <li>
-	<p>
-	  <a href="#running_1">Set your CLASSPATH</a>
-	</p>
+        <p>
+          <a href="#running_1">Set your CLASSPATH</a>
+        </p>
       </li>
       <li>
-	<p>
-	  Invoke the runner:
-	</p>
-	<p>
-	  <code>
-	    java org.junit.runner.JUnitCore &lt;test class name&gt; 
-	  </code>
-	</p>
+        <p>
+          Invoke the runner:
+        </p>
+        <p>
+          <code>
+            java org.junit.runner.JUnitCore &lt;test class name&gt; 
+          </code>
+        </p>
       </li>
-    </ol>
-  </li>
-  <li>
-    <p>
-      <b><a name="running_5"></a>How do I run JUnit using Ant?</b>
-    </p>
-    <p>
+    </ol></answer>
+        </faq>
+        <faq id="running_5">
+            <question>How do I run JUnit using Ant?</question>
+            <answer><p>
       <i>(Submitted by: Eric Armstrong)</i>
     </p>
     <ol>
       <li>
-	<p>
-	  Define any necessary Ant properties:
-	</p>
-	<div>
-	  <pre><code>
-&lt;property name="src" value="./src" /&gt;
+        <p>
+          Define any necessary Ant properties:
+        </p>
+          <pre class="prettyprint linenums">&lt;property name="src" value="./src" /&gt;
 &lt;property name="lib" value="./lib" /&gt;
 &lt;property name="classes" value="./classes" /&gt;
-&lt;property name="test.class.name" value="com.xyz.MyTestSuite" /&gt;
-	  </code></pre>
-	</div>
+&lt;property name="test.class.name" value="com.xyz.MyTestSuite" /&gt;</pre>
       </li>
       <li>
-	<p>
-	  Set up the CLASSPATH to be used by JUnit:
-	</p>
-	<div>
-	  <pre><code>
-&lt;path id="test.classpath"&gt;
+        <p>
+          Set up the CLASSPATH to be used by JUnit:
+        </p>
+          <pre class="prettyprint linenums">&lt;path id="test.classpath"&gt;
   &lt;pathelement location="${classes}" /&gt;
   &lt;pathelement location="/path/to/junit.jar" /&gt;
   &lt;fileset dir="${lib}">
     &lt;include name="**/*.jar"/&gt;
   &lt;/fileset&gt;
-&lt;/path&gt;
-	  </code></pre>
-        </div>
+&lt;/path&gt;</pre>
       </li>
       <li>
-	<p>
-	  Define the Ant task for running JUnit:
-	</p>
-	<div>
-	  <pre><code>
-&lt;target name="test"&gt;
+        <p>
+          Define the Ant task for running JUnit:
+        </p>
+          <pre class="prettyprint linenums">&lt;target name="test"&gt;
   &lt;junit fork="yes" haltonfailure="yes"&gt;
     &lt;test name="${test.class.name}" /&gt;
     &lt;formatter type="plain" usefile="false" /&gt;
     &lt;classpath refid="test.classpath" /&gt;
   &lt;/junit&gt;
-&lt;/target&gt;
-	  </code></pre>
-	</div>
+&lt;/target&gt;</pre>
       </li>
       <li>
-	<p>
-	  Run the test:
-	</p>
-	<div>
-	  <code>
-	      ant test
-	  </code>
-	</div>
+        <p>
+          Run the test:
+        </p>
+        <pre>ant test</pre>
       </li>
     </ol>
     <p>
       Refer to the <a
       href="http://jakarta.apache.org/ant/manual/OptionalTasks/junit.html">JUnit
       Ant Task</a> for more information.
-    </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="running_6"></a>How do I use Ant to create HTML test
-      reports?</b>
-    </p>
-    <p>
+    </p></answer>
+        </faq>
+        <faq id="running_6">
+            <question>How do I use Ant to create HTML test
+      reports?</question>
+            <answer><p>
       <i>(Submitted by: Eric Armstrong and Steffen Gemkow)</i>
     </p>
     <ol>
       <li>
-	<p>
-	  Ensure that Ant's <code>optional.jar</code> file is either
-	  in your CLASSPATH or exists in
-	  your <code>$ANT_HOME/lib</code> directory.
-	</p>
+        <p>
+          Ensure that Ant's <code>optional.jar</code> file is either
+          in your CLASSPATH or exists in
+          your <code>$ANT_HOME/lib</code> directory.
+        </p>
       </li>
       <li>
-	<p>
-	  Add an ANT property for the directory containing the HTML reports:
-	</p>
-	<div>
-	  <code>
-&lt;property name="test.reports" value="./reports" /&gt;
-	  </code>
-	</div>
+        <p>
+          Add an ANT property for the directory containing the HTML reports:
+        </p>
+        <pre class="prettyprint linenums">&lt;property name="test.reports" value="./reports" /&gt;</pre>
       </li>
       <li>
-	<p>
-	  Define the Ant task for running JUnit and generating reports:
-	</p>
-	<div>
-	  <pre><code>
-&lt;target name="test-html"&gt;
+        <p>
+          Define the Ant task for running JUnit and generating reports:
+        </p>
+          <pre class="prettyprint linenums">&lt;target name="test-html"&gt;
   &lt;junit fork="yes" printsummary="no" haltonfailure="no"&gt;
     &lt;batchtest fork="yes" todir="${test.reports}" &gt;
       &lt;fileset dir="${classes}"&gt;
@@ -1774,40 +1228,32 @@ oneTimeTearDown()
     &lt;/fileset&gt;
     &lt;report todir="${test.reports}" /&gt;
   &lt;/junitreport&gt;
-&lt;/target&gt;
-	  </code></pre>
-	</div>
+&lt;/target&gt;</pre>
       </li>
       <li>
-	<p>
-	  Run the test:
-	</p>
-	<div>
-	  <code>
-	    ant test-html
-	  </code>
-	</div>
+        <p>
+          Run the test:
+        </p>
+        <div>
+          <code>
+            ant test-html
+          </code>
+        </div>
       </li>
     </ol>
     <p>
       Refer to the 
       <a href="http://jakarta.apache.org/ant/manual/OptionalTasks/junit.html">JUnit Ant Task</a>
       for more information.
-    </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="running_7"></a>How do I pass command-line arguments
-      to a test execution?</b>
-    </p>
-    <p>
+    </p></answer>
+        </faq>
+        <faq id="running_7">
+            <question>How do I pass command-line arguments
+      to a test execution?</question>
+            <answer><p>
       Use the <tt>-D</tt> JVM command-line options, as in:
     </p>
-    <div>
-      <blockquote><code>
--DparameterName=parameterValue
-      </code></blockquote>
-    </div>
+    <pre class="prettyprint">-DparameterName=parameterValue</pre>
     <p>
       If the number of parameters on the command line gets unweildy,
       pass in the location of a property file that defines a set of
@@ -1816,15 +1262,13 @@ oneTimeTearDown()
       contains the <tt>XMLPropertyManager</tt>
       and <tt>PropertyManager</tt> classes that allow you to define a
       property file (or XML file) containing test parameters.
-    </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="running_9"></a>Why do I get
+    </p></answer>
+        </faq>
+        <faq id="running_9">
+            <question>Why do I get
       a <code>LinkageError</code> when using
-	XML interfaces in my test?</b>
-    </p>
-    <p>
+        XML interfaces in my test?</question>
+            <answer><p>
       <i>(Submitted by: Scott Stirling)</i>
     </p>
     <p>
@@ -1844,9 +1288,7 @@ oneTimeTearDown()
       is the current version in CVS, which demonstrates how to add
       exclusions to the list too:
     </p>
-    <div>
-      <blockquote><pre>
-#
+    <pre class="prettyprint linenums">#
 # The list of excluded package paths for the TestCaseClassLoader
 #
 excluded.0=sun.*
@@ -1857,9 +1299,7 @@ excluded.4=sunw.*
 excluded.5=java.*
 excluded.6=org.w3c.dom.*
 excluded.7=org.xml.sax.*
-excluded.8=net.jini.*
-      </pre></blockquote>
-    </div>
+excluded.8=net.jini.*</pre>
     <p>
       This is the most common case where the
       default <code>excluded.properties</code> list needs
@@ -1944,35 +1384,27 @@ excluded.8=net.jini.*
       cases use many JAXP and related XML classes, one or the other
       classloader will end up violating the constraints whatever you
       do.
-    </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="running_11"></a>Why do I get the warning
+    </p></answer>
+        </faq>
+        <faq id="running_11">
+            <question>Why do I get the warning
       "AssertionFailedError: No
-	tests found in XXX" when I run my test?</b>
-    </p>
-    <p>
+        tests found in XXX" when I run my test?</question>
+            <answer><p>
       Make sure you have more or more method annotated with <code>@Test</code>.
     </p>
     <p>
       For example:
     </p>
-    <div>
-      <blockquote><pre>
-@Test
+<pre class="prettyprint linenums">@Test
 public void testSomething() {
-}
-      </pre></blockquote>
-    </div>    
-  </li>
-  <li>
-    <p>
-      <b><a name="running_12"></a>Why do I see "Unknown Source" in the
+}</pre></answer>
+        </faq>
+        <faq id="running_12">
+            <question>Why do I see "Unknown Source" in the
       stack trace of
-a test failure, rather than the source file's line number?</b>
-    </p>
-    <p>
+a test failure, rather than the source file's line number?</question>
+            <answer><p>
       The debug option for the Java compiler must be enabled in order
       to see source file and line number information in a stack trace.
     </p>
@@ -1985,11 +1417,7 @@ a test failure, rather than the source file's line number?</b>
       <a href="http://jakarta.apache.org/ant/index.html">Ant</a> task, use the
       <code>debug="on"</code> attribute.  For example:
     </p>
-    <div>
-      <blockquote><code>
-&lt;javac srcdir="${src}" destdir="${build}" debug="on" /&gt;
-      </code></blockquote>
-    </div>
+      <pre>&lt;javac srcdir="${src}" destdir="${build}" debug="on" /&gt;</pre>
     <p>
       When using older JVMs pre-Hotspot (JDK 1.1 and most/all 1.2),
       run JUnit with the <code>-DJAVA_COMPILER=none</code> JMV command
@@ -2001,15 +1429,13 @@ a test failure, rather than the source file's line number?</b>
       where the assertion failed.  Compiling the non-test source with
       debug enabled will show the line where an exception was raised
       in the class under test.
-    </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="running_15"></a>How do I organize all test classes
-	in a TestSuite automatically and not use or manage a TestSuite
-	explicitly?</b>
-    </p>
-    <p>
+    </p></answer>
+        </faq>
+        <faq id="running_15">
+            <question>How do I organize all test classes
+        in a TestSuite automatically and not use or manage a TestSuite
+        explicitly?</question>
+            <answer><p>
       <i>(Submitted by: Bill de hora)</i>
     </p>
     <p>
@@ -2017,12 +1443,12 @@ a test failure, rather than the source file's line number?</b>
     </p>
     <ol>
       <li>
-	<p>
-	  In Ant, use the <code>junit</code> task and
-	  the <code>batchtest</code> element:
-	</p>
-	<div>
-	  <pre><code>
+        <p>
+          In Ant, use the <code>junit</code> task and
+          the <code>batchtest</code> element:
+        </p>
+        <div>
+          <pre class="prettyprint linenums">
 &lt;junit printsummary="yes" haltonfailure="yes"&gt;
   ...
   &lt;batchtest fork="yes"&gt;
@@ -2032,73 +1458,60 @@ a test failure, rather than the source file's line number?</b>
     &lt;/fileset&gt;
   &lt;/batchtest&gt;
 &lt;/junit&gt; 
-	  </code></pre>
-	</div>
-	<p>
-	  Idiomatic naming patterns for unit tests
-	  are <code>Test*.java</code> and <code>*Test.java</code>.
-	  Documentation and examples are at <a
-					       href="http://ant.apache.org/manual/OptionalTasks/junit.html">http://ant.apache.org/manual/OptionalTasks/junit.html</a>.
-	</p>
+          </pre>
+        </div>
+        <p>
+          Idiomatic naming patterns for unit tests
+          are <code>Test*.java</code> and <code>*Test.java</code>.
+          Documentation and examples are at <a
+                                               href="http://ant.apache.org/manual/OptionalTasks/junit.html">http://ant.apache.org/manual/OptionalTasks/junit.html</a>.
+        </p>
       </li>
       <li>
-	<p>
-	  Use the <code>DirectorySuiteBuilder</code>
-	  and <code>ArchiveSuiteBuilder</code> (for jar/zip files)
-	  classes provided by JUnit-addons project:
-	</p>
-	<div>
-	  <blockquote><pre>
-DirectorySuiteBuilder builder = new DirectorySuiteBuilder();
+        <p>
+          Use the <code>DirectorySuiteBuilder</code>
+          and <code>ArchiveSuiteBuilder</code> (for jar/zip files)
+          classes provided by JUnit-addons project:
+        </p>
+<pre class="prettyprint linenums">DirectorySuiteBuilder builder = new DirectorySuiteBuilder();
 builder.setSuffix("Test");
-Test suite = builer.suite("/home/project/myproject/tests"); 
-	  </pre></blockquote>
-	</div>
-	<p>
-	  Documentation and examples are at <a
-					       href="http://junit-addons.sourceforge.net/">http://junit-addons.sourceforge.net</a>.
-	</p>
+Test suite = builer.suite("/home/project/myproject/tests");</pre>
+        <p>
+          Documentation and examples are at <a
+                                               href="http://junit-addons.sourceforge.net/">http://junit-addons.sourceforge.net</a>.
+        </p>
       </li>
       <li>
-	<p>
-	  Write your own custom suite builder. 
-	</p>
-	<p>
-	  Have your test classes implement an interface and write a
-	  treewalker to load each class in a directory, inspect the
-	  class, and add any classes that implement the interface to a
-	  TestSuite.
-	</p>
-	<p>
-	  You might only want to do this if you are <b>very</b>
-	  uncomfortable with using a naming convention for test
-	  classes. Aside from being slow for larger suites, ultimately
-	  it's arguable whether it's more effort to follow a naming
-	  convention that have test classes implement an interface!
-	</p>
-	<p>
-	  An example of this approach is at 
-	  <a href="http://www.javaworld.com/javaworld/jw-12-2000/jw-1221-junit_p.html">http://www.javaworld.com/javaworld/jw-12-2000/jw-1221-junit_p.html</a>.  
-	</p>
-      </li>
-    </ol>
-  </li>
+        <p>
+          Write your own custom suite builder. 
+        </p>
+        <p>
+          Have your test classes implement an interface and write a
+          treewalker to load each class in a directory, inspect the
+          class, and add any classes that implement the interface to a
+          TestSuite.
+        </p>
+        <p>
+          You might only want to do this if you are <b>very</b>
+          uncomfortable with using a naming convention for test
+          classes. Aside from being slow for larger suites, ultimately
+          it's arguable whether it's more effort to follow a naming
+          convention that have test classes implement an interface!
+        </p>
+        <p>
+          An example of this approach is at 
+          <a href="http://www.javaworld.com/javaworld/jw-12-2000/jw-1221-junit_p.html">http://www.javaworld.com/javaworld/jw-12-2000/jw-1221-junit_p.html</a>.  
+        </p>
+    </li>
 </ol>
-
-<!--
-
-    Best Practices
-
--->
-<div class="header">
-<a name="best">Best Practices</a>
-</div>
-<ol>
-  <li>
-    <p>
-      <b><a name="best_1"></a>When should tests be written?</b>
-    </p>
-    <p>
+    </answer>
+        </faq>
+    </part>
+    <part id="best">
+        <title>Best Practices</title>
+        <faq id="best_1">
+            <question>When should tests be written?</question>
+            <answer><p>
       Tests should be written before the code.  Test-first programming
       is practiced by only writing new code when an automated test is
       failing.
@@ -2119,14 +1532,12 @@ Test suite = builer.suite("/home/project/myproject/tests");
     <p>
       Test-driven development is a lot more fun than writing tests
       after the code seems to be working.  Give it a try!
-    </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="best_2"></a>Do I have to write a test for
-	everything?</b>
-    </p>
-    <p>
+    </p></answer>
+        </faq>
+        <faq id="best_2">
+            <question>Do I have to write a test for
+        everything?</question>
+            <answer><p>
       No, just test everything that could reasonably break.  
     </p>
     <p>
@@ -2142,13 +1553,11 @@ Test suite = builer.suite("/home/project/myproject/tests");
       for a design improvement.  Look to improve the design so that
       it's easier to test, and by doing so a better design will
       usually emerge.
-    </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="best_3"></a>How simple is 'too simple to break'?</b>
-    </p>
-    <p>
+    </p></answer>
+        </faq>
+        <faq id="best_3">
+            <question>How simple is 'too simple to break'?</question>
+            <answer><p>
       <i>(Submitted by: J. B. Rainsberger)</i>
     </p>
     <p>
@@ -2171,13 +1580,9 @@ Test suite = builer.suite("/home/project/myproject/tests");
       nothing but forward parameters into a method called on another
       object. That method is too simple to break.
     </p>
-    <div>
-      <blockquote><pre>
-public void myMethod(final int a, final String b) {
+<pre class="prettyprint linenums">public void myMethod(final int a, final String b) {
     myCollaborator.anotherMethod(a, b);
-}
-      </pre></blockquote>
-    </div>
+}</pre>
     <p>
       <code>myMethod</code> cannot possibly break because it does nothing: it 
       forwards its input to another object and that's all. 
@@ -2215,9 +1620,7 @@ public void myMethod(final int a, final String b) {
     <p>
       Here's the way testing goes: 
     </p>
-    <div>
-      <blockquote><pre>
-becomeTimidAndTestEverything
+    <pre class="prettyprint linenums">becomeTimidAndTestEverything
 while writingTheSameThingOverAndOverAgain
     becomeMoreAggressive
     writeFewerTests
@@ -2226,18 +1629,14 @@ while writingTheSameThingOverAndOverAgain
         feelStupid
         becomeTimidAndTestEverything
     end
-end
-      </pre></blockquote>
-    </div>
+end</pre>
     <p>
       The loop, as you can see, never terminates.
-    </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="best_4"></a>How often should I run my tests?</b>
-    </p>
-    <p>
+    </p></answer>
+        </faq>
+        <faq id="best_4">
+            <question>How often should I run my tests?</question>
+            <answer><p>
       Run all your unit tests as often as possible, ideally every time
       the code is changed.  Make sure all your unit tests always run
       at 100%.  Frequent testing gives you confidence that your
@@ -2256,13 +1655,11 @@ end
       If you're using Eclipse, be sure to check out David Saff's 
       <a href="http://pag.csail.mit.edu/continuoustesting/">continuous
       testing plug-in</a>.
-    </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="best_5"></a>What do I do when a defect is reported?</b>
-    </p>
-    <p>
+    </p></answer>
+        </faq>
+        <faq id="best_5">
+            <question>What do I do when a defect is reported?</question>
+            <answer><p>
       Test-driven development generally lowers the defect density of
       software.  But we're all fallible, so sometimes a defect will
       slip through.  When this happens, write a failing test that
@@ -2273,13 +1670,11 @@ end
       Don't forget to use this as a learning opportunity.  Perhaps the
       defect could have been prevented by being more aggressive about
       testing everything that could reasonably break.
-    </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="best_6"></a>Why not just use <code>System.out.println()</code>?</b>
-    </p>
-    <p>
+    </p></answer>
+        </faq>
+        <faq id="best_6">
+            <question>Why not just use <code>System.out.println()</code>?</question>
+            <answer><p>
       Inserting debug statements into code is a low-tech method for
       debugging it.  It usually requires that output be scanned
       manually every time the program is run to ensure that the code
@@ -2291,13 +1686,11 @@ end
       its value over time.  If it's difficult to write a test to
       assert expectations, the tests may be telling you that shorter
       and more cohesive methods would improve your design.
-    </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="best_7"></a>Why not just use a debugger?</b>
-    </p>
-    <p>
+    </p></answer>
+        </faq>
+        <faq id="best_7">
+            <question>Why not just use a debugger?</question>
+            <answer><p>
       Debuggers are commonly used to step through code and inspect
       that the variables along the way contain the expected values.
       But stepping through a program in a debugger is a manual process
@@ -2313,34 +1706,22 @@ end
       it's difficult to write a test to assert expected values, the
       tests may be telling you that shorter and more cohesive methods
       would improve your design.
-    </p>
-  </li>
-</ol>
-
-<!--
-
-    Miscellaneous
-
--->
-<div class="header">
-<a name="misc">Miscellaneous</a>
-</div>
-<ol>
-  <li>
-    <p>
-      <b><a name="misc_1"></a>How do I integrate JUnit with my IDE?</b>
-    </p>
-    <p>
+    </p></answer>
+        </faq>
+   </part>
+    <part id="misc">
+        <title>Miscellaneous</title>
+        <faq id="misc_1">
+            <question>How do I integrate JUnit with my IDE?</question>
+            <answer><p>
       The JUnit home page maintains a list of <a
       href="http://www.junit.org/news/ide/index.htm">IDE integration
       instructions</a>.
-    </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="misc_2"></a>How do I launch a debugger when a test fails?</b>
-    </p>
-    <p>
+    </p></answer>
+        </faq>
+        <faq id="misc_2">
+            <question>How do I launch a debugger when a test fails?</question>
+            <answer>    <p>
       Start the <code>TestRunner</code> under the debugger and
       configure the debugger so that it catches
       the <code>junit.framework.AssertionFailedError</code>.
@@ -2353,28 +1734,16 @@ end
     <p>
       Notice that this will only launch the debugger when an expected
       failure occurs.
-    </p>
-  </li>
-  <li>
-    <p>
-      <b><a name="misc_3"></a>Where can I find unit testing frameworks
-      similar to JUnit for other languages?</b>
-    </p>
-    <p>
+    </p></answer>
+        </faq>
+        <faq id="misc_3">
+            <question>Where can I find unit testing frameworks
+      similar to JUnit for other languages?</question>
+            <answer><p>
       XProgramming.com maintains a complete list of available <a
       href="http://www.xprogramming.com/software.htm">xUnit testing
       frameworks</a>.
-    </p>
-  </li>
-</ol>
-
-<br/>
-
-<div align="right">
-  <a href="http://validator.w3.org/check?uri=referer">
-    <img src="http://www.w3.org/Icons/valid-xhtml10"
-         alt="Valid XHTML 1.0!" height="31" width="88" /></a>
-</div>
-
-</body>
-</html>
+    </p></answer>
+        </faq>
+    </part>
+</faqs>

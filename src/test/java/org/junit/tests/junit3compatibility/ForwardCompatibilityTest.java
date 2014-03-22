@@ -90,7 +90,7 @@ public class ForwardCompatibilityTest extends TestCase {
                 log.append(" failure " + test);
             }
 
-            public void addError(junit.framework.Test test, Throwable t) {
+            public void addError(junit.framework.Test test, Throwable e) {
                 log.append(" error " + test);
             }
         });

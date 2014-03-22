@@ -66,12 +66,16 @@ public class CustomTimeoutTest {
     public static class CustomTimeout extends Timeout {
 
         public CustomTimeout(int timeout, TimeUnit unit) {
-            super (timeout, unit);
+            this(timeout, unit, false);
+        }
+
+        public CustomTimeout(int timeout, TimeUnit unit, boolean lookForStuckThread) {
+            super (new Timeout(timeout, unit), lookForStuckThread);
         }
 
         @Override
         public Statement apply(Statement base, Description description) {
-            return new CustomFailOnTimeout(base, fTimeout, fTimeUnit, fLookForStuckThread);
+            return new CustomFailOnTimeout(base, getTimeout(), getTimeUnit(), isLookForStuckThread());
         }
     }
 
@@ -116,7 +120,7 @@ public class CustomTimeoutTest {
     public static class InfiniteLoopWithLookForStuckThreadTest {
 
         @Rule
-        public TestRule globalTimeout = new CustomTimeout(100, TimeUnit.MILLISECONDS).lookForStuckThread(true);
+        public TestRule globalTimeout = new CustomTimeout(100, TimeUnit.MILLISECONDS, true);
 
         @Test
         public void failure() throws Exception {
@@ -126,7 +130,7 @@ public class CustomTimeoutTest {
     }
 
     @Test
-    public void infiniteLoopwithLookForStuckThread() throws Exception {
+    public void infiniteLoopWithLookForStuckThread() throws Exception {
         JUnitCore core = new JUnitCore();
         Result result = core.run(InfiniteLoopWithLookForStuckThreadTest.class);
         assertEquals(1, result.getRunCount());

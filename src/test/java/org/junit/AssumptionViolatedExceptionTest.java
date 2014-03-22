@@ -1,4 +1,4 @@
-package org.junit.tests.experimental;
+package org.junit;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
@@ -8,11 +8,9 @@ import static org.junit.Assume.assumeThat;
 
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
-import org.junit.Test;
 import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
-import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.RunWith;
 
 @RunWith(Theories.class)
