@@ -7,14 +7,8 @@ import static org.junit.Assert.assertThat;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadInfo;
-import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -32,66 +26,9 @@ public class CustomTimeoutTest {
 
     public static class CustomTimeoutHandler {
 
-        private static Logger log = Logger.getLogger("CustomTimeoutHandler");
-
         public Exception handleTimeout(Thread thread) {
-            String prefix = "[" + getClass().getSimpleName() + "] ";
-            log.warning(prefix + "Test ran into timeout, here is a full thread dump:\n" + getFullThreadDump());
-            return new Exception(prefix + "Appears to be stuck => Full thread dump is logged as warning");
-        }
-
-        private String getFullThreadDump() {
-            StringBuilder sb = new StringBuilder();
-
-            // TODO: ThreadMXBean provides interesting thread dump information (locks, monitors, synchronizers) only with Java >= 1.6
-
-            // First try ThreadMXBean#findMonitorDeadlockedThreads():
-            ThreadMXBean threadMxBean = ManagementFactory.getThreadMXBean();
-            long[] deadlockedThreadIds = threadMxBean.findMonitorDeadlockedThreads();
-            if (deadlockedThreadIds != null) {
-                sb.append("Found deadlocked threads:");
-                ThreadInfo[] threadInfos = threadMxBean.getThreadInfo(deadlockedThreadIds);
-                for (ThreadInfo threadInfo : threadInfos) {
-                    sb.append("\n\t" + threadInfo.getThreadName() + " Id=" + threadInfo.getThreadId()
-                            + " Lock name=" + threadInfo.getLockName() + " Lock owner Id=" + threadInfo.getLockOwnerId()
-                            + " Lock owner name=" + threadInfo.getLockOwnerName());
-                }
-            }
-
-            // Then just the full thread dump:
-            Map<Thread, StackTraceElement[]> allStackTraces = Thread.getAllStackTraces();
-            sb.append("Thread dump (total threads=" + allStackTraces.size() + ")");
-            for (Thread thread : allStackTraces.keySet()) {
-                sb.append("\n\t" + thread.getName());
-            }
-            sb.append("\n");
-            for (Entry<Thread, StackTraceElement[]> threadEntry : allStackTraces.entrySet()) {
-                sb.append("\n" + threadToHeaderString(threadEntry.getKey()));
-
-                StackTraceElement[] stackTraces = threadEntry.getValue();
-                for (int i = 0; i < stackTraces.length; i++) {
-                    StackTraceElement ste = stackTraces[i];
-                    sb.append("\tat " + ste.toString());
-                    sb.append('\n');
-                }
-            }
-
-            return sb.toString();
-        }
-
-        private String threadToHeaderString(Thread thread) {
-            StringBuilder sb = new StringBuilder("\"" + thread.getName() + "\""
-                    + " Id=" + thread.getId() + " Daemon=" + thread.isDaemon()
-                    + " State=" + thread.getState() + " Priority=" + thread.getPriority()
-                    + " Group=" + thread.getThreadGroup().getName());
-            if (thread.isAlive()) {
-                sb.append(" (alive)");
-            }
-            if (thread.isInterrupted()) {
-                sb.append(" (interrupted)");
-            }
-            sb.append('\n');
-            return sb.toString();
+        	String prefix = "[" + getClass().getSimpleName() + "] ";
+            return new Exception(prefix + "Appears to be stuck due to running into timeout. Here is some more failure context...");
         }
 
     }
@@ -169,7 +106,7 @@ public class CustomTimeoutTest {
         for (int i = 0; i < 2; i++)
             exception[i] = result.getFailures().get(i).getException();
         assertThat(exception[0].getMessage(), containsString("test timed out after 100 milliseconds"));
-        assertThat(exception[1].getMessage(), containsString("[CustomTimeoutHandler] Appears to be stuck => Full thread dump is logged as warning"));
+        assertThat(exception[1].getMessage(), containsString("[CustomTimeoutHandler] Appears to be stuck due to running into timeout. Here is some more failure context..."));
     }
 
 
@@ -200,7 +137,7 @@ public class CustomTimeoutTest {
         assertThat(exception[0].getMessage(), containsString("test timed out after 100 milliseconds"));
         assertThat(stackForException(exception[0]), containsString("Thread.join"));
         assertThat(exception[1].getMessage(), containsString("Appears to be stuck in thread timeout-thr2"));
-        assertThat(exception[2].getMessage(), containsString("[CustomTimeoutHandler] Appears to be stuck => Full thread dump is logged as warning"));
+        assertThat(exception[2].getMessage(), containsString("[CustomTimeoutHandler] Appears to be stuck due to running into timeout. Here is some more failure context..."));
     }
 
     private String stackForException(Throwable exception) {
