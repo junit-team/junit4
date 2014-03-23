@@ -28,7 +28,7 @@ public abstract class BaseTestRunner implements TestListener {
     public static final String SUITE_METHODNAME = "suite";
 
     private static Properties preferences;
-    private static final int MAX_MESSAGE_LENGTH;
+    private static final int MAX_MESSAGE_LENGTH = getPreference("maxmessage", 500); // 500 is the default value;
     static boolean filterStack = true;
     boolean loading = true;
 
@@ -318,10 +318,6 @@ public abstract class BaseTestRunner implements TestListener {
             }
         }
         return false;
-    }
-
-    static {
-        MAX_MESSAGE_LENGTH = getPreference("maxmessage", 500); // 500 is the default value
     }
 
 }
