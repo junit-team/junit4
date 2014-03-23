@@ -28,7 +28,7 @@ public abstract class BaseTestRunner implements TestListener {
     public static final String SUITE_METHODNAME = "suite";
 
     private static Properties preferences;
-    static int maxMessageLength = 500;
+    private static final int MAX_MESSAGE_LENGTH;
     static boolean filterStack = true;
     boolean loading = true;
 
@@ -192,8 +192,8 @@ public abstract class BaseTestRunner implements TestListener {
      * Truncates a String to the maximum length.
      */
     public static String truncate(String s) {
-        if (maxMessageLength != -1 && s.length() > maxMessageLength) {
-            s = s.substring(0, maxMessageLength) + "...";
+        if (MAX_MESSAGE_LENGTH != -1 && s.length() > MAX_MESSAGE_LENGTH) {
+            s = s.substring(0, MAX_MESSAGE_LENGTH) + "...";
         }
         return s;
     }
@@ -321,7 +321,7 @@ public abstract class BaseTestRunner implements TestListener {
     }
 
     static {
-        maxMessageLength = getPreference("maxmessage", maxMessageLength);
+        MAX_MESSAGE_LENGTH = getPreference("maxmessage", 500); // 500 is the default value
     }
 
 }
