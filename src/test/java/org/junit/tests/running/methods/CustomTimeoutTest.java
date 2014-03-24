@@ -7,7 +7,7 @@ import static org.junit.Assert.assertThat;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Rule;
@@ -18,7 +18,6 @@ import org.junit.rules.Timeout;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
-import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
 import org.junit.tests.running.methods.TimeoutTest.InfiniteLoopMultithreaded;
 
@@ -28,7 +27,7 @@ public class CustomTimeoutTest {
 
         public Exception handleTimeout(Thread thread) {
         	String prefix = "[" + getClass().getSimpleName() + "] ";
-            return new Exception(prefix + "Appears to be stuck due to running into timeout. Here is some more failure context...");
+            return new Exception(prefix + "Appears to be stuck due to running into timeout. Here could be some more custom failure context...");
         }
 
     }
@@ -44,23 +43,14 @@ public class CustomTimeoutTest {
         }
 
         @Override
-        protected Exception createTimeoutException(Thread thread) {
-            ArrayList<Throwable> exceptions = new ArrayList<Throwable>();
-
-            Exception handlerException = handler.handleTimeout(thread);
-
-            Exception defaultException = super.createTimeoutException(thread);
-            if (defaultException instanceof MultipleFailureException) {
-                MultipleFailureException defaultMfe = (MultipleFailureException) defaultException;
-                exceptions.addAll(defaultMfe.getFailures());
-            } else {
-                exceptions.add(defaultException);
-            }
-
-            exceptions.add(handlerException);
-
-            return new MultipleFailureException(exceptions);
+        protected List<Throwable> createAdditionalTimeoutExceptions(
+                Thread thread) {
+            List<Throwable> exceptions = super.createAdditionalTimeoutExceptions(thread);
+            Throwable handleTimeout = handler.handleTimeout(thread);
+            exceptions.add(handleTimeout);
+            return exceptions;
         }
+
     }
 
     public static class CustomTimeout extends Timeout {
@@ -110,7 +100,7 @@ public class CustomTimeoutTest {
         for (int i = 0; i < 2; i++)
             exception[i] = result.getFailures().get(i).getException();
         assertThat(exception[0].getMessage(), containsString("test timed out after 100 milliseconds"));
-        assertThat(exception[1].getMessage(), containsString("[CustomTimeoutHandler] Appears to be stuck due to running into timeout. Here is some more failure context..."));
+        assertThat(exception[1].getMessage(), containsString("[CustomTimeoutHandler] Appears to be stuck due to running into timeout. Here could be some more custom failure context..."));
     }
 
 
@@ -141,7 +131,7 @@ public class CustomTimeoutTest {
         assertThat(exception[0].getMessage(), containsString("test timed out after 100 milliseconds"));
         assertThat(stackForException(exception[0]), containsString("Thread.join"));
         assertThat(exception[1].getMessage(), containsString("Appears to be stuck in thread timeout-thr2"));
-        assertThat(exception[2].getMessage(), containsString("[CustomTimeoutHandler] Appears to be stuck due to running into timeout. Here is some more failure context..."));
+        assertThat(exception[2].getMessage(), containsString("[CustomTimeoutHandler] Appears to be stuck due to running into timeout. Here could be some more custom failure context..."));
     }
 
     private String stackForException(Throwable exception) {
