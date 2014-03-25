@@ -47,7 +47,7 @@ public class Assignments {
     }
 
     public boolean isComplete() {
-        return unassigned.size() == 0;
+        return unassigned.isEmpty();
     }
 
     public ParameterSignature nextUnassigned() {
