@@ -26,9 +26,9 @@ public class ComparisonFailure extends AssertionError {
     /**
      * Constructs a comparison failure.
      *
-     * @param message  the identifying message or null
+     * @param message the identifying message or null
      * @param expected the expected string value
-     * @param actual   the actual string value
+     * @param actual the actual string value
      */
     public ComparisonFailure(String message, String expected, String actual) {
         super(message);
@@ -82,10 +82,10 @@ public class ComparisonFailure extends AssertionError {
 
         /**
          * @param contextLength the maximum length for <code>expected</code> and <code>actual</code> strings. When
-         *                      contextLength
-         *                      is exceeded, the Strings are shortened.
-         * @param expected      the expected string value
-         * @param actual        the actual string value
+         * contextLength
+         * is exceeded, the Strings are shortened.
+         * @param expected the expected string value
+         * @param actual the actual string value
          */
         public ComparisonCompactor(int contextLength, String expected, String actual) {
             this.contextLength = contextLength;
