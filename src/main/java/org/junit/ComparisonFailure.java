@@ -82,8 +82,7 @@ public class ComparisonFailure extends AssertionError {
 
         /**
          * @param contextLength the maximum length for <code>expected</code> and <code>actual</code> strings. When
-         * contextLength
-         * is exceeded, the Strings are shortened.
+         * contextLength is exceeded, the Strings are shortened.
          * @param expected the expected string value
          * @param actual the actual string value
          */
