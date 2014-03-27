@@ -76,9 +76,9 @@ public class ComparisonFailure extends AssertionError {
          * <code>contextLength</code>
          * is exceeded, the Strings are shortened.
          */
-        private final int contextLength;
+        private int contextLength;
         private String expected;
-        private final String actual;
+        private String actual;
 
         /**
          * @param contextLength the maximum length for <code>expected</code> and <code>actual</code> strings. When
