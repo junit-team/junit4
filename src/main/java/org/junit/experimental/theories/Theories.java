@@ -78,7 +78,7 @@ public class Theories extends BlockJUnit4ClassRunner {
                 each.validatePublicVoidNoArg(false, errors);
             }
             
-            for (ParameterSignature signature : each.getParameterSignatures()) {
+            for (ParameterSignature signature : ParameterSignature.signatures(each.getMethod())) {
                 ParametersSuppliedBy annotation = signature.findDeepAnnotation(ParametersSuppliedBy.class);
                 if (annotation != null) {
                     validateParameterSupplier(annotation.value(), errors);
