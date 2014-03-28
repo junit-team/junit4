@@ -2,9 +2,8 @@ package org.junit;
 
 /**
  * Thrown when an {@link org.junit.Assert#assertEquals(Object, Object) assertEquals(String,
- * String)} fails. Create and throw
- * a <code>ComparisonFailure</code> manually if you want to show users the difference between two complex
- * strings.
+ * String)} fails. Create and throw a <code>ComparisonFailure</code> manually if you want to show users the
+ * difference between two complex strings.
  * <p/>
  * Inspired by a patch from Alex Chaffee (alex@purpletech.com)
  *
@@ -36,8 +35,7 @@ public class ComparisonFailure extends AssertionError {
     }
 
     /**
-     * Returns "..." in place of common prefix and "..." in
-     * place of common suffix between expected and actual.
+     * Returns "..." in place of common prefix and "..." in place of common suffix between expected and actual.
      *
      * @see Throwable#getMessage()
      */
