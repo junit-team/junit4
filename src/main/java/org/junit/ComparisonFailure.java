@@ -71,8 +71,7 @@ public class ComparisonFailure extends AssertionError {
 
         /**
          * The maximum length for <code>expected</code> and <code>actual</code> strings to show. When
-         * <code>contextLength</code>
-         * is exceeded, the Strings are shortened.
+         * <code>contextLength</code> is exceeded, the Strings are shortened.
          */
         private final int contextLength;
         private final String expected;
@@ -112,11 +111,6 @@ public class ComparisonFailure extends AssertionError {
 
             /**
              * Can not be instantiated outside {@link org.junit.ComparisonFailure.ComparisonCompactor}.
-             *
-             * @param expected the expected string value
-             * @param actual the actual string value
-             * @param contextLength the maximum length of context surrounding the difference between the compared
-             * strings. When context length is exceeded, the prefixes and suffixes are compacted.
              */
             private DiffExtractor(String expected, String actual, int contextLength) {
                 this.expected = expected;
