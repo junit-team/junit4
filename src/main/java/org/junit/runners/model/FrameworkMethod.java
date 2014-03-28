@@ -7,7 +7,6 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import org.junit.experimental.theories.ParameterSignature;
 import org.junit.internal.runners.model.ReflectiveCallable;
 
 /**
@@ -196,10 +195,6 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
      */
     public <T extends Annotation> T getAnnotation(Class<T> annotationType) {
         return fMethod.getAnnotation(annotationType);
-    }
-
-    public List<ParameterSignature> getParameterSignatures() {
-        return ParameterSignature.signatures(fMethod);
     }
 
     @Override
