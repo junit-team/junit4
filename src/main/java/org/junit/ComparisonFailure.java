@@ -11,7 +11,6 @@ package org.junit;
  * @since 4.0
  */
 public class ComparisonFailure extends AssertionError {
-
     /**
      * The maximum length for expected and actual strings. If it is exceeded, the strings should be shortened.
      *
@@ -66,7 +65,6 @@ public class ComparisonFailure extends AssertionError {
     }
 
     private static class ComparisonCompactor {
-
         private static final String ELLIPSIS = "...";
         private static final String DIFF_END = "]";
         private static final String DIFF_START = "[";
@@ -76,13 +74,13 @@ public class ComparisonFailure extends AssertionError {
          * <code>contextLength</code>
          * is exceeded, the Strings are shortened.
          */
-        private int contextLength;
-        private String expected;
-        private String actual;
+        private final int contextLength;
+        private final String expected;
+        private final String actual;
 
         /**
-         * @param contextLength the maximum length for <code>expected</code> and <code>actual</code> strings. When
-         * contextLength is exceeded, the Strings are shortened.
+         * @param contextLength the maximum length of context surrounding the difference between the compared strings.
+         * When context length is exceeded, the prefixes and suffixes are compacted.
          * @param expected the expected string value
          * @param actual the actual string value
          */
@@ -96,7 +94,7 @@ public class ComparisonFailure extends AssertionError {
             if (expected == null || actual == null || expected.equals(actual)) {
                 return Assert.format(message, expected, actual);
             } else {
-                DiffExtractor extractor = new DiffExtractor();
+                DiffExtractor extractor = new DiffExtractor(expected, actual, contextLength);
                 String compactedPrefix = extractor.compactPrefix();
                 String compactedSuffix = extractor.compactSuffix();
                 return Assert.format(message,
@@ -105,25 +103,52 @@ public class ComparisonFailure extends AssertionError {
             }
         }
 
-        private class DiffExtractor {
+        private static class DiffExtractor {
+            private final String sharedPrefix;
+            private final String sharedSuffix;
+            private final String expected;
+            private final String actual;
+            private final int contextLength;
 
-            private String sharedPrefix;
-            private String sharedSuffix;
-
-            private DiffExtractor() {
-                sharedPrefix = sharedPrefix();
-                sharedSuffix = sharedSuffix(sharedPrefix);
+            /**
+             * Can not be instantiated outside {@link org.junit.ComparisonFailure.ComparisonCompactor}.
+             *
+             * @param expected the expected string value
+             * @param actual the actual string value
+             * @param contextLength the maximum length of context surrounding the difference between the compared
+             * strings. When context length is exceeded, the prefixes and suffixes are compacted.
+             */
+            private DiffExtractor(String expected, String actual, int contextLength) {
+                this.expected = expected;
+                this.actual = actual;
+                this.contextLength = contextLength;
+                sharedPrefix = sharedPrefix(expected, actual);
+                sharedSuffix = sharedSuffix(sharedPrefix, expected, actual);
             }
 
-            private String expectedDiff() {
+            public String expectedDiff() {
                 return extractDiff(expected);
             }
 
-            private String actualDiff() {
+            public String actualDiff() {
                 return extractDiff(actual);
             }
 
-            private String sharedPrefix() {
+            public String compactPrefix() {
+                if (sharedPrefix.length() <= contextLength) {
+                    return sharedPrefix;
+                }
+                return ELLIPSIS + sharedPrefix.substring(sharedPrefix.length() - contextLength);
+            }
+
+            public String compactSuffix() {
+                if (sharedSuffix.length() <= contextLength) {
+                    return sharedSuffix;
+                }
+                return sharedSuffix.substring(0, contextLength) + ELLIPSIS;
+            }
+
+            private static String sharedPrefix(String expected, String actual) {
                 int end = Math.min(expected.length(), actual.length());
                 for (int i = 0; i < end; i++) {
                     if (expected.charAt(i) != actual.charAt(i)) {
@@ -133,31 +158,17 @@ public class ComparisonFailure extends AssertionError {
                 return expected.substring(0, end);
             }
 
-            private String sharedSuffix(String prefix) {
+            private static String sharedSuffix(String prefix, String expected, String actual) {
                 int suffixLength = 0;
                 int maxSuffixLength = Math.min(expected.length() - prefix.length(),
                         actual.length() - prefix.length()) - 1;
                 for (; suffixLength <= maxSuffixLength; suffixLength++) {
-                    if (expected.charAt(expected.length() - 1 - suffixLength) !=
-                            actual.charAt(actual.length() - 1 - suffixLength)) {
+                    if (expected.charAt(expected.length() - 1 - suffixLength)
+                            != actual.charAt(actual.length() - 1 - suffixLength)) {
                         break;
                     }
                 }
                 return expected.substring(expected.length() - suffixLength);
-            }
-
-            private String compactPrefix() {
-                if (sharedPrefix.length() > contextLength) {
-                    return ELLIPSIS + sharedPrefix.substring(sharedPrefix.length() - contextLength);
-                }
-                return sharedPrefix;
-            }
-
-            private String compactSuffix() {
-                if (sharedSuffix.length() > contextLength) {
-                    return sharedSuffix.substring(0, contextLength) + ELLIPSIS;
-                }
-                return sharedSuffix;
             }
 
             private String extractDiff(String source) {
