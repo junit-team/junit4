@@ -67,7 +67,7 @@ public class FailOnTimeout extends Statement {
         }
     }
 
-    private Throwable createTimeoutException(Thread thread) {
+    protected Throwable createTimeoutException(Thread thread) {
         List<Throwable> exceptions = new ArrayList<Throwable>();
 
         exceptions.add(createCurrentThreadException(thread));
