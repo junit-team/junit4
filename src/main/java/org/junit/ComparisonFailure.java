@@ -1,8 +1,8 @@
 package org.junit;
 
 /**
- * Thrown when an {@link org.junit.Assert#assertEquals(Object, Object) assertEquals(String,
- * String)} fails. Create and throw a <code>ComparisonFailure</code> manually if you want to show users the
+ * Thrown when an {@link org.junit.Assert#assertEquals(Object, Object) assertEquals(String, String)} fails.
+ * Create and throw a <code>ComparisonFailure</code> manually if you want to show users the
  * difference between two complex strings.
  * <p/>
  * Inspired by a patch from Alex Chaffee (alex@purpletech.com)
@@ -91,7 +91,7 @@ public class ComparisonFailure extends AssertionError {
             if (expected == null || actual == null || expected.equals(actual)) {
                 return Assert.format(message, expected, actual);
             } else {
-                DiffExtractor extractor = new DiffExtractor(expected, actual, contextLength);
+                DiffExtractor extractor = new DiffExtractor();
                 String compactedPrefix = extractor.compactPrefix();
                 String compactedSuffix = extractor.compactSuffix();
                 return Assert.format(message,
@@ -100,20 +100,14 @@ public class ComparisonFailure extends AssertionError {
             }
         }
 
-        private static class DiffExtractor {
+        private class DiffExtractor {
             private final String sharedPrefix;
             private final String sharedSuffix;
-            private final String expected;
-            private final String actual;
-            private final int contextLength;
 
             /**
              * Can not be instantiated outside {@link org.junit.ComparisonFailure.ComparisonCompactor}.
              */
-            private DiffExtractor(String expected, String actual, int contextLength) {
-                this.expected = expected;
-                this.actual = actual;
-                this.contextLength = contextLength;
+            private DiffExtractor() {
                 sharedPrefix = sharedPrefix(expected, actual);
                 sharedSuffix = sharedSuffix(sharedPrefix, expected, actual);
             }
@@ -140,7 +134,7 @@ public class ComparisonFailure extends AssertionError {
                 return sharedSuffix.substring(0, contextLength) + ELLIPSIS;
             }
 
-            private static String sharedPrefix(String expected, String actual) {
+            private String sharedPrefix(String expected, String actual) {
                 int end = Math.min(expected.length(), actual.length());
                 for (int i = 0; i < end; i++) {
                     if (expected.charAt(i) != actual.charAt(i)) {
@@ -150,7 +144,7 @@ public class ComparisonFailure extends AssertionError {
                 return expected.substring(0, end);
             }
 
-            private static String sharedSuffix(String prefix, String expected, String actual) {
+            private String sharedSuffix(String prefix, String expected, String actual) {
                 int suffixLength = 0;
                 int maxSuffixLength = Math.min(expected.length() - prefix.length(),
                         actual.length() - prefix.length()) - 1;
