@@ -21,7 +21,6 @@ import org.junit.runners.model.FrameworkMethodTest;
 import org.junit.tests.assertion.AssertionTest;
 import org.junit.tests.assertion.ComparisonFailureTest;
 import org.junit.tests.assertion.MultipleFailureExceptionTest;
-import org.junit.tests.deprecated.JUnit4ClassRunnerTest;
 import org.junit.tests.description.AnnotatedDescriptionTest;
 import org.junit.tests.description.SuiteDescriptionTest;
 import org.junit.tests.description.TestDescriptionTest;
@@ -96,7 +95,6 @@ import org.junit.tests.running.methods.InheritedTestTest;
 import org.junit.tests.running.methods.ParameterizedTestMethodTest;
 import org.junit.tests.running.methods.TestMethodTest;
 import org.junit.tests.running.methods.TimeoutTest;
-import org.junit.tests.validation.BadlyFormedClassesTest;
 import org.junit.tests.validation.FailedConstructionTest;
 import org.junit.tests.validation.InaccessibleBaseClassTest;
 import org.junit.tests.validation.ValidationTest;
@@ -104,7 +102,6 @@ import org.junit.tests.validation.ValidationTest;
 // These test files need to be cleaned. See
 // https://sourceforge.net/pm/task.php?func=detailtask&project_task_id=136507&group_id=15278&group_project_id=51407
 
-@SuppressWarnings("deprecation")
 @RunWith(Suite.class)
 @SuiteClasses({
         AssumptionTest.class,
@@ -143,7 +140,6 @@ import org.junit.tests.validation.ValidationTest;
         JUnitCoreReturnsCorrectExitCodeTest.class,
         InaccessibleBaseClassTest.class,
         SuiteMethodTest.class,
-        BadlyFormedClassesTest.class,
         IgnoreClassTest.class,
         OldTestClassAdaptingListenerTest.class,
         AnnotatedDescriptionTest.class,
@@ -160,7 +156,6 @@ import org.junit.tests.validation.ValidationTest;
         MatcherTest.class,
         ObjectContractTest.class,
         TheoriesPerformanceTest.class,
-        JUnit4ClassRunnerTest.class,
         UseSuiteAsASuperclassTest.class,
         FilterableTest.class,
         FilterTest.class,
