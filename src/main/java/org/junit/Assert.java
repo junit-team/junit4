@@ -647,24 +647,27 @@ public class Assert {
     }
 
     /**
-     * @deprecated Use
-     *             <code>assertEquals(double expected, double actual, double delta)</code>
-     *             instead
+     * Asserts that two doubles are equal up to a bit representation.
+     * 
+     * @param expected expected value
+     * @param actual the value to check against
      */
-    @Deprecated
     static public void assertEquals(double expected, double actual) {
         assertEquals(null, expected, actual);
     }
 
     /**
-     * @deprecated Use
-     *             <code>assertEquals(String message, double expected, double actual, double delta)</code>
-     *             instead
+     * Asserts that two floats are equal up to a bit representation.
+     * If it is an {@link AssertionError} is thrown with the given message.
+     * 
+     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
+     * okay)
+     * @param expected expected value
+     * @param actual the value to check against
      */
-    @Deprecated
     static public void assertEquals(String message, double expected,
             double actual) {
-        fail("Use assertEquals(expected, actual, delta) to compare floating-point numbers");
+        assertEquals(message, expected, actual, 0.0d);
     }
 
     /**
@@ -684,6 +687,16 @@ public class Assert {
     }
 
     /**
+     * Asserts that two floats are equal up to a bit representation.
+     * 
+     * @param expected expected value
+     * @param actual the value to check against
+     */
+    static public void assertEquals(float expected, float actual) {
+        assertEquals(null, expected, actual, 0.0f);
+    }
+    
+    /**
      * Asserts that two floats are equal to within a positive delta.
      * If they are not, an {@link AssertionError} is thrown. If the expected
      * value is infinity then the delta value is ignored. NaNs are considered
@@ -695,7 +708,6 @@ public class Assert {
      * <code>actual</code> for which both numbers are still
      * considered equal.
      */
-
     static public void assertEquals(float expected, float actual, float delta) {
         assertEquals(null, expected, actual, delta);
     }

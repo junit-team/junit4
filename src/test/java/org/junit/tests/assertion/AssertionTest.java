@@ -331,14 +331,22 @@ public class AssertionTest {
     }
 
     @Test(expected = AssertionError.class)
-    public void floatsNotEqual() {
+    public void floatsNotEqualWithDelta() {
         assertEquals(1.0, 2.0, 0.9);
     }
+    
+    public void floatsEqualWithDelta() {
+        assertEquals(1.0, 2.0, 1.0);
+    }
 
-    @SuppressWarnings("deprecation")
     @Test(expected = AssertionError.class)
-    public void floatsNotEqualWithoutDelta() {
+    public void floatsNotEqual() {
         assertEquals(1.0, 1.1);
+    }
+    
+    @Test
+    public void floatsEqual() {
+        assertEquals(1.1, 1.1);
     }
 
     @Test
@@ -356,8 +364,22 @@ public class AssertionTest {
 
 
     @Test(expected = AssertionError.class)
-    public void doublesNotEqual() {
+    public void doublesNotEqualWithDelta() {
         assertEquals(1.0d, 2.0d, 0.9d);
+    }
+    
+    public void doublesEqualWithDelta() {
+        assertEquals(1.0d, 2.0d, 1.0d);
+    }
+    
+    @Test(expected = AssertionError.class)
+    public void doublesNotEqual() {
+        assertEquals(1.0d, 2.0d);
+    }
+    
+    @Test
+    public void doublesEqual() {
+        assertEquals(1.1d, 1.1d);
     }
 
     @Test
