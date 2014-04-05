@@ -99,7 +99,6 @@ import org.junit.tests.running.methods.TestMethodTest;
 import org.junit.tests.running.methods.TimeoutTest;
 import org.junit.tests.validation.BadlyFormedClassesTest;
 import org.junit.tests.validation.FailedConstructionTest;
-import org.junit.tests.validation.InaccessibleBaseClassTest;
 import org.junit.tests.validation.ValidationTest;
 import org.junit.validator.PublicClassValidatorTest;
 
@@ -143,7 +142,6 @@ import org.junit.validator.PublicClassValidatorTest;
         JUnit38ClassRunnerTest.class,
         SystemExitTest.class,
         JUnitCoreReturnsCorrectExitCodeTest.class,
-        InaccessibleBaseClassTest.class,
         SuiteMethodTest.class,
         BadlyFormedClassesTest.class,
         IgnoreClassTest.class,
