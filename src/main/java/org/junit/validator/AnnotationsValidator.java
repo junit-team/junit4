@@ -18,7 +18,7 @@ import org.junit.runners.model.TestClass;
  * 
  * @since 4.12
  */
-public final class AnnotationsValidator {
+public final class AnnotationsValidator implements TestClassValidator {
     private static final List<AnnotatableValidator<?>> VALIDATORS = Arrays.<AnnotatableValidator<?>>asList(
             new ClassValidator(), new MethodValidator(), new FieldValidator());
 

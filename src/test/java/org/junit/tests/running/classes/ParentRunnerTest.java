@@ -84,7 +84,7 @@ public class ParentRunnerTest {
     }
 
     private static class Exclude extends Filter {
-        private String methodName;
+        private final String methodName;
 
         public Exclude(String methodName) {
             this.methodName = methodName;
@@ -125,6 +125,18 @@ public class ParentRunnerTest {
     public void failWithHelpfulMessageForNonStaticClassRule() {
         assertClassHasFailureMessage(TestWithNonStaticClassRule.class,
                 "The @ClassRule 'temporaryFolder' must be static.");
+    }
+
+    static class NonPublicTestClass {
+        public NonPublicTestClass() {
+        }
+    }
+
+    @Test
+    public void cannotBeCreatedWithNonPublicTestClass() {
+        assertClassHasFailureMessage(
+                NonPublicTestClass.class,
+                "The class org.junit.tests.running.classes.ParentRunnerTest$NonPublicTestClass is not public.");
     }
 
     private void assertClassHasFailureMessage(Class<?> klass, String message) {
