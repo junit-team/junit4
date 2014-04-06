@@ -98,7 +98,7 @@ class JUnitCommandLineParseResult {
             result.add(args[j]);
         }
 
-        return result.toArray(new String[]{});
+        return result.toArray(new String[result.size()]);
     }
 
     void parseParameters(String[] args) {
@@ -119,7 +119,7 @@ class JUnitCommandLineParseResult {
     public Request createRequest(Computer computer) {
         if (parserErrors.isEmpty()) {
             return Request
-                    .classes(computer, classes.toArray(new Class<?>[0]))
+                    .classes(computer, classes.toArray(new Class<?>[classes.size()]))
                     .filterWith(filter);
         } else {
             return new Request() {
