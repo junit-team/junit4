@@ -2,7 +2,6 @@ package org.junit.experimental.theories;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -157,8 +156,7 @@ public class Theories extends BlockJUnit4ClassRunner {
         }
 
         protected void runWithIncompleteAssignment(Assignments incomplete)
-                throws InstantiationException, IllegalAccessException,
-                Throwable {
+                throws Throwable {
             for (PotentialAssignment source : incomplete
                     .potentialsForNextUnassigned()) {
                 runWithAssignment(incomplete.assignNext(source));
@@ -166,8 +164,7 @@ public class Theories extends BlockJUnit4ClassRunner {
         }
 
         protected void runWithCompleteAssignment(final Assignments complete)
-                throws InstantiationException, IllegalAccessException,
-                InvocationTargetException, NoSuchMethodException, Throwable {
+                throws Throwable {
             new BlockJUnit4ClassRunner(getTestClass().getJavaClass()) {
                 @Override
                 protected void collectInitializationErrors(

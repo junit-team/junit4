@@ -79,15 +79,15 @@ public class ForwardCompatibilityTest extends TestCase {
         result.addListener(new TestListener() {
 
             public void startTest(junit.framework.Test test) {
-                log.append(" start " + test);
+                log.append(" start ").append(test);
             }
 
             public void endTest(junit.framework.Test test) {
-                log.append(" end " + test);
+                log.append(" end ").append(test);
             }
 
             public void addFailure(junit.framework.Test test, AssertionFailedError t) {
-                log.append(" failure " + test);
+                log.append(" failure ").append(test);
             }
 
             public void addError(junit.framework.Test test, Throwable e) {
