@@ -11,6 +11,24 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 
 public class ErrorReportingRunner extends Runner {
+    private static final FailureReporter FALIURE_REPORTER = new FailureReporter();
+    private static final TestFailureReporter TEST_FALIURE_REPORTER = new TestFailureReporter();
+    
+    private static class FailureReporter {
+        void report(RunNotifier notifier, Description description, Throwable cause) {
+            notifier.fireTestFailure(new Failure(description, cause));
+        }
+    }
+    
+    private static final class TestFailureReporter extends FailureReporter {
+        @Override
+        void report(RunNotifier notifier, Description description, Throwable cause) {
+            notifier.fireTestStarted(description);
+            super.report(notifier, description, cause);
+            notifier.fireTestFinished(description);
+        }
+    }
+    
     private final List<Throwable> fCauses;
 
     private final Class<?> fTestClass;
@@ -57,9 +75,8 @@ public class ErrorReportingRunner extends Runner {
     }
 
     private void runCause(Throwable child, RunNotifier notifier) {
-        Description description = describeCause(child);
-        notifier.fireTestStarted(description);
-        notifier.fireTestFailure(new Failure(description, child));
-        notifier.fireTestFinished(description);
+        boolean errorInTest = !(child instanceof InitializationError);
+        FailureReporter failureReporter = (errorInTest) ? TEST_FALIURE_REPORTER : FALIURE_REPORTER; 
+        failureReporter.report(notifier, describeCause(child), child);
     }
 }

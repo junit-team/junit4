@@ -153,7 +153,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
     protected void validateOnlyOneConstructor(List<Throwable> errors) {
         if (!hasOneConstructor()) {
             String gripe = "Test class should have exactly one public constructor";
-            errors.add(new Exception(gripe));
+            errors.add(new InitializationError(gripe));
         }
     }
 
@@ -166,7 +166,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
                 && hasOneConstructor()
                 && (getTestClass().getOnlyConstructor().getParameterTypes().length != 0)) {
             String gripe = "Test class should have exactly one public zero-argument constructor";
-            errors.add(new Exception(gripe));
+            errors.add(new InitializationError(gripe));
         }
     }
 
@@ -186,7 +186,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
         validateTestMethods(errors);
 
         if (computeTestMethods().size() == 0) {
-            errors.add(new Exception("No runnable methods"));
+            errors.add(new InitializationError("No runnable methods"));
         }
     }
 

@@ -440,7 +440,7 @@ public class CategoryTest {
     public void ignoredTest() {// behaves same as Suite
         Result result= JUnitCore.runClasses(IgnoredTestCategoriesSuite.class);
         assertFalse(result.wasSuccessful());
-        assertThat(result.getRunCount(), is(1));
+        assertThat(result.getRunCount(), is(0));
         assertThat(result.getFailureCount(), is(1));
         assertThat(result.getIgnoreCount(), is(1));
     }
