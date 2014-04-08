@@ -16,6 +16,9 @@ public class ErrorReportingRunner extends Runner {
     private final Class<?> fTestClass;
 
     public ErrorReportingRunner(Class<?> testClass, Throwable cause) {
+        if (testClass == null) {
+            throw new NullPointerException("Test class cannot be null");
+        }
         fTestClass = testClass;
         fCauses = getCauses(cause);
     }
