@@ -55,7 +55,11 @@ public class FailOnTimeout extends Statement {
      */
     private Throwable getResult(FutureTask<Throwable> task, Thread thread) {
         try {
-            return task.get(fTimeout, fTimeUnit);
+            if (fTimeout > 0) {
+                return task.get(fTimeout, fTimeUnit);
+            } else {
+                return task.get();
+            }
         } catch (InterruptedException e) {
             return e; // caller will re-throw; no need to call Thread.interrupt()
         } catch (ExecutionException e) {

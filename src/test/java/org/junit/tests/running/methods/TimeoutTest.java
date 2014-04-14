@@ -274,4 +274,26 @@ public class TimeoutTest {
         JUnitCore.runClasses(WillTimeOut.class);
         assertThat(WillTimeOut.afterWasCalled, is(true));
     }
+
+    public static class TimeOutZero {
+        @Rule
+        public Timeout timeout = Timeout.seconds(0);
+
+        @Test
+        public void test() {
+            try {
+                Thread.sleep(200); // long enough to suspend thread execution
+            } catch (InterruptedException e) {
+                // Don't care
+            }
+        }
+    }
+
+    @Test
+    public void testZeroTimeoutIsIgnored() {
+        JUnitCore core = new JUnitCore();
+        Result result = core.run(TimeOutZero.class);
+        assertEquals("Should run the test", 1, result.getRunCount());
+        assertEquals("Test should not have failed", 0, result.getFailureCount());
+    }
 }
