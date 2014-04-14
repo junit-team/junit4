@@ -6,6 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,7 +82,7 @@ import org.junit.runners.model.Statement;
  *      return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
  *                 { 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
  *  }
- *  
+ *
  *  &#064;Parameter(0)
  *  public int fInput;
  *
@@ -101,7 +102,7 @@ import org.junit.runners.model.Statement;
  *
  * <p>
  * The parameters can be provided as an array, too:
- * 
+ *
  * <pre>
  * &#064;Parameters
  * public static Object[][] data() {
@@ -109,7 +110,7 @@ import org.junit.runners.model.Statement;
  * 			{ 5, 5 }, { 6, 8 } };
  * }
  * </pre>
- * 
+ *
  * <h3>Tests with single parameter</h3>
  * <p>
  * If your test needs a single parameter only, you don't have to wrap it with an
@@ -183,7 +184,24 @@ public class Parameterized extends Suite {
         int value() default 0;
     }
 
-    protected class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
+    /**
+     * Annotation for a class using parameterization to specify which
+     * Runner to use for each cycle of a test. If this annotation is
+     * not specified then the default {@link TestClassRunnerForParameters}
+     * is used.
+     *
+     * This annotation is only applicable for static fields extending {@link ParameterRule}.
+     *
+     * A ParameterRule can also perform functions to filter out parameters
+     * or modify the value of parameters being passed through it.
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.FIELD)
+    public static @interface UseParameterRule {
+    }
+
+
+    public static class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
         private final Object[] fParameters;
 
         private final String fName;
@@ -196,25 +214,36 @@ public class Parameterized extends Suite {
         }
 
         @Override
-        public Object createTest() throws Exception {
+        public Object createTest() throws InitializationError {
             if (fieldsAreAnnotated()) {
-                return createTestUsingFieldInjection();
+                return createTestUsingFieldInjection(fParameters);
             } else {
-                return createTestUsingConstructorInjection();
+                return createTestUsingConstructorInjection(fParameters);
             }
         }
 
-        private Object createTestUsingConstructorInjection() throws Exception {
-            return getTestClass().getOnlyConstructor().newInstance(fParameters);
+        private Object createTestUsingConstructorInjection(Object... params) throws InitializationError {
+            try {
+                return getTestClass().getOnlyConstructor().newInstance(params);
+            } catch (InstantiationException e) {
+                throw new InitializationError(e);
+            } catch (IllegalAccessException e) {
+                throw new InitializationError(e);
+            } catch (InvocationTargetException e) {
+                throw new InitializationError(e);
+            }
         }
 
-        private Object createTestUsingFieldInjection() throws Exception {
+        private Object createTestUsingFieldInjection(Object... params) throws InitializationError {
             List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter();
-            if (annotatedFieldsByParameter.size() != fParameters.length) {
-                throw new Exception("Wrong number of parameters and @Parameter fields." +
+            if (annotatedFieldsByParameter.size() != params.length) {
+                throw new RuntimeException("Wrong number of parameters and @Parameter fields." +
                         " @Parameter fields counted: " + annotatedFieldsByParameter.size() + ", available parameters: " + fParameters.length + ".");
+
+
             }
-            Object testClassInstance = getTestClass().getJavaClass().newInstance();
+            Object testClassInstance = createTestUsingConstructorInjection();
+
             for (FrameworkField each : annotatedFieldsByParameter) {
                 Field field = each.getField();
                 Parameter annotation = field.getAnnotation(Parameter.class);
@@ -222,10 +251,14 @@ public class Parameterized extends Suite {
                 try {
                     field.set(testClassInstance, fParameters[index]);
                 } catch (IllegalArgumentException iare) {
-                    throw new Exception(getTestClass().getName() + ": Trying to set " + field.getName() +
-                            " with the value " + fParameters[index] +
-                            " that is not the right type (" + fParameters[index].getClass().getSimpleName() + " instead of " +
-                            field.getType().getSimpleName() + ").", iare);
+                    throw new InitializationError(new Exception(getTestClass().getName()
+                            + ": Trying to set " + field.getName()
+                            + " with the value " + fParameters[index]
+                            + " that is not the right type ("
+                            + fParameters[index].getClass().getSimpleName() + " instead of " +
+                            field.getType().getSimpleName() + ").", iare));
+                } catch (IllegalAccessException e) {
+                    throw new InitializationError(e);
                 }
             }
             return testClassInstance;
@@ -293,7 +326,21 @@ public class Parameterized extends Suite {
         protected Annotation[] getRunnerAnnotations() {
             return new Annotation[0];
         }
+
+
+        private boolean fieldsAreAnnotated() {
+            return !getAnnotatedFieldsByParameter().isEmpty();
+        }
+
+        private List<FrameworkField> getAnnotatedFieldsByParameter() {
+            return getTestClass().getAnnotatedFields(Parameter.class);
+        }
+
     }
+
+
+
+
 
     private static final List<Runner> NO_RUNNERS = Collections.<Runner>emptyList();
 
@@ -302,7 +349,7 @@ public class Parameterized extends Suite {
     /**
      * Only called reflectively. Do not use programmatically.
      */
-    public Parameterized(Class<?> klass) throws Throwable {
+    public Parameterized(Class<?> klass) throws InitializationError {
         super(klass, NO_RUNNERS);
         Parameters parameters = getParametersMethod().getAnnotation(
                 Parameters.class);
@@ -315,30 +362,73 @@ public class Parameterized extends Suite {
     }
 
     private Runner createRunnerWithNotNormalizedParameters(String pattern,
-            int index, Object parametersOrSingleParameter)
+                                                           int index, Object parametersOrSingleParameter)
             throws InitializationError {
         Object[] parameters= (parametersOrSingleParameter instanceof Object[]) ? (Object[]) parametersOrSingleParameter
-            : new Object[] { parametersOrSingleParameter };
+                : new Object[] { parametersOrSingleParameter };
         return createRunner(pattern, index, parameters);
     }
 
-    protected Runner createRunner(String pattern, int index, Object[] parameters) throws InitializationError {
-        return new TestClassRunnerForParameters(getTestClass().getJavaClass(), pattern, index, parameters);
+    protected Runner createRunner(String pattern,
+                                  int index, Object[] parameters) throws InitializationError {
+
+        //validate all the @UseParameterRule fields are public and static
+        for (FrameworkField field : getTestClass().getAnnotatedFields(UseParameterRule.class)) {
+            if (!field.isPublic()) {
+                throw new InitializationError(
+                        String.format("UseParameterRule annotated field '%s' must be public",
+                                field.getName()));
+            }
+            if (!field.isStatic()) {
+                throw new InitializationError(
+                        String.format("UseParameterRule annotated field '%s' must be static",
+                                field.getName()));
+            }
+        }
+
+        // retrieve values of fields annotated with UseParameterRules and marked as static
+        List<ParameterRule> rules = getTestClass().getAnnotatedFieldValues(
+                null, UseParameterRule.class, ParameterRule.class);
+
+        // create an initial builder for starting the chain. This defaults to using the existing
+        // runner for parameters to maintain backwards compatibility
+        ParameterRunnerBuilder builder = new DefaultBuilder();
+
+        // chain the builders together
+        for (ParameterRule rule : rules) {
+            builder = rule.apply(builder);
+        }
+
+        // execute the final builder
+        return builder.build(getTestClass().getJavaClass(), pattern, index, parameters);
+
     }
 
-    @SuppressWarnings("unchecked")
-    private Iterable<Object> allParameters() throws Throwable {
-        Object parameters = getParametersMethod().invokeExplosively(null);
+    public static class DefaultBuilder implements ParameterRunnerBuilder {
+        public Runner build(Class<?> type, String pattern, int index,
+                            Object[] parameters) throws InitializationError {
+            return new TestClassRunnerForParameters(type, pattern, index, parameters);
+        }
+    }
+
+
+    private Iterable<Object> allParameters() throws InitializationError {
+        Object parameters;
+        try {
+            parameters = getParametersMethod().invokeExplosively(null);
+        } catch (Throwable throwable) {
+            throw new InitializationError(throwable);
+        }
         if (parameters instanceof Iterable) {
             return (Iterable<Object>) parameters;
         } else if (parameters instanceof Object[]) {
             return Arrays.asList((Object[]) parameters);
         } else {
-            throw parametersMethodReturnedWrongType();
+            throw new InitializationError(parametersMethodReturnedWrongType());
         }
     }
 
-    private FrameworkMethod getParametersMethod() throws Exception {
+    private FrameworkMethod getParametersMethod() throws InitializationError {
         List<FrameworkMethod> methods = getTestClass().getAnnotatedMethods(
                 Parameters.class);
         for (FrameworkMethod each : methods) {
@@ -347,25 +437,25 @@ public class Parameterized extends Suite {
             }
         }
 
-        throw new Exception("No public static parameters method on class "
-                + getTestClass().getName());
+        throw new InitializationError(new Exception("No public static parameters method on class "
+                + getTestClass().getName()));
     }
 
-    private List<Runner> createRunnersForParameters(Iterable<Object> allParameters, String namePattern) throws Exception {
+    private List<Runner> createRunnersForParameters(Iterable<Object> allParameters, String namePattern) throws InitializationError {
         try {
             int i = 0;
             List<Runner> children = new ArrayList<Runner>();
             for (Object parametersOfSingleTest : allParameters) {
                 children.add(createRunnerWithNotNormalizedParameters(
-                    namePattern, i++, parametersOfSingleTest));
+                        namePattern, i++, parametersOfSingleTest));
             }
             return children;
         } catch (ClassCastException e) {
-            throw parametersMethodReturnedWrongType();
+            throw new InitializationError(parametersMethodReturnedWrongType());
         }
     }
 
-    private Exception parametersMethodReturnedWrongType() throws Exception {
+    private Exception parametersMethodReturnedWrongType() throws InitializationError {
         String className = getTestClass().getName();
         String methodName = getParametersMethod().getName();
         String message = MessageFormat.format(
@@ -374,11 +464,101 @@ public class Parameterized extends Suite {
         return new Exception(message);
     }
 
-    private List<FrameworkField> getAnnotatedFieldsByParameter() {
-        return getTestClass().getAnnotatedFields(Parameter.class);
+    /**
+     * <tt>ParameterRunnerBuilder</tt>s perform the work within a
+     * {@link org.junit.runners.Parameterized.ParameterRule} by providing the runner that will
+     * execute the test class the containing rule is in, as well as any other actions it wants to
+     * perform on the input values.
+     *
+     * @since 4.12
+     */
+    public static interface ParameterRunnerBuilder {
+
+        Runner build(Class<?> type, String pattern, int index,
+                     Object[] parameters) throws InitializationError;
+
     }
 
-    private boolean fieldsAreAnnotated() {
-        return !getAnnotatedFieldsByParameter().isEmpty();
+    /**
+     * A ParameterRule allows Parameterized tests to customize how they're
+     * run and allows the developer to specify logic around their parameters
+     * by either modifying them in the rule, or by getting the rule to return
+     * a builder that generates a custom runner.
+     *
+     * @see ParameterRunnerBuilder
+     * @since 4.12
+     */
+    public static interface ParameterRule {
+
+        ParameterRunnerBuilder apply(ParameterRunnerBuilder builder);
+
+    }
+
+    /**
+     * The ParameterRuleChain parameter rule allows ordering of ParameterRules. You create a
+     * {@code ParameterRuleChain} with
+     * {@link #outerRule(org.junit.runners.Parameterized.ParameterRule)} and subsequent calls of
+     * {@link #around(org.junit.runners.Parameterized.ParameterRule)}:
+     *
+     * @since 4.12
+     */
+    public static class ParameterRuleChain implements ParameterRule {
+        private static final ParameterRuleChain EMPTY_CHAIN = new ParameterRuleChain(
+                Collections.<ParameterRule>emptyList());
+
+        private List<ParameterRule> rulesStartingWithInnerMost;
+
+        /**
+         * Returns a {@code ParameterRuleChain} without a
+         * {@link org.junit.runners.Parameterized.ParameterRule}. This method may be the starting
+         * point of a {@code ParameterRuleChain}.
+         *
+         * @return a {@code ParameterRuleChain} without a
+         * {@link org.junit.runners.Parameterized.ParameterRule}.
+         */
+        public static ParameterRuleChain emptyRuleChain() {
+            return EMPTY_CHAIN;
+        }
+
+        /**
+         * Returns a {@code ParmeterRuleChain} with a single {@link org.junit.runners
+         *  .Parameterized.ParameterRule}. This method
+         * is the usual starting point of a {@code ParameterRuleChain}.
+         *
+         * @param outerRule the outer parameter rule of the {@code ParameterRuleChain}.
+         * @return a {@code ParameterRuleChain} with a single
+         * {@link org.junit.runners.Parameterized.ParameterRule}.
+         */
+        public static ParameterRuleChain outerRule(ParameterRule outerRule) {
+            return emptyRuleChain().around(outerRule);
+        }
+
+        private ParameterRuleChain(List<ParameterRule> rules) {
+            this.rulesStartingWithInnerMost = rules;
+        }
+
+        /**
+         * Create a new {@code ParameterRuleChain}, which encloses the {@code nextRule} with
+         * the rules of the current {@code ParamterRuleChain}.
+         *
+         * @param enclosedRule the rule to enclose.
+         * @return a new {@code ParameterRuleChain}.
+         */
+        public ParameterRuleChain around(ParameterRule enclosedRule) {
+            List<ParameterRule> rulesOfNewChain = new ArrayList<ParameterRule>();
+            rulesOfNewChain.add(enclosedRule);
+            rulesOfNewChain.addAll(rulesStartingWithInnerMost);
+            return new ParameterRuleChain(rulesOfNewChain);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public ParameterRunnerBuilder apply(ParameterRunnerBuilder builder) {
+            for (ParameterRule each : rulesStartingWithInnerMost) {
+                builder = each.apply(builder);
+            }
+            return builder;
+        }
     }
 }

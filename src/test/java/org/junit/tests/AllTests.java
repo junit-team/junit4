@@ -80,6 +80,7 @@ import org.junit.tests.running.classes.BlockJUnit4ClassRunnerTest;
 import org.junit.tests.running.classes.ClassLevelMethodsWithIgnoredTestsTest;
 import org.junit.tests.running.classes.EnclosedTest;
 import org.junit.tests.running.classes.IgnoreClassTest;
+import org.junit.tests.running.classes.ParameterizedRuleTest;
 import org.junit.tests.running.classes.ParameterizedTestTest;
 import org.junit.tests.running.classes.ParentRunnerFilteringTest;
 import org.junit.tests.running.classes.ParentRunnerTest;
@@ -123,6 +124,7 @@ import org.junit.tests.validation.ValidationTest;
         ForwardCompatibilityTest.class,
         OldTests.class,
         ParameterizedTestTest.class,
+        ParameterizedRuleTest.class,
         RunWithTest.class,
         RunnerTest.class,
         SuiteTest.class,
