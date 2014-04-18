@@ -1,8 +1,11 @@
-package org.junit.tests.running.classes;
+package org.junit.runners.model;
 
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -11,9 +14,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TestRule;
-import org.junit.runners.model.FrameworkField;
-import org.junit.runners.model.FrameworkMethod;
-import org.junit.runners.model.TestClass;
 
 public class TestClassTest {
 
@@ -149,5 +149,56 @@ public class TestClassTest {
     	    new MethodsAnnotated(), Ignore.class, String.class);
     	assertThat(values, hasItem("jupiter"));
     	assertThat(values.size(), is(1));
+    }
+
+    @Test
+    public void isEqualToTestClassThatWrapsSameJavaClass() {
+        TestClass testClass = new TestClass(DummyClass.class);
+        TestClass testClassThatWrapsSameJavaClass = new TestClass(
+                DummyClass.class);
+        assertTrue(testClass.equals(testClassThatWrapsSameJavaClass));
+    }
+
+    @Test
+    public void isEqualToTestClassThatWrapsNoJavaClassToo() {
+        TestClass testClass = new TestClass(null);
+        TestClass testClassThatWrapsNoJavaClassToo = new TestClass(null);
+        assertTrue(testClass.equals(testClassThatWrapsNoJavaClassToo));
+    }
+
+    @Test
+    public void isNotEqualToTestClassThatWrapsADifferentJavaClass() {
+        TestClass testClass = new TestClass(DummyClass.class);
+        TestClass testClassThatWrapsADifferentJavaClass = new TestClass(
+                AnotherDummyClass.class);
+        assertFalse(testClass.equals(testClassThatWrapsADifferentJavaClass));
+    }
+
+    @Test
+    public void isNotEqualToNull() {
+        TestClass testClass = new TestClass(DummyClass.class);
+        assertFalse(testClass.equals(null));
+    }
+
+    private static class DummyClass {
+    }
+
+    private static class AnotherDummyClass {
+    }
+
+    @Test
+    public void hasSameHashCodeAsTestClassThatWrapsSameJavaClass() {
+        TestClass testClass = new TestClass(DummyClass.class);
+        TestClass testClassThatWrapsSameJavaClass = new TestClass(
+                DummyClass.class);
+        assertEquals(testClass.hashCode(),
+                testClassThatWrapsSameJavaClass.hashCode());
+    }
+
+    @Test
+    public void hasHashCodeWithoutJavaClass() {
+        TestClass testClass = new TestClass(null);
+        testClass.hashCode();
+        // everything is fine if no exception is thrown.
     }
 }
