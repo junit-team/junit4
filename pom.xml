@@ -289,6 +289,19 @@
                    </dependency>
                </dependencies>
            </plugin>
+           <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-jar-plugin</artifactId>
+               <version>2.4</version>
+               <configuration>
+                   <archive>
+                       <addMavenDescriptor>false</addMavenDescriptor>
+                       <manifest>
+                           <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                       </manifest>
+                   </archive>
+               </configuration>
+           </plugin>
         </plugins>
     </build>
 
