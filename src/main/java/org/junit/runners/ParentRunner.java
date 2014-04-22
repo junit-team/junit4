@@ -17,6 +17,7 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Rule;
+import org.junit.SortWith;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.statements.RunAfters;
@@ -384,13 +385,25 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     }
 
     public void sort(Sorter sorter) {
-        synchronized (fChildrenLock) {
-            for (T each : getFilteredChildren()) {
-                sorter.apply(each);
-            }
+        if(sorter==Sorter.ANNOTATED_SORTER){
             List<T> sortedChildren = new ArrayList<T>(getFilteredChildren());
-            Collections.sort(sortedChildren, comparator(sorter));
+            Sorter annotatedSorter=getSorter();
+            if(annotatedSorter!=null)
+                Collections.sort(sortedChildren, comparator(annotatedSorter));
             fFilteredChildren = Collections.unmodifiableCollection(sortedChildren);
+            for (T each : getFilteredChildren()) {
+                if(each instanceof Sortable)
+                    ((Sortable)each).sort(null);
+            }
+        }else{
+            synchronized (fChildrenLock) {
+                for (T each : getFilteredChildren()) {
+                    sorter.apply(each);
+                }
+                List<T> sortedChildren = new ArrayList<T>(getFilteredChildren());
+                Collections.sort(sortedChildren, comparator(sorter));
+                fFilteredChildren = Collections.unmodifiableCollection(sortedChildren);
+            }
         }
     }
 
@@ -435,5 +448,15 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      */
     public void setScheduler(RunnerScheduler scheduler) {
         this.fScheduler = scheduler;
+    }
+    
+    private Sorter getSorter(){
+        final TestClass clazz = getTestClass();
+        if(clazz==null)
+            return null;
+        SortWith sortMethod=clazz.getJavaClass().getAnnotation(SortWith.class);
+        if(sortMethod==null)
+            return null;
+        return sortMethod.value().getSorter();
     }
 }

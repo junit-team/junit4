@@ -22,10 +22,17 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerScheduler;
 import org.junit.tests.experimental.rules.RuleFieldValidatorTest.TestWithNonStaticClassRule;
 import org.junit.tests.experimental.rules.RuleFieldValidatorTest.TestWithProtectedClassRule;
+import org.junit.SortWith;
 
 public class ParentRunnerTest {
     public static String log = "";
 
+   /*
+    * Adding SortWith here because MethodSorter is no longer used when creating a test case.
+    * So if no sorting method is specified, the test methods will be executed in JVM order,
+    * which has chance to produce randomness to fail this test case.
+    */
+    @SortWith
     public static class FruitTest {
         @Test
         public void apple() {
@@ -41,7 +48,8 @@ public class ParentRunnerTest {
     @Test
     public void useChildHarvester() throws InitializationError {
         log = "";
-        ParentRunner<?> runner = new BlockJUnit4ClassRunner(FruitTest.class);
+		Request request = Request.aClass(FruitTest.class);
+        ParentRunner<?> runner = (ParentRunner<?>)request.getRunner();
         runner.setScheduler(new RunnerScheduler() {
             public void schedule(Runnable childStatement) {
                 log += "before ";
