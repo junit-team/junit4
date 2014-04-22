@@ -166,7 +166,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * <li>Run all non-overridden {@code @AfterClass} methods on the test-class
      * and superclasses: exceptions thrown by previous steps are combined, if
      * necessary, with exceptions from AfterClass methods into a
-     * {@link MultipleFailureException}.</li>
+     * {@link org.junit.runners.model.MultipleFailureException}.</li>
      * </ol>
      * </li>
      * </ol>
@@ -209,7 +209,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * and superclasses before executing {@code statement}; all AfterClass methods are
      * always executed: exceptions thrown by previous steps are combined, if
      * necessary, with exceptions from AfterClass methods into a
-     * {@link MultipleFailureException}.
+     * {@link org.junit.runners.model.MultipleFailureException}.
      */
     protected Statement withAfterClasses(Statement statement) {
         List<FrameworkMethod> afters = fTestClass
