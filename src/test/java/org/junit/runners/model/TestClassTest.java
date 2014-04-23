@@ -201,4 +201,24 @@ public class TestClassTest {
         testClass.hashCode();
         // everything is fine if no exception is thrown.
     }
+
+    public static class PublicClass {
+
+    }
+
+    @Test
+    public void identifiesPublicModifier() {
+        TestClass tc = new TestClass(PublicClass.class);
+        assertEquals("Wrong flag 'public',", true, tc.isPublic());
+    }
+
+    static class NonPublicClass {
+
+    }
+    
+    @Test
+    public void identifiesNonPublicModifier() {
+        TestClass tc = new TestClass(NonPublicClass.class);
+        assertEquals("Wrong flag 'public',", false, tc.isPublic());
+    }
 }

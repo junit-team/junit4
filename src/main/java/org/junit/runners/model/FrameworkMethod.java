@@ -3,7 +3,6 @@ package org.junit.runners.model;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -90,9 +89,6 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
         if (isStatic() != isStatic) {
             String state = isStatic ? "should" : "should not";
             errors.add(new Exception("Method " + fMethod.getName() + "() " + state + " be static"));
-        }
-        if (!Modifier.isPublic(getDeclaringClass().getModifiers())) {
-            errors.add(new Exception("Class " + getDeclaringClass().getName() + " should be public"));
         }
         if (!isPublic()) {
             errors.add(new Exception("Method " + fMethod.getName() + "() should be public"));

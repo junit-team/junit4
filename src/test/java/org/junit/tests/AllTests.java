@@ -99,8 +99,8 @@ import org.junit.tests.running.methods.TestMethodTest;
 import org.junit.tests.running.methods.TimeoutTest;
 import org.junit.tests.validation.BadlyFormedClassesTest;
 import org.junit.tests.validation.FailedConstructionTest;
-import org.junit.tests.validation.InaccessibleBaseClassTest;
 import org.junit.tests.validation.ValidationTest;
+import org.junit.validator.PublicClassValidatorTest;
 
 // These test files need to be cleaned. See
 // https://sourceforge.net/pm/task.php?func=detailtask&project_task_id=136507&group_id=15278&group_project_id=51407
@@ -142,7 +142,6 @@ import org.junit.tests.validation.ValidationTest;
         JUnit38ClassRunnerTest.class,
         SystemExitTest.class,
         JUnitCoreReturnsCorrectExitCodeTest.class,
-        InaccessibleBaseClassTest.class,
         SuiteMethodTest.class,
         BadlyFormedClassesTest.class,
         IgnoreClassTest.class,
@@ -204,7 +203,8 @@ import org.junit.tests.validation.ValidationTest;
         FrameworkMethodTest.class,
         FailOnTimeoutTest.class,
         JUnitCoreTest.class,
-        TestWithParametersTest.class
+        TestWithParametersTest.class,
+        PublicClassValidatorTest.class
 })
 public class AllTests {
     public static Test suite() {

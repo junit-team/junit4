@@ -6,6 +6,7 @@ import static org.junit.internal.runners.rules.RuleFieldValidator.CLASS_RULE_VAL
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -38,6 +39,8 @@ import org.junit.runners.model.RunnerScheduler;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
 import org.junit.validator.AnnotationsValidator;
+import org.junit.validator.PublicClassValidator;
+import org.junit.validator.TestClassValidator;
 
 /**
  * Provides most of the functionality specific to a Runner that implements a
@@ -54,13 +57,14 @@ import org.junit.validator.AnnotationsValidator;
  */
 public abstract class ParentRunner<T> extends Runner implements Filterable,
         Sortable {
+    private static final List<TestClassValidator> VALIDATORS = Arrays.asList(
+            new AnnotationsValidator(), new PublicClassValidator());
+
     private final Object fChildrenLock = new Object();
     private final TestClass fTestClass;
 
     // Guarded by fChildrenLock
     private volatile Collection<T> fFilteredChildren = null;
-
-    private final AnnotationsValidator fAnnotationsValidator= new AnnotationsValidator();
 
     private volatile RunnerScheduler fScheduler = new RunnerScheduler() {
         public void schedule(Runnable childStatement) {
@@ -121,7 +125,15 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         validatePublicVoidNoArgMethods(BeforeClass.class, true, errors);
         validatePublicVoidNoArgMethods(AfterClass.class, true, errors);
         validateClassRules(errors);
-        errors.addAll(fAnnotationsValidator.validateTestClass(getTestClass()));
+        applyValidators(errors);
+    }
+
+    private void applyValidators(List<Throwable> errors) {
+        if (getTestClass().getJavaClass() != null) {
+            for (TestClassValidator each : VALIDATORS) {
+                errors.addAll(each.validateTestClass(getTestClass()));
+            }
+        }
     }
 
     /**
