@@ -68,6 +68,7 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
      * <li>returns something other than void, or
      * <li>is static (given {@code isStatic is false}), or
      * <li>is not static (given {@code isStatic is true}).
+     * </ul>
      */
     public void validatePublicVoidNoArg(boolean isStatic, List<Throwable> errors) {
         validatePublicVoid(isStatic, errors);
@@ -84,6 +85,7 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
      * <li>returns something other than void, or
      * <li>is static (given {@code isStatic is false}), or
      * <li>is not static (given {@code isStatic is true}).
+     * </ul>
      */
     public void validatePublicVoid(boolean isStatic, List<Throwable> errors) {
         if (isStatic() != isStatic) {

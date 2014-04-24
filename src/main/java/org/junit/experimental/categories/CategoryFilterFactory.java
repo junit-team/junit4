@@ -17,7 +17,6 @@ abstract class CategoryFilterFactory implements FilterFactory {
      * {@link FilterFactoryParams} argument.
      *
      * @param params Parameters needed to create the {@link Filter}
-     * @throws FilterNotCreatedException
      */
     public Filter createFilter(FilterFactoryParams params) throws FilterNotCreatedException {
         try {
