@@ -211,6 +211,7 @@
                 <executions>
                     <execution>
                         <id>signature-check</id>
+                        <phase>test</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
