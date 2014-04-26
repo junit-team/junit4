@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>junit</groupId>
@@ -143,15 +144,20 @@
                             <rules>
                                 <requireMavenVersion>
                                     <!-- Some plugin features require a recent Maven runtime to work properly -->
-                                    <message>Current version of Maven ${maven.version} required to build the project should be ${project.prerequisites.maven}, or higher!</message>
+                                    <message>Current version of Maven ${maven.version} required to build the project
+                                        should be ${project.prerequisites.maven}, or higher!
+                                    </message>
                                     <version>[${project.prerequisites.maven},)</version>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
-                                    <message>Current JDK version ${java.version} should be ${jdkVersion}, or higher!</message>
+                                    <message>Current JDK version ${java.version} should be ${jdkVersion}, or higher!
+                                    </message>
                                     <version>${jdkVersion}</version>
                                 </requireJavaVersion>
                                 <requireNoRepositories>
-                                    <message>Best Practice is to never define repositories in pom.xml (use a repository manager instead).</message>
+                                    <message>Best Practice is to never define repositories in pom.xml (use a repository
+                                        manager instead).
+                                    </message>
                                 </requireNoRepositories>
                                 <requireReleaseDeps>
                                     <message>No Snapshots Dependencies Allowed!</message>
@@ -274,34 +280,34 @@
                 </configuration>
             </plugin>
             <plugin>
-               <artifactId>maven-site-plugin</artifactId>
-               <version>3.3</version>
-               <dependencies>
-                   <dependency>
-                       <groupId>com.github.stephenc.wagon</groupId>
-                       <artifactId>wagon-gitsite</artifactId>
-                       <version>0.4.1</version>
-                   </dependency>
-                   <dependency>
-                       <groupId>org.apache.maven.doxia</groupId>
-                       <artifactId>doxia-module-markdown</artifactId>
-                       <version>1.5</version>
-                   </dependency>
-               </dependencies>
-           </plugin>
-           <plugin>
-               <groupId>org.apache.maven.plugins</groupId>
-               <artifactId>maven-jar-plugin</artifactId>
-               <version>2.4</version>
-               <configuration>
-                   <archive>
-                       <addMavenDescriptor>false</addMavenDescriptor>
-                       <manifest>
-                           <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                       </manifest>
-                   </archive>
-               </configuration>
-           </plugin>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.3</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.github.stephenc.wagon</groupId>
+                        <artifactId>wagon-gitsite</artifactId>
+                        <version>0.4.1</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.maven.doxia</groupId>
+                        <artifactId>doxia-module-markdown</artifactId>
+                        <version>1.5</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <archive>
+                        <addMavenDescriptor>false</addMavenDescriptor>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -384,13 +390,13 @@
                         <dependencySourceInclude>org.hamcrest:hamcrest-core:*</dependencySourceInclude>
                     </dependencySourceIncludes>
                 </configuration>
-              <reportSets>
-                <reportSet>
-                  <reports>
-                    <report>javadoc</report>
-                  </reports>
-                </reportSet>
-              </reportSets>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>javadoc</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
