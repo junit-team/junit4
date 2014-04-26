@@ -208,7 +208,9 @@
                     <showWarnings>true</showWarnings>
                     <debug>true</debug>
                     <fork>true</fork>
-                    <compilerArgument>-Xlint:unchecked</compilerArgument>
+                    <compilerArgs>
+                        <arg>-Xlint:unchecked</arg>
+                    </compilerArgs>
                     <maxmem>128m</maxmem>
                 </configuration>
             </plugin>
