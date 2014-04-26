@@ -4,7 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Use the published version: {@link org.junit.runners.InitializationError}
+ * Use the published version:
+ * {@link org.junit.runners.model.InitializationError}
  * This may disappear as soon as 1 April 2009
  */
 @Deprecated

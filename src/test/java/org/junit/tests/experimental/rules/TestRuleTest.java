@@ -28,11 +28,6 @@ import org.junit.runner.Result;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
-/**
- * This test class is very similar to {@link TestMethodRuleTest}. If you add a test here, then it is likely that the other will have to be changed.
- * This tests {@link Rule}s attached to fields.
- * {@link TestMethodRuleTest} tests {@link Rule}s attached to methods.
- */
 public class TestRuleTest {
     private static boolean wasRun;
 

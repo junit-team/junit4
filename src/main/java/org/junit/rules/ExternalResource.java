@@ -56,7 +56,7 @@ public abstract class ExternalResource implements TestRule {
     /**
      * Override to set up your specific external resource.
      *
-     * @throws if setup fails (which will disable {@code after}
+     * @throws Throwable if setup fails (which will disable {@code after}
      */
     protected void before() throws Throwable {
         // do nothing
