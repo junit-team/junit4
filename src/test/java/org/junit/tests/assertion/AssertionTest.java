@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertCollectionEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotSame;
@@ -14,6 +15,9 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.ComparisonFailure;
@@ -384,6 +388,68 @@ public class AssertionTest {
         } catch (AssertionError exception) {
             assertEquals("message expected null, but was:<hello>", exception.getMessage());
         }
+    }
+    
+    @Test
+    public void collectionEquals() {
+        List<String> expected = Arrays.asList("a", "b", "c");
+        List<String> actual = new LinkedList<String>(expected);
+        assertCollectionEquals(expected, actual);
+    }
+
+    @Test 
+    public void collectionNotEquals() {
+        List<String> expected = Arrays.asList("a", "b", "c");
+        List<String> actual = Arrays.asList("c", "b", "a");
+        try {
+            assertCollectionEquals(expected, actual);
+        } catch (AssertionError e) {
+            assertEquals("element[0] expected:<[a]> but was:<[c]>", e.getMessage());
+            return;
+        }
+        
+        fail("failed to assert");
+    }
+    
+    @Test 
+    public void collectionNotEqualsWithMessage() {
+        List<String> expected = Arrays.asList("a", "b", "c");
+        List<String> actual = Arrays.asList("c", "b", "a");
+        try {
+            assertCollectionEquals("message", expected, actual);
+        } catch (AssertionError e) {
+            assertEquals("message element[0] expected:<[a]> but was:<[c]>", e.getMessage());
+            return;
+        }
+        
+        fail("failed to assert");
+    }
+
+    @Test
+    public void collectionNotEqualsDifferentSize() {
+        List<String> expected = Arrays.asList("a", "b", "c");
+        List<String> actual = Arrays.asList("a", "b", "c", "d");
+        try {
+            assertCollectionEquals(expected, actual);
+        } catch (AssertionError e) {
+            assertEquals("expected size:3 but was:4", e.getMessage());
+            return;
+        }
+        
+        fail("failed to assert");
+    }
+    
+    @Test
+    public void collectionNotEqualsDifferentSizeWithMessage() {
+        List<String> expected = Arrays.asList("a", "b", "c");
+        List<String> actual = Arrays.asList("a", "b", "c", "d");
+        try {
+            assertCollectionEquals("message", expected, actual);
+        } catch (AssertionError e) {
+            assertEquals("message expected size:3 but was:4", e.getMessage());
+            return;
+        }
+        fail("failed to assert");
     }
 
     @Test

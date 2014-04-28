@@ -1,5 +1,8 @@
 package org.junit;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.junit.internal.ArrayComparisonFailure;
@@ -531,6 +534,28 @@ public class Assert {
             Object actuals) throws ArrayComparisonFailure {
         new ExactComparisonCriteria().arrayEquals(message, expecteds, actuals);
     }
+    
+    public static <T> void assertCollectionEquals(Collection<T> expected, Collection<T> actual) {
+        assertCollectionEquals(null, expected, actual);
+    }
+    
+    public static <T> void assertCollectionEquals(String message, Collection<T> expected,
+            Collection<T> actual) {
+        String failurePrefix = message == null ? "" : message + " ";
+        if (expected.size() != actual.size())
+            throw new AssertionError(failurePrefix + "expected size:" + expected.size()  + " but was:" + actual.size());
+        assertEquals(message, expected.size(), actual.size());
+        Iterator<T> actualIter = actual.iterator();
+        int index = 0;
+        for (T expectedElem : expected) {
+            Assert.assertTrue(actualIter.hasNext());
+            T actualElem = actualIter.next();
+            assertEquals(failurePrefix + "element[" + index + "]", expectedElem, actualElem);
+            ++index;
+        }
+        assertFalse(actualIter.hasNext());
+    }
+
 
     /**
      * Asserts that two doubles are equal to within a positive delta.
