@@ -396,6 +396,16 @@ public class AssertionTest {
         List<String> actual = new LinkedList<String>(expected);
         assertCollectionEquals(expected, actual);
     }
+    
+    @Test(expected = AssertionError.class)
+    public void collectionNotEqualsExpectedNull() {
+        assertCollectionEquals(null, Arrays.asList(""));
+    }
+    
+    @Test(expected = AssertionError.class)
+    public void collectionNotEqualsActualNull() {
+        assertCollectionEquals(Arrays.asList(""), null);
+    }
 
     @Test 
     public void collectionNotEquals() {

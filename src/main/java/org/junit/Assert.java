@@ -535,12 +535,46 @@ public class Assert {
         new ExactComparisonCriteria().arrayEquals(message, expecteds, actuals);
     }
     
+    /**
+     * Asserts that two collections are equal by checking if their size is the same and their iterators return
+     * the same (equal) objects in the same order.
+     * 
+     * If the collections don't contain the same elements or their size differs, then an {@link AssertionError} is
+     * thrown.
+     * 
+     * If the <code>size()</code> method of the <code>expected</code> and <code>actual</code> collection returned
+     * the same value, but the collection iterators don't return the same number of elements, then an
+     * {@link AssertionError} is thrown too.
+     * 
+     * @param expected expected collection
+     * @param actual actual collection
+     */
     public static <T> void assertCollectionEquals(Collection<T> expected, Collection<T> actual) {
         assertCollectionEquals(null, expected, actual);
     }
     
+    /**
+     * Asserts that two collections are equal by checking if their size is the same and their iterators return
+     * the same (equal) objects in the same order.
+     * 
+     * If the collections don't contain the same elements or their size differs, then an {@link AssertionError} is
+     * thrown.
+     * 
+     * If the <code>size()</code> method of the <code>expected</code> and <code>actual</code> collection returned
+     * the same value, but the collection iterators don't return the same number of elements, then an
+     * {@link AssertionError} is thrown too.
+     * 
+     * @param message the identifying message for the {@link AssertionError} (<code>null</code> is permitted)
+     * @param expected expected collection
+     * @param actual actual collection
+     */
     public static <T> void assertCollectionEquals(String message, Collection<T> expected,
             Collection<T> actual) {
+        if (expected == null) {
+            assertNull(message, actual);
+        } else {
+            assertNotNull(message, actual);
+        }
         String failurePrefix = message == null ? "" : message + " ";
         if (expected.size() != actual.size())
             throw new AssertionError(failurePrefix + "expected size:" + expected.size()  + " but was:" + actual.size());
