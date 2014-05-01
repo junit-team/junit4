@@ -300,7 +300,7 @@ public class Description implements Serializable {
      *         the name of the method (or null if not)
      */
     public String getMethodName() {
-        return methodAndClassNamePatternGroupOrDefault(1, null);
+        return methodAndClassNamePatternGroupOrDefault(1, toString());
     }
 
     private String methodAndClassNamePatternGroupOrDefault(int group,
