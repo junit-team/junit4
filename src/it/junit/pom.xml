@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>junit</groupId>
+    <artifactId>integration-tests</artifactId>
+    <version>1.0</version>
+    <packaging>bundle</packaging>
+
+    <description>JUnit Integration Tests</description>
+
+    <prerequisites>
+        <maven>3.0.4</maven>
+    </prerequisites>
+
+    <properties>
+        <jdkVersion>1.5</jdkVersion>
+        <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>ISO-8859-1</project.reporting.outputEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>5.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.8</version>
+                <executions>
+                    <execution>
+                        <id>copy-osgi-bundles</id>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>junit</groupId>
+                                    <artifactId>junit</artifactId>
+                                    <version>@project.version@</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.ops4j.pax.tipi</groupId>
+                                    <artifactId>org.ops4j.pax.tipi.hamcrest.core</artifactId>
+                                    <version>1.3.0.1</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.build.directory}/bundles</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <source>${jdkVersion}</source>
+                    <target>${jdkVersion}</target>
+                    <testSource>${jdkVersion}</testSource>
+                    <testTarget>${jdkVersion}</testTarget>
+                    <showDeprecation>true</showDeprecation>
+                    <showWarnings>true</showWarnings>
+                    <debug>true</debug>
+                    <fork>true</fork>
+                    <compilerArgument>-Xlint:unchecked</compilerArgument>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.4.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>consumer</Bundle-SymbolicName>
+                        <Bundle-Name>${project.name} as OSGi consumer bundle</Bundle-Name>
+                        <Bundle-Description>This consumer bundle is dependent on JUnit bundle as provider.
+                        </Bundle-Description>
+                        <Import-Package>
+                            org.junit; version="@project.version@",
+                            org.junit.runner; version="@project.version@",
+                            org.osgi.framework; version="[1.3,2.0)",
+                            org.hamcrest; version="1.3",
+                            org.hamcrest.core; version="1.3"
+                        </Import-Package>
+                        <Bundle-Activator>org.junit.junitconsumer.Activator</Bundle-Activator>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.17</version>
+                <executions>
+                    <execution>
+                        <id>integration-tests</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>felix</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>org.apache.felix.framework</artifactId>
+                    <version>4.2.1</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>equinox</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.eclipse.tycho</groupId>
+                    <artifactId>org.eclipse.osgi</artifactId>
+                    <version>3.9.0.v20130305-2200</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>knopflerfish</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.knopflerfish</groupId>
+                    <artifactId>framework</artifactId>
+                    <version>5.3.3</version>
+                </dependency>
+            </dependencies>
+            <repositories>
+                <repository>
+                    <id>knopflerfish-remote-repository</id>
+                    <url>http://www.knopflerfish.org/maven2</url>
+                </repository>
+            </repositories>
+        </profile>
+    </profiles>
+</project>
