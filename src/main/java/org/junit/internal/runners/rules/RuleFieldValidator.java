@@ -88,7 +88,7 @@ public enum RuleFieldValidator {
             addError(errors, member, "must be static.");
         }
         if (!fStaticMembers && member.isStatic()) {
-            addError(errors, member, "must not be static.");
+            addError(errors, member, "must not be static or it has to be annotated with @ClassRule.");
         }
     }
 
