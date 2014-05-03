@@ -19,6 +19,7 @@ import org.junit.runners.Suite.SuiteClasses;
 import org.junit.runners.model.FrameworkFieldTest;
 import org.junit.runners.model.FrameworkMethodTest;
 import org.junit.runners.model.TestClassTest;
+import org.junit.runners.parameterized.ParameterizedNamesTest;
 import org.junit.runners.parameterized.TestWithParametersTest;
 import org.junit.tests.assertion.AssertionTest;
 import org.junit.tests.assertion.ComparisonFailureTest;
@@ -26,6 +27,7 @@ import org.junit.tests.assertion.MultipleFailureExceptionTest;
 import org.junit.tests.deprecated.JUnit4ClassRunnerTest;
 import org.junit.tests.description.AnnotatedDescriptionTest;
 import org.junit.tests.description.SuiteDescriptionTest;
+import org.junit.tests.description.TestDescriptionMethodNameTest;
 import org.junit.tests.description.TestDescriptionTest;
 import org.junit.tests.experimental.AssumptionTest;
 import org.junit.tests.experimental.ExperimentalTests;
@@ -113,6 +115,7 @@ import org.junit.validator.PublicClassValidatorTest;
         ListenerTest.class,
         FailedConstructionTest.class,
         TestDescriptionTest.class,
+        TestDescriptionMethodNameTest.class,
         SuiteDescriptionTest.class,
         AllTestsTest.class,
         AnnotationTest.class,
@@ -204,6 +207,7 @@ import org.junit.validator.PublicClassValidatorTest;
         FailOnTimeoutTest.class,
         JUnitCoreTest.class,
         TestWithParametersTest.class,
+        ParameterizedNamesTest.class,
         PublicClassValidatorTest.class
 })
 public class AllTests {

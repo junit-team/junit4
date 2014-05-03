@@ -31,7 +31,7 @@ public class Description implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private static final Pattern METHOD_AND_CLASS_NAME_PATTERN = Pattern
-            .compile("(.*)\\((.*)\\)");
+            .compile("([\\s\\S]*)\\((.*)\\)");
 
     /**
      * Create a <code>Description</code> named <code>name</code>.
