@@ -4,6 +4,8 @@ import org.junit.internal.runners.statements.FailOnTimeout;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
+import java.lang.management.ManagementFactory;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -41,6 +43,7 @@ public class Timeout implements TestRule {
     private final long timeout;
     private final TimeUnit timeUnit;
     private final boolean lookForStuckThread;
+    private final boolean enableWhenDebugging;
 
     /**
      * Create a {@code Timeout} instance with the timeout specified
@@ -72,6 +75,7 @@ public class Timeout implements TestRule {
         this.timeout = timeout;
         this.timeUnit = timeUnit;
         lookForStuckThread = false;
+        enableWhenDebugging = true;
     }
 
     /**
@@ -86,6 +90,24 @@ public class Timeout implements TestRule {
         timeout = t.timeout;
         timeUnit = t.timeUnit;
         this.lookForStuckThread = lookForStuckThread;
+        enableWhenDebugging = t.enableWhenDebugging;
+    }
+    
+    /**
+     * Create a {@code Timeout} instance with all fields explicitly specified.
+     * 
+     * @param timeout
+     * @param timeUnit
+     * @param lookForStuckThread
+     * @param enableWhenDebugging
+     * @since 4.12
+     */
+    protected Timeout(long timeout, TimeUnit timeUnit, boolean lookForStuckThread, 
+            boolean enableWhenDebugging) {
+        this.timeout = timeout;
+        this.timeUnit = timeUnit;
+        this.lookForStuckThread = lookForStuckThread;
+        this.enableWhenDebugging = enableWhenDebugging;
     }
 
     /**
@@ -116,8 +138,59 @@ public class Timeout implements TestRule {
     public Timeout lookingForStuckThread(boolean enable) {
         return new Timeout(this, enable);
     }
-
+    
+    /**
+     * <p>
+     * Specifies whether timeouts are enabled during debugging. When disabled if 
+     * the test ran has a debugger attached the test will not timeout to allow 
+     * the user time to debug.
+     * </p>
+     * 
+     * <p>
+     * Timeouts or time sensitive logic in the code under test is not handled 
+     * by this feature and may make this less useful in some circumstances.
+     * </p>
+     * 
+     * <p>
+     * The important benefit of this feature is that you can disable timeouts 
+     * without any making any modifications to your test class to remove them 
+     * during debugging.
+     * </p>
+     * 
+     * @param enable {@code false} to disable timeouts when debugging.
+     * @return This object
+     * @since 4.12
+     */
+    public Timeout whenDebugging(boolean enable) {
+        return new Timeout(timeout, timeUnit, lookForStuckThread, enable);
+    }
+    
+    boolean isDebugging() {
+        List<String> arguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
+        return isDebugging(arguments);
+    }
+    
+    boolean isDebugging(List<String> arguments) {
+        /*
+         * Options specified in:
+         * http://docs.oracle.com/javase/6/docs/technotes/guides/jpda/conninv.html#Invocation
+         * http://docs.oracle.com/javase/7/docs/technotes/guides/jpda/conninv.html#Invocation
+         * http://docs.oracle.com/javase/8/docs/technotes/guides/jpda/conninv.html#Invocation
+         */
+        for (String argument : arguments) {
+            if ("-Xdebug".equals(argument)) {
+                return true;
+            } else if (argument.startsWith("-agentlib:jdwp")) {
+                return true;
+            } 
+        }
+        return false;
+    }
+    
     public Statement apply(Statement base, Description description) {
+        if (!enableWhenDebugging && isDebugging()) {
+            return new FailOnTimeout(base, 0, timeUnit, lookForStuckThread);
+        }
         return new FailOnTimeout(base, timeout, timeUnit, lookForStuckThread);
     }
 }
