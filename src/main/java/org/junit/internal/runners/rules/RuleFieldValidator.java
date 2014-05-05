@@ -1,6 +1,7 @@
 package org.junit.internal.runners.rules;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Modifier;
 import java.util.List;
 
 import org.junit.ClassRule;
@@ -70,18 +71,24 @@ public enum RuleFieldValidator {
     }
 
     private void validateMember(FrameworkMember<?> member, List<Throwable> errors) {
+        validatePublicClass(member, errors);
         validateStatic(member, errors);
         validatePublic(member, errors);
         validateTestRuleOrMethodRule(member, errors);
     }
+    
+    private void validatePublicClass(FrameworkMember<?> member, List<Throwable> errors) {
+        if (fStaticMembers && !isDeclaringClassPublic(member)) {
+            addError(errors, member, " must be declared in a public class.");
+        }
+    }
 
-    private void validateStatic(FrameworkMember<?> member,
-            List<Throwable> errors) {
+    private void validateStatic(FrameworkMember<?> member, List<Throwable> errors) {
         if (fStaticMembers && !member.isStatic()) {
             addError(errors, member, "must be static.");
         }
         if (!fStaticMembers && member.isStatic()) {
-            addError(errors, member, "must not be static.");
+            addError(errors, member, "must not be static or it has to be annotated with @ClassRule.");
         }
     }
 
@@ -100,11 +107,14 @@ public enum RuleFieldValidator {
         }
     }
 
+    private boolean isDeclaringClassPublic(FrameworkMember<?> member) {
+        return Modifier.isPublic(member.getDeclaringClass().getModifiers());
+    }
+
     private boolean isTestRule(FrameworkMember<?> member) {
         return TestRule.class.isAssignableFrom(member.getType());
     }
 
-    @SuppressWarnings("deprecation")
     private boolean isMethodRule(FrameworkMember<?> member) {
         return MethodRule.class.isAssignableFrom(member.getType());
     }

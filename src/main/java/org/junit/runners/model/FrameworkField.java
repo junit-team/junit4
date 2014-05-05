@@ -2,7 +2,6 @@ package org.junit.runners.model;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 
 import org.junit.runners.BlockJUnit4ClassRunner;
 
@@ -16,6 +15,10 @@ public class FrameworkField extends FrameworkMember<FrameworkField> {
     private final Field fField;
 
     FrameworkField(Field field) {
+        if (field == null) {
+            throw new NullPointerException(
+                    "FrameworkField cannot be created without an underlying field.");
+        }
         fField = field;
     }
 
@@ -24,15 +27,8 @@ public class FrameworkField extends FrameworkMember<FrameworkField> {
         return getField().getName();
     }
 
-    @Override
     public Annotation[] getAnnotations() {
         return fField.getAnnotations();
-    }
-
-    @Override
-    public boolean isPublic() {
-        int modifiers = fField.getModifiers();
-        return Modifier.isPublic(modifiers);
     }
 
     @Override
@@ -41,9 +37,8 @@ public class FrameworkField extends FrameworkMember<FrameworkField> {
     }
 
     @Override
-    public boolean isStatic() {
-        int modifiers = fField.getModifiers();
-        return Modifier.isStatic(modifiers);
+    protected int getModifiers() {
+        return fField.getModifiers();
     }
 
     /**
@@ -61,11 +56,21 @@ public class FrameworkField extends FrameworkMember<FrameworkField> {
     public Class<?> getType() {
         return fField.getType();
     }
+    
+    @Override
+    public Class<?> getDeclaringClass() {
+        return fField.getDeclaringClass();
+    }
 
     /**
      * Attempts to retrieve the value of this field on {@code target}
      */
     public Object get(Object target) throws IllegalArgumentException, IllegalAccessException {
         return fField.get(target);
+    }
+
+    @Override
+    public String toString() {
+        return fField.toString();
     }
 }

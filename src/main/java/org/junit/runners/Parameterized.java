@@ -1,11 +1,9 @@
 package org.junit.runners;
 
-import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.reflect.Field;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,11 +11,12 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.runner.Runner;
-import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
-import org.junit.runners.model.Statement;
+import org.junit.runners.model.TestClass;
+import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParametersFactory;
+import org.junit.runners.parameterized.ParametersRunnerFactory;
+import org.junit.runners.parameterized.TestWithParameters;
 
 /**
  * The custom runner <code>Parameterized</code> implements parameterized tests.
@@ -130,12 +129,43 @@ import org.junit.runners.model.Statement;
  * }
  * </pre>
  *
+ * <h3>Create different runners</h3>
+ * <p>
+ * By default the {@code Parameterized} runner creates a slightly modified
+ * {@link BlockJUnit4ClassRunner} for each set of parameters. You can build an
+ * own {@code Parameterized} runner that creates another runner for each set of
+ * parameters. Therefore you have to build a {@link ParametersRunnerFactory}
+ * that creates a runner for each {@link TestWithParameters}. (
+ * {@code TestWithParameters} are bundling the parameters and the test name.)
+ * The factory must have a public zero-arg constructor.
+ *
+ * <pre>
+ * public class YourRunnerFactory implements ParameterizedRunnerFactory {
+ *     public Runner createRunnerForTestWithParameters(TestWithParameters test)
+ *             throws InitializationError {
+ *         return YourRunner(test);
+ *     }
+ * }
+ * </pre>
+ * <p>
+ * Use the {@link UseParametersRunnerFactory} to tell the {@code Parameterized}
+ * runner that it should use your factory.
+ *
+ * <pre>
+ * &#064;RunWith(Parameterized.class)
+ * &#064;UseParametersRunnerFactory(YourRunnerFactory.class)
+ * public class YourTest {
+ *     ...
+ * }
+ * </pre>
+ *
  * @since 4.0
  */
 public class Parameterized extends Suite {
     /**
      * Annotation for a method which provides parameters to be injected into the
-     * test class constructor by <code>Parameterized</code>
+     * test class constructor by <code>Parameterized</code>. The method has to
+     * be public and static.
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
@@ -182,117 +212,23 @@ public class Parameterized extends Suite {
         int value() default 0;
     }
 
-    protected class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
-        private final Object[] fParameters;
-
-        private final String fName;
-
-        protected TestClassRunnerForParameters(Class<?> type, String pattern, int index, Object[] parameters) throws InitializationError {
-            super(type);
-
-            fParameters = parameters;
-            fName = nameFor(pattern, index, parameters);
-        }
-
-        @Override
-        public Object createTest() throws Exception {
-            if (fieldsAreAnnotated()) {
-                return createTestUsingFieldInjection();
-            } else {
-                return createTestUsingConstructorInjection();
-            }
-        }
-
-        private Object createTestUsingConstructorInjection() throws Exception {
-            return getTestClass().getOnlyConstructor().newInstance(fParameters);
-        }
-
-        private Object createTestUsingFieldInjection() throws Exception {
-            List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter();
-            if (annotatedFieldsByParameter.size() != fParameters.length) {
-                throw new Exception("Wrong number of parameters and @Parameter fields." +
-                        " @Parameter fields counted: " + annotatedFieldsByParameter.size() + ", available parameters: " + fParameters.length + ".");
-            }
-            Object testClassInstance = getTestClass().getJavaClass().newInstance();
-            for (FrameworkField each : annotatedFieldsByParameter) {
-                Field field = each.getField();
-                Parameter annotation = field.getAnnotation(Parameter.class);
-                int index = annotation.value();
-                try {
-                    field.set(testClassInstance, fParameters[index]);
-                } catch (IllegalArgumentException iare) {
-                    throw new Exception(getTestClass().getName() + ": Trying to set " + field.getName() +
-                            " with the value " + fParameters[index] +
-                            " that is not the right type (" + fParameters[index].getClass().getSimpleName() + " instead of " +
-                            field.getType().getSimpleName() + ").", iare);
-                }
-            }
-            return testClassInstance;
-        }
-
-        protected String nameFor(String pattern, int index, Object[] parameters) {
-            String finalPattern = pattern.replaceAll("\\{index\\}", Integer.toString(index));
-            String name = MessageFormat.format(finalPattern, parameters);
-            return "[" + name + "]";
-        }
-
-        @Override
-        protected String getName() {
-            return fName;
-        }
-
-        @Override
-        protected String testName(FrameworkMethod method) {
-            return method.getName() + getName();
-        }
-
-        @Override
-        protected void validateConstructor(List<Throwable> errors) {
-            validateOnlyOneConstructor(errors);
-            if (fieldsAreAnnotated()) {
-                validateZeroArgConstructor(errors);
-            }
-        }
-
-        @Override
-        protected void validateFields(List<Throwable> errors) {
-            super.validateFields(errors);
-            if (fieldsAreAnnotated()) {
-                List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter();
-                int[] usedIndices = new int[annotatedFieldsByParameter.size()];
-                for (FrameworkField each : annotatedFieldsByParameter) {
-                    int index = each.getField().getAnnotation(Parameter.class).value();
-                    if (index < 0 || index > annotatedFieldsByParameter.size() - 1) {
-                        errors.add(
-                                new Exception("Invalid @Parameter value: " + index + ". @Parameter fields counted: " +
-                                        annotatedFieldsByParameter.size() + ". Please use an index between 0 and " +
-                                        (annotatedFieldsByParameter.size() - 1) + ".")
-                        );
-                    } else {
-                        usedIndices[index]++;
-                    }
-                }
-                for (int index = 0; index < usedIndices.length; index++) {
-                    int numberOfUse = usedIndices[index];
-                    if (numberOfUse == 0) {
-                        errors.add(new Exception("@Parameter(" + index + ") is never used."));
-                    } else if (numberOfUse > 1) {
-                        errors.add(new Exception("@Parameter(" + index + ") is used more than once (" + numberOfUse + ")."));
-                    }
-                }
-            }
-        }
-
-        @Override
-        protected Statement classBlock(RunNotifier notifier) {
-            return childrenInvoker(notifier);
-        }
-
-        @Override
-        protected Annotation[] getRunnerAnnotations() {
-            return new Annotation[0];
-        }
+    /**
+     * Add this annotation to your test class if you want to generate a special
+     * runner. You have to specify a {@link ParametersRunnerFactory} class that
+     * creates such runners. The factory must have a public zero-arg
+     * constructor.
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    public @interface UseParametersRunnerFactory {
+        /**
+         * @return a {@link ParametersRunnerFactory} class (must have a default
+         *         constructor)
+         */
+        Class<? extends ParametersRunnerFactory> value() default BlockJUnit4ClassRunnerWithParametersFactory.class;
     }
+
+    private static final ParametersRunnerFactory DEFAULT_FACTORY = new BlockJUnit4ClassRunnerWithParametersFactory();
 
     private static final List<Runner> NO_RUNNERS = Collections.<Runner>emptyList();
 
@@ -303,9 +239,25 @@ public class Parameterized extends Suite {
      */
     public Parameterized(Class<?> klass) throws Throwable {
         super(klass, NO_RUNNERS);
+        ParametersRunnerFactory runnerFactory = getParametersRunnerFactory(
+                klass);
         Parameters parameters = getParametersMethod().getAnnotation(
                 Parameters.class);
-        fRunners = Collections.unmodifiableList(createRunnersForParameters(allParameters(), parameters.name()));
+        fRunners = Collections.unmodifiableList(createRunnersForParameters(
+                allParameters(), parameters.name(), runnerFactory));
+    }
+
+    private ParametersRunnerFactory getParametersRunnerFactory(Class<?> klass)
+            throws InstantiationException, IllegalAccessException {
+        UseParametersRunnerFactory annotation = klass
+                .getAnnotation(UseParametersRunnerFactory.class);
+        if (annotation == null) {
+            return DEFAULT_FACTORY;
+        } else {
+            Class<? extends ParametersRunnerFactory> factoryClass = annotation
+                    .value();
+            return factoryClass.newInstance();
+        }
     }
 
     @Override
@@ -313,16 +265,12 @@ public class Parameterized extends Suite {
         return fRunners;
     }
 
-    private Runner createRunnerWithNotNormalizedParameters(String pattern,
-            int index, Object parametersOrSingleParameter)
-            throws InitializationError {
+    private TestWithParameters createTestWithNotNormalizedParameters(
+            String pattern, int index, Object parametersOrSingleParameter) {
         Object[] parameters= (parametersOrSingleParameter instanceof Object[]) ? (Object[]) parametersOrSingleParameter
             : new Object[] { parametersOrSingleParameter };
-        return createRunner(pattern, index, parameters);
-    }
-
-    protected Runner createRunner(String pattern, int index, Object[] parameters) throws InitializationError {
-        return new TestClassRunnerForParameters(getTestClass().getJavaClass(), pattern, index, parameters);
+        return createTestWithParameters(getTestClass(), pattern, index,
+                parameters);
     }
 
     @SuppressWarnings("unchecked")
@@ -350,18 +298,35 @@ public class Parameterized extends Suite {
                 + getTestClass().getName());
     }
 
-    private List<Runner> createRunnersForParameters(Iterable<Object> allParameters, String namePattern) throws Exception {
+    private List<Runner> createRunnersForParameters(
+            Iterable<Object> allParameters, String namePattern,
+            ParametersRunnerFactory runnerFactory)
+            throws InitializationError,
+            Exception {
         try {
-            int i = 0;
-            List<Runner> children = new ArrayList<Runner>();
-            for (Object parametersOfSingleTest : allParameters) {
-                children.add(createRunnerWithNotNormalizedParameters(
-                    namePattern, i++, parametersOfSingleTest));
+            List<TestWithParameters> tests = createTestsForParameters(
+                    allParameters, namePattern);
+            List<Runner> runners = new ArrayList<Runner>();
+            for (TestWithParameters test : tests) {
+                runners.add(runnerFactory
+                        .createRunnerForTestWithParameters(test));
             }
-            return children;
+            return runners;
         } catch (ClassCastException e) {
             throw parametersMethodReturnedWrongType();
         }
+    }
+
+    private List<TestWithParameters> createTestsForParameters(
+            Iterable<Object> allParameters, String namePattern)
+            throws Exception {
+        int i = 0;
+        List<TestWithParameters> children = new ArrayList<TestWithParameters>();
+        for (Object parametersOfSingleTest : allParameters) {
+            children.add(createTestWithNotNormalizedParameters(namePattern,
+                    i++, parametersOfSingleTest));
+        }
+        return children;
     }
 
     private Exception parametersMethodReturnedWrongType() throws Exception {
@@ -373,11 +338,12 @@ public class Parameterized extends Suite {
         return new Exception(message);
     }
 
-    private List<FrameworkField> getAnnotatedFieldsByParameter() {
-        return getTestClass().getAnnotatedFields(Parameter.class);
-    }
-
-    private boolean fieldsAreAnnotated() {
-        return !getAnnotatedFieldsByParameter().isEmpty();
+    private static TestWithParameters createTestWithParameters(
+            TestClass testClass, String pattern, int index, Object[] parameters) {
+        String finalPattern = pattern.replaceAll("\\{index\\}",
+                Integer.toString(index));
+        String name = MessageFormat.format(finalPattern, parameters);
+        return new TestWithParameters("[" + name + "]", testClass,
+                Arrays.asList(parameters));
     }
 }

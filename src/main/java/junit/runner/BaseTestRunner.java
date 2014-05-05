@@ -70,12 +70,12 @@ public abstract class BaseTestRunner implements TestListener {
         testEnded(test.toString());
     }
 
-    public synchronized void addError(final Test test, final Throwable t) {
-        testFailed(TestRunListener.STATUS_ERROR, test, t);
+    public synchronized void addError(final Test test, final Throwable e) {
+        testFailed(TestRunListener.STATUS_ERROR, test, e);
     }
 
-    public synchronized void addFailure(final Test test, final AssertionFailedError t) {
-        testFailed(TestRunListener.STATUS_FAILURE, test, t);
+    public synchronized void addFailure(final Test test, final AssertionFailedError e) {
+        testFailed(TestRunListener.STATUS_FAILURE, test, e);
     }
 
     // TestRunListener implementation
@@ -84,7 +84,7 @@ public abstract class BaseTestRunner implements TestListener {
 
     public abstract void testEnded(String testName);
 
-    public abstract void testFailed(int status, Test test, Throwable t);
+    public abstract void testFailed(int status, Test test, Throwable e);
 
     /**
      * Returns the Test corresponding to the given suite. This is
@@ -263,12 +263,11 @@ public abstract class BaseTestRunner implements TestListener {
     /**
      * Returns a filtered stack trace
      */
-    public static String getFilteredTrace(Throwable t) {
+    public static String getFilteredTrace(Throwable e) {
         StringWriter stringWriter = new StringWriter();
         PrintWriter writer = new PrintWriter(stringWriter);
-        t.printStackTrace(writer);
-        StringBuffer buffer = stringWriter.getBuffer();
-        String trace = buffer.toString();
+        e.printStackTrace(writer);
+        String trace = stringWriter.toString();
         return BaseTestRunner.getFilteredTrace(trace);
     }
 

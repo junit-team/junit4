@@ -30,7 +30,7 @@ public class MatcherTest {
             Arrays.asList(failure("cheese"), failure("mustard")));
 
     @Theory
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void differentMatchersHaveDifferentDescriptions(
             Matcher matcher1, Matcher matcher2, Object value) {
         assumeThat(value, matcher1);

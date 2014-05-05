@@ -32,9 +32,9 @@ abstract class CategoryFilterFactory implements FilterFactory {
      *
      * @param categories Category classes.
      */
-    protected abstract Filter createFilter(Class<?>... categories);
+    protected abstract Filter createFilter(List<Class<?>> categories);
 
-    private Class<?>[] parseCategories(String categories) throws ClassNotFoundException {
+    private List<Class<?>> parseCategories(String categories) throws ClassNotFoundException {
         List<Class<?>> categoryClasses = new ArrayList<Class<?>>();
 
         for (String category : categories.split(",")) {
@@ -43,6 +43,6 @@ abstract class CategoryFilterFactory implements FilterFactory {
             categoryClasses.add(categoryClass);
         }
 
-        return categoryClasses.toArray(new Class[]{});
+        return categoryClasses;
     }
 }

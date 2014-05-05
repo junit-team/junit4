@@ -14,7 +14,7 @@ import java.util.List;
  *
  * @see Test
  */
-public class TestResult extends Object {
+public class TestResult {
     protected List<TestFailure> fFailures;
     protected List<TestFailure> fErrors;
     protected List<TestListener> fListeners;
@@ -33,10 +33,10 @@ public class TestResult extends Object {
      * Adds an error to the list of errors. The passed in exception
      * caused the error.
      */
-    public synchronized void addError(Test test, Throwable t) {
-        fErrors.add(new TestFailure(test, t));
+    public synchronized void addError(Test test, Throwable e) {
+        fErrors.add(new TestFailure(test, e));
         for (TestListener each : cloneListeners()) {
-            each.addError(test, t);
+            each.addError(test, e);
         }
     }
 
@@ -44,10 +44,10 @@ public class TestResult extends Object {
      * Adds a failure to the list of failures. The passed in exception
      * caused the failure.
      */
-    public synchronized void addFailure(Test test, AssertionFailedError t) {
-        fFailures.add(new TestFailure(test, t));
+    public synchronized void addFailure(Test test, AssertionFailedError e) {
+        fFailures.add(new TestFailure(test, e));
         for (TestListener each : cloneListeners()) {
-            each.addFailure(test, t);
+            each.addFailure(test, e);
         }
     }
 

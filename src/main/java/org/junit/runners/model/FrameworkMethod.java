@@ -3,11 +3,9 @@ package org.junit.runners.model;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import org.junit.experimental.theories.ParameterSignature;
 import org.junit.internal.runners.model.ReflectiveCallable;
 
 /**
@@ -19,12 +17,16 @@ import org.junit.internal.runners.model.ReflectiveCallable;
  * @since 4.5
  */
 public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
-    final Method fMethod;
+    private final Method fMethod;
 
     /**
      * Returns a new {@code FrameworkMethod} for {@code method}
      */
     public FrameworkMethod(Method method) {
+        if (method == null) {
+            throw new NullPointerException(
+                    "FrameworkMethod cannot be created without an underlying method.");
+        }
         fMethod = method;
     }
 
@@ -84,14 +86,11 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
      * <li>is not static (given {@code isStatic is true}).
      */
     public void validatePublicVoid(boolean isStatic, List<Throwable> errors) {
-        if (Modifier.isStatic(fMethod.getModifiers()) != isStatic) {
+        if (isStatic() != isStatic) {
             String state = isStatic ? "should" : "should not";
             errors.add(new Exception("Method " + fMethod.getName() + "() " + state + " be static"));
         }
-        if (!Modifier.isPublic(fMethod.getDeclaringClass().getModifiers())) {
-            errors.add(new Exception("Class " + fMethod.getDeclaringClass().getName() + " should be public"));
-        }
-        if (!Modifier.isPublic(fMethod.getModifiers())) {
+        if (!isPublic()) {
             errors.add(new Exception("Method " + fMethod.getName() + "() should be public"));
         }
         if (fMethod.getReturnType() != Void.TYPE) {
@@ -99,20 +98,9 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
         }
     }
 
-    /**
-     * Returns true if this method is static, false if not
-     */
     @Override
-    public boolean isStatic() {
-        return Modifier.isStatic(fMethod.getModifiers());
-    }
-
-    /**
-     * Returns true if this method is public, false if not
-     */
-    @Override
-    public boolean isPublic() {
-        return Modifier.isPublic(fMethod.getModifiers());
+    protected int getModifiers() {
+        return fMethod.getModifiers();
     }
 
     /**
@@ -128,6 +116,14 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
     @Override
     public Class<?> getType() {
         return getReturnType();
+    }
+
+    /**
+     * Returns the class where the method is actually declared
+     */
+    @Override
+    public Class<?> getDeclaringClass() {
+        return fMethod.getDeclaringClass();
     }
 
     public void validateNoTypeParametersOnArgs(List<Throwable> errors) {
@@ -185,7 +181,6 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
     /**
      * Returns the annotations on this method
      */
-    @Override
     public Annotation[] getAnnotations() {
         return fMethod.getAnnotations();
     }
@@ -197,8 +192,9 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
     public <T extends Annotation> T getAnnotation(Class<T> annotationType) {
         return fMethod.getAnnotation(annotationType);
     }
-    
-    public List<ParameterSignature> getParameterSignatures() {
-        return ParameterSignature.signatures(fMethod);
+
+    @Override
+    public String toString() {
+        return fMethod.toString();
     }
 }

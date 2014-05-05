@@ -25,7 +25,10 @@ import org.junit.runner.notification.Failure;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+import org.junit.runners.Parameterized.UseParametersRunnerFactory;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.parameterized.ParametersRunnerFactory;
+import org.junit.runners.parameterized.TestWithParameters;
 
 public class ParameterizedTestTest {
     @RunWith(Parameterized.class)
@@ -307,12 +310,10 @@ public class ParameterizedTestTest {
     }
 
     @Test
-    public void meaningfulFailureWhenParametersNotPublic() throws Exception {
-        Result result = JUnitCore.runClasses(ProtectedParametersTest.class);
-        String expected = String.format(
-                "No public static parameters method on class %s",
-                ProtectedParametersTest.class.getName());
-        assertEquals(expected, result.getFailures().get(0).getMessage());
+    public void meaningfulFailureWhenParametersNotPublic() {
+        assertTestCreatesSingleFailureWithMessage(ProtectedParametersTest.class,
+                "No public static parameters method on class "
+                        + ProtectedParametersTest.class.getName());
     }
 
     @RunWith(Parameterized.class)
@@ -429,5 +430,43 @@ public class ParameterizedTestTest {
         Result result= JUnitCore
                 .runClasses(SingleArgumentTestWithIterable.class);
         assertEquals(2, result.getRunCount());
+    }
+
+    static public class ExceptionThrowingRunnerFactory implements
+            ParametersRunnerFactory {
+        public Runner createRunnerForTestWithParameters(TestWithParameters test)
+                throws InitializationError {
+            throw new InitializationError(
+                    "Called ExceptionThrowingRunnerFactory.");
+        }
+    }
+
+    @RunWith(Parameterized.class)
+    @UseParametersRunnerFactory(ExceptionThrowingRunnerFactory.class)
+    static public class TestWithUseParametersRunnerFactoryAnnotation {
+        @Parameters
+        public static Iterable<? extends Object> data() {
+            return asList("single test");
+        }
+
+        public TestWithUseParametersRunnerFactoryAnnotation(Object argument) {
+        }
+
+        @Test
+        public void aTest() {
+        }
+    }
+
+    @Test
+    public void usesParametersRunnerFactoryThatWasSpecifiedByAnnotation() {
+        assertTestCreatesSingleFailureWithMessage(
+                TestWithUseParametersRunnerFactoryAnnotation.class,
+                "Called ExceptionThrowingRunnerFactory.");
+    }
+
+    private void assertTestCreatesSingleFailureWithMessage(Class<?> test, String message) {
+        Result result = JUnitCore.runClasses(test);
+        assertEquals(1, result.getFailures().size());
+        assertEquals(message, result.getFailures().get(0).getMessage());
     }
 }

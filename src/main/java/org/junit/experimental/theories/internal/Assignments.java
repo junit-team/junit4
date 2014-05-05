@@ -37,7 +37,7 @@ public class Assignments {
      * assigned.
      */
     public static Assignments allUnassigned(Method testMethod,
-            TestClass testClass) throws Exception {
+            TestClass testClass) {
         List<ParameterSignature> signatures;
         signatures = ParameterSignature.signatures(testClass
                 .getOnlyConstructor());

@@ -102,10 +102,10 @@ public class TestSuite implements Test {
     /**
      * Converts the stack trace into a string
      */
-    private static String exceptionToString(Throwable t) {
+    private static String exceptionToString(Throwable e) {
         StringWriter stringWriter = new StringWriter();
         PrintWriter writer = new PrintWriter(stringWriter);
-        t.printStackTrace(writer);
+        e.printStackTrace(writer);
         return stringWriter.toString();
     }
 

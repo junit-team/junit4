@@ -65,7 +65,6 @@ public class TestRuleTest {
         assertTrue(wasRun);
     }
 
-    @SuppressWarnings("deprecation")
     public static class BothKindsOfRule implements TestRule, org.junit.rules.MethodRule {
         public int applications = 0;
 
@@ -275,7 +274,6 @@ public class TestRuleTest {
     }
 
     public static class PrivateRule {
-        @SuppressWarnings("unused")
         @Rule
         private TestRule rule = new TestName();
 
@@ -352,7 +350,6 @@ public class TestRuleTest {
         assertTrue(wasRun);
     }
 
-    @SuppressWarnings("deprecation")
     public static class MethodBothKindsOfRule implements TestRule, org.junit.rules.MethodRule {
         public int applications = 0;
 
@@ -514,6 +511,7 @@ public class TestRuleTest {
     }
 
     public static class MethodWatchmanTest {
+        @SuppressWarnings("unused")
         private static String watchedLog;
 
         private TestRule watchman = new TestWatcher() {
@@ -628,7 +626,6 @@ public class TestRuleTest {
     }
 
     public static class MethodPrivateRule {
-        @SuppressWarnings("unused")
         @Rule
         private TestRule getRule() {
             return new TestName();

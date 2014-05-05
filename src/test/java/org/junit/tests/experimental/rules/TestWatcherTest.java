@@ -1,14 +1,13 @@
 package org.junit.tests.experimental.rules;
 
-import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.failureCountIs;
 import static org.junit.experimental.results.ResultMatchers.hasFailureContaining;
 import static org.junit.runner.JUnitCore.runClasses;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.results.PrintableResult;
@@ -131,7 +130,7 @@ public class TestWatcherTest {
         @Rule
         public TestRule watcher = new TestWatcher() {
             @Override
-            protected void failed(Throwable t, Description description) {
+            protected void failed(Throwable e, Description description) {
                 throw new RuntimeException("watcher failed failure");
             }
 
