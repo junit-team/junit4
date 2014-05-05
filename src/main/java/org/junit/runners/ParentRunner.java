@@ -361,7 +361,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             Statement statement = classBlock(notifier);
             statement.evaluate();
         } catch (AssumptionViolatedException e) {
-            testNotifier.fireTestIgnored();
+            testNotifier.addFailedAssumption(e);
         } catch (StoppedByUserException e) {
             throw e;
         } catch (Throwable e) {
