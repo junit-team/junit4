@@ -2,10 +2,10 @@ package org.junit.runner;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.rules.EventCollector.hasSingleFailureWithMessage;
+import static org.junit.testsupport.EventCollectorMatchers.hasSingleFailureWithMessage;
 
 import org.junit.Test;
-import org.junit.rules.EventCollector;
+import org.junit.testsupport.EventCollector;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
 

@@ -1,20 +1,20 @@
 package org.junit.runner;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.experimental.categories.ExcludeCategories;
 import org.junit.experimental.categories.IncludeCategories;
-import org.junit.runner.notification.RunListener;
 import org.junit.tests.TestSystem;
+import org.junit.testsupport.EventCollector;
 
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.testsupport.EventCollectorMatchers.hasTestFinished;
+import static org.junit.testsupport.EventCollectorMatchers.hasTestStarted;
 
 public class FilterOptionIntegrationTest {
     private static final String INCLUDES_DUMMY_CATEGORY_0 = "--filter=" +
@@ -23,7 +23,7 @@ public class FilterOptionIntegrationTest {
             ExcludeCategories.class.getName() + "=" + DummyCategory1.class.getName();
 
     private JUnitCore jUnitCore = new JUnitCore();
-    private TestListener testListener = new TestListener();
+    private EventCollector testListener = new EventCollector();
 
     @Before
     public void setUp() {
@@ -111,40 +111,15 @@ public class FilterOptionIntegrationTest {
     }
 
     private void assertWasRun(Class<?> testClass) {
-        assertTrue(testClass.getName() + " expected to finish but did not", testListener.wasRun(testClass));
+        assertThat(testListener, wasRun(testClass));
     }
 
     private void assertWasNotRun(Class<?> testClass) {
-        assertFalse(
-                testClass.getName() + " expected not to have been started but was",
-                testListener.wasRun(testClass));
+        assertThat(testListener, not(wasRun(testClass)));
     }
 
-    private static class TestListener extends RunListener {
-        private Set<String> startedTests = new HashSet<String>();
-        private Set<String> finishedTests = new HashSet<String>();
-
-        @Override
-        public void testFinished(final Description description) {
-            finishedTests.add(description.getClassName());
-        }
-
-        private boolean testFinished(final Class<?> testClass) {
-            return finishedTests.contains(testClass.getName());
-        }
-
-        @Override
-        public void testStarted(final Description description) {
-            startedTests.add(description.getClassName());
-        }
-
-        private boolean testStarted(final Class<?> testClass) {
-            return startedTests.contains(testClass.getName());
-        }
-
-        public boolean wasRun(final Class<?> testClass) {
-            return testStarted(testClass) && testFinished(testClass);
-        }
+    private Matcher<EventCollector> wasRun(Class<?> testClass) {
+        return allOf(hasTestStarted(testClass), hasTestFinished(testClass));
     }
 
     public static class DummyTestClass {

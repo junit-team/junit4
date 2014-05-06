@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+import org.junit.testsupport.EventCollector;
 
 import java.util.concurrent.Callable;
 
@@ -20,7 +21,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
-import static org.junit.rules.EventCollector.*;
+import static org.junit.testsupport.EventCollectorMatchers.*;
 
 @RunWith(Parameterized.class)
 public class ErrorCollectorTest {

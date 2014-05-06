@@ -1,28 +1,15 @@
 package org.junit.tests.listening;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.testsupport.EventCollectorMatchers.hasNumberOfTestRunsFinished;
+import static org.junit.testsupport.EventCollectorMatchers.hasNumberOfTestRunsStarted;
 
 import junit.framework.TestCase;
 import org.junit.Test;
-import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
-import org.junit.runner.notification.RunListener;
+import org.junit.testsupport.EventCollector;
 
 public class RunnerTest {
-
-    private boolean wasRun;
-
-    public class MyListener extends RunListener {
-
-        int testCount;
-
-        @Override
-        public void testRunStarted(Description description) {
-            this.testCount = description.testCount();
-        }
-    }
-
     public static class Example {
         @Test
         public void empty() {
@@ -31,11 +18,8 @@ public class RunnerTest {
 
     @Test
     public void newTestCount() {
-        JUnitCore runner = new JUnitCore();
-        MyListener listener = new MyListener();
-        runner.addListener(listener);
-        runner.run(Example.class);
-        assertEquals(1, listener.testCount);
+        EventCollector eventCollector = runTest(Example.class);
+        assertThat(eventCollector, hasNumberOfTestRunsStarted(1));
     }
 
     public static class ExampleTest extends TestCase {
@@ -45,11 +29,8 @@ public class RunnerTest {
 
     @Test
     public void oldTestCount() {
-        JUnitCore runner = new JUnitCore();
-        MyListener listener = new MyListener();
-        runner.addListener(listener);
-        runner.run(ExampleTest.class);
-        assertEquals(1, listener.testCount);
+        EventCollector eventCollector = runTest(ExampleTest.class);
+        assertThat(eventCollector, hasNumberOfTestRunsStarted(1));
     }
 
     public static class NewExample {
@@ -60,16 +41,15 @@ public class RunnerTest {
 
     @Test
     public void testFinished() {
+        EventCollector eventCollector = runTest(NewExample.class);
+        assertThat(eventCollector, hasNumberOfTestRunsFinished(1));
+    }
+
+    private EventCollector runTest(Class<?> testClass) {
+        EventCollector eventCollector = new EventCollector();
         JUnitCore runner = new JUnitCore();
-        wasRun = false;
-        RunListener listener = new MyListener() {
-            @Override
-            public void testFinished(Description description) {
-                wasRun = true;
-            }
-        };
-        runner.addListener(listener);
-        runner.run(NewExample.class);
-        assertTrue(wasRun);
+        runner.addListener(eventCollector);
+        runner.run(testClass);
+        return eventCollector;
     }
 }

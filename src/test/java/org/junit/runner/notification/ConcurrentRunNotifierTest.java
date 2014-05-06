@@ -1,21 +1,22 @@
 package org.junit.runner.notification;
 
-import org.junit.Test;
-import org.junit.runner.Description;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.testsupport.EventCollectorMatchers.hasNumberOfTestsStarted;
 
 import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.junit.runner.Description;
+import org.junit.testsupport.EventCollector;
 
 /**
  * Testing RunNotifier in concurrent access.
@@ -26,21 +27,13 @@ import static org.junit.Assert.assertTrue;
  */
 public final class ConcurrentRunNotifierTest {
     private static final long TIMEOUT = 3;
+
     private final RunNotifier fNotifier = new RunNotifier();
-
-    private static class ConcurrentRunListener extends RunListener {
-        final AtomicInteger fTestStarted = new AtomicInteger(0);
-
-        @Override
-        public void testStarted(Description description) throws Exception {
-            fTestStarted.incrementAndGet();
-        }
-    }
 
     @Test
     public void realUsage() throws Exception {
-        ConcurrentRunListener listener1 = new ConcurrentRunListener();
-        ConcurrentRunListener listener2 = new ConcurrentRunListener();
+        EventCollector listener1 = new EventCollector();
+        EventCollector listener2 = new EventCollector();
         fNotifier.addListener(listener1);
         fNotifier.addListener(listener2);
 
@@ -59,8 +52,8 @@ public final class ConcurrentRunNotifierTest {
         fNotifier.removeListener(listener1);
         fNotifier.removeListener(listener2);
 
-        assertThat(listener1.fTestStarted.get(), is(numParallelTests));
-        assertThat(listener2.fTestStarted.get(), is(numParallelTests));
+        assertThat(listener1, hasNumberOfTestsStarted(numParallelTests));
+        assertThat(listener2, hasNumberOfTestsStarted(numParallelTests));
     }
 
     private static class ExaminedListener extends RunListener {

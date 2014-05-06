@@ -8,7 +8,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -25,8 +24,8 @@ import org.junit.runner.Result;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.notification.Failure;
-import org.junit.runner.notification.RunListener;
 import org.junit.tests.AllTests;
+import org.junit.testsupport.EventCollector;
 
 public class MaxStarterTest {
     private MaxCore fMax;
@@ -159,16 +158,11 @@ public class MaxStarterTest {
     @Test
     public void listenersAreCalledCorrectlyInTheFaceOfFailures()
             throws Exception {
+        EventCollector listener = new EventCollector();
         JUnitCore core = new JUnitCore();
-        final List<Failure> failures = new ArrayList<Failure>();
-        core.addListener(new RunListener() {
-            @Override
-            public void testRunFinished(Result result) throws Exception {
-                failures.addAll(result.getFailures());
-            }
-        });
+        core.addListener(listener);
         fMax.run(Request.aClass(TwoTests.class), core);
-        assertEquals(1, failures.size());
+        assertEquals(1, listener.getTestRunsFinished().get(0).getFailureCount());
     }
 
     @Test
@@ -275,7 +269,6 @@ public class MaxStarterTest {
         assertThat(JUnitCore.runClasses(HalfMalformedJUnit38TestMethod.class)
                 .getFailureCount(), is(1));
     }
-
 
     @Test
     public void correctErrorFromHalfMalformedTest() {

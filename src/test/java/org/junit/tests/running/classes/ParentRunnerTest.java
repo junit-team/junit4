@@ -1,15 +1,16 @@
 package org.junit.tests.running.classes;
 
-import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.testsupport.EventCollectorMatchers.*;
 
 import java.util.List;
 
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -19,8 +20,6 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.Result;
 import org.junit.runner.manipulation.Filter;
-import org.junit.runner.notification.Failure;
-import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.ParentRunner;
@@ -28,6 +27,7 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerScheduler;
 import org.junit.rules.RuleMemberValidatorTest.TestWithNonStaticClassRule;
 import org.junit.rules.RuleMemberValidatorTest.TestWithProtectedClassRule;
+import org.junit.testsupport.EventCollector;
 
 public class ParentRunnerTest {
     public static String log = "";
@@ -169,17 +169,10 @@ public class ParentRunnerTest {
 
     @Test
     public void assertionErrorAtParentLevelTest() throws InitializationError {
-        CountingRunListener countingRunListener = runTestWithParentRunner(AssertionErrorAtParentLevelTest.class);
-        Assert.assertEquals(1, countingRunListener.testSuiteStarted);
-        Assert.assertEquals(1, countingRunListener.testSuiteFinished);
-        Assert.assertEquals(1, countingRunListener.testSuiteFailure);
-        Assert.assertEquals(0, countingRunListener.testSuiteAssumptionFailure);
-
-        Assert.assertEquals(0, countingRunListener.testStarted);
-        Assert.assertEquals(0, countingRunListener.testFinished);
-        Assert.assertEquals(0, countingRunListener.testFailure);
-        Assert.assertEquals(0, countingRunListener.testAssumptionFailure);
-        Assert.assertEquals(0, countingRunListener.testIgnored);
+        EventCollector collector = runTestWithParentRunner(AssertionErrorAtParentLevelTest.class);
+        assertThat(collector, allOf(hasNoAssumptionFailure(), hasSingleFailure(),
+                hasNumberOfTestsIgnored(0), hasNumberOfTestsFinished(0), hasNumberOfTestsStarted(0),
+                hasNumberOfTestSuitesFinished(1), hasNumberOfTestSuiteStarted(1)));
     }
 
     public static class AssumptionViolatedAtParentLevelTest {
@@ -195,17 +188,10 @@ public class ParentRunnerTest {
 
     @Test
     public void assumptionViolatedAtParentLevel() throws InitializationError {
-        CountingRunListener countingRunListener = runTestWithParentRunner(AssumptionViolatedAtParentLevelTest.class);
-        Assert.assertEquals(1, countingRunListener.testSuiteStarted);
-        Assert.assertEquals(1, countingRunListener.testSuiteFinished);
-        Assert.assertEquals(0, countingRunListener.testSuiteFailure);
-        Assert.assertEquals(1, countingRunListener.testSuiteAssumptionFailure);
-
-        Assert.assertEquals(0, countingRunListener.testStarted);
-        Assert.assertEquals(0, countingRunListener.testFinished);
-        Assert.assertEquals(0, countingRunListener.testFailure);
-        Assert.assertEquals(0, countingRunListener.testAssumptionFailure);
-        Assert.assertEquals(0, countingRunListener.testIgnored);
+        EventCollector collector = runTestWithParentRunner(AssumptionViolatedAtParentLevelTest.class);
+        assertThat(collector, allOf(hasSingleAssumptionFailure(), hasNoFailure(),
+                hasNumberOfTestsIgnored(0), hasNumberOfTestsFinished(0), hasNumberOfTestsStarted(0),
+                hasNumberOfTestSuitesFinished(1), hasNumberOfTestSuiteStarted(1)));
     }
 
     public static class TestTest {
@@ -230,81 +216,18 @@ public class ParentRunnerTest {
 
     @Test
     public void parentRunnerTestMethods() throws InitializationError {
-        CountingRunListener countingRunListener = runTestWithParentRunner(TestTest.class);
-        Assert.assertEquals(1, countingRunListener.testSuiteStarted);
-        Assert.assertEquals(1, countingRunListener.testSuiteFinished);
-        Assert.assertEquals(0, countingRunListener.testSuiteFailure);
-        Assert.assertEquals(0, countingRunListener.testSuiteAssumptionFailure);
-
-        Assert.assertEquals(3, countingRunListener.testStarted);
-        Assert.assertEquals(3, countingRunListener.testFinished);
-        Assert.assertEquals(1, countingRunListener.testFailure);
-        Assert.assertEquals(1, countingRunListener.testAssumptionFailure);
-        Assert.assertEquals(1, countingRunListener.testIgnored);
+        EventCollector collector = runTestWithParentRunner(TestTest.class);
+        assertThat(collector, allOf(hasSingleAssumptionFailure(), hasSingleFailure(),
+                hasNumberOfTestsIgnored(1), hasNumberOfTestsFinished(3), hasNumberOfTestsStarted(3),
+                hasNumberOfTestSuitesFinished(1), hasNumberOfTestSuiteStarted(1)));
     }
 
-    private CountingRunListener runTestWithParentRunner(Class<?> testClass) throws InitializationError {
-        CountingRunListener listener = new CountingRunListener();
+    private EventCollector runTestWithParentRunner(Class<?> testClass) throws InitializationError {
+        EventCollector collector = new EventCollector();
         RunNotifier runNotifier = new RunNotifier();
-        runNotifier.addListener(listener);
-        ParentRunner<?> runner = new BlockJUnit4ClassRunner(testClass);
+        runNotifier.addListener(collector);
+        ParentRunner runner = new BlockJUnit4ClassRunner(testClass);
         runner.run(runNotifier);
-        return listener;
-    }
-
-    private static class CountingRunListener extends RunListener {
-        private int testSuiteStarted = 0;
-        private int testSuiteFinished = 0;
-        private int testSuiteFailure = 0;
-        private int testSuiteAssumptionFailure = 0;
-
-        private int testStarted = 0;
-        private int testFinished = 0;
-        private int testFailure = 0;
-        private int testAssumptionFailure = 0;
-        private int testIgnored = 0;
-
-        @Override
-        public void testSuiteStarted(Description description) throws Exception {
-            testSuiteStarted++;
-        }
-
-        @Override
-        public void testSuiteFinished(Description description) throws Exception {
-            testSuiteFinished++;
-        }
-
-        @Override
-        public void testStarted(Description description) throws Exception {
-            testStarted++;
-        }
-
-        @Override
-        public void testFinished(Description description) throws Exception {
-            testFinished++;
-        }
-
-        @Override
-        public void testFailure(Failure failure) throws Exception {
-            if (failure.getDescription().isSuite()) {
-                testSuiteFailure++;
-            } else {
-                testFailure++;
-            }
-        }
-
-        @Override
-        public void testAssumptionFailure(Failure failure) {
-            if (failure.getDescription().isSuite()) {
-                testSuiteAssumptionFailure++;
-            } else {
-                testAssumptionFailure++;
-            }
-        }
-
-        @Override
-        public void testIgnored(Description description) throws Exception {
-            testIgnored++;
-        }
+        return collector;
     }
 }

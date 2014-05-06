@@ -11,10 +11,10 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 import static org.junit.rules.ExpectedException.none;
-import static org.junit.rules.EventCollector.everyTestRunSuccessful;
-import static org.junit.rules.EventCollector.hasSingleAssumptionFailure;
-import static org.junit.rules.EventCollector.hasSingleFailure;
-import static org.junit.rules.EventCollector.hasSingleFailureWithMessage;
+import static org.junit.testsupport.EventCollectorMatchers.everyTestRunSuccessful;
+import static org.junit.testsupport.EventCollectorMatchers.hasSingleAssumptionFailure;
+import static org.junit.testsupport.EventCollectorMatchers.hasSingleFailure;
+import static org.junit.testsupport.EventCollectorMatchers.hasSingleFailureWithMessage;
 
 import java.util.Collection;
 
@@ -26,6 +26,7 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.junit.testsupport.EventCollector;
 
 @RunWith(Parameterized.class)
 public class ExpectedExceptionTest {

@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 import static org.junit.experimental.results.PrintableResult.testResult;
+import static org.junit.testsupport.EventCollectorMatchers.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +23,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.rules.ErrorCollector;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
@@ -38,6 +40,8 @@ import org.junit.runners.Parameterized.UseParametersRunnerFactory;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.parameterized.ParametersRunnerFactory;
 import org.junit.runners.parameterized.TestWithParameters;
+import org.junit.testsupport.EventCollector;
+import org.junit.testsupport.EventCollectorMatchers;
 
 public class ParameterizedTestTest {
     @RunWith(Parameterized.class)
@@ -797,18 +801,12 @@ public class ParameterizedTestTest {
         assertEquals(2, successResult.getRunCount());
 
         ParameterizedAssumtionViolation.condition = false;
+        EventCollector collector = new EventCollector();
         JUnitCore core = new JUnitCore();
-        final List<Failure> assumptionFailures = new ArrayList<Failure>();
-        core.addListener(new RunListener() {
-            @Override
-            public void testAssumptionFailure(Failure failure) {
-                assumptionFailures.add(failure);
-            }
-        });
-        Result failureResult = core.run(ParameterizedAssumtionViolation.class);
-        assertTrue(failureResult.wasSuccessful());
-        assertEquals(0, failureResult.getRunCount());
-        assertEquals(0, failureResult.getIgnoreCount());
-        assertEquals(1, assumptionFailures.size());
+        core.addListener(collector);
+        core.run(ParameterizedAssumtionViolation.class);
+        assertThat(collector, allOf(
+                hasNoFailure(), hasSingleAssumptionFailure(),
+                hasNumberOfTestsStarted(0), hasNumberOfTestsFinished(0)));
     }
 }

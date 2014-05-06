@@ -3,6 +3,8 @@ package org.junit.tests.junit3compatibility;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.testsupport.EventCollectorMatchers.hasNumberOfTestsStarted;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -19,9 +21,9 @@ import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
-import org.junit.runner.notification.RunListener;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.NoTestsRemainException;
+import org.junit.testsupport.EventCollector;
 
 public class JUnit38ClassRunnerTest {
     public static class MyTest extends TestCase {
@@ -51,8 +53,6 @@ public class JUnit38ClassRunnerTest {
         assertEquals(Description.createTestDescription(AnnotatedTest.class, "foo"), failure.getDescription());
     }
 
-    static int count;
-
     static public class OneTest extends TestCase {
         public void testOne() {
         }
@@ -60,20 +60,13 @@ public class JUnit38ClassRunnerTest {
 
     @Test
     public void testListener() throws Exception {
+        EventCollector eventCollector = new EventCollector();
         JUnitCore runner = new JUnitCore();
-        RunListener listener = new RunListener() {
-            @Override
-            public void testStarted(Description description) {
-                assertEquals(Description.createTestDescription(OneTest.class, "testOne"),
-                        description);
-                count++;
-            }
-        };
-
-        runner.addListener(listener);
-        count = 0;
+        runner.addListener(eventCollector);
         Result result = runner.run(OneTest.class);
-        assertEquals(1, count);
+        assertThat(eventCollector, hasNumberOfTestsStarted(1));
+        assertEquals(Description.createTestDescription(OneTest.class, "testOne"),
+                eventCollector.getTestsStarted().get(0));
         assertEquals(1, result.getRunCount());
     }
 
