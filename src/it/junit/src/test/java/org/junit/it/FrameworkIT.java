@@ -25,9 +25,6 @@ import static org.junit.runners.Parameterized.Parameters;
  * Using the pure OSGi framework API, the JUnit bundle is tested.
  * If the consumer's Activator fails, the start method on consumer bundle throws BundleException.
  * Log file is target/it/osgi/build.log.
- *
- * @author <a href="mailto:tibor.digana@gmail.com">Tibor Digana (tibor17)</a>
- * @since 4.12
  */
 @RunWith(Parameterized.class)
 public class FrameworkIT {

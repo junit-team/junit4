@@ -10,10 +10,6 @@ import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-/**
- * @author <a href="mailto:tibor.digana@gmail.com">Tibor Digana (tibor17)</a>
- * @since 4.12
- */
 public class ServiceLoaderTest {
     @Test
     public void serviceLoader() throws Exception {

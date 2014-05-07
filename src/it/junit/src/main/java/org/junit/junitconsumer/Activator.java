@@ -21,10 +21,6 @@ import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsSame.sameInstance;
 
-/**
- * @author <a href="mailto:tibor.digana@gmail.com">Tibor Digana (tibor17)</a>
- * @since 4.12
- */
 public final class Activator implements BundleActivator {
 
     public void start(BundleContext bundleContext) throws Exception {

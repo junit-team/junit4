@@ -5,10 +5,6 @@ import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Collection;
 
-/**
- * @author <a href="mailto:tibor.digana@gmail.com">Tibor Digana (tibor17)</a>
- * @since 4.12
- */
 final class BundlesUtil {
     private BundlesUtil() {
         throw new IllegalStateException("Not instantiated constructor.");

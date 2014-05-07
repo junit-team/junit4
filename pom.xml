@@ -91,7 +91,6 @@
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
         <arguments/>
         <gpg.keyname>67893CC4</gpg.keyname>
-        <skipTests>false</skipTests>
         <!--
         The OSGi bundle org.ops4j.pax.tipi:org.ops4j.pax.tipi.hamcrest.core:1.3.0.1:jar
         is compliant binary with Java Hamcrest artifact org.hamcrest:hamcrest-core:1.3:jar

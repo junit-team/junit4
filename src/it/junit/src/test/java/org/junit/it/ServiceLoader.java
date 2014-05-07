@@ -12,9 +12,6 @@ import java.util.Iterator;
 /**
  * Substitutes Java 1.6 ServiceLoader. Used in integration test {@link FrameworkIT}.
  * <p/>Loads OSGi frameworks.
- *
- * @author <a href="mailto:tibor.digana@gmail.com">Tibor Digana (tibor17)</a>
- * @since 4.12
  */
 public class ServiceLoader<S> implements Iterable<S> {
     private final Collection<S> services = new ArrayList<S>();
