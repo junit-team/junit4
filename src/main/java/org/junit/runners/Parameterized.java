@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.lang.SecurityManager;
+import java.lang.SecurityException;
 
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
@@ -214,9 +216,24 @@ public class Parameterized extends Suite {
                         " @Parameter fields counted: " + annotatedFieldsByParameter.size() + ", available parameters: " + fParameters.length + ".");
             }
             Object testClassInstance = getTestClass().getJavaClass().newInstance();
+            boolean areFieldsAccessable = true;
+            SecurityManager security = System.getSecurityManager();
+            if(security != null) {
+                try {
+                    security.checkPermission(new java.lang.reflect.ReflectPermission("suppressAccessChecks"));
+                } catch (SecurityException se) {
+                    areFieldsAccessable = false;
+                }
+            }
             for (FrameworkField each : annotatedFieldsByParameter) {
                 Field field = each.getField();
-                field.setAccessible(true);
+                if(areFieldsAccessable) {
+                    try {
+                        field.setAccessible(true);
+                    } catch (SecurityException se) { // Fallback
+                        areFieldsAccessable = false;
+                    }
+                }
                 Parameter annotation = field.getAnnotation(Parameter.class);
                 int index = annotation.value();
                 try {
