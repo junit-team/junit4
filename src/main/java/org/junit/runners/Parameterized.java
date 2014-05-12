@@ -64,7 +64,7 @@ import org.junit.runners.parameterized.TestWithParameters;
  * <dt>{1}</dt>
  * <dd>the second parameter value</dd>
  * <dt>...</dt>
- * <dd></dd>
+ * <dd>...</dd>
  * </dl>
  * <p>
  * In the example given above, the <code>Parameterized</code> runner creates
@@ -193,8 +193,8 @@ public class Parameterized extends Suite {
 
     /**
      * Annotation for fields of the test class which will be initialized by the
-     * method annotated by <code>Parameters</code><br/>
-     * By using directly this annotation, the test class constructor isn't needed.<br/>
+     * method annotated by <code>Parameters</code>.
+     * By using directly this annotation, the test class constructor isn't needed.
      * Index range must start at 0.
      * Default value is 0.
      */
@@ -203,7 +203,7 @@ public class Parameterized extends Suite {
     public static @interface Parameter {
         /**
          * Method that returns the index of the parameter in the array
-         * returned by the method annotated by <code>Parameters</code>.<br/>
+         * returned by the method annotated by <code>Parameters</code>.
          * Index range must start at 0.
          * Default value is 0.
          *

@@ -10,7 +10,7 @@ import org.junit.internal.InexactComparisonCriteria;
  * A set of assertion methods useful for writing tests. Only failed assertions
  * are recorded. These methods can be used directly:
  * <code>Assert.assertEquals(...)</code>, however, they read better if they
- * are referenced through static import:<br/>
+ * are referenced through static import:
  *
  * <pre>
  * import static org.junit.Assert.*;

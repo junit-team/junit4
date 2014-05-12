@@ -122,7 +122,7 @@ public class ExpectedException implements TestRule {
     /**
      * This method does nothing. Don't use it.
      * @deprecated AssertionErrors are handled by default since JUnit 4.12. Just
-     *             like in JUnit <= 4.10.
+     *             like in JUnit &lt;= 4.10.
      */
     @Deprecated
     public ExpectedException handleAssertionErrors() {
@@ -132,7 +132,7 @@ public class ExpectedException implements TestRule {
     /**
      * This method does nothing. Don't use it.
      * @deprecated AssumptionViolatedExceptions are handled by default since
-     *             JUnit 4.12. Just like in JUnit <= 4.10.
+     *             JUnit 4.12. Just like in JUnit &lt;= 4.10.
      */
     @Deprecated
     public ExpectedException handleAssumptionViolatedExceptions() {
@@ -180,7 +180,7 @@ public class ExpectedException implements TestRule {
      * public void throwsExceptionWithSpecificType() {
      *     thrown.expect(NullPointerException.class);
      *     throw new NullPointerException();
-     * }
+     * }</pre>
      */
     public void expect(Class<? extends Throwable> type) {
         expect(instanceOf(type));

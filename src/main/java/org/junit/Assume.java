@@ -23,7 +23,7 @@ import org.hamcrest.Matcher;
  * }
  * </pre>
  * These methods can be used directly: <code>Assume.assumeTrue(...)</code>, however, they
- * read better if they are referenced through static import:<br/>
+ * read better if they are referenced through static import:
  * <pre>
  * import static org.junit.Assume.*;
  *    ...

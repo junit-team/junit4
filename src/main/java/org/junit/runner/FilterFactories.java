@@ -16,7 +16,6 @@ public class FilterFactories {
      * "package.of.FilterFactory".
      *
      * @param filterSpec The filter specification
-     * @throws org.junit.runner.FilterFactory.FilterNotCreatedException
      */
     public static Filter createFilterFromFilterSpec(Description description, String filterSpec)
             throws FilterFactory.FilterNotCreatedException {
@@ -36,7 +35,6 @@ public class FilterFactories {
      *
      * @param filterFactoryFqcn The fully qualified class name of the {@link FilterFactory}
      * @param params The arguments to the {@link FilterFactory}
-     * @throws org.junit.runner.FilterFactory.FilterNotCreatedException
      */
     public static Filter createFilter(String filterFactoryFqcn, FilterFactoryParams params)
             throws FilterFactory.FilterNotCreatedException {
@@ -50,7 +48,6 @@ public class FilterFactories {
      *
      * @param filterFactoryClass The class of the {@link FilterFactory}
      * @param params             The arguments to the {@link FilterFactory}
-     * @throws org.junit.runner.FilterFactory.FilterNotCreatedException
      *
      */
     public static Filter createFilter(Class<? extends FilterFactory> filterFactoryClass, FilterFactoryParams params)

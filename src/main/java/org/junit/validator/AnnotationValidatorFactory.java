@@ -16,7 +16,6 @@ public class AnnotationValidatorFactory {
      * {@link org.junit.validator.ValidateWith}. Instances are
      * cached.
      *
-     * @param validateWithAnnotation
      * @return An instance of the AnnotationValidator.
      *
      * @since 4.12

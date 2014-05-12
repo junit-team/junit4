@@ -145,6 +145,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * <li>returns something other than void, or
      * <li>is static (given {@code isStatic is false}), or
      * <li>is not static (given {@code isStatic is true}).
+     * </ul>
      */
     protected void validatePublicVoidNoArgMethods(Class<? extends Annotation> annotation,
             boolean isStatic, List<Throwable> errors) {
@@ -272,8 +273,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     /**
      * Evaluates whether a child is ignored. The default implementation always
      * returns <code>false</code>.
-     * <p/>
-     * {@link BlockJUnit4ClassRunner}, for example, overrides this method to
+     * 
+     * <p>{@link BlockJUnit4ClassRunner}, for example, overrides this method to
      * filter tests based on the {@link Ignore} annotation.
      */
     protected boolean isIgnored(T child) {
