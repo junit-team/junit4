@@ -5,7 +5,7 @@ import java.io.StringWriter;
 
 
 /**
- * A <code>TestFailure</code> collects a failed test together with
+ * A {@code TestFailure} collects a failed test together with
  * the caught exception.
  *
  * @see TestResult
@@ -13,7 +13,6 @@ import java.io.StringWriter;
 public class TestFailure {
     protected Test fFailedTest;
     protected Throwable fThrownException;
-
 
     /**
      * Constructs a TestFailure with the given test and exception.
@@ -44,7 +43,11 @@ public class TestFailure {
     public String toString() {
         return fFailedTest + ": " + fThrownException.getMessage();
     }
-
+    
+    /**
+     * Returns a String containing the stack trace of the error
+     * thrown by TestFailure.
+     */
     public String trace() {
         StringWriter stringWriter = new StringWriter();
         PrintWriter writer = new PrintWriter(stringWriter);
@@ -52,10 +55,18 @@ public class TestFailure {
         return stringWriter.toString();
     }
 
+    /**
+     * Returns a String containing the message from the thrown exception.
+     */
     public String exceptionMessage() {
         return thrownException().getMessage();
     }
 
+    /**
+     * Returns {@code true} if the error is considered a failure
+     * (i.e. if it is an instance of {@code AssertionFailedError}),
+     * {@code false} otherwise.
+     */
     public boolean isFailure() {
         return thrownException() instanceof AssertionFailedError;
     }
