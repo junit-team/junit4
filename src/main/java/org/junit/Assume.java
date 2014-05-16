@@ -10,18 +10,22 @@ import org.hamcrest.Matcher;
 
 /**
  * A set of methods useful for stating assumptions about the conditions in which a test is meaningful.
- * A failed assumption does not mean the code is broken, but that the test provides no useful information.
- * The default JUnit runner treats tests with failing assumptions as ignored.  Custom runners may behave differently.
+ * A failed assumption does not mean the code is broken, but that the test provides no useful information. Assume
+ * basically means "don't run this test if these conditions don't apply". The default JUnit runner skips tests with
+ * failing assumptions. Custom runners may behave differently.
+ * <p>
+ * Some examples of using assumptions:
+ * <ul>
+ * <li>A parameterized test where some of the test methods don't make sense for some of the parameters.</li>
+ * <li>Tests for OS-specific functionality (some tests only work on XP, some only work on MacOS, etc).</li>
+ * <li>Android tests where some functionality only makes sense on some tablets, or only in devices that are also
+ * phones, or only devices running a particular version of the OS.</li>
+ * </ul>
+ * </p>
+ * Failed assumptions are usually not logged, because there may be many tests that don't apply to certain
+ * configurations.
  *
- * For example:
- * <pre>
- * // only provides information if database is reachable.
- * &#064;Test public void calculateTotalSalary() {
- *    DBConnection dbc = Database.connect();
- *    assumeNotNull(dbc);
- *    // ...
- * }
- * </pre>
+ * <p>
  * These methods can be used directly: <code>Assume.assumeTrue(...)</code>, however, they
  * read better if they are referenced through static import:
  * <pre>
@@ -29,6 +33,7 @@ import org.hamcrest.Matcher;
  *    ...
  *    assumeTrue(...);
  * </pre>
+ * </p>
  *
  * @since 4.4
  */
@@ -55,7 +60,7 @@ public class Assume {
      * @param message A message to pass to {@link AssumptionViolatedException}.
      */
     public static void assumeTrue(String message, boolean b) {
-        if (!b) throw new AssumptionViolatedException(message);
+        if (!b) { throw new AssumptionViolatedException(message); }
     }
 
     /**
@@ -83,7 +88,8 @@ public class Assume {
      *   int x = 1 / 0; // will never execute
      * </pre>
      *
-     * @param <T> the static type accepted by the matcher (this can flag obvious compile-time problems such as {@code assumeThat(1, is("a"))}
+     * @param <T> the static type accepted by the matcher (this can flag obvious compile-time problems such as {@code
+     * assumeThat(1, is("a"))}
      * @param actual the computed value being compared
      * @param matcher an expression, built of {@link Matcher}s, specifying allowed values
      * @see org.hamcrest.CoreMatchers
@@ -106,7 +112,8 @@ public class Assume {
      *   int x = 1 / 0; // will never execute
      * </pre>
      *
-     * @param <T> the static type accepted by the matcher (this can flag obvious compile-time problems such as {@code assumeThat(1, is("a"))}
+     * @param <T> the static type accepted by the matcher (this can flag obvious compile-time problems such as {@code
+     * assumeThat(1, is("a"))}
      * @param actual the computed value being compared
      * @param matcher an expression, built of {@link Matcher}s, specifying allowed values
      * @see org.hamcrest.CoreMatchers
