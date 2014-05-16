@@ -130,3 +130,8 @@ import javax.*
 import com.*
 <blank line> 
 import (all other imports)
+
+Note: the new Junit code under org.junit.* package tries to follow the Google Java Style 
+(http://google-styleguide.googlecode.com/svn/trunk/javaguide.html). 
+Where there are collisions between the Google Java Style and the explicitly specified Coding Style rules above, 
+the explicitly specified rules take precedence.
