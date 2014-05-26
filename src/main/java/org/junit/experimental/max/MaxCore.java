@@ -49,10 +49,10 @@ public class MaxCore {
         return new MaxCore(storedResults);
     }
 
-    private final MaxHistory fHistory;
+    private final MaxHistory history;
 
     private MaxCore(File storedResults) {
-        fHistory = MaxHistory.forFolder(storedResults);
+        history = MaxHistory.forFolder(storedResults);
     }
 
     /**
@@ -85,7 +85,7 @@ public class MaxCore {
      * @return a {@link Result} describing the details of the test run and the failed tests.
      */
     public Result run(Request request, JUnitCore core) {
-        core.addListener(fHistory.listener());
+        core.addListener(history.listener());
         return core.run(sortRequest(request).getRunner());
     }
 
@@ -98,7 +98,7 @@ public class MaxCore {
             return request;
         }
         List<Description> leaves = findLeaves(request);
-        Collections.sort(leaves, fHistory.testComparator());
+        Collections.sort(leaves, history.testComparator());
         return constructLeafRequest(leaves);
     }
 

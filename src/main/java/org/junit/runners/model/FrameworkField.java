@@ -12,14 +12,14 @@ import org.junit.runners.BlockJUnit4ClassRunner;
  * @since 4.7
  */
 public class FrameworkField extends FrameworkMember<FrameworkField> {
-    private final Field fField;
+    private final Field field;
 
     FrameworkField(Field field) {
         if (field == null) {
             throw new NullPointerException(
                     "FrameworkField cannot be created without an underlying field.");
         }
-        fField = field;
+        this.field = field;
     }
 
     @Override
@@ -28,7 +28,7 @@ public class FrameworkField extends FrameworkMember<FrameworkField> {
     }
 
     public Annotation[] getAnnotations() {
-        return fField.getAnnotations();
+        return field.getAnnotations();
     }
 
     @Override
@@ -38,14 +38,14 @@ public class FrameworkField extends FrameworkMember<FrameworkField> {
 
     @Override
     protected int getModifiers() {
-        return fField.getModifiers();
+        return field.getModifiers();
     }
 
     /**
      * @return the underlying java Field
      */
     public Field getField() {
-        return fField;
+        return field;
     }
 
     /**
@@ -54,23 +54,23 @@ public class FrameworkField extends FrameworkMember<FrameworkField> {
      */
     @Override
     public Class<?> getType() {
-        return fField.getType();
+        return field.getType();
     }
     
     @Override
     public Class<?> getDeclaringClass() {
-        return fField.getDeclaringClass();
+        return field.getDeclaringClass();
     }
 
     /**
      * Attempts to retrieve the value of this field on {@code target}
      */
     public Object get(Object target) throws IllegalArgumentException, IllegalAccessException {
-        return fField.get(target);
+        return field.get(target);
     }
 
     @Override
     public String toString() {
-        return fField.toString();
+        return field.toString();
     }
 }

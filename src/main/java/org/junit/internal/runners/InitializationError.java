@@ -11,10 +11,10 @@ import java.util.List;
 @Deprecated
 public class InitializationError extends Exception {
     private static final long serialVersionUID = 1L;
-    private final List<Throwable> fErrors;
+    private final List<Throwable> errors;
 
     public InitializationError(List<Throwable> errors) {
-        fErrors = errors;
+        this.errors = errors;
     }
 
     public InitializationError(Throwable... errors) {
@@ -26,6 +26,6 @@ public class InitializationError extends Exception {
     }
 
     public List<Throwable> getCauses() {
-        return fErrors;
+        return errors;
     }
 }

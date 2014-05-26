@@ -61,41 +61,41 @@ public class MaxHistory implements Serializable {
         }
     }
 
-    private final Map<String, Long> fDurations = new HashMap<String, Long>();
+    private final Map<String, Long> durations = new HashMap<String, Long>();
 
-    private final Map<String, Long> fFailureTimestamps = new HashMap<String, Long>();
+    private final Map<String, Long> failureTimestamps = new HashMap<String, Long>();
 
-    private final File fHistoryStore;
+    private final File historyStore;
 
     private MaxHistory(File storedResults) {
-        fHistoryStore = storedResults;
+        historyStore = storedResults;
     }
 
     private void save() throws IOException {
         ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(
-                fHistoryStore));
+                historyStore));
         stream.writeObject(this);
         stream.close();
     }
 
     Long getFailureTimestamp(Description key) {
-        return fFailureTimestamps.get(key.toString());
+        return failureTimestamps.get(key.toString());
     }
 
     void putTestFailureTimestamp(Description key, long end) {
-        fFailureTimestamps.put(key.toString(), end);
+        failureTimestamps.put(key.toString(), end);
     }
 
     boolean isNewTest(Description key) {
-        return !fDurations.containsKey(key.toString());
+        return !durations.containsKey(key.toString());
     }
 
     Long getTestDuration(Description key) {
-        return fDurations.get(key.toString());
+        return durations.get(key.toString());
     }
 
     void putTestDuration(Description description, long duration) {
-        fDurations.put(description.toString(), duration);
+        durations.put(description.toString(), duration);
     }
 
     private final class RememberingListener extends RunListener {

@@ -18,19 +18,19 @@ import org.hamcrest.StringDescription;
 public class AssumptionViolatedException extends RuntimeException implements SelfDescribing {
     private static final long serialVersionUID = 2L;
 
-    private final String fAssumption;
+    private final String assumption;
 
-    private final boolean fValueMatcher;
-    private final Object fValue;
+    private final boolean valueMatcher;
+    private final Object value;
 
-    private final Matcher<?> fMatcher;
+    private final Matcher<?> matcher;
 
     public AssumptionViolatedException(String assumption, boolean valueMatcher, Object value, Matcher<?> matcher) {
         super(value instanceof Throwable ? (Throwable) value : null);
-        fAssumption = assumption;
-        fValue = value;
-        fMatcher = matcher;
-        fValueMatcher = valueMatcher;
+        this.assumption = assumption;
+        this.value = value;
+        this.matcher = matcher;
+        this.valueMatcher = valueMatcher;
     }
 
     /**
@@ -69,21 +69,21 @@ public class AssumptionViolatedException extends RuntimeException implements Sel
     }
 
     public void describeTo(Description description) {
-        if (fAssumption != null) {
-            description.appendText(fAssumption);
+        if (assumption != null) {
+            description.appendText(assumption);
         }
 
-        if (fValueMatcher) {
-            if (fAssumption != null) {
+        if (valueMatcher) {
+            if (assumption != null) {
                 description.appendText(": ");
             }
 
             description.appendText("got: ");
-            description.appendValue(fValue);
+            description.appendValue(value);
 
-            if (fMatcher != null) {
+            if (matcher != null) {
                 description.appendText(", expected: ");
-                description.appendDescriptionOf(fMatcher);
+                description.appendDescriptionOf(matcher);
             }
         }
     }

@@ -118,27 +118,27 @@ public class Theories extends BlockJUnit4ClassRunner {
     public static class TheoryAnchor extends Statement {
         private int successes = 0;
 
-        private FrameworkMethod fTestMethod;
-        private TestClass fTestClass;
+        private final FrameworkMethod testMethod;
+        private final TestClass testClass;
 
         private List<AssumptionViolatedException> fInvalidParameters = new ArrayList<AssumptionViolatedException>();
 
-        public TheoryAnchor(FrameworkMethod method, TestClass testClass) {
-            fTestMethod = method;
-            fTestClass = testClass;
+        public TheoryAnchor(FrameworkMethod testMethod, TestClass testClass) {
+            this.testMethod = testMethod;
+            this.testClass = testClass;
         }
 
         private TestClass getTestClass() {
-            return fTestClass;
+            return testClass;
         }
 
         @Override
         public void evaluate() throws Throwable {
             runWithAssignment(Assignments.allUnassigned(
-                    fTestMethod.getMethod(), getTestClass()));
+                    testMethod.getMethod(), getTestClass()));
             
             //if this test method is not annotated with Theory, then no successes is a valid case
-            boolean hasTheoryAnnotation = fTestMethod.getAnnotation(Theory.class) != null;
+            boolean hasTheoryAnnotation = testMethod.getAnnotation(Theory.class) != null;
             if (successes == 0 && hasTheoryAnnotation) {
                 Assert
                         .fail("Never found parameters that satisfied method assumptions.  Violated assumptions: "
@@ -207,7 +207,7 @@ public class Theories extends BlockJUnit4ClassRunner {
                     
                     return getTestClass().getOnlyConstructor().newInstance(params);
                 }
-            }.methodBlock(fTestMethod).evaluate();
+            }.methodBlock(testMethod).evaluate();
         }
 
         private Statement methodCompletesWithParameters(
@@ -235,12 +235,12 @@ public class Theories extends BlockJUnit4ClassRunner {
             if (params.length == 0) {
                 throw e;
             }
-            throw new ParameterizedAssertionError(e, fTestMethod.getName(),
+            throw new ParameterizedAssertionError(e, testMethod.getName(),
                     params);
         }
 
         private boolean nullsOk() {
-            Theory annotation = fTestMethod.getMethod().getAnnotation(
+            Theory annotation = testMethod.getMethod().getAnnotation(
                     Theory.class);
             if (annotation == null) {
                 return false;
