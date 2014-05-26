@@ -75,15 +75,15 @@ import java.util.concurrent.TimeUnit;
  * @since 4.12
  */
 public class Stopwatch extends TestWatcher {
-    private long fStartNanos;
-    private long fEndNanos;
+    private long startNanos;
+    private long endNanos;
 
     /**
      * @param unit time unit for returned runtime
      * @return runtime measured during the test
      */
     public long runtime(TimeUnit unit) {
-        return unit.convert(currentNanoTime() - fStartNanos, TimeUnit.NANOSECONDS);
+        return unit.convert(currentNanoTime() - startNanos, TimeUnit.NANOSECONDS);
     }
 
     /**
@@ -135,15 +135,15 @@ public class Stopwatch extends TestWatcher {
     }
 
     private long getNanos() {
-        return fEndNanos - fStartNanos;
+        return endNanos - startNanos;
     }
 
     private void starting() {
-        fStartNanos= currentNanoTime();
+        startNanos = currentNanoTime();
     }
 
     private void stopping() {
-        fEndNanos= currentNanoTime();
+        endNanos = currentNanoTime();
     }
 
     private long currentNanoTime() {

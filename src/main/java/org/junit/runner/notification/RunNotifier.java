@@ -19,8 +19,8 @@ import org.junit.runner.Result;
  * @since 4.0
  */
 public class RunNotifier {
-    private final List<RunListener> fListeners = new CopyOnWriteArrayList<RunListener>();
-    private volatile boolean fPleaseStop = false;
+    private final List<RunListener> listeners = new CopyOnWriteArrayList<RunListener>();
+    private volatile boolean pleaseStop = false;
 
     /**
      * Internal use only
@@ -29,7 +29,7 @@ public class RunNotifier {
         if (listener == null) {
             throw new NullPointerException("Cannot add a null listener");
         }
-        fListeners.add(wrapIfNotThreadSafe(listener));
+        listeners.add(wrapIfNotThreadSafe(listener));
     }
 
     /**
@@ -39,7 +39,7 @@ public class RunNotifier {
         if (listener == null) {
             throw new NullPointerException("Cannot remove a null listener");
         }
-        fListeners.remove(wrapIfNotThreadSafe(listener));
+        listeners.remove(wrapIfNotThreadSafe(listener));
     }
 
     /**
@@ -53,21 +53,21 @@ public class RunNotifier {
 
 
     private abstract class SafeNotifier {
-        private final List<RunListener> fCurrentListeners;
+        private final List<RunListener> currentListeners;
 
         SafeNotifier() {
-            this(fListeners);
+            this(listeners);
         }
 
         SafeNotifier(List<RunListener> currentListeners) {
-            fCurrentListeners = currentListeners;
+            this.currentListeners = currentListeners;
         }
 
         void run() {
-            int capacity = fCurrentListeners.size();
+            int capacity = currentListeners.size();
             ArrayList<RunListener> safeListeners = new ArrayList<RunListener>(capacity);
             ArrayList<Failure> failures = new ArrayList<Failure>(capacity);
-            for (RunListener listener : fCurrentListeners) {
+            for (RunListener listener : currentListeners) {
                 try {
                     notifyListener(listener);
                     safeListeners.add(listener);
@@ -112,7 +112,7 @@ public class RunNotifier {
      * @throws StoppedByUserException thrown if a user has requested that the test run stop
      */
     public void fireTestStarted(final Description description) throws StoppedByUserException {
-        if (fPleaseStop) {
+        if (pleaseStop) {
             throw new StoppedByUserException();
         }
         new SafeNotifier() {
@@ -129,7 +129,7 @@ public class RunNotifier {
      * @param failure the description of the test that failed and the exception thrown
      */
     public void fireTestFailure(Failure failure) {
-        fireTestFailures(fListeners, asList(failure));
+        fireTestFailures(listeners, asList(failure));
     }
 
     private void fireTestFailures(List<RunListener> listeners,
@@ -199,7 +199,7 @@ public class RunNotifier {
      * to be shared amongst the many runners involved.
      */
     public void pleaseStop() {
-        fPleaseStop = true;
+        pleaseStop = true;
     }
 
     /**
@@ -209,6 +209,6 @@ public class RunNotifier {
         if (listener == null) {
             throw new NullPointerException("Cannot add a null listener");
         }
-        fListeners.add(0, wrapIfNotThreadSafe(listener));
+        listeners.add(0, wrapIfNotThreadSafe(listener));
     }
 }

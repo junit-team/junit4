@@ -20,7 +20,7 @@ public class Sorter implements Comparator<Description> {
         }
     });
 
-    private final Comparator<Description> fComparator;
+    private final Comparator<Description> comparator;
 
     /**
      * Creates a <code>Sorter</code> that uses <code>comparator</code>
@@ -29,7 +29,7 @@ public class Sorter implements Comparator<Description> {
      * @param comparator the {@link Comparator} to use when sorting tests
      */
     public Sorter(Comparator<Description> comparator) {
-        fComparator = comparator;
+        this.comparator = comparator;
     }
 
     /**
@@ -43,6 +43,6 @@ public class Sorter implements Comparator<Description> {
     }
 
     public int compare(Description o1, Description o2) {
-        return fComparator.compare(o1, o2);
+        return comparator.compare(o1, o2);
     }
 }

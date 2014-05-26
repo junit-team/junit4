@@ -14,8 +14,8 @@ public class ArrayComparisonFailure extends AssertionError {
 
     private static final long serialVersionUID = 1L;
 
-    private List<Integer> fIndices = new ArrayList<Integer>();
-    private final String fMessage;
+    private List<Integer> indices = new ArrayList<Integer>();
+    private final String message;
 
     /**
      * Construct a new <code>ArrayComparisonFailure</code> with an error text and the array's
@@ -26,23 +26,23 @@ public class ArrayComparisonFailure extends AssertionError {
      * @see Assert#assertArrayEquals(String, Object[], Object[])
      */
     public ArrayComparisonFailure(String message, AssertionError cause, int index) {
-        fMessage = message;
+        this.message = message;
         initCause(cause);
         addDimension(index);
     }
 
     public void addDimension(int index) {
-        fIndices.add(0, index);
+        indices.add(0, index);
     }
 
     @Override
     public String getMessage() {
         StringBuilder sb = new StringBuilder();
-        if (fMessage != null) {
-            sb.append(fMessage);
+        if (message != null) {
+            sb.append(message);
         }
         sb.append("arrays first differed at element ");
-        for (int each : fIndices) {
+        for (int each : indices) {
             sb.append("[");
             sb.append(each);
             sb.append("]");

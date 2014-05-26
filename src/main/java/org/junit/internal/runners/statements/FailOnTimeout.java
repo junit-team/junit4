@@ -14,11 +14,11 @@ import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestTimedOutException;
 
 public class FailOnTimeout extends Statement {
-    private final Statement fOriginalStatement;
-    private final TimeUnit fTimeUnit;
-    private final long fTimeout;
-    private final boolean fLookForStuckThread;
-    private volatile ThreadGroup fThreadGroup = null;
+    private final Statement originalStatement;
+    private final TimeUnit timeUnit;
+    private final long timeout;
+    private final boolean lookForStuckThread;
+    private volatile ThreadGroup threadGroup = null;
 
     public FailOnTimeout(Statement originalStatement, long millis) {
         this(originalStatement, millis, TimeUnit.MILLISECONDS);
@@ -29,17 +29,17 @@ public class FailOnTimeout extends Statement {
     }
 
     public FailOnTimeout(Statement originalStatement, long timeout, TimeUnit unit, boolean lookForStuckThread) {
-        fOriginalStatement = originalStatement;
-        fTimeout = timeout;
-        fTimeUnit = unit;
-        fLookForStuckThread = lookForStuckThread;
+        this.originalStatement = originalStatement;
+        this.timeout = timeout;
+        timeUnit = unit;
+        this.lookForStuckThread = lookForStuckThread;
     }
 
     @Override
     public void evaluate() throws Throwable {
         FutureTask<Throwable> task = new FutureTask<Throwable>(new CallableStatement());
-        fThreadGroup = new ThreadGroup("FailOnTimeoutGroup");
-        Thread thread = new Thread(fThreadGroup, task, "Time-limited test");
+        threadGroup = new ThreadGroup("FailOnTimeoutGroup");
+        Thread thread = new Thread(threadGroup, task, "Time-limited test");
         thread.setDaemon(true);
         thread.start();
         Throwable throwable = getResult(task, thread);
@@ -55,8 +55,8 @@ public class FailOnTimeout extends Statement {
      */
     private Throwable getResult(FutureTask<Throwable> task, Thread thread) {
         try {
-            if (fTimeout > 0) {
-                return task.get(fTimeout, fTimeUnit);
+            if (timeout > 0) {
+                return task.get(timeout, timeUnit);
             } else {
                 return task.get();
             }
@@ -72,8 +72,8 @@ public class FailOnTimeout extends Statement {
 
     private Exception createTimeoutException(Thread thread) {
         StackTraceElement[] stackTrace = thread.getStackTrace();
-        final Thread stuckThread = fLookForStuckThread ? getStuckThread(thread) : null;
-        Exception currThreadException = new TestTimedOutException(fTimeout, fTimeUnit);
+        final Thread stuckThread = lookForStuckThread ? getStuckThread(thread) : null;
+        Exception currThreadException = new TestTimedOutException(timeout, timeUnit);
         if (stackTrace != null) {
             currThreadException.setStackTrace(stackTrace);
             thread.interrupt();
@@ -115,9 +115,9 @@ public class FailOnTimeout extends Statement {
      * to {@code mainThread}.
      */
     private Thread getStuckThread (Thread mainThread) {
-        if (fThreadGroup == null) 
+        if (threadGroup == null)
             return null;
-        Thread[] threadsInGroup = getThreadArray(fThreadGroup);
+        Thread[] threadsInGroup = getThreadArray(threadGroup);
         if (threadsInGroup == null) 
             return null;
         
@@ -204,7 +204,7 @@ public class FailOnTimeout extends Statement {
     private class CallableStatement implements Callable<Throwable> {
         public Throwable call() throws Exception {
             try {
-                fOriginalStatement.evaluate();
+                originalStatement.evaluate();
             } catch (Exception e) {
                 throw e;
             } catch (Throwable e) {

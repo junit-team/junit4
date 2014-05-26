@@ -19,17 +19,17 @@ import org.junit.runners.model.TestClass;
  * parameters
  */
 public class Assignments {
-    private List<PotentialAssignment> fAssigned;
+    private List<PotentialAssignment> assigned;
 
-    private final List<ParameterSignature> fUnassigned;
+    private final List<ParameterSignature> unassigned;
 
-    private final TestClass fClass;
+    private final TestClass clazz;
 
     private Assignments(List<PotentialAssignment> assigned,
-            List<ParameterSignature> unassigned, TestClass testClass) {
-        fUnassigned = unassigned;
-        fAssigned = assigned;
-        fClass = testClass;
+            List<ParameterSignature> unassigned, TestClass clazz) {
+        this.unassigned = unassigned;
+        this.assigned = assigned;
+        this.clazz = clazz;
     }
 
     /**
@@ -47,27 +47,27 @@ public class Assignments {
     }
 
     public boolean isComplete() {
-        return fUnassigned.size() == 0;
+        return unassigned.size() == 0;
     }
 
     public ParameterSignature nextUnassigned() {
-        return fUnassigned.get(0);
+        return unassigned.get(0);
     }
 
     public Assignments assignNext(PotentialAssignment source) {
         List<PotentialAssignment> assigned = new ArrayList<PotentialAssignment>(
-                fAssigned);
+                this.assigned);
         assigned.add(source);
 
-        return new Assignments(assigned, fUnassigned.subList(1,
-                fUnassigned.size()), fClass);
+        return new Assignments(assigned, unassigned.subList(1,
+                unassigned.size()), clazz);
     }
 
     public Object[] getActualValues(int start, int stop) 
             throws CouldNotGenerateValueException {
         Object[] values = new Object[stop - start];
         for (int i = start; i < stop; i++) {
-            values[i - start] = fAssigned.get(i).getValue();
+            values[i - start] = assigned.get(i).getValue();
         }
         return values;
     }
@@ -104,7 +104,7 @@ public class Assignments {
         if (annotation != null) {
             return buildParameterSupplierFromClass(annotation.value());
         } else {
-            return new AllMembersSupplier(fClass);
+            return new AllMembersSupplier(clazz);
         }
     }
 
@@ -116,7 +116,7 @@ public class Assignments {
             Class<?>[] parameterTypes = constructor.getParameterTypes();
             if (parameterTypes.length == 1
                     && parameterTypes[0].equals(TestClass.class)) {
-                return (ParameterSupplier) constructor.newInstance(fClass);
+                return (ParameterSupplier) constructor.newInstance(clazz);
             }
         }
 
@@ -129,25 +129,25 @@ public class Assignments {
     }
 
     public Object[] getMethodArguments() throws CouldNotGenerateValueException {
-        return getActualValues(getConstructorParameterCount(), fAssigned.size());
+        return getActualValues(getConstructorParameterCount(), assigned.size());
     }
 
     public Object[] getAllArguments() throws CouldNotGenerateValueException {
-        return getActualValues(0, fAssigned.size());
+        return getActualValues(0, assigned.size());
     }
 
     private int getConstructorParameterCount() {
         List<ParameterSignature> signatures = ParameterSignature
-                .signatures(fClass.getOnlyConstructor());
+                .signatures(clazz.getOnlyConstructor());
         int constructorParameterCount = signatures.size();
         return constructorParameterCount;
     }
 
     public Object[] getArgumentStrings(boolean nullsOk)
             throws CouldNotGenerateValueException {
-        Object[] values = new Object[fAssigned.size()];
+        Object[] values = new Object[assigned.size()];
         for (int i = 0; i < values.length; i++) {
-            values[i] = fAssigned.get(i).getDescription();
+            values[i] = assigned.get(i).getDescription();
         }
         return values;
     }

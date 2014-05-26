@@ -12,8 +12,8 @@ public class TestTimedOutException extends Exception {
 
     private static final long serialVersionUID = 31935685163547539L;
 
-    private final TimeUnit fTimeUnit;
-    private final long fTimeout;
+    private final TimeUnit timeUnit;
+    private final long timeout;
 
     /**
      * Creates exception with a standard message "test timed out after [timeout] [timeUnit]"
@@ -24,21 +24,21 @@ public class TestTimedOutException extends Exception {
     public TestTimedOutException(long timeout, TimeUnit timeUnit) {
         super(String.format("test timed out after %d %s", 
                 timeout, timeUnit.name().toLowerCase()));
-        fTimeUnit = timeUnit;
-        fTimeout = timeout;
+        this.timeUnit = timeUnit;
+        this.timeout = timeout;
     }
 
     /**
      * Gets the time passed before the test was interrupted
      */
     public long getTimeout() {
-        return fTimeout;
+        return timeout;
     }
 
     /**
      * Gets the time unit for the timeout value
      */
     public TimeUnit getTimeUnit() {
-        return fTimeUnit;
+        return timeUnit;
     }
 }
