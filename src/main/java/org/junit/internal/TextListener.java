@@ -1,13 +1,13 @@
 package org.junit.internal;
 
-import java.io.PrintStream;
-import java.text.NumberFormat;
-import java.util.List;
-
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
+
+import java.io.PrintStream;
+import java.text.NumberFormat;
+import java.util.List;
 
 public class TextListener extends RunListener {
 
@@ -41,6 +41,19 @@ public class TextListener extends RunListener {
     @Override
     public void testIgnored(Description description) {
         writer.append('I');
+    }
+
+    @Override
+    public <T> void servicesLoaded(Class<T> serviceType, List<T> services) {
+        getWriter().print(String.format(
+                "For %s found %d services: [",
+                serviceType.getSimpleName(),
+                services.size()
+        ));
+        for (T service : services) {
+            getWriter().print(service.toString() + ", ");
+        }
+        getWriter().println("]");
     }
 
     /*
