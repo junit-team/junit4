@@ -16,6 +16,7 @@ import org.junit.runner.JUnitCommandLineParseResultTest;
 import org.junit.runner.JUnitCoreTest;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.ConcurrentRunNotifierTest;
+import org.junit.runner.notification.RunNotifierLoadListenersUsingSpiTest;
 import org.junit.runner.notification.RunNotifierTest;
 import org.junit.runner.notification.SynchronizedRunListenerTest;
 import org.junit.runners.Suite;
@@ -226,7 +227,8 @@ import org.junit.validator.PublicClassValidatorTest;
         CategoryValidatorTest.class,
         ForwardCompatibilityPrintingTest.class,
         DescriptionTest.class,
-        ErrorReportingRunnerTest.class
+        ErrorReportingRunnerTest.class,
+        RunNotifierLoadListenersUsingSpiTest.class
 })
 public class AllTests {
     public static Test suite() {

@@ -3,9 +3,12 @@ package org.junit.runner.notification;
 import static java.util.Arrays.asList;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.junit.internal.ServiceLoaderWrapper;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 
@@ -20,7 +23,31 @@ import org.junit.runner.Result;
  */
 public class RunNotifier {
     private final List<RunListener> listeners = new CopyOnWriteArrayList<RunListener>();
+    private final ServiceLoaderWrapper loader;
+    private final AtomicBoolean listenersUsingSpiAdded = new AtomicBoolean();
+
     private volatile boolean pleaseStop = false;
+
+    /**
+     * Create a new instance of {@link RunNotifier}
+     */
+    public RunNotifier() {
+        this(new ServiceLoaderWrapper());
+    }
+
+    /**
+     * Package private, for tests only
+     */
+    RunNotifier(ServiceLoaderWrapper loader) {
+        this.loader = loader;
+    }
+
+    /**
+     * Package private, for tests only
+     */
+    List<RunListener> getListeners() {
+        return listeners;
+    }
 
     /**
      * Internal use only
@@ -40,6 +67,22 @@ public class RunNotifier {
             throw new NullPointerException("Cannot remove a null listener");
         }
         listeners.remove(wrapIfNotThreadSafe(listener));
+    }
+
+    /**
+     * Internal use only.
+     * <p/>
+     * Invoke to load all {@link RunListener}} from classpath using Java SPI.
+     * @see org.junit.internal.ServiceLoaderWrapper
+     *
+     * @since 4.12
+     */
+    void loadListeners() {
+        if (listenersUsingSpiAdded.compareAndSet(false, true)) {
+            List<RunListener> loaded = loader.load(RunListener.class);
+            listeners.addAll(loaded);
+            fireServicesLoaded(RunListener.class, loaded);
+        }
     }
 
     /**
@@ -85,6 +128,7 @@ public class RunNotifier {
      * Do not invoke.
      */
     public void fireTestRunStarted(final Description description) {
+        loadListeners();
         new SafeNotifier() {
             @Override
             protected void notifyListener(RunListener each) throws Exception {
@@ -190,6 +234,21 @@ public class RunNotifier {
                 each.testFinished(description);
             }
         }.run();
+    }
+
+    /**
+     * Invoke to tell listeners that a some services loaded using {@link org.junit.internal.ServiceLoaderWrapper}
+     * @param serviceType a type of loaded services
+     * @param services loaded services
+     * @since 4.12
+     */
+    public <T> void fireServicesLoaded(final Class<T> serviceType, final List<T> services) {
+        new SafeNotifier() {
+            @Override
+            protected void notifyListener(RunListener each) throws Exception {
+                each.servicesLoaded(serviceType, Collections.unmodifiableList(services));
+            }
+        };
     }
 
     /**

@@ -43,6 +43,19 @@ public class TextListener extends RunListener {
         writer.append('I');
     }
 
+    @Override
+    public <T> void servicesLoaded(Class<T> serviceType, List<T> services) {
+        getWriter().print(String.format(
+                "For %s found %d services: [",
+                serviceType.getSimpleName(),
+                services.size()
+        ));
+        for (T service : services) {
+            getWriter().print(service.toString() + ", ");
+        }
+        getWriter().println("]");
+    }
+
     /*
       * Internal methods
       */
