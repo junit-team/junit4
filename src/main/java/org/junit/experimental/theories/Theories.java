@@ -118,8 +118,8 @@ public class Theories extends BlockJUnit4ClassRunner {
     public static class TheoryAnchor extends Statement {
         private int successes = 0;
 
-        private FrameworkMethod testMethod;
-        private TestClass testClass;
+        private final FrameworkMethod testMethod;
+        private final TestClass testClass;
 
         private List<AssumptionViolatedException> fInvalidParameters = new ArrayList<AssumptionViolatedException>();
 

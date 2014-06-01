@@ -14,7 +14,7 @@ public class ArrayComparisonFailure extends AssertionError {
 
     private static final long serialVersionUID = 1L;
 
-    private List<Integer> indices = new ArrayList<Integer>();
+    private final List<Integer> indices = new ArrayList<Integer>();
     private final String message;
 
     /**

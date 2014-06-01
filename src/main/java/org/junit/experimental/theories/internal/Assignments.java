@@ -19,7 +19,7 @@ import org.junit.runners.model.TestClass;
  * parameters
  */
 public class Assignments {
-    private List<PotentialAssignment> assigned;
+    private final List<PotentialAssignment> assigned;
 
     private final List<ParameterSignature> unassigned;
 

@@ -282,17 +282,17 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     }
 
     private void runChildren(final RunNotifier notifier) {
-        final RunnerScheduler scheduler = this.scheduler;
+        final RunnerScheduler currentScheduler = scheduler;
         try {
             for (final T each : getFilteredChildren()) {
-                scheduler.schedule(new Runnable() {
+                currentScheduler.schedule(new Runnable() {
                     public void run() {
                         ParentRunner.this.runChild(each, notifier);
                     }
                 });
             }
         } finally {
-            scheduler.finished();
+            currentScheduler.finished();
         }
     }
 
@@ -376,8 +376,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
     public void filter(Filter filter) throws NoTestsRemainException {
         synchronized (childrenLock) {
-            List<T> filteredChildren = new ArrayList<T>(getFilteredChildren());
-            for (Iterator<T> iter = filteredChildren.iterator(); iter.hasNext(); ) {
+            List<T> children = new ArrayList<T>(getFilteredChildren());
+            for (Iterator<T> iter = children.iterator(); iter.hasNext(); ) {
                 T each = iter.next();
                 if (shouldRun(filter, each)) {
                     try {
@@ -389,8 +389,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
                     iter.remove();
                 }
             }
-            this.filteredChildren = Collections.unmodifiableCollection(filteredChildren);
-            if (this.filteredChildren.isEmpty()) {
+            filteredChildren = Collections.unmodifiableCollection(children);
+            if (filteredChildren.isEmpty()) {
                 throw new NoTestsRemainException();
             }
         }

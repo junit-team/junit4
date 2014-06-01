@@ -20,8 +20,7 @@ public class EachTestNotifier {
         if (targetException instanceof MultipleFailureException) {
             addMultipleFailureException((MultipleFailureException) targetException);
         } else {
-            notifier
-                    .fireTestFailure(new Failure(description, targetException));
+            notifier.fireTestFailure(new Failure(description, targetException));
         }
     }
 

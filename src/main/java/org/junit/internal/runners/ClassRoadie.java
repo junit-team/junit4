@@ -17,9 +17,9 @@ import org.junit.runners.BlockJUnit4ClassRunner;
  */
 @Deprecated
 public class ClassRoadie {
-    private RunNotifier notifier;
-    private TestClass testClass;
-    private Description description;
+    private final RunNotifier notifier;
+    private final TestClass testClass;
+    private final Description description;
     private final Runnable runnable;
 
     public ClassRoadie(RunNotifier notifier, TestClass testClass,

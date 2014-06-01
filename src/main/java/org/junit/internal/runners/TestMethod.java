@@ -19,7 +19,7 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 @Deprecated
 public class TestMethod {
     private final Method method;
-    private TestClass testClass;
+    private final TestClass testClass;
 
     public TestMethod(Method method, TestClass testClass) {
         this.method = method;

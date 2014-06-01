@@ -115,12 +115,14 @@ public class FailOnTimeout extends Statement {
      * to {@code mainThread}.
      */
     private Thread getStuckThread (Thread mainThread) {
-        if (threadGroup == null)
+        if (threadGroup == null){
             return null;
+        }
         Thread[] threadsInGroup = getThreadArray(threadGroup);
-        if (threadsInGroup == null) 
+        if (threadsInGroup == null){
             return null;
-        
+        }
+
         // Now that we have all the threads in the test's thread group: Assume that
         // any thread we're "stuck" in is RUNNABLE.  Look for all RUNNABLE threads. 
         // If just one, we return that (unless it equals threadMain).  If there's more

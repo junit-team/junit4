@@ -65,8 +65,8 @@ public class JUnit4ClassRunner extends Runner implements Filterable, Sortable {
     @Override
     public Description getDescription() {
         Description spec = Description.createSuiteDescription(getName(), classAnnotations());
-        List<Method> testMethods = this.testMethods;
-        for (Method method : testMethods) {
+        List<Method> methods = testMethods;
+        for (Method method : methods) {
             spec.addChild(methodDescription(method));
         }
         return spec;
