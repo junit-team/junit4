@@ -38,9 +38,9 @@ import java.util.concurrent.TimeUnit;
  * @since 4.7
  */
 public class Timeout implements TestRule {
-    private final long fTimeout;
-    private final TimeUnit fTimeUnit;
-    private final boolean fLookForStuckThread;
+    private final long timeout;
+    private final TimeUnit timeUnit;
+    private final boolean lookForStuckThread;
 
     /**
      * Create a {@code Timeout} instance with the timeout specified
@@ -61,31 +61,31 @@ public class Timeout implements TestRule {
 
     /**
      * Create a {@code Timeout} instance with the timeout specified
-     * at the unit of granularity of the provided {@code TimeUnit}.
+     * at the timeUnit of granularity of the provided {@code TimeUnit}.
      *
      * @param timeout the maximum time to allow the test to run
      * before it should timeout
-     * @param unit the time unit for the {@code timeout}
+     * @param timeUnit the time unit for the {@code timeout}
      * @since 4.12
      */
-    public Timeout(long timeout, TimeUnit unit) {
-        fTimeout = timeout;
-        fTimeUnit = unit;
-        fLookForStuckThread = false;
+    public Timeout(long timeout, TimeUnit timeUnit) {
+        this.timeout = timeout;
+        this.timeUnit = timeUnit;
+        lookForStuckThread = false;
     }
 
     /**
      * Create a {@code Timeout} instance with the same fields as {@code t}
-     * except for {@code fLookForStuckThread}.
+     * except for {@code lookForStuckThread}.
      *
      * @param t the {@code Timeout} instance to copy
      * @param lookForStuckThread whether to look for a stuck thread
      * @since 4.12
      */
     protected Timeout(Timeout t, boolean lookForStuckThread) {
-        fTimeout = t.fTimeout;
-        fTimeUnit = t.fTimeUnit;
-        fLookForStuckThread = lookForStuckThread;
+        timeout = t.timeout;
+        timeUnit = t.timeUnit;
+        this.lookForStuckThread = lookForStuckThread;
     }
 
     /**
@@ -118,6 +118,6 @@ public class Timeout implements TestRule {
     }
 
     public Statement apply(Statement base, Description description) {
-        return new FailOnTimeout(base, fTimeout, fTimeUnit, fLookForStuckThread);
+        return new FailOnTimeout(base, timeout, timeUnit, lookForStuckThread);
     }
 }

@@ -21,10 +21,10 @@ import org.junit.runners.BlockJUnit4ClassRunner;
  */
 @Deprecated
 public class TestClass {
-    private final Class<?> fClass;
+    private final Class<?> clazz;
 
-    public TestClass(Class<?> klass) {
-        fClass = klass;
+    public TestClass(Class<?> clazz) {
+        this.clazz = clazz;
     }
 
     public List<Method> getTestMethods() {
@@ -41,7 +41,7 @@ public class TestClass {
 
     public List<Method> getAnnotatedMethods(Class<? extends Annotation> annotationClass) {
         List<Method> results = new ArrayList<Method>();
-        for (Class<?> eachClass : getSuperClasses(fClass)) {
+        for (Class<?> eachClass : getSuperClasses(clazz)) {
             Method[] methods = MethodSorter.getDeclaredMethods(eachClass);
             for (Method eachMethod : methods) {
                 Annotation annotation = eachMethod.getAnnotation(annotationClass);
@@ -95,15 +95,15 @@ public class TestClass {
     }
 
     public Constructor<?> getConstructor() throws SecurityException, NoSuchMethodException {
-        return fClass.getConstructor();
+        return clazz.getConstructor();
     }
 
     public Class<?> getJavaClass() {
-        return fClass;
+        return clazz;
     }
 
     public String getName() {
-        return fClass.getName();
+        return clazz.getName();
     }
 
 }

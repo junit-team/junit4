@@ -18,16 +18,16 @@ import org.junit.runners.model.Statement;
  */
 public class BlockJUnit4ClassRunnerWithParameters extends
         BlockJUnit4ClassRunner {
-    private final Object[] fParameters;
+    private final Object[] parameters;
 
-    private final String fName;
+    private final String name;
 
     public BlockJUnit4ClassRunnerWithParameters(TestWithParameters test)
             throws InitializationError {
         super(test.getTestClass().getJavaClass());
-        fParameters = test.getParameters().toArray(
+        parameters = test.getParameters().toArray(
                 new Object[test.getParameters().size()]);
-        fName = test.getName();
+        name = test.getName();
     }
 
     @Override
@@ -40,17 +40,17 @@ public class BlockJUnit4ClassRunnerWithParameters extends
     }
 
     private Object createTestUsingConstructorInjection() throws Exception {
-        return getTestClass().getOnlyConstructor().newInstance(fParameters);
+        return getTestClass().getOnlyConstructor().newInstance(parameters);
     }
 
     private Object createTestUsingFieldInjection() throws Exception {
         List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter();
-        if (annotatedFieldsByParameter.size() != fParameters.length) {
+        if (annotatedFieldsByParameter.size() != parameters.length) {
             throw new Exception(
                     "Wrong number of parameters and @Parameter fields."
                             + " @Parameter fields counted: "
                             + annotatedFieldsByParameter.size()
-                            + ", available parameters: " + fParameters.length
+                            + ", available parameters: " + parameters.length
                             + ".");
         }
         Object testClassInstance = getTestClass().getJavaClass().newInstance();
@@ -59,13 +59,13 @@ public class BlockJUnit4ClassRunnerWithParameters extends
             Parameter annotation = field.getAnnotation(Parameter.class);
             int index = annotation.value();
             try {
-                field.set(testClassInstance, fParameters[index]);
+                field.set(testClassInstance, parameters[index]);
             } catch (IllegalArgumentException iare) {
                 throw new Exception(getTestClass().getName()
                         + ": Trying to set " + field.getName()
-                        + " with the value " + fParameters[index]
+                        + " with the value " + parameters[index]
                         + " that is not the right type ("
-                        + fParameters[index].getClass().getSimpleName()
+                        + parameters[index].getClass().getSimpleName()
                         + " instead of " + field.getType().getSimpleName()
                         + ").", iare);
             }
@@ -75,7 +75,7 @@ public class BlockJUnit4ClassRunnerWithParameters extends
 
     @Override
     protected String getName() {
-        return fName;
+        return name;
     }
 
     @Override

@@ -17,7 +17,7 @@ import org.junit.internal.runners.model.ReflectiveCallable;
  * @since 4.5
  */
 public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
-    private final Method fMethod;
+    private final Method method;
 
     /**
      * Returns a new {@code FrameworkMethod} for {@code method}
@@ -27,14 +27,14 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
             throw new NullPointerException(
                     "FrameworkMethod cannot be created without an underlying method.");
         }
-        fMethod = method;
+        this.method = method;
     }
 
     /**
      * Returns the underlying Java method
      */
     public Method getMethod() {
-        return fMethod;
+        return method;
     }
 
     /**
@@ -47,7 +47,7 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
         return new ReflectiveCallable() {
             @Override
             protected Object runReflectiveCall() throws Throwable {
-                return fMethod.invoke(target, params);
+                return method.invoke(target, params);
             }
         }.run();
     }
@@ -57,7 +57,7 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
      */
     @Override
     public String getName() {
-        return fMethod.getName();
+        return method.getName();
     }
 
     /**
@@ -72,8 +72,8 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
      */
     public void validatePublicVoidNoArg(boolean isStatic, List<Throwable> errors) {
         validatePublicVoid(isStatic, errors);
-        if (fMethod.getParameterTypes().length != 0) {
-            errors.add(new Exception("Method " + fMethod.getName() + " should have no parameters"));
+        if (method.getParameterTypes().length != 0) {
+            errors.add(new Exception("Method " + method.getName() + " should have no parameters"));
         }
     }
 
@@ -90,26 +90,26 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
     public void validatePublicVoid(boolean isStatic, List<Throwable> errors) {
         if (isStatic() != isStatic) {
             String state = isStatic ? "should" : "should not";
-            errors.add(new Exception("Method " + fMethod.getName() + "() " + state + " be static"));
+            errors.add(new Exception("Method " + method.getName() + "() " + state + " be static"));
         }
         if (!isPublic()) {
-            errors.add(new Exception("Method " + fMethod.getName() + "() should be public"));
+            errors.add(new Exception("Method " + method.getName() + "() should be public"));
         }
-        if (fMethod.getReturnType() != Void.TYPE) {
-            errors.add(new Exception("Method " + fMethod.getName() + "() should be void"));
+        if (method.getReturnType() != Void.TYPE) {
+            errors.add(new Exception("Method " + method.getName() + "() should be void"));
         }
     }
 
     @Override
     protected int getModifiers() {
-        return fMethod.getModifiers();
+        return method.getModifiers();
     }
 
     /**
      * Returns the return type of the method
      */
     public Class<?> getReturnType() {
-        return fMethod.getReturnType();
+        return method.getReturnType();
     }
 
     /**
@@ -125,11 +125,11 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
      */
     @Override
     public Class<?> getDeclaringClass() {
-        return fMethod.getDeclaringClass();
+        return method.getDeclaringClass();
     }
 
     public void validateNoTypeParametersOnArgs(List<Throwable> errors) {
-        new NoGenericTypeParametersValidator(fMethod).validate(errors);
+        new NoGenericTypeParametersValidator(method).validate(errors);
     }
 
     @Override
@@ -153,12 +153,12 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
         if (!FrameworkMethod.class.isInstance(obj)) {
             return false;
         }
-        return ((FrameworkMethod) obj).fMethod.equals(fMethod);
+        return ((FrameworkMethod) obj).method.equals(method);
     }
 
     @Override
     public int hashCode() {
-        return fMethod.hashCode();
+        return method.hashCode();
     }
 
     /**
@@ -173,18 +173,18 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
     @Deprecated
     public boolean producesType(Type type) {
         return getParameterTypes().length == 0 && type instanceof Class<?>
-                && ((Class<?>) type).isAssignableFrom(fMethod.getReturnType());
+                && ((Class<?>) type).isAssignableFrom(method.getReturnType());
     }
 
     private Class<?>[] getParameterTypes() {
-        return fMethod.getParameterTypes();
+        return method.getParameterTypes();
     }
 
     /**
      * Returns the annotations on this method
      */
     public Annotation[] getAnnotations() {
-        return fMethod.getAnnotations();
+        return method.getAnnotations();
     }
 
     /**
@@ -192,11 +192,11 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
      * one exists.
      */
     public <T extends Annotation> T getAnnotation(Class<T> annotationType) {
-        return fMethod.getAnnotation(annotationType);
+        return method.getAnnotation(annotationType);
     }
 
     @Override
     public String toString() {
-        return fMethod.toString();
+        return method.toString();
     }
 }

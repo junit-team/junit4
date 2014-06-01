@@ -1,0 +1,3 @@
+JUnit project uses the Google Java Style (http://google-styleguide.googlecode.com/svn/trunk/javaguide.html) for all new
+code (under org.junit.*). Legacy code (under junit.*) used the legacy guide specified in LEGACY_CODING_STYLE.txt in the
+project root.

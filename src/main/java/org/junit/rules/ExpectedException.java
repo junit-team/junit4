@@ -112,7 +112,7 @@ public class ExpectedException implements TestRule {
         return new ExpectedException();
     }
 
-    private final ExpectedExceptionMatcherBuilder fMatcherBuilder = new ExpectedExceptionMatcherBuilder();
+    private final ExpectedExceptionMatcherBuilder matcherBuilder = new ExpectedExceptionMatcherBuilder();
 
     private String missingExceptionMessage= "Expected test to throw %s";
 
@@ -170,7 +170,7 @@ public class ExpectedException implements TestRule {
      * }</pre>
      */
     public void expect(Matcher<?> matcher) {
-        fMatcherBuilder.add(matcher);
+        matcherBuilder.add(matcher);
     }
 
     /**
@@ -227,16 +227,16 @@ public class ExpectedException implements TestRule {
     }
 
     private class ExpectedExceptionStatement extends Statement {
-        private final Statement fNext;
+        private final Statement next;
 
         public ExpectedExceptionStatement(Statement base) {
-            fNext = base;
+            next = base;
         }
 
         @Override
         public void evaluate() throws Throwable {
             try {
-                fNext.evaluate();
+                next.evaluate();
             } catch (Throwable e) {
                 handleException(e);
                 return;
@@ -249,14 +249,14 @@ public class ExpectedException implements TestRule {
 
     private void handleException(Throwable e) throws Throwable {
         if (isAnyExceptionExpected()) {
-            assertThat(e, fMatcherBuilder.build());
+            assertThat(e, matcherBuilder.build());
         } else {
             throw e;
         }
     }
 
     private boolean isAnyExceptionExpected() {
-        return fMatcherBuilder.expectsThrowable();
+        return matcherBuilder.expectsThrowable();
     }
 
     private void failDueToMissingException() throws AssertionError {
@@ -264,7 +264,7 @@ public class ExpectedException implements TestRule {
     }
     
     private String missingExceptionMessage() {
-        String expectation= StringDescription.toString(fMatcherBuilder.build());
+        String expectation= StringDescription.toString(matcherBuilder.build());
         return format(missingExceptionMessage, expectation);
     }
 }

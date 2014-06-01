@@ -42,16 +42,16 @@ public enum RuleFieldValidator {
      */
     RULE_METHOD_VALIDATOR(Rule.class, true, false);
 
-    private final Class<? extends Annotation> fAnnotation;
+    private final Class<? extends Annotation> annotation;
 
-    private final boolean fStaticMembers;
-    private final boolean fMethods;
+    private final boolean staticMembers;
+    private final boolean methods;
 
     private RuleFieldValidator(Class<? extends Annotation> annotation,
-            boolean methods, boolean fStaticMembers) {
-        this.fAnnotation = annotation;
-        this.fStaticMembers = fStaticMembers;
-        this.fMethods = methods;
+            boolean methods, boolean staticMembers) {
+        this.annotation = annotation;
+        this.staticMembers = staticMembers;
+        this.methods = methods;
     }
 
     /**
@@ -62,8 +62,8 @@ public enum RuleFieldValidator {
      * @param errors the list of errors.
      */
     public void validate(TestClass target, List<Throwable> errors) {
-        List<? extends FrameworkMember<?>> members = fMethods ? target.getAnnotatedMethods(fAnnotation)
-                : target.getAnnotatedFields(fAnnotation);
+        List<? extends FrameworkMember<?>> members = methods ? target.getAnnotatedMethods(annotation)
+                : target.getAnnotatedFields(annotation);
 
         for (FrameworkMember<?> each : members) {
             validateMember(each, errors);
@@ -78,16 +78,16 @@ public enum RuleFieldValidator {
     }
     
     private void validatePublicClass(FrameworkMember<?> member, List<Throwable> errors) {
-        if (fStaticMembers && !isDeclaringClassPublic(member)) {
+        if (staticMembers && !isDeclaringClassPublic(member)) {
             addError(errors, member, " must be declared in a public class.");
         }
     }
 
     private void validateStatic(FrameworkMember<?> member, List<Throwable> errors) {
-        if (fStaticMembers && !member.isStatic()) {
+        if (staticMembers && !member.isStatic()) {
             addError(errors, member, "must be static.");
         }
-        if (!fStaticMembers && member.isStatic()) {
+        if (!staticMembers && member.isStatic()) {
             addError(errors, member, "must not be static or it has to be annotated with @ClassRule.");
         }
     }
@@ -101,7 +101,7 @@ public enum RuleFieldValidator {
     private void validateTestRuleOrMethodRule(FrameworkMember<?> member,
             List<Throwable> errors) {
         if (!isMethodRule(member) && !isTestRule(member)) {
-            addError(errors, member, fMethods ?
+            addError(errors, member, methods ?
                     "must return an implementation of MethodRule or TestRule." :
                     "must implement MethodRule or TestRule.");
         }
@@ -121,7 +121,7 @@ public enum RuleFieldValidator {
 
     private void addError(List<Throwable> errors, FrameworkMember<?> member,
             String suffix) {
-        String message = "The @" + fAnnotation.getSimpleName() + " '"
+        String message = "The @" + annotation.getSimpleName() + " '"
                 + member.getName() + "' " + suffix;
         errors.add(new Exception(message));
     }

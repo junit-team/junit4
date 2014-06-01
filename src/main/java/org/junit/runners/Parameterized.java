@@ -232,7 +232,7 @@ public class Parameterized extends Suite {
 
     private static final List<Runner> NO_RUNNERS = Collections.<Runner>emptyList();
 
-    private final List<Runner> fRunners;
+    private final List<Runner> runners;
 
     /**
      * Only called reflectively. Do not use programmatically.
@@ -243,7 +243,7 @@ public class Parameterized extends Suite {
                 klass);
         Parameters parameters = getParametersMethod().getAnnotation(
                 Parameters.class);
-        fRunners = Collections.unmodifiableList(createRunnersForParameters(
+        runners = Collections.unmodifiableList(createRunnersForParameters(
                 allParameters(), parameters.name(), runnerFactory));
     }
 
@@ -262,7 +262,7 @@ public class Parameterized extends Suite {
 
     @Override
     protected List<Runner> getChildren() {
-        return fRunners;
+        return runners;
     }
 
     private TestWithParameters createTestWithNotNormalizedParameters(
