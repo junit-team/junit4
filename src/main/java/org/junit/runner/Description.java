@@ -29,8 +29,8 @@ import java.util.regex.Pattern;
  */
 public class Description implements Serializable {
     private static final long serialVersionUID = 1L;
-    static final Pattern METHOD_AND_CLASS_NAME_PATTERN = Pattern
-            .compile("(.*)\\((.*)\\)");
+    private static final Pattern METHOD_AND_CLASS_NAME_PATTERN = Pattern
+            .compile("([\\s\\S]*)\\((.*)\\)");
 
     /**
      * Create a <code>Description</code> named <code>name</code>.

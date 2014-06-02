@@ -104,7 +104,6 @@ public class DescriptionBuilderTest {
     @Test
     public void withAdditionalAnnotations_updatesTheAnnotations() throws Exception {
         Annotation newAnnotation = new Annotation() {
-            @Override
             public Class<? extends Annotation> annotationType() {
                 return this.getClass();
             }
