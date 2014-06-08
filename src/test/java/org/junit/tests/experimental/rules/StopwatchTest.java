@@ -1,14 +1,13 @@
 package org.junit.tests.experimental.rules;
 
+import org.junit.AssumptionViolatedException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.internal.AssumptionViolatedException;
 import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
-
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;

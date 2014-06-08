@@ -3,7 +3,7 @@ package org.junit.rules;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.internal.AssumptionViolatedException;
+import org.junit.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
@@ -54,7 +54,7 @@ public abstract class TestWatcher implements TestRule {
                 try {
                     base.evaluate();
                     succeededQuietly(description, errors);
-                } catch (AssumptionViolatedException e) {
+                } catch (@SuppressWarnings("deprecation") org.junit.internal.AssumptionViolatedException  e) {
                     errors.add(e);
                     skippedQuietly(e, description, errors);
                 } catch (Throwable e) {
@@ -87,10 +87,16 @@ public abstract class TestWatcher implements TestRule {
         }
     }
 
-    private void skippedQuietly(AssumptionViolatedException e, Description description,
+    @SuppressWarnings("deprecation")
+    private void skippedQuietly(
+            org.junit.internal.AssumptionViolatedException e, Description description,
             List<Throwable> errors) {
         try {
-            skipped(e, description);
+            if (e instanceof AssumptionViolatedException) {
+                skipped((AssumptionViolatedException) e, description);
+            } else {
+                skipped(e, description);
+            }
         } catch (Throwable e1) {
             errors.add(e1);
         }
@@ -129,7 +135,21 @@ public abstract class TestWatcher implements TestRule {
     /**
      * Invoked when a test is skipped due to a failed assumption.
      */
+    @SuppressWarnings("deprecation")
     protected void skipped(AssumptionViolatedException e, Description description) {
+        // For backwards compatibility with JUnit 4.11 and earlier, call the legacy version
+        org.junit.internal.AssumptionViolatedException asInternalException = e;
+        skipped(asInternalException, description);
+    }
+
+    /**
+     * Invoked when a test is skipped due to a failed assumption.
+     *
+     * @deprecated use {@link #skipped(AssumptionViolatedException, Description)}
+     */
+    @Deprecated
+    protected void skipped(
+            org.junit.internal.AssumptionViolatedException e, Description description) {
     }
 
     /**
