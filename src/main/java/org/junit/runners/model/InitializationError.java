@@ -17,7 +17,28 @@ public class InitializationError extends Exception {
      * errors {@code errors} as causes
      */
     public InitializationError(List<Throwable> errors) {
+        super(getMessage(errors));
         fErrors = errors;
+    }
+    
+    private static String getMessage(List<Throwable> errors) {
+        switch(errors.size()) {
+            case 0: return null;
+            case 1: return errors.get(0).getMessage();
+            default:
+                StringBuilder cause = new StringBuilder();
+                int i = 0;
+                for(Throwable error : errors) {
+                    String message = error.getMessage();
+                    if(message != null) {
+                        if(i > 0) {
+                            cause.append('\n');
+                        }
+                        cause.append(i++).append('.').append(' ').append(message);
+                    }
+                }
+                return cause.toString();
+        }
     }
 
     public InitializationError(Throwable error) {
