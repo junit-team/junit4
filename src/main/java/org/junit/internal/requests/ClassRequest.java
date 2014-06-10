@@ -3,6 +3,9 @@ package org.junit.internal.requests;
 import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
+import org.junit.runner.manipulation.Sortable;
+import org.junit.runner.manipulation.Sorter;
+import org.junit.runners.ParentRunner;
 
 public class ClassRequest extends Request {
     private final Object fRunnerLock = new Object();
@@ -25,6 +28,8 @@ public class ClassRequest extends Request {
             synchronized (fRunnerLock) {
                 if (fRunner == null) {
                     fRunner = new AllDefaultPossibilitiesBuilder(fCanUseSuiteMethod).safeRunnerForClass(fTestClass);
+                    if(fRunner instanceof Sortable)
+                        ((Sortable)fRunner).sort(Sorter.ANNOTATED_SORTER);
                 }
             }
         }

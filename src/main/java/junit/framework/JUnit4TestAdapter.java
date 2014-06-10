@@ -81,6 +81,7 @@ public class JUnit4TestAdapter implements Test, Filterable, Sortable, Describabl
     }
 
     public void sort(Sorter sorter) {
-        sorter.apply(fRunner);
+        if(sorter!=null)
+            sorter.apply(fRunner);
     }
 }
