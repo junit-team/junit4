@@ -93,6 +93,7 @@ import org.junit.tests.running.core.CommandLineTest;
 import org.junit.tests.running.core.JUnitCoreReturnsCorrectExitCodeTest;
 import org.junit.tests.running.core.SystemExitTest;
 import org.junit.tests.running.methods.AnnotationTest;
+import org.junit.tests.running.methods.CustomTimeoutTest;
 import org.junit.tests.running.methods.ExpectedTest;
 import org.junit.tests.running.methods.InheritedTestTest;
 import org.junit.tests.running.methods.ParameterizedTestMethodTest;
@@ -131,6 +132,7 @@ import org.junit.validator.PublicClassValidatorTest;
         TestMethodTest.class,
         TextListenerTest.class,
         TimeoutTest.class,
+        CustomTimeoutTest.class,
         EnclosedTest.class,
         ParameterizedTestMethodTest.class,
         InitializationErrorForwardCompatibilityTest.class,

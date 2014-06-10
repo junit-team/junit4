@@ -104,6 +104,18 @@ public class Timeout implements TestRule {
         return new Timeout(seconds, TimeUnit.SECONDS);
     }
 
+    protected final long getTimeout() {
+        return fTimeout;
+    }
+
+    protected final TimeUnit getTimeUnit() {
+        return fTimeUnit;
+    }
+
+    protected final boolean isLookForStuckThread() {
+        return fLookForStuckThread;
+    }
+
     /**
      * Specifies whether to look for a stuck thread.  If a timeout occurs and this
      * feature is enabled, the test will look for a thread that appears to be stuck
