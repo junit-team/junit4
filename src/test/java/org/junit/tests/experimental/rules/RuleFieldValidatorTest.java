@@ -50,7 +50,7 @@ public class RuleFieldValidatorTest {
     public void rejectClassRuleInNonPublicClass() {
         TestClass target = new TestClass(NonPublicTestWithClassRule.class);
         CLASS_RULE_VALIDATOR.validate(target, errors);
-        assertOneErrorWithMessage("The @ClassRule 'temporaryFolder'  must be declared in a public class.");
+        assertOneErrorWithMessage("The @ClassRule 'temporaryFolder' must be declared in a public class.");
     }
 
     static class NonPublicTestWithClassRule {
@@ -74,7 +74,7 @@ public class RuleFieldValidatorTest {
     public void rejectStaticTestRule() {
         TestClass target = new TestClass(TestWithStaticTestRule.class);
         RULE_VALIDATOR.validate(target, errors);
-        assertOneErrorWithMessage("The @Rule 'temporaryFolder' must not be static or it has to be annotated with @ClassRule.");
+        assertOneErrorWithMessage("The @Rule 'temporaryFolder' must not be static or it must be annotated with @ClassRule.");
     }
 
     public static class TestWithStaticTestRule {
@@ -157,7 +157,7 @@ public class RuleFieldValidatorTest {
     public void rejectMethodStaticTestRule() {
         TestClass target = new TestClass(TestMethodWithStaticTestRule.class);
         RULE_METHOD_VALIDATOR.validate(target, errors);
-        assertOneErrorWithMessage("The @Rule 'getTemporaryFolder' must not be static or it has to be annotated with @ClassRule.");
+        assertOneErrorWithMessage("The @Rule 'getTemporaryFolder' must not be static or it must be annotated with @ClassRule.");
     }
 
     public static class TestMethodWithStaticTestRule {

@@ -1,9 +1,5 @@
 package org.junit.internal.runners.rules;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Modifier;
-import java.util.List;
-
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.rules.MethodRule;
@@ -11,47 +7,75 @@ import org.junit.rules.TestRule;
 import org.junit.runners.model.FrameworkMember;
 import org.junit.runners.model.TestClass;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A RuleFieldValidator validates the rule fields of a
  * {@link org.junit.runners.model.TestClass}. All reasons for rejecting the
  * {@code TestClass} are written to a list of errors.
  *
- * There are four slightly different validators. The {@link #CLASS_RULE_VALIDATOR}
+ * <p>There are four slightly different validators. The {@link #CLASS_RULE_VALIDATOR}
  * validates fields with a {@link ClassRule} annotation and the
- * {@link #RULE_VALIDATOR} validates fields with a {@link Rule} annotation.
+ * {@link #RULE_VALIDATOR} validates fields with a {@link Rule} annotation.</p>
  *
- * The {@link #CLASS_RULE_METHOD_VALIDATOR}
+ * <p>The {@link #CLASS_RULE_METHOD_VALIDATOR}
  * validates methods with a {@link ClassRule} annotation and the
- * {@link #RULE_METHOD_VALIDATOR} validates methods with a {@link Rule} annotation.
+ * {@link #RULE_METHOD_VALIDATOR} validates methods with a {@link Rule} annotation.</p>
  */
-public enum RuleFieldValidator {
+public class RuleFieldValidator {
     /**
      * Validates fields with a {@link ClassRule} annotation.
      */
-    CLASS_RULE_VALIDATOR(ClassRule.class, false, true),
+    public static final RuleFieldValidator CLASS_RULE_VALIDATOR =
+            classRuleValidatorBuilder()
+            .withValidator(new DeclaringClassMustBePublic())
+            .withValidator(new MemberMustBeStatic())
+            .withValidator(new MemberMustBePublic())
+            .withValidator(new FieldMustBeARule())
+            .build();
     /**
      * Validates fields with a {@link Rule} annotation.
      */
-    RULE_VALIDATOR(Rule.class, false, false),
+    public static final RuleFieldValidator RULE_VALIDATOR =
+            testRuleValidatorBuilder()
+            .withValidator(new MemberMustBeNonStatic())
+            .withValidator(new MemberMustBePublic())
+            .withValidator(new FieldMustBeARule())
+            .build();
     /**
      * Validates methods with a {@link ClassRule} annotation.
      */
-    CLASS_RULE_METHOD_VALIDATOR(ClassRule.class, true, true),
+    public static final RuleFieldValidator CLASS_RULE_METHOD_VALIDATOR =
+            classRuleValidatorBuilder()
+            .forMethods()
+            .withValidator(new DeclaringClassMustBePublic())
+            .withValidator(new MemberMustBeStatic())
+            .withValidator(new MemberMustBePublic())
+            .withValidator(new MethodMustBeARule())
+            .build();
+
     /**
      * Validates methods with a {@link Rule} annotation.
      */
-    RULE_METHOD_VALIDATOR(Rule.class, true, false);
+    public static final RuleFieldValidator RULE_METHOD_VALIDATOR =
+            testRuleValidatorBuilder()
+            .forMethods()
+            .withValidator(new MemberMustBeNonStatic())
+            .withValidator(new MemberMustBePublic())
+            .withValidator(new MethodMustBeARule())
+            .build();
 
     private final Class<? extends Annotation> annotation;
-
-    private final boolean staticMembers;
     private final boolean methods;
+    private final List<RuleValidator> validatorStrategies;
 
-    private RuleFieldValidator(Class<? extends Annotation> annotation,
-            boolean methods, boolean staticMembers) {
-        this.annotation = annotation;
-        this.staticMembers = staticMembers;
-        this.methods = methods;
+    RuleFieldValidator(Builder builder) {
+        this.annotation = builder.annotation;
+        this.methods = builder.methods;
+        this.validatorStrategies = builder.validators;
     }
 
     /**
@@ -71,58 +95,146 @@ public enum RuleFieldValidator {
     }
 
     private void validateMember(FrameworkMember<?> member, List<Throwable> errors) {
-        validatePublicClass(member, errors);
-        validateStatic(member, errors);
-        validatePublic(member, errors);
-        validateTestRuleOrMethodRule(member, errors);
-    }
-    
-    private void validatePublicClass(FrameworkMember<?> member, List<Throwable> errors) {
-        if (staticMembers && !isDeclaringClassPublic(member)) {
-            addError(errors, member, " must be declared in a public class.");
+        for (RuleValidator strategy : validatorStrategies) {
+            strategy.validate(member, annotation, errors);
         }
     }
 
-    private void validateStatic(FrameworkMember<?> member, List<Throwable> errors) {
-        if (staticMembers && !member.isStatic()) {
-            addError(errors, member, "must be static.");
+    private static Builder classRuleValidatorBuilder() {
+        return new Builder(ClassRule.class);
+    }
+
+    private static Builder testRuleValidatorBuilder() {
+        return new Builder(Rule.class);
+    }
+
+    private static class Builder {
+        private final Class<? extends Annotation> annotation;
+        private boolean methods;
+        private final List<RuleValidator> validators;
+
+        private Builder(Class<? extends Annotation> annotation) {
+            this.annotation = annotation;
+            this.methods = false;
+            this.validators = new ArrayList<RuleValidator>();
         }
-        if (!staticMembers && member.isStatic()) {
-            addError(errors, member, "must not be static or it has to be annotated with @ClassRule.");
+
+        Builder forMethods() {
+            methods = true;
+            return this;
+        }
+
+        Builder withValidator(RuleValidator validator) {
+            validators.add(validator);
+            return this;
+        }
+
+        RuleFieldValidator build() {
+            return new RuleFieldValidator(this);
         }
     }
 
-    private void validatePublic(FrameworkMember<?> member, List<Throwable> errors) {
-        if (!member.isPublic()) {
-            addError(errors, member, "must be public.");
-        }
+    private static boolean isRuleType(FrameworkMember<?> member) {
+        return isMethodRule(member) || isTestRule(member);
     }
 
-    private void validateTestRuleOrMethodRule(FrameworkMember<?> member,
-            List<Throwable> errors) {
-        if (!isMethodRule(member) && !isTestRule(member)) {
-            addError(errors, member, methods ?
-                    "must return an implementation of MethodRule or TestRule." :
-                    "must implement MethodRule or TestRule.");
-        }
-    }
-
-    private boolean isDeclaringClassPublic(FrameworkMember<?> member) {
-        return Modifier.isPublic(member.getDeclaringClass().getModifiers());
-    }
-
-    private boolean isTestRule(FrameworkMember<?> member) {
+    private static boolean isTestRule(FrameworkMember<?> member) {
         return TestRule.class.isAssignableFrom(member.getType());
     }
 
-    private boolean isMethodRule(FrameworkMember<?> member) {
+    private static boolean isMethodRule(FrameworkMember<?> member) {
         return MethodRule.class.isAssignableFrom(member.getType());
     }
 
-    private void addError(List<Throwable> errors, FrameworkMember<?> member,
-            String suffix) {
-        String message = "The @" + annotation.getSimpleName() + " '"
-                + member.getName() + "' " + suffix;
-        errors.add(new Exception(message));
+    /**
+     * Encapsulates a single piece of validation logic, used to determine if {@link org.junit.Rule} and
+     * {@link org.junit.ClassRule} annotations have been used correctly
+     */
+    interface RuleValidator {
+        /**
+         * Examine the given member and add any violations of the strategy's validation logic to the given list of errors
+         * @param member The member (field or member) to examine
+         * @param annotation The type of rule annotation on the member
+         * @param errors The list of errors to add validation violations to
+         */
+        void validate(FrameworkMember<?> member, Class<? extends Annotation> annotation, List<Throwable> errors);
+    }
+
+    /**
+     * Requires the validated member to be non-static
+     */
+    private static final class MemberMustBeNonStatic implements RuleValidator {
+        public void validate(
+                FrameworkMember<?> member, Class<? extends Annotation> annotation, List<Throwable> errors) {
+            if (member.isStatic()) {
+                errors.add(new ValidationError(member, annotation,
+                        "must not be static or it must be annotated with @ClassRule."));
+            }
+        }
+    }
+
+    /**
+     * Requires the member to be static
+     */
+    private static final class MemberMustBeStatic implements RuleValidator {
+        public void validate(FrameworkMember<?> member, Class<? extends Annotation> annotation, List<Throwable> errors) {
+            if (!member.isStatic()) {
+                errors.add(new ValidationError(member, annotation,
+                        "must be static."));
+            }
+        }
+    }
+
+    /**
+     * Requires the member's declaring class to be public
+     */
+    private static final class DeclaringClassMustBePublic implements RuleValidator {
+        public void validate(FrameworkMember<?> member, Class<? extends Annotation> annotation, List<Throwable> errors) {
+            if (!isDeclaringClassPublic(member)) {
+                errors.add(new ValidationError(member, annotation,
+                        "must be declared in a public class."));
+            }
+        }
+
+        private boolean isDeclaringClassPublic(FrameworkMember<?> member) {
+            return Modifier.isPublic(member.getDeclaringClass().getModifiers());
+        }
+    }
+
+    /**
+     * Requires the member to be public
+     */
+    private static final class MemberMustBePublic implements RuleValidator {
+        public void validate(FrameworkMember<?> member, Class<? extends Annotation> annotation, List<Throwable> errors) {
+            if (!member.isPublic()) {
+                errors.add(new ValidationError(member, annotation,
+                        "must be public."));
+            }
+        }
+    }
+
+    /**
+     * Requires the member is a field implementing {@link org.junit.rules.MethodRule} or {@link org.junit.rules.TestRule}
+     */
+    private static final class FieldMustBeARule implements RuleValidator {
+        public void validate(FrameworkMember<?> member, Class<? extends Annotation> annotation, List<Throwable> errors) {
+            if (!isRuleType(member)) {
+                errors.add(new ValidationError(member, annotation,
+                        "must implement MethodRule or TestRule."));
+            }
+        }
+    }
+
+    /**
+     * Require the member to return an implementation of {@link org.junit.rules.MethodRule} or
+     * {@link org.junit.rules.TestRule}
+     */
+    private static final class MethodMustBeARule implements RuleValidator {
+        public void validate(FrameworkMember<?> member, Class<? extends Annotation> annotation, List<Throwable> errors) {
+            if (!isRuleType(member)) {
+                errors.add(new ValidationError(member, annotation,
+                        "must return an implementation of MethodRule or TestRule."));
+            }
+        }
     }
 }
