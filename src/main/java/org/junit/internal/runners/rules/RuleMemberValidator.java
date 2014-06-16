@@ -41,7 +41,7 @@ public class RuleMemberValidator {
      */
     public static final RuleMemberValidator RULE_VALIDATOR =
             testRuleValidatorBuilder()
-            .withValidator(new MemberMustBeNonStatic())
+            .withValidator(new MemberMustBeNonStaticOrAlsoClassRule())
             .withValidator(new MemberMustBePublic())
             .withValidator(new FieldMustBeARule())
             .build();
@@ -63,7 +63,7 @@ public class RuleMemberValidator {
     public static final RuleMemberValidator RULE_METHOD_VALIDATOR =
             testRuleValidatorBuilder()
             .forMethods()
-            .withValidator(new MemberMustBeNonStatic())
+            .withValidator(new MemberMustBeNonStaticOrAlsoClassRule())
             .withValidator(new MemberMustBePublic())
             .withValidator(new MethodMustBeARule())
             .build();
@@ -163,10 +163,17 @@ public class RuleMemberValidator {
     /**
      * Requires the validated member to be non-static
      */
-    private static final class MemberMustBeNonStatic implements RuleValidator {
-        public void validate(
-                FrameworkMember<?> member, Class<? extends Annotation> annotation, List<Throwable> errors) {
-            if (member.isStatic()) {
+    private static final class MemberMustBeNonStaticOrAlsoClassRule implements RuleValidator {
+        public void validate(FrameworkMember<?> member, Class<? extends Annotation> annotation, List<Throwable> errors) {
+            boolean isMethodRuleMember = isMethodRule(member);
+            boolean isClassRuleAnnotated = (member.getAnnotation(ClassRule.class) != null);
+
+            // We disallow:
+            //  - static MethodRule members
+            //  - static @Rule annotated members
+            //    - UNLESS they're also @ClassRule annotated
+            // Note that MethodRule cannot be annotated with @ClassRule
+            if (member.isStatic() && (isMethodRuleMember || !isClassRuleAnnotated)) {
                 String message;
                 if (isMethodRule(member)) {
                     message = "must not be static.";

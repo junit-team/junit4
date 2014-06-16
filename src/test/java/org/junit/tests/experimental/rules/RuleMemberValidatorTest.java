@@ -48,6 +48,19 @@ public class RuleMemberValidatorTest {
     }
 
     @Test
+    public void acceptStaticTestRuleThatIsAlsoClassRule() {
+        TestClass target = new TestClass(TestWithStaticClassAndTestRule.class);
+        CLASS_RULE_VALIDATOR.validate(target, errors);
+        assertNumberOfErrors(0);
+    }
+
+    public static class TestWithStaticClassAndTestRule {
+        @ClassRule
+        @Rule
+        public static TestRule temporaryFolder = new TemporaryFolder();
+    }
+
+    @Test
     public void rejectClassRuleInNonPublicClass() {
         TestClass target = new TestClass(NonPublicTestWithClassRule.class);
         CLASS_RULE_VALIDATOR.validate(target, errors);
@@ -149,6 +162,21 @@ public class RuleMemberValidatorTest {
     public static class MethodTestWithNonStaticClassRule {
         @ClassRule
         public TestRule getTemporaryFolder() {
+            return new TemporaryFolder();
+        }
+    }
+
+    @Test
+    public void acceptMethodStaticTestRuleThatIsAlsoClassRule() {
+        TestClass target = new TestClass(MethodTestWithStaticClassAndTestRule.class);
+        CLASS_RULE_METHOD_VALIDATOR.validate(target, errors);
+        assertNumberOfErrors(0);
+    }
+
+    public static class MethodTestWithStaticClassAndTestRule {
+        @ClassRule
+        @Rule
+        public static TestRule getTemporaryFolder() {
             return new TemporaryFolder();
         }
     }
