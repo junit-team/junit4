@@ -469,4 +469,32 @@ public class ParameterizedTestTest {
         assertEquals(1, result.getFailures().size());
         assertEquals(message, result.getFailures().get(0).getMessage());
     }
+    
+    @RunWith(Parameterized.class)
+    @UseParametersRunnerFactory(ExceptionThrowingRunnerFactory.class)
+    public static abstract class UseParameterizedFactoryAbstractTest {
+        @Parameters
+        public static Iterable<? extends Object> data() {
+            return asList("single test");
+        }
+    }
+    
+    public static class UseParameterizedFactoryTest extends
+            UseParameterizedFactoryAbstractTest {
+
+        public UseParameterizedFactoryTest(String parameter) {
+
+        }
+
+        @Test
+        public void parameterizedTest() {
+        }
+    }
+    
+    @Test
+    public void usesParametersRunnerFactoryThatWasSpecifiedByAnnotationInSuperClass() {
+        assertTestCreatesSingleFailureWithMessage(
+                UseParameterizedFactoryTest.class,
+                "Called ExceptionThrowingRunnerFactory.");
+    }
 }
