@@ -21,6 +21,8 @@ import org.junit.runners.model.FrameworkMethodTest;
 import org.junit.runners.model.TestClassTest;
 import org.junit.runners.parameterized.ParameterizedNamesTest;
 import org.junit.runners.parameterized.TestWithParametersTest;
+import org.junit.runners.parameterized.UseParameterizedFactoryAbstractTest;
+import org.junit.runners.parameterized.UseParameterizedFactoryTest;
 import org.junit.tests.assertion.AssertionTest;
 import org.junit.tests.assertion.ComparisonFailureTest;
 import org.junit.tests.assertion.MultipleFailureExceptionTest;
@@ -203,6 +205,7 @@ import org.junit.validator.PublicClassValidatorTest;
         JUnitCoreTest.class,
         TestWithParametersTest.class,
         ParameterizedNamesTest.class,
+        UseParameterizedFactoryTest.class,
         PublicClassValidatorTest.class
 })
 public class AllTests {
