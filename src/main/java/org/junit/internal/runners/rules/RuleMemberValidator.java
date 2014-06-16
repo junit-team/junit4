@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A RuleFieldValidator validates the rule fields of a
+ * A RuleMemberValidator validates the rule fields/methods of a
  * {@link org.junit.runners.model.TestClass}. All reasons for rejecting the
  * {@code TestClass} are written to a list of errors.
  *
@@ -25,11 +25,11 @@ import java.util.List;
  * validates methods with a {@link ClassRule} annotation and the
  * {@link #RULE_METHOD_VALIDATOR} validates methods with a {@link Rule} annotation.</p>
  */
-public class RuleFieldValidator {
+public class RuleMemberValidator {
     /**
      * Validates fields with a {@link ClassRule} annotation.
      */
-    public static final RuleFieldValidator CLASS_RULE_VALIDATOR =
+    public static final RuleMemberValidator CLASS_RULE_VALIDATOR =
             classRuleValidatorBuilder()
             .withValidator(new DeclaringClassMustBePublic())
             .withValidator(new MemberMustBeStatic())
@@ -39,7 +39,7 @@ public class RuleFieldValidator {
     /**
      * Validates fields with a {@link Rule} annotation.
      */
-    public static final RuleFieldValidator RULE_VALIDATOR =
+    public static final RuleMemberValidator RULE_VALIDATOR =
             testRuleValidatorBuilder()
             .withValidator(new MemberMustBeNonStatic())
             .withValidator(new MemberMustBePublic())
@@ -48,7 +48,7 @@ public class RuleFieldValidator {
     /**
      * Validates methods with a {@link ClassRule} annotation.
      */
-    public static final RuleFieldValidator CLASS_RULE_METHOD_VALIDATOR =
+    public static final RuleMemberValidator CLASS_RULE_METHOD_VALIDATOR =
             classRuleValidatorBuilder()
             .forMethods()
             .withValidator(new DeclaringClassMustBePublic())
@@ -60,7 +60,7 @@ public class RuleFieldValidator {
     /**
      * Validates methods with a {@link Rule} annotation.
      */
-    public static final RuleFieldValidator RULE_METHOD_VALIDATOR =
+    public static final RuleMemberValidator RULE_METHOD_VALIDATOR =
             testRuleValidatorBuilder()
             .forMethods()
             .withValidator(new MemberMustBeNonStatic())
@@ -72,7 +72,7 @@ public class RuleFieldValidator {
     private final boolean methods;
     private final List<RuleValidator> validatorStrategies;
 
-    RuleFieldValidator(Builder builder) {
+    RuleMemberValidator(Builder builder) {
         this.annotation = builder.annotation;
         this.methods = builder.methods;
         this.validatorStrategies = builder.validators;
@@ -129,8 +129,8 @@ public class RuleFieldValidator {
             return this;
         }
 
-        RuleFieldValidator build() {
-            return new RuleFieldValidator(this);
+        RuleMemberValidator build() {
+            return new RuleMemberValidator(this);
         }
     }
 
