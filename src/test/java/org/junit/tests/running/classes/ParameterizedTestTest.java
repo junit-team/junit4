@@ -475,31 +475,14 @@ public class ParameterizedTestTest {
     }
     
     @RunWith(Parameterized.class)
-    @UseParametersRunnerFactory(UseParameterizedFactoryAbstractTest.CustomParametersRunnerFactory.class)
+    @UseParametersRunnerFactory(ExceptionThrowingRunnerFactory.class)
     public static abstract class UseParameterizedFactoryAbstractTest {
-        protected static boolean testFlag = false;
 
         @Parameters
         public static Collection<Object[]> createParameters() {
             List<Object[]> result = new ArrayList<Object[]>();
             result.add(new Object[] { "parameter1" });
             return result;
-        }
-
-        public static class CustomParametersRunnerFactory implements
-                ParametersRunnerFactory {
-
-            public Runner createRunnerForTestWithParameters(
-                    TestWithParameters test) throws InitializationError {
-                return new BlockJUnit4ClassRunnerWithParameters(test) {
-                    @Override
-                    protected void runChild(final FrameworkMethod method,
-                            RunNotifier notifier) {
-                        testFlag = true;
-                        super.runChild(method, notifier);
-                    }
-                };
-            }
         }
     }
     
@@ -512,13 +495,13 @@ public class ParameterizedTestTest {
 
         @Test
         public void parameterizedTest() {
-            assertTrue(testFlag);
         }
     }
     
     @Test
     public void usesParametersRunnerFactoryThatWasSpecifiedByAnnotationInSuperClass() {
-        Result result = JUnitCore.runClasses(UseParameterizedFactoryTest.class);
-        assertEquals(0, result.getFailures().size());
+        assertTestCreatesSingleFailureWithMessage(
+                UseParameterizedFactoryTest.class,
+                "Called ExceptionThrowingRunnerFactory.");
     }
 }
