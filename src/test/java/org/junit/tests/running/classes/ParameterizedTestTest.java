@@ -7,6 +7,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.experimental.results.PrintableResult.testResult;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,12 +22,15 @@ import org.junit.runner.Request;
 import org.junit.runner.Result;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
+import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.Failure;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.Parameterized.UseParametersRunnerFactory;
+import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParameters;
 import org.junit.runners.parameterized.ParametersRunnerFactory;
 import org.junit.runners.parameterized.TestWithParameters;
 
@@ -468,5 +472,53 @@ public class ParameterizedTestTest {
         Result result = JUnitCore.runClasses(test);
         assertEquals(1, result.getFailures().size());
         assertEquals(message, result.getFailures().get(0).getMessage());
+    }
+    
+    @RunWith(Parameterized.class)
+    @UseParametersRunnerFactory(UseParameterizedFactoryAbstractTest.CustomParametersRunnerFactory.class)
+    public static abstract class UseParameterizedFactoryAbstractTest {
+        protected static boolean testFlag = false;
+
+        @Parameters
+        public static Collection<Object[]> createParameters() {
+            List<Object[]> result = new ArrayList<Object[]>();
+            result.add(new Object[] { "parameter1" });
+            return result;
+        }
+
+        public static class CustomParametersRunnerFactory implements
+                ParametersRunnerFactory {
+
+            public Runner createRunnerForTestWithParameters(
+                    TestWithParameters test) throws InitializationError {
+                return new BlockJUnit4ClassRunnerWithParameters(test) {
+                    @Override
+                    protected void runChild(final FrameworkMethod method,
+                            RunNotifier notifier) {
+                        testFlag = true;
+                        super.runChild(method, notifier);
+                    }
+                };
+            }
+        }
+    }
+    
+    public static class UseParameterizedFactoryTest extends
+            UseParameterizedFactoryAbstractTest {
+
+        public UseParameterizedFactoryTest(String parameter) {
+
+        }
+
+        @Test
+        public void parameterizedTest() {
+            assertTrue(testFlag);
+        }
+    }
+    
+    @Test
+    public void usesParametersRunnerFactoryThatWasSpecifiedByAnnotationInSuperClass() {
+        Result result = JUnitCore.runClasses(UseParameterizedFactoryTest.class);
+        assertEquals(0, result.getFailures().size());
     }
 }
