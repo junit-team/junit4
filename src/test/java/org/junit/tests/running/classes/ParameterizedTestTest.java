@@ -7,7 +7,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.experimental.results.PrintableResult.testResult;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -474,12 +473,9 @@ public class ParameterizedTestTest {
     @RunWith(Parameterized.class)
     @UseParametersRunnerFactory(ExceptionThrowingRunnerFactory.class)
     public static abstract class UseParameterizedFactoryAbstractTest {
-
         @Parameters
-        public static Collection<Object[]> createParameters() {
-            List<Object[]> result = new ArrayList<Object[]>();
-            result.add(new Object[] { "parameter1" });
-            return result;
+        public static Iterable<? extends Object> data() {
+            return asList("single test");
         }
     }
     
