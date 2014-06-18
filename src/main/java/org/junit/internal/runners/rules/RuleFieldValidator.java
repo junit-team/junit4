@@ -167,8 +167,13 @@ public class RuleFieldValidator {
         public void validate(
                 FrameworkMember<?> member, Class<? extends Annotation> annotation, List<Throwable> errors) {
             if (member.isStatic()) {
-                errors.add(new ValidationError(member, annotation,
-                        "must not be static or it must be annotated with @ClassRule."));
+                String message;
+                if (isMethodRule(member)) {
+                    message = "must not be static.";
+                } else {
+                    message = "must not be static or it must be annotated with @ClassRule.";
+                }
+                errors.add(new ValidationError(member, annotation, message));
             }
         }
     }

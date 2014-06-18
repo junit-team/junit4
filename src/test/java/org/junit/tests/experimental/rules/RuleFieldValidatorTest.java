@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.junit.rules.MethodRule;
 import org.junit.rules.TemporaryFolder;
 import org.junit.rules.TestRule;
+import org.junit.rules.TestWatchman;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
@@ -80,6 +81,19 @@ public class RuleFieldValidatorTest {
     public static class TestWithStaticTestRule {
         @Rule
         public static TestRule temporaryFolder = new TemporaryFolder();
+    }
+
+    @Test
+    public void rejectStaticMethodRule() {
+        TestClass target = new TestClass(TestWithStaticMethodRule.class);
+        RULE_VALIDATOR.validate(target, errors);
+        assertOneErrorWithMessage("The @Rule 'testWatchman' must not be static.");
+    }
+
+    public static class TestWithStaticMethodRule {
+        @SuppressWarnings("deprecation")
+        @Rule
+        public static MethodRule testWatchman = new TestWatchman();
     }
     
     @Test
@@ -165,6 +179,19 @@ public class RuleFieldValidatorTest {
         public static TestRule getTemporaryFolder() {
             return new TemporaryFolder();
         }
+    }
+
+    @Test
+    public void rejectMethodStaticMethodRule() {
+        TestClass target = new TestClass(TestMethodWithStaticMethodRule.class);
+        RULE_METHOD_VALIDATOR.validate(target, errors);
+        assertOneErrorWithMessage("The @Rule 'getTestWatchman' must not be static.");
+    }
+
+    public static class TestMethodWithStaticMethodRule {
+        @SuppressWarnings("deprecation")
+        @Rule
+        public static MethodRule getTestWatchman() { return new TestWatchman(); }
     }
 
     @Test
