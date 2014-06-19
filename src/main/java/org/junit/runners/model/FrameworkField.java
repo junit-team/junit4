@@ -31,6 +31,10 @@ public class FrameworkField extends FrameworkMember<FrameworkField> {
         return field.getAnnotations();
     }
 
+    public <T extends Annotation> T getAnnotation(Class<T> annotationType) {
+        return field.getAnnotation(annotationType);
+    }
+
     @Override
     public boolean isShadowedBy(FrameworkField otherMember) {
         return otherMember.getName().equals(getName());

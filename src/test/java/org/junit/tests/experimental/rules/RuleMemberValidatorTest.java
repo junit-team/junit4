@@ -1,10 +1,10 @@
 package org.junit.tests.experimental.rules;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.internal.runners.rules.RuleFieldValidator.CLASS_RULE_METHOD_VALIDATOR;
-import static org.junit.internal.runners.rules.RuleFieldValidator.CLASS_RULE_VALIDATOR;
-import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_METHOD_VALIDATOR;
-import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_VALIDATOR;
+import static org.junit.internal.runners.rules.RuleMemberValidator.CLASS_RULE_METHOD_VALIDATOR;
+import static org.junit.internal.runners.rules.RuleMemberValidator.CLASS_RULE_VALIDATOR;
+import static org.junit.internal.runners.rules.RuleMemberValidator.RULE_METHOD_VALIDATOR;
+import static org.junit.internal.runners.rules.RuleMemberValidator.RULE_VALIDATOR;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +15,12 @@ import org.junit.Test;
 import org.junit.rules.MethodRule;
 import org.junit.rules.TemporaryFolder;
 import org.junit.rules.TestRule;
+import org.junit.rules.TestWatchman;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
 
-public class RuleFieldValidatorTest {
+public class RuleMemberValidatorTest {
     private final List<Throwable> errors = new ArrayList<Throwable>();
 
     @Test
@@ -47,10 +48,23 @@ public class RuleFieldValidatorTest {
     }
 
     @Test
+    public void acceptStaticTestRuleThatIsAlsoClassRule() {
+        TestClass target = new TestClass(TestWithStaticClassAndTestRule.class);
+        CLASS_RULE_VALIDATOR.validate(target, errors);
+        assertNumberOfErrors(0);
+    }
+
+    public static class TestWithStaticClassAndTestRule {
+        @ClassRule
+        @Rule
+        public static TestRule temporaryFolder = new TemporaryFolder();
+    }
+
+    @Test
     public void rejectClassRuleInNonPublicClass() {
         TestClass target = new TestClass(NonPublicTestWithClassRule.class);
         CLASS_RULE_VALIDATOR.validate(target, errors);
-        assertOneErrorWithMessage("The @ClassRule 'temporaryFolder'  must be declared in a public class.");
+        assertOneErrorWithMessage("The @ClassRule 'temporaryFolder' must be declared in a public class.");
     }
 
     static class NonPublicTestWithClassRule {
@@ -74,12 +88,25 @@ public class RuleFieldValidatorTest {
     public void rejectStaticTestRule() {
         TestClass target = new TestClass(TestWithStaticTestRule.class);
         RULE_VALIDATOR.validate(target, errors);
-        assertOneErrorWithMessage("The @Rule 'temporaryFolder' must not be static or it has to be annotated with @ClassRule.");
+        assertOneErrorWithMessage("The @Rule 'temporaryFolder' must not be static or it must be annotated with @ClassRule.");
     }
 
     public static class TestWithStaticTestRule {
         @Rule
         public static TestRule temporaryFolder = new TemporaryFolder();
+    }
+
+    @Test
+    public void rejectStaticMethodRule() {
+        TestClass target = new TestClass(TestWithStaticMethodRule.class);
+        RULE_VALIDATOR.validate(target, errors);
+        assertOneErrorWithMessage("The @Rule 'testWatchman' must not be static.");
+    }
+
+    public static class TestWithStaticMethodRule {
+        @SuppressWarnings("deprecation")
+        @Rule
+        public static MethodRule testWatchman = new TestWatchman();
     }
     
     @Test
@@ -140,6 +167,21 @@ public class RuleFieldValidatorTest {
     }
 
     @Test
+    public void acceptMethodStaticTestRuleThatIsAlsoClassRule() {
+        TestClass target = new TestClass(MethodTestWithStaticClassAndTestRule.class);
+        CLASS_RULE_METHOD_VALIDATOR.validate(target, errors);
+        assertNumberOfErrors(0);
+    }
+
+    public static class MethodTestWithStaticClassAndTestRule {
+        @ClassRule
+        @Rule
+        public static TestRule getTemporaryFolder() {
+            return new TemporaryFolder();
+        }
+    }
+
+    @Test
     public void acceptMethodNonStaticTestRule() {
         TestClass target = new TestClass(TestMethodWithNonStaticTestRule.class);
         RULE_METHOD_VALIDATOR.validate(target, errors);
@@ -157,7 +199,7 @@ public class RuleFieldValidatorTest {
     public void rejectMethodStaticTestRule() {
         TestClass target = new TestClass(TestMethodWithStaticTestRule.class);
         RULE_METHOD_VALIDATOR.validate(target, errors);
-        assertOneErrorWithMessage("The @Rule 'getTemporaryFolder' must not be static or it has to be annotated with @ClassRule.");
+        assertOneErrorWithMessage("The @Rule 'getTemporaryFolder' must not be static or it must be annotated with @ClassRule.");
     }
 
     public static class TestMethodWithStaticTestRule {
@@ -165,6 +207,19 @@ public class RuleFieldValidatorTest {
         public static TestRule getTemporaryFolder() {
             return new TemporaryFolder();
         }
+    }
+
+    @Test
+    public void rejectMethodStaticMethodRule() {
+        TestClass target = new TestClass(TestMethodWithStaticMethodRule.class);
+        RULE_METHOD_VALIDATOR.validate(target, errors);
+        assertOneErrorWithMessage("The @Rule 'getTestWatchman' must not be static.");
+    }
+
+    public static class TestMethodWithStaticMethodRule {
+        @SuppressWarnings("deprecation")
+        @Rule
+        public static MethodRule getTestWatchman() { return new TestWatchman(); }
     }
 
     @Test

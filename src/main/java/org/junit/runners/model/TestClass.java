@@ -215,6 +215,13 @@ public class TestClass implements Annotatable {
         return clazz.getAnnotations();
     }
 
+    public <T extends Annotation> T getAnnotation(Class<T> annotationType) {
+        if (clazz == null) {
+            return null;
+        }
+        return clazz.getAnnotation(annotationType);
+    }
+
     public <T> List<T> getAnnotatedFieldValues(Object test,
             Class<? extends Annotation> annotationClass, Class<T> valueClass) {
         List<T> results = new ArrayList<T>();

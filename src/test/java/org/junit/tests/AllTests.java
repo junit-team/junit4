@@ -46,7 +46,7 @@ import org.junit.tests.experimental.rules.ExternalResourceRuleTest;
 import org.junit.tests.experimental.rules.MethodRulesTest;
 import org.junit.tests.experimental.rules.NameRulesTest;
 import org.junit.tests.experimental.rules.RuleChainTest;
-import org.junit.tests.experimental.rules.RuleFieldValidatorTest;
+import org.junit.tests.experimental.rules.RuleMemberValidatorTest;
 import org.junit.tests.experimental.rules.StopwatchTest;
 import org.junit.tests.experimental.rules.TempFolderRuleTest;
 import org.junit.tests.experimental.rules.TemporaryFolderUsageTest;
@@ -183,7 +183,7 @@ import org.junit.validator.PublicClassValidatorTest;
         JavadocTest.class,
         ParentRunnerFilteringTest.class,
         BlockJUnit4ClassRunnerOverrideTest.class,
-        RuleFieldValidatorTest.class,
+        RuleMemberValidatorTest.class,
         RuleChainTest.class,
         BlockJUnit4ClassRunnerTest.class,
         MethodSorterTest.class,

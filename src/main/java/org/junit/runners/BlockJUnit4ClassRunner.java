@@ -1,7 +1,7 @@
 package org.junit.runners;
 
-import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_METHOD_VALIDATOR;
-import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_VALIDATOR;
+import static org.junit.internal.runners.rules.RuleMemberValidator.RULE_METHOD_VALIDATOR;
+import static org.junit.internal.runners.rules.RuleMemberValidator.RULE_VALIDATOR;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
