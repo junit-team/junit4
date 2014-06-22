@@ -1,7 +1,7 @@
 We love pull requests. Here is a quick guide:
 
 1. You need to have Maven and a JDK (at least version 1.5) installed.
-2. Fork the repo.
+2. Fork the repo (see https://help.github.com/articles/fork-a-repo)
 3. Create a new branch from master.
 4. Ensure that you have a clean state by running `mvn verify`
 5. Add your change together with a test (tests are not needed for refactorings and documentation changes).
