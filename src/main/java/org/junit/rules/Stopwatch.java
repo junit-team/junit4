@@ -96,7 +96,7 @@ public abstract class Stopwatch implements TestRule {
      * @return runtime measured during the test
      */
     public long runtime(TimeUnit unit) {
-        return unit.convert(clock.nanoTime() - startNanos, TimeUnit.NANOSECONDS);
+        return unit.convert(getNanos(), TimeUnit.NANOSECONDS);
     }
 
     /**
@@ -124,7 +124,15 @@ public abstract class Stopwatch implements TestRule {
     }
 
     private long getNanos() {
-        return endNanos - startNanos;
+        if (startNanos == 0) {
+            throw new IllegalStateException("Test has not started");
+        }
+        long currentEndNanos = endNanos; // volatile read happens here
+        if (currentEndNanos == 0) {
+          currentEndNanos = clock.nanoTime();
+        }
+
+        return currentEndNanos - startNanos;
     }
 
     private void starting() {

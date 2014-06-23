@@ -18,6 +18,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeTrue;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assert.assertNotEquals;
 
 /**
  * @author tibor17
@@ -62,21 +63,23 @@ public class StopwatchTest {
             }
         };
 
-        @Rule
-        public final Stopwatch stopwatch = new Stopwatch(fakeClock) {
+        protected final Stopwatch stopwatch = new Stopwatch(fakeClock) {
             @Override
             protected void succeeded(long nanos, Description description) {
                 StopwatchTest.record = new Record(nanos, TestStatus.SUCCEEDED, description);
+                simulateTimePassing(1);
             }
 
             @Override
             protected void failed(long nanos, Throwable e, Description description) {
                 StopwatchTest.record = new Record(nanos, TestStatus.FAILED, description);
+                simulateTimePassing(1);
             }
 
             @Override
             protected void skipped(long nanos, AssumptionViolatedException e, Description description) {
                 StopwatchTest.record = new Record(nanos, TestStatus.SKIPPED, description);
+                simulateTimePassing(1);
             }
 
             @Override
@@ -84,6 +87,21 @@ public class StopwatchTest {
                 StopwatchTest.finishedRecord = new Record(nanos, description);
             }
         };
+
+        private final TestWatcher watcher = new TestWatcher() {
+            @Override
+            protected void finished(Description description) {
+                afterStopwatchRule();
+            }
+        };
+
+        @Rule
+        public final RuleChain chain = RuleChain
+            .outerRule(watcher)
+            .around(stopwatch);
+
+        protected void afterStopwatchRule() {
+        }
     }
 
     public static class SuccessfulTest extends AbstractStopwatchTest {
@@ -106,13 +124,28 @@ public class StopwatchTest {
         }
     }
 
-    public static class WrongDurationTest extends AbstractStopwatchTest {
+    public static class DurationDuringTestTest extends AbstractStopwatchTest {
         @Test
         public void duration() {
             simulateTimePassing(300L);
             assertEquals(300L, stopwatch.runtime(MILLISECONDS));
             simulateTimePassing(500L);
             assertEquals(800L, stopwatch.runtime(MILLISECONDS));
+        }
+    }
+
+    public static class DurationAfterTestTest extends AbstractStopwatchTest {
+        @Test
+        public void duration() {
+            simulateTimePassing(300L);
+            assertEquals(300L, stopwatch.runtime(MILLISECONDS));
+        }
+
+        @Override
+        protected void afterStopwatchRule() {
+            assertEquals(300L, stopwatch.runtime(MILLISECONDS));
+            simulateTimePassing(500L);
+            assertEquals(300L, stopwatch.runtime(MILLISECONDS));
         }
     }
 
@@ -167,8 +200,14 @@ public class StopwatchTest {
     }
 
     @Test
-    public void wrongDuration() {
-        Result result = runTest(WrongDurationTest.class);
+    public void runtimeDuringTestShouldReturnTimeSinceStart() {
+        Result result = runTest(DurationDuringTestTest.class);
+        assertTrue(result.wasSuccessful());
+    }
+
+  @Test
+    public void runtimeAfterTestShouldReturnRunDuration() {
+        Result result = runTest(DurationAfterTestTest.class);
         assertTrue(result.wasSuccessful());
     }
 }
