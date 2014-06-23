@@ -1,6 +1,6 @@
 package org.junit.rules;
 
-import org.junit.internal.AssumptionViolatedException;
+import org.junit.AssumptionViolatedException;
 import org.junit.runner.Description;
 
 import java.util.concurrent.TimeUnit;
