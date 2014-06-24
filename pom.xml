@@ -108,7 +108,7 @@
             <resource>
                 <directory>${project.basedir}</directory>
                 <includes>
-                    <include>LICENSE.txt</include>
+                    <include>LICENSE-junit.txt</include>
                 </includes>
             </resource>
         </resources>
