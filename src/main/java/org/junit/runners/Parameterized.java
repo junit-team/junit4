@@ -13,7 +13,6 @@ import java.util.List;
 
 import org.junit.runner.Runner;
 import org.junit.runners.model.FrameworkMethod;
-import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.TestClass;
 import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParametersFactory;
 import org.junit.runners.parameterized.ParametersRunnerFactory;
@@ -303,8 +302,7 @@ public class Parameterized extends Suite {
     private List<Runner> createRunnersForParameters(
             Iterable<Object> allParameters, String namePattern,
             ParametersRunnerFactory runnerFactory)
-            throws InitializationError,
-            Exception {
+            throws Exception {
         try {
             List<TestWithParameters> tests = createTestsForParameters(
                     allParameters, namePattern);
