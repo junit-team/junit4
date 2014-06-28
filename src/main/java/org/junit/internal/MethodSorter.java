@@ -18,7 +18,6 @@ public class MethodSorter {
             if (i1 != i2) {
                 return i1 < i2 ? -1 : 1;
             }
-           System.out.println(m1.getDeclaredAnnotations().getClass());
             return NAME_ASCENDING.compare(m1, m2);
         }
     };
