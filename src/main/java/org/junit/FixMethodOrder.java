@@ -32,16 +32,10 @@ import org.junit.runners.MethodSorters;
  * @since 4.11
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Target({ElementType.TYPE})
 public @interface FixMethodOrder {
     /**
      * Optionally specify <code>value</code> to have the methods executed in a particular order
      */
     MethodSorters value() default MethodSorters.DEFAULT;
 }
-
-
-
-
-
-
