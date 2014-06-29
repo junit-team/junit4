@@ -20,6 +20,7 @@ import org.junit.tests.listening.AllListeningTests;
 import org.junit.tests.manipulation.AllManipulationTests;
 import org.junit.tests.running.AllRunningTests;
 import org.junit.tests.validation.AllValidationTests;
+import org.junit.testsupport.AllTestSupportTests;
 import org.junit.validator.AllValidatorTests;
 
 @RunWith(Suite.class)
@@ -37,6 +38,7 @@ import org.junit.validator.AllValidatorTests;
         AllRunnerTests.class,
         AllRunningTests.class,
         AllSamplesTests.class,
+        AllTestSupportTests.class,
         AllValidationTests.class,
         AllValidatorTests.class,
         AssumptionViolatedExceptionTest.class,
