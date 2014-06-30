@@ -93,7 +93,7 @@ public class TemporaryFolder extends ExternalResource {
         for (int i = 0; i < folderNames.length; i++) {
             String folderName = folderNames[i];
             file = new File(file, folderName);
-            if (!file.mkdir() && isLastElementInArray(i, folderNames)) {
+            if (!file.mkdirs() && isLastElementInArray(i, folderNames)) {
                 throw new IOException(
                         "a folder with the name \'" + folderName + "\' already exists");
             }
