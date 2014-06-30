@@ -174,7 +174,7 @@ public class TemporaryFolderUsageTest {
         TemporaryFolder folder = new TemporaryFolder(tempDir);
         folder.create();
 
-	File file = folder.newFolder("foo/bar");
+        File file = folder.newFolder("foo/bar");
         assertTrue(file.exists());
     }
 
