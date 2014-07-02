@@ -1,24 +1,26 @@
 package org.junit.runner;
 
 import org.junit.internal.Classes;
+import org.junit.runner.FilterFactory.FilterNotCreatedException;
 import org.junit.runner.manipulation.Filter;
-
-import static org.junit.runner.FilterFactory.FilterNotCreatedException;
 
 /**
  * Utility class whose methods create a {@link FilterFactory}.
  */
-public class FilterFactories {
+class FilterFactories {
     /**
      * Creates a {@link Filter}.
      *
      * A filter specification is of the form "package.of.FilterFactory=args-to-filter-factory" or
      * "package.of.FilterFactory".
      *
-     * @param filterSpec The filter specification
+     * @param request the request that will be filtered
+     * @param filterSpec the filter specification
+     * @throws org.junit.runner.FilterFactory.FilterNotCreatedException
      */
-    public static Filter createFilterFromFilterSpec(Description description, String filterSpec)
+    public static Filter createFilterFromFilterSpec(Request request, String filterSpec)
             throws FilterFactory.FilterNotCreatedException {
+        Description topLevelDescription = request.getRunner().getDescription();
         String[] tuple;
 
         if (filterSpec.contains("=")) {
@@ -27,7 +29,7 @@ public class FilterFactories {
             tuple = new String[]{ filterSpec, "" };
         }
 
-        return createFilter(tuple[0], new FilterFactoryParams(tuple[1]));
+        return createFilter(tuple[0], new FilterFactoryParams(topLevelDescription, tuple[1]));
     }
 
     /**
