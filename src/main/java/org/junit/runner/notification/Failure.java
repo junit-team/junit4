@@ -17,7 +17,9 @@ import org.junit.runner.Description;
  */
 public class Failure implements Serializable {
     private static final long serialVersionUID = 1L;
+
     private final Description description;
+
     private final Throwable thrownException;
 
     /**
@@ -48,7 +50,6 @@ public class Failure implements Serializable {
     /**
      * @return the exception thrown
      */
-
     public Throwable getException() {
         return thrownException;
     }
