@@ -14,6 +14,7 @@ import org.junit.runner.JUnitCommandLineParseResultTest;
 import org.junit.runner.JUnitCoreTest;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.ConcurrentRunNotifierTest;
+import org.junit.runner.notification.FailureTest;
 import org.junit.runner.notification.RunNotifierTest;
 import org.junit.runner.notification.SynchronizedRunListenerTest;
 import org.junit.runners.Suite;
@@ -201,6 +202,7 @@ import org.junit.validator.PublicClassValidatorTest;
         FrameworkFieldTest.class,
         FrameworkMethodTest.class,
         FailOnTimeoutTest.class,
+        FailureTest.class,
         JUnitCoreTest.class,
         TestWithParametersTest.class,
         ParameterizedNamesTest.class,
