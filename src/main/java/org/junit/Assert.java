@@ -3,8 +3,6 @@ package org.junit;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.junit.internal.ArrayComparisonFailure;
-import org.junit.internal.ExactComparisonCriteria;
-import org.junit.internal.InexactComparisonCriteria;
 
 /**
  * A set of assertion methods useful for writing tests. Only failed assertions
@@ -280,7 +278,7 @@ public class Assert {
      */
     public static void assertArrayEquals(String message, Object[] expecteds,
             Object[] actuals) throws ArrayComparisonFailure {
-        internalArrayEquals(message, expecteds, actuals);
+        ArraysAssert.assertDeepEquals(message, expecteds, actuals);
     }
 
     /**
@@ -297,7 +295,7 @@ public class Assert {
     public static void assertArrayEquals(Object[] expecteds, Object[] actuals) {
         assertArrayEquals(null, expecteds, actuals);
     }
-    
+
     /**
      * Asserts that two boolean arrays are equal. If they are not, an
      * {@link AssertionError} is thrown with the given message. If
@@ -311,9 +309,9 @@ public class Assert {
      */
     public static void assertArrayEquals(String message, boolean[] expecteds,
             boolean[] actuals) throws ArrayComparisonFailure {
-        internalArrayEquals(message, expecteds, actuals);
+        ArraysAssert.assertEquals(message, expecteds, actuals);
     }    
-    
+
     /**
      * Asserts that two boolean arrays are equal. If they are not, an
      * {@link AssertionError} is thrown. If <code>expected</code> and
@@ -338,7 +336,7 @@ public class Assert {
      */
     public static void assertArrayEquals(String message, byte[] expecteds,
             byte[] actuals) throws ArrayComparisonFailure {
-        internalArrayEquals(message, expecteds, actuals);
+        ArraysAssert.assertEquals(message, expecteds, actuals);
     }
 
     /**
@@ -363,7 +361,7 @@ public class Assert {
      */
     public static void assertArrayEquals(String message, char[] expecteds,
             char[] actuals) throws ArrayComparisonFailure {
-        internalArrayEquals(message, expecteds, actuals);
+        ArraysAssert.assertEquals(message, expecteds, actuals);
     }
 
     /**
@@ -388,7 +386,7 @@ public class Assert {
      */
     public static void assertArrayEquals(String message, short[] expecteds,
             short[] actuals) throws ArrayComparisonFailure {
-        internalArrayEquals(message, expecteds, actuals);
+        ArraysAssert.assertEquals(message, expecteds, actuals);
     }
 
     /**
@@ -413,7 +411,7 @@ public class Assert {
      */
     public static void assertArrayEquals(String message, int[] expecteds,
             int[] actuals) throws ArrayComparisonFailure {
-        internalArrayEquals(message, expecteds, actuals);
+        ArraysAssert.assertEquals(message, expecteds, actuals);
     }
 
     /**
@@ -438,7 +436,7 @@ public class Assert {
      */
     public static void assertArrayEquals(String message, long[] expecteds,
             long[] actuals) throws ArrayComparisonFailure {
-        internalArrayEquals(message, expecteds, actuals);
+        ArraysAssert.assertEquals(message, expecteds, actuals);
     }
 
     /**
@@ -466,7 +464,7 @@ public class Assert {
      */
     public static void assertArrayEquals(String message, double[] expecteds,
             double[] actuals, double delta) throws ArrayComparisonFailure {
-        new InexactComparisonCriteria(delta).arrayEquals(message, expecteds, actuals);
+        ArraysAssert.assertEquals(message, expecteds, actuals, delta);
     }
 
     /**
@@ -497,7 +495,7 @@ public class Assert {
      */
     public static void assertArrayEquals(String message, float[] expecteds,
             float[] actuals, float delta) throws ArrayComparisonFailure {
-        new InexactComparisonCriteria(delta).arrayEquals(message, expecteds, actuals);
+        ArraysAssert.assertEquals(message, expecteds, actuals, delta);
     }
 
     /**
@@ -512,24 +510,6 @@ public class Assert {
      */
     public static void assertArrayEquals(float[] expecteds, float[] actuals, float delta) {
         assertArrayEquals(null, expecteds, actuals, delta);
-    }
-
-    /**
-     * Asserts that two object arrays are equal. If they are not, an
-     * {@link AssertionError} is thrown with the given message. If
-     * <code>expecteds</code> and <code>actuals</code> are <code>null</code>,
-     * they are considered equal.
-     *
-     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     * okay)
-     * @param expecteds Object array or array of arrays (multi-dimensional array) with
-     * expected values.
-     * @param actuals Object array or array of arrays (multi-dimensional array) with
-     * actual values
-     */
-    private static void internalArrayEquals(String message, Object expecteds,
-            Object actuals) throws ArrayComparisonFailure {
-        new ExactComparisonCriteria().arrayEquals(message, expecteds, actuals);
     }
 
     /**
@@ -829,7 +809,7 @@ public class Assert {
                 + ">");
     }
 
-    static private void failNotEquals(String message, Object expected,
+    private static void failNotEquals(String message, Object expected,
             Object actual) {
         fail(format(message, expected, actual));
     }
