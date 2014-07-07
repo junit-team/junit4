@@ -262,10 +262,30 @@ public abstract class TestCase extends Assert implements Test {
     }
 
     /**
+     * Asserts that two CharSequence are equal.
+     * 
+     * @author Michael Vorburger
+     */
+    @SuppressWarnings("deprecation")
+    public static void assertEquals(String message, CharSequence expected, CharSequence actual) {
+        Assert.assertEquals(message, expected, actual);
+    }
+
+    /**
      * Asserts that two Strings are equal.
      */
     @SuppressWarnings("deprecation")
     public static void assertEquals(String expected, String actual) {
+        Assert.assertEquals(expected, actual);
+    }
+
+    /**
+     * Asserts that two CharSequence are equal.
+     * 
+     * @author Michael Vorburger
+     */
+    @SuppressWarnings("deprecation")
+    public static void assertEquals(CharSequence expected, CharSequence actual) {
         Assert.assertEquals(expected, actual);
     }
 

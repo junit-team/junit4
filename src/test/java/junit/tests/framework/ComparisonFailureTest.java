@@ -44,4 +44,37 @@ public class ComparisonFailureTest extends TestCase {
         }
         fail();
     }
+    
+    /**
+     * Tests that assertEquals(CharSequence, CharSequence) throws a
+     * ComparisonFailure instead of just an AssertionFailedError.
+     * 
+     * This is important so that IDE views such as Eclipse' Result Comparison
+     * pop-up work; note that the diff is only available if a test fails with a
+     * ComparisonFailureError.
+     * 
+     * @author Michael Vorburger
+     */
+    public void testCharSequence() {
+        try {
+            CharSequence cs1 = new StringBuilder("a"); // NOT just "a";
+            CharSequence cs2 = new StringBuilder("b"); // NOT just "b";
+            assertEquals(cs1, cs2);
+        } catch (ComparisonFailure e) {
+            return;
+        }
+        fail();
+    }
+
+    public void testCharSequenceWithUserMessage() {
+        try {
+            CharSequence cs1 = new StringBuilder("a"); // NOT just "a";
+            CharSequence cs2 = new StringBuilder("b"); // NOT just "b";
+            assertEquals("NOK", cs1, cs2);
+        } catch (ComparisonFailure e) {
+            return;
+        }
+        fail();
+    }
+
 }

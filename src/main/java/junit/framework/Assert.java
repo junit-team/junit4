@@ -106,6 +106,26 @@ public class Assert {
     static public void assertEquals(String expected, String actual) {
         assertEquals(null, expected, actual);
     }
+    
+    /**
+     * Asserts that two CharSequence are equal.
+     * 
+     * @author Michael Vorburger
+     */
+    @SuppressWarnings("deprecation")
+    public static void assertEquals(String message, CharSequence expected, CharSequence actual) {
+        Assert.assertEquals(message, expected.toString(), actual.toString());
+    }
+
+    /**
+     * Asserts that two CharSequence are equal.
+     * 
+     * @author Michael Vorburger
+     */
+    @SuppressWarnings("deprecation")
+    public static void assertEquals(CharSequence expected, CharSequence actual) {
+        Assert.assertEquals(expected.toString(), actual.toString());
+    }
 
     /**
      * Asserts that two doubles are equal concerning a delta.  If they are not
