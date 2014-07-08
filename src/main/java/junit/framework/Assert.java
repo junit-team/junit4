@@ -112,9 +112,8 @@ public class Assert {
      * 
      * @author Michael Vorburger
      */
-    @SuppressWarnings("deprecation")
     public static void assertEquals(String message, CharSequence expected, CharSequence actual) {
-        Assert.assertEquals(message, expected.toString(), actual.toString());
+        assertEquals(message, expected.toString(), actual.toString());
     }
 
     /**
@@ -122,9 +121,8 @@ public class Assert {
      * 
      * @author Michael Vorburger
      */
-    @SuppressWarnings("deprecation")
     public static void assertEquals(CharSequence expected, CharSequence actual) {
-        Assert.assertEquals(expected.toString(), actual.toString());
+        assertEquals(expected.toString(), actual.toString());
     }
 
     /**
