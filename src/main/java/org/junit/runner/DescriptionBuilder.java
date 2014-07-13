@@ -88,15 +88,10 @@ public abstract class DescriptionBuilder {
     /**
      * Adds additional annotations. These annotations are passed to the {@code Description} for downstream interpreters.
      *
-     * @param annotation the first additional annotation
-     * @param additionalAnnotations more additional annotations
+     * @param additionalAnnotations additional annotations
      */
-    public DescriptionBuilder withAdditionalAnnotations(Annotation annotation, Annotation... additionalAnnotations) {
-        List<Annotation> annotations = new ArrayList<Annotation>();
-        annotations.add(annotation);
-        annotations.addAll(Arrays.asList(additionalAnnotations));
-        withAdditionalAnnotations(annotations);
-        return this;
+    public DescriptionBuilder withAdditionalAnnotations(Annotation... additionalAnnotations) {
+        return withAdditionalAnnotations(Arrays.asList(additionalAnnotations));
     }
 
     /**
