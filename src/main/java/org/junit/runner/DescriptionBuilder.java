@@ -81,6 +81,9 @@ public abstract class DescriptionBuilder {
      * @param annotations the additional annotations
      */
     public DescriptionBuilder withAdditionalAnnotations(List<Annotation> annotations) {
+        if (annotations.contains(null)) {
+            throw new NullPointerException("Cannot add a null annotation");
+        }
         this.annotations.addAll(annotations);
         return this;
     }
@@ -95,8 +98,7 @@ public abstract class DescriptionBuilder {
         List<Annotation> annotations = new ArrayList<Annotation>();
         annotations.add(annotation);
         annotations.addAll(Arrays.asList(additionalAnnotations));
-        withAdditionalAnnotations(annotations);
-        return this;
+        return withAdditionalAnnotations(annotations);
     }
 
     /**
