@@ -93,9 +93,9 @@ public abstract class Request {
 
 
     /**
-     * Not used within JUnit.  Clients should simply instantiate ErrorReportingRunner themselves
+     * Creates a {@link Request} that, when processed, will report an error for the given
+     * test class with the given cause.
      */
-    @Deprecated
     public static Request errorReport(Class<?> klass, Throwable cause) {
         return runner(new ErrorReportingRunner(klass, cause));
     }
