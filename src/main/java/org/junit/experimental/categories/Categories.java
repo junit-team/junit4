@@ -79,10 +79,6 @@ import org.junit.runners.model.RunnerBuilder;
  * @see <a href="https://github.com/junit-team/junit/wiki/Categories">Categories at JUnit wiki</a>
  */
 public class Categories extends Suite {
-    // the way filters are implemented makes this unnecessarily complicated,
-    // buggy, and difficult to specify.  A new way of handling filters could
-    // someday enable a better new implementation.
-    // https://github.com/junit-team/junit/issues/issue/172
 
     @Retention(RetentionPolicy.RUNTIME)
     public @interface IncludeCategory {
