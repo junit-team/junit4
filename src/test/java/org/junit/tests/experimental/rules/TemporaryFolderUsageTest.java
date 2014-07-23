@@ -167,6 +167,19 @@ public class TemporaryFolderUsageTest {
         assertThat(tempDir, is(folder.getRoot().getParentFile()));
     }
 
+    @Test
+    public void fileSeparatorShouldThrowExceptionWhenUsedAsPartOfFolderNameParameter() throws IOException {
+        tempFolder.create();
+
+        thrown.expect(IOException.class);
+        String errorMsg = "It's not possible to use the OS separator to create folder " +
+                                  "hierarchies like 'MyParentFolder'%s'MyFolder'. Please use newFolder('MyParentFolder', "+
+                                  "'MyFolder') instead";
+        thrown.expectMessage(String.format(errorMsg,File.separator));
+        tempFolder.newFolder("MyParentFolder" + File.separator + "MyFolder");
+
+    }
+
     private File createTemporaryFolder() throws IOException {
         File tempDir = File.createTempFile("junit", "tempFolder");
         assertTrue("Unable to delete temporary file", tempDir.delete());
