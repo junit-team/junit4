@@ -11,7 +11,12 @@ import org.junit.runner.manipulation.NoTestsRemainException;
  */
 public final class FilterRequest extends Request {
     private final Request request;
-    private final Filter filter;
+    /*
+     * We have to use the f prefix, because IntelliJ's JUnit4IdeaTestRunner uses
+     * reflection to access this field. See
+     * https://github.com/junit-team/junit/issues/960
+     */
+    private final Filter fFilter;
 
     /**
      * Creates a filtered Request
@@ -22,18 +27,18 @@ public final class FilterRequest extends Request {
      */
     public FilterRequest(Request request, Filter filter) {
         this.request = request;
-        this.filter = filter;
+        this.fFilter = filter;
     }
 
     @Override
     public Runner getRunner() {
         try {
             Runner runner = request.getRunner();
-            filter.apply(runner);
+            fFilter.apply(runner);
             return runner;
         } catch (NoTestsRemainException e) {
             return new ErrorReportingRunner(Filter.class, new Exception(String
-                    .format("No tests found matching %s from %s", filter
+                    .format("No tests found matching %s from %s", fFilter
                             .describe(), request.toString())));
         }
     }
