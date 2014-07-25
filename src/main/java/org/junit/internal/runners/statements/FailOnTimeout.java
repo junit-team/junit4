@@ -4,6 +4,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
@@ -37,11 +38,13 @@ public class FailOnTimeout extends Statement {
 
     @Override
     public void evaluate() throws Throwable {
-        FutureTask<Throwable> task = new FutureTask<Throwable>(new CallableStatement());
+        CallableStatement callable = new CallableStatement();
+        FutureTask<Throwable> task = new FutureTask<Throwable>(callable);
         threadGroup = new ThreadGroup("FailOnTimeoutGroup");
         Thread thread = new Thread(threadGroup, task, "Time-limited test");
         thread.setDaemon(true);
         thread.start();
+        callable.awaitStarted();
         Throwable throwable = getResult(task, thread);
         if (throwable != null) {
             throw throwable;
@@ -204,8 +207,11 @@ public class FailOnTimeout extends Statement {
     }
 
     private class CallableStatement implements Callable<Throwable> {
+        private final CountDownLatch startLatch = new CountDownLatch(1);
+
         public Throwable call() throws Exception {
             try {
+                startLatch.countDown();
                 originalStatement.evaluate();
             } catch (Exception e) {
                 throw e;
@@ -213,6 +219,10 @@ public class FailOnTimeout extends Statement {
                 return e;
             }
             return null;
+        }
+
+        public void awaitStarted() throws InterruptedException {
+            startLatch.await();
         }
     }
 }
