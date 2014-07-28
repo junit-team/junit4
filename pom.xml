@@ -501,7 +501,7 @@
             <id>restrict-doclint</id>
             <!-- doclint is only supported by JDK 8 -->
             <activation>
-                <jdk>[1.8,</jdk>
+                <jdk>[1.8,)</jdk>
             </activation>
             <build>
                 <plugins>
