@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>TheoriesPerformanceTest xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../../testapidocs/org/junit/tests/experimental/theories/runner/TheoriesPerformanceTest.html">View Javadoc</a></div><pre>
+<a class="jxr_linenumber" name="L1" href="#L1">1</a>   <strong class="jxr_keyword">package</strong> org.junit.tests.experimental.theories.runner;
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.assertThat;
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assume.assumeTrue;
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.experimental.results.PrintableResult.testResult;
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.experimental.results.ResultMatchers.isSuccessful;
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <strong class="jxr_keyword">import</strong> org.junit.Test;
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>   <strong class="jxr_keyword">import</strong> org.junit.experimental.theories.DataPoints;
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <strong class="jxr_keyword">import</strong> org.junit.experimental.theories.Theories;
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>  <strong class="jxr_keyword">import</strong> org.junit.experimental.theories.Theory;
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>  <strong class="jxr_keyword">import</strong> org.junit.runner.RunWith;
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/junit/tests/experimental/theories/runner/TheoriesPerformanceTest.html">TheoriesPerformanceTest</a> {
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>      @RunWith(Theories.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/junit/tests/experimental/theories/runner/TheoriesPerformanceTest.html">UpToTen</a> {
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>          @DataPoints
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>          <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">int</strong>[] ints = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>          @Theory
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>          <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> threeInts(<strong class="jxr_keyword">int</strong> x, <strong class="jxr_keyword">int</strong> y, <strong class="jxr_keyword">int</strong> z) {
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>              <em class="jxr_comment">// pass always</em>
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>          }
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>      }
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> TESTING_PERFORMANCE = false;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>      <em class="jxr_comment">// If we do not share the same instance of TestClass, repeatedly parsing the</em>
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>      <em class="jxr_comment">// class's annotations looking for @Befores and @Afters gets really costly.</em>
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>      <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>      <em class="jxr_comment">// Likewise, the TestClass must be passed into AllMembersSupplier, or the</em>
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>      <em class="jxr_comment">// annotation parsing is again costly.</em>
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>      @Test
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> tryCombinationsQuickly() {
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>          assumeTrue(TESTING_PERFORMANCE);
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>          assertThat(testResult(UpToTen.<strong class="jxr_keyword">class</strong>), isSuccessful());
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>      }
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  }
+</pre>
+<hr/>
+<div id="footer">Copyright &#169; 2002&#x2013;2014 <a href="http://www.junit.org">JUnit</a>. All rights reserved.</div>
+</body>
+</html>

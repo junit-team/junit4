@@ -1,0 +1,193 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.junit.rules;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import java.lang.management.ManagementFactory;<a name="line.3"></a>
+<FONT color="green">004</FONT>    import java.lang.management.RuntimeMXBean;<a name="line.4"></a>
+<FONT color="green">005</FONT>    import java.util.List;<a name="line.5"></a>
+<FONT color="green">006</FONT>    <a name="line.6"></a>
+<FONT color="green">007</FONT>    import org.junit.runner.Description;<a name="line.7"></a>
+<FONT color="green">008</FONT>    import org.junit.runners.model.Statement;<a name="line.8"></a>
+<FONT color="green">009</FONT>    <a name="line.9"></a>
+<FONT color="green">010</FONT>    /**<a name="line.10"></a>
+<FONT color="green">011</FONT>     * The {@code DisableOnDebug} Rule allows you to label certain rules to be<a name="line.11"></a>
+<FONT color="green">012</FONT>     * disabled when debugging.<a name="line.12"></a>
+<FONT color="green">013</FONT>     * &lt;p&gt;<a name="line.13"></a>
+<FONT color="green">014</FONT>     * The most illustrative use case is for tests that make use of the<a name="line.14"></a>
+<FONT color="green">015</FONT>     * {@link Timeout} rule, when ran in debug mode the test may terminate on<a name="line.15"></a>
+<FONT color="green">016</FONT>     * timeout abruptly during debugging. Developers may disable the timeout, or<a name="line.16"></a>
+<FONT color="green">017</FONT>     * increase the timeout by making a code change on tests that need debugging and<a name="line.17"></a>
+<FONT color="green">018</FONT>     * remember revert the change afterwards or rules such as {@link Timeout} that<a name="line.18"></a>
+<FONT color="green">019</FONT>     * may be disabled during debugging may be wrapped in a {@code DisableOnDebug}.<a name="line.19"></a>
+<FONT color="green">020</FONT>     * &lt;p&gt;<a name="line.20"></a>
+<FONT color="green">021</FONT>     * The important benefit of this feature is that you can disable such rules<a name="line.21"></a>
+<FONT color="green">022</FONT>     * without any making any modifications to your test class to remove them during<a name="line.22"></a>
+<FONT color="green">023</FONT>     * debugging.<a name="line.23"></a>
+<FONT color="green">024</FONT>     * &lt;p&gt;<a name="line.24"></a>
+<FONT color="green">025</FONT>     * This does nothing to tackle timeouts or time sensitive code under test when<a name="line.25"></a>
+<FONT color="green">026</FONT>     * debugging and may make this less useful in such circumstances.<a name="line.26"></a>
+<FONT color="green">027</FONT>     * &lt;p&gt;<a name="line.27"></a>
+<FONT color="green">028</FONT>     * Example usage:<a name="line.28"></a>
+<FONT color="green">029</FONT>     * <a name="line.29"></a>
+<FONT color="green">030</FONT>     * &lt;pre&gt;<a name="line.30"></a>
+<FONT color="green">031</FONT>     * public static class DisableTimeoutOnDebugSampleTest {<a name="line.31"></a>
+<FONT color="green">032</FONT>     * <a name="line.32"></a>
+<FONT color="green">033</FONT>     *     &amp;#064;Rule<a name="line.33"></a>
+<FONT color="green">034</FONT>     *     public TestRule timeout = new DisableOnDebug(new Timeout(20));<a name="line.34"></a>
+<FONT color="green">035</FONT>     * <a name="line.35"></a>
+<FONT color="green">036</FONT>     *     &amp;#064;Test<a name="line.36"></a>
+<FONT color="green">037</FONT>     *     public void myTest() {<a name="line.37"></a>
+<FONT color="green">038</FONT>     *         int i = 0;<a name="line.38"></a>
+<FONT color="green">039</FONT>     *         assertEquals(0, i); // suppose you had a break point here to inspect i<a name="line.39"></a>
+<FONT color="green">040</FONT>     *     }<a name="line.40"></a>
+<FONT color="green">041</FONT>     * }<a name="line.41"></a>
+<FONT color="green">042</FONT>     * &lt;/pre&gt;<a name="line.42"></a>
+<FONT color="green">043</FONT>     * <a name="line.43"></a>
+<FONT color="green">044</FONT>     * @since 4.12<a name="line.44"></a>
+<FONT color="green">045</FONT>     */<a name="line.45"></a>
+<FONT color="green">046</FONT>    public class DisableOnDebug implements TestRule {<a name="line.46"></a>
+<FONT color="green">047</FONT>        private final TestRule rule;<a name="line.47"></a>
+<FONT color="green">048</FONT>        private final boolean debugging;<a name="line.48"></a>
+<FONT color="green">049</FONT>    <a name="line.49"></a>
+<FONT color="green">050</FONT>        /**<a name="line.50"></a>
+<FONT color="green">051</FONT>         * Create a {@code DisableOnDebug} instance with the timeout specified in<a name="line.51"></a>
+<FONT color="green">052</FONT>         * milliseconds.<a name="line.52"></a>
+<FONT color="green">053</FONT>         * <a name="line.53"></a>
+<FONT color="green">054</FONT>         * @param rule to disable during debugging<a name="line.54"></a>
+<FONT color="green">055</FONT>         */<a name="line.55"></a>
+<FONT color="green">056</FONT>        public DisableOnDebug(TestRule rule) {<a name="line.56"></a>
+<FONT color="green">057</FONT>            this(rule, ManagementFactory.getRuntimeMXBean()<a name="line.57"></a>
+<FONT color="green">058</FONT>                    .getInputArguments());<a name="line.58"></a>
+<FONT color="green">059</FONT>        }<a name="line.59"></a>
+<FONT color="green">060</FONT>    <a name="line.60"></a>
+<FONT color="green">061</FONT>        /**<a name="line.61"></a>
+<FONT color="green">062</FONT>         * Visible for testing purposes only.<a name="line.62"></a>
+<FONT color="green">063</FONT>         * <a name="line.63"></a>
+<FONT color="green">064</FONT>         * @param rule the rule to disable during debugging<a name="line.64"></a>
+<FONT color="green">065</FONT>         * @param inputArguments<a name="line.65"></a>
+<FONT color="green">066</FONT>         *            arguments provided to the Java runtime<a name="line.66"></a>
+<FONT color="green">067</FONT>         */<a name="line.67"></a>
+<FONT color="green">068</FONT>        DisableOnDebug(TestRule rule, List&lt;String&gt; inputArguments) {<a name="line.68"></a>
+<FONT color="green">069</FONT>            this.rule = rule;<a name="line.69"></a>
+<FONT color="green">070</FONT>            debugging = isDebugging(inputArguments);<a name="line.70"></a>
+<FONT color="green">071</FONT>        }<a name="line.71"></a>
+<FONT color="green">072</FONT>    <a name="line.72"></a>
+<FONT color="green">073</FONT>        /**<a name="line.73"></a>
+<FONT color="green">074</FONT>         * @see TestRule#apply(Statement, Description)<a name="line.74"></a>
+<FONT color="green">075</FONT>         */<a name="line.75"></a>
+<FONT color="green">076</FONT>        public Statement apply(Statement base, Description description) {<a name="line.76"></a>
+<FONT color="green">077</FONT>            if (debugging) {<a name="line.77"></a>
+<FONT color="green">078</FONT>                return base;<a name="line.78"></a>
+<FONT color="green">079</FONT>            } else {<a name="line.79"></a>
+<FONT color="green">080</FONT>                return rule.apply(base, description);<a name="line.80"></a>
+<FONT color="green">081</FONT>            }<a name="line.81"></a>
+<FONT color="green">082</FONT>        }<a name="line.82"></a>
+<FONT color="green">083</FONT>    <a name="line.83"></a>
+<FONT color="green">084</FONT>        /**<a name="line.84"></a>
+<FONT color="green">085</FONT>         * Parses arguments passed to the runtime environment for debug flags<a name="line.85"></a>
+<FONT color="green">086</FONT>         * &lt;p&gt;<a name="line.86"></a>
+<FONT color="green">087</FONT>         * Options specified in:<a name="line.87"></a>
+<FONT color="green">088</FONT>         * &lt;ul&gt;<a name="line.88"></a>
+<FONT color="green">089</FONT>         * &lt;li&gt;<a name="line.89"></a>
+<FONT color="green">090</FONT>         * &lt;a href="http://docs.oracle.com/javase/6/docs/technotes/guides/jpda/conninv.html#Invocation"<a name="line.90"></a>
+<FONT color="green">091</FONT>         * &gt;javase-6&lt;/a&gt;&lt;/li&gt;<a name="line.91"></a>
+<FONT color="green">092</FONT>         * &lt;li&gt;&lt;a href="http://docs.oracle.com/javase/7/docs/technotes/guides/jpda/conninv.html#Invocation"<a name="line.92"></a>
+<FONT color="green">093</FONT>         * &gt;javase-7&lt;/a&gt;&lt;/li&gt;<a name="line.93"></a>
+<FONT color="green">094</FONT>         * &lt;li&gt;&lt;a href="http://docs.oracle.com/javase/8/docs/technotes/guides/jpda/conninv.html#Invocation"<a name="line.94"></a>
+<FONT color="green">095</FONT>         * &gt;javase-8&lt;/a&gt;&lt;/li&gt;<a name="line.95"></a>
+<FONT color="green">096</FONT>         * <a name="line.96"></a>
+<FONT color="green">097</FONT>         * <a name="line.97"></a>
+<FONT color="green">098</FONT>         * @param arguments<a name="line.98"></a>
+<FONT color="green">099</FONT>         *            the arguments passed to the runtime environment, usually this<a name="line.99"></a>
+<FONT color="green">100</FONT>         *            will be {@link RuntimeMXBean#getInputArguments()}<a name="line.100"></a>
+<FONT color="green">101</FONT>         * @return true if the current JVM was started in debug mode, false<a name="line.101"></a>
+<FONT color="green">102</FONT>         *         otherwise.<a name="line.102"></a>
+<FONT color="green">103</FONT>         */<a name="line.103"></a>
+<FONT color="green">104</FONT>        private static boolean isDebugging(List&lt;String&gt; arguments) {<a name="line.104"></a>
+<FONT color="green">105</FONT>            for (final String argument : arguments) {<a name="line.105"></a>
+<FONT color="green">106</FONT>                if ("-Xdebug".equals(argument)) {<a name="line.106"></a>
+<FONT color="green">107</FONT>                    return true;<a name="line.107"></a>
+<FONT color="green">108</FONT>                } else if (argument.startsWith("-agentlib:jdwp")) {<a name="line.108"></a>
+<FONT color="green">109</FONT>                    return true;<a name="line.109"></a>
+<FONT color="green">110</FONT>                }<a name="line.110"></a>
+<FONT color="green">111</FONT>            }<a name="line.111"></a>
+<FONT color="green">112</FONT>            return false;<a name="line.112"></a>
+<FONT color="green">113</FONT>        }<a name="line.113"></a>
+<FONT color="green">114</FONT>    <a name="line.114"></a>
+<FONT color="green">115</FONT>        /**<a name="line.115"></a>
+<FONT color="green">116</FONT>         * Returns {@code true} if the JVM is in debug mode. This method may be used<a name="line.116"></a>
+<FONT color="green">117</FONT>         * by test classes to take additional action to disable code paths that<a name="line.117"></a>
+<FONT color="green">118</FONT>         * interfere with debugging if required.<a name="line.118"></a>
+<FONT color="green">119</FONT>         * <a name="line.119"></a>
+<FONT color="green">120</FONT>         * @return {@code true} if the current JVM is in debug mode, {@code false}<a name="line.120"></a>
+<FONT color="green">121</FONT>         *         otherwise<a name="line.121"></a>
+<FONT color="green">122</FONT>         */<a name="line.122"></a>
+<FONT color="green">123</FONT>        public boolean isDebugging() {<a name="line.123"></a>
+<FONT color="green">124</FONT>            return debugging;<a name="line.124"></a>
+<FONT color="green">125</FONT>        }<a name="line.125"></a>
+<FONT color="green">126</FONT>    <a name="line.126"></a>
+<FONT color="green">127</FONT>    }<a name="line.127"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

@@ -1,0 +1,108 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.junit;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import java.lang.annotation.ElementType;<a name="line.3"></a>
+<FONT color="green">004</FONT>    import java.lang.annotation.Retention;<a name="line.4"></a>
+<FONT color="green">005</FONT>    import java.lang.annotation.RetentionPolicy;<a name="line.5"></a>
+<FONT color="green">006</FONT>    import java.lang.annotation.Target;<a name="line.6"></a>
+<FONT color="green">007</FONT>    <a name="line.7"></a>
+<FONT color="green">008</FONT>    /**<a name="line.8"></a>
+<FONT color="green">009</FONT>     * If you allocate expensive external resources in a {@link org.junit.BeforeClass} method you need to release them<a name="line.9"></a>
+<FONT color="green">010</FONT>     * after all the tests in the class have run. Annotating a &lt;code&gt;public static void&lt;/code&gt; method<a name="line.10"></a>
+<FONT color="green">011</FONT>     * with &lt;code&gt;&amp;#064;AfterClass&lt;/code&gt; causes that method to be run after all the tests in the class have been run. All &lt;code&gt;&amp;#064;AfterClass&lt;/code&gt;<a name="line.11"></a>
+<FONT color="green">012</FONT>     * methods are guaranteed to run even if a {@link org.junit.BeforeClass} method throws an<a name="line.12"></a>
+<FONT color="green">013</FONT>     * exception. The &lt;code&gt;&amp;#064;AfterClass&lt;/code&gt; methods declared in superclasses will be run after those of the current<a name="line.13"></a>
+<FONT color="green">014</FONT>     * class, unless they are shadowed in the current class.<a name="line.14"></a>
+<FONT color="green">015</FONT>     * &lt;p&gt;<a name="line.15"></a>
+<FONT color="green">016</FONT>     * Here is a simple example:<a name="line.16"></a>
+<FONT color="green">017</FONT>     * &lt;pre&gt;<a name="line.17"></a>
+<FONT color="green">018</FONT>     * public class Example {<a name="line.18"></a>
+<FONT color="green">019</FONT>     *    private static DatabaseConnection database;<a name="line.19"></a>
+<FONT color="green">020</FONT>     *    &amp;#064;BeforeClass public static void login() {<a name="line.20"></a>
+<FONT color="green">021</FONT>     *          database= ...;<a name="line.21"></a>
+<FONT color="green">022</FONT>     *    }<a name="line.22"></a>
+<FONT color="green">023</FONT>     *    &amp;#064;Test public void something() {<a name="line.23"></a>
+<FONT color="green">024</FONT>     *          ...<a name="line.24"></a>
+<FONT color="green">025</FONT>     *    }<a name="line.25"></a>
+<FONT color="green">026</FONT>     *    &amp;#064;Test public void somethingElse() {<a name="line.26"></a>
+<FONT color="green">027</FONT>     *          ...<a name="line.27"></a>
+<FONT color="green">028</FONT>     *    }<a name="line.28"></a>
+<FONT color="green">029</FONT>     *    &amp;#064;AfterClass public static void logout() {<a name="line.29"></a>
+<FONT color="green">030</FONT>     *          database.logout();<a name="line.30"></a>
+<FONT color="green">031</FONT>     *    }<a name="line.31"></a>
+<FONT color="green">032</FONT>     * }<a name="line.32"></a>
+<FONT color="green">033</FONT>     * &lt;/pre&gt;<a name="line.33"></a>
+<FONT color="green">034</FONT>     *<a name="line.34"></a>
+<FONT color="green">035</FONT>     * @see org.junit.BeforeClass<a name="line.35"></a>
+<FONT color="green">036</FONT>     * @see org.junit.Test<a name="line.36"></a>
+<FONT color="green">037</FONT>     * @since 4.0<a name="line.37"></a>
+<FONT color="green">038</FONT>     */<a name="line.38"></a>
+<FONT color="green">039</FONT>    @Retention(RetentionPolicy.RUNTIME)<a name="line.39"></a>
+<FONT color="green">040</FONT>    @Target(ElementType.METHOD)<a name="line.40"></a>
+<FONT color="green">041</FONT>    public @interface AfterClass {<a name="line.41"></a>
+<FONT color="green">042</FONT>    }<a name="line.42"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

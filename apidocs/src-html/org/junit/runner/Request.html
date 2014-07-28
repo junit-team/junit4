@@ -1,0 +1,236 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.junit.runner;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import java.util.Comparator;<a name="line.3"></a>
+<FONT color="green">004</FONT>    <a name="line.4"></a>
+<FONT color="green">005</FONT>    import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;<a name="line.5"></a>
+<FONT color="green">006</FONT>    import org.junit.internal.requests.ClassRequest;<a name="line.6"></a>
+<FONT color="green">007</FONT>    import org.junit.internal.requests.FilterRequest;<a name="line.7"></a>
+<FONT color="green">008</FONT>    import org.junit.internal.requests.SortingRequest;<a name="line.8"></a>
+<FONT color="green">009</FONT>    import org.junit.internal.runners.ErrorReportingRunner;<a name="line.9"></a>
+<FONT color="green">010</FONT>    import org.junit.runner.manipulation.Filter;<a name="line.10"></a>
+<FONT color="green">011</FONT>    import org.junit.runners.model.InitializationError;<a name="line.11"></a>
+<FONT color="green">012</FONT>    <a name="line.12"></a>
+<FONT color="green">013</FONT>    /**<a name="line.13"></a>
+<FONT color="green">014</FONT>     * A &lt;code&gt;Request&lt;/code&gt; is an abstract description of tests to be run. Older versions of<a name="line.14"></a>
+<FONT color="green">015</FONT>     * JUnit did not need such a concept--tests to be run were described either by classes containing<a name="line.15"></a>
+<FONT color="green">016</FONT>     * tests or a tree of {@link  org.junit.Test}s. However, we want to support filtering and sorting,<a name="line.16"></a>
+<FONT color="green">017</FONT>     * so we need a more abstract specification than the tests themselves and a richer<a name="line.17"></a>
+<FONT color="green">018</FONT>     * specification than just the classes.<a name="line.18"></a>
+<FONT color="green">019</FONT>     *<a name="line.19"></a>
+<FONT color="green">020</FONT>     * &lt;p&gt;The flow when JUnit runs tests is that a &lt;code&gt;Request&lt;/code&gt; specifies some tests to be run -&amp;gt;<a name="line.20"></a>
+<FONT color="green">021</FONT>     * a {@link org.junit.runner.Runner} is created for each class implied by the &lt;code&gt;Request&lt;/code&gt; -&amp;gt;<a name="line.21"></a>
+<FONT color="green">022</FONT>     * the {@link org.junit.runner.Runner} returns a detailed {@link org.junit.runner.Description}<a name="line.22"></a>
+<FONT color="green">023</FONT>     * which is a tree structure of the tests to be run.<a name="line.23"></a>
+<FONT color="green">024</FONT>     *<a name="line.24"></a>
+<FONT color="green">025</FONT>     * @since 4.0<a name="line.25"></a>
+<FONT color="green">026</FONT>     */<a name="line.26"></a>
+<FONT color="green">027</FONT>    public abstract class Request {<a name="line.27"></a>
+<FONT color="green">028</FONT>        /**<a name="line.28"></a>
+<FONT color="green">029</FONT>         * Create a &lt;code&gt;Request&lt;/code&gt; that, when processed, will run a single test.<a name="line.29"></a>
+<FONT color="green">030</FONT>         * This is done by filtering out all other tests. This method is used to support rerunning<a name="line.30"></a>
+<FONT color="green">031</FONT>         * single tests.<a name="line.31"></a>
+<FONT color="green">032</FONT>         *<a name="line.32"></a>
+<FONT color="green">033</FONT>         * @param clazz the class of the test<a name="line.33"></a>
+<FONT color="green">034</FONT>         * @param methodName the name of the test<a name="line.34"></a>
+<FONT color="green">035</FONT>         * @return a &lt;code&gt;Request&lt;/code&gt; that will cause a single test be run<a name="line.35"></a>
+<FONT color="green">036</FONT>         */<a name="line.36"></a>
+<FONT color="green">037</FONT>        public static Request method(Class&lt;?&gt; clazz, String methodName) {<a name="line.37"></a>
+<FONT color="green">038</FONT>            Description method = Description.createTestDescription(clazz, methodName);<a name="line.38"></a>
+<FONT color="green">039</FONT>            return Request.aClass(clazz).filterWith(method);<a name="line.39"></a>
+<FONT color="green">040</FONT>        }<a name="line.40"></a>
+<FONT color="green">041</FONT>    <a name="line.41"></a>
+<FONT color="green">042</FONT>        /**<a name="line.42"></a>
+<FONT color="green">043</FONT>         * Create a &lt;code&gt;Request&lt;/code&gt; that, when processed, will run all the tests<a name="line.43"></a>
+<FONT color="green">044</FONT>         * in a class. The odd name is necessary because &lt;code&gt;class&lt;/code&gt; is a reserved word.<a name="line.44"></a>
+<FONT color="green">045</FONT>         *<a name="line.45"></a>
+<FONT color="green">046</FONT>         * @param clazz the class containing the tests<a name="line.46"></a>
+<FONT color="green">047</FONT>         * @return a &lt;code&gt;Request&lt;/code&gt; that will cause all tests in the class to be run<a name="line.47"></a>
+<FONT color="green">048</FONT>         */<a name="line.48"></a>
+<FONT color="green">049</FONT>        public static Request aClass(Class&lt;?&gt; clazz) {<a name="line.49"></a>
+<FONT color="green">050</FONT>            return new ClassRequest(clazz);<a name="line.50"></a>
+<FONT color="green">051</FONT>        }<a name="line.51"></a>
+<FONT color="green">052</FONT>    <a name="line.52"></a>
+<FONT color="green">053</FONT>        /**<a name="line.53"></a>
+<FONT color="green">054</FONT>         * Create a &lt;code&gt;Request&lt;/code&gt; that, when processed, will run all the tests<a name="line.54"></a>
+<FONT color="green">055</FONT>         * in a class. If the class has a suite() method, it will be ignored.<a name="line.55"></a>
+<FONT color="green">056</FONT>         *<a name="line.56"></a>
+<FONT color="green">057</FONT>         * @param clazz the class containing the tests<a name="line.57"></a>
+<FONT color="green">058</FONT>         * @return a &lt;code&gt;Request&lt;/code&gt; that will cause all tests in the class to be run<a name="line.58"></a>
+<FONT color="green">059</FONT>         */<a name="line.59"></a>
+<FONT color="green">060</FONT>        public static Request classWithoutSuiteMethod(Class&lt;?&gt; clazz) {<a name="line.60"></a>
+<FONT color="green">061</FONT>            return new ClassRequest(clazz, false);<a name="line.61"></a>
+<FONT color="green">062</FONT>        }<a name="line.62"></a>
+<FONT color="green">063</FONT>    <a name="line.63"></a>
+<FONT color="green">064</FONT>        /**<a name="line.64"></a>
+<FONT color="green">065</FONT>         * Create a &lt;code&gt;Request&lt;/code&gt; that, when processed, will run all the tests<a name="line.65"></a>
+<FONT color="green">066</FONT>         * in a set of classes.<a name="line.66"></a>
+<FONT color="green">067</FONT>         *<a name="line.67"></a>
+<FONT color="green">068</FONT>         * @param computer Helps construct Runners from classes<a name="line.68"></a>
+<FONT color="green">069</FONT>         * @param classes the classes containing the tests<a name="line.69"></a>
+<FONT color="green">070</FONT>         * @return a &lt;code&gt;Request&lt;/code&gt; that will cause all tests in the classes to be run<a name="line.70"></a>
+<FONT color="green">071</FONT>         */<a name="line.71"></a>
+<FONT color="green">072</FONT>        public static Request classes(Computer computer, Class&lt;?&gt;... classes) {<a name="line.72"></a>
+<FONT color="green">073</FONT>            try {<a name="line.73"></a>
+<FONT color="green">074</FONT>                AllDefaultPossibilitiesBuilder builder = new AllDefaultPossibilitiesBuilder(true);<a name="line.74"></a>
+<FONT color="green">075</FONT>                Runner suite = computer.getSuite(builder, classes);<a name="line.75"></a>
+<FONT color="green">076</FONT>                return runner(suite);<a name="line.76"></a>
+<FONT color="green">077</FONT>            } catch (InitializationError e) {<a name="line.77"></a>
+<FONT color="green">078</FONT>                throw new RuntimeException(<a name="line.78"></a>
+<FONT color="green">079</FONT>                        "Bug in saff's brain: Suite constructor, called as above, should always complete");<a name="line.79"></a>
+<FONT color="green">080</FONT>            }<a name="line.80"></a>
+<FONT color="green">081</FONT>        }<a name="line.81"></a>
+<FONT color="green">082</FONT>    <a name="line.82"></a>
+<FONT color="green">083</FONT>        /**<a name="line.83"></a>
+<FONT color="green">084</FONT>         * Create a &lt;code&gt;Request&lt;/code&gt; that, when processed, will run all the tests<a name="line.84"></a>
+<FONT color="green">085</FONT>         * in a set of classes with the default &lt;code&gt;Computer&lt;/code&gt;.<a name="line.85"></a>
+<FONT color="green">086</FONT>         *<a name="line.86"></a>
+<FONT color="green">087</FONT>         * @param classes the classes containing the tests<a name="line.87"></a>
+<FONT color="green">088</FONT>         * @return a &lt;code&gt;Request&lt;/code&gt; that will cause all tests in the classes to be run<a name="line.88"></a>
+<FONT color="green">089</FONT>         */<a name="line.89"></a>
+<FONT color="green">090</FONT>        public static Request classes(Class&lt;?&gt;... classes) {<a name="line.90"></a>
+<FONT color="green">091</FONT>            return classes(JUnitCore.defaultComputer(), classes);<a name="line.91"></a>
+<FONT color="green">092</FONT>        }<a name="line.92"></a>
+<FONT color="green">093</FONT>    <a name="line.93"></a>
+<FONT color="green">094</FONT>    <a name="line.94"></a>
+<FONT color="green">095</FONT>        /**<a name="line.95"></a>
+<FONT color="green">096</FONT>         * Creates a {@link Request} that, when processed, will report an error for the given<a name="line.96"></a>
+<FONT color="green">097</FONT>         * test class with the given cause.<a name="line.97"></a>
+<FONT color="green">098</FONT>         */<a name="line.98"></a>
+<FONT color="green">099</FONT>        public static Request errorReport(Class&lt;?&gt; klass, Throwable cause) {<a name="line.99"></a>
+<FONT color="green">100</FONT>            return runner(new ErrorReportingRunner(klass, cause));<a name="line.100"></a>
+<FONT color="green">101</FONT>        }<a name="line.101"></a>
+<FONT color="green">102</FONT>    <a name="line.102"></a>
+<FONT color="green">103</FONT>        /**<a name="line.103"></a>
+<FONT color="green">104</FONT>         * @param runner the runner to return<a name="line.104"></a>
+<FONT color="green">105</FONT>         * @return a &lt;code&gt;Request&lt;/code&gt; that will run the given runner when invoked<a name="line.105"></a>
+<FONT color="green">106</FONT>         */<a name="line.106"></a>
+<FONT color="green">107</FONT>        public static Request runner(final Runner runner) {<a name="line.107"></a>
+<FONT color="green">108</FONT>            return new Request() {<a name="line.108"></a>
+<FONT color="green">109</FONT>                @Override<a name="line.109"></a>
+<FONT color="green">110</FONT>                public Runner getRunner() {<a name="line.110"></a>
+<FONT color="green">111</FONT>                    return runner;<a name="line.111"></a>
+<FONT color="green">112</FONT>                }<a name="line.112"></a>
+<FONT color="green">113</FONT>            };<a name="line.113"></a>
+<FONT color="green">114</FONT>        }<a name="line.114"></a>
+<FONT color="green">115</FONT>    <a name="line.115"></a>
+<FONT color="green">116</FONT>        /**<a name="line.116"></a>
+<FONT color="green">117</FONT>         * Returns a {@link Runner} for this Request<a name="line.117"></a>
+<FONT color="green">118</FONT>         *<a name="line.118"></a>
+<FONT color="green">119</FONT>         * @return corresponding {@link Runner} for this Request<a name="line.119"></a>
+<FONT color="green">120</FONT>         */<a name="line.120"></a>
+<FONT color="green">121</FONT>        public abstract Runner getRunner();<a name="line.121"></a>
+<FONT color="green">122</FONT>    <a name="line.122"></a>
+<FONT color="green">123</FONT>        /**<a name="line.123"></a>
+<FONT color="green">124</FONT>         * Returns a Request that only contains those tests that should run when<a name="line.124"></a>
+<FONT color="green">125</FONT>         * &lt;code&gt;filter&lt;/code&gt; is applied<a name="line.125"></a>
+<FONT color="green">126</FONT>         *<a name="line.126"></a>
+<FONT color="green">127</FONT>         * @param filter The {@link Filter} to apply to this Request<a name="line.127"></a>
+<FONT color="green">128</FONT>         * @return the filtered Request<a name="line.128"></a>
+<FONT color="green">129</FONT>         */<a name="line.129"></a>
+<FONT color="green">130</FONT>        public Request filterWith(Filter filter) {<a name="line.130"></a>
+<FONT color="green">131</FONT>            return new FilterRequest(this, filter);<a name="line.131"></a>
+<FONT color="green">132</FONT>        }<a name="line.132"></a>
+<FONT color="green">133</FONT>    <a name="line.133"></a>
+<FONT color="green">134</FONT>        /**<a name="line.134"></a>
+<FONT color="green">135</FONT>         * Returns a Request that only runs contains tests whose {@link Description}<a name="line.135"></a>
+<FONT color="green">136</FONT>         * equals &lt;code&gt;desiredDescription&lt;/code&gt;<a name="line.136"></a>
+<FONT color="green">137</FONT>         *<a name="line.137"></a>
+<FONT color="green">138</FONT>         * @param desiredDescription {@link Description} of those tests that should be run<a name="line.138"></a>
+<FONT color="green">139</FONT>         * @return the filtered Request<a name="line.139"></a>
+<FONT color="green">140</FONT>         */<a name="line.140"></a>
+<FONT color="green">141</FONT>        public Request filterWith(final Description desiredDescription) {<a name="line.141"></a>
+<FONT color="green">142</FONT>            return filterWith(Filter.matchMethodDescription(desiredDescription));<a name="line.142"></a>
+<FONT color="green">143</FONT>        }<a name="line.143"></a>
+<FONT color="green">144</FONT>    <a name="line.144"></a>
+<FONT color="green">145</FONT>        /**<a name="line.145"></a>
+<FONT color="green">146</FONT>         * Returns a Request whose Tests can be run in a certain order, defined by<a name="line.146"></a>
+<FONT color="green">147</FONT>         * &lt;code&gt;comparator&lt;/code&gt;<a name="line.147"></a>
+<FONT color="green">148</FONT>         * &lt;p&gt;<a name="line.148"></a>
+<FONT color="green">149</FONT>         * For example, here is code to run a test suite in alphabetical order:<a name="line.149"></a>
+<FONT color="green">150</FONT>         * &lt;pre&gt;<a name="line.150"></a>
+<FONT color="green">151</FONT>         * private static Comparator&amp;lt;Description&amp;gt; forward() {<a name="line.151"></a>
+<FONT color="green">152</FONT>         * return new Comparator&amp;lt;Description&amp;gt;() {<a name="line.152"></a>
+<FONT color="green">153</FONT>         * public int compare(Description o1, Description o2) {<a name="line.153"></a>
+<FONT color="green">154</FONT>         * return o1.getDisplayName().compareTo(o2.getDisplayName());<a name="line.154"></a>
+<FONT color="green">155</FONT>         * }<a name="line.155"></a>
+<FONT color="green">156</FONT>         * };<a name="line.156"></a>
+<FONT color="green">157</FONT>         * }<a name="line.157"></a>
+<FONT color="green">158</FONT>         *<a name="line.158"></a>
+<FONT color="green">159</FONT>         * public static main() {<a name="line.159"></a>
+<FONT color="green">160</FONT>         * new JUnitCore().run(Request.aClass(AllTests.class).sortWith(forward()));<a name="line.160"></a>
+<FONT color="green">161</FONT>         * }<a name="line.161"></a>
+<FONT color="green">162</FONT>         * &lt;/pre&gt;<a name="line.162"></a>
+<FONT color="green">163</FONT>         *<a name="line.163"></a>
+<FONT color="green">164</FONT>         * @param comparator definition of the order of the tests in this Request<a name="line.164"></a>
+<FONT color="green">165</FONT>         * @return a Request with ordered Tests<a name="line.165"></a>
+<FONT color="green">166</FONT>         */<a name="line.166"></a>
+<FONT color="green">167</FONT>        public Request sortWith(Comparator&lt;Description&gt; comparator) {<a name="line.167"></a>
+<FONT color="green">168</FONT>            return new SortingRequest(this, comparator);<a name="line.168"></a>
+<FONT color="green">169</FONT>        }<a name="line.169"></a>
+<FONT color="green">170</FONT>    }<a name="line.170"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

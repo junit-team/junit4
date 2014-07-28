@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>ParameterizedAssertionError xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../apidocs/org/junit/experimental/theories/internal/ParameterizedAssertionError.html">View Javadoc</a></div><pre>
+<a class="jxr_linenumber" name="L1" href="#L1">1</a>   <strong class="jxr_keyword">package</strong> org.junit.experimental.theories.internal;
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <strong class="jxr_keyword">import</strong> java.util.Arrays;
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <strong class="jxr_keyword">import</strong> java.util.Collection;
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   <strong class="jxr_keyword">import</strong> java.util.Iterator;
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/junit/experimental/theories/internal/ParameterizedAssertionError.html">ParameterizedAssertionError</a> <strong class="jxr_keyword">extends</strong> AssertionError {
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>       <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = 1L;
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>   
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../org/junit/experimental/theories/internal/ParameterizedAssertionError.html">ParameterizedAssertionError</a>(Throwable targetException,
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>              String methodName, Object... params) {
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>          <strong class="jxr_keyword">super</strong>(String.format(<span class="jxr_string">"%s(%s)"</span>, methodName, join(<span class="jxr_string">", "</span>, params)));
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>          <strong class="jxr_keyword">this</strong>.initCause(targetException);
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>      }
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>  
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>      @Override
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> equals(Object obj) {
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>          <strong class="jxr_keyword">return</strong> obj instanceof <a href="../../../../../org/junit/experimental/theories/internal/ParameterizedAssertionError.html">ParameterizedAssertionError</a> &amp;&amp; toString().equals(obj.toString());
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>      }
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>      @Override
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> hashCode() {
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>          <strong class="jxr_keyword">return</strong> toString().hashCode();
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>      }
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> String join(String delimiter, Object... params) {
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>          <strong class="jxr_keyword">return</strong> join(delimiter, Arrays.asList(params));
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>      }
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> String join(String delimiter, Collection&lt;Object&gt; values) {
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>          StringBuilder sb = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>          Iterator&lt;Object&gt; iter = values.iterator();
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>          <strong class="jxr_keyword">while</strong> (iter.hasNext()) {
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>              Object next = iter.next();
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>              sb.append(stringValueOf(next));
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>              <strong class="jxr_keyword">if</strong> (iter.hasNext()) {
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>                  sb.append(delimiter);
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>              }
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>          }
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>          <strong class="jxr_keyword">return</strong> sb.toString();
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>      }
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> String stringValueOf(Object next) {
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>          <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>              <strong class="jxr_keyword">return</strong> String.valueOf(next);
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>          } <strong class="jxr_keyword">catch</strong> (Throwable e) {
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>              <strong class="jxr_keyword">return</strong> <span class="jxr_string">"[toString failed]"</span>;
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>          }
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>      }
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>  }
+</pre>
+<hr/>
+<div id="footer">Copyright &#169; 2002&#x2013;2014 <a href="http://www.junit.org">JUnit</a>. All rights reserved.</div>
+</body>
+</html>

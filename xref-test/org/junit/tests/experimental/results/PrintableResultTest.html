@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>PrintableResultTest xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../testapidocs/org/junit/tests/experimental/results/PrintableResultTest.html">View Javadoc</a></div><pre>
+<a class="jxr_linenumber" name="L1" href="#L1">1</a>   <strong class="jxr_keyword">package</strong> org.junit.tests.experimental.results;
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> java.util.Arrays.asList;
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.hamcrest.CoreMatchers.allOf;
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.hamcrest.CoreMatchers.containsString;
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.assertThat;
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <strong class="jxr_keyword">import</strong> java.util.Arrays;
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>   
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <strong class="jxr_keyword">import</strong> org.junit.experimental.results.PrintableResult;
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>  <strong class="jxr_keyword">import</strong> org.junit.experimental.theories.DataPoint;
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>  <strong class="jxr_keyword">import</strong> org.junit.experimental.theories.Theories;
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  <strong class="jxr_keyword">import</strong> org.junit.experimental.theories.Theory;
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>  <strong class="jxr_keyword">import</strong> org.junit.runner.Description;
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>  <strong class="jxr_keyword">import</strong> org.junit.runner.RunWith;
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>  <strong class="jxr_keyword">import</strong> org.junit.runner.notification.Failure;
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>  
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>  @RunWith(Theories.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/junit/tests/experimental/results/PrintableResultTest.html">PrintableResultTest</a> {
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>      @Theory(nullsAccepted = false)
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> backTraceHasGoodToString(String descriptionName,
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>              <strong class="jxr_keyword">final</strong> String stackTraceClassName) {
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>          Failure failure = <strong class="jxr_keyword">new</strong> Failure(Description
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>                  .createSuiteDescription(descriptionName), <strong class="jxr_keyword">new</strong> Throwable() {
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>              <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = 1L;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>              @Override
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>              <strong class="jxr_keyword">public</strong> StackTraceElement[] getStackTrace() {
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> StackTraceElement[]{<strong class="jxr_keyword">new</strong> StackTraceElement(
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>                          stackTraceClassName, <span class="jxr_string">"methodName"</span>, <span class="jxr_string">"fileName"</span>, 1)};
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>              }
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>          });
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>          assertThat(<strong class="jxr_keyword">new</strong> PrintableResult(asList(failure)).toString(), allOf(
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>                  containsString(descriptionName), containsString(stackTraceClassName)));
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>      }
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>      @DataPoint
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> String SHELL_POINT = <span class="jxr_string">"Shell Point"</span>;
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>      @Theory
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> includeMultipleFailures(String secondExceptionName) {
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>          PrintableResult backtrace = <strong class="jxr_keyword">new</strong> PrintableResult(Arrays.asList(
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>                  <strong class="jxr_keyword">new</strong> Failure(Description.createSuiteDescription(<span class="jxr_string">"firstName"</span>),
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>                          <strong class="jxr_keyword">new</strong> RuntimeException(<span class="jxr_string">"firstException"</span>)), <strong class="jxr_keyword">new</strong> Failure(
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>                  Description.createSuiteDescription(<span class="jxr_string">"secondName"</span>),
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>                  <strong class="jxr_keyword">new</strong> RuntimeException(secondExceptionName))));
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>          assertThat(backtrace.toString(), containsString(secondExceptionName));
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>      }
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>  }
+</pre>
+<hr/>
+<div id="footer">Copyright &#169; 2002&#x2013;2014 <a href="http://www.junit.org">JUnit</a>. All rights reserved.</div>
+</body>
+</html>

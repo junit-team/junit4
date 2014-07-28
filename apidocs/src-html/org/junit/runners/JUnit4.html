@@ -1,0 +1,90 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.junit.runners;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import org.junit.runners.model.InitializationError;<a name="line.3"></a>
+<FONT color="green">004</FONT>    <a name="line.4"></a>
+<FONT color="green">005</FONT>    /**<a name="line.5"></a>
+<FONT color="green">006</FONT>     * Aliases the current default JUnit 4 class runner, for future-proofing. If<a name="line.6"></a>
+<FONT color="green">007</FONT>     * future versions of JUnit change the default Runner class, they will also<a name="line.7"></a>
+<FONT color="green">008</FONT>     * change the definition of this class. Developers wanting to explicitly tag a<a name="line.8"></a>
+<FONT color="green">009</FONT>     * class as a JUnit 4 class should use {@code @RunWith(JUnit4.class)}, not,<a name="line.9"></a>
+<FONT color="green">010</FONT>     * for example in JUnit 4.5, {@code @RunWith(BlockJUnit4ClassRunner.class)}.<a name="line.10"></a>
+<FONT color="green">011</FONT>     * This is the only way this class should be used--any extension that<a name="line.11"></a>
+<FONT color="green">012</FONT>     * depends on the implementation details of this class is likely to break<a name="line.12"></a>
+<FONT color="green">013</FONT>     * in future versions.<a name="line.13"></a>
+<FONT color="green">014</FONT>     *<a name="line.14"></a>
+<FONT color="green">015</FONT>     * @since 4.5<a name="line.15"></a>
+<FONT color="green">016</FONT>     */<a name="line.16"></a>
+<FONT color="green">017</FONT>    public final class JUnit4 extends BlockJUnit4ClassRunner {<a name="line.17"></a>
+<FONT color="green">018</FONT>        /**<a name="line.18"></a>
+<FONT color="green">019</FONT>         * Constructs a new instance of the default runner<a name="line.19"></a>
+<FONT color="green">020</FONT>         */<a name="line.20"></a>
+<FONT color="green">021</FONT>        public JUnit4(Class&lt;?&gt; klass) throws InitializationError {<a name="line.21"></a>
+<FONT color="green">022</FONT>            super(klass);<a name="line.22"></a>
+<FONT color="green">023</FONT>        }<a name="line.23"></a>
+<FONT color="green">024</FONT>    }<a name="line.24"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

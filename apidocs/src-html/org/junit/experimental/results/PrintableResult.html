@@ -1,0 +1,129 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.junit.experimental.results;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import java.io.ByteArrayOutputStream;<a name="line.3"></a>
+<FONT color="green">004</FONT>    import java.io.PrintStream;<a name="line.4"></a>
+<FONT color="green">005</FONT>    import java.util.List;<a name="line.5"></a>
+<FONT color="green">006</FONT>    <a name="line.6"></a>
+<FONT color="green">007</FONT>    import org.junit.internal.TextListener;<a name="line.7"></a>
+<FONT color="green">008</FONT>    import org.junit.runner.JUnitCore;<a name="line.8"></a>
+<FONT color="green">009</FONT>    import org.junit.runner.Request;<a name="line.9"></a>
+<FONT color="green">010</FONT>    import org.junit.runner.Result;<a name="line.10"></a>
+<FONT color="green">011</FONT>    import org.junit.runner.notification.Failure;<a name="line.11"></a>
+<FONT color="green">012</FONT>    <a name="line.12"></a>
+<FONT color="green">013</FONT>    /**<a name="line.13"></a>
+<FONT color="green">014</FONT>     * A test result that prints nicely in error messages.<a name="line.14"></a>
+<FONT color="green">015</FONT>     * This is only intended to be used in JUnit self-tests.<a name="line.15"></a>
+<FONT color="green">016</FONT>     * For example:<a name="line.16"></a>
+<FONT color="green">017</FONT>     *<a name="line.17"></a>
+<FONT color="green">018</FONT>     * &lt;pre&gt;<a name="line.18"></a>
+<FONT color="green">019</FONT>     *    assertThat(testResult(HasExpectedException.class), isSuccessful());<a name="line.19"></a>
+<FONT color="green">020</FONT>     * &lt;/pre&gt;<a name="line.20"></a>
+<FONT color="green">021</FONT>     */<a name="line.21"></a>
+<FONT color="green">022</FONT>    public class PrintableResult {<a name="line.22"></a>
+<FONT color="green">023</FONT>        private Result result;<a name="line.23"></a>
+<FONT color="green">024</FONT>    <a name="line.24"></a>
+<FONT color="green">025</FONT>        /**<a name="line.25"></a>
+<FONT color="green">026</FONT>         * The result of running JUnit on {@code type}<a name="line.26"></a>
+<FONT color="green">027</FONT>         */<a name="line.27"></a>
+<FONT color="green">028</FONT>        public static PrintableResult testResult(Class&lt;?&gt; type) {<a name="line.28"></a>
+<FONT color="green">029</FONT>            return testResult(Request.aClass(type));<a name="line.29"></a>
+<FONT color="green">030</FONT>        }<a name="line.30"></a>
+<FONT color="green">031</FONT>    <a name="line.31"></a>
+<FONT color="green">032</FONT>        /**<a name="line.32"></a>
+<FONT color="green">033</FONT>         * The result of running JUnit on Request {@code request}<a name="line.33"></a>
+<FONT color="green">034</FONT>         */<a name="line.34"></a>
+<FONT color="green">035</FONT>        public static PrintableResult testResult(Request request) {<a name="line.35"></a>
+<FONT color="green">036</FONT>            return new PrintableResult(new JUnitCore().run(request));<a name="line.36"></a>
+<FONT color="green">037</FONT>        }<a name="line.37"></a>
+<FONT color="green">038</FONT>    <a name="line.38"></a>
+<FONT color="green">039</FONT>        /**<a name="line.39"></a>
+<FONT color="green">040</FONT>         * A result that includes the given {@code failures}<a name="line.40"></a>
+<FONT color="green">041</FONT>         */<a name="line.41"></a>
+<FONT color="green">042</FONT>        public PrintableResult(List&lt;Failure&gt; failures) {<a name="line.42"></a>
+<FONT color="green">043</FONT>            this(new FailureList(failures).result());<a name="line.43"></a>
+<FONT color="green">044</FONT>        }<a name="line.44"></a>
+<FONT color="green">045</FONT>    <a name="line.45"></a>
+<FONT color="green">046</FONT>        private PrintableResult(Result result) {<a name="line.46"></a>
+<FONT color="green">047</FONT>            this.result = result;<a name="line.47"></a>
+<FONT color="green">048</FONT>        }<a name="line.48"></a>
+<FONT color="green">049</FONT>    <a name="line.49"></a>
+<FONT color="green">050</FONT>        /**<a name="line.50"></a>
+<FONT color="green">051</FONT>         * Returns the number of failures in this result.<a name="line.51"></a>
+<FONT color="green">052</FONT>         */<a name="line.52"></a>
+<FONT color="green">053</FONT>        public int failureCount() {<a name="line.53"></a>
+<FONT color="green">054</FONT>            return result.getFailures().size();<a name="line.54"></a>
+<FONT color="green">055</FONT>        }<a name="line.55"></a>
+<FONT color="green">056</FONT>    <a name="line.56"></a>
+<FONT color="green">057</FONT>        @Override<a name="line.57"></a>
+<FONT color="green">058</FONT>        public String toString() {<a name="line.58"></a>
+<FONT color="green">059</FONT>            ByteArrayOutputStream stream = new ByteArrayOutputStream();<a name="line.59"></a>
+<FONT color="green">060</FONT>            new TextListener(new PrintStream(stream)).testRunFinished(result);<a name="line.60"></a>
+<FONT color="green">061</FONT>            return stream.toString();<a name="line.61"></a>
+<FONT color="green">062</FONT>        }<a name="line.62"></a>
+<FONT color="green">063</FONT>    }<a name="line.63"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

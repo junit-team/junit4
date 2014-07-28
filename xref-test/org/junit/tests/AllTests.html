@@ -1,0 +1,227 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>AllTests xref</title>
+<link type="text/css" rel="stylesheet" href="../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../testapidocs/org/junit/tests/AllTests.html">View Javadoc</a></div><pre>
+<a class="jxr_linenumber" name="L1" href="#L1">1</a>   <strong class="jxr_keyword">package</strong> org.junit.tests;
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <strong class="jxr_keyword">import</strong> junit.framework.JUnit4TestAdapter;
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <strong class="jxr_keyword">import</strong> junit.framework.Test;
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   <strong class="jxr_keyword">import</strong> org.junit.AssumptionViolatedExceptionTest;
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <strong class="jxr_keyword">import</strong> org.junit.experimental.categories.CategoryFilterFactoryTest;
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   <strong class="jxr_keyword">import</strong> org.junit.internal.MethodSorterTest;
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <strong class="jxr_keyword">import</strong> org.junit.internal.matchers.StacktracePrintingMatcherTest;
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>   <strong class="jxr_keyword">import</strong> org.junit.rules.DisableOnDebugTest;
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <strong class="jxr_keyword">import</strong> org.junit.rules.StopwatchTest;
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>  <strong class="jxr_keyword">import</strong> org.junit.runner.FilterFactoriesTest;
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>  <strong class="jxr_keyword">import</strong> org.junit.runner.FilterOptionIntegrationTest;
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  <strong class="jxr_keyword">import</strong> org.junit.runner.JUnitCommandLineParseResultTest;
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>  <strong class="jxr_keyword">import</strong> org.junit.runner.JUnitCoreTest;
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>  <strong class="jxr_keyword">import</strong> org.junit.runner.RunWith;
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>  <strong class="jxr_keyword">import</strong> org.junit.runner.notification.ConcurrentRunNotifierTest;
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">import</strong> org.junit.runner.notification.RunNotifierTest;
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>  <strong class="jxr_keyword">import</strong> org.junit.runner.notification.SynchronizedRunListenerTest;
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> org.junit.runners.Suite;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> org.junit.runners.Suite.SuiteClasses;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.junit.runners.model.FrameworkFieldTest;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.junit.runners.model.FrameworkMethodTest;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.junit.runners.model.TestClassTest;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.junit.runners.parameterized.ParameterizedNamesTest;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.junit.runners.parameterized.TestWithParametersTest;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.assertion.AssertionTest;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.assertion.ComparisonFailureTest;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.assertion.MultipleFailureExceptionTest;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.description.AnnotatedDescriptionTest;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.description.SuiteDescriptionTest;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.description.TestDescriptionMethodNameTest;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.description.TestDescriptionTest;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.AssumptionTest;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.ExperimentalTests;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.MatcherTest;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.categories.CategoriesAndParameterizedTest;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.categories.CategoryTest;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.categories.JavadocTest;
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.categories.MultiCategoryTest;
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.max.JUnit38SortingTest;
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.max.MaxStarterTest;
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.parallel.ParallelClassTest;
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.parallel.ParallelMethodTest;
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.rules.BlockJUnit4ClassRunnerOverrideTest;
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.rules.ClassRulesTest;
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.rules.ExpectedExceptionTest;
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.rules.ExternalResourceRuleTest;
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.rules.MethodRulesTest;
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.rules.NameRulesTest;
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.rules.RuleChainTest;
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.rules.RuleMemberValidatorTest;
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.rules.TempFolderRuleTest;
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.rules.TemporaryFolderUsageTest;
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.rules.TestRuleTest;
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.rules.TimeoutRuleTest;
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.rules.VerifierRuleTest;
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.theories.TestedOnSupplierTest;
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.theories.internal.AllMembersSupplierTest;
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.theories.internal.ParameterizedAssertionErrorTest;
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.theories.internal.SpecificDataPointsSupplierTest;
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.theories.runner.TheoriesPerformanceTest;
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.theories.runner.WithAutoGeneratedDataPoints;
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.theories.runner.WithDataPointMethod;
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.experimental.theories.runner.WithNamedDataPoints;
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.internal.runners.statements.FailOnTimeoutTest;
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.junit3compatibility.AllTestsTest;
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.junit3compatibility.ClassRequestTest;
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.junit3compatibility.ForwardCompatibilityTest;
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.junit3compatibility.InitializationErrorForwardCompatibilityTest;
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.junit3compatibility.JUnit38ClassRunnerTest;
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.junit3compatibility.OldTestClassAdaptingListenerTest;
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.junit3compatibility.OldTests;
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.junit3compatibility.SuiteMethodTest;
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.listening.ListenerTest;
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.listening.RunnerTest;
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.listening.TestListenerTest;
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.listening.TextListenerTest;
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.listening.UserStopTest;
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.manipulation.FilterTest;
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.manipulation.FilterableTest;
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.manipulation.SingleMethodTest;
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.manipulation.SortableTest;
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.running.classes.BlockJUnit4ClassRunnerTest;
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.running.classes.ClassLevelMethodsWithIgnoredTestsTest;
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.running.classes.EnclosedTest;
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.running.classes.IgnoreClassTest;
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.running.classes.ParameterizedTestTest;
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.running.classes.ParentRunnerFilteringTest;
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.running.classes.ParentRunnerTest;
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.running.classes.RunWithTest;
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.running.classes.SuiteTest;
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.running.classes.UseSuiteAsASuperclassTest;
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.running.core.CommandLineTest;
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.running.core.JUnitCoreReturnsCorrectExitCodeTest;
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.running.core.SystemExitTest;
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.running.methods.AnnotationTest;
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.running.methods.ExpectedTest;
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.running.methods.InheritedTestTest;
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>  <strong class="jxr_keyword">import</strong> org.junit.tests.running.methods.ParameterizedTestMethodTest;
+<a class="jxr_linenumber" name="L100" href="#L100">100</a> <strong class="jxr_keyword">import</strong> org.junit.tests.running.methods.TestMethodTest;
+<a class="jxr_linenumber" name="L101" href="#L101">101</a> <strong class="jxr_keyword">import</strong> org.junit.tests.running.methods.TimeoutTest;
+<a class="jxr_linenumber" name="L102" href="#L102">102</a> <strong class="jxr_keyword">import</strong> org.junit.tests.validation.FailedConstructionTest;
+<a class="jxr_linenumber" name="L103" href="#L103">103</a> <strong class="jxr_keyword">import</strong> org.junit.tests.validation.ValidationTest;
+<a class="jxr_linenumber" name="L104" href="#L104">104</a> <strong class="jxr_keyword">import</strong> org.junit.validator.PublicClassValidatorTest;
+<a class="jxr_linenumber" name="L105" href="#L105">105</a> 
+<a class="jxr_linenumber" name="L106" href="#L106">106</a> <em class="jxr_comment">// These test files need to be cleaned. See</em>
+<a class="jxr_linenumber" name="L107" href="#L107">107</a> <em class="jxr_comment">// https://sourceforge.net/pm/task.php?func=detailtask&amp;project_task_id=136507&amp;group_id=15278&amp;group_project_id=51407</em>
+<a class="jxr_linenumber" name="L108" href="#L108">108</a> 
+<a class="jxr_linenumber" name="L109" href="#L109">109</a> @RunWith(Suite.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L110" href="#L110">110</a> @SuiteClasses({
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>         AssumptionTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>         ClassRequestTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>         ListenerTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>         FailedConstructionTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>         TestDescriptionTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L116" href="#L116">116</a>         TestDescriptionMethodNameTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L117" href="#L117">117</a>         SuiteDescriptionTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>         AllTestsTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L119" href="#L119">119</a>         AnnotationTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L120" href="#L120">120</a>         AssertionTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L121" href="#L121">121</a>         CommandLineTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L122" href="#L122">122</a>         ExpectedTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L123" href="#L123">123</a>         ComparisonFailureTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L124" href="#L124">124</a>         MultipleFailureExceptionTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L125" href="#L125">125</a>         ForwardCompatibilityTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L126" href="#L126">126</a>         OldTests.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L127" href="#L127">127</a>         ParameterizedTestTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>         RunWithTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L129" href="#L129">129</a>         RunnerTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L130" href="#L130">130</a>         SuiteTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>         TestListenerTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>         TestMethodTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L133" href="#L133">133</a>         TextListenerTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>         TimeoutTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L135" href="#L135">135</a>         EnclosedTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>         ParameterizedTestMethodTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>         InitializationErrorForwardCompatibilityTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>         SingleMethodTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>         ClassLevelMethodsWithIgnoredTestsTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>         ValidationTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>         UserStopTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L142" href="#L142">142</a>         SortableTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L143" href="#L143">143</a>         JUnit38ClassRunnerTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L144" href="#L144">144</a>         SystemExitTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L145" href="#L145">145</a>         JUnitCoreReturnsCorrectExitCodeTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>         SuiteMethodTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L147" href="#L147">147</a>         IgnoreClassTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>         OldTestClassAdaptingListenerTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>         AnnotatedDescriptionTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>         AssumptionViolatedExceptionTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>         ExperimentalTests.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>         InheritedTestTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>         TestClassTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>         AllMembersSupplierTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>         SpecificDataPointsSupplierTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>         ParameterizedAssertionErrorTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>         WithDataPointMethod.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>         WithNamedDataPoints.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>         WithAutoGeneratedDataPoints.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>         MatcherTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>         ObjectContractTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>         TheoriesPerformanceTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>         UseSuiteAsASuperclassTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>         FilterableTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>         FilterTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>         MaxStarterTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>         JUnit38SortingTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>         MethodRulesTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L169" href="#L169">169</a>         TestRuleTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L170" href="#L170">170</a>         TimeoutRuleTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L171" href="#L171">171</a>         ParallelClassTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L172" href="#L172">172</a>         ParallelMethodTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L173" href="#L173">173</a>         ParentRunnerTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L174" href="#L174">174</a>         NameRulesTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L175" href="#L175">175</a>         ClassRulesTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>         ExpectedExceptionTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L177" href="#L177">177</a>         TempFolderRuleTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L178" href="#L178">178</a>         TemporaryFolderUsageTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L179" href="#L179">179</a>         ExternalResourceRuleTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L180" href="#L180">180</a>         VerifierRuleTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L181" href="#L181">181</a>         CategoryTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>         CategoriesAndParameterizedTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L183" href="#L183">183</a>         MultiCategoryTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L184" href="#L184">184</a>         JavadocTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>         ParentRunnerFilteringTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L186" href="#L186">186</a>         BlockJUnit4ClassRunnerOverrideTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L187" href="#L187">187</a>         RuleMemberValidatorTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L188" href="#L188">188</a>         RuleChainTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L189" href="#L189">189</a>         BlockJUnit4ClassRunnerTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L190" href="#L190">190</a>         MethodSorterTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L191" href="#L191">191</a>         TestedOnSupplierTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L192" href="#L192">192</a>         StacktracePrintingMatcherTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L193" href="#L193">193</a>         StopwatchTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L194" href="#L194">194</a>         RunNotifierTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L195" href="#L195">195</a>         ConcurrentRunNotifierTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L196" href="#L196">196</a>         SynchronizedRunListenerTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L197" href="#L197">197</a>         FilterOptionIntegrationTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L198" href="#L198">198</a>         JUnitCommandLineParseResultTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>         FilterFactoriesTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L200" href="#L200">200</a>         CategoryFilterFactoryTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L201" href="#L201">201</a>         FrameworkFieldTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L202" href="#L202">202</a>         FrameworkMethodTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L203" href="#L203">203</a>         FailOnTimeoutTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L204" href="#L204">204</a>         JUnitCoreTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L205" href="#L205">205</a>         TestWithParametersTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L206" href="#L206">206</a>         ParameterizedNamesTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L207" href="#L207">207</a>         PublicClassValidatorTest.<strong class="jxr_keyword">class</strong>,
+<a class="jxr_linenumber" name="L208" href="#L208">208</a>         DisableOnDebugTest.<strong class="jxr_keyword">class</strong>
+<a class="jxr_linenumber" name="L209" href="#L209">209</a> })
+<a class="jxr_linenumber" name="L210" href="#L210">210</a> <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../org/junit/tests/AllTests.html">AllTests</a> {
+<a class="jxr_linenumber" name="L211" href="#L211">211</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> Test suite() {
+<a class="jxr_linenumber" name="L212" href="#L212">212</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> JUnit4TestAdapter(AllTests.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L213" href="#L213">213</a>     }
+<a class="jxr_linenumber" name="L214" href="#L214">214</a> }
+</pre>
+<hr/>
+<div id="footer">Copyright &#169; 2002&#x2013;2014 <a href="http://www.junit.org">JUnit</a>. All rights reserved.</div>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>JUnit4TestCaseFacade xref</title>
+<link type="text/css" rel="stylesheet" href="../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../apidocs/junit/framework/JUnit4TestCaseFacade.html">View Javadoc</a></div><pre>
+<a class="jxr_linenumber" name="L1" href="#L1">1</a>   <strong class="jxr_keyword">package</strong> junit.framework;
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <strong class="jxr_keyword">import</strong> org.junit.runner.Describable;
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <strong class="jxr_keyword">import</strong> org.junit.runner.Description;
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../junit/framework/JUnit4TestCaseFacade.html">JUnit4TestCaseFacade</a> <strong class="jxr_keyword">implements</strong> Test, <a href="../../org/junit/runner/Describable.html">Describable</a> {
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>       <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../org/junit/runner/Description.html">Description</a> fDescription;
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>       <a href="../../junit/framework/JUnit4TestCaseFacade.html">JUnit4TestCaseFacade</a>(<a href="../../org/junit/runner/Description.html">Description</a> description) {
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>          fDescription = description;
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>      }
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>  
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>      @Override
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>      <strong class="jxr_keyword">public</strong> String toString() {
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>          <strong class="jxr_keyword">return</strong> getDescription().toString();
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>      }
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>  
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> countTestCases() {
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>          <strong class="jxr_keyword">return</strong> 1;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>      }
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> run(<a href="../../junit/framework/TestResult.html">TestResult</a> result) {
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>          <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> RuntimeException(
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>                  <span class="jxr_string">"This test stub created only for informational purposes."</span>);
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>      }
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>      <strong class="jxr_keyword">public</strong> <a href="../../org/junit/runner/Description.html">Description</a> getDescription() {
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>          <strong class="jxr_keyword">return</strong> fDescription;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>      }
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  }
+</pre>
+<hr/>
+<div id="footer">Copyright &#169; 2002&#x2013;2014 <a href="http://www.junit.org">JUnit</a>. All rights reserved.</div>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>AnnotationValidatorFactoryTest xref</title>
+<link type="text/css" rel="stylesheet" href="../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../testapidocs/org/junit/validator/AnnotationValidatorFactoryTest.html">View Javadoc</a></div><pre>
+<a class="jxr_linenumber" name="L1" href="#L1">1</a>   <strong class="jxr_keyword">package</strong> org.junit.validator;
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <strong class="jxr_keyword">import</strong> org.junit.Rule;
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <strong class="jxr_keyword">import</strong> org.junit.Test;
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   <strong class="jxr_keyword">import</strong> org.junit.rules.ExpectedException;
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   <strong class="jxr_keyword">import</strong> java.lang.annotation.Annotation;
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>   <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.hamcrest.core.Is.is;
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.hamcrest.core.IsInstanceOf.instanceOf;
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.assertThat;
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>  
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../org/junit/validator/AnnotationValidatorFactoryTest.html">AnnotationValidatorFactoryTest</a> {
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>  
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>      @Rule
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>      <strong class="jxr_keyword">public</strong> ExpectedException exception = ExpectedException.none();
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>  
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>      @Test
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> createAnnotationValidator() {
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>          ValidateWith validateWith = SampleTestWithValidator.<strong class="jxr_keyword">class</strong>.getAnnotation(ValidateWith.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>          AnnotationValidator annotationValidator = <strong class="jxr_keyword">new</strong> AnnotationValidatorFactory().createAnnotationValidator(validateWith);
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>          assertThat(annotationValidator, is(instanceOf(Validator.<strong class="jxr_keyword">class</strong>)));
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>      }
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>      @Test
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> exceptionWhenAnnotationWithNullClassIsPassedIn() {
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>          exception.expect(IllegalArgumentException.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>          exception.expectMessage(<span class="jxr_string">"Can't create validator, value is null in "</span> +
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>                  <span class="jxr_string">"annotation org.junit.validator.AnnotationValidatorFactoryTest$ValidatorWithNullValue"</span>);
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>          <strong class="jxr_keyword">new</strong> AnnotationValidatorFactory().createAnnotationValidator(<strong class="jxr_keyword">new</strong> ValidatorWithNullValue());
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>      }
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../org/junit/validator/AnnotationValidatorFactoryTest.html">ValidatorWithNullValue</a> <strong class="jxr_keyword">implements</strong> ValidateWith {
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>          <strong class="jxr_keyword">public</strong> Class&lt;? <strong class="jxr_keyword">extends</strong> AnnotationValidator&gt; value() {
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>              <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>          }
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>          <strong class="jxr_keyword">public</strong> Class&lt;? <strong class="jxr_keyword">extends</strong> Annotation&gt; annotationType() {
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>              <strong class="jxr_keyword">return</strong> ValidateWith.<strong class="jxr_keyword">class</strong>;
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>          }
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>      }
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>      @ValidateWith(value = Validator.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../org/junit/validator/AnnotationValidatorFactoryTest.html">SampleTestWithValidator</a> {
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>      }
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>  
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../org/junit/validator/AnnotationValidatorFactoryTest.html">Validator</a> <strong class="jxr_keyword">extends</strong> AnnotationValidator {
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>      }
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>  
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>      @Test
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> exceptionWhenAnnotationValidatorCantBeCreated() {
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>          ValidateWith validateWith = SampleTestWithValidatorThatThrowsException.<strong class="jxr_keyword">class</strong>.getAnnotation(ValidateWith.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>          exception.expect(RuntimeException.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>          exception.expectMessage(<span class="jxr_string">"Exception received when creating AnnotationValidator class "</span> +
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>                  <span class="jxr_string">"org.junit.validator.AnnotationValidatorFactoryTest$ValidatorThatThrowsException"</span>);
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>          <strong class="jxr_keyword">new</strong> AnnotationValidatorFactory().createAnnotationValidator(validateWith);
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>      }
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>  
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>      @ValidateWith(value = ValidatorThatThrowsException.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../org/junit/validator/AnnotationValidatorFactoryTest.html">SampleTestWithValidatorThatThrowsException</a> {
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>      }
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>  
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../org/junit/validator/AnnotationValidatorFactoryTest.html">ValidatorThatThrowsException</a> <strong class="jxr_keyword">extends</strong> AnnotationValidator {
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>          <strong class="jxr_keyword">public</strong> <a href="../../../org/junit/validator/AnnotationValidatorFactoryTest.html">ValidatorThatThrowsException</a>() <strong class="jxr_keyword">throws</strong> InstantiationException {
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>              <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> InstantiationException(<span class="jxr_string">"Simulating exception in test"</span>);
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>          }
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>      }
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>  }
+</pre>
+<hr/>
+<div id="footer">Copyright &#169; 2002&#x2013;2014 <a href="http://www.junit.org">JUnit</a>. All rights reserved.</div>
+</body>
+</html>

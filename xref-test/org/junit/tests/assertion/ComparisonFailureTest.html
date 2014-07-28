@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>ComparisonFailureTest xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../testapidocs/org/junit/tests/assertion/ComparisonFailureTest.html">View Javadoc</a></div><pre>
+<a class="jxr_linenumber" name="L1" href="#L1">1</a>   <strong class="jxr_keyword">package</strong> org.junit.tests.assertion;
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.assertEquals;
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   <strong class="jxr_keyword">import</strong> java.util.Arrays;
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <strong class="jxr_keyword">import</strong> java.util.Collection;
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <strong class="jxr_keyword">import</strong> org.junit.ComparisonFailure;
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>   <strong class="jxr_keyword">import</strong> org.junit.Test;
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <strong class="jxr_keyword">import</strong> org.junit.runner.RunWith;
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>  <strong class="jxr_keyword">import</strong> org.junit.runners.Parameterized;
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>  <strong class="jxr_keyword">import</strong> org.junit.runners.Parameterized.Parameters;
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>  @RunWith(Parameterized.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/junit/tests/assertion/ComparisonFailureTest.html">ComparisonFailureTest</a> {
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>  		
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>  	<strong class="jxr_keyword">private</strong> String expected, actual, message;
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>  	
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  	<strong class="jxr_keyword">public</strong> <a href="../../../../org/junit/tests/assertion/ComparisonFailureTest.html">ComparisonFailureTest</a>(String e, String a, String m) {
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  		expected = e;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  		actual = a;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  		message = m;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  	}
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  	
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  	@Parameters(name = <span class="jxr_string">"compact-msg-{index}, exp=\&quot;{1}\&quot;"</span>)
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> Collection&lt;Object[]&gt; data() {
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  		<strong class="jxr_keyword">return</strong> Arrays.asList(<strong class="jxr_keyword">new</strong> Object[][] {
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  			<em class="jxr_comment">// simple base case</em>
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  			{ <span class="jxr_string">"a"</span>, <span class="jxr_string">"b"</span>, <span class="jxr_string">"expected:&lt;[a]&gt; but was:&lt;[b]&gt;"</span> },
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  				
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  			<em class="jxr_comment">// common prefix</em>
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  			{ <span class="jxr_string">"ba"</span>, <span class="jxr_string">"bc"</span>, <span class="jxr_string">"expected:&lt;b[a]&gt; but was:&lt;b[c]&gt;"</span> },
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  				
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  			<em class="jxr_comment">// common suffix</em>
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  			{ <span class="jxr_string">"ab"</span>, <span class="jxr_string">"cb"</span>, <span class="jxr_string">"expected:&lt;[a]b&gt; but was:&lt;[c]b&gt;"</span> },
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  				
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  			<em class="jxr_comment">// common pre and suffix</em>
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  			{ <span class="jxr_string">"abc"</span>, <span class="jxr_string">"adc"</span>, <span class="jxr_string">"expected:&lt;a[b]c&gt; but was:&lt;a[d]c&gt;"</span> },
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  			
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  			<em class="jxr_comment">// expected is subset of actual</em>
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  			{ <span class="jxr_string">"ab"</span>, <span class="jxr_string">"abc"</span>, <span class="jxr_string">"expected:&lt;ab[]&gt; but was:&lt;ab[c]&gt;"</span> },
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  			<em class="jxr_comment">// expected is superset of actual</em>
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  			{ <span class="jxr_string">"abc"</span>, <span class="jxr_string">"ab"</span>, <span class="jxr_string">"expected:&lt;ab[c]&gt; but was:&lt;ab[]&gt;"</span> },
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  			
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>  			<em class="jxr_comment">// overlapping matches.</em>
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  			{ <span class="jxr_string">"abc"</span>, <span class="jxr_string">"abbc"</span>, <span class="jxr_string">"expected:&lt;ab[]c&gt; but was:&lt;ab[b]c&gt;"</span> },
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>  
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>  			<em class="jxr_comment">// long prefix yielding "..."</em>
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>  			{ <span class="jxr_string">"01234567890123456789PRE:hello:POST"</span>, 
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>  				<span class="jxr_string">"01234567890123456789PRE:world:POST"</span>,
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>  				<span class="jxr_string">"expected:&lt;...4567890123456789PRE:[hello]:POST&gt; but was:&lt;...4567890123456789PRE:[world]:POST&gt;"</span> },
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>  					
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>  			<em class="jxr_comment">// long suffix	yielding "..."</em>
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>  			{ <span class="jxr_string">"PRE:hello:01234567890123456789POST"</span>,
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>  				<span class="jxr_string">"PRE:world:01234567890123456789POST"</span>,
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>  				<span class="jxr_string">"expected:&lt;PRE:[hello]:0123456789012345678...&gt; but was:&lt;PRE:[world]:0123456789012345678...&gt;"</span>	
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>  			},
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>  					
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>  			<em class="jxr_comment">// bug609972</em>
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>  			{ <span class="jxr_string">"S&amp;P500"</span>, <span class="jxr_string">"0"</span>, <span class="jxr_string">"expected:&lt;[S&amp;P50]0&gt; but was:&lt;[]0&gt;"</span> },
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>  			
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>  			<em class="jxr_comment">// empty expected string</em>
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>  			{ <span class="jxr_string">""</span>, <span class="jxr_string">"a"</span>, <span class="jxr_string">"expected:&lt;[]&gt; but was:&lt;[a]&gt;"</span> },
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>  
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>  			<em class="jxr_comment">// empty actual string</em>
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>  			{ <span class="jxr_string">"a"</span>, <span class="jxr_string">""</span>, <span class="jxr_string">"expected:&lt;[a]&gt; but was:&lt;[]&gt;"</span> }
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>  
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>  		});	
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>  	}
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>  
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>  	@Test
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>  	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> compactFailureMessage() {
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>  		ComparisonFailure failure = <strong class="jxr_keyword">new</strong> ComparisonFailure(<span class="jxr_string">""</span>, expected, actual);
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>  		assertEquals(message, failure.getMessage());
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>  	}
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>  	
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>  }
+</pre>
+<hr/>
+<div id="footer">Copyright &#169; 2002&#x2013;2014 <a href="http://www.junit.org">JUnit</a>. All rights reserved.</div>
+</body>
+</html>

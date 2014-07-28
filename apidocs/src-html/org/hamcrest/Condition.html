@@ -1,0 +1,135 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.hamcrest;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    /**<a name="line.3"></a>
+<FONT color="green">004</FONT>     * A Condition implements part of a multi-step match. We sometimes need to write matchers<a name="line.4"></a>
+<FONT color="green">005</FONT>     * that have a sequence of steps, where each step depends on the result of the previous<a name="line.5"></a>
+<FONT color="green">006</FONT>     * step and we can stop processing as soon as a step fails. These classes provide<a name="line.6"></a>
+<FONT color="green">007</FONT>     * infrastructure for writing such a sequence.<a name="line.7"></a>
+<FONT color="green">008</FONT>     *<a name="line.8"></a>
+<FONT color="green">009</FONT>     * Based on https://github.com/npryce/maybe-java<a name="line.9"></a>
+<FONT color="green">010</FONT>     * @author Steve Freeman 2012 http://www.hamcrest.com<a name="line.10"></a>
+<FONT color="green">011</FONT>     */<a name="line.11"></a>
+<FONT color="green">012</FONT>    <a name="line.12"></a>
+<FONT color="green">013</FONT>    public abstract class Condition&lt;T&gt; {<a name="line.13"></a>
+<FONT color="green">014</FONT>        public static final NotMatched&lt;Object&gt; NOT_MATCHED = new NotMatched&lt;Object&gt;();<a name="line.14"></a>
+<FONT color="green">015</FONT>    <a name="line.15"></a>
+<FONT color="green">016</FONT>        public interface Step&lt;I, O&gt; {<a name="line.16"></a>
+<FONT color="green">017</FONT>            Condition&lt;O&gt; apply(I value, Description mismatch);<a name="line.17"></a>
+<FONT color="green">018</FONT>        }<a name="line.18"></a>
+<FONT color="green">019</FONT>    <a name="line.19"></a>
+<FONT color="green">020</FONT>        private Condition() { }<a name="line.20"></a>
+<FONT color="green">021</FONT>    <a name="line.21"></a>
+<FONT color="green">022</FONT>        public abstract boolean matching(Matcher&lt;T&gt; match, String message);<a name="line.22"></a>
+<FONT color="green">023</FONT>        public abstract &lt;U&gt; Condition&lt;U&gt; and(Step&lt;? super T, U&gt; mapping);<a name="line.23"></a>
+<FONT color="green">024</FONT>    <a name="line.24"></a>
+<FONT color="green">025</FONT>        public final boolean matching(Matcher&lt;T&gt; match) { return matching(match, ""); }<a name="line.25"></a>
+<FONT color="green">026</FONT>        public final &lt;U&gt; Condition&lt;U&gt; then(Step&lt;? super T, U&gt; mapping) { return and(mapping); }<a name="line.26"></a>
+<FONT color="green">027</FONT>    <a name="line.27"></a>
+<FONT color="green">028</FONT>        @SuppressWarnings("unchecked")<a name="line.28"></a>
+<FONT color="green">029</FONT>        public static &lt;T&gt; Condition&lt;T&gt; notMatched() {<a name="line.29"></a>
+<FONT color="green">030</FONT>            return (Condition&lt;T&gt;) NOT_MATCHED;<a name="line.30"></a>
+<FONT color="green">031</FONT>        }<a name="line.31"></a>
+<FONT color="green">032</FONT>    <a name="line.32"></a>
+<FONT color="green">033</FONT>        public static &lt;T&gt; Condition&lt;T&gt; matched(final T theValue, final Description mismatch) {<a name="line.33"></a>
+<FONT color="green">034</FONT>            return new Matched&lt;T&gt;(theValue, mismatch);<a name="line.34"></a>
+<FONT color="green">035</FONT>        }<a name="line.35"></a>
+<FONT color="green">036</FONT>    <a name="line.36"></a>
+<FONT color="green">037</FONT>        private static final class Matched&lt;T&gt; extends Condition&lt;T&gt; {<a name="line.37"></a>
+<FONT color="green">038</FONT>            private final T theValue;<a name="line.38"></a>
+<FONT color="green">039</FONT>            private final Description mismatch;<a name="line.39"></a>
+<FONT color="green">040</FONT>    <a name="line.40"></a>
+<FONT color="green">041</FONT>            private Matched(T theValue, Description mismatch) {<a name="line.41"></a>
+<FONT color="green">042</FONT>                this.theValue = theValue;<a name="line.42"></a>
+<FONT color="green">043</FONT>                this.mismatch = mismatch;<a name="line.43"></a>
+<FONT color="green">044</FONT>            }<a name="line.44"></a>
+<FONT color="green">045</FONT>    <a name="line.45"></a>
+<FONT color="green">046</FONT>            @Override<a name="line.46"></a>
+<FONT color="green">047</FONT>            public boolean matching(Matcher&lt;T&gt; matcher, String message) {<a name="line.47"></a>
+<FONT color="green">048</FONT>                if (matcher.matches(theValue)) {<a name="line.48"></a>
+<FONT color="green">049</FONT>                    return true;<a name="line.49"></a>
+<FONT color="green">050</FONT>                }<a name="line.50"></a>
+<FONT color="green">051</FONT>                mismatch.appendText(message);<a name="line.51"></a>
+<FONT color="green">052</FONT>                matcher.describeMismatch(theValue, mismatch);<a name="line.52"></a>
+<FONT color="green">053</FONT>                return false;<a name="line.53"></a>
+<FONT color="green">054</FONT>            }<a name="line.54"></a>
+<FONT color="green">055</FONT>    <a name="line.55"></a>
+<FONT color="green">056</FONT>            @Override<a name="line.56"></a>
+<FONT color="green">057</FONT>            public &lt;U&gt; Condition&lt;U&gt; and(Step&lt;? super T, U&gt; next) {<a name="line.57"></a>
+<FONT color="green">058</FONT>                return next.apply(theValue, mismatch);<a name="line.58"></a>
+<FONT color="green">059</FONT>            }<a name="line.59"></a>
+<FONT color="green">060</FONT>        }<a name="line.60"></a>
+<FONT color="green">061</FONT>    <a name="line.61"></a>
+<FONT color="green">062</FONT>        private static final class NotMatched&lt;T&gt; extends Condition&lt;T&gt; {<a name="line.62"></a>
+<FONT color="green">063</FONT>            @Override public boolean matching(Matcher&lt;T&gt; match, String message) { return false; }<a name="line.63"></a>
+<FONT color="green">064</FONT>    <a name="line.64"></a>
+<FONT color="green">065</FONT>            @Override public &lt;U&gt; Condition&lt;U&gt; and(Step&lt;? super T, U&gt; mapping) {<a name="line.65"></a>
+<FONT color="green">066</FONT>                return notMatched();<a name="line.66"></a>
+<FONT color="green">067</FONT>            }<a name="line.67"></a>
+<FONT color="green">068</FONT>        }<a name="line.68"></a>
+<FONT color="green">069</FONT>    }<a name="line.69"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>
