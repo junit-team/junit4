@@ -339,11 +339,12 @@ public class Categories extends Suite {
     }
 
     private static void assertNoCategorizedDescendentsOfUncategorizeableParents(Description description) throws InitializationError {
-        if (!canHaveCategorizedChildren(description)) {
+        if (canHaveCategorizedChildren(description)) {
+            for (Description each : description.getChildren()) {
+                assertNoCategorizedDescendentsOfUncategorizeableParents(each);
+            }
+        } else {
             assertNoDescendantsHaveCategoryAnnotations(description);
-        }
-        for (Description each : description.getChildren()) {
-            assertNoCategorizedDescendentsOfUncategorizeableParents(each);
         }
     }
 
