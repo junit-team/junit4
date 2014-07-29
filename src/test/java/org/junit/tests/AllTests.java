@@ -18,6 +18,7 @@ import org.junit.runner.RunWith;
 import org.junit.runner.notification.ConcurrentRunNotifierTest;
 import org.junit.runner.notification.RunNotifierTest;
 import org.junit.runner.notification.SynchronizedRunListenerTest;
+import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParametersTest;
 import org.junit.runners.CustomBlockJUnit4ClassRunnerTest;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -231,6 +232,7 @@ import org.junit.validator.PublicClassValidatorTest;
         TypeMatchingBetweenMultiDataPointsMethod.class,
         TheoriesPerformanceTest.class,
         MoneyTest.class,
+        BlockJUnit4ClassRunnerWithParametersTest.class,
         CategoryValidatorTest.class,
         ForwardCompatibilityPrintingTest.class,
         DescriptionTest.class,
