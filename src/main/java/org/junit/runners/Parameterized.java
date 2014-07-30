@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.junit.runner.Runner;
 import org.junit.runners.model.FrameworkMethod;
@@ -342,8 +344,13 @@ public class Parameterized extends Suite {
 
     private static TestWithParameters createTestWithParameters(
             TestClass testClass, String pattern, int index, Object[] parameters) {
-        String finalPattern = pattern.replaceAll("\\{index\\}",
-                Integer.toString(index));
+        String finalPattern = pattern;
+        Pattern indexMatcherPattern = Pattern.compile("(\\{)index([^\\}]*\\})");
+        Matcher matcher = indexMatcherPattern.matcher(pattern);
+        if (matcher.find()) {
+            String idxPattern = matcher.group(1) + 0 + matcher.group(2);
+            finalPattern = pattern.replace(matcher.group(), MessageFormat.format(idxPattern, index));
+        }
         String name = MessageFormat.format(finalPattern, parameters);
         return new TestWithParameters("[" + name + "]", testClass,
                 Arrays.asList(parameters));
