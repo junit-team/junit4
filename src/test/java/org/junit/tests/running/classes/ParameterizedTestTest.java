@@ -89,7 +89,7 @@ public class ParameterizedTestTest {
     
     @RunWith(Parameterized.class)
     static public class ParameterizedWithSpecialTestname {
-        @Parameters(name = "{index,number,0000}: fib({0})={1}")
+        @Parameters(name = "{index,number,0000}: param 1: {0} on test#: {index} with expected result: {1} - {index}")
         public static Iterable<Object[]> data() {
             return Arrays.asList(new Object[][]{{0, 0}, {1, 1}, {2, 1},
                     {3, 2}, {4, 3}, {5, 5}, {6, 8}});
@@ -125,7 +125,7 @@ public class ParameterizedTestTest {
     public void failuresNamedCorrectlyWithSpecialTestname() {
         Result result = JUnitCore.runClasses(ParameterizedWithSpecialTestname.class);
         assertEquals(
-                "test[0001: fib(1)=1](" + ParameterizedWithSpecialTestname.class.getName() + ")",
+                "test[0001: param 1: 1 on test#: 1 with expected result: 1 - 1](" + ParameterizedWithSpecialTestname.class.getName() + ")",
                 result.getFailures().get(0).getTestHeader());
     }
 
@@ -139,7 +139,7 @@ public class ParameterizedTestTest {
     public void plansNamedCorrectlyWithSpecialTestname() throws Exception {
         Runner runner = Request.aClass(ParameterizedWithSpecialTestname.class).getRunner();
         Description description = runner.getDescription();
-        assertEquals("[0000: fib(0)=0]", description.getChildren().get(0)
+        assertEquals("[0000: param 1: 0 on test#: 0 with expected result: 0 - 0]", description.getChildren().get(0)
                 .getDisplayName());
     }
 
