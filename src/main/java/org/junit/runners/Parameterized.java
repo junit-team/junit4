@@ -165,6 +165,8 @@ import org.junit.runners.parameterized.TestWithParameters;
  * @since 4.0
  */
 public class Parameterized extends Suite {
+    private static final String INDEX_MATCHER_PATTERN = "(\\{)index([^\\}]*\\})";
+
     /**
      * Annotation for a method which provides parameters to be injected into the
      * test class constructor by <code>Parameterized</code>. The method has to
@@ -345,11 +347,11 @@ public class Parameterized extends Suite {
     private static TestWithParameters createTestWithParameters(
             TestClass testClass, String pattern, int index, Object[] parameters) {
         String finalPattern = pattern;
-        Pattern indexMatcherPattern = Pattern.compile("(\\{)index([^\\}]*\\})");
+        Pattern indexMatcherPattern = Pattern.compile(INDEX_MATCHER_PATTERN);
         Matcher matcher = indexMatcherPattern.matcher(pattern);
-        if (matcher.find()) {
-            String idxPattern = matcher.group(1) + 0 + matcher.group(2);
-            finalPattern = pattern.replace(matcher.group(), MessageFormat.format(idxPattern, index));
+        while (matcher.find()) {
+            String idxPattern = matcher.group(1) + "0" + matcher.group(2);
+            finalPattern = finalPattern.replace(matcher.group(), MessageFormat.format(idxPattern, index));
         }
         String name = MessageFormat.format(finalPattern, parameters);
         return new TestWithParameters("[" + name + "]", testClass,
