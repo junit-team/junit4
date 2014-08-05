@@ -1,431 +1,436 @@
-<HTML>
-<BODY BGCOLOR="white">
-<PRE>
-<FONT color="green">001</FONT>    package org.junit.runners;<a name="line.1"></a>
-<FONT color="green">002</FONT>    <a name="line.2"></a>
-<FONT color="green">003</FONT>    import static org.junit.internal.runners.rules.RuleMemberValidator.RULE_METHOD_VALIDATOR;<a name="line.3"></a>
-<FONT color="green">004</FONT>    import static org.junit.internal.runners.rules.RuleMemberValidator.RULE_VALIDATOR;<a name="line.4"></a>
-<FONT color="green">005</FONT>    <a name="line.5"></a>
-<FONT color="green">006</FONT>    import java.util.List;<a name="line.6"></a>
-<FONT color="green">007</FONT>    import java.util.concurrent.ConcurrentHashMap;<a name="line.7"></a>
-<FONT color="green">008</FONT>    <a name="line.8"></a>
-<FONT color="green">009</FONT>    import org.junit.After;<a name="line.9"></a>
-<FONT color="green">010</FONT>    import org.junit.Before;<a name="line.10"></a>
-<FONT color="green">011</FONT>    import org.junit.Ignore;<a name="line.11"></a>
-<FONT color="green">012</FONT>    import org.junit.Rule;<a name="line.12"></a>
-<FONT color="green">013</FONT>    import org.junit.Test;<a name="line.13"></a>
-<FONT color="green">014</FONT>    import org.junit.Test.None;<a name="line.14"></a>
-<FONT color="green">015</FONT>    import org.junit.internal.runners.model.ReflectiveCallable;<a name="line.15"></a>
-<FONT color="green">016</FONT>    import org.junit.internal.runners.statements.ExpectException;<a name="line.16"></a>
-<FONT color="green">017</FONT>    import org.junit.internal.runners.statements.Fail;<a name="line.17"></a>
-<FONT color="green">018</FONT>    import org.junit.internal.runners.statements.FailOnTimeout;<a name="line.18"></a>
-<FONT color="green">019</FONT>    import org.junit.internal.runners.statements.InvokeMethod;<a name="line.19"></a>
-<FONT color="green">020</FONT>    import org.junit.internal.runners.statements.RunAfters;<a name="line.20"></a>
-<FONT color="green">021</FONT>    import org.junit.internal.runners.statements.RunBefores;<a name="line.21"></a>
-<FONT color="green">022</FONT>    import org.junit.rules.RunRules;<a name="line.22"></a>
-<FONT color="green">023</FONT>    import org.junit.rules.TestRule;<a name="line.23"></a>
-<FONT color="green">024</FONT>    import org.junit.runner.Description;<a name="line.24"></a>
-<FONT color="green">025</FONT>    import org.junit.runner.notification.RunNotifier;<a name="line.25"></a>
-<FONT color="green">026</FONT>    import org.junit.runners.model.FrameworkMethod;<a name="line.26"></a>
-<FONT color="green">027</FONT>    import org.junit.runners.model.InitializationError;<a name="line.27"></a>
-<FONT color="green">028</FONT>    import org.junit.runners.model.MultipleFailureException;<a name="line.28"></a>
-<FONT color="green">029</FONT>    import org.junit.runners.model.Statement;<a name="line.29"></a>
-<FONT color="green">030</FONT>    <a name="line.30"></a>
-<FONT color="green">031</FONT>    /**<a name="line.31"></a>
-<FONT color="green">032</FONT>     * Implements the JUnit 4 standard test case class model, as defined by the<a name="line.32"></a>
-<FONT color="green">033</FONT>     * annotations in the org.junit package. Many users will never notice this<a name="line.33"></a>
-<FONT color="green">034</FONT>     * class: it is now the default test class runner, but it should have exactly<a name="line.34"></a>
-<FONT color="green">035</FONT>     * the same behavior as the old test class runner ({@code JUnit4ClassRunner}).<a name="line.35"></a>
-<FONT color="green">036</FONT>     * &lt;p&gt;<a name="line.36"></a>
-<FONT color="green">037</FONT>     * BlockJUnit4ClassRunner has advantages for writers of custom JUnit runners<a name="line.37"></a>
-<FONT color="green">038</FONT>     * that are slight changes to the default behavior, however:<a name="line.38"></a>
-<FONT color="green">039</FONT>     *<a name="line.39"></a>
-<FONT color="green">040</FONT>     * &lt;ul&gt;<a name="line.40"></a>
-<FONT color="green">041</FONT>     * &lt;li&gt;It has a much simpler implementation based on {@link Statement}s,<a name="line.41"></a>
-<FONT color="green">042</FONT>     * allowing new operations to be inserted into the appropriate point in the<a name="line.42"></a>
-<FONT color="green">043</FONT>     * execution flow.<a name="line.43"></a>
-<FONT color="green">044</FONT>     *<a name="line.44"></a>
-<FONT color="green">045</FONT>     * &lt;li&gt;It is published, and extension and reuse are encouraged, whereas {@code<a name="line.45"></a>
-<FONT color="green">046</FONT>     * JUnit4ClassRunner} was in an internal package, and is now deprecated.<a name="line.46"></a>
-<FONT color="green">047</FONT>     * &lt;/ul&gt;<a name="line.47"></a>
-<FONT color="green">048</FONT>     * &lt;p&gt;<a name="line.48"></a>
-<FONT color="green">049</FONT>     * In turn, in 2009 we introduced {@link Rule}s.  In many cases where extending<a name="line.49"></a>
-<FONT color="green">050</FONT>     * BlockJUnit4ClassRunner was necessary to add new behavior, {@link Rule}s can<a name="line.50"></a>
-<FONT color="green">051</FONT>     * be used, which makes the extension more reusable and composable.<a name="line.51"></a>
-<FONT color="green">052</FONT>     *<a name="line.52"></a>
-<FONT color="green">053</FONT>     * @since 4.5<a name="line.53"></a>
-<FONT color="green">054</FONT>     */<a name="line.54"></a>
-<FONT color="green">055</FONT>    public class BlockJUnit4ClassRunner extends ParentRunner&lt;FrameworkMethod&gt; {<a name="line.55"></a>
-<FONT color="green">056</FONT>        private final ConcurrentHashMap&lt;FrameworkMethod, Description&gt; methodDescriptions = new ConcurrentHashMap&lt;FrameworkMethod, Description&gt;();<a name="line.56"></a>
-<FONT color="green">057</FONT>        /**<a name="line.57"></a>
-<FONT color="green">058</FONT>         * Creates a BlockJUnit4ClassRunner to run {@code klass}<a name="line.58"></a>
-<FONT color="green">059</FONT>         *<a name="line.59"></a>
-<FONT color="green">060</FONT>         * @throws InitializationError if the test class is malformed.<a name="line.60"></a>
-<FONT color="green">061</FONT>         */<a name="line.61"></a>
-<FONT color="green">062</FONT>        public BlockJUnit4ClassRunner(Class&lt;?&gt; klass) throws InitializationError {<a name="line.62"></a>
-<FONT color="green">063</FONT>            super(klass);<a name="line.63"></a>
-<FONT color="green">064</FONT>        }<a name="line.64"></a>
-<FONT color="green">065</FONT>    <a name="line.65"></a>
-<FONT color="green">066</FONT>        //<a name="line.66"></a>
-<FONT color="green">067</FONT>        // Implementation of ParentRunner<a name="line.67"></a>
-<FONT color="green">068</FONT>        //<a name="line.68"></a>
-<FONT color="green">069</FONT>    <a name="line.69"></a>
-<FONT color="green">070</FONT>        @Override<a name="line.70"></a>
-<FONT color="green">071</FONT>        protected void runChild(final FrameworkMethod method, RunNotifier notifier) {<a name="line.71"></a>
-<FONT color="green">072</FONT>            Description description = describeChild(method);<a name="line.72"></a>
-<FONT color="green">073</FONT>            if (isIgnored(method)) {<a name="line.73"></a>
-<FONT color="green">074</FONT>                notifier.fireTestIgnored(description);<a name="line.74"></a>
-<FONT color="green">075</FONT>            } else {<a name="line.75"></a>
-<FONT color="green">076</FONT>                runLeaf(methodBlock(method), description, notifier);<a name="line.76"></a>
-<FONT color="green">077</FONT>            }<a name="line.77"></a>
-<FONT color="green">078</FONT>        }<a name="line.78"></a>
-<FONT color="green">079</FONT>        <a name="line.79"></a>
-<FONT color="green">080</FONT>        /**<a name="line.80"></a>
-<FONT color="green">081</FONT>         * Evaluates whether {@link FrameworkMethod}s are ignored based on the<a name="line.81"></a>
-<FONT color="green">082</FONT>         * {@link Ignore} annotation.<a name="line.82"></a>
-<FONT color="green">083</FONT>         */<a name="line.83"></a>
-<FONT color="green">084</FONT>        @Override<a name="line.84"></a>
-<FONT color="green">085</FONT>        protected boolean isIgnored(FrameworkMethod child) {<a name="line.85"></a>
-<FONT color="green">086</FONT>            return child.getAnnotation(Ignore.class) != null;<a name="line.86"></a>
-<FONT color="green">087</FONT>        }<a name="line.87"></a>
-<FONT color="green">088</FONT>    <a name="line.88"></a>
-<FONT color="green">089</FONT>        @Override<a name="line.89"></a>
-<FONT color="green">090</FONT>        protected Description describeChild(FrameworkMethod method) {<a name="line.90"></a>
-<FONT color="green">091</FONT>            Description description = methodDescriptions.get(method);<a name="line.91"></a>
-<FONT color="green">092</FONT>    <a name="line.92"></a>
-<FONT color="green">093</FONT>            if (description == null) {<a name="line.93"></a>
-<FONT color="green">094</FONT>                description = Description.createTestDescription(getTestClass().getJavaClass(),<a name="line.94"></a>
-<FONT color="green">095</FONT>                        testName(method), method.getAnnotations());<a name="line.95"></a>
-<FONT color="green">096</FONT>                methodDescriptions.putIfAbsent(method, description);<a name="line.96"></a>
-<FONT color="green">097</FONT>            }<a name="line.97"></a>
-<FONT color="green">098</FONT>    <a name="line.98"></a>
-<FONT color="green">099</FONT>            return description;<a name="line.99"></a>
-<FONT color="green">100</FONT>        }<a name="line.100"></a>
-<FONT color="green">101</FONT>    <a name="line.101"></a>
-<FONT color="green">102</FONT>        @Override<a name="line.102"></a>
-<FONT color="green">103</FONT>        protected List&lt;FrameworkMethod&gt; getChildren() {<a name="line.103"></a>
-<FONT color="green">104</FONT>            return computeTestMethods();<a name="line.104"></a>
-<FONT color="green">105</FONT>        }<a name="line.105"></a>
-<FONT color="green">106</FONT>    <a name="line.106"></a>
-<FONT color="green">107</FONT>        //<a name="line.107"></a>
-<FONT color="green">108</FONT>        // Override in subclasses<a name="line.108"></a>
-<FONT color="green">109</FONT>        //<a name="line.109"></a>
-<FONT color="green">110</FONT>    <a name="line.110"></a>
-<FONT color="green">111</FONT>        /**<a name="line.111"></a>
-<FONT color="green">112</FONT>         * Returns the methods that run tests. Default implementation returns all<a name="line.112"></a>
-<FONT color="green">113</FONT>         * methods annotated with {@code @Test} on this class and superclasses that<a name="line.113"></a>
-<FONT color="green">114</FONT>         * are not overridden.<a name="line.114"></a>
-<FONT color="green">115</FONT>         */<a name="line.115"></a>
-<FONT color="green">116</FONT>        protected List&lt;FrameworkMethod&gt; computeTestMethods() {<a name="line.116"></a>
-<FONT color="green">117</FONT>            return getTestClass().getAnnotatedMethods(Test.class);<a name="line.117"></a>
-<FONT color="green">118</FONT>        }<a name="line.118"></a>
-<FONT color="green">119</FONT>    <a name="line.119"></a>
-<FONT color="green">120</FONT>        @Override<a name="line.120"></a>
-<FONT color="green">121</FONT>        protected void collectInitializationErrors(List&lt;Throwable&gt; errors) {<a name="line.121"></a>
-<FONT color="green">122</FONT>            super.collectInitializationErrors(errors);<a name="line.122"></a>
-<FONT color="green">123</FONT>    <a name="line.123"></a>
-<FONT color="green">124</FONT>            validateNoNonStaticInnerClass(errors);<a name="line.124"></a>
-<FONT color="green">125</FONT>            validateConstructor(errors);<a name="line.125"></a>
-<FONT color="green">126</FONT>            validateInstanceMethods(errors);<a name="line.126"></a>
-<FONT color="green">127</FONT>            validateFields(errors);<a name="line.127"></a>
-<FONT color="green">128</FONT>            validateMethods(errors);<a name="line.128"></a>
-<FONT color="green">129</FONT>        }<a name="line.129"></a>
-<FONT color="green">130</FONT>    <a name="line.130"></a>
-<FONT color="green">131</FONT>        protected void validateNoNonStaticInnerClass(List&lt;Throwable&gt; errors) {<a name="line.131"></a>
-<FONT color="green">132</FONT>            if (getTestClass().isANonStaticInnerClass()) {<a name="line.132"></a>
-<FONT color="green">133</FONT>                String gripe = "The inner class " + getTestClass().getName()<a name="line.133"></a>
-<FONT color="green">134</FONT>                        + " is not static.";<a name="line.134"></a>
-<FONT color="green">135</FONT>                errors.add(new Exception(gripe));<a name="line.135"></a>
-<FONT color="green">136</FONT>            }<a name="line.136"></a>
-<FONT color="green">137</FONT>        }<a name="line.137"></a>
-<FONT color="green">138</FONT>    <a name="line.138"></a>
-<FONT color="green">139</FONT>        /**<a name="line.139"></a>
-<FONT color="green">140</FONT>         * Adds to {@code errors} if the test class has more than one constructor,<a name="line.140"></a>
-<FONT color="green">141</FONT>         * or if the constructor takes parameters. Override if a subclass requires<a name="line.141"></a>
-<FONT color="green">142</FONT>         * different validation rules.<a name="line.142"></a>
-<FONT color="green">143</FONT>         */<a name="line.143"></a>
-<FONT color="green">144</FONT>        protected void validateConstructor(List&lt;Throwable&gt; errors) {<a name="line.144"></a>
-<FONT color="green">145</FONT>            validateOnlyOneConstructor(errors);<a name="line.145"></a>
-<FONT color="green">146</FONT>            validateZeroArgConstructor(errors);<a name="line.146"></a>
-<FONT color="green">147</FONT>        }<a name="line.147"></a>
-<FONT color="green">148</FONT>    <a name="line.148"></a>
-<FONT color="green">149</FONT>        /**<a name="line.149"></a>
-<FONT color="green">150</FONT>         * Adds to {@code errors} if the test class has more than one constructor<a name="line.150"></a>
-<FONT color="green">151</FONT>         * (do not override)<a name="line.151"></a>
-<FONT color="green">152</FONT>         */<a name="line.152"></a>
-<FONT color="green">153</FONT>        protected void validateOnlyOneConstructor(List&lt;Throwable&gt; errors) {<a name="line.153"></a>
-<FONT color="green">154</FONT>            if (!hasOneConstructor()) {<a name="line.154"></a>
-<FONT color="green">155</FONT>                String gripe = "Test class should have exactly one public constructor";<a name="line.155"></a>
-<FONT color="green">156</FONT>                errors.add(new Exception(gripe));<a name="line.156"></a>
-<FONT color="green">157</FONT>            }<a name="line.157"></a>
-<FONT color="green">158</FONT>        }<a name="line.158"></a>
-<FONT color="green">159</FONT>    <a name="line.159"></a>
-<FONT color="green">160</FONT>        /**<a name="line.160"></a>
-<FONT color="green">161</FONT>         * Adds to {@code errors} if the test class's single constructor takes<a name="line.161"></a>
-<FONT color="green">162</FONT>         * parameters (do not override)<a name="line.162"></a>
-<FONT color="green">163</FONT>         */<a name="line.163"></a>
-<FONT color="green">164</FONT>        protected void validateZeroArgConstructor(List&lt;Throwable&gt; errors) {<a name="line.164"></a>
-<FONT color="green">165</FONT>            if (!getTestClass().isANonStaticInnerClass()<a name="line.165"></a>
-<FONT color="green">166</FONT>                    &amp;&amp; hasOneConstructor()<a name="line.166"></a>
-<FONT color="green">167</FONT>                    &amp;&amp; (getTestClass().getOnlyConstructor().getParameterTypes().length != 0)) {<a name="line.167"></a>
-<FONT color="green">168</FONT>                String gripe = "Test class should have exactly one public zero-argument constructor";<a name="line.168"></a>
-<FONT color="green">169</FONT>                errors.add(new Exception(gripe));<a name="line.169"></a>
-<FONT color="green">170</FONT>            }<a name="line.170"></a>
-<FONT color="green">171</FONT>        }<a name="line.171"></a>
-<FONT color="green">172</FONT>    <a name="line.172"></a>
-<FONT color="green">173</FONT>        private boolean hasOneConstructor() {<a name="line.173"></a>
-<FONT color="green">174</FONT>            return getTestClass().getJavaClass().getConstructors().length == 1;<a name="line.174"></a>
-<FONT color="green">175</FONT>        }<a name="line.175"></a>
-<FONT color="green">176</FONT>    <a name="line.176"></a>
-<FONT color="green">177</FONT>        /**<a name="line.177"></a>
-<FONT color="green">178</FONT>         * Adds to {@code errors} for each method annotated with {@code @Test},<a name="line.178"></a>
-<FONT color="green">179</FONT>         * {@code @Before}, or {@code @After} that is not a public, void instance<a name="line.179"></a>
-<FONT color="green">180</FONT>         * method with no arguments.<a name="line.180"></a>
-<FONT color="green">181</FONT>         */<a name="line.181"></a>
-<FONT color="green">182</FONT>        @Deprecated<a name="line.182"></a>
-<FONT color="green">183</FONT>        protected void validateInstanceMethods(List&lt;Throwable&gt; errors) {<a name="line.183"></a>
-<FONT color="green">184</FONT>            validatePublicVoidNoArgMethods(After.class, false, errors);<a name="line.184"></a>
-<FONT color="green">185</FONT>            validatePublicVoidNoArgMethods(Before.class, false, errors);<a name="line.185"></a>
-<FONT color="green">186</FONT>            validateTestMethods(errors);<a name="line.186"></a>
-<FONT color="green">187</FONT>    <a name="line.187"></a>
-<FONT color="green">188</FONT>            if (computeTestMethods().size() == 0) {<a name="line.188"></a>
-<FONT color="green">189</FONT>                errors.add(new Exception("No runnable methods"));<a name="line.189"></a>
-<FONT color="green">190</FONT>            }<a name="line.190"></a>
-<FONT color="green">191</FONT>        }<a name="line.191"></a>
-<FONT color="green">192</FONT>    <a name="line.192"></a>
-<FONT color="green">193</FONT>        protected void validateFields(List&lt;Throwable&gt; errors) {<a name="line.193"></a>
-<FONT color="green">194</FONT>            RULE_VALIDATOR.validate(getTestClass(), errors);<a name="line.194"></a>
-<FONT color="green">195</FONT>        }<a name="line.195"></a>
-<FONT color="green">196</FONT>    <a name="line.196"></a>
-<FONT color="green">197</FONT>        private void validateMethods(List&lt;Throwable&gt; errors) {<a name="line.197"></a>
-<FONT color="green">198</FONT>            RULE_METHOD_VALIDATOR.validate(getTestClass(), errors);<a name="line.198"></a>
-<FONT color="green">199</FONT>        }<a name="line.199"></a>
-<FONT color="green">200</FONT>    <a name="line.200"></a>
-<FONT color="green">201</FONT>        /**<a name="line.201"></a>
-<FONT color="green">202</FONT>         * Adds to {@code errors} for each method annotated with {@code @Test}that<a name="line.202"></a>
-<FONT color="green">203</FONT>         * is not a public, void instance method with no arguments.<a name="line.203"></a>
-<FONT color="green">204</FONT>         */<a name="line.204"></a>
-<FONT color="green">205</FONT>        protected void validateTestMethods(List&lt;Throwable&gt; errors) {<a name="line.205"></a>
-<FONT color="green">206</FONT>            validatePublicVoidNoArgMethods(Test.class, false, errors);<a name="line.206"></a>
-<FONT color="green">207</FONT>        }<a name="line.207"></a>
-<FONT color="green">208</FONT>    <a name="line.208"></a>
-<FONT color="green">209</FONT>        /**<a name="line.209"></a>
-<FONT color="green">210</FONT>         * Returns a new fixture for running a test. Default implementation executes<a name="line.210"></a>
-<FONT color="green">211</FONT>         * the test class's no-argument constructor (validation should have ensured<a name="line.211"></a>
-<FONT color="green">212</FONT>         * one exists).<a name="line.212"></a>
-<FONT color="green">213</FONT>         */<a name="line.213"></a>
-<FONT color="green">214</FONT>        protected Object createTest() throws Exception {<a name="line.214"></a>
-<FONT color="green">215</FONT>            return getTestClass().getOnlyConstructor().newInstance();<a name="line.215"></a>
-<FONT color="green">216</FONT>        }<a name="line.216"></a>
-<FONT color="green">217</FONT>    <a name="line.217"></a>
-<FONT color="green">218</FONT>        /**<a name="line.218"></a>
-<FONT color="green">219</FONT>         * Returns the name that describes {@code method} for {@link Description}s.<a name="line.219"></a>
-<FONT color="green">220</FONT>         * Default implementation is the method's name<a name="line.220"></a>
-<FONT color="green">221</FONT>         */<a name="line.221"></a>
-<FONT color="green">222</FONT>        protected String testName(FrameworkMethod method) {<a name="line.222"></a>
-<FONT color="green">223</FONT>            return method.getName();<a name="line.223"></a>
-<FONT color="green">224</FONT>        }<a name="line.224"></a>
-<FONT color="green">225</FONT>    <a name="line.225"></a>
-<FONT color="green">226</FONT>        /**<a name="line.226"></a>
-<FONT color="green">227</FONT>         * Returns a Statement that, when executed, either returns normally if<a name="line.227"></a>
-<FONT color="green">228</FONT>         * {@code method} passes, or throws an exception if {@code method} fails.<a name="line.228"></a>
-<FONT color="green">229</FONT>         *<a name="line.229"></a>
-<FONT color="green">230</FONT>         * Here is an outline of the default implementation:<a name="line.230"></a>
-<FONT color="green">231</FONT>         *<a name="line.231"></a>
-<FONT color="green">232</FONT>         * &lt;ul&gt;<a name="line.232"></a>
-<FONT color="green">233</FONT>         * &lt;li&gt;Invoke {@code method} on the result of {@code createTest()}, and<a name="line.233"></a>
-<FONT color="green">234</FONT>         * throw any exceptions thrown by either operation.<a name="line.234"></a>
-<FONT color="green">235</FONT>         * &lt;li&gt;HOWEVER, if {@code method}'s {@code @Test} annotation has the {@code<a name="line.235"></a>
-<FONT color="green">236</FONT>         * expecting} attribute, return normally only if the previous step threw an<a name="line.236"></a>
-<FONT color="green">237</FONT>         * exception of the correct type, and throw an exception otherwise.<a name="line.237"></a>
-<FONT color="green">238</FONT>         * &lt;li&gt;HOWEVER, if {@code method}'s {@code @Test} annotation has the {@code<a name="line.238"></a>
-<FONT color="green">239</FONT>         * timeout} attribute, throw an exception if the previous step takes more<a name="line.239"></a>
-<FONT color="green">240</FONT>         * than the specified number of milliseconds.<a name="line.240"></a>
-<FONT color="green">241</FONT>         * &lt;li&gt;ALWAYS run all non-overridden {@code @Before} methods on this class<a name="line.241"></a>
-<FONT color="green">242</FONT>         * and superclasses before any of the previous steps; if any throws an<a name="line.242"></a>
-<FONT color="green">243</FONT>         * Exception, stop execution and pass the exception on.<a name="line.243"></a>
-<FONT color="green">244</FONT>         * &lt;li&gt;ALWAYS run all non-overridden {@code @After} methods on this class<a name="line.244"></a>
-<FONT color="green">245</FONT>         * and superclasses after any of the previous steps; all After methods are<a name="line.245"></a>
-<FONT color="green">246</FONT>         * always executed: exceptions thrown by previous steps are combined, if<a name="line.246"></a>
-<FONT color="green">247</FONT>         * necessary, with exceptions from After methods into a<a name="line.247"></a>
-<FONT color="green">248</FONT>         * {@link MultipleFailureException}.<a name="line.248"></a>
-<FONT color="green">249</FONT>         * &lt;li&gt;ALWAYS allow {@code @Rule} fields to modify the execution of the<a name="line.249"></a>
-<FONT color="green">250</FONT>         * above steps. A {@code Rule} may prevent all execution of the above steps,<a name="line.250"></a>
-<FONT color="green">251</FONT>         * or add additional behavior before and after, or modify thrown exceptions.<a name="line.251"></a>
-<FONT color="green">252</FONT>         * For more information, see {@link TestRule}<a name="line.252"></a>
-<FONT color="green">253</FONT>         * &lt;/ul&gt;<a name="line.253"></a>
-<FONT color="green">254</FONT>         *<a name="line.254"></a>
-<FONT color="green">255</FONT>         * This can be overridden in subclasses, either by overriding this method,<a name="line.255"></a>
-<FONT color="green">256</FONT>         * or the implementations creating each sub-statement.<a name="line.256"></a>
-<FONT color="green">257</FONT>         */<a name="line.257"></a>
-<FONT color="green">258</FONT>        protected Statement methodBlock(FrameworkMethod method) {<a name="line.258"></a>
-<FONT color="green">259</FONT>            Object test;<a name="line.259"></a>
-<FONT color="green">260</FONT>            try {<a name="line.260"></a>
-<FONT color="green">261</FONT>                test = new ReflectiveCallable() {<a name="line.261"></a>
-<FONT color="green">262</FONT>                    @Override<a name="line.262"></a>
-<FONT color="green">263</FONT>                    protected Object runReflectiveCall() throws Throwable {<a name="line.263"></a>
-<FONT color="green">264</FONT>                        return createTest();<a name="line.264"></a>
-<FONT color="green">265</FONT>                    }<a name="line.265"></a>
-<FONT color="green">266</FONT>                }.run();<a name="line.266"></a>
-<FONT color="green">267</FONT>            } catch (Throwable e) {<a name="line.267"></a>
-<FONT color="green">268</FONT>                return new Fail(e);<a name="line.268"></a>
-<FONT color="green">269</FONT>            }<a name="line.269"></a>
-<FONT color="green">270</FONT>    <a name="line.270"></a>
-<FONT color="green">271</FONT>            Statement statement = methodInvoker(method, test);<a name="line.271"></a>
-<FONT color="green">272</FONT>            statement = possiblyExpectingExceptions(method, test, statement);<a name="line.272"></a>
-<FONT color="green">273</FONT>            statement = withPotentialTimeout(method, test, statement);<a name="line.273"></a>
-<FONT color="green">274</FONT>            statement = withBefores(method, test, statement);<a name="line.274"></a>
-<FONT color="green">275</FONT>            statement = withAfters(method, test, statement);<a name="line.275"></a>
-<FONT color="green">276</FONT>            statement = withRules(method, test, statement);<a name="line.276"></a>
-<FONT color="green">277</FONT>            return statement;<a name="line.277"></a>
-<FONT color="green">278</FONT>        }<a name="line.278"></a>
-<FONT color="green">279</FONT>    <a name="line.279"></a>
-<FONT color="green">280</FONT>        //<a name="line.280"></a>
-<FONT color="green">281</FONT>        // Statement builders<a name="line.281"></a>
-<FONT color="green">282</FONT>        //<a name="line.282"></a>
-<FONT color="green">283</FONT>    <a name="line.283"></a>
-<FONT color="green">284</FONT>        /**<a name="line.284"></a>
-<FONT color="green">285</FONT>         * Returns a {@link Statement} that invokes {@code method} on {@code test}<a name="line.285"></a>
-<FONT color="green">286</FONT>         */<a name="line.286"></a>
-<FONT color="green">287</FONT>        protected Statement methodInvoker(FrameworkMethod method, Object test) {<a name="line.287"></a>
-<FONT color="green">288</FONT>            return new InvokeMethod(method, test);<a name="line.288"></a>
-<FONT color="green">289</FONT>        }<a name="line.289"></a>
-<FONT color="green">290</FONT>    <a name="line.290"></a>
-<FONT color="green">291</FONT>        /**<a name="line.291"></a>
-<FONT color="green">292</FONT>         * Returns a {@link Statement}: if {@code method}'s {@code @Test} annotation<a name="line.292"></a>
-<FONT color="green">293</FONT>         * has the {@code expecting} attribute, return normally only if {@code next}<a name="line.293"></a>
-<FONT color="green">294</FONT>         * throws an exception of the correct type, and throw an exception<a name="line.294"></a>
-<FONT color="green">295</FONT>         * otherwise.<a name="line.295"></a>
-<FONT color="green">296</FONT>         */<a name="line.296"></a>
-<FONT color="green">297</FONT>        protected Statement possiblyExpectingExceptions(FrameworkMethod method,<a name="line.297"></a>
-<FONT color="green">298</FONT>                Object test, Statement next) {<a name="line.298"></a>
-<FONT color="green">299</FONT>            Test annotation = method.getAnnotation(Test.class);<a name="line.299"></a>
-<FONT color="green">300</FONT>            return expectsException(annotation) ? new ExpectException(next,<a name="line.300"></a>
-<FONT color="green">301</FONT>                    getExpectedException(annotation)) : next;<a name="line.301"></a>
-<FONT color="green">302</FONT>        }<a name="line.302"></a>
-<FONT color="green">303</FONT>    <a name="line.303"></a>
-<FONT color="green">304</FONT>        /**<a name="line.304"></a>
-<FONT color="green">305</FONT>         * Returns a {@link Statement}: if {@code method}'s {@code @Test} annotation<a name="line.305"></a>
-<FONT color="green">306</FONT>         * has the {@code timeout} attribute, throw an exception if {@code next}<a name="line.306"></a>
-<FONT color="green">307</FONT>         * takes more than the specified number of milliseconds.<a name="line.307"></a>
-<FONT color="green">308</FONT>         */<a name="line.308"></a>
-<FONT color="green">309</FONT>        @Deprecated<a name="line.309"></a>
-<FONT color="green">310</FONT>        protected Statement withPotentialTimeout(FrameworkMethod method,<a name="line.310"></a>
-<FONT color="green">311</FONT>                Object test, Statement next) {<a name="line.311"></a>
-<FONT color="green">312</FONT>            long timeout = getTimeout(method.getAnnotation(Test.class));<a name="line.312"></a>
-<FONT color="green">313</FONT>            return timeout &gt; 0 ? new FailOnTimeout(next, timeout) : next;<a name="line.313"></a>
-<FONT color="green">314</FONT>        }<a name="line.314"></a>
-<FONT color="green">315</FONT>    <a name="line.315"></a>
-<FONT color="green">316</FONT>        /**<a name="line.316"></a>
-<FONT color="green">317</FONT>         * Returns a {@link Statement}: run all non-overridden {@code @Before}<a name="line.317"></a>
-<FONT color="green">318</FONT>         * methods on this class and superclasses before running {@code next}; if<a name="line.318"></a>
-<FONT color="green">319</FONT>         * any throws an Exception, stop execution and pass the exception on.<a name="line.319"></a>
-<FONT color="green">320</FONT>         */<a name="line.320"></a>
-<FONT color="green">321</FONT>        protected Statement withBefores(FrameworkMethod method, Object target,<a name="line.321"></a>
-<FONT color="green">322</FONT>                Statement statement) {<a name="line.322"></a>
-<FONT color="green">323</FONT>            List&lt;FrameworkMethod&gt; befores = getTestClass().getAnnotatedMethods(<a name="line.323"></a>
-<FONT color="green">324</FONT>                    Before.class);<a name="line.324"></a>
-<FONT color="green">325</FONT>            return befores.isEmpty() ? statement : new RunBefores(statement,<a name="line.325"></a>
-<FONT color="green">326</FONT>                    befores, target);<a name="line.326"></a>
-<FONT color="green">327</FONT>        }<a name="line.327"></a>
-<FONT color="green">328</FONT>    <a name="line.328"></a>
-<FONT color="green">329</FONT>        /**<a name="line.329"></a>
-<FONT color="green">330</FONT>         * Returns a {@link Statement}: run all non-overridden {@code @After}<a name="line.330"></a>
-<FONT color="green">331</FONT>         * methods on this class and superclasses before running {@code next}; all<a name="line.331"></a>
-<FONT color="green">332</FONT>         * After methods are always executed: exceptions thrown by previous steps<a name="line.332"></a>
-<FONT color="green">333</FONT>         * are combined, if necessary, with exceptions from After methods into a<a name="line.333"></a>
-<FONT color="green">334</FONT>         * {@link MultipleFailureException}.<a name="line.334"></a>
-<FONT color="green">335</FONT>         */<a name="line.335"></a>
-<FONT color="green">336</FONT>        protected Statement withAfters(FrameworkMethod method, Object target,<a name="line.336"></a>
-<FONT color="green">337</FONT>                Statement statement) {<a name="line.337"></a>
-<FONT color="green">338</FONT>            List&lt;FrameworkMethod&gt; afters = getTestClass().getAnnotatedMethods(<a name="line.338"></a>
-<FONT color="green">339</FONT>                    After.class);<a name="line.339"></a>
-<FONT color="green">340</FONT>            return afters.isEmpty() ? statement : new RunAfters(statement, afters,<a name="line.340"></a>
-<FONT color="green">341</FONT>                    target);<a name="line.341"></a>
-<FONT color="green">342</FONT>        }<a name="line.342"></a>
-<FONT color="green">343</FONT>    <a name="line.343"></a>
-<FONT color="green">344</FONT>        private Statement withRules(FrameworkMethod method, Object target,<a name="line.344"></a>
-<FONT color="green">345</FONT>                Statement statement) {<a name="line.345"></a>
-<FONT color="green">346</FONT>            List&lt;TestRule&gt; testRules = getTestRules(target);<a name="line.346"></a>
-<FONT color="green">347</FONT>            Statement result = statement;<a name="line.347"></a>
-<FONT color="green">348</FONT>            result = withMethodRules(method, testRules, target, result);<a name="line.348"></a>
-<FONT color="green">349</FONT>            result = withTestRules(method, testRules, result);<a name="line.349"></a>
-<FONT color="green">350</FONT>    <a name="line.350"></a>
-<FONT color="green">351</FONT>            return result;<a name="line.351"></a>
-<FONT color="green">352</FONT>        }<a name="line.352"></a>
-<FONT color="green">353</FONT>    <a name="line.353"></a>
-<FONT color="green">354</FONT>        private Statement withMethodRules(FrameworkMethod method, List&lt;TestRule&gt; testRules,<a name="line.354"></a>
-<FONT color="green">355</FONT>                Object target, Statement result) {<a name="line.355"></a>
-<FONT color="green">356</FONT>            for (org.junit.rules.MethodRule each : getMethodRules(target)) {<a name="line.356"></a>
-<FONT color="green">357</FONT>                if (!testRules.contains(each)) {<a name="line.357"></a>
-<FONT color="green">358</FONT>                    result = each.apply(result, method, target);<a name="line.358"></a>
-<FONT color="green">359</FONT>                }<a name="line.359"></a>
-<FONT color="green">360</FONT>            }<a name="line.360"></a>
-<FONT color="green">361</FONT>            return result;<a name="line.361"></a>
-<FONT color="green">362</FONT>        }<a name="line.362"></a>
-<FONT color="green">363</FONT>    <a name="line.363"></a>
-<FONT color="green">364</FONT>        private List&lt;org.junit.rules.MethodRule&gt; getMethodRules(Object target) {<a name="line.364"></a>
-<FONT color="green">365</FONT>            return rules(target);<a name="line.365"></a>
-<FONT color="green">366</FONT>        }<a name="line.366"></a>
-<FONT color="green">367</FONT>    <a name="line.367"></a>
-<FONT color="green">368</FONT>        /**<a name="line.368"></a>
-<FONT color="green">369</FONT>         * @param target the test case instance<a name="line.369"></a>
-<FONT color="green">370</FONT>         * @return a list of MethodRules that should be applied when executing this<a name="line.370"></a>
-<FONT color="green">371</FONT>         *         test<a name="line.371"></a>
-<FONT color="green">372</FONT>         */<a name="line.372"></a>
-<FONT color="green">373</FONT>        protected List&lt;org.junit.rules.MethodRule&gt; rules(Object target) {<a name="line.373"></a>
-<FONT color="green">374</FONT>            return getTestClass().getAnnotatedFieldValues(target, Rule.class,<a name="line.374"></a>
-<FONT color="green">375</FONT>                    org.junit.rules.MethodRule.class);<a name="line.375"></a>
-<FONT color="green">376</FONT>        }<a name="line.376"></a>
-<FONT color="green">377</FONT>    <a name="line.377"></a>
-<FONT color="green">378</FONT>        /**<a name="line.378"></a>
-<FONT color="green">379</FONT>         * Returns a {@link Statement}: apply all non-static fields<a name="line.379"></a>
-<FONT color="green">380</FONT>         * annotated with {@link Rule}.<a name="line.380"></a>
-<FONT color="green">381</FONT>         *<a name="line.381"></a>
-<FONT color="green">382</FONT>         * @param statement The base statement<a name="line.382"></a>
-<FONT color="green">383</FONT>         * @return a RunRules statement if any class-level {@link Rule}s are<a name="line.383"></a>
-<FONT color="green">384</FONT>         *         found, or the base statement<a name="line.384"></a>
-<FONT color="green">385</FONT>         */<a name="line.385"></a>
-<FONT color="green">386</FONT>        private Statement withTestRules(FrameworkMethod method, List&lt;TestRule&gt; testRules,<a name="line.386"></a>
-<FONT color="green">387</FONT>                Statement statement) {<a name="line.387"></a>
-<FONT color="green">388</FONT>            return testRules.isEmpty() ? statement :<a name="line.388"></a>
-<FONT color="green">389</FONT>                    new RunRules(statement, testRules, describeChild(method));<a name="line.389"></a>
-<FONT color="green">390</FONT>        }<a name="line.390"></a>
-<FONT color="green">391</FONT>    <a name="line.391"></a>
-<FONT color="green">392</FONT>        /**<a name="line.392"></a>
-<FONT color="green">393</FONT>         * @param target the test case instance<a name="line.393"></a>
-<FONT color="green">394</FONT>         * @return a list of TestRules that should be applied when executing this<a name="line.394"></a>
-<FONT color="green">395</FONT>         *         test<a name="line.395"></a>
-<FONT color="green">396</FONT>         */<a name="line.396"></a>
-<FONT color="green">397</FONT>        protected List&lt;TestRule&gt; getTestRules(Object target) {<a name="line.397"></a>
-<FONT color="green">398</FONT>            List&lt;TestRule&gt; result = getTestClass().getAnnotatedMethodValues(target,<a name="line.398"></a>
-<FONT color="green">399</FONT>                    Rule.class, TestRule.class);<a name="line.399"></a>
-<FONT color="green">400</FONT>    <a name="line.400"></a>
-<FONT color="green">401</FONT>            result.addAll(getTestClass().getAnnotatedFieldValues(target,<a name="line.401"></a>
-<FONT color="green">402</FONT>                    Rule.class, TestRule.class));<a name="line.402"></a>
-<FONT color="green">403</FONT>    <a name="line.403"></a>
-<FONT color="green">404</FONT>            return result;<a name="line.404"></a>
-<FONT color="green">405</FONT>        }<a name="line.405"></a>
-<FONT color="green">406</FONT>    <a name="line.406"></a>
-<FONT color="green">407</FONT>        private Class&lt;? extends Throwable&gt; getExpectedException(Test annotation) {<a name="line.407"></a>
-<FONT color="green">408</FONT>            if (annotation == null || annotation.expected() == None.class) {<a name="line.408"></a>
-<FONT color="green">409</FONT>                return null;<a name="line.409"></a>
-<FONT color="green">410</FONT>            } else {<a name="line.410"></a>
-<FONT color="green">411</FONT>                return annotation.expected();<a name="line.411"></a>
-<FONT color="green">412</FONT>            }<a name="line.412"></a>
-<FONT color="green">413</FONT>        }<a name="line.413"></a>
-<FONT color="green">414</FONT>    <a name="line.414"></a>
-<FONT color="green">415</FONT>        private boolean expectsException(Test annotation) {<a name="line.415"></a>
-<FONT color="green">416</FONT>            return getExpectedException(annotation) != null;<a name="line.416"></a>
-<FONT color="green">417</FONT>        }<a name="line.417"></a>
-<FONT color="green">418</FONT>    <a name="line.418"></a>
-<FONT color="green">419</FONT>        private long getTimeout(Test annotation) {<a name="line.419"></a>
-<FONT color="green">420</FONT>            if (annotation == null) {<a name="line.420"></a>
-<FONT color="green">421</FONT>                return 0;<a name="line.421"></a>
-<FONT color="green">422</FONT>            }<a name="line.422"></a>
-<FONT color="green">423</FONT>            return annotation.timeout();<a name="line.423"></a>
-<FONT color="green">424</FONT>        }<a name="line.424"></a>
-<FONT color="green">425</FONT>    }<a name="line.425"></a>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package org.junit.runners;<a name="line.1"></a>
+<span class="sourceLineNo">002</span><a name="line.2"></a>
+<span class="sourceLineNo">003</span>import static org.junit.internal.runners.rules.RuleMemberValidator.RULE_METHOD_VALIDATOR;<a name="line.3"></a>
+<span class="sourceLineNo">004</span>import static org.junit.internal.runners.rules.RuleMemberValidator.RULE_VALIDATOR;<a name="line.4"></a>
+<span class="sourceLineNo">005</span><a name="line.5"></a>
+<span class="sourceLineNo">006</span>import java.util.List;<a name="line.6"></a>
+<span class="sourceLineNo">007</span>import java.util.concurrent.ConcurrentHashMap;<a name="line.7"></a>
+<span class="sourceLineNo">008</span><a name="line.8"></a>
+<span class="sourceLineNo">009</span>import org.junit.After;<a name="line.9"></a>
+<span class="sourceLineNo">010</span>import org.junit.Before;<a name="line.10"></a>
+<span class="sourceLineNo">011</span>import org.junit.Ignore;<a name="line.11"></a>
+<span class="sourceLineNo">012</span>import org.junit.Rule;<a name="line.12"></a>
+<span class="sourceLineNo">013</span>import org.junit.Test;<a name="line.13"></a>
+<span class="sourceLineNo">014</span>import org.junit.Test.None;<a name="line.14"></a>
+<span class="sourceLineNo">015</span>import org.junit.internal.runners.model.ReflectiveCallable;<a name="line.15"></a>
+<span class="sourceLineNo">016</span>import org.junit.internal.runners.statements.ExpectException;<a name="line.16"></a>
+<span class="sourceLineNo">017</span>import org.junit.internal.runners.statements.Fail;<a name="line.17"></a>
+<span class="sourceLineNo">018</span>import org.junit.internal.runners.statements.FailOnTimeout;<a name="line.18"></a>
+<span class="sourceLineNo">019</span>import org.junit.internal.runners.statements.InvokeMethod;<a name="line.19"></a>
+<span class="sourceLineNo">020</span>import org.junit.internal.runners.statements.RunAfters;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import org.junit.internal.runners.statements.RunBefores;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import org.junit.rules.RunRules;<a name="line.22"></a>
+<span class="sourceLineNo">023</span>import org.junit.rules.TestRule;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import org.junit.runner.Description;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import org.junit.runner.notification.RunNotifier;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>import org.junit.runners.model.FrameworkMethod;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import org.junit.runners.model.InitializationError;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import org.junit.runners.model.MultipleFailureException;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>import org.junit.runners.model.Statement;<a name="line.29"></a>
+<span class="sourceLineNo">030</span><a name="line.30"></a>
+<span class="sourceLineNo">031</span>/**<a name="line.31"></a>
+<span class="sourceLineNo">032</span> * Implements the JUnit 4 standard test case class model, as defined by the<a name="line.32"></a>
+<span class="sourceLineNo">033</span> * annotations in the org.junit package. Many users will never notice this<a name="line.33"></a>
+<span class="sourceLineNo">034</span> * class: it is now the default test class runner, but it should have exactly<a name="line.34"></a>
+<span class="sourceLineNo">035</span> * the same behavior as the old test class runner ({@code JUnit4ClassRunner}).<a name="line.35"></a>
+<span class="sourceLineNo">036</span> * &lt;p&gt;<a name="line.36"></a>
+<span class="sourceLineNo">037</span> * BlockJUnit4ClassRunner has advantages for writers of custom JUnit runners<a name="line.37"></a>
+<span class="sourceLineNo">038</span> * that are slight changes to the default behavior, however:<a name="line.38"></a>
+<span class="sourceLineNo">039</span> *<a name="line.39"></a>
+<span class="sourceLineNo">040</span> * &lt;ul&gt;<a name="line.40"></a>
+<span class="sourceLineNo">041</span> * &lt;li&gt;It has a much simpler implementation based on {@link Statement}s,<a name="line.41"></a>
+<span class="sourceLineNo">042</span> * allowing new operations to be inserted into the appropriate point in the<a name="line.42"></a>
+<span class="sourceLineNo">043</span> * execution flow.<a name="line.43"></a>
+<span class="sourceLineNo">044</span> *<a name="line.44"></a>
+<span class="sourceLineNo">045</span> * &lt;li&gt;It is published, and extension and reuse are encouraged, whereas {@code<a name="line.45"></a>
+<span class="sourceLineNo">046</span> * JUnit4ClassRunner} was in an internal package, and is now deprecated.<a name="line.46"></a>
+<span class="sourceLineNo">047</span> * &lt;/ul&gt;<a name="line.47"></a>
+<span class="sourceLineNo">048</span> * &lt;p&gt;<a name="line.48"></a>
+<span class="sourceLineNo">049</span> * In turn, in 2009 we introduced {@link Rule}s.  In many cases where extending<a name="line.49"></a>
+<span class="sourceLineNo">050</span> * BlockJUnit4ClassRunner was necessary to add new behavior, {@link Rule}s can<a name="line.50"></a>
+<span class="sourceLineNo">051</span> * be used, which makes the extension more reusable and composable.<a name="line.51"></a>
+<span class="sourceLineNo">052</span> *<a name="line.52"></a>
+<span class="sourceLineNo">053</span> * @since 4.5<a name="line.53"></a>
+<span class="sourceLineNo">054</span> */<a name="line.54"></a>
+<span class="sourceLineNo">055</span>public class BlockJUnit4ClassRunner extends ParentRunner&lt;FrameworkMethod&gt; {<a name="line.55"></a>
+<span class="sourceLineNo">056</span>    private final ConcurrentHashMap&lt;FrameworkMethod, Description&gt; methodDescriptions = new ConcurrentHashMap&lt;FrameworkMethod, Description&gt;();<a name="line.56"></a>
+<span class="sourceLineNo">057</span>    /**<a name="line.57"></a>
+<span class="sourceLineNo">058</span>     * Creates a BlockJUnit4ClassRunner to run {@code klass}<a name="line.58"></a>
+<span class="sourceLineNo">059</span>     *<a name="line.59"></a>
+<span class="sourceLineNo">060</span>     * @throws InitializationError if the test class is malformed.<a name="line.60"></a>
+<span class="sourceLineNo">061</span>     */<a name="line.61"></a>
+<span class="sourceLineNo">062</span>    public BlockJUnit4ClassRunner(Class&lt;?&gt; klass) throws InitializationError {<a name="line.62"></a>
+<span class="sourceLineNo">063</span>        super(klass);<a name="line.63"></a>
+<span class="sourceLineNo">064</span>    }<a name="line.64"></a>
+<span class="sourceLineNo">065</span><a name="line.65"></a>
+<span class="sourceLineNo">066</span>    //<a name="line.66"></a>
+<span class="sourceLineNo">067</span>    // Implementation of ParentRunner<a name="line.67"></a>
+<span class="sourceLineNo">068</span>    //<a name="line.68"></a>
+<span class="sourceLineNo">069</span><a name="line.69"></a>
+<span class="sourceLineNo">070</span>    @Override<a name="line.70"></a>
+<span class="sourceLineNo">071</span>    protected void runChild(final FrameworkMethod method, RunNotifier notifier) {<a name="line.71"></a>
+<span class="sourceLineNo">072</span>        Description description = describeChild(method);<a name="line.72"></a>
+<span class="sourceLineNo">073</span>        if (isIgnored(method)) {<a name="line.73"></a>
+<span class="sourceLineNo">074</span>            notifier.fireTestIgnored(description);<a name="line.74"></a>
+<span class="sourceLineNo">075</span>        } else {<a name="line.75"></a>
+<span class="sourceLineNo">076</span>            runLeaf(methodBlock(method), description, notifier);<a name="line.76"></a>
+<span class="sourceLineNo">077</span>        }<a name="line.77"></a>
+<span class="sourceLineNo">078</span>    }<a name="line.78"></a>
+<span class="sourceLineNo">079</span>    <a name="line.79"></a>
+<span class="sourceLineNo">080</span>    /**<a name="line.80"></a>
+<span class="sourceLineNo">081</span>     * Evaluates whether {@link FrameworkMethod}s are ignored based on the<a name="line.81"></a>
+<span class="sourceLineNo">082</span>     * {@link Ignore} annotation.<a name="line.82"></a>
+<span class="sourceLineNo">083</span>     */<a name="line.83"></a>
+<span class="sourceLineNo">084</span>    @Override<a name="line.84"></a>
+<span class="sourceLineNo">085</span>    protected boolean isIgnored(FrameworkMethod child) {<a name="line.85"></a>
+<span class="sourceLineNo">086</span>        return child.getAnnotation(Ignore.class) != null;<a name="line.86"></a>
+<span class="sourceLineNo">087</span>    }<a name="line.87"></a>
+<span class="sourceLineNo">088</span><a name="line.88"></a>
+<span class="sourceLineNo">089</span>    @Override<a name="line.89"></a>
+<span class="sourceLineNo">090</span>    protected Description describeChild(FrameworkMethod method) {<a name="line.90"></a>
+<span class="sourceLineNo">091</span>        Description description = methodDescriptions.get(method);<a name="line.91"></a>
+<span class="sourceLineNo">092</span><a name="line.92"></a>
+<span class="sourceLineNo">093</span>        if (description == null) {<a name="line.93"></a>
+<span class="sourceLineNo">094</span>            description = Description.createTestDescription(getTestClass().getJavaClass(),<a name="line.94"></a>
+<span class="sourceLineNo">095</span>                    testName(method), method.getAnnotations());<a name="line.95"></a>
+<span class="sourceLineNo">096</span>            methodDescriptions.putIfAbsent(method, description);<a name="line.96"></a>
+<span class="sourceLineNo">097</span>        }<a name="line.97"></a>
+<span class="sourceLineNo">098</span><a name="line.98"></a>
+<span class="sourceLineNo">099</span>        return description;<a name="line.99"></a>
+<span class="sourceLineNo">100</span>    }<a name="line.100"></a>
+<span class="sourceLineNo">101</span><a name="line.101"></a>
+<span class="sourceLineNo">102</span>    @Override<a name="line.102"></a>
+<span class="sourceLineNo">103</span>    protected List&lt;FrameworkMethod&gt; getChildren() {<a name="line.103"></a>
+<span class="sourceLineNo">104</span>        return computeTestMethods();<a name="line.104"></a>
+<span class="sourceLineNo">105</span>    }<a name="line.105"></a>
+<span class="sourceLineNo">106</span><a name="line.106"></a>
+<span class="sourceLineNo">107</span>    //<a name="line.107"></a>
+<span class="sourceLineNo">108</span>    // Override in subclasses<a name="line.108"></a>
+<span class="sourceLineNo">109</span>    //<a name="line.109"></a>
+<span class="sourceLineNo">110</span><a name="line.110"></a>
+<span class="sourceLineNo">111</span>    /**<a name="line.111"></a>
+<span class="sourceLineNo">112</span>     * Returns the methods that run tests. Default implementation returns all<a name="line.112"></a>
+<span class="sourceLineNo">113</span>     * methods annotated with {@code @Test} on this class and superclasses that<a name="line.113"></a>
+<span class="sourceLineNo">114</span>     * are not overridden.<a name="line.114"></a>
+<span class="sourceLineNo">115</span>     */<a name="line.115"></a>
+<span class="sourceLineNo">116</span>    protected List&lt;FrameworkMethod&gt; computeTestMethods() {<a name="line.116"></a>
+<span class="sourceLineNo">117</span>        return getTestClass().getAnnotatedMethods(Test.class);<a name="line.117"></a>
+<span class="sourceLineNo">118</span>    }<a name="line.118"></a>
+<span class="sourceLineNo">119</span><a name="line.119"></a>
+<span class="sourceLineNo">120</span>    @Override<a name="line.120"></a>
+<span class="sourceLineNo">121</span>    protected void collectInitializationErrors(List&lt;Throwable&gt; errors) {<a name="line.121"></a>
+<span class="sourceLineNo">122</span>        super.collectInitializationErrors(errors);<a name="line.122"></a>
+<span class="sourceLineNo">123</span><a name="line.123"></a>
+<span class="sourceLineNo">124</span>        validateNoNonStaticInnerClass(errors);<a name="line.124"></a>
+<span class="sourceLineNo">125</span>        validateConstructor(errors);<a name="line.125"></a>
+<span class="sourceLineNo">126</span>        validateInstanceMethods(errors);<a name="line.126"></a>
+<span class="sourceLineNo">127</span>        validateFields(errors);<a name="line.127"></a>
+<span class="sourceLineNo">128</span>        validateMethods(errors);<a name="line.128"></a>
+<span class="sourceLineNo">129</span>    }<a name="line.129"></a>
+<span class="sourceLineNo">130</span><a name="line.130"></a>
+<span class="sourceLineNo">131</span>    protected void validateNoNonStaticInnerClass(List&lt;Throwable&gt; errors) {<a name="line.131"></a>
+<span class="sourceLineNo">132</span>        if (getTestClass().isANonStaticInnerClass()) {<a name="line.132"></a>
+<span class="sourceLineNo">133</span>            String gripe = "The inner class " + getTestClass().getName()<a name="line.133"></a>
+<span class="sourceLineNo">134</span>                    + " is not static.";<a name="line.134"></a>
+<span class="sourceLineNo">135</span>            errors.add(new Exception(gripe));<a name="line.135"></a>
+<span class="sourceLineNo">136</span>        }<a name="line.136"></a>
+<span class="sourceLineNo">137</span>    }<a name="line.137"></a>
+<span class="sourceLineNo">138</span><a name="line.138"></a>
+<span class="sourceLineNo">139</span>    /**<a name="line.139"></a>
+<span class="sourceLineNo">140</span>     * Adds to {@code errors} if the test class has more than one constructor,<a name="line.140"></a>
+<span class="sourceLineNo">141</span>     * or if the constructor takes parameters. Override if a subclass requires<a name="line.141"></a>
+<span class="sourceLineNo">142</span>     * different validation rules.<a name="line.142"></a>
+<span class="sourceLineNo">143</span>     */<a name="line.143"></a>
+<span class="sourceLineNo">144</span>    protected void validateConstructor(List&lt;Throwable&gt; errors) {<a name="line.144"></a>
+<span class="sourceLineNo">145</span>        validateOnlyOneConstructor(errors);<a name="line.145"></a>
+<span class="sourceLineNo">146</span>        validateZeroArgConstructor(errors);<a name="line.146"></a>
+<span class="sourceLineNo">147</span>    }<a name="line.147"></a>
+<span class="sourceLineNo">148</span><a name="line.148"></a>
+<span class="sourceLineNo">149</span>    /**<a name="line.149"></a>
+<span class="sourceLineNo">150</span>     * Adds to {@code errors} if the test class has more than one constructor<a name="line.150"></a>
+<span class="sourceLineNo">151</span>     * (do not override)<a name="line.151"></a>
+<span class="sourceLineNo">152</span>     */<a name="line.152"></a>
+<span class="sourceLineNo">153</span>    protected void validateOnlyOneConstructor(List&lt;Throwable&gt; errors) {<a name="line.153"></a>
+<span class="sourceLineNo">154</span>        if (!hasOneConstructor()) {<a name="line.154"></a>
+<span class="sourceLineNo">155</span>            String gripe = "Test class should have exactly one public constructor";<a name="line.155"></a>
+<span class="sourceLineNo">156</span>            errors.add(new Exception(gripe));<a name="line.156"></a>
+<span class="sourceLineNo">157</span>        }<a name="line.157"></a>
+<span class="sourceLineNo">158</span>    }<a name="line.158"></a>
+<span class="sourceLineNo">159</span><a name="line.159"></a>
+<span class="sourceLineNo">160</span>    /**<a name="line.160"></a>
+<span class="sourceLineNo">161</span>     * Adds to {@code errors} if the test class's single constructor takes<a name="line.161"></a>
+<span class="sourceLineNo">162</span>     * parameters (do not override)<a name="line.162"></a>
+<span class="sourceLineNo">163</span>     */<a name="line.163"></a>
+<span class="sourceLineNo">164</span>    protected void validateZeroArgConstructor(List&lt;Throwable&gt; errors) {<a name="line.164"></a>
+<span class="sourceLineNo">165</span>        if (!getTestClass().isANonStaticInnerClass()<a name="line.165"></a>
+<span class="sourceLineNo">166</span>                &amp;&amp; hasOneConstructor()<a name="line.166"></a>
+<span class="sourceLineNo">167</span>                &amp;&amp; (getTestClass().getOnlyConstructor().getParameterTypes().length != 0)) {<a name="line.167"></a>
+<span class="sourceLineNo">168</span>            String gripe = "Test class should have exactly one public zero-argument constructor";<a name="line.168"></a>
+<span class="sourceLineNo">169</span>            errors.add(new Exception(gripe));<a name="line.169"></a>
+<span class="sourceLineNo">170</span>        }<a name="line.170"></a>
+<span class="sourceLineNo">171</span>    }<a name="line.171"></a>
+<span class="sourceLineNo">172</span><a name="line.172"></a>
+<span class="sourceLineNo">173</span>    private boolean hasOneConstructor() {<a name="line.173"></a>
+<span class="sourceLineNo">174</span>        return getTestClass().getJavaClass().getConstructors().length == 1;<a name="line.174"></a>
+<span class="sourceLineNo">175</span>    }<a name="line.175"></a>
+<span class="sourceLineNo">176</span><a name="line.176"></a>
+<span class="sourceLineNo">177</span>    /**<a name="line.177"></a>
+<span class="sourceLineNo">178</span>     * Adds to {@code errors} for each method annotated with {@code @Test},<a name="line.178"></a>
+<span class="sourceLineNo">179</span>     * {@code @Before}, or {@code @After} that is not a public, void instance<a name="line.179"></a>
+<span class="sourceLineNo">180</span>     * method with no arguments.<a name="line.180"></a>
+<span class="sourceLineNo">181</span>     */<a name="line.181"></a>
+<span class="sourceLineNo">182</span>    @Deprecated<a name="line.182"></a>
+<span class="sourceLineNo">183</span>    protected void validateInstanceMethods(List&lt;Throwable&gt; errors) {<a name="line.183"></a>
+<span class="sourceLineNo">184</span>        validatePublicVoidNoArgMethods(After.class, false, errors);<a name="line.184"></a>
+<span class="sourceLineNo">185</span>        validatePublicVoidNoArgMethods(Before.class, false, errors);<a name="line.185"></a>
+<span class="sourceLineNo">186</span>        validateTestMethods(errors);<a name="line.186"></a>
+<span class="sourceLineNo">187</span><a name="line.187"></a>
+<span class="sourceLineNo">188</span>        if (computeTestMethods().size() == 0) {<a name="line.188"></a>
+<span class="sourceLineNo">189</span>            errors.add(new Exception("No runnable methods"));<a name="line.189"></a>
+<span class="sourceLineNo">190</span>        }<a name="line.190"></a>
+<span class="sourceLineNo">191</span>    }<a name="line.191"></a>
+<span class="sourceLineNo">192</span><a name="line.192"></a>
+<span class="sourceLineNo">193</span>    protected void validateFields(List&lt;Throwable&gt; errors) {<a name="line.193"></a>
+<span class="sourceLineNo">194</span>        RULE_VALIDATOR.validate(getTestClass(), errors);<a name="line.194"></a>
+<span class="sourceLineNo">195</span>    }<a name="line.195"></a>
+<span class="sourceLineNo">196</span><a name="line.196"></a>
+<span class="sourceLineNo">197</span>    private void validateMethods(List&lt;Throwable&gt; errors) {<a name="line.197"></a>
+<span class="sourceLineNo">198</span>        RULE_METHOD_VALIDATOR.validate(getTestClass(), errors);<a name="line.198"></a>
+<span class="sourceLineNo">199</span>    }<a name="line.199"></a>
+<span class="sourceLineNo">200</span><a name="line.200"></a>
+<span class="sourceLineNo">201</span>    /**<a name="line.201"></a>
+<span class="sourceLineNo">202</span>     * Adds to {@code errors} for each method annotated with {@code @Test}that<a name="line.202"></a>
+<span class="sourceLineNo">203</span>     * is not a public, void instance method with no arguments.<a name="line.203"></a>
+<span class="sourceLineNo">204</span>     */<a name="line.204"></a>
+<span class="sourceLineNo">205</span>    protected void validateTestMethods(List&lt;Throwable&gt; errors) {<a name="line.205"></a>
+<span class="sourceLineNo">206</span>        validatePublicVoidNoArgMethods(Test.class, false, errors);<a name="line.206"></a>
+<span class="sourceLineNo">207</span>    }<a name="line.207"></a>
+<span class="sourceLineNo">208</span><a name="line.208"></a>
+<span class="sourceLineNo">209</span>    /**<a name="line.209"></a>
+<span class="sourceLineNo">210</span>     * Returns a new fixture for running a test. Default implementation executes<a name="line.210"></a>
+<span class="sourceLineNo">211</span>     * the test class's no-argument constructor (validation should have ensured<a name="line.211"></a>
+<span class="sourceLineNo">212</span>     * one exists).<a name="line.212"></a>
+<span class="sourceLineNo">213</span>     */<a name="line.213"></a>
+<span class="sourceLineNo">214</span>    protected Object createTest() throws Exception {<a name="line.214"></a>
+<span class="sourceLineNo">215</span>        return getTestClass().getOnlyConstructor().newInstance();<a name="line.215"></a>
+<span class="sourceLineNo">216</span>    }<a name="line.216"></a>
+<span class="sourceLineNo">217</span><a name="line.217"></a>
+<span class="sourceLineNo">218</span>    /**<a name="line.218"></a>
+<span class="sourceLineNo">219</span>     * Returns the name that describes {@code method} for {@link Description}s.<a name="line.219"></a>
+<span class="sourceLineNo">220</span>     * Default implementation is the method's name<a name="line.220"></a>
+<span class="sourceLineNo">221</span>     */<a name="line.221"></a>
+<span class="sourceLineNo">222</span>    protected String testName(FrameworkMethod method) {<a name="line.222"></a>
+<span class="sourceLineNo">223</span>        return method.getName();<a name="line.223"></a>
+<span class="sourceLineNo">224</span>    }<a name="line.224"></a>
+<span class="sourceLineNo">225</span><a name="line.225"></a>
+<span class="sourceLineNo">226</span>    /**<a name="line.226"></a>
+<span class="sourceLineNo">227</span>     * Returns a Statement that, when executed, either returns normally if<a name="line.227"></a>
+<span class="sourceLineNo">228</span>     * {@code method} passes, or throws an exception if {@code method} fails.<a name="line.228"></a>
+<span class="sourceLineNo">229</span>     *<a name="line.229"></a>
+<span class="sourceLineNo">230</span>     * Here is an outline of the default implementation:<a name="line.230"></a>
+<span class="sourceLineNo">231</span>     *<a name="line.231"></a>
+<span class="sourceLineNo">232</span>     * &lt;ul&gt;<a name="line.232"></a>
+<span class="sourceLineNo">233</span>     * &lt;li&gt;Invoke {@code method} on the result of {@code createTest()}, and<a name="line.233"></a>
+<span class="sourceLineNo">234</span>     * throw any exceptions thrown by either operation.<a name="line.234"></a>
+<span class="sourceLineNo">235</span>     * &lt;li&gt;HOWEVER, if {@code method}'s {@code @Test} annotation has the {@code<a name="line.235"></a>
+<span class="sourceLineNo">236</span>     * expecting} attribute, return normally only if the previous step threw an<a name="line.236"></a>
+<span class="sourceLineNo">237</span>     * exception of the correct type, and throw an exception otherwise.<a name="line.237"></a>
+<span class="sourceLineNo">238</span>     * &lt;li&gt;HOWEVER, if {@code method}'s {@code @Test} annotation has the {@code<a name="line.238"></a>
+<span class="sourceLineNo">239</span>     * timeout} attribute, throw an exception if the previous step takes more<a name="line.239"></a>
+<span class="sourceLineNo">240</span>     * than the specified number of milliseconds.<a name="line.240"></a>
+<span class="sourceLineNo">241</span>     * &lt;li&gt;ALWAYS run all non-overridden {@code @Before} methods on this class<a name="line.241"></a>
+<span class="sourceLineNo">242</span>     * and superclasses before any of the previous steps; if any throws an<a name="line.242"></a>
+<span class="sourceLineNo">243</span>     * Exception, stop execution and pass the exception on.<a name="line.243"></a>
+<span class="sourceLineNo">244</span>     * &lt;li&gt;ALWAYS run all non-overridden {@code @After} methods on this class<a name="line.244"></a>
+<span class="sourceLineNo">245</span>     * and superclasses after any of the previous steps; all After methods are<a name="line.245"></a>
+<span class="sourceLineNo">246</span>     * always executed: exceptions thrown by previous steps are combined, if<a name="line.246"></a>
+<span class="sourceLineNo">247</span>     * necessary, with exceptions from After methods into a<a name="line.247"></a>
+<span class="sourceLineNo">248</span>     * {@link MultipleFailureException}.<a name="line.248"></a>
+<span class="sourceLineNo">249</span>     * &lt;li&gt;ALWAYS allow {@code @Rule} fields to modify the execution of the<a name="line.249"></a>
+<span class="sourceLineNo">250</span>     * above steps. A {@code Rule} may prevent all execution of the above steps,<a name="line.250"></a>
+<span class="sourceLineNo">251</span>     * or add additional behavior before and after, or modify thrown exceptions.<a name="line.251"></a>
+<span class="sourceLineNo">252</span>     * For more information, see {@link TestRule}<a name="line.252"></a>
+<span class="sourceLineNo">253</span>     * &lt;/ul&gt;<a name="line.253"></a>
+<span class="sourceLineNo">254</span>     *<a name="line.254"></a>
+<span class="sourceLineNo">255</span>     * This can be overridden in subclasses, either by overriding this method,<a name="line.255"></a>
+<span class="sourceLineNo">256</span>     * or the implementations creating each sub-statement.<a name="line.256"></a>
+<span class="sourceLineNo">257</span>     */<a name="line.257"></a>
+<span class="sourceLineNo">258</span>    protected Statement methodBlock(FrameworkMethod method) {<a name="line.258"></a>
+<span class="sourceLineNo">259</span>        Object test;<a name="line.259"></a>
+<span class="sourceLineNo">260</span>        try {<a name="line.260"></a>
+<span class="sourceLineNo">261</span>            test = new ReflectiveCallable() {<a name="line.261"></a>
+<span class="sourceLineNo">262</span>                @Override<a name="line.262"></a>
+<span class="sourceLineNo">263</span>                protected Object runReflectiveCall() throws Throwable {<a name="line.263"></a>
+<span class="sourceLineNo">264</span>                    return createTest();<a name="line.264"></a>
+<span class="sourceLineNo">265</span>                }<a name="line.265"></a>
+<span class="sourceLineNo">266</span>            }.run();<a name="line.266"></a>
+<span class="sourceLineNo">267</span>        } catch (Throwable e) {<a name="line.267"></a>
+<span class="sourceLineNo">268</span>            return new Fail(e);<a name="line.268"></a>
+<span class="sourceLineNo">269</span>        }<a name="line.269"></a>
+<span class="sourceLineNo">270</span><a name="line.270"></a>
+<span class="sourceLineNo">271</span>        Statement statement = methodInvoker(method, test);<a name="line.271"></a>
+<span class="sourceLineNo">272</span>        statement = possiblyExpectingExceptions(method, test, statement);<a name="line.272"></a>
+<span class="sourceLineNo">273</span>        statement = withPotentialTimeout(method, test, statement);<a name="line.273"></a>
+<span class="sourceLineNo">274</span>        statement = withBefores(method, test, statement);<a name="line.274"></a>
+<span class="sourceLineNo">275</span>        statement = withAfters(method, test, statement);<a name="line.275"></a>
+<span class="sourceLineNo">276</span>        statement = withRules(method, test, statement);<a name="line.276"></a>
+<span class="sourceLineNo">277</span>        return statement;<a name="line.277"></a>
+<span class="sourceLineNo">278</span>    }<a name="line.278"></a>
+<span class="sourceLineNo">279</span><a name="line.279"></a>
+<span class="sourceLineNo">280</span>    //<a name="line.280"></a>
+<span class="sourceLineNo">281</span>    // Statement builders<a name="line.281"></a>
+<span class="sourceLineNo">282</span>    //<a name="line.282"></a>
+<span class="sourceLineNo">283</span><a name="line.283"></a>
+<span class="sourceLineNo">284</span>    /**<a name="line.284"></a>
+<span class="sourceLineNo">285</span>     * Returns a {@link Statement} that invokes {@code method} on {@code test}<a name="line.285"></a>
+<span class="sourceLineNo">286</span>     */<a name="line.286"></a>
+<span class="sourceLineNo">287</span>    protected Statement methodInvoker(FrameworkMethod method, Object test) {<a name="line.287"></a>
+<span class="sourceLineNo">288</span>        return new InvokeMethod(method, test);<a name="line.288"></a>
+<span class="sourceLineNo">289</span>    }<a name="line.289"></a>
+<span class="sourceLineNo">290</span><a name="line.290"></a>
+<span class="sourceLineNo">291</span>    /**<a name="line.291"></a>
+<span class="sourceLineNo">292</span>     * Returns a {@link Statement}: if {@code method}'s {@code @Test} annotation<a name="line.292"></a>
+<span class="sourceLineNo">293</span>     * has the {@code expecting} attribute, return normally only if {@code next}<a name="line.293"></a>
+<span class="sourceLineNo">294</span>     * throws an exception of the correct type, and throw an exception<a name="line.294"></a>
+<span class="sourceLineNo">295</span>     * otherwise.<a name="line.295"></a>
+<span class="sourceLineNo">296</span>     */<a name="line.296"></a>
+<span class="sourceLineNo">297</span>    protected Statement possiblyExpectingExceptions(FrameworkMethod method,<a name="line.297"></a>
+<span class="sourceLineNo">298</span>            Object test, Statement next) {<a name="line.298"></a>
+<span class="sourceLineNo">299</span>        Test annotation = method.getAnnotation(Test.class);<a name="line.299"></a>
+<span class="sourceLineNo">300</span>        return expectsException(annotation) ? new ExpectException(next,<a name="line.300"></a>
+<span class="sourceLineNo">301</span>                getExpectedException(annotation)) : next;<a name="line.301"></a>
+<span class="sourceLineNo">302</span>    }<a name="line.302"></a>
+<span class="sourceLineNo">303</span><a name="line.303"></a>
+<span class="sourceLineNo">304</span>    /**<a name="line.304"></a>
+<span class="sourceLineNo">305</span>     * Returns a {@link Statement}: if {@code method}'s {@code @Test} annotation<a name="line.305"></a>
+<span class="sourceLineNo">306</span>     * has the {@code timeout} attribute, throw an exception if {@code next}<a name="line.306"></a>
+<span class="sourceLineNo">307</span>     * takes more than the specified number of milliseconds.<a name="line.307"></a>
+<span class="sourceLineNo">308</span>     */<a name="line.308"></a>
+<span class="sourceLineNo">309</span>    @Deprecated<a name="line.309"></a>
+<span class="sourceLineNo">310</span>    protected Statement withPotentialTimeout(FrameworkMethod method,<a name="line.310"></a>
+<span class="sourceLineNo">311</span>            Object test, Statement next) {<a name="line.311"></a>
+<span class="sourceLineNo">312</span>        long timeout = getTimeout(method.getAnnotation(Test.class));<a name="line.312"></a>
+<span class="sourceLineNo">313</span>        return timeout &gt; 0 ? new FailOnTimeout(next, timeout) : next;<a name="line.313"></a>
+<span class="sourceLineNo">314</span>    }<a name="line.314"></a>
+<span class="sourceLineNo">315</span><a name="line.315"></a>
+<span class="sourceLineNo">316</span>    /**<a name="line.316"></a>
+<span class="sourceLineNo">317</span>     * Returns a {@link Statement}: run all non-overridden {@code @Before}<a name="line.317"></a>
+<span class="sourceLineNo">318</span>     * methods on this class and superclasses before running {@code next}; if<a name="line.318"></a>
+<span class="sourceLineNo">319</span>     * any throws an Exception, stop execution and pass the exception on.<a name="line.319"></a>
+<span class="sourceLineNo">320</span>     */<a name="line.320"></a>
+<span class="sourceLineNo">321</span>    protected Statement withBefores(FrameworkMethod method, Object target,<a name="line.321"></a>
+<span class="sourceLineNo">322</span>            Statement statement) {<a name="line.322"></a>
+<span class="sourceLineNo">323</span>        List&lt;FrameworkMethod&gt; befores = getTestClass().getAnnotatedMethods(<a name="line.323"></a>
+<span class="sourceLineNo">324</span>                Before.class);<a name="line.324"></a>
+<span class="sourceLineNo">325</span>        return befores.isEmpty() ? statement : new RunBefores(statement,<a name="line.325"></a>
+<span class="sourceLineNo">326</span>                befores, target);<a name="line.326"></a>
+<span class="sourceLineNo">327</span>    }<a name="line.327"></a>
+<span class="sourceLineNo">328</span><a name="line.328"></a>
+<span class="sourceLineNo">329</span>    /**<a name="line.329"></a>
+<span class="sourceLineNo">330</span>     * Returns a {@link Statement}: run all non-overridden {@code @After}<a name="line.330"></a>
+<span class="sourceLineNo">331</span>     * methods on this class and superclasses before running {@code next}; all<a name="line.331"></a>
+<span class="sourceLineNo">332</span>     * After methods are always executed: exceptions thrown by previous steps<a name="line.332"></a>
+<span class="sourceLineNo">333</span>     * are combined, if necessary, with exceptions from After methods into a<a name="line.333"></a>
+<span class="sourceLineNo">334</span>     * {@link MultipleFailureException}.<a name="line.334"></a>
+<span class="sourceLineNo">335</span>     */<a name="line.335"></a>
+<span class="sourceLineNo">336</span>    protected Statement withAfters(FrameworkMethod method, Object target,<a name="line.336"></a>
+<span class="sourceLineNo">337</span>            Statement statement) {<a name="line.337"></a>
+<span class="sourceLineNo">338</span>        List&lt;FrameworkMethod&gt; afters = getTestClass().getAnnotatedMethods(<a name="line.338"></a>
+<span class="sourceLineNo">339</span>                After.class);<a name="line.339"></a>
+<span class="sourceLineNo">340</span>        return afters.isEmpty() ? statement : new RunAfters(statement, afters,<a name="line.340"></a>
+<span class="sourceLineNo">341</span>                target);<a name="line.341"></a>
+<span class="sourceLineNo">342</span>    }<a name="line.342"></a>
+<span class="sourceLineNo">343</span><a name="line.343"></a>
+<span class="sourceLineNo">344</span>    private Statement withRules(FrameworkMethod method, Object target,<a name="line.344"></a>
+<span class="sourceLineNo">345</span>            Statement statement) {<a name="line.345"></a>
+<span class="sourceLineNo">346</span>        List&lt;TestRule&gt; testRules = getTestRules(target);<a name="line.346"></a>
+<span class="sourceLineNo">347</span>        Statement result = statement;<a name="line.347"></a>
+<span class="sourceLineNo">348</span>        result = withMethodRules(method, testRules, target, result);<a name="line.348"></a>
+<span class="sourceLineNo">349</span>        result = withTestRules(method, testRules, result);<a name="line.349"></a>
+<span class="sourceLineNo">350</span><a name="line.350"></a>
+<span class="sourceLineNo">351</span>        return result;<a name="line.351"></a>
+<span class="sourceLineNo">352</span>    }<a name="line.352"></a>
+<span class="sourceLineNo">353</span><a name="line.353"></a>
+<span class="sourceLineNo">354</span>    private Statement withMethodRules(FrameworkMethod method, List&lt;TestRule&gt; testRules,<a name="line.354"></a>
+<span class="sourceLineNo">355</span>            Object target, Statement result) {<a name="line.355"></a>
+<span class="sourceLineNo">356</span>        for (org.junit.rules.MethodRule each : getMethodRules(target)) {<a name="line.356"></a>
+<span class="sourceLineNo">357</span>            if (!testRules.contains(each)) {<a name="line.357"></a>
+<span class="sourceLineNo">358</span>                result = each.apply(result, method, target);<a name="line.358"></a>
+<span class="sourceLineNo">359</span>            }<a name="line.359"></a>
+<span class="sourceLineNo">360</span>        }<a name="line.360"></a>
+<span class="sourceLineNo">361</span>        return result;<a name="line.361"></a>
+<span class="sourceLineNo">362</span>    }<a name="line.362"></a>
+<span class="sourceLineNo">363</span><a name="line.363"></a>
+<span class="sourceLineNo">364</span>    private List&lt;org.junit.rules.MethodRule&gt; getMethodRules(Object target) {<a name="line.364"></a>
+<span class="sourceLineNo">365</span>        return rules(target);<a name="line.365"></a>
+<span class="sourceLineNo">366</span>    }<a name="line.366"></a>
+<span class="sourceLineNo">367</span><a name="line.367"></a>
+<span class="sourceLineNo">368</span>    /**<a name="line.368"></a>
+<span class="sourceLineNo">369</span>     * @param target the test case instance<a name="line.369"></a>
+<span class="sourceLineNo">370</span>     * @return a list of MethodRules that should be applied when executing this<a name="line.370"></a>
+<span class="sourceLineNo">371</span>     *         test<a name="line.371"></a>
+<span class="sourceLineNo">372</span>     */<a name="line.372"></a>
+<span class="sourceLineNo">373</span>    protected List&lt;org.junit.rules.MethodRule&gt; rules(Object target) {<a name="line.373"></a>
+<span class="sourceLineNo">374</span>        return getTestClass().getAnnotatedFieldValues(target, Rule.class,<a name="line.374"></a>
+<span class="sourceLineNo">375</span>                org.junit.rules.MethodRule.class);<a name="line.375"></a>
+<span class="sourceLineNo">376</span>    }<a name="line.376"></a>
+<span class="sourceLineNo">377</span><a name="line.377"></a>
+<span class="sourceLineNo">378</span>    /**<a name="line.378"></a>
+<span class="sourceLineNo">379</span>     * Returns a {@link Statement}: apply all non-static fields<a name="line.379"></a>
+<span class="sourceLineNo">380</span>     * annotated with {@link Rule}.<a name="line.380"></a>
+<span class="sourceLineNo">381</span>     *<a name="line.381"></a>
+<span class="sourceLineNo">382</span>     * @param statement The base statement<a name="line.382"></a>
+<span class="sourceLineNo">383</span>     * @return a RunRules statement if any class-level {@link Rule}s are<a name="line.383"></a>
+<span class="sourceLineNo">384</span>     *         found, or the base statement<a name="line.384"></a>
+<span class="sourceLineNo">385</span>     */<a name="line.385"></a>
+<span class="sourceLineNo">386</span>    private Statement withTestRules(FrameworkMethod method, List&lt;TestRule&gt; testRules,<a name="line.386"></a>
+<span class="sourceLineNo">387</span>            Statement statement) {<a name="line.387"></a>
+<span class="sourceLineNo">388</span>        return testRules.isEmpty() ? statement :<a name="line.388"></a>
+<span class="sourceLineNo">389</span>                new RunRules(statement, testRules, describeChild(method));<a name="line.389"></a>
+<span class="sourceLineNo">390</span>    }<a name="line.390"></a>
+<span class="sourceLineNo">391</span><a name="line.391"></a>
+<span class="sourceLineNo">392</span>    /**<a name="line.392"></a>
+<span class="sourceLineNo">393</span>     * @param target the test case instance<a name="line.393"></a>
+<span class="sourceLineNo">394</span>     * @return a list of TestRules that should be applied when executing this<a name="line.394"></a>
+<span class="sourceLineNo">395</span>     *         test<a name="line.395"></a>
+<span class="sourceLineNo">396</span>     */<a name="line.396"></a>
+<span class="sourceLineNo">397</span>    protected List&lt;TestRule&gt; getTestRules(Object target) {<a name="line.397"></a>
+<span class="sourceLineNo">398</span>        List&lt;TestRule&gt; result = getTestClass().getAnnotatedMethodValues(target,<a name="line.398"></a>
+<span class="sourceLineNo">399</span>                Rule.class, TestRule.class);<a name="line.399"></a>
+<span class="sourceLineNo">400</span><a name="line.400"></a>
+<span class="sourceLineNo">401</span>        result.addAll(getTestClass().getAnnotatedFieldValues(target,<a name="line.401"></a>
+<span class="sourceLineNo">402</span>                Rule.class, TestRule.class));<a name="line.402"></a>
+<span class="sourceLineNo">403</span><a name="line.403"></a>
+<span class="sourceLineNo">404</span>        return result;<a name="line.404"></a>
+<span class="sourceLineNo">405</span>    }<a name="line.405"></a>
+<span class="sourceLineNo">406</span><a name="line.406"></a>
+<span class="sourceLineNo">407</span>    private Class&lt;? extends Throwable&gt; getExpectedException(Test annotation) {<a name="line.407"></a>
+<span class="sourceLineNo">408</span>        if (annotation == null || annotation.expected() == None.class) {<a name="line.408"></a>
+<span class="sourceLineNo">409</span>            return null;<a name="line.409"></a>
+<span class="sourceLineNo">410</span>        } else {<a name="line.410"></a>
+<span class="sourceLineNo">411</span>            return annotation.expected();<a name="line.411"></a>
+<span class="sourceLineNo">412</span>        }<a name="line.412"></a>
+<span class="sourceLineNo">413</span>    }<a name="line.413"></a>
+<span class="sourceLineNo">414</span><a name="line.414"></a>
+<span class="sourceLineNo">415</span>    private boolean expectsException(Test annotation) {<a name="line.415"></a>
+<span class="sourceLineNo">416</span>        return getExpectedException(annotation) != null;<a name="line.416"></a>
+<span class="sourceLineNo">417</span>    }<a name="line.417"></a>
+<span class="sourceLineNo">418</span><a name="line.418"></a>
+<span class="sourceLineNo">419</span>    private long getTimeout(Test annotation) {<a name="line.419"></a>
+<span class="sourceLineNo">420</span>        if (annotation == null) {<a name="line.420"></a>
+<span class="sourceLineNo">421</span>            return 0;<a name="line.421"></a>
+<span class="sourceLineNo">422</span>        }<a name="line.422"></a>
+<span class="sourceLineNo">423</span>        return annotation.timeout();<a name="line.423"></a>
+<span class="sourceLineNo">424</span>    }<a name="line.424"></a>
+<span class="sourceLineNo">425</span>}<a name="line.425"></a>
 
 
 
@@ -486,6 +491,7 @@
 
 
 
-</PRE>
-</BODY>
-</HTML>
+</pre>
+</div>
+</body>
+</html>

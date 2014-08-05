@@ -1,91 +1,96 @@
-<HTML>
-<BODY BGCOLOR="white">
-<PRE>
-<FONT color="green">001</FONT>    package org.hamcrest;<a name="line.1"></a>
-<FONT color="green">002</FONT>    <a name="line.2"></a>
-<FONT color="green">003</FONT>    import org.hamcrest.internal.ReflectiveTypeFinder;<a name="line.3"></a>
-<FONT color="green">004</FONT>    <a name="line.4"></a>
-<FONT color="green">005</FONT>    /**<a name="line.5"></a>
-<FONT color="green">006</FONT>     * Convenient base class for Matchers that require a non-null value of a specific type.<a name="line.6"></a>
-<FONT color="green">007</FONT>     * This simply implements the null check, checks the type and then casts.<a name="line.7"></a>
-<FONT color="green">008</FONT>     *<a name="line.8"></a>
-<FONT color="green">009</FONT>     * @author Joe Walnes<a name="line.9"></a>
-<FONT color="green">010</FONT>     * @author Steve Freeman<a name="line.10"></a>
-<FONT color="green">011</FONT>     * @author Nat Pryce<a name="line.11"></a>
-<FONT color="green">012</FONT>     */<a name="line.12"></a>
-<FONT color="green">013</FONT>    public abstract class TypeSafeMatcher&lt;T&gt; extends BaseMatcher&lt;T&gt; {<a name="line.13"></a>
-<FONT color="green">014</FONT>        private static final ReflectiveTypeFinder TYPE_FINDER = new ReflectiveTypeFinder("matchesSafely", 1, 0);<a name="line.14"></a>
-<FONT color="green">015</FONT>        <a name="line.15"></a>
-<FONT color="green">016</FONT>        final private Class&lt;?&gt; expectedType;<a name="line.16"></a>
-<FONT color="green">017</FONT>    <a name="line.17"></a>
-<FONT color="green">018</FONT>        /**<a name="line.18"></a>
-<FONT color="green">019</FONT>         * The default constructor for simple sub types<a name="line.19"></a>
-<FONT color="green">020</FONT>         */<a name="line.20"></a>
-<FONT color="green">021</FONT>        protected TypeSafeMatcher() {<a name="line.21"></a>
-<FONT color="green">022</FONT>            this(TYPE_FINDER);<a name="line.22"></a>
-<FONT color="green">023</FONT>        }<a name="line.23"></a>
-<FONT color="green">024</FONT>       <a name="line.24"></a>
-<FONT color="green">025</FONT>        /**<a name="line.25"></a>
-<FONT color="green">026</FONT>         * Use this constructor if the subclass that implements &lt;code&gt;matchesSafely&lt;/code&gt; <a name="line.26"></a>
-<FONT color="green">027</FONT>         * is &lt;em&gt;not&lt;/em&gt; the class that binds &amp;lt;T&amp;gt; to a type. <a name="line.27"></a>
-<FONT color="green">028</FONT>         * @param expectedType The expectedType of the actual value.<a name="line.28"></a>
-<FONT color="green">029</FONT>         */<a name="line.29"></a>
-<FONT color="green">030</FONT>        protected TypeSafeMatcher(Class&lt;?&gt; expectedType) {<a name="line.30"></a>
-<FONT color="green">031</FONT>            this.expectedType = expectedType;<a name="line.31"></a>
-<FONT color="green">032</FONT>        }<a name="line.32"></a>
-<FONT color="green">033</FONT>        <a name="line.33"></a>
-<FONT color="green">034</FONT>        /**<a name="line.34"></a>
-<FONT color="green">035</FONT>         * Use this constructor if the subclass that implements &lt;code&gt;matchesSafely&lt;/code&gt; <a name="line.35"></a>
-<FONT color="green">036</FONT>         * is &lt;em&gt;not&lt;/em&gt; the class that binds &amp;lt;T&amp;gt; to a type. <a name="line.36"></a>
-<FONT color="green">037</FONT>         * @param typeFinder A type finder to extract the type<a name="line.37"></a>
-<FONT color="green">038</FONT>         */<a name="line.38"></a>
-<FONT color="green">039</FONT>        protected TypeSafeMatcher(ReflectiveTypeFinder typeFinder) {<a name="line.39"></a>
-<FONT color="green">040</FONT>          this.expectedType = typeFinder.findExpectedType(getClass()); <a name="line.40"></a>
-<FONT color="green">041</FONT>        }<a name="line.41"></a>
-<FONT color="green">042</FONT>     <a name="line.42"></a>
-<FONT color="green">043</FONT>        /**<a name="line.43"></a>
-<FONT color="green">044</FONT>         * Subclasses should implement this. The item will already have been checked for<a name="line.44"></a>
-<FONT color="green">045</FONT>         * the specific type and will never be null.<a name="line.45"></a>
-<FONT color="green">046</FONT>         */<a name="line.46"></a>
-<FONT color="green">047</FONT>        protected abstract boolean matchesSafely(T item);<a name="line.47"></a>
-<FONT color="green">048</FONT>        <a name="line.48"></a>
-<FONT color="green">049</FONT>        /**<a name="line.49"></a>
-<FONT color="green">050</FONT>         * Subclasses should override this. The item will already have been checked for<a name="line.50"></a>
-<FONT color="green">051</FONT>         * the specific type and will never be null.<a name="line.51"></a>
-<FONT color="green">052</FONT>         */<a name="line.52"></a>
-<FONT color="green">053</FONT>        protected void describeMismatchSafely(T item, Description mismatchDescription) {<a name="line.53"></a>
-<FONT color="green">054</FONT>            super.describeMismatch(item, mismatchDescription);<a name="line.54"></a>
-<FONT color="green">055</FONT>        }<a name="line.55"></a>
-<FONT color="green">056</FONT>        <a name="line.56"></a>
-<FONT color="green">057</FONT>        /**<a name="line.57"></a>
-<FONT color="green">058</FONT>         * Methods made final to prevent accidental override.<a name="line.58"></a>
-<FONT color="green">059</FONT>         * If you need to override this, there's no point on extending TypeSafeMatcher.<a name="line.59"></a>
-<FONT color="green">060</FONT>         * Instead, extend the {@link BaseMatcher}.<a name="line.60"></a>
-<FONT color="green">061</FONT>         */<a name="line.61"></a>
-<FONT color="green">062</FONT>        @Override<a name="line.62"></a>
-<FONT color="green">063</FONT>        @SuppressWarnings({"unchecked"})<a name="line.63"></a>
-<FONT color="green">064</FONT>        public final boolean matches(Object item) {<a name="line.64"></a>
-<FONT color="green">065</FONT>            return item != null<a name="line.65"></a>
-<FONT color="green">066</FONT>                    &amp;&amp; expectedType.isInstance(item)<a name="line.66"></a>
-<FONT color="green">067</FONT>                    &amp;&amp; matchesSafely((T) item);<a name="line.67"></a>
-<FONT color="green">068</FONT>        }<a name="line.68"></a>
-<FONT color="green">069</FONT>        <a name="line.69"></a>
-<FONT color="green">070</FONT>        @SuppressWarnings("unchecked")<a name="line.70"></a>
-<FONT color="green">071</FONT>        @Override<a name="line.71"></a>
-<FONT color="green">072</FONT>        final public void describeMismatch(Object item, Description description) {<a name="line.72"></a>
-<FONT color="green">073</FONT>            if (item == null) {<a name="line.73"></a>
-<FONT color="green">074</FONT>                super.describeMismatch(item, description);<a name="line.74"></a>
-<FONT color="green">075</FONT>            } else if (! expectedType.isInstance(item)) {<a name="line.75"></a>
-<FONT color="green">076</FONT>                description.appendText("was a ")<a name="line.76"></a>
-<FONT color="green">077</FONT>                           .appendText(item.getClass().getName())<a name="line.77"></a>
-<FONT color="green">078</FONT>                           .appendText(" (")<a name="line.78"></a>
-<FONT color="green">079</FONT>                           .appendValue(item)<a name="line.79"></a>
-<FONT color="green">080</FONT>                           .appendText(")");<a name="line.80"></a>
-<FONT color="green">081</FONT>            } else {<a name="line.81"></a>
-<FONT color="green">082</FONT>                describeMismatchSafely((T)item, description);<a name="line.82"></a>
-<FONT color="green">083</FONT>            }<a name="line.83"></a>
-<FONT color="green">084</FONT>        }<a name="line.84"></a>
-<FONT color="green">085</FONT>    }<a name="line.85"></a>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package org.hamcrest;<a name="line.1"></a>
+<span class="sourceLineNo">002</span><a name="line.2"></a>
+<span class="sourceLineNo">003</span>import org.hamcrest.internal.ReflectiveTypeFinder;<a name="line.3"></a>
+<span class="sourceLineNo">004</span><a name="line.4"></a>
+<span class="sourceLineNo">005</span>/**<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * Convenient base class for Matchers that require a non-null value of a specific type.<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * This simply implements the null check, checks the type and then casts.<a name="line.7"></a>
+<span class="sourceLineNo">008</span> *<a name="line.8"></a>
+<span class="sourceLineNo">009</span> * @author Joe Walnes<a name="line.9"></a>
+<span class="sourceLineNo">010</span> * @author Steve Freeman<a name="line.10"></a>
+<span class="sourceLineNo">011</span> * @author Nat Pryce<a name="line.11"></a>
+<span class="sourceLineNo">012</span> */<a name="line.12"></a>
+<span class="sourceLineNo">013</span>public abstract class TypeSafeMatcher&lt;T&gt; extends BaseMatcher&lt;T&gt; {<a name="line.13"></a>
+<span class="sourceLineNo">014</span>    private static final ReflectiveTypeFinder TYPE_FINDER = new ReflectiveTypeFinder("matchesSafely", 1, 0);<a name="line.14"></a>
+<span class="sourceLineNo">015</span>    <a name="line.15"></a>
+<span class="sourceLineNo">016</span>    final private Class&lt;?&gt; expectedType;<a name="line.16"></a>
+<span class="sourceLineNo">017</span><a name="line.17"></a>
+<span class="sourceLineNo">018</span>    /**<a name="line.18"></a>
+<span class="sourceLineNo">019</span>     * The default constructor for simple sub types<a name="line.19"></a>
+<span class="sourceLineNo">020</span>     */<a name="line.20"></a>
+<span class="sourceLineNo">021</span>    protected TypeSafeMatcher() {<a name="line.21"></a>
+<span class="sourceLineNo">022</span>        this(TYPE_FINDER);<a name="line.22"></a>
+<span class="sourceLineNo">023</span>    }<a name="line.23"></a>
+<span class="sourceLineNo">024</span>   <a name="line.24"></a>
+<span class="sourceLineNo">025</span>    /**<a name="line.25"></a>
+<span class="sourceLineNo">026</span>     * Use this constructor if the subclass that implements &lt;code&gt;matchesSafely&lt;/code&gt; <a name="line.26"></a>
+<span class="sourceLineNo">027</span>     * is &lt;em&gt;not&lt;/em&gt; the class that binds &amp;lt;T&amp;gt; to a type. <a name="line.27"></a>
+<span class="sourceLineNo">028</span>     * @param expectedType The expectedType of the actual value.<a name="line.28"></a>
+<span class="sourceLineNo">029</span>     */<a name="line.29"></a>
+<span class="sourceLineNo">030</span>    protected TypeSafeMatcher(Class&lt;?&gt; expectedType) {<a name="line.30"></a>
+<span class="sourceLineNo">031</span>        this.expectedType = expectedType;<a name="line.31"></a>
+<span class="sourceLineNo">032</span>    }<a name="line.32"></a>
+<span class="sourceLineNo">033</span>    <a name="line.33"></a>
+<span class="sourceLineNo">034</span>    /**<a name="line.34"></a>
+<span class="sourceLineNo">035</span>     * Use this constructor if the subclass that implements &lt;code&gt;matchesSafely&lt;/code&gt; <a name="line.35"></a>
+<span class="sourceLineNo">036</span>     * is &lt;em&gt;not&lt;/em&gt; the class that binds &amp;lt;T&amp;gt; to a type. <a name="line.36"></a>
+<span class="sourceLineNo">037</span>     * @param typeFinder A type finder to extract the type<a name="line.37"></a>
+<span class="sourceLineNo">038</span>     */<a name="line.38"></a>
+<span class="sourceLineNo">039</span>    protected TypeSafeMatcher(ReflectiveTypeFinder typeFinder) {<a name="line.39"></a>
+<span class="sourceLineNo">040</span>      this.expectedType = typeFinder.findExpectedType(getClass()); <a name="line.40"></a>
+<span class="sourceLineNo">041</span>    }<a name="line.41"></a>
+<span class="sourceLineNo">042</span> <a name="line.42"></a>
+<span class="sourceLineNo">043</span>    /**<a name="line.43"></a>
+<span class="sourceLineNo">044</span>     * Subclasses should implement this. The item will already have been checked for<a name="line.44"></a>
+<span class="sourceLineNo">045</span>     * the specific type and will never be null.<a name="line.45"></a>
+<span class="sourceLineNo">046</span>     */<a name="line.46"></a>
+<span class="sourceLineNo">047</span>    protected abstract boolean matchesSafely(T item);<a name="line.47"></a>
+<span class="sourceLineNo">048</span>    <a name="line.48"></a>
+<span class="sourceLineNo">049</span>    /**<a name="line.49"></a>
+<span class="sourceLineNo">050</span>     * Subclasses should override this. The item will already have been checked for<a name="line.50"></a>
+<span class="sourceLineNo">051</span>     * the specific type and will never be null.<a name="line.51"></a>
+<span class="sourceLineNo">052</span>     */<a name="line.52"></a>
+<span class="sourceLineNo">053</span>    protected void describeMismatchSafely(T item, Description mismatchDescription) {<a name="line.53"></a>
+<span class="sourceLineNo">054</span>        super.describeMismatch(item, mismatchDescription);<a name="line.54"></a>
+<span class="sourceLineNo">055</span>    }<a name="line.55"></a>
+<span class="sourceLineNo">056</span>    <a name="line.56"></a>
+<span class="sourceLineNo">057</span>    /**<a name="line.57"></a>
+<span class="sourceLineNo">058</span>     * Methods made final to prevent accidental override.<a name="line.58"></a>
+<span class="sourceLineNo">059</span>     * If you need to override this, there's no point on extending TypeSafeMatcher.<a name="line.59"></a>
+<span class="sourceLineNo">060</span>     * Instead, extend the {@link BaseMatcher}.<a name="line.60"></a>
+<span class="sourceLineNo">061</span>     */<a name="line.61"></a>
+<span class="sourceLineNo">062</span>    @Override<a name="line.62"></a>
+<span class="sourceLineNo">063</span>    @SuppressWarnings({"unchecked"})<a name="line.63"></a>
+<span class="sourceLineNo">064</span>    public final boolean matches(Object item) {<a name="line.64"></a>
+<span class="sourceLineNo">065</span>        return item != null<a name="line.65"></a>
+<span class="sourceLineNo">066</span>                &amp;&amp; expectedType.isInstance(item)<a name="line.66"></a>
+<span class="sourceLineNo">067</span>                &amp;&amp; matchesSafely((T) item);<a name="line.67"></a>
+<span class="sourceLineNo">068</span>    }<a name="line.68"></a>
+<span class="sourceLineNo">069</span>    <a name="line.69"></a>
+<span class="sourceLineNo">070</span>    @SuppressWarnings("unchecked")<a name="line.70"></a>
+<span class="sourceLineNo">071</span>    @Override<a name="line.71"></a>
+<span class="sourceLineNo">072</span>    final public void describeMismatch(Object item, Description description) {<a name="line.72"></a>
+<span class="sourceLineNo">073</span>        if (item == null) {<a name="line.73"></a>
+<span class="sourceLineNo">074</span>            super.describeMismatch(item, description);<a name="line.74"></a>
+<span class="sourceLineNo">075</span>        } else if (! expectedType.isInstance(item)) {<a name="line.75"></a>
+<span class="sourceLineNo">076</span>            description.appendText("was a ")<a name="line.76"></a>
+<span class="sourceLineNo">077</span>                       .appendText(item.getClass().getName())<a name="line.77"></a>
+<span class="sourceLineNo">078</span>                       .appendText(" (")<a name="line.78"></a>
+<span class="sourceLineNo">079</span>                       .appendValue(item)<a name="line.79"></a>
+<span class="sourceLineNo">080</span>                       .appendText(")");<a name="line.80"></a>
+<span class="sourceLineNo">081</span>        } else {<a name="line.81"></a>
+<span class="sourceLineNo">082</span>            describeMismatchSafely((T)item, description);<a name="line.82"></a>
+<span class="sourceLineNo">083</span>        }<a name="line.83"></a>
+<span class="sourceLineNo">084</span>    }<a name="line.84"></a>
+<span class="sourceLineNo">085</span>}<a name="line.85"></a>
 
 
 
@@ -146,6 +151,7 @@
 
 
 
-</PRE>
-</BODY>
-</HTML>
+</pre>
+</div>
+</body>
+</html>

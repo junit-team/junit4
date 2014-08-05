@@ -1,73 +1,78 @@
-<HTML>
-<BODY BGCOLOR="white">
-<PRE>
-<FONT color="green">001</FONT>    package org.junit.experimental;<a name="line.1"></a>
-<FONT color="green">002</FONT>    <a name="line.2"></a>
-<FONT color="green">003</FONT>    import java.util.concurrent.ExecutorService;<a name="line.3"></a>
-<FONT color="green">004</FONT>    import java.util.concurrent.Executors;<a name="line.4"></a>
-<FONT color="green">005</FONT>    import java.util.concurrent.TimeUnit;<a name="line.5"></a>
-<FONT color="green">006</FONT>    <a name="line.6"></a>
-<FONT color="green">007</FONT>    import org.junit.runner.Computer;<a name="line.7"></a>
-<FONT color="green">008</FONT>    import org.junit.runner.Runner;<a name="line.8"></a>
-<FONT color="green">009</FONT>    import org.junit.runners.ParentRunner;<a name="line.9"></a>
-<FONT color="green">010</FONT>    import org.junit.runners.model.InitializationError;<a name="line.10"></a>
-<FONT color="green">011</FONT>    import org.junit.runners.model.RunnerBuilder;<a name="line.11"></a>
-<FONT color="green">012</FONT>    import org.junit.runners.model.RunnerScheduler;<a name="line.12"></a>
-<FONT color="green">013</FONT>    <a name="line.13"></a>
-<FONT color="green">014</FONT>    public class ParallelComputer extends Computer {<a name="line.14"></a>
-<FONT color="green">015</FONT>        private final boolean classes;<a name="line.15"></a>
-<FONT color="green">016</FONT>    <a name="line.16"></a>
-<FONT color="green">017</FONT>        private final boolean methods;<a name="line.17"></a>
-<FONT color="green">018</FONT>    <a name="line.18"></a>
-<FONT color="green">019</FONT>        public ParallelComputer(boolean classes, boolean methods) {<a name="line.19"></a>
-<FONT color="green">020</FONT>            this.classes = classes;<a name="line.20"></a>
-<FONT color="green">021</FONT>            this.methods = methods;<a name="line.21"></a>
-<FONT color="green">022</FONT>        }<a name="line.22"></a>
-<FONT color="green">023</FONT>    <a name="line.23"></a>
-<FONT color="green">024</FONT>        public static Computer classes() {<a name="line.24"></a>
-<FONT color="green">025</FONT>            return new ParallelComputer(true, false);<a name="line.25"></a>
-<FONT color="green">026</FONT>        }<a name="line.26"></a>
-<FONT color="green">027</FONT>    <a name="line.27"></a>
-<FONT color="green">028</FONT>        public static Computer methods() {<a name="line.28"></a>
-<FONT color="green">029</FONT>            return new ParallelComputer(false, true);<a name="line.29"></a>
-<FONT color="green">030</FONT>        }<a name="line.30"></a>
-<FONT color="green">031</FONT>    <a name="line.31"></a>
-<FONT color="green">032</FONT>        private static Runner parallelize(Runner runner) {<a name="line.32"></a>
-<FONT color="green">033</FONT>            if (runner instanceof ParentRunner) {<a name="line.33"></a>
-<FONT color="green">034</FONT>                ((ParentRunner&lt;?&gt;) runner).setScheduler(new RunnerScheduler() {<a name="line.34"></a>
-<FONT color="green">035</FONT>                    private final ExecutorService fService = Executors.newCachedThreadPool();<a name="line.35"></a>
-<FONT color="green">036</FONT>    <a name="line.36"></a>
-<FONT color="green">037</FONT>                    public void schedule(Runnable childStatement) {<a name="line.37"></a>
-<FONT color="green">038</FONT>                        fService.submit(childStatement);<a name="line.38"></a>
-<FONT color="green">039</FONT>                    }<a name="line.39"></a>
-<FONT color="green">040</FONT>    <a name="line.40"></a>
-<FONT color="green">041</FONT>                    public void finished() {<a name="line.41"></a>
-<FONT color="green">042</FONT>                        try {<a name="line.42"></a>
-<FONT color="green">043</FONT>                            fService.shutdown();<a name="line.43"></a>
-<FONT color="green">044</FONT>                            fService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);<a name="line.44"></a>
-<FONT color="green">045</FONT>                        } catch (InterruptedException e) {<a name="line.45"></a>
-<FONT color="green">046</FONT>                            e.printStackTrace(System.err);<a name="line.46"></a>
-<FONT color="green">047</FONT>                        }<a name="line.47"></a>
-<FONT color="green">048</FONT>                    }<a name="line.48"></a>
-<FONT color="green">049</FONT>                });<a name="line.49"></a>
-<FONT color="green">050</FONT>            }<a name="line.50"></a>
-<FONT color="green">051</FONT>            return runner;<a name="line.51"></a>
-<FONT color="green">052</FONT>        }<a name="line.52"></a>
-<FONT color="green">053</FONT>    <a name="line.53"></a>
-<FONT color="green">054</FONT>        @Override<a name="line.54"></a>
-<FONT color="green">055</FONT>        public Runner getSuite(RunnerBuilder builder, java.lang.Class&lt;?&gt;[] classes)<a name="line.55"></a>
-<FONT color="green">056</FONT>                throws InitializationError {<a name="line.56"></a>
-<FONT color="green">057</FONT>            Runner suite = super.getSuite(builder, classes);<a name="line.57"></a>
-<FONT color="green">058</FONT>            return this.classes ? parallelize(suite) : suite;<a name="line.58"></a>
-<FONT color="green">059</FONT>        }<a name="line.59"></a>
-<FONT color="green">060</FONT>    <a name="line.60"></a>
-<FONT color="green">061</FONT>        @Override<a name="line.61"></a>
-<FONT color="green">062</FONT>        protected Runner getRunner(RunnerBuilder builder, Class&lt;?&gt; testClass)<a name="line.62"></a>
-<FONT color="green">063</FONT>                throws Throwable {<a name="line.63"></a>
-<FONT color="green">064</FONT>            Runner runner = super.getRunner(builder, testClass);<a name="line.64"></a>
-<FONT color="green">065</FONT>            return methods ? parallelize(runner) : runner;<a name="line.65"></a>
-<FONT color="green">066</FONT>        }<a name="line.66"></a>
-<FONT color="green">067</FONT>    }<a name="line.67"></a>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package org.junit.experimental;<a name="line.1"></a>
+<span class="sourceLineNo">002</span><a name="line.2"></a>
+<span class="sourceLineNo">003</span>import java.util.concurrent.ExecutorService;<a name="line.3"></a>
+<span class="sourceLineNo">004</span>import java.util.concurrent.Executors;<a name="line.4"></a>
+<span class="sourceLineNo">005</span>import java.util.concurrent.TimeUnit;<a name="line.5"></a>
+<span class="sourceLineNo">006</span><a name="line.6"></a>
+<span class="sourceLineNo">007</span>import org.junit.runner.Computer;<a name="line.7"></a>
+<span class="sourceLineNo">008</span>import org.junit.runner.Runner;<a name="line.8"></a>
+<span class="sourceLineNo">009</span>import org.junit.runners.ParentRunner;<a name="line.9"></a>
+<span class="sourceLineNo">010</span>import org.junit.runners.model.InitializationError;<a name="line.10"></a>
+<span class="sourceLineNo">011</span>import org.junit.runners.model.RunnerBuilder;<a name="line.11"></a>
+<span class="sourceLineNo">012</span>import org.junit.runners.model.RunnerScheduler;<a name="line.12"></a>
+<span class="sourceLineNo">013</span><a name="line.13"></a>
+<span class="sourceLineNo">014</span>public class ParallelComputer extends Computer {<a name="line.14"></a>
+<span class="sourceLineNo">015</span>    private final boolean classes;<a name="line.15"></a>
+<span class="sourceLineNo">016</span><a name="line.16"></a>
+<span class="sourceLineNo">017</span>    private final boolean methods;<a name="line.17"></a>
+<span class="sourceLineNo">018</span><a name="line.18"></a>
+<span class="sourceLineNo">019</span>    public ParallelComputer(boolean classes, boolean methods) {<a name="line.19"></a>
+<span class="sourceLineNo">020</span>        this.classes = classes;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>        this.methods = methods;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>    }<a name="line.22"></a>
+<span class="sourceLineNo">023</span><a name="line.23"></a>
+<span class="sourceLineNo">024</span>    public static Computer classes() {<a name="line.24"></a>
+<span class="sourceLineNo">025</span>        return new ParallelComputer(true, false);<a name="line.25"></a>
+<span class="sourceLineNo">026</span>    }<a name="line.26"></a>
+<span class="sourceLineNo">027</span><a name="line.27"></a>
+<span class="sourceLineNo">028</span>    public static Computer methods() {<a name="line.28"></a>
+<span class="sourceLineNo">029</span>        return new ParallelComputer(false, true);<a name="line.29"></a>
+<span class="sourceLineNo">030</span>    }<a name="line.30"></a>
+<span class="sourceLineNo">031</span><a name="line.31"></a>
+<span class="sourceLineNo">032</span>    private static Runner parallelize(Runner runner) {<a name="line.32"></a>
+<span class="sourceLineNo">033</span>        if (runner instanceof ParentRunner) {<a name="line.33"></a>
+<span class="sourceLineNo">034</span>            ((ParentRunner&lt;?&gt;) runner).setScheduler(new RunnerScheduler() {<a name="line.34"></a>
+<span class="sourceLineNo">035</span>                private final ExecutorService fService = Executors.newCachedThreadPool();<a name="line.35"></a>
+<span class="sourceLineNo">036</span><a name="line.36"></a>
+<span class="sourceLineNo">037</span>                public void schedule(Runnable childStatement) {<a name="line.37"></a>
+<span class="sourceLineNo">038</span>                    fService.submit(childStatement);<a name="line.38"></a>
+<span class="sourceLineNo">039</span>                }<a name="line.39"></a>
+<span class="sourceLineNo">040</span><a name="line.40"></a>
+<span class="sourceLineNo">041</span>                public void finished() {<a name="line.41"></a>
+<span class="sourceLineNo">042</span>                    try {<a name="line.42"></a>
+<span class="sourceLineNo">043</span>                        fService.shutdown();<a name="line.43"></a>
+<span class="sourceLineNo">044</span>                        fService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);<a name="line.44"></a>
+<span class="sourceLineNo">045</span>                    } catch (InterruptedException e) {<a name="line.45"></a>
+<span class="sourceLineNo">046</span>                        e.printStackTrace(System.err);<a name="line.46"></a>
+<span class="sourceLineNo">047</span>                    }<a name="line.47"></a>
+<span class="sourceLineNo">048</span>                }<a name="line.48"></a>
+<span class="sourceLineNo">049</span>            });<a name="line.49"></a>
+<span class="sourceLineNo">050</span>        }<a name="line.50"></a>
+<span class="sourceLineNo">051</span>        return runner;<a name="line.51"></a>
+<span class="sourceLineNo">052</span>    }<a name="line.52"></a>
+<span class="sourceLineNo">053</span><a name="line.53"></a>
+<span class="sourceLineNo">054</span>    @Override<a name="line.54"></a>
+<span class="sourceLineNo">055</span>    public Runner getSuite(RunnerBuilder builder, java.lang.Class&lt;?&gt;[] classes)<a name="line.55"></a>
+<span class="sourceLineNo">056</span>            throws InitializationError {<a name="line.56"></a>
+<span class="sourceLineNo">057</span>        Runner suite = super.getSuite(builder, classes);<a name="line.57"></a>
+<span class="sourceLineNo">058</span>        return this.classes ? parallelize(suite) : suite;<a name="line.58"></a>
+<span class="sourceLineNo">059</span>    }<a name="line.59"></a>
+<span class="sourceLineNo">060</span><a name="line.60"></a>
+<span class="sourceLineNo">061</span>    @Override<a name="line.61"></a>
+<span class="sourceLineNo">062</span>    protected Runner getRunner(RunnerBuilder builder, Class&lt;?&gt; testClass)<a name="line.62"></a>
+<span class="sourceLineNo">063</span>            throws Throwable {<a name="line.63"></a>
+<span class="sourceLineNo">064</span>        Runner runner = super.getRunner(builder, testClass);<a name="line.64"></a>
+<span class="sourceLineNo">065</span>        return methods ? parallelize(runner) : runner;<a name="line.65"></a>
+<span class="sourceLineNo">066</span>    }<a name="line.66"></a>
+<span class="sourceLineNo">067</span>}<a name="line.67"></a>
 
 
 
@@ -128,6 +133,7 @@
 
 
 
-</PRE>
-</BODY>
-</HTML>
+</pre>
+</div>
+</body>
+</html>

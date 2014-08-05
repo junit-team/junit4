@@ -1,25 +1,30 @@
-<HTML>
-<BODY BGCOLOR="white">
-<PRE>
-<FONT color="green">001</FONT>    package org.junit.validator;<a name="line.1"></a>
-<FONT color="green">002</FONT>    <a name="line.2"></a>
-<FONT color="green">003</FONT>    import java.lang.annotation.Inherited;<a name="line.3"></a>
-<FONT color="green">004</FONT>    import java.lang.annotation.Retention;<a name="line.4"></a>
-<FONT color="green">005</FONT>    import java.lang.annotation.RetentionPolicy;<a name="line.5"></a>
-<FONT color="green">006</FONT>    <a name="line.6"></a>
-<FONT color="green">007</FONT>    /**<a name="line.7"></a>
-<FONT color="green">008</FONT>     * Allows for an {@link AnnotationValidator} to be attached to an annotation.<a name="line.8"></a>
-<FONT color="green">009</FONT>     *<a name="line.9"></a>
-<FONT color="green">010</FONT>     * &lt;p&gt;When attached to an annotation, the validator will be instantiated and invoked<a name="line.10"></a>
-<FONT color="green">011</FONT>     * by the {@link org.junit.runners.ParentRunner}.&lt;/p&gt;<a name="line.11"></a>
-<FONT color="green">012</FONT>     *<a name="line.12"></a>
-<FONT color="green">013</FONT>     * @since 4.12<a name="line.13"></a>
-<FONT color="green">014</FONT>     */<a name="line.14"></a>
-<FONT color="green">015</FONT>    @Retention(RetentionPolicy.RUNTIME)<a name="line.15"></a>
-<FONT color="green">016</FONT>    @Inherited<a name="line.16"></a>
-<FONT color="green">017</FONT>    public @interface ValidateWith {<a name="line.17"></a>
-<FONT color="green">018</FONT>        Class&lt;? extends AnnotationValidator&gt; value();<a name="line.18"></a>
-<FONT color="green">019</FONT>    }<a name="line.19"></a>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package org.junit.validator;<a name="line.1"></a>
+<span class="sourceLineNo">002</span><a name="line.2"></a>
+<span class="sourceLineNo">003</span>import java.lang.annotation.Inherited;<a name="line.3"></a>
+<span class="sourceLineNo">004</span>import java.lang.annotation.Retention;<a name="line.4"></a>
+<span class="sourceLineNo">005</span>import java.lang.annotation.RetentionPolicy;<a name="line.5"></a>
+<span class="sourceLineNo">006</span><a name="line.6"></a>
+<span class="sourceLineNo">007</span>/**<a name="line.7"></a>
+<span class="sourceLineNo">008</span> * Allows for an {@link AnnotationValidator} to be attached to an annotation.<a name="line.8"></a>
+<span class="sourceLineNo">009</span> *<a name="line.9"></a>
+<span class="sourceLineNo">010</span> * &lt;p&gt;When attached to an annotation, the validator will be instantiated and invoked<a name="line.10"></a>
+<span class="sourceLineNo">011</span> * by the {@link org.junit.runners.ParentRunner}.&lt;/p&gt;<a name="line.11"></a>
+<span class="sourceLineNo">012</span> *<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * @since 4.12<a name="line.13"></a>
+<span class="sourceLineNo">014</span> */<a name="line.14"></a>
+<span class="sourceLineNo">015</span>@Retention(RetentionPolicy.RUNTIME)<a name="line.15"></a>
+<span class="sourceLineNo">016</span>@Inherited<a name="line.16"></a>
+<span class="sourceLineNo">017</span>public @interface ValidateWith {<a name="line.17"></a>
+<span class="sourceLineNo">018</span>    Class&lt;? extends AnnotationValidator&gt; value();<a name="line.18"></a>
+<span class="sourceLineNo">019</span>}<a name="line.19"></a>
 
 
 
@@ -80,6 +85,7 @@
 
 
 
-</PRE>
-</BODY>
-</HTML>
+</pre>
+</div>
+</body>
+</html>
