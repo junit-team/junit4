@@ -165,7 +165,6 @@ import org.junit.runners.parameterized.TestWithParameters;
  * @since 4.0
  */
 public class Parameterized extends Suite {
-    private static final String INDEX_MATCHER_PATTERN = "(\\{)index([^\\}]*\\})";
 
     /**
      * Annotation for a method which provides parameters to be injected into the
@@ -237,6 +236,8 @@ public class Parameterized extends Suite {
     private static final ParametersRunnerFactory DEFAULT_FACTORY = new BlockJUnit4ClassRunnerWithParametersFactory();
 
     private static final List<Runner> NO_RUNNERS = Collections.<Runner>emptyList();
+
+    private static final Pattern INDEX_MATCHER_PATTERN = Pattern.compile("(\\{)index([^\\}]*\\})");
 
     private final List<Runner> runners;
 
@@ -347,8 +348,7 @@ public class Parameterized extends Suite {
     private static TestWithParameters createTestWithParameters(
             TestClass testClass, String pattern, int index, Object[] parameters) {
         String finalPattern = pattern;
-        Pattern indexMatcherPattern = Pattern.compile(INDEX_MATCHER_PATTERN);
-        Matcher matcher = indexMatcherPattern.matcher(pattern);
+        Matcher matcher = INDEX_MATCHER_PATTERN.matcher(pattern);
         while (matcher.find()) {
             String idxPattern = matcher.group(1) + "0" + matcher.group(2);
             finalPattern = finalPattern.replace(matcher.group(), MessageFormat.format(idxPattern, index));
