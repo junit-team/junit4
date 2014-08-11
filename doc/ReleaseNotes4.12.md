@@ -586,11 +586,6 @@ Follow this link for _IntelliJ IDEA_: [http://www.jetbrains.com/idea/webhelp/act
 # Miscellaneous
 
 
-### [Pull request #862:] (https://github.com/junit-team/junit/pull/862) Delete classes that are deprecated for six years
-
-`JUnit4ClassRunner` was deprecated in JUnit 4.3 (six years and nine major releases ago) with a comment saying "This may disappear as soon as 1 April 2009". We started having some problems with running the tests in JDK 7, and we decided to delete the class and its support classes. Although we try very hard to maintain backwards compatibility, `JUnit4ClassRunner` didn't support `Rule`s, it wasn't designed to be extensible, and it was in an internal package. Please use `BlockJUnit4ClassRunner` instead.
-
-
 ### [Pull request #776:](https://github.com/junit-team/junit/pull/776) Add support for [Travis CI](http://travis-ci.org)
 
 Travis CI is a free CI server for public Github repositories. Every pull request is run by Travis CI and Github's web interface shows the CI result for each pull request. Every user can use Travis CI for testing her branches, too.
