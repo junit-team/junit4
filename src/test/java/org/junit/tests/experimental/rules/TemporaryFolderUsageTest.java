@@ -84,7 +84,16 @@ public class TemporaryFolderUsageTest {
         thrown.expectMessage("a folder with the name 'level1' already exists");
         tempFolder.newFolder("level1");
     }
-
+    
+    @Test
+    public void newFolderWithGivenFolderThrowsIOExceptionIfFolderNameConsistsOfMultiplePathComponents()
+            throws IOException {
+        tempFolder.create();
+        thrown.expect(IOException.class);
+        thrown.expectMessage("name cannot consist of multiple path components");
+        tempFolder.newFolder("temp1/temp2");
+    }
+    
     @Test
     public void newFolderWithGivenPathThrowsIllegalArgumentExceptionIfPathExists() throws IOException {
         tempFolder.create();
@@ -95,6 +104,15 @@ public class TemporaryFolderUsageTest {
         tempFolder.newFolder("level1", "level2", "level3");
     }
 
+    @Test
+    public void newFolderWithGivenPathThrowsIOExceptionIfFolderNamesConsistOfMultiplePathComponents()
+            throws IOException {
+        tempFolder.create();
+        thrown.expect(IOException.class);
+        thrown.expectMessage("name cannot consist of multiple path components");
+        tempFolder.newFolder("temp1", "temp2", "temp3/temp4");
+    }
+    
     @Test
     public void createInitializesRootFolder() throws IOException {
         tempFolder.create();
