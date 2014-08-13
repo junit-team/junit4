@@ -17,27 +17,27 @@ import org.junit.runners.BlockJUnit4ClassRunner;
  */
 @Deprecated
 public class ClassRoadie {
-    private RunNotifier fNotifier;
-    private TestClass fTestClass;
-    private Description fDescription;
-    private final Runnable fRunnable;
+    private RunNotifier notifier;
+    private TestClass testClass;
+    private Description description;
+    private final Runnable runnable;
 
     public ClassRoadie(RunNotifier notifier, TestClass testClass,
             Description description, Runnable runnable) {
-        fNotifier = notifier;
-        fTestClass = testClass;
-        fDescription = description;
-        fRunnable = runnable;
+        this.notifier = notifier;
+        this.testClass = testClass;
+        this.description = description;
+        this.runnable = runnable;
     }
 
     protected void runUnprotected() {
-        fRunnable.run();
+        runnable.run();
     }
 
     ;
 
     protected void addFailure(Throwable targetException) {
-        fNotifier.fireTestFailure(new Failure(fDescription, targetException));
+        notifier.fireTestFailure(new Failure(description, targetException));
     }
 
     public void runProtected() {
@@ -53,7 +53,7 @@ public class ClassRoadie {
     private void runBefores() throws FailedBefore {
         try {
             try {
-                List<Method> befores = fTestClass.getBefores();
+                List<Method> befores = testClass.getBefores();
                 for (Method before : befores) {
                     before.invoke(null);
                 }
@@ -69,7 +69,7 @@ public class ClassRoadie {
     }
 
     private void runAfters() {
-        List<Method> afters = fTestClass.getAfters();
+        List<Method> afters = testClass.getAfters();
         for (Method after : afters) {
             try {
                 after.invoke(null);
