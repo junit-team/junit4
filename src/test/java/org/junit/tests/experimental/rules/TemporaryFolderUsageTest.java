@@ -185,6 +185,17 @@ public class TemporaryFolderUsageTest {
         assertThat(tempDir, is(folder.getRoot().getParentFile()));
     }
 
+    @Test
+    public void canUseMultiplePathComponentsInFolderName() throws IOException {
+        File tempDir = createTemporaryFolder();
+
+        TemporaryFolder folder = new TemporaryFolder(tempDir);
+        folder.create();
+
+        File file = folder.newFolder("foo/bar");
+        assertTrue(file.exists());
+    }
+
     private File createTemporaryFolder() throws IOException {
         File tempDir = File.createTempFile("junit", "tempFolder");
         assertTrue("Unable to delete temporary file", tempDir.delete());
