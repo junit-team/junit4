@@ -3,6 +3,7 @@ package org.junit.rules;
 import static java.lang.String.format;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.internal.matchers.ThrowableCauseMatcher.hasCause;
@@ -210,6 +211,19 @@ public class ExpectedException implements TestRule {
      */
     public void expectMessage(Matcher<String> matcher) {
         expect(hasMessage(matcher));
+    }
+
+    /**
+     * Verify that your code throws an exception whose message equals
+     * a specific text.
+     * <pre> &#064;Test
+     * public void throwsExceptionWhoseMessageEqualsSpecificText() {
+     *     thrown.expectEqualMessage(&quot;The message&quot;);
+     *     throw new NullPointerException(&quot;The message&quot;);
+     * }</pre>
+     */
+    public void expectEqualMessage(String string) {
+        expectMessage(equalTo(string));
     }
 
     /**
