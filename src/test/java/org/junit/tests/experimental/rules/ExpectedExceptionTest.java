@@ -87,7 +87,18 @@ public class ExpectedExceptionTest {
                 {
                         UseCustomMessageWithPlaceHolder.class,
                         hasSingleFailureWithMessage(ARBITRARY_MESSAGE
-                                + " - an instance of java.lang.IllegalArgumentException") }
+                                + " - an instance of java.lang.IllegalArgumentException") },
+                {
+                        HasUnequalMessage.class,
+                        hasSingleFailureWithMessage(
+                                startsWith("\nExpected: exception with message \"expectedMessage\"\n" +
+                                        "     but: message was \"actualMessage\"")
+                        )
+                },
+                {
+                        HasEqualMessage.class,
+                        everyTestRunSuccessful()
+                }
         });
     }
 
@@ -204,6 +215,28 @@ public class ExpectedExceptionTest {
         public void throwsMore() {
             thrown.expectMessage("anything!");
             throw new NullPointerException();
+        }
+    }
+
+    public static class HasEqualMessage {
+        @Rule
+        public ExpectedException thrown = none();
+
+        @Test
+        public void throwsNullPointerException() {
+            thrown.expectEqualMessage("expectedMessage");
+            throw new IllegalArgumentException("expectedMessage");
+        }
+    }
+
+    public static class HasUnequalMessage {
+        @Rule
+        public ExpectedException thrown = none();
+
+        @Test
+        public void throwsNullPointerException() {
+            thrown.expectEqualMessage("expectedMessage");
+            throw new IllegalArgumentException("actualMessage");
         }
     }
 
