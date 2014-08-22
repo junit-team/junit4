@@ -26,7 +26,9 @@ public class AssumptionViolatedException extends RuntimeException implements Sel
     private final Matcher<?> matcher;
 
     public AssumptionViolatedException(String assumption, boolean valueMatcher, Object value, Matcher<?> matcher) {
-        super(value instanceof Throwable ? (Throwable) value : null);
+        if (value instanceof Throwable) {
+            initCause((Throwable) value);
+        }
         this.assumption = assumption;
         this.value = value;
         this.matcher = matcher;
