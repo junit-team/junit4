@@ -1,8 +1,6 @@
 package org.junit;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
 
@@ -47,5 +45,25 @@ public class AssumptionViolatedExceptionTest {
     public void simpleAssumptionViolatedExceptionDescribesItself() {
         AssumptionViolatedException e = new AssumptionViolatedException("not enough money");
         assertThat(StringDescription.asString(e), is("not enough money"));
+    }
+
+    @Test
+    public void nullCause() {
+        AssumptionViolatedException e = new AssumptionViolatedException("invalid number");
+        assertThat(e.getCause(), nullValue());
+    }
+
+    @Test
+    public void notNullCause() {
+        Throwable cause = new Exception();
+        AssumptionViolatedException e = new AssumptionViolatedException("invalid number", cause);
+        assertThat(e.getCause(), is(cause));
+    }
+
+    @Test
+    public void invalidCause() {
+        Object invalidCause = new String("a string");
+        AssumptionViolatedException e = new AssumptionViolatedException("invalid number", false, invalidCause, null);
+        assertThat(e.getCause(), nullValue());
     }
 }
