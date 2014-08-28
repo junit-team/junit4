@@ -26,9 +26,6 @@ public class AssumptionViolatedException extends RuntimeException implements Sel
     private final Matcher<?> matcher;
 
     public AssumptionViolatedException(String assumption, boolean valueMatcher, Object value, Matcher<?> matcher) {
-        if (value instanceof Throwable) {
-            initCause((Throwable) value);
-        }
         this.assumption = assumption;
         this.value = value;
         this.matcher = matcher;
@@ -63,11 +60,18 @@ public class AssumptionViolatedException extends RuntimeException implements Sel
      */
     public AssumptionViolatedException(String assumption, Throwable e) {
         this(assumption, false, e, null);
+        if (e != null) {
+            initCause(e);
+        }
     }
 
     @Override
     public String getMessage() {
         return StringDescription.asString(this);
+    }
+
+    public Object getValue() {
+        return value;
     }
 
     public void describeTo(Description description) {
