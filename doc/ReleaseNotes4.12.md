@@ -285,7 +285,14 @@ This rule is particularly useful in combination with the `Timeout` rule.
 public DisableOnDebug timeout = new DisableOnDebug(Timeout.seconds(1));
 ```
 
-See the Java doc for more detail and limitations. Related to https://github.com/junit-team/junit/issues/738
+See the Javadoc for more detail and limitations. Related to https://github.com/junit-team/junit/issues/738
+
+### [Pull request #974:](https://github.com/junit-team/junit/pull/974) Updated `TemporaryFolder.newFolder()` to give an error message if a path contains a slash.
+
+If you call `TemporaryFolder.newFolder("foo/bar")` in JUnit 4.10 the method returns a `File` object for the new folder but actually fails to create it. That is contrary to the expected behaviour of the method which is to actually create the folder. In JUnit 4.11 the same call throws an exception. Nowhere in the documentation does it explain that the String(s) passed to that method can only be single path components.
+
+With this fix, folder names are validated to contain single path name. If the folder name consists of multiple path names, an exception is thrown stating that usage of multiple path components in a string containing folder name is disallowed.
+
 
 # Theories
 
