@@ -1,10 +1,10 @@
 package org.junit.rules;
 
+import java.util.concurrent.TimeUnit;
+
 import org.junit.internal.runners.statements.FailOnTimeout;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * The Timeout Rule applies the same timeout to all test methods in a class:
@@ -118,6 +118,6 @@ public class Timeout implements TestRule {
     }
 
     public Statement apply(Statement base, Description description) {
-        return new FailOnTimeout(base, timeout, timeUnit, lookForStuckThread);
+        return new FailOnTimeout(base, timeout, timeUnit, lookForStuckThread, description.getDisplayName());
     }
 }

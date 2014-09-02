@@ -19,21 +19,24 @@ public class FailOnTimeout extends Statement {
     private final TimeUnit timeUnit;
     private final long timeout;
     private final boolean lookForStuckThread;
+    private String testName;
     private volatile ThreadGroup threadGroup = null;
 
-    public FailOnTimeout(Statement originalStatement, long millis) {
-        this(originalStatement, millis, TimeUnit.MILLISECONDS);
+    public FailOnTimeout(Statement originalStatement, long millis, String testName) {
+        this(originalStatement, millis, TimeUnit.MILLISECONDS, testName);
     }
 
-    public FailOnTimeout(Statement originalStatement, long timeout, TimeUnit unit) {
-        this(originalStatement, timeout, unit, false);
+    public FailOnTimeout(Statement originalStatement, long timeout, TimeUnit unit, String testName) {
+        this(originalStatement, timeout, unit, false, testName);
     }
 
-    public FailOnTimeout(Statement originalStatement, long timeout, TimeUnit unit, boolean lookForStuckThread) {
+    public FailOnTimeout(Statement originalStatement, long timeout, TimeUnit unit, boolean lookForStuckThread,
+                         String testName) {
         this.originalStatement = originalStatement;
         this.timeout = timeout;
         timeUnit = unit;
         this.lookForStuckThread = lookForStuckThread;
+        this.testName = testName;
     }
 
     @Override
@@ -41,7 +44,7 @@ public class FailOnTimeout extends Statement {
         CallableStatement callable = new CallableStatement();
         FutureTask<Throwable> task = new FutureTask<Throwable>(callable);
         threadGroup = new ThreadGroup("FailOnTimeoutGroup");
-        Thread thread = new Thread(threadGroup, task, "Time-limited test");
+        Thread thread = new Thread(threadGroup, task, testName);
         thread.setDaemon(true);
         thread.start();
         callable.awaitStarted();

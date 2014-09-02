@@ -12,7 +12,6 @@ import static org.junit.Assert.fail;
 
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.internal.runners.statements.FailOnTimeout;
@@ -32,8 +31,7 @@ public class FailOnTimeoutTest {
 
     private final TestStatement statement = new TestStatement();
 
-    private final FailOnTimeout failOnTimeout = new FailOnTimeout(statement,
-            TIMEOUT);
+    private final FailOnTimeout failOnTimeout = new FailOnTimeout(statement,TIMEOUT, "Test Name");
 
     @Test
     public void throwsTestTimedOutException() throws Throwable {
@@ -115,7 +113,7 @@ public class FailOnTimeoutTest {
     public void stopEndlessStatement() throws Throwable {
         InfiniteLoopStatement infiniteLoop = new InfiniteLoopStatement();
         FailOnTimeout infiniteLoopTimeout = new FailOnTimeout(infiniteLoop,
-                TIMEOUT);
+                TIMEOUT,"TestName");
         try {
             infiniteLoopTimeout.evaluate();
         } catch (Exception timeoutException) {
@@ -142,7 +140,7 @@ public class FailOnTimeoutTest {
     @Test
     public void stackTraceContainsRealCauseOfTimeout() throws Throwable {
         StuckStatement stuck = new StuckStatement();
-        FailOnTimeout stuckTimeout = new FailOnTimeout(stuck, TIMEOUT);
+        FailOnTimeout stuckTimeout = new FailOnTimeout(stuck, TIMEOUT, "TestName");
         try {
             stuckTimeout.evaluate();
             // We must not get here, we expect a timeout exception
@@ -166,6 +164,20 @@ public class FailOnTimeoutTest {
             assertFalse(
                     "Stack trace contains other than the real cause of the timeout, which can be very misleading",
                     stackTraceContainsOtherThanTheRealCauseOfTheTimeout);
+        }
+    }
+
+    @Test
+    public void timeoutThreadNameTest() throws Throwable {
+        Statement stuck = new InfiniteLoopStatement();
+        FailOnTimeout stuckTimeout = new FailOnTimeout(stuck, TIMEOUT, "TestName");
+        try {
+            stuckTimeout.evaluate();
+            // We must not get here, we expect a timeout exception
+            fail("Expected timeout exception");
+        } catch (Exception timeoutException) {
+            timeoutException.printStackTrace();
+            StackTraceElement[] stackTrace = timeoutException.getStackTrace();
         }
     }
 
