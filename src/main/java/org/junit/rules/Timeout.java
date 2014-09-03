@@ -118,6 +118,17 @@ public class Timeout implements TestRule {
     }
 
     public Statement apply(Statement base, Description description) {
-        return new FailOnTimeout(base, timeout, timeUnit, lookForStuckThread);
+        try {
+            return FailOnTimeout.builder()
+                .withTimeout(timeout, timeUnit)
+                .withLookingForStuckThread(lookForStuckThread)
+                .build(base);
+        } catch (final Exception e) {
+            return new Statement() {
+                @Override public void evaluate() throws Throwable {
+                    throw new RuntimeException("Invalid parameters for Timeout", e);
+                }
+            };
+        }
     }
 }
