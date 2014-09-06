@@ -22,6 +22,7 @@ import org.junit.AssumptionViolatedException;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.internal.matchers.ThrowableCauseMatcher;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -126,7 +127,7 @@ public class AssumptionTest {
             assumeNoException(exception);
             fail("Should have thrown exception");
         } catch (AssumptionViolatedException e) {
-            assertThat(e.getCause(), is(exception));
+            assertThat((Throwable) e.getValue(), is(exception));
         }
     }
 
@@ -229,7 +230,7 @@ public class AssumptionTest {
         final List<Failure> failures =
                 runAndGetAssumptionFailures(HasAssumeWithMessageAndCause.class);
         assertTrue(failures.get(0).getMessage().contains(message));
-        assertSame(failures.get(0).getException().getCause(), e);
+        assertSame(((AssumptionViolatedException) failures.get(0).getException()).getValue(), e);
     }
 
     public static class HasFailingAssumptionWithMessage {

@@ -3,6 +3,7 @@ package org.junit;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
 
@@ -47,5 +48,43 @@ public class AssumptionViolatedExceptionTest {
     public void simpleAssumptionViolatedExceptionDescribesItself() {
         AssumptionViolatedException e = new AssumptionViolatedException("not enough money");
         assertThat(StringDescription.asString(e), is("not enough money"));
+    }
+
+    @Test
+    public void nullCause() {
+        AssumptionViolatedException e = new AssumptionViolatedException("invalid number");
+        assertThat(e.getCause(), nullValue());
+    }
+
+    @Test
+    public void nullCauseWithObjectAndMatcher() {
+        Throwable testObject = new Exception();
+        AssumptionViolatedException e = new AssumptionViolatedException(testObject, containsString("test matcher"));
+        assertThat(e.getCause(), nullValue());
+    }
+
+    @Test
+    public void nullCauseWithAssumptionObjectAndMatcher() {
+        Throwable testObject = new Exception();
+        AssumptionViolatedException e = new AssumptionViolatedException(
+            "sample assumption", testObject, containsString("test matcher")
+        );
+        assertThat(e.getCause(), nullValue());
+    }
+
+    @Test
+    public void nullCauseWithMainConstructor() {
+        Throwable testObject = new Exception();
+        AssumptionViolatedException e = new AssumptionViolatedException(
+            "sample assumption", false, testObject, containsString("test matcher")
+        );
+        assertThat(e.getCause(), nullValue());
+    }
+
+    @Test
+    public void notNullCause() {
+        Throwable cause = new Exception();
+        AssumptionViolatedException e = new AssumptionViolatedException("invalid number", cause);
+        assertThat(e.getCause(), is(cause));
     }
 }
