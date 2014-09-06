@@ -21,19 +21,94 @@ public class FailOnTimeout extends Statement {
     private final boolean lookForStuckThread;
     private volatile ThreadGroup threadGroup = null;
 
-    public FailOnTimeout(Statement originalStatement, long millis) {
-        this(originalStatement, millis, TimeUnit.MILLISECONDS);
+    /**
+     * Returns a new builder for building an instance.
+     */
+    public static Builder builder() {
+        return new Builder();
     }
 
-    public FailOnTimeout(Statement originalStatement, long timeout, TimeUnit unit) {
-        this(originalStatement, timeout, unit, false);
+    /**
+     * Creates an instance wrapping the given statement with the given timeout in milliseconds.
+     *
+     * @param statement the statement to wrap
+     * @param timeoutMillis the timeout in milliseconds
+     * @deprecated use {@link #builder()} instead.
+     */
+    @Deprecated
+    public FailOnTimeout(Statement statement, long timeoutMillis) {
+        this(builder().withTimeout(timeoutMillis, TimeUnit.MILLISECONDS), statement);
     }
 
-    public FailOnTimeout(Statement originalStatement, long timeout, TimeUnit unit, boolean lookForStuckThread) {
-        this.originalStatement = originalStatement;
-        this.timeout = timeout;
-        timeUnit = unit;
-        this.lookForStuckThread = lookForStuckThread;
+    private FailOnTimeout(Builder builder, Statement statement) {
+        originalStatement = statement;
+        timeout = builder.timeout;
+        timeUnit = builder.unit;
+        lookForStuckThread = builder.lookForStuckThread;
+    }
+
+    /**
+     * Builder for {@link FailOnTimeout}.
+     */
+    public static class Builder {
+        private boolean lookForStuckThread = false;
+        private long timeout = 0;
+        private TimeUnit unit = TimeUnit.SECONDS;
+
+        private Builder() {
+        }
+
+        /**
+         * Specifies the time to wait before timing out the test.
+         *
+         * <p>If this is not called, or is called with a {@code timeout} of
+         * {@code 0}, the returned {@code Statement} will wait forever for the
+         * test to complete, however the test will still launch from a separate
+         * thread. This can be useful for disabling timeouts in environments
+         * where they are dynamically set based on some property.
+         *
+         * @param timeout the maximum time to wait
+         * @param unit the time unit of the {@code timeout} argument
+         * @return {@code this} for method chaining.
+         */
+        public Builder withTimeout(long timeout, TimeUnit unit) {
+            if (timeout < 0) {
+                throw new IllegalArgumentException("timeout must be non-negative");
+            }
+            if (unit == null) {
+                throw new NullPointerException("TimeUnit cannot be null");
+            }
+            this.timeout = timeout;
+            this.unit = unit;
+            return this;
+        }
+
+        /**
+         * Specifies whether to look for a stuck thread.  If a timeout occurs and this
+         * feature is enabled, the test will look for a thread that appears to be stuck
+         * and dump its backtrace.  This feature is experimental.  Behavior may change
+         * after the 4.12 release in response to feedback.
+         *
+         * @param enable {@code true} to enable the feature
+         * @return {@code this} for method chaining.
+         */
+        public Builder withLookingForStuckThread(boolean enable) {
+            this.lookForStuckThread = enable;
+            return this;
+        }
+
+        /**
+         * Builds a {@link FailOnTimeout} instance using the values in this builder,
+         * wrapping the given statement.
+         *
+         * @param statement
+         */
+        public FailOnTimeout build(Statement statement) {
+            if (statement == null) {
+                throw new NullPointerException("statement cannot be null");
+            }
+            return new FailOnTimeout(this, statement);
+        }
     }
 
     @Override
@@ -86,8 +161,8 @@ public class FailOnTimeout extends Statement {
                 new Exception ("Appears to be stuck in thread " +
                                stuckThread.getName());
             stuckThreadException.setStackTrace(getStackTrace(stuckThread));
-            return new MultipleFailureException    
-                (Arrays.<Throwable>asList(currThreadException, stuckThreadException));
+            return new MultipleFailureException(
+                Arrays.<Throwable>asList(currThreadException, stuckThreadException));
         } else {
             return currThreadException;
         }
@@ -117,12 +192,12 @@ public class FailOnTimeout extends Statement {
      * problem or if the thread cannot be determined.  The return value is never equal 
      * to {@code mainThread}.
      */
-    private Thread getStuckThread (Thread mainThread) {
-        if (threadGroup == null){
+    private Thread getStuckThread(Thread mainThread) {
+        if (threadGroup == null) {
             return null;
         }
         Thread[] threadsInGroup = getThreadArray(threadGroup);
-        if (threadsInGroup == null){
+        if (threadsInGroup == null) {
             return null;
         }
 
@@ -162,13 +237,16 @@ public class FailOnTimeout extends Statement {
         while (true) {
             threads = new Thread[enumSize];
             enumCount = group.enumerate(threads);
-            if (enumCount < enumSize) break;
+            if (enumCount < enumSize) {
+                break;
+            }
             // if there are too many threads to fit into the array, enumerate's result
             // is >= the array's length; therefore we can't trust that it returned all
             // the threads.  Try again.
             enumSize += 100;
-            if (++loopCount >= 5) 
+            if (++loopCount >= 5) {
                 return null;
+            }
             // threads are proliferating too fast for us.  Bail before we get into 
             // trouble.
         }
@@ -185,8 +263,9 @@ public class FailOnTimeout extends Statement {
     private Thread[] copyThreads(Thread[] threads, int count) {
         int length = Math.min(count, threads.length);
         Thread[] result = new Thread[length];
-        for (int i = 0; i < length; i++)
+        for (int i = 0; i < length; i++) {
             result[i] = threads[i];
+        }
         return result;
     }
 

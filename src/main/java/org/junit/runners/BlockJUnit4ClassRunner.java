@@ -5,6 +5,7 @@ import static org.junit.internal.runners.rules.RuleMemberValidator.RULE_VALIDATO
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Before;
@@ -310,7 +311,12 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
     protected Statement withPotentialTimeout(FrameworkMethod method,
             Object test, Statement next) {
         long timeout = getTimeout(method.getAnnotation(Test.class));
-        return timeout > 0 ? new FailOnTimeout(next, timeout) : next;
+        if (timeout <= 0) {
+            return next;
+        }
+        return FailOnTimeout.builder()
+               .withTimeout(timeout, TimeUnit.MILLISECONDS)
+               .build(next);
     }
 
     /**
