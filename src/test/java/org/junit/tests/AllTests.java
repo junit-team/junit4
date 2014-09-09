@@ -6,6 +6,7 @@ import org.junit.AssumptionViolatedExceptionTest;
 import org.junit.experimental.categories.CategoryFilterFactoryTest;
 import org.junit.internal.MethodSorterTest;
 import org.junit.internal.matchers.StacktracePrintingMatcherTest;
+import org.junit.internal.matchers.ThrowableCauseMatcherTest;
 import org.junit.rules.DisableOnDebugTest;
 import org.junit.rules.StopwatchTest;
 import org.junit.runner.FilterFactoriesTest;
@@ -205,7 +206,8 @@ import org.junit.validator.PublicClassValidatorTest;
         TestWithParametersTest.class,
         ParameterizedNamesTest.class,
         PublicClassValidatorTest.class,
-        DisableOnDebugTest.class
+        DisableOnDebugTest.class,
+        ThrowableCauseMatcherTest.class
 })
 public class AllTests {
     public static Test suite() {
