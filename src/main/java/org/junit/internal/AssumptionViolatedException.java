@@ -11,10 +11,7 @@ import org.hamcrest.StringDescription;
  * fails should not generate a test case failure.
  *
  * @see org.junit.Assume
- *
- * @deprecated Please use {@link org.junit.AssumptionViolatedException} instead.
  */
-@Deprecated
 public class AssumptionViolatedException extends RuntimeException implements SelfDescribing {
     private static final long serialVersionUID = 2L;
 
@@ -28,11 +25,15 @@ public class AssumptionViolatedException extends RuntimeException implements Sel
     private final Object fValue;
     private final Matcher<?> fMatcher;
 
-    public AssumptionViolatedException(String assumption, boolean valueMatcher, Object value, Matcher<?> matcher) {
+    /**
+     * @deprecated Please use {@link org.junit.AssumptionViolatedException} instead.
+     */
+    @Deprecated
+    public AssumptionViolatedException(String assumption, boolean hasValue, Object value, Matcher<?> matcher) {
         this.fAssumption = assumption;
         this.fValue = value;
         this.fMatcher = matcher;
-        this.fValueMatcher = valueMatcher;
+        this.fValueMatcher = hasValue;
 
         if (value instanceof Throwable) {
           initCause((Throwable) value);
@@ -42,7 +43,10 @@ public class AssumptionViolatedException extends RuntimeException implements Sel
     /**
      * An assumption exception with the given <i>value</i> (String or
      * Throwable) and an additional failing {@link Matcher}.
+     *
+     * @deprecated Please use {@link org.junit.AssumptionViolatedException} instead.
      */
+    @Deprecated
     public AssumptionViolatedException(Object value, Matcher<?> matcher) {
         this(null, true, value, matcher);
     }
@@ -50,23 +54,33 @@ public class AssumptionViolatedException extends RuntimeException implements Sel
     /**
      * An assumption exception with the given <i>value</i> (String or
      * Throwable) and an additional failing {@link Matcher}.
+     *
+     * @deprecated Please use {@link org.junit.AssumptionViolatedException} instead.
      */
+    @Deprecated
     public AssumptionViolatedException(String assumption, Object value, Matcher<?> matcher) {
         this(assumption, true, value, matcher);
     }
 
     /**
      * An assumption exception with the given message only.
+     *
+     * @deprecated Please use {@link org.junit.AssumptionViolatedException} instead.
      */
+    @Deprecated
     public AssumptionViolatedException(String assumption) {
         this(assumption, false, null, null);
     }
 
     /**
      * An assumption exception with the given message and a cause.
+     *
+     * @deprecated Please use {@link org.junit.AssumptionViolatedException} instead.
      */
+    @Deprecated
     public AssumptionViolatedException(String assumption, Throwable e) {
-        this(assumption, false, e, null);
+        this(assumption, false, null, null);
+        initCause(e);
     }
 
     @Override
@@ -80,6 +94,7 @@ public class AssumptionViolatedException extends RuntimeException implements Sel
         }
 
         if (fValueMatcher) {
+            // a value was passed in when this instance was constructed; print it
             if (fAssumption != null) {
                 description.appendText(": ");
             }

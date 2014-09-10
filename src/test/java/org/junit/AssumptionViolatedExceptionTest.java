@@ -3,9 +3,9 @@ package org.junit;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
-
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.junit.experimental.theories.DataPoint;
@@ -16,23 +16,23 @@ import org.junit.runner.RunWith;
 @RunWith(Theories.class)
 public class AssumptionViolatedExceptionTest {
     @DataPoint
-    public static Object TWO = 2;
+    public static Integer TWO = 2;
 
     @DataPoint
-    public static Matcher<?> IS_THREE = is(3);
+    public static Matcher<Integer> IS_THREE = is(3);
 
     @DataPoint
-    public static Matcher<?> NULL = null;
+    public static Matcher<Integer> NULL = null;
 
     @Theory
-    public void toStringReportsMatcher(Object actual, Matcher<?> matcher) {
+    public void toStringReportsMatcher(Integer actual, Matcher<Integer> matcher) {
         assumeThat(matcher, notNullValue());
         assertThat(new AssumptionViolatedException(actual, matcher).toString(),
                 containsString(matcher.toString()));
     }
 
     @Theory
-    public void toStringReportsValue(Object actual, Matcher<?> matcher) {
+    public void toStringReportsValue(Integer actual, Matcher<Integer> matcher) {
         assertThat(new AssumptionViolatedException(actual, matcher).toString(),
                 containsString(String.valueOf(actual)));
     }
@@ -58,26 +58,32 @@ public class AssumptionViolatedExceptionTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void canSetCauseWithInstanceCreatedWithObjectAndMatcher() {
       Throwable testObject = new Exception();
-      AssumptionViolatedException e = new AssumptionViolatedException(testObject, containsString("test matcher"));
+      org.junit.internal.AssumptionViolatedException e
+              = new org.junit.internal.AssumptionViolatedException(
+                      testObject, containsString("test matcher"));
       assertThat(e.getCause(), is(testObject));
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void canSetCauseWithInstanceCreatedWithAssumptionObjectAndMatcher() {
       Throwable testObject = new Exception();
-      AssumptionViolatedException e = new AssumptionViolatedException(
-          "sample assumption", testObject, containsString("test matcher"));
-
+      org.junit.internal.AssumptionViolatedException e
+              = new org.junit.internal.AssumptionViolatedException(
+                      "sample assumption", testObject, containsString("test matcher"));
       assertThat(e.getCause(), is(testObject));
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void canSetCauseWithInstanceCreatedWithMainConstructor() {
       Throwable testObject = new Exception();
-      AssumptionViolatedException e = new AssumptionViolatedException(
-          "sample assumption", false, testObject, containsString("test matcher"));
+      org.junit.internal.AssumptionViolatedException e
+              = new org.junit.internal.AssumptionViolatedException(
+                      "sample assumption", false, testObject, containsString("test matcher"));
       assertThat(e.getCause(), is(testObject));
     }
 
