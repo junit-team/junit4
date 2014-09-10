@@ -38,7 +38,7 @@ public class AssumptionViolatedExceptionTest {
     }
 
     @Test
-    public void AssumptionViolatedExceptionDescribesItself() {
+    public void assumptionViolatedExceptionWithMatcherDescribesItself() {
         AssumptionViolatedException e = new AssumptionViolatedException(3, is(2));
         assertThat(StringDescription.asString(e), is("got: <3>, expected: is <2>"));
     }
@@ -47,5 +47,44 @@ public class AssumptionViolatedExceptionTest {
     public void simpleAssumptionViolatedExceptionDescribesItself() {
         AssumptionViolatedException e = new AssumptionViolatedException("not enough money");
         assertThat(StringDescription.asString(e), is("not enough money"));
+    }
+
+    @Test
+    public void canInitCauseWithInstanceCreatedWithString() {
+      AssumptionViolatedException e = new AssumptionViolatedException("invalid number");
+      Throwable cause = new RuntimeException("cause");
+      e.initCause(cause);
+      assertThat(e.getCause(), is(cause));
+    }
+
+    @Test
+    public void canSetCauseWithInstanceCreatedWithObjectAndMatcher() {
+      Throwable testObject = new Exception();
+      AssumptionViolatedException e = new AssumptionViolatedException(testObject, containsString("test matcher"));
+      assertThat(e.getCause(), is(testObject));
+    }
+
+    @Test
+    public void canSetCauseWithInstanceCreatedWithAssumptionObjectAndMatcher() {
+      Throwable testObject = new Exception();
+      AssumptionViolatedException e = new AssumptionViolatedException(
+          "sample assumption", testObject, containsString("test matcher"));
+
+      assertThat(e.getCause(), is(testObject));
+    }
+
+    @Test
+    public void canSetCauseWithInstanceCreatedWithMainConstructor() {
+      Throwable testObject = new Exception();
+      AssumptionViolatedException e = new AssumptionViolatedException(
+          "sample assumption", false, testObject, containsString("test matcher"));
+      assertThat(e.getCause(), is(testObject));
+    }
+
+    @Test
+    public void canSetCauseWithInstanceCreatedWithExplicitThrowableConstructor() {
+      Throwable cause = new Exception();
+      AssumptionViolatedException e = new AssumptionViolatedException("invalid number", cause);
+      assertThat(e.getCause(), is(cause));
     }
 }
