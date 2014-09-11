@@ -95,6 +95,27 @@ This allows for validation to be added to annotations. Validators should extend 
 `ExpectedException` didn't handle `AssertionError`s and `AssumptionViolatedException` well. This has been fixed. The new documentation explains the usage of `ExpectedException` for testing these exceptions. The two methods `handleAssertionErrors()` and `handleAssumptionViolatedExceptions()` are not needed anymore. If you have used them, just remove it and read `ExpectedException`'s documentation.
 
 
+### [Pull request #818:](https://github.com/junit-team/junit/pull/818) External version of AssumptionViolatedException
+
+In JUnit 4.11 and earlier, if you wanted to write a custom runner that handled
+`AssumptionViolatedException` or you needed to create an instance of `AssumptionViolatedException`
+directly, you needed to import an internal class (`org.junit.internal.AssumptionViolatedException`).
+Now you can import `org.junit.AssumptionViolatedException` (which extends
+`org.junit.internal.AssumptionViolatedException`).
+
+The classes in `Assume` have been modified to throw `org.junit.AssumptionViolatedException`.
+
+
+### [Pull request #985:](https://github.com/junit-team/junit/pull/985) Change AssumptionViolatedException to not set the cause to null; fixes issue #494
+
+Previously, the `AssumptionViolatedException` constructors would explicitly set the cause to `null`
+(unless you use a constructor where you provide a `Throwable`, in which case it would set that as
+the cause). This prevented code directly creating the exception from setting a cause.
+
+With this change, the cause is only set if you pass in a `Throwable`.
+
+It's recommended that you create `AssumptionViolatedException` via the methods in `Assume`.
+
 
 ### [Pull request #542:](https://github.com/junit-team/junit/pull/542) Customized failure message for `ExpectedException`
 
