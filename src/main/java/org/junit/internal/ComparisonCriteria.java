@@ -1,6 +1,7 @@
 package org.junit.internal;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
 
 import org.junit.Assert;
 
@@ -24,7 +25,11 @@ public abstract class ComparisonCriteria {
      */
     public void arrayEquals(String message, Object expecteds, Object actuals)
             throws ArrayComparisonFailure {
-        if (expecteds == actuals) {
+        if (expecteds == actuals
+            || Arrays.deepEquals(new Object[] {expecteds}, new Object[] {actuals})) {
+            // The reflection-based loop below is potentially very slow, especially for primitive
+            // arrays. The deepEquals check allows us to circumvent it in the usual case where
+            // the arrays are exactly equal.
             return;
         }
         String header = message == null ? "" : message + ": ";
