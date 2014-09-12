@@ -1,9 +1,8 @@
 package org.junit.runner.notification;
 
-import java.io.PrintWriter;
 import java.io.Serializable;
-import java.io.StringWriter;
 
+import junit.rochapaulo.experiments.StacktraceFilter;
 import org.junit.runner.Description;
 
 /**
@@ -66,11 +65,14 @@ public class Failure implements Serializable {
      * @return the printed form of the exception
      */
     public String getTrace() {
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter writer = new PrintWriter(stringWriter);
-        getException().printStackTrace(writer);
-        StringBuffer buffer = stringWriter.getBuffer();
-        return buffer.toString();
+//        StringWriter stringWriter = new StringWriter();
+//        PrintWriter writer = new PrintWriter(stringWriter);
+//        getException().printStackTrace(writer);
+//        StringBuffer buffer = stringWriter.getBuffer();
+//        
+        StacktraceFilter cleaner = new StacktraceFilter();
+        return cleaner.apply(getException()).toString();
+//        return buffer.toString();
     }
 
     /**
