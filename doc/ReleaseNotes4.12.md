@@ -136,9 +136,24 @@ If a custom failure message is not provided, a default message is used.
 When a test times out, a `org.junit.runners.model.TestTimedOutException` is now thrown instead of a plain `java.lang.Exception`.
 
 
-### [Pull request #742:](https://github.com/junit-team/junit/pull/742) `Timeout` exceptions now include stack trace from stuck thread (experimental)
+### [Pull request #742:](https://github.com/junit-team/junit/pull/742) [Pull request #986:](https://github.com/junit-team/junit/pull/986) `Timeout` exceptions now include stack trace from stuck thread (experimental)
 
-`Timeout` exceptions try to determine if there is a child thread causing the problem, and if so its stack trace is included in the exception in addition to the one of the main thread. This feature must be enabled with a rule such as `new Timeout(100, TimeUnit.MILLISECONDS).lookingForStuckThread(true)`.
+`Timeout` exceptions try to determine if there is a child thread causing the problem, and if so its stack trace is included in the exception in addition to the one of the main thread. This feature must be enabled with the timeout rule by creating it through the new `Timeout.builder()` method:
+
+```java
+public class HasGlobalTimeout {
+    @Rule public final TestRule timeout = Timeout.builder()
+            .withTimeout(10, TimeUnit.SECONDS)
+            .withLookingForStuckThread(true)
+            .build();
+
+    @Test
+    public void testInfiniteLoop() {
+        for (;;) {
+        }
+    }
+}
+```
 
 
 ### [Pull request #544:](https://github.com/junit-team/junit/pull/544) New constructor and factories in `Timeout`
@@ -147,17 +162,21 @@ When a test times out, a `org.junit.runners.model.TestTimedOutException` is now 
 A new constructor is available: `Timeout(long timeout, TimeUnit unit)`. It enables you to use different granularities of time units like `NANOSECONDS`, `MICROSECONDS`, `MILLISECONDS`, and `SECONDS`. Examples:
 
 ```java
-    @Rule public final TestRule globalTimeout = new Timeout(50, TimeUnit.MILLISECONDS);
+@Rule public final TestRule globalTimeout = new Timeout(50, TimeUnit.MILLISECONDS);
+```
 
-    @Rule public final TestRule globalTimeout = new Timeout(10, TimeUnit.SECONDS);
+```java
+@Rule public final TestRule globalTimeout = new Timeout(10, TimeUnit.SECONDS);
 ```
 
 and factory methods in `Timeout`:
 
 ```java
-    @Rule public final TestRule globalTimeout = Timeout.millis(50);
+@Rule public final TestRule globalTimeout = Timeout.millis(50);
+```
 
-    @Rule public final TestRule globalTimeout = Timeout.seconds(10);`
+```java
+@Rule public final TestRule globalTimeout = Timeout.seconds(10);
 ```
 
 This usage avoids the truncation, which was the problem in the deprecated constructor `Timeout(int millis)` when casting `long` to `int`.
