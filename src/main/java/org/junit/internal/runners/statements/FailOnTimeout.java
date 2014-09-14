@@ -23,6 +23,8 @@ public class FailOnTimeout extends Statement {
 
     /**
      * Returns a new builder for building an instance.
+     *
+     * @since 4.12
      */
     public static Builder builder() {
         return new Builder();
@@ -49,6 +51,8 @@ public class FailOnTimeout extends Statement {
 
     /**
      * Builder for {@link FailOnTimeout}.
+     *
+     * @since 4.12
      */
     public static class Builder {
         private boolean lookForStuckThread = false;
