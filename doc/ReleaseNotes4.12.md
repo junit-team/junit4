@@ -12,6 +12,11 @@ Version 4.11 added `Assert.assertEquals()` for `float` parameters with a delta, 
 `Assert.assertArrayEquals()` previously existed for all primitive array types, except `boolean[]`. This has now been added for `boolean[]`.
 
 
+### [Pull request #918:](https://github.com/junit-team/junit/pull/918) Avoid potentially expensive reflection-based loop in Assert.assertArrayEquals()
+
+In the usual case, where the array elements are in fact exactly equal, the potentially expensive reflection-based loop to compare them is avoided by using `Arrays.deepEquals()` first. The exact comparison is only executed when `deepEquals()` returns `false`.
+
+
 # Test Runners
 
 
