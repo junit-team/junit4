@@ -47,6 +47,7 @@ public abstract class BaseTestRunner implements TestListener {
         if (fPreferences == null) {
             fPreferences = new Properties();
             fPreferences.put("loading", "true");
+            fPreferences.put("nostacktrace", "false");
             fPreferences.put("filterstack", "true");
             readPreferences();
         }

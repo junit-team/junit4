@@ -62,7 +62,10 @@ public class ResultPrinter implements TestListener {
 
     public void printDefect(TestFailure booBoo, int count) { // only public for testing purposes
         printDefectHeader(booBoo, count);
-        printDefectTrace(booBoo);
+        
+        if (!TestRunner.getPreference("nostacktrace").equals("true")) {
+            printDefectTrace(booBoo);
+        }
     }
 
     protected void printDefectHeader(TestFailure booBoo, int count) {
