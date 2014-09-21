@@ -18,18 +18,21 @@ import org.hamcrest.StringDescription;
 public class AssumptionViolatedException extends RuntimeException implements SelfDescribing {
     private static final long serialVersionUID = 2L;
 
-    private final String assumption;
-
-    private final boolean valueMatcher;
-    private final Object value;
-
-    private final Matcher<?> matcher;
+    /*
+     * We have to use the f prefix until the next major release to ensure
+     * serialization compatibility. 
+     * See https://github.com/junit-team/junit/issues/976
+     */
+    private final String fAssumption;
+    private final boolean fValueMatcher;
+    private final Object fValue;
+    private final Matcher<?> fMatcher;
 
     public AssumptionViolatedException(String assumption, boolean valueMatcher, Object value, Matcher<?> matcher) {
-        this.assumption = assumption;
-        this.value = value;
-        this.matcher = matcher;
-        this.valueMatcher = valueMatcher;
+        this.fAssumption = assumption;
+        this.fValue = value;
+        this.fMatcher = matcher;
+        this.fValueMatcher = valueMatcher;
 
         if (value instanceof Throwable) {
           initCause((Throwable) value);
@@ -72,21 +75,21 @@ public class AssumptionViolatedException extends RuntimeException implements Sel
     }
 
     public void describeTo(Description description) {
-        if (assumption != null) {
-            description.appendText(assumption);
+        if (fAssumption != null) {
+            description.appendText(fAssumption);
         }
 
-        if (valueMatcher) {
-            if (assumption != null) {
+        if (fValueMatcher) {
+            if (fAssumption != null) {
                 description.appendText(": ");
             }
 
             description.appendText("got: ");
-            description.appendValue(value);
+            description.appendValue(fValue);
 
-            if (matcher != null) {
+            if (fMatcher != null) {
                 description.appendText(", expected: ");
-                description.appendDescriptionOf(matcher);
+                description.appendDescriptionOf(fMatcher);
             }
         }
     }

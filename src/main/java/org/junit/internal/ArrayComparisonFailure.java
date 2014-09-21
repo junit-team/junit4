@@ -14,8 +14,13 @@ public class ArrayComparisonFailure extends AssertionError {
 
     private static final long serialVersionUID = 1L;
 
-    private final List<Integer> indices = new ArrayList<Integer>();
-    private final String message;
+    /*
+     * We have to use the f prefix until the next major release to ensure
+     * serialization compatibility. 
+     * See https://github.com/junit-team/junit/issues/976
+     */
+    private final List<Integer> fIndices = new ArrayList<Integer>();
+    private final String fMessage;
 
     /**
      * Construct a new <code>ArrayComparisonFailure</code> with an error text and the array's
@@ -26,23 +31,23 @@ public class ArrayComparisonFailure extends AssertionError {
      * @see Assert#assertArrayEquals(String, Object[], Object[])
      */
     public ArrayComparisonFailure(String message, AssertionError cause, int index) {
-        this.message = message;
+        this.fMessage = message;
         initCause(cause);
         addDimension(index);
     }
 
     public void addDimension(int index) {
-        indices.add(0, index);
+        fIndices.add(0, index);
     }
 
     @Override
     public String getMessage() {
         StringBuilder sb = new StringBuilder();
-        if (message != null) {
-            sb.append(message);
+        if (fMessage != null) {
+            sb.append(fMessage);
         }
         sb.append("arrays first differed at element ");
-        for (int each : indices) {
+        for (int each : fIndices) {
             sb.append("[");
             sb.append(each);
             sb.append("]");

@@ -14,21 +14,26 @@ import org.junit.internal.Throwables;
 public class MultipleFailureException extends Exception {
     private static final long serialVersionUID = 1L;
 
-    private final List<Throwable> errors;
+    /*
+     * We have to use the f prefix until the next major release to ensure
+     * serialization compatibility. 
+     * See https://github.com/junit-team/junit/issues/976
+     */
+    private final List<Throwable> fErrors;
 
     public MultipleFailureException(List<Throwable> errors) {
-        this.errors = new ArrayList<Throwable>(errors);
+        this.fErrors = new ArrayList<Throwable>(errors);
     }
 
     public List<Throwable> getFailures() {
-        return Collections.unmodifiableList(errors);
+        return Collections.unmodifiableList(fErrors);
     }
 
     @Override
     public String getMessage() {
         StringBuilder sb = new StringBuilder(
-                String.format("There were %d errors:", errors.size()));
-        for (Throwable e : errors) {
+                String.format("There were %d errors:", fErrors.size()));
+        for (Throwable e : fErrors) {
             sb.append(String.format("\n  %s(%s)", e.getClass().getName(), e.getMessage()));
         }
         return sb.toString();
