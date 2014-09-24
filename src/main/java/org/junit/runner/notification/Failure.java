@@ -17,8 +17,14 @@ import org.junit.runner.Description;
  */
 public class Failure implements Serializable {
     private static final long serialVersionUID = 1L;
-    private final Description description;
-    private final Throwable thrownException;
+
+    /*
+     * We have to use the f prefix until the next major release to ensure
+     * serialization compatibility. 
+     * See https://github.com/junit-team/junit/issues/976
+     */
+    private final Description fDescription;
+    private final Throwable fThrownException;
 
     /**
      * Constructs a <code>Failure</code> with the given description and exception.
@@ -27,22 +33,22 @@ public class Failure implements Serializable {
      * @param thrownException the exception that was thrown while running the test
      */
     public Failure(Description description, Throwable thrownException) {
-        this.thrownException = thrownException;
-        this.description = description;
+        this.fThrownException = thrownException;
+        this.fDescription = description;
     }
 
     /**
      * @return a user-understandable label for the test
      */
     public String getTestHeader() {
-        return description.getDisplayName();
+        return fDescription.getDisplayName();
     }
 
     /**
      * @return the raw description of the context of the failure.
      */
     public Description getDescription() {
-        return description;
+        return fDescription;
     }
 
     /**
@@ -50,12 +56,12 @@ public class Failure implements Serializable {
      */
 
     public Throwable getException() {
-        return thrownException;
+        return fThrownException;
     }
 
     @Override
     public String toString() {
-        return getTestHeader() + ": " + thrownException.getMessage();
+        return getTestHeader() + ": " + fThrownException.getMessage();
     }
 
     /**
