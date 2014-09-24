@@ -101,9 +101,9 @@ public class Assume {
      * If not, the test halts and is ignored.
      * Example:
      * <pre>:
-     *   assumeThat(1, is(1)); // passes
+     *   assumeThat("alwaysPasses", 1, is(1)); // passes
      *   foo(); // will execute
-     *   assumeThat(0, is(1)); // assumption failure! test halts
+     *   assumeThat("alwaysFails", 0, is(1)); // assumption failure! test halts
      *   int x = 1 / 0; // will never execute
      * </pre>
      *

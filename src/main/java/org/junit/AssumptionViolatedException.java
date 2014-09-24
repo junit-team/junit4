@@ -8,35 +8,33 @@ import org.hamcrest.Matcher;
  * fails should not generate a test case failure.
  *
  * @see org.junit.Assume
+ * @since 4.12
  */
+@SuppressWarnings("deprecation")
 public class AssumptionViolatedException extends org.junit.internal.AssumptionViolatedException {
     private static final long serialVersionUID = 1L;
 
-    public AssumptionViolatedException(String assumption, boolean valueMatcher, Object value, Matcher<?> matcher) {
-        super(assumption, valueMatcher, value, matcher);
+    /**
+     * An assumption exception with the given <i>actual</i> value and a <i>matcher</i> describing 
+     * the expectation that failed.
+     */
+    public <T> AssumptionViolatedException(T actual, Matcher<T> matcher) {
+        super(actual, matcher);
     }
 
     /**
-     * An assumption exception with the given <i>value</i> (String or
-     * Throwable) and an additional failing {@link Matcher}.
+     * An assumption exception with a message with the given <i>actual</i> value and a
+     * <i>matcher</i> describing the expectation that failed.
      */
-    public AssumptionViolatedException(Object value, Matcher<?> matcher) {
-        super(value, matcher);
-    }
-
-    /**
-     * An assumption exception with the given <i>value</i> (String or
-     * Throwable) and an additional failing {@link Matcher}.
-     */
-    public AssumptionViolatedException(String assumption, Object value, Matcher<?> matcher) {
-        super(assumption, value, matcher);
+    public <T> AssumptionViolatedException(String message, T expected, Matcher<T> matcher) {
+        super(message, expected, matcher);
     }
 
     /**
      * An assumption exception with the given message only.
      */
-    public AssumptionViolatedException(String assumption) {
-        super(assumption);
+    public AssumptionViolatedException(String message) {
+        super(message);
     }
 
     /**
