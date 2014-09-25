@@ -20,7 +20,7 @@
 <a class="jxr_linenumber" name="L12" href="#L12">12</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../junit/tests/extensions/RepeatedTestTest.html">RepeatedTestTest</a> <strong class="jxr_keyword">extends</strong> TestCase {
 <a class="jxr_linenumber" name="L13" href="#L13">13</a>      <strong class="jxr_keyword">private</strong> TestSuite fSuite;
 <a class="jxr_linenumber" name="L14" href="#L14">14</a>  
-<a class="jxr_linenumber" name="L15" href="#L15">15</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../junit/tests/extensions/RepeatedTestTest.html">SuccessTest</a> <strong class="jxr_keyword">extends</strong> TestCase {
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../junit/tests/extensions/ActiveTestTest.html">SuccessTest</a> <strong class="jxr_keyword">extends</strong> TestCase {
 <a class="jxr_linenumber" name="L16" href="#L16">16</a>  
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>          @Override
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>          <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> runTest() {
@@ -30,8 +30,8 @@
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>      <strong class="jxr_keyword">public</strong> <a href="../../../junit/tests/extensions/RepeatedTestTest.html">RepeatedTestTest</a>(String name) {
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>          <strong class="jxr_keyword">super</strong>(name);
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>          fSuite = <strong class="jxr_keyword">new</strong> TestSuite();
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>          fSuite.addTest(<strong class="jxr_keyword">new</strong> <a href="../../../junit/tests/extensions/RepeatedTestTest.html">SuccessTest</a>());
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>          fSuite.addTest(<strong class="jxr_keyword">new</strong> <a href="../../../junit/tests/extensions/RepeatedTestTest.html">SuccessTest</a>());
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>          fSuite.addTest(<strong class="jxr_keyword">new</strong> <a href="../../../junit/tests/extensions/ActiveTestTest.html">SuccessTest</a>());
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>          fSuite.addTest(<strong class="jxr_keyword">new</strong> <a href="../../../junit/tests/extensions/ActiveTestTest.html">SuccessTest</a>());
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>      }
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testRepeatedOnce() {

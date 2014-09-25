@@ -1,31 +1,26 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html lang="en">
-<head>
-<title>Source code</title>
-<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
-</head>
-<body>
-<div class="sourceContainer">
-<pre><span class="sourceLineNo">001</span>package org.junit.runners.model;<a name="line.1"></a>
-<span class="sourceLineNo">002</span><a name="line.2"></a>
-<span class="sourceLineNo">003</span>import java.lang.annotation.Annotation;<a name="line.3"></a>
-<span class="sourceLineNo">004</span><a name="line.4"></a>
-<span class="sourceLineNo">005</span>/**<a name="line.5"></a>
-<span class="sourceLineNo">006</span> * A model element that may have annotations.<a name="line.6"></a>
-<span class="sourceLineNo">007</span> * <a name="line.7"></a>
-<span class="sourceLineNo">008</span> * @since 4.12<a name="line.8"></a>
-<span class="sourceLineNo">009</span> */<a name="line.9"></a>
-<span class="sourceLineNo">010</span>public interface Annotatable {<a name="line.10"></a>
-<span class="sourceLineNo">011</span>    /**<a name="line.11"></a>
-<span class="sourceLineNo">012</span>     * Returns the model elements' annotations.<a name="line.12"></a>
-<span class="sourceLineNo">013</span>     */<a name="line.13"></a>
-<span class="sourceLineNo">014</span>    Annotation[] getAnnotations();<a name="line.14"></a>
-<span class="sourceLineNo">015</span><a name="line.15"></a>
-<span class="sourceLineNo">016</span>    /**<a name="line.16"></a>
-<span class="sourceLineNo">017</span>     * Returns the annotation on the model element of the given type, or @code{null}<a name="line.17"></a>
-<span class="sourceLineNo">018</span>     */<a name="line.18"></a>
-<span class="sourceLineNo">019</span>    &lt;T extends Annotation&gt; T getAnnotation(Class&lt;T&gt; annotationType);<a name="line.19"></a>
-<span class="sourceLineNo">020</span>}<a name="line.20"></a>
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.junit.runners.model;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import java.lang.annotation.Annotation;<a name="line.3"></a>
+<FONT color="green">004</FONT>    <a name="line.4"></a>
+<FONT color="green">005</FONT>    /**<a name="line.5"></a>
+<FONT color="green">006</FONT>     * A model element that may have annotations.<a name="line.6"></a>
+<FONT color="green">007</FONT>     * <a name="line.7"></a>
+<FONT color="green">008</FONT>     * @since 4.12<a name="line.8"></a>
+<FONT color="green">009</FONT>     */<a name="line.9"></a>
+<FONT color="green">010</FONT>    public interface Annotatable {<a name="line.10"></a>
+<FONT color="green">011</FONT>        /**<a name="line.11"></a>
+<FONT color="green">012</FONT>         * Returns the model elements' annotations.<a name="line.12"></a>
+<FONT color="green">013</FONT>         */<a name="line.13"></a>
+<FONT color="green">014</FONT>        Annotation[] getAnnotations();<a name="line.14"></a>
+<FONT color="green">015</FONT>    <a name="line.15"></a>
+<FONT color="green">016</FONT>        /**<a name="line.16"></a>
+<FONT color="green">017</FONT>         * Returns the annotation on the model element of the given type, or @code{null}<a name="line.17"></a>
+<FONT color="green">018</FONT>         */<a name="line.18"></a>
+<FONT color="green">019</FONT>        &lt;T extends Annotation&gt; T getAnnotation(Class&lt;T&gt; annotationType);<a name="line.19"></a>
+<FONT color="green">020</FONT>    }<a name="line.20"></a>
 
 
 
@@ -86,7 +81,6 @@
 
 
 
-</pre>
-</div>
-</body>
-</html>
+</PRE>
+</BODY>
+</HTML>

@@ -1,50 +1,45 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html lang="en">
-<head>
-<title>Source code</title>
-<link rel="stylesheet" type="text/css" href="../../../stylesheet.css" title="Style">
-</head>
-<body>
-<div class="sourceContainer">
-<pre><span class="sourceLineNo">001</span>package org.hamcrest;<a name="line.1"></a>
-<span class="sourceLineNo">002</span><a name="line.2"></a>
-<span class="sourceLineNo">003</span><a name="line.3"></a>
-<span class="sourceLineNo">004</span>/**<a name="line.4"></a>
-<span class="sourceLineNo">005</span> * Utility class for writing one off matchers.<a name="line.5"></a>
-<span class="sourceLineNo">006</span> * For example:<a name="line.6"></a>
-<span class="sourceLineNo">007</span> * &lt;pre&gt;<a name="line.7"></a>
-<span class="sourceLineNo">008</span> * Matcher&amp;lt;String&amp;gt; aNonEmptyString = new CustomTypeSafeMatcher&amp;lt;String&amp;gt;("a non empty string") {<a name="line.8"></a>
-<span class="sourceLineNo">009</span> *   public boolean matchesSafely(String string) {<a name="line.9"></a>
-<span class="sourceLineNo">010</span> *     return !string.isEmpty();<a name="line.10"></a>
-<span class="sourceLineNo">011</span> *   }<a name="line.11"></a>
-<span class="sourceLineNo">012</span> *   public void describeMismatchSafely(String string, Description mismatchDescription) {<a name="line.12"></a>
-<span class="sourceLineNo">013</span> *     mismatchDescription.appendText("was empty");<a name="line.13"></a>
-<span class="sourceLineNo">014</span> *   }<a name="line.14"></a>
-<span class="sourceLineNo">015</span> * };<a name="line.15"></a>
-<span class="sourceLineNo">016</span> * &lt;/pre&gt;<a name="line.16"></a>
-<span class="sourceLineNo">017</span> * This is a variant of {@link CustomMatcher} that first type checks<a name="line.17"></a>
-<span class="sourceLineNo">018</span> * the argument being matched. By the time {@link TypeSafeMatcher#matchesSafely} is<a name="line.18"></a>
-<span class="sourceLineNo">019</span> * is called the argument is guaranteed to be non-null and of the correct<a name="line.19"></a>
-<span class="sourceLineNo">020</span> * type.<a name="line.20"></a>
-<span class="sourceLineNo">021</span> *<a name="line.21"></a>
-<span class="sourceLineNo">022</span> * @author Neil Dunn<a name="line.22"></a>
-<span class="sourceLineNo">023</span> * @param &lt;T&gt; The type of object being matched<a name="line.23"></a>
-<span class="sourceLineNo">024</span> */<a name="line.24"></a>
-<span class="sourceLineNo">025</span>public abstract class CustomTypeSafeMatcher&lt;T&gt; extends TypeSafeMatcher&lt;T&gt; {<a name="line.25"></a>
-<span class="sourceLineNo">026</span>    private final String fixedDescription;<a name="line.26"></a>
-<span class="sourceLineNo">027</span><a name="line.27"></a>
-<span class="sourceLineNo">028</span>    public CustomTypeSafeMatcher(String description) {<a name="line.28"></a>
-<span class="sourceLineNo">029</span>        if (description == null) {<a name="line.29"></a>
-<span class="sourceLineNo">030</span>            throw new IllegalArgumentException("Description must be non null!");<a name="line.30"></a>
-<span class="sourceLineNo">031</span>        }<a name="line.31"></a>
-<span class="sourceLineNo">032</span>        this.fixedDescription = description;<a name="line.32"></a>
-<span class="sourceLineNo">033</span>    }<a name="line.33"></a>
-<span class="sourceLineNo">034</span><a name="line.34"></a>
-<span class="sourceLineNo">035</span>    @Override<a name="line.35"></a>
-<span class="sourceLineNo">036</span>    public final void describeTo(Description description) {<a name="line.36"></a>
-<span class="sourceLineNo">037</span>        description.appendText(fixedDescription);<a name="line.37"></a>
-<span class="sourceLineNo">038</span>    }<a name="line.38"></a>
-<span class="sourceLineNo">039</span>}<a name="line.39"></a>
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.hamcrest;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    <a name="line.3"></a>
+<FONT color="green">004</FONT>    /**<a name="line.4"></a>
+<FONT color="green">005</FONT>     * Utility class for writing one off matchers.<a name="line.5"></a>
+<FONT color="green">006</FONT>     * For example:<a name="line.6"></a>
+<FONT color="green">007</FONT>     * &lt;pre&gt;<a name="line.7"></a>
+<FONT color="green">008</FONT>     * Matcher&amp;lt;String&amp;gt; aNonEmptyString = new CustomTypeSafeMatcher&amp;lt;String&amp;gt;("a non empty string") {<a name="line.8"></a>
+<FONT color="green">009</FONT>     *   public boolean matchesSafely(String string) {<a name="line.9"></a>
+<FONT color="green">010</FONT>     *     return !string.isEmpty();<a name="line.10"></a>
+<FONT color="green">011</FONT>     *   }<a name="line.11"></a>
+<FONT color="green">012</FONT>     *   public void describeMismatchSafely(String string, Description mismatchDescription) {<a name="line.12"></a>
+<FONT color="green">013</FONT>     *     mismatchDescription.appendText("was empty");<a name="line.13"></a>
+<FONT color="green">014</FONT>     *   }<a name="line.14"></a>
+<FONT color="green">015</FONT>     * };<a name="line.15"></a>
+<FONT color="green">016</FONT>     * &lt;/pre&gt;<a name="line.16"></a>
+<FONT color="green">017</FONT>     * This is a variant of {@link CustomMatcher} that first type checks<a name="line.17"></a>
+<FONT color="green">018</FONT>     * the argument being matched. By the time {@link TypeSafeMatcher#matchesSafely} is<a name="line.18"></a>
+<FONT color="green">019</FONT>     * is called the argument is guaranteed to be non-null and of the correct<a name="line.19"></a>
+<FONT color="green">020</FONT>     * type.<a name="line.20"></a>
+<FONT color="green">021</FONT>     *<a name="line.21"></a>
+<FONT color="green">022</FONT>     * @author Neil Dunn<a name="line.22"></a>
+<FONT color="green">023</FONT>     * @param &lt;T&gt; The type of object being matched<a name="line.23"></a>
+<FONT color="green">024</FONT>     */<a name="line.24"></a>
+<FONT color="green">025</FONT>    public abstract class CustomTypeSafeMatcher&lt;T&gt; extends TypeSafeMatcher&lt;T&gt; {<a name="line.25"></a>
+<FONT color="green">026</FONT>        private final String fixedDescription;<a name="line.26"></a>
+<FONT color="green">027</FONT>    <a name="line.27"></a>
+<FONT color="green">028</FONT>        public CustomTypeSafeMatcher(String description) {<a name="line.28"></a>
+<FONT color="green">029</FONT>            if (description == null) {<a name="line.29"></a>
+<FONT color="green">030</FONT>                throw new IllegalArgumentException("Description must be non null!");<a name="line.30"></a>
+<FONT color="green">031</FONT>            }<a name="line.31"></a>
+<FONT color="green">032</FONT>            this.fixedDescription = description;<a name="line.32"></a>
+<FONT color="green">033</FONT>        }<a name="line.33"></a>
+<FONT color="green">034</FONT>    <a name="line.34"></a>
+<FONT color="green">035</FONT>        @Override<a name="line.35"></a>
+<FONT color="green">036</FONT>        public final void describeTo(Description description) {<a name="line.36"></a>
+<FONT color="green">037</FONT>            description.appendText(fixedDescription);<a name="line.37"></a>
+<FONT color="green">038</FONT>        }<a name="line.38"></a>
+<FONT color="green">039</FONT>    }<a name="line.39"></a>
 
 
 
@@ -105,7 +100,6 @@
 
 
 
-</pre>
-</div>
-</body>
-</html>
+</PRE>
+</BODY>
+</HTML>

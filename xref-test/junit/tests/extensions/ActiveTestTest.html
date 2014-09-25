@@ -19,7 +19,7 @@
 <a class="jxr_linenumber" name="L11" href="#L11">11</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L12" href="#L12">12</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../junit/tests/extensions/ActiveTestTest.html">ActiveTestTest</a> <strong class="jxr_keyword">extends</strong> TestCase {
 <a class="jxr_linenumber" name="L13" href="#L13">13</a>  
-<a class="jxr_linenumber" name="L14" href="#L14">14</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../junit/tests/extensions/RepeatedTestTest.html">SuccessTest</a> <strong class="jxr_keyword">extends</strong> TestCase {
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../junit/tests/extensions/ActiveTestTest.html">SuccessTest</a> <strong class="jxr_keyword">extends</strong> TestCase {
 <a class="jxr_linenumber" name="L15" href="#L15">15</a>          @Override
 <a class="jxr_linenumber" name="L16" href="#L16">16</a>          <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> runTest() {
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>          }
@@ -64,7 +64,7 @@
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>      ActiveTestSuite createActiveTestSuite() {
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>          ActiveTestSuite suite = <strong class="jxr_keyword">new</strong> ActiveTestSuite();
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; 100; i++) {
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>              suite.addTest(<strong class="jxr_keyword">new</strong> <a href="../../../junit/tests/extensions/RepeatedTestTest.html">SuccessTest</a>());
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>              suite.addTest(<strong class="jxr_keyword">new</strong> <a href="../../../junit/tests/extensions/ActiveTestTest.html">SuccessTest</a>());
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>          }
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>          <strong class="jxr_keyword">return</strong> suite;
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>      }

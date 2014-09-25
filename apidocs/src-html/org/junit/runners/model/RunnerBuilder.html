@@ -1,119 +1,114 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html lang="en">
-<head>
-<title>Source code</title>
-<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
-</head>
-<body>
-<div class="sourceContainer">
-<pre><span class="sourceLineNo">001</span>package org.junit.runners.model;<a name="line.1"></a>
-<span class="sourceLineNo">002</span><a name="line.2"></a>
-<span class="sourceLineNo">003</span>import java.util.ArrayList;<a name="line.3"></a>
-<span class="sourceLineNo">004</span>import java.util.HashSet;<a name="line.4"></a>
-<span class="sourceLineNo">005</span>import java.util.List;<a name="line.5"></a>
-<span class="sourceLineNo">006</span>import java.util.Set;<a name="line.6"></a>
-<span class="sourceLineNo">007</span><a name="line.7"></a>
-<span class="sourceLineNo">008</span>import org.junit.internal.runners.ErrorReportingRunner;<a name="line.8"></a>
-<span class="sourceLineNo">009</span>import org.junit.runner.Runner;<a name="line.9"></a>
-<span class="sourceLineNo">010</span><a name="line.10"></a>
-<span class="sourceLineNo">011</span>/**<a name="line.11"></a>
-<span class="sourceLineNo">012</span> * A RunnerBuilder is a strategy for constructing runners for classes.<a name="line.12"></a>
-<span class="sourceLineNo">013</span> *<a name="line.13"></a>
-<span class="sourceLineNo">014</span> * Only writers of custom runners should use &lt;code&gt;RunnerBuilder&lt;/code&gt;s.  A custom runner class with a constructor taking<a name="line.14"></a>
-<span class="sourceLineNo">015</span> * a &lt;code&gt;RunnerBuilder&lt;/code&gt; parameter will be passed the instance of &lt;code&gt;RunnerBuilder&lt;/code&gt; used to build that runner itself.<a name="line.15"></a>
-<span class="sourceLineNo">016</span> * For example,<a name="line.16"></a>
-<span class="sourceLineNo">017</span> * imagine a custom runner that builds suites based on a list of classes in a text file:<a name="line.17"></a>
-<span class="sourceLineNo">018</span> *<a name="line.18"></a>
-<span class="sourceLineNo">019</span> * &lt;pre&gt;<a name="line.19"></a>
-<span class="sourceLineNo">020</span> * \@RunWith(TextFileSuite.class)<a name="line.20"></a>
-<span class="sourceLineNo">021</span> * \@SuiteSpecFile("mysuite.txt")<a name="line.21"></a>
-<span class="sourceLineNo">022</span> * class MySuite {}<a name="line.22"></a>
-<span class="sourceLineNo">023</span> * &lt;/pre&gt;<a name="line.23"></a>
-<span class="sourceLineNo">024</span> *<a name="line.24"></a>
-<span class="sourceLineNo">025</span> * The implementation of TextFileSuite might include:<a name="line.25"></a>
-<span class="sourceLineNo">026</span> *<a name="line.26"></a>
-<span class="sourceLineNo">027</span> * &lt;pre&gt;<a name="line.27"></a>
-<span class="sourceLineNo">028</span> * public TextFileSuite(Class testClass, RunnerBuilder builder) {<a name="line.28"></a>
-<span class="sourceLineNo">029</span> *   // ...<a name="line.29"></a>
-<span class="sourceLineNo">030</span> *   for (String className : readClassNames())<a name="line.30"></a>
-<span class="sourceLineNo">031</span> *     addRunner(builder.runnerForClass(Class.forName(className)));<a name="line.31"></a>
-<span class="sourceLineNo">032</span> *   // ...<a name="line.32"></a>
-<span class="sourceLineNo">033</span> * }<a name="line.33"></a>
-<span class="sourceLineNo">034</span> * &lt;/pre&gt;<a name="line.34"></a>
-<span class="sourceLineNo">035</span> *<a name="line.35"></a>
-<span class="sourceLineNo">036</span> * @see org.junit.runners.Suite<a name="line.36"></a>
-<span class="sourceLineNo">037</span> * @since 4.5<a name="line.37"></a>
-<span class="sourceLineNo">038</span> */<a name="line.38"></a>
-<span class="sourceLineNo">039</span>public abstract class RunnerBuilder {<a name="line.39"></a>
-<span class="sourceLineNo">040</span>    private final Set&lt;Class&lt;?&gt;&gt; parents = new HashSet&lt;Class&lt;?&gt;&gt;();<a name="line.40"></a>
-<span class="sourceLineNo">041</span><a name="line.41"></a>
-<span class="sourceLineNo">042</span>    /**<a name="line.42"></a>
-<span class="sourceLineNo">043</span>     * Override to calculate the correct runner for a test class at runtime.<a name="line.43"></a>
-<span class="sourceLineNo">044</span>     *<a name="line.44"></a>
-<span class="sourceLineNo">045</span>     * @param testClass class to be run<a name="line.45"></a>
-<span class="sourceLineNo">046</span>     * @return a Runner<a name="line.46"></a>
-<span class="sourceLineNo">047</span>     * @throws Throwable if a runner cannot be constructed<a name="line.47"></a>
-<span class="sourceLineNo">048</span>     */<a name="line.48"></a>
-<span class="sourceLineNo">049</span>    public abstract Runner runnerForClass(Class&lt;?&gt; testClass) throws Throwable;<a name="line.49"></a>
-<span class="sourceLineNo">050</span><a name="line.50"></a>
-<span class="sourceLineNo">051</span>    /**<a name="line.51"></a>
-<span class="sourceLineNo">052</span>     * Always returns a runner, even if it is just one that prints an error instead of running tests.<a name="line.52"></a>
-<span class="sourceLineNo">053</span>     *<a name="line.53"></a>
-<span class="sourceLineNo">054</span>     * @param testClass class to be run<a name="line.54"></a>
-<span class="sourceLineNo">055</span>     * @return a Runner<a name="line.55"></a>
-<span class="sourceLineNo">056</span>     */<a name="line.56"></a>
-<span class="sourceLineNo">057</span>    public Runner safeRunnerForClass(Class&lt;?&gt; testClass) {<a name="line.57"></a>
-<span class="sourceLineNo">058</span>        try {<a name="line.58"></a>
-<span class="sourceLineNo">059</span>            return runnerForClass(testClass);<a name="line.59"></a>
-<span class="sourceLineNo">060</span>        } catch (Throwable e) {<a name="line.60"></a>
-<span class="sourceLineNo">061</span>            return new ErrorReportingRunner(testClass, e);<a name="line.61"></a>
-<span class="sourceLineNo">062</span>        }<a name="line.62"></a>
-<span class="sourceLineNo">063</span>    }<a name="line.63"></a>
-<span class="sourceLineNo">064</span><a name="line.64"></a>
-<span class="sourceLineNo">065</span>    Class&lt;?&gt; addParent(Class&lt;?&gt; parent) throws InitializationError {<a name="line.65"></a>
-<span class="sourceLineNo">066</span>        if (!parents.add(parent)) {<a name="line.66"></a>
-<span class="sourceLineNo">067</span>            throw new InitializationError(String.format("class '%s' (possibly indirectly) contains itself as a SuiteClass", parent.getName()));<a name="line.67"></a>
-<span class="sourceLineNo">068</span>        }<a name="line.68"></a>
-<span class="sourceLineNo">069</span>        return parent;<a name="line.69"></a>
-<span class="sourceLineNo">070</span>    }<a name="line.70"></a>
-<span class="sourceLineNo">071</span><a name="line.71"></a>
-<span class="sourceLineNo">072</span>    void removeParent(Class&lt;?&gt; klass) {<a name="line.72"></a>
-<span class="sourceLineNo">073</span>        parents.remove(klass);<a name="line.73"></a>
-<span class="sourceLineNo">074</span>    }<a name="line.74"></a>
-<span class="sourceLineNo">075</span><a name="line.75"></a>
-<span class="sourceLineNo">076</span>    /**<a name="line.76"></a>
-<span class="sourceLineNo">077</span>     * Constructs and returns a list of Runners, one for each child class in<a name="line.77"></a>
-<span class="sourceLineNo">078</span>     * {@code children}.  Care is taken to avoid infinite recursion:<a name="line.78"></a>
-<span class="sourceLineNo">079</span>     * this builder will throw an exception if it is requested for another<a name="line.79"></a>
-<span class="sourceLineNo">080</span>     * runner for {@code parent} before this call completes.<a name="line.80"></a>
-<span class="sourceLineNo">081</span>     */<a name="line.81"></a>
-<span class="sourceLineNo">082</span>    public List&lt;Runner&gt; runners(Class&lt;?&gt; parent, Class&lt;?&gt;[] children)<a name="line.82"></a>
-<span class="sourceLineNo">083</span>            throws InitializationError {<a name="line.83"></a>
-<span class="sourceLineNo">084</span>        addParent(parent);<a name="line.84"></a>
-<span class="sourceLineNo">085</span><a name="line.85"></a>
-<span class="sourceLineNo">086</span>        try {<a name="line.86"></a>
-<span class="sourceLineNo">087</span>            return runners(children);<a name="line.87"></a>
-<span class="sourceLineNo">088</span>        } finally {<a name="line.88"></a>
-<span class="sourceLineNo">089</span>            removeParent(parent);<a name="line.89"></a>
-<span class="sourceLineNo">090</span>        }<a name="line.90"></a>
-<span class="sourceLineNo">091</span>    }<a name="line.91"></a>
-<span class="sourceLineNo">092</span><a name="line.92"></a>
-<span class="sourceLineNo">093</span>    public List&lt;Runner&gt; runners(Class&lt;?&gt; parent, List&lt;Class&lt;?&gt;&gt; children)<a name="line.93"></a>
-<span class="sourceLineNo">094</span>            throws InitializationError {<a name="line.94"></a>
-<span class="sourceLineNo">095</span>        return runners(parent, children.toArray(new Class&lt;?&gt;[0]));<a name="line.95"></a>
-<span class="sourceLineNo">096</span>    }<a name="line.96"></a>
-<span class="sourceLineNo">097</span><a name="line.97"></a>
-<span class="sourceLineNo">098</span>    private List&lt;Runner&gt; runners(Class&lt;?&gt;[] children) {<a name="line.98"></a>
-<span class="sourceLineNo">099</span>        ArrayList&lt;Runner&gt; runners = new ArrayList&lt;Runner&gt;();<a name="line.99"></a>
-<span class="sourceLineNo">100</span>        for (Class&lt;?&gt; each : children) {<a name="line.100"></a>
-<span class="sourceLineNo">101</span>            Runner childRunner = safeRunnerForClass(each);<a name="line.101"></a>
-<span class="sourceLineNo">102</span>            if (childRunner != null) {<a name="line.102"></a>
-<span class="sourceLineNo">103</span>                runners.add(childRunner);<a name="line.103"></a>
-<span class="sourceLineNo">104</span>            }<a name="line.104"></a>
-<span class="sourceLineNo">105</span>        }<a name="line.105"></a>
-<span class="sourceLineNo">106</span>        return runners;<a name="line.106"></a>
-<span class="sourceLineNo">107</span>    }<a name="line.107"></a>
-<span class="sourceLineNo">108</span>}<a name="line.108"></a>
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.junit.runners.model;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import java.util.ArrayList;<a name="line.3"></a>
+<FONT color="green">004</FONT>    import java.util.HashSet;<a name="line.4"></a>
+<FONT color="green">005</FONT>    import java.util.List;<a name="line.5"></a>
+<FONT color="green">006</FONT>    import java.util.Set;<a name="line.6"></a>
+<FONT color="green">007</FONT>    <a name="line.7"></a>
+<FONT color="green">008</FONT>    import org.junit.internal.runners.ErrorReportingRunner;<a name="line.8"></a>
+<FONT color="green">009</FONT>    import org.junit.runner.Runner;<a name="line.9"></a>
+<FONT color="green">010</FONT>    <a name="line.10"></a>
+<FONT color="green">011</FONT>    /**<a name="line.11"></a>
+<FONT color="green">012</FONT>     * A RunnerBuilder is a strategy for constructing runners for classes.<a name="line.12"></a>
+<FONT color="green">013</FONT>     *<a name="line.13"></a>
+<FONT color="green">014</FONT>     * Only writers of custom runners should use &lt;code&gt;RunnerBuilder&lt;/code&gt;s.  A custom runner class with a constructor taking<a name="line.14"></a>
+<FONT color="green">015</FONT>     * a &lt;code&gt;RunnerBuilder&lt;/code&gt; parameter will be passed the instance of &lt;code&gt;RunnerBuilder&lt;/code&gt; used to build that runner itself.<a name="line.15"></a>
+<FONT color="green">016</FONT>     * For example,<a name="line.16"></a>
+<FONT color="green">017</FONT>     * imagine a custom runner that builds suites based on a list of classes in a text file:<a name="line.17"></a>
+<FONT color="green">018</FONT>     *<a name="line.18"></a>
+<FONT color="green">019</FONT>     * &lt;pre&gt;<a name="line.19"></a>
+<FONT color="green">020</FONT>     * \@RunWith(TextFileSuite.class)<a name="line.20"></a>
+<FONT color="green">021</FONT>     * \@SuiteSpecFile("mysuite.txt")<a name="line.21"></a>
+<FONT color="green">022</FONT>     * class MySuite {}<a name="line.22"></a>
+<FONT color="green">023</FONT>     * &lt;/pre&gt;<a name="line.23"></a>
+<FONT color="green">024</FONT>     *<a name="line.24"></a>
+<FONT color="green">025</FONT>     * The implementation of TextFileSuite might include:<a name="line.25"></a>
+<FONT color="green">026</FONT>     *<a name="line.26"></a>
+<FONT color="green">027</FONT>     * &lt;pre&gt;<a name="line.27"></a>
+<FONT color="green">028</FONT>     * public TextFileSuite(Class testClass, RunnerBuilder builder) {<a name="line.28"></a>
+<FONT color="green">029</FONT>     *   // ...<a name="line.29"></a>
+<FONT color="green">030</FONT>     *   for (String className : readClassNames())<a name="line.30"></a>
+<FONT color="green">031</FONT>     *     addRunner(builder.runnerForClass(Class.forName(className)));<a name="line.31"></a>
+<FONT color="green">032</FONT>     *   // ...<a name="line.32"></a>
+<FONT color="green">033</FONT>     * }<a name="line.33"></a>
+<FONT color="green">034</FONT>     * &lt;/pre&gt;<a name="line.34"></a>
+<FONT color="green">035</FONT>     *<a name="line.35"></a>
+<FONT color="green">036</FONT>     * @see org.junit.runners.Suite<a name="line.36"></a>
+<FONT color="green">037</FONT>     * @since 4.5<a name="line.37"></a>
+<FONT color="green">038</FONT>     */<a name="line.38"></a>
+<FONT color="green">039</FONT>    public abstract class RunnerBuilder {<a name="line.39"></a>
+<FONT color="green">040</FONT>        private final Set&lt;Class&lt;?&gt;&gt; parents = new HashSet&lt;Class&lt;?&gt;&gt;();<a name="line.40"></a>
+<FONT color="green">041</FONT>    <a name="line.41"></a>
+<FONT color="green">042</FONT>        /**<a name="line.42"></a>
+<FONT color="green">043</FONT>         * Override to calculate the correct runner for a test class at runtime.<a name="line.43"></a>
+<FONT color="green">044</FONT>         *<a name="line.44"></a>
+<FONT color="green">045</FONT>         * @param testClass class to be run<a name="line.45"></a>
+<FONT color="green">046</FONT>         * @return a Runner<a name="line.46"></a>
+<FONT color="green">047</FONT>         * @throws Throwable if a runner cannot be constructed<a name="line.47"></a>
+<FONT color="green">048</FONT>         */<a name="line.48"></a>
+<FONT color="green">049</FONT>        public abstract Runner runnerForClass(Class&lt;?&gt; testClass) throws Throwable;<a name="line.49"></a>
+<FONT color="green">050</FONT>    <a name="line.50"></a>
+<FONT color="green">051</FONT>        /**<a name="line.51"></a>
+<FONT color="green">052</FONT>         * Always returns a runner, even if it is just one that prints an error instead of running tests.<a name="line.52"></a>
+<FONT color="green">053</FONT>         *<a name="line.53"></a>
+<FONT color="green">054</FONT>         * @param testClass class to be run<a name="line.54"></a>
+<FONT color="green">055</FONT>         * @return a Runner<a name="line.55"></a>
+<FONT color="green">056</FONT>         */<a name="line.56"></a>
+<FONT color="green">057</FONT>        public Runner safeRunnerForClass(Class&lt;?&gt; testClass) {<a name="line.57"></a>
+<FONT color="green">058</FONT>            try {<a name="line.58"></a>
+<FONT color="green">059</FONT>                return runnerForClass(testClass);<a name="line.59"></a>
+<FONT color="green">060</FONT>            } catch (Throwable e) {<a name="line.60"></a>
+<FONT color="green">061</FONT>                return new ErrorReportingRunner(testClass, e);<a name="line.61"></a>
+<FONT color="green">062</FONT>            }<a name="line.62"></a>
+<FONT color="green">063</FONT>        }<a name="line.63"></a>
+<FONT color="green">064</FONT>    <a name="line.64"></a>
+<FONT color="green">065</FONT>        Class&lt;?&gt; addParent(Class&lt;?&gt; parent) throws InitializationError {<a name="line.65"></a>
+<FONT color="green">066</FONT>            if (!parents.add(parent)) {<a name="line.66"></a>
+<FONT color="green">067</FONT>                throw new InitializationError(String.format("class '%s' (possibly indirectly) contains itself as a SuiteClass", parent.getName()));<a name="line.67"></a>
+<FONT color="green">068</FONT>            }<a name="line.68"></a>
+<FONT color="green">069</FONT>            return parent;<a name="line.69"></a>
+<FONT color="green">070</FONT>        }<a name="line.70"></a>
+<FONT color="green">071</FONT>    <a name="line.71"></a>
+<FONT color="green">072</FONT>        void removeParent(Class&lt;?&gt; klass) {<a name="line.72"></a>
+<FONT color="green">073</FONT>            parents.remove(klass);<a name="line.73"></a>
+<FONT color="green">074</FONT>        }<a name="line.74"></a>
+<FONT color="green">075</FONT>    <a name="line.75"></a>
+<FONT color="green">076</FONT>        /**<a name="line.76"></a>
+<FONT color="green">077</FONT>         * Constructs and returns a list of Runners, one for each child class in<a name="line.77"></a>
+<FONT color="green">078</FONT>         * {@code children}.  Care is taken to avoid infinite recursion:<a name="line.78"></a>
+<FONT color="green">079</FONT>         * this builder will throw an exception if it is requested for another<a name="line.79"></a>
+<FONT color="green">080</FONT>         * runner for {@code parent} before this call completes.<a name="line.80"></a>
+<FONT color="green">081</FONT>         */<a name="line.81"></a>
+<FONT color="green">082</FONT>        public List&lt;Runner&gt; runners(Class&lt;?&gt; parent, Class&lt;?&gt;[] children)<a name="line.82"></a>
+<FONT color="green">083</FONT>                throws InitializationError {<a name="line.83"></a>
+<FONT color="green">084</FONT>            addParent(parent);<a name="line.84"></a>
+<FONT color="green">085</FONT>    <a name="line.85"></a>
+<FONT color="green">086</FONT>            try {<a name="line.86"></a>
+<FONT color="green">087</FONT>                return runners(children);<a name="line.87"></a>
+<FONT color="green">088</FONT>            } finally {<a name="line.88"></a>
+<FONT color="green">089</FONT>                removeParent(parent);<a name="line.89"></a>
+<FONT color="green">090</FONT>            }<a name="line.90"></a>
+<FONT color="green">091</FONT>        }<a name="line.91"></a>
+<FONT color="green">092</FONT>    <a name="line.92"></a>
+<FONT color="green">093</FONT>        public List&lt;Runner&gt; runners(Class&lt;?&gt; parent, List&lt;Class&lt;?&gt;&gt; children)<a name="line.93"></a>
+<FONT color="green">094</FONT>                throws InitializationError {<a name="line.94"></a>
+<FONT color="green">095</FONT>            return runners(parent, children.toArray(new Class&lt;?&gt;[0]));<a name="line.95"></a>
+<FONT color="green">096</FONT>        }<a name="line.96"></a>
+<FONT color="green">097</FONT>    <a name="line.97"></a>
+<FONT color="green">098</FONT>        private List&lt;Runner&gt; runners(Class&lt;?&gt;[] children) {<a name="line.98"></a>
+<FONT color="green">099</FONT>            ArrayList&lt;Runner&gt; runners = new ArrayList&lt;Runner&gt;();<a name="line.99"></a>
+<FONT color="green">100</FONT>            for (Class&lt;?&gt; each : children) {<a name="line.100"></a>
+<FONT color="green">101</FONT>                Runner childRunner = safeRunnerForClass(each);<a name="line.101"></a>
+<FONT color="green">102</FONT>                if (childRunner != null) {<a name="line.102"></a>
+<FONT color="green">103</FONT>                    runners.add(childRunner);<a name="line.103"></a>
+<FONT color="green">104</FONT>                }<a name="line.104"></a>
+<FONT color="green">105</FONT>            }<a name="line.105"></a>
+<FONT color="green">106</FONT>            return runners;<a name="line.106"></a>
+<FONT color="green">107</FONT>        }<a name="line.107"></a>
+<FONT color="green">108</FONT>    }<a name="line.108"></a>
 
 
 
@@ -174,7 +169,6 @@
 
 
 
-</pre>
-</div>
-</body>
-</html>
+</PRE>
+</BODY>
+</HTML>

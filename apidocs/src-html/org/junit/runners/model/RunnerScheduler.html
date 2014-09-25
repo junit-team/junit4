@@ -1,34 +1,29 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html lang="en">
-<head>
-<title>Source code</title>
-<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
-</head>
-<body>
-<div class="sourceContainer">
-<pre><span class="sourceLineNo">001</span>package org.junit.runners.model;<a name="line.1"></a>
-<span class="sourceLineNo">002</span><a name="line.2"></a>
-<span class="sourceLineNo">003</span>/**<a name="line.3"></a>
-<span class="sourceLineNo">004</span> * Represents a strategy for scheduling when individual test methods<a name="line.4"></a>
-<span class="sourceLineNo">005</span> * should be run (in serial or parallel)<a name="line.5"></a>
-<span class="sourceLineNo">006</span> *<a name="line.6"></a>
-<span class="sourceLineNo">007</span> * WARNING: still experimental, may go away.<a name="line.7"></a>
-<span class="sourceLineNo">008</span> *<a name="line.8"></a>
-<span class="sourceLineNo">009</span> * @since 4.7<a name="line.9"></a>
-<span class="sourceLineNo">010</span> */<a name="line.10"></a>
-<span class="sourceLineNo">011</span>public interface RunnerScheduler {<a name="line.11"></a>
-<span class="sourceLineNo">012</span>    /**<a name="line.12"></a>
-<span class="sourceLineNo">013</span>     * Schedule a child statement to run<a name="line.13"></a>
-<span class="sourceLineNo">014</span>     */<a name="line.14"></a>
-<span class="sourceLineNo">015</span>    void schedule(Runnable childStatement);<a name="line.15"></a>
-<span class="sourceLineNo">016</span><a name="line.16"></a>
-<span class="sourceLineNo">017</span>    /**<a name="line.17"></a>
-<span class="sourceLineNo">018</span>     * Override to implement any behavior that must occur<a name="line.18"></a>
-<span class="sourceLineNo">019</span>     * after all children have been scheduled (for example,<a name="line.19"></a>
-<span class="sourceLineNo">020</span>     * waiting for them all to finish)<a name="line.20"></a>
-<span class="sourceLineNo">021</span>     */<a name="line.21"></a>
-<span class="sourceLineNo">022</span>    void finished();<a name="line.22"></a>
-<span class="sourceLineNo">023</span>}<a name="line.23"></a>
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.junit.runners.model;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    /**<a name="line.3"></a>
+<FONT color="green">004</FONT>     * Represents a strategy for scheduling when individual test methods<a name="line.4"></a>
+<FONT color="green">005</FONT>     * should be run (in serial or parallel)<a name="line.5"></a>
+<FONT color="green">006</FONT>     *<a name="line.6"></a>
+<FONT color="green">007</FONT>     * WARNING: still experimental, may go away.<a name="line.7"></a>
+<FONT color="green">008</FONT>     *<a name="line.8"></a>
+<FONT color="green">009</FONT>     * @since 4.7<a name="line.9"></a>
+<FONT color="green">010</FONT>     */<a name="line.10"></a>
+<FONT color="green">011</FONT>    public interface RunnerScheduler {<a name="line.11"></a>
+<FONT color="green">012</FONT>        /**<a name="line.12"></a>
+<FONT color="green">013</FONT>         * Schedule a child statement to run<a name="line.13"></a>
+<FONT color="green">014</FONT>         */<a name="line.14"></a>
+<FONT color="green">015</FONT>        void schedule(Runnable childStatement);<a name="line.15"></a>
+<FONT color="green">016</FONT>    <a name="line.16"></a>
+<FONT color="green">017</FONT>        /**<a name="line.17"></a>
+<FONT color="green">018</FONT>         * Override to implement any behavior that must occur<a name="line.18"></a>
+<FONT color="green">019</FONT>         * after all children have been scheduled (for example,<a name="line.19"></a>
+<FONT color="green">020</FONT>         * waiting for them all to finish)<a name="line.20"></a>
+<FONT color="green">021</FONT>         */<a name="line.21"></a>
+<FONT color="green">022</FONT>        void finished();<a name="line.22"></a>
+<FONT color="green">023</FONT>    }<a name="line.23"></a>
 
 
 
@@ -89,7 +84,6 @@
 
 
 
-</pre>
-</div>
-</body>
-</html>
+</PRE>
+</BODY>
+</HTML>

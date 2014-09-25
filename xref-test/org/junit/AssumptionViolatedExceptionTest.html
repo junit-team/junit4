@@ -11,9 +11,9 @@
 <a class="jxr_linenumber" name="L3" href="#L3">3</a>   <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.hamcrest.CoreMatchers.containsString;
 <a class="jxr_linenumber" name="L4" href="#L4">4</a>   <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.hamcrest.CoreMatchers.is;
 <a class="jxr_linenumber" name="L5" href="#L5">5</a>   <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.hamcrest.CoreMatchers.notNullValue;
-<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.assertThat;
-<a class="jxr_linenumber" name="L7" href="#L7">7</a>   <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assume.assumeThat;
-<a class="jxr_linenumber" name="L8" href="#L8">8</a>   
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.hamcrest.CoreMatchers.nullValue;
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.assertThat;
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assume.assumeThat;
 <a class="jxr_linenumber" name="L9" href="#L9">9</a>   <strong class="jxr_keyword">import</strong> org.hamcrest.Matcher;
 <a class="jxr_linenumber" name="L10" href="#L10">10</a>  <strong class="jxr_keyword">import</strong> org.hamcrest.StringDescription;
 <a class="jxr_linenumber" name="L11" href="#L11">11</a>  <strong class="jxr_keyword">import</strong> org.junit.experimental.theories.DataPoint;
@@ -24,29 +24,29 @@
 <a class="jxr_linenumber" name="L16" href="#L16">16</a>  @RunWith(Theories.<strong class="jxr_keyword">class</strong>)
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../org/junit/AssumptionViolatedExceptionTest.html">AssumptionViolatedExceptionTest</a> {
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>      @DataPoint
-<a class="jxr_linenumber" name="L19" href="#L19">19</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> Object TWO = 2;
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> Integer TWO = 2;
 <a class="jxr_linenumber" name="L20" href="#L20">20</a>  
 <a class="jxr_linenumber" name="L21" href="#L21">21</a>      @DataPoint
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> Matcher&lt;?&gt; IS_THREE = is(3);
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> Matcher&lt;Integer&gt; IS_THREE = is(3);
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>      @DataPoint
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> Matcher&lt;?&gt; NULL = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> Matcher&lt;Integer&gt; NULL = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>      @Theory
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> toStringReportsMatcher(Object actual, Matcher&lt;?&gt; matcher) {
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> toStringReportsMatcher(Integer actual, Matcher&lt;Integer&gt; matcher) {
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>          assumeThat(matcher, notNullValue());
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>          assertThat(<strong class="jxr_keyword">new</strong> AssumptionViolatedException(actual, matcher).toString(),
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>                  containsString(matcher.toString()));
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>      }
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>      @Theory
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> toStringReportsValue(Object actual, Matcher&lt;?&gt; matcher) {
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> toStringReportsValue(Integer actual, Matcher&lt;Integer&gt; matcher) {
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>          assertThat(<strong class="jxr_keyword">new</strong> AssumptionViolatedException(actual, matcher).toString(),
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>                  containsString(String.valueOf(actual)));
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>      }
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>      @Test
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> AssumptionViolatedExceptionDescribesItself() {
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> assumptionViolatedExceptionWithMatcherDescribesItself() {
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>          AssumptionViolatedException e = <strong class="jxr_keyword">new</strong> AssumptionViolatedException(3, is(2));
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>          assertThat(StringDescription.asString(e), is(<span class="jxr_string">"got: &lt;3&gt;, expected: is &lt;2&gt;"</span>));
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>      }
@@ -56,7 +56,52 @@
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>          AssumptionViolatedException e = <strong class="jxr_keyword">new</strong> AssumptionViolatedException(<span class="jxr_string">"not enough money"</span>);
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>          assertThat(StringDescription.asString(e), is(<span class="jxr_string">"not enough money"</span>));
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>      }
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>  }
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>  
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>      @Test
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> canInitCauseWithInstanceCreatedWithString() {
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>        AssumptionViolatedException e = <strong class="jxr_keyword">new</strong> AssumptionViolatedException(<span class="jxr_string">"invalid number"</span>);
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>        Throwable cause = <strong class="jxr_keyword">new</strong> RuntimeException(<span class="jxr_string">"cause"</span>);
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>        e.initCause(cause);
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>        assertThat(e.getCause(), is(cause));
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>      }
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>  
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>      @Test
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>      @SuppressWarnings(<span class="jxr_string">"deprecation"</span>)
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> canSetCauseWithInstanceCreatedWithObjectAndMatcher() {
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>        Throwable testObject = <strong class="jxr_keyword">new</strong> Exception();
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>        org.junit.internal.AssumptionViolatedException e
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>                = <strong class="jxr_keyword">new</strong> org.junit.internal.AssumptionViolatedException(
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>                        testObject, containsString(<span class="jxr_string">"test matcher"</span>));
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>        assertThat(e.getCause(), is(testObject));
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>      }
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>  
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>      @Test
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>      @SuppressWarnings(<span class="jxr_string">"deprecation"</span>)
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> canSetCauseWithInstanceCreatedWithAssumptionObjectAndMatcher() {
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>        Throwable testObject = <strong class="jxr_keyword">new</strong> Exception();
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>        org.junit.internal.AssumptionViolatedException e
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>                = <strong class="jxr_keyword">new</strong> org.junit.internal.AssumptionViolatedException(
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>                        <span class="jxr_string">"sample assumption"</span>, testObject, containsString(<span class="jxr_string">"test matcher"</span>));
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>        assertThat(e.getCause(), is(testObject));
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>      }
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>  
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>      @Test
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>      @SuppressWarnings(<span class="jxr_string">"deprecation"</span>)
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> canSetCauseWithInstanceCreatedWithMainConstructor() {
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>        Throwable testObject = <strong class="jxr_keyword">new</strong> Exception();
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>        org.junit.internal.AssumptionViolatedException e
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>                = <strong class="jxr_keyword">new</strong> org.junit.internal.AssumptionViolatedException(
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>                        <span class="jxr_string">"sample assumption"</span>, false, testObject, containsString(<span class="jxr_string">"test matcher"</span>));
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>        assertThat(e.getCause(), is(testObject));
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>      }
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>  
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>      @Test
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> canSetCauseWithInstanceCreatedWithExplicitThrowableConstructor() {
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>        Throwable cause = <strong class="jxr_keyword">new</strong> Exception();
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>        AssumptionViolatedException e = <strong class="jxr_keyword">new</strong> AssumptionViolatedException(<span class="jxr_string">"invalid number"</span>, cause);
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>        assertThat(e.getCause(), is(cause));
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>      }
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2002&#x2013;2014 <a href="http://www.junit.org">JUnit</a>. All rights reserved.</div>

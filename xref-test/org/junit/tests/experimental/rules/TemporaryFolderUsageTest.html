@@ -92,119 +92,137 @@
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>          thrown.expectMessage(<span class="jxr_string">"a folder with the name 'level1' already exists"</span>);
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>          tempFolder.newFolder(<span class="jxr_string">"level1"</span>);
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>      }
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>  
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>      
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>      @Test
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> newFolderWithGivenPathThrowsIllegalArgumentExceptionIfPathExists() <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>          tempFolder.create();
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>          tempFolder.newFolder(<span class="jxr_string">"level1"</span>, <span class="jxr_string">"level2"</span>, <span class="jxr_string">"level3"</span>);
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>  
-<a class="jxr_linenumber" name="L93" href="#L93">93</a>          thrown.expect(IOException.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>          thrown.expectMessage(<span class="jxr_string">"a folder with the name 'level3' already exists"</span>);
-<a class="jxr_linenumber" name="L95" href="#L95">95</a>          tempFolder.newFolder(<span class="jxr_string">"level1"</span>, <span class="jxr_string">"level2"</span>, <span class="jxr_string">"level3"</span>);
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>      }
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>  
-<a class="jxr_linenumber" name="L98" href="#L98">98</a>      @Test
-<a class="jxr_linenumber" name="L99" href="#L99">99</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> createInitializesRootFolder() <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L100" href="#L100">100</a>         tempFolder.create();
-<a class="jxr_linenumber" name="L101" href="#L101">101</a>         assertFileExists(tempFolder.getRoot());
-<a class="jxr_linenumber" name="L102" href="#L102">102</a>     }
-<a class="jxr_linenumber" name="L103" href="#L103">103</a> 
-<a class="jxr_linenumber" name="L104" href="#L104">104</a>     @Test
-<a class="jxr_linenumber" name="L105" href="#L105">105</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> deleteShouldDoNothingIfRootFolderWasNotInitialized() {
-<a class="jxr_linenumber" name="L106" href="#L106">106</a>         tempFolder.delete();
-<a class="jxr_linenumber" name="L107" href="#L107">107</a>     }
-<a class="jxr_linenumber" name="L108" href="#L108">108</a> 
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>     @Test
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> deleteRemovesRootFolder() <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>         tempFolder.create();
-<a class="jxr_linenumber" name="L112" href="#L112">112</a>         tempFolder.delete();
-<a class="jxr_linenumber" name="L113" href="#L113">113</a>         assertFileDoesNotExist(tempFolder.getRoot());
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> newFolderWithGivenFolderThrowsIOExceptionIfFolderNameConsistsOfMultiplePathComponents()
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>              <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>          tempFolder.create();
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>          thrown.expect(IOException.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>          thrown.expectMessage(<span class="jxr_string">"name cannot consist of multiple path components"</span>);
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>          tempFolder.newFolder(<span class="jxr_string">"temp1/temp2"</span>);
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>      }
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>      
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>      @Test
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> newFolderWithGivenPathThrowsIllegalArgumentExceptionIfPathExists() <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>          tempFolder.create();
+<a class="jxr_linenumber" name="L100" href="#L100">100</a>         tempFolder.newFolder(<span class="jxr_string">"level1"</span>, <span class="jxr_string">"level2"</span>, <span class="jxr_string">"level3"</span>);
+<a class="jxr_linenumber" name="L101" href="#L101">101</a> 
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>         thrown.expect(IOException.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>         thrown.expectMessage(<span class="jxr_string">"a folder with the name 'level3' already exists"</span>);
+<a class="jxr_linenumber" name="L104" href="#L104">104</a>         tempFolder.newFolder(<span class="jxr_string">"level1"</span>, <span class="jxr_string">"level2"</span>, <span class="jxr_string">"level3"</span>);
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>     }
+<a class="jxr_linenumber" name="L106" href="#L106">106</a> 
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>     @Test
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> newFolderWithGivenPathThrowsIOExceptionIfFolderNamesConsistOfMultiplePathComponents()
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>             <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>         tempFolder.create();
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>         thrown.expect(IOException.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>         thrown.expectMessage(<span class="jxr_string">"name cannot consist of multiple path components"</span>);
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>         tempFolder.newFolder(<span class="jxr_string">"temp1"</span>, <span class="jxr_string">"temp2"</span>, <span class="jxr_string">"temp3/temp4"</span>);
 <a class="jxr_linenumber" name="L114" href="#L114">114</a>     }
-<a class="jxr_linenumber" name="L115" href="#L115">115</a> 
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>     
 <a class="jxr_linenumber" name="L116" href="#L116">116</a>     @Test
-<a class="jxr_linenumber" name="L117" href="#L117">117</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> newRandomFileIsCreatedUnderRootFolder() <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L117" href="#L117">117</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> createInitializesRootFolder() <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L118" href="#L118">118</a>         tempFolder.create();
-<a class="jxr_linenumber" name="L119" href="#L119">119</a> 
-<a class="jxr_linenumber" name="L120" href="#L120">120</a>         File f = tempFolder.newFile();
-<a class="jxr_linenumber" name="L121" href="#L121">121</a>         assertFileExists(f);
-<a class="jxr_linenumber" name="L122" href="#L122">122</a>         assertFileCreatedUnderRootFolder(<span class="jxr_string">"Random file"</span>, f);
-<a class="jxr_linenumber" name="L123" href="#L123">123</a>     }
-<a class="jxr_linenumber" name="L124" href="#L124">124</a> 
-<a class="jxr_linenumber" name="L125" href="#L125">125</a>     @Test
-<a class="jxr_linenumber" name="L126" href="#L126">126</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> newNamedFileIsCreatedUnderRootFolder() <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L127" href="#L127">127</a>         <strong class="jxr_keyword">final</strong> String fileName = <span class="jxr_string">"SampleFile.txt"</span>;
-<a class="jxr_linenumber" name="L128" href="#L128">128</a>         tempFolder.create();
-<a class="jxr_linenumber" name="L129" href="#L129">129</a> 
-<a class="jxr_linenumber" name="L130" href="#L130">130</a>         File f = tempFolder.newFile(fileName);
-<a class="jxr_linenumber" name="L131" href="#L131">131</a> 
-<a class="jxr_linenumber" name="L132" href="#L132">132</a>         assertFileExists(f);
-<a class="jxr_linenumber" name="L133" href="#L133">133</a>         assertFileCreatedUnderRootFolder(<span class="jxr_string">"Named file"</span>, f);
-<a class="jxr_linenumber" name="L134" href="#L134">134</a>         assertThat(<span class="jxr_string">"file name"</span>, f.getName(), equalTo(fileName));
-<a class="jxr_linenumber" name="L135" href="#L135">135</a>     }
-<a class="jxr_linenumber" name="L136" href="#L136">136</a> 
-<a class="jxr_linenumber" name="L137" href="#L137">137</a>     @Test
-<a class="jxr_linenumber" name="L138" href="#L138">138</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> newRandomFolderIsCreatedUnderRootFolder() <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L139" href="#L139">139</a>         tempFolder.create();
-<a class="jxr_linenumber" name="L140" href="#L140">140</a> 
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>         File f = tempFolder.newFolder();
-<a class="jxr_linenumber" name="L142" href="#L142">142</a>         assertFileExists(f);
-<a class="jxr_linenumber" name="L143" href="#L143">143</a>         assertFileCreatedUnderRootFolder(<span class="jxr_string">"Random folder"</span>, f);
-<a class="jxr_linenumber" name="L144" href="#L144">144</a>     }
-<a class="jxr_linenumber" name="L145" href="#L145">145</a> 
-<a class="jxr_linenumber" name="L146" href="#L146">146</a>     @Test
-<a class="jxr_linenumber" name="L147" href="#L147">147</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> newNestedFoldersCreatedUnderRootFolder() <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L148" href="#L148">148</a>         tempFolder.create();
+<a class="jxr_linenumber" name="L119" href="#L119">119</a>         assertFileExists(tempFolder.getRoot());
+<a class="jxr_linenumber" name="L120" href="#L120">120</a>     }
+<a class="jxr_linenumber" name="L121" href="#L121">121</a> 
+<a class="jxr_linenumber" name="L122" href="#L122">122</a>     @Test
+<a class="jxr_linenumber" name="L123" href="#L123">123</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> deleteShouldDoNothingIfRootFolderWasNotInitialized() {
+<a class="jxr_linenumber" name="L124" href="#L124">124</a>         tempFolder.delete();
+<a class="jxr_linenumber" name="L125" href="#L125">125</a>     }
+<a class="jxr_linenumber" name="L126" href="#L126">126</a> 
+<a class="jxr_linenumber" name="L127" href="#L127">127</a>     @Test
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> deleteRemovesRootFolder() <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L129" href="#L129">129</a>         tempFolder.create();
+<a class="jxr_linenumber" name="L130" href="#L130">130</a>         tempFolder.delete();
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>         assertFileDoesNotExist(tempFolder.getRoot());
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>     }
+<a class="jxr_linenumber" name="L133" href="#L133">133</a> 
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>     @Test
+<a class="jxr_linenumber" name="L135" href="#L135">135</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> newRandomFileIsCreatedUnderRootFolder() <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>         tempFolder.create();
+<a class="jxr_linenumber" name="L137" href="#L137">137</a> 
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>         File f = tempFolder.newFile();
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>         assertFileExists(f);
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>         assertFileCreatedUnderRootFolder(<span class="jxr_string">"Random file"</span>, f);
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>     }
+<a class="jxr_linenumber" name="L142" href="#L142">142</a> 
+<a class="jxr_linenumber" name="L143" href="#L143">143</a>     @Test
+<a class="jxr_linenumber" name="L144" href="#L144">144</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> newNamedFileIsCreatedUnderRootFolder() <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L145" href="#L145">145</a>         <strong class="jxr_keyword">final</strong> String fileName = <span class="jxr_string">"SampleFile.txt"</span>;
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>         tempFolder.create();
+<a class="jxr_linenumber" name="L147" href="#L147">147</a> 
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>         File f = tempFolder.newFile(fileName);
 <a class="jxr_linenumber" name="L149" href="#L149">149</a> 
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>         File f = tempFolder.newFolder(<span class="jxr_string">"top"</span>, <span class="jxr_string">"middle"</span>, <span class="jxr_string">"bottom"</span>);
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>         assertFileExists(f);
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>         assertParentFolderForFileIs(f, <strong class="jxr_keyword">new</strong> File(tempFolder.getRoot(),
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>                 <span class="jxr_string">"top/middle"</span>));
-<a class="jxr_linenumber" name="L154" href="#L154">154</a>         assertParentFolderForFileIs(f.getParentFile(),
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>                 <strong class="jxr_keyword">new</strong> File(tempFolder.getRoot(), <span class="jxr_string">"top"</span>));
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>         assertFileCreatedUnderRootFolder(<span class="jxr_string">"top"</span>, f.getParentFile()
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>                 .getParentFile());
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>     }
-<a class="jxr_linenumber" name="L159" href="#L159">159</a> 
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>     @Test
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> canSetTheBaseFileForATemporaryFolder() <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L162" href="#L162">162</a>         File tempDir = createTemporaryFolder();
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>         assertFileExists(f);
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>         assertFileCreatedUnderRootFolder(<span class="jxr_string">"Named file"</span>, f);
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>         assertThat(<span class="jxr_string">"file name"</span>, f.getName(), equalTo(fileName));
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>     }
+<a class="jxr_linenumber" name="L154" href="#L154">154</a> 
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>     @Test
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> newRandomFolderIsCreatedUnderRootFolder() <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>         tempFolder.create();
+<a class="jxr_linenumber" name="L158" href="#L158">158</a> 
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>         File f = tempFolder.newFolder();
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>         assertFileExists(f);
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>         assertFileCreatedUnderRootFolder(<span class="jxr_string">"Random folder"</span>, f);
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>     }
 <a class="jxr_linenumber" name="L163" href="#L163">163</a> 
-<a class="jxr_linenumber" name="L164" href="#L164">164</a>         TemporaryFolder folder = <strong class="jxr_keyword">new</strong> TemporaryFolder(tempDir);
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>         folder.create();
-<a class="jxr_linenumber" name="L166" href="#L166">166</a> 
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>         assertThat(tempDir, is(folder.getRoot().getParentFile()));
-<a class="jxr_linenumber" name="L168" href="#L168">168</a>     }
-<a class="jxr_linenumber" name="L169" href="#L169">169</a> 
-<a class="jxr_linenumber" name="L170" href="#L170">170</a>     <strong class="jxr_keyword">private</strong> File createTemporaryFolder() <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L171" href="#L171">171</a>         File tempDir = File.createTempFile(<span class="jxr_string">"junit"</span>, <span class="jxr_string">"tempFolder"</span>);
-<a class="jxr_linenumber" name="L172" href="#L172">172</a>         assertTrue(<span class="jxr_string">"Unable to delete temporary file"</span>, tempDir.delete());
-<a class="jxr_linenumber" name="L173" href="#L173">173</a>         assertTrue(<span class="jxr_string">"Unable to create temp directory"</span>, tempDir.mkdir());
-<a class="jxr_linenumber" name="L174" href="#L174">174</a>         <strong class="jxr_keyword">return</strong> tempDir;
-<a class="jxr_linenumber" name="L175" href="#L175">175</a>     }
-<a class="jxr_linenumber" name="L176" href="#L176">176</a> 
-<a class="jxr_linenumber" name="L177" href="#L177">177</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> assertFileDoesNotExist(File file) {
-<a class="jxr_linenumber" name="L178" href="#L178">178</a>         checkFileExists(<span class="jxr_string">"exists"</span>, file, false);
-<a class="jxr_linenumber" name="L179" href="#L179">179</a>     }
-<a class="jxr_linenumber" name="L180" href="#L180">180</a> 
-<a class="jxr_linenumber" name="L181" href="#L181">181</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> checkFileExists(String msg, File file, <strong class="jxr_keyword">boolean</strong> exists) {
-<a class="jxr_linenumber" name="L182" href="#L182">182</a>         assertThat(<span class="jxr_string">"File is null"</span>, file, is(notNullValue()));
-<a class="jxr_linenumber" name="L183" href="#L183">183</a>         assertThat(<span class="jxr_string">"File '"</span> + file.getAbsolutePath() + <span class="jxr_string">"' "</span> + msg,
-<a class="jxr_linenumber" name="L184" href="#L184">184</a>                 file.exists(), is(exists));
-<a class="jxr_linenumber" name="L185" href="#L185">185</a>     }
-<a class="jxr_linenumber" name="L186" href="#L186">186</a> 
-<a class="jxr_linenumber" name="L187" href="#L187">187</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> assertFileExists(File file) {
-<a class="jxr_linenumber" name="L188" href="#L188">188</a>         checkFileExists(<span class="jxr_string">"does not exist"</span>, file, <strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="L189" href="#L189">189</a>     }
-<a class="jxr_linenumber" name="L190" href="#L190">190</a> 
-<a class="jxr_linenumber" name="L191" href="#L191">191</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> assertFileCreatedUnderRootFolder(String msg, File f) {
-<a class="jxr_linenumber" name="L192" href="#L192">192</a>         assertParentFolderForFileIs(f, tempFolder.getRoot());
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>     @Test
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> newNestedFoldersCreatedUnderRootFolder() <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>         tempFolder.create();
+<a class="jxr_linenumber" name="L167" href="#L167">167</a> 
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>         File f = tempFolder.newFolder(<span class="jxr_string">"top"</span>, <span class="jxr_string">"middle"</span>, <span class="jxr_string">"bottom"</span>);
+<a class="jxr_linenumber" name="L169" href="#L169">169</a>         assertFileExists(f);
+<a class="jxr_linenumber" name="L170" href="#L170">170</a>         assertParentFolderForFileIs(f, <strong class="jxr_keyword">new</strong> File(tempFolder.getRoot(),
+<a class="jxr_linenumber" name="L171" href="#L171">171</a>                 <span class="jxr_string">"top/middle"</span>));
+<a class="jxr_linenumber" name="L172" href="#L172">172</a>         assertParentFolderForFileIs(f.getParentFile(),
+<a class="jxr_linenumber" name="L173" href="#L173">173</a>                 <strong class="jxr_keyword">new</strong> File(tempFolder.getRoot(), <span class="jxr_string">"top"</span>));
+<a class="jxr_linenumber" name="L174" href="#L174">174</a>         assertFileCreatedUnderRootFolder(<span class="jxr_string">"top"</span>, f.getParentFile()
+<a class="jxr_linenumber" name="L175" href="#L175">175</a>                 .getParentFile());
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>     }
+<a class="jxr_linenumber" name="L177" href="#L177">177</a> 
+<a class="jxr_linenumber" name="L178" href="#L178">178</a>     @Test
+<a class="jxr_linenumber" name="L179" href="#L179">179</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> canSetTheBaseFileForATemporaryFolder() <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L180" href="#L180">180</a>         File tempDir = createTemporaryFolder();
+<a class="jxr_linenumber" name="L181" href="#L181">181</a> 
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>         TemporaryFolder folder = <strong class="jxr_keyword">new</strong> TemporaryFolder(tempDir);
+<a class="jxr_linenumber" name="L183" href="#L183">183</a>         folder.create();
+<a class="jxr_linenumber" name="L184" href="#L184">184</a> 
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>         assertThat(tempDir, is(folder.getRoot().getParentFile()));
+<a class="jxr_linenumber" name="L186" href="#L186">186</a>     }
+<a class="jxr_linenumber" name="L187" href="#L187">187</a> 
+<a class="jxr_linenumber" name="L188" href="#L188">188</a>     <strong class="jxr_keyword">private</strong> File createTemporaryFolder() <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L189" href="#L189">189</a>         File tempDir = File.createTempFile(<span class="jxr_string">"junit"</span>, <span class="jxr_string">"tempFolder"</span>);
+<a class="jxr_linenumber" name="L190" href="#L190">190</a>         assertTrue(<span class="jxr_string">"Unable to delete temporary file"</span>, tempDir.delete());
+<a class="jxr_linenumber" name="L191" href="#L191">191</a>         assertTrue(<span class="jxr_string">"Unable to create temp directory"</span>, tempDir.mkdir());
+<a class="jxr_linenumber" name="L192" href="#L192">192</a>         <strong class="jxr_keyword">return</strong> tempDir;
 <a class="jxr_linenumber" name="L193" href="#L193">193</a>     }
 <a class="jxr_linenumber" name="L194" href="#L194">194</a> 
-<a class="jxr_linenumber" name="L195" href="#L195">195</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> assertParentFolderForFileIs(File f, File parentFolder) {
-<a class="jxr_linenumber" name="L196" href="#L196">196</a>         assertThat(<span class="jxr_string">"'"</span> + f.getAbsolutePath() + <span class="jxr_string">"': not under root"</span>,
-<a class="jxr_linenumber" name="L197" href="#L197">197</a>                 f.getParentFile(), is(parentFolder));
-<a class="jxr_linenumber" name="L198" href="#L198">198</a>     }
-<a class="jxr_linenumber" name="L199" href="#L199">199</a> }
+<a class="jxr_linenumber" name="L195" href="#L195">195</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> assertFileDoesNotExist(File file) {
+<a class="jxr_linenumber" name="L196" href="#L196">196</a>         checkFileExists(<span class="jxr_string">"exists"</span>, file, false);
+<a class="jxr_linenumber" name="L197" href="#L197">197</a>     }
+<a class="jxr_linenumber" name="L198" href="#L198">198</a> 
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> checkFileExists(String msg, File file, <strong class="jxr_keyword">boolean</strong> exists) {
+<a class="jxr_linenumber" name="L200" href="#L200">200</a>         assertThat(<span class="jxr_string">"File is null"</span>, file, is(notNullValue()));
+<a class="jxr_linenumber" name="L201" href="#L201">201</a>         assertThat(<span class="jxr_string">"File '"</span> + file.getAbsolutePath() + <span class="jxr_string">"' "</span> + msg,
+<a class="jxr_linenumber" name="L202" href="#L202">202</a>                 file.exists(), is(exists));
+<a class="jxr_linenumber" name="L203" href="#L203">203</a>     }
+<a class="jxr_linenumber" name="L204" href="#L204">204</a> 
+<a class="jxr_linenumber" name="L205" href="#L205">205</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> assertFileExists(File file) {
+<a class="jxr_linenumber" name="L206" href="#L206">206</a>         checkFileExists(<span class="jxr_string">"does not exist"</span>, file, <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L207" href="#L207">207</a>     }
+<a class="jxr_linenumber" name="L208" href="#L208">208</a> 
+<a class="jxr_linenumber" name="L209" href="#L209">209</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> assertFileCreatedUnderRootFolder(String msg, File f) {
+<a class="jxr_linenumber" name="L210" href="#L210">210</a>         assertParentFolderForFileIs(f, tempFolder.getRoot());
+<a class="jxr_linenumber" name="L211" href="#L211">211</a>     }
+<a class="jxr_linenumber" name="L212" href="#L212">212</a> 
+<a class="jxr_linenumber" name="L213" href="#L213">213</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> assertParentFolderForFileIs(File f, File parentFolder) {
+<a class="jxr_linenumber" name="L214" href="#L214">214</a>         assertThat(<span class="jxr_string">"'"</span> + f.getAbsolutePath() + <span class="jxr_string">"': not under root"</span>,
+<a class="jxr_linenumber" name="L215" href="#L215">215</a>                 f.getParentFile(), is(parentFolder));
+<a class="jxr_linenumber" name="L216" href="#L216">216</a>     }
+<a class="jxr_linenumber" name="L217" href="#L217">217</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2002&#x2013;2014 <a href="http://www.junit.org">JUnit</a>. All rights reserved.</div>
