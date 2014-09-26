@@ -1,5 +1,8 @@
 package junit.framework;
 
+import org.junit.internal.MethodSorter;
+import org.junit.runners.MethodSorters;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
@@ -10,8 +13,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
-
-import org.junit.internal.MethodSorter;
 
 /**
  * A <code>TestSuite</code> is a <code>Composite</code> of Tests.
@@ -146,7 +147,15 @@ public class TestSuite implements Test {
         Class<?> superClass = theClass;
         List<String> names = new ArrayList<String>();
         while (Test.class.isAssignableFrom(superClass)) {
-            for (Method each : MethodSorter.getDeclaredMethods(superClass)) {
+            MethodSorter.SortedMethods sortedMethods = MethodSorter.getDeclaredMethods(superClass);
+            //TODO: how to display order and seed to user? addTest(warning) won't do the good job
+            if (sortedMethods.getMethodSorter() != MethodSorters.DEFAULT && sortedMethods.getMethodSorter() != MethodSorters.RANDOM) {
+                addTest(warning("Tests sorted with " + sortedMethods.getMethodSorter().name() + " order"));
+            }
+            if (sortedMethods.getMethodSorter() == MethodSorters.RANDOM) {
+                addTest(warning("Tests sorted with " + sortedMethods.getMethodSorter().name() + " order and seed " + sortedMethods.getSeed()));
+            }
+            for (Method each : sortedMethods.getMethods()) {
                 addTestMethod(each, names, theClass);
             }
             superClass = superClass.getSuperclass();

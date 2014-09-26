@@ -1,10 +1,10 @@
 package org.junit.internal;
 
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Comparator;
-
 import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+
+import java.lang.reflect.Method;
+import java.util.*;
 
 public class MethodSorter {
     /**
@@ -48,25 +48,74 @@ public class MethodSorter {
      * @see <a href="http://bugs.sun.com/view_bug.do?bug_id=7023180">JDK
      *      (non-)bug #7023180</a>
      */
-    public static Method[] getDeclaredMethods(Class<?> clazz) {
-        Comparator<Method> comparator = getSorter(clazz.getAnnotation(FixMethodOrder.class));
-
+    public static SortedMethods getDeclaredMethods(Class<?> clazz) {
         Method[] methods = clazz.getDeclaredMethods();
-        if (comparator != null) {
-            Arrays.sort(methods, comparator);
+        FixMethodOrder annotation = clazz.getAnnotation(FixMethodOrder.class);
+
+        if (annotation == null) {
+            return sort(methods, MethodSorters.DEFAULT);
         }
 
-        return methods;
+        if (annotation.value() == MethodSorters.RANDOM) {
+            return shuffle(methods, annotation.seed());
+        }
+
+        return sort(methods, annotation.value());
     }
 
     private MethodSorter() {
     }
 
-    private static Comparator<Method> getSorter(FixMethodOrder fixMethodOrder) {
-        if (fixMethodOrder == null) {
-            return DEFAULT;
+    private static SortedMethods sort(Method[] methods, MethodSorters methodSorter) {
+        Comparator<Method> comparator = methodSorter.getComparator();
+        if (comparator != null) {
+            Arrays.sort(methods, comparator);
         }
 
-        return fixMethodOrder.value().getComparator();
+        return new SortedMethods(methods, methodSorter, null);
+    }
+
+    private static SortedMethods shuffle(Method[] methods, String seedText) {
+        long seed = determineSeed(seedText);
+        //TODO: how to display seed to user?
+        //System.out.println("Methods shuffled with seed " + seed);
+        Arrays.sort(methods, NAME_ASCENDING);
+        List<Method> methodList = Arrays.asList(methods);
+        Collections.shuffle(methodList, new Random(seed));
+
+        return new SortedMethods(methodList.toArray(new Method[methodList.size()]), MethodSorters.RANDOM, seed);
+    }
+
+    private static long determineSeed(String seedText) {
+        try {
+            return Long.valueOf(seedText);
+        } catch (NumberFormatException e) {
+            //do nothing
+        }
+        return System.currentTimeMillis();
+    }
+
+    public static class SortedMethods {
+        private Method[] methods;
+        private MethodSorters methodSorter;
+        private Long seed;
+
+        public SortedMethods(Method[] methods, MethodSorters methodSorter, Long seed) {
+            this.methods = methods;
+            this.methodSorter = methodSorter;
+            this.seed = seed;
+        }
+
+        public Method[] getMethods() {
+            return methods;
+        }
+
+        public MethodSorters getMethodSorter() {
+            return methodSorter;
+        }
+
+        public Long getSeed() {
+            return seed;
+        }
     }
 }

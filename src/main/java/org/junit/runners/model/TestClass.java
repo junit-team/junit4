@@ -1,27 +1,19 @@
 package org.junit.runners.model;
 
-import static java.lang.reflect.Modifier.isStatic;
-import static org.junit.internal.MethodSorter.NAME_ASCENDING;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.internal.MethodSorter;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.internal.MethodSorter;
+import static java.lang.reflect.Modifier.isStatic;
+import static org.junit.internal.MethodSorter.NAME_ASCENDING;
 
 /**
  * Wraps a class to be run, providing method validation and annotation searching
@@ -62,7 +54,7 @@ public class TestClass implements Annotatable {
 
     protected void scanAnnotatedMembers(Map<Class<? extends Annotation>, List<FrameworkMethod>> methodsForAnnotations, Map<Class<? extends Annotation>, List<FrameworkField>> fieldsForAnnotations) {
         for (Class<?> eachClass : getSuperClasses(clazz)) {
-            for (Method eachMethod : MethodSorter.getDeclaredMethods(eachClass)) {
+            for (Method eachMethod : MethodSorter.getDeclaredMethods(eachClass).getMethods()) {
                 addToAnnotationLists(new FrameworkMethod(eachMethod), methodsForAnnotations);
             }
             // ensuring fields are sorted to make sure that entries are inserted
@@ -108,7 +100,7 @@ public class TestClass implements Annotatable {
     /**
      * Returns, efficiently, all the non-overridden methods in this class and
      * its superclasses that are annotated}.
-     * 
+     *
      * @since 4.12
      */
     public List<FrameworkMethod> getAnnotatedMethods() {
@@ -129,7 +121,7 @@ public class TestClass implements Annotatable {
     /**
      * Returns, efficiently, all the non-overridden fields in this class and its
      * superclasses that are annotated.
-     * 
+     *
      * @since 4.12
      */
     public List<FrameworkField> getAnnotatedFields() {
