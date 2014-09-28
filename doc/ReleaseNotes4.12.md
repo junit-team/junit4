@@ -100,7 +100,7 @@ This allows for validation to be added to annotations. Validators should extend 
 `ExpectedException` didn't handle `AssertionError`s and `AssumptionViolatedException` well. This has been fixed. The new documentation explains the usage of `ExpectedException` for testing these exceptions. The two methods `handleAssertionErrors()` and `handleAssumptionViolatedExceptions()` are not needed anymore. If you have used them, just remove it and read `ExpectedException`'s documentation.
 
 
-### [Pull request #818:](https://github.com/junit-team/junit/pull/818) External version of AssumptionViolatedException
+### [Pull request #818:](https://github.com/junit-team/junit/pull/818) [Pull request #993:](https://github.com/junit-team/junit/pull/993) External version of AssumptionViolatedException
 
 In JUnit 4.11 and earlier, if you wanted to write a custom runner that handled
 `AssumptionViolatedException` or you needed to create an instance of `AssumptionViolatedException`
@@ -109,6 +109,10 @@ Now you can import `org.junit.AssumptionViolatedException` (which extends
 `org.junit.internal.AssumptionViolatedException`).
 
 The classes in `Assume` have been modified to throw `org.junit.AssumptionViolatedException`.
+
+The constructors in the external `AssumptionViolatedException` are also
+simpler than the ones in the internal version. That being said,
+it's recommended that you create `AssumptionViolatedException` via the methods in `Assume`.
 
 
 ### [Pull request #985:](https://github.com/junit-team/junit/pull/985) Change AssumptionViolatedException to not set the cause to null; fixes issue #494
