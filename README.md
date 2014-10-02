@@ -10,3 +10,4 @@ For more information, please visit:
 
 [![Built on DEV@cloud](http://www.cloudbees.com/sites/default/files/Button-Built-on-CB-1.png)](http://www.cloudbees.com/foss/foss-dev.cb)
 
+[![codecov.io](https://codecov.io/github/junit-team/junit/coverage.svg?branch=master)](https://codecov.io/github/junit-team/junit?branch=master)
