@@ -2,6 +2,8 @@ package junit.textui;
 
 
 import java.io.PrintStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -9,6 +11,8 @@ import junit.framework.TestResult;
 import junit.framework.TestSuite;
 import junit.runner.BaseTestRunner;
 import junit.runner.Version;
+import junit.runner.tracefilter.Packages;
+import junit.runner.tracefilter.TraceFilter;
 
 /**
  * A command line based tool to run tests.
@@ -164,8 +168,9 @@ public class TestRunner extends BaseTestRunner {
                 int lastIndex = arg.lastIndexOf('.');
                 testCase = arg.substring(0, lastIndex);
                 method = arg.substring(lastIndex + 1);
-            } else if (args[i].equals("-nostacktrace")) {
-                setPreference("nostacktrace", "true");
+            } else if (args[i].contains("-filterstack")) {
+                setPreference("filterstack", "true");
+                parsePackages(args[i]);
             } else if (args[i].equals("-v")) {
                 System.err.println("JUnit " + Version.id() + " by Kent Beck and Erich Gamma");
             } else {
@@ -185,6 +190,18 @@ public class TestRunner extends BaseTestRunner {
             return doRun(suite, wait);
         } catch (Exception e) {
             throw new Exception("Could not create and run test suite: " + e);
+        }
+    }
+
+    private void parsePackages(String pkgs) {
+        Pattern pattern = Pattern.compile("\\[(.*?)\\]");
+        Matcher matcher = pattern.matcher(pkgs);
+        
+        if (matcher.find()) {
+            String[] parsedPkgs = matcher.group(1).split(",");
+            TraceFilter.setPackages(new Packages(parsedPkgs));
+        } else {
+            TraceFilter.setPackages(Packages.defaultPackages());
         }
     }
 
