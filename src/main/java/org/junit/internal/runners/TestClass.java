@@ -1,18 +1,18 @@
 package org.junit.internal.runners;
 
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.internal.sorters.MethodSorterUtil;
+import org.junit.runners.BlockJUnit4ClassRunner;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.internal.MethodSorter;
-import org.junit.runners.BlockJUnit4ClassRunner;
 
 /**
  * @deprecated Included for backwards compatibility with JUnit 4.4. Will be
@@ -42,7 +42,7 @@ public class TestClass {
     public List<Method> getAnnotatedMethods(Class<? extends Annotation> annotationClass) {
         List<Method> results = new ArrayList<Method>();
         for (Class<?> eachClass : getSuperClasses(klass)) {
-            Method[] methods = MethodSorter.getDeclaredMethods(eachClass);
+            Method[] methods = MethodSorterUtil.getDeclaredMethods(eachClass);
             for (Method eachMethod : methods) {
                 Annotation annotation = eachMethod.getAnnotation(annotationClass);
                 if (annotation != null && !isShadowed(eachMethod, results)) {

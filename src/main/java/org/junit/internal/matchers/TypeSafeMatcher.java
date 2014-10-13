@@ -1,9 +1,9 @@
 package org.junit.internal.matchers;
 
-import java.lang.reflect.Method;
-
 import org.hamcrest.BaseMatcher;
-import org.junit.internal.MethodSorter;
+import org.junit.internal.sorters.MethodSorterUtil;
+
+import java.lang.reflect.Method;
 
 /**
  * Convenient base class for Matchers that require a non-null value of a specific type.
@@ -29,7 +29,7 @@ public abstract class TypeSafeMatcher<T> extends BaseMatcher<T> {
 
     private static Class<?> findExpectedType(Class<?> fromClass) {
         for (Class<?> c = fromClass; c != Object.class; c = c.getSuperclass()) {
-            for (Method method : MethodSorter.getDeclaredMethods(c)) {
+            for (Method method : MethodSorterUtil.getDeclaredMethods(c)) {
                 if (isMatchesSafelyMethod(method)) {
                     return method.getParameterTypes()[0];
                 }

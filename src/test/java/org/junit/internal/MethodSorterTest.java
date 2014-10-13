@@ -1,16 +1,19 @@
 package org.junit.internal;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertArrayEquals;
+import org.junit.SortWith;
+import org.junit.Test;
+import org.junit.internal.sorters.DefaultMethodSorter;
+import org.junit.internal.sorters.JvmMethodSorter;
+import org.junit.internal.sorters.MethodSorterUtil;
+import org.junit.internal.sorters.NameAscendingMethodSorter;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public class MethodSorterTest {
     private static final String ALPHA = "java.lang.Object alpha(int,double,java.lang.Thread)";
@@ -55,7 +58,7 @@ public class MethodSorterTest {
     }
 
     private List<String> getDeclaredMethodNames(Class<?> clazz) {
-        Method[] actualMethods = MethodSorter.getDeclaredMethods(clazz);
+        Method[] actualMethods = MethodSorterUtil.getDeclaredMethods(clazz);
 
         // Obtain just the names instead of the full methods.
         List<String> names = new ArrayList<String>();
@@ -65,7 +68,7 @@ public class MethodSorterTest {
                 names.add(m.toString().replace(clazz.getName() + '.', ""));
         	}
         }
-        
+
         return names;
     }
 
@@ -75,14 +78,14 @@ public class MethodSorterTest {
         List<String> actual = getDeclaredMethodNames(DummySortWithoutAnnotation.class);
         assertEquals(expected, actual);
     }
-    
+
     @Test
     public void testMethodsNullSorterSuper() {
         List<String> expected = Arrays.asList(SUPER_METHOD);
         List<String> actual = getDeclaredMethodNames(Super.class);
         assertEquals(expected, actual);
     }
-    
+
     @Test
     public void testMethodsNullSorterSub() {
         List<String> expected = Arrays.asList(SUB_METHOD);
@@ -90,7 +93,7 @@ public class MethodSorterTest {
         assertEquals(expected, actual);
     }
 
-    @FixMethodOrder(MethodSorters.DEFAULT)
+    @SortWith(DefaultMethodSorter.class)
     static class DummySortWithDefault {
         Object alpha(int i, double d, Thread t) {
             return null;
@@ -120,7 +123,7 @@ public class MethodSorterTest {
         assertEquals(expected, actual);
     }
 
-    @FixMethodOrder(MethodSorters.JVM)
+    @SortWith(JvmMethodSorter.class)
     static class DummySortJvm {
         Object alpha(int i, double d, Thread t) {
             return null;
@@ -146,11 +149,11 @@ public class MethodSorterTest {
     @Test
     public void testJvmMethodSorter() {
         Method[] fromJvmWithSynthetics = DummySortJvm.class.getDeclaredMethods();
-        Method[] sorted = MethodSorter.getDeclaredMethods(DummySortJvm.class);
+        Method[] sorted = new JvmMethodSorter().getDeclaredMethods(DummySortJvm.class);
         assertArrayEquals(fromJvmWithSynthetics, sorted);
     }
 
-    @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+    @SortWith(NameAscendingMethodSorter.class)
     static class DummySortWithNameAsc {
         Object alpha(int i, double d, Thread t) {
             return null;
