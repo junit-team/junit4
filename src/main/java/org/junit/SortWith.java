@@ -25,8 +25,9 @@ import java.lang.annotation.*;
  * }
  * </pre>
  *
- * @see org.junit.runners.MethodSorters
- * @since 4.11
+ * @see org.junit.internal.sorters.DefaultMethodSorter
+ * @see org.junit.internal.sorters.NameAscendingMethodSorter
+ * @see org.junit.internal.sorters.JvmMethodSorter
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
