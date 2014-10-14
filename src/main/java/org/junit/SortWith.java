@@ -20,7 +20,7 @@ import java.lang.annotation.*;
  * execution.</p>
  *
  * <pre>
- * &#064;SortWith(DefaultMethodSorder.class)
+ * &#064;SortWith(DefaultMethodSorter.class)
  * public class MyTest {
  * }
  * </pre>
