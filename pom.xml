@@ -360,8 +360,6 @@
                             <report>dependencies</report>
                             <report>dependency-convergence</report>
                             <report>cim</report>
-                            <report>plugin-management</report>
-                            <report>plugins</report>
                             <report>distribution-management</report>
                         </reports>
                     </reportSet>
