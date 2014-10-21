@@ -1,13 +1,11 @@
 package junit.runner;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -19,6 +17,7 @@ import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestListener;
 import junit.framework.TestSuite;
+import junit.runner.stackfilter.TraceFilter;
 
 /**
  * Base class for all test runners.
@@ -47,7 +46,7 @@ public abstract class BaseTestRunner implements TestListener {
         if (fPreferences == null) {
             fPreferences = new Properties();
             fPreferences.put("loading", "true");
-            fPreferences.put("filterstack", "true");
+            fPreferences.put("filterstack", "false");
             readPreferences();
         }
         return fPreferences;
@@ -278,46 +277,11 @@ public abstract class BaseTestRunner implements TestListener {
         if (showStackRaw()) {
             return stack;
         }
-
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        StringReader sr = new StringReader(stack);
-        BufferedReader br = new BufferedReader(sr);
-
-        String line;
-        try {
-            while ((line = br.readLine()) != null) {
-                if (!filterLine(line)) {
-                    pw.println(line);
-                }
-            }
-        } catch (Exception IOException) {
-            return stack; // return the stack unfiltered
-        }
-        return sw.toString();
+        return TraceFilter.filter(stack);
     }
 
     protected static boolean showStackRaw() {
         return !getPreference("filterstack").equals("true") || fgFilterStack == false;
-    }
-
-    static boolean filterLine(String line) {
-        String[] patterns = new String[]{
-                "junit.framework.TestCase",
-                "junit.framework.TestResult",
-                "junit.framework.TestSuite",
-                "junit.framework.Assert.", // don't filter AssertionFailure
-                "junit.swingui.TestRunner",
-                "junit.awtui.TestRunner",
-                "junit.textui.TestRunner",
-                "java.lang.reflect.Method.invoke("
-        };
-        for (int i = 0; i < patterns.length; i++) {
-            if (line.indexOf(patterns[i]) > 0) {
-                return true;
-            }
-        }
-        return false;
     }
 
     static {
