@@ -348,7 +348,6 @@
                     <reportSet>
                         <reports>
                             <report>index</report>
-                            <report>summary</report>
                             <report>dependency-info</report>
                             <report>modules</report>
                             <report>license</report>
@@ -360,21 +359,7 @@
                             <report>dependencies</report>
                             <report>dependency-convergence</report>
                             <report>cim</report>
-                            <report>plugin-management</report>
-                            <report>plugins</report>
                             <report>distribution-management</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-            <plugin>
-                <artifactId>maven-changes-plugin</artifactId>
-                <version>2.10</version>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>changes-report</report>
-                            <report>github-report</report>
                         </reports>
                     </reportSet>
                 </reportSets>
@@ -418,14 +403,6 @@
                         </reports>
                     </reportSet>
                 </reportSets>
-            </plugin>
-            <plugin>
-                <artifactId>maven-jxr-plugin</artifactId>
-                <version>2.4</version>
-            </plugin>
-            <plugin>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>2.17</version>
             </plugin>
         </plugins>
     </reporting>
