@@ -28,6 +28,21 @@
             <name>David Saff</name>
             <email>david@saff.net</email>
         </developer>
+        <developer>
+            <id>kcooney</id>
+            <name>Kevin Cooney</name>
+            <email>kcooney@google.com</email>
+        </developer>
+        <developer>
+            <id>stefanbirkner</id>
+            <name>Stefan Birkner</name>
+            <email>mail@stefan-birkner.de</email>
+        </developer>
+        <developer>
+            <id>marcphilipp</id>
+            <name>Marc Philipp</name>
+            <email>mail@marcphilipp.de</email>
+        </developer>
     </developers>
     <contributors>
         <contributor>
