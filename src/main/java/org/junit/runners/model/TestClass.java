@@ -244,8 +244,16 @@ public class TestClass implements Annotatable {
         List<T> results = new ArrayList<T>();
         for (FrameworkMethod each : getAnnotatedMethods(annotationClass)) {
             try {
-                Object fieldValue = each.invokeExplosively(test);
-                if (valueClass.isInstance(fieldValue)) {
+                /*
+                 * A method annotated with @Rule may return a @TestRule or a @MethodRule,
+                 * we cannot call the method to check whether the return type matches our
+                 * expectation i.e. subclass of valueClass. If we do that then the method 
+                 * will be invoked twice and we do not want to do that. So we first check
+                 * whether return type matches our expectation and only then call the method
+                 * to fetch the MethodRule
+                 */
+                if (valueClass.isAssignableFrom(each.getReturnType())) {
+                    Object fieldValue = each.invokeExplosively(test);
                     results.add(valueClass.cast(fieldValue));
                 }
             } catch (Throwable e) {
