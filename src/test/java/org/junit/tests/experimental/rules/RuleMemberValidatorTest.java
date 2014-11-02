@@ -71,7 +71,97 @@ public class RuleMemberValidatorTest {
         @ClassRule
         public static TestRule temporaryFolder = new TemporaryFolder();
     }
+    
+    /**
+     * If there is any property annotated with @ClassRule then it must implement
+     * {@link TestRule}
+     * 
+     * <p>This case has been added with 
+     * <a href="https://github.com/junit-team/junit/issues/1019">Issue #1019</a>
+     */
+    @Test
+    public void rejectClassRuleThatIsImplemetationOfMethodRule() {
+        TestClass target = new TestClass(TestWithClassRuleIsImplementationOfMethodRule.class);
+        CLASS_RULE_VALIDATOR.validate(target, errors);
+        assertOneErrorWithMessage("The @ClassRule 'classRule' must implement TestRule.");
+    }
+    
+    public static class TestWithClassRuleIsImplementationOfMethodRule {
+        @ClassRule
+        public static MethodRule classRule = new MethodRule() {
+            
+            public Statement apply(Statement base, FrameworkMethod method, Object target) {
+                return base;
+            }
+        };
+    }
 
+    /**
+     * If there is any method annotated with @ClassRule then it must return an 
+     * implementation of {@link TestRule}
+     * 
+     * <p>This case has been added with 
+     * <a href="https://github.com/junit-team/junit/issues/1019">Issue #1019</a>
+     */
+    @Test
+    public void rejectClassRuleThatReturnsImplementationOfMethodRule() {
+        TestClass target = new TestClass(TestWithClassRuleMethodThatReturnsMethodRule.class);
+        CLASS_RULE_METHOD_VALIDATOR.validate(target, errors);
+        assertOneErrorWithMessage("The @ClassRule 'methodRule' must return an implementation of TestRule.");
+    }
+
+    public static class TestWithClassRuleMethodThatReturnsMethodRule {
+        @ClassRule
+        public static MethodRule methodRule() {
+            return new MethodRule() {
+                
+                public Statement apply(Statement base, FrameworkMethod method, Object target) {
+                    return base;
+                }
+            };
+        }
+    }
+    
+    /**
+     * If there is any property annotated with @ClassRule then it must implement
+     * {@link TestRule}
+     * 
+     * <p>This case has been added with 
+     * <a href="https://github.com/junit-team/junit/issues/1019">Issue #1019</a>
+     */
+    @Test
+    public void rejectClassRuleIsAnArbitraryObject() throws Exception {
+        TestClass target = new TestClass(TestWithClassRuleIsAnArbitraryObject.class);
+        CLASS_RULE_VALIDATOR.validate(target, errors);
+        assertOneErrorWithMessage("The @ClassRule 'arbitraryObject' must implement TestRule.");
+    }
+
+    public static class TestWithClassRuleIsAnArbitraryObject {
+        @ClassRule
+        public static Object arbitraryObject = 1;
+    }
+    
+    /**
+     * If there is any method annotated with @ClassRule then it must return an 
+     * implementation of {@link TestRule}
+     * 
+     * <p>This case has been added with 
+     * <a href="https://github.com/junit-team/junit/issues/1019">Issue #1019</a> 
+     */
+    @Test
+    public void rejectClassRuleMethodReturnsAnArbitraryObject() throws Exception {
+        TestClass target = new TestClass(TestWithClassRuleMethodReturnsAnArbitraryObject.class);
+        CLASS_RULE_METHOD_VALIDATOR.validate(target, errors);
+        assertOneErrorWithMessage("The @ClassRule 'arbitraryObject' must return an implementation of TestRule.");
+    }
+
+    public static class TestWithClassRuleMethodReturnsAnArbitraryObject {
+        @ClassRule
+        public static Object arbitraryObject() {
+            return 1;
+        }
+    }
+    
     @Test
     public void acceptNonStaticTestRule() {
         TestClass target = new TestClass(TestWithNonStaticTestRule.class);
