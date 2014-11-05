@@ -34,7 +34,7 @@ public class RuleMemberValidator {
             .withValidator(new DeclaringClassMustBePublic())
             .withValidator(new MemberMustBeStatic())
             .withValidator(new MemberMustBePublic())
-            .withValidator(new FieldMustBeARule())
+            .withValidator(new FieldMustBeATestRule())
             .build();
     /**
      * Validates fields with a {@link Rule} annotation.
@@ -54,7 +54,7 @@ public class RuleMemberValidator {
             .withValidator(new DeclaringClassMustBePublic())
             .withValidator(new MemberMustBeStatic())
             .withValidator(new MemberMustBePublic())
-            .withValidator(new MethodMustBeARule())
+            .withValidator(new MethodMustBeATestRule())
             .build();
 
     /**
@@ -246,6 +246,33 @@ public class RuleMemberValidator {
             if (!isRuleType(member)) {
                 errors.add(new ValidationError(member, annotation,
                         "must return an implementation of MethodRule or TestRule."));
+            }
+        }
+    }
+    
+    /**
+     * Require the member to return an implementation of {@link org.junit.rules.TestRule}
+     */
+    private static final class MethodMustBeATestRule implements RuleValidator {
+        public void validate(FrameworkMember<?> member,
+                Class<? extends Annotation> annotation, List<Throwable> errors) {
+            if (!isTestRule(member)) {
+                errors.add(new ValidationError(member, annotation, 
+                        "must return an implementation of TestRule."));
+            }
+        }
+    }
+    
+    /**
+     * Requires the member is a field implementing {@link org.junit.rules.TestRule}
+     */
+    private static final class FieldMustBeATestRule implements RuleValidator {
+
+        public void validate(FrameworkMember<?> member,
+                Class<? extends Annotation> annotation, List<Throwable> errors) {
+            if (!isTestRule(member)) {
+                errors.add(new ValidationError(member, annotation,
+                        "must implement TestRule."));
             }
         }
     }
