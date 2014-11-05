@@ -1,7 +1,9 @@
 language: java
+before_install: sudo pip install codecov
 script: mvn verify javadoc:javadoc
 jdk:
   - oraclejdk7
   - oraclejdk8
   - openjdk7
   - openjdk6
+after_success: codecov
