@@ -20,6 +20,7 @@ import org.junit.internal.runners.statements.FailOnTimeout;
 import org.junit.internal.runners.statements.InvokeMethod;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
+import org.junit.rules.MethodRule;
 import org.junit.rules.RunRules;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -376,9 +377,14 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      * @return a list of MethodRules that should be applied when executing this
      *         test
      */
-    protected List<org.junit.rules.MethodRule> rules(Object target) {
-        return getTestClass().getAnnotatedFieldValues(target, Rule.class,
-                org.junit.rules.MethodRule.class);
+    protected List<MethodRule> rules(Object target) {
+        List<MethodRule> rules = getTestClass().getAnnotatedMethodValues(target, 
+                Rule.class, MethodRule.class);
+        
+        rules.addAll(getTestClass().getAnnotatedFieldValues(target,
+                Rule.class, MethodRule.class));
+        
+        return rules;
     }
 
     /**
