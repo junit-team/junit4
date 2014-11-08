@@ -295,7 +295,6 @@ public class MethodRulesTest {
     public static class HasMethodReturningMethodRule {
         private MethodRule methodRule = new MethodRule() {
             
-            @Override
             public Statement apply(final Statement base, FrameworkMethod method, Object target) {
                 return new Statement() {
                     
@@ -372,7 +371,6 @@ public class MethodRulesTest {
         
         private static class Dummy implements MethodRule {
             
-            @Override
             public Statement apply(final Statement base, FrameworkMethod method, Object target) {
                 return new Statement() {
                     
