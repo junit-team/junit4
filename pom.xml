@@ -514,6 +514,16 @@
                     </plugin>
                 </plugins>
             </build>
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <additionalparam>-Xdoclint:accessibility -Xdoclint:reference</additionalparam>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </reporting>
         </profile>
         <profile>
             <id>fast-tests</id>
