@@ -20,7 +20,12 @@ In the usual case, where the array elements are in fact exactly equal, the poten
 # Test Runners
 
 
-### [Pull request #817:] (https://github.com/junit-team/junit/pull/817) Support for context hierarchies
+### [Pull request #763:](https://github.com/junit-team/junit/pull/763) Allow custom test runners to create their own TestClasses and customize the scanning of annotations.
+
+This introduces some extension points to `ParentRunner` to allow subclasse to control creation
+of the `TestClass` instance and to scan for annotations.
+
+### [Pull request #817:](https://github.com/junit-team/junit/pull/817) Support for context hierarchies
 
 The `AnnotatedBuilder` is a strategy for constructing runners for test classes that have been annotated with the `@RunWith` annotation. All tests within such a class will be executed using the runner that was specified within the annotation.
 
@@ -140,7 +145,7 @@ If a custom failure message is not provided, a default message is used.
 # Timeout for Tests
 *See also [Timeout for tests](https://github.com/junit-team/junit/wiki/Timeout-for-tests)*
 
-### [Pull request #823:] (https://github.com/junit-team/junit/pull/823) Throw `TestFailedOnTimeoutException` instead of plain `Exception` on timeout
+### [Pull request #823:](https://github.com/junit-team/junit/pull/823) Throw `TestFailedOnTimeoutException` instead of plain `Exception` on timeout
 
 When a test times out, a `org.junit.runners.model.TestTimedOutException` is now thrown instead of a plain `java.lang.Exception`.
 
@@ -225,6 +230,8 @@ public class HasGlobalTimeout {
 ```
 Each test is run in a new _daemon_ thread. If the specified timeout elapses before the test completes, its execution is interrupted via `Thread#interrupt()`. This happens in interruptable I/O (operations throwing `java.io.InterruptedIOException` and `java.nio.channels.ClosedByInterruptException`), locks (package `java.util.concurrent`) and methods in `java.lang.Object` and `java.lang.Thread` throwing `java.lang.InterruptedException`.
 
+### [Pull request #876:](https://github.com/junit-team/junit/pull/876) The timeout rule never times out if you pass in a timeout of zero.
+
 
 # Parameterized Tests
 
@@ -242,7 +249,7 @@ The factory for creating the `Runner` instance of a single set of parameters is 
 # Rules
 
 
-### [Pull request #552:](https://github.com/junit-team/junit/pull/552) `Stopwatch` rule
+### [Pull request #552:](https://github.com/junit-team/junit/pull/552) [Pull request #937:](https://github.com/junit-team/junit/pull/937) `Stopwatch` rule
 
 The `Stopwatch` Rule notifies one of its own protected methods of the time spent by a test. Override them to get the time in nanoseconds. For example, this class will keep logging the time spent by each passed, failed, skipped, and finished test:
 
@@ -342,6 +349,31 @@ If you call `TemporaryFolder.newFolder("foo/bar")` in JUnit 4.10 the method retu
 
 With this fix, folder names are validated to contain single path name. If the folder name consists of multiple path names, an exception is thrown stating that usage of multiple path components in a string containing folder name is disallowed.
 
+### [Pull request #1015:](https://github.com/junit-team/junit/pull/1015) Methods annotated with `Rule` can return a `MethodRule`.
+
+Methods annotated with `@Rule` can now return either a `TestRule` (or subclass) or a
+`MethodRule` (or subclass).
+
+Prior to this change, all public methods annotated with `@Rule` were called, but the
+return value was ignored if it could not be assigned to a `TestRule`. After this change,
+the method is only called if the return type could be assigned to `TestRule` or
+`MethodRule`. For methods annotated with `@Rule` that return other values, see the notes
+for pull request #1020.
+
+### [Pull request #1020:](https://github.com/junit-team/junit/pull/1020) Added validation that @ClassRule should only be implementation of TestRule.
+
+Prior to this change, fields annotated with `@ClassRule` that did not have a type of `TestRule`
+(or a class that implements `TestRule`) were ignored. With this change, the test will fail
+with a validation error.
+
+Prior to this change, methods annotated with `@ClassRule` that did specify a return type
+of `TestRule`(or a class that implements `TestRule`) were ignored. With this change, the test
+will fail with a validation error.
+
+### [Pull request #1021:](https://github.com/junit-team/junit/pull/1021) JavaDoc of TemporaryFolder: folder not guaranteed to be deleted.
+
+Adjusted JavaDoc of TemporaryFolder to reflect that temporary folders are not guaranteed to be
+deleted.
 
 # Theories
 
@@ -629,3 +661,52 @@ While using JUnit in Android apps, if any other referenced library has a file na
 `Error generating final archive: Found duplicate file for APK: LICENSE.txt`
 
 To avoid this, the license file has been renamed to `LICENSE-junit.txt` 
+
+
+### [Pull request #962:](https://github.com/junit-team/junit/pull/962) Do not include thread start time in test timeout measurements.
+
+The time it takes to start a thread can be surprisingly large.
+Especially in virtualized cloud environments where noisy neighbours.
+This change reduces the probability of non-deterministic failures of
+tests with timeouts (@Test(timeout=…)) by not beginning the timeout
+clock until we have observed the starting of the task thread – the
+thread that runs the actual test. This should make tests with small
+timeout values more reliable in general, and especially in cloud CI
+environments.
+
+# Fixes to issues introduced in JUnit 4.12
+
+The following section lists fixes to problems introduced in the first
+release candidates for JUnit 4.12. You can ignore this section if you are
+trying to understand the changes between 4.11 and 4.12.
+
+### [Pull request #961:](https://github.com/junit-team/junit/pull/961) Restore field names with f prefix.
+
+In order to make the JUnit code more consistent with current coding practices, we changed
+a number of field names to not start with the prefix "f". Unfortunately, at least one IDE
+referenced a private field via reflection. This change reverts the field names for fields
+known to be read via reflection.
+
+### [Pull request #988:](https://github.com/junit-team/junit/pull/988) Revert "Delete classes that are deprecated for six years."
+
+In [745ca05](https://github.com/junit-team/junit/commit/745ca05dccf5cc907e43a58142bb8be97da2b78f)
+we removed classes that were deprecated for many releases. There was some concern that people
+might not expect classes to be removed in a 4.x release. Even though we are not aware of any
+problems from the deletion, we decided to add them back.
+
+These classes may be removed in JUnit 5.0 or later.
+
+### [Pull request #989:](https://github.com/junit-team/junit/pull/989) Add JUnitSystem.exit() back.
+
+In [917a88f](https://github.com/junit-team/junit/commit/917a88fad06ce108a596a8fdb4607b1a2fbb3f3e)
+the exit() method in JUnit was removed. This caused problems for at least one user. Even
+though this class is in an internal package, we decided to add it back, and deprecated it.
+
+This method may be removed in JUnit 5.0 or later.
+
+### [Pull request #994:](https://github.com/junit-team/junit/pull/994) [Pull request #1000:](https://github.com/junit-team/junit/pull/1000) Ensure serialization compatibility where possible.
+
+JUnit 4.12 RC1 introduced serilization incompatibilities with some of the classes. For example,
+these pre-release versions of JUnit could not read instances of `Result` that were serialized
+in JUnit 4.11 and earlier. These changes fix that problem.
+
