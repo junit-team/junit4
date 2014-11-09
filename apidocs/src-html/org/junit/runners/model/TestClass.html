@@ -247,65 +247,73 @@
 <FONT color="green">244</FONT>            List&lt;T&gt; results = new ArrayList&lt;T&gt;();<a name="line.244"></a>
 <FONT color="green">245</FONT>            for (FrameworkMethod each : getAnnotatedMethods(annotationClass)) {<a name="line.245"></a>
 <FONT color="green">246</FONT>                try {<a name="line.246"></a>
-<FONT color="green">247</FONT>                    Object fieldValue = each.invokeExplosively(test);<a name="line.247"></a>
-<FONT color="green">248</FONT>                    if (valueClass.isInstance(fieldValue)) {<a name="line.248"></a>
-<FONT color="green">249</FONT>                        results.add(valueClass.cast(fieldValue));<a name="line.249"></a>
-<FONT color="green">250</FONT>                    }<a name="line.250"></a>
-<FONT color="green">251</FONT>                } catch (Throwable e) {<a name="line.251"></a>
-<FONT color="green">252</FONT>                    throw new RuntimeException(<a name="line.252"></a>
-<FONT color="green">253</FONT>                            "Exception in " + each.getName(), e);<a name="line.253"></a>
-<FONT color="green">254</FONT>                }<a name="line.254"></a>
-<FONT color="green">255</FONT>            }<a name="line.255"></a>
-<FONT color="green">256</FONT>            return results;<a name="line.256"></a>
-<FONT color="green">257</FONT>        }<a name="line.257"></a>
-<FONT color="green">258</FONT>    <a name="line.258"></a>
-<FONT color="green">259</FONT>        public boolean isPublic() {<a name="line.259"></a>
-<FONT color="green">260</FONT>            return Modifier.isPublic(clazz.getModifiers());<a name="line.260"></a>
-<FONT color="green">261</FONT>        }<a name="line.261"></a>
-<FONT color="green">262</FONT>    <a name="line.262"></a>
-<FONT color="green">263</FONT>        public boolean isANonStaticInnerClass() {<a name="line.263"></a>
-<FONT color="green">264</FONT>            return clazz.isMemberClass() &amp;&amp; !isStatic(clazz.getModifiers());<a name="line.264"></a>
+<FONT color="green">247</FONT>                    /*<a name="line.247"></a>
+<FONT color="green">248</FONT>                     * A method annotated with @Rule may return a @TestRule or a @MethodRule,<a name="line.248"></a>
+<FONT color="green">249</FONT>                     * we cannot call the method to check whether the return type matches our<a name="line.249"></a>
+<FONT color="green">250</FONT>                     * expectation i.e. subclass of valueClass. If we do that then the method <a name="line.250"></a>
+<FONT color="green">251</FONT>                     * will be invoked twice and we do not want to do that. So we first check<a name="line.251"></a>
+<FONT color="green">252</FONT>                     * whether return type matches our expectation and only then call the method<a name="line.252"></a>
+<FONT color="green">253</FONT>                     * to fetch the MethodRule<a name="line.253"></a>
+<FONT color="green">254</FONT>                     */<a name="line.254"></a>
+<FONT color="green">255</FONT>                    if (valueClass.isAssignableFrom(each.getReturnType())) {<a name="line.255"></a>
+<FONT color="green">256</FONT>                        Object fieldValue = each.invokeExplosively(test);<a name="line.256"></a>
+<FONT color="green">257</FONT>                        results.add(valueClass.cast(fieldValue));<a name="line.257"></a>
+<FONT color="green">258</FONT>                    }<a name="line.258"></a>
+<FONT color="green">259</FONT>                } catch (Throwable e) {<a name="line.259"></a>
+<FONT color="green">260</FONT>                    throw new RuntimeException(<a name="line.260"></a>
+<FONT color="green">261</FONT>                            "Exception in " + each.getName(), e);<a name="line.261"></a>
+<FONT color="green">262</FONT>                }<a name="line.262"></a>
+<FONT color="green">263</FONT>            }<a name="line.263"></a>
+<FONT color="green">264</FONT>            return results;<a name="line.264"></a>
 <FONT color="green">265</FONT>        }<a name="line.265"></a>
 <FONT color="green">266</FONT>    <a name="line.266"></a>
-<FONT color="green">267</FONT>        @Override<a name="line.267"></a>
-<FONT color="green">268</FONT>        public int hashCode() {<a name="line.268"></a>
-<FONT color="green">269</FONT>            return (clazz == null) ? 0 : clazz.hashCode();<a name="line.269"></a>
-<FONT color="green">270</FONT>        }<a name="line.270"></a>
-<FONT color="green">271</FONT>    <a name="line.271"></a>
-<FONT color="green">272</FONT>        @Override<a name="line.272"></a>
-<FONT color="green">273</FONT>        public boolean equals(Object obj) {<a name="line.273"></a>
-<FONT color="green">274</FONT>            if (this == obj) {<a name="line.274"></a>
-<FONT color="green">275</FONT>                return true;<a name="line.275"></a>
-<FONT color="green">276</FONT>            }<a name="line.276"></a>
-<FONT color="green">277</FONT>            if (obj == null) {<a name="line.277"></a>
-<FONT color="green">278</FONT>                return false;<a name="line.278"></a>
-<FONT color="green">279</FONT>            }<a name="line.279"></a>
-<FONT color="green">280</FONT>            if (getClass() != obj.getClass()) {<a name="line.280"></a>
-<FONT color="green">281</FONT>                return false;<a name="line.281"></a>
-<FONT color="green">282</FONT>            }<a name="line.282"></a>
-<FONT color="green">283</FONT>            TestClass other = (TestClass) obj;<a name="line.283"></a>
-<FONT color="green">284</FONT>            return clazz == other.clazz;<a name="line.284"></a>
-<FONT color="green">285</FONT>        }<a name="line.285"></a>
-<FONT color="green">286</FONT>    <a name="line.286"></a>
-<FONT color="green">287</FONT>        /**<a name="line.287"></a>
-<FONT color="green">288</FONT>         * Compares two fields by its name.<a name="line.288"></a>
-<FONT color="green">289</FONT>         */<a name="line.289"></a>
-<FONT color="green">290</FONT>        private static class FieldComparator implements Comparator&lt;Field&gt; {<a name="line.290"></a>
-<FONT color="green">291</FONT>            public int compare(Field left, Field right) {<a name="line.291"></a>
-<FONT color="green">292</FONT>                return left.getName().compareTo(right.getName());<a name="line.292"></a>
-<FONT color="green">293</FONT>            }<a name="line.293"></a>
-<FONT color="green">294</FONT>        }<a name="line.294"></a>
-<FONT color="green">295</FONT>    <a name="line.295"></a>
-<FONT color="green">296</FONT>        /**<a name="line.296"></a>
-<FONT color="green">297</FONT>         * Compares two methods by its name.<a name="line.297"></a>
-<FONT color="green">298</FONT>         */<a name="line.298"></a>
-<FONT color="green">299</FONT>        private static class MethodComparator implements<a name="line.299"></a>
-<FONT color="green">300</FONT>                Comparator&lt;FrameworkMethod&gt; {<a name="line.300"></a>
-<FONT color="green">301</FONT>            public int compare(FrameworkMethod left, FrameworkMethod right) {<a name="line.301"></a>
-<FONT color="green">302</FONT>                return NAME_ASCENDING.compare(left.getMethod(), right.getMethod());<a name="line.302"></a>
-<FONT color="green">303</FONT>            }<a name="line.303"></a>
-<FONT color="green">304</FONT>        }<a name="line.304"></a>
-<FONT color="green">305</FONT>    }<a name="line.305"></a>
+<FONT color="green">267</FONT>        public boolean isPublic() {<a name="line.267"></a>
+<FONT color="green">268</FONT>            return Modifier.isPublic(clazz.getModifiers());<a name="line.268"></a>
+<FONT color="green">269</FONT>        }<a name="line.269"></a>
+<FONT color="green">270</FONT>    <a name="line.270"></a>
+<FONT color="green">271</FONT>        public boolean isANonStaticInnerClass() {<a name="line.271"></a>
+<FONT color="green">272</FONT>            return clazz.isMemberClass() &amp;&amp; !isStatic(clazz.getModifiers());<a name="line.272"></a>
+<FONT color="green">273</FONT>        }<a name="line.273"></a>
+<FONT color="green">274</FONT>    <a name="line.274"></a>
+<FONT color="green">275</FONT>        @Override<a name="line.275"></a>
+<FONT color="green">276</FONT>        public int hashCode() {<a name="line.276"></a>
+<FONT color="green">277</FONT>            return (clazz == null) ? 0 : clazz.hashCode();<a name="line.277"></a>
+<FONT color="green">278</FONT>        }<a name="line.278"></a>
+<FONT color="green">279</FONT>    <a name="line.279"></a>
+<FONT color="green">280</FONT>        @Override<a name="line.280"></a>
+<FONT color="green">281</FONT>        public boolean equals(Object obj) {<a name="line.281"></a>
+<FONT color="green">282</FONT>            if (this == obj) {<a name="line.282"></a>
+<FONT color="green">283</FONT>                return true;<a name="line.283"></a>
+<FONT color="green">284</FONT>            }<a name="line.284"></a>
+<FONT color="green">285</FONT>            if (obj == null) {<a name="line.285"></a>
+<FONT color="green">286</FONT>                return false;<a name="line.286"></a>
+<FONT color="green">287</FONT>            }<a name="line.287"></a>
+<FONT color="green">288</FONT>            if (getClass() != obj.getClass()) {<a name="line.288"></a>
+<FONT color="green">289</FONT>                return false;<a name="line.289"></a>
+<FONT color="green">290</FONT>            }<a name="line.290"></a>
+<FONT color="green">291</FONT>            TestClass other = (TestClass) obj;<a name="line.291"></a>
+<FONT color="green">292</FONT>            return clazz == other.clazz;<a name="line.292"></a>
+<FONT color="green">293</FONT>        }<a name="line.293"></a>
+<FONT color="green">294</FONT>    <a name="line.294"></a>
+<FONT color="green">295</FONT>        /**<a name="line.295"></a>
+<FONT color="green">296</FONT>         * Compares two fields by its name.<a name="line.296"></a>
+<FONT color="green">297</FONT>         */<a name="line.297"></a>
+<FONT color="green">298</FONT>        private static class FieldComparator implements Comparator&lt;Field&gt; {<a name="line.298"></a>
+<FONT color="green">299</FONT>            public int compare(Field left, Field right) {<a name="line.299"></a>
+<FONT color="green">300</FONT>                return left.getName().compareTo(right.getName());<a name="line.300"></a>
+<FONT color="green">301</FONT>            }<a name="line.301"></a>
+<FONT color="green">302</FONT>        }<a name="line.302"></a>
+<FONT color="green">303</FONT>    <a name="line.303"></a>
+<FONT color="green">304</FONT>        /**<a name="line.304"></a>
+<FONT color="green">305</FONT>         * Compares two methods by its name.<a name="line.305"></a>
+<FONT color="green">306</FONT>         */<a name="line.306"></a>
+<FONT color="green">307</FONT>        private static class MethodComparator implements<a name="line.307"></a>
+<FONT color="green">308</FONT>                Comparator&lt;FrameworkMethod&gt; {<a name="line.308"></a>
+<FONT color="green">309</FONT>            public int compare(FrameworkMethod left, FrameworkMethod right) {<a name="line.309"></a>
+<FONT color="green">310</FONT>                return NAME_ASCENDING.compare(left.getMethod(), right.getMethod());<a name="line.310"></a>
+<FONT color="green">311</FONT>            }<a name="line.311"></a>
+<FONT color="green">312</FONT>        }<a name="line.312"></a>
+<FONT color="green">313</FONT>    }<a name="line.313"></a>
 
 
 
