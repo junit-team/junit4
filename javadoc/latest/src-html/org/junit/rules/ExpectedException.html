@@ -1,0 +1,336 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.junit.rules;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import static java.lang.String.format;<a name="line.3"></a>
+<FONT color="green">004</FONT>    import static org.hamcrest.CoreMatchers.containsString;<a name="line.4"></a>
+<FONT color="green">005</FONT>    import static org.hamcrest.CoreMatchers.instanceOf;<a name="line.5"></a>
+<FONT color="green">006</FONT>    import static org.junit.Assert.assertThat;<a name="line.6"></a>
+<FONT color="green">007</FONT>    import static org.junit.Assert.fail;<a name="line.7"></a>
+<FONT color="green">008</FONT>    import static org.junit.internal.matchers.ThrowableCauseMatcher.hasCause;<a name="line.8"></a>
+<FONT color="green">009</FONT>    import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;<a name="line.9"></a>
+<FONT color="green">010</FONT>    <a name="line.10"></a>
+<FONT color="green">011</FONT>    import org.hamcrest.Matcher;<a name="line.11"></a>
+<FONT color="green">012</FONT>    import org.hamcrest.StringDescription;<a name="line.12"></a>
+<FONT color="green">013</FONT>    import org.junit.AssumptionViolatedException;<a name="line.13"></a>
+<FONT color="green">014</FONT>    import org.junit.runners.model.Statement;<a name="line.14"></a>
+<FONT color="green">015</FONT>    <a name="line.15"></a>
+<FONT color="green">016</FONT>    /**<a name="line.16"></a>
+<FONT color="green">017</FONT>     * The {@code ExpectedException} rule allows you to verify that your code<a name="line.17"></a>
+<FONT color="green">018</FONT>     * throws a specific exception.<a name="line.18"></a>
+<FONT color="green">019</FONT>     *<a name="line.19"></a>
+<FONT color="green">020</FONT>     * &lt;h3&gt;Usage&lt;/h3&gt;<a name="line.20"></a>
+<FONT color="green">021</FONT>     *<a name="line.21"></a>
+<FONT color="green">022</FONT>     * &lt;pre&gt; public class SimpleExpectedExceptionTest {<a name="line.22"></a>
+<FONT color="green">023</FONT>     *     &amp;#064;Rule<a name="line.23"></a>
+<FONT color="green">024</FONT>     *     public ExpectedException thrown= ExpectedException.none();<a name="line.24"></a>
+<FONT color="green">025</FONT>     *<a name="line.25"></a>
+<FONT color="green">026</FONT>     *     &amp;#064;Test<a name="line.26"></a>
+<FONT color="green">027</FONT>     *     public void throwsNothing() {<a name="line.27"></a>
+<FONT color="green">028</FONT>     *         // no exception expected, none thrown: passes.<a name="line.28"></a>
+<FONT color="green">029</FONT>     *     }<a name="line.29"></a>
+<FONT color="green">030</FONT>     *<a name="line.30"></a>
+<FONT color="green">031</FONT>     *     &amp;#064;Test<a name="line.31"></a>
+<FONT color="green">032</FONT>     *     public void throwsExceptionWithSpecificType() {<a name="line.32"></a>
+<FONT color="green">033</FONT>     *         thrown.expect(NullPointerException.class);<a name="line.33"></a>
+<FONT color="green">034</FONT>     *         throw new NullPointerException();<a name="line.34"></a>
+<FONT color="green">035</FONT>     *     }<a name="line.35"></a>
+<FONT color="green">036</FONT>     * }&lt;/pre&gt;<a name="line.36"></a>
+<FONT color="green">037</FONT>     * <a name="line.37"></a>
+<FONT color="green">038</FONT>     * &lt;p&gt;<a name="line.38"></a>
+<FONT color="green">039</FONT>     * You have to add the {@code ExpectedException} rule to your test.<a name="line.39"></a>
+<FONT color="green">040</FONT>     * This doesn't affect your existing tests (see {@code throwsNothing()}).<a name="line.40"></a>
+<FONT color="green">041</FONT>     * After specifiying the type of the expected exception your test is<a name="line.41"></a>
+<FONT color="green">042</FONT>     * successful when such an exception is thrown and it fails if a<a name="line.42"></a>
+<FONT color="green">043</FONT>     * different or no exception is thrown.<a name="line.43"></a>
+<FONT color="green">044</FONT>     *<a name="line.44"></a>
+<FONT color="green">045</FONT>     * &lt;p&gt;<a name="line.45"></a>
+<FONT color="green">046</FONT>     * Instead of specifying the exception's type you can characterize the<a name="line.46"></a>
+<FONT color="green">047</FONT>     * expected exception based on other criterias, too:<a name="line.47"></a>
+<FONT color="green">048</FONT>     *<a name="line.48"></a>
+<FONT color="green">049</FONT>     * &lt;ul&gt;<a name="line.49"></a>
+<FONT color="green">050</FONT>     *   &lt;li&gt;The exception's message contains a specific text: {@link #expectMessage(String)}&lt;/li&gt;<a name="line.50"></a>
+<FONT color="green">051</FONT>     *   &lt;li&gt;The exception's message complies with a Hamcrest matcher: {@link #expectMessage(Matcher)}&lt;/li&gt;<a name="line.51"></a>
+<FONT color="green">052</FONT>     *   &lt;li&gt;The exception's cause complies with a Hamcrest matcher: {@link #expectCause(Matcher)}&lt;/li&gt;<a name="line.52"></a>
+<FONT color="green">053</FONT>     *   &lt;li&gt;The exception itself complies with a Hamcrest matcher: {@link #expect(Matcher)}&lt;/li&gt;<a name="line.53"></a>
+<FONT color="green">054</FONT>     * &lt;/ul&gt;<a name="line.54"></a>
+<FONT color="green">055</FONT>     *<a name="line.55"></a>
+<FONT color="green">056</FONT>     * &lt;p&gt;<a name="line.56"></a>
+<FONT color="green">057</FONT>     * You can combine any of the presented expect-methods. The test is<a name="line.57"></a>
+<FONT color="green">058</FONT>     * successful if all specifications are met.<a name="line.58"></a>
+<FONT color="green">059</FONT>     * &lt;pre&gt; &amp;#064;Test<a name="line.59"></a>
+<FONT color="green">060</FONT>     * public void throwsException() {<a name="line.60"></a>
+<FONT color="green">061</FONT>     *     thrown.expect(NullPointerException.class);<a name="line.61"></a>
+<FONT color="green">062</FONT>     *     thrown.expectMessage(&amp;quot;happened&amp;quot;);<a name="line.62"></a>
+<FONT color="green">063</FONT>     *     throw new NullPointerException(&amp;quot;What happened?&amp;quot;);<a name="line.63"></a>
+<FONT color="green">064</FONT>     * }&lt;/pre&gt;<a name="line.64"></a>
+<FONT color="green">065</FONT>     *<a name="line.65"></a>
+<FONT color="green">066</FONT>     * &lt;h3&gt;AssumptionViolatedExceptions&lt;/h3&gt;<a name="line.66"></a>
+<FONT color="green">067</FONT>     * &lt;p&gt;<a name="line.67"></a>
+<FONT color="green">068</FONT>     * JUnit uses {@link AssumptionViolatedException}s for indicating that a test<a name="line.68"></a>
+<FONT color="green">069</FONT>     * provides no useful information. (See {@link org.junit.Assume} for more<a name="line.69"></a>
+<FONT color="green">070</FONT>     * information.) You have to call {@code assume} methods before you set<a name="line.70"></a>
+<FONT color="green">071</FONT>     * expectations of the {@code ExpectedException} rule. In this case the rule<a name="line.71"></a>
+<FONT color="green">072</FONT>     * will not handle consume the exceptions and it can be handled by the<a name="line.72"></a>
+<FONT color="green">073</FONT>     * framework. E.g. the following test is ignored by JUnit's default runner.<a name="line.73"></a>
+<FONT color="green">074</FONT>     *<a name="line.74"></a>
+<FONT color="green">075</FONT>     * &lt;pre&gt; &amp;#064;Test<a name="line.75"></a>
+<FONT color="green">076</FONT>     * public void ignoredBecauseOfFailedAssumption() {<a name="line.76"></a>
+<FONT color="green">077</FONT>     *     assumeTrue(false); // throws AssumptionViolatedException<a name="line.77"></a>
+<FONT color="green">078</FONT>     *     thrown.expect(NullPointerException.class);<a name="line.78"></a>
+<FONT color="green">079</FONT>     * }&lt;/pre&gt;<a name="line.79"></a>
+<FONT color="green">080</FONT>     *<a name="line.80"></a>
+<FONT color="green">081</FONT>     * &lt;h3&gt;AssertionErrors&lt;/h3&gt;<a name="line.81"></a>
+<FONT color="green">082</FONT>     *<a name="line.82"></a>
+<FONT color="green">083</FONT>     * &lt;p&gt;<a name="line.83"></a>
+<FONT color="green">084</FONT>     * JUnit uses {@link AssertionError}s for indicating that a test is failing. You<a name="line.84"></a>
+<FONT color="green">085</FONT>     * have to call {@code assert} methods before you set expectations of the<a name="line.85"></a>
+<FONT color="green">086</FONT>     * {@code ExpectedException} rule, if they should be handled by the framework.<a name="line.86"></a>
+<FONT color="green">087</FONT>     * E.g. the following test fails because of the {@code assertTrue} statement.<a name="line.87"></a>
+<FONT color="green">088</FONT>     *<a name="line.88"></a>
+<FONT color="green">089</FONT>     * &lt;pre&gt; &amp;#064;Test<a name="line.89"></a>
+<FONT color="green">090</FONT>     * public void throwsUnhandled() {<a name="line.90"></a>
+<FONT color="green">091</FONT>     *     assertTrue(false); // throws AssertionError<a name="line.91"></a>
+<FONT color="green">092</FONT>     *     thrown.expect(NullPointerException.class);<a name="line.92"></a>
+<FONT color="green">093</FONT>     * }&lt;/pre&gt;<a name="line.93"></a>
+<FONT color="green">094</FONT>     *<a name="line.94"></a>
+<FONT color="green">095</FONT>     * &lt;h3&gt;Missing Exceptions&lt;/h3&gt;<a name="line.95"></a>
+<FONT color="green">096</FONT>     * &lt;p&gt;<a name="line.96"></a>
+<FONT color="green">097</FONT>     * By default missing exceptions are reported with an error message<a name="line.97"></a>
+<FONT color="green">098</FONT>     * like "Expected test to throw an instance of foo". You can configure a different<a name="line.98"></a>
+<FONT color="green">099</FONT>     * message by means of {@link #reportMissingExceptionWithMessage(String)}. You<a name="line.99"></a>
+<FONT color="green">100</FONT>     * can use a {@code %s} placeholder for the description of the expected<a name="line.100"></a>
+<FONT color="green">101</FONT>     * exception. E.g. "Test doesn't throw %s." will fail with the error message<a name="line.101"></a>
+<FONT color="green">102</FONT>     * "Test doesn't throw an instance of foo.".<a name="line.102"></a>
+<FONT color="green">103</FONT>     *<a name="line.103"></a>
+<FONT color="green">104</FONT>     * @since 4.7<a name="line.104"></a>
+<FONT color="green">105</FONT>     */<a name="line.105"></a>
+<FONT color="green">106</FONT>    public class ExpectedException implements TestRule {<a name="line.106"></a>
+<FONT color="green">107</FONT>        /**<a name="line.107"></a>
+<FONT color="green">108</FONT>         * Returns a {@linkplain TestRule rule} that expects no exception to<a name="line.108"></a>
+<FONT color="green">109</FONT>         * be thrown (identical to behavior without this rule).<a name="line.109"></a>
+<FONT color="green">110</FONT>         */<a name="line.110"></a>
+<FONT color="green">111</FONT>        public static ExpectedException none() {<a name="line.111"></a>
+<FONT color="green">112</FONT>            return new ExpectedException();<a name="line.112"></a>
+<FONT color="green">113</FONT>        }<a name="line.113"></a>
+<FONT color="green">114</FONT>    <a name="line.114"></a>
+<FONT color="green">115</FONT>        private final ExpectedExceptionMatcherBuilder matcherBuilder = new ExpectedExceptionMatcherBuilder();<a name="line.115"></a>
+<FONT color="green">116</FONT>    <a name="line.116"></a>
+<FONT color="green">117</FONT>        private String missingExceptionMessage= "Expected test to throw %s";<a name="line.117"></a>
+<FONT color="green">118</FONT>    <a name="line.118"></a>
+<FONT color="green">119</FONT>        private ExpectedException() {<a name="line.119"></a>
+<FONT color="green">120</FONT>        }<a name="line.120"></a>
+<FONT color="green">121</FONT>    <a name="line.121"></a>
+<FONT color="green">122</FONT>        /**<a name="line.122"></a>
+<FONT color="green">123</FONT>         * This method does nothing. Don't use it.<a name="line.123"></a>
+<FONT color="green">124</FONT>         * @deprecated AssertionErrors are handled by default since JUnit 4.12. Just<a name="line.124"></a>
+<FONT color="green">125</FONT>         *             like in JUnit &amp;lt;= 4.10.<a name="line.125"></a>
+<FONT color="green">126</FONT>         */<a name="line.126"></a>
+<FONT color="green">127</FONT>        @Deprecated<a name="line.127"></a>
+<FONT color="green">128</FONT>        public ExpectedException handleAssertionErrors() {<a name="line.128"></a>
+<FONT color="green">129</FONT>            return this;<a name="line.129"></a>
+<FONT color="green">130</FONT>        }<a name="line.130"></a>
+<FONT color="green">131</FONT>    <a name="line.131"></a>
+<FONT color="green">132</FONT>        /**<a name="line.132"></a>
+<FONT color="green">133</FONT>         * This method does nothing. Don't use it.<a name="line.133"></a>
+<FONT color="green">134</FONT>         * @deprecated AssumptionViolatedExceptions are handled by default since<a name="line.134"></a>
+<FONT color="green">135</FONT>         *             JUnit 4.12. Just like in JUnit &amp;lt;= 4.10.<a name="line.135"></a>
+<FONT color="green">136</FONT>         */<a name="line.136"></a>
+<FONT color="green">137</FONT>        @Deprecated<a name="line.137"></a>
+<FONT color="green">138</FONT>        public ExpectedException handleAssumptionViolatedExceptions() {<a name="line.138"></a>
+<FONT color="green">139</FONT>            return this;<a name="line.139"></a>
+<FONT color="green">140</FONT>        }<a name="line.140"></a>
+<FONT color="green">141</FONT>    <a name="line.141"></a>
+<FONT color="green">142</FONT>        /**<a name="line.142"></a>
+<FONT color="green">143</FONT>         * Specifies the failure message for tests that are expected to throw <a name="line.143"></a>
+<FONT color="green">144</FONT>         * an exception but do not throw any. You can use a {@code %s} placeholder for<a name="line.144"></a>
+<FONT color="green">145</FONT>         * the description of the expected exception. E.g. "Test doesn't throw %s."<a name="line.145"></a>
+<FONT color="green">146</FONT>         * will fail with the error message<a name="line.146"></a>
+<FONT color="green">147</FONT>         * "Test doesn't throw an instance of foo.".<a name="line.147"></a>
+<FONT color="green">148</FONT>         *<a name="line.148"></a>
+<FONT color="green">149</FONT>         * @param message exception detail message<a name="line.149"></a>
+<FONT color="green">150</FONT>         * @return the rule itself<a name="line.150"></a>
+<FONT color="green">151</FONT>         */<a name="line.151"></a>
+<FONT color="green">152</FONT>        public ExpectedException reportMissingExceptionWithMessage(String message) {<a name="line.152"></a>
+<FONT color="green">153</FONT>            missingExceptionMessage = message;<a name="line.153"></a>
+<FONT color="green">154</FONT>            return this;<a name="line.154"></a>
+<FONT color="green">155</FONT>        }<a name="line.155"></a>
+<FONT color="green">156</FONT>    <a name="line.156"></a>
+<FONT color="green">157</FONT>        public Statement apply(Statement base,<a name="line.157"></a>
+<FONT color="green">158</FONT>                org.junit.runner.Description description) {<a name="line.158"></a>
+<FONT color="green">159</FONT>            return new ExpectedExceptionStatement(base);<a name="line.159"></a>
+<FONT color="green">160</FONT>        }<a name="line.160"></a>
+<FONT color="green">161</FONT>    <a name="line.161"></a>
+<FONT color="green">162</FONT>        /**<a name="line.162"></a>
+<FONT color="green">163</FONT>         * Verify that your code throws an exception that is matched by<a name="line.163"></a>
+<FONT color="green">164</FONT>         * a Hamcrest matcher.<a name="line.164"></a>
+<FONT color="green">165</FONT>         * &lt;pre&gt; &amp;#064;Test<a name="line.165"></a>
+<FONT color="green">166</FONT>         * public void throwsExceptionThatCompliesWithMatcher() {<a name="line.166"></a>
+<FONT color="green">167</FONT>         *     NullPointerException e = new NullPointerException();<a name="line.167"></a>
+<FONT color="green">168</FONT>         *     thrown.expect(is(e));<a name="line.168"></a>
+<FONT color="green">169</FONT>         *     throw e;<a name="line.169"></a>
+<FONT color="green">170</FONT>         * }&lt;/pre&gt;<a name="line.170"></a>
+<FONT color="green">171</FONT>         */<a name="line.171"></a>
+<FONT color="green">172</FONT>        public void expect(Matcher&lt;?&gt; matcher) {<a name="line.172"></a>
+<FONT color="green">173</FONT>            matcherBuilder.add(matcher);<a name="line.173"></a>
+<FONT color="green">174</FONT>        }<a name="line.174"></a>
+<FONT color="green">175</FONT>    <a name="line.175"></a>
+<FONT color="green">176</FONT>        /**<a name="line.176"></a>
+<FONT color="green">177</FONT>         * Verify that your code throws an exception that is an<a name="line.177"></a>
+<FONT color="green">178</FONT>         * instance of specific {@code type}.<a name="line.178"></a>
+<FONT color="green">179</FONT>         * &lt;pre&gt; &amp;#064;Test<a name="line.179"></a>
+<FONT color="green">180</FONT>         * public void throwsExceptionWithSpecificType() {<a name="line.180"></a>
+<FONT color="green">181</FONT>         *     thrown.expect(NullPointerException.class);<a name="line.181"></a>
+<FONT color="green">182</FONT>         *     throw new NullPointerException();<a name="line.182"></a>
+<FONT color="green">183</FONT>         * }&lt;/pre&gt;<a name="line.183"></a>
+<FONT color="green">184</FONT>         */<a name="line.184"></a>
+<FONT color="green">185</FONT>        public void expect(Class&lt;? extends Throwable&gt; type) {<a name="line.185"></a>
+<FONT color="green">186</FONT>            expect(instanceOf(type));<a name="line.186"></a>
+<FONT color="green">187</FONT>        }<a name="line.187"></a>
+<FONT color="green">188</FONT>    <a name="line.188"></a>
+<FONT color="green">189</FONT>        /**<a name="line.189"></a>
+<FONT color="green">190</FONT>         * Verify that your code throws an exception whose message contains<a name="line.190"></a>
+<FONT color="green">191</FONT>         * a specific text.<a name="line.191"></a>
+<FONT color="green">192</FONT>         * &lt;pre&gt; &amp;#064;Test<a name="line.192"></a>
+<FONT color="green">193</FONT>         * public void throwsExceptionWhoseMessageContainsSpecificText() {<a name="line.193"></a>
+<FONT color="green">194</FONT>         *     thrown.expectMessage(&amp;quot;happened&amp;quot;);<a name="line.194"></a>
+<FONT color="green">195</FONT>         *     throw new NullPointerException(&amp;quot;What happened?&amp;quot;);<a name="line.195"></a>
+<FONT color="green">196</FONT>         * }&lt;/pre&gt;<a name="line.196"></a>
+<FONT color="green">197</FONT>         */<a name="line.197"></a>
+<FONT color="green">198</FONT>        public void expectMessage(String substring) {<a name="line.198"></a>
+<FONT color="green">199</FONT>            expectMessage(containsString(substring));<a name="line.199"></a>
+<FONT color="green">200</FONT>        }<a name="line.200"></a>
+<FONT color="green">201</FONT>    <a name="line.201"></a>
+<FONT color="green">202</FONT>        /**<a name="line.202"></a>
+<FONT color="green">203</FONT>         * Verify that your code throws an exception whose message is matched <a name="line.203"></a>
+<FONT color="green">204</FONT>         * by a Hamcrest matcher.<a name="line.204"></a>
+<FONT color="green">205</FONT>         * &lt;pre&gt; &amp;#064;Test<a name="line.205"></a>
+<FONT color="green">206</FONT>         * public void throwsExceptionWhoseMessageCompliesWithMatcher() {<a name="line.206"></a>
+<FONT color="green">207</FONT>         *     thrown.expectMessage(startsWith(&amp;quot;What&amp;quot;));<a name="line.207"></a>
+<FONT color="green">208</FONT>         *     throw new NullPointerException(&amp;quot;What happened?&amp;quot;);<a name="line.208"></a>
+<FONT color="green">209</FONT>         * }&lt;/pre&gt;<a name="line.209"></a>
+<FONT color="green">210</FONT>         */<a name="line.210"></a>
+<FONT color="green">211</FONT>        public void expectMessage(Matcher&lt;String&gt; matcher) {<a name="line.211"></a>
+<FONT color="green">212</FONT>            expect(hasMessage(matcher));<a name="line.212"></a>
+<FONT color="green">213</FONT>        }<a name="line.213"></a>
+<FONT color="green">214</FONT>    <a name="line.214"></a>
+<FONT color="green">215</FONT>        /**<a name="line.215"></a>
+<FONT color="green">216</FONT>         * Verify that your code throws an exception whose cause is matched by <a name="line.216"></a>
+<FONT color="green">217</FONT>         * a Hamcrest matcher.<a name="line.217"></a>
+<FONT color="green">218</FONT>         * &lt;pre&gt; &amp;#064;Test<a name="line.218"></a>
+<FONT color="green">219</FONT>         * public void throwsExceptionWhoseCauseCompliesWithMatcher() {<a name="line.219"></a>
+<FONT color="green">220</FONT>         *     NullPointerException expectedCause = new NullPointerException();<a name="line.220"></a>
+<FONT color="green">221</FONT>         *     thrown.expectCause(is(expectedCause));<a name="line.221"></a>
+<FONT color="green">222</FONT>         *     throw new IllegalArgumentException(&amp;quot;What happened?&amp;quot;, cause);<a name="line.222"></a>
+<FONT color="green">223</FONT>         * }&lt;/pre&gt;<a name="line.223"></a>
+<FONT color="green">224</FONT>         */<a name="line.224"></a>
+<FONT color="green">225</FONT>        public void expectCause(Matcher&lt;? extends Throwable&gt; expectedCause) {<a name="line.225"></a>
+<FONT color="green">226</FONT>            expect(hasCause(expectedCause));<a name="line.226"></a>
+<FONT color="green">227</FONT>        }<a name="line.227"></a>
+<FONT color="green">228</FONT>    <a name="line.228"></a>
+<FONT color="green">229</FONT>        private class ExpectedExceptionStatement extends Statement {<a name="line.229"></a>
+<FONT color="green">230</FONT>            private final Statement next;<a name="line.230"></a>
+<FONT color="green">231</FONT>    <a name="line.231"></a>
+<FONT color="green">232</FONT>            public ExpectedExceptionStatement(Statement base) {<a name="line.232"></a>
+<FONT color="green">233</FONT>                next = base;<a name="line.233"></a>
+<FONT color="green">234</FONT>            }<a name="line.234"></a>
+<FONT color="green">235</FONT>    <a name="line.235"></a>
+<FONT color="green">236</FONT>            @Override<a name="line.236"></a>
+<FONT color="green">237</FONT>            public void evaluate() throws Throwable {<a name="line.237"></a>
+<FONT color="green">238</FONT>                try {<a name="line.238"></a>
+<FONT color="green">239</FONT>                    next.evaluate();<a name="line.239"></a>
+<FONT color="green">240</FONT>                } catch (Throwable e) {<a name="line.240"></a>
+<FONT color="green">241</FONT>                    handleException(e);<a name="line.241"></a>
+<FONT color="green">242</FONT>                    return;<a name="line.242"></a>
+<FONT color="green">243</FONT>                }<a name="line.243"></a>
+<FONT color="green">244</FONT>                if (isAnyExceptionExpected()) {<a name="line.244"></a>
+<FONT color="green">245</FONT>                    failDueToMissingException();<a name="line.245"></a>
+<FONT color="green">246</FONT>                }<a name="line.246"></a>
+<FONT color="green">247</FONT>            }<a name="line.247"></a>
+<FONT color="green">248</FONT>        }<a name="line.248"></a>
+<FONT color="green">249</FONT>    <a name="line.249"></a>
+<FONT color="green">250</FONT>        private void handleException(Throwable e) throws Throwable {<a name="line.250"></a>
+<FONT color="green">251</FONT>            if (isAnyExceptionExpected()) {<a name="line.251"></a>
+<FONT color="green">252</FONT>                assertThat(e, matcherBuilder.build());<a name="line.252"></a>
+<FONT color="green">253</FONT>            } else {<a name="line.253"></a>
+<FONT color="green">254</FONT>                throw e;<a name="line.254"></a>
+<FONT color="green">255</FONT>            }<a name="line.255"></a>
+<FONT color="green">256</FONT>        }<a name="line.256"></a>
+<FONT color="green">257</FONT>    <a name="line.257"></a>
+<FONT color="green">258</FONT>        private boolean isAnyExceptionExpected() {<a name="line.258"></a>
+<FONT color="green">259</FONT>            return matcherBuilder.expectsThrowable();<a name="line.259"></a>
+<FONT color="green">260</FONT>        }<a name="line.260"></a>
+<FONT color="green">261</FONT>    <a name="line.261"></a>
+<FONT color="green">262</FONT>        private void failDueToMissingException() throws AssertionError {<a name="line.262"></a>
+<FONT color="green">263</FONT>            fail(missingExceptionMessage());<a name="line.263"></a>
+<FONT color="green">264</FONT>        }<a name="line.264"></a>
+<FONT color="green">265</FONT>        <a name="line.265"></a>
+<FONT color="green">266</FONT>        private String missingExceptionMessage() {<a name="line.266"></a>
+<FONT color="green">267</FONT>            String expectation= StringDescription.toString(matcherBuilder.build());<a name="line.267"></a>
+<FONT color="green">268</FONT>            return format(missingExceptionMessage, expectation);<a name="line.268"></a>
+<FONT color="green">269</FONT>        }<a name="line.269"></a>
+<FONT color="green">270</FONT>    }<a name="line.270"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

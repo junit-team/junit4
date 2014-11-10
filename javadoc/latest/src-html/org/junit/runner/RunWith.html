@@ -1,0 +1,102 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.junit.runner;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import java.lang.annotation.ElementType;<a name="line.3"></a>
+<FONT color="green">004</FONT>    import java.lang.annotation.Inherited;<a name="line.4"></a>
+<FONT color="green">005</FONT>    import java.lang.annotation.Retention;<a name="line.5"></a>
+<FONT color="green">006</FONT>    import java.lang.annotation.RetentionPolicy;<a name="line.6"></a>
+<FONT color="green">007</FONT>    import java.lang.annotation.Target;<a name="line.7"></a>
+<FONT color="green">008</FONT>    <a name="line.8"></a>
+<FONT color="green">009</FONT>    /**<a name="line.9"></a>
+<FONT color="green">010</FONT>     * When a class is annotated with &lt;code&gt;&amp;#064;RunWith&lt;/code&gt; or extends a class annotated<a name="line.10"></a>
+<FONT color="green">011</FONT>     * with &lt;code&gt;&amp;#064;RunWith&lt;/code&gt;, JUnit will invoke the class it references to run the<a name="line.11"></a>
+<FONT color="green">012</FONT>     * tests in that class instead of the runner built into JUnit. We added this feature late<a name="line.12"></a>
+<FONT color="green">013</FONT>     * in development. While it seems powerful we expect the runner API to change as we learn<a name="line.13"></a>
+<FONT color="green">014</FONT>     * how people really use it. Some of the classes that are currently internal will likely<a name="line.14"></a>
+<FONT color="green">015</FONT>     * be refined and become public.<a name="line.15"></a>
+<FONT color="green">016</FONT>     *<a name="line.16"></a>
+<FONT color="green">017</FONT>     * For example, suites in JUnit 4 are built using RunWith, and a custom runner named Suite:<a name="line.17"></a>
+<FONT color="green">018</FONT>     *<a name="line.18"></a>
+<FONT color="green">019</FONT>     * &lt;pre&gt;<a name="line.19"></a>
+<FONT color="green">020</FONT>     * &amp;#064;RunWith(Suite.class)<a name="line.20"></a>
+<FONT color="green">021</FONT>     * &amp;#064;SuiteClasses({ATest.class, BTest.class, CTest.class})<a name="line.21"></a>
+<FONT color="green">022</FONT>     * public class ABCSuite {<a name="line.22"></a>
+<FONT color="green">023</FONT>     * }<a name="line.23"></a>
+<FONT color="green">024</FONT>     * &lt;/pre&gt;<a name="line.24"></a>
+<FONT color="green">025</FONT>     *<a name="line.25"></a>
+<FONT color="green">026</FONT>     * @since 4.0<a name="line.26"></a>
+<FONT color="green">027</FONT>     */<a name="line.27"></a>
+<FONT color="green">028</FONT>    @Retention(RetentionPolicy.RUNTIME)<a name="line.28"></a>
+<FONT color="green">029</FONT>    @Target(ElementType.TYPE)<a name="line.29"></a>
+<FONT color="green">030</FONT>    @Inherited<a name="line.30"></a>
+<FONT color="green">031</FONT>    public @interface RunWith {<a name="line.31"></a>
+<FONT color="green">032</FONT>        /**<a name="line.32"></a>
+<FONT color="green">033</FONT>         * @return a Runner class (must have a constructor that takes a single Class to run)<a name="line.33"></a>
+<FONT color="green">034</FONT>         */<a name="line.34"></a>
+<FONT color="green">035</FONT>        Class&lt;? extends Runner&gt; value();<a name="line.35"></a>
+<FONT color="green">036</FONT>    }<a name="line.36"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

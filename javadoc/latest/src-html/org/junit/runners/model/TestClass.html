@@ -1,0 +1,379 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.junit.runners.model;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import static java.lang.reflect.Modifier.isStatic;<a name="line.3"></a>
+<FONT color="green">004</FONT>    import static org.junit.internal.MethodSorter.NAME_ASCENDING;<a name="line.4"></a>
+<FONT color="green">005</FONT>    <a name="line.5"></a>
+<FONT color="green">006</FONT>    import java.lang.annotation.Annotation;<a name="line.6"></a>
+<FONT color="green">007</FONT>    import java.lang.reflect.Constructor;<a name="line.7"></a>
+<FONT color="green">008</FONT>    import java.lang.reflect.Field;<a name="line.8"></a>
+<FONT color="green">009</FONT>    import java.lang.reflect.Method;<a name="line.9"></a>
+<FONT color="green">010</FONT>    import java.lang.reflect.Modifier;<a name="line.10"></a>
+<FONT color="green">011</FONT>    import java.util.ArrayList;<a name="line.11"></a>
+<FONT color="green">012</FONT>    import java.util.Arrays;<a name="line.12"></a>
+<FONT color="green">013</FONT>    import java.util.Collections;<a name="line.13"></a>
+<FONT color="green">014</FONT>    import java.util.Comparator;<a name="line.14"></a>
+<FONT color="green">015</FONT>    import java.util.LinkedHashMap;<a name="line.15"></a>
+<FONT color="green">016</FONT>    import java.util.LinkedHashSet;<a name="line.16"></a>
+<FONT color="green">017</FONT>    import java.util.List;<a name="line.17"></a>
+<FONT color="green">018</FONT>    import java.util.Map;<a name="line.18"></a>
+<FONT color="green">019</FONT>    import java.util.Set;<a name="line.19"></a>
+<FONT color="green">020</FONT>    <a name="line.20"></a>
+<FONT color="green">021</FONT>    import org.junit.Assert;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import org.junit.Before;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import org.junit.BeforeClass;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import org.junit.internal.MethodSorter;<a name="line.24"></a>
+<FONT color="green">025</FONT>    <a name="line.25"></a>
+<FONT color="green">026</FONT>    /**<a name="line.26"></a>
+<FONT color="green">027</FONT>     * Wraps a class to be run, providing method validation and annotation searching<a name="line.27"></a>
+<FONT color="green">028</FONT>     *<a name="line.28"></a>
+<FONT color="green">029</FONT>     * @since 4.5<a name="line.29"></a>
+<FONT color="green">030</FONT>     */<a name="line.30"></a>
+<FONT color="green">031</FONT>    public class TestClass implements Annotatable {<a name="line.31"></a>
+<FONT color="green">032</FONT>        private static final FieldComparator FIELD_COMPARATOR = new FieldComparator();<a name="line.32"></a>
+<FONT color="green">033</FONT>        private static final MethodComparator METHOD_COMPARATOR = new MethodComparator();<a name="line.33"></a>
+<FONT color="green">034</FONT>    <a name="line.34"></a>
+<FONT color="green">035</FONT>        private final Class&lt;?&gt; clazz;<a name="line.35"></a>
+<FONT color="green">036</FONT>        private final Map&lt;Class&lt;? extends Annotation&gt;, List&lt;FrameworkMethod&gt;&gt; methodsForAnnotations;<a name="line.36"></a>
+<FONT color="green">037</FONT>        private final Map&lt;Class&lt;? extends Annotation&gt;, List&lt;FrameworkField&gt;&gt; fieldsForAnnotations;<a name="line.37"></a>
+<FONT color="green">038</FONT>    <a name="line.38"></a>
+<FONT color="green">039</FONT>        /**<a name="line.39"></a>
+<FONT color="green">040</FONT>         * Creates a {@code TestClass} wrapping {@code clazz}. Each time this<a name="line.40"></a>
+<FONT color="green">041</FONT>         * constructor executes, the class is scanned for annotations, which can be<a name="line.41"></a>
+<FONT color="green">042</FONT>         * an expensive process (we hope in future JDK's it will not be.) Therefore,<a name="line.42"></a>
+<FONT color="green">043</FONT>         * try to share instances of {@code TestClass} where possible.<a name="line.43"></a>
+<FONT color="green">044</FONT>         */<a name="line.44"></a>
+<FONT color="green">045</FONT>        public TestClass(Class&lt;?&gt; clazz) {<a name="line.45"></a>
+<FONT color="green">046</FONT>            this.clazz = clazz;<a name="line.46"></a>
+<FONT color="green">047</FONT>            if (clazz != null &amp;&amp; clazz.getConstructors().length &gt; 1) {<a name="line.47"></a>
+<FONT color="green">048</FONT>                throw new IllegalArgumentException(<a name="line.48"></a>
+<FONT color="green">049</FONT>                        "Test class can only have one constructor");<a name="line.49"></a>
+<FONT color="green">050</FONT>            }<a name="line.50"></a>
+<FONT color="green">051</FONT>    <a name="line.51"></a>
+<FONT color="green">052</FONT>            Map&lt;Class&lt;? extends Annotation&gt;, List&lt;FrameworkMethod&gt;&gt; methodsForAnnotations =<a name="line.52"></a>
+<FONT color="green">053</FONT>                    new LinkedHashMap&lt;Class&lt;? extends Annotation&gt;, List&lt;FrameworkMethod&gt;&gt;();<a name="line.53"></a>
+<FONT color="green">054</FONT>            Map&lt;Class&lt;? extends Annotation&gt;, List&lt;FrameworkField&gt;&gt; fieldsForAnnotations =<a name="line.54"></a>
+<FONT color="green">055</FONT>                    new LinkedHashMap&lt;Class&lt;? extends Annotation&gt;, List&lt;FrameworkField&gt;&gt;();<a name="line.55"></a>
+<FONT color="green">056</FONT>    <a name="line.56"></a>
+<FONT color="green">057</FONT>            scanAnnotatedMembers(methodsForAnnotations, fieldsForAnnotations);<a name="line.57"></a>
+<FONT color="green">058</FONT>    <a name="line.58"></a>
+<FONT color="green">059</FONT>            this.methodsForAnnotations = makeDeeplyUnmodifiable(methodsForAnnotations);<a name="line.59"></a>
+<FONT color="green">060</FONT>            this.fieldsForAnnotations = makeDeeplyUnmodifiable(fieldsForAnnotations);<a name="line.60"></a>
+<FONT color="green">061</FONT>        }<a name="line.61"></a>
+<FONT color="green">062</FONT>    <a name="line.62"></a>
+<FONT color="green">063</FONT>        protected void scanAnnotatedMembers(Map&lt;Class&lt;? extends Annotation&gt;, List&lt;FrameworkMethod&gt;&gt; methodsForAnnotations, Map&lt;Class&lt;? extends Annotation&gt;, List&lt;FrameworkField&gt;&gt; fieldsForAnnotations) {<a name="line.63"></a>
+<FONT color="green">064</FONT>            for (Class&lt;?&gt; eachClass : getSuperClasses(clazz)) {<a name="line.64"></a>
+<FONT color="green">065</FONT>                for (Method eachMethod : MethodSorter.getDeclaredMethods(eachClass)) {<a name="line.65"></a>
+<FONT color="green">066</FONT>                    addToAnnotationLists(new FrameworkMethod(eachMethod), methodsForAnnotations);<a name="line.66"></a>
+<FONT color="green">067</FONT>                }<a name="line.67"></a>
+<FONT color="green">068</FONT>                // ensuring fields are sorted to make sure that entries are inserted<a name="line.68"></a>
+<FONT color="green">069</FONT>                // and read from fieldForAnnotations in a deterministic order<a name="line.69"></a>
+<FONT color="green">070</FONT>                for (Field eachField : getSortedDeclaredFields(eachClass)) {<a name="line.70"></a>
+<FONT color="green">071</FONT>                    addToAnnotationLists(new FrameworkField(eachField), fieldsForAnnotations);<a name="line.71"></a>
+<FONT color="green">072</FONT>                }<a name="line.72"></a>
+<FONT color="green">073</FONT>            }<a name="line.73"></a>
+<FONT color="green">074</FONT>        }<a name="line.74"></a>
+<FONT color="green">075</FONT>    <a name="line.75"></a>
+<FONT color="green">076</FONT>        private static Field[] getSortedDeclaredFields(Class&lt;?&gt; clazz) {<a name="line.76"></a>
+<FONT color="green">077</FONT>            Field[] declaredFields = clazz.getDeclaredFields();<a name="line.77"></a>
+<FONT color="green">078</FONT>            Arrays.sort(declaredFields, FIELD_COMPARATOR);<a name="line.78"></a>
+<FONT color="green">079</FONT>            return declaredFields;<a name="line.79"></a>
+<FONT color="green">080</FONT>        }<a name="line.80"></a>
+<FONT color="green">081</FONT>    <a name="line.81"></a>
+<FONT color="green">082</FONT>        protected static &lt;T extends FrameworkMember&lt;T&gt;&gt; void addToAnnotationLists(T member,<a name="line.82"></a>
+<FONT color="green">083</FONT>                Map&lt;Class&lt;? extends Annotation&gt;, List&lt;T&gt;&gt; map) {<a name="line.83"></a>
+<FONT color="green">084</FONT>            for (Annotation each : member.getAnnotations()) {<a name="line.84"></a>
+<FONT color="green">085</FONT>                Class&lt;? extends Annotation&gt; type = each.annotationType();<a name="line.85"></a>
+<FONT color="green">086</FONT>                List&lt;T&gt; members = getAnnotatedMembers(map, type, true);<a name="line.86"></a>
+<FONT color="green">087</FONT>                if (member.isShadowedBy(members)) {<a name="line.87"></a>
+<FONT color="green">088</FONT>                    return;<a name="line.88"></a>
+<FONT color="green">089</FONT>                }<a name="line.89"></a>
+<FONT color="green">090</FONT>                if (runsTopToBottom(type)) {<a name="line.90"></a>
+<FONT color="green">091</FONT>                    members.add(0, member);<a name="line.91"></a>
+<FONT color="green">092</FONT>                } else {<a name="line.92"></a>
+<FONT color="green">093</FONT>                    members.add(member);<a name="line.93"></a>
+<FONT color="green">094</FONT>                }<a name="line.94"></a>
+<FONT color="green">095</FONT>            }<a name="line.95"></a>
+<FONT color="green">096</FONT>        }<a name="line.96"></a>
+<FONT color="green">097</FONT>    <a name="line.97"></a>
+<FONT color="green">098</FONT>        private static &lt;T extends FrameworkMember&lt;T&gt;&gt; Map&lt;Class&lt;? extends Annotation&gt;, List&lt;T&gt;&gt;<a name="line.98"></a>
+<FONT color="green">099</FONT>                makeDeeplyUnmodifiable(Map&lt;Class&lt;? extends Annotation&gt;, List&lt;T&gt;&gt; source) {<a name="line.99"></a>
+<FONT color="green">100</FONT>            LinkedHashMap&lt;Class&lt;? extends Annotation&gt;, List&lt;T&gt;&gt; copy =<a name="line.100"></a>
+<FONT color="green">101</FONT>                    new LinkedHashMap&lt;Class&lt;? extends Annotation&gt;, List&lt;T&gt;&gt;();<a name="line.101"></a>
+<FONT color="green">102</FONT>            for (Map.Entry&lt;Class&lt;? extends Annotation&gt;, List&lt;T&gt;&gt; entry : source.entrySet()) {<a name="line.102"></a>
+<FONT color="green">103</FONT>                copy.put(entry.getKey(), Collections.unmodifiableList(entry.getValue()));<a name="line.103"></a>
+<FONT color="green">104</FONT>            }<a name="line.104"></a>
+<FONT color="green">105</FONT>            return Collections.unmodifiableMap(copy);<a name="line.105"></a>
+<FONT color="green">106</FONT>        }<a name="line.106"></a>
+<FONT color="green">107</FONT>    <a name="line.107"></a>
+<FONT color="green">108</FONT>        /**<a name="line.108"></a>
+<FONT color="green">109</FONT>         * Returns, efficiently, all the non-overridden methods in this class and<a name="line.109"></a>
+<FONT color="green">110</FONT>         * its superclasses that are annotated}.<a name="line.110"></a>
+<FONT color="green">111</FONT>         * <a name="line.111"></a>
+<FONT color="green">112</FONT>         * @since 4.12<a name="line.112"></a>
+<FONT color="green">113</FONT>         */<a name="line.113"></a>
+<FONT color="green">114</FONT>        public List&lt;FrameworkMethod&gt; getAnnotatedMethods() {<a name="line.114"></a>
+<FONT color="green">115</FONT>            List&lt;FrameworkMethod&gt; methods = collectValues(methodsForAnnotations);<a name="line.115"></a>
+<FONT color="green">116</FONT>            Collections.sort(methods, METHOD_COMPARATOR);<a name="line.116"></a>
+<FONT color="green">117</FONT>            return methods;<a name="line.117"></a>
+<FONT color="green">118</FONT>        }<a name="line.118"></a>
+<FONT color="green">119</FONT>    <a name="line.119"></a>
+<FONT color="green">120</FONT>        /**<a name="line.120"></a>
+<FONT color="green">121</FONT>         * Returns, efficiently, all the non-overridden methods in this class and<a name="line.121"></a>
+<FONT color="green">122</FONT>         * its superclasses that are annotated with {@code annotationClass}.<a name="line.122"></a>
+<FONT color="green">123</FONT>         */<a name="line.123"></a>
+<FONT color="green">124</FONT>        public List&lt;FrameworkMethod&gt; getAnnotatedMethods(<a name="line.124"></a>
+<FONT color="green">125</FONT>                Class&lt;? extends Annotation&gt; annotationClass) {<a name="line.125"></a>
+<FONT color="green">126</FONT>            return Collections.unmodifiableList(getAnnotatedMembers(methodsForAnnotations, annotationClass, false));<a name="line.126"></a>
+<FONT color="green">127</FONT>        }<a name="line.127"></a>
+<FONT color="green">128</FONT>    <a name="line.128"></a>
+<FONT color="green">129</FONT>        /**<a name="line.129"></a>
+<FONT color="green">130</FONT>         * Returns, efficiently, all the non-overridden fields in this class and its<a name="line.130"></a>
+<FONT color="green">131</FONT>         * superclasses that are annotated.<a name="line.131"></a>
+<FONT color="green">132</FONT>         * <a name="line.132"></a>
+<FONT color="green">133</FONT>         * @since 4.12<a name="line.133"></a>
+<FONT color="green">134</FONT>         */<a name="line.134"></a>
+<FONT color="green">135</FONT>        public List&lt;FrameworkField&gt; getAnnotatedFields() {<a name="line.135"></a>
+<FONT color="green">136</FONT>            return collectValues(fieldsForAnnotations);<a name="line.136"></a>
+<FONT color="green">137</FONT>        }<a name="line.137"></a>
+<FONT color="green">138</FONT>    <a name="line.138"></a>
+<FONT color="green">139</FONT>        /**<a name="line.139"></a>
+<FONT color="green">140</FONT>         * Returns, efficiently, all the non-overridden fields in this class and its<a name="line.140"></a>
+<FONT color="green">141</FONT>         * superclasses that are annotated with {@code annotationClass}.<a name="line.141"></a>
+<FONT color="green">142</FONT>         */<a name="line.142"></a>
+<FONT color="green">143</FONT>        public List&lt;FrameworkField&gt; getAnnotatedFields(<a name="line.143"></a>
+<FONT color="green">144</FONT>                Class&lt;? extends Annotation&gt; annotationClass) {<a name="line.144"></a>
+<FONT color="green">145</FONT>            return Collections.unmodifiableList(getAnnotatedMembers(fieldsForAnnotations, annotationClass, false));<a name="line.145"></a>
+<FONT color="green">146</FONT>        }<a name="line.146"></a>
+<FONT color="green">147</FONT>    <a name="line.147"></a>
+<FONT color="green">148</FONT>        private &lt;T&gt; List&lt;T&gt; collectValues(Map&lt;?, List&lt;T&gt;&gt; map) {<a name="line.148"></a>
+<FONT color="green">149</FONT>            Set&lt;T&gt; values = new LinkedHashSet&lt;T&gt;();<a name="line.149"></a>
+<FONT color="green">150</FONT>            for (List&lt;T&gt; additionalValues : map.values()) {<a name="line.150"></a>
+<FONT color="green">151</FONT>                values.addAll(additionalValues);<a name="line.151"></a>
+<FONT color="green">152</FONT>            }<a name="line.152"></a>
+<FONT color="green">153</FONT>            return new ArrayList&lt;T&gt;(values);<a name="line.153"></a>
+<FONT color="green">154</FONT>        }<a name="line.154"></a>
+<FONT color="green">155</FONT>    <a name="line.155"></a>
+<FONT color="green">156</FONT>        private static &lt;T&gt; List&lt;T&gt; getAnnotatedMembers(Map&lt;Class&lt;? extends Annotation&gt;, List&lt;T&gt;&gt; map,<a name="line.156"></a>
+<FONT color="green">157</FONT>                Class&lt;? extends Annotation&gt; type, boolean fillIfAbsent) {<a name="line.157"></a>
+<FONT color="green">158</FONT>            if (!map.containsKey(type) &amp;&amp; fillIfAbsent) {<a name="line.158"></a>
+<FONT color="green">159</FONT>                map.put(type, new ArrayList&lt;T&gt;());<a name="line.159"></a>
+<FONT color="green">160</FONT>            }<a name="line.160"></a>
+<FONT color="green">161</FONT>            List&lt;T&gt; members = map.get(type);<a name="line.161"></a>
+<FONT color="green">162</FONT>            return members == null ? Collections.&lt;T&gt;emptyList() : members;<a name="line.162"></a>
+<FONT color="green">163</FONT>        }<a name="line.163"></a>
+<FONT color="green">164</FONT>    <a name="line.164"></a>
+<FONT color="green">165</FONT>        private static boolean runsTopToBottom(Class&lt;? extends Annotation&gt; annotation) {<a name="line.165"></a>
+<FONT color="green">166</FONT>            return annotation.equals(Before.class)<a name="line.166"></a>
+<FONT color="green">167</FONT>                    || annotation.equals(BeforeClass.class);<a name="line.167"></a>
+<FONT color="green">168</FONT>        }<a name="line.168"></a>
+<FONT color="green">169</FONT>    <a name="line.169"></a>
+<FONT color="green">170</FONT>        private static List&lt;Class&lt;?&gt;&gt; getSuperClasses(Class&lt;?&gt; testClass) {<a name="line.170"></a>
+<FONT color="green">171</FONT>            ArrayList&lt;Class&lt;?&gt;&gt; results = new ArrayList&lt;Class&lt;?&gt;&gt;();<a name="line.171"></a>
+<FONT color="green">172</FONT>            Class&lt;?&gt; current = testClass;<a name="line.172"></a>
+<FONT color="green">173</FONT>            while (current != null) {<a name="line.173"></a>
+<FONT color="green">174</FONT>                results.add(current);<a name="line.174"></a>
+<FONT color="green">175</FONT>                current = current.getSuperclass();<a name="line.175"></a>
+<FONT color="green">176</FONT>            }<a name="line.176"></a>
+<FONT color="green">177</FONT>            return results;<a name="line.177"></a>
+<FONT color="green">178</FONT>        }<a name="line.178"></a>
+<FONT color="green">179</FONT>    <a name="line.179"></a>
+<FONT color="green">180</FONT>        /**<a name="line.180"></a>
+<FONT color="green">181</FONT>         * Returns the underlying Java class.<a name="line.181"></a>
+<FONT color="green">182</FONT>         */<a name="line.182"></a>
+<FONT color="green">183</FONT>        public Class&lt;?&gt; getJavaClass() {<a name="line.183"></a>
+<FONT color="green">184</FONT>            return clazz;<a name="line.184"></a>
+<FONT color="green">185</FONT>        }<a name="line.185"></a>
+<FONT color="green">186</FONT>    <a name="line.186"></a>
+<FONT color="green">187</FONT>        /**<a name="line.187"></a>
+<FONT color="green">188</FONT>         * Returns the class's name.<a name="line.188"></a>
+<FONT color="green">189</FONT>         */<a name="line.189"></a>
+<FONT color="green">190</FONT>        public String getName() {<a name="line.190"></a>
+<FONT color="green">191</FONT>            if (clazz == null) {<a name="line.191"></a>
+<FONT color="green">192</FONT>                return "null";<a name="line.192"></a>
+<FONT color="green">193</FONT>            }<a name="line.193"></a>
+<FONT color="green">194</FONT>            return clazz.getName();<a name="line.194"></a>
+<FONT color="green">195</FONT>        }<a name="line.195"></a>
+<FONT color="green">196</FONT>    <a name="line.196"></a>
+<FONT color="green">197</FONT>        /**<a name="line.197"></a>
+<FONT color="green">198</FONT>         * Returns the only public constructor in the class, or throws an {@code<a name="line.198"></a>
+<FONT color="green">199</FONT>         * AssertionError} if there are more or less than one.<a name="line.199"></a>
+<FONT color="green">200</FONT>         */<a name="line.200"></a>
+<FONT color="green">201</FONT>    <a name="line.201"></a>
+<FONT color="green">202</FONT>        public Constructor&lt;?&gt; getOnlyConstructor() {<a name="line.202"></a>
+<FONT color="green">203</FONT>            Constructor&lt;?&gt;[] constructors = clazz.getConstructors();<a name="line.203"></a>
+<FONT color="green">204</FONT>            Assert.assertEquals(1, constructors.length);<a name="line.204"></a>
+<FONT color="green">205</FONT>            return constructors[0];<a name="line.205"></a>
+<FONT color="green">206</FONT>        }<a name="line.206"></a>
+<FONT color="green">207</FONT>    <a name="line.207"></a>
+<FONT color="green">208</FONT>        /**<a name="line.208"></a>
+<FONT color="green">209</FONT>         * Returns the annotations on this class<a name="line.209"></a>
+<FONT color="green">210</FONT>         */<a name="line.210"></a>
+<FONT color="green">211</FONT>        public Annotation[] getAnnotations() {<a name="line.211"></a>
+<FONT color="green">212</FONT>            if (clazz == null) {<a name="line.212"></a>
+<FONT color="green">213</FONT>                return new Annotation[0];<a name="line.213"></a>
+<FONT color="green">214</FONT>            }<a name="line.214"></a>
+<FONT color="green">215</FONT>            return clazz.getAnnotations();<a name="line.215"></a>
+<FONT color="green">216</FONT>        }<a name="line.216"></a>
+<FONT color="green">217</FONT>    <a name="line.217"></a>
+<FONT color="green">218</FONT>        public &lt;T extends Annotation&gt; T getAnnotation(Class&lt;T&gt; annotationType) {<a name="line.218"></a>
+<FONT color="green">219</FONT>            if (clazz == null) {<a name="line.219"></a>
+<FONT color="green">220</FONT>                return null;<a name="line.220"></a>
+<FONT color="green">221</FONT>            }<a name="line.221"></a>
+<FONT color="green">222</FONT>            return clazz.getAnnotation(annotationType);<a name="line.222"></a>
+<FONT color="green">223</FONT>        }<a name="line.223"></a>
+<FONT color="green">224</FONT>    <a name="line.224"></a>
+<FONT color="green">225</FONT>        public &lt;T&gt; List&lt;T&gt; getAnnotatedFieldValues(Object test,<a name="line.225"></a>
+<FONT color="green">226</FONT>                Class&lt;? extends Annotation&gt; annotationClass, Class&lt;T&gt; valueClass) {<a name="line.226"></a>
+<FONT color="green">227</FONT>            List&lt;T&gt; results = new ArrayList&lt;T&gt;();<a name="line.227"></a>
+<FONT color="green">228</FONT>            for (FrameworkField each : getAnnotatedFields(annotationClass)) {<a name="line.228"></a>
+<FONT color="green">229</FONT>                try {<a name="line.229"></a>
+<FONT color="green">230</FONT>                    Object fieldValue = each.get(test);<a name="line.230"></a>
+<FONT color="green">231</FONT>                    if (valueClass.isInstance(fieldValue)) {<a name="line.231"></a>
+<FONT color="green">232</FONT>                        results.add(valueClass.cast(fieldValue));<a name="line.232"></a>
+<FONT color="green">233</FONT>                    }<a name="line.233"></a>
+<FONT color="green">234</FONT>                } catch (IllegalAccessException e) {<a name="line.234"></a>
+<FONT color="green">235</FONT>                    throw new RuntimeException(<a name="line.235"></a>
+<FONT color="green">236</FONT>                            "How did getFields return a field we couldn't access?", e);<a name="line.236"></a>
+<FONT color="green">237</FONT>                }<a name="line.237"></a>
+<FONT color="green">238</FONT>            }<a name="line.238"></a>
+<FONT color="green">239</FONT>            return results;<a name="line.239"></a>
+<FONT color="green">240</FONT>        }<a name="line.240"></a>
+<FONT color="green">241</FONT>    <a name="line.241"></a>
+<FONT color="green">242</FONT>        public &lt;T&gt; List&lt;T&gt; getAnnotatedMethodValues(Object test,<a name="line.242"></a>
+<FONT color="green">243</FONT>                Class&lt;? extends Annotation&gt; annotationClass, Class&lt;T&gt; valueClass) {<a name="line.243"></a>
+<FONT color="green">244</FONT>            List&lt;T&gt; results = new ArrayList&lt;T&gt;();<a name="line.244"></a>
+<FONT color="green">245</FONT>            for (FrameworkMethod each : getAnnotatedMethods(annotationClass)) {<a name="line.245"></a>
+<FONT color="green">246</FONT>                try {<a name="line.246"></a>
+<FONT color="green">247</FONT>                    /*<a name="line.247"></a>
+<FONT color="green">248</FONT>                     * A method annotated with @Rule may return a @TestRule or a @MethodRule,<a name="line.248"></a>
+<FONT color="green">249</FONT>                     * we cannot call the method to check whether the return type matches our<a name="line.249"></a>
+<FONT color="green">250</FONT>                     * expectation i.e. subclass of valueClass. If we do that then the method <a name="line.250"></a>
+<FONT color="green">251</FONT>                     * will be invoked twice and we do not want to do that. So we first check<a name="line.251"></a>
+<FONT color="green">252</FONT>                     * whether return type matches our expectation and only then call the method<a name="line.252"></a>
+<FONT color="green">253</FONT>                     * to fetch the MethodRule<a name="line.253"></a>
+<FONT color="green">254</FONT>                     */<a name="line.254"></a>
+<FONT color="green">255</FONT>                    if (valueClass.isAssignableFrom(each.getReturnType())) {<a name="line.255"></a>
+<FONT color="green">256</FONT>                        Object fieldValue = each.invokeExplosively(test);<a name="line.256"></a>
+<FONT color="green">257</FONT>                        results.add(valueClass.cast(fieldValue));<a name="line.257"></a>
+<FONT color="green">258</FONT>                    }<a name="line.258"></a>
+<FONT color="green">259</FONT>                } catch (Throwable e) {<a name="line.259"></a>
+<FONT color="green">260</FONT>                    throw new RuntimeException(<a name="line.260"></a>
+<FONT color="green">261</FONT>                            "Exception in " + each.getName(), e);<a name="line.261"></a>
+<FONT color="green">262</FONT>                }<a name="line.262"></a>
+<FONT color="green">263</FONT>            }<a name="line.263"></a>
+<FONT color="green">264</FONT>            return results;<a name="line.264"></a>
+<FONT color="green">265</FONT>        }<a name="line.265"></a>
+<FONT color="green">266</FONT>    <a name="line.266"></a>
+<FONT color="green">267</FONT>        public boolean isPublic() {<a name="line.267"></a>
+<FONT color="green">268</FONT>            return Modifier.isPublic(clazz.getModifiers());<a name="line.268"></a>
+<FONT color="green">269</FONT>        }<a name="line.269"></a>
+<FONT color="green">270</FONT>    <a name="line.270"></a>
+<FONT color="green">271</FONT>        public boolean isANonStaticInnerClass() {<a name="line.271"></a>
+<FONT color="green">272</FONT>            return clazz.isMemberClass() &amp;&amp; !isStatic(clazz.getModifiers());<a name="line.272"></a>
+<FONT color="green">273</FONT>        }<a name="line.273"></a>
+<FONT color="green">274</FONT>    <a name="line.274"></a>
+<FONT color="green">275</FONT>        @Override<a name="line.275"></a>
+<FONT color="green">276</FONT>        public int hashCode() {<a name="line.276"></a>
+<FONT color="green">277</FONT>            return (clazz == null) ? 0 : clazz.hashCode();<a name="line.277"></a>
+<FONT color="green">278</FONT>        }<a name="line.278"></a>
+<FONT color="green">279</FONT>    <a name="line.279"></a>
+<FONT color="green">280</FONT>        @Override<a name="line.280"></a>
+<FONT color="green">281</FONT>        public boolean equals(Object obj) {<a name="line.281"></a>
+<FONT color="green">282</FONT>            if (this == obj) {<a name="line.282"></a>
+<FONT color="green">283</FONT>                return true;<a name="line.283"></a>
+<FONT color="green">284</FONT>            }<a name="line.284"></a>
+<FONT color="green">285</FONT>            if (obj == null) {<a name="line.285"></a>
+<FONT color="green">286</FONT>                return false;<a name="line.286"></a>
+<FONT color="green">287</FONT>            }<a name="line.287"></a>
+<FONT color="green">288</FONT>            if (getClass() != obj.getClass()) {<a name="line.288"></a>
+<FONT color="green">289</FONT>                return false;<a name="line.289"></a>
+<FONT color="green">290</FONT>            }<a name="line.290"></a>
+<FONT color="green">291</FONT>            TestClass other = (TestClass) obj;<a name="line.291"></a>
+<FONT color="green">292</FONT>            return clazz == other.clazz;<a name="line.292"></a>
+<FONT color="green">293</FONT>        }<a name="line.293"></a>
+<FONT color="green">294</FONT>    <a name="line.294"></a>
+<FONT color="green">295</FONT>        /**<a name="line.295"></a>
+<FONT color="green">296</FONT>         * Compares two fields by its name.<a name="line.296"></a>
+<FONT color="green">297</FONT>         */<a name="line.297"></a>
+<FONT color="green">298</FONT>        private static class FieldComparator implements Comparator&lt;Field&gt; {<a name="line.298"></a>
+<FONT color="green">299</FONT>            public int compare(Field left, Field right) {<a name="line.299"></a>
+<FONT color="green">300</FONT>                return left.getName().compareTo(right.getName());<a name="line.300"></a>
+<FONT color="green">301</FONT>            }<a name="line.301"></a>
+<FONT color="green">302</FONT>        }<a name="line.302"></a>
+<FONT color="green">303</FONT>    <a name="line.303"></a>
+<FONT color="green">304</FONT>        /**<a name="line.304"></a>
+<FONT color="green">305</FONT>         * Compares two methods by its name.<a name="line.305"></a>
+<FONT color="green">306</FONT>         */<a name="line.306"></a>
+<FONT color="green">307</FONT>        private static class MethodComparator implements<a name="line.307"></a>
+<FONT color="green">308</FONT>                Comparator&lt;FrameworkMethod&gt; {<a name="line.308"></a>
+<FONT color="green">309</FONT>            public int compare(FrameworkMethod left, FrameworkMethod right) {<a name="line.309"></a>
+<FONT color="green">310</FONT>                return NAME_ASCENDING.compare(left.getMethod(), right.getMethod());<a name="line.310"></a>
+<FONT color="green">311</FONT>            }<a name="line.311"></a>
+<FONT color="green">312</FONT>        }<a name="line.312"></a>
+<FONT color="green">313</FONT>    }<a name="line.313"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

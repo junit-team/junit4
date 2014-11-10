@@ -1,0 +1,153 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.junit.runner.notification;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import java.io.PrintWriter;<a name="line.3"></a>
+<FONT color="green">004</FONT>    import java.io.Serializable;<a name="line.4"></a>
+<FONT color="green">005</FONT>    import java.io.StringWriter;<a name="line.5"></a>
+<FONT color="green">006</FONT>    <a name="line.6"></a>
+<FONT color="green">007</FONT>    import org.junit.runner.Description;<a name="line.7"></a>
+<FONT color="green">008</FONT>    <a name="line.8"></a>
+<FONT color="green">009</FONT>    /**<a name="line.9"></a>
+<FONT color="green">010</FONT>     * A &lt;code&gt;Failure&lt;/code&gt; holds a description of the failed test and the<a name="line.10"></a>
+<FONT color="green">011</FONT>     * exception that was thrown while running it. In most cases the {@link org.junit.runner.Description}<a name="line.11"></a>
+<FONT color="green">012</FONT>     * will be of a single test. However, if problems are encountered while constructing the<a name="line.12"></a>
+<FONT color="green">013</FONT>     * test (for example, if a {@link org.junit.BeforeClass} method is not static), it may describe<a name="line.13"></a>
+<FONT color="green">014</FONT>     * something other than a single test.<a name="line.14"></a>
+<FONT color="green">015</FONT>     *<a name="line.15"></a>
+<FONT color="green">016</FONT>     * @since 4.0<a name="line.16"></a>
+<FONT color="green">017</FONT>     */<a name="line.17"></a>
+<FONT color="green">018</FONT>    public class Failure implements Serializable {<a name="line.18"></a>
+<FONT color="green">019</FONT>        private static final long serialVersionUID = 1L;<a name="line.19"></a>
+<FONT color="green">020</FONT>    <a name="line.20"></a>
+<FONT color="green">021</FONT>        /*<a name="line.21"></a>
+<FONT color="green">022</FONT>         * We have to use the f prefix until the next major release to ensure<a name="line.22"></a>
+<FONT color="green">023</FONT>         * serialization compatibility. <a name="line.23"></a>
+<FONT color="green">024</FONT>         * See https://github.com/junit-team/junit/issues/976<a name="line.24"></a>
+<FONT color="green">025</FONT>         */<a name="line.25"></a>
+<FONT color="green">026</FONT>        private final Description fDescription;<a name="line.26"></a>
+<FONT color="green">027</FONT>        private final Throwable fThrownException;<a name="line.27"></a>
+<FONT color="green">028</FONT>    <a name="line.28"></a>
+<FONT color="green">029</FONT>        /**<a name="line.29"></a>
+<FONT color="green">030</FONT>         * Constructs a &lt;code&gt;Failure&lt;/code&gt; with the given description and exception.<a name="line.30"></a>
+<FONT color="green">031</FONT>         *<a name="line.31"></a>
+<FONT color="green">032</FONT>         * @param description a {@link org.junit.runner.Description} of the test that failed<a name="line.32"></a>
+<FONT color="green">033</FONT>         * @param thrownException the exception that was thrown while running the test<a name="line.33"></a>
+<FONT color="green">034</FONT>         */<a name="line.34"></a>
+<FONT color="green">035</FONT>        public Failure(Description description, Throwable thrownException) {<a name="line.35"></a>
+<FONT color="green">036</FONT>            this.fThrownException = thrownException;<a name="line.36"></a>
+<FONT color="green">037</FONT>            this.fDescription = description;<a name="line.37"></a>
+<FONT color="green">038</FONT>        }<a name="line.38"></a>
+<FONT color="green">039</FONT>    <a name="line.39"></a>
+<FONT color="green">040</FONT>        /**<a name="line.40"></a>
+<FONT color="green">041</FONT>         * @return a user-understandable label for the test<a name="line.41"></a>
+<FONT color="green">042</FONT>         */<a name="line.42"></a>
+<FONT color="green">043</FONT>        public String getTestHeader() {<a name="line.43"></a>
+<FONT color="green">044</FONT>            return fDescription.getDisplayName();<a name="line.44"></a>
+<FONT color="green">045</FONT>        }<a name="line.45"></a>
+<FONT color="green">046</FONT>    <a name="line.46"></a>
+<FONT color="green">047</FONT>        /**<a name="line.47"></a>
+<FONT color="green">048</FONT>         * @return the raw description of the context of the failure.<a name="line.48"></a>
+<FONT color="green">049</FONT>         */<a name="line.49"></a>
+<FONT color="green">050</FONT>        public Description getDescription() {<a name="line.50"></a>
+<FONT color="green">051</FONT>            return fDescription;<a name="line.51"></a>
+<FONT color="green">052</FONT>        }<a name="line.52"></a>
+<FONT color="green">053</FONT>    <a name="line.53"></a>
+<FONT color="green">054</FONT>        /**<a name="line.54"></a>
+<FONT color="green">055</FONT>         * @return the exception thrown<a name="line.55"></a>
+<FONT color="green">056</FONT>         */<a name="line.56"></a>
+<FONT color="green">057</FONT>    <a name="line.57"></a>
+<FONT color="green">058</FONT>        public Throwable getException() {<a name="line.58"></a>
+<FONT color="green">059</FONT>            return fThrownException;<a name="line.59"></a>
+<FONT color="green">060</FONT>        }<a name="line.60"></a>
+<FONT color="green">061</FONT>    <a name="line.61"></a>
+<FONT color="green">062</FONT>        @Override<a name="line.62"></a>
+<FONT color="green">063</FONT>        public String toString() {<a name="line.63"></a>
+<FONT color="green">064</FONT>            return getTestHeader() + ": " + fThrownException.getMessage();<a name="line.64"></a>
+<FONT color="green">065</FONT>        }<a name="line.65"></a>
+<FONT color="green">066</FONT>    <a name="line.66"></a>
+<FONT color="green">067</FONT>        /**<a name="line.67"></a>
+<FONT color="green">068</FONT>         * Convenience method<a name="line.68"></a>
+<FONT color="green">069</FONT>         *<a name="line.69"></a>
+<FONT color="green">070</FONT>         * @return the printed form of the exception<a name="line.70"></a>
+<FONT color="green">071</FONT>         */<a name="line.71"></a>
+<FONT color="green">072</FONT>        public String getTrace() {<a name="line.72"></a>
+<FONT color="green">073</FONT>            StringWriter stringWriter = new StringWriter();<a name="line.73"></a>
+<FONT color="green">074</FONT>            PrintWriter writer = new PrintWriter(stringWriter);<a name="line.74"></a>
+<FONT color="green">075</FONT>            getException().printStackTrace(writer);<a name="line.75"></a>
+<FONT color="green">076</FONT>            return stringWriter.toString();<a name="line.76"></a>
+<FONT color="green">077</FONT>        }<a name="line.77"></a>
+<FONT color="green">078</FONT>    <a name="line.78"></a>
+<FONT color="green">079</FONT>        /**<a name="line.79"></a>
+<FONT color="green">080</FONT>         * Convenience method<a name="line.80"></a>
+<FONT color="green">081</FONT>         *<a name="line.81"></a>
+<FONT color="green">082</FONT>         * @return the message of the thrown exception<a name="line.82"></a>
+<FONT color="green">083</FONT>         */<a name="line.83"></a>
+<FONT color="green">084</FONT>        public String getMessage() {<a name="line.84"></a>
+<FONT color="green">085</FONT>            return getException().getMessage();<a name="line.85"></a>
+<FONT color="green">086</FONT>        }<a name="line.86"></a>
+<FONT color="green">087</FONT>    }<a name="line.87"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>
