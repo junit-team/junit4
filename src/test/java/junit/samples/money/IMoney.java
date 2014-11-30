@@ -7,39 +7,39 @@ public interface IMoney {
     /**
      * Adds a money to this money.
      */
-     IMoney add(IMoney m);
+    IMoney add(IMoney m);
 
     /**
      * Adds a simple Money to this money. This is a helper method for
      * implementing double dispatch
      */
-     IMoney addMoney(Money m);
+    IMoney addMoney(Money m);
 
     /**
      * Adds a MoneyBag to this money. This is a helper method for
      * implementing double dispatch
      */
-     IMoney addMoneyBag(MoneyBag s);
+    IMoney addMoneyBag(MoneyBag s);
 
     /**
      * Tests whether this money is zero
      */
-     boolean isZero();
+    boolean isZero();
 
     /**
      * Multiplies a money by the given factor.
      */
-     IMoney multiply(int factor);
+    IMoney multiply(int factor);
 
     /**
      * Negates this money.
      */
-     IMoney negate();
+    IMoney negate();
 
     /**
      * Subtracts a money from this money.
      */
-     IMoney subtract(IMoney m);
+    IMoney subtract(IMoney m);
 
     /**
      * Append this to a MoneyBag m.
@@ -47,5 +47,5 @@ public interface IMoney {
      * polymorphically, but it should not be used by clients
      * because it modifies the argument m.
      */
-     void appendTo(MoneyBag m);
+    void appendTo(MoneyBag m);
 }
