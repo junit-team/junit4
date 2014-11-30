@@ -84,11 +84,17 @@ public class VerifierRuleTest {
                     throw new RuntimeException("first!");
                 }
             });
-            collector.checkSucceeds(new Callable<Object>() {
-                public Object call() throws Exception {
+            collector.checkSucceeds(new Callable<Integer>() {
+                public Integer call() throws Exception {
                     throw new RuntimeException("second!");
                 }
             });
+            Integer result = collector.checkSucceeds(new Callable<Integer>() {
+                public Integer call() throws Exception {
+                    return 1;
+                }
+            });
+            assertEquals(Integer.valueOf(1), result);
         }
     }
 
