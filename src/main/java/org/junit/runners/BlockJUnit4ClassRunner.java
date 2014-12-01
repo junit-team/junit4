@@ -218,6 +218,14 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
     }
 
     /**
+     * Returns a new fixture to run a particular test {@code method} against.
+     * Default implementation executes the no-argument {@link #createTest()} method.
+     */
+    protected Object createTest(FrameworkMethod method) throws Exception {
+        return createTest();
+    }
+
+    /**
      * Returns the name that describes {@code method} for {@link Description}s.
      * Default implementation is the method's name
      */
@@ -232,7 +240,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      * Here is an outline of the default implementation:
      *
      * <ul>
-     * <li>Invoke {@code method} on the result of {@code createTest()}, and
+     * <li>Invoke {@code method} on the result of {@link #createTest(org.junit.runners.model.FrameworkMethod)}, and
      * throw any exceptions thrown by either operation.
      * <li>HOWEVER, if {@code method}'s {@code @Test} annotation has the {@code
      * expecting} attribute, return normally only if the previous step threw an
@@ -257,13 +265,13 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      * This can be overridden in subclasses, either by overriding this method,
      * or the implementations creating each sub-statement.
      */
-    protected Statement methodBlock(FrameworkMethod method) {
+    protected Statement methodBlock(final FrameworkMethod method) {
         Object test;
         try {
             test = new ReflectiveCallable() {
                 @Override
                 protected Object runReflectiveCall() throws Throwable {
-                    return createTest();
+                    return createTest(method);
                 }
             }.run();
         } catch (Throwable e) {
