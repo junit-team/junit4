@@ -22,7 +22,7 @@ In the usual case, where the array elements are in fact exactly equal, the poten
 
 ### [Pull request #763:](https://github.com/junit-team/junit/pull/763) Allow custom test runners to create their own TestClasses and customize the scanning of annotations.
 
-This introduces some extension points to `ParentRunner` to allow subclasse to control creation
+This introduces some extension points to `ParentRunner` to allow subclasses to control creation
 of the `TestClass` instance and to scan for annotations.
 
 ### [Pull request #817:](https://github.com/junit-team/junit/pull/817) Support for context hierarchies
