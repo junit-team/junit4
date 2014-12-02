@@ -134,4 +134,44 @@ public class BlockJUnit4ClassRunnerOverrideTest {
     public void overrideCreateTestMethod() {
         assertThat(testResult(OverrideCreateTest.class), isSuccessful());
     }
+
+
+    /**
+     * Runner for testing override of {@link org.junit.runners.BlockJUnit4ClassRunner#createTest()}
+     * is still called by default if no other {@code createTest} method override
+     * is in place. This is tested by setting a boolean flag in a field of the
+     * test class so it can be checked to confirm that the createTest method was
+     * called.
+     */
+    public static class CreateTestDefersToNoArgCreateTestRunner extends BlockJUnit4ClassRunner {
+        public CreateTestDefersToNoArgCreateTestRunner(final Class<?> klass) throws InitializationError {
+            super(klass);
+
+            assert(klass.equals(CreateTestDefersToNoArgCreateTestTest.class));
+        }
+
+        @Override
+        protected Object createTest() {
+            final CreateTestDefersToNoArgCreateTestTest obj = new CreateTestDefersToNoArgCreateTestTest();
+
+            obj.createTestCalled = true;
+
+            return obj;
+        }
+    }
+
+    @RunWith(CreateTestDefersToNoArgCreateTestRunner.class)
+    public static class CreateTestDefersToNoArgCreateTestTest {
+        public boolean createTestCalled = false;
+
+        @Test
+        public void testCreateTestCalled() {
+            assertEquals(true, createTestCalled);
+        }
+    }
+
+    @Test
+    public void createTestDefersToNoArgCreateTest() {
+        assertThat(testResult(CreateTestDefersToNoArgCreateTestTest.class), isSuccessful());
+    }
 }
