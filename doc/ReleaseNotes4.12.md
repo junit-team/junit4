@@ -30,8 +30,6 @@ java org.junit.runner.JUnitCore \
 
 In general, the argument to `--filter` should be `ClassName=param`, where `ClassName` names an implementation of `FilterFactory`, whose `createFilter` method will be called with an instance of `FilterFactoryParams` that contains `"param"`, in order to return the filter to be applied.
 
-FilterFactory
-
 # Test Runners
 
 
