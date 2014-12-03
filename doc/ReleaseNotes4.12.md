@@ -17,6 +17,21 @@ Version 4.11 added `Assert.assertEquals()` for `float` parameters with a delta, 
 In the usual case, where the array elements are in fact exactly equal, the potentially expensive reflection-based loop to compare them is avoided by using `Arrays.deepEquals()` first. The exact comparison is only executed when `deepEquals()` returns `false`.
 
 
+# Command-line options
+### [Pull request #647:](https://github.com/junit-team/junit/pull/647) Support command-line `--filter` param.
+
+When running JUnit from the command line, a command-line parameter can be supplied using `--filter`, which supplies a filter that will restrict which tests and subtests from the rest of the command will be run.  For example, this will run only the tests in ExampleTestSuite that are in categories Cat1 or Cat2:
+
+```
+java org.junit.runner.JUnitCore \
+  --filter=org.junit.experimental.categories.IncludeCategories=pkg.of.Cat1,pkg.of.Cat2 \
+  com.example.ExampleTestSuite
+```
+
+In general, the argument to `--filter` should be `ClassName=param`, where `ClassName` names an implementation of `FilterFactory`, whose `createFilter` method will be called with an instance of `FilterFactoryParams` that contains `"param"`, in order to return the filter to be applied.
+
+FilterFactory
+
 # Test Runners
 
 
