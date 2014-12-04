@@ -155,6 +155,13 @@ thrown.reportMissingExceptionWithMessage("FAIL: Expected exception to be thrown"
 If a custom failure message is not provided, a default message is used.
 
 
+### [Pull request #1013:](https://github.com/junit-team/junit/pull/1013) Make ErrorCollector#checkSucceeds generic
+
+The method `ErrorCollector.checkSucceeds()` is now generic. Previously, you could only pass
+in a `Callable<Object>` and it returned `Object`. You can now pass any `Callable` and the
+return type will match the type of the callable.
+
+
 # Timeout for Tests
 *See also [Timeout for tests](https://github.com/junit-team/junit/wiki/Timeout-for-tests)*
 
