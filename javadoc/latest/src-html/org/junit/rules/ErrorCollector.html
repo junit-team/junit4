@@ -76,7 +76,7 @@
 <FONT color="green">073</FONT>         * Execution continues, but the test will fail at the end if<a name="line.73"></a>
 <FONT color="green">074</FONT>         * {@code callable} threw an exception.<a name="line.74"></a>
 <FONT color="green">075</FONT>         */<a name="line.75"></a>
-<FONT color="green">076</FONT>        public Object checkSucceeds(Callable&lt;Object&gt; callable) {<a name="line.76"></a>
+<FONT color="green">076</FONT>        public &lt;T&gt; T checkSucceeds(Callable&lt;T&gt; callable) {<a name="line.76"></a>
 <FONT color="green">077</FONT>            try {<a name="line.77"></a>
 <FONT color="green">078</FONT>                return callable.call();<a name="line.78"></a>
 <FONT color="green">079</FONT>            } catch (Throwable e) {<a name="line.79"></a>
