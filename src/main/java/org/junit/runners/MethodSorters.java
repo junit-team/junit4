@@ -1,9 +1,9 @@
 package org.junit.runners;
 
+import org.junit.internal.MethodSorter;
+
 import java.lang.reflect.Method;
 import java.util.Comparator;
-
-import org.junit.internal.MethodSorter;
 
 /**
  * Sort the methods into a specified execution order.
@@ -27,7 +27,14 @@ public enum MethodSorters {
     /**
      * Sorts the test methods in a deterministic, but not predictable, order
      */
-    DEFAULT(MethodSorter.DEFAULT);
+    DEFAULT(MethodSorter.DEFAULT),
+
+    /**
+     * Shuffles the test methods.
+     * Note that random seed that was used to shuffle is displayed,
+     * so you should be able to reproduce it later.
+     */
+    RANDOM(null);
 
     private final Comparator<Method> comparator;
 

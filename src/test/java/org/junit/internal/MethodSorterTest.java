@@ -1,16 +1,16 @@
 package org.junit.internal;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertArrayEquals;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import static org.junit.Assert.*;
 
 public class MethodSorterTest {
     private static final String ALPHA = "java.lang.Object alpha(int,double,java.lang.Thread)";
@@ -55,7 +55,7 @@ public class MethodSorterTest {
     }
 
     private List<String> getDeclaredMethodNames(Class<?> clazz) {
-        Method[] actualMethods = MethodSorter.getDeclaredMethods(clazz);
+        Method[] actualMethods = MethodSorter.getDeclaredMethods(clazz).getMethods();
 
         // Obtain just the names instead of the full methods.
         List<String> names = new ArrayList<String>();
@@ -65,7 +65,7 @@ public class MethodSorterTest {
                 names.add(m.toString().replace(clazz.getName() + '.', ""));
         	}
         }
-        
+
         return names;
     }
 
@@ -75,14 +75,14 @@ public class MethodSorterTest {
         List<String> actual = getDeclaredMethodNames(DummySortWithoutAnnotation.class);
         assertEquals(expected, actual);
     }
-    
+
     @Test
     public void testMethodsNullSorterSuper() {
         List<String> expected = Arrays.asList(SUPER_METHOD);
         List<String> actual = getDeclaredMethodNames(Super.class);
         assertEquals(expected, actual);
     }
-    
+
     @Test
     public void testMethodsNullSorterSub() {
         List<String> expected = Arrays.asList(SUB_METHOD);
@@ -146,7 +146,7 @@ public class MethodSorterTest {
     @Test
     public void testJvmMethodSorter() {
         Method[] fromJvmWithSynthetics = DummySortJvm.class.getDeclaredMethods();
-        Method[] sorted = MethodSorter.getDeclaredMethods(DummySortJvm.class);
+        Method[] sorted = MethodSorter.getDeclaredMethods(DummySortJvm.class).getMethods();
         assertArrayEquals(fromJvmWithSynthetics, sorted);
     }
 
@@ -177,6 +177,66 @@ public class MethodSorterTest {
     public void testAscendingMethodSorter() {
         List<String> expected = Arrays.asList(ALPHA, BETA, DELTA, EPSILON, GAMMA_VOID, GAMMA_BOOLEAN);
         List<String> actual = getDeclaredMethodNames(DummySortWithNameAsc.class);
+        assertEquals(expected, actual);
+    }
+
+    @FixMethodOrder(MethodSorters.RANDOM)
+    static class DummyRandomWithoutSeed {
+        Object alpha(int i, double d, Thread t) {
+            return null;
+        }
+
+        void beta(int[][] x) {
+        }
+
+        int gamma() {
+            return 0;
+        }
+
+        void gamma(boolean b) {
+        }
+
+        void delta() {
+        }
+
+        void epsilon() {
+        }
+    }
+
+    @Test
+    public void testRandomWithoutSeed() {
+        List<String> expected = Arrays.asList(ALPHA, BETA, DELTA, EPSILON, GAMMA_VOID, GAMMA_BOOLEAN);
+        List<String> actual = getDeclaredMethodNames(DummyRandomWithoutSeed.class);
+        assertTrue(actual.containsAll(expected));
+    }
+
+    @FixMethodOrder(value = MethodSorters.RANDOM, seed = "7246")
+    static class DummyRandomWithSeed {
+        Object alpha(int i, double d, Thread t) {
+            return null;
+        }
+
+        void beta(int[][] x) {
+        }
+
+        int gamma() {
+            return 0;
+        }
+
+        void gamma(boolean b) {
+        }
+
+        void delta() {
+        }
+
+        void epsilon() {
+        }
+    }
+
+    @Test
+    public void testRandomWithSeed() {
+        List<String> expected = Arrays.asList(GAMMA_BOOLEAN, BETA, GAMMA_VOID, DELTA, EPSILON, ALPHA);
+        List<String> actual = getDeclaredMethodNames(DummyRandomWithSeed.class);
         assertEquals(expected, actual);
     }
 }

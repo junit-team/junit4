@@ -1,11 +1,11 @@
 package org.junit;
 
+import org.junit.runners.MethodSorters;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import org.junit.runners.MethodSorters;
 
 /**
  * This class allows the user to choose the order of execution of the methods within a test class.
@@ -38,4 +38,9 @@ public @interface FixMethodOrder {
      * Optionally specify <code>value</code> to have the methods executed in a particular order
      */
     MethodSorters value() default MethodSorters.DEFAULT;
+
+    /**
+     * Optionally specify <code>seed</code> for random order
+     */
+    String seed() default "";
 }
