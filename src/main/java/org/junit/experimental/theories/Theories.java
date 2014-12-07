@@ -9,9 +9,9 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Assume;
+import org.junit.AssumptionViolatedException;
 import org.junit.experimental.theories.internal.Assignments;
 import org.junit.experimental.theories.internal.ParameterizedAssertionError;
-import org.junit.internal.AssumptionViolatedException;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;

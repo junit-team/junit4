@@ -1,6 +1,6 @@
 package org.junit.internal.runners.statements;
 
-import org.junit.internal.AssumptionViolatedException;
+import org.junit.AssumptionViolatedException;
 import org.junit.runners.model.Statement;
 
 public class ExpectException extends Statement {
