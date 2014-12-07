@@ -7,21 +7,13 @@ import java.io.PrintStream;
 import org.junit.internal.JUnitSystem;
 
 public class TestSystem implements JUnitSystem {
+
     private PrintStream out;
-    public int fCode;
-    private ByteArrayOutputStream fOutContents;
+    private ByteArrayOutputStream outContents;
 
     public TestSystem() {
-        fOutContents = new ByteArrayOutputStream();
-        out = new PrintStream(fOutContents);
-    }
-
-    /**
-     * Will be removed in the next major release
-     */
-    @Deprecated
-    public void exit(int code) {
-        fCode = code;
+        outContents = new ByteArrayOutputStream();
+        out = new PrintStream(outContents);
     }
 
     public PrintStream out() {
@@ -29,7 +21,7 @@ public class TestSystem implements JUnitSystem {
     }
 
     public OutputStream outContents() {
-        return fOutContents;
+        return outContents;
     }
 
 }
