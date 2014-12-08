@@ -366,6 +366,7 @@ public class AssertionTest {
         assertEquals(Double.NaN, Double.NaN, Double.POSITIVE_INFINITY);
     }
 
+    @SuppressWarnings("unused")
     @Test
     public void nullNullmessage() {
         try {
@@ -376,6 +377,7 @@ public class AssertionTest {
         }
     }
 
+    @SuppressWarnings("unused")
     @Test
     public void nullWithMessage() {
         try {
