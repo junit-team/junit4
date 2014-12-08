@@ -175,6 +175,7 @@ public class ParentRunnerTest {
     }
 
     public static class AssumptionViolatedAtParentLevelTest {
+        @SuppressWarnings("deprecation")
         @BeforeClass
         public static void beforeClass() {
             throw new AssumptionViolatedException("Thrown from @BeforeClass");
@@ -207,6 +208,7 @@ public class ParentRunnerTest {
         @Test
         public void ignore() {}
 
+        @SuppressWarnings("deprecation")
         @Test
         public void assumptionFail() {
             throw new AssumptionViolatedException("Thrown from @Test");
