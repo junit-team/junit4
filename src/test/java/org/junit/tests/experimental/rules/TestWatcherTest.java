@@ -52,6 +52,7 @@ public class TestWatcherTest {
                 watchedLog.append("finished ");
             }
 
+            @Override
             protected void skipped(AssumptionViolatedException e, Description description) {
                 watchedLog.append("skipped ");
             }
