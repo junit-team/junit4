@@ -7,13 +7,13 @@ public class RunnerSpy extends Runner {
     public static final Description DESCRIPTION = Description.TEST_MECHANISM;
 
     private RunnerBuilder invokedRunnerBuilder;
-    private Class invokedTestClass;
+    private Class<?> invokedTestClass;
 
-    public RunnerSpy(Class testClass) {
+    public RunnerSpy(Class<?> testClass) {
         invokedTestClass = testClass;
     }
 
-    public RunnerSpy(Class testClass, RunnerBuilder runnerBuilder) {
+    public RunnerSpy(Class<?> testClass, RunnerBuilder runnerBuilder) {
         invokedTestClass = testClass;
         invokedRunnerBuilder = runnerBuilder;
     }
@@ -31,7 +31,7 @@ public class RunnerSpy extends Runner {
         return invokedRunnerBuilder;
     }
 
-    public Class getInvokedTestClass() {
+    public Class<?> getInvokedTestClass() {
         return invokedTestClass;
     }
 }
