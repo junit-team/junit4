@@ -54,7 +54,7 @@ public abstract class TestWatcher implements TestRule {
                 try {
                     base.evaluate();
                     succeededQuietly(description, errors);
-                } catch (@SuppressWarnings("deprecation") org.junit.internal.AssumptionViolatedException  e) {
+                } catch (org.junit.internal.AssumptionViolatedException  e) {
                     errors.add(e);
                     skippedQuietly(e, description, errors);
                 } catch (Throwable e) {
@@ -87,7 +87,6 @@ public abstract class TestWatcher implements TestRule {
         }
     }
 
-    @SuppressWarnings("deprecation")
     private void skippedQuietly(
             org.junit.internal.AssumptionViolatedException e, Description description,
             List<Throwable> errors) {
@@ -135,7 +134,6 @@ public abstract class TestWatcher implements TestRule {
     /**
      * Invoked when a test is skipped due to a failed assumption.
      */
-    @SuppressWarnings("deprecation")
     protected void skipped(AssumptionViolatedException e, Description description) {
         // For backwards compatibility with JUnit 4.11 and earlier, call the legacy version
         org.junit.internal.AssumptionViolatedException asInternalException = e;
