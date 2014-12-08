@@ -229,7 +229,7 @@ public class ParentRunnerTest {
         CountingRunListener listener = new CountingRunListener();
         RunNotifier runNotifier = new RunNotifier();
         runNotifier.addListener(listener);
-        ParentRunner runner = new BlockJUnit4ClassRunner(testClass);
+        ParentRunner<?> runner = new BlockJUnit4ClassRunner(testClass);
         runner.run(runNotifier);
         return listener;
     }
