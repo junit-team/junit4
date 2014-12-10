@@ -55,6 +55,7 @@ import org.junit.tests.experimental.rules.NameRulesTest;
 import org.junit.tests.experimental.rules.RuleChainTest;
 import org.junit.tests.experimental.rules.RuleMemberValidatorTest;
 import org.junit.tests.experimental.rules.TempFolderRuleTest;
+import org.junit.tests.experimental.rules.TemporaryFolderRuleAssuredDeletionTest;
 import org.junit.tests.experimental.rules.TemporaryFolderUsageTest;
 import org.junit.tests.experimental.rules.TestRuleTest;
 import org.junit.tests.experimental.rules.TestWatcherTest;
@@ -231,7 +232,8 @@ import org.junit.validator.PublicClassValidatorTest;
         CategoryValidatorTest.class,
         ForwardCompatibilityPrintingTest.class,
         DescriptionTest.class,
-        ErrorReportingRunnerTest.class
+        ErrorReportingRunnerTest.class,
+        TemporaryFolderRuleAssuredDeletionTest.class
 })
 public class AllTests {
     public static Test suite() {
