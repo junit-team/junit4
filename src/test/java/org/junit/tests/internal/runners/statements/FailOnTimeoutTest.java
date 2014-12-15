@@ -26,7 +26,7 @@ import org.junit.runners.model.TestTimedOutException;
  */
 public class FailOnTimeoutTest {
     private static final long TIMEOUT = 100;
-    private static final long DURATION_THAT_EXCEEDS_TIMEOUT = TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS);
+    private static final long DURATION_THAT_EXCEEDS_TIMEOUT = 60 * 60 * 1000; //1 hour
 
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
