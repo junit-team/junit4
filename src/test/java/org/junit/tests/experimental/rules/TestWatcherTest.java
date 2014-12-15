@@ -52,11 +52,13 @@ public class TestWatcherTest {
                 watchedLog.append("finished ");
             }
 
+            @Override
             protected void skipped(AssumptionViolatedException e, Description description) {
                 watchedLog.append("skipped ");
             }
         };
 
+        @SuppressWarnings("deprecation")
         @Test
         public void succeeds() {
             throw new AssumptionViolatedException("don't run");
@@ -80,6 +82,7 @@ public class TestWatcherTest {
             }
         };
 
+        @SuppressWarnings("deprecation")
         @Test
         public void fails() {
             throw new AssumptionViolatedException("test failure");

@@ -50,6 +50,9 @@ public class ResultTest extends TestCase {
      * This makes values returned by the methods deterministic.
      */
     private static class ResultWithFixedRunTime extends Result {
+
+        private static final long serialVersionUID = 1L;
+
         private final Result delegate;
 
         public ResultWithFixedRunTime(Result delegate) {

@@ -16,6 +16,7 @@ public interface FilterFactory {
     /**
      * Exception thrown if the {@link Filter} cannot be created.
      */
+    @SuppressWarnings("serial")
     public static class FilterNotCreatedException extends Exception {
         public FilterNotCreatedException(Exception exception) {
             super(exception.getMessage(), exception);

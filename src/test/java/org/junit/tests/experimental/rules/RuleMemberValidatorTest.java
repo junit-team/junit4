@@ -15,7 +15,6 @@ import org.junit.Test;
 import org.junit.rules.MethodRule;
 import org.junit.rules.TemporaryFolder;
 import org.junit.rules.TestRule;
-import org.junit.rules.TestWatchman;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
@@ -190,13 +189,12 @@ public class RuleMemberValidatorTest {
     public void rejectStaticMethodRule() {
         TestClass target = new TestClass(TestWithStaticMethodRule.class);
         RULE_VALIDATOR.validate(target, errors);
-        assertOneErrorWithMessage("The @Rule 'testWatchman' must not be static.");
+        assertOneErrorWithMessage("The @Rule 'someMethodRule' must not be static.");
     }
 
     public static class TestWithStaticMethodRule {
-        @SuppressWarnings("deprecation")
         @Rule
-        public static MethodRule testWatchman = new TestWatchman();
+        public static MethodRule someMethodRule = new SomeMethodRule();
     }
     
     @Test
@@ -303,13 +301,12 @@ public class RuleMemberValidatorTest {
     public void rejectMethodStaticMethodRule() {
         TestClass target = new TestClass(TestMethodWithStaticMethodRule.class);
         RULE_METHOD_VALIDATOR.validate(target, errors);
-        assertOneErrorWithMessage("The @Rule 'getTestWatchman' must not be static.");
+        assertOneErrorWithMessage("The @Rule 'getSomeMethodRule' must not be static.");
     }
 
     public static class TestMethodWithStaticMethodRule {
-        @SuppressWarnings("deprecation")
         @Rule
-        public static MethodRule getTestWatchman() { return new TestWatchman(); }
+        public static MethodRule getSomeMethodRule() { return new SomeMethodRule(); }
     }
 
     @Test
@@ -352,5 +349,11 @@ public class RuleMemberValidatorTest {
 
     private void assertNumberOfErrors(int numberOfErrors) {
         assertEquals("Wrong number of errors:", numberOfErrors, errors.size());
+    }
+    
+    private static final class SomeMethodRule implements MethodRule {
+        public Statement apply(Statement base, FrameworkMethod method, Object target) {
+            return base;
+        }
     }
 }
