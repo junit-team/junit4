@@ -15,10 +15,10 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Assume;
+import org.junit.AssumptionViolatedException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.internal.AssumptionViolatedException;
 import org.junit.rules.TestName;
 import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
