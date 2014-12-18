@@ -39,17 +39,12 @@ public class ErrorReportingRunner extends Runner {
         }
     }
 
-    @SuppressWarnings("deprecation")
     private List<Throwable> getCauses(Throwable cause) {
         if (cause instanceof InvocationTargetException) {
             return getCauses(cause.getCause());
         }
         if (cause instanceof InitializationError) {
             return ((InitializationError) cause).getCauses();
-        }
-        if (cause instanceof org.junit.internal.runners.InitializationError) {
-            return ((org.junit.internal.runners.InitializationError) cause)
-                    .getCauses();
         }
         return Arrays.asList(cause);
     }
