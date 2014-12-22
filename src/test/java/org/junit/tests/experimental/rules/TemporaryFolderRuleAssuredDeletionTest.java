@@ -1,5 +1,6 @@
 package org.junit.tests.experimental.rules;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.failureCountIs;
@@ -7,7 +8,6 @@ import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 
 import java.io.IOException;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.results.PrintableResult;
@@ -57,7 +57,7 @@ public class TemporaryFolderRuleAssuredDeletionTest {
     public void testStrictVerificationFailure() {
         PrintableResult result = testResult(HasTempFolderWithAssuredDeletion.class);
         assertThat(result, failureCountIs(1));
-        assertThat(result.toString(), CoreMatchers.containsString("Unable to clean up temporary folder"));
+        assertThat(result.toString(), containsString("Unable to clean up temporary folder"));
     }
     
     public static class HasTempFolderWithoutAssuredDeletion {

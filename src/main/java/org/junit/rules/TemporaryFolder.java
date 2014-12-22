@@ -10,8 +10,8 @@ import org.junit.Rule;
 /**
  * The TemporaryFolder Rule allows creation of files and folders that should
  * be deleted when the test method finishes (whether it passes or
- * fails). Whether the deletion is successful or not is not checked by this rule.
- * No exception will be thrown in case the deletion fails.
+ * fails).
+ * By default no exception will be thrown in case the deletion fails.
  *
  * <p>Example of usage:
  * <pre>
@@ -26,6 +26,17 @@ import org.junit.Rule;
  *      // ...
  *     }
  * }
+ * </pre>
+ * 
+ * <p>
+ * TemporaryFolder rule supports assured deletion mode, which
+ * will fail the test in case deletion fails with {@link AssertionError}.
+ * 
+ * <p>
+ * Creating TemporaryFolder with assured deletion:
+ * <pre>
+ *  &#064;Rule
+ *  public TemporaryFolder folder= TemporaryFolder.builder().assureDeletion().build();
  * </pre>
  *
  * @since 4.7
