@@ -212,6 +212,26 @@ public class AssertionTest {
     }
 
     @Test
+    public void multiDimensionalArraysDifferentLengthMessage() {
+        try {
+            assertArrayEquals("message", new Object[][]{{true, true}, {false, false}}, new Object[][]{{true, true}, {false}});
+            fail();
+        } catch (AssertionError exception) {
+            assertEquals("message: arrays first differed at element [1]; array lengths differed, expected.length=2 actual.length=1", exception.getMessage());
+        }
+    }
+
+    @Test
+    public void multiDimensionalArraysDifferentLengthNoMessage() {
+        try {
+            assertArrayEquals(new Object[][]{{true, true}, {false, false}}, new Object[][]{{true, true}, {false}});
+            fail();
+        } catch (AssertionError exception) {
+            assertEquals("arrays first differed at element [1]; array lengths differed, expected.length=2 actual.length=1", exception.getMessage());
+        }
+    }
+
+    @Test
     public void arraysWithNullElementEqual() {
         Object[] objects1 = new Object[]{null};
         Object[] objects2 = new Object[]{null};

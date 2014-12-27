@@ -25,6 +25,11 @@ public abstract class ComparisonCriteria {
      */
     public void arrayEquals(String message, Object expecteds, Object actuals)
             throws ArrayComparisonFailure {
+        arrayEquals(message, expecteds, actuals, true);
+    }
+
+    private void arrayEquals(String message, Object expecteds, Object actuals, boolean outer)
+            throws ArrayComparisonFailure {
         if (expecteds == actuals
             || Arrays.deepEquals(new Object[] {expecteds}, new Object[] {actuals})) {
             // The reflection-based loop below is potentially very slow, especially for primitive
@@ -35,7 +40,7 @@ public abstract class ComparisonCriteria {
         String header = message == null ? "" : message + ": ";
 
         int expectedsLength = assertArraysAreSameLength(expecteds,
-                actuals, header);
+                actuals, outer ? header : "");
 
         for (int i = 0; i < expectedsLength; i++) {
             Object expected = Array.get(expecteds, i);
@@ -43,10 +48,12 @@ public abstract class ComparisonCriteria {
 
             if (isArray(expected) && isArray(actual)) {
                 try {
-                    arrayEquals(message, expected, actual);
+                    arrayEquals(message, expected, actual, false);
                 } catch (ArrayComparisonFailure e) {
                     e.addDimension(i);
                     throw e;
+                } catch (AssertionError e) {
+                    throw new ArrayComparisonFailure(header, e, i);
                 }
             } else {
                 try {
