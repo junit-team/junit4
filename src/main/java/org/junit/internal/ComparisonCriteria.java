@@ -39,8 +39,9 @@ public abstract class ComparisonCriteria {
         }
         String header = message == null ? "" : message + ": ";
 
-        int expectedsLength = assertArraysAreSameLength(expecteds,
-                actuals, outer ? header : "");
+        // Only include the user-provided message in the outer exception.
+        String exceptionMessage = outer ? header : "";
+        int expectedsLength = assertArraysAreSameLength(expecteds, actuals, exceptionMessage);
 
         for (int i = 0; i < expectedsLength; i++) {
             Object expected = Array.get(expecteds, i);
@@ -53,6 +54,7 @@ public abstract class ComparisonCriteria {
                     e.addDimension(i);
                     throw e;
                 } catch (AssertionError e) {
+                    // Array lengths differed.
                     throw new ArrayComparisonFailure(header, e, i);
                 }
             } else {
