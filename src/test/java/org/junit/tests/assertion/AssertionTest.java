@@ -14,9 +14,11 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 
 import org.junit.Assert;
 import org.junit.ComparisonFailure;
+import org.junit.ExceptionSupplier;
 import org.junit.Test;
 import org.junit.internal.ArrayComparisonFailure;
 
@@ -649,5 +651,51 @@ public class AssertionTest {
     @Test(expected = AssertionError.class)
     public void assertNotEqualsIgnoresFloatDeltaOnNaN() {
         assertNotEquals(Float.NaN, Float.NaN, 1f);
+    }
+
+    @Test
+    public void expectWithACodeBlockThatThrowsTheCorrectException() throws Exception {
+        final Exception expectedException = new Exception("The exception");
+        ExceptionSupplier<Exception> supplier = new ExceptionSupplier<Exception>() {
+            public void get() throws Exception {
+                throw expectedException;
+            }
+        };
+
+        Exception actual = Assert.expect(Exception.class, supplier);
+
+        assertSame(expectedException, actual);
+    }
+
+    @Test
+    public void expectWithACodeBlockThatDoesNotThrowAnException() throws Exception {
+        ExceptionSupplier<RuntimeException> supplier = new ExceptionSupplier<RuntimeException>() {
+            public void get() {
+                //do nothing
+            }
+        };
+
+        try {
+            Assert.expect(RuntimeException.class, supplier);
+            fail("expected an AssertionError to be thrown");
+        } catch (AssertionError e) {
+            assertEquals("Expected a java.lang.RuntimeException to be thrown", e.getMessage());
+        }
+    }
+
+    @Test
+    public void expectWithACodeBlockThatThrowsTheWrongKindOfException() throws Exception {
+        final NullPointerException testException = new NullPointerException("an exception not expected by the test");
+
+        try {
+            Assert.expect(SQLException.class, new ExceptionSupplier<SQLException>() {
+                public void get() {
+                    throw testException;
+                }
+            });
+            fail("the unexpected exception should be thrown");
+        } catch(NullPointerException e) {
+            assertSame(testException, e);
+        }
     }
 }
