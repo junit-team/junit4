@@ -407,6 +407,18 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         }
     }
 
+    protected Collection<T> getFilteredChildren() {
+        if (filteredChildren == null) {
+            synchronized (childrenLock) {
+                if (filteredChildren == null) {
+                    filteredChildren = Collections
+                            .unmodifiableCollection(getChildren());
+                }
+            }
+        }
+        return filteredChildren;
+    }
+
     //
     // Private implementation
     //
@@ -417,17 +429,6 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         if (!errors.isEmpty()) {
             throw new InitializationError(errors);
         }
-    }
-
-    private Collection<T> getFilteredChildren() {
-        if (filteredChildren == null) {
-            synchronized (childrenLock) {
-                if (filteredChildren == null) {
-                    filteredChildren = Collections.unmodifiableCollection(getChildren());
-                }
-            }
-        }
-        return filteredChildren;
     }
 
     private boolean shouldRun(Filter filter, T each) {
