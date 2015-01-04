@@ -84,7 +84,7 @@ public class Timeout implements TestRule {
     }
 
     /**
-     * Create a {@code Timeout} instance initialized with values form
+     * Create a {@code Timeout} instance initialized with values from
      * a builder.
      *
      * @since 4.12
