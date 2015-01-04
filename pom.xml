@@ -101,7 +101,7 @@
     </distributionManagement>
 
     <properties>
-        <jdkVersion>1.5</jdkVersion>
+        <jdkVersion>1.6</jdkVersion>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
         <arguments />
         <gpg.keyname>67893CC4</gpg.keyname>
@@ -142,7 +142,7 @@
             <plugin>
                 <!--
                 Checks that the version of user's maven installation is 3.0.4,
-                the JDK is 1.5+, no non-standard repositories are specified in
+                the JDK is 1.6+, no non-standard repositories are specified in
                 the project, requires only release versions of dependencies of other artifacts.
                 -->
                 <artifactId>maven-enforcer-plugin</artifactId>
@@ -206,7 +206,7 @@
                     <value>${project.version}</value>
                 </configuration>
             </plugin>
-            <plugin><!-- Using jdk 1.5.0_22, package-info.java files are compiled correctly. -->
+            <plugin>
                 <!--
                 java compiler plugin forked in extra process
                 -->
@@ -218,7 +218,7 @@
                     <target>${jdkVersion}</target>
                     <testSource>${jdkVersion}</testSource>
                     <testTarget>${jdkVersion}</testTarget>
-                    <compilerVersion>1.5</compilerVersion>
+                    <compilerVersion>${jdkVersion}</compilerVersion>
                     <showDeprecation>true</showDeprecation>
                     <showWarnings>true</showWarnings>
                     <debug>true</debug>
@@ -243,8 +243,8 @@
                         <configuration>
                             <signature>
                                 <groupId>org.codehaus.mojo.signature</groupId>
-                                <artifactId>java15</artifactId>
-                                <version>1.0</version>
+                                <artifactId>java16</artifactId>
+                                <version>1.1</version>
                             </signature>
                         </configuration>
                     </execution>
