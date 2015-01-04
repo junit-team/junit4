@@ -237,7 +237,7 @@ public class TemporaryFolder extends ExternalResource {
      * Delete all files and folders under the temporary folder. Usually not
      * called directly, since it is automatically applied by the {@link Rule}.
      *
-     * @throws {@code IllegalStateException} if unable to clean up resources
+     * @throws IllegalStateException if unable to clean up resources
      * and deletion of resources is assured.
      */
     public void delete() {
