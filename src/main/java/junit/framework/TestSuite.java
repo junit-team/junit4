@@ -1,5 +1,7 @@
 package junit.framework;
 
+import org.junit.internal.sorters.MethodSorterUtil;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
@@ -10,8 +12,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
-
-import org.junit.internal.MethodSorter;
 
 /**
  * A <code>TestSuite</code> is a <code>Composite</code> of Tests.
@@ -146,7 +146,7 @@ public class TestSuite implements Test {
         Class<?> superClass = theClass;
         List<String> names = new ArrayList<String>();
         while (Test.class.isAssignableFrom(superClass)) {
-            for (Method each : MethodSorter.getDeclaredMethods(superClass)) {
+            for (Method each : MethodSorterUtil.getDeclaredMethods(superClass)) {
                 addTestMethod(each, names, theClass);
             }
             superClass = superClass.getSuperclass();

@@ -1,11 +1,8 @@
 package org.junit;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.junit.internal.sorters.MethodSorter;
 
-import org.junit.runners.MethodSorters;
+import java.lang.annotation.*;
 
 /**
  * This class allows the user to choose the order of execution of the methods within a test class.
@@ -16,26 +13,28 @@ import org.junit.runners.MethodSorters;
  *
  * <p>It is recommended that test methods be written so that they are independent of the order that they are executed.
  * However, there may be a number of dependent tests either through error or by design.
- * This class allows the user to specify the order of execution of test methods.
+ * This class allows the user to specify the order of execution of test methods.</p>
  *
- * <p>For possibilities, see {@link MethodSorters}
- *
- * Here is an example:
+ * <p>There are three built-in sorters shipped with JUnit: default, jvm and name ascending. You can write your own
+ * implementation of {@link org.junit.internal.sorters.DefaultMethodSorter}. You can also use this mechanism to provide random order
+ * execution.</p>
  *
  * <pre>
- * &#064;FixMethodOrder(MethodSorters.NAME_ASCENDING)
+ * &#064;SortWith(DefaultMethodSorter.class)
  * public class MyTest {
  * }
  * </pre>
  *
- * @see org.junit.runners.MethodSorters
- * @since 4.11
+ * @see org.junit.internal.sorters.DefaultMethodSorter
+ * @see org.junit.internal.sorters.NameAscendingMethodSorter
+ * @see org.junit.internal.sorters.JvmMethodSorter
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-public @interface FixMethodOrder {
+@Inherited
+public @interface SortWith {
     /**
      * Optionally specify <code>value</code> to have the methods executed in a particular order
      */
-    MethodSorters value() default MethodSorters.DEFAULT;
+    Class<? extends MethodSorter> value();
 }
