@@ -991,14 +991,16 @@ public class Assert {
      * @return the expected exception, if it is thrown
      * @throws Exception any exception <i>other</i> than the expected exception
      */
-    public static <T extends Exception> T expect(Class<T> exceptionClass, ExceptionSupplier<T> supplier) throws Exception {
+    public static <T extends Throwable> T expect(Class<T> exceptionClass, ExceptionSupplier<T> supplier) throws Exception {
         try {
             supplier.get();
-        } catch (Exception e) {
-            if (exceptionClass.isInstance(e)) {
-                return exceptionClass.cast(e);
+        } catch (Throwable t) {
+            if (exceptionClass.isInstance(t)) {
+                return exceptionClass.cast(t);
             }
-            throw e;
+            AssertionError error = new AssertionError("Expected a " + exceptionClass.getName() + " to be thrown, but caught a " + t.getClass().getName() + " instead");
+            error.initCause(t);
+            throw error;
         }
         throw new AssertionError("Expected a " + exceptionClass.getName() + " to be thrown");
     }

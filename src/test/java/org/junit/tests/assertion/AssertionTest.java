@@ -694,8 +694,56 @@ public class AssertionTest {
                 }
             });
             fail("the unexpected exception should be thrown");
-        } catch(NullPointerException e) {
-            assertSame(testException, e);
+        } catch(AssertionError e) {
+            assertEquals("Expected a java.sql.SQLException to be thrown, but caught a java.lang.NullPointerException instead", e.getMessage());
+            assertSame(testException, e.getCause());
+        }
+    }
+
+    @Test
+    public void expectWithACodeBlockThatThrowsTheCorrectError() throws Exception {
+        final Error expectedError = new Error("The exception");
+        ExceptionSupplier<Error> supplier = new ExceptionSupplier<Error>() {
+            public void get() throws Exception {
+                throw expectedError;
+            }
+        };
+
+        Error actual = Assert.expect(Error.class, supplier);
+
+        assertSame(expectedError, actual);
+    }
+
+    @Test
+    public void expectWithACodeBlockThatDoesNotThrowAnError() throws Exception {
+        ExceptionSupplier<Error> supplier = new ExceptionSupplier<Error>() {
+            public void get() {
+                //do nothing
+            }
+        };
+
+        try {
+            Assert.expect(Error.class, supplier);
+            fail("expected an AssertionError to be thrown");
+        } catch (AssertionError e) {
+            assertEquals("Expected a java.lang.Error to be thrown", e.getMessage());
+        }
+    }
+
+    @Test
+    public void expectWithACodeBlockThatThrowsTheWrongKindOfError() throws Exception {
+        final Error theError = new Error("an exception not expected by the test");
+
+        try {
+            Assert.expect(SQLException.class, new ExceptionSupplier<SQLException>() {
+                public void get() {
+                    throw theError;
+                }
+            });
+            fail("the unexpected exception should be thrown");
+        } catch(AssertionError e) {
+            assertEquals("Expected a java.sql.SQLException to be thrown, but caught a java.lang.Error instead", e.getMessage());
+            assertSame(theError, e.getCause());
         }
     }
 }
