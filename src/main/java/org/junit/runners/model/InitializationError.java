@@ -44,4 +44,8 @@ public class InitializationError extends Exception {
     public List<Throwable> getCauses() {
         return fErrors;
     }
+    
+    public InitializationError(String message, Throwable cause) {
+        this(new Exception(message, cause));        
+    }
 }
