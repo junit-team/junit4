@@ -955,4 +955,53 @@ public class Assert {
             Matcher<? super T> matcher) {
         MatcherAssert.assertThat(reason, actual, matcher);
     }
+
+    /**
+     * Executes a code block, expecting an exception to be thrown.
+     *
+     * If the expected exception is thrown, it is caught and returned.
+     * If an exception is not thrown, an AssertionError will be thrown.
+     * If an unexpected exception is thrown, it will not be caught.
+     *
+     * This is a Java 8 convenience method that encapsulates this pattern:
+     *
+     * <pre>
+     *     try {
+     *         doSomething();
+     *         fail("expected an Exception")
+     *     } catch (Exception e) {
+     *         //assert something about the exception
+     *     }
+     * </pre>
+     *
+     * and replaces it with:
+     *
+     * <pre>
+     *     Exception e = expect(Exception.class, () -&gt; doSomething());
+     *     ///assert something about the exception
+     * </pre>
+     *
+     * This is sometimes preferable to using <pre>@Test(expected=...)</pre>, because
+     * the exact line that should throw the exception is obvious, and you can make
+     * assertions about the encountered exception (has a certain cause or a certain message, etc).
+     *
+     * @param exceptionClass the expected exception class
+     * @param supplier a lambda expression (or anonymous interface implementation) that is expected to throw an Exception
+     * @param <T> The expected type of exception
+     * @return the expected exception, if it is thrown
+     * @throws Exception any exception <i>other</i> than the expected exception
+     */
+    public static <T extends Throwable> T expect(Class<T> exceptionClass, ExceptionSupplier<T> supplier) throws Exception {
+        try {
+            supplier.get();
+        } catch (Throwable t) {
+            if (exceptionClass.isInstance(t)) {
+                return exceptionClass.cast(t);
+            }
+            AssertionError error = new AssertionError("Expected a " + exceptionClass.getName() + " to be thrown, but caught a " + t.getClass().getName() + " instead");
+            error.initCause(t);
+            throw error;
+        }
+        throw new AssertionError("Expected a " + exceptionClass.getName() + " to be thrown");
+    }
 }
