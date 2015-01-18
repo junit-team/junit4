@@ -32,7 +32,6 @@ public final class Activator implements BundleActivator {
         }
 
         testOSGiSymbolicNames(bundles);
-        testJUnitInternalPackages();
         testJUnitResources(bundles);
         testHamcrest();
         testWithJunitCore();
@@ -47,22 +46,6 @@ public final class Activator implements BundleActivator {
         String providerBundleSymbolicName = "org.junit";
         String consumerBundleSymbolicName = "consumer";
         assertThat(bundles.keySet(), hasItems(providerBundleSymbolicName, consumerBundleSymbolicName));
-    }
-
-    private void testJUnitInternalPackages() {
-        try {
-            Class.forName("org.junit.internal.JUnitSystem");
-            fail("internal package 'org.junit.internal' should not be exported from OSGi bundle");
-        } catch (ClassNotFoundException e) {
-            // do nothing -expected
-        }
-
-        try {
-            Class.forName("org.junit.experimental.theories.internal.AllMembersSupplier");
-            fail("internal package 'org.junit.experimental.theories.internal' should not be exported from OSGi bundle");
-        } catch (ClassNotFoundException e) {
-            // do nothing -expected
-        }
     }
 
     private void testJUnitResources(Map<String, Bundle> bundles) {
