@@ -57,12 +57,12 @@ import org.junit.runners.model.Statement;
 public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
     private final ConcurrentHashMap<FrameworkMethod, Description> methodDescriptions = new ConcurrentHashMap<FrameworkMethod, Description>();
     /**
-     * Creates a BlockJUnit4ClassRunner to run {@code klass}
+     * Creates a BlockJUnit4ClassRunner to run {@code testClass}
      *
      * @throws InitializationError if the test class is malformed.
      */
-    public BlockJUnit4ClassRunner(Class<?> klass) throws InitializationError {
-        super(klass);
+    public BlockJUnit4ClassRunner(Class<?> testClass) throws InitializationError {
+        super(testClass);
     }
 
     //
