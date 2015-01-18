@@ -4,11 +4,13 @@ import static java.lang.Long.MAX_VALUE;
 import static java.lang.Math.atan;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.sleep;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.internal.runners.statements.FailOnTimeout.builder;
 
 import java.util.concurrent.TimeUnit;
 
@@ -23,26 +25,26 @@ import org.junit.runners.model.TestTimedOutException;
  * @author Asaf Ary, Stefan Birkner
  */
 public class FailOnTimeoutTest {
-    private static final int TIMEOUT = 100;
+    private static final long TIMEOUT = 100;
+    private static final long DURATION_THAT_EXCEEDS_TIMEOUT = 60 * 60 * 1000; //1 hour
 
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
 
     private final TestStatement statement = new TestStatement();
 
-    private final FailOnTimeout failOnTimeout = new FailOnTimeout(statement,
-            TIMEOUT);
+    private final FailOnTimeout failOnTimeout = builder().withTimeout(TIMEOUT, MILLISECONDS).build(statement);
 
     @Test
     public void throwsTestTimedOutException() throws Throwable {
         thrown.expect(TestTimedOutException.class);
-        evaluateWithWaitDuration(TIMEOUT + 50);
+        evaluateWithWaitDuration(DURATION_THAT_EXCEEDS_TIMEOUT);
     }
 
     @Test
     public void throwExceptionWithNiceMessageOnTimeout() throws Throwable {
         thrown.expectMessage("test timed out after 100 milliseconds");
-        evaluateWithWaitDuration(TIMEOUT + 50);
+        evaluateWithWaitDuration(DURATION_THAT_EXCEEDS_TIMEOUT);
     }
 
     @Test
@@ -57,7 +59,7 @@ public class FailOnTimeoutTest {
             throws Throwable {
         thrown.expect(TestTimedOutException.class);
         evaluateWithWaitDuration(0);
-        evaluateWithWaitDuration(TIMEOUT + 50);
+        evaluateWithWaitDuration(DURATION_THAT_EXCEEDS_TIMEOUT);
     }
 
     @Test
@@ -68,14 +70,14 @@ public class FailOnTimeoutTest {
             evaluateWithException(new RuntimeException());
         } catch (Throwable expected) {
         }
-        evaluateWithWaitDuration(TIMEOUT + 50);
+        evaluateWithWaitDuration(DURATION_THAT_EXCEEDS_TIMEOUT);
     }
 
     @Test
     public void throwsExceptionWithTimeoutValueAndTimeUnitSet()
             throws Throwable {
         try {
-            evaluateWithWaitDuration(TIMEOUT + 50);
+            evaluateWithWaitDuration(DURATION_THAT_EXCEEDS_TIMEOUT);
             fail("No exception was thrown when test timed out");
         } catch (TestTimedOutException e) {
             assertEquals(TIMEOUT, e.getTimeout());
@@ -89,14 +91,14 @@ public class FailOnTimeoutTest {
         failOnTimeout.evaluate();
     }
 
-    private void evaluateWithWaitDuration(int waitDuration) throws Throwable {
+    private void evaluateWithWaitDuration(long waitDuration) throws Throwable {
         statement.nextException = null;
         statement.waitDuration = waitDuration;
         failOnTimeout.evaluate();
     }
 
     private static final class TestStatement extends Statement {
-        int waitDuration;
+        long waitDuration;
 
         Exception nextException;
 
@@ -112,8 +114,7 @@ public class FailOnTimeoutTest {
     @Test
     public void stopEndlessStatement() throws Throwable {
         InfiniteLoopStatement infiniteLoop = new InfiniteLoopStatement();
-        FailOnTimeout infiniteLoopTimeout = new FailOnTimeout(infiniteLoop,
-                TIMEOUT);
+        FailOnTimeout infiniteLoopTimeout = builder().withTimeout(TIMEOUT, MILLISECONDS).build(infiniteLoop);
         try {
             infiniteLoopTimeout.evaluate();
         } catch (Exception timeoutException) {
@@ -140,7 +141,7 @@ public class FailOnTimeoutTest {
     @Test
     public void stackTraceContainsRealCauseOfTimeout() throws Throwable {
         StuckStatement stuck = new StuckStatement();
-        FailOnTimeout stuckTimeout = new FailOnTimeout(stuck, TIMEOUT);
+        FailOnTimeout stuckTimeout = builder().withTimeout(TIMEOUT, MILLISECONDS).build(stuck);
         try {
             stuckTimeout.evaluate();
             // We must not get here, we expect a timeout exception

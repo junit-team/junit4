@@ -73,7 +73,7 @@ public class ErrorCollector extends Verifier {
      * Execution continues, but the test will fail at the end if
      * {@code callable} threw an exception.
      */
-    public Object checkSucceeds(Callable<Object> callable) {
+    public <T> T checkSucceeds(Callable<T> callable) {
         try {
             return callable.call();
         } catch (Throwable e) {

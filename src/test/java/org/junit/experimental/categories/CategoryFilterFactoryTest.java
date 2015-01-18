@@ -2,6 +2,7 @@ package org.junit.experimental.categories;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.runner.Description.createSuiteDescription;
 
 import java.util.List;
 
@@ -21,11 +22,12 @@ public class CategoryFilterFactoryTest {
     @Rule
     public TestName testName = new TestName();
 
-    private CategoryFilterFactory categoryFilterFactory = new CategoryFilterFactoryStub();
+    private final CategoryFilterFactory categoryFilterFactory = new CategoryFilterFactoryStub();
 
     @Test
     public void shouldCreateFilter() throws Exception {
         FilterFactoryParams params = new FilterFactoryParams(
+                createSuiteDescription(testName.getMethodName()),
                 CategoryFilterFactoryStub.class.getName());
         Filter filter = categoryFilterFactory.createFilter(params);
 
@@ -35,6 +37,7 @@ public class CategoryFilterFactoryTest {
     @Test
     public void shouldThrowException() throws Exception {
         FilterFactoryParams params = new FilterFactoryParams(
+                createSuiteDescription(testName.getMethodName()),
                 "NonExistentFilter");
 
         expectedException.expect(FilterFactory.FilterNotCreatedException.class);

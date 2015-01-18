@@ -11,16 +11,16 @@ import java.lang.annotation.Target;
  * Also, you can annotate a class containing test methods with <code>&#064;Ignore</code> and none of the containing
  * tests will be executed. Native JUnit 4 test runners should report the number of ignored tests along with the
  * number of tests that ran and the number of tests that failed.
- * <p>
- * For example:
+ *
+ * <p>For example:
  * <pre>
  *    &#064;Ignore &#064;Test public void something() { ...
  * </pre>
- * &#064;Ignore takes an optional default parameter if you want to record why a test is being ignored:<br/>
+ * &#064;Ignore takes an optional default parameter if you want to record why a test is being ignored:
  * <pre>
  *    &#064;Ignore("not ready yet") &#064;Test public void something() { ...
  * </pre>
- * &#064;Ignore can also be applied to the test class:<br/>
+ * &#064;Ignore can also be applied to the test class:
  * <pre>
  *      &#064;Ignore public class IgnoreMe {
  *          &#064;Test public void test1() { ... }

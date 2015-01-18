@@ -55,22 +55,22 @@ public class ComparisonCompactorTest extends TestCase {
         assertEquals("expected:<[]bc> but was:<[a]bc>", failure);
     }
 
-    public void testComparisonErrorOverlapingMatches() {
+    public void testComparisonErrorOverlappingMatches() {
         String failure = new ComparisonCompactor(0, "abc", "abbc").compact(null);
         assertEquals("expected:<...[]...> but was:<...[b]...>", failure);
     }
 
-    public void testComparisonErrorOverlapingMatchesContext() {
+    public void testComparisonErrorOverlappingMatchesContext() {
         String failure = new ComparisonCompactor(2, "abc", "abbc").compact(null);
         assertEquals("expected:<ab[]c> but was:<ab[b]c>", failure);
     }
 
-    public void testComparisonErrorOverlapingMatches2() {
+    public void testComparisonErrorOverlappingMatches2() {
         String failure = new ComparisonCompactor(0, "abcdde", "abcde").compact(null);
         assertEquals("expected:<...[d]...> but was:<...[]...>", failure);
     }
 
-    public void testComparisonErrorOverlapingMatches2Context() {
+    public void testComparisonErrorOverlappingMatches2Context() {
         String failure = new ComparisonCompactor(2, "abcdde", "abcde").compact(null);
         assertEquals("expected:<...cd[d]e> but was:<...cd[]e>", failure);
     }

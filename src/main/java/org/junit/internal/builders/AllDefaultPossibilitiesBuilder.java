@@ -7,10 +7,10 @@ import org.junit.runner.Runner;
 import org.junit.runners.model.RunnerBuilder;
 
 public class AllDefaultPossibilitiesBuilder extends RunnerBuilder {
-    private final boolean fCanUseSuiteMethod;
+    private final boolean canUseSuiteMethod;
 
     public AllDefaultPossibilitiesBuilder(boolean canUseSuiteMethod) {
-        fCanUseSuiteMethod = canUseSuiteMethod;
+        this.canUseSuiteMethod = canUseSuiteMethod;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class AllDefaultPossibilitiesBuilder extends RunnerBuilder {
     }
 
     protected RunnerBuilder suiteMethodBuilder() {
-        if (fCanUseSuiteMethod) {
+        if (canUseSuiteMethod) {
             return new SuiteMethodBuilder();
         }
         return new NullBuilder();

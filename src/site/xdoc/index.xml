@@ -78,8 +78,7 @@
             <li><a href="https://github.com/junit-team/junit/wiki/Getting-started">Getting started</a></li>
             <li>Release Notes
               <ul>
-<li>
-<a href="https://github.com/junit-team/junit/wiki/4.12-release-notes">4.12</a> - (unreleased)</li>
+<li><a href="https://github.com/junit-team/junit/blob/master/doc/ReleaseNotes4.12.md">4.12</a></li>
 <li><a href="https://github.com/junit-team/junit/blob/master/doc/ReleaseNotes4.11.md">4.11</a></li>
 <li><a href="https://github.com/junit-team/junit/blob/master/doc/ReleaseNotes4.10.md">4.10</a></li>
 <li><a href="https://github.com/junit-team/junit/blob/master/doc/ReleaseNotes4.9.1.md">4.9.1</a></li>
@@ -89,7 +88,7 @@
             <li><a href="https://github.com/junit-team/junit/wiki/Maintainer-documentation">Maintainer Documentation</a></li>
             <li><a href="https://github.com/junit-team/junit/wiki/I-want-to-help%21">I want to help!</a></li>
             <li><a href="http://stackoverflow.com/questions/tagged/junit">Latest JUnit Questions on StackOverflow</a></li>
-<li>JavaDocs</li>
+            <li><a href="javadoc/latest/index.html">JavaDocs</a></li>
             <li><a href="./faq.html">Frequently asked questions</a></li>
             <li><a href="https://github.com/junit-team/junit/wiki">Wiki</a></li>
           </ul>

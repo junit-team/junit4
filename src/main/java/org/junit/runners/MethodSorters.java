@@ -29,13 +29,13 @@ public enum MethodSorters {
      */
     DEFAULT(MethodSorter.DEFAULT);
 
-    private final Comparator<Method> fComparator;
+    private final Comparator<Method> comparator;
 
     private MethodSorters(Comparator<Method> comparator) {
-        this.fComparator = comparator;
+        this.comparator = comparator;
     }
 
     public Comparator<Method> getComparator() {
-        return fComparator;
+        return comparator;
     }
 }

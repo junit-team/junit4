@@ -79,10 +79,6 @@ import org.junit.runners.model.RunnerBuilder;
  * @see <a href="https://github.com/junit-team/junit/wiki/Categories">Categories at JUnit wiki</a>
  */
 public class Categories extends Suite {
-    // the way filters are implemented makes this unnecessarily complicated,
-    // buggy, and difficult to specify.  A new way of handling filters could
-    // someday enable a better new implementation.
-    // https://github.com/junit-team/junit/issues/issue/172
 
     @Retention(RetentionPolicy.RUNTIME)
     public @interface IncludeCategory {
@@ -115,10 +111,10 @@ public class Categories extends Suite {
     }
 
     public static class CategoryFilter extends Filter {
-        private final Set<Class<?>> fIncluded;
-        private final Set<Class<?>> fExcluded;
-        private final boolean fIncludedAny;
-        private final boolean fExcludedAny;
+        private final Set<Class<?>> included;
+        private final Set<Class<?>> excluded;
+        private final boolean includedAny;
+        private final boolean excludedAny;
 
         public static CategoryFilter include(boolean matchAny, Class<?>... categories) {
             if (hasNull(categories)) {
@@ -157,10 +153,10 @@ public class Categories extends Suite {
 
         protected CategoryFilter(boolean matchAnyIncludes, Set<Class<?>> includes,
                                boolean matchAnyExcludes, Set<Class<?>> excludes) {
-            fIncludedAny= matchAnyIncludes;
-            fExcludedAny= matchAnyExcludes;
-            fIncluded= copyAndRefine(includes);
-            fExcluded= copyAndRefine(excludes);
+            includedAny = matchAnyIncludes;
+            excludedAny = matchAnyExcludes;
+            included = copyAndRefine(includes);
+            excluded = copyAndRefine(excludes);
         }
 
         /**
@@ -186,9 +182,9 @@ public class Categories extends Suite {
          */
         @Override public String toString() {
             StringBuilder description= new StringBuilder("categories ")
-                .append(fIncluded.isEmpty() ? "[all]" : fIncluded);
-            if (!fExcluded.isEmpty()) {
-                description.append(" - ").append(fExcluded);
+                .append(included.isEmpty() ? "[all]" : included);
+            if (!excluded.isEmpty()) {
+                description.append(" - ").append(excluded);
             }
             return description.toString();
         }
@@ -213,29 +209,29 @@ public class Categories extends Suite {
 
             // If a child has no categories, immediately return.
             if (childCategories.isEmpty()) {
-                return fIncluded.isEmpty();
+                return included.isEmpty();
             }
 
-            if (!fExcluded.isEmpty()) {
-                if (fExcludedAny) {
-                    if (matchesAnyParentCategories(childCategories, fExcluded)) {
+            if (!excluded.isEmpty()) {
+                if (excludedAny) {
+                    if (matchesAnyParentCategories(childCategories, excluded)) {
                         return false;
                     }
                 } else {
-                    if (matchesAllParentCategories(childCategories, fExcluded)) {
+                    if (matchesAllParentCategories(childCategories, excluded)) {
                         return false;
                     }
                 }
             }
 
-            if (fIncluded.isEmpty()) {
+            if (included.isEmpty()) {
                 // Couldn't be excluded, and with no suite's included categories treated as should run.
                 return true;
             } else {
-                if (fIncludedAny) {
-                    return matchesAnyParentCategories(childCategories, fIncluded);
+                if (includedAny) {
+                    return matchesAnyParentCategories(childCategories, included);
                 } else {
-                    return matchesAllParentCategories(childCategories, fIncluded);
+                    return matchesAllParentCategories(childCategories, included);
                 }
             }
         }
@@ -343,11 +339,12 @@ public class Categories extends Suite {
     }
 
     private static void assertNoCategorizedDescendentsOfUncategorizeableParents(Description description) throws InitializationError {
-        if (!canHaveCategorizedChildren(description)) {
+        if (canHaveCategorizedChildren(description)) {
+            for (Description each : description.getChildren()) {
+                assertNoCategorizedDescendentsOfUncategorizeableParents(each);
+            }
+        } else {
             assertNoDescendantsHaveCategoryAnnotations(description);
-        }
-        for (Description each : description.getChildren()) {
-            assertNoCategorizedDescendentsOfUncategorizeableParents(each);
         }
     }
 

@@ -15,40 +15,40 @@ import org.junit.runners.model.TestClass;
  * @since 4.12
  */
 public class TestWithParameters {
-    private final String fName;
+    private final String name;
 
-    private final TestClass fTestClass;
+    private final TestClass testClass;
 
-    private final List<Object> fParameters;
+    private final List<Object> parameters;
 
     public TestWithParameters(String name, TestClass testClass,
             List<Object> parameters) {
         notNull(name, "The name is missing.");
         notNull(testClass, "The test class is missing.");
         notNull(parameters, "The parameters are missing.");
-        fName = name;
-        fTestClass = testClass;
-        fParameters = unmodifiableList(new ArrayList<Object>(parameters));
+        this.name = name;
+        this.testClass = testClass;
+        this.parameters = unmodifiableList(new ArrayList<Object>(parameters));
     }
 
     public String getName() {
-        return fName;
+        return name;
     }
 
     public TestClass getTestClass() {
-        return fTestClass;
+        return testClass;
     }
 
     public List<Object> getParameters() {
-        return fParameters;
+        return parameters;
     }
 
     @Override
     public int hashCode() {
         int prime = 14747;
-        int result = prime + fName.hashCode();
-        result = prime * result + fTestClass.hashCode();
-        return prime * result + fParameters.hashCode();
+        int result = prime + name.hashCode();
+        result = prime * result + testClass.hashCode();
+        return prime * result + parameters.hashCode();
     }
 
     @Override
@@ -63,15 +63,15 @@ public class TestWithParameters {
             return false;
         }
         TestWithParameters other = (TestWithParameters) obj;
-        return fName.equals(other.fName)
-                && fParameters.equals(other.fParameters)
-                && fTestClass.equals(other.fTestClass);
+        return name.equals(other.name)
+                && parameters.equals(other.parameters)
+                && testClass.equals(other.testClass);
     }
 
     @Override
     public String toString() {
-        return fTestClass.getName() + " '" + fName + "' with parameters "
-                + fParameters;
+        return testClass.getName() + " '" + name + "' with parameters "
+                + parameters;
     }
 
     private static void notNull(Object value, String message) {

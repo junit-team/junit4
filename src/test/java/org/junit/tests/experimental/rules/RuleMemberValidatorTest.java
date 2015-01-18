@@ -1,10 +1,10 @@
 package org.junit.tests.experimental.rules;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.internal.runners.rules.RuleFieldValidator.CLASS_RULE_METHOD_VALIDATOR;
-import static org.junit.internal.runners.rules.RuleFieldValidator.CLASS_RULE_VALIDATOR;
-import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_METHOD_VALIDATOR;
-import static org.junit.internal.runners.rules.RuleFieldValidator.RULE_VALIDATOR;
+import static org.junit.internal.runners.rules.RuleMemberValidator.CLASS_RULE_METHOD_VALIDATOR;
+import static org.junit.internal.runners.rules.RuleMemberValidator.CLASS_RULE_VALIDATOR;
+import static org.junit.internal.runners.rules.RuleMemberValidator.RULE_METHOD_VALIDATOR;
+import static org.junit.internal.runners.rules.RuleMemberValidator.RULE_VALIDATOR;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
 
-public class RuleFieldValidatorTest {
+public class RuleMemberValidatorTest {
     private final List<Throwable> errors = new ArrayList<Throwable>();
 
     @Test
@@ -47,17 +47,120 @@ public class RuleFieldValidatorTest {
     }
 
     @Test
+    public void acceptStaticTestRuleThatIsAlsoClassRule() {
+        TestClass target = new TestClass(TestWithStaticClassAndTestRule.class);
+        CLASS_RULE_VALIDATOR.validate(target, errors);
+        assertNumberOfErrors(0);
+    }
+
+    public static class TestWithStaticClassAndTestRule {
+        @ClassRule
+        @Rule
+        public static TestRule temporaryFolder = new TemporaryFolder();
+    }
+
+    @Test
     public void rejectClassRuleInNonPublicClass() {
         TestClass target = new TestClass(NonPublicTestWithClassRule.class);
         CLASS_RULE_VALIDATOR.validate(target, errors);
-        assertOneErrorWithMessage("The @ClassRule 'temporaryFolder'  must be declared in a public class.");
+        assertOneErrorWithMessage("The @ClassRule 'temporaryFolder' must be declared in a public class.");
     }
 
     static class NonPublicTestWithClassRule {
         @ClassRule
         public static TestRule temporaryFolder = new TemporaryFolder();
     }
+    
+    /**
+     * If there is any property annotated with @ClassRule then it must implement
+     * {@link TestRule}
+     * 
+     * <p>This case has been added with 
+     * <a href="https://github.com/junit-team/junit/issues/1019">Issue #1019</a>
+     */
+    @Test
+    public void rejectClassRuleThatIsImplemetationOfMethodRule() {
+        TestClass target = new TestClass(TestWithClassRuleIsImplementationOfMethodRule.class);
+        CLASS_RULE_VALIDATOR.validate(target, errors);
+        assertOneErrorWithMessage("The @ClassRule 'classRule' must implement TestRule.");
+    }
+    
+    public static class TestWithClassRuleIsImplementationOfMethodRule {
+        @ClassRule
+        public static MethodRule classRule = new MethodRule() {
+            
+            public Statement apply(Statement base, FrameworkMethod method, Object target) {
+                return base;
+            }
+        };
+    }
 
+    /**
+     * If there is any method annotated with @ClassRule then it must return an 
+     * implementation of {@link TestRule}
+     * 
+     * <p>This case has been added with 
+     * <a href="https://github.com/junit-team/junit/issues/1019">Issue #1019</a>
+     */
+    @Test
+    public void rejectClassRuleThatReturnsImplementationOfMethodRule() {
+        TestClass target = new TestClass(TestWithClassRuleMethodThatReturnsMethodRule.class);
+        CLASS_RULE_METHOD_VALIDATOR.validate(target, errors);
+        assertOneErrorWithMessage("The @ClassRule 'methodRule' must return an implementation of TestRule.");
+    }
+
+    public static class TestWithClassRuleMethodThatReturnsMethodRule {
+        @ClassRule
+        public static MethodRule methodRule() {
+            return new MethodRule() {
+                
+                public Statement apply(Statement base, FrameworkMethod method, Object target) {
+                    return base;
+                }
+            };
+        }
+    }
+    
+    /**
+     * If there is any property annotated with @ClassRule then it must implement
+     * {@link TestRule}
+     * 
+     * <p>This case has been added with 
+     * <a href="https://github.com/junit-team/junit/issues/1019">Issue #1019</a>
+     */
+    @Test
+    public void rejectClassRuleIsAnArbitraryObject() throws Exception {
+        TestClass target = new TestClass(TestWithClassRuleIsAnArbitraryObject.class);
+        CLASS_RULE_VALIDATOR.validate(target, errors);
+        assertOneErrorWithMessage("The @ClassRule 'arbitraryObject' must implement TestRule.");
+    }
+
+    public static class TestWithClassRuleIsAnArbitraryObject {
+        @ClassRule
+        public static Object arbitraryObject = 1;
+    }
+    
+    /**
+     * If there is any method annotated with @ClassRule then it must return an 
+     * implementation of {@link TestRule}
+     * 
+     * <p>This case has been added with 
+     * <a href="https://github.com/junit-team/junit/issues/1019">Issue #1019</a> 
+     */
+    @Test
+    public void rejectClassRuleMethodReturnsAnArbitraryObject() throws Exception {
+        TestClass target = new TestClass(TestWithClassRuleMethodReturnsAnArbitraryObject.class);
+        CLASS_RULE_METHOD_VALIDATOR.validate(target, errors);
+        assertOneErrorWithMessage("The @ClassRule 'arbitraryObject' must return an implementation of TestRule.");
+    }
+
+    public static class TestWithClassRuleMethodReturnsAnArbitraryObject {
+        @ClassRule
+        public static Object arbitraryObject() {
+            return 1;
+        }
+    }
+    
     @Test
     public void acceptNonStaticTestRule() {
         TestClass target = new TestClass(TestWithNonStaticTestRule.class);
@@ -74,12 +177,24 @@ public class RuleFieldValidatorTest {
     public void rejectStaticTestRule() {
         TestClass target = new TestClass(TestWithStaticTestRule.class);
         RULE_VALIDATOR.validate(target, errors);
-        assertOneErrorWithMessage("The @Rule 'temporaryFolder' must not be static.");
+        assertOneErrorWithMessage("The @Rule 'temporaryFolder' must not be static or it must be annotated with @ClassRule.");
     }
 
     public static class TestWithStaticTestRule {
         @Rule
         public static TestRule temporaryFolder = new TemporaryFolder();
+    }
+
+    @Test
+    public void rejectStaticMethodRule() {
+        TestClass target = new TestClass(TestWithStaticMethodRule.class);
+        RULE_VALIDATOR.validate(target, errors);
+        assertOneErrorWithMessage("The @Rule 'someMethodRule' must not be static.");
+    }
+
+    public static class TestWithStaticMethodRule {
+        @Rule
+        public static MethodRule someMethodRule = new SomeMethodRule();
     }
     
     @Test
@@ -140,6 +255,21 @@ public class RuleFieldValidatorTest {
     }
 
     @Test
+    public void acceptMethodStaticTestRuleThatIsAlsoClassRule() {
+        TestClass target = new TestClass(MethodTestWithStaticClassAndTestRule.class);
+        CLASS_RULE_METHOD_VALIDATOR.validate(target, errors);
+        assertNumberOfErrors(0);
+    }
+
+    public static class MethodTestWithStaticClassAndTestRule {
+        @ClassRule
+        @Rule
+        public static TestRule getTemporaryFolder() {
+            return new TemporaryFolder();
+        }
+    }
+
+    @Test
     public void acceptMethodNonStaticTestRule() {
         TestClass target = new TestClass(TestMethodWithNonStaticTestRule.class);
         RULE_METHOD_VALIDATOR.validate(target, errors);
@@ -157,7 +287,7 @@ public class RuleFieldValidatorTest {
     public void rejectMethodStaticTestRule() {
         TestClass target = new TestClass(TestMethodWithStaticTestRule.class);
         RULE_METHOD_VALIDATOR.validate(target, errors);
-        assertOneErrorWithMessage("The @Rule 'getTemporaryFolder' must not be static.");
+        assertOneErrorWithMessage("The @Rule 'getTemporaryFolder' must not be static or it must be annotated with @ClassRule.");
     }
 
     public static class TestMethodWithStaticTestRule {
@@ -165,6 +295,18 @@ public class RuleFieldValidatorTest {
         public static TestRule getTemporaryFolder() {
             return new TemporaryFolder();
         }
+    }
+
+    @Test
+    public void rejectMethodStaticMethodRule() {
+        TestClass target = new TestClass(TestMethodWithStaticMethodRule.class);
+        RULE_METHOD_VALIDATOR.validate(target, errors);
+        assertOneErrorWithMessage("The @Rule 'getSomeMethodRule' must not be static.");
+    }
+
+    public static class TestMethodWithStaticMethodRule {
+        @Rule
+        public static MethodRule getSomeMethodRule() { return new SomeMethodRule(); }
     }
 
     @Test
@@ -207,5 +349,11 @@ public class RuleFieldValidatorTest {
 
     private void assertNumberOfErrors(int numberOfErrors) {
         assertEquals("Wrong number of errors:", numberOfErrors, errors.size());
+    }
+    
+    private static final class SomeMethodRule implements MethodRule {
+        public Statement apply(Statement base, FrameworkMethod method, Object target) {
+            return base;
+        }
     }
 }

@@ -31,7 +31,7 @@ public class Description implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private static final Pattern METHOD_AND_CLASS_NAME_PATTERN = Pattern
-            .compile("(.*)\\((.*)\\)");
+            .compile("([\\s\\S]*)\\((.*)\\)");
 
     /**
      * Create a <code>Description</code> named <code>name</code>.
@@ -136,6 +136,11 @@ public class Description implements Serializable {
      */
     public static final Description TEST_MECHANISM = new Description(null, "Test mechanism");
 
+    /*
+     * We have to use the f prefix until the next major release to ensure
+     * serialization compatibility. 
+     * See https://github.com/junit-team/junit/issues/976
+     */
     private final Collection<Description> fChildren = new ConcurrentLinkedQueue<Description>();
     private final String fDisplayName;
     private final Serializable fUniqueId;
@@ -146,7 +151,7 @@ public class Description implements Serializable {
         this(clazz, displayName, displayName, annotations);
     }
 
-    private Description(Class<?> clazz, String displayName, Serializable uniqueId, Annotation... annotations) {
+    private Description(Class<?> testClass, String displayName, Serializable uniqueId, Annotation... annotations) {
         if ((displayName == null) || (displayName.length() == 0)) {
             throw new IllegalArgumentException(
                     "The display name must not be empty.");
@@ -155,10 +160,10 @@ public class Description implements Serializable {
             throw new IllegalArgumentException(
                     "The unique id must not be null.");
         }
-        fTestClass = clazz;
-        fDisplayName = displayName;
-        fUniqueId = uniqueId;
-        fAnnotations = annotations;
+        this.fTestClass = testClass;
+        this.fDisplayName = displayName;
+        this.fUniqueId = uniqueId;
+        this.fAnnotations = annotations;
     }
 
     /**

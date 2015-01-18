@@ -5,10 +5,10 @@ import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 
 public class IgnoredClassRunner extends Runner {
-    private final Class<?> fTestClass;
+    private final Class<?> clazz;
 
     public IgnoredClassRunner(Class<?> testClass) {
-        fTestClass = testClass;
+        clazz = testClass;
     }
 
     @Override
@@ -18,6 +18,6 @@ public class IgnoredClassRunner extends Runner {
 
     @Override
     public Description getDescription() {
-        return Description.createSuiteDescription(fTestClass);
+        return Description.createSuiteDescription(clazz);
     }
 }

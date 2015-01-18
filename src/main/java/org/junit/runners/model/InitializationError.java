@@ -10,6 +10,12 @@ import java.util.List;
  */
 public class InitializationError extends Exception {
     private static final long serialVersionUID = 1L;
+
+    /*
+     * We have to use the f prefix until the next major release to ensure
+     * serialization compatibility. 
+     * See https://github.com/junit-team/junit/issues/976
+     */
     private final List<Throwable> fErrors;
 
     /**
@@ -17,7 +23,7 @@ public class InitializationError extends Exception {
      * errors {@code errors} as causes
      */
     public InitializationError(List<Throwable> errors) {
-        fErrors = errors;
+        this.fErrors = errors;
     }
 
     public InitializationError(Throwable error) {

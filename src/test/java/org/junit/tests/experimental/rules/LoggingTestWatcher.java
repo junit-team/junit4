@@ -1,5 +1,6 @@
 package org.junit.tests.experimental.rules;
 
+import org.junit.AssumptionViolatedException;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
@@ -18,6 +19,11 @@ class LoggingTestWatcher extends TestWatcher {
     @Override
     protected void failed(Throwable e, Description description) {
         log.append("failed ");
+    }
+
+    @Override
+    protected void skipped(AssumptionViolatedException e, Description description) {
+        log.append("skipped ");
     }
 
     @Override
