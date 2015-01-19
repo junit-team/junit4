@@ -27,7 +27,7 @@ public class ErrorReportingRunner extends Runner {
     }
 
     /**
-     * @since 4.12
+     * @since 4.13
      */
     public ErrorReportingRunner(String displayName, Throwable cause) {
         if (displayName == null) {
