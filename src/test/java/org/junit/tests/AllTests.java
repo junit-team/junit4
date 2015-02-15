@@ -18,6 +18,7 @@ import org.junit.runner.RunWith;
 import org.junit.runner.notification.ConcurrentRunNotifierTest;
 import org.junit.runner.notification.RunNotifierTest;
 import org.junit.runner.notification.SynchronizedRunListenerTest;
+import org.junit.runners.CustomBlockJUnit4ClassRunnerTest;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.junit.runners.model.FrameworkFieldTest;
@@ -203,6 +204,7 @@ import org.junit.validator.PublicClassValidatorTest;
         RuleMemberValidatorTest.class,
         RuleChainTest.class,
         BlockJUnit4ClassRunnerTest.class,
+        CustomBlockJUnit4ClassRunnerTest.class,
         MethodSorterTest.class,
         TestedOnSupplierTest.class,
         StacktracePrintingMatcherTest.class,
