@@ -55,7 +55,9 @@ import org.junit.runners.model.Statement;
  * @since 4.5
  */
 public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
+
     private final ConcurrentHashMap<FrameworkMethod, Description> methodDescriptions = new ConcurrentHashMap<FrameworkMethod, Description>();
+
     /**
      * Creates a BlockJUnit4ClassRunner to run {@code testClass}
      *
@@ -75,10 +77,17 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
         if (isIgnored(method)) {
             notifier.fireTestIgnored(description);
         } else {
-            runLeaf(methodBlock(method), description, notifier);
+            Statement statement;
+            try {
+                statement = methodBlock(method);
+            }
+            catch (Throwable ex) {
+                statement = new Fail(ex);
+            }
+            runLeaf(statement, description, notifier);
         }
     }
-    
+
     /**
      * Evaluates whether {@link FrameworkMethod}s are ignored based on the
      * {@link Ignore} annotation.
@@ -390,10 +399,10 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
     protected List<MethodRule> rules(Object target) {
         List<MethodRule> rules = getTestClass().getAnnotatedMethodValues(target, 
                 Rule.class, MethodRule.class);
-        
+
         rules.addAll(getTestClass().getAnnotatedFieldValues(target,
                 Rule.class, MethodRule.class));
-        
+
         return rules;
     }
 
