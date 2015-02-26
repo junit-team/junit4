@@ -19,12 +19,12 @@
               <pre class="prettyprint">
     @Test
     public void newArrayListsHaveNoElements() {
-        assertThat(new ArrayList().size(), is(0));
+        assertThat(new ArrayList&lt;Integer&gt;().size(), is(0));
     }
 
     @Test
     public void sizeReturnsNumberOfElements() {
-        List instance = new ArrayList();
+        List&lt;Object&gt; instance = new ArrayList&lt;Object&gt;();
         instance.add(new Object());
         instance.add(new Object());
         assertThat(instance.size(), is(2));
