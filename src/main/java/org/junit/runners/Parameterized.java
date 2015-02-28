@@ -140,7 +140,7 @@ import org.junit.runners.parameterized.TestWithParameters;
  * The factory must have a public zero-arg constructor.
  *
  * <pre>
- * public class YourRunnerFactory implements ParameterizedRunnerFactory {
+ * public class YourRunnerFactory implements ParametersRunnerFactory {
  *     public Runner createRunnerForTestWithParameters(TestWithParameters test)
  *             throws InitializationError {
  *         return YourRunner(test);
