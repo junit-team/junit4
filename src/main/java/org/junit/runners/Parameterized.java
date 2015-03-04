@@ -29,8 +29,8 @@ import org.junit.runners.parameterized.TestWithParameters;
  * public class FibonacciTest {
  *     private static class Fibonacci {
  *         public static final int compute(int input) {
- *             if (input < 0) { throw new IllegalArgumentException(); }
- *             if (input >= 2) { return compute(input - 2) + compute(input - 1); }
+ *             if (input &lt; 0) { throw new IllegalArgumentException(); }
+ *             if (input &gt;= 2) { return compute(input - 2) + compute(input - 1); }
  *             return input;
  *         }
  *     }
