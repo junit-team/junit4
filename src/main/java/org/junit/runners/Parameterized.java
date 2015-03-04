@@ -27,6 +27,14 @@ import org.junit.runners.parameterized.TestWithParameters;
  * <pre>
  * &#064;RunWith(Parameterized.class)
  * public class FibonacciTest {
+ *     private static class Fibonacci {
+ *         public static final int compute(int input) {
+ *             if (input < 0) { throw new IllegalArgumentException(); }
+ *             if (input >= 2) { return compute(input - 2) + compute(input - 1); }
+ *             return input;
+ *         }
+ *     }
+ *
  *     &#064;Parameters(name= &quot;{index}: fib[{0}]={1}&quot;)
  *     public static Iterable&lt;Object[]&gt; data() {
  *         return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
