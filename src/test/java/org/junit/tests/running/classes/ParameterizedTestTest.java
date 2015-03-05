@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.junit.experimental.results.PrintableResult.testResult;
 
 import java.util.Arrays;
@@ -59,10 +60,9 @@ public class ParameterizedTestTest {
     }
 
     @Test
-    public void count() {
+    public void countsRuns() {
         Result result = JUnitCore.runClasses(FibonacciTest.class);
         assertEquals(7, result.getRunCount());
-        assertEquals(6, result.getFailureCount());
     }
 
     @Test
@@ -85,6 +85,28 @@ public class ParameterizedTestTest {
         Description description = runner.getDescription();
         assertEquals("[0: fib(0)=0]", description.getChildren().get(0)
                 .getDisplayName());
+    }
+
+    @RunWith(Parameterized.class)
+    public static class ThreeFailures {
+        @Parameters
+        public static Collection<Integer> data() {
+            return Arrays.asList(1, 2, 3);
+        }
+
+        @Parameter(0)
+        public int unused;
+
+        @Test
+        public void testSomething() {
+            fail();
+        }
+    }
+
+    @Test
+    public void countsFailures() throws Exception {
+        Result result = JUnitCore.runClasses(ThreeFailures.class);
+        assertEquals(3, result.getFailureCount());
     }
 
     @RunWith(Parameterized.class)
