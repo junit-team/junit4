@@ -32,7 +32,7 @@ import org.junit.runners.parameterized.TestWithParameters;
  * }
  *
  * &#064;RunWith(Parameterized.class)
- * public class IntAdditionTest {
+ * public class IntAdderTest {
  *     &#064;Parameters()
  *     public static Iterable&lt;Object[]&gt; data() {
  *         return Arrays.asList(new Object[][] {
@@ -48,7 +48,7 @@ import org.junit.runners.parameterized.TestWithParameters;
  *     private final int addend2;
  *     private final int sum;
  * 
- *     public IntAdditionTest(final int addend1, final int addend2, final int sum) {
+ *     public IntAdderTest(final int addend1, final int addend2, final int sum) {
  *         this.addend1 = addend1;
  *         this.addend2 = addend2;
  *         this.sum = sum;
@@ -57,13 +57,6 @@ import org.junit.runners.parameterized.TestWithParameters;
  *     &#064;Test
  *     public void test() {
  *         assertEquals(sum, IntAdder.add(addend1, addend2));
- *     }
- * }
- * public class Fibonacci {
- *     public static int compute(int input) {
- *         if (input &lt; 0) { throw new IllegalArgumentException(); }
- *         if (input &gt;= 2) { return compute(input - 2) + compute(input - 1); }
- *         return input;
  *     }
  * }
  * </pre>
