@@ -104,6 +104,13 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     protected abstract Description describeChild(T child);
 
     /**
+     * Fires test ignore through {@code notifier} for child corresponding to
+     * {@code child}, which can be assumed to be an element of the list returned
+     * by {@link ParentRunner#getChildren()}.
+     */
+    protected abstract void fireIgnoreChild(T child, RunNotifier notifier);
+
+    /**
      * Runs the test corresponding to {@code child}, which can be assumed to be
      * an element of the list returned by {@link ParentRunner#getChildren()}.
      * Subclasses are responsible for making sure that relevant test events are
@@ -188,11 +195,13 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      */
     protected Statement classBlock(final RunNotifier notifier) {
         Statement statement = childrenInvoker(notifier);
-        if (!areAllChildrenIgnored()) {
-            statement = withBeforeClasses(statement);
-            statement = withAfterClasses(statement);
-            statement = withClassRules(statement);
+        final Statement ignores = withIgnores(notifier);
+        if (areAllChildrenIgnored()) {
+            return ignores;
         }
+        statement = withBeforeClasses(ignores, statement);
+        statement = withAfterClasses(statement);
+        statement = withClassRules(statement);
         return statement;
     }
 
@@ -206,15 +215,33 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     }
 
     /**
-     * Returns a {@link Statement}: run all non-overridden {@code @BeforeClass} methods on this class
+     * Returns a {@link Statement}: run all non-overridden {@code @Ignore} methods on this class
+     * and superclasses before executing {@code next}.
+     */
+    protected Statement withIgnores(final RunNotifier notifier) {
+        return new Statement() {
+            @Override
+            public void evaluate() throws Throwable {
+                for (final T each : getFilteredChildren()) {
+                    if (isIgnored(each)) {
+                        ParentRunner.this.fireIgnoreChild(each, notifier);
+                    }
+                }
+            }
+        };
+    }
+
+    /**
+     * @param previous The previous statement, or {@code null}.
+     * @param next The next statement after methods annotated with {@link BeforeClass}.
+     * @return A {@link Statement}: run all non-overridden {@code @BeforeClass} methods on this class
      * and superclasses before executing {@code statement}; if any throws an
      * Exception, stop execution and pass the exception on.
      */
-    protected Statement withBeforeClasses(Statement statement) {
+    protected Statement withBeforeClasses(final Statement previous, final Statement next) {
         List<FrameworkMethod> befores = testClass
                 .getAnnotatedMethods(BeforeClass.class);
-        return befores.isEmpty() ? statement :
-                new RunBefores(statement, befores, null);
+        return new RunBefores(previous, next, befores, null);
     }
 
     /**
@@ -285,11 +312,13 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         final RunnerScheduler currentScheduler = scheduler;
         try {
             for (final T each : getFilteredChildren()) {
-                currentScheduler.schedule(new Runnable() {
-                    public void run() {
-                        ParentRunner.this.runChild(each, notifier);
-                    }
-                });
+                if (!isIgnored(each)) {
+                    currentScheduler.schedule(new Runnable() {
+                        public void run() {
+                            ParentRunner.this.runChild(each, notifier);
+                        }
+                    });
+                }
             }
         } finally {
             currentScheduler.finished();
