@@ -251,5 +251,29 @@ public class TestMethodTest {
         Result result = JUnitCore.runClasses(OnlyTestIsIgnored.class);
         assertEquals(0, result.getFailureCount());
         assertEquals(1, result.getIgnoreCount());
+        assertEquals(0, result.getRunCount());
     }
+
+    public static class OneTestIsIgnoredAndOneIsIncomplete {
+        @BeforeClass
+        public static void throwException() throws Exception {
+            throw new Exception();
+        }
+        @Ignore
+        @Test
+        public void ignored() {
+        }
+        @Test
+        public void failure() {
+        }
+    }
+
+    @Test
+    public void testOneIgnoredAndOneIncomplete() {
+        Result result = JUnitCore.runClasses(OneTestIsIgnoredAndOneIsIncomplete.class);
+        assertEquals(1, result.getFailureCount());
+        assertEquals(1, result.getIgnoreCount());
+        assertEquals(0, result.getRunCount());
+    }
+
 }

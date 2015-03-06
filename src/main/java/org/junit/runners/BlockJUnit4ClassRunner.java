@@ -72,20 +72,20 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
     //
 
     @Override
+    protected void fireIgnoreChild(final FrameworkMethod method, final RunNotifier notifier) {
+        notifier.fireTestIgnored(describeChild(method));
+    }
+
+    @Override
     protected void runChild(final FrameworkMethod method, RunNotifier notifier) {
-        Description description = describeChild(method);
-        if (isIgnored(method)) {
-            notifier.fireTestIgnored(description);
-        } else {
-            Statement statement;
-            try {
-                statement = methodBlock(method);
-            }
-            catch (Throwable ex) {
-                statement = new Fail(ex);
-            }
-            runLeaf(statement, description, notifier);
+        Statement statement;
+        try {
+            statement = methodBlock(method);
         }
+        catch (Throwable ex) {
+            statement = new Fail(ex);
+        }
+        runLeaf(statement, describeChild(method), notifier);
     }
 
     /**
@@ -348,7 +348,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
             Statement statement) {
         List<FrameworkMethod> befores = getTestClass().getAnnotatedMethods(
                 Before.class);
-        return befores.isEmpty() ? statement : new RunBefores(statement,
+        return befores.isEmpty() ? statement : new RunBefores(null, statement,
                 befores, target);
     }
 
