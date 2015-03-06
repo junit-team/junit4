@@ -157,31 +157,10 @@ public class ParameterizedTestTest {
     }
 
     @Test
-    public void countWithParameterizedField() {
+    public void providesDataByAnnotatedFields() {
         Result result = JUnitCore.runClasses(FibonacciWithParameterizedFieldTest.class);
         assertEquals(7, result.getRunCount());
         assertEquals(6, result.getFailureCount());
-    }
-
-    @Test
-    public void failuresNamedCorrectlyWithParameterizedField() {
-        Result result = JUnitCore.runClasses(FibonacciWithParameterizedFieldTest.class);
-        assertEquals(String
-                .format("test[1](%s)", FibonacciWithParameterizedFieldTest.class.getName()), result
-                .getFailures().get(0).getTestHeader());
-    }
-
-    @Test
-    public void countBeforeRunWithParameterizedField() throws Exception {
-        Runner runner = Request.aClass(FibonacciWithParameterizedFieldTest.class).getRunner();
-        assertEquals(7, runner.testCount());
-    }
-
-    @Test
-    public void plansNamedCorrectlyWithParameterizedField() throws Exception {
-        Runner runner = Request.aClass(FibonacciWithParameterizedFieldTest.class).getRunner();
-        Description description = runner.getDescription();
-        assertEquals("[0]", description.getChildren().get(0).getDisplayName());
     }
 
     @RunWith(Parameterized.class)
