@@ -23,7 +23,7 @@ import org.junit.runners.parameterized.TestWithParameters;
  * When running a parameterized test class, instances are created for the
  * cross-product of the test methods and the test data elements.
  * <p>
- * For example, to test a method that adds to integers, write:
+ * For example, this class has a method that adds two integers and returns the sum.
  * <pre>
  * &#047;* This is the class being tested. *&#047;
  * public class IntAdder {
@@ -31,11 +31,17 @@ import org.junit.runners.parameterized.TestWithParameters;
  *         return addend1 + addend2;
  *     }
  * }
- *
+ * </pre>
+ * The following is a test for the above example class.
+ * For each element returned from the <code>&#064;Parameters</code> annotated method,
+ * an instance of the <code>Parameterized</code> test class is created and
+ * its <code>&#064;Test</code> annotated method (e.g. <code>test()</code>) is invoked.
+ * <pre>
  * &#047;* This is is the unit test for {&#064;link IntAdder}. *&#047;
  * &#064;RunWith(Parameterized.class)
  * public class IntAdderTest {
- *     &#064;Parameters()
+ *     &#047;* Each of these is used to create a new {&#064;link IntAdderTest} instance. *&#047;
+ *     &#064;Parameters(name= &quot;{index}: {0} + {1} = {2}&quot;)
  *     public static Iterable&lt;Object[]&gt; data() {
  *         return Arrays.asList(new Object[][] {
  *             { Integer.MIN_VALUE, Integer.MIN_VALUE, 0 }, { Integer.MIN_VALUE, Integer.MIN_VALUE + 1, 1 },
@@ -82,15 +88,19 @@ import org.junit.runners.parameterized.TestWithParameters;
  * <dd>...</dd>
  * </dl>
  * <p>
- * In the example given above, the <code>Parameterized</code> runner creates
- * names like <code>[10: 1 + 1 = 2]</code>. If you don't use the name parameter,
- * then the current parameter index is used as name.
+ * In the example given above, the <code>Parameterized</code> annotation
+ * has the name <code>{index} {0} + {1} = {2}</code>.
+ * The eleventh parameter (index 10) is <code>{ 1, 1, 2 }</code>.
+ * Its name would be <code>[10: 1 + 1 = 2]</code>.
+ * (The name is always wrapped in &quot;[&quot; and &quot;]&quot;.)
+ * If you don't specify the <code>name</code>,
+ * then it defaults to <code>{index}</code> (e.g. <code>[10]</code>). 
  * <p>
  * You can also write:
  * <pre>
  * &#064;RunWith(Parameterized.class)
  * public class IntAdderTest {
- *     &#064;Parameters
+ *     &#064;Parameters(name= &quot;{index}: {0} + {1} = {2}&quot;)
  *     public static Iterable&lt;Object[]&gt; data() {
  *         return Arrays.asList(new Object[][] {
  *             ...
@@ -120,10 +130,10 @@ import org.junit.runners.parameterized.TestWithParameters;
  * with the data values in the <code>&#064;Parameters</code> method.
  *
  * <p>
- * The parameters can be provided as an array, too:
+ * The parameters can be provided as an array:
  * 
  * <pre>
- * &#064;Parameters
+ * &#064;Parameters(name= &quot;{index}: {0} + {1} = {2}&quot;)
  * public static Iterable&lt;Object[]&gt; data() {
  *     return Arrays.asList(new Object[][] {
  *         ...
