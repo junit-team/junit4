@@ -23,22 +23,25 @@ import org.junit.runners.parameterized.TestWithParameters;
  * When running a parameterized test class, instances are created for the
  * cross-product of the test methods and the test data elements.
  * <p>
- * For example, to test a Fibonacci function, write:
+ * For example, to test a method that adds to integers, write:
  * <pre>
+ * &#047;* This is the class being tested. *&#047;
  * public class IntAdder {
  *     public static int add(int addend1, int addend2) {
  *         return addend1 + addend2;
  *     }
  * }
  *
+ * &#047;* This is is the unit test for {&#064;link IntAdder}. *&#047;
  * &#064;RunWith(Parameterized.class)
  * public class IntAdderTest {
  *     &#064;Parameters()
  *     public static Iterable&lt;Object[]&gt; data() {
  *         return Arrays.asList(new Object[][] {
  *             { Integer.MIN_VALUE, Integer.MIN_VALUE, 0 }, { Integer.MIN_VALUE, Integer.MIN_VALUE + 1, 1 },
- *             { 0, 0, 0 }, { 1, 1, 2 }, { 2, 1, 3 }, { 3, 2, 5 },
- *             { 4, 3, 7 }, { 5, 5, 10 }, { 6, 8, 14 },
+ *             { -1, -1, -2 }, { -1, 0, -1 }, { -1, 1, 0 },
+ *             { 0, -1, -1 }, { 0, 0, 0 }, { 0, 1, 1 },
+ *             { 1, -1, 0 }, { 1, 0, 1 }, { 1, 1, 2 },
  *             { Integer.MAX_VALUE, Integer.MIN_VALUE, -1 }, { Integer.MAX_VALUE, Integer.MIN_VALUE + 1, 0 },
  *             { Integer.MAX_VALUE, 1, Integer.MIN_VALUE }, { Integer.MAX_VALUE, 2, Integer.MIN_VALUE + 1 },
  *             { Integer.MAX_VALUE, Integer.MAX_VALUE - 1, -3 }, { Integer.MAX_VALUE, Integer.MAX_VALUE, -2 } });
@@ -61,8 +64,8 @@ import org.junit.runners.parameterized.TestWithParameters;
  * }
  * </pre>
  * <p>
- * Each instance of <code>FibonacciTest</code> will be constructed using the
- * two-argument constructor and the data values in the
+ * Each instance of <code>IntAdderTest</code> will be constructed using its
+ * three-argument constructor and the data values in the
  * <code>&#064;Parameters</code> method.
  * <p>
  * In order that you can easily identify the individual tests, you may provide a
@@ -80,33 +83,39 @@ import org.junit.runners.parameterized.TestWithParameters;
  * </dl>
  * <p>
  * In the example given above, the <code>Parameterized</code> runner creates
- * names like <code>[1: fib(3)=2]</code>. If you don't use the name parameter,
+ * names like <code>[10: 1 + 1 = 2]</code>. If you don't use the name parameter,
  * then the current parameter index is used as name.
  * <p>
  * You can also write:
  * <pre>
  * &#064;RunWith(Parameterized.class)
- * public class FibonacciTest {
- *  &#064;Parameters
- *  public static Iterable&lt;Object[]&gt; data() {
- *      return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
- *                 { 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
- *  }
+ * public class IntAdderTest {
+ *     &#064;Parameters
+ *     public static Iterable&lt;Object[]&gt; data() {
+ *         return Arrays.asList(new Object[][] {
+ *             ...
+ *             { 0, -1, -1 }, { 0, 0, 0 }, { 0, 1, 1 },
+ *             ...
+ *             { Integer.MAX_VALUE, Integer.MAX_VALUE - 1, -3 }, { Integer.MAX_VALUE, Integer.MAX_VALUE, -2 } });
+ *     }
  *  
- *  &#064;Parameter(0)
- *  public int fInput;
+ *     &#064;Parameter(0)
+ *     public int addend1;
  *
- *  &#064;Parameter(1)
- *  public int fExpected;
+ *     &#064;Parameter(1)
+ *     public int addend2;
  *
- *  &#064;Test
- *  public void test() {
- *      assertEquals(fExpected, Fibonacci.compute(fInput));
- *  }
+ *     &#064;Parameter(2)
+ *     public int sum;
+ *
+ *     &#064;Test
+ *     public void test() {
+ *         assertEquals(sum, IntAdder.add(addend1, addend2));
+ *     }
  * }
  * </pre>
  * <p>
- * Each instance of <code>FibonacciTest</code> will be constructed with the default constructor
+ * Each instance of <code>IntAdderTest</code> will be constructed with the default constructor
  * and fields annotated by <code>&#064;Parameter</code>  will be initialized
  * with the data values in the <code>&#064;Parameters</code> method.
  *
@@ -115,9 +124,12 @@ import org.junit.runners.parameterized.TestWithParameters;
  * 
  * <pre>
  * &#064;Parameters
- * public static Object[][] data() {
- * 	return new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 }, { 3, 2 }, { 4, 3 },
- * 			{ 5, 5 }, { 6, 8 } };
+ * public static Iterable&lt;Object[]&gt; data() {
+ *     return Arrays.asList(new Object[][] {
+ *         ...
+ *         { 1, -1, 0 }, { 1, 0, 1 }, { 1, 1, 2 },
+ *         ...
+ *         { Integer.MAX_VALUE, Integer.MAX_VALUE - 1, -3 }, { Integer.MAX_VALUE, Integer.MAX_VALUE, -2 } });
  * }
  * </pre>
  * 
@@ -129,7 +141,7 @@ import org.junit.runners.parameterized.TestWithParameters;
  * <pre>
  * &#064;Parameters
  * public static Iterable&lt;? extends Object&gt; data() {
- * 	return Arrays.asList(&quot;first test&quot;, &quot;second test&quot;);
+ * 	   return Arrays.asList(&quot;first test&quot;, &quot;second test&quot;);
  * }
  * </pre>
  * <p>
@@ -137,7 +149,7 @@ import org.junit.runners.parameterized.TestWithParameters;
  * <pre>
  * &#064;Parameters
  * public static Object[] data() {
- * 	return new Object[] { &quot;first test&quot;, &quot;second test&quot; };
+ * 	   return new Object[] { &quot;first test&quot;, &quot;second test&quot; };
  * }
  * </pre>
  *
