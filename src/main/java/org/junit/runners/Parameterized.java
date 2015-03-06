@@ -25,33 +25,45 @@ import org.junit.runners.parameterized.TestWithParameters;
  * <p>
  * For example, to test a Fibonacci function, write:
  * <pre>
+ * public class IntAdder {
+ *     public static int add(int addend1, int addend2) {
+ *         return addend1 + addend2;
+ *     }
+ * }
+ *
+ * &#064;RunWith(Parameterized.class)
+ * public class IntAdditionTest {
+ *     &#064;Parameters()
+ *     public static Iterable&lt;Object[]&gt; data() {
+ *         return Arrays.asList(new Object[][] {
+ *             { Integer.MIN_VALUE, Integer.MIN_VALUE, 0 }, { Integer.MIN_VALUE, Integer.MIN_VALUE + 1, 1 },
+ *             { 0, 0, 0 }, { 1, 1, 2 }, { 2, 1, 3 }, { 3, 2, 5 },
+ *             { 4, 3, 7 }, { 5, 5, 10 }, { 6, 8, 14 },
+ *             { Integer.MAX_VALUE, Integer.MIN_VALUE, -1 }, { Integer.MAX_VALUE, Integer.MIN_VALUE + 1, 0 },
+ *             { Integer.MAX_VALUE, 1, Integer.MIN_VALUE }, { Integer.MAX_VALUE, 2, Integer.MIN_VALUE + 1 },
+ *             { Integer.MAX_VALUE, Integer.MAX_VALUE - 1, -3 }, { Integer.MAX_VALUE, Integer.MAX_VALUE, -2 } });
+ *     }
+ * 
+ *     private final int addend1;
+ *     private final int addend2;
+ *     private final int sum;
+ * 
+ *     public IntAdditionTest(final int addend1, final int addend2, final int sum) {
+ *         this.addend1 = addend1;
+ *         this.addend2 = addend2;
+ *         this.sum = sum;
+ *     }
+ * 
+ *     &#064;Test
+ *     public void test() {
+ *         assertEquals(sum, IntAdder.add(addend1, addend2));
+ *     }
+ * }
  * public class Fibonacci {
  *     public static int compute(int input) {
  *         if (input &lt; 0) { throw new IllegalArgumentException(); }
  *         if (input &gt;= 2) { return compute(input - 2) + compute(input - 1); }
  *         return input;
- *     }
- * }
- *
- * &#064;RunWith(Parameterized.class)
- * public class FibonacciTest {
- *     &#064;Parameters(name= &quot;{index}: fib[{0}]={1}&quot;)
- *     public static Iterable&lt;Object[]&gt; data() {
- *         return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
- *                 { 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
- *     }
- *
- *     private int fInput;
- *     private int fExpected;
- *
- *     public FibonacciTest(int input, int expected) {
- *         fInput= input;
- *         fExpected= expected;
- *     }
- *
- *     &#064;Test
- *     public void test() {
- *         assertEquals(fExpected, Fibonacci.compute(fInput));
  *     }
  * }
  * </pre>
