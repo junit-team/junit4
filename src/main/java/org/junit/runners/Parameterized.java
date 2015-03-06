@@ -23,34 +23,37 @@ import org.junit.runners.parameterized.TestWithParameters;
  * When running a parameterized test class, instances are created for the
  * cross-product of the test methods and the test data elements.
  * <p>
- * For example, to test a Fibonacci function, write:
+ * For example, to test the <code>+</code> operator, write:
  * <pre>
  * &#064;RunWith(Parameterized.class)
- * public class FibonacciTest {
- *     &#064;Parameters(name= &quot;{index}: fib[{0}]={1}&quot;)
+ * public class AdditionTest {
+ *     &#064;Parameters(name = &quot;{index}: {0} + {1} = {2}&quot;)
  *     public static Iterable&lt;Object[]&gt; data() {
- *         return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
- *                 { 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
+ *         return Arrays.asList(new Object[][] { { 0, 0, 0 }, { 1, 1, 2 },
+ *                 { 3, 2, 5 }, { 4, 3, 7 } });
  *     }
  *
- *     private int fInput;
+ *     private int firstSummand;
  *
- *     private int fExpected;
+ *     private int secondSummand;
  *
- *     public FibonacciTest(int input, int expected) {
- *         fInput= input;
- *         fExpected= expected;
+ *     private int sum;
+ *
+ *     public AdditionTest(int firstSummand, int secondSummand, int sum) {
+ *         this.firstSummand = firstSummand;
+ *         this.secondSummand = secondSummand;
+ *         this.sum = sum;
  *     }
  *
  *     &#064;Test
  *     public void test() {
- *         assertEquals(fExpected, Fibonacci.compute(fInput));
+ *         assertEquals(sum, firstSummand + secondSummand);
  *     }
  * }
  * </pre>
  * <p>
- * Each instance of <code>FibonacciTest</code> will be constructed using the
- * two-argument constructor and the data values in the
+ * Each instance of <code>AdditionTest</code> will be constructed using the
+ * three-argument constructor and the data values in the
  * <code>&#064;Parameters</code> method.
  * <p>
  * In order that you can easily identify the individual tests, you may provide a
@@ -68,33 +71,36 @@ import org.junit.runners.parameterized.TestWithParameters;
  * </dl>
  * <p>
  * In the example given above, the <code>Parameterized</code> runner creates
- * names like <code>[1: fib(3)=2]</code>. If you don't use the name parameter,
+ * names like <code>[2: 3 + 2 = 5]</code>. If you don't use the name parameter,
  * then the current parameter index is used as name.
  * <p>
  * You can also write:
  * <pre>
  * &#064;RunWith(Parameterized.class)
- * public class FibonacciTest {
- *  &#064;Parameters
- *  public static Iterable&lt;Object[]&gt; data() {
- *      return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
- *                 { 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
- *  }
- *  
- *  &#064;Parameter(0)
- *  public int fInput;
+ * public class AdditionTest {
+ *     &#064;Parameters(name = &quot;{index}: {0} + {1} = {2}&quot;)
+ *     public static Iterable&lt;Object[]&gt; data() {
+ *         return Arrays.asList(new Object[][] { { 0, 0, 0 }, { 1, 1, 2 },
+ *                 { 3, 2, 5 }, { 4, 3, 7 } });
+ *     }
  *
- *  &#064;Parameter(1)
- *  public int fExpected;
+ *     &#064;Parameter(0)
+ *     public int firstSummand;
  *
- *  &#064;Test
- *  public void test() {
- *      assertEquals(fExpected, Fibonacci.compute(fInput));
- *  }
+ *     &#064;Parameter(1)
+ *     public int secondSummand;
+ *
+ *     &#064;Parameter(2)
+ *     public int sum;
+ *
+ *     &#064;Test
+ *     public void test() {
+ *         assertEquals(sum, firstSummand + secondSummand);
+ *     }
  * }
  * </pre>
  * <p>
- * Each instance of <code>FibonacciTest</code> will be constructed with the default constructor
+ * Each instance of <code>AdditionTest</code> will be constructed with the default constructor
  * and fields annotated by <code>&#064;Parameter</code>  will be initialized
  * with the data values in the <code>&#064;Parameters</code> method.
  *
@@ -104,8 +110,7 @@ import org.junit.runners.parameterized.TestWithParameters;
  * <pre>
  * &#064;Parameters
  * public static Object[][] data() {
- * 	return new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 }, { 3, 2 }, { 4, 3 },
- * 			{ 5, 5 }, { 6, 8 } };
+ * 	return new Object[][] { { 0, 0, 0 }, { 1, 1, 2 }, { 3, 2, 5 }, { 4, 3, 7 } } };
  * }
  * </pre>
  * 
