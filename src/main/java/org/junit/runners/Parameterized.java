@@ -25,7 +25,7 @@ import org.junit.runners.parameterized.TestWithParameters;
  * <p>
  * For example, this class has a method that adds two integers and returns the sum:
  * <pre>
- * &#047;* This is an example class that adds to integers. *&#047;
+ * &#047;* This is an example class that adds two integers. *&#047;
  * public class IntAdder {
  *     public static int add(int addend1, int addend2) {
  *         return addend1 + addend2;
