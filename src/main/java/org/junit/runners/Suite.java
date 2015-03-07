@@ -124,11 +124,6 @@ public class Suite extends ParentRunner<Runner> {
     }
 
     @Override
-    protected void fireIgnoreChild(final Runner runner, final RunNotifier notifier) {
-        // nothing to fire
-    }
-
-    @Override
     protected void runChild(Runner runner, final RunNotifier notifier) {
         runner.run(notifier);
     }
