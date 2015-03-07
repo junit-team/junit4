@@ -23,16 +23,16 @@ import org.junit.runners.parameterized.TestWithParameters;
  * When running a parameterized test class, instances are created for the
  * cross-product of the test methods and the test data elements.
  * <p>
- * For example, this class has a method that adds two integers and returns the sum.
+ * For example, this class has a method that adds two integers and returns the sum:
  * <pre>
- * &#047;* This is the class being tested. *&#047;
+ * &#047;* This is an example class that adds to integers. *&#047;
  * public class IntAdder {
  *     public static int add(int addend1, int addend2) {
  *         return addend1 + addend2;
  *     }
  * }
  * </pre>
- * The following is a test for the above example class.
+ * The following is a test for {&#064;link IntAdder}.
  * For each element returned from the <code>&#064;Parameters</code> annotated method,
  * an instance of the <code>Parameterized</code> test class is created and
  * its <code>&#064;Test</code> annotated method (e.g. <code>test()</code>) is invoked.
@@ -41,23 +41,20 @@ import org.junit.runners.parameterized.TestWithParameters;
  * &#064;RunWith(Parameterized.class)
  * public class IntAdderTest {
  *     &#047;* Each of these is used to create a new {&#064;link IntAdderTest} instance. *&#047;
- *     &#064;Parameters(name= &quot;{index}: {0} + {1} = {2}&quot;)
+ *     &#064;Parameters(name = &quot;{index}: {0} + {1} = {2}&quot;)
  *     public static Iterable&lt;Object[]&gt; data() {
  *         return Arrays.asList(new Object[][] {
- *             { Integer.MIN_VALUE, Integer.MIN_VALUE, 0 }, { Integer.MIN_VALUE, Integer.MIN_VALUE + 1, 1 },
- *             { -1, -1, -2 }, { -1, 0, -1 }, { -1, 1, 0 },
- *             { 0, -1, -1 }, { 0, 0, 0 }, { 0, 1, 1 },
- *             { 1, -1, 0 }, { 1, 0, 1 }, { 1, 1, 2 },
- *             { Integer.MAX_VALUE, Integer.MIN_VALUE, -1 }, { Integer.MAX_VALUE, Integer.MIN_VALUE + 1, 0 },
- *             { Integer.MAX_VALUE, 1, Integer.MIN_VALUE }, { Integer.MAX_VALUE, 2, Integer.MIN_VALUE + 1 },
- *             { Integer.MAX_VALUE, Integer.MAX_VALUE - 1, -3 }, { Integer.MAX_VALUE, Integer.MAX_VALUE, -2 } });
+ *             { -1, 1, 0 },
+ *             {  0, 0, 0 },
+ *             {  1, 0, 1 },
+ *             {  1, 1, 2 } });
  *     }
  * 
- *     private final int addend1;
- *     private final int addend2;
- *     private final int sum;
+ *     private int addend1;
+ *     private int addend2;
+ *     private int sum;
  * 
- *     public IntAdderTest(final int addend1, final int addend2, final int sum) {
+ *     public IntAdderTest(int addend1, int addend2, int sum) {
  *         this.addend1 = addend1;
  *         this.addend2 = addend2;
  *         this.sum = sum;
@@ -71,7 +68,7 @@ import org.junit.runners.parameterized.TestWithParameters;
  * </pre>
  * <p>
  * Each instance of <code>IntAdderTest</code> will be constructed using its
- * three-argument constructor and the data values in the
+ * three-argument constructor and the data values provided by the
  * <code>&#064;Parameters</code> method.
  * <p>
  * In order that you can easily identify the individual tests, you may provide a
@@ -88,25 +85,21 @@ import org.junit.runners.parameterized.TestWithParameters;
  * <dd>...</dd>
  * </dl>
  * <p>
- * In the example given above, the <code>Parameterized</code> annotation
- * has the name <code>{index} {0} + {1} = {2}</code>.
- * The eleventh parameter (index 10) is <code>{ 1, 1, 2 }</code>.
- * Its name would be <code>[10: 1 + 1 = 2]</code>.
- * (The name is always wrapped in &quot;[&quot; and &quot;]&quot;.)
- * If you don't specify the <code>name</code>,
- * then it defaults to <code>{index}</code> (e.g. <code>[10]</code>). 
+ * In the example given above, the <code>Parameterized</code> runner creates
+ * names like <code>[{index} {0} + {1} = {2}]</code>. If you don't use the name
+ * parameter, then the current parameter index is used as the name.
  * <p>
  * You can also write:
  * <pre>
  * &#064;RunWith(Parameterized.class)
  * public class IntAdderTest {
- *     &#064;Parameters(name= &quot;{index}: {0} + {1} = {2}&quot;)
+ *     &#064;Parameters(name = &quot;{index}: {0} + {1} = {2}&quot;)
  *     public static Iterable&lt;Object[]&gt; data() {
  *         return Arrays.asList(new Object[][] {
- *             ...
- *             { 0, -1, -1 }, { 0, 0, 0 }, { 0, 1, 1 },
- *             ...
- *             { Integer.MAX_VALUE, Integer.MAX_VALUE - 1, -3 }, { Integer.MAX_VALUE, Integer.MAX_VALUE, -2 } });
+ *             { -1, 1, 0 },
+ *             {  0, 0, 0 },
+ *             {  1, 0, 1 },
+ *             {  1, 1, 2 } });
  *     }
  *  
  *     &#064;Parameter(0)
@@ -133,13 +126,13 @@ import org.junit.runners.parameterized.TestWithParameters;
  * The parameters can be provided as an array:
  * 
  * <pre>
- * &#064;Parameters(name= &quot;{index}: {0} + {1} = {2}&quot;)
+ * &#064;Parameters(name = &quot;{index}: {0} + {1} = {2}&quot;)
  * public static Iterable&lt;Object[]&gt; data() {
  *     return Arrays.asList(new Object[][] {
- *         ...
- *         { 1, -1, 0 }, { 1, 0, 1 }, { 1, 1, 2 },
- *         ...
- *         { Integer.MAX_VALUE, Integer.MAX_VALUE - 1, -3 }, { Integer.MAX_VALUE, Integer.MAX_VALUE, -2 } });
+ *         { -1, 1, 0 },
+ *         {  0, 0, 0 },
+ *         {  1, 0, 1 },
+ *         {  1, 1, 2 } });
  * }
  * </pre>
  * 
@@ -151,7 +144,7 @@ import org.junit.runners.parameterized.TestWithParameters;
  * <pre>
  * &#064;Parameters
  * public static Iterable&lt;? extends Object&gt; data() {
- * 	   return Arrays.asList(&quot;first test&quot;, &quot;second test&quot;);
+ * 	return Arrays.asList(&quot;first test&quot;, &quot;second test&quot;);
  * }
  * </pre>
  * <p>
@@ -159,7 +152,7 @@ import org.junit.runners.parameterized.TestWithParameters;
  * <pre>
  * &#064;Parameters
  * public static Object[] data() {
- * 	   return new Object[] { &quot;first test&quot;, &quot;second test&quot; };
+ * 	return new Object[] { &quot;first test&quot;, &quot;second test&quot; };
  * }
  * </pre>
  *
