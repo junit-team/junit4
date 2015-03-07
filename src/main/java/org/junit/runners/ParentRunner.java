@@ -64,7 +64,9 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     private final TestClass testClass;
 
     // Guarded by childrenLock
-    private volatile Collection<T> filteredChildren = null;
+    private volatile Collection<T> filteredChildren;
+    private volatile Collection<T> ignoredChildren;
+    private volatile Collection<T> nonIgnoredChildren;
 
     private volatile RunnerScheduler scheduler = new RunnerScheduler() {
         public void schedule(Runnable childStatement) {
@@ -187,7 +189,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * @return {@code Statement}
      */
     protected Statement classBlock(final RunNotifier notifier) {
-        if (areAllChildrenIgnored()) {
+        if (areAllFilteredChildrenIgnored()) {
             return withNotificationOfIgnoredChildren(null, notifier);
         }
         Statement statement = childrenInvoker(notifier);
@@ -198,13 +200,18 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         return statement;
     }
 
-    private boolean areAllChildrenIgnored() {
-        for (T child : getFilteredChildren()) {
-            if (!isIgnored(child)) {
-                return false;
-            }
-        }
-        return true;
+    private boolean areAllFilteredChildrenIgnored() {
+        return getFilteredChildren().size() == getIgnoredFilteredChildren().size();
+    }
+
+    private Collection<T> getIgnoredFilteredChildren() {
+        getFilteredChildren();
+        return ignoredChildren;
+    }
+
+    private Collection<T> getNonIgnoredFilteredChildren() {
+        getFilteredChildren();
+        return nonIgnoredChildren;
     }
 
     /**
@@ -213,12 +220,14 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * @param next The next statement, or {@code null}, if there is no next statement.
      * @param notifier The runner notifier.
      */
-    protected Statement withNotificationOfIgnoredChildren(final Statement next, final RunNotifier notifier) {
+    protected Statement withNotificationOfIgnoredChildren(final Statement next,
+            final RunNotifier notifier) {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
-                runChildren(true, notifier);
-                if (null != next) {
+                runChildren(getIgnoredFilteredChildren(), notifier,
+                        areAllFilteredChildrenIgnored());
+               if (null != next) {
                     next.evaluate();
                 }
             }
@@ -285,7 +294,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         return new Statement() {
             @Override
             public void evaluate() {
-                runChildren(false, notifier);
+                runChildren(getNonIgnoredFilteredChildren(), notifier, true);
             }
         };
     }
@@ -301,25 +310,20 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         return false;
     }
 
-    private static interface Predicate<T> {
-        boolean apply(T input);
-    }
-
-    private void runChildren(boolean isIgnored, final RunNotifier notifier) {
+    private void runChildren(Collection<T> children, final RunNotifier notifier, boolean isFinished) {
         final RunnerScheduler currentScheduler = scheduler;
         try {
-            for (final T each : getFilteredChildren()) {
-                // execute only, if the method is not annotated with @Ignore
-                if (isIgnored(each) == isIgnored) {
-                    currentScheduler.schedule(new Runnable() {
-                        public void run() {
-                            ParentRunner.this.runChild(each, notifier);
-                        }
-                    });
-                }
+            for (final T each : children) {
+                currentScheduler.schedule(new Runnable() {
+                    public void run() {
+                        ParentRunner.this.runChild(each, notifier);
+                    }
+                });
             }
         } finally {
-            currentScheduler.finished();
+            if (isFinished) {
+                currentScheduler.finished();
+            }
         }
     }
 
@@ -451,6 +455,18 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             synchronized (childrenLock) {
                 if (filteredChildren == null) {
                     filteredChildren = Collections.unmodifiableCollection(getChildren());
+                    List<T> ignored = new ArrayList<T>();
+                    List<T> nonIgnored = new ArrayList<T>();
+                    // create disjunct lists of ignored and non ignored filtered children
+                    for (T child : filteredChildren) {
+                        if (isIgnored(child)) {
+                            ignored.add(child);
+                        } else {
+                            nonIgnored.add(child);
+                        }
+                    }
+                    ignoredChildren = Collections.unmodifiableCollection(ignored);
+                    nonIgnoredChildren = Collections.unmodifiableCollection(nonIgnored);
                 }
             }
         }
