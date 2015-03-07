@@ -104,13 +104,6 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     protected abstract Description describeChild(T child);
 
     /**
-     * Fires test ignore through {@code notifier} for child corresponding to
-     * {@code child}, which can be assumed to be an element of the list returned
-     * by {@link ParentRunner#getChildren()}.
-     */
-    protected abstract void fireIgnoreChild(T child, RunNotifier notifier);
-
-    /**
      * Runs the test corresponding to {@code child}, which can be assumed to be
      * an element of the list returned by {@link ParentRunner#getChildren()}.
      * Subclasses are responsible for making sure that relevant test events are
@@ -194,12 +187,12 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * @return {@code Statement}
      */
     protected Statement classBlock(final RunNotifier notifier) {
-        Statement statement = childrenInvoker(notifier);
-        final Statement ignores = withIgnores(notifier);
         if (areAllChildrenIgnored()) {
-            return ignores;
+            return withIgnores(null, notifier);
         }
-        statement = withBeforeClasses(ignores, statement);
+        Statement statement = childrenInvoker(notifier);
+        statement = withBeforeClasses(statement);
+        statement = withIgnores(statement, notifier);
         statement = withAfterClasses(statement);
         statement = withClassRules(statement);
         return statement;
@@ -215,33 +208,38 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     }
 
     /**
-     * Returns a {@link Statement}: run all non-overridden {@code @Ignore} methods on this class
+     * Returns a {@link Statement}: notify all non-overridden {@code @Ignore} methods on this class
      * and superclasses before executing {@code next}.
+     * @param next The next statement, or {@code null}, if there is no next statement.
+     * @param notifier The runner notifier.
      */
-    protected Statement withIgnores(final RunNotifier notifier) {
+    protected Statement withIgnores(final Statement next, final RunNotifier notifier) {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
                 for (final T each : getFilteredChildren()) {
+                    // only notify methods annotated with @Ignore
                     if (isIgnored(each)) {
-                        ParentRunner.this.fireIgnoreChild(each, notifier);
+                        ParentRunner.this.runChild(each, notifier);
                     }
+                }
+                if (null != next) {
+                    next.evaluate();
                 }
             }
         };
     }
 
     /**
-     * @param previous The previous statement, or {@code null}.
-     * @param next The next statement after methods annotated with {@link BeforeClass}.
-     * @return A {@link Statement}: run all non-overridden {@code @BeforeClass} methods on this class
+     * Returns a {@link Statement}: run all non-overridden {@code @BeforeClass} methods on this class
      * and superclasses before executing {@code statement}; if any throws an
      * Exception, stop execution and pass the exception on.
      */
-    protected Statement withBeforeClasses(final Statement previous, final Statement next) {
+    protected Statement withBeforeClasses(Statement statement) {
         List<FrameworkMethod> befores = testClass
                 .getAnnotatedMethods(BeforeClass.class);
-        return new RunBefores(previous, next, befores, null);
+        return befores.isEmpty() ? statement :
+                new RunBefores(statement, befores, null);
     }
 
     /**
@@ -312,6 +310,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         final RunnerScheduler currentScheduler = scheduler;
         try {
             for (final T each : getFilteredChildren()) {
+                // execute only, if the method is not annotated with @Ignore
                 if (!isIgnored(each)) {
                     currentScheduler.schedule(new Runnable() {
                         public void run() {
