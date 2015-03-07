@@ -188,11 +188,11 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      */
     protected Statement classBlock(final RunNotifier notifier) {
         if (areAllChildrenIgnored()) {
-            return withIgnores(null, notifier);
+            return withNotificationOfIgnoredChildren(null, notifier);
         }
         Statement statement = childrenInvoker(notifier);
         statement = withBeforeClasses(statement);
-        statement = withIgnores(statement, notifier);
+        statement = withNotificationOfIgnoredChildren(statement, notifier);
         statement = withAfterClasses(statement);
         statement = withClassRules(statement);
         return statement;
@@ -213,16 +213,11 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * @param next The next statement, or {@code null}, if there is no next statement.
      * @param notifier The runner notifier.
      */
-    protected Statement withIgnores(final Statement next, final RunNotifier notifier) {
+    protected Statement withNotificationOfIgnoredChildren(final Statement next, final RunNotifier notifier) {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
-                for (final T each : getFilteredChildren()) {
-                    // only notify methods annotated with @Ignore
-                    if (isIgnored(each)) {
-                        ParentRunner.this.runChild(each, notifier);
-                    }
-                }
+                runChildren(true, notifier);
                 if (null != next) {
                     next.evaluate();
                 }
@@ -290,7 +285,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         return new Statement() {
             @Override
             public void evaluate() {
-                runChildren(notifier);
+                runChildren(false, notifier);
             }
         };
     }
@@ -306,12 +301,16 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         return false;
     }
 
-    private void runChildren(final RunNotifier notifier) {
+    private static interface Predicate<T> {
+        boolean apply(T input);
+    }
+
+    private void runChildren(boolean isIgnored, final RunNotifier notifier) {
         final RunnerScheduler currentScheduler = scheduler;
         try {
             for (final T each : getFilteredChildren()) {
                 // execute only, if the method is not annotated with @Ignore
-                if (!isIgnored(each)) {
+                if (isIgnored(each) == isIgnored) {
                     currentScheduler.schedule(new Runnable() {
                         public void run() {
                             ParentRunner.this.runChild(each, notifier);
