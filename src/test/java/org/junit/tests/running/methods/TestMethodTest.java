@@ -271,7 +271,7 @@ public class TestMethodTest {
     }
 
     @Test
-    public void testOneIgnoredAndOneIncomplete() {
+    public void testOneIgnoredAndOneIncompleteCausedByExceptionInBeforeClass() {
         Result result = JUnitCore
                 .runClasses(OneTestIsIgnoredAndOneIsIncompleteCausedByExceptionInBeforeClass.class);
         assertEquals(1, result.getFailureCount());
@@ -296,7 +296,7 @@ public class TestMethodTest {
     }
 
     @Test
-    public void testOneIgnoredAndOneIncomplete2() {
+    public void testOneIgnoredAndOneIncompleteCausedByExceptionInAfterClass() {
         Result result = JUnitCore.runClasses(OneTestIsIgnoredAndOneIsIncompleteCausedByExceptionInAfterClass.class);
         assertEquals(1, result.getFailureCount());
         assertEquals(1, result.getIgnoreCount());
