@@ -254,15 +254,17 @@ public class TestMethodTest {
         assertEquals(0, result.getRunCount());
     }
 
-    public static class OneTestIsIgnoredAndOneIsIncomplete {
+    public static class OneTestIsIgnoredAndOneIsIncompleteCausedByExceptionInBeforeClass {
         @BeforeClass
         public static void throwException() throws Exception {
             throw new Exception();
         }
+
         @Ignore
         @Test
         public void ignored() {
         }
+
         @Test
         public void failure() {
         }
@@ -270,10 +272,35 @@ public class TestMethodTest {
 
     @Test
     public void testOneIgnoredAndOneIncomplete() {
-        Result result = JUnitCore.runClasses(OneTestIsIgnoredAndOneIsIncomplete.class);
+        Result result = JUnitCore
+                .runClasses(OneTestIsIgnoredAndOneIsIncompleteCausedByExceptionInBeforeClass.class);
         assertEquals(1, result.getFailureCount());
         assertEquals(1, result.getIgnoreCount());
         assertEquals(0, result.getRunCount());
+    }
+
+    public static class OneTestIsIgnoredAndOneIsIncompleteCausedByExceptionInAfterClass {
+        @AfterClass
+        public static void throwException() throws Exception {
+            throw new Exception();
+        }
+
+        @Ignore
+        @Test
+        public void ignored() {
+        }
+
+        @Test
+        public void failure() {
+        }
+    }
+
+    @Test
+    public void testOneIgnoredAndOneIncomplete2() {
+        Result result = JUnitCore.runClasses(OneTestIsIgnoredAndOneIsIncompleteCausedByExceptionInAfterClass.class);
+        assertEquals(1, result.getFailureCount());
+        assertEquals(1, result.getIgnoreCount());
+        assertEquals(1, result.getRunCount());
     }
 
 }
