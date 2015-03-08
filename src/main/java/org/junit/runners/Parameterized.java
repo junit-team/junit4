@@ -25,7 +25,7 @@ import org.junit.runners.parameterized.TestWithParameters;
  * <p>
  * For example, this class has a method that adds two integers and returns the sum:
  * <pre>
- * &#047;* This is an example class that adds two integers. *&#047;
+ * &#047;* Example class that adds two integers. *&#047;
  * public class IntAdder {
  *     public static int add(int addend1, int addend2) {
  *         return addend1 + addend2;
@@ -37,7 +37,7 @@ import org.junit.runners.parameterized.TestWithParameters;
  * an instance of the <code>Parameterized</code> test class is created and
  * its <code>&#064;Test</code> annotated method (e.g. <code>test()</code>) is invoked.
  * <pre>
- * &#047;* This is is the unit test for {&#064;link IntAdder}. *&#047;
+ * &#047;* Tests for {&#064;link IntAdder}. *&#047;
  * &#064;RunWith(Parameterized.class)
  * public class IntAdderTest {
  *     &#047;* Each of these is used to create a new {&#064;link IntAdderTest} instance. *&#047;
