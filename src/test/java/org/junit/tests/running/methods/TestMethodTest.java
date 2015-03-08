@@ -291,7 +291,11 @@ public class TestMethodTest {
         }
 
         @Test
-        public void failure() {
+        public void success1() {
+        }
+
+        @Test
+        public void success2() {
         }
     }
 
@@ -300,7 +304,7 @@ public class TestMethodTest {
         Result result = JUnitCore.runClasses(OneTestIsIgnoredAndOneIsIncompleteCausedByExceptionInAfterClass.class);
         assertEquals(1, result.getFailureCount());
         assertEquals(1, result.getIgnoreCount());
-        assertEquals(1, result.getRunCount());
+        assertEquals(2, result.getRunCount());
     }
 
 }
