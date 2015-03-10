@@ -131,7 +131,7 @@ public class TestRunner extends BaseTestRunner {
         }
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         TestRunner aTestRunner = new TestRunner();
         try {
             TestResult r = aTestRunner.start(args);
@@ -149,7 +149,7 @@ public class TestRunner extends BaseTestRunner {
      * Starts a test run. Analyzes the command line arguments and runs the given
      * test suite.
      */
-    public TestResult start(String args[]) throws Exception {
+    public TestResult start(String[] args) throws Exception {
         String testCase = "";
         String method = "";
         boolean wait = false;
