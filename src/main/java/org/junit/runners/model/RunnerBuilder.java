@@ -96,7 +96,7 @@ public abstract class RunnerBuilder {
     }
 
     private List<Runner> runners(Class<?>[] children) {
-        ArrayList<Runner> runners = new ArrayList<Runner>();
+        List<Runner> runners = new ArrayList<Runner>();
         for (Class<?> each : children) {
             Runner childRunner = safeRunnerForClass(each);
             if (childRunner != null) {
