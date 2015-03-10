@@ -284,7 +284,7 @@ public class Categories extends Suite {
         }
 
         private static Set<Class<?>> copyAndRefine(Set<Class<?>> classes) {
-            HashSet<Class<?>> c= new HashSet<Class<?>>();
+            Set<Class<?>> c= new HashSet<Class<?>>();
             if (classes != null) {
                 c.addAll(classes);
             }
