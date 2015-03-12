@@ -9,17 +9,21 @@ import org.junit.runner.manipulation.Sorter;
 
 public class SortingRequest extends Request {
     private final Request request;
-    private final Comparator<Description> comparator;
+    private final Sorter sorter;
 
     public SortingRequest(Request request, Comparator<Description> comparator) {
+       this(request, new Sorter(comparator));
+    }
+    
+    public SortingRequest(Request request, Sorter sorter) {
         this.request = request;
-        this.comparator = comparator;
+        this.sorter = sorter;
     }
 
     @Override
     public Runner getRunner() {
         Runner runner = request.getRunner();
-        new Sorter(comparator).apply(runner);
+        sorter.apply(runner);
         return runner;
     }
 }
