@@ -8,6 +8,7 @@ import org.junit.internal.requests.FilterRequest;
 import org.junit.internal.requests.SortingRequest;
 import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.manipulation.Filter;
+import org.junit.runner.manipulation.Sorter;
 import org.junit.runners.model.InitializationError;
 
 /**
@@ -165,5 +166,16 @@ public abstract class Request {
      */
     public Request sortWith(Comparator<Description> comparator) {
         return new SortingRequest(this, comparator);
+    }
+    
+    /**
+     * Returns a Request whose Tests can be run in a certain order, defined by
+     * <code>sorter</code>
+     *
+     * @param sorter the sorter determining the order of the tests in this Request
+     * @return a Request with ordered Tests
+     */
+    public Request sortWith(Sorter sorter) {
+        return new SortingRequest(this, sorter);
     }
 }
