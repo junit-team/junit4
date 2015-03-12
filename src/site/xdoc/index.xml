@@ -14,8 +14,17 @@
      <div id="carousel-main">
         <div id="main-carousel" class="carousel slide">
           <div class="carousel-inner">
-            <div class="item active">
-              <div style="height:20em" >
+	          <div class="item active">
+	            <div class="carousel-content" id="junit-lambda-teaser">
+								<p><a href="junit-lambda.html"><img src="images/junit-lambda/junit-lambda-logo.png" alt="JUnit Lambda" /></a></p>
+	            </div>
+	            <div class="carousel-caption">
+	              <p><strong><a href="junit-lambda.html">Support our crowdfunding campaign!</a></strong></p>
+	              <p><a href="junit-lambda.html">Help shaping the future of testing on the JVM.</a></p>
+	            </div>
+	          </div>
+            <div class="item">
+              <div class="carousel-content">
               <pre class="prettyprint">
     @Test
     public void newArrayListsHaveNoElements() {
@@ -38,7 +47,7 @@
               </div>
             </div>
             <div class="item">
-              <div style="height:20em">
+              <div class="carousel-content">
               <pre class="prettyprint lang-java">
     @Test
     public void lookupEmailAddresses() {
