@@ -22,11 +22,11 @@ public class ParallelComputer extends Computer {
     }
 
     public static Computer classes() {
-        return new ParallelComputer(true, false);
+        return new ParallelComputer(Boolean.TRUE, Boolean.FALSE);
     }
 
     public static Computer methods() {
-        return new ParallelComputer(false, true);
+        return new ParallelComputer(Boolean.FALSE, Boolean.TRUE);
     }
 
     private static Runner parallelize(Runner runner) {

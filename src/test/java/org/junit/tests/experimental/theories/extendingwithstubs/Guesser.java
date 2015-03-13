@@ -86,7 +86,7 @@ public class Guesser<T> extends ReguessableValue {
             protected void append(char arg0) {
             }
 
-            boolean expectedSeen = false;
+            boolean expectedSeen = Boolean.FALSE;
             Object expected = null;
 
             @Override
@@ -98,7 +98,7 @@ public class Guesser<T> extends ReguessableValue {
             private void noteValue(Object value) {
                 if (!expectedSeen) {
                     expected = value;
-                    expectedSeen = true;
+                    expectedSeen = Boolean.TRUE;
                     return;
                 }
 

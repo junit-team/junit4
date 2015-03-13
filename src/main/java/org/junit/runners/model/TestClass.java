@@ -83,7 +83,7 @@ public class TestClass implements Annotatable {
             Map<Class<? extends Annotation>, List<T>> map) {
         for (Annotation each : member.getAnnotations()) {
             Class<? extends Annotation> type = each.annotationType();
-            List<T> members = getAnnotatedMembers(map, type, true);
+            List<T> members = getAnnotatedMembers(map, type, Boolean.TRUE);
             if (member.isShadowedBy(members)) {
                 return;
             }
@@ -123,7 +123,7 @@ public class TestClass implements Annotatable {
      */
     public List<FrameworkMethod> getAnnotatedMethods(
             Class<? extends Annotation> annotationClass) {
-        return Collections.unmodifiableList(getAnnotatedMembers(methodsForAnnotations, annotationClass, false));
+        return Collections.unmodifiableList(getAnnotatedMembers(methodsForAnnotations, annotationClass, Boolean.FALSE));
     }
 
     /**
@@ -142,7 +142,7 @@ public class TestClass implements Annotatable {
      */
     public List<FrameworkField> getAnnotatedFields(
             Class<? extends Annotation> annotationClass) {
-        return Collections.unmodifiableList(getAnnotatedMembers(fieldsForAnnotations, annotationClass, false));
+        return Collections.unmodifiableList(getAnnotatedMembers(fieldsForAnnotations, annotationClass, Boolean.FALSE));
     }
 
     private <T> List<T> collectValues(Map<?, List<T>> map) {
@@ -280,13 +280,13 @@ public class TestClass implements Annotatable {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
-            return true;
+            return Boolean.TRUE;
         }
         if (obj == null) {
-            return false;
+            return Boolean.FALSE;
         }
         if (getClass() != obj.getClass()) {
-            return false;
+            return Boolean.FALSE;
         }
         TestClass other = (TestClass) obj;
         return clazz == other.clazz;

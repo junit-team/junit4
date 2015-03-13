@@ -63,25 +63,25 @@ public class TestClass {
     private boolean isShadowed(Method method, List<Method> results) {
         for (Method each : results) {
             if (isShadowed(method, each)) {
-                return true;
+                return Boolean.TRUE;
             }
         }
-        return false;
+        return Boolean.FALSE;
     }
 
     private boolean isShadowed(Method current, Method previous) {
         if (!previous.getName().equals(current.getName())) {
-            return false;
+            return Boolean.FALSE;
         }
         if (previous.getParameterTypes().length != current.getParameterTypes().length) {
-            return false;
+            return Boolean.FALSE;
         }
         for (int i = 0; i < previous.getParameterTypes().length; i++) {
             if (!previous.getParameterTypes()[i].equals(current.getParameterTypes()[i])) {
-                return false;
+                return Boolean.FALSE;
             }
         }
-        return true;
+        return Boolean.TRUE;
     }
 
     private List<Class<?>> getSuperClasses(Class<?> testClass) {

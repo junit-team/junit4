@@ -25,7 +25,7 @@ public abstract class ComparisonCriteria {
      */
     public void arrayEquals(String message, Object expecteds, Object actuals)
             throws ArrayComparisonFailure {
-        arrayEquals(message, expecteds, actuals, true);
+        arrayEquals(message, expecteds, actuals, Boolean.TRUE);
     }
 
     private void arrayEquals(String message, Object expecteds, Object actuals, boolean outer)

@@ -41,7 +41,7 @@ public final class IncludeCategories extends CategoryFilterFactory {
         }
 
         public IncludesAny(Set<Class<?>> categories) {
-            super(true, categories, true, null);
+            super(Boolean.TRUE, categories, Boolean.TRUE, null);
         }
 
         @Override

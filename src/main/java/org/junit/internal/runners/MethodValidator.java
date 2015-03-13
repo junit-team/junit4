@@ -30,9 +30,9 @@ public class MethodValidator {
     }
 
     public void validateInstanceMethods() {
-        validateTestMethods(After.class, false);
-        validateTestMethods(Before.class, false);
-        validateTestMethods(Test.class, false);
+        validateTestMethods(After.class, Boolean.FALSE);
+        validateTestMethods(Before.class, Boolean.FALSE);
+        validateTestMethods(Test.class, Boolean.FALSE);
 
         List<Method> methods = testClass.getAnnotatedMethods(Test.class);
         if (methods.size() == 0) {
@@ -41,8 +41,8 @@ public class MethodValidator {
     }
 
     public void validateStaticMethods() {
-        validateTestMethods(BeforeClass.class, true);
-        validateTestMethods(AfterClass.class, true);
+        validateTestMethods(BeforeClass.class, Boolean.TRUE);
+        validateTestMethods(AfterClass.class, Boolean.TRUE);
     }
 
     public List<Throwable> validateMethodsForDefaultRunner() {

@@ -4,7 +4,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeTrue;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
-
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
@@ -23,7 +22,7 @@ public class TheoriesPerformanceTest {
         }
     }
 
-    private static final boolean TESTING_PERFORMANCE = false;
+    private static final boolean TESTING_PERFORMANCE = Boolean.FALSE;
 
     // If we do not share the same instance of TestClass, repeatedly parsing the
     // class's annotations looking for @Befores and @Afters gets really costly.

@@ -113,7 +113,7 @@ public class TemporaryFolder extends ExternalResource {
          * @return this
          */
         public Builder assureDeletion() {
-            this.assureDeletion = true;
+            this.assureDeletion = Boolean.TRUE;
             return this;
         }
 
@@ -257,14 +257,14 @@ public class TemporaryFolder extends ExternalResource {
      */
     protected boolean tryDelete() {
         if (folder == null) {
-            return true;
+            return Boolean.TRUE;
         }
         
         return recursiveDelete(folder);
     }
     
     private boolean recursiveDelete(File file) {
-        boolean result = true;
+        boolean result = Boolean.TRUE;
         File[] files = file.listFiles();
         if (files != null) {
             for (File each : files) {

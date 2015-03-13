@@ -104,9 +104,9 @@ public class DisableOnDebug implements TestRule {
     private static boolean isDebugging(List<String> arguments) {
         for (final String argument : arguments) {
             if ("-Xdebug".equals(argument)) {
-                return true;
+                return Boolean.TRUE;
             } else if (argument.startsWith("-agentlib:jdwp")) {
-                return true;
+                return Boolean.TRUE;
             }
         }
         return false;

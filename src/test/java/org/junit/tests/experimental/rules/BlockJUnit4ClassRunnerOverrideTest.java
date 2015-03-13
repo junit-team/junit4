@@ -26,7 +26,7 @@ public class BlockJUnit4ClassRunnerOverrideTest {
             return new Statement() {
                 @Override
                 public void evaluate() throws Throwable {
-                    target.getClass().getField("flipBit").set(target, true);
+                    target.getClass().getField("flipBit").set(target, Boolean.TRUE);
                     base.evaluate();
                 }
             };
@@ -154,7 +154,7 @@ public class BlockJUnit4ClassRunnerOverrideTest {
         protected Object createTest() {
             final CreateTestDefersToNoArgCreateTestTest obj = new CreateTestDefersToNoArgCreateTestTest();
 
-            obj.createTestCalled = true;
+            obj.createTestCalled = Boolean.TRUE;
 
             return obj;
         }
@@ -166,7 +166,7 @@ public class BlockJUnit4ClassRunnerOverrideTest {
 
         @Test
         public void testCreateTestCalled() {
-            assertEquals(true, createTestCalled);
+            assertEquals(Boolean.TRUE, createTestCalled);
         }
     }
 

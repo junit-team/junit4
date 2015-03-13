@@ -35,7 +35,7 @@ public class CategoriesAndParameterizedTest {
 
         @Test
         public void testSomething() {
-            Assert.assertTrue(true);
+            Assert.assertTrue(Boolean.TRUE);
         }
     }
 
@@ -52,7 +52,7 @@ public class CategoriesAndParameterizedTest {
         @Test
         @Category(Token.class)
         public void testSomething() {
-            Assert.assertTrue(true);
+            Assert.assertTrue(Boolean.TRUE);
         }
     }
 
@@ -69,7 +69,7 @@ public class CategoriesAndParameterizedTest {
 
         @Test
         public void testSomething() {
-            Assert.assertTrue(true);
+            Assert.assertTrue(Boolean.TRUE);
         }
     }
 
@@ -77,7 +77,7 @@ public class CategoriesAndParameterizedTest {
     public static class VanillaCategorizedJUnitTest {
         @Test
         public void testSomething() {
-            Assert.assertTrue(true);
+            Assert.assertTrue(Boolean.TRUE);
         }
     }
 

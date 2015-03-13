@@ -135,17 +135,17 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
     @Override
     public boolean isShadowedBy(FrameworkMethod other) {
         if (!other.getName().equals(getName())) {
-            return false;
+            return Boolean.FALSE;
         }
         if (other.getParameterTypes().length != getParameterTypes().length) {
-            return false;
+            return Boolean.FALSE;
         }
         for (int i = 0; i < other.getParameterTypes().length; i++) {
             if (!other.getParameterTypes()[i].equals(getParameterTypes()[i])) {
-                return false;
+                return Boolean.FALSE;
             }
         }
-        return true;
+        return Boolean.TRUE;
     }
 
     @Override

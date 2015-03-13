@@ -17,7 +17,7 @@ public class TextRunnerSingleMethodTest extends TestCase {
     public static class InvocationTest extends TestCase {
 
         public void testWasInvoked() {
-            TextRunnerSingleMethodTest.fgWasInvoked = true;
+            TextRunnerSingleMethodTest.fgWasInvoked = Boolean.TRUE;
         }
 
         public void testNotInvoked() {

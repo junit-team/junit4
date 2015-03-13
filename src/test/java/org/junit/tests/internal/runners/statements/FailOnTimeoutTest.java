@@ -131,7 +131,7 @@ public class FailOnTimeoutTest {
 
         @Override
         public void evaluate() throws Throwable {
-            while (true) {
+            while (Boolean.TRUE) {
                 sleep(10); // sleep in order to enable interrupting thread
                 ++COUNT;
             }
@@ -148,15 +148,15 @@ public class FailOnTimeoutTest {
             fail("Expected timeout exception");
         } catch (Exception timeoutException) {
             StackTraceElement[] stackTrace = timeoutException.getStackTrace();
-            boolean stackTraceContainsTheRealCauseOfTheTimeout = false;
-            boolean stackTraceContainsOtherThanTheRealCauseOfTheTimeout = false;
+            boolean stackTraceContainsTheRealCauseOfTheTimeout = Boolean.FALSE;
+            boolean stackTraceContainsOtherThanTheRealCauseOfTheTimeout = Boolean.FALSE;
             for (StackTraceElement element : stackTrace) {
                 String methodName = element.getMethodName();
                 if ("theRealCauseOfTheTimeout".equals(methodName)) {
-                    stackTraceContainsTheRealCauseOfTheTimeout = true;
+                    stackTraceContainsTheRealCauseOfTheTimeout = Boolean.TRUE;
                 }
                 if ("notTheRealCauseOfTheTimeout".equals(methodName)) {
-                    stackTraceContainsOtherThanTheRealCauseOfTheTimeout = true;
+                    stackTraceContainsOtherThanTheRealCauseOfTheTimeout = Boolean.TRUE;
                 }
             }
             assertTrue(

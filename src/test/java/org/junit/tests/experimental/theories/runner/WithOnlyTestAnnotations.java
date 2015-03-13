@@ -7,7 +7,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.failureCountIs;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
-
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.Theories;
@@ -46,7 +45,7 @@ public class WithOnlyTestAnnotations {
     public static class HonorTimeout {
         @Test(timeout = 5)
         public void shouldStop() {
-            while (true) {
+            while (Boolean.TRUE) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {

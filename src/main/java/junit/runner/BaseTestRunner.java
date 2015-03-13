@@ -29,8 +29,8 @@ public abstract class BaseTestRunner implements TestListener {
 
     private static Properties fPreferences;
     static int fgMaxMessageLength = 500;
-    static boolean fgFilterStack = true;
-    boolean fLoading = true;
+    static boolean fgFilterStack = Boolean.TRUE;
+    boolean fLoading = Boolean.TRUE;
 
     /*
     * Implementation of TestListener
@@ -298,7 +298,7 @@ public abstract class BaseTestRunner implements TestListener {
     }
 
     protected static boolean showStackRaw() {
-        return !getPreference("filterstack").equals("true") || fgFilterStack == false;
+        return !getPreference("filterstack").equals("true") || fgFilterStack == Boolean.FALSE;
     }
 
     static boolean filterLine(String line) {
@@ -314,10 +314,10 @@ public abstract class BaseTestRunner implements TestListener {
         };
         for (int i = 0; i < patterns.length; i++) {
             if (line.indexOf(patterns[i]) > 0) {
-                return true;
+                return Boolean.TRUE;
             }
         }
-        return false;
+        return Boolean.FALSE;
     }
 
     static {

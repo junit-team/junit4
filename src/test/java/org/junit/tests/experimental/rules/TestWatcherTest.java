@@ -25,7 +25,7 @@ public class TestWatcherTest {
 
         @Test
         public void succeeds() {
-            assumeTrue(false);
+            assumeTrue(Boolean.FALSE);
         }
     }
 

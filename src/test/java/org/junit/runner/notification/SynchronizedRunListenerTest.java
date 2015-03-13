@@ -44,10 +44,10 @@ public class SynchronizedRunListenerTest {
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
-                return true;
+                return Boolean.TRUE;
             }
             if (!(obj instanceof MethodSignature)) {
-                return false;
+                return Boolean.FALSE;
             }
             MethodSignature that = (MethodSignature) obj;
             return fName.equals(that.fName) && fParameterTypes.equals(that.fParameterTypes);
@@ -91,10 +91,10 @@ public class SynchronizedRunListenerTest {
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
-                return true;
+                return Boolean.TRUE;
             }
             if (!(obj instanceof NamedListener)) {
-                return false;
+                return Boolean.FALSE;
             }
             NamedListener that = (NamedListener) obj;
             return this.fName.equals(that.fName);

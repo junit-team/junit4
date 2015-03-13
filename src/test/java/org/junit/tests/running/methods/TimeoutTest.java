@@ -201,7 +201,7 @@ public class TimeoutTest {
         @Rule
         public TestRule globalTimeout = Timeout.builder()
             .withTimeout(100, TimeUnit.MILLISECONDS)
-            .withLookingForStuckThread(true)
+            .withLookingForStuckThread(Boolean.TRUE)
             .build();
 
         @Test
@@ -214,12 +214,12 @@ public class TimeoutTest {
         @Rule
         public TestRule globalTimeout = Timeout.builder()
             .withTimeout(100, TimeUnit.MILLISECONDS)
-            .withLookingForStuckThread(true)
+            .withLookingForStuckThread(Boolean.TRUE)
             .build();
 
         @Test
         public void failure() throws Exception {
-            (new InfiniteLoopMultithreaded()).failure(true);
+            (new InfiniteLoopMultithreaded()).failure(Boolean.TRUE);
         }
     }
 
@@ -256,7 +256,7 @@ public class TimeoutTest {
     }
 
     public static class WillTimeOut {
-        static boolean afterWasCalled = false;
+        static boolean afterWasCalled = Boolean.FALSE;
 
         @Test(timeout = 1)
         public void test() {
@@ -271,14 +271,14 @@ public class TimeoutTest {
 
         @After
         public void after() {
-            afterWasCalled = true;
+            afterWasCalled = Boolean.TRUE;
         }
     }
 
     @Test
     public void makeSureAfterIsCalledAfterATimeout() {
         JUnitCore.runClasses(WillTimeOut.class);
-        assertThat(WillTimeOut.afterWasCalled, is(true));
+        assertThat(WillTimeOut.afterWasCalled, is(Boolean.TRUE));
     }
 
     public static class TimeOutZero {

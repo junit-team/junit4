@@ -16,7 +16,7 @@ public class AssumingInTheoriesTest {
 
     @Test
     public void noTheoryAnnotationMeansAssumeShouldIgnore() {
-        Assume.assumeTrue(false);
+        Assume.assumeTrue(Boolean.FALSE);
     }
 
     @Test
@@ -31,7 +31,7 @@ public class AssumingInTheoriesTest {
     public static class TheoryWithNoUnassumedParameters {
 
         @DataPoint
-        public final static boolean FALSE = false;
+        public final static boolean FALSE = Boolean.FALSE;
 
         @Theory
         public void theoryWithNoUnassumedParameters(boolean value) {

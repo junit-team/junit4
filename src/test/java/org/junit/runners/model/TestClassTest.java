@@ -62,7 +62,7 @@ public class TestClassTest {
         assertThat(
                 new TestClass(OuterClass.NonStaticInnerClass.class)
                         .isANonStaticInnerClass(),
-                is(true));
+                is(Boolean.TRUE));
     }
 
     public static class OuterClass2 {
@@ -75,7 +75,7 @@ public class TestClassTest {
         assertThat(
                 new TestClass(OuterClass2.StaticInnerClass.class)
                         .isANonStaticInnerClass(),
-                is(false));
+                is(Boolean.FALSE));
     }
 
     public static class SimpleClass {
@@ -84,7 +84,7 @@ public class TestClassTest {
     @Test
     public void dontMarkNonInnerClassAsInnerClass() {
         assertThat(new TestClass(SimpleClass.class).isANonStaticInnerClass(),
-                is(false));
+                is(Boolean.FALSE));
     }
 
     public static class FieldAnnotated {
@@ -212,7 +212,7 @@ public class TestClassTest {
     @Test
     public void identifiesPublicModifier() {
         TestClass tc = new TestClass(PublicClass.class);
-        assertEquals("Wrong flag 'public',", true, tc.isPublic());
+        assertEquals("Wrong flag 'public',", Boolean.TRUE, tc.isPublic());
     }
 
     static class NonPublicClass {
@@ -222,7 +222,7 @@ public class TestClassTest {
     @Test
     public void identifiesNonPublicModifier() {
         TestClass tc = new TestClass(NonPublicClass.class);
-        assertEquals("Wrong flag 'public',", false, tc.isPublic());
+        assertEquals("Wrong flag 'public',", Boolean.FALSE, tc.isPublic());
     }
 
     @Ignore

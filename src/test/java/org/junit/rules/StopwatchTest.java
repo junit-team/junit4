@@ -119,7 +119,7 @@ public class StopwatchTest {
     public static class SkippedTest extends AbstractStopwatchTest {
         @Test
         public void skippedTest() {
-            assumeTrue(false);
+            assumeTrue(Boolean.FALSE);
         }
     }
 

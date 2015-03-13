@@ -12,7 +12,7 @@ import junit.tests.WasRun;
  */
 public class ExtensionTest extends TestCase {
     static class TornDown extends TestSetup {
-        boolean fTornDown = false;
+        boolean fTornDown = Boolean.FALSE;
 
         TornDown(Test test) {
             super(test);
@@ -20,7 +20,7 @@ public class ExtensionTest extends TestCase {
 
         @Override
         protected void tearDown() {
-            fTornDown = true;
+            fTornDown = Boolean.TRUE;
         }
     }
 

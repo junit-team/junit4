@@ -117,9 +117,9 @@ public class AssertTest extends TestCase {
     }
 
     public void testAssertTrue() {
-        assertTrue(true);
+        assertTrue(Boolean.TRUE);
         try {
-            assertTrue(false);
+            assertTrue(Boolean.FALSE);
         } catch (AssertionFailedError e) {
             return;
         }
@@ -127,9 +127,9 @@ public class AssertTest extends TestCase {
     }
 
     public void testAssertFalse() {
-        assertFalse(false);
+        assertFalse(Boolean.FALSE);
         try {
-            assertFalse(true);
+            assertFalse(Boolean.TRUE);
         } catch (AssertionFailedError e) {
             return;
         }

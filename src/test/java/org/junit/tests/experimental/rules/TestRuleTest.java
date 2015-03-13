@@ -38,7 +38,7 @@ public class TestRuleTest {
                 return new Statement() {
                     @Override
                     public void evaluate() throws Throwable {
-                        wasRun = true;
+                        wasRun = Boolean.TRUE;
                         base.evaluate();
                     }
 
@@ -318,7 +318,7 @@ public class TestRuleTest {
                 return new Statement() {
                     @Override
                     public void evaluate() throws Throwable {
-                        wasRun = true;
+                        wasRun = Boolean.TRUE;
                         base.evaluate();
                     }
 
@@ -492,7 +492,7 @@ public class TestRuleTest {
 
         @Test
         public void nothing() {
-            Assume.assumeTrue(false);
+            Assume.assumeTrue(Boolean.FALSE);
         }
     }
 

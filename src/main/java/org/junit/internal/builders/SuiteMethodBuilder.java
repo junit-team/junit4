@@ -17,8 +17,8 @@ public class SuiteMethodBuilder extends RunnerBuilder {
         try {
             testClass.getMethod("suite");
         } catch (NoSuchMethodException e) {
-            return false;
+            return Boolean.FALSE;
         }
-        return true;
+        return Boolean.TRUE;
     }
 }

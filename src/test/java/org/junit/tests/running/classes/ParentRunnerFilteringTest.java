@@ -54,7 +54,7 @@ public class ParentRunnerFilteringTest {
             } else {
                 countMap.put(description, count + 1);
             }
-            return true;
+            return Boolean.TRUE;
         }
 
         @Override

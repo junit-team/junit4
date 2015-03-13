@@ -31,7 +31,7 @@ public class CommandLineTest {
     static public class Example {
         @Test
         public void test() {
-            testWasRun = true;
+            testWasRun = Boolean.TRUE;
         }
     }
 

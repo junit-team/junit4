@@ -7,11 +7,11 @@ import junit.runner.BaseTestRunner;
 
 public class BaseTestRunnerTest extends TestCase {
     public static class MockRunner extends BaseTestRunner {
-        private boolean fRunFailed = false;
+        private boolean fRunFailed = Boolean.FALSE;
 
         @Override
         protected void runFailed(String message) {
-            fRunFailed = true;
+            fRunFailed = Boolean.TRUE;
         }
 
         @Override

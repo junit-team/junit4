@@ -35,7 +35,7 @@ public class MethodRulesTest {
                 return new Statement() {
                     @Override
                     public void evaluate() throws Throwable {
-                        wasRun = true;
+                        wasRun = Boolean.TRUE;
                         base.evaluate();
                     }
 
@@ -52,7 +52,7 @@ public class MethodRulesTest {
 
     @Test
     public void ruleIsIntroducedAndEvaluated() {
-        wasRun = false;
+        wasRun = Boolean.FALSE;
         JUnitCore.runClasses(ExampleTest.class);
         assertTrue(wasRun);
     }
@@ -299,7 +299,7 @@ public class MethodRulesTest {
                     
                     @Override
                     public void evaluate() throws Throwable {
-                        wasRun = true;
+                        wasRun = Boolean.TRUE;
                         base.evaluate();
                     }
                 };

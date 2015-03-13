@@ -44,7 +44,7 @@ public class RuleChainTest {
 
         @Test
         public void example() {
-            assertTrue(true);
+            assertTrue(Boolean.TRUE);
         }
     }
 

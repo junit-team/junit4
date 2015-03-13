@@ -213,7 +213,7 @@ public class MaxStarterTest {
         Request filtered = oneClass.filterWith(new Filter() {
             @Override
             public boolean shouldRun(Description description) {
-                return true;
+                return Boolean.TRUE;
             }
 
             @Override

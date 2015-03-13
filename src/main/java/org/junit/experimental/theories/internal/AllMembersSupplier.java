@@ -165,10 +165,10 @@ public class AllMembersSupplier extends ParameterSupplier {
     private static boolean isAssignableToAnyOf(Class<?>[] typeArray, Object target) {
         for (Class<?> type : typeArray) {
             if (type.isAssignableFrom(target.getClass())) {
-                return true;
+                return Boolean.TRUE;
             }
         }
-        return false;
+        return Boolean.FALSE;
     }
 
     protected Collection<FrameworkMethod> getDataPointsMethods(ParameterSignature sig) {

@@ -21,7 +21,7 @@ public abstract class Filter {
     public static final Filter ALL = new Filter() {
         @Override
         public boolean shouldRun(Description description) {
-            return true;
+            return Boolean.TRUE;
         }
 
         @Override
@@ -55,10 +55,10 @@ public abstract class Filter {
                 // explicitly check if any children want to run
                 for (Description each : description.getChildren()) {
                     if (shouldRun(each)) {
-                        return true;
+                        return Boolean.TRUE;
                     }
                 }
-                return false;
+                return Boolean.FALSE;
             }
 
             @Override

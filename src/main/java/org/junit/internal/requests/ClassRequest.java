@@ -22,7 +22,7 @@ public class ClassRequest extends Request {
     }
 
     public ClassRequest(Class<?> testClass) {
-        this(testClass, true);
+        this(testClass, Boolean.TRUE);
     }
 
     @Override

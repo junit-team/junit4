@@ -115,12 +115,12 @@ public class RuleMemberValidator {
 
         private Builder(Class<? extends Annotation> annotation) {
             this.annotation = annotation;
-            this.methods = false;
+            this.methods = Boolean.FALSE;
             this.validators = new ArrayList<RuleValidator>();
         }
 
         Builder forMethods() {
-            methods = true;
+            methods = Boolean.TRUE;
             return this;
         }
 
