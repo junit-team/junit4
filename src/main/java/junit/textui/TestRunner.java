@@ -83,7 +83,7 @@ public class TestRunner extends BaseTestRunner {
      */
     static public void runAndWait(Test suite) {
         TestRunner aTestRunner = new TestRunner();
-        aTestRunner.doRun(suite, true);
+        aTestRunner.doRun(suite, Boolean.TRUE);
     }
 
     @Override
@@ -106,7 +106,7 @@ public class TestRunner extends BaseTestRunner {
     }
 
     public TestResult doRun(Test test) {
-        return doRun(test, false);
+        return doRun(test, Boolean.FALSE);
     }
 
     public TestResult doRun(Test suite, boolean wait) {
@@ -152,11 +152,11 @@ public class TestRunner extends BaseTestRunner {
     public TestResult start(String args[]) throws Exception {
         String testCase = "";
         String method = "";
-        boolean wait = false;
+        boolean wait = Boolean.FALSE;
 
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-wait")) {
-                wait = true;
+                wait = Boolean.TRUE;
             } else if (args[i].equals("-c")) {
                 testCase = extractClassName(args[++i]);
             } else if (args[i].equals("-m")) {

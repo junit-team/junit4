@@ -68,17 +68,17 @@ public class MoneyBag implements IMoney {
         if (anObject instanceof MoneyBag) {
             MoneyBag aMoneyBag = (MoneyBag) anObject;
             if (aMoneyBag.fMonies.size() != fMonies.size()) {
-                return false;
+                return Boolean.FALSE;
             }
 
             for (Money each : fMonies) {
                 if (!aMoneyBag.contains(each)) {
-                    return false;
+                    return Boolean.FALSE;
                 }
             }
-            return true;
+            return Boolean.TRUE;
         }
-        return false;
+        return Boolean.FALSE;
     }
 
     private Money findMoney(String currency) {
@@ -92,7 +92,7 @@ public class MoneyBag implements IMoney {
 
     private boolean contains(Money m) {
         Money found = findMoney(m.currency());
-        if (found == null) return false;
+        if (found == null) return Boolean.FALSE;
         return found.amount() == m.amount();
     }
 

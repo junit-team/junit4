@@ -56,7 +56,7 @@ public class FailOnTimeout extends Statement {
      * @since 4.12
      */
     public static class Builder {
-        private boolean lookForStuckThread = false;
+        private boolean lookForStuckThread = Boolean.FALSE;
         private long timeout = 0;
         private TimeUnit unit = TimeUnit.SECONDS;
 
@@ -122,7 +122,7 @@ public class FailOnTimeout extends Statement {
         FutureTask<Throwable> task = new FutureTask<Throwable>(callable);
         ThreadGroup threadGroup = new ThreadGroup("FailOnTimeoutGroup");
         Thread thread = new Thread(threadGroup, task, "Time-limited test");
-        thread.setDaemon(true);
+        thread.setDaemon(Boolean.TRUE);
         thread.start();
         callable.awaitStarted();
         Throwable throwable = getResult(task, thread);

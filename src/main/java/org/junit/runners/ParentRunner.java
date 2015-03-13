@@ -122,8 +122,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * {@code public static void} with no arguments.
      */
     protected void collectInitializationErrors(List<Throwable> errors) {
-        validatePublicVoidNoArgMethods(BeforeClass.class, true, errors);
-        validatePublicVoidNoArgMethods(AfterClass.class, true, errors);
+        validatePublicVoidNoArgMethods(BeforeClass.class, Boolean.TRUE, errors);
+        validatePublicVoidNoArgMethods(AfterClass.class, Boolean.TRUE, errors);
         validateClassRules(errors);
         applyValidators(errors);
     }
@@ -199,10 +199,10 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     private boolean areAllChildrenIgnored() {
         for (T child : getFilteredChildren()) {
             if (!isIgnored(child)) {
-                return false;
+                return Boolean.FALSE;
             }
         }
-        return true;
+        return Boolean.TRUE;
     }
 
     /**

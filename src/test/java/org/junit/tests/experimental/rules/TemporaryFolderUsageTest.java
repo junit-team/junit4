@@ -193,7 +193,7 @@ public class TemporaryFolderUsageTest {
     }
 
     private void assertFileDoesNotExist(File file) {
-        checkFileExists("exists", file, false);
+        checkFileExists("exists", file, Boolean.FALSE);
     }
 
     private void checkFileExists(String msg, File file, boolean exists) {
@@ -203,7 +203,7 @@ public class TemporaryFolderUsageTest {
     }
 
     private void assertFileExists(File file) {
-        checkFileExists("does not exist", file, true);
+        checkFileExists("does not exist", file, Boolean.TRUE);
     }
 
     private void assertFileCreatedUnderRootFolder(String msg, File f) {

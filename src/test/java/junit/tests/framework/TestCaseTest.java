@@ -13,11 +13,11 @@ import junit.tests.WasRun;
 public class TestCaseTest extends TestCase {
 
     static class TornDown extends TestCase {
-        boolean fTornDown = false;
+        boolean fTornDown = Boolean.FALSE;
 
         @Override
         protected void tearDown() {
-            fTornDown = true;
+            fTornDown = Boolean.TRUE;
         }
 
         @Override

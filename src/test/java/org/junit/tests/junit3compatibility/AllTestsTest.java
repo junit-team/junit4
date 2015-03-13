@@ -4,7 +4,6 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -18,7 +17,7 @@ public class AllTestsTest {
 
     public static class OneTest extends TestCase {
         public void testSomething() {
-            run = true;
+            run = Boolean.TRUE;
         }
     }
 
@@ -54,7 +53,7 @@ public class AllTestsTest {
     public static class JUnit4Test {
         @org.junit.Test
         public void testSomething() {
-            run = true;
+            run = Boolean.TRUE;
         }
     }
 

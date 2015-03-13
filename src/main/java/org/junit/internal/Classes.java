@@ -13,6 +13,6 @@ public class Classes {
      * @throws ClassNotFoundException
      */
     public static Class<?> getClass(String className) throws ClassNotFoundException {
-        return Class.forName(className, true, currentThread().getContextClassLoader());
+        return Class.forName(className, Boolean.TRUE, currentThread().getContextClassLoader());
     }
 }

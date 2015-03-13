@@ -114,9 +114,9 @@ public class Assert {
             String cleanMessage = message == null ? "" : message;
             throw new ComparisonFailure(cleanMessage, (String) expected,
                     (String) actual);
-        } else {
-            failNotEquals(message, expected, actual);
         }
+        
+        failNotEquals(message, expected, actual);
     }
 
     private static boolean equalsRegardingNull(Object expected, Object actual) {
@@ -600,24 +600,24 @@ public class Assert {
 
     static private boolean doubleIsDifferent(double d1, double d2, double delta) {
         if (Double.compare(d1, d2) == 0) {
-            return false;
+            return Boolean.FALSE;
         }
         if ((Math.abs(d1 - d2) <= delta)) {
-            return false;
+            return Boolean.FALSE;
         }
 
-        return true;
+        return Boolean.TRUE;
     }
 
     static private boolean floatIsDifferent(float f1, float f2, float delta) {
         if (Float.compare(f1, f2) == 0) {
-            return false;
+            return Boolean.FALSE;
         }
         if ((Math.abs(f1 - f2) <= delta)) {
-            return false;
+            return Boolean.FALSE;
         }
 
-        return true;
+        return Boolean.TRUE;
     }
 
     /**

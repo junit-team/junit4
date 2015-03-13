@@ -13,15 +13,15 @@ import junit.framework.TestSuite;
 public class TextRunnerTest extends TestCase {
 
     public void testFailure() throws Exception {
-        execTest("junit.tests.framework.Failure", false);
+        execTest("junit.tests.framework.Failure", Boolean.FALSE);
     }
 
     public void testSuccess() throws Exception {
-        execTest("junit.tests.framework.Success", true);
+        execTest("junit.tests.framework.Success", Boolean.TRUE);
     }
 
     public void testError() throws Exception {
-        execTest("junit.tests.BogusDude", false);
+        execTest("junit.tests.BogusDude", Boolean.FALSE);
     }
 
     void execTest(String testClass, boolean success) throws Exception {

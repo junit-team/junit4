@@ -15,7 +15,7 @@ public abstract class FrameworkMember<T extends FrameworkMember<T>> implements
     boolean isShadowedBy(List<T> members) {
         for (T each : members) {
             if (isShadowedBy(each)) {
-                return true;
+                return Boolean.TRUE;
             }
         }
         return false;

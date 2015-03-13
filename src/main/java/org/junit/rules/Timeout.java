@@ -80,7 +80,7 @@ public class Timeout implements TestRule {
     public Timeout(long timeout, TimeUnit timeUnit) {
         this.timeout = timeout;
         this.timeUnit = timeUnit;
-        lookForStuckThread = false;
+        lookForStuckThread = Boolean.FALSE;
     }
 
     /**
@@ -168,7 +168,7 @@ public class Timeout implements TestRule {
      * @since 4.12
      */
     public static class Builder {
-        private boolean lookForStuckThread = false;
+        private boolean lookForStuckThread = Boolean.FALSE;
         private long timeout = 0;
         private TimeUnit timeUnit = TimeUnit.SECONDS;
 

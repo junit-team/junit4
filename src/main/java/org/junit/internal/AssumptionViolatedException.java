@@ -48,7 +48,7 @@ public class AssumptionViolatedException extends RuntimeException implements Sel
      */
     @Deprecated
     public AssumptionViolatedException(Object value, Matcher<?> matcher) {
-        this(null, true, value, matcher);
+        this(null, Boolean.TRUE, value, matcher);
     }
 
     /**
@@ -59,7 +59,7 @@ public class AssumptionViolatedException extends RuntimeException implements Sel
      */
     @Deprecated
     public AssumptionViolatedException(String assumption, Object value, Matcher<?> matcher) {
-        this(assumption, true, value, matcher);
+        this(assumption, Boolean.TRUE, value, matcher);
     }
 
     /**
@@ -69,7 +69,7 @@ public class AssumptionViolatedException extends RuntimeException implements Sel
      */
     @Deprecated
     public AssumptionViolatedException(String assumption) {
-        this(assumption, false, null, null);
+        this(assumption, Boolean.FALSE, null, null);
     }
 
     /**
@@ -79,7 +79,7 @@ public class AssumptionViolatedException extends RuntimeException implements Sel
      */
     @Deprecated
     public AssumptionViolatedException(String assumption, Throwable e) {
-        this(assumption, false, null, null);
+        this(assumption, Boolean.FALSE, null, null);
         initCause(e);
     }
 

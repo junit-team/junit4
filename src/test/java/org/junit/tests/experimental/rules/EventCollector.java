@@ -98,7 +98,7 @@ class EventCollector extends RunListener {
                 description.appendText("was ");
                 hasSingleFailure().describeMismatch(item, description);
                 description.appendText(": ");
-                boolean first= true;
+                boolean first= Boolean.TRUE;
                 for (Failure f : item.fFailures) {
                     if (!first) {
                         description.appendText(" ,");

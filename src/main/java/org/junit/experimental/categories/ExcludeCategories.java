@@ -41,7 +41,7 @@ public final class ExcludeCategories extends CategoryFilterFactory {
         }
 
         public ExcludesAny(Set<Class<?>> categories) {
-            super(true, null, true, categories);
+            super(Boolean.TRUE, null, Boolean.TRUE, categories);
         }
 
         @Override

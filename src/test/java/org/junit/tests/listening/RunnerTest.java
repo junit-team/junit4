@@ -2,7 +2,6 @@ package org.junit.tests.listening;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import junit.framework.TestCase;
 import org.junit.Test;
 import org.junit.runner.Description;
@@ -65,7 +64,7 @@ public class RunnerTest {
         RunListener listener = new MyListener() {
             @Override
             public void testFinished(Description description) {
-                wasRun = true;
+                wasRun = Boolean.TRUE;
             }
         };
         runner.addListener(listener);

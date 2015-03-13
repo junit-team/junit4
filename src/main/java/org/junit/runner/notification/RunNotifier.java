@@ -20,7 +20,7 @@ import org.junit.runner.Result;
  */
 public class RunNotifier {
     private final List<RunListener> listeners = new CopyOnWriteArrayList<RunListener>();
-    private volatile boolean pleaseStop = false;
+    private volatile boolean pleaseStop = Boolean.FALSE;
 
     /**
      * Internal use only
@@ -199,7 +199,7 @@ public class RunNotifier {
      * to be shared amongst the many runners involved.
      */
     public void pleaseStop() {
-        pleaseStop = true;
+        pleaseStop = Boolean.TRUE;
     }
 
     /**

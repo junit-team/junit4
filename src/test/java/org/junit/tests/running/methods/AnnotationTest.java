@@ -25,13 +25,13 @@ public class AnnotationTest extends TestCase {
 
     @Override
     public void setUp() {
-        run = false;
+        run = Boolean.FALSE;
     }
 
     static public class SimpleTest {
         @Test
         public void success() {
-            run = true;
+            run = Boolean.TRUE;
         }
     }
 
@@ -45,7 +45,7 @@ public class AnnotationTest extends TestCase {
     static public class SimpleTestWithFutureProofExplicitRunner {
         @Test
         public void success() {
-            run = true;
+            run = Boolean.TRUE;
         }
     }
 
@@ -58,7 +58,7 @@ public class AnnotationTest extends TestCase {
     static public class SetupTest {
         @Before
         public void before() {
-            run = true;
+            run = Boolean.TRUE;
         }
 
         @Test
@@ -75,7 +75,7 @@ public class AnnotationTest extends TestCase {
     static public class TeardownTest {
         @After
         public void after() {
-            run = true;
+            run = Boolean.TRUE;
         }
 
         @Test
@@ -112,7 +112,7 @@ public class AnnotationTest extends TestCase {
 
         @Test
         public void test() {
-            run = true;
+            run = Boolean.TRUE;
         }
     }
 
@@ -167,7 +167,7 @@ public class AnnotationTest extends TestCase {
     static public class TeardownAfterFailureTest {
         @After
         public void after() {
-            run = true;
+            run = Boolean.TRUE;
         }
 
         @Test
@@ -210,7 +210,7 @@ public class AnnotationTest extends TestCase {
 
     static public class OldTest extends TestCase {
         public void test() {
-            run = true;
+            run = Boolean.TRUE;
         }
     }
 
@@ -363,12 +363,12 @@ public class AnnotationTest extends TestCase {
 
         @Test
         public void test() {
-            run = true;
+            run = Boolean.TRUE;
         }
     }
 
     public void testErrorInBeforeClass() throws Exception {
-        run = false;
+        run = Boolean.FALSE;
         JUnitCore core = new JUnitCore();
         Result result = core.run(ErrorInBeforeClass.class);
         assertFalse(run);
@@ -380,7 +380,7 @@ public class AnnotationTest extends TestCase {
     static public class ErrorInAfterClass {
         @Test
         public void test() {
-            run = true;
+            run = Boolean.TRUE;
         }
 
         @AfterClass

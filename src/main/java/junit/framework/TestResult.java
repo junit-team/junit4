@@ -26,7 +26,7 @@ public class TestResult {
         fErrors = new ArrayList<TestFailure>();
         fListeners = new ArrayList<TestListener>();
         fRunTests = 0;
-        fStop = false;
+        fStop = Boolean.FALSE;
     }
 
     /**
@@ -173,7 +173,7 @@ public class TestResult {
      * Marks that the test run should stop.
      */
     public synchronized void stop() {
-        fStop = true;
+        fStop = Boolean.TRUE;
     }
 
     /**

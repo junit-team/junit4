@@ -14,10 +14,10 @@ public class ExpectException extends Statement {
 
     @Override
     public void evaluate() throws Exception {
-        boolean complete = false;
+        boolean complete = Boolean.FALSE;
         try {
             next.evaluate();
-            complete = true;
+            complete = Boolean.TRUE;
         } catch (AssumptionViolatedException e) {
             throw e;
         } catch (Throwable e) {

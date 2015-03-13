@@ -65,7 +65,7 @@ public final class ConcurrentRunNotifierTest {
 
     private static class ExaminedListener extends RunListener {
         final boolean throwFromTestStarted;
-        volatile boolean hasTestFailure = false;
+        volatile boolean hasTestFailure = Boolean.FALSE;
 
         ExaminedListener(boolean throwFromTestStarted) {
             this.throwFromTestStarted = throwFromTestStarted;
@@ -80,7 +80,7 @@ public final class ConcurrentRunNotifierTest {
 
         @Override
         public void testFailure(Failure failure) throws Exception {
-            hasTestFailure = true;
+            hasTestFailure = Boolean.TRUE;
         }
     }
 
@@ -101,7 +101,7 @@ public final class ConcurrentRunNotifierTest {
                 examinedListeners[i] = new ExaminedListener(fail);
             }
 
-            final AtomicBoolean condition = new AtomicBoolean(true);
+            final AtomicBoolean condition = new AtomicBoolean(Boolean.TRUE);
             final CyclicBarrier trigger = new CyclicBarrier(2);
             final CountDownLatch latch = new CountDownLatch(10);
 
@@ -129,7 +129,7 @@ public final class ConcurrentRunNotifierTest {
             }
 
             notificationsPool.shutdown();
-            condition.set(false);
+            condition.set(Boolean.FALSE);
             assertTrue(notificationsPool.awaitTermination(TIMEOUT, TimeUnit.SECONDS));
 
             if (totalListenersFailures != 0) {

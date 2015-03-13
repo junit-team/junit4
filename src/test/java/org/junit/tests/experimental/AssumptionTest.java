@@ -135,13 +135,13 @@ public class AssumptionTest {
 
     @Test(expected = AssumptionViolatedException.class)
     public void assumeTrueWorks() {
-        Assume.assumeTrue(false);
+        Assume.assumeTrue(Boolean.FALSE);
     }
 
     public static class HasFailingAssumeInBefore {
         @Before
         public void checkForSomethingThatIsntThere() {
-            assumeTrue(false);
+            assumeTrue(Boolean.FALSE);
         }
 
         @Test
@@ -158,7 +158,7 @@ public class AssumptionTest {
     public static class HasFailingAssumeInBeforeClass {
         @BeforeClass
         public static void checkForSomethingThatIsntThere() {
-            assumeTrue(false);
+            assumeTrue(Boolean.FALSE);
         }
 
         @Test
@@ -174,7 +174,7 @@ public class AssumptionTest {
 
     public static class AssumptionFailureInConstructor {
         public AssumptionFailureInConstructor() {
-            assumeTrue(false);
+            assumeTrue(Boolean.FALSE);
         }
 
         @Test
@@ -190,7 +190,7 @@ public class AssumptionTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void assumeWithExpectedException() {
-        assumeTrue(false);
+        assumeTrue(Boolean.FALSE);
     }
 
     final static String message = "Some random message string.";
@@ -202,7 +202,7 @@ public class AssumptionTest {
     public static class HasAssumeWithMessage {
         @Test
         public void testMethod() {
-            assumeTrue(message, false);
+            assumeTrue(message, Boolean.FALSE);
         }
     }
 

@@ -58,7 +58,7 @@ public abstract class Request {
      * @return a <code>Request</code> that will cause all tests in the class to be run
      */
     public static Request classWithoutSuiteMethod(Class<?> clazz) {
-        return new ClassRequest(clazz, false);
+        return new ClassRequest(clazz, Boolean.FALSE);
     }
 
     /**
@@ -71,7 +71,7 @@ public abstract class Request {
      */
     public static Request classes(Computer computer, Class<?>... classes) {
         try {
-            AllDefaultPossibilitiesBuilder builder = new AllDefaultPossibilitiesBuilder(true);
+            AllDefaultPossibilitiesBuilder builder = new AllDefaultPossibilitiesBuilder(Boolean.TRUE);
             Runner suite = computer.getSuite(builder, classes);
             return runner(suite);
         } catch (InitializationError e) {

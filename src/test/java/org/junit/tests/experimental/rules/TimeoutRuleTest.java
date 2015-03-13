@@ -28,7 +28,7 @@ import org.junit.runner.notification.Failure;
 public class TimeoutRuleTest {
     private static final ReentrantLock run1Lock = new ReentrantLock();
 
-    private static volatile boolean run4done = false;
+    private static volatile boolean run4done = Boolean.FALSE;
 
     public abstract static class AbstractTimeoutTest {
         public static final StringBuffer logger = new StringBuffer();
@@ -68,7 +68,7 @@ public class TimeoutRuleTest {
             Random rnd = new Random();
             byte[] data = new byte[1024];
             File tmp = tmpFile.newFile();
-            while (true) {
+            while (Boolean.TRUE) {
                 RandomAccessFile randomAccessFile = new RandomAccessFile(tmp, "rw");
                 try {
                     FileChannel channel = randomAccessFile.getChannel();
@@ -115,14 +115,14 @@ public class TimeoutRuleTest {
 
     @Before
     public void before() {
-        run4done = false;
+        run4done = Boolean.FALSE;
         run1Lock.lock();
     }
 
     @After
     public void after() {
         // set run4done to make sure that the thread won't continue at run4()
-        run4done = true;
+        run4done = Boolean.TRUE;
         run1Lock.unlock();
     }
 

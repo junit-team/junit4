@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -30,7 +29,7 @@ public class SuiteMethodTest {
         }
 
         public void notObviouslyATest() {
-            wasRun = true;
+            wasRun = Boolean.TRUE;
         }
     }
 
@@ -44,7 +43,7 @@ public class SuiteMethodTest {
     static public class NewTest {
         @Test
         public void sample() {
-            wasRun = true;
+            wasRun = Boolean.TRUE;
         }
 
         public static junit.framework.Test suite() {
@@ -84,7 +83,7 @@ public class SuiteMethodTest {
     static public class NewTestSuiteFails {
         @Test
         public void sample() {
-            wasRun = true;
+            wasRun = Boolean.TRUE;
         }
 
         public static junit.framework.Test suite() {
@@ -106,13 +105,13 @@ public class SuiteMethodTest {
 
         @Test
         public void sample() {
-            wasRun = true;
+            wasRun = Boolean.TRUE;
         }
 
         @Ignore
         @Test
         public void ignore() {
-            wasIgnoredRun = true;
+            wasIgnoredRun = Boolean.TRUE;
         }
 
         public static junit.framework.Test suite() {
@@ -123,7 +122,7 @@ public class SuiteMethodTest {
     @Test
     public void makeSureSuiteNotUsedWithJUnit4Classes2() {
         wasRun = false;
-        NewTestSuiteNotUsed.wasIgnoredRun = false;
+        NewTestSuiteNotUsed.wasIgnoredRun = Boolean.FALSE;
         Result res = JUnitCore.runClasses(NewTestSuiteNotUsed.class);
         assertTrue(wasRun);
         assertFalse(NewTestSuiteNotUsed.wasIgnoredRun);

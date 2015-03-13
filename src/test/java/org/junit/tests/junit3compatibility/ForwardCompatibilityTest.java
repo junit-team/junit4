@@ -213,7 +213,7 @@ public class ForwardCompatibilityTest extends TestCase {
         assertTrue(failure.exceptionMessage().contains("Method shouldBeStatic() should be static"));
     }
 
-    private static boolean wasRun = false;
+    private static boolean wasRun = Boolean.FALSE;
 
     public static class MarkerRunner extends Runner {
         public MarkerRunner(Class<?> klass) {
@@ -221,7 +221,7 @@ public class ForwardCompatibilityTest extends TestCase {
 
         @Override
         public void run(RunNotifier notifier) {
-            wasRun = true;
+            wasRun = Boolean.TRUE;
         }
 
         @Override

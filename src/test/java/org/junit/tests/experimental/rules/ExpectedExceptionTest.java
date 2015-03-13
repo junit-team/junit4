@@ -280,7 +280,7 @@ public class ExpectedExceptionTest {
 
         @Test
         public void failedAssumption() {
-            assumeTrue(false);
+            assumeTrue(Boolean.FALSE);
             thrown.expect(NullPointerException.class);
         }
     }

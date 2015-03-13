@@ -120,30 +120,30 @@ public class Categories extends Suite {
             if (hasNull(categories)) {
                 throw new NullPointerException("has null category");
             }
-            return categoryFilter(matchAny, createSet(categories), true, null);
+            return categoryFilter(matchAny, createSet(categories), Boolean.TRUE, null);
         }
 
         public static CategoryFilter include(Class<?> category) {
-            return include(true, category);
+            return include(Boolean.TRUE, category);
         }
 
         public static CategoryFilter include(Class<?>... categories) {
-            return include(true, categories);
+            return include(Boolean.TRUE, categories);
         }
 
         public static CategoryFilter exclude(boolean matchAny, Class<?>... categories) {
             if (hasNull(categories)) {
                 throw new NullPointerException("has null category");
             }
-            return categoryFilter(true, null, matchAny, createSet(categories));
+            return categoryFilter(Boolean.TRUE, null, matchAny, createSet(categories));
         }
 
         public static CategoryFilter exclude(Class<?> category) {
-            return exclude(true, category);
+            return exclude(Boolean.TRUE, category);
         }
 
         public static CategoryFilter exclude(Class<?>... categories) {
-            return exclude(true, categories);
+            return exclude(Boolean.TRUE, categories);
         }
 
         public static CategoryFilter categoryFilter(boolean matchAnyInclusions, Set<Class<?>> inclusions,
@@ -192,16 +192,16 @@ public class Categories extends Suite {
         @Override
         public boolean shouldRun(Description description) {
             if (hasCorrectCategoryAnnotation(description)) {
-                return true;
+                return Boolean.TRUE;
             }
 
             for (Description each : description.getChildren()) {
                 if (shouldRun(each)) {
-                    return true;
+                    return Boolean.TRUE;
                 }
             }
 
-            return false;
+            return Boolean.FALSE;
         }
 
         private boolean hasCorrectCategoryAnnotation(Description description) {
@@ -215,18 +215,18 @@ public class Categories extends Suite {
             if (!excluded.isEmpty()) {
                 if (excludedAny) {
                     if (matchesAnyParentCategories(childCategories, excluded)) {
-                        return false;
+                        return Boolean.FALSE;
                     }
                 } else {
                     if (matchesAllParentCategories(childCategories, excluded)) {
-                        return false;
+                        return Boolean.FALSE;
                     }
                 }
             }
 
             if (included.isEmpty()) {
                 // Couldn't be excluded, and with no suite's included categories treated as should run.
-                return true;
+                return Boolean.TRUE;
             } else {
                 if (includedAny) {
                     return matchesAnyParentCategories(childCategories, included);
@@ -243,7 +243,7 @@ public class Categories extends Suite {
         private boolean matchesAnyParentCategories(Set<Class<?>> childCategories, Set<Class<?>> parentCategories) {
             for (Class<?> parentCategory : parentCategories) {
                 if (hasAssignableTo(childCategories, parentCategory)) {
-                    return true;
+                    return Boolean.TRUE;
                 }
             }
             return false;
@@ -256,10 +256,10 @@ public class Categories extends Suite {
         private boolean matchesAllParentCategories(Set<Class<?>> childCategories, Set<Class<?>> parentCategories) {
             for (Class<?> parentCategory : parentCategories) {
                 if (!hasAssignableTo(childCategories, parentCategory)) {
-                    return false;
+                    return Boolean.FALSE;
                 }
             }
-            return true;
+            return Boolean.TRUE;
         }
 
         private static Set<Class<?>> categories(Description description) {
@@ -296,10 +296,10 @@ public class Categories extends Suite {
             if (classes == null) return false;
             for (Class<?> clazz : classes) {
                 if (clazz == null) {
-                    return true;
+                    return Boolean.TRUE;
                 }
             }
-            return false;
+            return Boolean.FALSE;
         }
     }
 
@@ -361,16 +361,16 @@ public class Categories extends Suite {
     private static boolean canHaveCategorizedChildren(Description description) {
         for (Description each : description.getChildren()) {
             if (each.getTestClass() == null) {
-                return false;
+                return Boolean.FALSE;
             }
         }
-        return true;
+        return Boolean.TRUE;
     }
 
     private static boolean hasAssignableTo(Set<Class<?>> assigns, Class<?> to) {
         for (final Class<?> from : assigns) {
             if (to.isAssignableFrom(from)) {
-                return true;
+                return Boolean.TRUE;
             }
         }
         return false;

@@ -86,10 +86,10 @@ final class SynchronizedRunListener extends RunListener {
     @Override
     public boolean equals(Object other) {
         if (this == other) {
-            return true;
+            return Boolean.TRUE;
         }
         if (!(other instanceof SynchronizedRunListener)) {
-            return false;
+            return Boolean.FALSE;
         }
         SynchronizedRunListener that = (SynchronizedRunListener) other;
         
