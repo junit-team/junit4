@@ -1,6 +1,10 @@
 package org.junit.runner.manipulation;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import org.junit.runner.Description;
 
@@ -10,7 +14,7 @@ import org.junit.runner.Description;
  *
  * @since 4.0
  */
-public class Sorter implements Comparator<Description> {
+public class Sorter extends Ordering implements Comparator<Description> {
     /**
      * NULL is a <code>Sorter</code> that leaves elements in an undefined order
      */
@@ -33,16 +37,32 @@ public class Sorter implements Comparator<Description> {
     }
 
     /**
-     * Sorts the test in <code>runner</code> using <code>comparator</code>
+     * Sorts the test in <code>runner</code> using <code>comparator</code>.
      */
-    public void apply(Object object) {
-        if (object instanceof Sortable) {
-            Sortable sortable = (Sortable) object;
+    @Override
+    public void apply(Object runner) {
+        // Sorting is more efficient than ordering, so check if the runner is Sortable first
+        if (runner instanceof Sortable) {
+            Sortable sortable = (Sortable) runner;
             sortable.sort(this);
+        } else {
+            try {
+                super.apply(runner);
+            } catch (InvalidOrderingException e) {
+                // Can never get here when applying a sortable ordering.
+                throw new AssertionError(e);
+            }
         }
     }
 
     public int compare(Description o1, Description o2) {
         return comparator.compare(o1, o2);
+    }
+ 
+    @Override
+    public final List<Description> order(Collection<Description> siblings) {
+        List<Description> sorted = new ArrayList<Description>(siblings);
+        Collections.sort(sorted, this);
+        return sorted;
     }
 }

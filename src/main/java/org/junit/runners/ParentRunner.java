@@ -7,11 +7,14 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -25,11 +28,15 @@ import org.junit.internal.runners.statements.RunBefores;
 import org.junit.rules.RunRules;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
+import org.junit.runner.OrderWith;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
+import org.junit.runner.manipulation.GenericOrdering;
+import org.junit.runner.manipulation.InvalidOrderingException;
 import org.junit.runner.manipulation.NoTestsRemainException;
-import org.junit.runner.manipulation.Sortable;
+import org.junit.runner.manipulation.Orderable;
+import org.junit.runner.manipulation.Ordering;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
@@ -56,7 +63,7 @@ import org.junit.validator.TestClassValidator;
  * @since 4.5
  */
 public abstract class ParentRunner<T> extends Runner implements Filterable,
-        Sortable {
+        Orderable {
     private static final List<TestClassValidator> VALIDATORS = Arrays.asList(
             new AnnotationsValidator(), new PublicClassValidator());
 
@@ -64,7 +71,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     private final TestClass testClass;
 
     // Guarded by childrenLock
-    private volatile Collection<T> filteredChildren = null;
+    private volatile List<T> filteredChildren = null;
 
     private volatile RunnerScheduler scheduler = new RunnerScheduler() {
         public void schedule(Runnable childStatement) {
@@ -264,7 +271,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     protected Statement childrenInvoker(final RunNotifier notifier) {
         return new Statement() {
             @Override
-            public void evaluate() {
+            public void evaluate() throws Exception {
                 runChildren(notifier);
             }
         };
@@ -281,7 +288,10 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         return false;
     }
 
-    private void runChildren(final RunNotifier notifier) {
+    private void runChildren(final RunNotifier notifier) throws Exception {
+        if (invalidOrderingException != null) {
+            throw new InitializationError(invalidOrderingException);
+        }
         final RunnerScheduler currentScheduler = scheduler;
         try {
             for (final T each : getFilteredChildren()) {
@@ -389,7 +399,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
                     iter.remove();
                 }
             }
-            filteredChildren = Collections.unmodifiableCollection(children);
+            filteredChildren = Collections.unmodifiableList(children);
             if (filteredChildren.isEmpty()) {
                 throw new NoTestsRemainException();
             }
@@ -403,7 +413,49 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             }
             List<T> sortedChildren = new ArrayList<T>(getFilteredChildren());
             Collections.sort(sortedChildren, comparator(sorter));
-            filteredChildren = Collections.unmodifiableCollection(sortedChildren);
+            filteredChildren = Collections.unmodifiableList(sortedChildren);
+        }
+    }
+
+    /**
+     * Implementation of {@link Orderable#order(GenericOrdering)}.
+     *
+     * @since 4.13
+     */
+    public void order(GenericOrdering ordering) throws InvalidOrderingException {
+        synchronized (childrenLock) {
+            List<T> children = getFilteredChildren();
+            Map<Description, List<T>> childMap = new LinkedHashMap<Description, List<T>>(
+                    children.size());
+            for (T child : children) {
+                Description description = describeChild(child);
+                List<T> childrenWithDescription = childMap.get(description);
+                if (childrenWithDescription == null) {
+                    childrenWithDescription = new ArrayList<T>(1);
+                    childMap.put(description, childrenWithDescription);
+                }
+                childrenWithDescription.add(child);
+                ordering.apply(child);
+            }
+
+            Set<Description> uniqueDescriptions = childMap.keySet();
+            List<Description> inOrder = ordering.order(Collections.unmodifiableSet(uniqueDescriptions));
+
+            if (!uniqueDescriptions.containsAll(inOrder)) {
+                throw new InvalidOrderingException("Ordering added items");
+            }
+            Set<Description> resultAsSet = new HashSet<Description>(inOrder);
+            if (resultAsSet.size() != inOrder.size()) {
+                throw new InvalidOrderingException("Ordering duplicated items");
+            } else if (!resultAsSet.containsAll(uniqueDescriptions)) {
+                throw new InvalidOrderingException("Ordering removed items");
+            }
+
+            children = new ArrayList<T>(children.size());
+            for (Description description : inOrder) {
+                children.addAll(childMap.get(description));
+            }
+            filteredChildren = Collections.unmodifiableList(children);
         }
     }
 
@@ -418,13 +470,27 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             throw new InitializationError(errors);
         }
     }
+  
+    private volatile InvalidOrderingException invalidOrderingException;
 
-    private Collection<T> getFilteredChildren() {
+    private List<T> getFilteredChildren() {
         if (filteredChildren == null) {
             synchronized (childrenLock) {
                 if (filteredChildren == null) {
-                    filteredChildren = Collections.unmodifiableCollection(getChildren());
+                    List<T> children = getChildren();
+                    filteredChildren = Collections.unmodifiableList(children);
+                    
+                    OrderWith orderWith = testClass.getAnnotation(OrderWith.class);
+                    if (orderWith != null) {
+                        try {
+                            Ordering ordering = Ordering.definedBy(orderWith.value());
+                            ordering.apply(this);
+                        } catch (InvalidOrderingException e) {
+                            invalidOrderingException = e;
+                        }
+                    }
                 }
+                
             }
         }
         return filteredChildren;

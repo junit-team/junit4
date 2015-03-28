@@ -1,9 +1,6 @@
 package org.junit.tests.manipulation;
 
 import static org.junit.Assert.assertEquals;
-
-import java.util.Comparator;
-
 import junit.framework.JUnit4TestAdapter;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,26 +10,20 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
+import org.junit.runner.manipulation.GenericOrdering;
+import org.junit.runner.manipulation.InvalidOrderingException;
 import org.junit.runner.manipulation.Orderable;
-import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 
 @RunWith(Enclosed.class)
-public class SortableTest {
-    private static Comparator<Description> forward() {
-        return Comparators.alphanumeric();
-    }
-
-    private static Comparator<Description> backward() {
-        return Comparators.reverse(Comparators.alphanumeric());
-    }
-
-    public static class TestClassRunnerIsSortable {
+public class OrderableTest {
+ 
+    public static class TestClassRunnerIsOrderable {
         private static String log = "";
 
-        public static class SortMe {
+        public static class OrderMe {
             @Test
             public void a() {
                 log += "a";
@@ -55,16 +46,16 @@ public class SortableTest {
         }
 
         @Test
-        public void sortingForwardWorksOnTestClassRunner() {
-            Request forward = Request.aClass(SortMe.class).sortWith(forward());
+        public void orderingForwardWorksOnTestClassRunner() {
+            Request forward = Request.aClass(OrderMe.class).orderWith(new AlphanumericOrdering());
 
             new JUnitCore().run(forward);
             assertEquals("abc", log);
         }
 
         @Test
-        public void sortingBackwardWorksOnTestClassRunner() {
-            Request backward = Request.aClass(SortMe.class).sortWith(backward());
+        public void orderingBackwardWorksOnTestClassRunner() {
+            Request backward = Request.aClass(OrderMe.class).orderWith(new ReverseAlphanumericOrdering());
 
             new JUnitCore().run(backward);
             assertEquals("cba", log);
@@ -108,26 +99,98 @@ public class SortableTest {
         }
 
         @Test
-        public void sortingForwardWorksOnSuite() {
-            Request forward = Request.aClass(Enclosing.class).sortWith(forward());
+        public void orderingForwardWorksOnSuite() {
+            Request forward = Request.aClass(Enclosing.class).orderWith(new AlphanumericOrdering());
 
             new JUnitCore().run(forward);
             assertEquals("AaAbAcBaBbBc", log);
         }
 
         @Test
-        public void sortingBackwardWorksOnSuite() {
-            Request backward = Request.aClass(Enclosing.class).sortWith(backward());
+        public void orderingBackwardWorksOnSuite() {
+            Request backward = Request.aClass(Enclosing.class).orderWith(new ReverseAlphanumericOrdering());
 
             new JUnitCore().run(backward);
             assertEquals("BcBbBaAcAbAa", log);
         }
     }
 
-    public static class TestClassRunnerIsSortableWithSuiteMethod {
+    public static class TestOrderableClassRunnerIsSortable {
         private static String log = "";
 
-        public static class SortMe {
+        /**
+         * A Runner that implements {@link Orderable}.
+         */
+        public static class OrderableRunner extends Runner implements Orderable {
+            private final BlockJUnit4ClassRunner delegate;
+
+            public OrderableRunner(Class<?> klass) throws Throwable {
+                delegate = new BlockJUnit4ClassRunner(klass);
+            }
+            
+            @Override
+            public void run(RunNotifier notifier) {
+                delegate.run(notifier);
+            }
+                
+            @Override
+            public Description getDescription() {
+                return delegate.getDescription();
+            }
+
+            public void order(GenericOrdering ordering) throws InvalidOrderingException {
+                delegate.order(ordering);
+            }
+
+            public void sort(Sorter sorter) {
+                delegate.sort(sorter);
+            }
+        }
+
+        @RunWith(OrderableRunner.class)
+        public static class OrderMe {
+            @Test
+            public void a() {
+                log += "a";
+            }
+
+            @Test
+            public void b() {
+                log += "b";
+            }
+
+            @Test
+            public void c() {
+                log += "c";
+            }
+        }
+
+        @Before
+        public void resetLog() {
+            log = "";
+        }
+
+        @Test
+        public void orderingorwardWorksOnTestClassRunner() {
+            Request forward = Request.aClass(OrderMe.class).orderWith(new AlphanumericOrdering());
+
+            new JUnitCore().run(forward);
+            assertEquals("abc", log);
+        }
+
+        @Test
+        public void orderedBackwardWorksOnTestClassRunner() {
+            Request backward = Request.aClass(OrderMe.class).orderWith(new ReverseAlphanumericOrdering());
+
+            new JUnitCore().run(backward);
+            assertEquals("cba", log);
+        }
+    }
+
+    public static class TestClassRunnerIsOrderableWithSuiteMethod {
+        private static String log = "";
+
+        public static class OrderMe {
             @Test
             public void a() {
                 log += "a";
@@ -144,7 +207,7 @@ public class SortableTest {
             }
 
             public static junit.framework.Test suite() {
-                return new JUnit4TestAdapter(SortMe.class);
+                return new JUnit4TestAdapter(OrderMe.class);
             }
         }
 
@@ -154,25 +217,25 @@ public class SortableTest {
         }
 
         @Test
-        public void sortingForwardWorksOnTestClassRunner() {
-            Request forward = Request.aClass(SortMe.class).sortWith(forward());
+        public void orderingForwardWorksOnTestClassRunner() {
+            Request forward = Request.aClass(OrderMe.class).orderWith(new AlphanumericOrdering());
 
             new JUnitCore().run(forward);
             assertEquals("abc", log);
         }
 
         @Test
-        public void sortingBackwardWorksOnTestClassRunner() {
-            Request backward = Request.aClass(SortMe.class).sortWith(backward());
+        public void orderingBackwardWorksOnTestClassRunner() {
+            Request backward = Request.aClass(OrderMe.class).orderWith(new ReverseAlphanumericOrdering());
 
             new JUnitCore().run(backward);
             assertEquals("cba", log);
         }
     }
 
-    public static class UnsortableRunnersAreHandledWithoutCrashing {
-        public static class UnsortableRunner extends Runner {
-            public UnsortableRunner(Class<?> klass) {
+    public static class UnOrderableRunnersAreHandledWithoutCrashing {
+        public static class UnOrderableRunner extends Runner {
+            public UnOrderableRunner(Class<?> klass) {
             }
 
             @Override
@@ -185,89 +248,17 @@ public class SortableTest {
             }
         }
 
-        @RunWith(UnsortableRunner.class)
-        public static class Unsortable {
+        @RunWith(UnOrderableRunner.class)
+        public static class UnOrderable {
             @Test
             public void a() {
             }
         }
 
         @Test
-        public void unsortablesAreHandledWithoutCrashing() {
-            Request unsorted = Request.aClass(Unsortable.class).sortWith(forward());
-            new JUnitCore().run(unsorted);
-        }
-    }
-
-    public static class TestOnlySortableClassRunnerIsSortable {
-        private static String log = "";
-
-        /**
-         * A Runner that implements {@link Sortable} but not {@link Orderable}.
-         */
-        public static class SortableRunner extends Runner implements Sortable {
-            private final BlockJUnit4ClassRunner delegate;
-
-            public SortableRunner(Class<?> klass) throws Throwable {
-                delegate = new BlockJUnit4ClassRunner(klass);
-            }
-
-            @Override
-            public void run(RunNotifier notifier) {
-                delegate.run(notifier);
-            }
-
-            @Override
-            public Description getDescription() {
-                return delegate.getDescription();
-            }
-
-            public void sort(Sorter sorter) {
-                delegate.sort(sorter);
-            }
-        }
-
-        @RunWith(SortableRunner.class)
-        public static class SortMe {
-            @Test
-            public void a() {
-                log += "a";
-            }
-
-            @Test
-            public void b() {
-                log += "b";
-            }
-
-            @Test
-            public void c() {
-                log += "c";
-            }
-
-            public static junit.framework.Test suite() {
-                return new JUnit4TestAdapter(SortMe.class);
-            }
-        }
-
-        @Before
-        public void resetLog() {
-            log = "";
-        }
-
-        @Test
-        public void sortingForwardWorksOnTestClassRunner() {
-            Request forward = Request.aClass(SortMe.class).sortWith(forward());
-
-            new JUnitCore().run(forward);
-            assertEquals("abc", log);
-        }
-
-        @Test
-        public void sortingBackwardWorksOnTestClassRunner() {
-            Request backward = Request.aClass(SortMe.class).sortWith(backward());
-
-            new JUnitCore().run(backward);
-            assertEquals("cba", log);
+        public void unOrderablesAreHandledWithoutCrashing() {
+            Request unordered = Request.aClass(UnOrderable.class).orderWith(new AlphanumericOrdering());
+            new JUnitCore().run(unordered);
         }
     }
 }
