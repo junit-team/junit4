@@ -7,11 +7,12 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -29,6 +30,8 @@ import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
 import org.junit.runner.manipulation.NoTestsRemainException;
+import org.junit.runner.manipulation.Orderable;
+import org.junit.runner.manipulation.Ordering;
 import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
@@ -56,7 +59,7 @@ import org.junit.validator.TestClassValidator;
  * @since 4.5
  */
 public abstract class ParentRunner<T> extends Runner implements Filterable,
-        Sortable {
+        Sortable, Orderable {
     private static final List<TestClassValidator> VALIDATORS = Arrays.asList(
             new AnnotationsValidator(), new PublicClassValidator());
 
@@ -64,7 +67,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     private final TestClass testClass;
 
     // Guarded by childrenLock
-    private volatile Collection<T> filteredChildren = null;
+    private volatile List<T> filteredChildren = null;
 
     private volatile RunnerScheduler scheduler = new RunnerScheduler() {
         public void schedule(Runnable childStatement) {
@@ -389,7 +392,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
                     iter.remove();
                 }
             }
-            filteredChildren = Collections.unmodifiableCollection(children);
+            filteredChildren = Collections.unmodifiableList(children);
             if (filteredChildren.isEmpty()) {
                 throw new NoTestsRemainException();
             }
@@ -403,7 +406,36 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             }
             List<T> sortedChildren = new ArrayList<T>(getFilteredChildren());
             Collections.sort(sortedChildren, comparator(sorter));
-            filteredChildren = Collections.unmodifiableCollection(sortedChildren);
+            filteredChildren = Collections.unmodifiableList(sortedChildren);
+        }
+    }
+
+    public void order(Ordering ordering) {
+        synchronized (childrenLock) {
+            List<T> children = getFilteredChildren();
+            Map<Description, T> childMap = new LinkedHashMap<Description, T>(children.size());
+            for (T child : children) {
+                childMap.put(describeChild(child), child);
+                ordering.apply(child);
+            }
+            if (childMap.size() != children.size()) {
+                // Duplicate child descriptions; can't order
+                return;
+            }
+
+            List<Description> inOrder = ordering.order(
+                    Collections.unmodifiableSet(childMap.keySet()));
+            if (!(inOrder.size() == children.size()
+                    && childMap.keySet().containsAll(inOrder))) {
+                // Bad ordering
+                return;
+            }
+            children = new ArrayList<T>(children.size());
+            for (Description description : inOrder) {
+                children.add(childMap.get(description));
+            }
+
+            filteredChildren = Collections.unmodifiableList(children);
         }
     }
 
@@ -419,11 +451,11 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         }
     }
 
-    private Collection<T> getFilteredChildren() {
+    private List<T> getFilteredChildren() {
         if (filteredChildren == null) {
             synchronized (childrenLock) {
                 if (filteredChildren == null) {
-                    filteredChildren = Collections.unmodifiableCollection(getChildren());
+                    filteredChildren = Collections.unmodifiableList(getChildren());
                 }
             }
         }

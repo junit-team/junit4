@@ -91,6 +91,7 @@ import org.junit.tests.listening.TextListenerTest;
 import org.junit.tests.listening.UserStopTest;
 import org.junit.tests.manipulation.FilterTest;
 import org.junit.tests.manipulation.FilterableTest;
+import org.junit.tests.manipulation.OrderableTest;
 import org.junit.tests.manipulation.SingleMethodTest;
 import org.junit.tests.manipulation.SortableTest;
 import org.junit.tests.running.classes.BlockJUnit4ClassRunnerTest;
@@ -155,6 +156,7 @@ import org.junit.validator.PublicClassValidatorTest;
         ValidationTest.class,
         UserStopTest.class,
         SortableTest.class,
+        OrderableTest.class,
         JUnit38ClassRunnerTest.class,
         SystemExitTest.class,
         JUnitCoreReturnsCorrectExitCodeTest.class,
