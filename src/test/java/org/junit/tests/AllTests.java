@@ -6,6 +6,7 @@ import junit.samples.money.MoneyTest;
 import org.junit.AssumptionViolatedExceptionTest;
 import org.junit.experimental.categories.CategoryFilterFactoryTest;
 import org.junit.internal.MethodSorterTest;
+import org.junit.internal.StackTracesTest;
 import org.junit.internal.matchers.StacktracePrintingMatcherTest;
 import org.junit.internal.matchers.ThrowableCauseMatcherTest;
 import org.junit.rules.DisableOnDebugTest;
@@ -235,6 +236,7 @@ import org.junit.validator.PublicClassValidatorTest;
         ForwardCompatibilityPrintingTest.class,
         DescriptionTest.class,
         ErrorReportingRunnerTest.class,
+        StackTracesTest.class,
         TemporaryFolderRuleAssuredDeletionTest.class
 })
 public class AllTests {
