@@ -33,12 +33,15 @@ public class Sorter implements Comparator<Description> {
     }
 
     /**
-     * Sorts the test in <code>runner</code> using <code>comparator</code>
+     * Sorts the test in <code>runner</code> using <code>comparator</code>.
      */
-    public void apply(Object object) {
-        if (object instanceof Sortable) {
-            Sortable sortable = (Sortable) object;
+    public void apply(Object runner) {
+        if (runner instanceof Sortable) {
+            Sortable sortable = (Sortable) runner;
             sortable.sort(this);
+        } else if (runner instanceof Orderable) {
+            Orderable orderable = (Orderable) runner;
+            orderable.order(Ordering.sortedBy(this));
         }
     }
 

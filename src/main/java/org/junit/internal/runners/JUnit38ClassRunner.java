@@ -13,6 +13,8 @@ import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
 import org.junit.runner.manipulation.NoTestsRemainException;
+import org.junit.runner.manipulation.Orderable;
+import org.junit.runner.manipulation.Ordering;
 import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.Failure;
@@ -20,7 +22,7 @@ import org.junit.runner.notification.RunNotifier;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
+public class JUnit38ClassRunner extends Runner implements Filterable, Sortable, Orderable {
     private static final class OldTestClassAdaptingListener implements
             TestListener {
         private final RunNotifier notifier;
@@ -167,6 +169,13 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
         if (getTest() instanceof Sortable) {
             Sortable adapter = (Sortable) getTest();
             adapter.sort(sorter);
+        }
+    }
+
+    public void order(Ordering ordering) {
+        if (getTest() instanceof Orderable) {
+            Orderable adapter = (Orderable) getTest();
+            adapter.order(ordering);
         }
     }
 
