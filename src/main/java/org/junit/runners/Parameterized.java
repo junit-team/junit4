@@ -23,34 +23,52 @@ import org.junit.runners.parameterized.TestWithParameters;
  * When running a parameterized test class, instances are created for the
  * cross-product of the test methods and the test data elements.
  * <p>
- * For example, to test a Fibonacci function, write:
+ * For example, this class has a method that adds two integers and returns the sum:
  * <pre>
+ * &#047;* Example class that adds two integers. *&#047;
+ * public class IntAdder {
+ *     public static int add(int addend1, int addend2) {
+ *         return addend1 + addend2;
+ *     }
+ * }
+ * </pre>
+ * The following is a test for {&#064;link IntAdder}.
+ * For each element returned from the <code>&#064;Parameters</code> annotated method,
+ * an instance of the <code>Parameterized</code> test class is created and
+ * its <code>&#064;Test</code> annotated method (e.g. <code>test()</code>) is invoked.
+ * <pre>
+ * &#047;* Tests for {&#064;link IntAdder}. *&#047;
  * &#064;RunWith(Parameterized.class)
- * public class FibonacciTest {
- *     &#064;Parameters(name= &quot;{index}: fib[{0}]={1}&quot;)
+ * public class IntAdderTest {
+ *     &#047;* Each of these is used to create a new {&#064;link IntAdderTest} instance. *&#047;
+ *     &#064;Parameters(name = &quot;{index}: {0} + {1} = {2}&quot;)
  *     public static Iterable&lt;Object[]&gt; data() {
- *         return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
- *                 { 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
+ *         return Arrays.asList(new Object[][] {
+ *             { -1, 1, 0 },
+ *             {  0, 0, 0 },
+ *             {  1, 0, 1 },
+ *             {  1, 1, 2 } });
  *     }
- *
- *     private int fInput;
- *
- *     private int fExpected;
- *
- *     public FibonacciTest(int input, int expected) {
- *         fInput= input;
- *         fExpected= expected;
+ * 
+ *     private int addend1;
+ *     private int addend2;
+ *     private int sum;
+ * 
+ *     public IntAdderTest(int addend1, int addend2, int sum) {
+ *         this.addend1 = addend1;
+ *         this.addend2 = addend2;
+ *         this.sum = sum;
  *     }
- *
+ * 
  *     &#064;Test
  *     public void test() {
- *         assertEquals(fExpected, Fibonacci.compute(fInput));
+ *         assertEquals(sum, IntAdder.add(addend1, addend2));
  *     }
  * }
  * </pre>
  * <p>
- * Each instance of <code>FibonacciTest</code> will be constructed using the
- * two-argument constructor and the data values in the
+ * Each instance of <code>IntAdderTest</code> will be constructed using its
+ * three-argument constructor and the data values provided by the
  * <code>&#064;Parameters</code> method.
  * <p>
  * In order that you can easily identify the individual tests, you may provide a
@@ -68,44 +86,53 @@ import org.junit.runners.parameterized.TestWithParameters;
  * </dl>
  * <p>
  * In the example given above, the <code>Parameterized</code> runner creates
- * names like <code>[1: fib(3)=2]</code>. If you don't use the name parameter,
- * then the current parameter index is used as name.
+ * names like <code>[{index} {0} + {1} = {2}]</code>. If you don't use the name
+ * parameter, then the current parameter index is used as the name.
  * <p>
  * You can also write:
  * <pre>
  * &#064;RunWith(Parameterized.class)
- * public class FibonacciTest {
- *  &#064;Parameters
- *  public static Iterable&lt;Object[]&gt; data() {
- *      return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
- *                 { 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
- *  }
+ * public class IntAdderTest {
+ *     &#064;Parameters(name = &quot;{index}: {0} + {1} = {2}&quot;)
+ *     public static Iterable&lt;Object[]&gt; data() {
+ *         return Arrays.asList(new Object[][] {
+ *             { -1, 1, 0 },
+ *             {  0, 0, 0 },
+ *             {  1, 0, 1 },
+ *             {  1, 1, 2 } });
+ *     }
  *  
- *  &#064;Parameter(0)
- *  public int fInput;
+ *     &#064;Parameter(0)
+ *     public int addend1;
  *
- *  &#064;Parameter(1)
- *  public int fExpected;
+ *     &#064;Parameter(1)
+ *     public int addend2;
  *
- *  &#064;Test
- *  public void test() {
- *      assertEquals(fExpected, Fibonacci.compute(fInput));
- *  }
+ *     &#064;Parameter(2)
+ *     public int sum;
+ *
+ *     &#064;Test
+ *     public void test() {
+ *         assertEquals(sum, IntAdder.add(addend1, addend2));
+ *     }
  * }
  * </pre>
  * <p>
- * Each instance of <code>FibonacciTest</code> will be constructed with the default constructor
+ * Each instance of <code>IntAdderTest</code> will be constructed with the default constructor
  * and fields annotated by <code>&#064;Parameter</code>  will be initialized
  * with the data values in the <code>&#064;Parameters</code> method.
  *
  * <p>
- * The parameters can be provided as an array, too:
+ * The parameters can be provided as an array:
  * 
  * <pre>
- * &#064;Parameters
- * public static Object[][] data() {
- * 	return new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 }, { 3, 2 }, { 4, 3 },
- * 			{ 5, 5 }, { 6, 8 } };
+ * &#064;Parameters(name = &quot;{index}: {0} + {1} = {2}&quot;)
+ * public static Iterable&lt;Object[]&gt; data() {
+ *     return Arrays.asList(new Object[][] {
+ *         { -1, 1, 0 },
+ *         {  0, 0, 0 },
+ *         {  1, 0, 1 },
+ *         {  1, 1, 2 } });
  * }
  * </pre>
  * 
