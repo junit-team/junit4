@@ -4,6 +4,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.List;
 
+import org.junit.Test;
+import org.junit.internal.runners.statements.InvokeMethod;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.Parameterized.Parameter;
@@ -21,6 +23,8 @@ public class BlockJUnit4ClassRunnerWithParameters extends
     private final Object[] parameters;
 
     private final String name;
+    
+    private boolean useTestInjection = false;
 
     public BlockJUnit4ClassRunnerWithParameters(TestWithParameters test)
             throws InitializationError {
@@ -34,9 +38,19 @@ public class BlockJUnit4ClassRunnerWithParameters extends
     public Object createTest() throws Exception {
         if (fieldsAreAnnotated()) {
             return createTestUsingFieldInjection();
-        } else {
+        }
+        
+        if (constructorHasParameters()) {
             return createTestUsingConstructorInjection();
         }
+        
+        Object instance = createTestUsingTestInjection();
+        useTestInjection = true;
+        return instance;
+    }
+    
+    private Object createTestUsingTestInjection() throws Exception {
+        return getTestClass().getOnlyConstructor().newInstance();
     }
 
     private Object createTestUsingConstructorInjection() throws Exception {
@@ -73,6 +87,30 @@ public class BlockJUnit4ClassRunnerWithParameters extends
         return testClassInstance;
     }
 
+    private boolean constructorHasParameters() {
+        Class<?>[] parameterTypes = getTestClass().getOnlyConstructor().getParameterTypes();
+        return parameterTypes.length > 0;
+    }
+    
+    @Override
+    protected Statement methodInvoker(FrameworkMethod method,
+            Object testInstance) {
+        if(useTestInjection) {
+            return new InvokeParameterizedMethod(method, parameters, testInstance);
+        } else {
+            return super.methodInvoker(method, testInstance);
+        }
+    }
+    
+    @Override
+    protected void validateTestMethods(List<Throwable> errors) {
+        List<FrameworkMethod> methods = getTestClass().getAnnotatedMethods(Test.class);
+
+        for (FrameworkMethod eachTestMethod : methods) {
+            eachTestMethod.validatePublicVoid(false, errors);
+        }
+    }
+    
     @Override
     protected String getName() {
         return name;
