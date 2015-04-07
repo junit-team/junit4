@@ -98,7 +98,7 @@ public class BlockJUnit4ClassRunnerWithParameters extends
         if(useTestInjection) {
             return new InvokeParameterizedMethod(method, parameters, testInstance);
         } else {
-            return new InvokeMethod(method, testInstance);
+            return super.methodInvoker(method, testInstance);
         }
     }
     
