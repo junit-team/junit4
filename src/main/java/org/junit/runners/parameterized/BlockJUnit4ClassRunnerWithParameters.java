@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import org.junit.Test;
+import org.junit.internal.runners.statements.InvokeMethod;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.Parameterized.Parameter;
@@ -22,6 +23,8 @@ public class BlockJUnit4ClassRunnerWithParameters extends
     private final Object[] parameters;
 
     private final String name;
+    
+    private boolean useTestInjection = false;
 
     public BlockJUnit4ClassRunnerWithParameters(TestWithParameters test)
             throws InitializationError {
@@ -41,7 +44,9 @@ public class BlockJUnit4ClassRunnerWithParameters extends
             return createTestUsingConstructorInjection();
         }
         
-        return createTestUsingTestInjection();
+        Object instance = createTestUsingTestInjection();
+        useTestInjection = true;
+        return instance;
     }
     
     private Object createTestUsingTestInjection() throws Exception {
@@ -83,14 +88,18 @@ public class BlockJUnit4ClassRunnerWithParameters extends
     }
 
     private boolean constructorHasParameters() {
-        Class<?>[] parameters = getTestClass().getOnlyConstructor().getParameterTypes();
-        return parameters.length > 0;
+        Class<?>[] parameterTypes = getTestClass().getOnlyConstructor().getParameterTypes();
+        return parameterTypes.length > 0;
     }
     
     @Override
     protected Statement methodInvoker(FrameworkMethod method,
             Object testInstance) {
-        return new InvokeParameterizedMethod(method, parameters, testInstance);
+        if(useTestInjection) {
+            return new InvokeParameterizedMethod(method, parameters, testInstance);
+        } else {
+            return new InvokeMethod(method, testInstance);
+        }
     }
     
     @Override
