@@ -83,7 +83,7 @@ public class BlockJUnit4ClassRunnerWithParameters extends
     }
 
     private boolean constructorHasParameters() {
-        java.lang.reflect.Parameter[] parameters = getTestClass().getOnlyConstructor().getParameters();
+        Class<?>[] parameters = getTestClass().getOnlyConstructor().getParameterTypes();
         return parameters.length > 0;
     }
     
