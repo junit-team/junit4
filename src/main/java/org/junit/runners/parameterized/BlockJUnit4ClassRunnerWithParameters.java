@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.List;
 
+import org.junit.Test;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.Parameterized.Parameter;
@@ -34,9 +35,17 @@ public class BlockJUnit4ClassRunnerWithParameters extends
     public Object createTest() throws Exception {
         if (fieldsAreAnnotated()) {
             return createTestUsingFieldInjection();
-        } else {
+        }
+        
+        if (constructorHasParameters()) {
             return createTestUsingConstructorInjection();
         }
+        
+        return createTestUsingTestInjection();
+    }
+    
+    private Object createTestUsingTestInjection() throws Exception {
+        return getTestClass().getOnlyConstructor().newInstance();
     }
 
     private Object createTestUsingConstructorInjection() throws Exception {
@@ -73,6 +82,26 @@ public class BlockJUnit4ClassRunnerWithParameters extends
         return testClassInstance;
     }
 
+    private boolean constructorHasParameters() {
+        java.lang.reflect.Parameter[] parameters = getTestClass().getOnlyConstructor().getParameters();
+        return parameters.length > 0;
+    }
+    
+    @Override
+    protected Statement methodInvoker(FrameworkMethod method,
+            Object testInstance) {
+        return new InvokeParameterizedMethod(method, parameters, testInstance);
+    }
+    
+    @Override
+    protected void validateTestMethods(List<Throwable> errors) {
+        List<FrameworkMethod> methods = getTestClass().getAnnotatedMethods(Test.class);
+
+        for (FrameworkMethod eachTestMethod : methods) {
+            eachTestMethod.validatePublicVoid(false, errors);
+        }
+    }
+    
     @Override
     protected String getName() {
         return name;
