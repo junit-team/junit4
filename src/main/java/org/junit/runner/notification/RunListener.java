@@ -70,6 +70,25 @@ public class RunListener {
     }
 
     /**
+     * Called when a test suite is about to be started.
+     *
+     * @param description the description of the test suite that is about to be run
+     *                    (generally a class name)
+     * @since 4.13
+     */
+    public void testSuiteStarted(Description description) throws Exception {
+    }
+
+    /**
+     * Called when a test suite has finished, whether the test suite succeeds or fails.
+     *
+     * @param description the description of the test suite that just ran
+     * @since 4.13
+     */
+    public void testSuiteFinished(Description description) throws Exception {
+    }
+
+    /**
      * Called when an atomic test is about to be started.
      *
      * @param description the description of the test that is about to be run
