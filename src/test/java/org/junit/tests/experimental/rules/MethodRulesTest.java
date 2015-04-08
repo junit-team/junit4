@@ -70,21 +70,20 @@ public class MethodRulesTest {
 
     private static int runCount;
 
-    public static class MultipleRuleTest {
-        private static class Increment implements MethodRule {
-            public Statement apply(final Statement base,
-                    FrameworkMethod method, Object target) {
-                return new Statement() {
-                    @Override
-                    public void evaluate() throws Throwable {
-                        runCount++;
-                        base.evaluate();
-                    }
-
-                    ;
-                };
-            }
+    private static class Increment implements MethodRule {
+        public Statement apply(final Statement base,
+                FrameworkMethod method, Object target) {
+            return new Statement() {
+                @Override
+                public void evaluate() throws Throwable {
+                    runCount++;
+                    base.evaluate();
+                }
+            };
         }
+    }
+    
+    public static class MultipleRuleTest {
 
         @Rule
         public MethodRule incrementor1 = new Increment();
@@ -291,5 +290,119 @@ public class MethodRulesTest {
     @Test
     public void useCustomMethodRule() {
         assertThat(testResult(UsesCustomMethodRule.class), isSuccessful());
+    }
+    
+    public static class HasMethodReturningMethodRule {
+        private MethodRule methodRule = new MethodRule() {
+            public Statement apply(final Statement base, FrameworkMethod method, Object target) {
+                return new Statement() {
+                    
+                    @Override
+                    public void evaluate() throws Throwable {
+                        wasRun = true;
+                        base.evaluate();
+                    }
+                };
+            }
+        };
+        
+        @Rule
+        public MethodRule methodRule() {
+            return methodRule;
+        }
+        
+        @Test
+        public void doNothing() {
+            
+        }
+    }
+
+    /**
+     * If there are any public methods annotated with @Rule returning a {@link MethodRule}
+     * then it should also be run.
+     * 
+     * <p>This case has been added with 
+     * <a href="https://github.com/junit-team/junit/issues/589">Issue #589</a> - 
+     * Support @Rule for methods works only for TestRule but not for MethodRule
+     */
+    @Test
+    public void runsMethodRuleThatIsReturnedByMethod() {
+        wasRun = false;
+        JUnitCore.runClasses(HasMethodReturningMethodRule.class);
+        assertTrue(wasRun);
+    }
+    
+    public static class HasMultipleMethodsReturningMethodRule {
+        @Rule
+        public Increment methodRule1() {
+            return new Increment();
+        }
+        
+        @Rule
+        public Increment methodRule2() {
+            return new Increment();
+        }
+        
+        @Test
+        public void doNothing() {
+            
+        }
+    }
+
+    /**
+     * If there are multiple public methods annotated with @Rule returning a {@link MethodRule}
+     * then all the rules returned should be run.
+     * 
+     * <p>This case has been added with 
+     * <a href="https://github.com/junit-team/junit/issues/589">Issue #589</a> - 
+     * Support @Rule for methods works only for TestRule but not for MethodRule
+     */
+    @Test
+    public void runsAllMethodRulesThatAreReturnedByMethods() {
+        runCount = 0;
+        JUnitCore.runClasses(HasMultipleMethodsReturningMethodRule.class);
+        assertEquals(2, runCount);
+    }
+    
+    
+    public static class CallsMethodReturningRuleOnlyOnce {
+        int callCount = 0;
+        
+        private static class Dummy implements MethodRule {
+            public Statement apply(final Statement base, FrameworkMethod method, Object target) {
+                return new Statement() {
+                    
+                    @Override
+                    public void evaluate() throws Throwable {
+                        base.evaluate();
+                    }
+                };
+            }
+        };
+       
+        
+        @Rule
+        public MethodRule methodRule() {
+            callCount++;
+            return new Dummy();
+        }
+        
+        @Test
+        public void doNothing() {
+            assertEquals(1, callCount);
+        }
+    }
+
+    /**
+     * If there are any public methods annotated with @Rule returning a {@link MethodRule}
+     * then method should be called only once.
+     * 
+     * <p>This case has been added with 
+     * <a href="https://github.com/junit-team/junit/issues/589">Issue #589</a> - 
+     * Support @Rule for methods works only for TestRule but not for MethodRule
+     */
+    @Test
+    public void callsMethodReturningRuleOnlyOnce() {
+        assertTrue(JUnitCore.runClasses(CallsMethodReturningRuleOnlyOnce.class).wasSuccessful());
     }
 }

@@ -61,41 +61,44 @@ public class MaxHistory implements Serializable {
         }
     }
 
-    private final Map<String, Long> durations = new HashMap<String, Long>();
-
-    private final Map<String, Long> failureTimestamps = new HashMap<String, Long>();
-
-    private final File historyStore;
+    /*
+     * We have to use the f prefix until the next major release to ensure
+     * serialization compatibility. 
+     * See https://github.com/junit-team/junit/issues/976
+     */
+    private final Map<String, Long> fDurations = new HashMap<String, Long>();
+    private final Map<String, Long> fFailureTimestamps = new HashMap<String, Long>();
+    private final File fHistoryStore;
 
     private MaxHistory(File storedResults) {
-        historyStore = storedResults;
+        fHistoryStore = storedResults;
     }
 
     private void save() throws IOException {
         ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(
-                historyStore));
+                fHistoryStore));
         stream.writeObject(this);
         stream.close();
     }
 
     Long getFailureTimestamp(Description key) {
-        return failureTimestamps.get(key.toString());
+        return fFailureTimestamps.get(key.toString());
     }
 
     void putTestFailureTimestamp(Description key, long end) {
-        failureTimestamps.put(key.toString(), end);
+        fFailureTimestamps.put(key.toString(), end);
     }
 
     boolean isNewTest(Description key) {
-        return !durations.containsKey(key.toString());
+        return !fDurations.containsKey(key.toString());
     }
 
     Long getTestDuration(Description key) {
-        return durations.get(key.toString());
+        return fDurations.get(key.toString());
     }
 
     void putTestDuration(Description description, long duration) {
-        durations.put(description.toString(), duration);
+        fDurations.put(description.toString(), duration);
     }
 
     private final class RememberingListener extends RunListener {

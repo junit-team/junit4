@@ -1,14 +1,11 @@
 package org.junit.validator;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
-import java.lang.annotation.Annotation;
-
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertThat;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public class AnnotationValidatorFactoryTest {
 
@@ -20,26 +17,6 @@ public class AnnotationValidatorFactoryTest {
         ValidateWith validateWith = SampleTestWithValidator.class.getAnnotation(ValidateWith.class);
         AnnotationValidator annotationValidator = new AnnotationValidatorFactory().createAnnotationValidator(validateWith);
         assertThat(annotationValidator, is(instanceOf(Validator.class)));
-    }
-
-    @Test
-    public void exceptionWhenAnnotationWithNullClassIsPassedIn() {
-        exception.expect(IllegalArgumentException.class);
-        exception.expectMessage("Can't create validator, value is null in " +
-                "annotation org.junit.validator.AnnotationValidatorFactoryTest$ValidatorWithNullValue");
-
-        new AnnotationValidatorFactory().createAnnotationValidator(new ValidatorWithNullValue());
-    }
-
-
-    public static class ValidatorWithNullValue implements ValidateWith {
-        public Class<? extends AnnotationValidator> value() {
-            return null;
-        }
-
-        public Class<? extends Annotation> annotationType() {
-            return ValidateWith.class;
-        }
     }
 
     @ValidateWith(value = Validator.class)

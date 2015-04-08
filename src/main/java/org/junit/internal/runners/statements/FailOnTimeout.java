@@ -3,6 +3,8 @@ package org.junit.internal.runners.statements;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -19,31 +21,121 @@ public class FailOnTimeout extends Statement {
     private final TimeUnit timeUnit;
     private final long timeout;
     private final boolean lookForStuckThread;
-    private String testName;
-    private volatile ThreadGroup threadGroup = null;
+    private final String testName;
 
-    public FailOnTimeout(Statement originalStatement, long millis, String testName) {
-        this(originalStatement, millis, TimeUnit.MILLISECONDS, testName);
+    /**
+     * Returns a new builder for building an instance.
+     *
+     * @since 4.12
+     */
+    public static Builder builder() {
+        return new Builder();
     }
 
-    public FailOnTimeout(Statement originalStatement, long timeout, TimeUnit unit, String testName) {
-        this(originalStatement, timeout, unit, false, testName);
+    /**
+     * Creates an instance wrapping the given statement with the given timeout in milliseconds.
+     *
+     * @param statement the statement to wrap
+     * @param timeoutMillis the timeout in milliseconds
+     * @deprecated use {@link #builder()} instead.
+     */
+    @Deprecated
+    public FailOnTimeout(Statement statement, long timeoutMillis) {
+        this(builder().withTimeout(timeoutMillis, TimeUnit.MILLISECONDS), statement);
     }
 
-    public FailOnTimeout(Statement originalStatement, long timeout, TimeUnit unit, boolean lookForStuckThread,
-                         String testName) {
-        this.originalStatement = originalStatement;
-        this.timeout = timeout;
-        timeUnit = unit;
-        this.lookForStuckThread = lookForStuckThread;
-        this.testName = testName;
+    private FailOnTimeout(Builder builder, Statement statement) {
+        originalStatement = statement;
+        timeout = builder.timeout;
+        timeUnit = builder.unit;
+        lookForStuckThread = builder.lookForStuckThread;
+        testName = builder.testName;
+    }
+
+    /**
+     * Builder for {@link FailOnTimeout}.
+     *
+     * @since 4.12
+     */
+    public static class Builder {
+        private boolean lookForStuckThread = false;
+        private long timeout = 0;
+        private TimeUnit unit = TimeUnit.SECONDS;
+        private String testName = "Time-limited test";
+
+        private Builder() {
+        }
+
+        /**
+         * Specifies the time to wait before timing out the test.
+         *
+         * <p>If this is not called, or is called with a {@code timeout} of
+         * {@code 0}, the returned {@code Statement} will wait forever for the
+         * test to complete, however the test will still launch from a separate
+         * thread. This can be useful for disabling timeouts in environments
+         * where they are dynamically set based on some property.
+         *
+         * @param timeout the maximum time to wait
+         * @param unit the time unit of the {@code timeout} argument
+         * @return {@code this} for method chaining.
+         */
+        public Builder withTimeout(long timeout, TimeUnit unit) {
+            if (timeout < 0) {
+                throw new IllegalArgumentException("timeout must be non-negative");
+            }
+            if (unit == null) {
+                throw new NullPointerException("TimeUnit cannot be null");
+            }
+            this.timeout = timeout;
+            this.unit = unit;
+            return this;
+        }
+
+        /**
+         * Specifies whether to look for a stuck thread.  If a timeout occurs and this
+         * feature is enabled, the test will look for a thread that appears to be stuck
+         * and dump its backtrace.  This feature is experimental.  Behavior may change
+         * after the 4.12 release in response to feedback.
+         *
+         * @param enable {@code true} to enable the feature
+         * @return {@code this} for method chaining.
+         */
+        public Builder withLookingForStuckThread(boolean enable) {
+            this.lookForStuckThread = enable;
+            return this;
+        }
+
+        /**
+         * Specifies the test name. If this is provided, the thread generated when
+         * evaluating this statement will be named with the given value.
+         *
+         * @param testName the name to be used for the generated thread
+         * @return {@code this} for method chaining.
+         */
+        public Builder withTestName(String testName) {
+            this.testName = testName;
+            return this;
+        }
+
+        /**
+         * Builds a {@link FailOnTimeout} instance using the values in this builder,
+         * wrapping the given statement.
+         *
+         * @param statement
+         */
+        public FailOnTimeout build(Statement statement) {
+            if (statement == null) {
+                throw new NullPointerException("statement cannot be null");
+            }
+            return new FailOnTimeout(this, statement);
+        }
     }
 
     @Override
     public void evaluate() throws Throwable {
         CallableStatement callable = new CallableStatement();
         FutureTask<Throwable> task = new FutureTask<Throwable>(callable);
-        threadGroup = new ThreadGroup("FailOnTimeoutGroup");
+        ThreadGroup threadGroup = new ThreadGroup("FailOnTimeoutGroup");
         Thread thread = new Thread(threadGroup, task, testName);
         thread.setDaemon(true);
         thread.start();
@@ -86,11 +178,11 @@ public class FailOnTimeout extends Statement {
         }
         if (stuckThread != null) {
             Exception stuckThreadException = 
-                new Exception ("Appears to be stuck in thread " +
+                new Exception("Appears to be stuck in thread " +
                                stuckThread.getName());
             stuckThreadException.setStackTrace(getStackTrace(stuckThread));
-            return new MultipleFailureException    
-                (Arrays.<Throwable>asList(currThreadException, stuckThreadException));
+            return new MultipleFailureException(
+                Arrays.<Throwable>asList(currThreadException, stuckThreadException));
         } else {
             return currThreadException;
         }
@@ -120,12 +212,9 @@ public class FailOnTimeout extends Statement {
      * problem or if the thread cannot be determined.  The return value is never equal 
      * to {@code mainThread}.
      */
-    private Thread getStuckThread (Thread mainThread) {
-        if (threadGroup == null){
-            return null;
-        }
-        Thread[] threadsInGroup = getThreadArray(threadGroup);
-        if (threadsInGroup == null){
+    private Thread getStuckThread(Thread mainThread) {
+        List<Thread> threadsInGroup = getThreadsInGroup(mainThread.getThreadGroup());
+        if (threadsInGroup.isEmpty()) {
             return null;
         }
 
@@ -152,45 +241,27 @@ public class FailOnTimeout extends Statement {
      * Returns all active threads belonging to a thread group.  
      * @param group The thread group.
      * @return The active threads in the thread group.  The result should be a
-     * complete list of the active threads at some point in time.  Returns {@code null}
+     * complete list of the active threads at some point in time.  Returns an empty list
      * if this cannot be determined, e.g. because new threads are being created at an
      * extremely fast rate.
      */
-    private Thread[] getThreadArray(ThreadGroup group) {
-        final int count = group.activeCount(); // this is just an estimate
-        int enumSize = Math.max(count * 2, 100);
-        int enumCount;
-        Thread[] threads;
-        int loopCount = 0;
-        while (true) {
-            threads = new Thread[enumSize];
-            enumCount = group.enumerate(threads);
-            if (enumCount < enumSize) break;
+    private List<Thread> getThreadsInGroup(ThreadGroup group) {
+        final int activeThreadCount = group.activeCount(); // this is just an estimate
+        int threadArraySize = Math.max(activeThreadCount * 2, 100);
+        for (int loopCount = 0; loopCount < 5; loopCount++) {
+            Thread[] threads = new Thread[threadArraySize];
+            int enumCount = group.enumerate(threads);
+            if (enumCount < threadArraySize) {
+                return Arrays.asList(threads).subList(0, enumCount);
+            }
             // if there are too many threads to fit into the array, enumerate's result
             // is >= the array's length; therefore we can't trust that it returned all
             // the threads.  Try again.
-            enumSize += 100;
-            if (++loopCount >= 5) 
-                return null;
-            // threads are proliferating too fast for us.  Bail before we get into 
-            // trouble.
+            threadArraySize += 100;
         }
-        return copyThreads(threads, enumCount);
-    }
-
-    /**
-     * Returns an array of the first {@code count} Threads in {@code threads}. 
-     * (Use instead of Arrays.copyOf to maintain compatibility with Java 1.5.)
-     * @param threads The source array.
-     * @param count The maximum length of the result array.
-     * @return The first {@count} (at most) elements of {@code threads}.
-     */
-    private Thread[] copyThreads(Thread[] threads, int count) {
-        int length = Math.min(count, threads.length);
-        Thread[] result = new Thread[length];
-        for (int i = 0; i < length; i++)
-            result[i] = threads[i];
-        return result;
+        // threads are proliferating too fast for us.  Bail before we get into 
+        // trouble.
+        return Collections.emptyList();
     }
 
     /**
@@ -198,7 +269,7 @@ public class FailOnTimeout extends Statement {
      * @param thr The thread to query.
      * @return The CPU time used by {@code thr}, or 0 if it cannot be determined.
      */
-    private long cpuTime (Thread thr) {
+    private long cpuTime(Thread thr) {
         ThreadMXBean mxBean = ManagementFactory.getThreadMXBean();
         if (mxBean.isThreadCpuTimeSupported()) {
             try {

@@ -23,6 +23,7 @@ import org.junit.rules.TestRule;
 import org.junit.rules.Timeout;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
 
 public class TimeoutRuleTest {
     private static final ReentrantLock run1Lock = new ReentrantLock();
@@ -101,6 +102,16 @@ public class TimeoutRuleTest {
         @Rule
         public final TestRule globalTimeout = new Timeout(200, TimeUnit.MILLISECONDS);
     }
+    
+    public static class HasNullTimeUnit {
+
+        @Rule
+        public final TestRule globalTimeout = new Timeout(200, null);
+        
+        @Test
+        public void wouldPass() {
+        }
+    }
 
     @Before
     public void before() {
@@ -139,5 +150,16 @@ public class TimeoutRuleTest {
         assertThat(HasGlobalLongTimeout.logger.toString(), containsString("run4"));
         assertThat(HasGlobalLongTimeout.logger.toString(), containsString("run5"));
         assertThat(HasGlobalLongTimeout.logger.toString(), containsString("run6"));
+    }
+
+    @Test
+    public void nullTimeUnit() {
+        Result result = JUnitCore.runClasses(HasNullTimeUnit.class);
+        assertEquals(1, result.getFailureCount());
+        Failure failure = result.getFailures().get(0);
+        assertThat(failure.getException().getMessage(),
+                containsString("Invalid parameters for Timeout"));
+        Throwable cause = failure.getException().getCause();
+        assertThat(cause.getMessage(), containsString("TimeUnit cannot be null"));
     }
 }

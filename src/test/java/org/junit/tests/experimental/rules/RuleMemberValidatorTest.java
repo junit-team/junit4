@@ -15,7 +15,6 @@ import org.junit.Test;
 import org.junit.rules.MethodRule;
 import org.junit.rules.TemporaryFolder;
 import org.junit.rules.TestRule;
-import org.junit.rules.TestWatchman;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
@@ -71,7 +70,97 @@ public class RuleMemberValidatorTest {
         @ClassRule
         public static TestRule temporaryFolder = new TemporaryFolder();
     }
+    
+    /**
+     * If there is any property annotated with @ClassRule then it must implement
+     * {@link TestRule}
+     * 
+     * <p>This case has been added with 
+     * <a href="https://github.com/junit-team/junit/issues/1019">Issue #1019</a>
+     */
+    @Test
+    public void rejectClassRuleThatIsImplemetationOfMethodRule() {
+        TestClass target = new TestClass(TestWithClassRuleIsImplementationOfMethodRule.class);
+        CLASS_RULE_VALIDATOR.validate(target, errors);
+        assertOneErrorWithMessage("The @ClassRule 'classRule' must implement TestRule.");
+    }
+    
+    public static class TestWithClassRuleIsImplementationOfMethodRule {
+        @ClassRule
+        public static MethodRule classRule = new MethodRule() {
+            
+            public Statement apply(Statement base, FrameworkMethod method, Object target) {
+                return base;
+            }
+        };
+    }
 
+    /**
+     * If there is any method annotated with @ClassRule then it must return an 
+     * implementation of {@link TestRule}
+     * 
+     * <p>This case has been added with 
+     * <a href="https://github.com/junit-team/junit/issues/1019">Issue #1019</a>
+     */
+    @Test
+    public void rejectClassRuleThatReturnsImplementationOfMethodRule() {
+        TestClass target = new TestClass(TestWithClassRuleMethodThatReturnsMethodRule.class);
+        CLASS_RULE_METHOD_VALIDATOR.validate(target, errors);
+        assertOneErrorWithMessage("The @ClassRule 'methodRule' must return an implementation of TestRule.");
+    }
+
+    public static class TestWithClassRuleMethodThatReturnsMethodRule {
+        @ClassRule
+        public static MethodRule methodRule() {
+            return new MethodRule() {
+                
+                public Statement apply(Statement base, FrameworkMethod method, Object target) {
+                    return base;
+                }
+            };
+        }
+    }
+    
+    /**
+     * If there is any property annotated with @ClassRule then it must implement
+     * {@link TestRule}
+     * 
+     * <p>This case has been added with 
+     * <a href="https://github.com/junit-team/junit/issues/1019">Issue #1019</a>
+     */
+    @Test
+    public void rejectClassRuleIsAnArbitraryObject() throws Exception {
+        TestClass target = new TestClass(TestWithClassRuleIsAnArbitraryObject.class);
+        CLASS_RULE_VALIDATOR.validate(target, errors);
+        assertOneErrorWithMessage("The @ClassRule 'arbitraryObject' must implement TestRule.");
+    }
+
+    public static class TestWithClassRuleIsAnArbitraryObject {
+        @ClassRule
+        public static Object arbitraryObject = 1;
+    }
+    
+    /**
+     * If there is any method annotated with @ClassRule then it must return an 
+     * implementation of {@link TestRule}
+     * 
+     * <p>This case has been added with 
+     * <a href="https://github.com/junit-team/junit/issues/1019">Issue #1019</a> 
+     */
+    @Test
+    public void rejectClassRuleMethodReturnsAnArbitraryObject() throws Exception {
+        TestClass target = new TestClass(TestWithClassRuleMethodReturnsAnArbitraryObject.class);
+        CLASS_RULE_METHOD_VALIDATOR.validate(target, errors);
+        assertOneErrorWithMessage("The @ClassRule 'arbitraryObject' must return an implementation of TestRule.");
+    }
+
+    public static class TestWithClassRuleMethodReturnsAnArbitraryObject {
+        @ClassRule
+        public static Object arbitraryObject() {
+            return 1;
+        }
+    }
+    
     @Test
     public void acceptNonStaticTestRule() {
         TestClass target = new TestClass(TestWithNonStaticTestRule.class);
@@ -100,13 +189,12 @@ public class RuleMemberValidatorTest {
     public void rejectStaticMethodRule() {
         TestClass target = new TestClass(TestWithStaticMethodRule.class);
         RULE_VALIDATOR.validate(target, errors);
-        assertOneErrorWithMessage("The @Rule 'testWatchman' must not be static.");
+        assertOneErrorWithMessage("The @Rule 'someMethodRule' must not be static.");
     }
 
     public static class TestWithStaticMethodRule {
-        @SuppressWarnings("deprecation")
         @Rule
-        public static MethodRule testWatchman = new TestWatchman();
+        public static MethodRule someMethodRule = new SomeMethodRule();
     }
     
     @Test
@@ -213,13 +301,12 @@ public class RuleMemberValidatorTest {
     public void rejectMethodStaticMethodRule() {
         TestClass target = new TestClass(TestMethodWithStaticMethodRule.class);
         RULE_METHOD_VALIDATOR.validate(target, errors);
-        assertOneErrorWithMessage("The @Rule 'getTestWatchman' must not be static.");
+        assertOneErrorWithMessage("The @Rule 'getSomeMethodRule' must not be static.");
     }
 
     public static class TestMethodWithStaticMethodRule {
-        @SuppressWarnings("deprecation")
         @Rule
-        public static MethodRule getTestWatchman() { return new TestWatchman(); }
+        public static MethodRule getSomeMethodRule() { return new SomeMethodRule(); }
     }
 
     @Test
@@ -262,5 +349,11 @@ public class RuleMemberValidatorTest {
 
     private void assertNumberOfErrors(int numberOfErrors) {
         assertEquals("Wrong number of errors:", numberOfErrors, errors.size());
+    }
+    
+    private static final class SomeMethodRule implements MethodRule {
+        public Statement apply(Statement base, FrameworkMethod method, Object target) {
+            return base;
+        }
     }
 }

@@ -1,15 +1,19 @@
 package org.junit.rules;
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.IOException;
 
 import org.junit.Rule;
 
 /**
- * The TemporaryFolder Rule allows creation of files and folders that are
- * guaranteed to be deleted when the test method finishes (whether it passes or
- * fails):
+ * The TemporaryFolder Rule allows creation of files and folders that should
+ * be deleted when the test method finishes (whether it passes or
+ * fails).
+ * By default no exception will be thrown in case the deletion fails.
  *
+ * <p>Example of usage:
  * <pre>
  * public static class HasTempFolder {
  *  &#064;Rule
@@ -24,18 +28,101 @@ import org.junit.Rule;
  * }
  * </pre>
  *
+ * <p>TemporaryFolder rule supports assured deletion mode, which
+ * will fail the test in case deletion fails with {@link AssertionError}.
+ *
+ * <p>Creating TemporaryFolder with assured deletion:
+ * <pre>
+ *  &#064;Rule
+ *  public TemporaryFolder folder= TemporaryFolder.builder().assureDeletion().build();
+ * </pre>
+ *
  * @since 4.7
  */
 public class TemporaryFolder extends ExternalResource {
     private final File parentFolder;
+    private final boolean assureDeletion;
     private File folder;
 
+    /**
+     * Create a temporary folder which uses system default temporary-file 
+     * directory to create temporary resources.
+     */
     public TemporaryFolder() {
-        this(null);
+        this((File) null);
     }
 
+    /**
+     * Create a temporary folder which uses the specified directory to create
+     * temporary resources.
+     *
+     * @param parentFolder folder where temporary resources will be created.
+     * If {@code null} then system default temporary-file directory is used.
+     */
     public TemporaryFolder(File parentFolder) {
         this.parentFolder = parentFolder;
+        this.assureDeletion = false;
+    }
+
+    /**
+     * Create a {@link TemporaryFolder} initialized with
+     * values from a builder.
+     */
+    protected TemporaryFolder(Builder builder) {
+        this.parentFolder = builder.parentFolder;
+        this.assureDeletion = builder.assureDeletion;
+    }
+
+    /**
+     * Returns a new builder for building an instance of {@link TemporaryFolder}.
+     *
+     * @since 4.13
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
+     * Builds an instance of {@link TemporaryFolder}.
+     * 
+     * @since 4.13
+     */
+    public static class Builder {
+        private File parentFolder;
+        private boolean assureDeletion;
+
+        protected Builder() {}
+
+        /**
+         * Specifies which folder to use for creating temporary resources.
+         * If {@code null} then system default temporary-file directory is
+         * used.
+         *
+         * @return this
+         */
+        public Builder parentFolder(File parentFolder) {
+            this.parentFolder = parentFolder;
+            return this;
+        }
+
+        /**
+         * Setting this flag assures that no resources are left undeleted. Failure
+         * to fulfill the assurance results in failure of tests with an
+         * {@link IllegalStateException}.
+         *
+         * @return this
+         */
+        public Builder assureDeletion() {
+            this.assureDeletion = true;
+            return this;
+        }
+
+        /**
+         * Builds a {@link TemporaryFolder} instance using the values in this builder.
+         */
+        public TemporaryFolder build() {
+            return new TemporaryFolder(this);
+        }
     }
 
     @Override
@@ -148,21 +235,42 @@ public class TemporaryFolder extends ExternalResource {
 
     /**
      * Delete all files and folders under the temporary folder. Usually not
-     * called directly, since it is automatically applied by the {@link Rule}
+     * called directly, since it is automatically applied by the {@link Rule}.
+     *
+     * @throws IllegalStateException if unable to clean up resources
+     * and deletion of resources is assured.
      */
     public void delete() {
-        if (folder != null) {
-            recursiveDelete(folder);
+        if (!tryDelete()) {
+            if (assureDeletion) {
+                fail("Unable to clean up temporary folder " + folder);
+            }
         }
     }
 
-    private void recursiveDelete(File file) {
+    /**
+     * Tries to delete all files and folders under the temporary folder and
+     * returns whether deletion was successful or not.
+     *
+     * @return {@code true} if all resources are deleted successfully,
+     *         {@code false} otherwise.
+     */
+    protected boolean tryDelete() {
+        if (folder == null) {
+            return true;
+        }
+        
+        return recursiveDelete(folder);
+    }
+    
+    private boolean recursiveDelete(File file) {
+        boolean result = true;
         File[] files = file.listFiles();
         if (files != null) {
             for (File each : files) {
-                recursiveDelete(each);
+                result = result && recursiveDelete(each);
             }
         }
-        file.delete();
+        return result && file.delete();
     }
 }

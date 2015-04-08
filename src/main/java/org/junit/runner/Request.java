@@ -75,8 +75,7 @@ public abstract class Request {
             Runner suite = computer.getSuite(builder, classes);
             return runner(suite);
         } catch (InitializationError e) {
-            throw new RuntimeException(
-                    "Bug in saff's brain: Suite constructor, called as above, should always complete");
+            return runner(new ErrorReportingRunner(e, classes));
         }
     }
 

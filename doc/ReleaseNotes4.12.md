@@ -12,10 +12,33 @@ Version 4.11 added `Assert.assertEquals()` for `float` parameters with a delta, 
 `Assert.assertArrayEquals()` previously existed for all primitive array types, except `boolean[]`. This has now been added for `boolean[]`.
 
 
+### [Pull request #918:](https://github.com/junit-team/junit/pull/918) Avoid potentially expensive reflection-based loop in Assert.assertArrayEquals()
+
+In the usual case, where the array elements are in fact exactly equal, the potentially expensive reflection-based loop to compare them is avoided by using `Arrays.deepEquals()` first. The exact comparison is only executed when `deepEquals()` returns `false`.
+
+
+# Command-line options
+### [Pull request #647:](https://github.com/junit-team/junit/pull/647) Support command-line `--filter` param.
+
+When running JUnit from the command line, a command-line parameter can be supplied using `--filter`, which supplies a filter that will restrict which tests and subtests from the rest of the command will be run.  For example, this will run only the tests in ExampleTestSuite that are in categories Cat1 or Cat2:
+
+```
+java org.junit.runner.JUnitCore \
+  --filter=org.junit.experimental.categories.IncludeCategories=pkg.of.Cat1,pkg.of.Cat2 \
+  com.example.ExampleTestSuite
+```
+
+In general, the argument to `--filter` should be `ClassName=param`, where `ClassName` names an implementation of `FilterFactory`, whose `createFilter` method will be called with an instance of `FilterFactoryParams` that contains `"param"`, in order to return the filter to be applied.
+
 # Test Runners
 
 
-### [Pull request #817:] (https://github.com/junit-team/junit/pull/817) Support for context hierarchies
+### [Pull request #763:](https://github.com/junit-team/junit/pull/763) Allow custom test runners to create their own TestClasses and customize the scanning of annotations.
+
+This introduces some extension points to `ParentRunner` to allow subclasses to control creation
+of the `TestClass` instance and to scan for annotations.
+
+### [Pull request #817:](https://github.com/junit-team/junit/pull/817) Support for context hierarchies
 
 The `AnnotatedBuilder` is a strategy for constructing runners for test classes that have been annotated with the `@RunWith` annotation. All tests within such a class will be executed using the runner that was specified within the annotation.
 
@@ -95,6 +118,31 @@ This allows for validation to be added to annotations. Validators should extend 
 `ExpectedException` didn't handle `AssertionError`s and `AssumptionViolatedException` well. This has been fixed. The new documentation explains the usage of `ExpectedException` for testing these exceptions. The two methods `handleAssertionErrors()` and `handleAssumptionViolatedExceptions()` are not needed anymore. If you have used them, just remove it and read `ExpectedException`'s documentation.
 
 
+### [Pull request #818:](https://github.com/junit-team/junit/pull/818) [Pull request #993:](https://github.com/junit-team/junit/pull/993) External version of AssumptionViolatedException
+
+In JUnit 4.11 and earlier, if you wanted to write a custom runner that handled
+`AssumptionViolatedException` or you needed to create an instance of `AssumptionViolatedException`
+directly, you needed to import an internal class (`org.junit.internal.AssumptionViolatedException`).
+Now you can import `org.junit.AssumptionViolatedException` (which extends
+`org.junit.internal.AssumptionViolatedException`).
+
+The classes in `Assume` have been modified to throw `org.junit.AssumptionViolatedException`.
+
+The constructors in the external `AssumptionViolatedException` are also
+simpler than the ones in the internal version. That being said,
+it's recommended that you create `AssumptionViolatedException` via the methods in `Assume`.
+
+
+### [Pull request #985:](https://github.com/junit-team/junit/pull/985) Change AssumptionViolatedException to not set the cause to null; fixes issue #494
+
+Previously, the `AssumptionViolatedException` constructors would explicitly set the cause to `null`
+(unless you use a constructor where you provide a `Throwable`, in which case it would set that as
+the cause). This prevented code directly creating the exception from setting a cause.
+
+With this change, the cause is only set if you pass in a `Throwable`.
+
+It's recommended that you create `AssumptionViolatedException` via the methods in `Assume`.
+
 
 ### [Pull request #542:](https://github.com/junit-team/junit/pull/542) Customized failure message for `ExpectedException`
 
@@ -107,17 +155,39 @@ thrown.reportMissingExceptionWithMessage("FAIL: Expected exception to be thrown"
 If a custom failure message is not provided, a default message is used.
 
 
+### [Pull request #1013:](https://github.com/junit-team/junit/pull/1013) Make ErrorCollector#checkSucceeds generic
+
+The method `ErrorCollector.checkSucceeds()` is now generic. Previously, you could only pass
+in a `Callable<Object>` and it returned `Object`. You can now pass any `Callable` and the
+return type will match the type of the callable.
+
+
 # Timeout for Tests
 *See also [Timeout for tests](https://github.com/junit-team/junit/wiki/Timeout-for-tests)*
 
-### [Pull request #823:] (https://github.com/junit-team/junit/pull/823) Throw `TestFailedOnTimeoutException` instead of plain `Exception` on timeout
+### [Pull request #823:](https://github.com/junit-team/junit/pull/823) Throw `TestFailedOnTimeoutException` instead of plain `Exception` on timeout
 
 When a test times out, a `org.junit.runners.model.TestTimedOutException` is now thrown instead of a plain `java.lang.Exception`.
 
 
-### [Pull request #742:](https://github.com/junit-team/junit/pull/742) `Timeout` exceptions now include stack trace from stuck thread (experimental)
+### [Pull request #742:](https://github.com/junit-team/junit/pull/742) [Pull request #986:](https://github.com/junit-team/junit/pull/986) `Timeout` exceptions now include stack trace from stuck thread (experimental)
 
-`Timeout` exceptions try to determine if there is a child thread causing the problem, and if so its stack trace is included in the exception in addition to the one of the main thread. This feature must be enabled with a rule such as `new Timeout(100, TimeUnit.MILLISECONDS).lookingForStuckThread(true)`.
+`Timeout` exceptions try to determine if there is a child thread causing the problem, and if so its stack trace is included in the exception in addition to the one of the main thread. This feature must be enabled with the timeout rule by creating it through the new `Timeout.builder()` method:
+
+```java
+public class HasGlobalTimeout {
+    @Rule public final TestRule timeout = Timeout.builder()
+            .withTimeout(10, TimeUnit.SECONDS)
+            .withLookingForStuckThread(true)
+            .build();
+
+    @Test
+    public void testInfiniteLoop() {
+        for (;;) {
+        }
+    }
+}
+```
 
 
 ### [Pull request #544:](https://github.com/junit-team/junit/pull/544) New constructor and factories in `Timeout`
@@ -126,17 +196,21 @@ When a test times out, a `org.junit.runners.model.TestTimedOutException` is now 
 A new constructor is available: `Timeout(long timeout, TimeUnit unit)`. It enables you to use different granularities of time units like `NANOSECONDS`, `MICROSECONDS`, `MILLISECONDS`, and `SECONDS`. Examples:
 
 ```java
-    @Rule public final TestRule globalTimeout = new Timeout(50, TimeUnit.MILLISECONDS);
+@Rule public final TestRule globalTimeout = new Timeout(50, TimeUnit.MILLISECONDS);
+```
 
-    @Rule public final TestRule globalTimeout = new Timeout(10, TimeUnit.SECONDS);
+```java
+@Rule public final TestRule globalTimeout = new Timeout(10, TimeUnit.SECONDS);
 ```
 
 and factory methods in `Timeout`:
 
 ```java
-    @Rule public final TestRule globalTimeout = Timeout.millis(50);
+@Rule public final TestRule globalTimeout = Timeout.millis(50);
+```
 
-    @Rule public final TestRule globalTimeout = Timeout.seconds(10);`
+```java
+@Rule public final TestRule globalTimeout = Timeout.seconds(10);
 ```
 
 This usage avoids the truncation, which was the problem in the deprecated constructor `Timeout(int millis)` when casting `long` to `int`.
@@ -176,6 +250,8 @@ public class HasGlobalTimeout {
 ```
 Each test is run in a new _daemon_ thread. If the specified timeout elapses before the test completes, its execution is interrupted via `Thread#interrupt()`. This happens in interruptable I/O (operations throwing `java.io.InterruptedIOException` and `java.nio.channels.ClosedByInterruptException`), locks (package `java.util.concurrent`) and methods in `java.lang.Object` and `java.lang.Thread` throwing `java.lang.InterruptedException`.
 
+### [Pull request #876:](https://github.com/junit-team/junit/pull/876) The timeout rule never times out if you pass in a timeout of zero.
+
 
 # Parameterized Tests
 
@@ -193,7 +269,7 @@ The factory for creating the `Runner` instance of a single set of parameters is 
 # Rules
 
 
-### [Pull request #552:](https://github.com/junit-team/junit/pull/552) `Stopwatch` rule
+### [Pull request #552:](https://github.com/junit-team/junit/pull/552) [Pull request #937:](https://github.com/junit-team/junit/pull/937) `Stopwatch` rule
 
 The `Stopwatch` Rule notifies one of its own protected methods of the time spent by a test. Override them to get the time in nanoseconds. For example, this class will keep logging the time spent by each passed, failed, skipped, and finished test:
 
@@ -293,6 +369,31 @@ If you call `TemporaryFolder.newFolder("foo/bar")` in JUnit 4.10 the method retu
 
 With this fix, folder names are validated to contain single path name. If the folder name consists of multiple path names, an exception is thrown stating that usage of multiple path components in a string containing folder name is disallowed.
 
+### [Pull request #1015:](https://github.com/junit-team/junit/pull/1015) Methods annotated with `Rule` can return a `MethodRule`.
+
+Methods annotated with `@Rule` can now return either a `TestRule` (or subclass) or a
+`MethodRule` (or subclass).
+
+Prior to this change, all public methods annotated with `@Rule` were called, but the
+return value was ignored if it could not be assigned to a `TestRule`. After this change,
+the method is only called if the return type could be assigned to `TestRule` or
+`MethodRule`. For methods annotated with `@Rule` that return other values, see the notes
+for pull request #1020.
+
+### [Pull request #1020:](https://github.com/junit-team/junit/pull/1020) Added validation that @ClassRule should only be implementation of TestRule.
+
+Prior to this change, fields annotated with `@ClassRule` that did not have a type of `TestRule`
+(or a class that implements `TestRule`) were ignored. With this change, the test will fail
+with a validation error.
+
+Prior to this change, methods annotated with `@ClassRule` that did specify a return type
+of `TestRule`(or a class that implements `TestRule`) were ignored. With this change, the test
+will fail with a validation error.
+
+### [Pull request #1021:](https://github.com/junit-team/junit/pull/1021) JavaDoc of TemporaryFolder: folder not guaranteed to be deleted.
+
+Adjusted JavaDoc of TemporaryFolder to reflect that temporary folders are not guaranteed to be
+deleted.
 
 # Theories
 
@@ -565,11 +666,6 @@ Follow this link for _IntelliJ IDEA_: [http://www.jetbrains.com/idea/webhelp/act
 # Miscellaneous
 
 
-### [Pull request #862:] (https://github.com/junit-team/junit/pull/862) Delete classes that are deprecated for six years
-
-`JUnit4ClassRunner` was deprecated in JUnit 4.3 (six years and nine major releases ago) with a comment saying "This may disappear as soon as 1 April 2009". We started having some problems with running the tests in JDK 7, and we decided to delete the class and its support classes. Although we try very hard to maintain backwards compatibility, `JUnit4ClassRunner` didn't support `Rule`s, it wasn't designed to be extensible, and it was in an internal package. Please use `BlockJUnit4ClassRunner` instead.
-
-
 ### [Pull request #776:](https://github.com/junit-team/junit/pull/776) Add support for [Travis CI](http://travis-ci.org)
 
 Travis CI is a free CI server for public Github repositories. Every pull request is run by Travis CI and Github's web interface shows the CI result for each pull request. Every user can use Travis CI for testing her branches, too.
@@ -585,3 +681,52 @@ While using JUnit in Android apps, if any other referenced library has a file na
 `Error generating final archive: Found duplicate file for APK: LICENSE.txt`
 
 To avoid this, the license file has been renamed to `LICENSE-junit.txt` 
+
+
+### [Pull request #962:](https://github.com/junit-team/junit/pull/962) Do not include thread start time in test timeout measurements.
+
+The time it takes to start a thread can be surprisingly large.
+Especially in virtualized cloud environments where noisy neighbours.
+This change reduces the probability of non-deterministic failures of
+tests with timeouts (@Test(timeout=…)) by not beginning the timeout
+clock until we have observed the starting of the task thread – the
+thread that runs the actual test. This should make tests with small
+timeout values more reliable in general, and especially in cloud CI
+environments.
+
+# Fixes to issues introduced in JUnit 4.12
+
+The following section lists fixes to problems introduced in the first
+release candidates for JUnit 4.12. You can ignore this section if you are
+trying to understand the changes between 4.11 and 4.12.
+
+### [Pull request #961:](https://github.com/junit-team/junit/pull/961) Restore field names with f prefix.
+
+In order to make the JUnit code more consistent with current coding practices, we changed
+a number of field names to not start with the prefix "f". Unfortunately, at least one IDE
+referenced a private field via reflection. This change reverts the field names for fields
+known to be read via reflection.
+
+### [Pull request #988:](https://github.com/junit-team/junit/pull/988) Revert "Delete classes that are deprecated for six years."
+
+In [745ca05](https://github.com/junit-team/junit/commit/745ca05dccf5cc907e43a58142bb8be97da2b78f)
+we removed classes that were deprecated for many releases. There was some concern that people
+might not expect classes to be removed in a 4.x release. Even though we are not aware of any
+problems from the deletion, we decided to add them back.
+
+These classes may be removed in JUnit 5.0 or later.
+
+### [Pull request #989:](https://github.com/junit-team/junit/pull/989) Add JUnitSystem.exit() back.
+
+In [917a88f](https://github.com/junit-team/junit/commit/917a88fad06ce108a596a8fdb4607b1a2fbb3f3e)
+the exit() method in JUnit was removed. This caused problems for at least one user. Even
+though this class is in an internal package, we decided to add it back, and deprecated it.
+
+This method may be removed in JUnit 5.0 or later.
+
+### [Pull request #994:](https://github.com/junit-team/junit/pull/994) [Pull request #1000:](https://github.com/junit-team/junit/pull/1000) Ensure serialization compatibility where possible.
+
+JUnit 4.12 RC1 introduced serilization incompatibilities with some of the classes. For example,
+these pre-release versions of JUnit could not read instances of `Result` that were serialized
+in JUnit 4.11 and earlier. These changes fix that problem.
+

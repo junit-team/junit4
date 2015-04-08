@@ -27,9 +27,6 @@ public class AnnotationValidatorFactory {
         }
 
         Class<? extends AnnotationValidator> clazz = validateWithAnnotation.value();
-        if (clazz == null) {
-            throw new IllegalArgumentException("Can't create validator, value is null in annotation " + validateWithAnnotation.getClass().getName());
-        }
         try {
             AnnotationValidator annotationValidator = clazz.newInstance();
             VALIDATORS_FOR_ANNOTATION_TYPES.putIfAbsent(validateWithAnnotation, annotationValidator);

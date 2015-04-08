@@ -13,7 +13,6 @@ import java.util.List;
 
 import org.junit.runner.Runner;
 import org.junit.runners.model.FrameworkMethod;
-import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.TestClass;
 import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParametersFactory;
 import org.junit.runners.parameterized.ParametersRunnerFactory;
@@ -141,7 +140,7 @@ import org.junit.runners.parameterized.TestWithParameters;
  * The factory must have a public zero-arg constructor.
  *
  * <pre>
- * public class YourRunnerFactory implements ParameterizedRunnerFactory {
+ * public class YourRunnerFactory implements ParametersRunnerFactory {
  *     public Runner createRunnerForTestWithParameters(TestWithParameters test)
  *             throws InitializationError {
  *         return YourRunner(test);
@@ -230,122 +229,127 @@ public class Parameterized extends Suite {
         Class<? extends ParametersRunnerFactory> value() default BlockJUnit4ClassRunnerWithParametersFactory.class;
     }
 
-    private static final ParametersRunnerFactory DEFAULT_FACTORY = new BlockJUnit4ClassRunnerWithParametersFactory();
-
-    private static final List<Runner> NO_RUNNERS = Collections.<Runner>emptyList();
-
-    private final List<Runner> runners;
-
     /**
      * Only called reflectively. Do not use programmatically.
      */
     public Parameterized(Class<?> klass) throws Throwable {
-        super(klass, NO_RUNNERS);
-        ParametersRunnerFactory runnerFactory = getParametersRunnerFactory(
-                klass);
-        Parameters parameters = getParametersMethod().getAnnotation(
-                Parameters.class);
-        runners = Collections.unmodifiableList(createRunnersForParameters(
-                allParameters(), parameters.name(), runnerFactory));
+        super(klass, RunnersFactory.createRunnersForClass(klass));
     }
 
-    private ParametersRunnerFactory getParametersRunnerFactory(Class<?> klass)
-            throws InstantiationException, IllegalAccessException {
-        UseParametersRunnerFactory annotation = klass
-                .getAnnotation(UseParametersRunnerFactory.class);
-        if (annotation == null) {
-            return DEFAULT_FACTORY;
-        } else {
-            Class<? extends ParametersRunnerFactory> factoryClass = annotation
-                    .value();
-            return factoryClass.newInstance();
+    private static class RunnersFactory {
+        private static final ParametersRunnerFactory DEFAULT_FACTORY = new BlockJUnit4ClassRunnerWithParametersFactory();
+
+        private final TestClass testClass;
+
+        static List<Runner> createRunnersForClass(Class<?> klass)
+                throws Throwable {
+            return new RunnersFactory(klass).createRunners();
         }
-    }
 
-    @Override
-    protected List<Runner> getChildren() {
-        return runners;
-    }
-
-    private TestWithParameters createTestWithNotNormalizedParameters(
-            String pattern, int index, Object parametersOrSingleParameter) {
-        Object[] parameters= (parametersOrSingleParameter instanceof Object[]) ? (Object[]) parametersOrSingleParameter
-            : new Object[] { parametersOrSingleParameter };
-        return createTestWithParameters(getTestClass(), pattern, index,
-                parameters);
-    }
-
-    @SuppressWarnings("unchecked")
-    private Iterable<Object> allParameters() throws Throwable {
-        Object parameters = getParametersMethod().invokeExplosively(null);
-        if (parameters instanceof Iterable) {
-            return (Iterable<Object>) parameters;
-        } else if (parameters instanceof Object[]) {
-            return Arrays.asList((Object[]) parameters);
-        } else {
-            throw parametersMethodReturnedWrongType();
+        private RunnersFactory(Class<?> klass) {
+            testClass = new TestClass(klass);
         }
-    }
 
-    private FrameworkMethod getParametersMethod() throws Exception {
-        List<FrameworkMethod> methods = getTestClass().getAnnotatedMethods(
-                Parameters.class);
-        for (FrameworkMethod each : methods) {
-            if (each.isStatic() && each.isPublic()) {
-                return each;
+        private List<Runner> createRunners() throws Throwable {
+            Parameters parameters = getParametersMethod().getAnnotation(
+                    Parameters.class);
+            return Collections.unmodifiableList(createRunnersForParameters(
+                    allParameters(), parameters.name(),
+                    getParametersRunnerFactory()));
+        }
+
+        private ParametersRunnerFactory getParametersRunnerFactory()
+                throws InstantiationException, IllegalAccessException {
+            UseParametersRunnerFactory annotation = testClass
+                    .getAnnotation(UseParametersRunnerFactory.class);
+            if (annotation == null) {
+                return DEFAULT_FACTORY;
+            } else {
+                Class<? extends ParametersRunnerFactory> factoryClass = annotation
+                        .value();
+                return factoryClass.newInstance();
             }
         }
 
-        throw new Exception("No public static parameters method on class "
-                + getTestClass().getName());
-    }
+        private TestWithParameters createTestWithNotNormalizedParameters(
+                String pattern, int index, Object parametersOrSingleParameter) {
+            Object[] parameters = (parametersOrSingleParameter instanceof Object[]) ? (Object[]) parametersOrSingleParameter
+                    : new Object[] { parametersOrSingleParameter };
+            return createTestWithParameters(testClass, pattern, index,
+                    parameters);
+        }
 
-    private List<Runner> createRunnersForParameters(
-            Iterable<Object> allParameters, String namePattern,
-            ParametersRunnerFactory runnerFactory)
-            throws InitializationError,
-            Exception {
-        try {
-            List<TestWithParameters> tests = createTestsForParameters(
-                    allParameters, namePattern);
-            List<Runner> runners = new ArrayList<Runner>();
-            for (TestWithParameters test : tests) {
-                runners.add(runnerFactory
-                        .createRunnerForTestWithParameters(test));
+        @SuppressWarnings("unchecked")
+        private Iterable<Object> allParameters() throws Throwable {
+            Object parameters = getParametersMethod().invokeExplosively(null);
+            if (parameters instanceof Iterable) {
+                return (Iterable<Object>) parameters;
+            } else if (parameters instanceof Object[]) {
+                return Arrays.asList((Object[]) parameters);
+            } else {
+                throw parametersMethodReturnedWrongType();
             }
-            return runners;
-        } catch (ClassCastException e) {
-            throw parametersMethodReturnedWrongType();
         }
-    }
 
-    private List<TestWithParameters> createTestsForParameters(
-            Iterable<Object> allParameters, String namePattern)
-            throws Exception {
-        int i = 0;
-        List<TestWithParameters> children = new ArrayList<TestWithParameters>();
-        for (Object parametersOfSingleTest : allParameters) {
-            children.add(createTestWithNotNormalizedParameters(namePattern,
-                    i++, parametersOfSingleTest));
+        private FrameworkMethod getParametersMethod() throws Exception {
+            List<FrameworkMethod> methods = testClass
+                    .getAnnotatedMethods(Parameters.class);
+            for (FrameworkMethod each : methods) {
+                if (each.isStatic() && each.isPublic()) {
+                    return each;
+                }
+            }
+
+            throw new Exception("No public static parameters method on class "
+                    + testClass.getName());
         }
-        return children;
-    }
 
-    private Exception parametersMethodReturnedWrongType() throws Exception {
-        String className = getTestClass().getName();
-        String methodName = getParametersMethod().getName();
-        String message = MessageFormat.format(
-                "{0}.{1}() must return an Iterable of arrays.",
-                className, methodName);
-        return new Exception(message);
-    }
+        private List<Runner> createRunnersForParameters(
+                Iterable<Object> allParameters, String namePattern,
+                ParametersRunnerFactory runnerFactory) throws Exception {
+            try {
+                List<TestWithParameters> tests = createTestsForParameters(
+                        allParameters, namePattern);
+                List<Runner> runners = new ArrayList<Runner>();
+                for (TestWithParameters test : tests) {
+                    runners.add(runnerFactory
+                            .createRunnerForTestWithParameters(test));
+                }
+                return runners;
+            } catch (ClassCastException e) {
+                throw parametersMethodReturnedWrongType();
+            }
+        }
 
-    private static TestWithParameters createTestWithParameters(
-            TestClass testClass, String pattern, int index, Object[] parameters) {
-        String finalPattern = pattern.replaceAll("\\{index\\}",
-                Integer.toString(index));
-        String name = MessageFormat.format(finalPattern, parameters);
-        return new TestWithParameters("[" + name + "]", testClass,
-                Arrays.asList(parameters));
+        private List<TestWithParameters> createTestsForParameters(
+                Iterable<Object> allParameters, String namePattern)
+                throws Exception {
+            int i = 0;
+            List<TestWithParameters> children = new ArrayList<TestWithParameters>();
+            for (Object parametersOfSingleTest : allParameters) {
+                children.add(createTestWithNotNormalizedParameters(namePattern,
+                        i++, parametersOfSingleTest));
+            }
+            return children;
+        }
+
+        private Exception parametersMethodReturnedWrongType() throws Exception {
+            String className = testClass.getName();
+            String methodName = getParametersMethod().getName();
+            String message = MessageFormat.format(
+                    "{0}.{1}() must return an Iterable of arrays.", className,
+                    methodName);
+            return new Exception(message);
+        }
+
+        private TestWithParameters createTestWithParameters(
+                TestClass testClass, String pattern, int index,
+                Object[] parameters) {
+            String finalPattern = pattern.replaceAll("\\{index\\}",
+                    Integer.toString(index));
+            String name = MessageFormat.format(finalPattern, parameters);
+            return new TestWithParameters("[" + name + "]", testClass,
+                    Arrays.asList(parameters));
+        }
     }
 }

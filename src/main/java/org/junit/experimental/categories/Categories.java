@@ -284,7 +284,7 @@ public class Categories extends Suite {
         }
 
         private static Set<Class<?>> copyAndRefine(Set<Class<?>> classes) {
-            HashSet<Class<?>> c= new HashSet<Class<?>>();
+            Set<Class<?>> c= new HashSet<Class<?>>();
             if (classes != null) {
                 c.addAll(classes);
             }
@@ -339,11 +339,12 @@ public class Categories extends Suite {
     }
 
     private static void assertNoCategorizedDescendentsOfUncategorizeableParents(Description description) throws InitializationError {
-        if (!canHaveCategorizedChildren(description)) {
+        if (canHaveCategorizedChildren(description)) {
+            for (Description each : description.getChildren()) {
+                assertNoCategorizedDescendentsOfUncategorizeableParents(each);
+            }
+        } else {
             assertNoDescendantsHaveCategoryAnnotations(description);
-        }
-        for (Description each : description.getChildren()) {
-            assertNoCategorizedDescendentsOfUncategorizeableParents(each);
         }
     }
 
