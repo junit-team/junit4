@@ -18,6 +18,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.internal.runners.statements.FailOnTimeout;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestTimedOutException;
 
@@ -169,16 +170,24 @@ public class FailOnTimeoutTest {
     }
 
     @Test
-    public void timeoutThreadNameTest() throws Throwable {
+    public void threadUsesDescriptionSpecified() throws Throwable {
         Statement stuck = new InfiniteLoopStatement();
-        FailOnTimeout stuckTimeout = builder().withTimeout(TIMEOUT, MILLISECONDS).build(stuck);
+        Description description = Description.createTestDescription("ThreadTestClassName", "ThreadTestName");
+        FailOnTimeout stuckTimeout =
+            builder().withTimeout(TIMEOUT, MILLISECONDS).withDescription(description).build(stuck);
         try {
             stuckTimeout.evaluate();
             // We must not get here, we expect a timeout exception
             fail("Expected timeout exception");
         } catch (Exception timeoutException) {
-            timeoutException.printStackTrace();
-            StackTraceElement[] stackTrace = timeoutException.getStackTrace();
+            boolean threadWithMatchingNameExists = false;
+            for (Thread thread : Thread.getAllStackTraces().keySet()) {
+                if (thread.getName().equals(description.getDisplayName())) {
+                    threadWithMatchingNameExists = true;
+                    break;
+                }
+            }
+            assertTrue(threadWithMatchingNameExists);
         }
     }
 
