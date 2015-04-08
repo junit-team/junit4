@@ -174,7 +174,7 @@ public class Parameterized extends Suite {
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    public static @interface Parameters {
+    public @interface Parameters {
         /**
          * Optional pattern to derive the test's name from the parameters. Use
          * numbers in braces to refer to the parameters or the additional data
@@ -205,7 +205,7 @@ public class Parameterized extends Suite {
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
-    public static @interface Parameter {
+    public @interface Parameter {
         /**
          * Method that returns the index of the parameter in the array
          * returned by the method annotated by <code>Parameters</code>.
