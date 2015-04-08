@@ -12,6 +12,7 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.junit.runner.Description;
 import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestTimedOutException;
@@ -21,7 +22,7 @@ public class FailOnTimeout extends Statement {
     private final TimeUnit timeUnit;
     private final long timeout;
     private final boolean lookForStuckThread;
-    private final String testName;
+    private final Description description;
 
     /**
      * Returns a new builder for building an instance.
@@ -49,7 +50,7 @@ public class FailOnTimeout extends Statement {
         timeout = builder.timeout;
         timeUnit = builder.unit;
         lookForStuckThread = builder.lookForStuckThread;
-        testName = builder.testName;
+        description = builder.description;
     }
 
     /**
@@ -61,7 +62,7 @@ public class FailOnTimeout extends Statement {
         private boolean lookForStuckThread = false;
         private long timeout = 0;
         private TimeUnit unit = TimeUnit.SECONDS;
-        private String testName = "Time-limited test";
+        private Description description;
 
         private Builder() {
         }
@@ -106,14 +107,16 @@ public class FailOnTimeout extends Statement {
         }
 
         /**
-         * Specifies the test name. If this is provided, the thread generated when
-         * evaluating this statement will be named with the given value.
+         * Specifies the description of this test. If this is provided, the
+         * thread generated when evaluating this statement will be given a
+         * name corresponding with the description.
          *
-         * @param testName the name to be used for the generated thread
+         * @param description a description of the test, to be used when
+         *                    naming the generated thread
          * @return {@code this} for method chaining.
          */
-        public Builder withTestName(String testName) {
-            this.testName = testName;
+        public Builder withDescription(Description description) {
+            this.description = description;
             return this;
         }
 
@@ -136,7 +139,8 @@ public class FailOnTimeout extends Statement {
         CallableStatement callable = new CallableStatement();
         FutureTask<Throwable> task = new FutureTask<Throwable>(callable);
         ThreadGroup threadGroup = new ThreadGroup("FailOnTimeoutGroup");
-        Thread thread = new Thread(threadGroup, task, testName);
+        String threadName = description == null ? "Time-limited test" : description.getDisplayName();
+        Thread thread = new Thread(threadGroup, task, threadName);
         thread.setDaemon(true);
         thread.start();
         callable.awaitStarted();

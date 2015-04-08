@@ -335,7 +335,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
         }
         return FailOnTimeout.builder()
                .withTimeout(timeout, TimeUnit.MILLISECONDS)
-               .withTestName(method.getClass() + method.getName())
+               .withDescription(describeChild(method))
                .build(next);
     }
 

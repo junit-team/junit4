@@ -143,17 +143,17 @@ public class Timeout implements TestRule {
      * @since 4.12
      */
     protected Statement createFailOnTimeoutStatement(
-            Statement statement, String testName) throws Exception {
+            Statement statement, Description description) throws Exception {
         return FailOnTimeout.builder()
             .withTimeout(timeout, timeUnit)
             .withLookingForStuckThread(lookForStuckThread)
-            .withTestName(testName)
+            .withDescription(description)
             .build(statement);
     }
 
     public Statement apply(Statement base, Description description) {
         try {
-            return createFailOnTimeoutStatement(base, description.getDisplayName());
+            return createFailOnTimeoutStatement(base, description);
         } catch (final Exception e) {
             return new Statement() {
                 @Override public void evaluate() throws Throwable {

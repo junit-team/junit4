@@ -33,8 +33,7 @@ public class FailOnTimeoutTest {
 
     private final TestStatement statement = new TestStatement();
 
-    private final FailOnTimeout failOnTimeout =
-            builder().withTimeout(TIMEOUT, MILLISECONDS).withTestName("Test Name").build(statement);
+    private final FailOnTimeout failOnTimeout = builder().withTimeout(TIMEOUT, MILLISECONDS).build(statement);
 
     @Test
     public void throwsTestTimedOutException() throws Throwable {
@@ -115,8 +114,7 @@ public class FailOnTimeoutTest {
     @Test
     public void stopEndlessStatement() throws Throwable {
         InfiniteLoopStatement infiniteLoop = new InfiniteLoopStatement();
-        FailOnTimeout infiniteLoopTimeout =
-                builder().withTimeout(TIMEOUT, MILLISECONDS).withTestName("Test Name").build(infiniteLoop);
+        FailOnTimeout infiniteLoopTimeout = builder().withTimeout(TIMEOUT, MILLISECONDS).build(infiniteLoop);
         try {
             infiniteLoopTimeout.evaluate();
         } catch (Exception timeoutException) {
@@ -143,8 +141,7 @@ public class FailOnTimeoutTest {
     @Test
     public void stackTraceContainsRealCauseOfTimeout() throws Throwable {
         StuckStatement stuck = new StuckStatement();
-        FailOnTimeout stuckTimeout =
-                builder().withTimeout(TIMEOUT, MILLISECONDS).withTestName("Test Name").build(stuck);
+        FailOnTimeout stuckTimeout = builder().withTimeout(TIMEOUT, MILLISECONDS).build(stuck);
         try {
             stuckTimeout.evaluate();
             // We must not get here, we expect a timeout exception
@@ -174,8 +171,7 @@ public class FailOnTimeoutTest {
     @Test
     public void timeoutThreadNameTest() throws Throwable {
         Statement stuck = new InfiniteLoopStatement();
-        FailOnTimeout stuckTimeout =
-                builder().withTimeout(TIMEOUT, MILLISECONDS).withTestName("Test Name").build(stuck);
+        FailOnTimeout stuckTimeout = builder().withTimeout(TIMEOUT, MILLISECONDS).build(stuck);
         try {
             stuckTimeout.evaluate();
             // We must not get here, we expect a timeout exception
