@@ -3,10 +3,12 @@ package org.junit.runner.notification;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 
+import java.util.List;
+
 /**
  * Thread-safe decorator for {@link RunListener} implementations that synchronizes
  * calls to the delegate.
- *
+ * <p/>
  * <p>This class synchronizes all listener calls on a RunNotifier instance. This is done because
  * prior to JUnit 4.12, all listeners were called in a synchronized block in RunNotifier,
  * so no two listeners were ever called concurrently. If we instead made the methods here
@@ -15,9 +17,8 @@ import org.junit.runner.Result;
  *
  * @author Tibor Digana (tibor17)
  * @author Kevin Cooney (kcooney)
- * @since 4.12
- *
  * @see RunNotifier
+ * @since 4.12
  */
 @RunListener.ThreadSafe
 final class SynchronizedRunListener extends RunListener {
@@ -79,6 +80,13 @@ final class SynchronizedRunListener extends RunListener {
     }
 
     @Override
+    public <T> void servicesLoaded(Class<T> serviceType, List<T> services) {
+        synchronized (monitor) {
+            listener.servicesLoaded(serviceType, services);
+        }
+    }
+
+    @Override
     public int hashCode() {
         return listener.hashCode();
     }
@@ -92,7 +100,7 @@ final class SynchronizedRunListener extends RunListener {
             return false;
         }
         SynchronizedRunListener that = (SynchronizedRunListener) other;
-        
+
         return listener.equals(that.listener);
     }
 

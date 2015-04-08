@@ -16,6 +16,7 @@ import org.junit.runner.JUnitCommandLineParseResultTest;
 import org.junit.runner.JUnitCoreTest;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.ConcurrentRunNotifierTest;
+import org.junit.runner.notification.RunNotifierLoadListenersUsingSpiTest;
 import org.junit.runner.notification.RunNotifierTest;
 import org.junit.runner.notification.SynchronizedRunListenerTest;
 import org.junit.runners.CustomBlockJUnit4ClassRunnerTest;
@@ -235,7 +236,8 @@ import org.junit.validator.PublicClassValidatorTest;
         ForwardCompatibilityPrintingTest.class,
         DescriptionTest.class,
         ErrorReportingRunnerTest.class,
-        TemporaryFolderRuleAssuredDeletionTest.class
+        TemporaryFolderRuleAssuredDeletionTest.class,
+        RunNotifierLoadListenersUsingSpiTest.class
 })
 public class AllTests {
     public static Test suite() {

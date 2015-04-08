@@ -5,6 +5,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.List;
 
 import org.junit.runner.Description;
 import org.junit.runner.Result;
@@ -122,6 +123,15 @@ public class RunListener {
     public void testIgnored(Description description) throws Exception {
     }
 
+    /**
+     * Called when some services loaded using {@link org.junit.internal.ServiceLoaderWrapper}
+     * @param serviceType a type of the loaded services
+     * @param services loaded services
+     *
+     * @since 4.12
+     */
+    public <T> void servicesLoaded(Class<T> serviceType, List<T> services) {
+    }
 
     /**
      * Indicates a {@code RunListener} that can have its methods called
