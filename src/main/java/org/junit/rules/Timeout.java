@@ -137,17 +137,15 @@ public class Timeout implements TestRule {
     /**
      * Creates a {@link Statement} that will run the given
      * {@code statement}, and timeout the operation based
-     * on the values configured in this rule. Subclasses
-     * can override this method for different behavior.
+     * on the values configured in this rule.
      *
      * @since 4.12
      */
-    protected Statement createFailOnTimeoutStatement(
-            Statement statement, Description description) throws Exception {
+    @Deprecated
+    protected Statement createFailOnTimeoutStatement(Statement statement) throws Exception {
         return FailOnTimeout.builder()
             .withTimeout(timeout, timeUnit)
             .withLookingForStuckThread(lookForStuckThread)
-            .withDescription(description)
             .build(statement);
     }
 
@@ -161,6 +159,19 @@ public class Timeout implements TestRule {
                 }
             };
         }
+    }
+
+    /**
+     * Creates a {@link Statement} that will run the given
+     * {@code statement} in a thread with a name based on
+     * the given {@code description}, and timeout the operation
+     * based on the values configured in this rule.
+     */
+    private Statement createFailOnTimeoutStatement(
+            Statement statement, Description description) throws Exception {
+        return FailOnTimeout.builder()
+            .withDescription(description)
+            .build(createFailOnTimeoutStatement(statement));
     }
 
     /**
