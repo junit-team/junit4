@@ -291,7 +291,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 
         Statement statement = methodInvoker(method, test);
         statement = possiblyExpectingExceptions(method, test, statement);
-        statement = withPotentialTimeout(method, statement);
+        statement = withPotentialTimeout(method, test, statement);
         statement = withBefores(method, test, statement);
         statement = withAfters(method, test, statement);
         statement = withRules(method, test, statement);
@@ -328,7 +328,8 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      * takes more than the specified number of milliseconds.
      */
     @Deprecated
-    protected Statement withPotentialTimeout(FrameworkMethod method, Statement next) {
+    protected Statement withPotentialTimeout(FrameworkMethod method,
+            Object test, Statement next) {
         long timeout = getTimeout(method.getAnnotation(Test.class));
         if (timeout <= 0) {
             return next;
