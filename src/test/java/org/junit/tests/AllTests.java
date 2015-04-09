@@ -24,6 +24,7 @@ import org.junit.runners.Suite.SuiteClasses;
 import org.junit.runners.model.FrameworkFieldTest;
 import org.junit.runners.model.FrameworkMethodTest;
 import org.junit.runners.model.TestClassTest;
+import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParametersTest;
 import org.junit.runners.parameterized.ParameterizedNamesTest;
 import org.junit.runners.parameterized.TestWithParametersTest;
 import org.junit.tests.assertion.AssertionTest;
@@ -222,6 +223,7 @@ import org.junit.validator.PublicClassValidatorTest;
         JUnitCoreTest.class,
         TestWithParametersTest.class,
         ParameterizedNamesTest.class,
+        BlockJUnit4ClassRunnerWithParametersTest.class,
         PublicClassValidatorTest.class,
         DisableOnDebugTest.class,
         ThrowableCauseMatcherTest.class,
