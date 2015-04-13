@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.junit.experimental.results.PrintableResult.testResult;
 
 import java.util.Arrays;
@@ -32,59 +33,79 @@ import org.junit.runners.parameterized.TestWithParameters;
 
 public class ParameterizedTestTest {
     @RunWith(Parameterized.class)
-    static public class FibonacciTest {
-        @Parameters(name = "{index}: fib({0})={1}")
+    public static class AdditionTest {
+        @Parameters(name = "{index}: {0} + {1} = {2}")
         public static Iterable<Object[]> data() {
-            return Arrays.asList(new Object[][]{{0, 0}, {1, 1}, {2, 1},
-                    {3, 2}, {4, 3}, {5, 5}, {6, 8}});
+            return Arrays.asList(new Object[][] { { 0, 0, 0 }, { 1, 1, 2 },
+                    { 3, 2, 5 }, { 4, 3, 7 } });
         }
 
-        private final int fInput;
+        private int firstSummand;
 
-        private final int fExpected;
+        private int secondSummand;
 
-        public FibonacciTest(int input, int expected) {
-            fInput = input;
-            fExpected = expected;
+        private int sum;
+
+        public AdditionTest(int firstSummand, int secondSummand, int sum) {
+            this.firstSummand = firstSummand;
+            this.secondSummand = secondSummand;
+            this.sum = sum;
         }
 
         @Test
         public void test() {
-            assertEquals(fExpected, fib(fInput));
-        }
-
-        private int fib(int x) {
-            return 0;
+            assertEquals(sum, firstSummand + secondSummand);
         }
     }
 
     @Test
-    public void count() {
-        Result result = JUnitCore.runClasses(FibonacciTest.class);
-        assertEquals(7, result.getRunCount());
-        assertEquals(6, result.getFailureCount());
-    }
-
-    @Test
-    public void failuresNamedCorrectly() {
-        Result result = JUnitCore.runClasses(FibonacciTest.class);
-        assertEquals(
-                "test[1: fib(1)=1](" + FibonacciTest.class.getName() + ")",
-                result.getFailures().get(0).getTestHeader());
+    public void countsRuns() {
+        Result result = JUnitCore.runClasses(AdditionTest.class);
+        assertEquals(4, result.getRunCount());
     }
 
     @Test
     public void countBeforeRun() throws Exception {
-        Runner runner = Request.aClass(FibonacciTest.class).getRunner();
-        assertEquals(7, runner.testCount());
+        Runner runner = Request.aClass(AdditionTest.class).getRunner();
+        assertEquals(4, runner.testCount());
     }
 
     @Test
     public void plansNamedCorrectly() throws Exception {
-        Runner runner = Request.aClass(FibonacciTest.class).getRunner();
+        Runner runner = Request.aClass(AdditionTest.class).getRunner();
         Description description = runner.getDescription();
-        assertEquals("[0: fib(0)=0]", description.getChildren().get(0)
+        assertEquals("[2: 3 + 2 = 5]", description.getChildren().get(2)
                 .getDisplayName());
+    }
+
+    @RunWith(Parameterized.class)
+    public static class ThreeFailures {
+        @Parameters(name = "{index}: x={0}")
+        public static Collection<Integer> data() {
+            return Arrays.asList(1, 2, 3);
+        }
+
+        @Parameter(0)
+        public int unused;
+
+        @Test
+        public void testSomething() {
+            fail();
+        }
+    }
+
+    @Test
+    public void countsFailures() throws Exception {
+        Result result = JUnitCore.runClasses(ThreeFailures.class);
+        assertEquals(3, result.getFailureCount());
+    }
+
+    @Test
+    public void failuresNamedCorrectly() {
+        Result result = JUnitCore.runClasses(ThreeFailures.class);
+        assertEquals(
+                "testSomething[0: x=1](" + ThreeFailures.class.getName() + ")",
+                result.getFailures().get(0).getTestHeader());
     }
 
     @RunWith(Parameterized.class)
@@ -111,55 +132,33 @@ public class ParameterizedTestTest {
     }
 
     @RunWith(Parameterized.class)
-    static public class FibonacciWithParameterizedFieldTest {
-        @Parameters
-        public static Collection<Object[]> data() {
-            return Arrays.asList(new Object[][]{{0, 0}, {1, 1}, {2, 1},
-                    {3, 2}, {4, 3}, {5, 5}, {6, 8}});
+    public static class AdditionTestWithAnnotatedFields {
+        @Parameters(name = "{index}: {0} + {1} = {2}")
+        public static Iterable<Object[]> data() {
+            return Arrays.asList(new Object[][] { { 0, 0, 0 }, { 1, 1, 2 },
+                    { 3, 2, 5 }, { 4, 3, 7 } });
         }
 
         @Parameter(0)
-        public int fInput;
+        public int firstSummand;
 
         @Parameter(1)
-        public int fExpected;
+        public int secondSummand;
+
+        @Parameter(2)
+        public int sum;
 
         @Test
         public void test() {
-            assertEquals(fExpected, fib(fInput));
-        }
-
-        private int fib(int x) {
-            return 0;
+            assertEquals(sum, firstSummand + secondSummand);
         }
     }
 
     @Test
-    public void countWithParameterizedField() {
-        Result result = JUnitCore.runClasses(FibonacciWithParameterizedFieldTest.class);
-        assertEquals(7, result.getRunCount());
-        assertEquals(6, result.getFailureCount());
-    }
-
-    @Test
-    public void failuresNamedCorrectlyWithParameterizedField() {
-        Result result = JUnitCore.runClasses(FibonacciWithParameterizedFieldTest.class);
-        assertEquals(String
-                .format("test[1](%s)", FibonacciWithParameterizedFieldTest.class.getName()), result
-                .getFailures().get(0).getTestHeader());
-    }
-
-    @Test
-    public void countBeforeRunWithParameterizedField() throws Exception {
-        Runner runner = Request.aClass(FibonacciWithParameterizedFieldTest.class).getRunner();
-        assertEquals(7, runner.testCount());
-    }
-
-    @Test
-    public void plansNamedCorrectlyWithParameterizedField() throws Exception {
-        Runner runner = Request.aClass(FibonacciWithParameterizedFieldTest.class).getRunner();
-        Description description = runner.getDescription();
-        assertEquals("[0]", description.getChildren().get(0).getDisplayName());
+    public void providesDataByAnnotatedFields() {
+        Result result = JUnitCore.runClasses(AdditionTestWithAnnotatedFields.class);
+        assertEquals(4, result.getRunCount());
+        assertEquals(0, result.getFailureCount());
     }
 
     @RunWith(Parameterized.class)
@@ -357,36 +356,32 @@ public class ParameterizedTestTest {
     }
 
     @RunWith(Parameterized.class)
-    static public class FibonacciTestWithArray {
-        @Parameters(name= "{index}: fib({0})={1}")
+    public static class AdditionTestWithArray {
+        @Parameters(name = "{index}: {0} + {1} = {2}")
         public static Object[][] data() {
-            return new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
-                { 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } };
+            return new Object[][] { { 0, 0, 0 }, { 1, 1, 2 }, { 3, 2, 5 },
+                    { 4, 3, 7 } };
         }
 
-        private final int fInput;
+        @Parameter(0)
+        public int firstSummand;
 
-        private final int fExpected;
+        @Parameter(1)
+        public int secondSummand;
 
-        public FibonacciTestWithArray(int input, int expected) {
-            fInput= input;
-            fExpected= expected;
-        }
+        @Parameter(2)
+        public int sum;
 
         @Test
         public void test() {
-            assertEquals(fExpected, fib(fInput));
-        }
-
-        private int fib(int x) {
-            return 0;
+            assertEquals(sum, firstSummand + secondSummand);
         }
     }
 
     @Test
     public void runsEveryTestOfArray() {
-        Result result= JUnitCore.runClasses(FibonacciTestWithArray.class);
-        assertEquals(7, result.getRunCount());
+        Result result= JUnitCore.runClasses(AdditionTestWithArray.class);
+        assertEquals(4, result.getRunCount());
     }
 
     @RunWith(Parameterized.class)
