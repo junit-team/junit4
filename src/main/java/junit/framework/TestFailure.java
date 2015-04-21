@@ -52,6 +52,7 @@ public class TestFailure {
         StringWriter stringWriter = new StringWriter();
         PrintWriter writer = new PrintWriter(stringWriter);
         thrownException().printStackTrace(writer);
+        writer.close();
         return stringWriter.toString();
     }
 
