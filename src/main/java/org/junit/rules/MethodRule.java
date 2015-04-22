@@ -14,14 +14,7 @@ import org.junit.runners.model.Statement;
  * or write your own:
  *
  * <ul>
- *   <li>{@link ErrorCollector}: collect multiple errors in one test method</li>
- *   <li>{@link ExpectedException}: make flexible assertions about thrown exceptions</li>
- *   <li>{@link ExternalResource}: start and stop a server, for example</li>
- *   <li>{@link TemporaryFolder}: create fresh files, and delete after test</li>
- *   <li>{@link TestName}: remember the test name for use during the method</li>
  *   <li>{@link TestWatchman}: add logic at events during method execution</li>
- *   <li>{@link Timeout}: cause test to fail after a set time</li>
- *   <li>{@link Verifier}: fail test if object state ends up incorrect</li>
  * </ul>
  *
  * Note that {@link MethodRule} has been replaced by {@link TestRule},
