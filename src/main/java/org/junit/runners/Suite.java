@@ -47,7 +47,7 @@ public class Suite extends ParentRunner<Runner> {
         /**
          * @return the classes to be run
          */
-        public Class<?>[] value();
+        Class<?>[] value();
     }
 
     private static Class<?>[] getAnnotatedClasses(Class<?> klass) throws InitializationError {

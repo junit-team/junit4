@@ -18,6 +18,10 @@ import org.junit.runners.model.Statement;
  */
 public class BlockJUnit4ClassRunnerWithParameters extends
         BlockJUnit4ClassRunner {
+    private enum InjectionType {
+        CONSTRUCTOR, FIELD
+    }
+
     private final Object[] parameters;
 
     private final String name;
@@ -32,10 +36,15 @@ public class BlockJUnit4ClassRunnerWithParameters extends
 
     @Override
     public Object createTest() throws Exception {
-        if (fieldsAreAnnotated()) {
-            return createTestUsingFieldInjection();
-        } else {
-            return createTestUsingConstructorInjection();
+        InjectionType injectionType = getInjectionType();
+        switch (injectionType) {
+            case CONSTRUCTOR:
+                return createTestUsingConstructorInjection();
+            case FIELD:
+                return createTestUsingFieldInjection();
+            default:
+                throw new IllegalStateException("The injection type "
+                        + injectionType + " is not supported.");
         }
     }
 
@@ -86,7 +95,7 @@ public class BlockJUnit4ClassRunnerWithParameters extends
     @Override
     protected void validateConstructor(List<Throwable> errors) {
         validateOnlyOneConstructor(errors);
-        if (fieldsAreAnnotated()) {
+        if (getInjectionType() != InjectionType.CONSTRUCTOR) {
             validateZeroArgConstructor(errors);
         }
     }
@@ -94,7 +103,7 @@ public class BlockJUnit4ClassRunnerWithParameters extends
     @Override
     protected void validateFields(List<Throwable> errors) {
         super.validateFields(errors);
-        if (fieldsAreAnnotated()) {
+        if (getInjectionType() == InjectionType.FIELD) {
             List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter();
             int[] usedIndices = new int[annotatedFieldsByParameter.size()];
             for (FrameworkField each : annotatedFieldsByParameter) {
@@ -135,6 +144,14 @@ public class BlockJUnit4ClassRunnerWithParameters extends
 
     private List<FrameworkField> getAnnotatedFieldsByParameter() {
         return getTestClass().getAnnotatedFields(Parameter.class);
+    }
+
+    private InjectionType getInjectionType() {
+        if (fieldsAreAnnotated()) {
+            return InjectionType.FIELD;
+        } else {
+            return InjectionType.CONSTRUCTOR;
+        }
     }
 
     private boolean fieldsAreAnnotated() {

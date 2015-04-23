@@ -86,13 +86,13 @@ public class Categories extends Suite {
          * Determines the tests to run that are annotated with categories specified in
          * the value of this annotation or their subtypes unless excluded with {@link ExcludeCategory}.
          */
-        public Class<?>[] value() default {};
+        Class<?>[] value() default {};
 
         /**
          * If <tt>true</tt>, runs tests annotated with <em>any</em> of the categories in
          * {@link IncludeCategory#value()}. Otherwise, runs tests only if annotated with <em>all</em> of the categories.
          */
-        public boolean matchAny() default true;
+        boolean matchAny() default true;
     }
 
     @Retention(RetentionPolicy.RUNTIME)
@@ -101,13 +101,13 @@ public class Categories extends Suite {
          * Determines the tests which do not run if they are annotated with categories specified in the
          * value of this annotation or their subtypes regardless of being included in {@link IncludeCategory#value()}.
          */
-        public Class<?>[] value() default {};
+        Class<?>[] value() default {};
 
         /**
          * If <tt>true</tt>, the tests annotated with <em>any</em> of the categories in {@link ExcludeCategory#value()}
          * do not run. Otherwise, the tests do not run if and only if annotated with <em>all</em> categories.
          */
-        public boolean matchAny() default true;
+        boolean matchAny() default true;
     }
 
     public static class CategoryFilter extends Filter {
@@ -284,7 +284,7 @@ public class Categories extends Suite {
         }
 
         private static Set<Class<?>> copyAndRefine(Set<Class<?>> classes) {
-            HashSet<Class<?>> c= new HashSet<Class<?>>();
+            Set<Class<?>> c= new HashSet<Class<?>>();
             if (classes != null) {
                 c.addAll(classes);
             }

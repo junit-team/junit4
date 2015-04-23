@@ -85,7 +85,7 @@ public class TestClass {
     }
 
     private List<Class<?>> getSuperClasses(Class<?> testClass) {
-        ArrayList<Class<?>> results = new ArrayList<Class<?>>();
+        List<Class<?>> results = new ArrayList<Class<?>>();
         Class<?> current = testClass;
         while (current != null) {
             results.add(current);
