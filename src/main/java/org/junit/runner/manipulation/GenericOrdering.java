@@ -24,6 +24,10 @@ public final class GenericOrdering extends Ordering {
 
     @Override
     public void apply(Object runner) throws InvalidOrderingException {
+        /*
+         * We overwrite apply() to avoid having a GenericOrdering wrap another
+         * GenericOrdering.
+         */
         if (runner instanceof Orderable) {
             Orderable orderable = (Orderable) runner;
             orderable.order(this);

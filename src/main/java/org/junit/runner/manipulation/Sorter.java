@@ -41,17 +41,14 @@ public class Sorter extends Ordering implements Comparator<Description> {
      */
     @Override
     public void apply(Object runner) {
-        // Sorting is more efficient than ordering, so check if the runner is Sortable first
+        /*
+         * Note that all runners that are Orderable are also Sortable (because
+         * Orderable extends Sortable). Sorting is more efficient than ordering,
+         * so we override the parent behavior so we sort instead.
+         */
         if (runner instanceof Sortable) {
             Sortable sortable = (Sortable) runner;
             sortable.sort(this);
-        } else {
-            try {
-                super.apply(runner);
-            } catch (InvalidOrderingException e) {
-                // Can never get here when applying a sortable ordering.
-                throw new AssertionError(e);
-            }
         }
     }
 
