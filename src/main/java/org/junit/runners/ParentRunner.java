@@ -35,6 +35,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.RunnerScheduler;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
@@ -363,11 +364,58 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             statement.evaluate();
         } catch (AssumptionViolatedException e) {
             testNotifier.addFailedAssumption(e);
-        } catch (StoppedByUserException e) {
-            throw e;
         } catch (Throwable e) {
-            testNotifier.addFailure(e);
+            processExecutionFailures(testNotifier, gatherAllFailures(e));
         }
+    }
+
+    /**
+     * Goes through all execution failures trying to find and re-throw 
+     * {@link StoppedByUserException} while adding all other errors to
+     * test notifier.
+     * 
+     * @param testNotifier notifier to add failures
+     * @param failures list of execution failures
+     */
+    private void processExecutionFailures(EachTestNotifier testNotifier,
+            List<Throwable> failures) {
+        StoppedByUserException stoppedByUserException = null;
+        
+        for (Throwable failure : failures) {
+            if (failure instanceof StoppedByUserException) {
+                stoppedByUserException = (StoppedByUserException) failure;
+            } else {
+                testNotifier.addFailure(failure);
+            }
+        }
+        
+        if (stoppedByUserException != null) {
+            throw stoppedByUserException;
+        }
+    }
+    
+    /**
+     * Returns all failures from the specified exception going through each
+     * encountered {@link MultipleFailureException} recursively.
+     * 
+     * @param throwable input exception
+     * @return list of all failures
+     */
+    private List<Throwable> gatherAllFailures(Throwable throwable) {
+        List<Throwable> result = new ArrayList<Throwable>();
+        
+        if (throwable instanceof MultipleFailureException) {
+            MultipleFailureException multipleFailureException =
+                    (MultipleFailureException) throwable;
+            
+            for (Throwable failure : multipleFailureException.getFailures()) {
+                result.addAll(gatherAllFailures(failure));
+            }
+        } else {
+            result.add(throwable);
+        }
+        
+        return result;
     }
 
     //
