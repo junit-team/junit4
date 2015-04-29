@@ -3,6 +3,7 @@ package org.junit.tests;
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.samples.money.MoneyTest;
+import junit.tests.framework.MessageTest;
 import org.junit.AssumptionViolatedExceptionTest;
 import org.junit.experimental.categories.CategoryFilterFactoryTest;
 import org.junit.internal.MethodSorterTest;
@@ -235,7 +236,8 @@ import org.junit.validator.PublicClassValidatorTest;
         ForwardCompatibilityPrintingTest.class,
         DescriptionTest.class,
         ErrorReportingRunnerTest.class,
-        TemporaryFolderRuleAssuredDeletionTest.class
+        TemporaryFolderRuleAssuredDeletionTest.class,
+        MessageTest.class
 })
 public class AllTests {
     public static Test suite() {

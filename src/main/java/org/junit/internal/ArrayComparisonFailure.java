@@ -8,7 +8,7 @@ import org.junit.Assert;
 /**
  * Thrown when two array elements differ
  *
- * @see Assert#assertArrayEquals(String, Object[], Object[])
+ * @see Assert#assertArrayEquals(CharSequence, Object[], Object[])
  */
 public class ArrayComparisonFailure extends AssertionError {
 
@@ -20,7 +20,7 @@ public class ArrayComparisonFailure extends AssertionError {
      * See https://github.com/junit-team/junit/issues/976
      */
     private final List<Integer> fIndices = new ArrayList<Integer>();
-    private final String fMessage;
+    private final CharSequence fMessage;
 
     /**
      * Construct a new <code>ArrayComparisonFailure</code> with an error text and the array's
@@ -28,9 +28,9 @@ public class ArrayComparisonFailure extends AssertionError {
      *
      * @param cause the exception that caused the array's content to fail the assertion test
      * @param index the array position of the objects that are not equal.
-     * @see Assert#assertArrayEquals(String, Object[], Object[])
+     * @see Assert#assertArrayEquals(CharSequence, Object[], Object[])
      */
-    public ArrayComparisonFailure(String message, AssertionError cause, int index) {
+    public ArrayComparisonFailure(CharSequence message, AssertionError cause, int index) {
         this.fMessage = message;
         initCause(cause);
         addDimension(index);
