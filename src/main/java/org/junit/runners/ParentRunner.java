@@ -28,7 +28,6 @@ import org.junit.internal.runners.statements.RunBefores;
 import org.junit.rules.RunRules;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
-import org.junit.runner.OrderWith;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
@@ -36,7 +35,6 @@ import org.junit.runner.manipulation.GenericOrdering;
 import org.junit.runner.manipulation.InvalidOrderingException;
 import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.manipulation.Orderable;
-import org.junit.runner.manipulation.Ordering;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
@@ -289,9 +287,6 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     }
 
     private void runChildren(final RunNotifier notifier) throws Exception {
-        if (invalidOrderingException != null) {
-            throw new InitializationError(invalidOrderingException);
-        }
         final RunnerScheduler currentScheduler = scheduler;
         try {
             for (final T each : getFilteredChildren()) {
@@ -471,26 +466,13 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         }
     }
   
-    private volatile InvalidOrderingException invalidOrderingException;
-
     private List<T> getFilteredChildren() {
         if (filteredChildren == null) {
             synchronized (childrenLock) {
                 if (filteredChildren == null) {
                     List<T> children = getChildren();
                     filteredChildren = Collections.unmodifiableList(children);
-                    
-                    OrderWith orderWith = testClass.getAnnotation(OrderWith.class);
-                    if (orderWith != null) {
-                        try {
-                            Ordering ordering = Ordering.definedBy(orderWith.value());
-                            ordering.apply(this);
-                        } catch (InvalidOrderingException e) {
-                            invalidOrderingException = e;
-                        }
-                    }
                 }
-                
             }
         }
         return filteredChildren;
