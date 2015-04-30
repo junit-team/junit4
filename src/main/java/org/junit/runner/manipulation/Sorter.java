@@ -1,10 +1,6 @@
 package org.junit.runner.manipulation;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 import org.junit.runner.Description;
 
@@ -14,7 +10,7 @@ import org.junit.runner.Description;
  *
  * @since 4.0
  */
-public class Sorter extends Ordering implements Comparator<Description> {
+public class Sorter implements Comparator<Description> {
     /**
      * NULL is a <code>Sorter</code> that leaves elements in an undefined order
      */
@@ -39,33 +35,18 @@ public class Sorter extends Ordering implements Comparator<Description> {
     /**
      * Sorts the test in <code>runner</code> using <code>comparator</code>.
      */
-    @Override
     public void apply(Object runner) {
-        /*
-         * Note that all runners that are Orderable are also Sortable (because
-         * Orderable extends Sortable). Sorting is more efficient than ordering,
-         * so we override the parent behavior so we sort instead.
-         */
         if (runner instanceof Sortable) {
             Sortable sortable = (Sortable) runner;
             sortable.sort(this);
+        } else if (runner instanceof Orderable) {
+            SortBasedOrdering ordering = new SortBasedOrdering(this);
+            ordering.apply(runner);
         }
     }
 
     public int compare(Description o1, Description o2) {
         return comparator.compare(o1, o2);
     }
- 
-    @Override
-    public final List<Description> order(Collection<Description> siblings) {
-        /*
-         * In practice, we will never get here--Sorters do their work in the
-         * compare() method--but the Liskov substitution principle demands that
-         * we obey the general contract of Orderable. Luckily, it's trivial to
-         * implement.
-         */
-        List<Description> sorted = new ArrayList<Description>(siblings);
-        Collections.sort(sorted, this); // Note: it would be incorrect to pass in "comparator"
-        return sorted;
-    }
 }
+
