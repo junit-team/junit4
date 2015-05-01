@@ -434,7 +434,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             }
 
             Set<Description> uniqueDescriptions = childMap.keySet();
-            List<Description> inOrder = ordering.order(Collections.unmodifiableSet(uniqueDescriptions));
+            List<Description> inOrder = ordering.orderChildren(getDescription());
 
             if (!uniqueDescriptions.containsAll(inOrder)) {
                 throw new InvalidOrderingException("Ordering added items");

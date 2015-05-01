@@ -1,7 +1,6 @@
 package org.junit.runner.manipulation;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -26,8 +25,8 @@ public abstract class Ordering {
     public static Ordering shuffledBy(final Random random) {
         return new Ordering() {
             @Override
-            public List<Description> order(Collection<Description> siblings) {
-                List<Description> shuffled = new ArrayList<Description>(siblings);
+            public List<Description> orderChildren(Description parent) {
+                List<Description> shuffled = new ArrayList<Description>(parent.getChildren());
                 Collections.shuffle(shuffled, random);
                 return shuffled;
             }
@@ -70,9 +69,10 @@ public abstract class Ordering {
     }
 
     /**
-     * Orders the given descriptions (all of which have the same parent).
+     * Orders the children of the given {@link Description}.
      *
-     * @param siblings unmodifiable collection of descriptions to order
+     * @param parent description which is the parent of the chidlren to sort
+     * @return children of {@code parent} in order
      */
-    public abstract List<Description> order(Collection<Description> siblings);
+    public abstract List<Description> orderChildren(Description parent);
 }

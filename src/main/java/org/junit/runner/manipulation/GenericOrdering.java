@@ -1,6 +1,5 @@
 package org.junit.runner.manipulation;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.junit.runner.Description;
@@ -18,8 +17,8 @@ public final class GenericOrdering extends Ordering {
     }
 
     @Override
-    public List<Description> order(Collection<Description> siblings) {
-        return delegate.order(siblings);
+    public List<Description> orderChildren(Description parent) {
+        return delegate.orderChildren(parent);
     }
 
     @Override

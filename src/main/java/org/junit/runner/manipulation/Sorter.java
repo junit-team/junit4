@@ -1,7 +1,6 @@
 package org.junit.runner.manipulation;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -57,14 +56,14 @@ public class Sorter extends Ordering implements Comparator<Description> {
     }
  
     @Override
-    public final List<Description> order(Collection<Description> siblings) {
+    public final List<Description> orderChildren(Description parent) {
         /*
          * In practice, we will never get here--Sorters do their work in the
          * compare() method--but the Liskov substitution principle demands that
          * we obey the general contract of Orderable. Luckily, it's trivial to
          * implement.
          */
-        List<Description> sorted = new ArrayList<Description>(siblings);
+        List<Description> sorted = new ArrayList<Description>(parent.getChildren());
         Collections.sort(sorted, this); // Note: it would be incorrect to pass in "comparator"
         return sorted;
     }

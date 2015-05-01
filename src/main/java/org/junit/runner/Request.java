@@ -177,8 +177,8 @@ public abstract class Request {
      * <pre>
      * private static Ordering reverse() {
      *   return new Ordering() {
-     *     public List&lt;Description&gt; order(Collection&lt;Description&gt; siblings) {
-     *       List&lt;Description&gt; ordered = new ArrayList&lt;&gt;(siblings);
+     *     public List&lt;Description&gt; orderChildren(;Description parent) {
+     *       List&lt;Description&gt; ordered = new ArrayList&lt;&gt;(parent.getChildren());
      *       Collections.reverse(ordered);
      *       return ordered;
      *     }
