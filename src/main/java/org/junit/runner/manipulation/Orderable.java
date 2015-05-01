@@ -9,12 +9,12 @@ package org.junit.runner.manipulation;
  *
  * @since 4.13
  */
-public interface Orderable {
+public interface Orderable extends Sortable {
 
     /**
      * Orders the tests using <code>ordering</code>
      *
      * @throws InvalidOrderingException if ordering does something invalid (like remove or add children)
      */
-    void order(Ordering ordering) throws InvalidOrderingException;
+    void order(GenericOrdering ordering) throws InvalidOrderingException;
 }

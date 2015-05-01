@@ -56,9 +56,16 @@ public abstract class Ordering {
      * @throws InvalidOrderingException if ordering does something invalid (like remove or add children)
      */
     public void apply(Object runner) throws InvalidOrderingException {
+        /*
+         * If the runner is Sortable but not Orderable and this Ordering is a
+         * Sorter, then the Sorter subclass overrides apply() to apply the sort.
+         * 
+         * Note that GenericOrdering also overrides apply() to avoid having a
+         * GenericOrdering wrap another GenericOrdering.
+         */
         if (runner instanceof Orderable) {
             Orderable orderable = (Orderable) runner;
-            orderable.order(this);
+            orderable.order(new GenericOrdering(this));
         }
     }
 

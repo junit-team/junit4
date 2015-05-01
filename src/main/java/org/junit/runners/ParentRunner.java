@@ -31,11 +31,10 @@ import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
+import org.junit.runner.manipulation.GenericOrdering;
 import org.junit.runner.manipulation.InvalidOrderingException;
 import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.manipulation.Orderable;
-import org.junit.runner.manipulation.Ordering;
-import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
@@ -62,7 +61,7 @@ import org.junit.validator.TestClassValidator;
  * @since 4.5
  */
 public abstract class ParentRunner<T> extends Runner implements Filterable,
-        Sortable, Orderable {
+        Orderable {
     private static final List<TestClassValidator> VALIDATORS = Arrays.asList(
             new AnnotationsValidator(), new PublicClassValidator());
 
@@ -418,7 +417,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      *
      * @since 4.13
      */
-    public void order(Ordering ordering) throws InvalidOrderingException {
+    public void order(GenericOrdering ordering) throws InvalidOrderingException {
         synchronized (childrenLock) {
             List<T> children = getFilteredChildren();
             Map<Description, List<T>> childMap = new LinkedHashMap<Description, List<T>>(
