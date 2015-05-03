@@ -185,59 +185,13 @@ public class Parameterized extends Suite {
     }
 
     protected class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
-        private final Object[] fParameters;
-
         private final String fName;
-
-        protected TestClassRunnerForParameters(Class<?> type, String pattern, int index, Object[] parameters) throws InitializationError {
-            super(type);
-
-            fParameters = parameters;
-            fName = nameFor(pattern, index, parameters);
-        }
         
         protected TestClassRunnerForParameters(TestClass testClass, String pattern, int index, Object[] parameters) throws InitializationError {
             super(testClass);
 
-            fParameters = parameters;
             fName = nameFor(pattern, index, parameters);
         }        
-
-        @Override
-        public Object createTest() throws Exception {
-            if (fieldsAreAnnotated()) {
-                return createTestUsingFieldInjection();
-            } else {
-                return createTestUsingConstructorInjection();
-            }
-        }
-
-        private Object createTestUsingConstructorInjection() throws Exception {
-            return getTestClass().newInstance(fParameters);
-        }
-
-        private Object createTestUsingFieldInjection() throws Exception {
-            List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter();
-            if (annotatedFieldsByParameter.size() != fParameters.length) {
-                throw new Exception("Wrong number of parameters and @Parameter fields." +
-                        " @Parameter fields counted: " + annotatedFieldsByParameter.size() + ", available parameters: " + fParameters.length + ".");
-            }
-            Object testClassInstance = getTestClass().newInstance();
-            for (FrameworkField each : annotatedFieldsByParameter) {
-                Field field = each.getField();
-                Parameter annotation = field.getAnnotation(Parameter.class);
-                int index = annotation.value();
-                try {
-                    field.set(testClassInstance, fParameters[index]);
-                } catch (IllegalArgumentException iare) {
-                    throw new Exception(getTestClass().getName() + ": Trying to set " + field.getName() +
-                            " with the value " + fParameters[index] +
-                            " that is not the right type (" + fParameters[index].getClass().getSimpleName() + " instead of " +
-                            field.getType().getSimpleName() + ").", iare);
-                }
-            }
-            return testClassInstance;
-        }
 
         protected String nameFor(String pattern, int index, Object[] parameters) {
             String finalPattern = pattern.replaceAll("\\{index\\}", Integer.toString(index));
@@ -302,6 +256,51 @@ public class Parameterized extends Suite {
             return new Annotation[0];
         }
     }
+    
+    protected class TestClassForParameters extends TestClass {
+        private final Object[] fParameters;
+        
+        protected TestClassForParameters(Class<?> testClass, Object[] parameters) {
+            super(testClass);
+            fParameters = parameters;
+        }
+        
+        @Override
+        public Object newInstance(Object ... args) throws Exception {
+            if (fieldsAreAnnotated()) {
+                return createTestUsingFieldInjection();
+            } else {
+                return createTestUsingConstructorInjection();
+            }
+        }
+
+        private Object createTestUsingConstructorInjection() throws Exception {
+            return super.newInstance(fParameters);
+        }
+
+        private Object createTestUsingFieldInjection() throws Exception {
+            List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter();
+            if (annotatedFieldsByParameter.size() != fParameters.length) {
+                throw new Exception("Wrong number of parameters and @Parameter fields." +
+                        " @Parameter fields counted: " + annotatedFieldsByParameter.size() + ", available parameters: " + fParameters.length + ".");
+            }
+            Object testClassInstance = getTestClass().newInstance();
+            for (FrameworkField each : annotatedFieldsByParameter) {
+                Field field = each.getField();
+                Parameter annotation = field.getAnnotation(Parameter.class);
+                int index = annotation.value();
+                try {
+                    field.set(testClassInstance, fParameters[index]);
+                } catch (IllegalArgumentException iare) {
+                    throw new Exception(getTestClass().getName() + ": Trying to set " + field.getName() +
+                            " with the value " + fParameters[index] +
+                            " that is not the right type (" + fParameters[index].getClass().getSimpleName() + " instead of " +
+                            field.getType().getSimpleName() + ").", iare);
+                }
+            }
+            return testClassInstance;
+        }    
+    }
 
     private static final List<Runner> NO_RUNNERS = Collections.<Runner>emptyList();
 
@@ -338,7 +337,8 @@ public class Parameterized extends Suite {
     }
 
     protected Runner createRunner(String pattern, int index, Object[] parameters) throws InitializationError {
-        return new TestClassRunnerForParameters(getTestClass().getJavaClass(), pattern, index, parameters);
+        return new TestClassRunnerForParameters(new TestClassForParameters(getTestClass().getJavaClass(),
+                parameters), pattern, index, parameters);
     }
 
     @SuppressWarnings("unchecked")

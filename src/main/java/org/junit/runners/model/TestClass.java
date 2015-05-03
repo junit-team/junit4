@@ -6,7 +6,6 @@ import static org.junit.internal.MethodSorter.NAME_ASCENDING;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -208,13 +207,9 @@ public class TestClass implements Annotatable {
      * Construct a new instance of the test object
      * @param args paramters for the constructor
      * @return new object
-     * @throws InstantiationException on failure to construct
-     * @throws IllegalAccessException on failure to access constructor
-     * @throws IllegalArgumentException on failure to construct with given arguments
-     * @throws InvocationTargetException on failure to construct
+     * @throws Throwable on failure to construct
      */
-    public Object newInstance(Object ... args) throws InstantiationException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException {
+    public Object newInstance(Object ... args) throws Exception {
         return getOnlyConstructor().newInstance(args);
     }
     
