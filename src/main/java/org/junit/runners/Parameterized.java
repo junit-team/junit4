@@ -18,6 +18,7 @@ import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
+import org.junit.runners.model.TestClass;
 
 /**
  * The custom runner <code>Parameterized</code> implements parameterized tests.
@@ -194,6 +195,13 @@ public class Parameterized extends Suite {
             fParameters = parameters;
             fName = nameFor(pattern, index, parameters);
         }
+        
+        protected TestClassRunnerForParameters(TestClass testClass, String pattern, int index, Object[] parameters) throws InitializationError {
+            super(testClass);
+
+            fParameters = parameters;
+            fName = nameFor(pattern, index, parameters);
+        }        
 
         @Override
         public Object createTest() throws Exception {
@@ -205,7 +213,7 @@ public class Parameterized extends Suite {
         }
 
         private Object createTestUsingConstructorInjection() throws Exception {
-            return getTestClass().getOnlyConstructor().newInstance(fParameters);
+            return getTestClass().newInstance(fParameters);
         }
 
         private Object createTestUsingFieldInjection() throws Exception {
@@ -214,7 +222,7 @@ public class Parameterized extends Suite {
                 throw new Exception("Wrong number of parameters and @Parameter fields." +
                         " @Parameter fields counted: " + annotatedFieldsByParameter.size() + ", available parameters: " + fParameters.length + ".");
             }
-            Object testClassInstance = getTestClass().getJavaClass().newInstance();
+            Object testClassInstance = getTestClass().newInstance();
             for (FrameworkField each : annotatedFieldsByParameter) {
                 Field field = each.getField();
                 Parameter annotation = field.getAnnotation(Parameter.class);
@@ -308,6 +316,13 @@ public class Parameterized extends Suite {
                 Parameters.class);
         fRunners = Collections.unmodifiableList(createRunnersForParameters(allParameters(), parameters.name()));
     }
+    
+    public Parameterized(TestClass testClass) throws Throwable {
+        super(testClass, NO_RUNNERS);
+        Parameters parameters = getParametersMethod().getAnnotation(
+                Parameters.class);
+        fRunners = Collections.unmodifiableList(createRunnersForParameters(allParameters(), parameters.name()));
+    }    
 
     @Override
     protected List<Runner> getChildren() {

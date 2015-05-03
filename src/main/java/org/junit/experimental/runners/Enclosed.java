@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.junit.runners.Suite;
 import org.junit.runners.model.RunnerBuilder;
+import org.junit.runners.model.TestClass;
 
 /**
  * If you put tests in inner classes, Ant, for example, won't find them. By running the outer class
@@ -30,6 +31,10 @@ public class Enclosed extends Suite {
     public Enclosed(Class<?> klass, RunnerBuilder builder) throws Throwable {
         super(builder, klass, filterAbstractClasses(klass.getClasses()));
     }
+    
+    public Enclosed(TestClass testClass, RunnerBuilder builder) throws Throwable {
+        super(builder, testClass, filterAbstractClasses(testClass.getJavaClass().getClasses()));
+    }    
     
     private static Class<?>[] filterAbstractClasses(final Class<?>[] classes) {     
         final List<Class<?>> filteredList= new ArrayList<Class<?>>(classes.length);

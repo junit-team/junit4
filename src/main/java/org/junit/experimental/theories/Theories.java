@@ -23,6 +23,10 @@ public class Theories extends BlockJUnit4ClassRunner {
     public Theories(Class<?> klass) throws InitializationError {
         super(klass);
     }
+    
+    public Theories(TestClass testClass) throws InitializationError {
+        super(testClass);
+    }    
 
     @Override
     protected void collectInitializationErrors(List<Throwable> errors) {

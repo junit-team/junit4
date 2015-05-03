@@ -84,6 +84,18 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         return new TestClass(testClass);
     }
 
+    /**
+     * Constructs a new {@code ParentRunner} that will run the Java test class 
+     * encapsulated in the {@code @TestClass} object - this constructor allows
+     * the constructor of this runner to provide a TestClass implementation that
+     * can inject things into the instance of the test object constructed
+     * by test runners that use the {@code @TestClass} to create the test object
+     */    
+    protected ParentRunner(TestClass testClass) throws InitializationError {
+        fTestClass = testClass;
+        validate();
+    }
+    
     //
     // Must be overridden
     //

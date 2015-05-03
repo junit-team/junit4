@@ -14,6 +14,7 @@ import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
+import org.junit.runners.model.TestClass;
 
 /**
  * Using <code>Suite</code> as a runner allows you to manually
@@ -78,7 +79,7 @@ public class Suite extends ParentRunner<Runner> {
      * @param classes the classes in the suite
      */
     public Suite(RunnerBuilder builder, Class<?>[] classes) throws InitializationError {
-        this(null, builder.runners(null, classes));
+        this((Class<?>)null, builder.runners(null, classes));
     }
 
     /**
@@ -101,6 +102,17 @@ public class Suite extends ParentRunner<Runner> {
     protected Suite(RunnerBuilder builder, Class<?> klass, Class<?>[] suiteClasses) throws InitializationError {
         this(klass, builder.runners(klass, suiteClasses));
     }
+    
+    /**
+     * Called by this class and subclasses once the classes making up the suite have been determined
+     *
+     * @param builder builds runners for classes in the suite
+     * @param klass the root of the suite
+     * @param suiteClasses the classes in the suite
+     */
+    protected Suite(RunnerBuilder builder, TestClass testClass, Class<?>[] suiteClasses) throws InitializationError {
+        this(testClass, builder.runners(testClass.getJavaClass(), suiteClasses));
+    }    
 
     /**
      * Called by this class and subclasses once the runners making up the suite have been determined
@@ -112,6 +124,17 @@ public class Suite extends ParentRunner<Runner> {
         super(klass);
         fRunners = Collections.unmodifiableList(runners);
     }
+    
+    /**
+     * Called by this class and subclasses once the runners making up the suite have been determined
+     *
+     * @param testClass root of the suite (encapsulated in TestClass)
+     * @param runners for each class in the suite, a {@link Runner}
+     */
+    protected Suite(TestClass testClass, List<Runner> runners) throws InitializationError {
+        super(testClass);
+        fRunners = Collections.unmodifiableList(runners);
+    }    
 
     @Override
     protected List<Runner> getChildren() {

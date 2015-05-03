@@ -27,6 +27,7 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
+import org.junit.runners.model.TestClass;
 
 /**
  * Implements the JUnit 4 standard test case class model, as defined by the
@@ -62,6 +63,15 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
     public BlockJUnit4ClassRunner(Class<?> klass) throws InitializationError {
         super(klass);
     }
+    
+    /**
+     * Creates a BlockJUnit4ClassRunner to run class in {@code testClass}
+     *
+     * @throws InitializationError if the test class is malformed.
+     */
+    public BlockJUnit4ClassRunner(TestClass testClass) throws InitializationError {
+        super(testClass);
+    }    
 
     //
     // Implementation of ParentRunner
@@ -212,7 +222,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      * one exists).
      */
     protected Object createTest() throws Exception {
-        return getTestClass().getOnlyConstructor().newInstance();
+        return getTestClass().newInstance();
     }
 
     /**

@@ -6,6 +6,7 @@ import static org.junit.internal.MethodSorter.NAME_ASCENDING;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -197,13 +198,26 @@ public class TestClass implements Annotatable {
      * Returns the only public constructor in the class, or throws an {@code
      * AssertionError} if there are more or less than one.
      */
-
     public Constructor<?> getOnlyConstructor() {
         Constructor<?>[] constructors = fClass.getConstructors();
         Assert.assertEquals(1, constructors.length);
         return constructors[0];
     }
 
+    /**
+     * Construct a new instance of the test object
+     * @param args paramters for the constructor
+     * @return new object
+     * @throws InstantiationException on failure to construct
+     * @throws IllegalAccessException on failure to access constructor
+     * @throws IllegalArgumentException on failure to construct with given arguments
+     * @throws InvocationTargetException on failure to construct
+     */
+    public Object newInstance(Object ... args) throws InstantiationException, IllegalAccessException,
+            IllegalArgumentException, InvocationTargetException {
+        return getOnlyConstructor().newInstance(args);
+    }
+    
     /**
      * Returns the annotations on this class
      */
