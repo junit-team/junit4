@@ -216,7 +216,10 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
                 && ((Class<?>) type).isAssignableFrom(method.getReturnType());
     }
 
-    private Class<?>[] getParameterTypes() {
+    /**
+     * Returns the parameter types of this method
+     */
+    public Class<?>[] getParameterTypes() {
         return method.getParameterTypes();
     }
 

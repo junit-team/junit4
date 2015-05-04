@@ -1,6 +1,7 @@
 package org.junit.internal.runners.statements;
 
 import org.junit.TestCase;
+import org.junit.runners.model.ArgumentFactory;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
@@ -18,7 +19,7 @@ public class InvokeMethod extends Statement {
         TestCase testCase = testMethod.getContextAs(TestCase.class);
         if (testCase!=null) {
             // specialised by test case
-            testMethod.invokeExplosively(target, (Object[])testCase.value());
+            testMethod.invokeExplosively(target, ArgumentFactory.convert(testCase.value(), testMethod));
         } else {
             // no argument call
             testMethod.invokeExplosively(target);

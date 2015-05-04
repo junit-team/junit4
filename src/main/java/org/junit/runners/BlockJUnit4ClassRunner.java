@@ -27,6 +27,7 @@ import org.junit.rules.RunRules;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.model.ArgumentFactory;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.MultipleFailureException;
@@ -243,7 +244,9 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
                 testMethod.validatePublicVoidNoArg(false, errors);
             } else {
                 testMethod.validatePublicVoid(false, errors);
-                // TODO validate the right number of arguments for the test cases
+                for(TestCase testCase:annotation.cases()) {
+                    ArgumentFactory.validateCanBeUsedWith(testCase.value(), testMethod, errors);
+                }
             }
         }        
     }
