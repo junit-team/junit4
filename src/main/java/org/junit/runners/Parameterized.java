@@ -259,10 +259,12 @@ public class Parameterized extends Suite {
     
     protected class TestClassForParameters extends TestClass {
         private final Object[] fParameters;
+        private final TestClass fDecoratedConstructingTestClass;
         
-        protected TestClassForParameters(Class<?> testClass, Object[] parameters) {
-            super(testClass);
+        protected TestClassForParameters(TestClass decorated, Object[] parameters) {
+            super(decorated.getJavaClass());
             fParameters = parameters;
+            fDecoratedConstructingTestClass = decorated;
         }
         
         @Override
@@ -275,7 +277,7 @@ public class Parameterized extends Suite {
         }
 
         private Object createTestUsingConstructorInjection() throws Exception {
-            return super.newInstance(fParameters);
+            return fDecoratedConstructingTestClass.newInstance(fParameters);
         }
 
         private Object createTestUsingFieldInjection() throws Exception {
@@ -284,7 +286,7 @@ public class Parameterized extends Suite {
                 throw new Exception("Wrong number of parameters and @Parameter fields." +
                         " @Parameter fields counted: " + annotatedFieldsByParameter.size() + ", available parameters: " + fParameters.length + ".");
             }
-            Object testClassInstance = getTestClass().newInstance();
+            Object testClassInstance = fDecoratedConstructingTestClass.newInstance();
             for (FrameworkField each : annotatedFieldsByParameter) {
                 Field field = each.getField();
                 Parameter annotation = field.getAnnotation(Parameter.class);
@@ -337,8 +339,8 @@ public class Parameterized extends Suite {
     }
 
     protected Runner createRunner(String pattern, int index, Object[] parameters) throws InitializationError {
-        return new TestClassRunnerForParameters(new TestClassForParameters(getTestClass().getJavaClass(),
-                parameters), pattern, index, parameters);
+        return new TestClassRunnerForParameters(new TestClassForParameters(getTestClass(), parameters), 
+                pattern, index, parameters);
     }
 
     @SuppressWarnings("unchecked")
