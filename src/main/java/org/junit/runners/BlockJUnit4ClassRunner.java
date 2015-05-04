@@ -3,6 +3,7 @@ package org.junit.runners;
 import static org.junit.internal.runners.rules.RuleMemberValidator.RULE_METHOD_VALIDATOR;
 import static org.junit.internal.runners.rules.RuleMemberValidator.RULE_VALIDATOR;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -13,6 +14,7 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.Test.None;
+import org.junit.TestCase;
 import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.internal.runners.statements.ExpectException;
 import org.junit.internal.runners.statements.Fail;
@@ -122,10 +124,29 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
     /**
      * Returns the methods that run tests. Default implementation returns all
      * methods annotated with {@code @Test} on this class and superclasses that
-     * are not overridden.
+     * are not overridden. Where a method annotation with {@code @Test} has
+     * {@code @TestCase}s specified, then multiple framework methods are created to
+     * run each test case, with the test case as context.
      */
     protected List<FrameworkMethod> computeTestMethods() {
-        return getTestClass().getAnnotatedMethods(Test.class);
+        List<FrameworkMethod> testMethods = new ArrayList<FrameworkMethod>();
+        for(FrameworkMethod method:getTestClass().getAnnotatedMethods(Test.class)) {
+            Test testAnnotation = method.getAnnotation(Test.class);
+            if (testAnnotation.cases().length>0) {
+                addTestCaseSpecialisationsFor(method, testAnnotation, testMethods);
+            } else {
+                testMethods.add(method);
+            }
+        }
+        
+        return testMethods;
+    }
+
+    private void addTestCaseSpecialisationsFor(FrameworkMethod method,
+            Test testAnnotation, List<FrameworkMethod> target) {
+        for(TestCase testCase:testAnnotation.cases()) {
+            target.add(new FrameworkMethod(method.getMethod(), testCase));
+        }
     }
 
     @Override
@@ -214,7 +235,17 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      * is not a public, void instance method with no arguments.
      */
     protected void validateTestMethods(List<Throwable> errors) {
-        validatePublicVoidNoArgMethods(Test.class, false, errors);
+        List<FrameworkMethod> methods = getTestClass().getAnnotatedMethods(Test.class);
+
+        for (FrameworkMethod testMethod : methods) {
+            Test annotation = testMethod.getAnnotation(Test.class);
+            if (annotation.cases().length==0) {
+                testMethod.validatePublicVoidNoArg(false, errors);
+            } else {
+                testMethod.validatePublicVoid(false, errors);
+                // TODO validate the right number of arguments for the test cases
+            }
+        }        
     }
 
     /**
@@ -241,7 +272,30 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      * Default implementation is the method's name
      */
     protected String testName(FrameworkMethod method) {
-        return method.getName();
+        return method.getName() + testCaseSuffix(method);
+    }
+
+    /**
+     * Returns a suffix for test case specialisation if one's relevant
+     * or empty string if not
+     */
+    protected String testCaseSuffix(FrameworkMethod method) {
+        TestCase testCaseAnnotation = method.getContextAs(TestCase.class);
+        if (testCaseAnnotation==null) {
+            return "";
+        }
+        StringBuilder suffix = new StringBuilder();
+        suffix.append("[");
+        boolean first = true;
+        for(String arg:testCaseAnnotation.value()) {
+            if (!first) {
+                suffix.append(",");
+            }
+            first = false;
+            suffix.append(arg);
+        }
+        suffix.append("]");
+        return suffix.toString();
     }
 
     /**

@@ -1,13 +1,15 @@
 package org.junit.tests.running.classes;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.List;
 
 import org.junit.Test;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
 import org.junit.tests.mock.MockTestRunner;
+import org.junit.TestCase;
+
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
 
 public class BlockJUnit4ClassRunnerTest {
     public static class OuterClass {
@@ -50,4 +52,25 @@ public class BlockJUnit4ClassRunnerTest {
 
         runner.assertTestsStartedByName("test1", "test2");
     }
+    
+    public static class ClaassWithTestCaseSpecialisation {
+        @Test(cases={
+                @TestCase({"a","b","ab"}),
+                @TestCase({"J","Unit","JUnit"}),
+                @TestCase({"J","Unit","Unit"})})
+        public void concatenation(String left, String right, String expected) {
+            assertThat(left + right, is(expected));
+        }
+    }
+    
+    @Test
+    public void testMethodIsRunForEachTestCase() throws InitializationError {
+        MockTestRunner runner = MockTestRunner.runTestsOf(ClaassWithTestCaseSpecialisation.class);
+        
+        assertEquals(3, runner.getTestStartedCount());
+        assertEquals(1, runner.getTestFailureCount());
+
+        runner.assertTestsStartedByName("concatenation[a,b,ab]",
+                "concatenation[J,Unit,JUnit]", "concatenation[J,Unit,Unit]");
+    }   
 }

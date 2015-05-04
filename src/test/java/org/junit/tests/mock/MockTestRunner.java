@@ -92,7 +92,9 @@ public class MockTestRunner {
      * those mentioned. No guarantee of the order of test execution tested for
      */
     public void assertTestsStartedByName(String ... names) {
-        assertThat(listener.namesOfStartedTests, hasItems(names));
+        for(String name:names) {
+            assertTrue("Didn't start method " + name, listener.namesOfStartedTests.contains(name));
+        }
     }
     
     /**
