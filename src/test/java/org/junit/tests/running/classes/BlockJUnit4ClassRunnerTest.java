@@ -7,6 +7,7 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
+import org.junit.tests.mock.MockTestRunner;
 
 public class BlockJUnit4ClassRunnerTest {
     public static class OuterClass {
@@ -29,5 +30,24 @@ public class BlockJUnit4ClassRunnerTest {
                     "The inner class org.junit.tests.running.classes.BlockJUnit4ClassRunnerTest$OuterClass$Enclosed is not static.",
                     causes.get(0).getMessage());
         }
+    }
+    
+    public static class ClassWithNoTestCaseSpecialisations {
+        @Test
+        public void test1() {
+        }
+        
+        @Test
+        public void test2() {
+        }
+    }
+    
+    @Test
+    public void noTestCaseSpecialisationsRegressionTest() throws InitializationError {
+        MockTestRunner runner = MockTestRunner.runTestsOf(ClassWithNoTestCaseSpecialisations.class);
+        
+        assertEquals(2, runner.getTestFinishedCount());
+
+        runner.assertTestsStartedByName("test1", "test2");
     }
 }
