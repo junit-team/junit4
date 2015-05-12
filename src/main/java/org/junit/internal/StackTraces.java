@@ -71,7 +71,7 @@ public class StackTraces {
             if (line != null) {
                 // Print remaining stack trace lines.
                 do {
-                    trimmedTrace.append(line).append("\n");
+                    trimmedTrace.append(String.format("%s%n", line));
                     line = reader.readLine();
                 } while (line != null);
             }
@@ -84,7 +84,7 @@ public class StackTraces {
     private static void appendStackTraceLines(
             List<String> stackTraceLines, StringBuilder destBuilder) {
         for (String stackTraceLine : stackTraceLines) {
-            destBuilder.append(stackTraceLine).append("\n");
+            destBuilder.append(String.format("%s%n", stackTraceLine));
         }
     }
 
