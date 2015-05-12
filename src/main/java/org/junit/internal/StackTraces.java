@@ -175,7 +175,6 @@ public class StackTraces {
         "org.junit.experimental.runners.",
         "org.junit.internal.",
         "junit.",
-        "org.apache.maven.surefire."
     };
 
     private static boolean isTestFrameworkStackTraceLine(String line) {
