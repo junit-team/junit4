@@ -10,7 +10,7 @@ import org.junit.runners.model.Statement;
  * {@link Statement} that executes the method is passed to each annotated
  * {@link Rule} in turn, and each may return a substitute or modified
  * {@link Statement}, which is passed to the next {@link Rule}, if any. For
- * and example of how this can be useful, see {@link TestWatchman}.
+ * an example of how this can be useful, see {@link TestWatchman}.
  *
  * Note that {@link MethodRule} has been replaced by {@link TestRule},
  * which has the added benefit of supporting class rules.
