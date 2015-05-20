@@ -1,14 +1,14 @@
 package org.junit.experimental.categories;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.junit.MatcherAssert.assertThat;
 import static org.junit.runner.Description.createSuiteDescription;
 
 import java.util.List;
 
+import org.hamcrest.junit.ExpectedException;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.rules.TestName;
 import org.junit.runner.Description;
 import org.junit.runner.FilterFactory;

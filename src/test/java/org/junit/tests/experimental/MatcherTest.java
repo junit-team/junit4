@@ -1,8 +1,8 @@
 package org.junit.tests.experimental;
 
 import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assume.assumeThat;
+import static org.hamcrest.junit.MatcherAssert.assertThat;
+import static org.hamcrest.junit.MatcherAssume.assumeThat;
 import static org.junit.experimental.results.ResultMatchers.hasFailureContaining;
 import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
 
