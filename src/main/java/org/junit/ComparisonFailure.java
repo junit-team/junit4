@@ -33,7 +33,7 @@ public class ComparisonFailure extends AssertionError {
      * @param expected the expected string value
      * @param actual the actual string value
      */
-    public ComparisonFailure(String message, String expected, String actual) {
+    public ComparisonFailure(CharSequence message, String expected, String actual) {
         super(message);
         this.fExpected = expected;
         this.fActual = actual;

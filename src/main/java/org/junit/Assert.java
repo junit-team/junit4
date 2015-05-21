@@ -36,7 +36,7 @@ public class Assert {
      * okay)
      * @param condition condition to be checked
      */
-    static public void assertTrue(String message, boolean condition) {
+    static public void assertTrue(CharSequence message, boolean condition) {
         if (!condition) {
             fail(message);
         }
@@ -60,7 +60,7 @@ public class Assert {
      * okay)
      * @param condition condition to be checked
      */
-    static public void assertFalse(String message, boolean condition) {
+    static public void assertFalse(CharSequence message, boolean condition) {
         assertTrue(message, !condition);
     }
 
@@ -81,7 +81,7 @@ public class Assert {
      * okay)
      * @see AssertionError
      */
-    static public void fail(String message) {
+    static public void fail(CharSequence message) {
         if (message == null) {
             throw new AssertionError();
         }
@@ -106,12 +106,12 @@ public class Assert {
      * @param expected expected value
      * @param actual actual value
      */
-    static public void assertEquals(String message, Object expected,
+    static public void assertEquals(CharSequence message, Object expected,
             Object actual) {
         if (equalsRegardingNull(expected, actual)) {
             return;
         } else if (expected instanceof String && actual instanceof String) {
-            String cleanMessage = message == null ? "" : message;
+            CharSequence cleanMessage = message == null ? "" : message;
             throw new ComparisonFailure(cleanMessage, (String) expected,
                     (String) actual);
         } else {
@@ -155,7 +155,7 @@ public class Assert {
      * @param unexpected unexpected value to check
      * @param actual the value to check against <code>unexpected</code>
      */
-    static public void assertNotEquals(String message, Object unexpected,
+    static public void assertNotEquals(CharSequence message, Object unexpected,
             Object actual) {
         if (equalsRegardingNull(unexpected, actual)) {
             failEquals(message, actual);
@@ -175,7 +175,7 @@ public class Assert {
         assertNotEquals(null, unexpected, actual);
     }
 
-    private static void failEquals(String message, Object actual) {
+    private static void failEquals(CharSequence message, Object actual) {
         String formatted = "Values should be different. ";
         if (message != null) {
             formatted = message + ". ";
@@ -194,7 +194,7 @@ public class Assert {
      * @param unexpected unexpected value to check
      * @param actual the value to check against <code>unexpected</code>
      */
-    static public void assertNotEquals(String message, long unexpected, long actual) {
+    static public void assertNotEquals(CharSequence message, long unexpected, long actual) {
         if (unexpected == actual) {
             failEquals(message, Long.valueOf(actual));
         }
@@ -226,7 +226,7 @@ public class Assert {
      * <code>actual</code> for which both numbers are still
      * considered equal.
      */
-    static public void assertNotEquals(String message, double unexpected,
+    static public void assertNotEquals(CharSequence message, double unexpected,
             double actual, double delta) {
         if (!doubleIsDifferent(unexpected, actual, delta)) {
             failEquals(message, Double.valueOf(actual));
@@ -278,7 +278,7 @@ public class Assert {
      * @param actuals Object array or array of arrays (multi-dimensional array) with
      * actual values
      */
-    public static void assertArrayEquals(String message, Object[] expecteds,
+    public static void assertArrayEquals(CharSequence message, Object[] expecteds,
             Object[] actuals) throws ArrayComparisonFailure {
         internalArrayEquals(message, expecteds, actuals);
     }
@@ -309,7 +309,7 @@ public class Assert {
      * @param expecteds boolean array with expected values.
      * @param actuals boolean array with expected values.
      */
-    public static void assertArrayEquals(String message, boolean[] expecteds,
+    public static void assertArrayEquals(CharSequence message, boolean[] expecteds,
             boolean[] actuals) throws ArrayComparisonFailure {
         internalArrayEquals(message, expecteds, actuals);
     }    
@@ -336,7 +336,7 @@ public class Assert {
      * @param expecteds byte array with expected values.
      * @param actuals byte array with actual values
      */
-    public static void assertArrayEquals(String message, byte[] expecteds,
+    public static void assertArrayEquals(CharSequence message, byte[] expecteds,
             byte[] actuals) throws ArrayComparisonFailure {
         internalArrayEquals(message, expecteds, actuals);
     }
@@ -361,7 +361,7 @@ public class Assert {
      * @param expecteds char array with expected values.
      * @param actuals char array with actual values
      */
-    public static void assertArrayEquals(String message, char[] expecteds,
+    public static void assertArrayEquals(CharSequence message, char[] expecteds,
             char[] actuals) throws ArrayComparisonFailure {
         internalArrayEquals(message, expecteds, actuals);
     }
@@ -386,7 +386,7 @@ public class Assert {
      * @param expecteds short array with expected values.
      * @param actuals short array with actual values
      */
-    public static void assertArrayEquals(String message, short[] expecteds,
+    public static void assertArrayEquals(CharSequence message, short[] expecteds,
             short[] actuals) throws ArrayComparisonFailure {
         internalArrayEquals(message, expecteds, actuals);
     }
@@ -411,7 +411,7 @@ public class Assert {
      * @param expecteds int array with expected values.
      * @param actuals int array with actual values
      */
-    public static void assertArrayEquals(String message, int[] expecteds,
+    public static void assertArrayEquals(CharSequence message, int[] expecteds,
             int[] actuals) throws ArrayComparisonFailure {
         internalArrayEquals(message, expecteds, actuals);
     }
@@ -436,7 +436,7 @@ public class Assert {
      * @param expecteds long array with expected values.
      * @param actuals long array with actual values
      */
-    public static void assertArrayEquals(String message, long[] expecteds,
+    public static void assertArrayEquals(CharSequence message, long[] expecteds,
             long[] actuals) throws ArrayComparisonFailure {
         internalArrayEquals(message, expecteds, actuals);
     }
@@ -464,7 +464,7 @@ public class Assert {
      * <code>actuals[i]</code> for which both numbers are still
      * considered equal.
      */
-    public static void assertArrayEquals(String message, double[] expecteds,
+    public static void assertArrayEquals(CharSequence message, double[] expecteds,
             double[] actuals, double delta) throws ArrayComparisonFailure {
         new InexactComparisonCriteria(delta).arrayEquals(message, expecteds, actuals);
     }
@@ -495,7 +495,7 @@ public class Assert {
      * <code>actuals[i]</code> for which both numbers are still
      * considered equal.
      */
-    public static void assertArrayEquals(String message, float[] expecteds,
+    public static void assertArrayEquals(CharSequence message, float[] expecteds,
             float[] actuals, float delta) throws ArrayComparisonFailure {
         new InexactComparisonCriteria(delta).arrayEquals(message, expecteds, actuals);
     }
@@ -527,7 +527,7 @@ public class Assert {
      * @param actuals Object array or array of arrays (multi-dimensional array) with
      * actual values
      */
-    private static void internalArrayEquals(String message, Object expecteds,
+    private static void internalArrayEquals(CharSequence message, Object expecteds,
             Object actuals) throws ArrayComparisonFailure {
         new ExactComparisonCriteria().arrayEquals(message, expecteds, actuals);
     }
@@ -547,7 +547,7 @@ public class Assert {
      * <code>actual</code> for which both numbers are still
      * considered equal.
      */
-    static public void assertEquals(String message, double expected,
+    static public void assertEquals(CharSequence message, double expected,
             double actual, double delta) {
         if (doubleIsDifferent(expected, actual, delta)) {
             failNotEquals(message, Double.valueOf(expected), Double.valueOf(actual));
@@ -569,7 +569,7 @@ public class Assert {
      * <code>actual</code> for which both numbers are still
      * considered equal.
      */
-    static public void assertEquals(String message, float expected,
+    static public void assertEquals(CharSequence message, float expected,
             float actual, float delta) {
         if (floatIsDifferent(expected, actual, delta)) {
             failNotEquals(message, Float.valueOf(expected), Float.valueOf(actual));
@@ -591,7 +591,7 @@ public class Assert {
      * <code>actual</code> for which both numbers are still
      * considered equal.
      */
-    static public void assertNotEquals(String message, float unexpected,
+    static public void assertNotEquals(CharSequence message, float unexpected,
             float actual, float delta) {
         if (!floatIsDifferent(unexpected, actual, delta)) {
             failEquals(message, Float.valueOf(actual));
@@ -640,7 +640,7 @@ public class Assert {
      * @param expected long expected value.
      * @param actual long actual value
      */
-    static public void assertEquals(String message, long expected, long actual) {
+    static public void assertEquals(CharSequence message, long expected, long actual) {
         if (expected != actual) {
             failNotEquals(message, Long.valueOf(expected), Long.valueOf(actual));
         }
@@ -662,7 +662,7 @@ public class Assert {
      *             instead
      */
     @Deprecated
-    static public void assertEquals(String message, double expected,
+    static public void assertEquals(CharSequence message, double expected,
             double actual) {
         fail("Use assertEquals(expected, actual, delta) to compare floating-point numbers");
     }
@@ -708,7 +708,7 @@ public class Assert {
      * okay)
      * @param object Object to check or <code>null</code>
      */
-    static public void assertNotNull(String message, Object object) {
+    static public void assertNotNull(CharSequence message, Object object) {
         assertTrue(message, object != null);
     }
 
@@ -730,7 +730,7 @@ public class Assert {
      * okay)
      * @param object Object to check or <code>null</code>
      */
-    static public void assertNull(String message, Object object) {
+    static public void assertNull(CharSequence message, Object object) {
         if (object == null) {
             return;
         }
@@ -747,7 +747,7 @@ public class Assert {
         assertNull(null, object);
     }
 
-    static private void failNotNull(String message, Object actual) {
+    static private void failNotNull(CharSequence message, Object actual) {
         String formatted = "";
         if (message != null) {
             formatted = message + " ";
@@ -764,7 +764,7 @@ public class Assert {
      * @param expected the expected object
      * @param actual the object to compare to <code>expected</code>
      */
-    static public void assertSame(String message, Object expected, Object actual) {
+    static public void assertSame(CharSequence message, Object expected, Object actual) {
         if (expected == actual) {
             return;
         }
@@ -792,7 +792,7 @@ public class Assert {
      * @param unexpected the object you don't expect
      * @param actual the object to compare to <code>unexpected</code>
      */
-    static public void assertNotSame(String message, Object unexpected,
+    static public void assertNotSame(CharSequence message, Object unexpected,
             Object actual) {
         if (unexpected == actual) {
             failSame(message);
@@ -811,15 +811,15 @@ public class Assert {
         assertNotSame(null, unexpected, actual);
     }
 
-    static private void failSame(String message) {
-        String formatted = "";
+    static private void failSame(CharSequence message) {
+        CharSequence formatted = "";
         if (message != null) {
             formatted = message + " ";
         }
         fail(formatted + "expected not same");
     }
 
-    static private void failNotSame(String message, Object expected,
+    static private void failNotSame(CharSequence message, Object expected,
             Object actual) {
         String formatted = "";
         if (message != null) {
@@ -829,12 +829,12 @@ public class Assert {
                 + ">");
     }
 
-    static private void failNotEquals(String message, Object expected,
+    static private void failNotEquals(CharSequence message, Object expected,
             Object actual) {
         fail(format(message, expected, actual));
     }
 
-    static String format(String message, Object expected, Object actual) {
+    static String format(CharSequence message, Object expected, Object actual) {
         String formatted = "";
         if (message != null && !message.equals("")) {
             formatted = message + " ";
@@ -871,7 +871,7 @@ public class Assert {
      * @deprecated use assertArrayEquals
      */
     @Deprecated
-    public static void assertEquals(String message, Object[] expecteds,
+    public static void assertEquals(CharSequence message, Object[] expecteds,
             Object[] actuals) {
         assertArrayEquals(message, expecteds, actuals);
     }
