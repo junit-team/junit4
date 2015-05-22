@@ -14,10 +14,10 @@ import static org.junit.internal.runners.statements.FailOnTimeout.builder;
 
 import java.util.concurrent.TimeUnit;
 
+import org.hamcrest.junit.ExpectedException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.internal.runners.statements.FailOnTimeout;
-import org.junit.rules.ExpectedException;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestTimedOutException;
 

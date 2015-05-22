@@ -1,14 +1,15 @@
 package org.junit.tests.experimental.theories.internal;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.junit.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.tests.experimental.theories.TheoryTestUtils.potentialAssignments;
 
 import java.util.Arrays;
 import java.util.List;
 
+import org.hamcrest.junit.ExpectedException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoint;
@@ -17,7 +18,6 @@ import org.junit.experimental.theories.ParameterSignature;
 import org.junit.experimental.theories.PotentialAssignment;
 import org.junit.experimental.theories.Theory;
 import org.junit.experimental.theories.internal.AllMembersSupplier;
-import org.junit.rules.ExpectedException;
 import org.junit.runners.model.TestClass;
 
 public class AllMembersSupplierTest {

@@ -101,7 +101,7 @@
     </distributionManagement>
 
     <properties>
-        <jdkVersion>1.6</jdkVersion>
+        <jdkVersion>1.7</jdkVersion>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
         <arguments />
         <gpg.keyname>67893CC4</gpg.keyname>
@@ -110,8 +110,21 @@
     <dependencies>
         <dependency>
             <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
-            <version>1.3</version>
+            <artifactId>java-hamcrest</artifactId>
+            <version>2.0.0.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-junit</artifactId>
+            <version>2.0.0.0</version>
+            <scope>test</scope>
+            <exclusions>
+				<exclusion>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+				</exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
@@ -142,7 +155,7 @@
             <plugin>
                 <!--
                 Checks that the version of user's maven installation is 3.0.4,
-                the JDK is 1.6+, no non-standard repositories are specified in
+                the JDK is ${jdkVersion}+, no non-standard repositories are specified in
                 the project, requires only release versions of dependencies of other artifacts.
                 -->
                 <artifactId>maven-enforcer-plugin</artifactId>
@@ -243,8 +256,8 @@
                         <configuration>
                             <signature>
                                 <groupId>org.codehaus.mojo.signature</groupId>
-                                <artifactId>java16</artifactId>
-                                <version>1.1</version>
+                                <artifactId>java17</artifactId>
+                                <version>1.0</version>
                             </signature>
                         </configuration>
                     </execution>
@@ -303,10 +316,6 @@
                     <minmemory>32m</minmemory>
                     <maxmemory>128m</maxmemory>
                     <failOnError>true</failOnError>
-                    <includeDependencySources>true</includeDependencySources>
-                    <dependencySourceIncludes>
-                        <dependencySourceInclude>org.hamcrest:hamcrest-core:*</dependencySourceInclude>
-                    </dependencySourceIncludes>
                 </configuration>
             </plugin>
             <plugin>
@@ -355,10 +364,6 @@
             <plugin>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
                 <version>2.7</version>
-                <configuration>
-                    <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
-                    <!-- waiting for MPIR-267 -->
-                </configuration>
                 <reportSets>
                     <reportSet>
                         <reports>
@@ -407,10 +412,6 @@
                     <minmemory>32m</minmemory>
                     <maxmemory>128m</maxmemory>
                     <failOnError>true</failOnError>
-                    <includeDependencySources>true</includeDependencySources>
-                    <dependencySourceIncludes>
-                        <dependencySourceInclude>org.hamcrest:hamcrest-core:*</dependencySourceInclude>
-                    </dependencySourceIncludes>
                 </configuration>
                 <reportSets>
                     <reportSet>

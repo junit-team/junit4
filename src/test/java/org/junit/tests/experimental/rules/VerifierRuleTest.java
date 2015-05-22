@@ -1,18 +1,18 @@
 package org.junit.tests.experimental.rules;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.junit.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.hasFailureContaining;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 
 import java.util.concurrent.Callable;
 
+import org.hamcrest.junit.ErrorCollector;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.results.PrintableResult;
-import org.junit.rules.ErrorCollector;
 import org.junit.rules.Verifier;
 
 public class VerifierRuleTest {
@@ -84,12 +84,12 @@ public class VerifierRuleTest {
                     throw new RuntimeException("first!");
                 }
             });
-            collector.checkSucceeds(new Callable<Integer>() {
+            collector.checkSucceeds(new Callable<Object>() {
                 public Integer call() throws Exception {
                     throw new RuntimeException("second!");
                 }
             });
-            Integer result = collector.checkSucceeds(new Callable<Integer>() {
+            Object result = collector.checkSucceeds(new Callable<Object>() {
                 public Integer call() throws Exception {
                     return 1;
                 }

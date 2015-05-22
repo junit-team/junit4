@@ -3,14 +3,14 @@ package org.junit.runner;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.junit.MatcherAssert.assertThat;
 
 import java.util.List;
 
+import org.hamcrest.junit.ExpectedException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.IncludeCategories;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.manipulation.Filter;
 
 public class JUnitCommandLineParseResultTest {

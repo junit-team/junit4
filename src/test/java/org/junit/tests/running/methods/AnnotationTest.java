@@ -2,7 +2,7 @@ package org.junit.tests.running.methods;
 
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.junit.MatcherAssert.assertThat;
 
 import java.util.Collection;
 import java.util.HashSet;
