@@ -101,7 +101,7 @@
     </distributionManagement>
 
     <properties>
-        <jdkVersion>1.6</jdkVersion>
+        <jdkVersion>1.7</jdkVersion>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
         <arguments />
         <gpg.keyname>67893CC4</gpg.keyname>
@@ -142,7 +142,7 @@
             <plugin>
                 <!--
                 Checks that the version of user's maven installation is 3.0.4,
-                the JDK is 1.6+, no non-standard repositories are specified in
+                the JDK is ${jdkVersion}+, no non-standard repositories are specified in
                 the project, requires only release versions of dependencies of other artifacts.
                 -->
                 <artifactId>maven-enforcer-plugin</artifactId>
@@ -243,8 +243,8 @@
                         <configuration>
                             <signature>
                                 <groupId>org.codehaus.mojo.signature</groupId>
-                                <artifactId>java16</artifactId>
-                                <version>1.1</version>
+                                <artifactId>java17</artifactId>
+                                <version>1.0</version>
                             </signature>
                         </configuration>
                     </execution>
