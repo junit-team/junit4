@@ -261,6 +261,22 @@ public abstract class TestCase extends Assert implements Test {
     }
 
     /**
+     * Asserts that two CharSequence are equal.
+     */
+    @SuppressWarnings("deprecation")
+    protected static void assertEquals(String message, CharSequence expected, CharSequence actual) {
+        Assert.assertEquals(message, expected.toString(), actual.toString());
+    }
+
+    /**
+     * Asserts that two CharSequence are equal.
+     */
+    @SuppressWarnings("deprecation")
+    protected void assertEquals(CharSequence expected, CharSequence actual) {
+        Assert.assertEquals(expected.toString(), actual.toString());
+    }
+
+    /**
      * Asserts that two doubles are equal concerning a delta.  If they are not
      * an AssertionFailedError is thrown with the given message.  If the expected
      * value is infinity then the delta value is ignored.

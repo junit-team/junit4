@@ -110,10 +110,11 @@ public class Assert {
             Object actual) {
         if (equalsRegardingNull(expected, actual)) {
             return;
-        } else if (expected instanceof String && actual instanceof String) {
+        } else if (expected instanceof CharSequence && actual instanceof CharSequence) {
             String cleanMessage = message == null ? "" : message;
-            throw new ComparisonFailure(cleanMessage, (String) expected,
-                    (String) actual);
+            throw new ComparisonFailure(cleanMessage,
+                    ((CharSequence) expected).toString(),
+                    ((CharSequence) actual).toString());
         } else {
             failNotEquals(message, expected, actual);
         }
