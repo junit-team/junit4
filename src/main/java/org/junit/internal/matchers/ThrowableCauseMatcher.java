@@ -10,7 +10,9 @@ import org.hamcrest.TypeSafeMatcher;
  * match.
  *
  * @param <T> the type of the throwable being matched
+ * @deprecated use {@code org.hamcrest.junit.ExpectedException}
  */
+@Deprecated
 public class ThrowableCauseMatcher<T extends Throwable> extends
         TypeSafeMatcher<T> {
 
