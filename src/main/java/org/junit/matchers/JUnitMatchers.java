@@ -11,7 +11,9 @@ import org.junit.internal.matchers.StacktracePrintingMatcher;
  * not currently included in the basic CoreMatchers class from hamcrest.
  *
  * @since 4.4
+ * @deprecated use {@code org.hamcrest.junit.JUnitMatchers}
  */
+@Deprecated
 public class JUnitMatchers {
     /**
      * @return A matcher matching any collection containing element
