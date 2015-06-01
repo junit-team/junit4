@@ -30,17 +30,6 @@ public class StackTraces {
         return trimStackTrace(exception.toString(), stringWriter.toString());
     }
 
-    /**
-     * Trims the given stack trace.  Stack trace elements that are below the test method are
-     * filtered. out.
-     *
-     * @param fullTrace the full stack trace
-     * @return a trimmed stack trace, or the original trace if trimming wasn't possible
-     */
-    public static String trimStackTrace(String fullTrace) {
-        return trimStackTrace("", fullTrace);
-    }
-
     static String trimStackTrace(String extractedExceptionMessage, String fullTrace) {
         StringBuilder trimmedTrace = new StringBuilder(extractedExceptionMessage);
         BufferedReader reader = new BufferedReader(

@@ -35,9 +35,6 @@ public class StackFilterTest extends TestCase {
         StringWriter swout = new StringWriter();
         PrintWriter pwout = new PrintWriter(swout);
         pwout.println("junit.framework.AssertionFailedError");
-        pwout.println("\tat junit.framework.Assert.fail(Assert.java:144)");
-        pwout.println("\tat junit.framework.Assert.assert(Assert.java:19)");
-        pwout.println("\tat junit.framework.Assert.assert(Assert.java:26)");
         pwout.println("\tat MyTest.f(MyTest.java:13)");
         pwout.println("\tat MyTest.testStackTrace(MyTest.java:8)");
         fFiltered = swout.toString();
