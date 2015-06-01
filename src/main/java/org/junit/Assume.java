@@ -34,6 +34,15 @@ import org.hamcrest.Matcher;
  * @since 4.4
  */
 public class Assume {
+
+    /**
+     * Do not instantiate.
+     * @deprecated since 4.13.
+     */
+    @Deprecated
+    public Assume() {
+    }
+
     /**
      * If called with an expression evaluating to {@code false}, the test will halt and be ignored.
      */
