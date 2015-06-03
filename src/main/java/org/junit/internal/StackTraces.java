@@ -24,39 +24,41 @@ public class StackTraces {
      * @return a trimmed stack trace, or the original trace if trimming wasn't possible
      */
     public static String getTrimmedStackTrace(Throwable exception) {
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter writer = new PrintWriter(stringWriter);
-        exception.printStackTrace(writer);
-        return trimStackTrace(exception.toString(), stringWriter.toString());
-    }
-
-    static String trimStackTrace(String extractedExceptionMessage, String fullTrace) {
-        StringBuilder trimmedTrace = new StringBuilder(extractedExceptionMessage);
+        String fullTrace = getFullStackTrace(exception);
         BufferedReader reader = new BufferedReader(
-            new StringReader(fullTrace.substring(extractedExceptionMessage.length())));
+            new StringReader(fullTrace.substring(exception.toString().length())));
 
         try {
             // Collect the stack trace lines for "exception" (but not the cause).
             List<String> stackTraceLines = new ArrayList<String>();
-            List<String> remainingLines = new ArrayList<String>();
-            collectStackTraceLines(reader, stackTraceLines, remainingLines);
+            List<String> causedByLines = new ArrayList<String>();
+            collectStackTraceLines(reader, stackTraceLines, causedByLines);
 
             if (stackTraceLines.isEmpty()) {
                 // No stack trace?
                 return fullTrace;
             }
-            boolean hasCause = !remainingLines.isEmpty();
+            boolean hasCause = !causedByLines.isEmpty();
             stackTraceLines = trimStackTraceLines(stackTraceLines, hasCause);
             if (stackTraceLines.isEmpty()) {
                 // Could not trim stack trace lines.
                 return fullTrace;
             }
+
+            StringBuilder trimmedTrace = new StringBuilder(exception.toString());
             appendStackTraceLines(stackTraceLines, trimmedTrace);
-            appendStackTraceLines(remainingLines, trimmedTrace);
+            appendStackTraceLines(causedByLines, trimmedTrace);
             return trimmedTrace.toString();
         } catch (IOException e) {
         }
         return fullTrace;
+    }
+
+    private static String getFullStackTrace(Throwable exception) {
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter writer = new PrintWriter(stringWriter);
+        exception.printStackTrace(writer);
+        return stringWriter.toString();
     }
 
     private static void collectStackTraceLines(
@@ -94,8 +96,9 @@ public class StackTraces {
                 if (!hasCause) {
                     return trimmedLines;
                 }
-                List<String> copy = new ArrayList<String>(trimmedLines);
-                copy.add("\t..." + (stackTraceLines.size() - copy.size()) + "more");
+                List<String> copy = new ArrayList<String>(trimmedLines.size() + 1);
+                copy.addAll(trimmedLines);
+                copy.add("\t... " + (stackTraceLines.size() - trimmedLines.size()) + " trimmed");
                 return copy;
             }
             linesToInclude--;
@@ -166,14 +169,21 @@ public class StackTraces {
         "junit.",
     };
 
+    private static final String[] TEST_FRAMEWORK_TEST_METHOD_NAME_PREFIXES = {
+        "org.junit.internal.StackTracesTest",
+    };
+
     private static boolean isTestFrameworkStackTraceLine(String line) {
-        return isMatchingStackTraceLine(line, TEST_FRAMEWORK_METHOD_NAME_PREFIXES);
+        return isMatchingStackTraceLine(line, TEST_FRAMEWORK_METHOD_NAME_PREFIXES) &&
+                !isMatchingStackTraceLine(line, TEST_FRAMEWORK_TEST_METHOD_NAME_PREFIXES);
     }
     
     private static final String[] REFLECTION_METHOD_NAME_PREFIXES = {
         "sun.reflect.",
         "java.lang.reflect.",
-        "org.junit.rules.RunRules.evaluate(", // get better stack traces for failures in method rules
+        "org.junit.rules.RunRules.<init>(",
+        "org.junit.rules.RunRules.applyAll(", // calls TestRules
+        "org.junit.runners.BlockJUnit4ClassRunner.withMethodRules(", // calls MethodRules
         "junit.framework.TestCase.runBare(", // runBare() directly calls setUp() and tearDown()
    };
     
@@ -181,13 +191,13 @@ public class StackTraces {
         return isMatchingStackTraceLine(line, REFLECTION_METHOD_NAME_PREFIXES);
     }
 
-    private static boolean isMatchingStackTraceLine(String line, String[] packagePrefixes) {
+    private static boolean isMatchingStackTraceLine(String line, String[] methodNamePrefixes) {
         if (!line.startsWith("\tat ")) {
             return false;
         }
         line = line.substring(4);
-        for (String packagePrefix : packagePrefixes) {
-            if (line.startsWith(packagePrefix)) {
+        for (String methodNamePrefix : methodNamePrefixes) {
+            if (line.startsWith(methodNamePrefix)) {
                 return true;
             }
         }
