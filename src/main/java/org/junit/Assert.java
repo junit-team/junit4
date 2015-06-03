@@ -6,6 +6,9 @@ import org.junit.internal.ArrayComparisonFailure;
 import org.junit.internal.ExactComparisonCriteria;
 import org.junit.internal.InexactComparisonCriteria;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+
 /**
  * A set of assertion methods useful for writing tests. Only failed assertions
  * are recorded. These methods can be used directly:
@@ -832,6 +835,99 @@ public class Assert {
     private static void failNotEquals(String message, Object expected,
             Object actual) {
         fail(format(message, expected, actual));
+    }
+
+    public interface Predicate<T> {
+        boolean test(T t);
+    }
+
+    public interface ThrowingRunnable {
+        void run() throws Exception;
+    }
+
+    public static void assertThrows(Runnable runnable) {
+        assertThrows(runnable, Throwable.class, null);
+    }
+
+    public static void assertThrows(Runnable runnable, String message) {
+        assertThrows(runnable, Throwable.class, message);
+    }
+
+    public static void assertThrows(Runnable runnable, Class<? extends Throwable> expectedException) {
+        assertThrows(runnable, expectedException, null);
+    }
+
+    public static void assertThrows(final ThrowingRunnable runnable, Class<? extends Throwable> expectedException, String message) {
+        Callable<Void> wrappedRunnable = new Callable<Void>() {
+            public Void call() throws Exception {
+                runnable.run();
+                return null;
+            }
+        };
+        assertThrows(wrappedRunnable, expectedException, message);
+    }
+
+    public static void assertThrows(ThrowingRunnable runnable) {
+        assertThrows(runnable, Throwable.class, null);
+    }
+
+    public static void assertThrows(ThrowingRunnable runnable, String message) {
+        assertThrows(runnable, Throwable.class, message);
+    }
+
+    public static void assertThrows(ThrowingRunnable runnable, Class<? extends Throwable> expectedException) {
+        assertThrows(runnable, expectedException, null);
+    }
+
+    public static void assertThrows(Runnable runnable, Class<? extends Throwable> expectedException, String message) {
+        assertThrows(Executors.callable(runnable), expectedException, message);
+    }
+
+    public static void assertThrows(Callable<?> callable) {
+        assertThrows(callable, Throwable.class, null);
+    }
+
+    public static void assertThrows(Callable<?> callable, String message) {
+        assertThrows(callable, Throwable.class, message);
+    }
+
+    public static void assertThrows(Callable<?> callable, Class<? extends Throwable> expectedException) {
+        assertThrows(callable, expectedException, null);
+    }
+
+    public static void assertThrows(Callable<?> callable, Class<? extends Throwable> expectedException, String message) {
+        assertThrows(callable, defaultExceptionDecider(expectedException), message);
+    }
+
+    private static Predicate<Throwable> defaultExceptionDecider(final Class<? extends Throwable> c) {
+        return new Predicate<Throwable>() {
+            public boolean test(Throwable throwable) {
+                return c.isAssignableFrom(throwable.getClass());
+            }
+        };
+    }
+
+    public static void assertThrows(Runnable runnable, Predicate<? super Throwable> exceptionDecider) {
+        assertThrows(runnable, exceptionDecider, null);
+    }
+
+    public static void assertThrows(Runnable runnable, Predicate<? super Throwable> exceptionDecider, String message) {
+        assertThrows(Executors.callable(runnable), exceptionDecider, message);
+    }
+
+    public static void assertThrows(Callable<?> callable, Predicate<? super Throwable> exceptionDecider) {
+        assertThrows(callable, exceptionDecider, null);
+    }
+
+    public static void assertThrows(Callable<?> callable, Predicate<? super Throwable> exceptionDecider, String message) {
+        boolean threw = false;
+        try {
+            callable.call();
+        } catch (Throwable t) {
+            threw = true;
+            assertTrue(message, exceptionDecider.test(t));
+        }
+        assertTrue(message, threw);
     }
 
     static String format(String message, Object expected, Object actual) {
