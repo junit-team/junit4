@@ -1,5 +1,16 @@
 package org.junit.tests.assertion;
 
+import org.junit.Assert;
+import org.junit.Assert.Predicate;
+import org.junit.ComparisonFailure;
+import org.junit.Test;
+import org.junit.internal.ArrayComparisonFailure;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.net.SocketException;
+import java.util.concurrent.Callable;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -10,15 +21,9 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-import java.math.BigDecimal;
-
-import org.junit.Assert;
-import org.junit.ComparisonFailure;
-import org.junit.Test;
-import org.junit.internal.ArrayComparisonFailure;
 
 /**
  * Tests for {@link org.junit.Assert}
@@ -673,5 +678,88 @@ public class AssertionTest {
     @Test(expected = AssertionError.class)
     public void assertNotEqualsIgnoresFloatDeltaOnNaN() {
         assertNotEquals(Float.NaN, Float.NaN, 1f);
+    }
+
+    @Test
+    public void assertThrowsCatchesExceptions() {
+        assertThrows(throwingRunnable());
+        assertThrows(throwingCallable(new Exception()));
+    }
+
+    @Test(expected = AssertionError.class)
+    public void assertThrowsFailsWhenNoExceptionIsThrown() {
+        assertThrows(nonThrowingCallable());
+    }
+
+    @Test
+    public void assertThrowsContainsExpectedMessage() {
+        try {
+            assertThrows(nonThrowingCallable(), "message");
+            fail();
+        } catch (AssertionError error) {
+            assertTrue(error.getMessage().equals("message"));
+        }
+    }
+
+    @Test(expected = AssertionError.class)
+    public void assertThrowsDoesNotAcceptASupertype() {
+        assertThrows(throwingCallable(new IOException()), SocketException.class);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void assertThrowsDoesNotAcceptAnUnrelatedType() {
+        assertThrows(throwingCallable(new IOException()), RuntimeException.class);
+    }
+
+    @Test
+    public void assertThrowsAcceptsASubtype() {
+        assertThrows(throwingCallable(new SocketException()), IOException.class);
+    }
+
+    @Test
+    public void assertThrowsCanUseCustomPredicates() {
+        assertThrows(throwingCallable(new Exception("--- message ---")), messsageContains("message"));
+    }
+
+    @Test(expected = AssertionError.class)
+    public void assertThrowsCanUseCustomPredicates3() {
+        assertThrows(throwingCallable(new Exception("message")), messsageContains("asdf"));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void assertThrowsPropagatesInternalPredicateExceptions() {
+        assertThrows(throwingCallable(null), messsageContains("asdf"));
+    }
+
+    private static Callable<Void> nonThrowingCallable() {
+        return new Callable<Void>() {
+            public Void call() throws Exception {
+                return null;
+            }
+        };
+    }
+
+    private static Callable<Void> throwingCallable(final Exception ex) {
+        return new Callable<Void>() {
+            public Void call() throws Exception {
+                throw ex;
+            }
+        };
+    }
+
+    private static Runnable throwingRunnable() {
+        return new Runnable() {
+            public void run() {
+                assertTrue(false);
+            }
+        };
+    }
+
+    private static Predicate<Throwable> messsageContains(final String substring) {
+        return new Predicate<Throwable>() {
+            public boolean test(Throwable throwable) {
+                return throwable.getMessage().contains(substring);
+            }
+        };
     }
 }
