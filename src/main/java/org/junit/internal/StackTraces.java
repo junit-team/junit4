@@ -7,6 +7,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import java.util.List;
  * Utility class for working with stack traces.
  */
 public class StackTraces {
+
     private StackTraces() {
     }
 
@@ -24,34 +26,64 @@ public class StackTraces {
      * @return a trimmed stack trace, or the original trace if trimming wasn't possible
      */
     public static String getTrimmedStackTrace(Throwable exception) {
-        String fullTrace = getFullStackTrace(exception);
-        BufferedReader reader = new BufferedReader(
-            new StringReader(fullTrace.substring(exception.toString().length())));
-
-        try {
-            // Collect the stack trace lines for "exception" (but not the cause).
-            List<String> stackTraceLines = new ArrayList<String>();
-            List<String> causedByLines = new ArrayList<String>();
-            collectStackTraceLines(reader, stackTraceLines, causedByLines);
-
-            if (stackTraceLines.isEmpty()) {
-                // No stack trace?
-                return fullTrace;
-            }
-            boolean hasCause = !causedByLines.isEmpty();
-            stackTraceLines = trimStackTraceLines(stackTraceLines, hasCause);
-            if (stackTraceLines.isEmpty()) {
-                // Could not trim stack trace lines.
-                return fullTrace;
-            }
-
-            StringBuilder trimmedTrace = new StringBuilder(exception.toString());
-            appendStackTraceLines(stackTraceLines, trimmedTrace);
-            appendStackTraceLines(causedByLines, trimmedTrace);
-            return trimmedTrace.toString();
-        } catch (IOException e) {
+        List<String> trimmedStackTraceLines = getTrimmedStackTraceLines(exception);
+        if (trimmedStackTraceLines.isEmpty()) {
+            return getFullStackTrace(exception);
         }
-        return fullTrace;
+
+        StringBuilder result = new StringBuilder(exception.toString());
+        appendStackTraceLines(trimmedStackTraceLines, result);
+        appendStackTraceLines(getCauseStackTraceLines(exception), result);
+        return result.toString();
+    }
+
+    private static List<String> getTrimmedStackTraceLines(Throwable exception) {
+        List<StackTraceElement> stackTraceElements = Arrays.asList(exception.getStackTrace());
+        int linesToInclude = stackTraceElements.size();
+
+        State state = State.PROCESSING_OTHER_CODE;
+        for (StackTraceElement stackTraceElement : asReversedList(stackTraceElements)) {
+            state = state.processStackTraceElement(stackTraceElement);
+            if (state == State.DONE) {
+                List<String> trimmedLines = new ArrayList<String>(linesToInclude + 2);
+                trimmedLines.add("");
+                for (StackTraceElement each : stackTraceElements.subList(0, linesToInclude)) {
+                    trimmedLines.add("\tat " + each);
+                }
+                if (exception.getCause() != null) {
+                    trimmedLines.add("\t... " + (stackTraceElements.size() - trimmedLines.size()) + " trimmed");
+                }
+                return trimmedLines;
+            }
+            linesToInclude--;
+        }
+        return Collections.emptyList();
+    }
+
+    private static List<String> getCauseStackTraceLines(Throwable exception) {
+        if (exception.getCause() != null) {
+            String fullTrace = getFullStackTrace(exception);
+            BufferedReader reader = new BufferedReader(
+                    new StringReader(fullTrace.substring(exception.toString().length())));
+            List<String> causedByLines = new ArrayList<String>();
+    
+            try {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (line.startsWith("Caused by: ")) {
+                        causedByLines.add(line);
+                        while ((line = reader.readLine()) != null) {
+                            causedByLines.add(line);
+                        }
+                        return causedByLines;
+                    }
+                }
+            } catch (IOException e) {
+                // We should never get here, because we are reading from a StringReader
+            }
+        }
+
+        return Collections.emptyList();
     }
 
     private static String getFullStackTrace(Throwable exception) {
@@ -61,49 +93,11 @@ public class StackTraces {
         return stringWriter.toString();
     }
 
-    private static void collectStackTraceLines(
-            BufferedReader reader,
-            List<String> stackTraceLines,
-            List<String> remainingLines) throws IOException {
-        String line;
-        while ((line = reader.readLine()) != null) {
-            if (line.startsWith("Caused by: ")) {
-                remainingLines.add(line);
-                while ((line = reader.readLine()) != null) {
-                    remainingLines.add(line);
-                }
-                return;
-            }
-            stackTraceLines.add(line);
-        }
-    }
-
     private static void appendStackTraceLines(
             List<String> stackTraceLines, StringBuilder destBuilder) {
         for (String stackTraceLine : stackTraceLines) {
             destBuilder.append(String.format("%s%n", stackTraceLine));
         }
-    }
-
-    private static List<String> trimStackTraceLines(
-            List<String> stackTraceLines, boolean hasCause) {
-        State state = State.PROCESSING_OTHER_CODE;
-        int linesToInclude = stackTraceLines.size();
-        for (String stackTraceLine : asReversedList(stackTraceLines)) {
-            state = state.processLine(stackTraceLine);
-            if (state == State.DONE) {
-                List<String> trimmedLines = stackTraceLines.subList(0, linesToInclude);
-                if (!hasCause) {
-                    return trimmedLines;
-                }
-                List<String> copy = new ArrayList<String>(trimmedLines.size() + 1);
-                copy.addAll(trimmedLines);
-                copy.add("\t... " + (stackTraceLines.size() - trimmedLines.size()) + " trimmed");
-                return copy;
-            }
-            linesToInclude--;
-        }
-        return Collections.emptyList();
     }
 
     private static <T> List<T> asReversedList(final List<T> list) {
@@ -123,28 +117,28 @@ public class StackTraces {
 
     private enum State {
         PROCESSING_OTHER_CODE {
-            @Override public State processLine(String line) {
-                if (isTestFrameworkStackTraceLine(line)) {
+            @Override public State processLine(String methodName) {
+                if (isTestFrameworkMethod(methodName)) {
                     return PROCESSING_TEST_FRAMEWORK_CODE;
                 }
                 return this;
             }
         },
         PROCESSING_TEST_FRAMEWORK_CODE {
-            @Override public State processLine(String line) {
-                if (isReflectionStackTraceLine(line)) {
+            @Override public State processLine(String methodName) {
+                if (isReflectionMethod(methodName)) {
                     return PROCESSING_REFLECTION_CODE;
-                } else if (isTestFrameworkStackTraceLine(line)) {
+                } else if (isTestFrameworkMethod(methodName)) {
                     return this;
                 }
                 return PROCESSING_OTHER_CODE;
             } 
         },
         PROCESSING_REFLECTION_CODE {
-            @Override public State processLine(String line) {
-                if (isReflectionStackTraceLine(line)) {
+            @Override public State processLine(String methodName) {
+                if (isReflectionMethod(methodName)) {
                     return this;
-                } else if (isTestFrameworkStackTraceLine(line)) {
+                } else if (isTestFrameworkMethod(methodName)) {
                     // This is here to handle TestCase.runBare() calling TestCase.runTest().
                     return PROCESSING_TEST_FRAMEWORK_CODE;
                 }
@@ -152,13 +146,18 @@ public class StackTraces {
             } 
         },
         DONE {
-            @Override public State processLine(String line) {
+            @Override public State processLine(String methodName) {
                 return this;
             } 
         };
 
-        /** Processes a stack trace line, possibly moving to a new state. */
-        public abstract State processLine(String line);
+        /** Processes a stack trace element method name, possibly moving to a new state. */
+        protected abstract State processLine(String methodName);
+        
+        /** Processes a stack trace element, possibly moving to a new state. */
+        public final State processStackTraceElement(StackTraceElement element) {
+            return processLine(element.getClassName() + "." + element.getMethodName() + "()");
+        }
     }
 
     private static final String[] TEST_FRAMEWORK_METHOD_NAME_PREFIXES = {
@@ -173,9 +172,9 @@ public class StackTraces {
         "org.junit.internal.StackTracesTest",
     };
 
-    private static boolean isTestFrameworkStackTraceLine(String line) {
-        return isMatchingStackTraceLine(line, TEST_FRAMEWORK_METHOD_NAME_PREFIXES) &&
-                !isMatchingStackTraceLine(line, TEST_FRAMEWORK_TEST_METHOD_NAME_PREFIXES);
+    private static boolean isTestFrameworkMethod(String methodName) {
+        return isMatchingMethod(methodName, TEST_FRAMEWORK_METHOD_NAME_PREFIXES) &&
+                !isMatchingMethod(methodName, TEST_FRAMEWORK_TEST_METHOD_NAME_PREFIXES);
     }
     
     private static final String[] REFLECTION_METHOD_NAME_PREFIXES = {
@@ -187,17 +186,13 @@ public class StackTraces {
         "junit.framework.TestCase.runBare(", // runBare() directly calls setUp() and tearDown()
    };
     
-    private static boolean isReflectionStackTraceLine(String line) {
-        return isMatchingStackTraceLine(line, REFLECTION_METHOD_NAME_PREFIXES);
+    private static boolean isReflectionMethod(String methodName) {
+        return isMatchingMethod(methodName, REFLECTION_METHOD_NAME_PREFIXES);
     }
 
-    private static boolean isMatchingStackTraceLine(String line, String[] methodNamePrefixes) {
-        if (!line.startsWith("\tat ")) {
-            return false;
-        }
-        line = line.substring(4);
+    private static boolean isMatchingMethod(String methodName, String[] methodNamePrefixes) {
         for (String methodNamePrefix : methodNamePrefixes) {
-            if (line.startsWith(methodNamePrefix)) {
+            if (methodName.startsWith(methodNamePrefix)) {
                 return true;
             }
         }
