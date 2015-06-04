@@ -957,19 +957,17 @@ public class Assert {
     }
 
     /**
-     * This interface facilitates the use of expectThrows from Java 8. It allows
-     * method references to void methods (that declare checked exceptions) to be
-     * passed directly into expectThrows without wrapping. It is not meant to be
-     * implemented directly.
+     * This interface facilitates the use of expectThrows from Java 8. It allows method references
+     * to void methods (that declare checked exceptions) to be passed directly into expectThrows
+     * without wrapping. It is not meant to be implemented directly.
      */
     public interface ThrowingRunnable {
         void run() throws Throwable;
     }
 
     /**
-     * Asserts that {@code runnable} throws an exception when executed. If it
-     * does, the exception object is returned. If it does not, an
-     * {@link AssertionError} is thrown.
+     * Asserts that {@code runnable} throws an exception when executed. If it does, the exception
+     * object is returned. If it does not, an {@link AssertionError} is thrown.
      *
      * @param runnable A function that is expected to throw an exception when executed
      * @return The exception thrown by {@code runnable}
@@ -979,11 +977,11 @@ public class Assert {
     }
 
     /**
-     * Asserts that {@code runnable} throws an exception when executed. If it
-     * does, the exception object is returned. If it does not, an
-     * {@link AssertionError} is thrown with the given {@code message}.
+     * Asserts that {@code runnable} throws an exception when executed. If it does, the exception
+     * object is returned. If it does not, an {@link AssertionError} is thrown with the given {@code
+     * message}.
      *
-     * @param message the identifying message for the {@link AssertionError}
+     * @param message  the identifying message for the {@link AssertionError}
      * @param runnable A function that is expected to throw an exception when executed
      * @return The exception thrown by {@code runnable}
      */
@@ -992,11 +990,10 @@ public class Assert {
     }
 
     /**
-     * Asserts that {@code runnable} throws an exception of type
-     * {@code throwableClass} when executed. If it does, the exception object
-     * is returned. If it does not throw an exception, an {@link AssertionError}
-     * is thrown. If it throws the wrong type of exception, an
-     * {@code AssertionError} is thrown describing the mismatch.
+     * Asserts that {@code runnable} throws an exception of type {@code throwableClass} when
+     * executed. If it does, the exception object is returned. If it does not throw an exception, an
+     * {@link AssertionError} is thrown. If it throws the wrong type of exception, an {@code
+     * AssertionError} is thrown describing the mismatch.
      *
      * @param throwableClass the expected type of the exception
      * @param runnable       A function that is expected to throw an exception when executed
@@ -1007,13 +1004,12 @@ public class Assert {
     }
 
     /**
-     * Asserts that {@code runnable} throws an exception of type
-     * {@code throwableClass} when executed. If it does, the exception object
-     * is returned. If it does not throw an exception, an {@link AssertionError}
-     * is thrown with the given {@code message}. If it throws the wrong type
+     * Asserts that {@code runnable} throws an exception of type {@code throwableClass} when
+     * executed. If it does, the exception object is returned. If it does not throw an exception, an
+     * {@link AssertionError} is thrown with the given {@code message}. If it throws the wrong type
      * of exception, an {@code AssertionError} is thrown describing the mismatch.
      *
-     * @param message the identifying message for the {@link AssertionError}
+     * @param message        the identifying message for the {@link AssertionError}
      * @param throwableClass the expected type of the exception
      * @param runnable       A function that is expected to throw an exception when executed
      * @return The exception thrown by {@code runnable}
