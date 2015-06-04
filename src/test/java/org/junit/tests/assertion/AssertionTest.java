@@ -1,5 +1,14 @@
 package org.junit.tests.assertion;
 
+import org.junit.Assert;
+import org.junit.Assert.ThrowingRunnable;
+import org.junit.ComparisonFailure;
+import org.junit.Test;
+import org.junit.internal.ArrayComparisonFailure;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -13,15 +22,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.expectThrows;
 import static org.junit.Assert.fail;
-
-import org.junit.Assert;
-import org.junit.Assert.ThrowingRunnable;
-import org.junit.ComparisonFailure;
-import org.junit.Test;
-import org.junit.internal.ArrayComparisonFailure;
-
-import java.io.IOException;
-import java.math.BigDecimal;
 
 /**
  * Tests for {@link org.junit.Assert}
@@ -680,26 +680,15 @@ public class AssertionTest {
 
     @Test(expected = AssertionError.class)
     public void expectThrowsRequiresAnExceptionToBeThrown() {
-        expectThrows(nonThrowingRunnable());
+        expectThrows(Throwable.class, nonThrowingRunnable());
     }
 
     @Test
     public void expectThrowsIncludesAnInformativeDefaultMessage() {
         try {
-            expectThrows(nonThrowingRunnable());
+            expectThrows(Throwable.class, nonThrowingRunnable());
         } catch (AssertionError ex) {
             assertEquals("Expected Throwable to be thrown, but nothing was thrown", ex.getMessage());
-            return;
-        }
-        fail();
-    }
-
-    @Test
-    public void expectThrowsIncludesTheSuppliedMessage() {
-        try {
-            expectThrows("message", nonThrowingRunnable());
-        } catch (AssertionError ex) {
-            assertEquals("message", ex.getMessage());
             return;
         }
         fail();
@@ -709,16 +698,9 @@ public class AssertionTest {
     public void expectThrowsReturnsTheSameObjectThrown() {
         NullPointerException npe = new NullPointerException();
 
-        Throwable throwable = expectThrows(throwingRunnable(npe));
+        Throwable throwable = expectThrows(Throwable.class, throwingRunnable(npe));
 
         assertSame(npe, throwable);
-    }
-
-    @Test(expected = ClassCastException.class)
-    public void expectThrowsDetectsTypeMismatchesViaAssignment() {
-        NullPointerException npe = new NullPointerException();
-
-        IOException ioException = expectThrows(throwingRunnable(npe));
     }
 
     @Test(expected = AssertionError.class)
