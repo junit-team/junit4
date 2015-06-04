@@ -974,25 +974,58 @@ public class Assert {
      * @param runnable A function that is expected to throw an exception when executed
      * @return The exception thrown by {@code runnable}
      */
-    public static Throwable expectThrows(ThrowingRunnable runnable) {
-        return expectThrows(null, runnable);
+    public static <T extends Throwable> T expectThrows(ThrowingRunnable runnable) {
+        return (T) expectThrows(null, Throwable.class, runnable);
     }
-
 
     /**
      * Asserts that {@code runnable} throws an exception when executed. If it
      * does, the exception object is returned. If it does not, an
-     * {@link AssertionError} is thrown with the given message.
+     * {@link AssertionError} is thrown with the given {@code message}.
      *
      * @param message the identifying message for the {@link AssertionError}
      * @param runnable A function that is expected to throw an exception when executed
      * @return The exception thrown by {@code runnable}
      */
-    public static Throwable expectThrows(String message, ThrowingRunnable runnable) {
+    public static <T extends Throwable> T expectThrows(String message, ThrowingRunnable runnable) {
+        return (T) expectThrows(message, Throwable.class, runnable);
+    }
+
+    /**
+     * Asserts that {@code runnable} throws an exception of type
+     * {@code throwableClass} when executed. If it does, the exception object
+     * is returned. If it does not throw an exception, an {@link AssertionError}
+     * is thrown. If it throws the wrong type of exception, an
+     * {@code AssertionError} is thrown describing the mismatch.
+     *
+     * @param throwableClass the expected type of the exception
+     * @param runnable       A function that is expected to throw an exception when executed
+     * @return The exception thrown by {@code runnable}
+     */
+    public static <T extends Throwable> T expectThrows(Class<T> throwableClass, ThrowingRunnable runnable) {
+        return expectThrows(null, throwableClass, runnable);
+    }
+
+    /**
+     * Asserts that {@code runnable} throws an exception of type
+     * {@code throwableClass} when executed. If it does, the exception object
+     * is returned. If it does not throw an exception, an {@link AssertionError}
+     * is thrown with the given {@code message}. If it throws the wrong type
+     * of exception, an {@code AssertionError} is thrown describing the mismatch.
+     *
+     * @param message the identifying message for the {@link AssertionError}
+     * @param throwableClass the expected type of the exception
+     * @param runnable       A function that is expected to throw an exception when executed
+     * @return The exception thrown by {@code runnable}
+     */
+    public static <T extends Throwable> T expectThrows(String message, Class<T> throwableClass, ThrowingRunnable runnable) {
         try {
             runnable.run();
         } catch (Throwable t) {
-            return t;
+            String mismatchMessage = String.format("Expected %s to be thrown, but got %s instead",
+                    throwableClass.getSimpleName(), t.getClass().getSimpleName());
+            assertTrue(mismatchMessage, throwableClass.isInstance(t));
+            return (T) t;
         }
         fail(message);
         throw new AssertionError(); // This statement is unreachable.

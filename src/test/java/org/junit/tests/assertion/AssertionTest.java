@@ -1,5 +1,14 @@
 package org.junit.tests.assertion;
 
+import org.junit.Assert;
+import org.junit.Assert.ThrowingRunnable;
+import org.junit.ComparisonFailure;
+import org.junit.Test;
+import org.junit.internal.ArrayComparisonFailure;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -13,14 +22,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.expectThrows;
 import static org.junit.Assert.fail;
-
-import java.math.BigDecimal;
-
-import org.junit.Assert;
-import org.junit.Assert.ThrowingRunnable;
-import org.junit.ComparisonFailure;
-import org.junit.Test;
-import org.junit.internal.ArrayComparisonFailure;
 
 /**
  * Tests for {@link org.junit.Assert}
@@ -709,6 +710,33 @@ public class AssertionTest {
         Throwable throwable = expectThrows(throwingRunnable(npe));
 
         assertSame(npe, throwable);
+    }
+
+    @Test(expected = ClassCastException.class)
+    public void expectThrowsDetectsTypeMismatchesViaAssignment() {
+        NullPointerException npe = new NullPointerException();
+
+        IOException ioException = expectThrows(throwingRunnable(npe));
+    }
+
+    @Test(expected = AssertionError.class)
+    public void expectThrowsDetectsTypeMismatchesViaExplicitTypeHint() {
+        NullPointerException npe = new NullPointerException();
+
+        expectThrows(IOException.class, throwingRunnable(npe));
+    }
+
+    @Test
+    public void expectThrowsSuppliesACoherentErrorMessageUponTypeMismatch() {
+        NullPointerException npe = new NullPointerException();
+
+        try {
+            expectThrows(IOException.class, throwingRunnable(npe));
+            fail();
+        } catch (AssertionError error) {
+            assertEquals("Expected IOException to be thrown, but got NullPointerException instead",
+                    error.getMessage());
+        }
     }
 
     private static ThrowingRunnable nonThrowingRunnable() {
