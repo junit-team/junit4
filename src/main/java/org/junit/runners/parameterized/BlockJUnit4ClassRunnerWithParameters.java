@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.List;
 
+import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.Parameterized.Parameter;
@@ -139,7 +140,16 @@ public class BlockJUnit4ClassRunnerWithParameters extends
 
     @Override
     protected Annotation[] getRunnerAnnotations() {
-        return new Annotation[0];
+        Annotation[] allAnnotations = super.getRunnerAnnotations();
+        Annotation[] annotationsWithoutRunWith = new Annotation[allAnnotations.length - 1];
+        int i = 0;
+        for (Annotation annotation: allAnnotations) {
+            if (!annotation.annotationType().equals(RunWith.class)) {
+                annotationsWithoutRunWith[i] = annotation;
+                ++i;
+            }
+        }
+        return annotationsWithoutRunWith;
     }
 
     private List<FrameworkField> getAnnotatedFieldsByParameter() {

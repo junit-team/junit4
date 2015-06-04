@@ -315,7 +315,6 @@ public class Categories extends Suite {
         } catch (NoTestsRemainException e) {
             throw new InitializationError(e);
         }
-        assertNoCategorizedDescendentsOfUncategorizeableParents(getDescription());
     }
 
     private static Set<Class<?>> getIncludedCategory(Class<?> klass) {
@@ -336,35 +335,6 @@ public class Categories extends Suite {
     private static boolean isAnyExcluded(Class<?> klass) {
         ExcludeCategory annotation= klass.getAnnotation(ExcludeCategory.class);
         return annotation == null || annotation.matchAny();
-    }
-
-    private static void assertNoCategorizedDescendentsOfUncategorizeableParents(Description description) throws InitializationError {
-        if (canHaveCategorizedChildren(description)) {
-            for (Description each : description.getChildren()) {
-                assertNoCategorizedDescendentsOfUncategorizeableParents(each);
-            }
-        } else {
-            assertNoDescendantsHaveCategoryAnnotations(description);
-        }
-    }
-
-    private static void assertNoDescendantsHaveCategoryAnnotations(Description description) throws InitializationError {
-        for (Description each : description.getChildren()) {
-            if (each.getAnnotation(Category.class) != null) {
-                throw new InitializationError("Category annotations on Parameterized classes are not supported on individual methods.");
-            }
-            assertNoDescendantsHaveCategoryAnnotations(each);
-        }
-    }
-
-    // If children have names like [0], our current magical category code can't determine their parentage.
-    private static boolean canHaveCategorizedChildren(Description description) {
-        for (Description each : description.getChildren()) {
-            if (each.getTestClass() == null) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private static boolean hasAssignableTo(Set<Class<?>> assigns, Class<?> to) {
