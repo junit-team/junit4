@@ -1,14 +1,5 @@
 package org.junit.tests.assertion;
 
-import org.junit.Assert;
-import org.junit.Assert.ThrowingRunnable;
-import org.junit.ComparisonFailure;
-import org.junit.Test;
-import org.junit.internal.ArrayComparisonFailure;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -22,6 +13,15 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.expectThrows;
 import static org.junit.Assert.fail;
+
+import org.junit.Assert;
+import org.junit.Assert.ThrowingRunnable;
+import org.junit.ComparisonFailure;
+import org.junit.Test;
+import org.junit.internal.ArrayComparisonFailure;
+
+import java.io.IOException;
+import java.math.BigDecimal;
 
 /**
  * Tests for {@link org.junit.Assert}
