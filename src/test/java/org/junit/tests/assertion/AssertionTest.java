@@ -729,14 +729,29 @@ public class AssertionTest {
     }
 
     @Test
+    public void expectThrowsWrapsAndPropagatesUnexpectedExceptions() {
+        NullPointerException npe = new NullPointerException("inner-message");
+
+        try {
+            expectThrows(IOException.class, throwingRunnable(npe));
+        } catch (AssertionError ex) {
+            assertSame(npe, ex.getCause());
+            assertEquals("inner-message", ex.getCause().getMessage());
+            return;
+        }
+        fail();
+    }
+
+    @Test
     public void expectThrowsSuppliesACoherentErrorMessageUponTypeMismatch() {
         NullPointerException npe = new NullPointerException();
 
         try {
             expectThrows(IOException.class, throwingRunnable(npe));
         } catch (AssertionError error) {
-            assertEquals("Expected IOException to be thrown, but got NullPointerException instead",
+            assertEquals("Expected IOException to be thrown, but NullPointerException was thrown",
                     error.getMessage());
+            assertSame(npe, error.getCause());
             return;
         }
         fail();

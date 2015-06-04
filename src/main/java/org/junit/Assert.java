@@ -975,6 +975,7 @@ public class Assert {
      * @return The exception thrown by {@code runnable}
      * @since 4.13
      */
+    @SuppressWarnings("unchecked")
     public static <T extends Throwable> T expectThrows(ThrowingRunnable runnable) {
         return (T) expectThrows(null, Throwable.class, runnable);
     }
@@ -989,6 +990,7 @@ public class Assert {
      * @return The exception thrown by {@code runnable}
      * @since 4.13
      */
+    @SuppressWarnings("unchecked")
     public static <T extends Throwable> T expectThrows(String message, ThrowingRunnable runnable) {
         return (T) expectThrows(message, Throwable.class, runnable);
     }
@@ -997,7 +999,8 @@ public class Assert {
      * Asserts that {@code runnable} throws an exception of type {@code throwableClass} when
      * executed. If it does, the exception object is returned. If it does not throw an exception, an
      * {@link AssertionError} is thrown. If it throws the wrong type of exception, an {@code
-     * AssertionError} is thrown describing the mismatch.
+     * AssertionError} is thrown describing the mismatch; the exception that was actually thrown can
+     * be obtained by calling {@link AssertionError#getCause}.
      *
      * @param throwableClass the expected type of the exception
      * @param runnable       A function that is expected to throw an exception when executed
@@ -1012,7 +1015,8 @@ public class Assert {
      * Asserts that {@code runnable} throws an exception of type {@code throwableClass} when
      * executed. If it does, the exception object is returned. If it does not throw an exception, an
      * {@link AssertionError} is thrown with the given {@code message}. If it throws the wrong type
-     * of exception, an {@code AssertionError} is thrown describing the mismatch.
+     * of exception, an {@code AssertionError} is thrown describing the mismatch; the exception that
+     * was actually thrown can be obtained by calling {@link AssertionError#getCause}.
      *
      * @param message        the identifying message for the {@link AssertionError}
      * @param throwableClass the expected type of the exception
@@ -1020,14 +1024,22 @@ public class Assert {
      * @return The exception thrown by {@code runnable}
      * @since 4.13
      */
+    @SuppressWarnings("unchecked")
     public static <T extends Throwable> T expectThrows(String message, Class<T> throwableClass, ThrowingRunnable runnable) {
         try {
             runnable.run();
         } catch (Throwable t) {
-            String mismatchMessage = String.format("Expected %s to be thrown, but got %s instead",
-                    throwableClass.getSimpleName(), t.getClass().getSimpleName());
-            assertTrue(mismatchMessage, throwableClass.isInstance(t));
-            return (T) t;
+            try {
+                return throwableClass.cast(t);
+            } catch (ClassCastException ex) {
+                String mismatchMessage = String.format("Expected %s to be thrown, but %s was thrown",
+                        throwableClass.getSimpleName(), t.getClass().getSimpleName());
+
+                // The AssertionError(String, Throwable) ctor is only available on JDK7.
+                AssertionError assertionError = new AssertionError(mismatchMessage);
+                assertionError.initCause(t);
+                throw assertionError;
+            }
         }
         fail(message);
         throw new AssertionError(); // This statement is unreachable.
