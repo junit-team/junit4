@@ -955,4 +955,46 @@ public class Assert {
             Matcher<? super T> matcher) {
         MatcherAssert.assertThat(reason, actual, matcher);
     }
+
+    /**
+     * This interface facilitates the use of expectThrows from Java 8. It allows
+     * method references to void methods (that declare checked exceptions) to be
+     * passed directly into expectThrows without wrapping. It is not meant to be
+     * implemented directly.
+     */
+    public interface ThrowingRunnable {
+        void run() throws Throwable;
+    }
+
+    /**
+     * Asserts that {@code runnable} throws an exception when executed. If it
+     * does, the exception object is returned. If it does not, an
+     * {@link AssertionError} is thrown.
+     *
+     * @param runnable A function that is expected to throw an exception when executed
+     * @return The exception thrown by {@code runnable}
+     */
+    public static Throwable expectThrows(ThrowingRunnable runnable) {
+        return expectThrows(null, runnable);
+    }
+
+
+    /**
+     * Asserts that {@code runnable} throws an exception when executed. If it
+     * does, the exception object is returned. If it does not, an
+     * {@link AssertionError} is thrown with the given message.
+     *
+     * @param message the identifying message for the {@link AssertionError}
+     * @param runnable A function that is expected to throw an exception when executed
+     * @return The exception thrown by {@code runnable}
+     */
+    public static Throwable expectThrows(String message, ThrowingRunnable runnable) {
+        try {
+            runnable.run();
+        } catch (Throwable t) {
+            return t;
+        }
+        fail(message);
+        throw new AssertionError(); // This statement is unreachable.
+    }
 }

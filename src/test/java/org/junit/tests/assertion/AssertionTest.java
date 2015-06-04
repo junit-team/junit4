@@ -11,11 +11,13 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.expectThrows;
 import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
 
 import org.junit.Assert;
+import org.junit.Assert.ThrowingRunnable;
 import org.junit.ComparisonFailure;
 import org.junit.Test;
 import org.junit.internal.ArrayComparisonFailure;
@@ -170,7 +172,7 @@ public class AssertionTest {
     public void oneDimensionalFloatArraysAreNotEqual() {
         assertArrayEquals(new float[]{1.0f}, new float[]{2.5f}, 1.0f);
     }
-    
+
     @Test(expected = AssertionError.class)
     public void oneDimensionalBooleanArraysAreNotEqual() {
         assertArrayEquals(new boolean[]{true}, new boolean[]{false});
@@ -673,5 +675,54 @@ public class AssertionTest {
     @Test(expected = AssertionError.class)
     public void assertNotEqualsIgnoresFloatDeltaOnNaN() {
         assertNotEquals(Float.NaN, Float.NaN, 1f);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void expectThrowsRequiresAnExceptionToBeThrown() {
+        expectThrows(nonThrowingRunnable());
+    }
+
+    @Test
+    public void expectThrowsIncludesNoMessageByDefault() {
+        try {
+            expectThrows(nonThrowingRunnable());
+            fail();
+        } catch (AssertionError ex) {
+            assertNull(ex.getMessage());
+        }
+    }
+
+    @Test
+    public void expectThrowsIncludesTheSuppliedMessage() {
+        try {
+            expectThrows("message", nonThrowingRunnable());
+            fail();
+        } catch (AssertionError ex) {
+            assertEquals("message", ex.getMessage());
+        }
+    }
+
+    @Test
+    public void expectThrowsReturnsTheSameObjectThrown() {
+        NullPointerException npe = new NullPointerException();
+
+        Throwable throwable = expectThrows(throwingRunnable(npe));
+
+        assertSame(npe, throwable);
+    }
+
+    private static ThrowingRunnable nonThrowingRunnable() {
+        return new ThrowingRunnable() {
+            public void run() throws Throwable {
+            }
+        };
+    }
+
+    private static ThrowingRunnable throwingRunnable(final Throwable t) {
+        return new ThrowingRunnable() {
+            public void run() throws Throwable {
+                throw t;
+            }
+        };
     }
 }
