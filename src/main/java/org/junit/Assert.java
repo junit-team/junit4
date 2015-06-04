@@ -1029,9 +1029,9 @@ public class Assert {
         try {
             runnable.run();
         } catch (Throwable t) {
-            try {
+            if (throwableClass.isInstance(t)) {
                 return throwableClass.cast(t);
-            } catch (ClassCastException ex) {
+            } else {
                 String mismatchMessage = String.format("Expected %s to be thrown, but %s was thrown",
                         throwableClass.getSimpleName(), t.getClass().getSimpleName());
 
@@ -1044,7 +1044,6 @@ public class Assert {
         if (message == null) {
             message = String.format("Expected %s to be thrown, but nothing was thrown", throwableClass.getSimpleName());
         }
-        fail(message);
-        throw new AssertionError(); // This statement is unreachable.
+        throw new AssertionError(message);
     }
 }
