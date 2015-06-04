@@ -1042,7 +1042,7 @@ public class Assert {
             }
         }
         if (message == null) {
-            message = String.format("Expected %s to be thrown, but nothing was thrown.", throwableClass.getSimpleName());
+            message = String.format("Expected %s to be thrown, but nothing was thrown", throwableClass.getSimpleName());
         }
         fail(message);
         throw new AssertionError(); // This statement is unreachable.

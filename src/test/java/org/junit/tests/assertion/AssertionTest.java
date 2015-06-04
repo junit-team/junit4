@@ -684,11 +684,11 @@ public class AssertionTest {
     }
 
     @Test
-    public void expectThrowsIncludesNoMessageByDefault() {
+    public void expectThrowsIncludesAnInformativeDefaultMessage() {
         try {
             expectThrows(nonThrowingRunnable());
         } catch (AssertionError ex) {
-            assertNull(ex.getMessage());
+            assertEquals("Expected Throwable to be thrown, but nothing was thrown", ex.getMessage());
             return;
         }
         fail();
