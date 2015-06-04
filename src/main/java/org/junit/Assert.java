@@ -298,7 +298,7 @@ public class Assert {
     public static void assertArrayEquals(Object[] expecteds, Object[] actuals) {
         assertArrayEquals(null, expecteds, actuals);
     }
-    
+
     /**
      * Asserts that two boolean arrays are equal. If they are not, an
      * {@link AssertionError} is thrown with the given message. If
@@ -313,8 +313,8 @@ public class Assert {
     public static void assertArrayEquals(String message, boolean[] expecteds,
             boolean[] actuals) throws ArrayComparisonFailure {
         internalArrayEquals(message, expecteds, actuals);
-    }    
-    
+    }
+
     /**
      * Asserts that two boolean arrays are equal. If they are not, an
      * {@link AssertionError} is thrown. If <code>expected</code> and
@@ -960,6 +960,8 @@ public class Assert {
      * This interface facilitates the use of expectThrows from Java 8. It allows method references
      * to void methods (that declare checked exceptions) to be passed directly into expectThrows
      * without wrapping. It is not meant to be implemented directly.
+     *
+     * @since 4.13
      */
     public interface ThrowingRunnable {
         void run() throws Throwable;
@@ -971,6 +973,7 @@ public class Assert {
      *
      * @param runnable A function that is expected to throw an exception when executed
      * @return The exception thrown by {@code runnable}
+     * @since 4.13
      */
     public static <T extends Throwable> T expectThrows(ThrowingRunnable runnable) {
         return (T) expectThrows(null, Throwable.class, runnable);
@@ -984,6 +987,7 @@ public class Assert {
      * @param message  the identifying message for the {@link AssertionError}
      * @param runnable A function that is expected to throw an exception when executed
      * @return The exception thrown by {@code runnable}
+     * @since 4.13
      */
     public static <T extends Throwable> T expectThrows(String message, ThrowingRunnable runnable) {
         return (T) expectThrows(message, Throwable.class, runnable);
@@ -998,6 +1002,7 @@ public class Assert {
      * @param throwableClass the expected type of the exception
      * @param runnable       A function that is expected to throw an exception when executed
      * @return The exception thrown by {@code runnable}
+     * @since 4.13
      */
     public static <T extends Throwable> T expectThrows(Class<T> throwableClass, ThrowingRunnable runnable) {
         return expectThrows(null, throwableClass, runnable);
@@ -1013,6 +1018,7 @@ public class Assert {
      * @param throwableClass the expected type of the exception
      * @param runnable       A function that is expected to throw an exception when executed
      * @return The exception thrown by {@code runnable}
+     * @since 4.13
      */
     public static <T extends Throwable> T expectThrows(String message, Class<T> throwableClass, ThrowingRunnable runnable) {
         try {
