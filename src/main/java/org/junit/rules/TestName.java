@@ -25,7 +25,7 @@ import org.junit.runner.Description;
  * @since 4.7
  */
 public class TestName extends TestWatcher {
-    private String name;
+    private volatile String name;
 
     @Override
     protected void starting(Description d) {
