@@ -687,20 +687,22 @@ public class AssertionTest {
     public void expectThrowsIncludesNoMessageByDefault() {
         try {
             expectThrows(nonThrowingRunnable());
-            fail();
         } catch (AssertionError ex) {
             assertNull(ex.getMessage());
+            return;
         }
+        fail();
     }
 
     @Test
     public void expectThrowsIncludesTheSuppliedMessage() {
         try {
             expectThrows("message", nonThrowingRunnable());
-            fail();
         } catch (AssertionError ex) {
             assertEquals("message", ex.getMessage());
+            return;
         }
+        fail();
     }
 
     @Test
@@ -732,11 +734,12 @@ public class AssertionTest {
 
         try {
             expectThrows(IOException.class, throwingRunnable(npe));
-            fail();
         } catch (AssertionError error) {
             assertEquals("Expected IOException to be thrown, but got NullPointerException instead",
                     error.getMessage());
+            return;
         }
+        fail();
     }
 
     private static ThrowingRunnable nonThrowingRunnable() {
