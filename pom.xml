@@ -1,10 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>junit</groupId>
     <artifactId>junit</artifactId>
     <version>4.13-SNAPSHOT</version>
+    <packaging>bundle</packaging>
 
     <name>JUnit</name>
     <description>JUnit is a unit testing framework for Java, created by Erich Gamma and Kent Beck.</description>
@@ -105,13 +106,14 @@
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
         <arguments />
         <gpg.keyname>67893CC4</gpg.keyname>
+        <hamcrestVersion>1.3</hamcrestVersion>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
-            <version>1.3</version>
+            <version>${hamcrestVersion}</version>
         </dependency>
     </dependencies>
 
@@ -251,6 +253,35 @@
                 </executions>
             </plugin>
             <plugin>
+                <!-- OSGi bundle in JAR archive -->
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.5.3</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>org.${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Name>${project.name}</Bundle-Name>
+                        <Bundle-Description>${project.description}</Bundle-Description>
+                        <Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
+                        <Bundle-DocURL>${project.organization.url}</Bundle-DocURL>
+                        <Bundle-Version>${project.version}</Bundle-Version>
+                        <Bundle-License>Eclipse Public License 1.0</Bundle-License>
+                        <Import-Package>
+                            !org.hamcrest.internal.*,
+                            org.hamcrest.*; version="${hamcrestVersion}"; resolution:=optional
+                        </Import-Package>
+                    </instructions>
+                    <archive>
+                      <addMavenDescriptor>false</addMavenDescriptor>
+                        <manifest>
+                            <mainClass>org.junit.runner.JUnitCore</mainClass>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
                 <!--
                 A plugin which uses the JUnit framework in order to start
                 our junit suite "AllTests" after the sources are compiled.
@@ -261,6 +292,56 @@
                     <test>org/junit/tests/AllTests.java</test>
                     <useSystemClassLoader>true</useSystemClassLoader>
                     <enableAssertions>false</enableAssertions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-invoker-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>integration-tests-felix</id>
+                        <goals>
+                            <goal>install</goal>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <cloneProjectsTo>${project.build.directory}/it/felix</cloneProjectsTo>
+                            <profiles>
+                                <profile>felix</profile>
+                            </profiles>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>integration-tests-equinox</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <cloneProjectsTo>${project.build.directory}/it/equinox</cloneProjectsTo>
+                            <profiles>
+                                <profile>equinox</profile>
+                            </profiles>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>integration-tests-knopflerfish</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <cloneProjectsTo>${project.build.directory}/it/knopflerfish</cloneProjectsTo>
+                            <profiles>
+                                <profile>knopflerfish</profile>
+                            </profiles>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <skipInstallation>${skipTests}</skipInstallation>
+                    <skipInvocation>${skipTests}</skipInvocation>
+                    <streamLogs>true</streamLogs>
+                    <showErrors>true</showErrors>
+                    <localRepositoryPath>${maven.repo.local}</localRepositoryPath>
                 </configuration>
             </plugin>
             <plugin>
@@ -334,18 +415,6 @@
                         <version>1.5</version>
                     </dependency>
                 </dependencies>
-            </plugin>
-            <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.5</version>
-                <configuration>
-                    <archive>
-                        <addMavenDescriptor>false</addMavenDescriptor>
-                        <manifest>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                        </manifest>
-                    </archive>
-                </configuration>
             </plugin>
         </plugins>
     </build>
