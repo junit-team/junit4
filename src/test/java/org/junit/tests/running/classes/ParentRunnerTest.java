@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.hamcrest.Matcher;
@@ -25,6 +26,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.RunnerScheduler;
 import org.junit.tests.experimental.rules.RuleMemberValidatorTest.TestWithNonStaticClassRule;
 import org.junit.tests.experimental.rules.RuleMemberValidatorTest.TestWithProtectedClassRule;
@@ -213,14 +215,19 @@ public class ParentRunnerTest {
         public void assumptionFail() {
             throw new AssumptionViolatedException("Thrown from @Test");
         }
+
+        @Test
+        public void MultipleFailureExceptionFail() throws Exception {
+            throw new MultipleFailureException(Collections.<Throwable>emptyList());
+        }
     }
 
     @Test
     public void parentRunnerTestMethods() throws InitializationError {
         CountingRunListener countingRunListener = runTestWithParentRunner(TestTest.class);
-        Assert.assertEquals(3, countingRunListener.testStarted);
-        Assert.assertEquals(3, countingRunListener.testFinished);
-        Assert.assertEquals(1, countingRunListener.testFailure);
+        Assert.assertEquals(4, countingRunListener.testStarted);
+        Assert.assertEquals(4, countingRunListener.testFinished);
+        Assert.assertEquals(2, countingRunListener.testFailure);
         Assert.assertEquals(1, countingRunListener.testAssumptionFailure);
         Assert.assertEquals(1, countingRunListener.testIgnored);
     }
