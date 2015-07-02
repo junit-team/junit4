@@ -31,6 +31,9 @@ public class MultipleFailureException extends Exception {
 
     @Override
     public String getMessage() {
+        if(fErrors.isEmpty()) {
+            return this.getClass().getName();
+        }
         StringBuilder sb = new StringBuilder(
                 String.format("There were %d errors:", fErrors.size()));
         for (Throwable e : fErrors) {

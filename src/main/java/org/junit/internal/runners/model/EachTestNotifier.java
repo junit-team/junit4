@@ -25,6 +25,9 @@ public class EachTestNotifier {
     }
 
     private void addMultipleFailureException(MultipleFailureException mfe) {
+        if(mfe.getFailures().isEmpty()) {
+            notifier.fireTestFailure(new Failure(description, mfe));
+        }
         for (Throwable each : mfe.getFailures()) {
             addFailure(each);
         }
