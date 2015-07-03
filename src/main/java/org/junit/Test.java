@@ -95,4 +95,10 @@ public @interface Test {
      * </p>
      */
     long timeout() default 0L;
+
+    /**
+     * Optionally specify the execution order of a test method. Methods are executed from the lowest <code>order</code>
+     * to the highest.
+     */
+    int order() default 0;
 }
