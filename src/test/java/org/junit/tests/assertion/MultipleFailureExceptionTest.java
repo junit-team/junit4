@@ -1,7 +1,7 @@
 package org.junit.tests.assertion;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -73,9 +73,8 @@ public class MultipleFailureExceptionTest {
         try {
             new MultipleFailureException(Collections.<Throwable>emptyList());
             fail();
-        } catch (Exception expected) {
-            assertThat(expected, instanceOf(IllegalArgumentException.class));
-            assertTrue(expected.getMessage().equals("Argument error list cannot be empty"));
+        } catch (IllegalArgumentException expected) {
+            assertThat(expected.getMessage(), containsString("Argument error list cannot be empty"));
         }
     }
 
