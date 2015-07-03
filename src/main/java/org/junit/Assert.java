@@ -969,14 +969,29 @@ public class Assert {
 
     /**
      * Asserts that {@code runnable} throws an exception of type {@code throwableClass} when
+     * executed. If it does not throw an exception, an {@link AssertionError} is thrown. If it
+     * throws the wrong type of exception, an {@code AssertionError} is thrown describing the
+     * mismatch; the exception that was actually thrown can be obtained by calling {@link
+     * AssertionError#getCause}.
+     *
+     * @param throwableClass the expected type of the exception
+     * @param runnable       a function that is expected to throw an exception when executed
+     * @since 4.13
+     */
+    public static <T extends Throwable> void assertThrows(Class<T> throwableClass, ThrowingRunnable runnable) {
+        expectThrows(throwableClass, runnable);
+    }
+
+    /**
+     * Asserts that {@code runnable} throws an exception of type {@code throwableClass} when
      * executed. If it does, the exception object is returned. If it does not throw an exception, an
      * {@link AssertionError} is thrown. If it throws the wrong type of exception, an {@code
      * AssertionError} is thrown describing the mismatch; the exception that was actually thrown can
      * be obtained by calling {@link AssertionError#getCause}.
      *
      * @param throwableClass the expected type of the exception
-     * @param runnable       A function that is expected to throw an exception when executed
-     * @return The exception thrown by {@code runnable}
+     * @param runnable       a function that is expected to throw an exception when executed
+     * @return the exception thrown by {@code runnable}
      * @since 4.13
      */
     public static <T extends Throwable> T expectThrows(Class<T> throwableClass, ThrowingRunnable runnable) {
