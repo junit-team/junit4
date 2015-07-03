@@ -688,7 +688,7 @@ public class AssertionTest {
         try {
             expectThrows(Throwable.class, nonThrowingRunnable());
         } catch (AssertionError ex) {
-            assertEquals("Expected Throwable to be thrown, but nothing was thrown", ex.getMessage());
+            assertEquals("expected Throwable to be thrown, but nothing was thrown", ex.getMessage());
             return;
         }
         fail();
@@ -731,7 +731,7 @@ public class AssertionTest {
         try {
             expectThrows(IOException.class, throwingRunnable(npe));
         } catch (AssertionError error) {
-            assertEquals("Expected IOException to be thrown, but NullPointerException was thrown",
+            assertEquals("unexpected exception type thrown; expected:<IOException> but was:<NullPointerException>",
                     error.getMessage());
             assertSame(npe, error.getCause());
             return;

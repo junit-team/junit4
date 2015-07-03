@@ -968,50 +968,51 @@ public class Assert {
     }
 
     /**
-     * Asserts that {@code runnable} throws an exception of type {@code throwableClass} when
+     * Asserts that {@code runnable} throws an exception of type {@code expectedThrowable} when
      * executed. If it does not throw an exception, an {@link AssertionError} is thrown. If it
      * throws the wrong type of exception, an {@code AssertionError} is thrown describing the
      * mismatch; the exception that was actually thrown can be obtained by calling {@link
      * AssertionError#getCause}.
      *
-     * @param throwableClass the expected type of the exception
+     * @param expectedThrowable the expected type of the exception
      * @param runnable       a function that is expected to throw an exception when executed
      * @since 4.13
      */
-    public static <T extends Throwable> void assertThrows(Class<T> throwableClass, ThrowingRunnable runnable) {
-        expectThrows(throwableClass, runnable);
+    public static void assertThrows(Class<? extends Throwable> expectedThrowable, ThrowingRunnable runnable) {
+        expectThrows(expectedThrowable, runnable);
     }
 
     /**
-     * Asserts that {@code runnable} throws an exception of type {@code throwableClass} when
+     * Asserts that {@code runnable} throws an exception of type {@code expectedThrowable} when
      * executed. If it does, the exception object is returned. If it does not throw an exception, an
      * {@link AssertionError} is thrown. If it throws the wrong type of exception, an {@code
      * AssertionError} is thrown describing the mismatch; the exception that was actually thrown can
      * be obtained by calling {@link AssertionError#getCause}.
      *
-     * @param throwableClass the expected type of the exception
+     * @param expectedThrowable the expected type of the exception
      * @param runnable       a function that is expected to throw an exception when executed
      * @return the exception thrown by {@code runnable}
      * @since 4.13
      */
-    public static <T extends Throwable> T expectThrows(Class<T> throwableClass, ThrowingRunnable runnable) {
+    public static <T extends Throwable> T expectThrows(Class<T> expectedThrowable, ThrowingRunnable runnable) {
         try {
             runnable.run();
-        } catch (Throwable t) {
-            if (throwableClass.isInstance(t)) {
-                return throwableClass.cast(t);
+        } catch (Throwable actualThrown) {
+            if (expectedThrowable.isInstance(actualThrown)) {
+                @SuppressWarnings("unchecked") T retVal = (T) actualThrown;
+                return retVal;
             } else {
-                String mismatchMessage = String.format("Expected %s to be thrown, but %s was thrown",
-                        throwableClass.getSimpleName(), t.getClass().getSimpleName());
+                String mismatchMessage = format("unexpected exception type thrown;",
+                        expectedThrowable.getSimpleName(), actualThrown.getClass().getSimpleName());
 
                 // The AssertionError(String, Throwable) ctor is only available on JDK7.
                 AssertionError assertionError = new AssertionError(mismatchMessage);
-                assertionError.initCause(t);
+                assertionError.initCause(actualThrown);
                 throw assertionError;
             }
         }
-        String message = String.format("Expected %s to be thrown, but nothing was thrown",
-                    throwableClass.getSimpleName());
+        String message = String.format("expected %s to be thrown, but nothing was thrown",
+                expectedThrowable.getSimpleName());
         throw new AssertionError(message);
     }
 }
