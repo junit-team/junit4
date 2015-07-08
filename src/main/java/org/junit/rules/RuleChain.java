@@ -72,7 +72,7 @@ public class RuleChain implements TestRule {
     }
 
     /**
-     * Create a new {@code RuleChain}, which encloses the {@code nextRule} with
+     * Create a new {@code RuleChain}, which encloses the {@code enclosedRule} with
      * the rules of the current {@code RuleChain}.
      *
      * @param enclosedRule the rule to enclose.
