@@ -391,8 +391,6 @@ public class TestRuleTest {
         assertTrue(wasRun);
     }
 
-//	private static int runCount;
-
     public static class MethodMultipleRuleTest {
         private static class Increment implements TestRule {
             public Statement apply(final Statement base, Description description) {
@@ -676,8 +674,6 @@ public class TestRuleTest {
         }
     }
 
-    ;
-
     public static class UsesFieldAndMethodRule {
         @Rule
         public OrderTestRule orderMethod() {
@@ -698,15 +694,6 @@ public class TestRuleTest {
     public void usesFieldAndMethodRule() {
         orderList.clear();
         assertThat(testResult(UsesFieldAndMethodRule.class), isSuccessful());
-    }
-
-    public static class MultipleCallsTest implements TestRule {
-        public int applications = 0;
-
-        public Statement apply(Statement base, Description description) {
-            applications++;
-            return base;
-        }
     }
 
     public static class CallMethodOnlyOnceRule {

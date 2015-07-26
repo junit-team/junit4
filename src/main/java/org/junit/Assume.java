@@ -34,6 +34,15 @@ import org.hamcrest.Matcher;
  * @since 4.4
  */
 public class Assume {
+
+    /**
+     * Do not instantiate.
+     * @deprecated since 4.13.
+     */
+    @Deprecated
+    public Assume() {
+    }
+
     /**
      * If called with an expression evaluating to {@code false}, the test will halt and be ignored.
      */
@@ -89,7 +98,9 @@ public class Assume {
      * @param matcher an expression, built of {@link Matcher}s, specifying allowed values
      * @see org.hamcrest.CoreMatchers
      * @see org.junit.matchers.JUnitMatchers
+     * @deprecated use {@code org.hamcrest.junit.MatcherAssume.assumeThat()}
      */
+    @Deprecated
     public static <T> void assumeThat(T actual, Matcher<T> matcher) {
         if (!matcher.matches(actual)) {
             throw new AssumptionViolatedException(actual, matcher);
@@ -112,7 +123,9 @@ public class Assume {
      * @param matcher an expression, built of {@link Matcher}s, specifying allowed values
      * @see org.hamcrest.CoreMatchers
      * @see org.junit.matchers.JUnitMatchers
+     * @deprecated use {@code org.hamcrest.junit.MatcherAssume.assumeThat()}
      */
+    @Deprecated
     public static <T> void assumeThat(String message, T actual, Matcher<T> matcher) {
         if (!matcher.matches(actual)) {
             throw new AssumptionViolatedException(message, actual, matcher);

@@ -65,8 +65,8 @@ public class RunNotifier {
 
         void run() {
             int capacity = currentListeners.size();
-            ArrayList<RunListener> safeListeners = new ArrayList<RunListener>(capacity);
-            ArrayList<Failure> failures = new ArrayList<Failure>(capacity);
+            List<RunListener> safeListeners = new ArrayList<RunListener>(capacity);
+            List<Failure> failures = new ArrayList<Failure>(capacity);
             for (RunListener listener : currentListeners) {
                 try {
                     notifyListener(listener);

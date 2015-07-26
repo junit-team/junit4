@@ -97,7 +97,7 @@ public class TestClass implements Annotatable {
 
     private static <T extends FrameworkMember<T>> Map<Class<? extends Annotation>, List<T>>
             makeDeeplyUnmodifiable(Map<Class<? extends Annotation>, List<T>> source) {
-        LinkedHashMap<Class<? extends Annotation>, List<T>> copy =
+        Map<Class<? extends Annotation>, List<T>> copy =
                 new LinkedHashMap<Class<? extends Annotation>, List<T>>();
         for (Map.Entry<Class<? extends Annotation>, List<T>> entry : source.entrySet()) {
             copy.put(entry.getKey(), Collections.unmodifiableList(entry.getValue()));
@@ -168,7 +168,7 @@ public class TestClass implements Annotatable {
     }
 
     private static List<Class<?>> getSuperClasses(Class<?> testClass) {
-        ArrayList<Class<?>> results = new ArrayList<Class<?>>();
+        List<Class<?>> results = new ArrayList<Class<?>>();
         Class<?> current = testClass;
         while (current != null) {
             results.add(current);

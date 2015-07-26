@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.List;
 
+import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.Parameterized.Parameter;
@@ -18,6 +19,10 @@ import org.junit.runners.model.Statement;
  */
 public class BlockJUnit4ClassRunnerWithParameters extends
         BlockJUnit4ClassRunner {
+    private enum InjectionType {
+        CONSTRUCTOR, FIELD
+    }
+
     private final Object[] parameters;
 
     private final String name;
@@ -32,10 +37,15 @@ public class BlockJUnit4ClassRunnerWithParameters extends
 
     @Override
     public Object createTest() throws Exception {
-        if (fieldsAreAnnotated()) {
-            return createTestUsingFieldInjection();
-        } else {
-            return createTestUsingConstructorInjection();
+        InjectionType injectionType = getInjectionType();
+        switch (injectionType) {
+            case CONSTRUCTOR:
+                return createTestUsingConstructorInjection();
+            case FIELD:
+                return createTestUsingFieldInjection();
+            default:
+                throw new IllegalStateException("The injection type "
+                        + injectionType + " is not supported.");
         }
     }
 
@@ -86,7 +96,7 @@ public class BlockJUnit4ClassRunnerWithParameters extends
     @Override
     protected void validateConstructor(List<Throwable> errors) {
         validateOnlyOneConstructor(errors);
-        if (fieldsAreAnnotated()) {
+        if (getInjectionType() != InjectionType.CONSTRUCTOR) {
             validateZeroArgConstructor(errors);
         }
     }
@@ -94,7 +104,7 @@ public class BlockJUnit4ClassRunnerWithParameters extends
     @Override
     protected void validateFields(List<Throwable> errors) {
         super.validateFields(errors);
-        if (fieldsAreAnnotated()) {
+        if (getInjectionType() == InjectionType.FIELD) {
             List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter();
             int[] usedIndices = new int[annotatedFieldsByParameter.size()];
             for (FrameworkField each : annotatedFieldsByParameter) {
@@ -130,11 +140,28 @@ public class BlockJUnit4ClassRunnerWithParameters extends
 
     @Override
     protected Annotation[] getRunnerAnnotations() {
-        return new Annotation[0];
+        Annotation[] allAnnotations = super.getRunnerAnnotations();
+        Annotation[] annotationsWithoutRunWith = new Annotation[allAnnotations.length - 1];
+        int i = 0;
+        for (Annotation annotation: allAnnotations) {
+            if (!annotation.annotationType().equals(RunWith.class)) {
+                annotationsWithoutRunWith[i] = annotation;
+                ++i;
+            }
+        }
+        return annotationsWithoutRunWith;
     }
 
     private List<FrameworkField> getAnnotatedFieldsByParameter() {
         return getTestClass().getAnnotatedFields(Parameter.class);
+    }
+
+    private InjectionType getInjectionType() {
+        if (fieldsAreAnnotated()) {
+            return InjectionType.FIELD;
+        } else {
+            return InjectionType.CONSTRUCTOR;
+        }
     }
 
     private boolean fieldsAreAnnotated() {

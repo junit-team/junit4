@@ -51,7 +51,7 @@ import org.junit.runners.model.TestClass;
  *      }
  * }
  * </pre>
- * This makes it clear that the user's filename should be included in the config file name,
+ * This makes it clear that the username should be included in the config file name,
  * only if it doesn't contain a slash. Another test or theory might define what happens when a username does contain
  * a slash. <code>UserTest</code> will attempt to run <code>filenameIncludesUsername</code> on every compatible data
  * point defined in the class. If any of the assumptions fail, the data point is silently ignored. If all of the
