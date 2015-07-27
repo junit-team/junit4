@@ -25,6 +25,7 @@
     <head>
       <link rel="stylesheet" href="@relativePath@/css/plain-links.css" />
       <link rel="stylesheet" href="@relativePath@/css/carousel.css" />
+      <link rel="stylesheet" href="@relativePath@/css/junit-lambda.css" />
     </head>
     <breadcrumbs>
       <item name="JUnit" href="http://junit.org/" />
