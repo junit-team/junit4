@@ -52,14 +52,14 @@ public class TestResult {
     }
 
     /**
-     * Registers a TestListener
+     * Registers a TestListener.
      */
     public synchronized void addListener(TestListener listener) {
         fListeners.add(listener);
     }
 
     /**
-     * Unregisters a TestListener
+     * Unregisters a TestListener.
      */
     public synchronized void removeListener(TestListener listener) {
         fListeners.remove(listener);
@@ -91,7 +91,7 @@ public class TestResult {
     }
 
     /**
-     * Returns an Enumeration for the errors
+     * Returns an Enumeration for the errors.
      */
     public synchronized Enumeration<TestFailure> errors() {
         return Collections.enumeration(fErrors);
@@ -106,7 +106,7 @@ public class TestResult {
     }
 
     /**
-     * Returns an Enumeration for the failures
+     * Returns an Enumeration for the failures.
      */
     public synchronized Enumeration<TestFailure> failures() {
         return Collections.enumeration(fFailures);
@@ -150,7 +150,7 @@ public class TestResult {
     }
 
     /**
-     * Checks whether the test run should stop
+     * Checks whether the test run should stop.
      */
     public synchronized boolean shouldStop() {
         return fStop;
