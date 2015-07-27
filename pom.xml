@@ -199,8 +199,8 @@
                 </executions>
                 <configuration>
                     <ignoreMissingFile>false</ignoreMissingFile>
-                    <file>src/main/java/junit/runner/Version.java.template</file>
-                    <outputFile>src/main/java/junit/runner/Version.java</outputFile>
+                    <file>${project.build.sourceDirectory}/junit/runner/Version.java.template</file>
+                    <outputFile>${project.build.sourceDirectory}/junit/runner/Version.java</outputFile>
                     <regex>false</regex>
                     <token>@version@</token>
                     <value>${project.version}</value>
