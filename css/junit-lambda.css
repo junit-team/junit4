@@ -37,6 +37,11 @@ ul.inline {
 	height: 120px;
 	line-height: 120px;
 }
+.sponsors-medium li a {
+	width: 278px;
+	height: 139px;
+	line-height: 139px;
+}
 .sponsors-large li a {
 	width: 435px;
 	height: 237px;
