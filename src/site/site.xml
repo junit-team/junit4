@@ -39,6 +39,7 @@
 
     <menu name="Crowdfunding">
       <item name="JUnit Lambda" href="junit-lambda.html"/>
+      <item name="Campaign Contributors" href="junit-lambda-contributors.html"/>
     </menu>
 
     <menu ref="reports" inherit="bottom" />
