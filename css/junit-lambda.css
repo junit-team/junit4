@@ -1,12 +1,14 @@
-ul.sponsors {
+ul.inline {
     margin-left: 0;
     list-style: none;
 }
-.sponsors li {
+.inline li {
   display: inline-block;
 	margin-right: 10px;
 	margin-bottom: 10px;
+}
 
+.sponsors li {
 	border: 1px solid #e3e3e3;
 	-webkit-border-radius: 4px;
 	   -moz-border-radius: 4px;
@@ -25,10 +27,18 @@ ul.sponsors {
 .sponsors li a {
 	display: block;
 	padding: 0 10px !important;
-	height: 100px;
-	width: 200px;
-	line-height: 100px;
 }
 .sponsors li a img {
 	vertical-align: middle;
+}
+
+.sponsors-small li a {
+	width: 200px;
+	height: 120px;
+	line-height: 120px;
+}
+.sponsors-large li a {
+	width: 435px;
+	height: 237px;
+	line-height: 237px;
 }
