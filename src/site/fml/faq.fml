@@ -721,6 +721,12 @@ public void testIndexOutOfBoundsExceptionNotRaised()
       read <a
       href="http://www.onjava.com/pub/a/onjava/2003/11/12/reflection.html">this
       article</a>.
+    </p>
+    <p>
+      If you are using JDK 1.6 or higher and you annotate your tests with @Test,
+      you can use <a href="http://dp4j.com">Dp4j</a> to inject reflection in your
+      test methods. For details on how to use it, see <a href="http://dp4j.com/testscript">
+      this test script</a>.
     </p></answer></faq>
       <faq id="#tests_12"><question>Why does JUnit only report the first
       failure in a single test?</question><answer><p>
