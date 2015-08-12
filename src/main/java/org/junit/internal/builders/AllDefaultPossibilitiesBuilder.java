@@ -40,7 +40,10 @@ public class AllDefaultPossibilitiesBuilder extends RunnerBuilder {
     }
 
     protected AnnotatedBuilder annotatedBuilder() {
-        return new AnnotatedBuilder(this);
+        // For compatibility with Request#classes(...) and the Suite runner,
+        // deeper nesting levels always need to support suite() methods:
+        RunnerBuilder suiteBuilder = canUseSuiteMethod ? this : new AllDefaultPossibilitiesBuilder(true);
+        return new AnnotatedBuilder(suiteBuilder);
     }
 
     protected IgnoredBuilder ignoredBuilder() {

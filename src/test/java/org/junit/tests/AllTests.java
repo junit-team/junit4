@@ -18,13 +18,13 @@ import org.junit.runner.RunWith;
 import org.junit.runner.notification.ConcurrentRunNotifierTest;
 import org.junit.runner.notification.RunNotifierTest;
 import org.junit.runner.notification.SynchronizedRunListenerTest;
-import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParametersTest;
 import org.junit.runners.CustomBlockJUnit4ClassRunnerTest;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.junit.runners.model.FrameworkFieldTest;
 import org.junit.runners.model.FrameworkMethodTest;
 import org.junit.runners.model.TestClassTest;
+import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParametersTest;
 import org.junit.runners.parameterized.ParameterizedNamesTest;
 import org.junit.runners.parameterized.TestWithParametersTest;
 import org.junit.tests.assertion.AssertionTest;
@@ -82,6 +82,7 @@ import org.junit.tests.junit3compatibility.ForwardCompatibilityPrintingTest;
 import org.junit.tests.junit3compatibility.ForwardCompatibilityTest;
 import org.junit.tests.junit3compatibility.InitializationErrorForwardCompatibilityTest;
 import org.junit.tests.junit3compatibility.JUnit38ClassRunnerTest;
+import org.junit.tests.junit3compatibility.JUnit4TestAdapterTest;
 import org.junit.tests.junit3compatibility.OldTestClassAdaptingListenerTest;
 import org.junit.tests.junit3compatibility.OldTests;
 import org.junit.tests.junit3compatibility.SuiteMethodTest;
@@ -157,6 +158,7 @@ import org.junit.validator.PublicClassValidatorTest;
         UserStopTest.class,
         SortableTest.class,
         JUnit38ClassRunnerTest.class,
+        JUnit4TestAdapterTest.class,
         SystemExitTest.class,
         JUnitCoreReturnsCorrectExitCodeTest.class,
         SuiteMethodTest.class,
