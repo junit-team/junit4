@@ -16,15 +16,15 @@ public class ComparisonFailure extends AssertionError {
      * @see ComparisonCompactor
      */
     private static final int MAX_CONTEXT_LENGTH = 20;
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     /*
      * We have to use the f prefix until the next major release to ensure
      * serialization compatibility. 
      * See https://github.com/junit-team/junit/issues/976
      */
-    private String fExpected;
-    private String fActual;
+    private String expected;
+    private String actual;
 
     /**
      * Constructs a comparison failure.
@@ -35,8 +35,8 @@ public class ComparisonFailure extends AssertionError {
      */
     public ComparisonFailure(String message, String expected, String actual) {
         super(message);
-        this.fExpected = expected;
-        this.fActual = actual;
+        this.expected = expected;
+        this.actual = actual;
     }
 
     /**
@@ -46,7 +46,7 @@ public class ComparisonFailure extends AssertionError {
      */
     @Override
     public String getMessage() {
-        return new ComparisonCompactor(MAX_CONTEXT_LENGTH, fExpected, fActual).compact(super.getMessage());
+        return new ComparisonCompactor(MAX_CONTEXT_LENGTH, expected, actual).compact(super.getMessage());
     }
 
     /**
@@ -55,7 +55,7 @@ public class ComparisonFailure extends AssertionError {
      * @return the actual string value
      */
     public String getActual() {
-        return fActual;
+        return actual;
     }
 
     /**
@@ -64,7 +64,7 @@ public class ComparisonFailure extends AssertionError {
      * @return the expected string value
      */
     public String getExpected() {
-        return fExpected;
+        return expected;
     }
 
     private static class ComparisonCompactor {

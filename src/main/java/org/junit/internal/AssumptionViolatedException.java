@@ -13,27 +13,27 @@ import org.hamcrest.StringDescription;
  * @see org.junit.Assume
  */
 public class AssumptionViolatedException extends RuntimeException implements SelfDescribing {
-    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 3L;
 
     /*
      * We have to use the f prefix until the next major release to ensure
      * serialization compatibility. 
      * See https://github.com/junit-team/junit/issues/976
      */
-    private final String fAssumption;
-    private final boolean fValueMatcher;
-    private final Object fValue;
-    private final Matcher<?> fMatcher;
+    private final String assumption;
+    private final boolean hasValue;
+    private final Object value;
+    private final Matcher<?> matcher;
 
     /**
      * @deprecated Please use {@link org.junit.AssumptionViolatedException} instead.
      */
     @Deprecated
     public AssumptionViolatedException(String assumption, boolean hasValue, Object value, Matcher<?> matcher) {
-        this.fAssumption = assumption;
-        this.fValue = value;
-        this.fMatcher = matcher;
-        this.fValueMatcher = hasValue;
+        this.assumption = assumption;
+        this.value = value;
+        this.matcher = matcher;
+        this.hasValue = hasValue;
 
         if (value instanceof Throwable) {
           initCause((Throwable) value);
@@ -89,23 +89,30 @@ public class AssumptionViolatedException extends RuntimeException implements Sel
     }
 
     public void describeTo(Description description) {
-        if (fAssumption != null) {
-            description.appendText(fAssumption);
+        if (assumption != null) {
+            description.appendText(assumption);
         }
 
-        if (fValueMatcher) {
-            // a value was passed in when this instance was constructed; print it
-            if (fAssumption != null) {
-                description.appendText(": ");
-            }
+        if (hasValue) {
+            printValue(description);
+            printMatcher(description);
+        }
+    }
 
-            description.appendText("got: ");
-            description.appendValue(fValue);
+    private void printValue(Description description) {
+        // a value was passed in when this instance was constructed; print it
+        if (assumption != null) {
+            description.appendText(": ");
+        }
 
-            if (fMatcher != null) {
-                description.appendText(", expected: ");
-                description.appendDescriptionOf(fMatcher);
-            }
+        description.appendText("got: ");
+        description.appendValue(value);
+    }
+
+    private void printMatcher(Description description) {
+        if (matcher != null) {
+            description.appendText(", expected: ");
+            description.appendDescriptionOf(matcher);
         }
     }
 }

@@ -12,31 +12,31 @@ import org.junit.internal.Throwables;
  * @since 4.9
  */
 public class MultipleFailureException extends Exception {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     /*
      * We have to use the f prefix until the next major release to ensure
      * serialization compatibility. 
      * See https://github.com/junit-team/junit/issues/976
      */
-    private final List<Throwable> fErrors;
+    private final List<Throwable> errors;
 
     public MultipleFailureException(List<Throwable> errors) {
         if (errors.isEmpty()) {
             throw new IllegalArgumentException("Argument error list cannot be empty");
         }
-        this.fErrors = new ArrayList<Throwable>(errors);
+        this.errors = new ArrayList<Throwable>(errors);
     }
 
     public List<Throwable> getFailures() {
-        return Collections.unmodifiableList(fErrors);
+        return Collections.unmodifiableList(errors);
     }
 
     @Override
     public String getMessage() {
         StringBuilder sb = new StringBuilder(
-                String.format("There were %d errors:", fErrors.size()));
-        for (Throwable e : fErrors) {
+                String.format("There were %d errors:", errors.size()));
+        for (Throwable e : errors) {
             sb.append(String.format("\n  %s(%s)", e.getClass().getName(), e.getMessage()));
         }
         return sb.toString();

@@ -9,21 +9,21 @@ import java.util.List;
  * @since 4.5
  */
 public class InitializationError extends Exception {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     /*
      * We have to use the f prefix until the next major release to ensure
      * serialization compatibility. 
      * See https://github.com/junit-team/junit/issues/976
      */
-    private final List<Throwable> fErrors;
+    private final List<Throwable> errors;
 
     /**
      * Construct a new {@code InitializationError} with one or more
      * errors {@code errors} as causes
      */
     public InitializationError(List<Throwable> errors) {
-        this.fErrors = errors;
+        this.errors = errors;
     }
 
     public InitializationError(Throwable error) {
@@ -42,6 +42,6 @@ public class InitializationError extends Exception {
      * Returns one or more Throwables that led to this initialization error.
      */
     public List<Throwable> getCauses() {
-        return fErrors;
+        return errors;
     }
 }
