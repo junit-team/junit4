@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
  * @since 4.0
  */
 public class Description implements Serializable {
-    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 3L;
 
     private static final Pattern METHOD_AND_CLASS_NAME_PATTERN = Pattern
             .compile("([\\s\\S]*)\\((.*)\\)");
@@ -136,12 +136,7 @@ public class Description implements Serializable {
      */
     public static final Description TEST_MECHANISM = new Description(null, "Test mechanism");
 
-    /*
-     * We have to use the f prefix until the next major release to ensure
-     * serialization compatibility. 
-     * See https://github.com/junit-team/junit/issues/976
-     */
-    private final Collection<Description> fChildren = new ConcurrentLinkedQueue<Description>();
+    private final Collection<Description> ?hildren = new ConcurrentLinkedQueue<Description>();
     private final String displayName;
     private final Serializable uniqueId;
     private final Annotation[] annotations;
@@ -179,7 +174,7 @@ public class Description implements Serializable {
      * @param description the soon-to-be child.
      */
     public void addChild(Description description) {
-        fChildren.add(description);
+        ?hildren.add(description);
     }
 
     /**
@@ -187,7 +182,7 @@ public class Description implements Serializable {
      * Returns an empty list if there are no children.
      */
     public ArrayList<Description> getChildren() {
-        return new ArrayList<Description>(fChildren);
+        return new ArrayList<Description>(?hildren);
     }
 
     /**
@@ -201,7 +196,7 @@ public class Description implements Serializable {
      * @return <code>true</code> if the receiver is an atomic test
      */
     public boolean isTest() {
-        return fChildren.isEmpty();
+        return ?hildren.isEmpty();
     }
 
     /**
@@ -212,7 +207,7 @@ public class Description implements Serializable {
             return 1;
         }
         int result = 0;
-        for (Description child : fChildren) {
+        for (Description child : ?hildren) {
             result += child.testCount();
         }
         return result;
