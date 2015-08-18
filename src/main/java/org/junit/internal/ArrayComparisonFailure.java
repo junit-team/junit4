@@ -14,11 +14,6 @@ public class ArrayComparisonFailure extends AssertionError {
 
     private static final long serialVersionUID = 1L;
 
-    /*
-     * We have to use the f prefix until the next major release to ensure
-     * serialization compatibility. 
-     * See https://github.com/junit-team/junit/issues/976
-     */
     private final List<Integer> indices = new ArrayList<Integer>();
     private final String message;
 

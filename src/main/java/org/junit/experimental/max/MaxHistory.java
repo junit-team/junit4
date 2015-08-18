@@ -69,11 +69,6 @@ public class MaxHistory implements Serializable {
         }
     }
 
-    /*
-     * We have to use the f prefix until the next major release to ensure
-     * serialization compatibility. 
-     * See https://github.com/junit-team/junit/issues/976
-     */
     private final Map<String, Long> durations = new HashMap<String, Long>();
     private final Map<String, Long> failureTimestamps = new HashMap<String, Long>();
     private final File historyStore;
