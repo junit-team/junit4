@@ -136,7 +136,7 @@ public class Description implements Serializable {
      */
     public static final Description TEST_MECHANISM = new Description(null, "Test mechanism");
 
-    private final Collection<Description> ?hildren = new ConcurrentLinkedQueue<Description>();
+    private final Collection<Description> children = new ConcurrentLinkedQueue<Description>();
     private final String displayName;
     private final Serializable uniqueId;
     private final Annotation[] annotations;
@@ -174,7 +174,7 @@ public class Description implements Serializable {
      * @param description the soon-to-be child.
      */
     public void addChild(Description description) {
-        ?hildren.add(description);
+        children.add(description);
     }
 
     /**
@@ -182,7 +182,7 @@ public class Description implements Serializable {
      * Returns an empty list if there are no children.
      */
     public ArrayList<Description> getChildren() {
-        return new ArrayList<Description>(?hildren);
+        return new ArrayList<Description>(children);
     }
 
     /**
@@ -196,7 +196,7 @@ public class Description implements Serializable {
      * @return <code>true</code> if the receiver is an atomic test
      */
     public boolean isTest() {
-        return ?hildren.isEmpty();
+        return children.isEmpty();
     }
 
     /**
@@ -207,7 +207,7 @@ public class Description implements Serializable {
             return 1;
         }
         int result = 0;
-        for (Description child : ?hildren) {
+        for (Description child : children) {
             result += child.testCount();
         }
         return result;
