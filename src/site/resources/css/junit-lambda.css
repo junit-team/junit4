@@ -42,6 +42,9 @@ ul.inline {
 	height: 141px;
 	line-height: 141px;
 }
+.sponsors-medium.amex img {
+	max-height: 90%;
+}
 .sponsors-large li a {
 	width: 435px;
 	height: 237px;
