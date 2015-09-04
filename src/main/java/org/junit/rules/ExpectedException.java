@@ -38,9 +38,15 @@ import org.junit.runners.model.Statement;
  * <p>
  * You have to add the {@code ExpectedException} rule to your test.
  * This doesn't affect your existing tests (see {@code throwsNothing()}).
- * After specifiying the type of the expected exception your test is
+ * After specifying the type of the expected exception your test is
  * successful when such an exception is thrown and it fails if a
  * different or no exception is thrown.
+ *
+ * <p>
+ * This rule does not perform any special magic to make execution continue
+ * as if the exception had not been thrown. So it is nearly always a mistake
+ * for a test method to have statements after the one that is expected to
+ * throw the exception.
  *
  * <p>
  * Instead of specifying the exception's type you can characterize the
