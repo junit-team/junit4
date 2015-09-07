@@ -26,8 +26,8 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerScheduler;
-import org.junit.tests.experimental.rules.RuleFieldValidatorTest.TestWithNonStaticClassRule;
-import org.junit.tests.experimental.rules.RuleFieldValidatorTest.TestWithProtectedClassRule;
+import org.junit.tests.experimental.rules.RuleMemberValidatorTest.TestWithNonStaticClassRule;
+import org.junit.tests.experimental.rules.RuleMemberValidatorTest.TestWithProtectedClassRule;
 
 public class ParentRunnerTest {
     public static String log = "";
@@ -175,6 +175,7 @@ public class ParentRunnerTest {
     }
 
     public static class AssumptionViolatedAtParentLevelTest {
+        @SuppressWarnings("deprecation")
         @BeforeClass
         public static void beforeClass() {
             throw new AssumptionViolatedException("Thrown from @BeforeClass");
@@ -207,6 +208,7 @@ public class ParentRunnerTest {
         @Test
         public void ignore() {}
 
+        @SuppressWarnings("deprecation")
         @Test
         public void assumptionFail() {
             throw new AssumptionViolatedException("Thrown from @Test");
@@ -227,7 +229,7 @@ public class ParentRunnerTest {
         CountingRunListener listener = new CountingRunListener();
         RunNotifier runNotifier = new RunNotifier();
         runNotifier.addListener(listener);
-        ParentRunner runner = new BlockJUnit4ClassRunner(testClass);
+        ParentRunner<?> runner = new BlockJUnit4ClassRunner(testClass);
         runner.run(runNotifier);
         return listener;
     }

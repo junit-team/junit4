@@ -1,10 +1,10 @@
 package org.junit;
 
 /**
- * Thrown when an {@link org.junit.Assert#assertEquals(Object, Object) assertEquals(String, String)} fails. Create and throw
- * a <code>ComparisonFailure</code> manually if you want to show users the difference between two complex
- * strings.
- *
+ * Thrown when an {@link org.junit.Assert#assertEquals(Object, Object) assertEquals(String, String)} fails.
+ * Create and throw a <code>ComparisonFailure</code> manually if you want to show users the
+ * difference between two complex strings.
+ * <p/>
  * Inspired by a patch from Alex Chaffee (alex@purpletech.com)
  *
  * @since 4.0
@@ -18,8 +18,13 @@ public class ComparisonFailure extends AssertionError {
     private static final int MAX_CONTEXT_LENGTH = 20;
     private static final long serialVersionUID = 1L;
 
-    private String expected;
-    private String actual;
+    /*
+     * We have to use the f prefix until the next major release to ensure
+     * serialization compatibility. 
+     * See https://github.com/junit-team/junit/issues/976
+     */
+    private String fExpected;
+    private String fActual;
 
     /**
      * Constructs a comparison failure.
@@ -30,19 +35,18 @@ public class ComparisonFailure extends AssertionError {
      */
     public ComparisonFailure(String message, String expected, String actual) {
         super(message);
-        this.expected = expected;
-        this.actual = actual;
+        this.fExpected = expected;
+        this.fActual = actual;
     }
 
     /**
-     * Returns "..." in place of common prefix and "..." in
-     * place of common suffix between expected and actual.
+     * Returns "..." in place of common prefix and "..." in place of common suffix between expected and actual.
      *
      * @see Throwable#getMessage()
      */
     @Override
     public String getMessage() {
-        return new ComparisonCompactor(MAX_CONTEXT_LENGTH, expected, actual).compact(super.getMessage());
+        return new ComparisonCompactor(MAX_CONTEXT_LENGTH, fExpected, fActual).compact(super.getMessage());
     }
 
     /**
@@ -51,7 +55,7 @@ public class ComparisonFailure extends AssertionError {
      * @return the actual string value
      */
     public String getActual() {
-        return actual;
+        return fActual;
     }
 
     /**
@@ -60,33 +64,25 @@ public class ComparisonFailure extends AssertionError {
      * @return the expected string value
      */
     public String getExpected() {
-        return expected;
+        return fExpected;
     }
 
     private static class ComparisonCompactor {
         private static final String ELLIPSIS = "...";
-        private static final String DELTA_END = "]";
-        private static final String DELTA_START = "[";
+        private static final String DIFF_END = "]";
+        private static final String DIFF_START = "[";
 
         /**
-         * The maximum length for <code>expected</code> and <code>actual</code> strings to show. When <code>contextLength</code>
-         * is exceeded, the Strings are shortened.
+         * The maximum length for <code>expected</code> and <code>actual</code> strings to show. When
+         * <code>contextLength</code> is exceeded, the Strings are shortened.
          */
-        private int contextLength;
-        
-        private String expected;
-        private String actual;
-        
-        /**
-         * The length of the shared prefix / suffix of the expected and actual strings.
-         * Equals to zero if the strings do not share a common prefix/suffix.
-         */
-        private int prefix;
-        private int suffix;
+        private final int contextLength;
+        private final String expected;
+        private final String actual;
 
         /**
-         * @param contextLength the maximum length for <code>expected</code> and <code>actual</code> strings. When contextLength
-         * is exceeded, the Strings are shortened.
+         * @param contextLength the maximum length of context surrounding the difference between the compared strings.
+         * When context length is exceeded, the prefixes and suffixes are compacted.
          * @param expected the expected string value
          * @param actual the actual string value
          */
@@ -96,61 +92,80 @@ public class ComparisonFailure extends AssertionError {
             this.actual = actual;
         }
 
-        private String compact(String message) {
-            if (expected == null || actual == null || areStringsEqual()) {
+        public String compact(String message) {
+            if (expected == null || actual == null || expected.equals(actual)) {
                 return Assert.format(message, expected, actual);
+            } else {
+                DiffExtractor extractor = new DiffExtractor();
+                String compactedPrefix = extractor.compactPrefix();
+                String compactedSuffix = extractor.compactSuffix();
+                return Assert.format(message,
+                        compactedPrefix + extractor.expectedDiff() + compactedSuffix,
+                        compactedPrefix + extractor.actualDiff() + compactedSuffix);
             }
-
-            findCommonPrefix();
-            findCommonSuffix();
-            String expected = compactString(this.expected);
-            String actual = compactString(this.actual);
-            return Assert.format(message, expected, actual);
         }
 
-        private String compactString(String source) {
-            String result = DELTA_START + source.substring(prefix, source.length() - suffix) + DELTA_END;
-            if (prefix > 0) {
-                result = computeCommonPrefix() + result;
-            }
-            if (suffix > 0) {
-                result = result + computeCommonSuffix();
-            }
-            return result;
-        }
-
-        private void findCommonPrefix() {
-            prefix = 0;
+        private String sharedPrefix() {
             int end = Math.min(expected.length(), actual.length());
-            for (; prefix < end; prefix++) {
-                if (expected.charAt(prefix) != actual.charAt(prefix)) {
+            for (int i = 0; i < end; i++) {
+                if (expected.charAt(i) != actual.charAt(i)) {
+                    return expected.substring(0, i);
+                }
+            }
+            return expected.substring(0, end);
+        }
+
+        private String sharedSuffix(String prefix) {
+            int suffixLength = 0;
+            int maxSuffixLength = Math.min(expected.length() - prefix.length(),
+                    actual.length() - prefix.length()) - 1;
+            for (; suffixLength <= maxSuffixLength; suffixLength++) {
+                if (expected.charAt(expected.length() - 1 - suffixLength)
+                        != actual.charAt(actual.length() - 1 - suffixLength)) {
                     break;
                 }
             }
+            return expected.substring(expected.length() - suffixLength);
         }
 
-        private void findCommonSuffix() {
-            int expectedSuffix = expected.length() - 1;
-            int actualSuffix = actual.length() - 1;
-            for (; actualSuffix >= prefix && expectedSuffix >= prefix; actualSuffix--, expectedSuffix--) {
-                if (expected.charAt(expectedSuffix) != actual.charAt(actualSuffix)) {
-                    break;
-                }
+        private class DiffExtractor {
+            private final String sharedPrefix;
+            private final String sharedSuffix;
+
+            /**
+             * Can not be instantiated outside {@link org.junit.ComparisonFailure.ComparisonCompactor}.
+             */
+            private DiffExtractor() {
+                sharedPrefix = sharedPrefix();
+                sharedSuffix = sharedSuffix(sharedPrefix);
             }
-            suffix = expected.length() - expectedSuffix - 1;
-        }
 
-        private String computeCommonPrefix() {
-            return (prefix > contextLength ? ELLIPSIS : "") + expected.substring(Math.max(0, prefix - contextLength), prefix);
-        }
+            public String expectedDiff() {
+                return extractDiff(expected);
+            }
 
-        private String computeCommonSuffix() {
-            int end = Math.min(expected.length() - suffix + contextLength, expected.length());
-            return expected.substring(expected.length() - suffix, end) + (expected.length() - suffix < expected.length() - contextLength ? ELLIPSIS : "");
-        }
+            public String actualDiff() {
+                return extractDiff(actual);
+            }
 
-        private boolean areStringsEqual() {
-            return expected.equals(actual);
+            public String compactPrefix() {
+                if (sharedPrefix.length() <= contextLength) {
+                    return sharedPrefix;
+                }
+                return ELLIPSIS + sharedPrefix.substring(sharedPrefix.length() - contextLength);
+            }
+
+            public String compactSuffix() {
+                if (sharedSuffix.length() <= contextLength) {
+                    return sharedSuffix;
+                }
+                return sharedSuffix.substring(0, contextLength) + ELLIPSIS;
+            }
+
+            private String extractDiff(String source) {
+                return DIFF_START + source.substring(sharedPrefix.length(), source.length() - sharedSuffix.length())
+                        + DIFF_END;
+            }
         }
     }
 }

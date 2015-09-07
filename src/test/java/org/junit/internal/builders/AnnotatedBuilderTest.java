@@ -1,17 +1,15 @@
 package org.junit.internal.builders;
 
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
+import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.junit.runner.RunnerSpy;
 import org.junit.runners.model.RunnerBuilder;
 import org.junit.runners.model.RunnerBuilderStub;
-
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.assertThat;
 
 public class AnnotatedBuilderTest {
     private AnnotatedBuilder builder = new AnnotatedBuilder(new RunnerBuilderStub());
@@ -28,7 +26,7 @@ public class AnnotatedBuilderTest {
         assertThat(runner, is(instanceOf(RunnerSpy.class)));
 
         RunnerSpy runnerSpy = (RunnerSpy) runner;
-        assertThat(runnerSpy.getInvokedTestClass(), is(equalTo((Class) OuterClass.class)));
+        assertThat(runnerSpy.getInvokedTestClass(), is((Object) OuterClass.class));
     }
 
     @Test
@@ -37,7 +35,7 @@ public class AnnotatedBuilderTest {
         assertThat(runner, is(instanceOf(RunnerSpy.class)));
 
         RunnerSpy runnerSpy = (RunnerSpy) runner;
-        assertThat(runnerSpy.getInvokedTestClass(), is(equalTo((Class) OuterClass.InnerClassWithoutOwnRunWith.class)));
+        assertThat(runnerSpy.getInvokedTestClass(), is((Object) OuterClass.InnerClassWithoutOwnRunWith.class));
     }
 
     @Test
@@ -46,7 +44,7 @@ public class AnnotatedBuilderTest {
         assertThat(runner, is(instanceOf(RunnerSpy.class)));
 
         RunnerSpy runnerSpy = (RunnerSpy) runner;
-        assertThat(runnerSpy.getInvokedTestClass(), is(equalTo((Class) OuterClass.InnerClassWithoutOwnRunWith.MostInnerClass.class)));
+        assertThat(runnerSpy.getInvokedTestClass(), is((Object) OuterClass.InnerClassWithoutOwnRunWith.MostInnerClass.class));
     }
 
     @Test
@@ -55,7 +53,7 @@ public class AnnotatedBuilderTest {
         assertThat(runner, is(instanceOf(InnerRunner.class)));
 
         RunnerSpy runnerSpy = (RunnerSpy) runner;
-        assertThat(runnerSpy.getInvokedTestClass(), is(equalTo((Class) OuterClass.InnerClassWithOwnRunWith.class)));
+        assertThat(runnerSpy.getInvokedTestClass(), is((Object) OuterClass.InnerClassWithOwnRunWith.class));
     }
 
     @Test
@@ -64,7 +62,7 @@ public class AnnotatedBuilderTest {
         assertThat(runner, is(instanceOf(InnerRunner.class)));
 
         RunnerSpy runnerSpy = (RunnerSpy) runner;
-        assertThat(runnerSpy.getInvokedTestClass(), is(equalTo((Class) OuterClass.InnerClassWithOwnRunWith.MostInnerClass.class)));
+        assertThat(runnerSpy.getInvokedTestClass(), is((Object) OuterClass.InnerClassWithOwnRunWith.MostInnerClass.class));
     }
 
     @RunWith(RunnerSpy.class)
@@ -96,11 +94,11 @@ public class AnnotatedBuilderTest {
     }
 
     public static class InnerRunner extends RunnerSpy {
-        public InnerRunner(Class testClass) {
+        public InnerRunner(Class<?> testClass) {
             super(testClass);
         }
 
-        public InnerRunner(Class testClass, RunnerBuilder runnerBuilder) {
+        public InnerRunner(Class<?> testClass, RunnerBuilder runnerBuilder) {
             super(testClass, runnerBuilder);
         }
     }

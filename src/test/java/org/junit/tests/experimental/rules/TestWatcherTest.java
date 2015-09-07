@@ -34,7 +34,43 @@ public class TestWatcherTest {
         ViolatedAssumptionTest.watchedLog = new StringBuilder();
         runClasses(ViolatedAssumptionTest.class);
         assertThat(ViolatedAssumptionTest.watchedLog.toString(),
-                is("starting finished "));
+                is("starting skipped finished "));
+    }
+
+    public static class InternalViolatedAssumptionTest {
+        private static StringBuilder watchedLog = new StringBuilder();
+
+        @Rule
+        public TestRule watcher = new TestWatcher() {
+            @Override
+            protected void starting(Description description) {
+                watchedLog.append("starting ");
+            }
+
+            @Override
+            protected void finished(Description description) {
+                watchedLog.append("finished ");
+            }
+
+            @Override
+            protected void skipped(AssumptionViolatedException e, Description description) {
+                watchedLog.append("skipped ");
+            }
+        };
+
+        @SuppressWarnings("deprecation")
+        @Test
+        public void succeeds() {
+            throw new AssumptionViolatedException("don't run");
+        }
+    }
+
+    @Test
+    public void internalViolatedAssumption() {
+        InternalViolatedAssumptionTest.watchedLog = new StringBuilder();
+        runClasses(InternalViolatedAssumptionTest.class);
+        assertThat(InternalViolatedAssumptionTest.watchedLog.toString(),
+                is("starting skipped finished "));
     }
 
     public static class TestWatcherSkippedThrowsExceptionTest {
@@ -46,6 +82,7 @@ public class TestWatcherTest {
             }
         };
 
+        @SuppressWarnings("deprecation")
         @Test
         public void fails() {
             throw new AssumptionViolatedException("test failure");

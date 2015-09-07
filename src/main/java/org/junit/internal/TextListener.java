@@ -11,14 +11,14 @@ import org.junit.runner.notification.RunListener;
 
 public class TextListener extends RunListener {
 
-    private final PrintStream fWriter;
+    private final PrintStream writer;
 
     public TextListener(JUnitSystem system) {
         this(system.out());
     }
 
     public TextListener(PrintStream writer) {
-        this.fWriter = writer;
+        this.writer = writer;
     }
 
     @Override
@@ -30,17 +30,17 @@ public class TextListener extends RunListener {
 
     @Override
     public void testStarted(Description description) {
-        fWriter.append('.');
+        writer.append('.');
     }
 
     @Override
     public void testFailure(Failure failure) {
-        fWriter.append('E');
+        writer.append('E');
     }
 
     @Override
     public void testIgnored(Description description) {
-        fWriter.append('I');
+        writer.append('I');
     }
 
     /*
@@ -48,7 +48,7 @@ public class TextListener extends RunListener {
       */
 
     private PrintStream getWriter() {
-        return fWriter;
+        return writer;
     }
 
     protected void printHeader(long runTime) {
@@ -58,7 +58,7 @@ public class TextListener extends RunListener {
 
     protected void printFailures(Result result) {
         List<Failure> failures = result.getFailures();
-        if (failures.size() == 0) {
+        if (failures.isEmpty()) {
             return;
         }
         if (failures.size() == 1) {

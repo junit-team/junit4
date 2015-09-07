@@ -1,16 +1,18 @@
 package org.junit.runner;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assume.assumeThat;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.ExcludeCategories;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TestName;
 import org.junit.runner.manipulation.Filter;
-
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.runner.Description.createSuiteDescription;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 public class FilterFactoriesTest {
     @Rule
@@ -19,10 +21,14 @@ public class FilterFactoriesTest {
     @Rule
     public TestName testName = new TestName();
 
+    private Request createSuiteRequest() {
+        return Request.aClass(DummySuite.class);
+    }
+
     @Test
     public void shouldCreateFilterWithArguments() throws Exception {
         Filter filter = FilterFactories.createFilterFromFilterSpec(
-                createSuiteDescription(testName.getMethodName()),
+                createSuiteRequest(),
                 ExcludeCategories.class.getName() + "=" + DummyCategory.class.getName());
 
         assertThat(filter.describe(), startsWith("excludes "));
@@ -31,15 +37,32 @@ public class FilterFactoriesTest {
     @Test
     public void shouldCreateFilterWithNoArguments() throws Exception {
         Filter filter = FilterFactories.createFilterFromFilterSpec(
-                createSuiteDescription(testName.getMethodName()), FilterFactoryStub.class.getName());
+                createSuiteRequest(), FilterFactoryStub.class.getName());
 
         assertThat(filter, instanceOf(DummyFilter.class));
     }
 
     @Test
+    public void shouldPassOnDescriptionToFilterFactory() throws Exception {
+        Request request = createSuiteRequest();
+        Description description = request.getRunner().getDescription();
+        Filter filter = FilterFactories.createFilterFromFilterSpec(
+                request, FilterFactoryStub.class.getName());
+
+        // This assumption tested in shouldCreateFilterWithNoArguments()
+        assumeThat(filter, instanceOf(DummyFilter.class));
+
+        DummyFilter dummyFilter = (DummyFilter) filter;
+        assertThat(dummyFilter.getTopLevelDescription(), is(description));
+    }
+
+    @Test
     public void shouldCreateFilter() throws Exception {
         Filter filter = FilterFactories.createFilter(
-                FilterFactoryStub.class, new FilterFactoryParams(""));
+                FilterFactoryStub.class,
+                new FilterFactoryParams(
+                        Description.createSuiteDescription(testName.getMethodName()),
+                        ""));
 
         assertThat(filter, instanceOf(DummyFilter.class));
     }
@@ -71,12 +94,22 @@ public class FilterFactoriesTest {
     }
 
     public static class FilterFactoryStub implements FilterFactory {
-        public Filter createFilter(FilterFactoryParams unused) {
-            return new DummyFilter();
+        public Filter createFilter(FilterFactoryParams params) {
+            return new DummyFilter(params.getTopLevelDescription());
         }
     }
 
     private static class DummyFilter extends Filter {
+        private final Description fTopLevelDescription;
+
+        public DummyFilter(Description topLevelDescription) {
+            fTopLevelDescription = topLevelDescription;
+        }
+
+        public Description getTopLevelDescription() {
+            return fTopLevelDescription;
+        }
+
         @Override
         public boolean shouldRun(Description description) {
             return false;
@@ -89,5 +122,16 @@ public class FilterFactoriesTest {
     }
 
     public static class DummyCategory {
+    }
+
+    @RunWith(Suite.class)
+    @SuiteClasses(DummyTest.class)
+    public static class DummySuite {
+    }
+
+    public static class DummyTest {
+        @Test
+        public void passes() {
+        }
     }
 }

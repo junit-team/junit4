@@ -10,31 +10,36 @@ import org.junit.runner.manipulation.NoTestsRemainException;
  * A filtered {@link Request}.
  */
 public final class FilterRequest extends Request {
-    private final Request fRequest;
+    private final Request request;
+    /*
+     * We have to use the f prefix, because IntelliJ's JUnit4IdeaTestRunner uses
+     * reflection to access this field. See
+     * https://github.com/junit-team/junit/issues/960
+     */
     private final Filter fFilter;
 
     /**
      * Creates a filtered Request
      *
-     * @param classRequest a {@link Request} describing your Tests
+     * @param request a {@link Request} describing your Tests
      * @param filter {@link Filter} to apply to the Tests described in
-     * <code>classRequest</code>
+     * <code>request</code>
      */
-    public FilterRequest(Request classRequest, Filter filter) {
-        fRequest = classRequest;
-        fFilter = filter;
+    public FilterRequest(Request request, Filter filter) {
+        this.request = request;
+        this.fFilter = filter;
     }
 
     @Override
     public Runner getRunner() {
         try {
-            Runner runner = fRequest.getRunner();
+            Runner runner = request.getRunner();
             fFilter.apply(runner);
             return runner;
         } catch (NoTestsRemainException e) {
             return new ErrorReportingRunner(Filter.class, new Exception(String
                     .format("No tests found matching %s from %s", fFilter
-                            .describe(), fRequest.toString())));
+                            .describe(), request.toString())));
         }
     }
 }

@@ -2,11 +2,13 @@ package org.junit.runners.model;
 
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.lang.annotation.Annotation;
 import java.util.List;
 
 import org.junit.Ignore;
@@ -14,6 +16,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TestRule;
+import org.junit.runner.RunWith;
 
 public class TestClassTest {
 
@@ -220,5 +223,23 @@ public class TestClassTest {
     public void identifiesNonPublicModifier() {
         TestClass tc = new TestClass(NonPublicClass.class);
         assertEquals("Wrong flag 'public',", false, tc.isPublic());
+    }
+
+    @Ignore
+    static class AnnotatedClass {
+    }
+
+    @Test
+    public void presentAnnotationIsAvailable() {
+        TestClass tc = new TestClass(AnnotatedClass.class);
+        Annotation annotation = tc.getAnnotation(Ignore.class);
+        assertTrue(Ignore.class.isAssignableFrom(annotation.getClass()));
+    }
+
+    @Test
+    public void missingAnnotationIsNotAvailable() {
+        TestClass tc = new TestClass(AnnotatedClass.class);
+        Annotation annotation = tc.getAnnotation(RunWith.class);
+        assertThat(annotation, is(nullValue()));
     }
 }

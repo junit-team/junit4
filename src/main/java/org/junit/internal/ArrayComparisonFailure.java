@@ -14,7 +14,12 @@ public class ArrayComparisonFailure extends AssertionError {
 
     private static final long serialVersionUID = 1L;
 
-    private List<Integer> fIndices = new ArrayList<Integer>();
+    /*
+     * We have to use the f prefix until the next major release to ensure
+     * serialization compatibility. 
+     * See https://github.com/junit-team/junit/issues/976
+     */
+    private final List<Integer> fIndices = new ArrayList<Integer>();
     private final String fMessage;
 
     /**
@@ -26,7 +31,7 @@ public class ArrayComparisonFailure extends AssertionError {
      * @see Assert#assertArrayEquals(String, Object[], Object[])
      */
     public ArrayComparisonFailure(String message, AssertionError cause, int index) {
-        fMessage = message;
+        this.fMessage = message;
         initCause(cause);
         addDimension(index);
     }

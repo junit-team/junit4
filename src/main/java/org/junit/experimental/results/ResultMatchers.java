@@ -14,6 +14,15 @@ import org.hamcrest.TypeSafeMatcher;
  * </pre>
  */
 public class ResultMatchers {
+
+    /**
+     * Do not instantiate.
+     * @deprecated will be private soon.
+     */
+    @Deprecated
+    public ResultMatchers() {
+    }
+
     /**
      * Matches if the tests are all successful
      */

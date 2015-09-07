@@ -39,6 +39,7 @@ public class MainRunner {
             throw new ExitException(status);
         }
 
+        @SuppressWarnings("deprecation")
         @Override
         public boolean getInCheck() {
             return (originalSecurityManager != null) && originalSecurityManager.getInCheck();
@@ -175,6 +176,7 @@ public class MainRunner {
             }
         }
 
+        @SuppressWarnings("deprecation")
         @Override
         public void checkMulticast(InetAddress maddr, byte ttl) {
             if (originalSecurityManager != null) {

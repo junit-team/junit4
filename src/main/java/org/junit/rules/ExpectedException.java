@@ -7,7 +7,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.internal.matchers.ThrowableCauseMatcher.hasCause;
 import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
-
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.junit.AssumptionViolatedException;
@@ -118,7 +117,7 @@ public class ExpectedException implements TestRule {
         return new ExpectedException();
     }
 
-    private final ExpectedExceptionMatcherBuilder fMatcherBuilder = new ExpectedExceptionMatcherBuilder();
+    private final ExpectedExceptionMatcherBuilder matcherBuilder = new ExpectedExceptionMatcherBuilder();
 
     private String missingExceptionMessage= "Expected test to throw %s";
 
@@ -174,9 +173,12 @@ public class ExpectedException implements TestRule {
      *     thrown.expect(is(e));
      *     throw e;
      * }</pre>
+     *
+     * @deprecated use {@code org.hamcrest.junit.ExpectedException.expect()}
      */
+    @Deprecated
     public void expect(Matcher<?> matcher) {
-        fMatcherBuilder.add(matcher);
+        matcherBuilder.add(matcher);
     }
 
     /**
@@ -213,7 +215,10 @@ public class ExpectedException implements TestRule {
      *     thrown.expectMessage(startsWith(&quot;What&quot;));
      *     throw new NullPointerException(&quot;What happened?&quot;);
      * }</pre>
+     *
+     * @deprecated use {@code org.hamcrest.junit.ExpectedException.expectMessage()}
      */
+    @Deprecated
     public void expectMessage(Matcher<String> matcher) {
         expect(hasMessage(matcher));
     }
@@ -227,22 +232,25 @@ public class ExpectedException implements TestRule {
      *     thrown.expectCause(is(expectedCause));
      *     throw new IllegalArgumentException(&quot;What happened?&quot;, cause);
      * }</pre>
+     *
+     * @deprecated use {@code org.hamcrest.junit.ExpectedException.expectCause()}
      */
+    @Deprecated
     public void expectCause(Matcher<? extends Throwable> expectedCause) {
         expect(hasCause(expectedCause));
     }
 
     private class ExpectedExceptionStatement extends Statement {
-        private final Statement fNext;
+        private final Statement next;
 
         public ExpectedExceptionStatement(Statement base) {
-            fNext = base;
+            next = base;
         }
 
         @Override
         public void evaluate() throws Throwable {
             try {
-                fNext.evaluate();
+                next.evaluate();
             } catch (Throwable e) {
                 handleException(e);
                 return;
@@ -255,14 +263,14 @@ public class ExpectedException implements TestRule {
 
     private void handleException(Throwable e) throws Throwable {
         if (isAnyExceptionExpected()) {
-            assertThat(e, fMatcherBuilder.build());
+            assertThat(e, matcherBuilder.build());
         } else {
             throw e;
         }
     }
 
     private boolean isAnyExceptionExpected() {
-        return fMatcherBuilder.expectsThrowable();
+        return matcherBuilder.expectsThrowable();
     }
 
     private void failDueToMissingException() throws AssertionError {
@@ -270,7 +278,7 @@ public class ExpectedException implements TestRule {
     }
     
     private String missingExceptionMessage() {
-        String expectation= StringDescription.toString(fMatcherBuilder.build());
+        String expectation= StringDescription.toString(matcherBuilder.build());
         return format(missingExceptionMessage, expectation);
     }
 }

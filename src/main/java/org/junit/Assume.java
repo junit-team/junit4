@@ -10,29 +10,39 @@ import org.hamcrest.Matcher;
 
 /**
  * A set of methods useful for stating assumptions about the conditions in which a test is meaningful.
- * A failed assumption does not mean the code is broken, but that the test provides no useful information.
- * The default JUnit runner treats tests with failing assumptions as ignored.  Custom runners may behave differently.
+ * A failed assumption does not mean the code is broken, but that the test provides no useful information. Assume
+ * basically means "don't run this test if these conditions don't apply". The default JUnit runner skips tests with
+ * failing assumptions. Custom runners may behave differently.
+ * <p>
+ *     A good example of using assumptions is in <a href="https://github.com/junit-team/junit/wiki/Theories">Theories</a> where they are needed to exclude certain datapoints that aren't suitable or allowed for a certain test case.
+ * </p>
+ * Failed assumptions are usually not logged, because there may be many tests that don't apply to certain
+ * configurations.
  *
- * For example:
- * <pre>
- * // only provides information if database is reachable.
- * &#064;Test public void calculateTotalSalary() {
- *    DBConnection dbc = Database.connect();
- *    assumeNotNull(dbc);
- *    // ...
- * }
- * </pre>
+ * <p>
  * These methods can be used directly: <code>Assume.assumeTrue(...)</code>, however, they
- * read better if they are referenced through static import:
+ * read better if they are referenced through static import:<br/>
  * <pre>
  * import static org.junit.Assume.*;
  *    ...
  *    assumeTrue(...);
  * </pre>
+ * </p>
+ *
+ * @see <a href="https://github.com/junit-team/junit/wiki/Theories">Theories</a>
  *
  * @since 4.4
  */
 public class Assume {
+
+    /**
+     * Do not instantiate.
+     * @deprecated since 4.13.
+     */
+    @Deprecated
+    public Assume() {
+    }
+
     /**
      * If called with an expression evaluating to {@code false}, the test will halt and be ignored.
      */
@@ -88,7 +98,9 @@ public class Assume {
      * @param matcher an expression, built of {@link Matcher}s, specifying allowed values
      * @see org.hamcrest.CoreMatchers
      * @see org.junit.matchers.JUnitMatchers
+     * @deprecated use {@code org.hamcrest.junit.MatcherAssume.assumeThat()}
      */
+    @Deprecated
     public static <T> void assumeThat(T actual, Matcher<T> matcher) {
         if (!matcher.matches(actual)) {
             throw new AssumptionViolatedException(actual, matcher);
@@ -100,9 +112,9 @@ public class Assume {
      * If not, the test halts and is ignored.
      * Example:
      * <pre>:
-     *   assumeThat(1, is(1)); // passes
+     *   assumeThat("alwaysPasses", 1, is(1)); // passes
      *   foo(); // will execute
-     *   assumeThat(0, is(1)); // assumption failure! test halts
+     *   assumeThat("alwaysFails", 0, is(1)); // assumption failure! test halts
      *   int x = 1 / 0; // will never execute
      * </pre>
      *
@@ -111,7 +123,9 @@ public class Assume {
      * @param matcher an expression, built of {@link Matcher}s, specifying allowed values
      * @see org.hamcrest.CoreMatchers
      * @see org.junit.matchers.JUnitMatchers
+     * @deprecated use {@code org.hamcrest.junit.MatcherAssume.assumeThat()}
      */
+    @Deprecated
     public static <T> void assumeThat(String message, T actual, Matcher<T> matcher) {
         if (!matcher.matches(actual)) {
             throw new AssumptionViolatedException(message, actual, matcher);

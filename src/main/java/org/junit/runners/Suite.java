@@ -47,7 +47,7 @@ public class Suite extends ParentRunner<Runner> {
         /**
          * @return the classes to be run
          */
-        public Class<?>[] value();
+        Class<?>[] value();
     }
 
     private static Class<?>[] getAnnotatedClasses(Class<?> klass) throws InitializationError {
@@ -58,7 +58,7 @@ public class Suite extends ParentRunner<Runner> {
         return annotation.value();
     }
 
-    private final List<Runner> fRunners;
+    private final List<Runner> runners;
 
     /**
      * Called reflectively on classes annotated with <code>@RunWith(Suite.class)</code>
@@ -110,12 +110,12 @@ public class Suite extends ParentRunner<Runner> {
      */
     protected Suite(Class<?> klass, List<Runner> runners) throws InitializationError {
         super(klass);
-        fRunners = Collections.unmodifiableList(runners);
+        this.runners = Collections.unmodifiableList(runners);
     }
 
     @Override
     protected List<Runner> getChildren() {
-        return fRunners;
+        return runners;
     }
 
     @Override
