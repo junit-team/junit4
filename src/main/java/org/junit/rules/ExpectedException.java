@@ -14,7 +14,10 @@ import org.junit.runners.model.Statement;
 
 /**
  * The {@code ExpectedException} rule allows you to verify that your code
- * throws a specific exception.
+ * throws a specific exception. Note that {@link org.junit.Assert#assertThrows Assert.assertThrows}
+ * is often a better choice since it allows you to express exactly where you expect the exception
+ * to be thrown. (Use {@link org.junit.Assert#expectThrows expectThrows} if you need to assert
+ * something about the thrown exception.)
  *
  * <h3>Usage</h3>
  *
