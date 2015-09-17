@@ -28,8 +28,10 @@ ul.inline {
 	display: block;
 	padding: 0 10px !important;
 }
-.sponsors li a img {
-	vertical-align: middle;
+
+.sponsors-small li a img {
+  max-height: 100px;
+  max-width: 200px;
 }
 
 .sponsors-small li a {
