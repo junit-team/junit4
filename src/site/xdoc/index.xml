@@ -91,6 +91,7 @@
             <li><a href="javadoc/latest/index.html">JavaDocs</a></li>
             <li><a href="./faq.html">Frequently asked questions</a></li>
             <li><a href="https://github.com/junit-team/junit/wiki">Wiki</a></li>
+            <li><a href="./license.html">License</a></li>
           </ul>
         </div>
         <div class="span4" id="concepts-section">
