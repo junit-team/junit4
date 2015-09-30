@@ -23,7 +23,7 @@ import org.junit.runner.notification.RunListener;
  * @since 4.0
  */
 public class Result implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
     private static final ObjectStreamField[] serialPersistentFields =
             ObjectStreamClass.lookup(SerializedForm.class).getFields();
     private final AtomicInteger count;
@@ -153,7 +153,7 @@ public class Result implements Serializable {
      * class match the files that {@code Result} had in JUnit 4.11.
      */
     private static class SerializedForm implements Serializable {
-        private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 2L;
         private final AtomicInteger fCount;
         private final AtomicInteger fIgnoreCount;
         private final List<Failure> fFailures;

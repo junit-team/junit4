@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
  * @since 4.0
  */
 public class Description implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 3L;
 
     private static final Pattern METHOD_AND_CLASS_NAME_PATTERN = Pattern
             .compile("([\\s\\S]*)\\((.*)\\)");
@@ -136,16 +136,11 @@ public class Description implements Serializable {
      */
     public static final Description TEST_MECHANISM = new Description(null, "Test mechanism");
 
-    /*
-     * We have to use the f prefix until the next major release to ensure
-     * serialization compatibility. 
-     * See https://github.com/junit-team/junit/issues/976
-     */
-    private final Collection<Description> fChildren = new ConcurrentLinkedQueue<Description>();
-    private final String fDisplayName;
-    private final Serializable fUniqueId;
-    private final Annotation[] fAnnotations;
-    private volatile /* write-once */ Class<?> fTestClass;
+    private final Collection<Description> children = new ConcurrentLinkedQueue<Description>();
+    private final String displayName;
+    private final Serializable uniqueId;
+    private final Annotation[] annotations;
+    private volatile /* write-once */ Class<?> testClass;
 
     private Description(Class<?> clazz, String displayName, Annotation... annotations) {
         this(clazz, displayName, displayName, annotations);
@@ -160,17 +155,17 @@ public class Description implements Serializable {
             throw new IllegalArgumentException(
                     "The unique id must not be null.");
         }
-        this.fTestClass = testClass;
-        this.fDisplayName = displayName;
-        this.fUniqueId = uniqueId;
-        this.fAnnotations = annotations;
+        this.testClass = testClass;
+        this.displayName = displayName;
+        this.uniqueId = uniqueId;
+        this.annotations = annotations;
     }
 
     /**
      * @return a user-understandable label
      */
     public String getDisplayName() {
-        return fDisplayName;
+        return displayName;
     }
 
     /**
@@ -179,7 +174,7 @@ public class Description implements Serializable {
      * @param description the soon-to-be child.
      */
     public void addChild(Description description) {
-        fChildren.add(description);
+        children.add(description);
     }
 
     /**
@@ -187,7 +182,7 @@ public class Description implements Serializable {
      * Returns an empty list if there are no children.
      */
     public ArrayList<Description> getChildren() {
-        return new ArrayList<Description>(fChildren);
+        return new ArrayList<Description>(children);
     }
 
     /**
@@ -201,7 +196,7 @@ public class Description implements Serializable {
      * @return <code>true</code> if the receiver is an atomic test
      */
     public boolean isTest() {
-        return fChildren.isEmpty();
+        return children.isEmpty();
     }
 
     /**
@@ -212,7 +207,7 @@ public class Description implements Serializable {
             return 1;
         }
         int result = 0;
-        for (Description child : fChildren) {
+        for (Description child : children) {
             result += child.testCount();
         }
         return result;
@@ -220,7 +215,7 @@ public class Description implements Serializable {
 
     @Override
     public int hashCode() {
-        return fUniqueId.hashCode();
+        return uniqueId.hashCode();
     }
 
     @Override
@@ -229,7 +224,7 @@ public class Description implements Serializable {
             return false;
         }
         Description d = (Description) obj;
-        return fUniqueId.equals(d.fUniqueId);
+        return uniqueId.equals(d.uniqueId);
     }
 
     @Override
@@ -249,7 +244,7 @@ public class Description implements Serializable {
      *         children will be added back)
      */
     public Description childlessCopy() {
-        return new Description(fTestClass, fDisplayName, fAnnotations);
+        return new Description(testClass, displayName, annotations);
     }
 
     /**
@@ -257,7 +252,7 @@ public class Description implements Serializable {
      *         or null if none exists
      */
     public <T extends Annotation> T getAnnotation(Class<T> annotationType) {
-        for (Annotation each : fAnnotations) {
+        for (Annotation each : annotations) {
             if (each.annotationType().equals(annotationType)) {
                 return annotationType.cast(each);
             }
@@ -269,7 +264,7 @@ public class Description implements Serializable {
      * @return all of the annotations attached to this description node
      */
     public Collection<Annotation> getAnnotations() {
-        return Arrays.asList(fAnnotations);
+        return Arrays.asList(annotations);
     }
 
     /**
@@ -277,16 +272,16 @@ public class Description implements Serializable {
      *         the class of the test instance.
      */
     public Class<?> getTestClass() {
-        if (fTestClass != null) {
-            return fTestClass;
+        if (testClass != null) {
+            return testClass;
         }
         String name = getClassName();
         if (name == null) {
             return null;
         }
         try {
-            fTestClass = Class.forName(name, false, getClass().getClassLoader());
-            return fTestClass;
+            testClass = Class.forName(name, false, getClass().getClassLoader());
+            return testClass;
         } catch (ClassNotFoundException e) {
             return null;
         }
@@ -297,7 +292,7 @@ public class Description implements Serializable {
      *         the name of the class of the test instance
      */
     public String getClassName() {
-        return fTestClass != null ? fTestClass.getName() : methodAndClassNamePatternGroupOrDefault(2, toString());
+        return testClass != null ? testClass.getName() : methodAndClassNamePatternGroupOrDefault(2, toString());
     }
 
     /**

@@ -24,7 +24,7 @@ import org.junit.runner.notification.RunListener;
  * </ul>
  */
 public class MaxHistory implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     /**
      * Loads a {@link MaxHistory} from {@code file}, or generates a new one that
@@ -45,60 +45,62 @@ public class MaxHistory implements Serializable {
     private static MaxHistory readHistory(File storedResults)
             throws CouldNotReadCoreException {
         try {
-            FileInputStream file = new FileInputStream(storedResults);
-            try {
-                ObjectInputStream stream = new ObjectInputStream(file);
-                try {
-                    return (MaxHistory) stream.readObject();
-                } finally {
-                    stream.close();
-                }
-            } finally {
-                file.close();
-            }
+            return tryRead(storedResults);
         } catch (Exception e) {
             throw new CouldNotReadCoreException(e);
         }
     }
 
-    /*
-     * We have to use the f prefix until the next major release to ensure
-     * serialization compatibility. 
-     * See https://github.com/junit-team/junit/issues/976
-     */
-    private final Map<String, Long> fDurations = new HashMap<String, Long>();
-    private final Map<String, Long> fFailureTimestamps = new HashMap<String, Long>();
-    private final File fHistoryStore;
+    private static MaxHistory tryRead(File storedResults) throws IOException, ClassNotFoundException {
+        FileInputStream file = new FileInputStream(storedResults);
+        try {
+            return readObject(file);
+        } finally {
+            file.close();
+        }
+    }
+
+    private static MaxHistory readObject(FileInputStream file) throws IOException, ClassNotFoundException {
+        ObjectInputStream stream = new ObjectInputStream(file);
+        try {
+            return (MaxHistory) stream.readObject();
+        } finally {
+            stream.close();
+        }
+    }
+
+    private final Map<String, Long> durations = new HashMap<String, Long>();
+    private final Map<String, Long> failureTimestamps = new HashMap<String, Long>();
+    private final File historyStore;
 
     private MaxHistory(File storedResults) {
-        fHistoryStore = storedResults;
+        historyStore = storedResults;
     }
 
     private void save() throws IOException {
-        ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(
-                fHistoryStore));
+        ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(historyStore));
         stream.writeObject(this);
         stream.close();
     }
 
     Long getFailureTimestamp(Description key) {
-        return fFailureTimestamps.get(key.toString());
+        return failureTimestamps.get(key.toString());
     }
 
     void putTestFailureTimestamp(Description key, long end) {
-        fFailureTimestamps.put(key.toString(), end);
+        failureTimestamps.put(key.toString(), end);
     }
 
     boolean isNewTest(Description key) {
-        return !fDurations.containsKey(key.toString());
+        return !durations.containsKey(key.toString());
     }
 
     Long getTestDuration(Description key) {
-        return fDurations.get(key.toString());
+        return durations.get(key.toString());
     }
 
     void putTestDuration(Description description, long duration) {
-        fDurations.put(description.toString(), duration);
+        durations.put(description.toString(), duration);
     }
 
     private final class RememberingListener extends RunListener {
