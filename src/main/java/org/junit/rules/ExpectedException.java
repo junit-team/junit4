@@ -20,7 +20,7 @@ import org.junit.runners.model.Statement;
  *
  * <pre> public class SimpleExpectedExceptionTest {
  *     &#064;Rule
- *     public ExpectedException thrown= ExpectedException.none();
+ *     public ExpectedException thrown = ExpectedException.none();
  *
  *     &#064;Test
  *     public void throwsNothing() {
@@ -43,7 +43,7 @@ import org.junit.runners.model.Statement;
  *
  * <p>
  * Instead of specifying the exception's type you can characterize the
- * expected exception based on other criterias, too:
+ * expected exception based on other criteria, too:
  *
  * <ul>
  *   <li>The exception's message contains a specific text: {@link #expectMessage(String)}</li>
