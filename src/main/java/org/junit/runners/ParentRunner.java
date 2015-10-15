@@ -84,7 +84,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         validate();
     }
 
-    protected TestClass createTestClass(Class<?> testClass) {
+    protected TestClass createTestClass(Class<?> testClass) throws InitializationError {
         return new TestClass(testClass);
     }
 
