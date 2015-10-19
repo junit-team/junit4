@@ -9,6 +9,7 @@ import org.junit.internal.MethodSorterTest;
 import org.junit.internal.matchers.StacktracePrintingMatcherTest;
 import org.junit.internal.matchers.ThrowableCauseMatcherTest;
 import org.junit.rules.DisableOnDebugTest;
+import org.junit.rules.ReducedStackTraceTest;
 import org.junit.rules.StopwatchTest;
 import org.junit.runner.FilterFactoriesTest;
 import org.junit.runner.FilterOptionIntegrationTest;
@@ -192,6 +193,7 @@ import org.junit.validator.PublicClassValidatorTest;
         NameRulesTest.class,
         ClassRulesTest.class,
         ExpectedExceptionTest.class,
+        ReducedStackTraceTest.class,
         TempFolderRuleTest.class,
         TemporaryFolderUsageTest.class,
         ExternalResourceRuleTest.class,
