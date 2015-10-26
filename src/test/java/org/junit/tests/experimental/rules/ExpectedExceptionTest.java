@@ -20,6 +20,7 @@ import java.util.Collection;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -87,7 +88,10 @@ public class ExpectedExceptionTest {
                 {
                         UseCustomMessageWithPlaceHolder.class,
                         hasSingleFailureWithMessage(ARBITRARY_MESSAGE
-                                + " - an instance of java.lang.IllegalArgumentException") }
+                                + " - an instance of java.lang.IllegalArgumentException") },
+                {EvaluateNullPostCheck.class, everyTestRunSuccessful()},
+                {PassPostThrowCheck.class, everyTestRunSuccessful()},
+                {FailPostThrowCheck.class, hasSingleFailure()}
         });
     }
 
@@ -363,6 +367,53 @@ public class ExpectedExceptionTest {
         public void noThrow() {
             thrown.expect(IllegalArgumentException.class);
             thrown.reportMissingExceptionWithMessage(ARBITRARY_MESSAGE);
+        }
+    }
+
+    public static class EvaluateNullPostCheck {
+
+        @Rule
+        public ExpectedException thrown = ExpectedException.none();
+
+        @Test
+        public void throwAndDontCrashWithNullPostCheck() {
+            thrown.expect(IllegalArgumentException.class);
+            thrown.evaluatePostcheck(null);
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public static class PassPostThrowCheck {
+
+        @Rule
+        public ExpectedException thrown = ExpectedException.none();
+
+        @Test
+        public void throwAndPassPostcheck() {
+            thrown.expect(IllegalArgumentException.class);
+            thrown.evaluatePostcheck(new Runnable() {
+                public void run() {
+                    Assert.assertTrue(true);
+                }
+            });
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public static class FailPostThrowCheck {
+
+        @Rule
+        public ExpectedException thrown = ExpectedException.none();
+
+        @Test
+        public void throwAndFailPostcheck() {
+            thrown.expect(IllegalArgumentException.class);
+            thrown.evaluatePostcheck(new Runnable() {
+                public void run() {
+                    Assert.fail();
+                }
+            });
+            throw new IllegalArgumentException();
         }
     }
 }

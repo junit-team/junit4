@@ -115,6 +115,14 @@ public class ExpectedException implements TestRule {
 
     private String missingExceptionMessage= "Expected test to throw %s";
 
+    private Runnable postThrowCheck = EmptyCheck.instance;
+
+    private static class EmptyCheck implements Runnable {
+        public static final EmptyCheck instance = new EmptyCheck();
+        private EmptyCheck() { }
+        public void run() { }
+    }
+
     private ExpectedException() {
     }
 
@@ -234,6 +242,27 @@ public class ExpectedException implements TestRule {
         expect(hasCause(expectedCause));
     }
 
+    /**
+     * Evaluate post check after expected exception is thrown.
+     * <pre> &#064;Test
+     * public void throwsExceptionWithSpecificType() {
+     *     thrown.expect(NullPointerException.class);
+     *     thrown.evaluatePostcheck(new Runnable() {
+     *         @Override
+     *         public void run() {
+     *             // additional checks (e.g. whether a mock was called before
+     *             // the test threw the exception)
+     *         }
+     *     });
+     *     throw new NullPointerException();
+     * }</pre>
+     */
+    public void evaluatePostcheck(Runnable postThrowCheck) {
+        if (postThrowCheck == null)
+            return;
+        this.postThrowCheck = postThrowCheck;
+    }
+
     private class ExpectedExceptionStatement extends Statement {
         private final Statement next;
 
@@ -247,6 +276,7 @@ public class ExpectedException implements TestRule {
                 next.evaluate();
             } catch (Throwable e) {
                 handleException(e);
+                postThrowCheck.run();
                 return;
             }
             if (isAnyExceptionExpected()) {
