@@ -248,10 +248,11 @@ public class ExpectedException implements TestRule {
      * public void throwsExceptionWithSpecificType() {
      *     thrown.expect(NullPointerException.class);
      *     thrown.evaluatePostcheck(new Runnable() {
-     *         @Override
+     *         &#064;Override
      *         public void run() {
-     *             // additional checks (e.g. whether a mock was called before
-     *             // the test threw the exception)
+     *             // Additional checks (e.g. whether a mock was called before
+     *             // the test threw an exception). This will be called after
+     *             // the exception is caught and verified.
      *         }
      *     });
      *     throw new NullPointerException();
