@@ -64,6 +64,21 @@ public class AssertionTest {
         assertArrayEquals("not equal", (new Object[]{new Object()}), (new Object[]{new Object()}));
     }
 
+    @Test(expected = AssertionError.class)
+    public void arraysDifferentLengthDifferingAtStartNotEqual() {
+        assertArrayEquals("not equal", (new Object[]{true}), (new Object[]{false, true}));
+    }
+
+    @Test(expected = AssertionError.class)
+    public void arraysDifferentLengthDifferingAtEndNotEqual() {
+        assertArrayEquals("not equal", (new Object[]{true}), (new Object[]{true, false}));
+    }
+
+    @Test(expected = AssertionError.class)
+    public void arraysDifferentLengthDifferingAtEndAndExpectedArrayLongerNotEqual() {
+        assertArrayEquals("not equal", (new Object[]{true, false}), (new Object[]{true}));
+    }
+
     @Test
     public void arraysExpectedNullMessage() {
         try {
@@ -83,11 +98,29 @@ public class AssertionTest {
     }
 
     @Test
-    public void arraysDifferentLengthMessage() {
+    public void arraysDifferentLengthDifferingAtStartMessage() {
         try {
-            assertArrayEquals("not equal", (new Object[0]), (new Object[1]));
+            assertArrayEquals("not equal", (new Object[]{true}), (new Object[]{false, true}));
         } catch (AssertionError exception) {
-            assertEquals("not equal: array lengths differed, expected.length=0 actual.length=1", exception.getMessage());
+            assertEquals("not equal: array lengths differed, expected.length=1 actual.length=2; arrays first differed at element [0]; expected:<true> but was:<false>", exception.getMessage());
+        }
+    }
+
+    @Test
+    public void arraysDifferentLengthDifferingAtEndMessage() {
+        try {
+            assertArrayEquals("not equal", (new Object[]{true}), (new Object[]{true, false}));
+        } catch (AssertionError exception) {
+            assertEquals("not equal: array lengths differed, expected.length=1 actual.length=2; arrays first differed at element [1]; expected:<end of array> but was:<false>", exception.getMessage());
+        }
+    }
+
+    @Test
+    public void arraysDifferentLengthDifferingAtEndAndExpectedArrayLongerMessage() {
+        try {
+            assertArrayEquals("not equal", (new Object[]{true, false}), (new Object[]{true}));
+        } catch (AssertionError exception) {
+            assertEquals("not equal: array lengths differed, expected.length=2 actual.length=1; arrays first differed at element [1]; expected:<false> but was:<end of array>", exception.getMessage());
         }
     }
 
