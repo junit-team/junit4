@@ -9,12 +9,17 @@ import static org.junit.internal.matchers.ThrowableCauseMatcher.hasCause;
 import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
+import org.junit.Assert;
+import org.junit.Assert.ThrowingRunnable;
 import org.junit.AssumptionViolatedException;
 import org.junit.runners.model.Statement;
 
 /**
  * The {@code ExpectedException} rule allows you to verify that your code
- * throws a specific exception.
+ * throws a specific exception. (This rule is designed to be used with Java
+ * versions prior to 8. From Java 8 on we recommend to use
+ * {@link Assert#assertThrows(Class, ThrowingRunnable) Assert.assertThrows} or
+ * {@link Assert#expectThrows(Class, ThrowingRunnable) Assert.expectThrows}.)
  *
  * <h3>Usage</h3>
  *
