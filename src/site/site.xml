@@ -37,8 +37,9 @@
       <item name="Cookbook" href="cookbook.html"/>
     </menu>
 
-    <menu name="Crowdfunding">
-      <item name="JUnit Lambda" href="junit-lambda.html"/>
+    <menu name="JUnit Lambda">
+      <item name="Project page" href="junit-lambda.html"/>
+      <item name="Campaign Page (ended)" href="junit-lambda-campaign.html"/>
       <item name="Campaign Contributors" href="junit-lambda-contributors.html"/>
     </menu>
 

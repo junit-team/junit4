@@ -19,8 +19,8 @@
 								<p><a href="junit-lambda.html"><img src="images/junit-lambda/junit-lambda-logo.png" alt="JUnit Lambda" /></a></p>
 	            </div>
 	            <div class="carousel-caption">
-	              <p><strong><a href="junit-lambda.html">Support our crowdfunding campaign!</a></strong></p>
-	              <p><a href="junit-lambda.html">Help shaping the future of testing on the JVM.</a></p>
+	              <p><strong><a href="junit-lambda.html">Work on the prototype has started.</a></strong></p>
+	              <p><a href="junit-lambda.html">Explore and give feedback!</a></p>
 	            </div>
 	          </div>
             <div class="item">
@@ -52,7 +52,7 @@
     @Test
     public void lookupEmailAddresses() {
         assertThat(new CartoonCharacterEmailLookupService().getResults("looney"), allOf(
-            not(empty()), 
+            not(empty()),
             containsInAnyOrder(
                 allOf(instanceOf(Map.class), hasEntry("id", "56"), hasEntry("email", "roadrunner@fast.org")),
                 allOf(instanceOf(Map.class), hasEntry("id", "76"), hasEntry("email", "wiley@acme.com"))
