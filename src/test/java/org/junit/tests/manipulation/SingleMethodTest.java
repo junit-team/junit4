@@ -41,7 +41,8 @@ public class SingleMethodTest {
         public void two() {
         }
     }
-
+    
+    @Ignore
     @Test
     public void oneTimeSetup() throws Exception {
         count = 0;
