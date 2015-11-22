@@ -105,8 +105,8 @@ public class TestClassTest {
         TestClass tc= new TestClass(FieldAnnotated.class);
         List<FrameworkField> annotatedFields= tc.getAnnotatedFields();
         assertThat("Wrong number of annotated fields.", annotatedFields.size(), is(3));
-        assertThat("First annotated field is wrong.", annotatedFields
-            .iterator().next().getName(), is("fieldA"));
+        assertThat("First annotated field is wrong.",
+            annotatedFields.iterator().next().getName(), is("fieldA"));
     }
 
     @Test
@@ -134,26 +134,26 @@ public class TestClassTest {
         @Test
         public int methodB() {
             return 0;
-    	}
+        }
     }
 
     @Test
     public void providesAnnotatedMethodsSortedByName() {
-    	TestClass tc = new TestClass(MethodsAnnotated.class);
-    	List<FrameworkMethod> annotatedMethods = tc.getAnnotatedMethods();
-    	assertThat("Wrong number of annotated methods.",
-    	    annotatedMethods.size(), is(3));
-    	assertThat("First annotated method is wrong.",
-          annotatedMethods.iterator().next().getName(), is("methodA"));
+        TestClass tc = new TestClass(MethodsAnnotated.class);
+        List<FrameworkMethod> annotatedMethods = tc.getAnnotatedMethods();
+        assertThat("Wrong number of annotated methods.",
+            annotatedMethods.size(), is(3));
+        assertThat("First annotated method is wrong.",
+            annotatedMethods.iterator().next().getName(), is("methodA"));
     }
 
     @Test
     public void annotatedMethodValues() {
-    	TestClass tc = new TestClass(MethodsAnnotated.class);
-    	List<String> values = tc.getAnnotatedMethodValues(
-    	    new MethodsAnnotated(), Ignore.class, String.class);
-    	assertThat(values, hasItem("jupiter"));
-    	assertThat(values.size(), is(1));
+        TestClass tc = new TestClass(MethodsAnnotated.class);
+        List<String> values = tc.getAnnotatedMethodValues(
+            new MethodsAnnotated(), Ignore.class, String.class);
+        assertThat(values, hasItem("jupiter"));
+        assertThat(values.size(), is(1));
     }
 
     @Test
