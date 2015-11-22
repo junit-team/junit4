@@ -9,7 +9,9 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.annotation.Annotation;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -141,8 +143,8 @@ public class TestClassTest {
     	List<FrameworkMethod> annotatedMethods = tc.getAnnotatedMethods();
     	assertThat("Wrong number of annotated methods.",
     	    annotatedMethods.size(), is(3));
-    	assertThat("First annotated method is wrong.", annotatedMethods
-    	    .iterator().next().getName(), is("methodA"));
+    	assertThat("First annotated method is wrong.",
+          annotatedMethods.iterator().next().getName(), is("methodA"));
     }
 
     @Test
@@ -152,6 +154,71 @@ public class TestClassTest {
     	    new MethodsAnnotated(), Ignore.class, String.class);
     	assertThat(values, hasItem("jupiter"));
     	assertThat(values.size(), is(1));
+    }
+
+    @Test
+    public void providesMethodsWithSpecificAnnotation() {
+        TestClass tc = new TestClass(MethodsAnnotated.class);
+        List<FrameworkMethod> annotatedMethods = tc.getAnnotatedMethods(Test.class);
+        assertThat("Wrong number of annotated methods.",
+            annotatedMethods.size(), is(3));
+        assertThat("First annotated method is wrong.",
+            annotatedMethods.iterator().next().getName(), is("methodA"));
+    }
+
+    public interface TopInterface {
+        @Test
+        void topTest();
+    }
+
+    public interface SubInterfaceA extends TopInterface {
+        @Test
+        void additionalTest();
+    }
+
+    public interface SubInterfaceB extends TopInterface {
+        @Test
+        void anotherTest();
+    }
+
+    public interface SubInterfaceC extends SubInterfaceA, SubInterfaceB {
+        @Test
+        void yetAnotherTest();
+    }
+
+    public static class MethodsMixedIn implements SubInterfaceC {
+        public void yetAnotherTest() {
+        }
+
+        public void additionalTest() {
+        }
+
+        public void anotherTest() {
+        }
+
+        @Test // Also annotated in the TopInterface; mustn't be duplicated
+        public void topTest() {
+        }
+    }
+
+    @Test
+    public void provideMethodsAnnotatedInInterfaces() {
+        TestClass tc = new TestClass(MethodsMixedIn.class);
+        List<FrameworkMethod> annotatedMethods = tc.getAnnotatedMethods(Test.class);
+
+        assertThat("Wrong number of annotated methods.",
+            annotatedMethods.size(), is(4));
+
+        Set<String> actualMethodNames = new HashSet<String>();
+        Set<String> expectedMethodNames = new HashSet<String>();
+        expectedMethodNames.add("topTest");
+        expectedMethodNames.add("anotherTest");
+        expectedMethodNames.add("additionalTest");
+        expectedMethodNames.add("yetAnotherTest");
+        for (FrameworkMethod annotatedMethod : annotatedMethods) {
+            actualMethodNames.add(annotatedMethod.getName());
+        }
+        assertThat("First annotated method is wrong.", actualMethodNames, is(expectedMethodNames));
     }
 
     @Test
