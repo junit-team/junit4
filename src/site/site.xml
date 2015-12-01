@@ -41,6 +41,7 @@
       <item name="Project page" href="junit-lambda.html"/>
       <item name="Campaign Page (ended)" href="junit-lambda-campaign.html"/>
       <item name="Campaign Contributors" href="junit-lambda-contributors.html"/>
+      <item name="Campaign Spending" href="junit-lambda-spending.html"/>
     </menu>
 
     <menu ref="reports" inherit="bottom" />
