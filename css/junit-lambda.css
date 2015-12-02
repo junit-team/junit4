@@ -49,3 +49,21 @@ ul.inline {
 	height: 237px;
 	line-height: 237px;
 }
+
+ul.people {
+	margin-left: 7px;
+	margin-right: 7px;
+}
+.people li {
+	display: block;
+	width: 170px;
+	margin: 0;
+	padding: 0 15px 0 0;
+	float: left;
+	text-align: center;
+}
+.people img.avatar {
+	display: block;
+	width: 100%;
+	margin: 0 0 10px 0;
+}
