@@ -11,3 +11,4 @@ MaxCore.max
 out
 java.hprof.txt
 .gitattributes
+.DS_Store

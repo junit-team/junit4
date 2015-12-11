@@ -24,6 +24,8 @@
   <body>
     <head>
       <link rel="stylesheet" href="@relativePath@/css/plain-links.css" />
+      <link rel="stylesheet" href="@relativePath@/css/carousel.css" />
+      <link rel="stylesheet" href="@relativePath@/css/junit-lambda.css" />
     </head>
     <breadcrumbs>
       <item name="JUnit" href="http://junit.org/" />
@@ -33,6 +35,13 @@
       <item name="Introduction" href="index.html"/>
       <item name="Frequently asked questions" href="faq.html"/>
       <item name="Cookbook" href="cookbook.html"/>
+    </menu>
+
+    <menu name="JUnit Lambda">
+      <item name="Project page" href="junit-lambda.html"/>
+      <item name="Campaign Page (ended)" href="junit-lambda-campaign.html"/>
+      <item name="Campaign Contributors" href="junit-lambda-contributors.html"/>
+      <item name="Campaign Spending" href="junit-lambda-spending.html"/>
     </menu>
 
     <menu ref="reports" inherit="bottom" />

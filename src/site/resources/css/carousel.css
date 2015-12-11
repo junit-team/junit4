@@ -1,0 +1,13 @@
+.carousel-content {
+	height: 20em;
+}
+.carousel-caption a {
+	color: #ffffff;
+}
+#junit-lambda-teaser {
+	background: url(../images/junit-lambda/background.png);
+	text-align: center;
+}
+#junit-lambda-teaser p {
+	padding-top: 25px;
+}
