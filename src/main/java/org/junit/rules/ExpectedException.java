@@ -27,7 +27,7 @@ import org.junit.runners.model.Statement;
  *
  * <pre> public class SimpleExpectedExceptionTest {
  *     &#064;Rule
- *     public ExpectedException thrown= ExpectedException.none();
+ *     public ExpectedException thrown = ExpectedException.none();
  *
  *     &#064;Test
  *     public void throwsNothing() {
