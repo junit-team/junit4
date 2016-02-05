@@ -336,4 +336,10 @@ public class Assert {
         }
         return formatted + "expected:<" + expected + "> but was:<" + actual + ">";
     }
+    static public void failNotEqualsRaul(String message, Object expected, Object actual) {
+        fail(format(message, expected, actual));
+    }
+    static public void failNotEqualsRaul2(String message, Object expected, Object actual) {
+        fail(format(message, expected, actual));
+    }
 }
