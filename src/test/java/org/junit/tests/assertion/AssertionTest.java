@@ -219,23 +219,42 @@ public class AssertionTest {
 
     @Test
     public void twoDimensionalArraysDifferentOuterLengthNotEqual() {
-        Object[] extraArray = {true};
         assertArrayEqualsFailure(
-                new Object[][]{extraArray, {}},
+                new Object[][]{{true}, {}},
                 new Object[][]{{}},
                 "array lengths differed, expected.length=1 actual.length=0; arrays first differed at element [0][0]; expected:<true> but was:<end of array>");
         assertArrayEqualsFailure(
-                new Object[][]{{}, extraArray},
+                new Object[][]{{}, {true}},
                 new Object[][]{{}},
-                "array lengths differed, expected.length=2 actual.length=1; arrays first differed at element [1]; expected:<" + extraArray.toString() + "> but was:<end of array>");
+                "array lengths differed, expected.length=2 actual.length=1; arrays first differed at element [1]; expected:<java.lang.Object[1]> but was:<end of array>");
         assertArrayEqualsFailure(
                 new Object[][]{{}},
-                new Object[][]{extraArray, {}},
+                new Object[][]{{true}, {}},
                 "array lengths differed, expected.length=0 actual.length=1; arrays first differed at element [0][0]; expected:<end of array> but was:<true>");
         assertArrayEqualsFailure(
                 new Object[][]{{}},
-                new Object[][]{{}, extraArray},
-                "array lengths differed, expected.length=1 actual.length=2; arrays first differed at element [1]; expected:<end of array> but was:<" + extraArray.toString() + ">");
+                new Object[][]{{}, {true}},
+                "array lengths differed, expected.length=1 actual.length=2; arrays first differed at element [1]; expected:<end of array> but was:<java.lang.Object[1]>");
+    }
+
+    @Test
+    public void primitiveArraysConvertedToStringCorrectly() {
+        assertArrayEqualsFailure(
+                new boolean[][]{{}, {true}},
+                new boolean[][]{{}},
+                "array lengths differed, expected.length=2 actual.length=1; arrays first differed at element [1]; expected:<boolean[1]> but was:<end of array>");
+        assertArrayEqualsFailure(
+                new int[][]{{}, {23}},
+                new int[][]{{}},
+                "array lengths differed, expected.length=2 actual.length=1; arrays first differed at element [1]; expected:<int[1]> but was:<end of array>");
+    }
+
+    @Test
+    public void twoDimensionalArraysConvertedToStringCorrectly() {
+        assertArrayEqualsFailure(
+                new Object[][][]{{}, {{true}}},
+                new Object[][][]{{}},
+                "array lengths differed, expected.length=2 actual.length=1; arrays first differed at element [1]; expected:<java.lang.Object[][1]> but was:<end of array>");
     }
 
     @Test
