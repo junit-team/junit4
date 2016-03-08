@@ -346,8 +346,12 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
     @Override
     public Description getDescription() {
-        Description description = Description.createSuiteDescription(getName(),
-                getRunnerAnnotations());
+        Description description =
+                Description.createSuiteDescription(
+                        getTestClass().getJavaClass(),
+                        getName(),
+                        getRunnerAnnotations()
+                );
         for (T child : getFilteredChildren()) {
             description.addChild(describeChild(child));
         }
