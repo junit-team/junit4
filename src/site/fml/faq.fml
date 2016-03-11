@@ -138,15 +138,6 @@
     </p>
 </answer>
 </faq>
-  <faq id="overview_6"><question>What's the latest news on JUnit?</question>
-  <answer>
-    <p>
-      The JUnit home page publishes
-      the <a href="http://www.junit.org/news/index.htm">latest JUnit
-      news</a>.
-    </p>
-</answer>
-</faq>
       <faq id="overview_7"><question>How is JUnit licensed?</question>
       <answer>
     <p>
