@@ -171,8 +171,9 @@ public class ExpectedException implements TestRule {
      * @deprecated use {@code org.hamcrest.junit.ExpectedException.expect()}
      */
     @Deprecated
-    public void expect(Matcher<?> matcher) {
+    public ExpectedException expect(Matcher<?> matcher) {
         matcherBuilder.add(matcher);
+        return this;
     }
 
     /**
@@ -184,8 +185,9 @@ public class ExpectedException implements TestRule {
      *     throw new NullPointerException();
      * }</pre>
      */
-    public void expect(Class<? extends Throwable> type) {
+    public ExpectedException expect(Class<? extends Throwable> type) {
         expect(instanceOf(type));
+        return this;
     }
 
     /**
@@ -197,8 +199,9 @@ public class ExpectedException implements TestRule {
      *     throw new NullPointerException(&quot;What happened?&quot;);
      * }</pre>
      */
-    public void expectMessage(String substring) {
+    public ExpectedException expectMessage(String substring) {
         expectMessage(containsString(substring));
+        return this;
     }
 
     /**
@@ -213,8 +216,9 @@ public class ExpectedException implements TestRule {
      * @deprecated use {@code org.hamcrest.junit.ExpectedException.expectMessage()}
      */
     @Deprecated
-    public void expectMessage(Matcher<String> matcher) {
+    public ExpectedException expectMessage(Matcher<String> matcher) {
         expect(hasMessage(matcher));
+        return this;
     }
 
     /**
@@ -230,8 +234,9 @@ public class ExpectedException implements TestRule {
      * @deprecated use {@code org.hamcrest.junit.ExpectedException.expectCause()}
      */
     @Deprecated
-    public void expectCause(Matcher<? extends Throwable> expectedCause) {
+    public ExpectedException expectCause(Matcher<? extends Throwable> expectedCause) {
         expect(hasCause(expectedCause));
+        return this;
     }
 
     private class ExpectedExceptionStatement extends Statement {
