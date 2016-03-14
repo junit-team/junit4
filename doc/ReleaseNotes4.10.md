@@ -12,18 +12,20 @@ junit-dep-4.9.jar incorrectly contained hamcrest classes, which could lead to ve
 
 The RuleChain rule allows ordering of TestRules:
 
-    public static class UseRuleChain {
-    	@Rule
-    	public TestRule chain= RuleChain
-    	                       .outerRule(new LoggingRule("outer rule")
-    	                       .around(new LoggingRule("middle rule")
-    	                       .around(new LoggingRule("inner rule");
-    
-    	@Test
-    	public void example() {
-    		assertTrue(true);
-    	}
-    }
+```java
+public static class UseRuleChain {
+	@Rule
+	public TestRule chain= RuleChain
+	                       .outerRule(new LoggingRule("outer rule")
+	                       .around(new LoggingRule("middle rule")
+	                       .around(new LoggingRule("inner rule");
+
+	@Test
+	public void example() {
+		assertTrue(true);
+	}
+}
+```
 
 writes the log
 

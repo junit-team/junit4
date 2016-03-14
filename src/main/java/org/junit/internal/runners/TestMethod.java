@@ -13,25 +13,25 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 
 /**
  * @deprecated Included for backwards compatibility with JUnit 4.4. Will be
- *             removed in the next release. Please use
+ *             removed in the next major release. Please use
  *             {@link BlockJUnit4ClassRunner} in place of {@link JUnit4ClassRunner}.
  */
 @Deprecated
 public class TestMethod {
-    private final Method fMethod;
-    private TestClass fTestClass;
+    private final Method method;
+    private TestClass testClass;
 
     public TestMethod(Method method, TestClass testClass) {
-        fMethod = method;
-        fTestClass = testClass;
+        this.method = method;
+        this.testClass = testClass;
     }
 
     public boolean isIgnored() {
-        return fMethod.getAnnotation(Ignore.class) != null;
+        return method.getAnnotation(Ignore.class) != null;
     }
 
     public long getTimeout() {
-        Test annotation = fMethod.getAnnotation(Test.class);
+        Test annotation = method.getAnnotation(Test.class);
         if (annotation == null) {
             return 0;
         }
@@ -40,7 +40,7 @@ public class TestMethod {
     }
 
     protected Class<? extends Throwable> getExpectedException() {
-        Test annotation = fMethod.getAnnotation(Test.class);
+        Test annotation = method.getAnnotation(Test.class);
         if (annotation == null || annotation.expected() == None.class) {
             return null;
         } else {
@@ -57,15 +57,15 @@ public class TestMethod {
     }
 
     List<Method> getBefores() {
-        return fTestClass.getAnnotatedMethods(Before.class);
+        return testClass.getAnnotatedMethods(Before.class);
     }
 
     List<Method> getAfters() {
-        return fTestClass.getAnnotatedMethods(After.class);
+        return testClass.getAnnotatedMethods(After.class);
     }
 
     public void invoke(Object test) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-        fMethod.invoke(test);
+        method.invoke(test);
     }
 
 }

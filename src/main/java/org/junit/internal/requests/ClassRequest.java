@@ -5,14 +5,20 @@ import org.junit.runner.Request;
 import org.junit.runner.Runner;
 
 public class ClassRequest extends Request {
-    private final Object fRunnerLock = new Object();
+    private final Object runnerLock = new Object();
+
+    /*
+     * We have to use the f prefix, because IntelliJ's JUnit4IdeaTestRunner uses
+     * reflection to access this field. See
+     * https://github.com/junit-team/junit/issues/960
+     */
     private final Class<?> fTestClass;
-    private final boolean fCanUseSuiteMethod;
-    private volatile Runner fRunner;
+    private final boolean canUseSuiteMethod;
+    private volatile Runner runner;
 
     public ClassRequest(Class<?> testClass, boolean canUseSuiteMethod) {
-        fTestClass = testClass;
-        fCanUseSuiteMethod = canUseSuiteMethod;
+        this.fTestClass = testClass;
+        this.canUseSuiteMethod = canUseSuiteMethod;
     }
 
     public ClassRequest(Class<?> testClass) {
@@ -21,13 +27,13 @@ public class ClassRequest extends Request {
 
     @Override
     public Runner getRunner() {
-        if (fRunner == null) {
-            synchronized (fRunnerLock) {
-                if (fRunner == null) {
-                    fRunner = new AllDefaultPossibilitiesBuilder(fCanUseSuiteMethod).safeRunnerForClass(fTestClass);
+        if (runner == null) {
+            synchronized (runnerLock) {
+                if (runner == null) {
+                    runner = new AllDefaultPossibilitiesBuilder(canUseSuiteMethod).safeRunnerForClass(fTestClass);
                 }
             }
         }
-        return fRunner;
+        return runner;
     }
 }

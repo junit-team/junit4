@@ -1,0 +1,132 @@
+==================================
+Coding style
+==================================
+
+----------------------------------
+Tabs and Indents
+----------------------------------
+* Tab size : 4
+* Indent : 4
+* Continuation indent : 8
+* Label indent : 0
+
+> Don't use tab characters.
+
+----------------------------------
+Spaces
+----------------------------------
+Before Parentheses
+* if parentheses
+* for parentheses
+* while parentheses
+* switch parentheses
+* try parentheses
+* catch parentheses
+* synchronized parentheses
+
+Around Operators
+* Assignment operators (=, +=, …)
+* Logical operators (&&, ||)
+* Equality operators (==, !=)
+* Relational operators (<, >, <=, >=)
+* Bitwise operators (&, |, ^)
+* Additive operators (+, -)
+* Multiplicative operators (*, /, %)
+* Shift operators (<<, >>, >>>)
+
+Before Left Brace
+* Class left brace
+* Method left brace
+* if left brace
+* else left brace
+* for left brace
+* while left brace
+* do left brace
+* switch left brace
+* try left brace
+* catch left brace
+* finally left brace
+* synchronized left brace
+
+Before Keywords
+* else keyword
+* while keyword
+* catch keyword
+* finally keyword
+
+In Ternary Operator (?:)
+* Before ?
+* After ?
+* Before :
+* After :
+
+Within Type Arguments
+* After comma
+
+Other
+* After comma
+* After semicolon
+* After type cast
+
+----------------------------------
+Wrapping and Braces
+----------------------------------
+Braces placement
+* In class declaration : End of line
+* In method declaration : End of line
+* Other : End of line
+
+Use Of Braces
+* if() statement : When multiline
+* for() statement : When multiline
+* while() statement : When multiline
+* do .. while() statement : When multiline
+
+Annotations
+* Class annotations : Wrap always
+* Method annotations : Wrap always
+* Field annotations : Wrap always
+* Parameter annotations : Do not wrap
+* Local variable annotations : Do not wrap
+
+----------------------------------
+Blank Lines
+----------------------------------
+Minimum Blank Lines
+* Before package statement : 0
+* After package statement : 1
+* Before imports : 1
+* After imports : 1
+* Around class : 1
+* After class header : 0
+* After anonymous class header : 0
+* Around field in interface : 0
+* Around field : 0
+* Around method in interface : 1
+* Around method : 1
+* Before method body : 0 
+
+----------------------------------
+JavaDoc
+----------------------------------
+Alignment
+* Align thrown exception descriptions
+
+Blank Lines
+* After description
+
+Other
+* Enable leading asterisks
+* Use @throws rather than @exception
+* Keep empty lines
+
+----------------------------------
+Imports
+----------------------------------
+import static (all other imports)
+<blank line>
+import java.*
+import javax.*
+import com.*
+<blank line> 
+import (all other imports)

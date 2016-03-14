@@ -1,44 +1,47 @@
 package org.junit.rules;
 
-import org.junit.internal.AssumptionViolatedException;
+import org.junit.AssumptionViolatedException;
 import org.junit.runner.Description;
+import org.junit.runners.model.Statement;
 
 import java.util.concurrent.TimeUnit;
 
 /**
- * The Stopwatch Rule notifies one of its own protected methods of the time spent by a test.<p/>
- * Override them to get the time in nanoseconds. For example, this class will keep logging the
+ * The Stopwatch Rule notifies one of its own protected methods of the time spent by a test.
+ *
+ * <p>Override them to get the time in nanoseconds. For example, this class will keep logging the
  * time spent by each passed, failed, skipped, and finished test:
  *
  * <pre>
  * public static class StopwatchTest {
- *     private static final Logger logger= Logger.getLogger(&quot;&quot;);
+ *     private static final Logger logger = Logger.getLogger(&quot;&quot;);
  *
- *     private static void logInfo(String testName, String status, long nanos) {
+ *     private static void logInfo(Description description, String status, long nanos) {
+ *         String testName = description.getMethodName();
  *         logger.info(String.format(&quot;Test %s %s, spent %d microseconds&quot;,
- *                                     testName, status, Stopwatch.toMicros(nanos)));
+ *                                   testName, status, TimeUnit.NANOSECONDS.toMicros(nanos)));
  *     }
  *
  *     &#064;Rule
- *     public Stopwatch stopwatch= new Stopwatch() {
+ *     public Stopwatch stopwatch = new Stopwatch() {
  *         &#064;Override
  *         protected void succeeded(long nanos, Description description) {
- *             logInfo(description.getMethodName(), &quot;succeeded&quot;, nanos);
+ *             logInfo(description, &quot;succeeded&quot;, nanos);
  *         }
  *
  *         &#064;Override
  *         protected void failed(long nanos, Throwable e, Description description) {
- *             logInfo(description.getMethodName(), &quot;failed&quot;, nanos);
+ *             logInfo(description, &quot;failed&quot;, nanos);
  *         }
  *
  *         &#064;Override
  *         protected void skipped(long nanos, AssumptionViolatedException e, Description description) {
- *             logInfo(description.getMethodName(), &quot;skipped&quot;, nanos);
+ *             logInfo(description, &quot;skipped&quot;, nanos);
  *         }
  *
  *         &#064;Override
  *         protected void finished(long nanos, Description description) {
- *             logInfo(description.getMethodName(), &quot;finished&quot;, nanos);
+ *             logInfo(description, &quot;finished&quot;, nanos);
  *         }
  *     };
  *
@@ -62,7 +65,7 @@ import java.util.concurrent.TimeUnit;
  * <pre>
  * &#064;Test
  * public void performanceTest() throws InterruptedException {
- *     long delta= 30;
+ *     long delta = 30;
  *     Thread.sleep(300L);
  *     assertEquals(300d, stopwatch.runtime(MILLISECONDS), delta);
  *     Thread.sleep(500L);
@@ -73,16 +76,27 @@ import java.util.concurrent.TimeUnit;
  * @author tibor17
  * @since 4.12
  */
-public class Stopwatch extends TestWatcher {
-    private long fStartNanos;
-    private long fEndNanos;
+public class Stopwatch implements TestRule {
+    private final Clock clock;
+    private volatile long startNanos;
+    private volatile long endNanos;
+
+    public Stopwatch() {
+        this(new Clock());
+    }
+
+    Stopwatch(Clock clock) {
+        this.clock = clock;
+    }
 
     /**
+     * Gets the runtime for the test.
+     *
      * @param unit time unit for returned runtime
      * @return runtime measured during the test
      */
     public long runtime(TimeUnit unit) {
-        return unit.convert(currentNanoTime() - fStartNanos, TimeUnit.NANOSECONDS);
+        return unit.convert(getNanos(), TimeUnit.NANOSECONDS);
     }
 
     /**
@@ -109,66 +123,61 @@ public class Stopwatch extends TestWatcher {
     protected void finished(long nanos, Description description) {
     }
 
-    /**
-     * @param nanos time in nanoseconds
-     * @return time converted to microseconds
-     */
-    public static long toMicros(long nanos) {
-        return TimeUnit.NANOSECONDS.toMicros(nanos);
-    }
-
-    /**
-     * @param nanos time in nanoseconds
-     * @return time converted to milliseconds
-     */
-    public static long toMillis(long nanos) {
-        return TimeUnit.NANOSECONDS.toMillis(nanos);
-    }
-
-    /**
-     * @param nanos time in nanoseconds
-     * @return time converted to seconds
-     */
-    public static long toSeconds(long nanos) {
-        return TimeUnit.NANOSECONDS.toSeconds(nanos);
-    }
-
     private long getNanos() {
-        return fEndNanos - fStartNanos;
+        if (startNanos == 0) {
+            throw new IllegalStateException("Test has not started");
+        }
+        long currentEndNanos = endNanos; // volatile read happens here
+        if (currentEndNanos == 0) {
+          currentEndNanos = clock.nanoTime();
+        }
+
+        return currentEndNanos - startNanos;
     }
 
     private void starting() {
-        fStartNanos= currentNanoTime();
+        startNanos = clock.nanoTime();
+        endNanos = 0;
     }
 
     private void stopping() {
-        fEndNanos= currentNanoTime();
+        endNanos = clock.nanoTime();
     }
 
-    private long currentNanoTime() {
-        return System.nanoTime();
+    public final Statement apply(Statement base, Description description) {
+        return new InternalWatcher().apply(base, description);
     }
 
-    @Override final protected void succeeded(Description description) {
-        stopping();
-        succeeded(getNanos(), description);
+    private class InternalWatcher extends TestWatcher {
+
+        @Override protected void starting(Description description) {
+            Stopwatch.this.starting();
+        }
+
+        @Override protected void finished(Description description) {
+            Stopwatch.this.finished(getNanos(), description);
+        }
+
+        @Override protected void succeeded(Description description) {
+            Stopwatch.this.stopping();
+            Stopwatch.this.succeeded(getNanos(), description);
+        }
+
+        @Override protected void failed(Throwable e, Description description) {
+            Stopwatch.this.stopping();
+            Stopwatch.this.failed(getNanos(), e, description);
+        }
+
+        @Override protected void skipped(AssumptionViolatedException e, Description description) {
+            Stopwatch.this.stopping();
+            Stopwatch.this.skipped(getNanos(), e, description);
+        }
     }
 
-    @Override final protected void failed(Throwable e, Description description) {
-        stopping();
-        failed(getNanos(), e, description);
-    }
+    static class Clock {
 
-    @Override final protected void skipped(AssumptionViolatedException e, Description description) {
-        stopping();
-        skipped(getNanos(), e, description);
-    }
-
-    @Override final protected void starting(Description description) {
-        starting();
-    }
-
-    @Override final protected void finished(Description description) {
-        finished(getNanos(), description);
+        public long nanoTime() {
+            return System.nanoTime();
+        }
     }
 }

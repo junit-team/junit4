@@ -16,15 +16,15 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 
 /**
  * @deprecated Included for backwards compatibility with JUnit 4.4. Will be
- *             removed in the next release. Please use
+ *             removed in the next major release. Please use
  *             {@link BlockJUnit4ClassRunner} in place of {@link JUnit4ClassRunner}.
  */
 @Deprecated
 public class TestClass {
-    private final Class<?> fClass;
+    private final Class<?> klass;
 
     public TestClass(Class<?> klass) {
-        fClass = klass;
+        this.klass = klass;
     }
 
     public List<Method> getTestMethods() {
@@ -41,7 +41,7 @@ public class TestClass {
 
     public List<Method> getAnnotatedMethods(Class<? extends Annotation> annotationClass) {
         List<Method> results = new ArrayList<Method>();
-        for (Class<?> eachClass : getSuperClasses(fClass)) {
+        for (Class<?> eachClass : getSuperClasses(klass)) {
             Method[] methods = MethodSorter.getDeclaredMethods(eachClass);
             for (Method eachMethod : methods) {
                 Annotation annotation = eachMethod.getAnnotation(annotationClass);
@@ -85,7 +85,7 @@ public class TestClass {
     }
 
     private List<Class<?>> getSuperClasses(Class<?> testClass) {
-        ArrayList<Class<?>> results = new ArrayList<Class<?>>();
+        List<Class<?>> results = new ArrayList<Class<?>>();
         Class<?> current = testClass;
         while (current != null) {
             results.add(current);
@@ -95,15 +95,15 @@ public class TestClass {
     }
 
     public Constructor<?> getConstructor() throws SecurityException, NoSuchMethodException {
-        return fClass.getConstructor();
+        return klass.getConstructor();
     }
 
     public Class<?> getJavaClass() {
-        return fClass;
+        return klass;
     }
 
     public String getName() {
-        return fClass.getName();
+        return klass.getName();
     }
 
 }

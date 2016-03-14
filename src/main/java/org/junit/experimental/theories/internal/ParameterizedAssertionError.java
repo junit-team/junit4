@@ -4,36 +4,40 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
-public class ParameterizedAssertionError extends RuntimeException {
+public class ParameterizedAssertionError extends AssertionError {
     private static final long serialVersionUID = 1L;
 
     public ParameterizedAssertionError(Throwable targetException,
             String methodName, Object... params) {
-        super(String.format("%s(%s)", methodName, join(", ", params)),
-                targetException);
+        super(String.format("%s(%s)", methodName, join(", ", params)));
+        this.initCause(targetException);
     }
 
     @Override
     public boolean equals(Object obj) {
-        return toString().equals(obj.toString());
+        return obj instanceof ParameterizedAssertionError && toString().equals(obj.toString());
+    }
+
+    @Override
+    public int hashCode() {
+        return toString().hashCode();
     }
 
     public static String join(String delimiter, Object... params) {
         return join(delimiter, Arrays.asList(params));
     }
 
-    public static String join(String delimiter,
-            Collection<Object> values) {
-        StringBuffer buffer = new StringBuffer();
+    public static String join(String delimiter, Collection<Object> values) {
+        StringBuilder sb = new StringBuilder();
         Iterator<Object> iter = values.iterator();
         while (iter.hasNext()) {
             Object next = iter.next();
-            buffer.append(stringValueOf(next));
+            sb.append(stringValueOf(next));
             if (iter.hasNext()) {
-                buffer.append(delimiter);
+                sb.append(delimiter);
             }
         }
-        return buffer.toString();
+        return sb.toString();
     }
 
     private static String stringValueOf(Object next) {

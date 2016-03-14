@@ -28,11 +28,6 @@ import org.junit.runner.Result;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
-/**
- * This test class is very similar to {@link TestMethodRuleTest}. If you add a test here, then it is likely that the other will have to be changed.
- * This tests {@link Rule}s attached to fields.
- * {@link TestMethodRuleTest} tests {@link Rule}s attached to methods.
- */
 public class TestRuleTest {
     private static boolean wasRun;
 
@@ -65,7 +60,6 @@ public class TestRuleTest {
         assertTrue(wasRun);
     }
 
-    @SuppressWarnings("deprecation")
     public static class BothKindsOfRule implements TestRule, org.junit.rules.MethodRule {
         public int applications = 0;
 
@@ -275,7 +269,6 @@ public class TestRuleTest {
     }
 
     public static class PrivateRule {
-        @SuppressWarnings("unused")
         @Rule
         private TestRule rule = new TestName();
 
@@ -352,7 +345,6 @@ public class TestRuleTest {
         assertTrue(wasRun);
     }
 
-    @SuppressWarnings("deprecation")
     public static class MethodBothKindsOfRule implements TestRule, org.junit.rules.MethodRule {
         public int applications = 0;
 
@@ -398,8 +390,6 @@ public class TestRuleTest {
         JUnitCore.runClasses(MethodSonOfExampleTest.class);
         assertTrue(wasRun);
     }
-
-//	private static int runCount;
 
     public static class MethodMultipleRuleTest {
         private static class Increment implements TestRule {
@@ -514,6 +504,7 @@ public class TestRuleTest {
     }
 
     public static class MethodWatchmanTest {
+        @SuppressWarnings("unused")
         private static String watchedLog;
 
         private TestRule watchman = new TestWatcher() {
@@ -628,7 +619,6 @@ public class TestRuleTest {
     }
 
     public static class MethodPrivateRule {
-        @SuppressWarnings("unused")
         @Rule
         private TestRule getRule() {
             return new TestName();
@@ -684,8 +674,6 @@ public class TestRuleTest {
         }
     }
 
-    ;
-
     public static class UsesFieldAndMethodRule {
         @Rule
         public OrderTestRule orderMethod() {
@@ -706,15 +694,6 @@ public class TestRuleTest {
     public void usesFieldAndMethodRule() {
         orderList.clear();
         assertThat(testResult(UsesFieldAndMethodRule.class), isSuccessful());
-    }
-
-    public static class MultipleCallsTest implements TestRule {
-        public int applications = 0;
-
-        public Statement apply(Statement base, Description description) {
-            applications++;
-            return base;
-        }
     }
 
     public static class CallMethodOnlyOnceRule {

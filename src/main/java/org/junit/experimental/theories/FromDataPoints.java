@@ -9,14 +9,14 @@ import org.junit.experimental.theories.internal.SpecificDataPointsSupplier;
 
 /**
  * Annotating a parameter of a {@link org.junit.experimental.theories.Theory
- * &#064Theory} method with <code>&#064;FromDataPoints</code> will limit the
+ * &#064;Theory} method with <code>&#064;FromDataPoints</code> will limit the
  * datapoints considered as potential values for that parameter to just the
  * {@link org.junit.experimental.theories.DataPoints DataPoints} with the given
  * name. DataPoint names can be given as the value parameter of the
- * &#064DataPoints annotation.
+ * &#064;DataPoints annotation.
  * <p>
  * DataPoints without names will not be considered as values for any parameters
- * annotated with &#064FromDataPoints.
+ * annotated with &#064;FromDataPoints.
  * <pre>
  * &#064;DataPoints
  * public static String[] unnamed = new String[] { ... };

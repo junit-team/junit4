@@ -19,7 +19,7 @@ public class BaseTestRunnerTest extends TestCase {
         }
 
         @Override
-        public void testFailed(int status, Test test, Throwable t) {
+        public void testFailed(int status, Test test, Throwable e) {
         }
 
         @Override

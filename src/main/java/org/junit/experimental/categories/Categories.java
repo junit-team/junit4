@@ -79,10 +79,6 @@ import org.junit.runners.model.RunnerBuilder;
  * @see <a href="https://github.com/junit-team/junit/wiki/Categories">Categories at JUnit wiki</a>
  */
 public class Categories extends Suite {
-    // the way filters are implemented makes this unnecessarily complicated,
-    // buggy, and difficult to specify.  A new way of handling filters could
-    // someday enable a better new implementation.
-    // https://github.com/junit-team/junit/issues/issue/172
 
     @Retention(RetentionPolicy.RUNTIME)
     public @interface IncludeCategory {
@@ -90,13 +86,13 @@ public class Categories extends Suite {
          * Determines the tests to run that are annotated with categories specified in
          * the value of this annotation or their subtypes unless excluded with {@link ExcludeCategory}.
          */
-        public Class<?>[] value() default {};
+        Class<?>[] value() default {};
 
         /**
          * If <tt>true</tt>, runs tests annotated with <em>any</em> of the categories in
          * {@link IncludeCategory#value()}. Otherwise, runs tests only if annotated with <em>all</em> of the categories.
          */
-        public boolean matchAny() default true;
+        boolean matchAny() default true;
     }
 
     @Retention(RetentionPolicy.RUNTIME)
@@ -105,20 +101,20 @@ public class Categories extends Suite {
          * Determines the tests which do not run if they are annotated with categories specified in the
          * value of this annotation or their subtypes regardless of being included in {@link IncludeCategory#value()}.
          */
-        public Class<?>[] value() default {};
+        Class<?>[] value() default {};
 
         /**
          * If <tt>true</tt>, the tests annotated with <em>any</em> of the categories in {@link ExcludeCategory#value()}
          * do not run. Otherwise, the tests do not run if and only if annotated with <em>all</em> categories.
          */
-        public boolean matchAny() default true;
+        boolean matchAny() default true;
     }
 
     public static class CategoryFilter extends Filter {
-        private final Set<Class<?>> fIncluded;
-        private final Set<Class<?>> fExcluded;
-        private final boolean fIncludedAny;
-        private final boolean fExcludedAny;
+        private final Set<Class<?>> included;
+        private final Set<Class<?>> excluded;
+        private final boolean includedAny;
+        private final boolean excludedAny;
 
         public static CategoryFilter include(boolean matchAny, Class<?>... categories) {
             if (hasNull(categories)) {
@@ -157,10 +153,10 @@ public class Categories extends Suite {
 
         protected CategoryFilter(boolean matchAnyIncludes, Set<Class<?>> includes,
                                boolean matchAnyExcludes, Set<Class<?>> excludes) {
-            fIncludedAny= matchAnyIncludes;
-            fExcludedAny= matchAnyExcludes;
-            fIncluded= copyAndRefine(includes);
-            fExcluded= copyAndRefine(excludes);
+            includedAny = matchAnyIncludes;
+            excludedAny = matchAnyExcludes;
+            included = copyAndRefine(includes);
+            excluded = copyAndRefine(excludes);
         }
 
         /**
@@ -186,9 +182,9 @@ public class Categories extends Suite {
          */
         @Override public String toString() {
             StringBuilder description= new StringBuilder("categories ")
-                .append(fIncluded.isEmpty() ? "[all]" : fIncluded);
-            if (!fExcluded.isEmpty()) {
-                description.append(" - ").append(fExcluded);
+                .append(included.isEmpty() ? "[all]" : included);
+            if (!excluded.isEmpty()) {
+                description.append(" - ").append(excluded);
             }
             return description.toString();
         }
@@ -213,29 +209,29 @@ public class Categories extends Suite {
 
             // If a child has no categories, immediately return.
             if (childCategories.isEmpty()) {
-                return fIncluded.isEmpty();
+                return included.isEmpty();
             }
 
-            if (!fExcluded.isEmpty()) {
-                if (fExcludedAny) {
-                    if (matchesAnyParentCategories(childCategories, fExcluded)) {
+            if (!excluded.isEmpty()) {
+                if (excludedAny) {
+                    if (matchesAnyParentCategories(childCategories, excluded)) {
                         return false;
                     }
                 } else {
-                    if (matchesAllParentCategories(childCategories, fExcluded)) {
+                    if (matchesAllParentCategories(childCategories, excluded)) {
                         return false;
                     }
                 }
             }
-            
-            if (fIncluded.isEmpty()) {
+
+            if (included.isEmpty()) {
                 // Couldn't be excluded, and with no suite's included categories treated as should run.
                 return true;
             } else {
-                if (fIncludedAny) {
-                    return matchesAnyParentCategories(childCategories, fIncluded);
+                if (includedAny) {
+                    return matchesAnyParentCategories(childCategories, included);
                 } else {
-                    return matchesAllParentCategories(childCategories, fIncluded);
+                    return matchesAllParentCategories(childCategories, included);
                 }
             }
         }
@@ -288,7 +284,7 @@ public class Categories extends Suite {
         }
 
         private static Set<Class<?>> copyAndRefine(Set<Class<?>> classes) {
-            HashSet<Class<?>> c= new HashSet<Class<?>>();
+            Set<Class<?>> c= new HashSet<Class<?>>();
             if (classes != null) {
                 c.addAll(classes);
             }
@@ -318,13 +314,10 @@ public class Categories extends Suite {
             filter(CategoryFilter.categoryFilter(isAnyIncluded, included, isAnyExcluded, excluded));
         } catch (NoTestsRemainException e) {
             throw new InitializationError(e);
-        } catch (ClassNotFoundException e) {
-            throw new InitializationError(e);
         }
-        assertNoCategorizedDescendentsOfUncategorizeableParents(getDescription());
     }
 
-    private static Set<Class<?>> getIncludedCategory(Class<?> klass) throws ClassNotFoundException {
+    private static Set<Class<?>> getIncludedCategory(Class<?> klass) {
         IncludeCategory annotation= klass.getAnnotation(IncludeCategory.class);
         return createSet(annotation == null ? null : annotation.value());
     }
@@ -334,7 +327,7 @@ public class Categories extends Suite {
         return annotation == null || annotation.matchAny();
     }
 
-    private static Set<Class<?>> getExcludedCategory(Class<?> klass) throws ClassNotFoundException {
+    private static Set<Class<?>> getExcludedCategory(Class<?> klass) {
         ExcludeCategory annotation= klass.getAnnotation(ExcludeCategory.class);
         return createSet(annotation == null ? null : annotation.value());
     }
@@ -342,34 +335,6 @@ public class Categories extends Suite {
     private static boolean isAnyExcluded(Class<?> klass) {
         ExcludeCategory annotation= klass.getAnnotation(ExcludeCategory.class);
         return annotation == null || annotation.matchAny();
-    }
-
-    private static void assertNoCategorizedDescendentsOfUncategorizeableParents(Description description) throws InitializationError {
-        if (!canHaveCategorizedChildren(description)) {
-            assertNoDescendantsHaveCategoryAnnotations(description);
-        }
-        for (Description each : description.getChildren()) {
-            assertNoCategorizedDescendentsOfUncategorizeableParents(each);
-        }
-    }
-
-    private static void assertNoDescendantsHaveCategoryAnnotations(Description description) throws InitializationError {
-        for (Description each : description.getChildren()) {
-            if (each.getAnnotation(Category.class) != null) {
-                throw new InitializationError("Category annotations on Parameterized classes are not supported on individual methods.");
-            }
-            assertNoDescendantsHaveCategoryAnnotations(each);
-        }
-    }
-
-    // If children have names like [0], our current magical category code can't determine their parentage.
-    private static boolean canHaveCategorizedChildren(Description description) {
-        for (Description each : description.getChildren()) {
-            if (each.getTestClass() == null) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private static boolean hasAssignableTo(Set<Class<?>> assigns, Class<?> to) {

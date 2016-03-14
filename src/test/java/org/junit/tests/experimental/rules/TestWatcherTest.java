@@ -1,14 +1,13 @@
 package org.junit.tests.experimental.rules;
 
-import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.failureCountIs;
 import static org.junit.experimental.results.ResultMatchers.hasFailureContaining;
 import static org.junit.runner.JUnitCore.runClasses;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.results.PrintableResult;
@@ -35,7 +34,43 @@ public class TestWatcherTest {
         ViolatedAssumptionTest.watchedLog = new StringBuilder();
         runClasses(ViolatedAssumptionTest.class);
         assertThat(ViolatedAssumptionTest.watchedLog.toString(),
-                is("starting finished "));
+                is("starting skipped finished "));
+    }
+
+    public static class InternalViolatedAssumptionTest {
+        private static StringBuilder watchedLog = new StringBuilder();
+
+        @Rule
+        public TestRule watcher = new TestWatcher() {
+            @Override
+            protected void starting(Description description) {
+                watchedLog.append("starting ");
+            }
+
+            @Override
+            protected void finished(Description description) {
+                watchedLog.append("finished ");
+            }
+
+            @Override
+            protected void skipped(AssumptionViolatedException e, Description description) {
+                watchedLog.append("skipped ");
+            }
+        };
+
+        @SuppressWarnings("deprecation")
+        @Test
+        public void succeeds() {
+            throw new AssumptionViolatedException("don't run");
+        }
+    }
+
+    @Test
+    public void internalViolatedAssumption() {
+        InternalViolatedAssumptionTest.watchedLog = new StringBuilder();
+        runClasses(InternalViolatedAssumptionTest.class);
+        assertThat(InternalViolatedAssumptionTest.watchedLog.toString(),
+                is("starting skipped finished "));
     }
 
     public static class TestWatcherSkippedThrowsExceptionTest {
@@ -47,6 +82,7 @@ public class TestWatcherTest {
             }
         };
 
+        @SuppressWarnings("deprecation")
         @Test
         public void fails() {
             throw new AssumptionViolatedException("test failure");
@@ -131,7 +167,7 @@ public class TestWatcherTest {
         @Rule
         public TestRule watcher = new TestWatcher() {
             @Override
-            protected void failed(Throwable t, Description description) {
+            protected void failed(Throwable e, Description description) {
                 throw new RuntimeException("watcher failed failure");
             }
 

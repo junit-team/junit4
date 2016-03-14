@@ -18,6 +18,7 @@ public class ComparisonCompactor {
         fActual = actual;
     }
 
+    @SuppressWarnings("deprecation")
     public String compact(String message) {
         if (fExpected == null || fActual == null || areStringsEqual()) {
             return Assert.format(message, fExpected, fActual);

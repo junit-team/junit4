@@ -23,9 +23,6 @@ import org.junit.runners.model.Statement;
 
 /**
  * Tests to exercise class-level rules.
- * This test class is very similar to {@link ClassRulesMethodTest}. If you add a test here, then it is likely that the other will have to be changed.
- * This tests {@link ClassRule}s attached to fields.
- * {@link ClassRulesMethodTest} tests {@link ClassRule}s attached to methods.
  */
 public class ClassRulesTest {
     public static class Counter extends ExternalResource {

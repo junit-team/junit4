@@ -16,9 +16,9 @@ import org.junit.runners.model.InitializationError;
  * tests or a tree of {@link  org.junit.Test}s. However, we want to support filtering and sorting,
  * so we need a more abstract specification than the tests themselves and a richer
  * specification than just the classes.
- * <p>
- * The flow when JUnit runs tests is that a <code>Request</code> specifies some tests to be run ->
- * a {@link org.junit.runner.Runner} is created for each class implied by the <code>Request</code> ->
+ *
+ * <p>The flow when JUnit runs tests is that a <code>Request</code> specifies some tests to be run -&gt;
+ * a {@link org.junit.runner.Runner} is created for each class implied by the <code>Request</code> -&gt;
  * the {@link org.junit.runner.Runner} returns a detailed {@link org.junit.runner.Description}
  * which is a tree structure of the tests to be run.
  *
@@ -75,8 +75,7 @@ public abstract class Request {
             Runner suite = computer.getSuite(builder, classes);
             return runner(suite);
         } catch (InitializationError e) {
-            throw new RuntimeException(
-                    "Bug in saff's brain: Suite constructor, called as above, should always complete");
+            return runner(new ErrorReportingRunner(e, classes));
         }
     }
 
@@ -93,9 +92,9 @@ public abstract class Request {
 
 
     /**
-     * Not used within JUnit.  Clients should simply instantiate ErrorReportingRunner themselves
+     * Creates a {@link Request} that, when processed, will report an error for the given
+     * test class with the given cause.
      */
-    @Deprecated
     public static Request errorReport(Class<?> klass, Throwable cause) {
         return runner(new ErrorReportingRunner(klass, cause));
     }
@@ -148,8 +147,8 @@ public abstract class Request {
      * <p>
      * For example, here is code to run a test suite in alphabetical order:
      * <pre>
-     * private static Comparator<Description> forward() {
-     * return new Comparator<Description>() {
+     * private static Comparator&lt;Description&gt; forward() {
+     * return new Comparator&lt;Description&gt;() {
      * public int compare(Description o1, Description o2) {
      * return o1.getDisplayName().compareTo(o2.getDisplayName());
      * }

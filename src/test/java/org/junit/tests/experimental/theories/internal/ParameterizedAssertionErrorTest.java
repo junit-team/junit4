@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assume.assumeThat;
 
 import org.junit.Test;
@@ -53,15 +54,33 @@ public class ParameterizedAssertionErrorTest {
     @Theory
     public void equalsReturnsTrue(Throwable targetException, String methodName,
             Object[] params) {
-        assertThat(new ParameterizedAssertionError(targetException, methodName,
-                params), is(new ParameterizedAssertionError(targetException,
-                methodName, params)));
+        assertThat(
+                new ParameterizedAssertionError(targetException, methodName, params),
+                is(new ParameterizedAssertionError(targetException, methodName, params)));
+    }
+
+    @Theory
+    public void sameHashCodeWhenEquals(Throwable targetException, String methodName,
+            Object[] params) {
+        ParameterizedAssertionError one = new ParameterizedAssertionError(
+                targetException, methodName, params);
+        ParameterizedAssertionError two = new ParameterizedAssertionError(
+                targetException, methodName, params);
+        assumeThat(one, is(two));
+
+        assertThat(one.hashCode(), is(two.hashCode()));
     }
 
     @Theory(nullsAccepted = false)
     public void buildParameterizedAssertionError(String methodName, String param) {
-        assertThat(new ParameterizedAssertionError(new RuntimeException(),
-                methodName, param).toString(), containsString(methodName));
+        assertThat(new ParameterizedAssertionError(
+                new RuntimeException(), methodName, param).toString(),
+                containsString(methodName));
+    }
+
+    @Theory
+    public void isNotEqualToNull(ParameterizedAssertionError a) {
+        assertFalse(a.equals(null));
     }
 
     @Test

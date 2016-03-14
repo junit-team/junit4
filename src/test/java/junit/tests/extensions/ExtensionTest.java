@@ -71,6 +71,7 @@ public class ExtensionTest extends TestCase {
         WasRun test = new WasRun();
 
         TornDown wrapper = new TornDown(test) {
+            @SuppressWarnings("deprecation")
             @Override
             public void setUp() {
                 fail();
@@ -87,6 +88,7 @@ public class ExtensionTest extends TestCase {
         WasRun test = new WasRun();
 
         TestSetup wrapper = new TestSetup(test) {
+            @SuppressWarnings("deprecation")
             @Override
             public void setUp() {
                 fail();

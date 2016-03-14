@@ -11,11 +11,14 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.expectThrows;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 
 import org.junit.Assert;
+import org.junit.Assert.ThrowingRunnable;
 import org.junit.ComparisonFailure;
 import org.junit.Test;
 import org.junit.internal.ArrayComparisonFailure;
@@ -170,7 +173,7 @@ public class AssertionTest {
     public void oneDimensionalFloatArraysAreNotEqual() {
         assertArrayEquals(new float[]{1.0f}, new float[]{2.5f}, 1.0f);
     }
-    
+
     @Test(expected = AssertionError.class)
     public void oneDimensionalBooleanArraysAreNotEqual() {
         assertArrayEquals(new boolean[]{true}, new boolean[]{false});
@@ -209,6 +212,30 @@ public class AssertionTest {
         } catch (AssertionError exception) {
             assertEquals("arrays first differed at element [1][0]; expected:<false> but was:<true>", exception.getMessage());
         }
+    }
+
+    @Test
+    public void multiDimensionalArraysDifferentLengthMessage() {
+        try {
+            assertArrayEquals("message", new Object[][]{{true, true}, {false, false}}, new Object[][]{{true, true}, {false}});
+        } catch (AssertionError exception) {
+            assertEquals("message: arrays first differed at element [1]; array lengths differed, expected.length=2 actual.length=1", exception.getMessage());
+            return;
+        }
+
+        fail("Expected AssertionError to be thrown");
+    }
+
+    @Test
+    public void multiDimensionalArraysDifferentLengthNoMessage() {
+        try {
+            assertArrayEquals(new Object[][]{{true, true}, {false, false}}, new Object[][]{{true, true}, {false}});
+        } catch (AssertionError exception) {
+            assertEquals("arrays first differed at element [1]; array lengths differed, expected.length=2 actual.length=1", exception.getMessage());
+            return;
+        }
+
+        fail("Expected AssertionError to be thrown");
     }
 
     @Test
@@ -366,6 +393,7 @@ public class AssertionTest {
         assertEquals(Double.NaN, Double.NaN, Double.POSITIVE_INFINITY);
     }
 
+    @SuppressWarnings("unused")
     @Test
     public void nullNullmessage() {
         try {
@@ -376,6 +404,7 @@ public class AssertionTest {
         }
     }
 
+    @SuppressWarnings("unused")
     @Test
     public void nullWithMessage() {
         try {
@@ -647,5 +676,81 @@ public class AssertionTest {
     @Test(expected = AssertionError.class)
     public void assertNotEqualsIgnoresFloatDeltaOnNaN() {
         assertNotEquals(Float.NaN, Float.NaN, 1f);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void expectThrowsRequiresAnExceptionToBeThrown() {
+        expectThrows(Throwable.class, nonThrowingRunnable());
+    }
+
+    @Test
+    public void expectThrowsIncludesAnInformativeDefaultMessage() {
+        try {
+            expectThrows(Throwable.class, nonThrowingRunnable());
+        } catch (AssertionError ex) {
+            assertEquals("expected Throwable to be thrown, but nothing was thrown", ex.getMessage());
+            return;
+        }
+        fail();
+    }
+
+    @Test
+    public void expectThrowsReturnsTheSameObjectThrown() {
+        NullPointerException npe = new NullPointerException();
+
+        Throwable throwable = expectThrows(Throwable.class, throwingRunnable(npe));
+
+        assertSame(npe, throwable);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void expectThrowsDetectsTypeMismatchesViaExplicitTypeHint() {
+        NullPointerException npe = new NullPointerException();
+
+        expectThrows(IOException.class, throwingRunnable(npe));
+    }
+
+    @Test
+    public void expectThrowsWrapsAndPropagatesUnexpectedExceptions() {
+        NullPointerException npe = new NullPointerException("inner-message");
+
+        try {
+            expectThrows(IOException.class, throwingRunnable(npe));
+        } catch (AssertionError ex) {
+            assertSame(npe, ex.getCause());
+            assertEquals("inner-message", ex.getCause().getMessage());
+            return;
+        }
+        fail();
+    }
+
+    @Test
+    public void expectThrowsSuppliesACoherentErrorMessageUponTypeMismatch() {
+        NullPointerException npe = new NullPointerException();
+
+        try {
+            expectThrows(IOException.class, throwingRunnable(npe));
+        } catch (AssertionError error) {
+            assertEquals("unexpected exception type thrown; expected:<IOException> but was:<NullPointerException>",
+                    error.getMessage());
+            assertSame(npe, error.getCause());
+            return;
+        }
+        fail();
+    }
+
+    private static ThrowingRunnable nonThrowingRunnable() {
+        return new ThrowingRunnable() {
+            public void run() throws Throwable {
+            }
+        };
+    }
+
+    private static ThrowingRunnable throwingRunnable(final Throwable t) {
+        return new ThrowingRunnable() {
+            public void run() throws Throwable {
+                throw t;
+            }
+        };
     }
 }

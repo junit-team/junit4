@@ -1,5 +1,10 @@
 package org.junit.runner;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import java.util.List;
 
 import org.junit.Rule;
@@ -8,42 +13,33 @@ import org.junit.experimental.categories.IncludeCategories;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.manipulation.Filter;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 public class JUnitCommandLineParseResultTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
-    private JUnitCommandLineParseResult jUnitCommandLineParseResult = new JUnitCommandLineParseResult();
+    private final JUnitCommandLineParseResult jUnitCommandLineParseResult = new JUnitCommandLineParseResult();
 
     @Test
     public void shouldStopParsingOptionsUponDoubleHyphenArg() throws Exception {
-        String[] restOfArgs = jUnitCommandLineParseResult.parseOptions(new String[]{
-                "--0", "--1", "--", "--2", "--3"
-        });
+        String[] restOfArgs = jUnitCommandLineParseResult.parseOptions(
+                "--0", "--1", "--", "--2", "--3");
 
         assertThat(restOfArgs, is(new String[]{"--2", "--3"}));
     }
 
     @Test
     public void shouldParseFilterArgWithEqualsSyntax() throws Exception {
-        jUnitCommandLineParseResult.parseOptions(new String[]{
-                "--filter=" + IncludeCategories.class.getName() + "=" + DummyCategory0.class.getName()
-        });
+        String value= IncludeCategories.class.getName() + "=" + DummyCategory0.class.getName();
+        jUnitCommandLineParseResult.parseOptions("--filter=" + value);
 
-        Filter filter = jUnitCommandLineParseResult.getFilter();
+        List<String> specs= jUnitCommandLineParseResult.getFilterSpecs();
 
-        assertThat(filter.describe(), startsWith("includes "));
+        assertThat(specs, hasItems(value));
     }
 
     @Test
     public void shouldCreateFailureUponBaldFilterOptionNotFollowedByValue() {
-        jUnitCommandLineParseResult.parseOptions(new String[]{
-                "--filter"
-        });
+        jUnitCommandLineParseResult.parseOptions("--filter");
 
         Runner runner = jUnitCommandLineParseResult.createRequest(new Computer()).getRunner();
         Description description = runner.getDescription().getChildren().get(0);
@@ -53,14 +49,12 @@ public class JUnitCommandLineParseResultTest {
 
     @Test
     public void shouldParseFilterArgInWhichValueIsASeparateArg() throws Exception {
-        jUnitCommandLineParseResult.parseOptions(new String[]{
-                "--filter",
-                IncludeCategories.class.getName() + "=" + DummyCategory0.class.getName()
-        });
+        String value= IncludeCategories.class.getName() + "=" + DummyCategory0.class.getName();
+        jUnitCommandLineParseResult.parseOptions("--filter", value);
 
-        Filter filter = jUnitCommandLineParseResult.getFilter();
+        List<String> specs= jUnitCommandLineParseResult.getFilterSpecs();
 
-        assertThat(filter.describe(), startsWith("includes "));
+        assertThat(specs, hasItems(value));
     }
 
     @Test

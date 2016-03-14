@@ -2,6 +2,7 @@ package org.junit.tests.experimental.rules;
 
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 
@@ -18,7 +19,6 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
-@SuppressWarnings("deprecation")
 public class BlockJUnit4ClassRunnerOverrideTest {
     public static class FlipBitRule implements MethodRule {
         public Statement apply(final Statement base, FrameworkMethod method,
@@ -89,5 +89,89 @@ public class BlockJUnit4ClassRunnerOverrideTest {
     @Test
     public void overrideTestRulesMethod() {
         assertThat(testResult(OverrideRulesTest.class), isSuccessful());
+    }
+
+
+    /**
+     * Runner for testing override of {@link org.junit.runners.BlockJUnit4ClassRunner#createTest(org.junit.runners.model.FrameworkMethod)}
+     * by setting the {@link org.junit.runners.model.FrameworkMethod} in a field
+     * of the test class so it can be compared with the test method that is being
+     * executed.
+     */
+    public static class OverrideCreateTestRunner extends BlockJUnit4ClassRunner {
+        public OverrideCreateTestRunner(final Class<?> klass) throws InitializationError {
+            super(klass);
+
+            assert(klass.equals(OverrideCreateTest.class));
+        }
+
+        @Override
+        protected Object createTest(FrameworkMethod method) {
+            final OverrideCreateTest obj = new OverrideCreateTest();
+
+            obj.method = method;
+
+            return obj;
+        }
+    }
+
+    @RunWith(OverrideCreateTestRunner.class)
+    public static class OverrideCreateTest {
+        public FrameworkMethod method;
+
+        @Test
+        public void testMethodA() {
+            assertEquals("testMethodA", method.getMethod().getName());
+        }
+
+        @Test
+        public void testMethodB() {
+            assertEquals("testMethodB", method.getMethod().getName());
+        }
+    }
+
+    @Test
+    public void overrideCreateTestMethod() {
+        assertThat(testResult(OverrideCreateTest.class), isSuccessful());
+    }
+
+
+    /**
+     * Runner for testing override of {@link org.junit.runners.BlockJUnit4ClassRunner#createTest()}
+     * is still called by default if no other {@code createTest} method override
+     * is in place. This is tested by setting a boolean flag in a field of the
+     * test class so it can be checked to confirm that the createTest method was
+     * called.
+     */
+    public static class CreateTestDefersToNoArgCreateTestRunner extends BlockJUnit4ClassRunner {
+        public CreateTestDefersToNoArgCreateTestRunner(final Class<?> klass) throws InitializationError {
+            super(klass);
+
+            assert(klass.equals(CreateTestDefersToNoArgCreateTestTest.class));
+        }
+
+        @Override
+        protected Object createTest() {
+            final CreateTestDefersToNoArgCreateTestTest obj = new CreateTestDefersToNoArgCreateTestTest();
+
+            obj.createTestCalled = true;
+
+            return obj;
+        }
+    }
+
+    @RunWith(CreateTestDefersToNoArgCreateTestRunner.class)
+    public static class CreateTestDefersToNoArgCreateTestTest {
+        public boolean createTestCalled = false;
+
+        @Test
+        public void testCreateTestCalled() {
+            assertEquals(true, createTestCalled);
+        }
+    }
+
+    @Test
+    public void createTestDefersToNoArgCreateTest() {
+        assertThat(testResult(CreateTestDefersToNoArgCreateTestTest.class), isSuccessful());
     }
 }

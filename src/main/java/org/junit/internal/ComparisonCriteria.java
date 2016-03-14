@@ -1,6 +1,7 @@
 package org.junit.internal;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
 
 import org.junit.Assert;
 
@@ -24,13 +25,23 @@ public abstract class ComparisonCriteria {
      */
     public void arrayEquals(String message, Object expecteds, Object actuals)
             throws ArrayComparisonFailure {
-        if (expecteds == actuals) {
+        arrayEquals(message, expecteds, actuals, true);
+    }
+
+    private void arrayEquals(String message, Object expecteds, Object actuals, boolean outer)
+            throws ArrayComparisonFailure {
+        if (expecteds == actuals
+            || Arrays.deepEquals(new Object[] {expecteds}, new Object[] {actuals})) {
+            // The reflection-based loop below is potentially very slow, especially for primitive
+            // arrays. The deepEquals check allows us to circumvent it in the usual case where
+            // the arrays are exactly equal.
             return;
         }
         String header = message == null ? "" : message + ": ";
 
-        int expectedsLength = assertArraysAreSameLength(expecteds,
-                actuals, header);
+        // Only include the user-provided message in the outer exception.
+        String exceptionMessage = outer ? header : "";
+        int expectedsLength = assertArraysAreSameLength(expecteds, actuals, exceptionMessage);
 
         for (int i = 0; i < expectedsLength; i++) {
             Object expected = Array.get(expecteds, i);
@@ -38,10 +49,13 @@ public abstract class ComparisonCriteria {
 
             if (isArray(expected) && isArray(actual)) {
                 try {
-                    arrayEquals(message, expected, actual);
+                    arrayEquals(message, expected, actual, false);
                 } catch (ArrayComparisonFailure e) {
                     e.addDimension(i);
                     throw e;
+                } catch (AssertionError e) {
+                    // Array lengths differed.
+                    throw new ArrayComparisonFailure(header, e, i);
                 }
             } else {
                 try {

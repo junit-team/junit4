@@ -3,7 +3,7 @@ package org.junit.rules;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.internal.AssumptionViolatedException;
+import org.junit.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
@@ -54,12 +54,12 @@ public abstract class TestWatcher implements TestRule {
                 try {
                     base.evaluate();
                     succeededQuietly(description, errors);
-                } catch (AssumptionViolatedException e) {
+                } catch (org.junit.internal.AssumptionViolatedException  e) {
                     errors.add(e);
                     skippedQuietly(e, description, errors);
-                } catch (Throwable t) {
-                    errors.add(t);
-                    failedQuietly(t, description, errors);
+                } catch (Throwable e) {
+                    errors.add(e);
+                    failedQuietly(e, description, errors);
                 } finally {
                     finishedQuietly(description, errors);
                 }
@@ -73,26 +73,31 @@ public abstract class TestWatcher implements TestRule {
             List<Throwable> errors) {
         try {
             succeeded(description);
-        } catch (Throwable t) {
-            errors.add(t);
+        } catch (Throwable e) {
+            errors.add(e);
         }
     }
 
-    private void failedQuietly(Throwable t, Description description,
+    private void failedQuietly(Throwable e, Description description,
             List<Throwable> errors) {
         try {
-            failed(t, description);
-        } catch (Throwable t1) {
-            errors.add(t1);
+            failed(e, description);
+        } catch (Throwable e1) {
+            errors.add(e1);
         }
     }
 
-    private void skippedQuietly(AssumptionViolatedException e, Description description,
+    private void skippedQuietly(
+            org.junit.internal.AssumptionViolatedException e, Description description,
             List<Throwable> errors) {
         try {
-            skipped(e, description);
-        } catch (Throwable t) {
-            errors.add(t);
+            if (e instanceof AssumptionViolatedException) {
+                skipped((AssumptionViolatedException) e, description);
+            } else {
+                skipped(e, description);
+            }
+        } catch (Throwable e1) {
+            errors.add(e1);
         }
     }
 
@@ -100,8 +105,8 @@ public abstract class TestWatcher implements TestRule {
             List<Throwable> errors) {
         try {
             starting(description);
-        } catch (Throwable t) {
-            errors.add(t);
+        } catch (Throwable e) {
+            errors.add(e);
         }
     }
 
@@ -109,8 +114,8 @@ public abstract class TestWatcher implements TestRule {
             List<Throwable> errors) {
         try {
             finished(description);
-        } catch (Throwable t) {
-            errors.add(t);
+        } catch (Throwable e) {
+            errors.add(e);
         }
     }
 
@@ -130,6 +135,19 @@ public abstract class TestWatcher implements TestRule {
      * Invoked when a test is skipped due to a failed assumption.
      */
     protected void skipped(AssumptionViolatedException e, Description description) {
+        // For backwards compatibility with JUnit 4.11 and earlier, call the legacy version
+        org.junit.internal.AssumptionViolatedException asInternalException = e;
+        skipped(asInternalException, description);
+    }
+
+    /**
+     * Invoked when a test is skipped due to a failed assumption.
+     *
+     * @deprecated use {@link #skipped(AssumptionViolatedException, Description)}
+     */
+    @Deprecated
+    protected void skipped(
+            org.junit.internal.AssumptionViolatedException e, Description description) {
     }
 
     /**

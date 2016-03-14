@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
  * public static class HasGlobalLongTimeout {
  *
  *  &#064;Rule
- *  public Timeout globalTimeout= new Timeout(20);
+ *  public Timeout globalTimeout = Timeout.millis(20);
  *
  *  &#064;Test
  *  public void run1() throws InterruptedException {
@@ -30,13 +30,26 @@ import java.util.concurrent.TimeUnit;
  * the test completes, its execution is interrupted via {@link Thread#interrupt()}.
  * This happens in interruptable I/O and locks, and methods in {@link Object}
  * and {@link Thread} throwing {@link InterruptedException}.
+ * <p>
+ * A specified timeout of 0 will be interpreted as not set, however tests will
+ * still launch from separate threads. This can be useful for disabling timeouts
+ * in environments where they are dynamically set based on some property.
  *
  * @since 4.7
  */
 public class Timeout implements TestRule {
-    private final long fTimeout;
-    private final TimeUnit fTimeUnit;
-    private final boolean fLookForStuckThread;
+    private final long timeout;
+    private final TimeUnit timeUnit;
+    private final boolean lookForStuckThread;
+
+    /**
+     * Returns a new builder for building an instance.
+     *
+     * @since 4.12
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
 
     /**
      * Create a {@code Timeout} instance with the timeout specified
@@ -57,35 +70,35 @@ public class Timeout implements TestRule {
 
     /**
      * Create a {@code Timeout} instance with the timeout specified
-     * at the unit of granularity of the provided {@code TimeUnit}.
+     * at the timeUnit of granularity of the provided {@code TimeUnit}.
      *
      * @param timeout the maximum time to allow the test to run
      * before it should timeout
-     * @param unit the time unit for the {@code timeout}
+     * @param timeUnit the time unit for the {@code timeout}
      * @since 4.12
      */
-    public Timeout(long timeout, TimeUnit unit) {
-        fTimeout = timeout;
-        fTimeUnit = unit;
-        fLookForStuckThread = false;
+    public Timeout(long timeout, TimeUnit timeUnit) {
+        this.timeout = timeout;
+        this.timeUnit = timeUnit;
+        lookForStuckThread = false;
     }
 
     /**
-     * Create a {@code Timeout} instance with the same fields as {@code t}
-     * except for {@code fLookForStuckThread}.
+     * Create a {@code Timeout} instance initialized with values from
+     * a builder.
      *
-     * @param t the {@code Timeout} instance to copy
-     * @param lookForStuckThread whether to look for a stuck thread
      * @since 4.12
      */
-    protected Timeout(Timeout t, boolean lookForStuckThread) {
-        fTimeout = t.fTimeout;
-        fTimeUnit = t.fTimeUnit;
-        fLookForStuckThread = lookForStuckThread;
+    protected Timeout(Builder builder) {
+        timeout = builder.getTimeout();
+        timeUnit = builder.getTimeUnit();
+        lookForStuckThread = builder.getLookingForStuckThread();
     }
 
     /**
-     * @param millis the timeout in milliseconds
+     * Creates a {@link Timeout} that will timeout a test after the
+     * given duration, in milliseconds.
+     *
      * @since 4.12
      */
     public static Timeout millis(long millis) {
@@ -93,7 +106,9 @@ public class Timeout implements TestRule {
     }
 
     /**
-     * @param seconds the timeout in seconds
+     * Creates a {@link Timeout} that will timeout a test after the
+     * given duration, in seconds.
+     *
      * @since 4.12
      */
     public static Timeout seconds(long seconds) {
@@ -101,19 +116,118 @@ public class Timeout implements TestRule {
     }
 
     /**
-     * Specifies whether to look for a stuck thread.  If a timeout occurs and this
-     * feature is enabled, the test will look for a thread that appears to be stuck
-     * and dump its backtrace.  This feature is experimental.  Behavior may change
-     * after the 4.12 release in response to feedback.
-     * @param enable {@code true} to enable the feature
-     * @return This object
+     * Gets the timeout configured for this rule, in the given units.
+     *
      * @since 4.12
      */
-    public Timeout lookingForStuckThread(boolean enable) {
-        return new Timeout(this, enable);
+    protected final long getTimeout(TimeUnit unit) {
+        return unit.convert(timeout, timeUnit);
+    }
+
+    /**
+     * Gets whether this {@code Timeout} will look for a stuck thread
+     * when the test times out.
+     *
+     * @since 4.12
+     */
+    protected final boolean getLookingForStuckThread() {
+        return lookForStuckThread;
+    }
+
+    /**
+     * Creates a {@link Statement} that will run the given
+     * {@code statement}, and timeout the operation based
+     * on the values configured in this rule. Subclasses
+     * can override this method for different behavior.
+     *
+     * @since 4.12
+     */
+    protected Statement createFailOnTimeoutStatement(
+            Statement statement) throws Exception {
+        return FailOnTimeout.builder()
+            .withTimeout(timeout, timeUnit)
+            .withLookingForStuckThread(lookForStuckThread)
+            .build(statement);
     }
 
     public Statement apply(Statement base, Description description) {
-        return new FailOnTimeout(base, fTimeout, fTimeUnit, fLookForStuckThread);
+        try {
+            return createFailOnTimeoutStatement(base);
+        } catch (final Exception e) {
+            return new Statement() {
+                @Override public void evaluate() throws Throwable {
+                    throw new RuntimeException("Invalid parameters for Timeout", e);
+                }
+            };
+        }
+    }
+
+    /**
+     * Builder for {@link Timeout}.
+     *
+     * @since 4.12
+     */
+    public static class Builder {
+        private boolean lookForStuckThread = false;
+        private long timeout = 0;
+        private TimeUnit timeUnit = TimeUnit.SECONDS;
+
+        protected Builder() {
+        }
+
+        /**
+         * Specifies the time to wait before timing out the test.
+         *
+         * <p>If this is not called, or is called with a
+         * {@code timeout} of {@code 0}, the returned {@code Timeout}
+         * rule instance will cause the tests to wait forever to
+         * complete, however the tests will still launch from a
+         * separate thread. This can be useful for disabling timeouts
+         * in environments where they are dynamically set based on
+         * some property.
+         *
+         * @param timeout the maximum time to wait
+         * @param unit the time unit of the {@code timeout} argument
+         * @return {@code this} for method chaining.
+         */
+        public Builder withTimeout(long timeout, TimeUnit unit) {
+            this.timeout = timeout;
+            this.timeUnit = unit;
+            return this;
+        }
+
+        protected long getTimeout() {
+            return timeout;
+        }
+
+        protected TimeUnit getTimeUnit()  {
+            return timeUnit;
+        }
+
+        /**
+         * Specifies whether to look for a stuck thread.  If a timeout occurs and this
+         * feature is enabled, the rule will look for a thread that appears to be stuck
+         * and dump its backtrace.  This feature is experimental.  Behavior may change
+         * after the 4.12 release in response to feedback.
+         *
+         * @param enable {@code true} to enable the feature
+         * @return {@code this} for method chaining.
+         */
+        public Builder withLookingForStuckThread(boolean enable) {
+            this.lookForStuckThread = enable;
+            return this;
+        }
+
+        protected boolean getLookingForStuckThread() {
+            return lookForStuckThread;
+        }
+
+
+        /**
+         * Builds a {@link Timeout} instance using the values in this builder.,
+         */
+        public Timeout build() {
+            return new Timeout(this);
+        }
     }
 }

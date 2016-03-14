@@ -15,41 +15,42 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
+import org.junit.runners.model.TestTimedOutException;
 
 /**
  * @deprecated Included for backwards compatibility with JUnit 4.4. Will be
- *             removed in the next release. Please use
+ *             removed in the next major release. Please use
  *             {@link BlockJUnit4ClassRunner} in place of {@link JUnit4ClassRunner}.
  */
 @Deprecated
 public class MethodRoadie {
-    private final Object fTest;
-    private final RunNotifier fNotifier;
-    private final Description fDescription;
-    private TestMethod fTestMethod;
+    private final Object test;
+    private final RunNotifier notifier;
+    private final Description description;
+    private TestMethod testMethod;
 
     public MethodRoadie(Object test, TestMethod method, RunNotifier notifier, Description description) {
-        fTest = test;
-        fNotifier = notifier;
-        fDescription = description;
-        fTestMethod = method;
+        this.test = test;
+        this.notifier = notifier;
+        this.description = description;
+        testMethod = method;
     }
 
     public void run() {
-        if (fTestMethod.isIgnored()) {
-            fNotifier.fireTestIgnored(fDescription);
+        if (testMethod.isIgnored()) {
+            notifier.fireTestIgnored(description);
             return;
         }
-        fNotifier.fireTestStarted(fDescription);
+        notifier.fireTestStarted(description);
         try {
-            long timeout = fTestMethod.getTimeout();
+            long timeout = testMethod.getTimeout();
             if (timeout > 0) {
                 runWithTimeout(timeout);
             } else {
                 runTest();
             }
         } finally {
-            fNotifier.fireTestFinished(fDescription);
+            notifier.fireTestFinished(description);
         }
     }
 
@@ -74,7 +75,7 @@ public class MethodRoadie {
                     }
                     result.get(0, TimeUnit.MILLISECONDS); // throws the exception if one occurred during the invocation
                 } catch (TimeoutException e) {
-                    addFailure(new Exception(String.format("test timed out after %d milliseconds", timeout)));
+                    addFailure(new TestTimedOutException(timeout, TimeUnit.MILLISECONDS));
                 } catch (Exception e) {
                     addFailure(e);
                 }
@@ -104,18 +105,18 @@ public class MethodRoadie {
 
     protected void runTestMethod() {
         try {
-            fTestMethod.invoke(fTest);
-            if (fTestMethod.expectsException()) {
-                addFailure(new AssertionError("Expected exception: " + fTestMethod.getExpectedException().getName()));
+            testMethod.invoke(test);
+            if (testMethod.expectsException()) {
+                addFailure(new AssertionError("Expected exception: " + testMethod.getExpectedException().getName()));
             }
         } catch (InvocationTargetException e) {
             Throwable actual = e.getTargetException();
             if (actual instanceof AssumptionViolatedException) {
                 return;
-            } else if (!fTestMethod.expectsException()) {
+            } else if (!testMethod.expectsException()) {
                 addFailure(actual);
-            } else if (fTestMethod.isUnexpected(actual)) {
-                String message = "Unexpected exception, expected<" + fTestMethod.getExpectedException().getName() + "> but was<"
+            } else if (testMethod.isUnexpected(actual)) {
+                String message = "Unexpected exception, expected<" + testMethod.getExpectedException().getName() + "> but was<"
                         + actual.getClass().getName() + ">";
                 addFailure(new Exception(message, actual));
             }
@@ -127,9 +128,9 @@ public class MethodRoadie {
     private void runBefores() throws FailedBefore {
         try {
             try {
-                List<Method> befores = fTestMethod.getBefores();
+                List<Method> befores = testMethod.getBefores();
                 for (Method before : befores) {
-                    before.invoke(fTest);
+                    before.invoke(test);
                 }
             } catch (InvocationTargetException e) {
                 throw e.getTargetException();
@@ -143,10 +144,10 @@ public class MethodRoadie {
     }
 
     private void runAfters() {
-        List<Method> afters = fTestMethod.getAfters();
+        List<Method> afters = testMethod.getAfters();
         for (Method after : afters) {
             try {
-                after.invoke(fTest);
+                after.invoke(test);
             } catch (InvocationTargetException e) {
                 addFailure(e.getTargetException());
             } catch (Throwable e) {
@@ -156,7 +157,7 @@ public class MethodRoadie {
     }
 
     protected void addFailure(Throwable e) {
-        fNotifier.fireTestFailure(new Failure(fDescription, e));
+        notifier.fireTestFailure(new Failure(description, e));
     }
 }
 

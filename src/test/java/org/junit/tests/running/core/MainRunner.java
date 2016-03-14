@@ -39,6 +39,7 @@ public class MainRunner {
             throw new ExitException(status);
         }
 
+        @SuppressWarnings("deprecation")
         @Override
         public boolean getInCheck() {
             return (originalSecurityManager != null) && originalSecurityManager.getInCheck();
@@ -175,6 +176,7 @@ public class MainRunner {
             }
         }
 
+        @SuppressWarnings("deprecation")
         @Override
         public void checkMulticast(InetAddress maddr, byte ttl) {
             if (originalSecurityManager != null) {
@@ -273,7 +275,7 @@ public class MainRunner {
     public Integer runWithCheckForSystemExit(Runnable runnable) {
         SecurityManager oldSecurityManager = System.getSecurityManager();
         System.setSecurityManager(new NoExitSecurityManager(oldSecurityManager));
-        PrintStream oldPrintStream = System.out;
+        PrintStream oldOut = System.out;
 
         System.setOut(new PrintStream(new ByteArrayOutputStream()));
         try {
@@ -285,7 +287,7 @@ public class MainRunner {
             return e.getStatus();
         } finally {
             System.setSecurityManager(oldSecurityManager);
-            System.setOut(oldPrintStream);
+            System.setOut(oldOut);
         }
     }
 }

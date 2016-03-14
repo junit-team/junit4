@@ -23,24 +23,24 @@ import java.lang.reflect.Method;
 public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
     private static final class OldTestClassAdaptingListener implements
             TestListener {
-        private final RunNotifier fNotifier;
+        private final RunNotifier notifier;
 
         private OldTestClassAdaptingListener(RunNotifier notifier) {
-            fNotifier = notifier;
+            this.notifier = notifier;
         }
 
         public void endTest(Test test) {
-            fNotifier.fireTestFinished(asDescription(test));
+            notifier.fireTestFinished(asDescription(test));
         }
 
         public void startTest(Test test) {
-            fNotifier.fireTestStarted(asDescription(test));
+            notifier.fireTestStarted(asDescription(test));
         }
 
         // Implement junit.framework.TestListener
-        public void addError(Test test, Throwable t) {
-            Failure failure = new Failure(asDescription(test), t);
-            fNotifier.fireTestFailure(failure);
+        public void addError(Test test, Throwable e) {
+            Failure failure = new Failure(asDescription(test), e);
+            notifier.fireTestFailure(failure);
         }
 
         private Description asDescription(Test test) {
@@ -68,7 +68,7 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
         }
     }
 
-    private volatile Test fTest;
+    private volatile Test test;
 
     public JUnit38ClassRunner(Class<?> klass) {
         this(new TestSuite(klass.asSubclass(TestCase.class)));
@@ -171,10 +171,10 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Sortable {
     }
 
     private void setTest(Test test) {
-        fTest = test;
+        this.test = test;
     }
 
     private Test getTest() {
-        return fTest;
+        return test;
     }
 }

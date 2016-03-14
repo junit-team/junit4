@@ -1,37 +1,33 @@
 package org.junit.tests.running.classes;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+
+import java.util.List;
+
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runners.model.FrameworkField;
-import org.junit.runners.model.FrameworkMethod;
-import org.junit.runners.model.TestClass;
-import org.junit.validator.AnnotationValidator;
-import org.junit.validator.ValidateWith;
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.Result;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerScheduler;
-import org.junit.tests.experimental.rules.RuleFieldValidatorTest.TestWithNonStaticClassRule;
-import org.junit.tests.experimental.rules.RuleFieldValidatorTest.TestWithProtectedClassRule;
-
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.util.Arrays.asList;
-import static org.hamcrest.core.IsCollectionContaining.hasItem;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import org.junit.tests.experimental.rules.RuleMemberValidatorTest.TestWithNonStaticClassRule;
+import org.junit.tests.experimental.rules.RuleMemberValidatorTest.TestWithProtectedClassRule;
 
 public class ParentRunnerTest {
     public static String log = "";
@@ -94,7 +90,7 @@ public class ParentRunnerTest {
     }
 
     private static class Exclude extends Filter {
-        private String methodName;
+        private final String methodName;
 
         public Exclude(String methodName) {
             this.methodName = methodName;
@@ -137,83 +133,137 @@ public class ParentRunnerTest {
                 "The @ClassRule 'temporaryFolder' must be static.");
     }
 
+    static class NonPublicTestClass {
+        public NonPublicTestClass() {
+        }
+    }
+
+    @Test
+    public void cannotBeCreatedWithNonPublicTestClass() {
+        assertClassHasFailureMessage(
+                NonPublicTestClass.class,
+                "The class org.junit.tests.running.classes.ParentRunnerTest$NonPublicTestClass is not public.");
+    }
+
     private void assertClassHasFailureMessage(Class<?> klass, String message) {
         JUnitCore junitCore = new JUnitCore();
         Request request = Request.aClass(klass);
         Result result = junitCore.run(request);
-        List<String> messages = new ArrayList<String>();
-        for (Failure failure : result.getFailures()) {
-            messages.add(failure.getMessage());
-        }
-        assertThat(messages, hasItem(message));
-
+        assertThat(result.getFailureCount(), is(2)); //the second failure is no runnable methods
+        assertThat(result.getFailures().get(0).getMessage(),
+                is(equalTo(message)));
     }
 
-    public static class ExampleAnnotationValidator extends AnnotationValidator {
-        private static final String ANNOTATED_METHOD_CALLED = "annotated method called";
-        private static final String ANNOTATED_FIELD_CALLED = "annotated field called";
-        private static final String ANNOTATED_CLASS_CALLED = "annotated class called";
-
-        @Override
-        public List<Exception> validateAnnotatedClass(TestClass testClass) {
-            return asList(new Exception(ANNOTATED_CLASS_CALLED));
+    public static class AssertionErrorAtParentLevelTest {
+        @BeforeClass
+        public static void beforeClass() throws Throwable {
+            throw new AssertionError("Thrown from @BeforeClass");
         }
-
-        @Override
-        public List<Exception> validateAnnotatedField(FrameworkField field) {
-            return asList(new Exception(ANNOTATED_FIELD_CALLED));
-        }
-
-        @Override
-        public List<Exception> validateAnnotatedMethod(FrameworkMethod method) {
-            return asList(new Exception(ANNOTATED_METHOD_CALLED));
-        }
-    }
-
-    @Retention(RetentionPolicy.RUNTIME)
-    @Inherited
-    @ValidateWith(ExampleAnnotationValidator.class)
-    public @interface ExampleAnnotationWithValidator {
-    }
-
-    public static class AnnotationValidatorMethodTest {
-        @ExampleAnnotationWithValidator
-        @Test
-        public void test() {
-        }
-    }
-
-    public static class AnnotationValidatorFieldTest {
-        @ExampleAnnotationWithValidator
-        private String field;
 
         @Test
-        public void test() {
-        }
+        public void test() {}
     }
 
-    @ExampleAnnotationWithValidator
-    public static class AnnotationValidatorClassTest {
+    @Test
+    public void assertionErrorAtParentLevelTest() throws InitializationError {
+        CountingRunListener countingRunListener = runTestWithParentRunner(AssertionErrorAtParentLevelTest.class);
+        Assert.assertEquals(0, countingRunListener.testStarted);
+        Assert.assertEquals(0, countingRunListener.testFinished);
+        Assert.assertEquals(1, countingRunListener.testFailure);
+        Assert.assertEquals(0, countingRunListener.testAssumptionFailure);
+        Assert.assertEquals(0, countingRunListener.testIgnored);
+    }
+
+    public static class AssumptionViolatedAtParentLevelTest {
+        @SuppressWarnings("deprecation")
+        @BeforeClass
+        public static void beforeClass() {
+            throw new AssumptionViolatedException("Thrown from @BeforeClass");
+        }
+
         @Test
-        public void test() {
+        public void test() {}
+    }
+
+    @Test
+    public void assumptionViolatedAtParentLevel() throws InitializationError {
+        CountingRunListener countingRunListener = runTestWithParentRunner(AssumptionViolatedAtParentLevelTest.class);
+        Assert.assertEquals(0, countingRunListener.testStarted);
+        Assert.assertEquals(0, countingRunListener.testFinished);
+        Assert.assertEquals(0, countingRunListener.testFailure);
+        Assert.assertEquals(1, countingRunListener.testAssumptionFailure);
+        Assert.assertEquals(0, countingRunListener.testIgnored);
+    }
+
+    public static class TestTest {
+        @Test
+        public void pass() {}
+
+        @Test
+        public void fail() {
+            throw new AssertionError("Thrown from @Test");
+        }
+
+        @Ignore
+        @Test
+        public void ignore() {}
+
+        @SuppressWarnings("deprecation")
+        @Test
+        public void assumptionFail() {
+            throw new AssumptionViolatedException("Thrown from @Test");
         }
     }
 
     @Test
-    public void validatorIsCalledForAClass() {
-        assertClassHasFailureMessage(AnnotationValidatorClassTest.class,
-                ExampleAnnotationValidator.ANNOTATED_CLASS_CALLED);
+    public void parentRunnerTestMethods() throws InitializationError {
+        CountingRunListener countingRunListener = runTestWithParentRunner(TestTest.class);
+        Assert.assertEquals(3, countingRunListener.testStarted);
+        Assert.assertEquals(3, countingRunListener.testFinished);
+        Assert.assertEquals(1, countingRunListener.testFailure);
+        Assert.assertEquals(1, countingRunListener.testAssumptionFailure);
+        Assert.assertEquals(1, countingRunListener.testIgnored);
     }
 
-    @Test
-    public void validatorIsCalledForAMethod() throws InitializationError {
-        assertClassHasFailureMessage(AnnotationValidatorMethodTest.class,
-                ExampleAnnotationValidator.ANNOTATED_METHOD_CALLED);
+    private CountingRunListener runTestWithParentRunner(Class<?> testClass) throws InitializationError {
+        CountingRunListener listener = new CountingRunListener();
+        RunNotifier runNotifier = new RunNotifier();
+        runNotifier.addListener(listener);
+        ParentRunner<?> runner = new BlockJUnit4ClassRunner(testClass);
+        runner.run(runNotifier);
+        return listener;
     }
 
-    @Test
-    public void validatorIsCalledForAField() {
-        assertClassHasFailureMessage(AnnotationValidatorFieldTest.class,
-                ExampleAnnotationValidator.ANNOTATED_FIELD_CALLED);
+    private static class CountingRunListener extends RunListener {
+        private int testStarted = 0;
+        private int testFinished = 0;
+        private int testFailure = 0;
+        private int testAssumptionFailure = 0;
+        private int testIgnored = 0;
+
+        @Override
+        public void testStarted(Description description) throws Exception {
+            testStarted++;
+        }
+
+        @Override
+        public void testFinished(Description description) throws Exception {
+            testFinished++;
+        }
+
+        @Override
+        public void testFailure(Failure failure) throws Exception {
+            testFailure++;
+        }
+
+        @Override
+        public void testAssumptionFailure(Failure failure) {
+            testAssumptionFailure++;
+        }
+
+        @Override
+        public void testIgnored(Description description) throws Exception {
+            testIgnored++;
+        }
     }
 }

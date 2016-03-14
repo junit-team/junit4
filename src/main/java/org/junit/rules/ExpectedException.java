@@ -9,7 +9,7 @@ import static org.junit.internal.matchers.ThrowableCauseMatcher.hasCause;
 import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
-import org.junit.internal.AssumptionViolatedException;
+import org.junit.AssumptionViolatedException;
 import org.junit.runners.model.Statement;
 
 /**
@@ -20,7 +20,7 @@ import org.junit.runners.model.Statement;
  *
  * <pre> public class SimpleExpectedExceptionTest {
  *     &#064;Rule
- *     public ExpectedException thrown= ExpectedException.none();
+ *     public ExpectedException thrown = ExpectedException.none();
  *
  *     &#064;Test
  *     public void throwsNothing() {
@@ -43,7 +43,7 @@ import org.junit.runners.model.Statement;
  *
  * <p>
  * Instead of specifying the exception's type you can characterize the
- * expected exception based on other criterias, too:
+ * expected exception based on other criteria, too:
  *
  * <ul>
  *   <li>The exception's message contains a specific text: {@link #expectMessage(String)}</li>
@@ -111,7 +111,7 @@ public class ExpectedException implements TestRule {
         return new ExpectedException();
     }
 
-    private final ExpectedExceptionMatcherBuilder fMatcherBuilder = new ExpectedExceptionMatcherBuilder();
+    private final ExpectedExceptionMatcherBuilder matcherBuilder = new ExpectedExceptionMatcherBuilder();
 
     private String missingExceptionMessage= "Expected test to throw %s";
 
@@ -121,7 +121,7 @@ public class ExpectedException implements TestRule {
     /**
      * This method does nothing. Don't use it.
      * @deprecated AssertionErrors are handled by default since JUnit 4.12. Just
-     *             like in JUnit <= 4.10.
+     *             like in JUnit &lt;= 4.10.
      */
     @Deprecated
     public ExpectedException handleAssertionErrors() {
@@ -131,7 +131,7 @@ public class ExpectedException implements TestRule {
     /**
      * This method does nothing. Don't use it.
      * @deprecated AssumptionViolatedExceptions are handled by default since
-     *             JUnit 4.12. Just like in JUnit <= 4.10.
+     *             JUnit 4.12. Just like in JUnit &lt;= 4.10.
      */
     @Deprecated
     public ExpectedException handleAssumptionViolatedExceptions() {
@@ -167,9 +167,13 @@ public class ExpectedException implements TestRule {
      *     thrown.expect(is(e));
      *     throw e;
      * }</pre>
+     *
+     * @deprecated use {@code org.hamcrest.junit.ExpectedException.expect()}
      */
-    public void expect(Matcher<?> matcher) {
-        fMatcherBuilder.add(matcher);
+    @Deprecated
+    public ExpectedException expect(Matcher<?> matcher) {
+        matcherBuilder.add(matcher);
+        return this;
     }
 
     /**
@@ -179,10 +183,11 @@ public class ExpectedException implements TestRule {
      * public void throwsExceptionWithSpecificType() {
      *     thrown.expect(NullPointerException.class);
      *     throw new NullPointerException();
-     * }
+     * }</pre>
      */
-    public void expect(Class<? extends Throwable> type) {
+    public ExpectedException expect(Class<? extends Throwable> type) {
         expect(instanceOf(type));
+        return this;
     }
 
     /**
@@ -194,8 +199,9 @@ public class ExpectedException implements TestRule {
      *     throw new NullPointerException(&quot;What happened?&quot;);
      * }</pre>
      */
-    public void expectMessage(String substring) {
+    public ExpectedException expectMessage(String substring) {
         expectMessage(containsString(substring));
+        return this;
     }
 
     /**
@@ -206,9 +212,13 @@ public class ExpectedException implements TestRule {
      *     thrown.expectMessage(startsWith(&quot;What&quot;));
      *     throw new NullPointerException(&quot;What happened?&quot;);
      * }</pre>
+     *
+     * @deprecated use {@code org.hamcrest.junit.ExpectedException.expectMessage()}
      */
-    public void expectMessage(Matcher<String> matcher) {
+    @Deprecated
+    public ExpectedException expectMessage(Matcher<String> matcher) {
         expect(hasMessage(matcher));
+        return this;
     }
 
     /**
@@ -220,22 +230,26 @@ public class ExpectedException implements TestRule {
      *     thrown.expectCause(is(expectedCause));
      *     throw new IllegalArgumentException(&quot;What happened?&quot;, cause);
      * }</pre>
+     *
+     * @deprecated use {@code org.hamcrest.junit.ExpectedException.expectCause()}
      */
-    public void expectCause(Matcher<? extends Throwable> expectedCause) {
+    @Deprecated
+    public ExpectedException expectCause(Matcher<? extends Throwable> expectedCause) {
         expect(hasCause(expectedCause));
+        return this;
     }
 
     private class ExpectedExceptionStatement extends Statement {
-        private final Statement fNext;
+        private final Statement next;
 
         public ExpectedExceptionStatement(Statement base) {
-            fNext = base;
+            next = base;
         }
 
         @Override
         public void evaluate() throws Throwable {
             try {
-                fNext.evaluate();
+                next.evaluate();
             } catch (Throwable e) {
                 handleException(e);
                 return;
@@ -248,14 +262,14 @@ public class ExpectedException implements TestRule {
 
     private void handleException(Throwable e) throws Throwable {
         if (isAnyExceptionExpected()) {
-            assertThat(e, fMatcherBuilder.build());
+            assertThat(e, matcherBuilder.build());
         } else {
             throw e;
         }
     }
 
     private boolean isAnyExceptionExpected() {
-        return fMatcherBuilder.expectsThrowable();
+        return matcherBuilder.expectsThrowable();
     }
 
     private void failDueToMissingException() throws AssertionError {
@@ -263,7 +277,7 @@ public class ExpectedException implements TestRule {
     }
     
     private String missingExceptionMessage() {
-        String expectation= StringDescription.toString(fMatcherBuilder.build());
+        String expectation= StringDescription.toString(matcherBuilder.build());
         return format(missingExceptionMessage, expectation);
     }
 }

@@ -1,19 +1,18 @@
 package org.junit.runner;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.internal.Classes;
-import org.junit.internal.runners.ErrorReportingRunner;
+import org.junit.runner.FilterFactory.FilterNotCreatedException;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runners.model.InitializationError;
 
-import static org.junit.runner.Description.createSuiteDescription;
-
 class JUnitCommandLineParseResult {
-    private Filter filter = Filter.ALL;
-    private List<Class<?>> classes = new ArrayList<Class<?>>();
-    private List<Throwable> parserErrors = new ArrayList<Throwable>();
+    private final List<String> filterSpecs = new ArrayList<String>();
+    private final List<Class<?>> classes = new ArrayList<Class<?>>();
+    private final List<Throwable> parserErrors = new ArrayList<Throwable>();
 
     /**
      * Do not use. Testing purposes only.
@@ -21,17 +20,17 @@ class JUnitCommandLineParseResult {
     JUnitCommandLineParseResult() {}
 
     /**
-     * Returns filters parsed from command line.
+     * Returns filter specs parsed from command line.
      */
-    public Filter getFilter() {
-        return filter;
+    public List<String> getFilterSpecs() {
+        return Collections.unmodifiableList(filterSpecs);
     }
 
     /**
      * Returns test classes parsed from command line.
      */
     public List<Class<?>> getClasses() {
-        return classes;
+        return Collections.unmodifiableList(classes);
     }
 
     /**
@@ -47,44 +46,38 @@ class JUnitCommandLineParseResult {
         return result;
     }
 
-    void parseArgs(String[] args) {
+    private void parseArgs(String[] args) {
         parseParameters(parseOptions(args));
     }
 
-    String[] parseOptions(String[] args) {
+    String[] parseOptions(String... args) {
         for (int i = 0; i != args.length; ++i) {
             String arg = args[i];
 
-            try {
-                if (arg.equals("--")) {
-                    return copyArray(args, i + 1, args.length);
-                } else if (arg.startsWith("--")) {
-                    if (arg.startsWith("--filter=") || arg.equals("--filter")) {
-                        String filterSpec;
-                        if (arg.equals("--filter")) {
-                            ++i;
+            if (arg.equals("--")) {
+                return copyArray(args, i + 1, args.length);
+            } else if (arg.startsWith("--")) {
+                if (arg.startsWith("--filter=") || arg.equals("--filter")) {
+                    String filterSpec;
+                    if (arg.equals("--filter")) {
+                        ++i;
 
-                            if (i < args.length) {
-                                filterSpec = args[i];
-                            } else {
-                                parserErrors.add(new CommandLineParserError(arg + " value not specified"));
-
-                                break;
-                            }
+                        if (i < args.length) {
+                            filterSpec = args[i];
                         } else {
-                            filterSpec = arg.substring(arg.indexOf('=') + 1);
+                            parserErrors.add(new CommandLineParserError(arg + " value not specified"));
+                            break;
                         }
-
-                        filter = filter.intersect(FilterFactories.createFilterFromFilterSpec(
-                                createSuiteDescription(arg), filterSpec));
                     } else {
-                        parserErrors.add(new CommandLineParserError("JUnit knows nothing about the " + arg + " option"));
+                        filterSpec = arg.substring(arg.indexOf('=') + 1);
                     }
+
+                    filterSpecs.add(filterSpec);
                 } else {
-                    return copyArray(args, i, args.length);
+                    parserErrors.add(new CommandLineParserError("JUnit knows nothing about the " + arg + " option"));
                 }
-            } catch (FilterFactory.FilterNotCreatedException e) {
-                parserErrors.add(e);
+            } else {
+                return copyArray(args, i, args.length);
             }
         }
 
@@ -98,7 +91,7 @@ class JUnitCommandLineParseResult {
             result.add(args[j]);
         }
 
-        return result.toArray(new String[]{});
+        return result.toArray(new String[result.size()]);
     }
 
     void parseParameters(String[] args) {
@@ -111,6 +104,10 @@ class JUnitCommandLineParseResult {
         }
     }
 
+    private Request errorReport(Throwable cause) {
+        return Request.errorReport(JUnitCommandLineParseResult.class, cause);
+    }
+
     /**
      * Creates a {@link Request}.
      *
@@ -118,18 +115,24 @@ class JUnitCommandLineParseResult {
      */
     public Request createRequest(Computer computer) {
         if (parserErrors.isEmpty()) {
-            return Request
-                    .classes(computer, classes.toArray(new Class<?>[0]))
-                    .filterWith(filter);
+            Request request = Request.classes(
+                    computer, classes.toArray(new Class<?>[classes.size()]));
+            return applyFilterSpecs(request);
         } else {
-            return new Request() {
-                @Override
-                public Runner getRunner() {
-                    return new ErrorReportingRunner(
-                            JUnitCommandLineParseResult.class,
-                            new InitializationError(parserErrors));
-                }
-            };
+            return errorReport(new InitializationError(parserErrors));
+        }
+    }
+
+    private Request applyFilterSpecs(Request request) {
+        try {
+            for (String filterSpec : filterSpecs) {
+                Filter filter = FilterFactories.createFilterFromFilterSpec(
+                        request, filterSpec);
+                request = request.filterWith(filter);
+            }
+            return request;
+        } catch (FilterNotCreatedException e) {
+            return errorReport(e);
         }
     }
 
@@ -137,6 +140,8 @@ class JUnitCommandLineParseResult {
      * Exception used if there's a problem parsing the command line.
      */
     public static class CommandLineParserError extends Exception {
+        private static final long serialVersionUID= 1L;
+
         public CommandLineParserError(String message) {
             super(message);
         }

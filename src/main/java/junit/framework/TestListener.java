@@ -7,12 +7,12 @@ public interface TestListener {
     /**
      * An error occurred.
      */
-    public void addError(Test test, Throwable t);
+    public void addError(Test test, Throwable e);
 
     /**
      * A failure occurred.
      */
-    public void addFailure(Test test, AssertionFailedError t);
+    public void addFailure(Test test, AssertionFailedError e);
 
     /**
      * A test ended.

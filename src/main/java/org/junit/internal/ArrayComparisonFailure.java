@@ -14,9 +14,13 @@ public class ArrayComparisonFailure extends AssertionError {
 
     private static final long serialVersionUID = 1L;
 
-    private List<Integer> fIndices = new ArrayList<Integer>();
+    /*
+     * We have to use the f prefix until the next major release to ensure
+     * serialization compatibility. 
+     * See https://github.com/junit-team/junit/issues/976
+     */
+    private final List<Integer> fIndices = new ArrayList<Integer>();
     private final String fMessage;
-    private final AssertionError fCause;
 
     /**
      * Construct a new <code>ArrayComparisonFailure</code> with an error text and the array's
@@ -27,8 +31,8 @@ public class ArrayComparisonFailure extends AssertionError {
      * @see Assert#assertArrayEquals(String, Object[], Object[])
      */
     public ArrayComparisonFailure(String message, AssertionError cause, int index) {
-        fMessage = message;
-        fCause = cause;
+        this.fMessage = message;
+        initCause(cause);
         addDimension(index);
     }
 
@@ -38,19 +42,19 @@ public class ArrayComparisonFailure extends AssertionError {
 
     @Override
     public String getMessage() {
-        StringBuilder builder = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         if (fMessage != null) {
-            builder.append(fMessage);
+            sb.append(fMessage);
         }
-        builder.append("arrays first differed at element ");
+        sb.append("arrays first differed at element ");
         for (int each : fIndices) {
-            builder.append("[");
-            builder.append(each);
-            builder.append("]");
+            sb.append("[");
+            sb.append(each);
+            sb.append("]");
         }
-        builder.append("; ");
-        builder.append(fCause.getMessage());
-        return builder.toString();
+        sb.append("; ");
+        sb.append(getCause().getMessage());
+        return sb.toString();
     }
 
     /**

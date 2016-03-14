@@ -14,31 +14,33 @@ Max Eclipse plug-in at:
 
 Example:
 
-	public static class TwoUnEqualTests {
-		@Test
-		public void slow() throws InterruptedException {
-			Thread.sleep(100);
-			fail();
-		}
-
-		@Test
-		public void fast() {
-			fail();
-		}
+```java
+public static class TwoUnEqualTests {
+	@Test
+	public void slow() throws InterruptedException {
+		Thread.sleep(100);
+		fail();
 	}
 
 	@Test
-	public void rememberOldRuns() {
-		File maxFile = new File("history.max");
-		MaxCore firstMax = MaxCore.storedLocally(maxFile);
-		firstMax.run(TwoUnEqualTests.class);
-
-		MaxCore useHistory= MaxCore.storedLocally(maxFile);
-		List<Failure> failures= useHistory.run(TwoUnEqualTests.class)
-				.getFailures();
-		assertEquals("fast", failures.get(0).getDescription().getMethodName());
-		assertEquals("slow", failures.get(1).getDescription().getMethodName());
+	public void fast() {
+		fail();
 	}
+}
+
+@Test
+public void rememberOldRuns() {
+	File maxFile = new File("history.max");
+	MaxCore firstMax = MaxCore.storedLocally(maxFile);
+	firstMax.run(TwoUnEqualTests.class);
+
+	MaxCore useHistory= MaxCore.storedLocally(maxFile);
+	List<Failure> failures= useHistory.run(TwoUnEqualTests.class)
+		.getFailures();
+	assertEquals("fast", failures.get(0).getDescription().getMethodName());
+	assertEquals("slow", failures.get(1).getDescription().getMethodName());
+}
+```
 
 ### Test scheduling strategies ###
 
@@ -54,32 +56,36 @@ merged with MaxCore in some way in the future.
 
 Example:
 
-	public static class Example {
-		@Test public void one() throws InterruptedException {
-			Thread.sleep(1000);
-		}
-		@Test public void two() throws InterruptedException {
-			Thread.sleep(1000);
-		}
+```java
+public static class Example {
+	@Test public void one() throws InterruptedException {
+		Thread.sleep(1000);
 	}
+	@Test public void two() throws InterruptedException {
+		Thread.sleep(1000);
+	}
+}
 	
-	@Test public void testsRunInParallel() {
-		long start= System.currentTimeMillis();
-		Result result= JUnitCore.runClasses(ParallelComputer.methods(),
-				Example.class);
-		assertTrue(result.wasSuccessful());
-		long end= System.currentTimeMillis();
-		assertThat(end - start, betweenInclusive(1000, 1500));
-	}
+@Test public void testsRunInParallel() {
+	long start= System.currentTimeMillis();
+	Result result= JUnitCore.runClasses(ParallelComputer.methods(),
+			Example.class);
+	assertTrue(result.wasSuccessful());
+	long end= System.currentTimeMillis();
+	assertThat(end - start, betweenInclusive(1000, 1500));
+}
+```
 
 ### Comparing double arrays ###
 
 Arrays of doubles can be compared, using a delta allowance for equality:
 
-	@Test
-	public void doubleArraysAreEqual() {
-		assertArrayEquals(new double[] {1.0, 2.0}, new double[] {1.0, 2.0}, 0.01);
-	}
+```java
+@Test
+public void doubleArraysAreEqual() {
+	assertArrayEquals(new double[] {1.0, 2.0}, new double[] {1.0, 2.0}, 0.01);
+}
+```
 	
 ### `Filter.matchDescription` API ###
 

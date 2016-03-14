@@ -24,9 +24,9 @@ public class SuiteMethodTest {
         }
 
         public static junit.framework.Test suite() {
-            TestSuite result = new TestSuite();
-            result.addTest(new OldTest("notObviouslyATest"));
-            return result;
+            TestSuite suite = new TestSuite();
+            suite.addTest(new OldTest("notObviouslyATest"));
+            return suite;
         }
 
         public void notObviouslyATest() {

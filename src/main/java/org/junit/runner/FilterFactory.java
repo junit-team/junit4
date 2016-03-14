@@ -10,14 +10,14 @@ public interface FilterFactory {
      * Creates a {@link Filter} given a {@link FilterFactoryParams} argument.
      *
      * @param params Parameters needed to create the {@link Filter}
-     * @throws FilterNotCreatedException
      */
     Filter createFilter(FilterFactoryParams params) throws FilterNotCreatedException;
 
     /**
      * Exception thrown if the {@link Filter} cannot be created.
      */
-    public static class FilterNotCreatedException extends Exception {
+    @SuppressWarnings("serial")
+    class FilterNotCreatedException extends Exception {
         public FilterNotCreatedException(Exception exception) {
             super(exception.getMessage(), exception);
         }

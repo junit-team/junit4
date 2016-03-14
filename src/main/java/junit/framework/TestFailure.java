@@ -5,15 +5,14 @@ import java.io.StringWriter;
 
 
 /**
- * A <code>TestFailure</code> collects a failed test together with
+ * A {@code TestFailure} collects a failed test together with
  * the caught exception.
  *
  * @see TestResult
  */
-public class TestFailure extends Object {
+public class TestFailure {
     protected Test fFailedTest;
     protected Throwable fThrownException;
-
 
     /**
      * Constructs a TestFailure with the given test and exception.
@@ -42,23 +41,32 @@ public class TestFailure extends Object {
      */
     @Override
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append(fFailedTest + ": " + fThrownException.getMessage());
-        return buffer.toString();
+        return fFailedTest + ": " + fThrownException.getMessage();
     }
-
+    
+    /**
+     * Returns a String containing the stack trace of the error
+     * thrown by TestFailure.
+     */
     public String trace() {
         StringWriter stringWriter = new StringWriter();
         PrintWriter writer = new PrintWriter(stringWriter);
         thrownException().printStackTrace(writer);
-        StringBuffer buffer = stringWriter.getBuffer();
-        return buffer.toString();
+        return stringWriter.toString();
     }
 
+    /**
+     * Returns a String containing the message from the thrown exception.
+     */
     public String exceptionMessage() {
         return thrownException().getMessage();
     }
 
+    /**
+     * Returns {@code true} if the error is considered a failure
+     * (i.e. if it is an instance of {@code AssertionFailedError}),
+     * {@code false} otherwise.
+     */
     public boolean isFailure() {
         return thrownException() instanceof AssertionFailedError;
     }

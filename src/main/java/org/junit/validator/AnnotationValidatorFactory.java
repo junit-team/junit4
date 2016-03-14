@@ -8,8 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 4.12
  */
 public class AnnotationValidatorFactory {
-
-    private static ConcurrentHashMap<ValidateWith, AnnotationValidator> fAnnotationTypeToValidatorMap =
+    private static final ConcurrentHashMap<ValidateWith, AnnotationValidator> VALIDATORS_FOR_ANNOTATION_TYPES =
             new ConcurrentHashMap<ValidateWith, AnnotationValidator>();
 
     /**
@@ -17,25 +16,21 @@ public class AnnotationValidatorFactory {
      * {@link org.junit.validator.ValidateWith}. Instances are
      * cached.
      *
-     * @param validateWithAnnotation
      * @return An instance of the AnnotationValidator.
      *
      * @since 4.12
      */
     public AnnotationValidator createAnnotationValidator(ValidateWith validateWithAnnotation) {
-        AnnotationValidator validator = fAnnotationTypeToValidatorMap.get(validateWithAnnotation);
+        AnnotationValidator validator = VALIDATORS_FOR_ANNOTATION_TYPES.get(validateWithAnnotation);
         if (validator != null) {
             return validator;
         }
 
         Class<? extends AnnotationValidator> clazz = validateWithAnnotation.value();
-        if (clazz == null) {
-            throw new IllegalArgumentException("Can't create validator, value is null in annotation " + validateWithAnnotation.getClass().getName());
-        }
         try {
             AnnotationValidator annotationValidator = clazz.newInstance();
-            fAnnotationTypeToValidatorMap.putIfAbsent(validateWithAnnotation, annotationValidator);
-            return fAnnotationTypeToValidatorMap.get(validateWithAnnotation);
+            VALIDATORS_FOR_ANNOTATION_TYPES.putIfAbsent(validateWithAnnotation, annotationValidator);
+            return VALIDATORS_FOR_ANNOTATION_TYPES.get(validateWithAnnotation);
         } catch (Exception e) {
             throw new RuntimeException("Exception received when creating AnnotationValidator class " + clazz.getName(), e);
         }

@@ -1,18 +1,22 @@
 package org.junit.runners.model;
 
 import static java.lang.reflect.Modifier.isStatic;
+import static org.junit.internal.MethodSorter.NAME_ASCENDING;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,20 +28,23 @@ import org.junit.internal.MethodSorter;
  *
  * @since 4.5
  */
-public class TestClass {
-    private final Class<?> fClass;
-    private final Map<Class<? extends Annotation>, List<FrameworkMethod>> fMethodsForAnnotations;
-    private final Map<Class<? extends Annotation>, List<FrameworkField>> fFieldsForAnnotations;
+public class TestClass implements Annotatable {
+    private static final FieldComparator FIELD_COMPARATOR = new FieldComparator();
+    private static final MethodComparator METHOD_COMPARATOR = new MethodComparator();
+
+    private final Class<?> clazz;
+    private final Map<Class<? extends Annotation>, List<FrameworkMethod>> methodsForAnnotations;
+    private final Map<Class<? extends Annotation>, List<FrameworkField>> fieldsForAnnotations;
 
     /**
-     * Creates a {@code TestClass} wrapping {@code klass}. Each time this
+     * Creates a {@code TestClass} wrapping {@code clazz}. Each time this
      * constructor executes, the class is scanned for annotations, which can be
      * an expensive process (we hope in future JDK's it will not be.) Therefore,
      * try to share instances of {@code TestClass} where possible.
      */
-    public TestClass(Class<?> klass) {
-        fClass = klass;
-        if (klass != null && klass.getConstructors().length > 1) {
+    public TestClass(Class<?> clazz) {
+        this.clazz = clazz;
+        if (clazz != null && clazz.getConstructors().length > 1) {
             throw new IllegalArgumentException(
                     "Test class can only have one constructor");
         }
@@ -49,12 +56,12 @@ public class TestClass {
 
         scanAnnotatedMembers(methodsForAnnotations, fieldsForAnnotations);
 
-        fMethodsForAnnotations = makeDeeplyUnmodifiable(methodsForAnnotations);
-        fFieldsForAnnotations = makeDeeplyUnmodifiable(fieldsForAnnotations);
+        this.methodsForAnnotations = makeDeeplyUnmodifiable(methodsForAnnotations);
+        this.fieldsForAnnotations = makeDeeplyUnmodifiable(fieldsForAnnotations);
     }
 
     protected void scanAnnotatedMembers(Map<Class<? extends Annotation>, List<FrameworkMethod>> methodsForAnnotations, Map<Class<? extends Annotation>, List<FrameworkField>> fieldsForAnnotations) {
-        for (Class<?> eachClass : getSuperClasses(fClass)) {
+        for (Class<?> eachClass : getSuperClasses(clazz)) {
             for (Method eachMethod : MethodSorter.getDeclaredMethods(eachClass)) {
                 addToAnnotationLists(new FrameworkMethod(eachMethod), methodsForAnnotations);
             }
@@ -68,11 +75,7 @@ public class TestClass {
 
     private static Field[] getSortedDeclaredFields(Class<?> clazz) {
         Field[] declaredFields = clazz.getDeclaredFields();
-        Arrays.sort(declaredFields, new Comparator<Field>() {
-            public int compare(Field field1, Field field2) {
-                return field1.getName().compareTo(field2.getName());
-            }
-        });
+        Arrays.sort(declaredFields, FIELD_COMPARATOR);
         return declaredFields;
     }
 
@@ -94,7 +97,7 @@ public class TestClass {
 
     private static <T extends FrameworkMember<T>> Map<Class<? extends Annotation>, List<T>>
             makeDeeplyUnmodifiable(Map<Class<? extends Annotation>, List<T>> source) {
-        LinkedHashMap<Class<? extends Annotation>, List<T>> copy =
+        Map<Class<? extends Annotation>, List<T>> copy =
                 new LinkedHashMap<Class<? extends Annotation>, List<T>>();
         for (Map.Entry<Class<? extends Annotation>, List<T>> entry : source.entrySet()) {
             copy.put(entry.getKey(), Collections.unmodifiableList(entry.getValue()));
@@ -102,6 +105,17 @@ public class TestClass {
         return Collections.unmodifiableMap(copy);
     }
 
+    /**
+     * Returns, efficiently, all the non-overridden methods in this class and
+     * its superclasses that are annotated}.
+     * 
+     * @since 4.12
+     */
+    public List<FrameworkMethod> getAnnotatedMethods() {
+        List<FrameworkMethod> methods = collectValues(methodsForAnnotations);
+        Collections.sort(methods, METHOD_COMPARATOR);
+        return methods;
+    }
 
     /**
      * Returns, efficiently, all the non-overridden methods in this class and
@@ -109,7 +123,17 @@ public class TestClass {
      */
     public List<FrameworkMethod> getAnnotatedMethods(
             Class<? extends Annotation> annotationClass) {
-        return Collections.unmodifiableList(getAnnotatedMembers(fMethodsForAnnotations, annotationClass, false));
+        return Collections.unmodifiableList(getAnnotatedMembers(methodsForAnnotations, annotationClass, false));
+    }
+
+    /**
+     * Returns, efficiently, all the non-overridden fields in this class and its
+     * superclasses that are annotated.
+     * 
+     * @since 4.12
+     */
+    public List<FrameworkField> getAnnotatedFields() {
+        return collectValues(fieldsForAnnotations);
     }
 
     /**
@@ -118,27 +142,15 @@ public class TestClass {
      */
     public List<FrameworkField> getAnnotatedFields(
             Class<? extends Annotation> annotationClass) {
-        return Collections.unmodifiableList(getAnnotatedMembers(fFieldsForAnnotations, annotationClass, false));
+        return Collections.unmodifiableList(getAnnotatedMembers(fieldsForAnnotations, annotationClass, false));
     }
 
-    /**
-     * Gets a {@code Map} between annotations and methods that have
-     * the annotation in this class or its superclasses.
-     *
-     * @since 4.12
-     */
-    public Map<Class<? extends Annotation>, List<FrameworkMethod>> getAnnotationToMethods() {
-        return fMethodsForAnnotations;
-    }
-
-    /**
-     * Gets a {@code Map} between annotations and fields that have
-     * the annotation in this class or its superclasses.
-     *
-     * @since 4.12
-     */
-    public Map<Class<? extends Annotation>, List<FrameworkField>> getAnnotationToFields() {
-        return fFieldsForAnnotations;
+    private <T> List<T> collectValues(Map<?, List<T>> map) {
+        Set<T> values = new LinkedHashSet<T>();
+        for (List<T> additionalValues : map.values()) {
+            values.addAll(additionalValues);
+        }
+        return new ArrayList<T>(values);
     }
 
     private static <T> List<T> getAnnotatedMembers(Map<Class<? extends Annotation>, List<T>> map,
@@ -156,7 +168,7 @@ public class TestClass {
     }
 
     private static List<Class<?>> getSuperClasses(Class<?> testClass) {
-        ArrayList<Class<?>> results = new ArrayList<Class<?>>();
+        List<Class<?>> results = new ArrayList<Class<?>>();
         Class<?> current = testClass;
         while (current != null) {
             results.add(current);
@@ -169,17 +181,17 @@ public class TestClass {
      * Returns the underlying Java class.
      */
     public Class<?> getJavaClass() {
-        return fClass;
+        return clazz;
     }
 
     /**
      * Returns the class's name.
      */
     public String getName() {
-        if (fClass == null) {
+        if (clazz == null) {
             return "null";
         }
-        return fClass.getName();
+        return clazz.getName();
     }
 
     /**
@@ -188,7 +200,7 @@ public class TestClass {
      */
 
     public Constructor<?> getOnlyConstructor() {
-        Constructor<?>[] constructors = fClass.getConstructors();
+        Constructor<?>[] constructors = clazz.getConstructors();
         Assert.assertEquals(1, constructors.length);
         return constructors[0];
     }
@@ -197,10 +209,17 @@ public class TestClass {
      * Returns the annotations on this class
      */
     public Annotation[] getAnnotations() {
-        if (fClass == null) {
+        if (clazz == null) {
             return new Annotation[0];
         }
-        return fClass.getAnnotations();
+        return clazz.getAnnotations();
+    }
+
+    public <T extends Annotation> T getAnnotation(Class<T> annotationType) {
+        if (clazz == null) {
+            return null;
+        }
+        return clazz.getAnnotation(annotationType);
     }
 
     public <T> List<T> getAnnotatedFieldValues(Object test,
@@ -225,8 +244,16 @@ public class TestClass {
         List<T> results = new ArrayList<T>();
         for (FrameworkMethod each : getAnnotatedMethods(annotationClass)) {
             try {
-                Object fieldValue = each.invokeExplosively(test);
-                if (valueClass.isInstance(fieldValue)) {
+                /*
+                 * A method annotated with @Rule may return a @TestRule or a @MethodRule,
+                 * we cannot call the method to check whether the return type matches our
+                 * expectation i.e. subclass of valueClass. If we do that then the method 
+                 * will be invoked twice and we do not want to do that. So we first check
+                 * whether return type matches our expectation and only then call the method
+                 * to fetch the MethodRule
+                 */
+                if (valueClass.isAssignableFrom(each.getReturnType())) {
+                    Object fieldValue = each.invokeExplosively(test);
                     results.add(valueClass.cast(fieldValue));
                 }
             } catch (Throwable e) {
@@ -237,7 +264,50 @@ public class TestClass {
         return results;
     }
 
+    public boolean isPublic() {
+        return Modifier.isPublic(clazz.getModifiers());
+    }
+
     public boolean isANonStaticInnerClass() {
-        return fClass.isMemberClass() && !isStatic(fClass.getModifiers());
+        return clazz.isMemberClass() && !isStatic(clazz.getModifiers());
+    }
+
+    @Override
+    public int hashCode() {
+        return (clazz == null) ? 0 : clazz.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        TestClass other = (TestClass) obj;
+        return clazz == other.clazz;
+    }
+
+    /**
+     * Compares two fields by its name.
+     */
+    private static class FieldComparator implements Comparator<Field> {
+        public int compare(Field left, Field right) {
+            return left.getName().compareTo(right.getName());
+        }
+    }
+
+    /**
+     * Compares two methods by its name.
+     */
+    private static class MethodComparator implements
+            Comparator<FrameworkMethod> {
+        public int compare(FrameworkMethod left, FrameworkMethod right) {
+            return NAME_ASCENDING.compare(left.getMethod(), right.getMethod());
+        }
     }
 }

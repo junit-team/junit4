@@ -199,7 +199,10 @@ public class TimeoutTest {
     
     public static class InfiniteLoopWithStuckThreadTest {
         @Rule
-        public TestRule globalTimeout = new Timeout(100, TimeUnit.MILLISECONDS).lookingForStuckThread(true);
+        public TestRule globalTimeout = Timeout.builder()
+            .withTimeout(100, TimeUnit.MILLISECONDS)
+            .withLookingForStuckThread(true)
+            .build();
 
         @Test
         public void failure() throws Exception {
@@ -209,7 +212,10 @@ public class TimeoutTest {
     
     public static class InfiniteLoopStuckInMainThreadTest {
         @Rule
-        public TestRule globalTimeout = new Timeout(100, TimeUnit.MILLISECONDS).lookingForStuckThread(true);
+        public TestRule globalTimeout = Timeout.builder()
+            .withTimeout(100, TimeUnit.MILLISECONDS)
+            .withLookingForStuckThread(true)
+            .build();
 
         @Test
         public void failure() throws Exception {
@@ -273,5 +279,56 @@ public class TimeoutTest {
     public void makeSureAfterIsCalledAfterATimeout() {
         JUnitCore.runClasses(WillTimeOut.class);
         assertThat(WillTimeOut.afterWasCalled, is(true));
+    }
+
+    public static class TimeOutZero {
+        @Rule
+        public Timeout timeout = Timeout.seconds(0);
+
+        @Test
+        public void test() {
+            try {
+                Thread.sleep(200); // long enough to suspend thread execution
+            } catch (InterruptedException e) {
+                // Don't care
+            }
+        }
+    }
+
+    @Test
+    public void testZeroTimeoutIsIgnored() {
+        JUnitCore core = new JUnitCore();
+        Result result = core.run(TimeOutZero.class);
+        assertEquals("Should run the test", 1, result.getRunCount());
+        assertEquals("Test should not have failed", 0, result.getFailureCount());
+    }
+
+    private static class TimeoutSubclass extends Timeout {
+
+        public TimeoutSubclass(long timeout, TimeUnit timeUnit) {
+            super(timeout, timeUnit);
+        }
+
+        public long getTimeoutFromSuperclass(TimeUnit unit) {
+            return super.getTimeout(unit);
+        }
+    }
+
+    public static class TimeOutOneSecond {
+        @Rule
+        public TimeoutSubclass timeout = new TimeoutSubclass(1, TimeUnit.SECONDS);
+
+        @Test
+        public void test() {
+            assertEquals(1000, timeout.getTimeoutFromSuperclass(TimeUnit.MILLISECONDS));
+        }
+    }
+
+    @Test
+    public void testGetTimeout() {
+        JUnitCore core = new JUnitCore();
+        Result result = core.run(TimeOutOneSecond.class);
+        assertEquals("Should run the test", 1, result.getRunCount());
+        assertEquals("Test should not have failed", 0, result.getFailureCount());
     }
 }

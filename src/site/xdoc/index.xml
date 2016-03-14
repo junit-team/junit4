@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<document>
+  <properties>
+    <title>About</title>
+  </properties>
+  <head>
+    <link rel="stylesheet" href="./css/hopscotch-0.1.2.min.css" />
+    <script src="scripts/index.js" type="text/javascript" ></script>
+  </head>
+  <body>
+       <p>
+        JUnit is a simple framework to write repeatable tests. It is an instance of the xUnit architecture for unit testing frameworks.
+      </p>
+     <div id="carousel-main">
+        <div id="main-carousel" class="carousel slide">
+          <div class="carousel-inner">
+            <div class="item active">
+              <div style="height:20em" >
+              <pre class="prettyprint">
+    @Test
+    public void newArrayListsHaveNoElements() {
+        assertThat(new ArrayList&lt;Integer&gt;().size(), is(0));
+    }
+
+    @Test
+    public void sizeReturnsNumberOfElements() {
+        List&lt;Object&gt; instance = new ArrayList&lt;Object&gt;();
+        instance.add(new Object());
+        instance.add(new Object());
+        assertThat(instance.size(), is(2));
+    }
+
+              </pre>
+              </div>
+              <div class="carousel-caption">
+                <p><strong>Annotations</strong></p>
+                <p>Start by marking your tests with <code>@Test</code>.</p>
+              </div>
+            </div>
+            <div class="item">
+              <div style="height:20em">
+              <pre class="prettyprint lang-java">
+    @Test
+    public void lookupEmailAddresses() {
+        assertThat(new CartoonCharacterEmailLookupService().getResults("looney"), allOf(
+            not(empty()), 
+            containsInAnyOrder(
+                allOf(instanceOf(Map.class), hasEntry("id", "56"), hasEntry("email", "roadrunner@fast.org")),
+                allOf(instanceOf(Map.class), hasEntry("id", "76"), hasEntry("email", "wiley@acme.com"))
+            )
+        ));
+    }
+
+
+
+              </pre>
+              </div>
+              <div class="carousel-caption">
+                <p><strong>Hamcrest matchers</strong></p>
+                <p>Make your assertions more expressive and get better failure reports in return. </p>
+              </div>
+            </div>
+          </div>
+          <a id="main-carousel-prev" class="carousel-control left" name="main-carousel-prev" data-slide="prev">&#8249;</a>
+          <a id="main-carousel-next" class="carousel-control right" name="main-carousel-next" data-slide="next">&#8250;</a>
+        </div>
+      </div>
+      <p  class="pagination-centered">
+        <a class="btn btn-primary btn-large" href="javascript:startSiteTour()">Let's take a tour »</a>
+      </p>
+
+      <div class="container">
+      <div class="row">
+        <div class="span4" id="welcome-section">
+          <p><b>Welcome</b></p>
+          <ul>
+            <li><a href="https://github.com/junit-team/junit/wiki/Download-and-Install">Download and install</a></li>
+            <li><a href="https://github.com/junit-team/junit/wiki/Getting-started">Getting started</a></li>
+            <li>Release Notes
+              <ul>
+<li><a href="https://github.com/junit-team/junit/blob/master/doc/ReleaseNotes4.12.md">4.12</a></li>
+<li><a href="https://github.com/junit-team/junit/blob/master/doc/ReleaseNotes4.11.md">4.11</a></li>
+<li><a href="https://github.com/junit-team/junit/blob/master/doc/ReleaseNotes4.10.md">4.10</a></li>
+<li><a href="https://github.com/junit-team/junit/blob/master/doc/ReleaseNotes4.9.1.md">4.9.1</a></li>
+<li><a href="https://github.com/junit-team/junit/blob/master/doc/ReleaseNotes4.9.md">4.9</a></li>
+              </ul>
+            </li>
+            <li><a href="https://github.com/junit-team/junit/wiki/Maintainer-documentation">Maintainer Documentation</a></li>
+            <li><a href="https://github.com/junit-team/junit/wiki/I-want-to-help%21">I want to help!</a></li>
+            <li><a href="http://stackoverflow.com/questions/tagged/junit">Latest JUnit Questions on StackOverflow</a></li>
+            <li><a href="javadoc/latest/index.html">JavaDocs</a></li>
+            <li><a href="./faq.html">Frequently asked questions</a></li>
+            <li><a href="https://github.com/junit-team/junit/wiki">Wiki</a></li>
+            <li><a href="./license.html">License</a></li>
+          </ul>
+        </div>
+        <div class="span4" id="concepts-section">
+          <p><b>Usage and Idioms</b></p>
+          <ul>
+<li><a href="https://github.com/junit-team/junit/wiki/Assertions">Assertions</a></li>
+<li><a href="https://github.com/junit-team/junit/wiki/Test-runners">Test Runners</a></li>
+<li><a href="https://github.com/junit-team/junit/wiki/Aggregating-tests-in-suites">Aggregating tests in Suites</a></li>
+<li><a href="https://github.com/junit-team/junit/wiki/Test-execution-order">Test Execution Order</a></li>
+<li><a href="https://github.com/junit-team/junit/wiki/Exception-testing">Exception Testing</a></li>
+<li><a href="https://github.com/junit-team/junit/wiki/Matchers-and-assertthat">Matchers and assertThat</a></li>
+<li><a href="https://github.com/junit-team/junit/wiki/Ignoring-tests">Ignoring Tests</a></li>
+<li><a href="https://github.com/junit-team/junit/wiki/Timeout-for-tests">Timeout for Tests</a></li>
+<li><a href="https://github.com/junit-team/junit/wiki/Parameterized-tests">Parameterized Tests</a></li>
+<li><a href="https://github.com/junit-team/junit/wiki/Assumptions-with-assume">Assumptions with Assume</a></li>
+<li><a href="https://github.com/junit-team/junit/wiki/Rules">Rules</a></li>
+<li><a href="https://github.com/junit-team/junit/wiki/Theories">Theories</a></li>
+<li><a href="https://github.com/junit-team/junit/wiki/Test-fixtures">Test Fixtures</a></li>
+<li><a href="https://github.com/junit-team/junit/wiki/Categories">Categories</a></li>
+<li><a href="https://github.com/junit-team/junit/wiki/Use-with-Maven">Use with Maven</a></li>
+<li><a href="https://github.com/junit-team/junit/wiki/Multithreaded-code-and-concurrency">Multithreaded code and Concurrency</a></li>
+<li><a href="https://github.com/junit-team/junit/wiki/Java-contract-test-helpers">Java contract test helpers</a></li>
+<li><a href="https://github.com/junit-team/junit/wiki/Continuous-testing">Continuous Testing</a></li>          </ul>
+        </div>
+        <div class="span4" id="thirdparty-section">
+          <p><b>Third-party extensions</b></p>
+          <ul>
+<li><a href="https://github.com/junit-team/junit/wiki/Custom-runners">Custom Runners</a></li>
+<li>
+<a href="http://site.trajano.net/commons-testing/">net.trajano.commons:commons-testing for UtilityClassTestUtil</a> per #646</li>
+<li>
+<a href="http://stefanbirkner.github.io/system-rules">System Rules</a> – A collection of JUnit rules for testing code that uses java.lang.System.</li>
+<li>
+<a href="https://junit-toolbox.googlecode.com/">JUnit Toolbox</a> - Provides runners for parallel testing, a <code>PoolingWait</code> class to ease asynchronous testing, and a <code>WildcardPatternSuite</code> which allow you to specify wildcard patterns instead of explicitly listing all classes when you create a suite class.</li>
+<li>
+<a href="https://github.com/pholser/junit-quickcheck">junit-quickcheck</a> - QuickCheck-style parameter suppliers for JUnit theories. Uses <a href="https://github.com/junit-team/junit.contrib/tree/master/theories">junit.contrib's version of the theories machinery</a>, which respects generics on theory parameters.</li>          </ul>
+        </div>
+      </div>
+    </div>
+    <script src="scripts/hopscotch-0.1.2.min.js" type="text/javascript" ></script>
+    <script>//<![CDATA[
+        var tour = {
+          id: "welcome_tour",
+          steps:[
+            {
+              target: "welcome-section",
+              placement: "right",
+              title: "First things first",
+              content: "Here are the links to the most important information"
+            },
+            {
+              target: $('ul.nav')[0],
+              fixedElement: true,
+              placement: "bottom",
+              title: "Maven site documentation",
+              content: "Don't forget that the documentation generated by Maven is hiding up here"
+            },
+            {
+              target: $('body a[href="http://github.com/junit-team/junit"] img')[0],
+              placement: "left",
+              title: "Source code",
+              content: "The source code for JUnit is hosted on GitHub"
+            },
+            {
+              target: "concepts-section",
+              placement: "right",
+              title: "Understanding JUnit",
+              content: "Find out more about how to do things with JUnit"
+            },
+            {
+              target: "thirdparty-section",
+              placement: "left",
+              title: "Extending JUnit",
+              content: "Find out about third party extensions to the JUnit framework"
+            }
+          ]
+        }
+        window.startSiteTour = function(){
+            hopscotch.startTour(tour);
+            return undefined;
+        };
+    //]]></script>
+  </body>
+</document>
