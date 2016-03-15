@@ -108,7 +108,7 @@ public class TemporaryFolder extends ExternalResource {
         /**
          * Setting this flag assures that no resources are left undeleted. Failure
          * to fulfill the assurance results in failure of tests with an
-         * {@link IllegalStateException}.
+         * {@link AssertionError}.
          *
          * @return this
          */
@@ -237,7 +237,7 @@ public class TemporaryFolder extends ExternalResource {
      * Delete all files and folders under the temporary folder. Usually not
      * called directly, since it is automatically applied by the {@link Rule}.
      *
-     * @throws IllegalStateException if unable to clean up resources
+     * @throws AssertionError if unable to clean up resources
      * and deletion of resources is assured.
      */
     public void delete() {
