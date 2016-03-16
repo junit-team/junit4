@@ -16,11 +16,11 @@
           <div class="carousel-inner">
 	          <div class="item active">
 	            <div class="carousel-content" id="junit-lambda-teaser">
-								<p><a href="junit-lambda.html"><img src="images/junit-lambda/junit-lambda-logo.png" alt="JUnit Lambda" /></a></p>
+								<p><a href="junit5.html"><img src="images/junit5-banner.png" alt="JUnit 5" /></a></p>
 	            </div>
 	            <div class="carousel-caption">
-	              <p><strong><a href="junit-lambda.html">Work on the prototype has started.</a></strong></p>
-	              <p><a href="junit-lambda.html">Explore and give feedback!</a></p>
+	              <p><strong><a href="junit5.html">Work on JUnit 5 - Milestone 1 has started.</a></strong></p>
+	              <p><a href="junit5.html">Explore and give feedback!</a></p>
 	            </div>
 	          </div>
             <div class="item">

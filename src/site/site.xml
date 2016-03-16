@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/DECORATION/1.1.0 http://maven.apache.org/xsd/decoration-1.1.0.xsd">
   <bannerLeft>
     <name>${project.name}</name>
-    <src>http://junit.org/images/junit-logo.png</src>
+    <src>./images/junit45-combined.png</src>
     <href>http://junit.org/</href>
   </bannerLeft>
 
@@ -37,11 +37,9 @@
       <item name="Cookbook" href="cookbook.html"/>
     </menu>
 
-    <menu name="JUnit Lambda">
-      <item name="Project page" href="junit-lambda.html"/>
-      <item name="Campaign Page (ended)" href="junit-lambda-campaign.html"/>
-      <item name="Campaign Contributors" href="junit-lambda-contributors.html"/>
-      <item name="Campaign Spending" href="junit-lambda-spending.html"/>
+    <menu name="JUnit 5">
+      <item name="Project page" href="junit5.html"/>
+      <item name="JUnit Lambda Campaign" href="junit-lambda.html"/>
     </menu>
 
     <menu ref="reports" inherit="bottom" />
