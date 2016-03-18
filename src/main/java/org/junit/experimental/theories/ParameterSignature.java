@@ -34,7 +34,7 @@ public class ParameterSignature {
         map.put(b, a);
     }
     
-    public static ArrayList<ParameterSignature> signatures(Method method) {
+    public static List<ParameterSignature> signatures(Method method) {
         return signatures(method.getParameterTypes(), method
                 .getParameterAnnotations());
     }
@@ -44,7 +44,7 @@ public class ParameterSignature {
                 .getParameterAnnotations());
     }
 
-    private static ArrayList<ParameterSignature> signatures(
+    private static List<ParameterSignature> signatures(
             Class<?>[] parameterTypes, Annotation[][] parameterAnnotations) {
         ArrayList<ParameterSignature> sigs = new ArrayList<ParameterSignature>();
         for (int i = 0; i < parameterTypes.length; i++) {
