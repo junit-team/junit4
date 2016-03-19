@@ -187,7 +187,7 @@ public class Description implements Serializable {
      * Gets the copy of the children of this {@code Description}.
      * Returns an empty list if there are no children.
      */
-    public List<Description> getChildren() {
+    public ArrayList<Description> getChildren() {
         return new ArrayList<Description>(fChildren);
     }
 
