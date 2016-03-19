@@ -5,7 +5,6 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -187,7 +186,7 @@ public class Description implements Serializable {
      * Gets the copy of the children of this {@code Description}.
      * Returns an empty list if there are no children.
      */
-    public List<Description> getChildren() {
+    public ArrayList<Description> getChildren() {
         return new ArrayList<Description>(fChildren);
     }
 
