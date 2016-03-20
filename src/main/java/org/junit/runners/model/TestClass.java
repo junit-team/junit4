@@ -74,7 +74,12 @@ public class TestClass implements Annotatable {
     }
 
     private static Field[] getSortedDeclaredFields(Class<?> clazz) {
-        Field[] declaredFields = clazz.getDeclaredFields();
+        Field[] declaredFields = null;
+        try {
+            declaredFields = clazz.getDeclaredFields();
+        } catch (SecurityException securityException) {
+            return new Field[0];
+        }
         Arrays.sort(declaredFields, FIELD_COMPARATOR);
         return declaredFields;
     }
