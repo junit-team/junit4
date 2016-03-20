@@ -101,7 +101,7 @@
     </distributionManagement>
 
     <properties>
-        <jdkVersion>1.5</jdkVersion>
+        <jdkVersion>1.7</jdkVersion>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
         <arguments />
         <gpg.keyname>67893CC4</gpg.keyname>
