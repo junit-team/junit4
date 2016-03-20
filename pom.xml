@@ -5,6 +5,7 @@
     <groupId>junit</groupId>
     <artifactId>junit</artifactId>
     <version>4.12</version>
+    <packaging>bundle</packaging>
 
     <name>JUnit</name>
     <description>JUnit is a unit testing framework for Java, created by Erich Gamma and Kent Beck.</description>
@@ -128,6 +129,20 @@
             </resource>
         </resources>
         <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.3.7</version>
+                <configuration>
+                    <instructions>
+                        <Bundle-Name>${project.artifactId}</Bundle-Name>
+                        <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Description>${project.name}</Bundle-Description>
+                        <Export-Package>junit.*,!org.junit.internal.*,org.junit.*</Export-Package>
+                    </instructions>
+                </configuration>
+                <extensions>true</extensions>
+            </plugin>
             <!--
             Both "org.apache" and "org.codehaus" are default providers of MOJO plugins
             which are especially dedicated to Maven projects.
