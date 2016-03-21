@@ -77,7 +77,7 @@ public class RuleMemberValidatorTest {
      * {@link TestRule}
      * 
      * <p>This case has been added with 
-     * <a href="https://github.com/junit-team/junit/issues/1019">Issue #1019</a>
+     * <a href="https://github.com/junit-team/junit4/issues/1019">Issue #1019</a>
      */
     @Test
     public void rejectClassRuleThatIsImplemetationOfMethodRule() {
@@ -101,7 +101,7 @@ public class RuleMemberValidatorTest {
      * implementation of {@link TestRule}
      * 
      * <p>This case has been added with 
-     * <a href="https://github.com/junit-team/junit/issues/1019">Issue #1019</a>
+     * <a href="https://github.com/junit-team/junit4/issues/1019">Issue #1019</a>
      */
     @Test
     public void rejectClassRuleThatReturnsImplementationOfMethodRule() {
@@ -127,7 +127,7 @@ public class RuleMemberValidatorTest {
      * {@link TestRule}
      * 
      * <p>This case has been added with 
-     * <a href="https://github.com/junit-team/junit/issues/1019">Issue #1019</a>
+     * <a href="https://github.com/junit-team/junit4/issues/1019">Issue #1019</a>
      */
     @Test
     public void rejectClassRuleIsAnArbitraryObject() throws Exception {
@@ -146,7 +146,7 @@ public class RuleMemberValidatorTest {
      * implementation of {@link TestRule}
      * 
      * <p>This case has been added with 
-     * <a href="https://github.com/junit-team/junit/issues/1019">Issue #1019</a> 
+     * <a href="https://github.com/junit-team/junit4/issues/1019">Issue #1019</a> 
      */
     @Test
     public void rejectClassRuleMethodReturnsAnArbitraryObject() throws Exception {

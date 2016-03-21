@@ -322,7 +322,7 @@ public class MethodRulesTest {
      * then it should also be run.
      * 
      * <p>This case has been added with 
-     * <a href="https://github.com/junit-team/junit/issues/589">Issue #589</a> - 
+     * <a href="https://github.com/junit-team/junit4/issues/589">Issue #589</a> - 
      * Support @Rule for methods works only for TestRule but not for MethodRule
      */
     @Test
@@ -354,7 +354,7 @@ public class MethodRulesTest {
      * then all the rules returned should be run.
      * 
      * <p>This case has been added with 
-     * <a href="https://github.com/junit-team/junit/issues/589">Issue #589</a> - 
+     * <a href="https://github.com/junit-team/junit4/issues/589">Issue #589</a> - 
      * Support @Rule for methods works only for TestRule but not for MethodRule
      */
     @Test
@@ -398,7 +398,7 @@ public class MethodRulesTest {
      * then method should be called only once.
      * 
      * <p>This case has been added with 
-     * <a href="https://github.com/junit-team/junit/issues/589">Issue #589</a> - 
+     * <a href="https://github.com/junit-team/junit4/issues/589">Issue #589</a> - 
      * Support @Rule for methods works only for TestRule but not for MethodRule
      */
     @Test

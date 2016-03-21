@@ -76,7 +76,7 @@ import org.junit.runners.model.RunnerBuilder;
  * </pre>
  *
  * @version 4.12
- * @see <a href="https://github.com/junit-team/junit/wiki/Categories">Categories at JUnit wiki</a>
+ * @see <a href="https://github.com/junit-team/junit4/wiki/Categories">Categories at JUnit wiki</a>
  */
 public class Categories extends Suite {
 

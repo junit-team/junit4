@@ -252,7 +252,7 @@ public class ExpectedExceptionTest {
         }
     }
 
-    //https://github.com/junit-team/junit/pull/583
+    //https://github.com/junit-team/junit4/pull/583
     public static class ExpectAssertionErrorWhichIsNotThrown {
         @Rule
         public ExpectedException thrown = none();
