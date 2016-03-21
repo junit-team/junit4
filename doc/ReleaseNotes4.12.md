@@ -609,7 +609,7 @@ Create directory _.m2_ in your _user home_. Then the artifacts and plugins are s
 
 #### How to launch the build from the command line
 
-Clone the project (git clone https://github.com/junit-team/junit.git) and navigate to the project root on your local system (cd junit).
+Clone the project (git clone https://github.com/junit-team/junit4.git) and navigate to the project root on your local system (cd junit).
 Clean the previous build in _target_ directory, build the project, and install new artifacts in your local repository:
 
 `apache-maven-3.0.4/bin/mvn clean install`
