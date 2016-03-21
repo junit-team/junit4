@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/DECORATION/1.1.0 http://maven.apache.org/xsd/decoration-1.1.0.xsd">
   <bannerLeft>
     <name>${project.name}</name>
-    <src>./images/junit45-combined.png</src>
+    <src>./images/junit-logo.png</src>
     <href>http://junit.org/</href>
   </bannerLeft>
 
