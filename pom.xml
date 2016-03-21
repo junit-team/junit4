@@ -69,8 +69,8 @@
     </prerequisites>
 
     <scm>
-        <connection>scm:git:git://github.com/junit-team/junit.git</connection>
-        <developerConnection>scm:git:git@github.com:junit-team/junit.git</developerConnection>
+        <connection>scm:git:git://github.com/junit-team/junit4.git</connection>
+        <developerConnection>scm:git:git@github.com:junit-team/junit4.git</developerConnection>
         <url>http://github.com/junit-team/junit/tree/master</url>
       <tag>HEAD</tag>
   </scm>
@@ -96,7 +96,7 @@
         </repository>
         <site>
             <id>junit.github.io</id>
-            <url>gitsite:git@github.com/junit-team/junit.git</url>
+            <url>gitsite:git@github.com/junit-team/junit4.git</url>
         </site>
     </distributionManagement>
 
