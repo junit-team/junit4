@@ -18,7 +18,7 @@ public class AssumptionViolatedException extends RuntimeException implements Sel
     /*
      * We have to use the f prefix until the next major release to ensure
      * serialization compatibility. 
-     * See https://github.com/junit-team/junit/issues/976
+     * See https://github.com/junit-team/junit4/issues/976
      */
     private final String fAssumption;
     private final boolean fValueMatcher;

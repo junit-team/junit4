@@ -10,7 +10,7 @@ public class ClassRequest extends Request {
     /*
      * We have to use the f prefix, because IntelliJ's JUnit4IdeaTestRunner uses
      * reflection to access this field. See
-     * https://github.com/junit-team/junit/issues/960
+     * https://github.com/junit-team/junit4/issues/960
      */
     private final Class<?> fTestClass;
     private final boolean canUseSuiteMethod;

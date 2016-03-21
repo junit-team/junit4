@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
  * If the exception's message or one of its properties should be verified, the
  * {@link org.junit.rules.ExpectedException ExpectedException} rule can be used. Further
  * information about exception testing can be found at the
- * <a href="https://github.com/junit-team/junit/wiki/Exception-testing">JUnit Wiki</a>.
+ * <a href="https://github.com/junit-team/junit4/wiki/Exception-testing">JUnit Wiki</a>.
  * <p>
  * The second optional parameter, <code>timeout</code>, causes a test to fail if it takes
  * longer than a specified amount of clock time (measured in milliseconds). The following test fails:
