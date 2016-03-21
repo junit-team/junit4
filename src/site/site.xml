@@ -31,7 +31,7 @@
       <item name="JUnit" href="http://junit.org/" />
     </breadcrumbs>
 
-    <menu name="Overview">
+    <menu name="JUnit 4">
       <item name="Introduction" href="index.html"/>
       <item name="Frequently asked questions" href="faq.html"/>
       <item name="Cookbook" href="cookbook.html"/>
@@ -42,7 +42,7 @@
       <item name="JUnit Lambda Campaign" href="junit-lambda.html"/>
     </menu>
 
-    <menu ref="reports" inherit="bottom" />
+    <menu name="JUnit 4 Project Documentation" ref="reports" inherit="bottom" />
 
   </body>
 
