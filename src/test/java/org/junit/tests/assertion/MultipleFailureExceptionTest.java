@@ -14,6 +14,7 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runners.model.MultipleFailureException;
 
+
 /**
  * Tests for {@link org.junit.runners.model.MultipleFailureException}
  *
@@ -37,7 +38,7 @@ public class MultipleFailureExceptionTest {
             assertSame(e, exception);
         }
     }
-    
+
     @Test
     public void assertEmptyRethrowsSingleError() throws Exception {
         Throwable exception= new AnnotationFormatError("changeo");
@@ -51,7 +52,7 @@ public class MultipleFailureExceptionTest {
     }
 
     @Test
-    public void assertEmptyThrowsMutipleFailureExceptionForManyThrowables() throws Exception {
+    public void assertEmptyThrowsMultipleFailureExceptionForManyThrowables() throws Exception {
         List<Throwable> errors = new ArrayList<Throwable>();
         errors.add(new ExpectedException("basil"));
         errors.add(new RuntimeException("garlic"));
