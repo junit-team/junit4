@@ -6,11 +6,13 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.ParentRunner;
+import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -41,6 +43,27 @@ public class ParentRunnerClassLoaderTest {
                 "use Class.forName we can not find test class again, because tests can be " +
                 "located in different ClassLoader",
                 description.getTestClass(), testClassWithOwnClassLoader
+        );
+    }
+
+    @Test
+    public void testBackwardCompatibilityWithOverrideGetName() throws Exception {
+        final Class<TestWithClassRule> originalTestClass = TestWithClassRule.class;
+        final Class<?> waitClass = ParentRunnerClassLoaderTest.class;
+
+        ParentRunner<FrameworkMethod> subParentRunner = new BlockJUnit4ClassRunner(originalTestClass) {
+            @Override
+            protected String getName() {
+                return waitClass.getName();
+            }
+        };
+
+        Description description = subParentRunner.getDescription();
+        Class<?> result = description.getTestClass();
+
+        assertEquals("Subclass of ParentRunner can override getName method and specify another test class for run, " +
+                "we should  maintain backwards compatibility with JUnit 4.12",
+                waitClass, result
         );
     }
 
