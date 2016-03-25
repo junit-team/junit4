@@ -15,11 +15,6 @@ class JUnitCommandLineParseResult {
     private final List<Throwable> parserErrors = new ArrayList<Throwable>();
 
     /**
-     * Do not use. Testing purposes only.
-     */
-    JUnitCommandLineParseResult() {}
-
-    /**
      * Returns filter specs parsed from command line.
      */
     public List<String> getFilterSpecs() {
