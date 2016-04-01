@@ -18,6 +18,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.internal.runners.statements.FailOnTimeout;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestTimedOutException;
 
@@ -165,6 +166,28 @@ public class FailOnTimeoutTest {
             assertFalse(
                     "Stack trace contains other than the real cause of the timeout, which can be very misleading",
                     stackTraceContainsOtherThanTheRealCauseOfTheTimeout);
+        }
+    }
+
+    @Test
+    public void threadUsesDescriptionSpecified() throws Throwable {
+        Statement stuck = new InfiniteLoopStatement();
+        Description description = Description.createTestDescription("ThreadTestClassName", "ThreadTestName");
+        FailOnTimeout stuckTimeout =
+            builder().withTimeout(TIMEOUT, MILLISECONDS).withDescription(description).build(stuck);
+        try {
+            stuckTimeout.evaluate();
+            // We must not get here, we expect a timeout exception
+            fail("Expected timeout exception");
+        } catch (Exception timeoutException) {
+            boolean threadWithMatchingNameExists = false;
+            for (Thread thread : Thread.getAllStackTraces().keySet()) {
+                if (thread.getName().equals(description.getDisplayName())) {
+                    threadWithMatchingNameExists = true;
+                    break;
+                }
+            }
+            assertTrue(threadWithMatchingNameExists);
         }
     }
 

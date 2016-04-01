@@ -1,10 +1,10 @@
 package org.junit.rules;
 
+import java.util.concurrent.TimeUnit;
+
 import org.junit.internal.runners.statements.FailOnTimeout;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * The Timeout Rule applies the same timeout to all test methods in a class:
@@ -137,13 +137,12 @@ public class Timeout implements TestRule {
     /**
      * Creates a {@link Statement} that will run the given
      * {@code statement}, and timeout the operation based
-     * on the values configured in this rule. Subclasses
-     * can override this method for different behavior.
+     * on the values configured in this rule.
      *
      * @since 4.12
      */
-    protected Statement createFailOnTimeoutStatement(
-            Statement statement) throws Exception {
+    @Deprecated
+    protected Statement createFailOnTimeoutStatement(Statement statement) throws Exception {
         return FailOnTimeout.builder()
             .withTimeout(timeout, timeUnit)
             .withLookingForStuckThread(lookForStuckThread)
@@ -152,7 +151,7 @@ public class Timeout implements TestRule {
 
     public Statement apply(Statement base, Description description) {
         try {
-            return createFailOnTimeoutStatement(base);
+            return createFailOnTimeoutStatement(base, description);
         } catch (final Exception e) {
             return new Statement() {
                 @Override public void evaluate() throws Throwable {
@@ -160,6 +159,19 @@ public class Timeout implements TestRule {
                 }
             };
         }
+    }
+
+    /**
+     * Creates a {@link Statement} that will run the given
+     * {@code statement} in a thread with a name based on
+     * the given {@code description}, and timeout the operation
+     * based on the values configured in this rule.
+     */
+    private Statement createFailOnTimeoutStatement(
+            Statement statement, Description description) throws Exception {
+        return FailOnTimeout.builder()
+            .withDescription(description)
+            .build(createFailOnTimeoutStatement(statement));
     }
 
     /**
