@@ -4,6 +4,7 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import org.junit.Rule;
 
@@ -268,7 +269,9 @@ public class TemporaryFolder extends ExternalResource {
         File[] files = file.listFiles();
         if (files != null) {
             for (File each : files) {
-                result = result && recursiveDelete(each);
+                if (!Files.isSymbolicLink(each.toPath())) {
+                    result = result && recursiveDelete(each);
+                }
             }
         }
         return result && file.delete();

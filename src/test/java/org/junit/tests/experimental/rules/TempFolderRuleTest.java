@@ -12,6 +12,7 @@ import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
 import java.util.Arrays;
 
 import org.junit.After;
@@ -173,6 +174,23 @@ public class TempFolderRuleTest {
         folder.create();
         folder.delete();
         assertFalse(folder.getRoot().exists());
+    }
+
+    @Test
+    public void recursiveDeleteDoesntDescendViaSymlinks() throws IOException {
+        TemporaryFolder folderOfUntouchable = new TemporaryFolder();
+        folderOfUntouchable.create();
+        File untouchable = new File(folderOfUntouchable.getRoot(), "untouchable");
+        untouchable.createNewFile();
+
+        TemporaryFolder folder = new TemporaryFolder();
+        folder.create();
+        Files.createSymbolicLink(
+                folder.getRoot().toPath().resolve("symlink"),
+                folderOfUntouchable.getRoot().toPath());
+        folder.delete();
+
+        assertTrue(untouchable.exists());
     }
 
     public static class NameClashes {
