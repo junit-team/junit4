@@ -12,6 +12,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
+import org.junit.tests.mock.MockTestRunner;
 
 /**
  * Tests that verify proper behavior for custom runners that extend
@@ -24,14 +25,12 @@ public class CustomBlockJUnit4ClassRunnerTest {
 
 	@Test
 	public void exceptionsFromMethodBlockMustNotResultInUnrootedTests() throws Exception {
-		TrackingRunListener listener = new TrackingRunListener();
-		RunNotifier notifier = new RunNotifier();
-		notifier.addListener(listener);
+	    MockTestRunner testRunner = new MockTestRunner();
 
-		new CustomBlockJUnit4ClassRunner(CustomBlockJUnit4ClassRunnerTestCase.class).run(notifier);
-		assertEquals("tests started.", 2, listener.testStartedCount.get());
-		assertEquals("tests failed.", 1, listener.testFailureCount.get());
-		assertEquals("tests finished.", 2, listener.testFinishedCount.get());
+		new CustomBlockJUnit4ClassRunner(CustomBlockJUnit4ClassRunnerTestCase.class).run(testRunner.getNotifier());
+		assertEquals("tests started.", 2, testRunner.getTestStartedCount());
+		assertEquals("tests failed.", 1, testRunner.getTestFailureCount());
+		assertEquals("tests finished.", 2, testRunner.getTestFinishedCount());
 	}
 
 
@@ -59,32 +58,4 @@ public class CustomBlockJUnit4ClassRunnerTest {
 			return super.methodBlock(method);
 		}
 	}
-
-	/**
-	 * Simple {@link RunListener} that tracks the number of times that
-	 * certain callbacks are invoked.
-	 */
-	private static class TrackingRunListener extends RunListener {
-
-		final AtomicInteger testStartedCount = new AtomicInteger();
-		final AtomicInteger testFailureCount = new AtomicInteger();
-		final AtomicInteger testFinishedCount = new AtomicInteger();
-
-
-		@Override
-		public void testStarted(Description description) throws Exception {
-			testStartedCount.incrementAndGet();
-		}
-
-		@Override
-		public void testFailure(Failure failure) throws Exception {
-			testFailureCount.incrementAndGet();
-		}
-
-		@Override
-		public void testFinished(Description description) throws Exception {
-			testFinishedCount.incrementAndGet();
-		}
-	}
-
 }

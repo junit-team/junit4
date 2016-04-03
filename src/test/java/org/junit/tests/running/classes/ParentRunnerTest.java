@@ -19,8 +19,6 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.Result;
 import org.junit.runner.manipulation.Filter;
-import org.junit.runner.notification.Failure;
-import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.ParentRunner;
@@ -28,6 +26,7 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerScheduler;
 import org.junit.tests.experimental.rules.RuleMemberValidatorTest.TestWithNonStaticClassRule;
 import org.junit.tests.experimental.rules.RuleMemberValidatorTest.TestWithProtectedClassRule;
+import org.junit.tests.mock.MockTestRunner;
 
 public class ParentRunnerTest {
     public static String log = "";
@@ -166,12 +165,12 @@ public class ParentRunnerTest {
 
     @Test
     public void assertionErrorAtParentLevelTest() throws InitializationError {
-        CountingRunListener countingRunListener = runTestWithParentRunner(AssertionErrorAtParentLevelTest.class);
-        Assert.assertEquals(0, countingRunListener.testStarted);
-        Assert.assertEquals(0, countingRunListener.testFinished);
-        Assert.assertEquals(1, countingRunListener.testFailure);
-        Assert.assertEquals(0, countingRunListener.testAssumptionFailure);
-        Assert.assertEquals(0, countingRunListener.testIgnored);
+        MockTestRunner runner = MockTestRunner.runTestsOf(AssertionErrorAtParentLevelTest.class);
+        Assert.assertEquals(0, runner.getTestStartedCount());
+        Assert.assertEquals(0, runner.getTestFinishedCount());
+        Assert.assertEquals(1, runner.getTestFailureCount());
+        Assert.assertEquals(0, runner.getTestAssumptionFailureCount());
+        Assert.assertEquals(0, runner.getTestIgnoredCount());
     }
 
     public static class AssumptionViolatedAtParentLevelTest {
@@ -187,12 +186,12 @@ public class ParentRunnerTest {
 
     @Test
     public void assumptionViolatedAtParentLevel() throws InitializationError {
-        CountingRunListener countingRunListener = runTestWithParentRunner(AssumptionViolatedAtParentLevelTest.class);
-        Assert.assertEquals(0, countingRunListener.testStarted);
-        Assert.assertEquals(0, countingRunListener.testFinished);
-        Assert.assertEquals(0, countingRunListener.testFailure);
-        Assert.assertEquals(1, countingRunListener.testAssumptionFailure);
-        Assert.assertEquals(0, countingRunListener.testIgnored);
+        MockTestRunner runner = MockTestRunner.runTestsOf(AssumptionViolatedAtParentLevelTest.class);
+        Assert.assertEquals(0, runner.getTestStartedCount());
+        Assert.assertEquals(0, runner.getTestFinishedCount());
+        Assert.assertEquals(0, runner.getTestFailureCount());
+        Assert.assertEquals(1, runner.getTestAssumptionFailureCount());
+        Assert.assertEquals(0, runner.getTestIgnoredCount());
     }
 
     public static class TestTest {
@@ -217,53 +216,11 @@ public class ParentRunnerTest {
 
     @Test
     public void parentRunnerTestMethods() throws InitializationError {
-        CountingRunListener countingRunListener = runTestWithParentRunner(TestTest.class);
-        Assert.assertEquals(3, countingRunListener.testStarted);
-        Assert.assertEquals(3, countingRunListener.testFinished);
-        Assert.assertEquals(1, countingRunListener.testFailure);
-        Assert.assertEquals(1, countingRunListener.testAssumptionFailure);
-        Assert.assertEquals(1, countingRunListener.testIgnored);
-    }
-
-    private CountingRunListener runTestWithParentRunner(Class<?> testClass) throws InitializationError {
-        CountingRunListener listener = new CountingRunListener();
-        RunNotifier runNotifier = new RunNotifier();
-        runNotifier.addListener(listener);
-        ParentRunner<?> runner = new BlockJUnit4ClassRunner(testClass);
-        runner.run(runNotifier);
-        return listener;
-    }
-
-    private static class CountingRunListener extends RunListener {
-        private int testStarted = 0;
-        private int testFinished = 0;
-        private int testFailure = 0;
-        private int testAssumptionFailure = 0;
-        private int testIgnored = 0;
-
-        @Override
-        public void testStarted(Description description) throws Exception {
-            testStarted++;
-        }
-
-        @Override
-        public void testFinished(Description description) throws Exception {
-            testFinished++;
-        }
-
-        @Override
-        public void testFailure(Failure failure) throws Exception {
-            testFailure++;
-        }
-
-        @Override
-        public void testAssumptionFailure(Failure failure) {
-            testAssumptionFailure++;
-        }
-
-        @Override
-        public void testIgnored(Description description) throws Exception {
-            testIgnored++;
-        }
+        MockTestRunner runner = MockTestRunner.runTestsOf(TestTest.class);
+        Assert.assertEquals(3, runner.getTestStartedCount());
+        Assert.assertEquals(3, runner.getTestFinishedCount());
+        Assert.assertEquals(1, runner.getTestFailureCount());
+        Assert.assertEquals(1, runner.getTestAssumptionFailureCount());
+        Assert.assertEquals(1, runner.getTestIgnoredCount());
     }
 }

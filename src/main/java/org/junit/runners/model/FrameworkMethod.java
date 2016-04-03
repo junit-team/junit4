@@ -18,16 +18,31 @@ import org.junit.internal.runners.model.ReflectiveCallable;
  */
 public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
     private final Method method;
+    
+    /**
+     * Context for the method, chosen by the creator to help later
+     * users of this method use it in the correct way
+     */
+    private final Object context;
 
     /**
      * Returns a new {@code FrameworkMethod} for {@code method}
      */
     public FrameworkMethod(Method method) {
+        this(method, null);
+    }
+    
+    /**
+     * Returns a new  {@code FrameworkMethod} for {@code method}
+     * with an annotation as context
+     */
+    public FrameworkMethod(Method method, Object context) {
         if (method == null) {
             throw new NullPointerException(
                     "FrameworkMethod cannot be created without an underlying method.");
         }
         this.method = method;
+        this.context = context;
     }
 
     /**
@@ -35,6 +50,19 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
      */
     public Method getMethod() {
         return method;
+    }
+    
+    /**
+     * Retrieve the context of this method as the expected type
+     * @param type type required
+     * @return null if there is no context or the context is not the required type
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getContextAs(Class<?> type) {
+        if (context!=null && type.isAssignableFrom(context.getClass())) {
+            return (T)context;
+        }
+        return null;
     }
 
     /**
@@ -153,14 +181,26 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
         if (!FrameworkMethod.class.isInstance(obj)) {
             return false;
         }
-        return ((FrameworkMethod) obj).method.equals(method);
+        FrameworkMethod other = (FrameworkMethod)obj;
+        if (context == null) {
+            if (other.context != null) {
+                return false;
+            }
+        } else if (!context.equals(other.context)) {
+            return false;        
+        }
+        return other.method.equals(method);
     }
 
     @Override
     public int hashCode() {
-        return method.hashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((context == null) ? 0 : context.hashCode());
+        result = prime * result + ((method == null) ? 0 : method.hashCode());
+        return result;
     }
-
+    
     /**
      * Returns true if this is a no-arg method that returns a value assignable
      * to {@code type}
@@ -176,7 +216,10 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
                 && ((Class<?>) type).isAssignableFrom(method.getReturnType());
     }
 
-    private Class<?>[] getParameterTypes() {
+    /**
+     * Returns the parameter types of this method
+     */
+    public Class<?>[] getParameterTypes() {
         return method.getParameterTypes();
     }
 

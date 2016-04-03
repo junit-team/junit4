@@ -95,4 +95,12 @@ public @interface Test {
      * </p>
      */
     long timeout() default 0L;
+    
+    /**
+     * Optionally specify an array of {@link org.junit.TestCase} annotations to mark this test method as
+     * data driven. This will allow a test runner to execute the same method multiple times for each of the
+     * individual sets of test data. This functionality is available in {@link org.junit.runners.BlockJUnit4ClassRunner}
+     * the default JUnit4 test runner.
+     */
+    TestCase[] cases() default {};    
 }
