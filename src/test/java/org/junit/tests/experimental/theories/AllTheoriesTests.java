@@ -11,7 +11,9 @@ import org.junit.tests.experimental.theories.runner.AllTheoriesRunnerTests;
         AllTheoriesInternalTests.class,
         AllTheoriesRunnerTests.class,
         ParameterSignatureTest.class,
-        TestedOnSupplierTest.class
+        TestedOnSupplierTest.class,
+        AssumingInTheoriesTest.class,
+        PotentialAssignmentTest.class
 })
 public class AllTheoriesTests {
 }

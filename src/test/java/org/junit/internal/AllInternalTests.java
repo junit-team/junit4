@@ -11,6 +11,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
+        AnnotatedBuilderTest.class,
         ErrorReportingRunnerTest.class,
         FailOnTimeoutTest.class,
         MethodSorterTest.class,

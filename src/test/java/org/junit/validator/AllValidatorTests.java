@@ -6,6 +6,8 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
+        AnnotationsValidatorTest.class,
+        AnnotationValidatorFactoryTest.class,
         PublicClassValidatorTest.class
 })
 public class AllValidatorTests {

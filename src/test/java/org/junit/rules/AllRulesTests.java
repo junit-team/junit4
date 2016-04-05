@@ -21,6 +21,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TemporaryFolderUsageTest.class,
         TestRuleTest.class,
         TestWatcherTest.class,
+        TestWatchmanTest.class,
+        // todo TestWatchmanTest.class, - doesn't work and wasn't being run before.
         TimeoutRuleTest.class,
         VerifierRuleTest.class
 })

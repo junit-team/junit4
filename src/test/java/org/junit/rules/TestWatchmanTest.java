@@ -13,8 +13,9 @@ import org.junit.runners.model.FrameworkMethod;
 @SuppressWarnings("deprecation")
 public class TestWatchmanTest {
     public static class ViolatedAssumptionTest {
+        static StringBuilder log = new StringBuilder();
         @Rule
-        public static LoggingTestWatchman watchman = new LoggingTestWatchman();
+        public LoggingTestWatchman watchman = new LoggingTestWatchman(log);
 
         @Test
         public void succeeds() {
@@ -25,13 +26,14 @@ public class TestWatchmanTest {
     @Test
     public void neitherLogSuccessNorFailedForViolatedAssumption() {
         runClasses(ViolatedAssumptionTest.class);
-        assertThat(ViolatedAssumptionTest.watchman.log.toString(),
+        assertThat(ViolatedAssumptionTest.log.toString(),
                 is("starting finished "));
     }
 
     public static class FailingTest {
+        static StringBuilder log = new StringBuilder();
         @Rule
-        public static LoggingTestWatchman watchman = new LoggingTestWatchman();
+        public LoggingTestWatchman watchman = new LoggingTestWatchman(log);
 
         @Test
         public void succeeds() {
@@ -42,12 +44,16 @@ public class TestWatchmanTest {
     @Test
     public void logFailingTest() {
         runClasses(FailingTest.class);
-        assertThat(FailingTest.watchman.log.toString(),
+        assertThat(FailingTest.log.toString(),
                 is("starting failed finished "));
     }
 
     private static class LoggingTestWatchman extends TestWatchman {
-        private final StringBuilder log = new StringBuilder();
+        private final StringBuilder log;
+
+        private LoggingTestWatchman(StringBuilder log) {
+            this.log = log;
+        }
 
         @Override
         public void succeeded(FrameworkMethod method) {

@@ -7,6 +7,7 @@ import org.junit.samples.money.MoneyTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({
+        ListTest.class,
         MoneyTest.class
 })
 public class AllSamplesTests {
