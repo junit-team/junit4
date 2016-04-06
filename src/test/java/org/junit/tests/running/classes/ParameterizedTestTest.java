@@ -311,8 +311,38 @@ public class ParameterizedTestTest {
     @Test
     public void meaningfulFailureWhenParametersNotPublic() {
         assertTestCreatesSingleFailureWithMessage(ProtectedParametersTest.class,
-                "No public static parameters method on class "
-                        + ProtectedParametersTest.class.getName());
+                "Parameters method should be public");
+    }
+
+    @RunWith(Parameterized.class)
+    static public class NonStaticParametersTest {
+        @Parameters
+        public Collection<Object[]> data() {
+            return Collections.emptyList();
+        }
+
+        @Test
+        public void aTest() {
+        }
+    }
+
+    @Test
+    public void meaningfulFailureWhenParametersNotStatic() {
+        assertTestCreatesSingleFailureWithMessage(NonStaticParametersTest.class,
+                "Parameters method should be static");
+    }
+
+    @RunWith(Parameterized.class)
+    static public class MissingParametersMethods {
+        @Test
+        public void aTest() {
+        }
+    }
+
+    @Test
+    public void meaningfulFailureWithoutParameters() {
+        assertTestCreatesSingleFailureWithMessage(MissingParametersMethods.class,
+                "No parameters methods found");
     }
 
     @RunWith(Parameterized.class)
@@ -380,7 +410,7 @@ public class ParameterizedTestTest {
 
     @Test
     public void runsEveryTestOfArray() {
-        Result result= JUnitCore.runClasses(AdditionTestWithArray.class);
+        Result result = JUnitCore.runClasses(AdditionTestWithArray.class);
         assertEquals(4, result.getRunCount());
     }
 
@@ -401,7 +431,7 @@ public class ParameterizedTestTest {
 
     @Test
     public void runsForEverySingleArgumentOfArray() {
-        Result result= JUnitCore.runClasses(SingleArgumentTestWithArray.class);
+        Result result = JUnitCore.runClasses(SingleArgumentTestWithArray.class);
         assertEquals(2, result.getRunCount());
     }
 
@@ -418,11 +448,11 @@ public class ParameterizedTestTest {
         @Test
         public void aTest() {
         }
-  	}
+    }
 
     @Test
     public void runsForEverySingleArgumentOfIterable() {
-        Result result= JUnitCore
+        Result result = JUnitCore
                 .runClasses(SingleArgumentTestWithIterable.class);
         assertEquals(2, result.getRunCount());
     }
@@ -464,7 +494,7 @@ public class ParameterizedTestTest {
         assertEquals(1, result.getFailures().size());
         assertEquals(message, result.getFailures().get(0).getMessage());
     }
-    
+
     @RunWith(Parameterized.class)
     @UseParametersRunnerFactory(ExceptionThrowingRunnerFactory.class)
     public static abstract class UseParameterizedFactoryAbstractTest {
@@ -473,7 +503,7 @@ public class ParameterizedTestTest {
             return asList("single test");
         }
     }
-    
+
     public static class UseParameterizedFactoryTest extends
             UseParameterizedFactoryAbstractTest {
 
@@ -485,7 +515,7 @@ public class ParameterizedTestTest {
         public void parameterizedTest() {
         }
     }
-    
+
     @Test
     public void usesParametersRunnerFactoryThatWasSpecifiedByAnnotationInSuperClass() {
         assertTestCreatesSingleFailureWithMessage(

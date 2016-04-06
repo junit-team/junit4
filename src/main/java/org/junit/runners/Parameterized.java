@@ -278,7 +278,7 @@ public class Parameterized extends Suite {
                     Parameters.class);
 
             if (methods.isEmpty()) {
-                throw new Exception("No parameters methods found!");
+                throw new Exception("No parameters methods found");
             }
 
             for (FrameworkMethod method : methods) {
@@ -287,7 +287,7 @@ public class Parameterized extends Suite {
                 }
 
                 if (!method.isStatic()) {
-                    throw new Exception("Parameters methods should be static");
+                    throw new Exception("Parameters method should be static");
                 }
             }
             return methods;
@@ -309,36 +309,49 @@ public class Parameterized extends Suite {
             String pattern = method.getAnnotation(Parameters.class).name();
             List<TestWithParameters> tests = new ArrayList<TestWithParameters>();
             int index = 0;
-            for (Object[] parametersSet : getParametersForMethod(method)) {
+            for (Object parameters : getParametersForMethod(method)) {
                 String finalPattern = pattern
                         .replaceAll("\\{method\\}", method.getName())
                         .replaceAll("\\{index\\}", Integer.toString(index++));
-                String name = MessageFormat.format(finalPattern, parametersSet);
+                Object[] normalizedParameters = normalizeParameters(parameters);
+                String name = MessageFormat.format(finalPattern,
+                        normalizedParameters);
                 tests.add(new TestWithParameters("[" + name + "]", testClass,
-                        Arrays.asList(parametersSet)));
+                        Arrays.asList(normalizedParameters)));
             }
             return tests;
         }
 
         @SuppressWarnings("unchecked")
-        private Iterable<Object[]> getParametersForMethod(
+        private Iterable<Object> getParametersForMethod(
                 FrameworkMethod method)
                 throws Throwable {
             Object parameters = method.invokeExplosively(null);
 
             try {
                 if (parameters instanceof Iterable) {
-                    return (Iterable<Object[]>) parameters;
+                    return (Iterable<Object>) parameters;
                 }
 
-                if (parameters instanceof Object[][]) {
-                    return Arrays.asList((Object[][]) parameters);
+                if (parameters instanceof Object[]) {
+                    return Arrays.asList((Object[]) parameters);
                 }
             } catch (ClassCastException ex) {
                 // ignore
             }
 
-            throw new Exception("parameters should returns iterable or array");
+            String message = MessageFormat.format(
+                    "{0}.{1}() must return an Iterable of arrays.",
+                    testClass.getName(), method.getName());
+            throw new Exception(message);
+        }
+
+        private Object[] normalizeParameters(Object parameters) {
+            if (parameters instanceof Object[]) {
+                return (Object[]) parameters;
+            }
+
+            return new Object[]{parameters};
         }
     }
 }
