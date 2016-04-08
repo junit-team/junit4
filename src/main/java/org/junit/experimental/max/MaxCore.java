@@ -114,7 +114,7 @@ public class MaxCore {
                     return new Suite((Class<?>) null, runners) {
                     };
                 } catch (InitializationError e) {
-                    return new ErrorReportingRunner(null, e);
+                    return new ErrorReportingRunner((Class<?>) null, e);
                 }
             }
         };

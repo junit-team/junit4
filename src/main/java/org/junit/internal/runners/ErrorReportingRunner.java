@@ -13,28 +13,39 @@ import org.junit.runners.model.InitializationError;
 public class ErrorReportingRunner extends Runner {
     private final List<Throwable> causes;
 
-    private final String classNames;
+    // Only one of the following two fields will be non-null.
+    private final Class<?> testClass;
+    private final String displayName;
 
     public ErrorReportingRunner(Class<?> testClass, Throwable cause) {
-        this(cause, new Class<?>[] { testClass });
-    }
-    
-    public ErrorReportingRunner(Throwable cause, Class<?>... testClasses) {
-        if (testClasses == null || testClasses.length == 0) {
-            throw new NullPointerException("Test classes cannot be null or empty");
+        if (testClass == null) {
+            throw new NullPointerException("Test class cannot be null");
         }
-        for (Class<?> testClass : testClasses) {
-            if (testClass == null) {
-                throw new NullPointerException("Test class cannot be null");
-            }
-        }
-        classNames = getClassNames(testClasses);
+        this.testClass = testClass;
+        displayName = null;
         causes = getCauses(cause);
     }
-    
+
+    /**
+     * @since 4.13
+     */
+    public ErrorReportingRunner(String displayName, Throwable cause) {
+        if (displayName == null) {
+            throw new NullPointerException("Display name cannot be null");
+        }
+        testClass = null;
+        this.displayName = displayName;
+        causes = getCauses(cause);
+    }
+
     @Override
     public Description getDescription() {
-        Description description = Description.createSuiteDescription(classNames);
+        Description description;
+        if (testClass != null) {
+            description = Description.createSuiteDescription(testClass);
+        } else {
+            description = Description.createSuiteDescription(displayName);
+        }
         for (Throwable each : causes) {
             description.addChild(describeCause(each));
         }
@@ -48,19 +59,8 @@ public class ErrorReportingRunner extends Runner {
         }
     }
 
-    private String getClassNames(Class<?>... testClasses) {
-        final StringBuilder builder = new StringBuilder();
-        for (Class<?> testClass : testClasses) {
-            if (builder.length() != 0) {
-                builder.append(", ");
-            }
-            builder.append(testClass.getName());
-        }
-        return builder.toString();
-    }
-
     @SuppressWarnings("deprecation")
-    private List<Throwable> getCauses(Throwable cause) {
+    private static List<Throwable> getCauses(Throwable cause) {
         if (cause instanceof InvocationTargetException) {
             return getCauses(cause.getCause());
         }
@@ -75,7 +75,10 @@ public class ErrorReportingRunner extends Runner {
     }
 
     private Description describeCause(Throwable child) {
-        return Description.createTestDescription(classNames, "initializationError");
+        if (testClass != null) {
+            return Description.createTestDescription(testClass, "initializationError");
+        }
+        return Description.createTestDescription(displayName, "initializationError");
     }
 
     private void runCause(Throwable child, RunNotifier notifier) {

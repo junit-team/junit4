@@ -70,13 +70,35 @@ public abstract class Request {
      * @return a <code>Request</code> that will cause all tests in the classes to be run
      */
     public static Request classes(Computer computer, Class<?>... classes) {
+        if (computer == null) {
+            throw new NullPointerException("Computer cannot be null");
+        }
+        if (classes == null) {
+            throw new NullPointerException("Classes cannot be null");
+        }
+
         try {
             AllDefaultPossibilitiesBuilder builder = new AllDefaultPossibilitiesBuilder(true);
             Runner suite = computer.getSuite(builder, classes);
             return runner(suite);
         } catch (InitializationError e) {
-            return runner(new ErrorReportingRunner(e, classes));
+            return runner(new ErrorReportingRunner(joinClassNames(classes), e));
         }
+    }
+
+    private static String joinClassNames(Class<?>... testClasses) {
+        StringBuilder builder = new StringBuilder();
+        for (Class<?> testClass : testClasses) {
+            if (builder.length() != 0) {
+                builder.append(", ");
+            }
+            if (testClass == null) {
+                builder.append("null");
+            } else {
+                builder.append(testClass.getName());
+            }
+        }
+        return builder.toString();
     }
 
     /**
