@@ -219,7 +219,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
     /**
      * Returns a {@link Statement}: run all non-overridden {@code @AfterClass} methods on this class
-     * and superclasses before executing {@code statement}; all AfterClass methods are
+     * and superclasses after executing {@code statement}; all AfterClass methods are
      * always executed: exceptions thrown by previous steps are combined, if
      * necessary, with exceptions from AfterClass methods into a
      * {@link org.junit.runners.model.MultipleFailureException}.
