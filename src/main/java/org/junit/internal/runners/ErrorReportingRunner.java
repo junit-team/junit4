@@ -71,22 +71,22 @@ public class ErrorReportingRunner extends Runner {
         return Arrays.asList(cause);
     }
 
-    private Description describeCause(Throwable child) {
-        return Description.createTestDescription(classNames, "initializationError");
-    }
-
     private Description createDescription() {
         Description description = Description.createSuiteDescription(classNames);
         for (Throwable each : causes) {
-            description.addChild(describeCause(each));
+            description.addChild(describeCause());
         }
         return description;
     }
 
     private void runCause(Throwable child, RunNotifier notifier) {
-        Description description = describeCause(child);
+        Description description = describeCause();
         notifier.fireTestStarted(description);
         notifier.fireTestFailure(new Failure(description, child));
         notifier.fireTestFinished(description);
+    }
+
+    private Description describeCause() {
+        return Description.createTestDescription(classNames, "initializationError");
     }
 }
