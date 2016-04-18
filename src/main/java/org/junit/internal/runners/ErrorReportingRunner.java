@@ -12,8 +12,8 @@ import org.junit.runners.model.InitializationError;
 
 public class ErrorReportingRunner extends Runner {
     private final List<Throwable> causes;
-
     private final String classNames;
+    private final Description description;
 
     public ErrorReportingRunner(Class<?> testClass, Throwable cause) {
         this(cause, new Class<?>[] { testClass });
@@ -30,15 +30,7 @@ public class ErrorReportingRunner extends Runner {
         }
         classNames = getClassNames(testClasses);
         causes = getCauses(cause);
-    }
-    
-    @Override
-    public Description getDescription() {
-        Description description = Description.createSuiteDescription(classNames);
-        for (Throwable each : causes) {
-            description.addChild(describeCause(each));
-        }
-        return description;
+        description = createDescription();
     }
 
     @Override
@@ -46,6 +38,11 @@ public class ErrorReportingRunner extends Runner {
         for (Throwable each : causes) {
             runCause(each, notifier);
         }
+    }
+
+    @Override
+    public Description getDescription() {
+        return description;
     }
 
     private String getClassNames(Class<?>... testClasses) {
@@ -76,6 +73,14 @@ public class ErrorReportingRunner extends Runner {
 
     private Description describeCause(Throwable child) {
         return Description.createTestDescription(classNames, "initializationError");
+    }
+
+    private Description createDescription() {
+        Description description = Description.createSuiteDescription(classNames);
+        for (Throwable each : causes) {
+            description.addChild(describeCause(each));
+        }
+        return description;
     }
 
     private void runCause(Throwable child, RunNotifier notifier) {
