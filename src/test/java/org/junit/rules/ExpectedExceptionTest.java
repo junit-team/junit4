@@ -7,6 +7,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
@@ -26,6 +27,7 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.junit.runners.model.Statement;
 
 @RunWith(Parameterized.class)
 public class ExpectedExceptionTest {
@@ -362,6 +364,43 @@ public class ExpectedExceptionTest {
         public void noThrow() {
             thrown.expect(IllegalArgumentException.class);
             thrown.reportMissingExceptionWithMessage(ARBITRARY_MESSAGE);
+        }
+    }
+
+    public static class ThrownExpectedExceptionAndContinueTestAfterException {
+
+        public ExpectedException thrown = ExpectedException.none();
+        public ExpectedException thrownInPostStatement = ExpectedException.none();
+
+        @Rule
+        public RuleChain ruleChain = RuleChain.outerRule(thrownInPostStatement).around(thrown);
+
+        @Test
+        public void shouldEvaluateGivenStatementAfterExpectedException() {
+            final String exceptionMessage = "To make sure that statement evaluation is done";
+            int number = 10;
+            final int[] input = {2, 5, 0, 3};
+            thrownInPostStatement.expect(RuntimeException.class);
+            thrownInPostStatement.expectMessage(exceptionMessage);
+            thrown.expect(ArithmeticException.class);
+            thrown.evaluatePostException(new Statement() {
+                @Override
+                public void evaluate() throws Throwable {
+                    assertEquals(input[0], 5);
+                    assertEquals(input[1], 2);
+                    assertEquals(input[2], 0);
+                    assertEquals(input[3], 3);
+                    throw new RuntimeException(exceptionMessage);
+                }
+            });
+
+            divideBy(number, input);
+        }
+
+        private void divideBy(int number, int[] input) {
+            for (int i = 0; i < input.length; i++) {
+                input[i]=number/input[i];
+            }
         }
     }
 }
