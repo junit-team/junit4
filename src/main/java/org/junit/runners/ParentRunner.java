@@ -415,7 +415,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         List<Throwable> errors = new ArrayList<Throwable>();
         collectInitializationErrors(errors);
         if (!errors.isEmpty()) {
-            throw new InitializationError(errors);
+            throw new InvalidTestClassError(testClass.getJavaClass(), errors);
         }
     }
 
