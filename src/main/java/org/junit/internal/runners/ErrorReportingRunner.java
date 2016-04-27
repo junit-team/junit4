@@ -16,7 +16,7 @@ public class ErrorReportingRunner extends Runner {
     private final Description description;
 
     public ErrorReportingRunner(Class<?> testClass, Throwable cause) {
-        this(cause, new Class<?>[] { testClass });
+        this(cause, testClass);
     }
     
     public ErrorReportingRunner(Throwable cause, Class<?>... testClasses) {
