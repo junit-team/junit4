@@ -1,7 +1,6 @@
 package org.junit.internal.runners;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.runner.Description;
@@ -9,6 +8,8 @@ import org.junit.runner.Runner;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
+
+import static java.util.Collections.singletonList;
 
 public class ErrorReportingRunner extends Runner {
     private final List<Throwable> causes;
@@ -68,7 +69,7 @@ public class ErrorReportingRunner extends Runner {
             return ((org.junit.internal.runners.InitializationError) cause)
                     .getCauses();
         }
-        return Arrays.asList(cause);
+        return singletonList(cause);
     }
 
     private Description createDescription() {
