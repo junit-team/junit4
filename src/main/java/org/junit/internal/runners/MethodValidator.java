@@ -45,11 +45,10 @@ public class MethodValidator {
         validateTestMethods(AfterClass.class, true);
     }
 
-    public List<Throwable> validateMethodsForDefaultRunner() {
+    public void validateMethodsForDefaultRunner() {
         validateNoArgConstructor();
         validateStaticMethods();
         validateInstanceMethods();
-        return errors;
     }
 
     public void assertValid() throws InitializationError {

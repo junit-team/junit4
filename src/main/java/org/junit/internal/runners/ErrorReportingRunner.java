@@ -35,8 +35,8 @@ public class ErrorReportingRunner extends Runner {
     @Override
     public Description getDescription() {
         Description description = Description.createSuiteDescription(classNames);
-        for (Throwable each : causes) {
-            description.addChild(describeCause(each));
+        for(int i = 0; i < causes.size(); i++) {
+            description.addChild(describeCause());
         }
         return description;
     }
@@ -74,12 +74,12 @@ public class ErrorReportingRunner extends Runner {
         return Arrays.asList(cause);
     }
 
-    private Description describeCause(Throwable child) {
+    private Description describeCause() {
         return Description.createTestDescription(classNames, "initializationError");
     }
 
     private void runCause(Throwable child, RunNotifier notifier) {
-        Description description = describeCause(child);
+        Description description = describeCause();
         notifier.fireTestStarted(description);
         notifier.fireTestFailure(new Failure(description, child));
         notifier.fireTestFinished(description);

@@ -1,6 +1,5 @@
 package org.junit.internal.runners;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -21,14 +20,6 @@ public class InitializationError extends Exception {
 
     public InitializationError(List<Throwable> errors) {
         this.fErrors = errors;
-    }
-
-    public InitializationError(Throwable... errors) {
-        this(Arrays.asList(errors));
-    }
-
-    public InitializationError(String string) {
-        this(new Exception(string));
     }
 
     public List<Throwable> getCauses() {

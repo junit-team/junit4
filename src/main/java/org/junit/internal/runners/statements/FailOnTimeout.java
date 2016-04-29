@@ -31,18 +31,6 @@ public class FailOnTimeout extends Statement {
         return new Builder();
     }
 
-    /**
-     * Creates an instance wrapping the given statement with the given timeout in milliseconds.
-     *
-     * @param statement the statement to wrap
-     * @param timeoutMillis the timeout in milliseconds
-     * @deprecated use {@link #builder()} instead.
-     */
-    @Deprecated
-    public FailOnTimeout(Statement statement, long timeoutMillis) {
-        this(builder().withTimeout(timeoutMillis, TimeUnit.MILLISECONDS), statement);
-    }
-
     private FailOnTimeout(Builder builder, Statement statement) {
         originalStatement = statement;
         timeout = builder.timeout;
