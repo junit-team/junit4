@@ -41,8 +41,4 @@ public class EachTestNotifier {
     public void fireTestStarted() {
         notifier.fireTestStarted(description);
     }
-
-    public void fireTestIgnored() {
-        notifier.fireTestIgnored(description);
-    }
 }
