@@ -4,6 +4,13 @@ import org.junit.runners.model.InitializationError;
 
 import java.util.List;
 
+/**
+ * Thrown by {@link org.junit.runner.Runner}s in case the class under test is not valid.
+ * <p>
+ * Its message conveniently lists all of the validation errors.
+ *
+ * @since 4.13
+ */
 public class InvalidTestClassError extends InitializationError {
     private static final long serialVersionUID = 1L;
 
@@ -16,6 +23,9 @@ public class InvalidTestClassError extends InitializationError {
         this.message = createMessage(testClass, errors);
     }
 
+    /**
+     * @return a message with a list of all of the validation errors
+     */
     @Override
     public String getMessage() {
         return message;
