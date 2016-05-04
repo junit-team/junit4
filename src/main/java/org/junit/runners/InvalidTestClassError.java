@@ -23,14 +23,6 @@ public class InvalidTestClassError extends InitializationError {
         this.message = createMessage(testClass, errors);
     }
 
-    /**
-     * @return a message with a list of all of the validation errors
-     */
-    @Override
-    public String getMessage() {
-        return message;
-    }
-
     private static String createMessage(Class<?> testClass, List<Throwable> errors) {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("Invalid test class '%s':", testClass.getName()));
@@ -39,5 +31,13 @@ public class InvalidTestClassError extends InitializationError {
             sb.append("\n  " + i++ + ". " + error.getMessage());
         }
         return sb.toString();
+    }
+
+    /**
+     * @return a message with a list of all of the validation errors
+     */
+    @Override
+    public String getMessage() {
+        return message;
     }
 }
