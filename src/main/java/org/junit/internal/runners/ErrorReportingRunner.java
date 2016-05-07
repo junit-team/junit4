@@ -13,8 +13,8 @@ import static java.util.Collections.singletonList;
 
 public class ErrorReportingRunner extends Runner {
     private final List<Throwable> causes;
+
     private final String classNames;
-    private final Description description;
 
     public ErrorReportingRunner(Class<?> testClass, Throwable cause) {
         this(cause, testClass);
@@ -31,7 +31,15 @@ public class ErrorReportingRunner extends Runner {
         }
         classNames = getClassNames(testClasses);
         causes = getCauses(cause);
-        description = createDescription();
+    }
+    
+    @Override
+    public Description getDescription() {
+        Description description = Description.createSuiteDescription(classNames);
+        for (Throwable each : causes) {
+            description.addChild(describeCause());
+        }
+        return description;
     }
 
     @Override
@@ -39,11 +47,6 @@ public class ErrorReportingRunner extends Runner {
         for (Throwable each : causes) {
             runCause(each, notifier);
         }
-    }
-
-    @Override
-    public Description getDescription() {
-        return description;
     }
 
     private String getClassNames(Class<?>... testClasses) {
@@ -70,14 +73,6 @@ public class ErrorReportingRunner extends Runner {
                     .getCauses();
         }
         return singletonList(cause);
-    }
-
-    private Description createDescription() {
-        Description description = Description.createSuiteDescription(classNames);
-        for (Throwable each : causes) {
-            description.addChild(describeCause());
-        }
-        return description;
     }
 
     private void runCause(Throwable child, RunNotifier notifier) {
