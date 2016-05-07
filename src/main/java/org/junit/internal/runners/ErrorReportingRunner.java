@@ -75,14 +75,14 @@ public class ErrorReportingRunner extends Runner {
         return singletonList(cause);
     }
 
+    private Description describeCause() {
+        return Description.createTestDescription(classNames, "initializationError");
+    }
+
     private void runCause(Throwable child, RunNotifier notifier) {
         Description description = describeCause();
         notifier.fireTestStarted(description);
         notifier.fireTestFailure(new Failure(description, child));
         notifier.fireTestFinished(description);
-    }
-
-    private Description describeCause() {
-        return Description.createTestDescription(classNames, "initializationError");
     }
 }
