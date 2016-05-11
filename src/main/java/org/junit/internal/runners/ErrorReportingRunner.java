@@ -8,6 +8,7 @@ import org.junit.runners.InvalidTestClassError;
 import org.junit.runners.model.InitializationError;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
@@ -76,7 +77,7 @@ public class ErrorReportingRunner extends Runner {
             return ((org.junit.internal.runners.InitializationError) cause)
                     .getCauses();
         }
-        return singletonList(cause);
+        return Arrays.asList(cause);
     }
 
     private Description describeCause(Throwable child) {
