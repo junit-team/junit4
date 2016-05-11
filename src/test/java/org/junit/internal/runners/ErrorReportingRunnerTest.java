@@ -42,7 +42,7 @@ public class ErrorReportingRunnerTest {
     public void givenInvalidTestClassErrorAsCause() {
         final List<Failure> firedFailures = new ArrayList<Failure>();
         InvalidTestClassError testClassError = new InvalidTestClassError(TestClassWithErrors.class,
-                Arrays.asList(new Throwable("reason1"), new Throwable("reason2")));
+                Arrays.asList(new Throwable("validation error 1"), new Throwable("validation error 2")));
         ErrorReportingRunner sut = new ErrorReportingRunner(TestClassWithErrors.class, testClassError);
 
         sut.run(new RunNotifier() {
@@ -65,15 +65,15 @@ public class ErrorReportingRunnerTest {
 
         assertThat(result.getFailureCount(), is(1));
         Throwable failure = result.getFailures().get(0).getException();
+        assertThat(failure, instanceOf(InvalidTestClassError.class));
         assertThat(failure.getMessage(), allOf(
-                startsWith("Invalid test class"),
-                containsString(TestClassWithErrors.class.getName()),
+                startsWith("Invalid test class '" + TestClassWithErrors.class.getName() + "'"),
                 containsString("\n  1. "),
                 containsString("\n  2. ")
         ));
     }
 
-    public static class TestClassWithErrors {
+    private static class TestClassWithErrors {
         @Before public static void staticBeforeMethod() {}
         @After public static void staticAfterMethod() {}
 
