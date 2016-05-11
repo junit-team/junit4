@@ -17,17 +17,17 @@ public class InvalidTestClassError extends InitializationError {
     private final Class<?> testClass;
     private final String message;
 
-    public InvalidTestClassError(Class<?> offendingTestClass, List<Throwable> errors) {
-        super(errors);
+    public InvalidTestClassError(Class<?> offendingTestClass, List<Throwable> validationErrors) {
+        super(validationErrors);
         this.testClass = offendingTestClass;
-        this.message = createMessage(testClass, errors);
+        this.message = createMessage(testClass, validationErrors);
     }
 
-    private static String createMessage(Class<?> testClass, List<Throwable> errors) {
+    private static String createMessage(Class<?> testClass, List<Throwable> validationErrors) {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("Invalid test class '%s':", testClass.getName()));
         int i = 1;
-        for (Throwable error : errors) {
+        for (Throwable error : validationErrors) {
             sb.append("\n  " + i++ + ". " + error.getMessage());
         }
         return sb.toString();
