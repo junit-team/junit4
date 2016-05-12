@@ -19,7 +19,9 @@ public class ExpectException extends Statement {
             next.evaluate();
             complete = true;
         } catch (AssumptionViolatedException e) {
-            throw e;
+            if (!expected.isAssignableFrom(e.getClass())) {
+                throw e;
+            }
         } catch (Throwable e) {
             if (!expected.isAssignableFrom(e.getClass())) {
                 String message = "Unexpected exception, expected<"
