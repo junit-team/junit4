@@ -262,6 +262,13 @@
                     <useSystemClassLoader>true</useSystemClassLoader>
                     <enableAssertions>false</enableAssertions>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-junit47</artifactId>
+                        <version>2.19.1</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <!--
@@ -552,13 +559,6 @@
                             <parallel>classes</parallel>
                             <threadCountClasses>2</threadCountClasses>
                         </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.apache.maven.surefire</groupId>
-                                <artifactId>surefire-junit47</artifactId>
-                                <version>2.18</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                 </plugins>
             </build>
