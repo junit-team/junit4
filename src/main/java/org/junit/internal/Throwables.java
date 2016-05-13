@@ -1,5 +1,8 @@
 package org.junit.internal;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 /**
  * Miscellaneous functions dealing with {@code Throwable}.
  *
@@ -38,5 +41,14 @@ public final class Throwables {
     @SuppressWarnings("unchecked")
     private static <T extends Throwable> void rethrow(Throwable e) throws T {
         throw (T) e;
+    }
+
+    /**
+     * Gets the stack trace from a Throwable as a String.
+     */
+    public static String getStackTrace(Throwable throwable) {
+        StringWriter sw = new StringWriter();
+        throwable.printStackTrace(new PrintWriter(sw, true));
+        return sw.toString();
     }
 }
