@@ -47,6 +47,22 @@ public class ResultMatchers {
     }
 
     /**
+     * Matches if the number of failures matches {@code countMatcher}
+     */
+    public static Matcher<PrintableResult> failureCount(final Matcher<Integer> countMatcher) {
+        return new TypeSafeMatcher<PrintableResult>() {
+            public void describeTo(Description description) {
+                description.appendText("has a number of failures matching " + countMatcher);
+            }
+
+            @Override
+            public boolean matchesSafely(PrintableResult item) {
+                return countMatcher.matches(item.failureCount());
+            }
+        };
+    }
+
+    /**
      * Matches if the result has exactly one failure, and it contains {@code string}
      */
     public static Matcher<Object> hasSingleFailureContaining(final String string) {

@@ -8,8 +8,7 @@ import org.junit.runner.notification.Failure;
 
 import java.util.ArrayList;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 public class ResultMatchersTest {
@@ -29,5 +28,11 @@ public class ResultMatchersTest {
     public void hasFailureContaining_givenNonMatchingScenario() {
         PrintableResult resultWithNoFailures = new PrintableResult(new ArrayList<Failure>());
         assertThat(ResultMatchers.hasFailureContaining("").matches(resultWithNoFailures), is(false));
+    }
+
+    @Test
+    public void failureCount_nonMatchingScenario() {
+        PrintableResult resultWithNoFailures = new PrintableResult(new ArrayList<Failure>());
+        assertThat(ResultMatchers.failureCount(greaterThanOrEqualTo(3)).matches(resultWithNoFailures), is(false));
     }
 }
