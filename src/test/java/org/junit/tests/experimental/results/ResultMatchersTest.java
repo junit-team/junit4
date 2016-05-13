@@ -12,10 +12,11 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 public class ResultMatchersTest {
+
     @Test
     public void hasFailuresHasGoodDescription() {
         assertThat(ResultMatchers.failureCountIs(3).toString(),
-                is("has 3 failures"));
+                is("has a number of failures matching <3>"));
     }
 
     @Theory
