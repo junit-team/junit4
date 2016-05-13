@@ -20,7 +20,6 @@ public class ExpectExceptionTest {
         }
     }
 
-
     private static class StatementThrowingAssumptionViolatedException extends Statement {
         @Override
         public void evaluate() throws Throwable {
