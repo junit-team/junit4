@@ -4,15 +4,20 @@ import org.junit.Test;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.runners.model.Statement;
 
+import static org.junit.Assert.*;
+
 public class ExpectExceptionTest {
 
     @Test
-    public void givenWeAreExpectingAssumptionViolatedExceptionAndAStatementThrowingAssumptionViolatedException() throws Exception {
+    public void givenWeAreExpectingAssumptionViolatedExceptionAndAStatementThrowingAssumptionViolatedException() {
         ExpectException sut = new ExpectException(new StatementThrowingAssumptionViolatedException(), AssumptionViolatedException.class);
 
-        sut.evaluate();
-
-        // then no exception should be thrown
+        try {
+            sut.evaluate();
+            // then no exception should be thrown
+        } catch (Throwable e) {
+            fail("should not throw anything, but was thrown: " + e);
+        }
     }
 
 
