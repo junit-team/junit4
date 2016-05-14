@@ -77,9 +77,14 @@ public class AssumptionTest {
         assertThat(result.getFailureCount(), is(1));
     }
 
-    @Test(expected = AssumptionViolatedException.class)
+    @Test
     public void assumeThatWorks() {
-        assumeThat(1, is(2));
+        try {
+            assumeThat(1, is(2));
+            fail("should throw AssumptionViolatedException");
+        } catch (AssumptionViolatedException e) {
+            // expected
+        }
     }
 
     @Test
@@ -94,10 +99,15 @@ public class AssumptionTest {
         assertCompletesNormally();
     }
 
-    @Test(expected = AssumptionViolatedException.class)
+    @Test
     public void assumeNotNullThrowsException() {
         Object[] objects = {1, 2, null};
-        assumeNotNull(objects);
+        try {
+            assumeNotNull(objects);
+            fail("should throw AssumptionViolatedException");
+        } catch (AssumptionViolatedException e) {
+            // expected
+        }
     }
 
     @Test
@@ -133,9 +143,14 @@ public class AssumptionTest {
     private void assertCompletesNormally() {
     }
 
-    @Test(expected = AssumptionViolatedException.class)
+    @Test
     public void assumeTrueWorks() {
-        Assume.assumeTrue(false);
+        try {
+            Assume.assumeTrue(false);
+            fail("should throw AssumptionViolatedException");
+        } catch (AssumptionViolatedException e) {
+            // expected
+        }
     }
 
     public static class HasFailingAssumeInBefore {
