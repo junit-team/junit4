@@ -37,6 +37,14 @@ public class ResultMatchersTest {
     }
 
     @Test
+    public void hasFailureContaining_givenResultWithOneFailure() {
+        PrintableResult resultWithOneFailure = new PrintableResult(Collections.singletonList(
+                new Failure(Description.EMPTY, new RuntimeException("my failure"))));
+
+        assertThat(ResultMatchers.hasFailureContaining("my failure").matches(resultWithOneFailure), is(true));
+    }
+
+    @Test
     public void testFailureCount() {
         PrintableResult resultWithOneFailure = new PrintableResult(Collections.singletonList(
                 new Failure(Description.EMPTY, new RuntimeException("failure 1"))));
