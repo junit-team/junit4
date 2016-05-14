@@ -42,6 +42,7 @@ public class ResultMatchersTest {
                 new Failure(Description.EMPTY, new RuntimeException("my failure"))));
 
         assertThat(ResultMatchers.hasFailureContaining("my failure").matches(resultWithOneFailure), is(true));
+        assertThat(ResultMatchers.hasFailureContaining("his failure").matches(resultWithOneFailure), is(false));
     }
 
     @Test
