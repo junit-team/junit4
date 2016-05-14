@@ -101,8 +101,8 @@ public class AssumptionTest {
 
     @Test
     public void assumeNotNullThrowsException() {
-        Object[] objects = {1, 2, null};
         try {
+            Object[] objects = {1, 2, null};
             assumeNotNull(objects);
             fail("should throw AssumptionViolatedException");
         } catch (AssumptionViolatedException e) {
