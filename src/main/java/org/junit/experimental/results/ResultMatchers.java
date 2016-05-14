@@ -5,8 +5,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 /**
  * Matchers on a PrintableResult, to enable JUnit self-tests.
@@ -76,9 +75,9 @@ public class ResultMatchers {
      * contains {@code string}
      */
     public static Matcher<PrintableResult> hasFailureContaining(final String string) {
-        return new BaseMatcher<PrintableResult>() {
-            public boolean matches(Object item) {
-                return failureCount(greaterThan(0)).matches(item) && item.toString().contains(string);
+        return new TypeSafeMatcher<PrintableResult>() {
+            public boolean matchesSafely(PrintableResult item) {
+                return item.failureCount() > 0 && item.toString().contains(string);
             }
 
             public void describeTo(Description description) {

@@ -4,11 +4,15 @@ import org.junit.Test;
 import org.junit.experimental.results.PrintableResult;
 import org.junit.experimental.results.ResultMatchers;
 import org.junit.experimental.theories.Theory;
+import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 public class ResultMatchersTest {
@@ -26,14 +30,18 @@ public class ResultMatchersTest {
     }
 
     @Test
-    public void hasFailureContaining_givenNonMatchingScenario() {
+    public void hasFailureContaining_givenResultWithNoFailures() {
         PrintableResult resultWithNoFailures = new PrintableResult(new ArrayList<Failure>());
+
         assertThat(ResultMatchers.hasFailureContaining("").matches(resultWithNoFailures), is(false));
     }
 
     @Test
-    public void failureCount_nonMatchingScenario() {
-        PrintableResult resultWithNoFailures = new PrintableResult(new ArrayList<Failure>());
-        assertThat(ResultMatchers.failureCount(greaterThanOrEqualTo(3)).matches(resultWithNoFailures), is(false));
+    public void testFailureCount() {
+        PrintableResult resultWithOneFailure = new PrintableResult(Collections.singletonList(
+                new Failure(Description.EMPTY, new RuntimeException("failure 1"))));
+
+        assertThat(ResultMatchers.failureCount(equalTo(3)).matches(resultWithOneFailure), is(false));
+        assertThat(ResultMatchers.failureCount(equalTo(1)).matches(resultWithOneFailure), is(true));
     }
 }
