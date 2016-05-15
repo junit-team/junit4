@@ -41,9 +41,23 @@ public abstract class ComparisonCriteria {
 
         // Only include the user-provided message in the outer exception.
         String exceptionMessage = outer ? header : "";
-        int expectedsLength = assertArraysAreSameLength(expecteds, actuals, exceptionMessage);
 
-        for (int i = 0; i < expectedsLength; i++) {
+        if (expecteds == null) {
+            Assert.fail(exceptionMessage + "expected array was null");
+        }
+        if (actuals == null) {
+            Assert.fail(exceptionMessage + "actual array was null");
+        }
+
+        int actualsLength = Array.getLength(actuals);
+        int expectedsLength = Array.getLength(expecteds);
+        if (actualsLength != expectedsLength) {
+            header = header + "array lengths differed, expected.length="
+                    + expectedsLength + " actual.length=" + actualsLength + "; ";
+        }
+        int prefixLength = Math.min(actualsLength, expectedsLength);
+
+        for (int i = 0; i < prefixLength; i++) {
             Object expected = Array.get(expecteds, i);
             Object actual = Array.get(actuals, i);
 
@@ -65,27 +79,31 @@ public abstract class ComparisonCriteria {
                 }
             }
         }
+
+        if (actualsLength != expectedsLength) {
+            Object expected = getArrayElementOrSentinel(expecteds, expectedsLength, prefixLength);
+            Object actual = getArrayElementOrSentinel(actuals, actualsLength, prefixLength);
+            try {
+                Assert.assertEquals(expected, actual);
+            } catch (AssertionError e) {
+                throw new ArrayComparisonFailure(header, e, prefixLength);
+            }
+        }
+    }
+
+    private static final Object END_OF_ARRAY_SENTINEL = new Object() {
+        @Override
+        public String toString() {
+            return "end of array";
+        }
+    };
+
+    private Object getArrayElementOrSentinel(Object array, int length, int index) {
+        return index < length ? Array.get(array, index) : END_OF_ARRAY_SENTINEL;
     }
 
     private boolean isArray(Object expected) {
         return expected != null && expected.getClass().isArray();
-    }
-
-    private int assertArraysAreSameLength(Object expecteds,
-            Object actuals, String header) {
-        if (expecteds == null) {
-            Assert.fail(header + "expected array was null");
-        }
-        if (actuals == null) {
-            Assert.fail(header + "actual array was null");
-        }
-        int actualsLength = Array.getLength(actuals);
-        int expectedsLength = Array.getLength(expecteds);
-        if (actualsLength != expectedsLength) {
-            Assert.fail(header + "array lengths differed, expected.length="
-                    + expectedsLength + " actual.length=" + actualsLength);
-        }
-        return expectedsLength;
     }
 
     protected abstract void assertElementsEqual(Object expected, Object actual);
