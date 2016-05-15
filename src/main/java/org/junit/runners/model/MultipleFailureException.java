@@ -32,10 +32,14 @@ public class MultipleFailureException extends Exception {
     @Override
     public String getMessage() {
         StringBuilder sb = new StringBuilder(
-                String.format("There were %d errors:", fErrors.size()));
+                String.format("There were %d errors:\n", fErrors.size()));
+
+        int i = 1;
         for (Throwable e : fErrors) {
-            sb.append(String.format("\n  %s(%s)", e.getClass().getName(), e.getMessage()));
+            sb.append(String.format("\n  %d. %s", i, Throwables.getStackTrace(e)));
+            i++;
         }
+
         return sb.toString();
     }
 
