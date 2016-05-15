@@ -81,8 +81,8 @@ public abstract class ComparisonCriteria {
         }
 
         if (actualsLength != expectedsLength) {
-            Object expected = getArrayElementOrSentinel(expecteds, expectedsLength, prefixLength);
-            Object actual = getArrayElementOrSentinel(actuals, actualsLength, prefixLength);
+            Object expected = getToStringableArrayElement(expecteds, expectedsLength, prefixLength);
+            Object actual = getToStringableArrayElement(actuals, actualsLength, prefixLength);
             try {
                 Assert.assertEquals(expected, actual);
             } catch (AssertionError e) {
@@ -91,15 +91,37 @@ public abstract class ComparisonCriteria {
         }
     }
 
-    private static final Object END_OF_ARRAY_SENTINEL = new Object() {
-        @Override
-        public String toString() {
-            return "end of array";
-        }
-    };
+    private static final Object END_OF_ARRAY_SENTINEL = objectWithToString("end of array");
 
-    private Object getArrayElementOrSentinel(Object array, int length, int index) {
-        return index < length ? Array.get(array, index) : END_OF_ARRAY_SENTINEL;
+    private Object getToStringableArrayElement(Object array, int length, int index) {
+        if (index < length) {
+            Object element = Array.get(array, index);
+            if (isArray(element)) {
+                return objectWithToString(componentTypeName(element.getClass()) + "[" + Array.getLength(element) + "]");
+            } else {
+                return element;
+            }
+        } else {
+            return END_OF_ARRAY_SENTINEL;
+        }
+    }
+
+    private static Object objectWithToString(final String string) {
+        return new Object() {
+            @Override
+            public String toString() {
+                return string;
+            }
+        };
+    }
+
+    private String componentTypeName(Class<?> arrayClass) {
+        Class<?> componentType = arrayClass.getComponentType();
+        if (componentType.isArray()) {
+            return componentTypeName(componentType) + "[]";
+        } else {
+            return componentType.getName();
+        }
     }
 
     private boolean isArray(Object expected) {
