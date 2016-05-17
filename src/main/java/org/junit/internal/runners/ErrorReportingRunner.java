@@ -1,15 +1,14 @@
 package org.junit.internal.runners;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.InvalidTestClassError;
 import org.junit.runners.model.InitializationError;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.List;
 
 import static java.util.Collections.singletonList;
 
@@ -19,7 +18,7 @@ public class ErrorReportingRunner extends Runner {
     private final String classNames;
 
     public ErrorReportingRunner(Class<?> testClass, Throwable cause) {
-        this(cause, new Class<?>[] { testClass });
+        this(cause, testClass);
     }
     
     public ErrorReportingRunner(Throwable cause, Class<?>... testClasses) {
@@ -39,7 +38,7 @@ public class ErrorReportingRunner extends Runner {
     public Description getDescription() {
         Description description = Description.createSuiteDescription(classNames);
         for (Throwable each : causes) {
-            description.addChild(describeCause(each));
+            description.addChild(describeCause());
         }
         return description;
     }
@@ -77,15 +76,15 @@ public class ErrorReportingRunner extends Runner {
             return ((org.junit.internal.runners.InitializationError) cause)
                     .getCauses();
         }
-        return Arrays.asList(cause);
+        return singletonList(cause);
     }
 
-    private Description describeCause(Throwable child) {
+    private Description describeCause() {
         return Description.createTestDescription(classNames, "initializationError");
     }
 
     private void runCause(Throwable child, RunNotifier notifier) {
-        Description description = describeCause(child);
+        Description description = describeCause();
         notifier.fireTestStarted(description);
         notifier.fireTestFailure(new Failure(description, child));
         notifier.fireTestFinished(description);
