@@ -28,7 +28,7 @@ public class InvalidTestClassError extends InitializationError {
         sb.append(String.format("Invalid test class '%s':", testClass.getName()));
         int i = 1;
         for (Throwable error : validationErrors) {
-            sb.append("\n  " + i++ + ". " + error.getMessage());
+            sb.append("\n  " + (i++) + ". " + error.getMessage());
         }
         return sb.toString();
     }
