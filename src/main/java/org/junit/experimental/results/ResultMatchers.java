@@ -46,6 +46,8 @@ public class ResultMatchers {
 
     /**
      * Matches if the number of failures matches {@code countMatcher}
+     *
+     * @since 4.13
      */
     public static Matcher<PrintableResult> failureCountIs(Matcher<? super Integer> countMatcher) {
         return new FailureCountMatcher(countMatcher);
