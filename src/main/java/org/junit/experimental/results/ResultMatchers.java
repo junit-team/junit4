@@ -5,8 +5,6 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-
 /**
  * Matchers on a PrintableResult, to enable JUnit self-tests.
  * For example:
@@ -36,21 +34,14 @@ public class ResultMatchers {
      * Matches if there are {@code count} failures
      */
     public static Matcher<PrintableResult> failureCountIs(final int count) {
-        return failureCount(equalTo(count));
-    }
-
-    /**
-     * Matches if the number of failures matches {@code countMatcher}
-     */
-    public static Matcher<PrintableResult> failureCount(final Matcher<Integer> countMatcher) {
         return new TypeSafeMatcher<PrintableResult>() {
             public void describeTo(Description description) {
-                description.appendText("has a number of failures matching " + countMatcher);
+                description.appendText("has " + count + " failures");
             }
 
             @Override
             public boolean matchesSafely(PrintableResult item) {
-                return countMatcher.matches(item.failureCount());
+                return item.failureCount() == count;
             }
         };
     }
