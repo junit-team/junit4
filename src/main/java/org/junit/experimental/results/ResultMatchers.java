@@ -5,6 +5,8 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+
 /**
  * Matchers on a PrintableResult, to enable JUnit self-tests.
  * For example:
@@ -34,16 +36,19 @@ public class ResultMatchers {
      * Matches if there are {@code count} failures
      */
     public static Matcher<PrintableResult> failureCountIs(final int count) {
-        return new TypeSafeMatcher<PrintableResult>() {
+        return new FailureCountMatcher(equalTo(count)) {
+            @Override
             public void describeTo(Description description) {
                 description.appendText("has " + count + " failures");
             }
-
-            @Override
-            public boolean matchesSafely(PrintableResult item) {
-                return item.failureCount() == count;
-            }
         };
+    }
+
+    /**
+     * Matches if the number of failures matches {@code countMatcher}
+     */
+    public static Matcher<PrintableResult> failureCountIs(Matcher<? super Integer> countMatcher) {
+        return new FailureCountMatcher(countMatcher);
     }
 
     /**
@@ -75,5 +80,22 @@ public class ResultMatchers {
                 description.appendText("has failure containing " + string);
             }
         };
+    }
+
+    private static class FailureCountMatcher extends TypeSafeMatcher<PrintableResult> {
+        private final Matcher<? super Integer> countMatcher;
+
+        public FailureCountMatcher(Matcher<? super Integer> countMatcher) {
+            this.countMatcher = countMatcher;
+        }
+
+        public void describeTo(Description description) {
+            description.appendText("has a number of failures matching " + countMatcher);
+        }
+
+        @Override
+        public boolean matchesSafely(PrintableResult item) {
+            return countMatcher.matches(item.failureCount());
+        }
     }
 }
