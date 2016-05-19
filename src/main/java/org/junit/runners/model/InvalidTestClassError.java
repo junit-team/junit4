@@ -1,7 +1,5 @@
 package org.junit.runners.model;
 
-import org.junit.runners.model.InitializationError;
-
 import java.util.List;
 
 /**
