@@ -1,4 +1,4 @@
-package org.junit.runners;
+package org.junit.runners.model;
 
 import org.junit.runners.model.InitializationError;
 
