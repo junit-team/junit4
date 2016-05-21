@@ -262,8 +262,13 @@ public class TemporaryFolder extends ExternalResource {
         
         return recursiveDelete(folder);
     }
-    
+
     private boolean recursiveDelete(File file) {
+        // Try deleting file before assuming file is a directory
+        // to prevent following symbolic links.
+        if (file.delete()) {
+            return true;
+        }
         boolean result = true;
         File[] files = file.listFiles();
         if (files != null) {
