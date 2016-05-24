@@ -26,10 +26,10 @@ import org.junit.runner.Runner;
  *
  * <pre>
  * public TextFileSuite(Class testClass, RunnerBuilder builder) {
- *   // ...
- *   for (String className : readClassNames())
- *     addRunner(builder.runnerForClass(Class.forName(className)));
- *   // ...
+ *     // ...
+ *     for (String className : readClassNames())
+ *         addRunner(builder.runnerForClass(Class.forName(className)));
+ *     // ...
  * }
  * </pre>
  *
@@ -37,73 +37,75 @@ import org.junit.runner.Runner;
  * @since 4.5
  */
 public abstract class RunnerBuilder {
-  private final Set<Class<?>> parents = new HashSet<Class<?>>();
+    private final Set<Class<?>> parents = new HashSet<Class<?>>();
 
-  /**
-   * Override to calculate the correct runner for a test class at runtime.
-   *
-   * @param testClass class to be run
-   * @return a Runner
-   * @throws Throwable if a runner cannot be constructed
-   */
-  public abstract Runner runnerForClass(Class<?> testClass) throws Throwable;
+    /**
+     * Override to calculate the correct runner for a test class at runtime.
+     *
+     * @param testClass class to be run
+     * @return a Runner
+     * @throws Throwable if a runner cannot be constructed
+     */
+    public abstract Runner runnerForClass(Class<?> testClass) throws Throwable;
 
-  /**
-   * Always returns a runner or null.
-   * <p>
-   * In case of an exception a runner will be returned that prints an error instead of running
-   * tests.
-   * 
-   * @param testClass class to be run
-   * @return a Runner
-   */
-  public Runner safeRunnerForClass(Class<?> testClass) {
-    try {
-      return runnerForClass(testClass);
-    } catch (Throwable e) {
-      return new ErrorReportingRunner(testClass, e);
+    /**
+     * Always returns a runner or null.
+     * <p>
+     * In case of an exception a runner will be returned that prints an error instead of running
+     * tests.
+     * 
+     * @param testClass class to be run
+     * @return a Runner
+     */
+    public Runner safeRunnerForClass(Class<?> testClass) {
+        try {
+            return runnerForClass(testClass);
+        } catch (Throwable e) {
+            return new ErrorReportingRunner(testClass, e);
+        }
     }
-  }
 
-  Class<?> addParent(Class<?> parent) throws InitializationError {
-    if (!parents.add(parent)) {
-      throw new InitializationError(String.format(
-          "class '%s' (possibly indirectly) contains itself as a SuiteClass", parent.getName()));
+    Class<?> addParent(Class<?> parent) throws InitializationError {
+        if (!parents.add(parent)) {
+            throw new InitializationError(String.format(
+                    "class '%s' (possibly indirectly) contains itself as a SuiteClass",
+                    parent.getName()));
+        }
+        return parent;
     }
-    return parent;
-  }
 
-  void removeParent(Class<?> klass) {
-    parents.remove(klass);
-  }
-
-  /**
-   * Constructs and returns a list of Runners, one for each child class in {@code children}. Care is
-   * taken to avoid infinite recursion: this builder will throw an exception if it is requested for
-   * another runner for {@code parent} before this call completes.
-   */
-  public List<Runner> runners(Class<?> parent, Class<?>[] children) throws InitializationError {
-    addParent(parent);
-
-    try {
-      return runners(children);
-    } finally {
-      removeParent(parent);
+    void removeParent(Class<?> klass) {
+        parents.remove(klass);
     }
-  }
 
-  public List<Runner> runners(Class<?> parent, List<Class<?>> children) throws InitializationError {
-    return runners(parent, children.toArray(new Class<?>[0]));
-  }
+    /**
+     * Constructs and returns a list of Runners, one for each child class in {@code children}. Care
+     * is taken to avoid infinite recursion: this builder will throw an exception if it is requested
+     * for another runner for {@code parent} before this call completes.
+     */
+    public List<Runner> runners(Class<?> parent, Class<?>[] children) throws InitializationError {
+        addParent(parent);
 
-  private List<Runner> runners(Class<?>[] children) {
-    List<Runner> runners = new ArrayList<Runner>();
-    for (Class<?> each : children) {
-      Runner childRunner = safeRunnerForClass(each);
-      if (childRunner != null) {
-        runners.add(childRunner);
-      }
+        try {
+            return runners(children);
+        } finally {
+            removeParent(parent);
+        }
     }
-    return runners;
-  }
+
+    public List<Runner> runners(Class<?> parent, List<Class<?>> children)
+            throws InitializationError {
+        return runners(parent, children.toArray(new Class<?>[0]));
+    }
+
+    private List<Runner> runners(Class<?>[] children) {
+        List<Runner> runners = new ArrayList<Runner>();
+        for (Class<?> each : children) {
+            Runner childRunner = safeRunnerForClass(each);
+            if (childRunner != null) {
+                runners.add(childRunner);
+            }
+        }
+        return runners;
+    }
 }
