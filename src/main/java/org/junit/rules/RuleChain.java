@@ -77,8 +77,12 @@ public class RuleChain implements TestRule {
      *
      * @param enclosedRule the rule to enclose.
      * @return a new {@code RuleChain}.
+     * @throws IllegalArgumentException if {@code enclosedRule} is null
      */
     public RuleChain around(TestRule enclosedRule) {
+        if (enclosedRule == null) {
+            throw new IllegalArgumentException("The enclosed rule should not be null");
+        }
         List<TestRule> rulesOfNewChain = new ArrayList<TestRule>();
         rulesOfNewChain.add(enclosedRule);
         rulesOfNewChain.addAll(rulesStartingWithInnerMost);
