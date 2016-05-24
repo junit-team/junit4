@@ -1,3 +1,5 @@
-JUnit project uses the Google Java Style (http://google-styleguide.googlecode.com/svn/trunk/javaguide.html) for all new
-code (under org.junit.*). Legacy code (under junit.*) used the legacy guide specified in LEGACY_CODING_STYLE.txt in the
+JUnit project uses the Google Java Style (https://github.com/google/styleguide) for all new
+code (under org.junit.*). Deviating from this, indentation is 4 spaces instead of 2.
+
+Legacy code (under junit.*) used the legacy guide specified in LEGACY_CODING_STYLE.txt in the
 project root.
