@@ -49,8 +49,11 @@ public abstract class RunnerBuilder {
   public abstract Runner runnerForClass(Class<?> testClass) throws Throwable;
 
   /**
-   * Always returns a runner, even if it is just one that prints an error instead of running tests.
-   *
+   * Always returns a runner or null.
+   * <p>
+   * In case of an exception a runner will be returned that prints an error instead of running
+   * tests.
+   * 
    * @param testClass class to be run
    * @return a Runner
    */
