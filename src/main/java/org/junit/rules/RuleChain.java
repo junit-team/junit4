@@ -89,9 +89,6 @@ public class RuleChain implements TestRule {
      * {@inheritDoc}
      */
     public Statement apply(Statement base, Description description) {
-        for (TestRule each : rulesStartingWithInnerMost) {
-            base = each.apply(base, description);
-        }
-        return base;
+        return new RunRules(base, rulesStartingWithInnerMost, description);
     }
 }
