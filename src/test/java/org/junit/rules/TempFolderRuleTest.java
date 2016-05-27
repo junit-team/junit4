@@ -31,6 +31,13 @@ public class TempFolderRuleTest {
             createdFiles[0] = folder.newFile("myfile.txt");
             assertTrue(createdFiles[0].exists());
         }
+
+        @Test
+        public void testTempFolderLocation() throws IOException {
+            File folderRoot = folder.getRoot();
+            String tmpRoot = System.getProperty("java.io.tmpdir");
+            assertTrue(folderRoot.toString().startsWith(tmpRoot));
+        }
     }
 
     @Test

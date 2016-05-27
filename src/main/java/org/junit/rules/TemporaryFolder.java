@@ -224,10 +224,10 @@ public class TemporaryFolder extends ExternalResource {
             // Use createTempFile to get a suitable folder name.
             String suffix = ".tmp";
             File tmpFile = File.createTempFile(TMP_PREFIX, suffix, parentFolder);
-            String tmpName = tmpFile.getName();
-            // Discard suffix of tmpName.
+            String tmpName = tmpFile.toString();
+            // Discard .tmp suffix of tmpName.
             String folderName = tmpName.substring(0, tmpName.length() - suffix.length());
-            createdFolder = new File(parentFolder, folderName);
+            createdFolder = new File(folderName);
             if (createdFolder.mkdir()) {
                 tmpFile.delete();
                 return createdFolder;
