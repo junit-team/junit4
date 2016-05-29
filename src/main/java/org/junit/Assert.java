@@ -2,6 +2,7 @@ package org.junit;
 
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
+import org.junit.function.ThrowingRunnable;
 import org.junit.internal.ArrayComparisonFailure;
 import org.junit.internal.ExactComparisonCriteria;
 import org.junit.internal.InexactComparisonCriteria;
@@ -958,17 +959,6 @@ public class Assert {
     public static <T> void assertThat(String reason, T actual,
             Matcher<? super T> matcher) {
         MatcherAssert.assertThat(reason, actual, matcher);
-    }
-
-    /**
-     * This interface facilitates the use of expectThrows from Java 8. It allows method references
-     * to void methods (that declare checked exceptions) to be passed directly into expectThrows
-     * without wrapping. It is not meant to be implemented directly.
-     *
-     * @since 4.13
-     */
-    public interface ThrowingRunnable {
-        void run() throws Throwable;
     }
 
     /**
