@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.internal.Throwables;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -89,15 +90,7 @@ public class RuleChainTest {
         Result result = JUnitCore.runClasses(RuleChainWithNullRules.class);
 
         assertThat(result.getFailures().size(), equalTo(1));
-        String stacktrace = stacktraceToString(result.getFailures().get(0).getException());
+        String stacktrace = Throwables.getStacktrace(result.getFailures().get(0).getException());
         assertThat(stacktrace, containsString("\tat org.junit.rules.RuleChainTest$RuleChainWithNullRules.<init>(RuleChainTest.java:"));
-    }
-
-    // TODO delete as soon as #1312 is merged
-    private static String stacktraceToString(Throwable e) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        e.printStackTrace(pw);
-        return sw.toString();
     }
 }
