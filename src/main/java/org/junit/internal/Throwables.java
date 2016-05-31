@@ -44,7 +44,9 @@ public final class Throwables {
     }
 
     /**
-     * @return a String with the stacktrace of the given throwable
+     * Returns a String with the stacktrace of the given Throwable.
+     *
+     * @since 4.13
      */
     public static String getStacktrace(Throwable exception) {
         StringWriter stringWriter = new StringWriter();
