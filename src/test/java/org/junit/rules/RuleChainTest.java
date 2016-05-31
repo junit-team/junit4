@@ -70,8 +70,8 @@ public class RuleChainTest {
         try {
             chain.around(null);
             fail("around() should not allow null rules");
-        } catch (IllegalArgumentException e) {
-            // expected
+        } catch (NullPointerException e) {
+            assertThat(e.getMessage(), equalTo("The enclosed rule should not be null"));
         }
     }
 
