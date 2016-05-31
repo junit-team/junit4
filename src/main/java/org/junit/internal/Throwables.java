@@ -44,7 +44,7 @@ public final class Throwables {
     }
 
     /**
-     * Returns a String with the stacktrace of the given Throwable.
+     * Returns the stacktrace of the given Throwable as a String.
      *
      * @since 4.13
      */
