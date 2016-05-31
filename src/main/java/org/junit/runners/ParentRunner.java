@@ -358,6 +358,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     public void run(final RunNotifier notifier) {
         EachTestNotifier testNotifier = new EachTestNotifier(notifier,
                 getDescription());
+        testNotifier.fireTestSuiteStarted();
         try {
             Statement statement = classBlock(notifier);
             statement.evaluate();
@@ -367,6 +368,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             throw e;
         } catch (Throwable e) {
             testNotifier.addFailure(e);
+        } finally {
+            testNotifier.fireTestSuiteFinished();
         }
     }
 
