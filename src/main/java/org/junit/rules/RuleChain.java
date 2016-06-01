@@ -13,12 +13,12 @@ import org.junit.runners.model.Statement;
  * {@link #around(TestRule)}:
  *
  * <pre>
- * public static class UseRuleChain {
+ * public class UseRuleChain {
  * 	&#064;Rule
  * 	public RuleChain chain= RuleChain
- * 	                       .outerRule(new LoggingRule("outer rule")
- * 	                       .around(new LoggingRule("middle rule")
- * 	                       .around(new LoggingRule("inner rule");
+ * 	                       .outerRule(new LoggingRule("outer rule"))
+ * 	                       .around(new LoggingRule("middle rule"))
+ * 	                       .around(new LoggingRule("inner rule"));
  *
  * 	&#064;Test
  * 	public void example() {
@@ -36,6 +36,21 @@ import org.junit.runners.model.Statement;
  * finished inner rule
  * finished middle rule
  * finished outer rule
+ * </pre>
+ * 
+ * {@code RuleChain} cannot be used to define the order of existing rules.
+ * For example in the below snippet the LoggingRule {@code middle} would be
+ * executed outside as well as inside the {@code RuleChain}:
+ *
+ * <pre>
+ * &#064;Rule
+ * public LoggingRule middle = new LoggingRule("middle rule");
+ * 
+ * &#064;Rule
+ * public RuleChain chain = RuleChain
+ *                          .outerRule(new LoggingRule("outer rule"))
+ *                          .around(middle)
+ *                          .around(new LoggingRule("inner rule"));
  * </pre>
  *
  * @since 4.10
