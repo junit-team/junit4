@@ -38,7 +38,7 @@ import org.junit.runners.model.Statement;
  * finished outer rule
  * </pre>
  * 
- * {@code RuleChain} cannot be used to define the order of existing rules.</br>
+ * {@code RuleChain} cannot be used to define the order of existing rules.
  * For example in the below snippet the LoggingRule <i>middle</i> would be executed 
  * outside as well as inside the {@code RuleChain}:
  * <pre>
