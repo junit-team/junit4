@@ -72,7 +72,7 @@ public class RuleChainTest {
             chain.around(null);
             fail("around() should not allow null rules");
         } catch (NullPointerException e) {
-            assertThat(e.getMessage(), equalTo("The enclosed rule should not be null"));
+            assertThat(e.getMessage(), equalTo("The enclosed rule must not be null"));
         }
     }
 
