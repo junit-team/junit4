@@ -43,6 +43,11 @@ public class ArrayComparisonFailure extends AssertionError {
     }
 
     @Override
+    public synchronized Throwable getCause() {
+        return super.getCause() == null ? fCause : super.getCause();
+    }
+
+    @Override
     public String getMessage() {
         StringBuilder sb = new StringBuilder();
         if (fMessage != null) {
