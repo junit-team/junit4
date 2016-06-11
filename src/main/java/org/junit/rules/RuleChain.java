@@ -51,8 +51,6 @@ import org.junit.runners.model.Statement;
  *                          .around(middle)
  *                          .around(new LoggingRule("inner rule"));
  * </pre>
- * <p>
- * 
  *
  * @since 4.10
  */
