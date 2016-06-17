@@ -12,6 +12,7 @@ import java.util.concurrent.Callable;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.results.PrintableResult;
+import org.junit.function.ThrowingRunnable;
 
 public class VerifierRuleTest {
     public static class UsesErrorCollector {
@@ -121,6 +122,66 @@ public class VerifierRuleTest {
     public void usedErrorCollectorCheckSucceedsShouldPass() {
         PrintableResult testResult = testResult(UsesErrorCollectorCheckSucceedsPasses.class);
         assertThat(testResult, isSuccessful());
+    }
+
+    public static class UsesErrorCollectorCheckThrowsMatchingClass {
+        @Rule
+        public ErrorCollector collector = new ErrorCollector();
+
+        @Test
+        public void example() {
+            collector.checkThrows(IllegalArgumentException.class, new ThrowingRunnable() {
+                public void run() throws Throwable {
+                    throw new IllegalArgumentException();
+                }
+            });
+        }
+    }
+
+    @Test
+    public void usedErrorCollectorCheckThrowsMatchingClassShouldPass() {
+        PrintableResult testResult = testResult(UsesErrorCollectorCheckThrowsMatchingClass.class);
+        assertThat(testResult, isSuccessful());
+    }
+
+    public static class UsesErrorCollectorCheckThrowsClassMismatch {
+        @Rule
+        public ErrorCollector collector = new ErrorCollector();
+
+        @Test
+        public void example() {
+            collector.checkThrows(IllegalArgumentException.class, new ThrowingRunnable() {
+                public void run() throws Throwable {
+                    throw new NullPointerException();
+                }
+            });
+        }
+    }
+
+    @Test
+    public void usedErrorCollectorCheckThrowsClassMismatchShouldFail() {
+        PrintableResult testResult = testResult(UsesErrorCollectorCheckThrowsClassMismatch.class);
+        assertThat(testResult, hasFailureContaining(
+            "expected:<IllegalArgumentException> but was:<NullPointerException>"));
+    }
+
+    public static class UsesErrorCollectorCheckThrowsNothingThrown {
+        @Rule
+        public ErrorCollector collector = new ErrorCollector();
+
+        @Test
+        public void example() {
+            collector.checkThrows(IllegalArgumentException.class, new ThrowingRunnable() {
+                public void run() throws Throwable {
+                }
+            });
+        }
+    }
+
+    @Test
+    public void usedErrorCollectorCheckThrowsNothingThrownShouldFail() {
+        PrintableResult testResult = testResult(UsesErrorCollectorCheckThrowsNothingThrown.class);
+        assertThat(testResult, hasFailureContaining("but nothing was thrown"));
     }
 
     private static String sequence;

@@ -168,9 +168,14 @@ public class ParentRunnerTest {
     @Test
     public void assertionErrorAtParentLevelTest() throws InitializationError {
         CountingRunListener countingRunListener = runTestWithParentRunner(AssertionErrorAtParentLevelTest.class);
+        Assert.assertEquals(1, countingRunListener.testSuiteStarted);
+        Assert.assertEquals(1, countingRunListener.testSuiteFinished);
+        Assert.assertEquals(1, countingRunListener.testSuiteFailure);
+        Assert.assertEquals(0, countingRunListener.testSuiteAssumptionFailure);
+
         Assert.assertEquals(0, countingRunListener.testStarted);
         Assert.assertEquals(0, countingRunListener.testFinished);
-        Assert.assertEquals(1, countingRunListener.testFailure);
+        Assert.assertEquals(0, countingRunListener.testFailure);
         Assert.assertEquals(0, countingRunListener.testAssumptionFailure);
         Assert.assertEquals(0, countingRunListener.testIgnored);
     }
@@ -189,10 +194,15 @@ public class ParentRunnerTest {
     @Test
     public void assumptionViolatedAtParentLevel() throws InitializationError {
         CountingRunListener countingRunListener = runTestWithParentRunner(AssumptionViolatedAtParentLevelTest.class);
+        Assert.assertEquals(1, countingRunListener.testSuiteStarted);
+        Assert.assertEquals(1, countingRunListener.testSuiteFinished);
+        Assert.assertEquals(0, countingRunListener.testSuiteFailure);
+        Assert.assertEquals(1, countingRunListener.testSuiteAssumptionFailure);
+
         Assert.assertEquals(0, countingRunListener.testStarted);
         Assert.assertEquals(0, countingRunListener.testFinished);
         Assert.assertEquals(0, countingRunListener.testFailure);
-        Assert.assertEquals(1, countingRunListener.testAssumptionFailure);
+        Assert.assertEquals(0, countingRunListener.testAssumptionFailure);
         Assert.assertEquals(0, countingRunListener.testIgnored);
     }
 
@@ -219,6 +229,11 @@ public class ParentRunnerTest {
     @Test
     public void parentRunnerTestMethods() throws InitializationError {
         CountingRunListener countingRunListener = runTestWithParentRunner(TestTest.class);
+        Assert.assertEquals(1, countingRunListener.testSuiteStarted);
+        Assert.assertEquals(1, countingRunListener.testSuiteFinished);
+        Assert.assertEquals(0, countingRunListener.testSuiteFailure);
+        Assert.assertEquals(0, countingRunListener.testSuiteAssumptionFailure);
+
         Assert.assertEquals(3, countingRunListener.testStarted);
         Assert.assertEquals(3, countingRunListener.testFinished);
         Assert.assertEquals(1, countingRunListener.testFailure);
@@ -236,11 +251,26 @@ public class ParentRunnerTest {
     }
 
     private static class CountingRunListener extends RunListener {
+        private int testSuiteStarted = 0;
+        private int testSuiteFinished = 0;
+        private int testSuiteFailure = 0;
+        private int testSuiteAssumptionFailure = 0;
+
         private int testStarted = 0;
         private int testFinished = 0;
         private int testFailure = 0;
         private int testAssumptionFailure = 0;
         private int testIgnored = 0;
+
+        @Override
+        public void testSuiteStarted(Description description) throws Exception {
+            testSuiteStarted++;
+        }
+
+        @Override
+        public void testSuiteFinished(Description description) throws Exception {
+            testSuiteFinished++;
+        }
 
         @Override
         public void testStarted(Description description) throws Exception {
@@ -254,12 +284,20 @@ public class ParentRunnerTest {
 
         @Override
         public void testFailure(Failure failure) throws Exception {
-            testFailure++;
+            if (failure.getDescription().isSuite()) {
+                testSuiteFailure++;
+            } else {
+                testFailure++;
+            }
         }
 
         @Override
         public void testAssumptionFailure(Failure failure) {
-            testAssumptionFailure++;
+            if (failure.getDescription().isSuite()) {
+                testSuiteAssumptionFailure++;
+            } else {
+                testAssumptionFailure++;
+            }
         }
 
         @Override

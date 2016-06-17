@@ -45,4 +45,27 @@ public class EachTestNotifier {
     public void fireTestIgnored() {
         notifier.fireTestIgnored(description);
     }
+
+    /**
+     * Calls {@link RunNotifier#fireTestSuiteStarted(Description)}, passing the
+     * {@link Description} that was passed to the {@code EachTestNotifier} constructor.
+     * This should be called when a test suite is about to be started.
+     * @see RunNotifier#fireTestSuiteStarted(Description)
+     * @since 4.13
+     */
+    public void fireTestSuiteStarted() {
+        notifier.fireTestSuiteStarted(description);
+    }
+
+    /**
+     * Calls {@link RunNotifier#fireTestSuiteFinished(Description)}, passing the
+     * {@link Description} that was passed to the {@code EachTestNotifier} constructor.
+     * This should be called when a test suite has finished, whether the test suite succeeds
+     * or fails.
+     * @see RunNotifier#fireTestSuiteFinished(Description)
+     * @since 4.13
+     */
+    public void fireTestSuiteFinished() {
+        notifier.fireTestSuiteFinished(description);
+    }
 }
