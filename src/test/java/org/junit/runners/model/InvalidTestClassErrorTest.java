@@ -1,7 +1,6 @@
 package org.junit.runners.model;
 
 import org.junit.Test;
-import org.junit.runners.model.InvalidTestClassError;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
