@@ -12,13 +12,11 @@ import java.util.List;
 public class InvalidTestClassError extends InitializationError {
     private static final long serialVersionUID = 1L;
 
-    private final Class<?> testClass;
     private final String message;
 
     public InvalidTestClassError(Class<?> offendingTestClass, List<Throwable> validationErrors) {
         super(validationErrors);
-        this.testClass = offendingTestClass;
-        this.message = createMessage(testClass, validationErrors);
+        this.message = createMessage(offendingTestClass, validationErrors);
     }
 
     private static String createMessage(Class<?> testClass, List<Throwable> validationErrors) {
