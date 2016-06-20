@@ -16,9 +16,9 @@ import org.junit.runners.model.Statement;
  * public static class UseRuleChain {
  * 	&#064;Rule
  * 	public RuleChain chain= RuleChain
- * 	                       .outerRule(new LoggingRule("outer rule")
- * 	                       .around(new LoggingRule("middle rule")
- * 	                       .around(new LoggingRule("inner rule");
+ * 	                       .outerRule(new LoggingRule("outer rule"))
+ * 	                       .around(new LoggingRule("middle rule"))
+ * 	                       .around(new LoggingRule("inner rule"));
  *
  * 	&#064;Test
  * 	public void example() {
