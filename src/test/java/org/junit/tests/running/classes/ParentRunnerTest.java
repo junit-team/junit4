@@ -1,5 +1,6 @@
 package org.junit.tests.running.classes;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
@@ -149,9 +150,9 @@ public class ParentRunnerTest {
         JUnitCore junitCore = new JUnitCore();
         Request request = Request.aClass(klass);
         Result result = junitCore.run(request);
-        assertThat(result.getFailureCount(), is(2)); //the second failure is no runnable methods
+        assertThat(result.getFailureCount(), is(1));
         assertThat(result.getFailures().get(0).getMessage(),
-                is(equalTo(message)));
+                containsString(message));
     }
 
     public static class AssertionErrorAtParentLevelTest {

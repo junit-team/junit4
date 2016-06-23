@@ -8,6 +8,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
         FrameworkFieldTest.class,
         FrameworkMethodTest.class,
+        InvalidTestClassErrorTest.class,
         TestClassTest.class
 })
 public class AllModelTests {

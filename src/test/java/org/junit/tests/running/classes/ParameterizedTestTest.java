@@ -1,6 +1,7 @@
 package org.junit.tests.running.classes;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -186,11 +187,11 @@ public class ParameterizedTestTest {
     @Test
     public void failureOnInitialization() {
         Result result = JUnitCore.runClasses(BadIndexForAnnotatedFieldTest.class);
-        assertEquals(2, result.getFailureCount());
+        assertEquals(1, result.getFailureCount());
         List<Failure> failures = result.getFailures();
-        assertEquals("Invalid @Parameter value: 2. @Parameter fields counted: 1. Please use an index between 0 and 0.",
-                failures.get(0).getException().getMessage());
-        assertEquals("@Parameter(0) is never used.", failures.get(1).getException().getMessage());
+        assertThat(failures.get(0).getException().getMessage(), allOf(
+                containsString("Invalid @Parameter value: 2. @Parameter fields counted: 1. Please use an index between 0 and 0."),
+                containsString("@Parameter(0) is never used.")));
     }
 
     @RunWith(Parameterized.class)
