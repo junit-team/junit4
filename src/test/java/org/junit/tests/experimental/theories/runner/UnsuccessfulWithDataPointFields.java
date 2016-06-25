@@ -119,7 +119,7 @@ public class UnsuccessfulWithDataPointFields {
     public void dataPointFieldsMustBeStatic() {
         assertThat(
                 testResult(DataPointFieldsMustBeStatic.class),
-                CoreMatchers.both(hasFailureContaining("DataPoint field THREE must be static"))
+                CoreMatchers.<PrintableResult>both(hasFailureContaining("DataPoint field THREE must be static"))
                         .and(hasFailureContaining("DataPoint field FOURS must be static")));
     }
     
