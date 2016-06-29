@@ -1,5 +1,7 @@
 package org.junit.runners;
 
+import static org.junit.internal.runners.rules.FixtureMemberValidator.CLASS_FIXTURE_FIELD_VALIDATOR;
+import static org.junit.internal.runners.rules.FixtureMemberValidator.CLASS_FIXTURE_METHOD_VALIDATOR;
 import static org.junit.internal.runners.rules.RuleMemberValidator.CLASS_RULE_METHOD_VALIDATOR;
 import static org.junit.internal.runners.rules.RuleMemberValidator.CLASS_RULE_VALIDATOR;
 
@@ -18,8 +20,11 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Rule;
+import org.junit.fixtures.ClassFixture;
+import org.junit.fixtures.TestFixture;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.EachTestNotifier;
+import org.junit.internal.runners.rules.RunFixture;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
 import org.junit.rules.RunRules;
@@ -159,6 +164,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     private void validateClassRules(List<Throwable> errors) {
         CLASS_RULE_VALIDATOR.validate(getTestClass(), errors);
         CLASS_RULE_METHOD_VALIDATOR.validate(getTestClass(), errors);
+        CLASS_FIXTURE_FIELD_VALIDATOR.validate(getTestClass(), errors);
+        CLASS_FIXTURE_METHOD_VALIDATOR.validate(getTestClass(), errors);
     }
 
     /**
@@ -251,9 +258,24 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      *         each method in the tested class.
      */
     protected List<TestRule> classRules() {
-        List<TestRule> result = testClass.getAnnotatedMethodValues(null, ClassRule.class, TestRule.class);
-        result.addAll(testClass.getAnnotatedFieldValues(null, ClassRule.class, TestRule.class));
+        TestClass clazz = getTestClass();
+        List<TestRule> result = clazz.getAnnotatedMethodValues(null, ClassRule.class, TestRule.class);
+        List<TestFixture> fixtures = clazz.getAnnotatedMethodValues(
+                null, ClassFixture.class, TestFixture.class);
+        result.addAll(toTestRules(fixtures));
+        
+        result.addAll(clazz.getAnnotatedFieldValues(null, ClassRule.class, TestRule.class));
+        fixtures = clazz.getAnnotatedFieldValues(null, ClassFixture.class, TestFixture.class);
+        result.addAll(toTestRules(fixtures));
         return result;
+    }
+
+    static Collection<TestRule> toTestRules(List<TestFixture> fixtures) {
+        List<TestRule> rules = new ArrayList<TestRule>(fixtures.size());
+        for (TestFixture fixture : fixtures) {
+            rules.add(new RunFixture(fixture));
+        }
+        return rules;
     }
 
     /**

@@ -1,5 +1,7 @@
 package org.junit.runners;
 
+import static org.junit.internal.runners.rules.FixtureMemberValidator.FIXTURE_FIELD_VALIDATOR;
+import static org.junit.internal.runners.rules.FixtureMemberValidator.FIXTURE_METHOD_VALIDATOR;
 import static org.junit.internal.runners.rules.RuleMemberValidator.RULE_METHOD_VALIDATOR;
 import static org.junit.internal.runners.rules.RuleMemberValidator.RULE_VALIDATOR;
 
@@ -14,6 +16,8 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.Test.None;
+import org.junit.fixtures.Fixture;
+import org.junit.fixtures.TestFixture;
 import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.internal.runners.statements.ExpectException;
 import org.junit.internal.runners.statements.Fail;
@@ -30,6 +34,7 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
+import org.junit.runners.model.TestClass;
 
 /**
  * Implements the JUnit 4 standard test case class model, as defined by the
@@ -205,10 +210,12 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 
     protected void validateFields(List<Throwable> errors) {
         RULE_VALIDATOR.validate(getTestClass(), errors);
+        FIXTURE_FIELD_VALIDATOR.validate(getTestClass(), errors);
     }
 
     private void validateMethods(List<Throwable> errors) {
         RULE_METHOD_VALIDATOR.validate(getTestClass(), errors);
+        FIXTURE_METHOD_VALIDATOR.validate(getTestClass(), errors);
     }
 
     /**
@@ -430,11 +437,19 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      *         test
      */
     protected List<TestRule> getTestRules(Object target) {
-        List<TestRule> result = getTestClass().getAnnotatedMethodValues(target,
-                Rule.class, TestRule.class);
+        TestClass testClass = getTestClass();
 
-        result.addAll(getTestClass().getAnnotatedFieldValues(target,
-                Rule.class, TestRule.class));
+        List<TestRule> result = testClass.getAnnotatedMethodValues(
+                target, Rule.class, TestRule.class);
+        result.addAll(testClass.getAnnotatedFieldValues(
+                target, Rule.class, TestRule.class));
+
+        List<TestFixture> fixtures = testClass.getAnnotatedMethodValues(
+                target, Fixture.class, TestFixture.class);
+        result.addAll(toTestRules(fixtures));
+        fixtures = testClass.getAnnotatedFieldValues(
+                target, Fixture.class, TestFixture.class);
+        result.addAll(toTestRules(fixtures));
 
         return result;
     }
