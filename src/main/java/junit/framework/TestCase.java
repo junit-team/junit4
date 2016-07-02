@@ -3,6 +3,14 @@ package junit.framework;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.fixtures.FixtureContext;
+import org.junit.fixtures.FixtureManager;
+import org.junit.fixtures.TearDown;
+import org.junit.fixtures.TestFixture;
+import org.junit.runners.model.MultipleFailureException;
 
 /**
  * A test case defines the fixture to run multiple tests. To define a test case<br/>
@@ -80,6 +88,10 @@ public abstract class TestCase extends Assert implements Test {
      */
     private String fName;
 
+    private FixtureManager fixtureManager = new FixtureManager();
+    private boolean testStarted = false;
+    private final List<TestFixture> testFixtures = new ArrayList<TestFixture>();
+
     /**
      * No-arg constructor to enable serialization. This method
      * is not intended to be used by mere mortals without calling setName().
@@ -93,6 +105,29 @@ public abstract class TestCase extends Assert implements Test {
      */
     public TestCase(String name) {
         fName = name;
+    }
+
+    /**
+     * Adds a test fixture to the current test. If {@link #setUp()} has been called
+     * then the fixture will be initialized right away. Otherwise, the fixture will
+     * be initialized before {@code setUp()} is called.
+     *
+     * @param testFixture
+     * @throws Exception exception thrown during {@code TestFixture#initialize(FixtureContext)}
+     */
+    public final void addTestFixture(TestFixture testFixture) throws Throwable {
+        if (testStarted) {
+            fixtureManager.initializeFixture(testFixture);
+        } else {
+            testFixtures.add(testFixture);
+        }
+    }
+
+    /**
+     * Adds a {@link TearDown} to run after the test completes.
+     */
+    public final void addTearDown(TearDown tearDown)  {
+        fixtureManager.addTearDown(tearDown);
     }
 
     /**
@@ -136,10 +171,19 @@ public abstract class TestCase extends Assert implements Test {
      * @throws Throwable if any exception is thrown
      */
     public void runBare() throws Throwable {
+        // Call setUp() in a fixture so that all TearDowns are called if setUp() throws an exception.
+        addTestFixture(new TestFixture() {
+            public void initialize(FixtureContext context) throws Exception {
+                setUp();
+            }
+        });
+        initializeTestFixtures();
+
         Throwable exception = null;
-        setUp();
+        List<Throwable> tearDownErrors = new ArrayList<Throwable>();
         try {
             runTest();
+            fixtureManager.runAllPostconditions();
         } catch (Throwable running) {
             exception = running;
         } finally {
@@ -148,8 +192,23 @@ public abstract class TestCase extends Assert implements Test {
             } catch (Throwable tearingDown) {
                 if (exception == null) exception = tearingDown;
             }
+            fixtureManager.runAllTearDowns(tearDownErrors);
+            fixtureManager = new FixtureManager();
         }
         if (exception != null) throw exception;
+        MultipleFailureException.assertEmpty(tearDownErrors);
+    }
+
+    private void initializeTestFixtures() throws Throwable {
+        testStarted = true;
+
+        try {
+            for (TestFixture testFixture : testFixtures) {
+                fixtureManager.initializeFixture(testFixture);
+            }
+        } finally {
+            testFixtures.clear();
+        }
     }
 
     /**
