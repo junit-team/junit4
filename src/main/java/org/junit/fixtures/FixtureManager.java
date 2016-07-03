@@ -32,7 +32,7 @@ public class FixtureManager  {
      * @throws Exception exception thrown during {@code TestFixture#initialize(FixtureContext)}
      */
     public final void initializeFixture(TestFixture testFixture) throws Exception {
-        state.checkCanInitializeFixture();
+        state.checkCanModifyFixture();
         FixtureContextFacade context = new FixtureContextFacade();
         try {
             context.initialize(testFixture);
@@ -50,12 +50,12 @@ public class FixtureManager  {
     /**
      * Resets this fixture to its initial state.
      */
-    public void reset() {
+    public final void reset() {
         state = State.HEALTHY;
         tearDowns.clear();
         testPostconditions.clear();
     }
- 
+
     /**
      * Adds a {@link TearDown} to run after the test completes.
      */
@@ -63,10 +63,10 @@ public class FixtureManager  {
         if (tearDown == null) {
             throw new NullPointerException();
         }
-        state.checkCanInitializeFixture();
+        state.checkCanModifyFixture();
         tearDowns.add(tearDown);
     } 
-
+ 
     /**
      * Handle a suppressed exceptions that occurred while running  tear downs.
      * Subclasses can override this to do additional work (for example, in JDK 7
@@ -110,8 +110,12 @@ public class FixtureManager  {
         }
     }
 
-
-    private FixtureManager(InstanceMethod testMethod, Class<?> testClass) {
+    /**
+     * Constructs an instance.
+     *
+     * @param testMethod test method, or {@code null} if this is a class fixture.
+     */
+    protected FixtureManager(InstanceMethod testMethod, Class<?> testClass) {
         this.testMethod = testMethod;
         this.testClass = testClass;
     }
@@ -163,7 +167,7 @@ public class FixtureManager  {
     private enum State {
         HEALTHY {
             @Override
-            void checkCanInitializeFixture() {
+            void checkCanModifyFixture() {
             }
 
             @Override
@@ -177,7 +181,7 @@ public class FixtureManager  {
             }
         }, READY_FOR_TEARDOWN {
             @Override
-            void checkCanInitializeFixture() {
+            void checkCanModifyFixture() {
                 throw new IllegalStateException();
             }
 
@@ -192,7 +196,7 @@ public class FixtureManager  {
             }
         }, RUNNING_TEAR_DOWNS {
             @Override
-            void checkCanInitializeFixture() {
+            void checkCanModifyFixture() {
                 throw new IllegalStateException();
             }
 
@@ -207,7 +211,7 @@ public class FixtureManager  {
             }
         }, COMPLETED {
             @Override
-            void checkCanInitializeFixture() {
+            void checkCanModifyFixture() {
                 throw new IllegalStateException();
             }
 
@@ -222,7 +226,7 @@ public class FixtureManager  {
             }
         };
 
-        abstract void checkCanInitializeFixture();
+        abstract void checkCanModifyFixture();
         abstract State startRunPostConditions();
         abstract State startRunTearDowns();
     }

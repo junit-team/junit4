@@ -3,7 +3,7 @@ package org.junit.fixtures;
 /**
  * Base class for simple test fixtures.
  */
-public abstract class AbstractTestFixture implements TestFixture {
+public abstract class SimpleTestFixture implements TestFixture {
 
     public final void initialize(FixtureContext context) throws Exception {
         beforeTest();
@@ -14,7 +14,7 @@ public abstract class AbstractTestFixture implements TestFixture {
         });
         context.addTestPostcondition(new TestPostcondition() {
             public void verify() throws Exception {
-                AbstractTestFixture.this.verify();
+                SimpleTestFixture.this.verify();
             }
         });
     }

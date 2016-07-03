@@ -26,7 +26,7 @@ import org.junit.rules.TestRule;
  *
  * Multiple test fixtures can be applied to a test or suite execution.
  *
- * To make writing test fixtures easier, you can use {@link AbstractTestFixture}.
+ * To make writing test fixtures easier, you can use {@link SimpleTestFixture}.
  *
  * To see how test fixtures can be useful, see these provided fixturs.
  *

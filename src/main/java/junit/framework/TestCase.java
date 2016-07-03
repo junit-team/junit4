@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.junit.fixtures.FixtureManager;
 import org.junit.fixtures.InstanceMethod;
+import org.junit.fixtures.TearDown;
 import org.junit.fixtures.TestFixture;
 import org.junit.runners.model.MultipleFailureException;
 
@@ -119,16 +120,29 @@ public abstract class TestCase extends Assert implements Test {
         if (testStarted) {
             getOrCreateFixtureManager().initializeFixture(testFixture);
         } else {
-            if (fName == null) {
-                throw new IllegalStateException("Cannot add a test fixture before the name is set");
-            }
             testFixtures.add(testFixture);
         }
     }
 
+    /**
+     * Adds a {@link TearDown} to run after the test completes.
+     * Cannot be called before {@link #setUp()} is called.
+     */
+    public final void addTearDown(TearDown tearDown) {
+        if (!testStarted) {
+             throw new IllegalStateException("Cannot call addTeadrDown() before setUp() is called");
+        }
+        getOrCreateFixtureManager().addTearDown(tearDown);
+    }
+
+    /**
+     * Gets or creates the fixture manager.
+     *
+     * @throws AssertionFailedError if the test method doesn't exist
+     */
     private FixtureManager getOrCreateFixtureManager() {
         if (fixtureManager == null) {
-            Method testMethod = getTestMethod();
+            Method testMethod = getTestMethod(); // Can throw AssertionFailedError
             fixtureManager = FixtureManager.forTestMethod(new InstanceMethod(testMethod, this));
         }
         return fixtureManager;
@@ -203,12 +217,14 @@ public abstract class TestCase extends Assert implements Test {
     }
 
     private void initializeTestFixtures() throws Throwable {
-        if (fixtureManager == null && testFixtures.isEmpty()) {
-            return;
-        }
-
-        getOrCreateFixtureManager();
         testStarted = true;
+
+        if (fixtureManager == null) {
+            if (testFixtures.isEmpty()) {
+                return;
+            }
+            getOrCreateFixtureManager();
+        }
 
         try {
             for (TestFixture testFixture : testFixtures) {
