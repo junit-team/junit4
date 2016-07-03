@@ -28,6 +28,7 @@ public class FixtureMemberValidator extends AnnotatedMemberValidator {
      * Validates fields with a {@link Fixture} annotation.
      */
     public static final FixtureMemberValidator FIXTURE_FIELD_VALIDATOR = testMemberValidatorBuilder()
+            .withValidator(new MemberMustBeNonStaticOrAlsoClassFixture())
             .withValidator(new FieldMustBeAFixture())
             .build();
   
@@ -44,6 +45,7 @@ public class FixtureMemberValidator extends AnnotatedMemberValidator {
      */
     public static final FixtureMemberValidator FIXTURE_METHOD_VALIDATOR = classMemberValidatorBuilder()
             .forMethods()
+            .withValidator(new MemberMustBeNonStaticOrAlsoClassFixture())
             .withValidator(new MethodMustBeAFixture())
             .build();
 
@@ -94,6 +96,20 @@ public class FixtureMemberValidator extends AnnotatedMemberValidator {
             if (!isTestFixture(member)) {
                 errors.add(new ValidationError(member, annotation,
                         "must implement TestFixture."));
+            }
+        }
+    }
+
+    /**
+     * Requires the validated member to be non-static, unless they are annotated with {@code @ClassFixture}.
+     */
+    private static final class MemberMustBeNonStaticOrAlsoClassFixture implements MemberValidator {
+        public void validate(FrameworkMember<?> member, Class<? extends Annotation> annotation, List<Throwable> errors) {
+            boolean isClassFixtureAnnotated = (member.getAnnotation(ClassFixture.class) != null);
+
+            if (member.isStatic() && !isClassFixtureAnnotated) {
+                String message = "must not be static or it must be annotated with @ClassFixture.";
+                errors.add(new ValidationError(member, annotation, message));
             }
         }
     }

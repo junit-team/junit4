@@ -270,7 +270,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         return result;
     }
 
-    static Collection<TestRule> toTestRules(List<TestFixture> fixtures) {
+    private static Collection<TestRule> toTestRules(List<TestFixture> fixtures) {
         List<TestRule> rules = new ArrayList<TestRule>(fixtures.size());
         for (TestFixture fixture : fixtures) {
             rules.add(new RunFixture(fixture));

@@ -16,4 +16,15 @@ public abstract class FixtureContext {
      * may not run at all if an easier post-condidtion fails.
      */
     public abstract void addTestPostcondition(TestPostcondition postcondition);
+
+    /**
+     * Gets the method that this fixture is modifying, or {@code null} if this
+     * fixture is a class fixture.
+     */
+    public abstract InstanceMethod getInstanceMethod();
+
+    /**
+     * Gets the class that this fixture is modifying.
+     */
+    public abstract Class<?> getTestClass();
 }

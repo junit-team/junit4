@@ -12,7 +12,17 @@ import org.junit.internal.Throwables;
 public class FixtureManager  {
     private final Stack<TearDown> tearDowns = new Stack<TearDown>();
     private final List<TestPostcondition> testPostconditions = new ArrayList<TestPostcondition>();
+    private final Class<?> testClass;
+    private final InstanceMethod testMethod;
     private State state = State.HEALTHY;
+
+    public static FixtureManager forTestMethod(InstanceMethod testMethod) {
+        return new FixtureManager(testMethod, testMethod.getMethod().getDeclaringClass());
+    }
+
+    public static FixtureManager forTestClass(Class<?> testClass) {
+        return new FixtureManager(null, testClass);
+    }
 
     /**
      * Initializes a fixture, registering any tear downs or postconditions registered by
@@ -35,6 +45,15 @@ public class FixtureManager  {
             }
             Throwables.rethrowAsException(e);
         }
+    }
+ 
+    /**
+     * Resets this fixture to its initial state.
+     */
+    public void reset() {
+        state = State.HEALTHY;
+        tearDowns.clear();
+        testPostconditions.clear();
     }
  
     /**
@@ -81,14 +100,20 @@ public class FixtureManager  {
      * Removes and runs all of the {@link TearDown} instances managed by this class.
      * 
      * @param errors filled in with a list of all errors encountered while running the tear downs.
-     * @throws Throwable exception thrown from first failing postcondition
+     * @throws Exception exception thrown from first failing postcondition
      */
-    public final void runAllPostconditions() throws Throwable {
+    public final void runAllPostconditions() throws Exception {
         state = state.startRunPostConditions();
 
         for (TestPostcondition postcondition : testPostconditions) {
             postcondition.verify();
         }
+    }
+
+
+    private FixtureManager(InstanceMethod testMethod, Class<?> testClass) {
+        this.testMethod = testMethod;
+        this.testClass = testClass;
     }
 
     private class FixtureContextFacade extends FixtureContext {
@@ -115,6 +140,16 @@ public class FixtureManager  {
         public void addTestPostcondition(TestPostcondition postcondition) {
             checkUnitialized();
             testPostconditions.add(postcondition);
+        }
+        
+        @Override
+        public InstanceMethod getInstanceMethod() {
+            return testMethod;
+        }
+        
+        @Override
+        public Class<?> getTestClass() {
+            return testClass;
         }
 
         private void checkUnitialized() {
@@ -190,5 +225,5 @@ public class FixtureManager  {
         abstract void checkCanInitializeFixture();
         abstract State startRunPostConditions();
         abstract State startRunTearDowns();
-    }   
+    }
 }

@@ -6,9 +6,8 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.fixtures.FixtureContext;
 import org.junit.fixtures.FixtureManager;
-import org.junit.fixtures.TearDown;
+import org.junit.fixtures.InstanceMethod;
 import org.junit.fixtures.TestFixture;
 import org.junit.runners.model.MultipleFailureException;
 
@@ -88,9 +87,10 @@ public abstract class TestCase extends Assert implements Test {
      */
     private String fName;
 
-    private FixtureManager fixtureManager = new FixtureManager();
+    private FixtureManager fixtureManager;
     private boolean testStarted = false;
     private final List<TestFixture> testFixtures = new ArrayList<TestFixture>();
+    private Method testMethod;
 
     /**
      * No-arg constructor to enable serialization. This method
@@ -117,17 +117,21 @@ public abstract class TestCase extends Assert implements Test {
      */
     public final void addTestFixture(TestFixture testFixture) throws Throwable {
         if (testStarted) {
-            fixtureManager.initializeFixture(testFixture);
+            getOrCreateFixtureManager().initializeFixture(testFixture);
         } else {
+            if (fName == null) {
+                throw new IllegalStateException("Cannot add a test fixture before the name is set");
+            }
             testFixtures.add(testFixture);
         }
     }
 
-    /**
-     * Adds a {@link TearDown} to run after the test completes.
-     */
-    public final void addTearDown(TearDown tearDown)  {
-        fixtureManager.addTearDown(tearDown);
+    private FixtureManager getOrCreateFixtureManager() {
+        if (fixtureManager == null) {
+            Method testMethod = getTestMethod();
+            fixtureManager = FixtureManager.forTestMethod(new InstanceMethod(testMethod, this));
+        }
+        return fixtureManager;
     }
 
     /**
@@ -171,19 +175,19 @@ public abstract class TestCase extends Assert implements Test {
      * @throws Throwable if any exception is thrown
      */
     public void runBare() throws Throwable {
-        // Call setUp() in a fixture so that all TearDowns are called if setUp() throws an exception.
-        addTestFixture(new TestFixture() {
-            public void initialize(FixtureContext context) throws Exception {
-                setUp();
-            }
-        });
         initializeTestFixtures();
-
-        Throwable exception = null;
         List<Throwable> tearDownErrors = new ArrayList<Throwable>();
         try {
+            setUp();
+        } catch (Throwable e) {
+            runAllTearDowns(tearDownErrors);
+            throw e;
+        }
+
+        Throwable exception = null;
+        try {
             runTest();
-            fixtureManager.runAllPostconditions();
+            runAllPostconditions();
         } catch (Throwable running) {
             exception = running;
         } finally {
@@ -192,14 +196,18 @@ public abstract class TestCase extends Assert implements Test {
             } catch (Throwable tearingDown) {
                 if (exception == null) exception = tearingDown;
             }
-            fixtureManager.runAllTearDowns(tearDownErrors);
-            fixtureManager = new FixtureManager();
+            runAllTearDowns(tearDownErrors);
         }
         if (exception != null) throw exception;
         MultipleFailureException.assertEmpty(tearDownErrors);
     }
 
     private void initializeTestFixtures() throws Throwable {
+        if (fixtureManager == null && testFixtures.isEmpty()) {
+            return;
+        }
+
+        getOrCreateFixtureManager();
         testStarted = true;
 
         try {
@@ -211,26 +219,28 @@ public abstract class TestCase extends Assert implements Test {
         }
     }
 
+    private void runAllPostconditions() throws Exception {
+        if (fixtureManager == null) {
+            return;
+        }
+        fixtureManager.runAllPostconditions();
+    }
+
+    private void runAllTearDowns(List<Throwable> tearDownErrors) {
+        if (fixtureManager == null) {
+            return;
+        }
+        fixtureManager.runAllTearDowns(tearDownErrors);
+        fixtureManager.reset();
+    }
+
     /**
      * Override to run the test and assert its state.
      *
      * @throws Throwable if any exception is thrown
      */
     protected void runTest() throws Throwable {
-        assertNotNull("TestCase.fName cannot be null", fName); // Some VMs crash when calling getMethod(null,null);
-        Method runMethod = null;
-        try {
-            // use getMethod to get all public inherited
-            // methods. getDeclaredMethods returns all
-            // methods of this class but excludes the
-            // inherited ones.
-            runMethod = getClass().getMethod(fName, (Class[]) null);
-        } catch (NoSuchMethodException e) {
-            fail("Method \"" + fName + "\" not found");
-        }
-        if (!Modifier.isPublic(runMethod.getModifiers())) {
-            fail("Method \"" + fName + "\" should be public");
-        }
+        Method runMethod = getTestMethod();
 
         try {
             runMethod.invoke(this);
@@ -241,6 +251,28 @@ public abstract class TestCase extends Assert implements Test {
             e.fillInStackTrace();
             throw e;
         }
+    }
+
+    private Method getTestMethod() {
+        if (testMethod != null) {
+            return testMethod;
+        }
+        assertNotNull("TestCase.fName cannot be null", fName); // Some VMs crash when calling getMethod(null,null);
+        try {
+            // use getMethod to get all public inherited
+            // methods. getDeclaredMethods returns all
+            // methods of this class but excludes the
+            // inherited ones.
+            Method runMethod = getClass().getMethod(fName, (Class[]) null);
+            if (!Modifier.isPublic(runMethod.getModifiers())) {
+                fail("Method \"" + fName + "\" should be public");
+            }
+            testMethod = runMethod;
+            return testMethod;
+        } catch (NoSuchMethodException e) {
+            fail("Method \"" + fName + "\" not found");
+        }
+        return null; // we never get here
     }
 
     /**

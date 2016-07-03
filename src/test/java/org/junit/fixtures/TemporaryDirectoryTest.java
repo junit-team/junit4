@@ -138,7 +138,7 @@ public class TemporaryDirectoryTest {
     @Test
     public void recursiveDeleteDirectoryWithOneElement() throws Throwable {
         TemporaryDirectory tmpDir = new TemporaryDirectory();
-        FixtureManager fixtureManager = new FixtureManager();
+        FixtureManager fixtureManager = FixtureManager.forTestClass(getClass());
         fixtureManager.initializeFixture(tmpDir);
         File file = tmpDir.newFile("a");
         runAllTearDowns(fixtureManager);
@@ -149,7 +149,7 @@ public class TemporaryDirectoryTest {
     @Test
     public void recursiveDeleteDirectoryWithOneRandomElement() throws Throwable {
         TemporaryDirectory tmpDir = new TemporaryDirectory();
-        FixtureManager fixtureManager = new FixtureManager();
+        FixtureManager fixtureManager = FixtureManager.forTestClass(getClass());
         fixtureManager.initializeFixture(tmpDir);
         File file = tmpDir.newFile();
         runAllTearDowns(fixtureManager);
@@ -160,7 +160,7 @@ public class TemporaryDirectoryTest {
     @Test
     public void recursiveDeleteDirectoryWithZeroElements() throws Throwable {
         TemporaryDirectory tmpDir = new TemporaryDirectory();
-        FixtureManager fixtureManager = new FixtureManager();
+        FixtureManager fixtureManager = FixtureManager.forTestClass(getClass());
         fixtureManager.initializeFixture(tmpDir);
         runAllTearDowns(fixtureManager);
         assertFalse(tmpDir.getRoot().exists());
