@@ -14,13 +14,13 @@ import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
 
 /**
- * Adapter that allows a {@link TestFixture} to be used as a rule.
+ * Adapter that allows {@link TestFixture} instances to be run a rule.
  */
-public class RunFixture implements TestRule, MethodRule {
-    private final TestFixture testFixture;
+public class RunFixtures implements TestRule, MethodRule {
+    private final List<TestFixture> testFixtures;
 
-    public RunFixture(TestFixture testFixture) {
-        this.testFixture = testFixture;
+    public RunFixtures(List<TestFixture> testFixtures) {
+        this.testFixtures = new ArrayList<TestFixture>(testFixtures);
     }
 
     public Statement apply(Statement base, FrameworkMethod method, Object target) {
@@ -47,7 +47,9 @@ public class RunFixture implements TestRule, MethodRule {
 
         @Override
         public void evaluate() throws Throwable {
-            fixtureManager.initializeFixture(testFixture);
+            for (TestFixture testFixture : testFixtures) {
+                fixtureManager.initializeFixture(testFixture);
+            }
 
             List<Throwable> errors = new ArrayList<Throwable>();
             try {

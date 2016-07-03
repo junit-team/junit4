@@ -24,7 +24,7 @@ import org.junit.fixtures.ClassFixture;
 import org.junit.fixtures.TestFixture;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.EachTestNotifier;
-import org.junit.internal.runners.rules.RunFixture;
+import org.junit.internal.runners.rules.RunFixtures;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
 import org.junit.rules.RunRules;
@@ -260,22 +260,14 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     protected List<TestRule> classRules() {
         TestClass clazz = getTestClass();
         List<TestRule> result = clazz.getAnnotatedMethodValues(null, ClassRule.class, TestRule.class);
+        result.addAll(clazz.getAnnotatedFieldValues(null, ClassRule.class, TestRule.class));
+        
         List<TestFixture> fixtures = clazz.getAnnotatedMethodValues(
                 null, ClassFixture.class, TestFixture.class);
-        result.addAll(toTestRules(fixtures));
+        fixtures.addAll(clazz.getAnnotatedFieldValues(null, ClassFixture.class, TestFixture.class));
+        result.add(new RunFixtures(fixtures));
         
-        result.addAll(clazz.getAnnotatedFieldValues(null, ClassRule.class, TestRule.class));
-        fixtures = clazz.getAnnotatedFieldValues(null, ClassFixture.class, TestFixture.class);
-        result.addAll(toTestRules(fixtures));
         return result;
-    }
-
-    private static Collection<TestRule> toTestRules(List<TestFixture> fixtures) {
-        List<TestRule> rules = new ArrayList<TestRule>(fixtures.size());
-        for (TestFixture fixture : fixtures) {
-            rules.add(new RunFixture(fixture));
-        }
-        return rules;
     }
 
     /**

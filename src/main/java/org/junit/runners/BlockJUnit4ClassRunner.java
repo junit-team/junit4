@@ -5,8 +5,6 @@ import static org.junit.internal.runners.rules.FixtureMemberValidator.FIXTURE_ME
 import static org.junit.internal.runners.rules.RuleMemberValidator.RULE_METHOD_VALIDATOR;
 import static org.junit.internal.runners.rules.RuleMemberValidator.RULE_VALIDATOR;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -21,7 +19,7 @@ import org.junit.Test.None;
 import org.junit.fixtures.Fixture;
 import org.junit.fixtures.TestFixture;
 import org.junit.internal.runners.model.ReflectiveCallable;
-import org.junit.internal.runners.rules.RunFixture;
+import org.junit.internal.runners.rules.RunFixtures;
 import org.junit.internal.runners.statements.ExpectException;
 import org.junit.internal.runners.statements.Fail;
 import org.junit.internal.runners.statements.FailOnTimeout;
@@ -414,15 +412,14 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
         TestClass testClass = getTestClass();
         List<MethodRule> rules = testClass.getAnnotatedMethodValues(target, 
                 Rule.class, MethodRule.class);
-        List<TestFixture> fixtures = testClass.getAnnotatedMethodValues(
-                target, Fixture.class, TestFixture.class);
-        rules.addAll(toMethodRules(fixtures));
-
         rules.addAll(testClass.getAnnotatedFieldValues(target,
                 Rule.class, MethodRule.class));
-        fixtures = testClass.getAnnotatedFieldValues(
+
+        List<TestFixture> fixtures = testClass.getAnnotatedMethodValues(
                 target, Fixture.class, TestFixture.class);
-        rules.addAll(toMethodRules(fixtures));
+        fixtures.addAll(testClass.getAnnotatedFieldValues(
+                target, Fixture.class, TestFixture.class));
+        rules.add(new RunFixtures(fixtures));
         
         return rules;
     }
@@ -453,14 +450,6 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
         result.addAll(testClass.getAnnotatedFieldValues(
                 target, Rule.class, TestRule.class));
         return result;
-    }
-
-    static Collection<MethodRule> toMethodRules(List<TestFixture> fixtures) {
-        List<MethodRule> rules = new ArrayList<MethodRule>(fixtures.size());
-        for (TestFixture fixture : fixtures) {
-            rules.add(new RunFixture(fixture));
-        }
-        return rules;
     }
 
     private Class<? extends Throwable> getExpectedException(Test annotation) {
