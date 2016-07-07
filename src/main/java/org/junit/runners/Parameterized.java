@@ -256,10 +256,10 @@ public class Parameterized extends Suite {
         }
 
         private List<Runner> createRunners() throws Throwable {
-            Parameters parameters = getParametersMethod().getAnnotation(
+            Parameters parameters = getParametersMethod(testClass).getAnnotation(
                     Parameters.class);
             return Collections.unmodifiableList(createRunnersForParameters(
-                    allParameters(), parameters.name(),
+                    allParameters(testClass), parameters.name(),
                     getParametersRunnerFactory()));
         }
 
@@ -285,18 +285,18 @@ public class Parameterized extends Suite {
         }
 
         @SuppressWarnings("unchecked")
-        private Iterable<Object> allParameters() throws Throwable {
-            Object parameters = getParametersMethod().invokeExplosively(null);
+        public static Iterable<Object> allParameters(TestClass testClass) throws Throwable {
+            Object parameters = getParametersMethod(testClass).invokeExplosively(null);
             if (parameters instanceof Iterable) {
                 return (Iterable<Object>) parameters;
             } else if (parameters instanceof Object[]) {
                 return Arrays.asList((Object[]) parameters);
             } else {
-                throw parametersMethodReturnedWrongType();
+                throw parametersMethodReturnedWrongType(testClass);
             }
         }
 
-        private FrameworkMethod getParametersMethod() throws Exception {
+        public static FrameworkMethod getParametersMethod(TestClass testClass) throws Exception {
             List<FrameworkMethod> methods = testClass
                     .getAnnotatedMethods(Parameters.class);
             for (FrameworkMethod each : methods) {
@@ -322,7 +322,7 @@ public class Parameterized extends Suite {
                 }
                 return runners;
             } catch (ClassCastException e) {
-                throw parametersMethodReturnedWrongType();
+                throw parametersMethodReturnedWrongType(this.testClass);
             }
         }
 
@@ -338,9 +338,9 @@ public class Parameterized extends Suite {
             return children;
         }
 
-        private Exception parametersMethodReturnedWrongType() throws Exception {
+        private static Exception parametersMethodReturnedWrongType(TestClass testClass) throws Exception {
             String className = testClass.getName();
-            String methodName = getParametersMethod().getName();
+            String methodName = getParametersMethod(testClass).getName();
             String message = MessageFormat.format(
                     "{0}.{1}() must return an Iterable of arrays.", className,
                     methodName);
