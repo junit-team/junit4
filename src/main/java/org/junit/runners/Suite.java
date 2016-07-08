@@ -50,7 +50,7 @@ public class Suite extends ParentRunner<Runner> {
         Class<?>[] value();
     }
 
-    private static Class<?>[] getAnnotatedClasses(Class<?> klass) throws InitializationError {
+    public static Class<?>[] getSuiteClasses(Class<?> klass) throws InitializationError {
         SuiteClasses annotation = klass.getAnnotation(SuiteClasses.class);
         if (annotation == null) {
             throw new InitializationError(String.format("class '%s' must have a SuiteClasses annotation", klass.getName()));
@@ -67,7 +67,7 @@ public class Suite extends ParentRunner<Runner> {
      * @param builder builds runners for classes in the suite
      */
     public Suite(Class<?> klass, RunnerBuilder builder) throws InitializationError {
-        this(builder, klass, getAnnotatedClasses(klass));
+        this(builder, klass, getSuiteClasses(klass));
     }
 
     /**
