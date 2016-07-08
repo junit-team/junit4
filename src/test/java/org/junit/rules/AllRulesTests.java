@@ -20,6 +20,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TemporaryFolderRuleAssuredDeletionTest.class,
         TemporaryFolderUsageTest.class,
         TestRuleTest.class,
+        TestRuleAdapterTest.class,
         TestWatcherTest.class,
         TestWatchmanTest.class,
         // todo TestWatchmanTest.class, - doesn't work and wasn't being run before.
