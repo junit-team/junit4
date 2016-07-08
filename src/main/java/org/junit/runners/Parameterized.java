@@ -256,10 +256,8 @@ public class Parameterized extends Suite {
         }
 
         private List<Runner> createRunners() throws Throwable {
-            Parameters parameters = Parameterized.getParametersMethod(testClass).getAnnotation(
-                    Parameters.class);
             return Collections.unmodifiableList(createRunnersForParameters(
-                    Parameterized.allParameters(testClass), parameters.name(),
+                    Parameterized.allParameters(testClass), Parameterized.getNamePatternForParameters(testClass),
                     getParametersRunnerFactory()));
         }
 
@@ -333,7 +331,7 @@ public class Parameterized extends Suite {
         }
     }
 
-    public static FrameworkMethod getParametersMethod(TestClass testClass) throws Exception {
+    private static FrameworkMethod getParametersMethod(TestClass testClass) throws Exception {
         List<FrameworkMethod> methods = testClass
                 .getAnnotatedMethods(Parameters.class);
         for (FrameworkMethod each : methods) {
@@ -364,8 +362,12 @@ public class Parameterized extends Suite {
             Object[] parameters) {
         String finalPattern = pattern.replaceAll("\\{index\\}",
                 Integer.toString(index));
-        String name = MessageFormat.format(finalPattern, parameters);
-        String testName = "[" + name + "]";
-        return testName;
+        return "[" + MessageFormat.format(finalPattern, parameters) + "]";
+    }
+
+    public static String getNamePatternForParameters(TestClass testClass) throws Exception {
+        Parameters parameters = getParametersMethod(testClass).getAnnotation(
+                Parameters.class);
+        return parameters.name();
     }
 }
