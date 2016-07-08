@@ -256,10 +256,10 @@ public class Parameterized extends Suite {
         }
 
         private List<Runner> createRunners() throws Throwable {
-            Parameters parameters = getParametersMethod(testClass).getAnnotation(
+            Parameters parameters = Parameterized.getParametersMethod(testClass).getAnnotation(
                     Parameters.class);
             return Collections.unmodifiableList(createRunnersForParameters(
-                    allParameters(testClass), parameters.name(),
+                    Parameterized.allParameters(testClass), parameters.name(),
                     getParametersRunnerFactory()));
         }
 
@@ -278,35 +278,9 @@ public class Parameterized extends Suite {
 
         private TestWithParameters createTestWithNotNormalizedParameters(
                 String pattern, int index, Object parametersOrSingleParameter) {
-            Object[] parameters = (parametersOrSingleParameter instanceof Object[]) ? (Object[]) parametersOrSingleParameter
-                    : new Object[] { parametersOrSingleParameter };
+            Object[] parameters = Parameterized.normalizeParameter(parametersOrSingleParameter);
             return createTestWithParameters(testClass, pattern, index,
                     parameters);
-        }
-
-        @SuppressWarnings("unchecked")
-        public static Iterable<Object> allParameters(TestClass testClass) throws Throwable {
-            Object parameters = getParametersMethod(testClass).invokeExplosively(null);
-            if (parameters instanceof Iterable) {
-                return (Iterable<Object>) parameters;
-            } else if (parameters instanceof Object[]) {
-                return Arrays.asList((Object[]) parameters);
-            } else {
-                throw parametersMethodReturnedWrongType(testClass);
-            }
-        }
-
-        public static FrameworkMethod getParametersMethod(TestClass testClass) throws Exception {
-            List<FrameworkMethod> methods = testClass
-                    .getAnnotatedMethods(Parameters.class);
-            for (FrameworkMethod each : methods) {
-                if (each.isStatic() && each.isPublic()) {
-                    return each;
-                }
-            }
-
-            throw new Exception("No public static parameters method on class "
-                    + testClass.getName());
         }
 
         private List<Runner> createRunnersForParameters(
@@ -322,7 +296,7 @@ public class Parameterized extends Suite {
                 }
                 return runners;
             } catch (ClassCastException e) {
-                throw parametersMethodReturnedWrongType(this.testClass);
+                throw Parameterized.parametersMethodReturnedWrongType(this.testClass);
             }
         }
 
@@ -338,23 +312,60 @@ public class Parameterized extends Suite {
             return children;
         }
 
-        private static Exception parametersMethodReturnedWrongType(TestClass testClass) throws Exception {
-            String className = testClass.getName();
-            String methodName = getParametersMethod(testClass).getName();
-            String message = MessageFormat.format(
-                    "{0}.{1}() must return an Iterable of arrays.", className,
-                    methodName);
-            return new Exception(message);
-        }
-
         private TestWithParameters createTestWithParameters(
                 TestClass testClass, String pattern, int index,
                 Object[] parameters) {
-            String finalPattern = pattern.replaceAll("\\{index\\}",
-                    Integer.toString(index));
-            String name = MessageFormat.format(finalPattern, parameters);
-            return new TestWithParameters("[" + name + "]", testClass,
+            String testName = Parameterized.produceTestName(pattern, index, parameters);
+            return new TestWithParameters(testName, testClass,
                     Arrays.asList(parameters));
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Iterable<Object> allParameters(TestClass testClass) throws Throwable {
+        Object parameters = getParametersMethod(testClass).invokeExplosively(null);
+        if (parameters instanceof Iterable) {
+            return (Iterable<Object>) parameters;
+        } else if (parameters instanceof Object[]) {
+            return Arrays.asList((Object[]) parameters);
+        } else {
+            throw parametersMethodReturnedWrongType(testClass);
+        }
+    }
+
+    public static FrameworkMethod getParametersMethod(TestClass testClass) throws Exception {
+        List<FrameworkMethod> methods = testClass
+                .getAnnotatedMethods(Parameters.class);
+        for (FrameworkMethod each : methods) {
+            if (each.isStatic() && each.isPublic()) {
+                return each;
+            }
+        }
+    
+        throw new Exception("No public static parameters method on class "
+                + testClass.getName());
+    }
+
+    private static Exception parametersMethodReturnedWrongType(TestClass testClass) throws Exception {
+        String className = testClass.getName();
+        String methodName = getParametersMethod(testClass).getName();
+        String message = MessageFormat.format(
+                "{0}.{1}() must return an Iterable of arrays.", className,
+                methodName);
+        return new Exception(message);
+    }
+
+    public static Object[] normalizeParameter(Object parametersOrSingleParameter) {
+        return (parametersOrSingleParameter instanceof Object[]) ? (Object[]) parametersOrSingleParameter
+                : new Object[] { parametersOrSingleParameter };
+    }
+
+    public static String produceTestName(String pattern, int index,
+            Object[] parameters) {
+        String finalPattern = pattern.replaceAll("\\{index\\}",
+                Integer.toString(index));
+        String name = MessageFormat.format(finalPattern, parameters);
+        String testName = "[" + name + "]";
+        return testName;
     }
 }
