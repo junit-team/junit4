@@ -8,7 +8,7 @@ import org.junit.runners.model.FrameworkMember;
 /**
  * Encapsulates a single piece of validation logic for a field or method.
  *
- * <p>See also {@link MemberValidators}.
+ * <p>See also {@link AnnotatedMemberValidator}.
  */
 interface MemberValidator {
     /**

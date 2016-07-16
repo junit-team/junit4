@@ -7,14 +7,14 @@ import org.junit.rules.TestRule;
 /**
  * A test fixture adds behavior before and after a test method, or set of test methods.
  * It may perform necessary setup or cleanup for tests, or it may verify that some
- * condition holds true after a test (or set of tests) runs witout throwing an
+ * condition holds true after a test (or set of tests) runs without throwing an
  * exception.
  *
  * Test fixtures are a simpler replacement for {@link TestRule}, and can do everything
  * that could be done previously with methods annotated with {@link org.junit.Before},
  * {@link org.junit.After}, {@link org.junit.BeforeClass}, or {@link org.junit.AfterClass},
  * but they allow a single object to encapsulate these behaviors, and therefore are
- * reusable between classes and projects. They are also composeable.
+ * reusable between classes and projects. They are also composable.
  *
  * The default JUnit test runners for suites and individual test cases will install
  * {@code TestFixture} instances that are found via non-static methods and fields
@@ -31,12 +31,11 @@ import org.junit.rules.TestRule;
  * To see how test fixtures can be useful, see these provided fixturs.
  *
  * <ul>
- *   <li>{@link TemporaryDirectory}: create fresh files, and delete them after test runs</li>
+ *   <li>{@link TemporaryDirectory}: create fresh directories, and delete them after test runs</li>
  * </ul>
  *
  * @since 4.13
  */
-
 public interface TestFixture {
 
     /**

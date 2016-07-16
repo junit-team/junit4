@@ -23,6 +23,7 @@ import org.junit.runners.model.MultipleFailureException;
  * Tests for {@link TemporaryDirectory}.
  */
 public class TemporaryDirectoryTest {
+    private static final ClassWrapper CLASS_WRAPPER = new ClassWrapper(TemporaryDirectoryTest.class);
     private static File[] createdFiles = new File[20];
 
     public static class HasTempDirectory {
@@ -138,7 +139,7 @@ public class TemporaryDirectoryTest {
     @Test
     public void recursiveDeleteDirectoryWithOneElement() throws Throwable {
         TemporaryDirectory tmpDir = new TemporaryDirectory();
-        FixtureManager fixtureManager = FixtureManager.forTestClass(getClass());
+        FixtureManager fixtureManager = FixtureManager.forTestClass(CLASS_WRAPPER);
         fixtureManager.initializeFixture(tmpDir);
         File file = tmpDir.newFile("a");
         runAllTearDowns(fixtureManager);
@@ -149,7 +150,7 @@ public class TemporaryDirectoryTest {
     @Test
     public void recursiveDeleteDirectoryWithOneRandomElement() throws Throwable {
         TemporaryDirectory tmpDir = new TemporaryDirectory();
-        FixtureManager fixtureManager = FixtureManager.forTestClass(getClass());
+        FixtureManager fixtureManager = FixtureManager.forTestClass(CLASS_WRAPPER);
         fixtureManager.initializeFixture(tmpDir);
         File file = tmpDir.newFile();
         runAllTearDowns(fixtureManager);
@@ -160,7 +161,7 @@ public class TemporaryDirectoryTest {
     @Test
     public void recursiveDeleteDirectoryWithZeroElements() throws Throwable {
         TemporaryDirectory tmpDir = new TemporaryDirectory();
-        FixtureManager fixtureManager = FixtureManager.forTestClass(getClass());
+        FixtureManager fixtureManager = FixtureManager.forTestClass(CLASS_WRAPPER);
         fixtureManager.initializeFixture(tmpDir);
         runAllTearDowns(fixtureManager);
         assertFalse(tmpDir.getRoot().exists());

@@ -16,6 +16,7 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.Test.None;
+import org.junit.fixtures.ClassWrapper;
 import org.junit.fixtures.Fixture;
 import org.junit.fixtures.TestFixture;
 import org.junit.internal.runners.model.ReflectiveCallable;
@@ -419,7 +420,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
                 target, Fixture.class, TestFixture.class);
         fixtures.addAll(testClass.getAnnotatedFieldValues(
                 target, Fixture.class, TestFixture.class));
-        rules.add(new RunFixtures(fixtures));
+        rules.add(new RunFixtures(fixtures, new ClassWrapper(testClass.getJavaClass())));
         
         return rules;
     }

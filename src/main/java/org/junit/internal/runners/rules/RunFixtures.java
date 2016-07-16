@@ -3,6 +3,7 @@ package org.junit.internal.runners.rules;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.fixtures.ClassWrapper;
 import org.junit.fixtures.FixtureManager;
 import org.junit.fixtures.InstanceMethod;
 import org.junit.fixtures.TestFixture;
@@ -18,8 +19,10 @@ import org.junit.runners.model.Statement;
  */
 public class RunFixtures implements TestRule, MethodRule {
     private final List<TestFixture> testFixtures;
+    private final ClassWrapper testClass;
 
-    public RunFixtures(List<TestFixture> testFixtures) {
+    public RunFixtures(List<TestFixture> testFixtures, ClassWrapper testClass) {
+        this.testClass = testClass;
         this.testFixtures = new ArrayList<TestFixture>(testFixtures);
     }
 
@@ -28,21 +31,22 @@ public class RunFixtures implements TestRule, MethodRule {
     }
 
     public Statement apply(Statement base, Description description) {
-        return new FixtureInstallingStatement(base, description.getTestClass());
+        return new FixtureInstallingStatement(base);
     }
  
     private class FixtureInstallingStatement extends Statement  {
         private final Statement baseStatement;
         private final FixtureManager fixtureManager;
 
-        public FixtureInstallingStatement(Statement baseStatement, Class<?> testClass) {
+        public FixtureInstallingStatement(Statement baseStatement) {
             this.baseStatement = baseStatement;
             fixtureManager = FixtureManager.forTestClass(testClass);
         }
 
         public FixtureInstallingStatement(Statement baseStatement, FrameworkMethod method, Object target) {
             this.baseStatement = baseStatement;
-            fixtureManager = FixtureManager.forTestMethod(new InstanceMethod(method.getMethod(), target));
+            fixtureManager = FixtureManager.forTestMethod(
+                    new InstanceMethod(testClass, method.getMethod(), target));
         }
 
         @Override

@@ -26,5 +26,5 @@ public abstract class FixtureContext {
     /**
      * Gets the class that this fixture is modifying.
      */
-    public abstract Class<?> getTestClass();
+    public abstract ClassWrapper getTestClass();
 }

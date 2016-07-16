@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * Annotates static fields that reference test fixtures or methods that return them. A field must be public,
- * static and implement {@link org.junit.rules.TestFixture}. A method must be public static, and return
+ * static and implement {@link org.junit.fixtures.TestFixture}. A method must be public static, and return
  * a subtype of {@link org.junit.rules.TestRule}. Fields and methods of this type are called Class Fixtures.
  *
  * <p>Class fixtures will be initialized before all the test methods in a the class or fixture

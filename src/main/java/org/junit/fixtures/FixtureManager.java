@@ -12,16 +12,16 @@ import org.junit.internal.Throwables;
 public class FixtureManager  {
     private final Stack<TearDown> tearDowns = new Stack<TearDown>();
     private final List<TestPostcondition> testPostconditions = new ArrayList<TestPostcondition>();
-    private final Class<?> testClass;
+    private final ClassWrapper testClass;
     private final InstanceMethod testMethod;
     private State state = State.HEALTHY;
 
     public static FixtureManager forTestMethod(InstanceMethod testMethod) {
-        return new FixtureManager(testMethod, testMethod.getMethod().getDeclaringClass());
+        return new FixtureManager(testMethod.getJavaClass(), testMethod);
     }
 
-    public static FixtureManager forTestClass(Class<?> testClass) {
-        return new FixtureManager(null, testClass);
+    public static FixtureManager forTestClass(ClassWrapper testClass) {
+        return new FixtureManager(testClass, null);
     }
 
     /**
@@ -73,7 +73,7 @@ public class FixtureManager  {
      * or higher, you could register the exceptions as suppressed exceptions).
      *
      * @param originalException exception that triggered the tear downs
-     * @param suppressedErrors suppressed errors encountered during tear-down.
+     * @param suppressedError suppressed errors encountered during tear-down.
      */
     protected void handleSuppressedError(Throwable originalException, Throwable suppressedError) {
     }
@@ -97,25 +97,29 @@ public class FixtureManager  {
     }
  
     /**
-     * Removes and runs all of the {@link TearDown} instances managed by this class.
+     * Runs the {@link TestPostcondition} instances managed by this class. If any
+     * of the postconditions throws an exception, this method will throw that exception.
+     * If no postconditions throw an exception, then all postconditions will be callled.
      * 
-     * @param errors filled in with a list of all errors encountered while running the tear downs.
      * @throws Exception exception thrown from first failing postcondition
      */
     public final void runAllPostconditions() throws Exception {
         state = state.startRunPostConditions();
 
-        for (TestPostcondition postcondition : testPostconditions) {
-            postcondition.verify();
+        try {
+            for (TestPostcondition postcondition : testPostconditions) {
+                postcondition.verify();
+            }
+        } finally {
+            testPostconditions.clear();
         }
     }
 
     /**
      * Constructs an instance.
-     *
      * @param testMethod test method, or {@code null} if this is a class fixture.
      */
-    protected FixtureManager(InstanceMethod testMethod, Class<?> testClass) {
+    protected FixtureManager(ClassWrapper testClass, InstanceMethod testMethod) {
         this.testMethod = testMethod;
         this.testClass = testClass;
     }
@@ -152,7 +156,7 @@ public class FixtureManager  {
         }
         
         @Override
-        public Class<?> getTestClass() {
+        public ClassWrapper getTestClass() {
             return testClass;
         }
 

@@ -21,6 +21,7 @@ import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.fixtures.ClassFixture;
+import org.junit.fixtures.ClassWrapper;
 import org.junit.fixtures.TestFixture;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.EachTestNotifier;
@@ -265,7 +266,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         List<TestFixture> fixtures = clazz.getAnnotatedMethodValues(
                 null, ClassFixture.class, TestFixture.class);
         fixtures.addAll(clazz.getAnnotatedFieldValues(null, ClassFixture.class, TestFixture.class));
-        result.add(new RunFixtures(fixtures));
+        result.add(new RunFixtures(fixtures, new ClassWrapper(clazz.getJavaClass())));
         
         return result;
     }

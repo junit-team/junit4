@@ -3,6 +3,8 @@ package org.junit.internal.runners.rules;
 import java.lang.annotation.Annotation;
 import java.util.List;
 
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.fixtures.ClassFixture;
 import org.junit.fixtures.Fixture;
 import org.junit.fixtures.TestFixture;
@@ -12,9 +14,14 @@ import org.junit.runners.model.FrameworkMember;
  * Validates the fixture fields/methods of a {@link org.junit.runners.model.TestClass}.
  * All reasons for rejecting the {@code TestClass} are written to a list of errors.
  *
- * <p>There are two slightly different validators. The {@link #FIXTURE_FIELD_VALIDATOR}
- * validates fields with a {@link Fixture} annotation and the
- * {@link #FIXTURE_METHDO_VALIDATOR} validates methods with a {@link Fixture} annotation.</p>
+ * <p>There are four slightly different validators. The {@link #CLASS_FIXTURE_FIELD_VALIDATOR}
+ * validates fields with a {@link ClassFixture} annotation and the
+ * {@link #FIXTURE_FIELD_VALIDATOR} validates fields with a {@link Fixture} annotation.</p>
+ *
+ * <p>The {@link #CLASS_FIXTURE_METHOD_VALIDATOR}
+ * validates methods with a {@link ClassFixture} annotation and the
+ * {@link #FIXTURE_METHOD_VALIDATOR} validates methods with a {@link Fixture} annotation.</p>
+ 
  */
 public class FixtureMemberValidator extends AnnotatedMemberValidator {
     /**

@@ -6,6 +6,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.fixtures.ClassWrapper;
 import org.junit.fixtures.FixtureManager;
 import org.junit.fixtures.InstanceMethod;
 import org.junit.fixtures.TearDown;
@@ -143,7 +144,8 @@ public abstract class TestCase extends Assert implements Test {
     private FixtureManager getOrCreateFixtureManager() {
         if (fixtureManager == null) {
             Method testMethod = getTestMethod(); // Can throw AssertionFailedError
-            fixtureManager = FixtureManager.forTestMethod(new InstanceMethod(testMethod, this));
+            fixtureManager = FixtureManager.forTestMethod(
+                    new InstanceMethod(new ClassWrapper(getClass()), testMethod, this));
         }
         return fixtureManager;
     }
