@@ -90,7 +90,7 @@ abstract class AnnotatedMemberValidator {
             return (B) this;
         }
 
-        private <T> T checkNotNull(T t) {
+        private static <T> T checkNotNull(T t) {
             if (t == null) {
                 throw new NullPointerException();
             }

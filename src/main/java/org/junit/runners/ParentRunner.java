@@ -1,5 +1,6 @@
 package org.junit.runners;
 
+import static java.util.Arrays.asList;
 import static org.junit.internal.runners.rules.FixtureMemberValidator.CLASS_FIXTURE_FIELD_VALIDATOR;
 import static org.junit.internal.runners.rules.FixtureMemberValidator.CLASS_FIXTURE_METHOD_VALIDATOR;
 import static org.junit.internal.runners.rules.RuleMemberValidator.CLASS_RULE_METHOD_VALIDATOR;
@@ -266,7 +267,11 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         List<TestFixture> fixtures = clazz.getAnnotatedMethodValues(
                 null, ClassFixture.class, TestFixture.class);
         fixtures.addAll(clazz.getAnnotatedFieldValues(null, ClassFixture.class, TestFixture.class));
-        result.add(new RunFixtures(fixtures, new ClassWrapper(clazz.getJavaClass())));
+        if (!fixtures.isEmpty()) {
+            ClassWrapper classWrapper = new ClassWrapper(
+                    testClass.getJavaClass(), asList(testClass.getAnnotations()));
+            result.add(new RunFixtures(fixtures, classWrapper));
+        }
         
         return result;
     }

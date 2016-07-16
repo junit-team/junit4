@@ -1,5 +1,6 @@
 package org.junit.runners;
 
+import static java.util.Arrays.asList;
 import static org.junit.internal.runners.rules.FixtureMemberValidator.FIXTURE_FIELD_VALIDATOR;
 import static org.junit.internal.runners.rules.FixtureMemberValidator.FIXTURE_METHOD_VALIDATOR;
 import static org.junit.internal.runners.rules.RuleMemberValidator.RULE_METHOD_VALIDATOR;
@@ -420,7 +421,11 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
                 target, Fixture.class, TestFixture.class);
         fixtures.addAll(testClass.getAnnotatedFieldValues(
                 target, Fixture.class, TestFixture.class));
-        rules.add(new RunFixtures(fixtures, new ClassWrapper(testClass.getJavaClass())));
+        if (!fixtures.isEmpty()) {
+            ClassWrapper classWrapper = new ClassWrapper(
+                    testClass.getJavaClass(), asList(testClass.getAnnotations()));
+            rules.add(new RunFixtures(fixtures, classWrapper));
+        }
         
         return rules;
     }
