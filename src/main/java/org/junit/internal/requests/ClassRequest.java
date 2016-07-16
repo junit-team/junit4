@@ -1,11 +1,14 @@
 package org.junit.internal.requests;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
 
 public class ClassRequest extends Request {
-    private final Object runnerLock = new Object();
+    private final Lock runnerLock = new ReentrantLock();
 
     /*
      * We have to use the f prefix, because IntelliJ's JUnit4IdeaTestRunner uses
@@ -28,10 +31,13 @@ public class ClassRequest extends Request {
     @Override
     public Runner getRunner() {
         if (runner == null) {
-            synchronized (runnerLock) {
+            runnerLock.lock();
+            try {
                 if (runner == null) {
                     runner = new AllDefaultPossibilitiesBuilder(canUseSuiteMethod).safeRunnerForClass(fTestClass);
                 }
+            } finally {
+                runnerLock.unlock();
             }
         }
         return runner;
