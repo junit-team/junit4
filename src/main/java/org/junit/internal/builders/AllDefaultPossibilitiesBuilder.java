@@ -9,6 +9,17 @@ import org.junit.runners.model.RunnerBuilder;
 public class AllDefaultPossibilitiesBuilder extends RunnerBuilder {
     private final boolean canUseSuiteMethod;
 
+    /**
+     * @since 4.13
+     */
+    public AllDefaultPossibilitiesBuilder() {
+        canUseSuiteMethod = true;
+    }
+
+    /**
+     * @deprecated used {@link #AllDefaultPossibilitiesBuilder()}.
+     */
+    @Deprecated
     public AllDefaultPossibilitiesBuilder(boolean canUseSuiteMethod) {
         this.canUseSuiteMethod = canUseSuiteMethod;
     }
@@ -40,10 +51,7 @@ public class AllDefaultPossibilitiesBuilder extends RunnerBuilder {
     }
 
     protected AnnotatedBuilder annotatedBuilder() {
-        // For compatibility with Request#classes(...) and the Suite runner,
-        // deeper nesting levels always need to support suite() methods:
-        RunnerBuilder suiteBuilder = canUseSuiteMethod ? this : new AllDefaultPossibilitiesBuilder(true);
-        return new AnnotatedBuilder(suiteBuilder);
+        return new AnnotatedBuilder(this);
     }
 
     protected IgnoredBuilder ignoredBuilder() {
