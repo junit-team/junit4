@@ -366,8 +366,8 @@ public class Parameterized extends Suite {
     }
 
     public static String getNamePatternForParameters(TestClass testClass) throws Exception {
-        Parameters parameters = getParametersMethod(testClass).getAnnotation(
+        Parameters parametersAnnotation = getParametersMethod(testClass).getAnnotation(
                 Parameters.class);
-        return parameters.name();
+        return parametersAnnotation.name();
     }
 }
