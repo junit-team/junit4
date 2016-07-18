@@ -12,13 +12,14 @@ import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
+import org.junit.runners.model.TestClass;
 
 /**
  * A {@link BlockJUnit4ClassRunner} with parameters support. Parameters can be
  * injected via constructor or into annotated fields.
  */
-public class BlockJUnit4ClassRunnerWithParameters extends
-        BlockJUnit4ClassRunner {
+public class BlockJUnit4ClassRunnerWithParameters
+        extends BlockJUnit4ClassRunner {
     private enum InjectionType {
         CONSTRUCTOR, FIELD
     }
@@ -30,31 +31,37 @@ public class BlockJUnit4ClassRunnerWithParameters extends
     public BlockJUnit4ClassRunnerWithParameters(TestWithParameters test)
             throws InitializationError {
         super(test.getTestClass().getJavaClass());
-        parameters = test.getParameters().toArray(
-                new Object[test.getParameters().size()]);
+        parameters = test.getParameters()
+                .toArray(new Object[test.getParameters().size()]);
         name = test.getName();
     }
 
     @Override
     public Object createTest() throws Exception {
-        InjectionType injectionType = getInjectionType();
+        return createInstanceOfParameterizedTest(getTestClass(), parameters);
+    }
+
+    public static Object createInstanceOfParameterizedTest(TestClass testClass, Object[] parameters)
+            throws Exception {
+        InjectionType injectionType = getInjectionType(testClass);
         switch (injectionType) {
-            case CONSTRUCTOR:
-                return createTestUsingConstructorInjection();
-            case FIELD:
-                return createTestUsingFieldInjection();
-            default:
-                throw new IllegalStateException("The injection type "
-                        + injectionType + " is not supported.");
+        case CONSTRUCTOR:
+            return createTestUsingConstructorInjection(testClass, parameters);
+        case FIELD:
+            return createTestUsingFieldInjection(testClass, parameters);
+        default:
+            throw new IllegalStateException("The injection type "
+                    + injectionType + " is not supported.");
         }
     }
 
-    private Object createTestUsingConstructorInjection() throws Exception {
-        return getTestClass().getOnlyConstructor().newInstance(parameters);
+    private static Object createTestUsingConstructorInjection(TestClass testClass, Object[] parameters) throws Exception {
+        return testClass.getOnlyConstructor().newInstance(parameters);
     }
 
-    private Object createTestUsingFieldInjection() throws Exception {
-        List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter();
+    private static Object createTestUsingFieldInjection(TestClass testClass, Object[] parameters) throws Exception {
+        List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter(
+                testClass);
         if (annotatedFieldsByParameter.size() != parameters.length) {
             throw new Exception(
                     "Wrong number of parameters and @Parameter fields."
@@ -63,7 +70,7 @@ public class BlockJUnit4ClassRunnerWithParameters extends
                             + ", available parameters: " + parameters.length
                             + ".");
         }
-        Object testClassInstance = getTestClass().getJavaClass().newInstance();
+        Object testClassInstance = testClass.getJavaClass().newInstance();
         for (FrameworkField each : annotatedFieldsByParameter) {
             Field field = each.getField();
             Parameter annotation = field.getAnnotation(Parameter.class);
@@ -71,7 +78,7 @@ public class BlockJUnit4ClassRunnerWithParameters extends
             try {
                 field.set(testClassInstance, parameters[index]);
             } catch (IllegalArgumentException iare) {
-                throw new Exception(getTestClass().getName()
+                throw new Exception(testClass.getName()
                         + ": Trying to set " + field.getName()
                         + " with the value " + parameters[index]
                         + " that is not the right type ("
@@ -96,7 +103,7 @@ public class BlockJUnit4ClassRunnerWithParameters extends
     @Override
     protected void validateConstructor(List<Throwable> errors) {
         validateOnlyOneConstructor(errors);
-        if (getInjectionType() != InjectionType.CONSTRUCTOR) {
+        if (getInjectionType(getTestClass()) != InjectionType.CONSTRUCTOR) {
             validateZeroArgConstructor(errors);
         }
     }
@@ -104,13 +111,15 @@ public class BlockJUnit4ClassRunnerWithParameters extends
     @Override
     protected void validateFields(List<Throwable> errors) {
         super.validateFields(errors);
-        if (getInjectionType() == InjectionType.FIELD) {
-            List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter();
+        if (getInjectionType(getTestClass()) == InjectionType.FIELD) {
+            List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter(
+                    getTestClass());
             int[] usedIndices = new int[annotatedFieldsByParameter.size()];
             for (FrameworkField each : annotatedFieldsByParameter) {
                 int index = each.getField().getAnnotation(Parameter.class)
                         .value();
-                if (index < 0 || index > annotatedFieldsByParameter.size() - 1) {
+                if (index < 0
+                        || index > annotatedFieldsByParameter.size() - 1) {
                     errors.add(new Exception("Invalid @Parameter value: "
                             + index + ". @Parameter fields counted: "
                             + annotatedFieldsByParameter.size()
@@ -123,11 +132,12 @@ public class BlockJUnit4ClassRunnerWithParameters extends
             for (int index = 0; index < usedIndices.length; index++) {
                 int numberOfUse = usedIndices[index];
                 if (numberOfUse == 0) {
-                    errors.add(new Exception("@Parameter(" + index
-                            + ") is never used."));
+                    errors.add(new Exception(
+                            "@Parameter(" + index + ") is never used."));
                 } else if (numberOfUse > 1) {
-                    errors.add(new Exception("@Parameter(" + index
-                            + ") is used more than once (" + numberOfUse + ")."));
+                    errors.add(new Exception(
+                            "@Parameter(" + index + ") is used more than once ("
+                                    + numberOfUse + ")."));
                 }
             }
         }
@@ -141,9 +151,10 @@ public class BlockJUnit4ClassRunnerWithParameters extends
     @Override
     protected Annotation[] getRunnerAnnotations() {
         Annotation[] allAnnotations = super.getRunnerAnnotations();
-        Annotation[] annotationsWithoutRunWith = new Annotation[allAnnotations.length - 1];
+        Annotation[] annotationsWithoutRunWith = new Annotation[allAnnotations.length
+                - 1];
         int i = 0;
-        for (Annotation annotation: allAnnotations) {
+        for (Annotation annotation : allAnnotations) {
             if (!annotation.annotationType().equals(RunWith.class)) {
                 annotationsWithoutRunWith[i] = annotation;
                 ++i;
@@ -152,19 +163,20 @@ public class BlockJUnit4ClassRunnerWithParameters extends
         return annotationsWithoutRunWith;
     }
 
-    private List<FrameworkField> getAnnotatedFieldsByParameter() {
-        return getTestClass().getAnnotatedFields(Parameter.class);
+    public static List<FrameworkField> getAnnotatedFieldsByParameter(
+            TestClass testClass) {
+        return testClass.getAnnotatedFields(Parameter.class);
     }
 
-    private InjectionType getInjectionType() {
-        if (fieldsAreAnnotated()) {
+    private static InjectionType getInjectionType(TestClass testClass) {
+        if (fieldsAreAnnotated(testClass)) {
             return InjectionType.FIELD;
         } else {
             return InjectionType.CONSTRUCTOR;
         }
     }
 
-    private boolean fieldsAreAnnotated() {
-        return !getAnnotatedFieldsByParameter().isEmpty();
+    private static boolean fieldsAreAnnotated(TestClass testClass) {
+        return !getAnnotatedFieldsByParameter(testClass).isEmpty();
     }
 }
