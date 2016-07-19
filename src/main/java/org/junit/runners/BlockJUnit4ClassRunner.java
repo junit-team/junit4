@@ -450,8 +450,8 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
     /**
      * @param target
      *            the test case instance
-     * @param the
-     *            {@link TestClass} where the {@link TestRule} annotations have
+     * @param testClass
+     *            the {@link TestClass} where the {@link TestRule} annotations have
      *            been defined.
      * @return a list of TestRules that should be applied when executing this
      *         test
