@@ -189,9 +189,9 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     protected Statement classBlock(final RunNotifier notifier) {
         Statement statement = childrenInvoker(notifier);
         if (!areAllChildrenIgnored()) {
-            statement = withBeforeClasses(statement, testClass);
-            statement = withAfterClasses(statement, testClass);
-            statement = withClassRules(statement, testClass, getDescription());
+            statement = withBeforeClasses(statement);
+            statement = withAfterClasses(statement);
+            statement = withClassRules(statement, getDescription());
         }
         return statement;
     }
@@ -209,9 +209,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * Returns a {@link Statement}: run all non-overridden {@code @BeforeClass} methods on this class
      * and superclasses before executing {@code statement}; if any throws an
      * Exception, stop execution and pass the exception on.
-     * @param testClass 
      */
-    public static Statement withBeforeClasses(Statement statement, TestClass testClass) {
+    protected Statement withBeforeClasses(Statement statement) {
         List<FrameworkMethod> befores = testClass
                 .getAnnotatedMethods(BeforeClass.class);
         return befores.isEmpty() ? statement :
@@ -224,9 +223,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * always executed: exceptions thrown by previous steps are combined, if
      * necessary, with exceptions from AfterClass methods into a
      * {@link org.junit.runners.model.MultipleFailureException}.
-     * @param testClass 
      */
-    public static Statement withAfterClasses(Statement statement, TestClass testClass) {
+    protected Statement withAfterClasses(Statement statement) {
         List<FrameworkMethod> afters = testClass
                 .getAnnotatedMethods(AfterClass.class);
         return afters.isEmpty() ? statement :
@@ -239,23 +237,21 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * annotated with {@link ClassRule}.
      *
      * @param statement the base statement
-     * @param testClass 
      * @param description the description to pass to the {@link Rule}s
      * @return a RunRules statement if any class-level {@link Rule}s are
      *         found, or the base statement
      */
-    public static Statement withClassRules(Statement statement, TestClass testClass, Description description) {
-        List<TestRule> classRules = classRules(testClass);
+    protected Statement withClassRules(Statement statement, Description description) {
+        List<TestRule> classRules = classRules();
         return classRules.isEmpty() ? statement :
                 new RunRules(statement, classRules, description);
     }
 
     /**
-     * @param testClass 
      * @return the {@code ClassRule}s that can transform the block that runs
      *         each method in the tested class.
      */
-    protected static List<TestRule> classRules(TestClass testClass) {
+    protected List<TestRule> classRules() {
         List<TestRule> result = testClass.getAnnotatedMethodValues(null, ClassRule.class, TestRule.class);
         result.addAll(testClass.getAnnotatedFieldValues(null, ClassRule.class, TestRule.class));
         return result;
