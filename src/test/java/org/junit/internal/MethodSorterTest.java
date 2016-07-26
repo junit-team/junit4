@@ -71,7 +71,7 @@ public class MethodSorterTest {
 
     @Test
     public void testMethodsNullSorterSelf() {
-        List<String> expected = Arrays.asList(EPSILON, BETA, ALPHA, DELTA, GAMMA_VOID, GAMMA_BOOLEAN);
+        List<String> expected = Arrays.asList(EPSILON, BETA, DELTA, GAMMA_VOID, GAMMA_BOOLEAN);
         List<String> actual = getDeclaredMethodNames(DummySortWithoutAnnotation.class);
         assertEquals(expected, actual);
     }
