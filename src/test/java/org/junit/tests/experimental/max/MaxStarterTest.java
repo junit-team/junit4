@@ -248,8 +248,6 @@ public class MaxStarterTest {
         }
     }
 
-    String fMessage = null;
-
     @Test
     public void correctErrorFromMalformedTest() {
         Request request = Request.aClass(MalformedJUnit38TestMethod.class);

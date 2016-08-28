@@ -1,17 +1,26 @@
 package org.junit.rules;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.rules.RuleChain.outerRule;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.internal.Throwables;
 import org.junit.runner.Description;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
 
 public class RuleChainTest {
     private static final List<String> LOG = new ArrayList<String>();
@@ -54,5 +63,34 @@ public class RuleChainTest {
                 "finished inner rule", "finished middle rule",
                 "finished outer rule");
         assertEquals(expectedLog, LOG);
+    }
+
+    @Test
+    public void aroundShouldNotAllowNullRules() {
+        RuleChain chain = RuleChain.emptyRuleChain();
+        try {
+            chain.around(null);
+            fail("around() should not allow null rules");
+        } catch (NullPointerException e) {
+            assertThat(e.getMessage(), equalTo("The enclosed rule must not be null"));
+        }
+    }
+
+    public static class RuleChainWithNullRules {
+        @Rule
+        public final RuleChain chain = outerRule(new LoggingRule("outer rule"))
+                .around(null);
+
+        @Test
+        public void example() {}
+    }
+
+    @Test
+    public void whenRuleChainHasNullRuleTheStacktraceShouldPointToIt() {
+        Result result = JUnitCore.runClasses(RuleChainWithNullRules.class);
+
+        assertThat(result.getFailures().size(), equalTo(1));
+        String stacktrace = Throwables.getStacktrace(result.getFailures().get(0).getException());
+        assertThat(stacktrace, containsString("\tat org.junit.rules.RuleChainTest$RuleChainWithNullRules.<init>(RuleChainTest.java:"));
     }
 }

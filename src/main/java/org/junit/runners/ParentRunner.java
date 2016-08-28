@@ -35,6 +35,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.InvalidTestClassError;
 import org.junit.runners.model.RunnerScheduler;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
@@ -358,6 +359,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     public void run(final RunNotifier notifier) {
         EachTestNotifier testNotifier = new EachTestNotifier(notifier,
                 getDescription());
+        testNotifier.fireTestSuiteStarted();
         try {
             Statement statement = classBlock(notifier);
             statement.evaluate();
@@ -367,6 +369,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             throw e;
         } catch (Throwable e) {
             testNotifier.addFailure(e);
+        } finally {
+            testNotifier.fireTestSuiteFinished();
         }
     }
 
@@ -415,7 +419,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         List<Throwable> errors = new ArrayList<Throwable>();
         collectInitializationErrors(errors);
         if (!errors.isEmpty()) {
-            throw new InitializationError(errors);
+            throw new InvalidTestClassError(testClass.getJavaClass(), errors);
         }
     }
 

@@ -55,7 +55,7 @@ import org.junit.runners.model.TestClass;
  * only if it doesn't contain a slash. Another test or theory might define what happens when a username does contain
  * a slash. <code>UserTest</code> will attempt to run <code>filenameIncludesUsername</code> on every compatible data
  * point defined in the class. If any of the assumptions fail, the data point is silently ignored. If all of the
- * assumptions pass, but an assertion fails, the test fails.
+ * assumptions pass, but an assertion fails, the test fails. If no parameters can be found that satisfy all assumptions, the test fails.
  * <p>
  * Defining general statements as theories allows data point reuse across a bunch of functionality tests and also
  * allows automated tools to search for new, unexpected data points that expose bugs.
