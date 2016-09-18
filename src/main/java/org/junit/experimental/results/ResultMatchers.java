@@ -66,9 +66,9 @@ public class ResultMatchers {
      * contains {@code string}
      */
     public static Matcher<PrintableResult> hasFailureContaining(final String string) {
-        return new BaseMatcher<PrintableResult>() {
-            public boolean matches(Object item) {
-                return item.toString().contains(string);
+        return new TypeSafeMatcher<PrintableResult>() {
+            public boolean matchesSafely(PrintableResult item) {
+                return item.failureCount() > 0 && item.toString().contains(string);
             }
 
             public void describeTo(Description description) {
