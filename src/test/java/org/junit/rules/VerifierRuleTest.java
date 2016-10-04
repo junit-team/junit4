@@ -4,11 +4,14 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
+import static org.junit.experimental.results.ResultMatchers.failureCountIs;
 import static org.junit.experimental.results.ResultMatchers.hasFailureContaining;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 
 import java.util.concurrent.Callable;
 
+import org.junit.Assume;
+import org.junit.AssumptionViolatedException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.results.PrintableResult;
@@ -46,6 +49,24 @@ public class VerifierRuleTest {
         PrintableResult testResult = testResult(UsesErrorCollectorTwice.class);
         assertThat(testResult, hasFailureContaining("first thing went wrong"));
         assertThat(testResult, hasFailureContaining("second thing went wrong"));
+    }
+
+    public static class UsesErrorCollectorShouldFailFastWithAssumption {
+        @Rule
+        public ErrorCollector collector = new ErrorCollector();
+
+        @Test
+        public void example() {
+            collector.addError(new AssumptionViolatedException("should stop execution"));
+            collector.addError(new Throwable("should not happen"));
+        }
+    }
+
+    @Test
+    public void usedErrorCollectorShouldFailFastWithAssumption() {
+        PrintableResult testResult = testResult(UsesErrorCollectorShouldFailFastWithAssumption.class);
+        assertThat(testResult, failureCountIs(1));
+        assertThat(testResult, hasFailureContaining("Assumptions are not supported in ErrorCollector"));
     }
 
     public static class UsesErrorCollectorCheckThat {
@@ -124,6 +145,33 @@ public class VerifierRuleTest {
         assertThat(testResult, isSuccessful());
     }
 
+    public static class UsesErrorCollectorCheckSucceedsFailsFastWithAssumption {
+        @Rule
+        public ErrorCollector collector = new ErrorCollector();
+
+        @Test
+        public void example() {
+            collector.checkSucceeds(new Callable<Object>() {
+                public Object call() throws Exception {
+                    Assume.assumeTrue(false);
+                    return null;
+                }
+            });
+            collector.checkSucceeds(new Callable<Object>() {
+                public Object call() throws Exception {
+                    throw new RuntimeException("this should not happen");
+                }
+            });
+        }
+    }
+
+    @Test
+    public void usedErrorCollectorCheckSucceedsShouldFailFastWithAssumption() {
+        PrintableResult testResult = testResult(UsesErrorCollectorCheckSucceedsFailsFastWithAssumption.class);
+        assertThat(testResult, failureCountIs(1));
+        assertThat(testResult, hasFailureContaining("Assumptions are not supported in ErrorCollector"));
+    }
+
     public static class UsesErrorCollectorCheckThrowsMatchingClass {
         @Rule
         public ErrorCollector collector = new ErrorCollector();
@@ -182,6 +230,32 @@ public class VerifierRuleTest {
     public void usedErrorCollectorCheckThrowsNothingThrownShouldFail() {
         PrintableResult testResult = testResult(UsesErrorCollectorCheckThrowsNothingThrown.class);
         assertThat(testResult, hasFailureContaining("but nothing was thrown"));
+    }
+
+    public static class UsesErrorCollectorCheckThrowsFailsFastWithAssumption {
+        @Rule
+        public ErrorCollector collector = new ErrorCollector();
+
+        @Test
+        public void example() {
+            collector.checkThrows(IllegalArgumentException.class, new ThrowingRunnable() {
+                public void run() throws Throwable {
+                    Assume.assumeTrue(false);
+                }
+            });
+            collector.checkThrows(IllegalArgumentException.class, new ThrowingRunnable() {
+                public void run() throws Throwable {
+                    throw new IllegalAccessException("this should not happen");
+                }
+            });
+        }
+    }
+
+    @Test
+    public void usedErrorCollectorCheckThrowsShouldFailFastWithAssumption() {
+        PrintableResult testResult = testResult(UsesErrorCollectorCheckThrowsFailsFastWithAssumption.class);
+        assertThat(testResult, failureCountIs(1));
+        assertThat(testResult, hasFailureContaining("Assumptions are not supported in ErrorCollector"));
     }
 
     private static String sequence;
