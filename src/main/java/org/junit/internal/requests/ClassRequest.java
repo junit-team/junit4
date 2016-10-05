@@ -27,11 +27,9 @@ public class ClassRequest extends Request {
 
     @Override
     public Runner getRunner() {
-        if (runner == null) {
-            synchronized (runnerLock) {
-                if (runner == null) {
-                    runner = new AllDefaultPossibilitiesBuilder(canUseSuiteMethod).safeRunnerForClass(fTestClass);
-                }
+        synchronized (runnerLock) {
+            if (runner == null) {
+                runner = new AllDefaultPossibilitiesBuilder(canUseSuiteMethod).safeRunnerForClass(fTestClass);
             }
         }
         return runner;
