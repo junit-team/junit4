@@ -13,6 +13,16 @@ import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 
+/**
+ * The JUnit4TestAdapter enables running JUnit-4-style tests using a JUnit-3-style test runner.
+ *
+ * <p> To use it, add the following to a test class:
+ * <pre>
+      public static Test suite() {
+        return new JUnit4TestAdapter(<em>YourJUnit4TestClass</em>.class);
+      }
+</pre>
+ */
 public class JUnit4TestAdapter implements Test, Filterable, Sortable, Describable {
     private final Class<?> fNewTestClass;
 

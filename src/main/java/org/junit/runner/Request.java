@@ -71,7 +71,7 @@ public abstract class Request {
      */
     public static Request classes(Computer computer, Class<?>... classes) {
         try {
-            AllDefaultPossibilitiesBuilder builder = new AllDefaultPossibilitiesBuilder(true);
+            AllDefaultPossibilitiesBuilder builder = new AllDefaultPossibilitiesBuilder();
             Runner suite = computer.getSuite(builder, classes);
             return runner(suite);
         } catch (InitializationError e) {
