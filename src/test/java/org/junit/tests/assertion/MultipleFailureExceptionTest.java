@@ -72,7 +72,7 @@ public class MultipleFailureExceptionTest {
     @Test
     public void assertEmptyErrorListConstructorFailure() {
         try {
-            new MultipleFailureException(Collections.<Throwable> emptyList());
+            new MultipleFailureException(Collections.<Throwable>emptyList());
             fail();
         } catch (IllegalArgumentException expected) {
             assertThat(expected.getMessage(),
