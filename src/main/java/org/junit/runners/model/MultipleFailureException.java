@@ -1,5 +1,7 @@
 package org.junit.runners.model;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,7 +19,7 @@ public class MultipleFailureException extends Exception {
     /*
      * We have to use the f prefix until the next major release to ensure
      * serialization compatibility. 
-     * See https://github.com/junit-team/junit/issues/976
+     * See https://github.com/junit-team/junit4/issues/976
      */
     private final List<Throwable> fErrors;
 
@@ -39,6 +41,27 @@ public class MultipleFailureException extends Exception {
         return sb.toString();
     }
 
+    @Override
+    public void printStackTrace() {
+        for (Throwable e: fErrors) {
+            e.printStackTrace();
+        }
+    }
+    
+    @Override
+    public void printStackTrace(PrintStream s) {
+        for (Throwable e: fErrors) {
+            e.printStackTrace(s);
+        }
+    }
+    
+    @Override
+    public void printStackTrace(PrintWriter s) {
+        for (Throwable e: fErrors) {
+            e.printStackTrace(s);
+        }
+    }
+    
     /**
      * Asserts that a list of throwables is empty. If it isn't empty,
      * will throw {@link MultipleFailureException} (if there are

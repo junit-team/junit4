@@ -14,7 +14,7 @@ import org.hamcrest.Matcher;
  * basically means "don't run this test if these conditions don't apply". The default JUnit runner skips tests with
  * failing assumptions. Custom runners may behave differently.
  * <p>
- *     A good example of using assumptions is in <a href="https://github.com/junit-team/junit/wiki/Theories">Theories</a> where they are needed to exclude certain datapoints that aren't suitable or allowed for a certain test case.
+ *     A good example of using assumptions is in <a href="https://github.com/junit-team/junit4/wiki/Theories">Theories</a> where they are needed to exclude certain datapoints that aren't suitable or allowed for a certain test case.
  * </p>
  * Failed assumptions are usually not logged, because there may be many tests that don't apply to certain
  * configurations.
@@ -29,7 +29,7 @@ import org.hamcrest.Matcher;
  * </pre>
  * </p>
  *
- * @see <a href="https://github.com/junit-team/junit/wiki/Theories">Theories</a>
+ * @see <a href="https://github.com/junit-team/junit4/wiki/Theories">Theories</a>
  *
  * @since 4.4
  */

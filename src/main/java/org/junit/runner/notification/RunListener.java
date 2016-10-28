@@ -70,6 +70,34 @@ public class RunListener {
     }
 
     /**
+     * Called when a test suite is about to be started. If this method is
+     * called for a given {@link Description}, then {@link #testSuiteFinished(Description)}
+     * will also be called for the same {@code Description}.
+     *
+     * <p>Note that not all runners will call this method, so runners should
+     * be prepared to handle {@link #testStarted(Description)} calls for tests
+     * where there was no cooresponding {@code testSuiteStarted()} call for
+     * the parent {@code Description}.
+     *
+     * @param description the description of the test suite that is about to be run
+     *                    (generally a class name)
+     * @since 4.13
+     */
+    public void testSuiteStarted(Description description) throws Exception {
+    }
+
+    /**
+     * Called when a test suite has finished, whether the test suite succeeds or fails.
+     * This method will not be called for a given {@link Description} unless
+     * {@link #testSuiteStarted(Description)} was called for the same @code Description}.
+     *
+     * @param description the description of the test suite that just ran
+     * @since 4.13
+     */
+    public void testSuiteFinished(Description description) throws Exception {
+    }
+
+    /**
      * Called when an atomic test is about to be started.
      *
      * @param description the description of the test that is about to be run

@@ -44,6 +44,9 @@ public class TemporaryFolder extends ExternalResource {
     private final boolean assureDeletion;
     private File folder;
 
+    private static final int TEMP_DIR_ATTEMPTS = 10000;
+    private static final String TMP_PREFIX = "junit";
+
     /**
      * Create a temporary folder which uses system default temporary-file 
      * directory to create temporary resources.
@@ -108,7 +111,7 @@ public class TemporaryFolder extends ExternalResource {
         /**
          * Setting this flag assures that no resources are left undeleted. Failure
          * to fulfill the assurance results in failure of tests with an
-         * {@link IllegalStateException}.
+         * {@link AssertionError}.
          *
          * @return this
          */
@@ -160,7 +163,7 @@ public class TemporaryFolder extends ExternalResource {
      * Returns a new fresh file with a random name under the temporary folder.
      */
     public File newFile() throws IOException {
-        return File.createTempFile("junit", null, getRoot());
+        return File.createTempFile(TMP_PREFIX, null, getRoot());
     }
 
     /**
@@ -216,10 +219,24 @@ public class TemporaryFolder extends ExternalResource {
     }
 
     private File createTemporaryFolderIn(File parentFolder) throws IOException {
-        File createdFolder = File.createTempFile("junit", "", parentFolder);
-        createdFolder.delete();
-        createdFolder.mkdir();
-        return createdFolder;
+        File createdFolder = null;
+        for (int i = 0; i < TEMP_DIR_ATTEMPTS; ++i) {
+            // Use createTempFile to get a suitable folder name.
+            String suffix = ".tmp";
+            File tmpFile = File.createTempFile(TMP_PREFIX, suffix, parentFolder);
+            String tmpName = tmpFile.toString();
+            // Discard .tmp suffix of tmpName.
+            String folderName = tmpName.substring(0, tmpName.length() - suffix.length());
+            createdFolder = new File(folderName);
+            if (createdFolder.mkdir()) {
+                tmpFile.delete();
+                return createdFolder;
+            }
+            tmpFile.delete();
+        }
+        throw new IOException("Unable to create temporary directory in: "
+            + parentFolder.toString() + ". Tried " + TEMP_DIR_ATTEMPTS + " times. "
+            + "Last attempted to create: " + createdFolder.toString());
     }
 
     /**
@@ -237,7 +254,7 @@ public class TemporaryFolder extends ExternalResource {
      * Delete all files and folders under the temporary folder. Usually not
      * called directly, since it is automatically applied by the {@link Rule}.
      *
-     * @throws IllegalStateException if unable to clean up resources
+     * @throws AssertionError if unable to clean up resources
      * and deletion of resources is assured.
      */
     public void delete() {
@@ -262,8 +279,13 @@ public class TemporaryFolder extends ExternalResource {
         
         return recursiveDelete(folder);
     }
-    
+
     private boolean recursiveDelete(File file) {
+        // Try deleting file before assuming file is a directory
+        // to prevent following symbolic links.
+        if (file.delete()) {
+            return true;
+        }
         boolean result = true;
         File[] files = file.listFiles();
         if (files != null) {

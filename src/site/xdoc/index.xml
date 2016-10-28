@@ -74,51 +74,52 @@
         <div class="span4" id="welcome-section">
           <p><b>Welcome</b></p>
           <ul>
-            <li><a href="https://github.com/junit-team/junit/wiki/Download-and-Install">Download and install</a></li>
-            <li><a href="https://github.com/junit-team/junit/wiki/Getting-started">Getting started</a></li>
+            <li><a href="https://github.com/junit-team/junit4/wiki/Download-and-Install">Download and install</a></li>
+            <li><a href="https://github.com/junit-team/junit4/wiki/Getting-started">Getting started</a></li>
             <li>Release Notes
               <ul>
-<li><a href="https://github.com/junit-team/junit/blob/master/doc/ReleaseNotes4.12.md">4.12</a></li>
-<li><a href="https://github.com/junit-team/junit/blob/master/doc/ReleaseNotes4.11.md">4.11</a></li>
-<li><a href="https://github.com/junit-team/junit/blob/master/doc/ReleaseNotes4.10.md">4.10</a></li>
-<li><a href="https://github.com/junit-team/junit/blob/master/doc/ReleaseNotes4.9.1.md">4.9.1</a></li>
-<li><a href="https://github.com/junit-team/junit/blob/master/doc/ReleaseNotes4.9.md">4.9</a></li>
+<li><a href="https://github.com/junit-team/junit4/blob/master/doc/ReleaseNotes4.12.md">4.12</a></li>
+<li><a href="https://github.com/junit-team/junit4/blob/master/doc/ReleaseNotes4.11.md">4.11</a></li>
+<li><a href="https://github.com/junit-team/junit4/blob/master/doc/ReleaseNotes4.10.md">4.10</a></li>
+<li><a href="https://github.com/junit-team/junit4/blob/master/doc/ReleaseNotes4.9.1.md">4.9.1</a></li>
+<li><a href="https://github.com/junit-team/junit4/blob/master/doc/ReleaseNotes4.9.md">4.9</a></li>
               </ul>
             </li>
-            <li><a href="https://github.com/junit-team/junit/wiki/Maintainer-documentation">Maintainer Documentation</a></li>
-            <li><a href="https://github.com/junit-team/junit/wiki/I-want-to-help%21">I want to help!</a></li>
+            <li><a href="https://github.com/junit-team/junit4/wiki/Maintainer-documentation">Maintainer Documentation</a></li>
+            <li><a href="https://github.com/junit-team/junit4/wiki/I-want-to-help%21">I want to help!</a></li>
             <li><a href="http://stackoverflow.com/questions/tagged/junit">Latest JUnit Questions on StackOverflow</a></li>
             <li><a href="javadoc/latest/index.html">JavaDocs</a></li>
             <li><a href="./faq.html">Frequently asked questions</a></li>
-            <li><a href="https://github.com/junit-team/junit/wiki">Wiki</a></li>
+            <li><a href="https://github.com/junit-team/junit4/wiki">Wiki</a></li>
+            <li><a href="./license.html">License</a></li>
           </ul>
         </div>
         <div class="span4" id="concepts-section">
           <p><b>Usage and Idioms</b></p>
           <ul>
-<li><a href="https://github.com/junit-team/junit/wiki/Assertions">Assertions</a></li>
-<li><a href="https://github.com/junit-team/junit/wiki/Test-runners">Test Runners</a></li>
-<li><a href="https://github.com/junit-team/junit/wiki/Aggregating-tests-in-suites">Aggregating tests in Suites</a></li>
-<li><a href="https://github.com/junit-team/junit/wiki/Test-execution-order">Test Execution Order</a></li>
-<li><a href="https://github.com/junit-team/junit/wiki/Exception-testing">Exception Testing</a></li>
-<li><a href="https://github.com/junit-team/junit/wiki/Matchers-and-assertthat">Matchers and assertThat</a></li>
-<li><a href="https://github.com/junit-team/junit/wiki/Ignoring-tests">Ignoring Tests</a></li>
-<li><a href="https://github.com/junit-team/junit/wiki/Timeout-for-tests">Timeout for Tests</a></li>
-<li><a href="https://github.com/junit-team/junit/wiki/Parameterized-tests">Parameterized Tests</a></li>
-<li><a href="https://github.com/junit-team/junit/wiki/Assumptions-with-assume">Assumptions with Assume</a></li>
-<li><a href="https://github.com/junit-team/junit/wiki/Rules">Rules</a></li>
-<li><a href="https://github.com/junit-team/junit/wiki/Theories">Theories</a></li>
-<li><a href="https://github.com/junit-team/junit/wiki/Test-fixtures">Test Fixtures</a></li>
-<li><a href="https://github.com/junit-team/junit/wiki/Categories">Categories</a></li>
-<li><a href="https://github.com/junit-team/junit/wiki/Use-with-Maven">Use with Maven</a></li>
-<li><a href="https://github.com/junit-team/junit/wiki/Multithreaded-code-and-concurrency">Multithreaded code and Concurrency</a></li>
-<li><a href="https://github.com/junit-team/junit/wiki/Java-contract-test-helpers">Java contract test helpers</a></li>
-<li><a href="https://github.com/junit-team/junit/wiki/Continuous-testing">Continuous Testing</a></li>          </ul>
+<li><a href="https://github.com/junit-team/junit4/wiki/Assertions">Assertions</a></li>
+<li><a href="https://github.com/junit-team/junit4/wiki/Test-runners">Test Runners</a></li>
+<li><a href="https://github.com/junit-team/junit4/wiki/Aggregating-tests-in-suites">Aggregating tests in Suites</a></li>
+<li><a href="https://github.com/junit-team/junit4/wiki/Test-execution-order">Test Execution Order</a></li>
+<li><a href="https://github.com/junit-team/junit4/wiki/Exception-testing">Exception Testing</a></li>
+<li><a href="https://github.com/junit-team/junit4/wiki/Matchers-and-assertthat">Matchers and assertThat</a></li>
+<li><a href="https://github.com/junit-team/junit4/wiki/Ignoring-tests">Ignoring Tests</a></li>
+<li><a href="https://github.com/junit-team/junit4/wiki/Timeout-for-tests">Timeout for Tests</a></li>
+<li><a href="https://github.com/junit-team/junit4/wiki/Parameterized-tests">Parameterized Tests</a></li>
+<li><a href="https://github.com/junit-team/junit4/wiki/Assumptions-with-assume">Assumptions with Assume</a></li>
+<li><a href="https://github.com/junit-team/junit4/wiki/Rules">Rules</a></li>
+<li><a href="https://github.com/junit-team/junit4/wiki/Theories">Theories</a></li>
+<li><a href="https://github.com/junit-team/junit4/wiki/Test-fixtures">Test Fixtures</a></li>
+<li><a href="https://github.com/junit-team/junit4/wiki/Categories">Categories</a></li>
+<li><a href="https://github.com/junit-team/junit4/wiki/Use-with-Maven">Use with Maven</a></li>
+<li><a href="https://github.com/junit-team/junit4/wiki/Multithreaded-code-and-concurrency">Multithreaded code and Concurrency</a></li>
+<li><a href="https://github.com/junit-team/junit4/wiki/Java-contract-test-helpers">Java contract test helpers</a></li>
+<li><a href="https://github.com/junit-team/junit4/wiki/Continuous-testing">Continuous Testing</a></li>          </ul>
         </div>
         <div class="span4" id="thirdparty-section">
           <p><b>Third-party extensions</b></p>
           <ul>
-<li><a href="https://github.com/junit-team/junit/wiki/Custom-runners">Custom Runners</a></li>
+<li><a href="https://github.com/junit-team/junit4/wiki/Custom-runners">Custom Runners</a></li>
 <li>
 <a href="http://site.trajano.net/commons-testing/">net.trajano.commons:commons-testing for UtilityClassTestUtil</a> per #646</li>
 <li>

@@ -13,12 +13,12 @@ import org.junit.runners.model.Statement;
  * {@link #around(TestRule)}:
  *
  * <pre>
- * public static class UseRuleChain {
+ * public class UseRuleChain {
  * 	&#064;Rule
  * 	public RuleChain chain= RuleChain
- * 	                       .outerRule(new LoggingRule("outer rule")
- * 	                       .around(new LoggingRule("middle rule")
- * 	                       .around(new LoggingRule("inner rule");
+ * 	                       .outerRule(new LoggingRule("outer rule"))
+ * 	                       .around(new LoggingRule("middle rule"))
+ * 	                       .around(new LoggingRule("inner rule"));
  *
  * 	&#064;Test
  * 	public void example() {
@@ -36,6 +36,21 @@ import org.junit.runners.model.Statement;
  * finished inner rule
  * finished middle rule
  * finished outer rule
+ * </pre>
+ * 
+ * {@code RuleChain} cannot be used to define the order of existing rules.
+ * For example in the below snippet the LoggingRule {@code middle} would be
+ * executed outside as well as inside the {@code RuleChain}:
+ *
+ * <pre>
+ * &#064;Rule
+ * public LoggingRule middle = new LoggingRule("middle rule");
+ * 
+ * &#064;Rule
+ * public RuleChain chain = RuleChain
+ *                          .outerRule(new LoggingRule("outer rule"))
+ *                          .around(middle)
+ *                          .around(new LoggingRule("inner rule"));
  * </pre>
  *
  * @since 4.10
@@ -75,10 +90,14 @@ public class RuleChain implements TestRule {
      * Create a new {@code RuleChain}, which encloses the given {@link TestRule} with
      * the rules of the current {@code RuleChain}.
      *
-     * @param enclosedRule the rule to enclose.
+     * @param enclosedRule the rule to enclose; must not be {@code null}.
      * @return a new {@code RuleChain}.
+     * @throws NullPointerException if the argument {@code enclosedRule} is {@code null}
      */
     public RuleChain around(TestRule enclosedRule) {
+        if (enclosedRule == null) {
+            throw new NullPointerException("The enclosed rule must not be null");
+        }
         List<TestRule> rulesOfNewChain = new ArrayList<TestRule>();
         rulesOfNewChain.add(enclosedRule);
         rulesOfNewChain.addAll(rulesStartingWithInnerMost);
@@ -89,9 +108,6 @@ public class RuleChain implements TestRule {
      * {@inheritDoc}
      */
     public Statement apply(Statement base, Description description) {
-        for (TestRule each : rulesStartingWithInnerMost) {
-            base = each.apply(base, description);
-        }
-        return base;
+        return new RunRules(base, rulesStartingWithInnerMost, description);
     }
 }

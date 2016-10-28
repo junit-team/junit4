@@ -14,13 +14,20 @@ import org.junit.runners.model.Statement;
 
 /**
  * The {@code ExpectedException} rule allows you to verify that your code
- * throws a specific exception.
+ * throws a specific exception. Note that, starting with Java 8,
+ * {@link org.junit.Assert#assertThrows(java.lang.Class, org.junit.Assert.ThrowingRunnable)
+ * Assert.assertThrows}
+ * is often a better choice since it allows you to express exactly where you
+ * expect the exception to be thrown. Use
+ * {@link org.junit.Assert#expectThrows(java.lang.Class,
+ * org.junit.Assert.ThrowingRunnable) expectThrows}
+ * if you need to assert something about the thrown exception.
  *
  * <h3>Usage</h3>
  *
  * <pre> public class SimpleExpectedExceptionTest {
  *     &#064;Rule
- *     public ExpectedException thrown= ExpectedException.none();
+ *     public ExpectedException thrown = ExpectedException.none();
  *
  *     &#064;Test
  *     public void throwsNothing() {
@@ -34,16 +41,19 @@ import org.junit.runners.model.Statement;
  *     }
  * }</pre>
  * 
- * <p>
- * You have to add the {@code ExpectedException} rule to your test.
+ * <p>You have to add the {@code ExpectedException} rule to your test.
  * This doesn't affect your existing tests (see {@code throwsNothing()}).
- * After specifiying the type of the expected exception your test is
+ * After specifying the type of the expected exception your test is
  * successful when such an exception is thrown and it fails if a
  * different or no exception is thrown.
  *
- * <p>
- * Instead of specifying the exception's type you can characterize the
- * expected exception based on other criterias, too:
+ * <p>This rule does not perform any special magic to make execution continue
+ * as if the exception had not been thrown. So it is nearly always a mistake
+ * for a test method to have statements after the one that is expected to
+ * throw the exception.
+ *
+ * <p>Instead of specifying the exception's type you can characterize the
+ * expected exception based on other criteria, too:
  *
  * <ul>
  *   <li>The exception's message contains a specific text: {@link #expectMessage(String)}</li>
@@ -52,8 +62,7 @@ import org.junit.runners.model.Statement;
  *   <li>The exception itself complies with a Hamcrest matcher: {@link #expect(Matcher)}</li>
  * </ul>
  *
- * <p>
- * You can combine any of the presented expect-methods. The test is
+ * <p>You can combine any of the presented expect-methods. The test is
  * successful if all specifications are met.
  * <pre> &#064;Test
  * public void throwsException() {
@@ -63,8 +72,7 @@ import org.junit.runners.model.Statement;
  * }</pre>
  *
  * <h3>AssumptionViolatedExceptions</h3>
- * <p>
- * JUnit uses {@link AssumptionViolatedException}s for indicating that a test
+ * <p>JUnit uses {@link AssumptionViolatedException}s for indicating that a test
  * provides no useful information. (See {@link org.junit.Assume} for more
  * information.) You have to call {@code assume} methods before you set
  * expectations of the {@code ExpectedException} rule. In this case the rule
@@ -79,8 +87,7 @@ import org.junit.runners.model.Statement;
  *
  * <h3>AssertionErrors</h3>
  *
- * <p>
- * JUnit uses {@link AssertionError}s for indicating that a test is failing. You
+ * <p>JUnit uses {@link AssertionError}s for indicating that a test is failing. You
  * have to call {@code assert} methods before you set expectations of the
  * {@code ExpectedException} rule, if they should be handled by the framework.
  * E.g. the following test fails because of the {@code assertTrue} statement.
@@ -92,8 +99,7 @@ import org.junit.runners.model.Statement;
  * }</pre>
  *
  * <h3>Missing Exceptions</h3>
- * <p>
- * By default missing exceptions are reported with an error message
+ * <p>By default missing exceptions are reported with an error message
  * like "Expected test to throw an instance of foo". You can configure a different
  * message by means of {@link #reportMissingExceptionWithMessage(String)}. You
  * can use a {@code %s} placeholder for the description of the expected
@@ -171,8 +177,9 @@ public class ExpectedException implements TestRule {
      * @deprecated use {@code org.hamcrest.junit.ExpectedException.expect()}
      */
     @Deprecated
-    public void expect(Matcher<?> matcher) {
+    public ExpectedException expect(Matcher<?> matcher) {
         matcherBuilder.add(matcher);
+        return this;
     }
 
     /**
@@ -184,8 +191,9 @@ public class ExpectedException implements TestRule {
      *     throw new NullPointerException();
      * }</pre>
      */
-    public void expect(Class<? extends Throwable> type) {
+    public ExpectedException expect(Class<? extends Throwable> type) {
         expect(instanceOf(type));
+        return this;
     }
 
     /**
@@ -197,8 +205,9 @@ public class ExpectedException implements TestRule {
      *     throw new NullPointerException(&quot;What happened?&quot;);
      * }</pre>
      */
-    public void expectMessage(String substring) {
+    public ExpectedException expectMessage(String substring) {
         expectMessage(containsString(substring));
+        return this;
     }
 
     /**
@@ -213,8 +222,9 @@ public class ExpectedException implements TestRule {
      * @deprecated use {@code org.hamcrest.junit.ExpectedException.expectMessage()}
      */
     @Deprecated
-    public void expectMessage(Matcher<String> matcher) {
+    public ExpectedException expectMessage(Matcher<String> matcher) {
         expect(hasMessage(matcher));
+        return this;
     }
 
     /**
@@ -230,8 +240,9 @@ public class ExpectedException implements TestRule {
      * @deprecated use {@code org.hamcrest.junit.ExpectedException.expectCause()}
      */
     @Deprecated
-    public void expectCause(Matcher<? extends Throwable> expectedCause) {
+    public ExpectedException expectCause(Matcher<? extends Throwable> expectedCause) {
         expect(hasCause(expectedCause));
+        return this;
     }
 
     private class ExpectedExceptionStatement extends Statement {
