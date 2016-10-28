@@ -1,7 +1,5 @@
 package junit.framework;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -12,6 +10,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.junit.internal.MethodSorter;
+import org.junit.internal.Throwables;
 
 /**
  * A <code>TestSuite</code> is a <code>Composite</code> of Tests.
@@ -65,11 +64,11 @@ public class TestSuite implements Test {
                 test = constructor.newInstance(new Object[]{name});
             }
         } catch (InstantiationException e) {
-            return (warning("Cannot instantiate test case: " + name + " (" + exceptionToString(e) + ")"));
+            return (warning("Cannot instantiate test case: " + name + " (" + Throwables.getStacktrace(e) + ")"));
         } catch (InvocationTargetException e) {
-            return (warning("Exception in constructor: " + name + " (" + exceptionToString(e.getTargetException()) + ")"));
+            return (warning("Exception in constructor: " + name + " (" + Throwables.getStacktrace(e.getTargetException()) + ")"));
         } catch (IllegalAccessException e) {
-            return (warning("Cannot access test case: " + name + " (" + exceptionToString(e) + ")"));
+            return (warning("Cannot access test case: " + name + " (" + Throwables.getStacktrace(e) + ")"));
         }
         return (Test) test;
     }

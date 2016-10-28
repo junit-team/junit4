@@ -1,6 +1,8 @@
 package org.junit.tests.validation;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -54,7 +56,7 @@ public class BadlyFormedClassesTest {
 
     @Test
     public void noRunnableMethods() {
-        assertEquals("No runnable methods", exceptionMessageFrom(NoTests.class));
+        assertThat(exceptionMessageFrom(NoTests.class), containsString("No runnable methods"));
     }
 
     @Test

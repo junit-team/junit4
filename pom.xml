@@ -49,7 +49,7 @@
             <name>JUnit contributors</name>
             <organization>JUnit</organization>
             <email>junit@yahoogroups.com</email>
-            <url>https://github.com/junit-team/junit/graphs/contributors</url>
+            <url>https://github.com/junit-team/junit4/graphs/contributors</url>
             <roles>
                 <role>developers</role>
             </roles>
@@ -69,21 +69,21 @@
     </prerequisites>
 
     <scm>
-        <connection>scm:git:git://github.com/junit-team/junit.git</connection>
-        <developerConnection>scm:git:git@github.com:junit-team/junit.git</developerConnection>
-        <url>http://github.com/junit-team/junit/tree/master</url>
+        <connection>scm:git:git://github.com/junit-team/junit4.git</connection>
+        <developerConnection>scm:git:git@github.com:junit-team/junit4.git</developerConnection>
+        <url>http://github.com/junit-team/junit4/tree/master</url>
       <tag>HEAD</tag>
   </scm>
     <issueManagement>
         <system>github</system>
-        <url>https://github.com/junit-team/junit/issues</url>
+        <url>https://github.com/junit-team/junit4/issues</url>
     </issueManagement>
     <ciManagement>
         <system>jenkins</system>
         <url>https://junit.ci.cloudbees.com/</url>
     </ciManagement>
     <distributionManagement>
-        <downloadUrl>https://github.com/junit-team/junit/wiki/Download-and-Install</downloadUrl>
+        <downloadUrl>https://github.com/junit-team/junit4/wiki/Download-and-Install</downloadUrl>
         <snapshotRepository>
             <id>junit-snapshot-repo</id>
             <name>Nexus Snapshot Repository</name>
@@ -96,12 +96,14 @@
         </repository>
         <site>
             <id>junit.github.io</id>
-            <url>gitsite:git@github.com/junit-team/junit.git</url>
+            <url>gitsite:git@github.com/junit-team/junit4.git</url>
         </site>
     </distributionManagement>
 
     <properties>
         <jdkVersion>1.5</jdkVersion>
+        <surefireVersion>2.19.1</surefireVersion>
+        <hamcrestVersion>1.3</hamcrestVersion>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
         <arguments />
         <gpg.keyname>67893CC4</gpg.keyname>
@@ -111,7 +113,14 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
-            <version>1.3</version>
+            <version>${hamcrestVersion}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+            <version>${hamcrestVersion}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -256,12 +265,19 @@
                 our junit suite "AllTests" after the sources are compiled.
                 -->
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.18.1</version>
+                <version>${surefireVersion}</version>
                 <configuration>
                     <test>org/junit/tests/AllTests.java</test>
                     <useSystemClassLoader>true</useSystemClassLoader>
                     <enableAssertions>false</enableAssertions>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-junit47</artifactId>
+                        <version>${surefireVersion}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <!--
@@ -552,13 +568,6 @@
                             <parallel>classes</parallel>
                             <threadCountClasses>2</threadCountClasses>
                         </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.apache.maven.surefire</groupId>
-                                <artifactId>surefire-junit47</artifactId>
-                                <version>2.18</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                 </plugins>
             </build>

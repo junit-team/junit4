@@ -82,7 +82,7 @@
      reinholdfuereder@github For initial test for GH-39
 
 2011 Apr 15
-     ububenheimer@github for bug report https://github.com/junit-team/junit/issues/208
+     ububenheimer@github for bug report https://github.com/junit-team/junit4/issues/208
 
 2011 Apr 29
      reinholdfuereder@github: bug report, test, and fix for GH-38:

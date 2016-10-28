@@ -88,7 +88,7 @@ public class Suite extends ParentRunner<Runner> {
      * @param suiteClasses the classes in the suite
      */
     protected Suite(Class<?> klass, Class<?>[] suiteClasses) throws InitializationError {
-        this(new AllDefaultPossibilitiesBuilder(true), klass, suiteClasses);
+        this(new AllDefaultPossibilitiesBuilder(), klass, suiteClasses);
     }
 
     /**
