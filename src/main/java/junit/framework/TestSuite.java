@@ -98,16 +98,6 @@ public class TestSuite implements Test {
         };
     }
 
-    /**
-     * Converts the stack trace into a string.
-     */
-    private static String exceptionToString(Throwable e) {
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter writer = new PrintWriter(stringWriter);
-        e.printStackTrace(writer);
-        return stringWriter.toString();
-    }
-
     private String fName;
 
     private Vector<Test> fTests = new Vector<Test>(10); // Cannot convert this to List because it is used directly by some test runners
