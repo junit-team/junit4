@@ -34,7 +34,7 @@ import org.junit.internal.Throwables;
  * <p>
  * A final option is to do the same for a large array of test classes.
  * <pre>
- * Class[] testClasses = { MathTest.class, AnotherTest.class }
+ * Class[] testClasses = { MathTest.class, AnotherTest.class };
  * TestSuite suite= new TestSuite(testClasses);
  * </pre>
  *
@@ -199,7 +199,7 @@ public class TestSuite implements Test {
     }
 
     /**
-     * Adds the tests from the given class to the suite
+     * Adds the tests from the given class to the suite.
      */
     public void addTestSuite(Class<? extends TestCase> testClass) {
         addTest(new TestSuite(testClass));
@@ -251,21 +251,21 @@ public class TestSuite implements Test {
     }
 
     /**
-     * Returns the test at the given index
+     * Returns the test at the given index.
      */
     public Test testAt(int index) {
         return fTests.get(index);
     }
 
     /**
-     * Returns the number of tests in this suite
+     * Returns the number of tests in this suite.
      */
     public int testCount() {
         return fTests.size();
     }
 
     /**
-     * Returns the tests as an enumeration
+     * Returns the tests as an enumeration.
      */
     public Enumeration<Test> tests() {
         return fTests.elements();
