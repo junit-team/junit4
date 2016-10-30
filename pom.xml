@@ -396,6 +396,15 @@
                     <violationIgnore>indentation</violationIgnore>
                 </configuration>
             </plugin>
+            <plugin>
+                <!--
+                To apply: mvn googleformatter:format
+                To repair indentation (BSD/Mac sed): git status -s | sed -En 's/^ M (src.*\.java)$/\1/p' | xargs sed -Ei '' 's/^( *)/\1\1/'
+                -->
+                <groupId>com.theoryinpractise</groupId>
+                <artifactId>googleformatter-maven-plugin</artifactId>
+                <version>1.0.6</version>
+            </plugin>
         </plugins>
     </build>
 
