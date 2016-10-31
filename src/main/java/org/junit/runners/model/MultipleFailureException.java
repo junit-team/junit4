@@ -24,6 +24,10 @@ public class MultipleFailureException extends Exception {
     private final List<Throwable> fErrors;
 
     public MultipleFailureException(List<Throwable> errors) {
+        if (errors.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "List of Throwables must not be empty");
+        }
         this.fErrors = new ArrayList<Throwable>(errors);
     }
 

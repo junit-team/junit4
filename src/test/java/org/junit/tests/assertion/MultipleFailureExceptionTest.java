@@ -1,5 +1,6 @@
 package org.junit.tests.assertion;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
@@ -68,6 +69,16 @@ public class MultipleFailureExceptionTest {
         }
     }
 
+    @Test
+    public void assertEmptyErrorListConstructorFailure() {
+        try {
+            new MultipleFailureException(Collections.<Throwable>emptyList());
+            fail();
+        } catch (IllegalArgumentException expected) {
+            assertThat(expected.getMessage(),
+                    containsString("List of Throwables must not be empty"));
+        }
+    }
 
     private static class ExpectedException extends RuntimeException {
         private static final long serialVersionUID = 1L;
