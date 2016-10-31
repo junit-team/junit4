@@ -79,6 +79,7 @@ public class Assume {
      * If called with one or more null elements in <code>objects</code>, the test will halt and be ignored.
      */
     public static void assumeNotNull(Object... objects) {
+        assumeThat(objects, notNullValue());
         assumeThat(asList(objects), everyItem(notNullValue()));
     }
 
