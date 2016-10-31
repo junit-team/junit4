@@ -30,7 +30,17 @@ public class Computer {
             public Runner runnerForClass(Class<?> testClass) throws Throwable {
                 return getRunner(builder, testClass);
             }
-        }, classes);
+        }, classes) {
+            @Override
+            protected String getName() {
+                /*
+                 * #1320 The generated suite is not based on a real class so
+                 * only a 'null' description can be generated from it. This name
+                 * will be overridden here.
+                 */
+                return "classes";
+            }
+        };
     }
 
     /**
