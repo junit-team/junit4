@@ -113,7 +113,7 @@ public class AssumptionTest {
     @Test
     public void assumeNotNullSingleNullThrowsException() {
         try {
-            assumeNotNull(null);
+            assumeNotNull((Object[]) null);
             fail("should throw AssumptionViolatedException");
         } catch (AssumptionViolatedException e) {
             // expected
