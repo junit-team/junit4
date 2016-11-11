@@ -297,7 +297,7 @@ public abstract class BaseTestRunner implements TestListener {
     }
 
     protected static boolean showStackRaw() {
-        return !getPreference("filterstack").equals("true") || fgFilterStack == false;
+        return !getPreference("filterstack").equals("true") || !fgFilterStack;
     }
 
     static boolean filterLine(String line) {
