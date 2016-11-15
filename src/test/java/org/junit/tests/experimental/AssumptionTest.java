@@ -111,7 +111,7 @@ public class AssumptionTest {
     }
 
     @Test
-    public void assumeNotNullSingleNullThrowsException() {
+    public void assumeNotNullThrowsExceptionForNullArray() {
         try {
             assumeNotNull((Object[]) null);
             fail("should throw AssumptionViolatedException");
