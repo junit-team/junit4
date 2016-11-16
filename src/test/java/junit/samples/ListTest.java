@@ -34,7 +34,7 @@ public class ListTest extends TestCase {
     public void testCapacity() {
         int size = fFull.size();
         for (int i = 0; i < 100; i++) {
-            fFull.add(new Integer(i));
+            fFull.add(i);
         }
         assertTrue(fFull.size() == 100 + size);
     }
