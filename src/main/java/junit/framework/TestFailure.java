@@ -10,8 +10,8 @@ import org.junit.internal.Throwables;
  * @see TestResult
  */
 public class TestFailure {
-    protected Test fFailedTest;
-    protected Throwable fThrownException;
+    private Test fFailedTest;
+    private Throwable fThrownException;
 
     /**
      * Constructs a TestFailure with the given test and exception.

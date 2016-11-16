@@ -7,20 +7,20 @@ public interface TestListener {
     /**
      * An error occurred.
      */
-    public void addError(Test test, Throwable e);
+    void addError(Test test, Throwable e);
 
     /**
      * A failure occurred.
      */
-    public void addFailure(Test test, AssertionFailedError e);
+    void addFailure(Test test, AssertionFailedError e);
 
     /**
      * A test ended.
      */
-    public void endTest(Test test);
+    void endTest(Test test);
 
     /**
      * A test started.
      */
-    public void startTest(Test test);
+    void startTest(Test test);
 }

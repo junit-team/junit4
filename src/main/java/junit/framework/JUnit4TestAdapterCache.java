@@ -29,7 +29,7 @@ public class JUnit4TestAdapterCache extends HashMap<Description, Test> {
         }
     }
 
-    Test createTest(Description description) {
+    private Test createTest(Description description) {
         if (description.isTest()) {
             return new JUnit4TestCaseFacade(description);
         } else {
