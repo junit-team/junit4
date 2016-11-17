@@ -11,7 +11,7 @@ import junit.framework.TestResult;
  */
 @SuppressWarnings("deprecation")
 public class TestDecorator extends Assert implements Test {
-    private Test fTest;
+    protected Test fTest;
 
     public TestDecorator(Test test) {
         fTest = test;
