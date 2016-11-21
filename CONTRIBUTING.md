@@ -24,3 +24,19 @@ Now you are waiting on us. We review your pull request and at least leave some c
 
 Note that if you are thinking of providing a fix for one of the bugs or feature requests, it's usually
 a good idea to add a comment to the bug to make sure that there's agreement on how we should proceed.
+
+### Limitations
+
+The JUnit team is not accepting changes to the code under the following paths :
+
+* `src/main/java/junit`
+* `test/java/junit/tests/framework`
+* `test/java/junit/tests/extensions`
+
+The reasoning is that the JUnit team feels that our users should focus on using either the JUnit4 APIs
+or the soon-to-be-released JUnit4 APIs.
+
+The team is also reluctant to accept changes that only update code from one code style to another.
+Generally the code in JUnit was approved by at least one person, so two people agreed that the style was reasonable.
+
+To find other places where you can have an impact, please see the [Issues tagged lowhanging](https://github.com/junit-team/junit4/issues?q=is%3Aissue+is%3Aopen+label%3Alowhanging).
