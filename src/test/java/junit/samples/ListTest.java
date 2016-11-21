@@ -11,21 +11,18 @@ import junit.framework.TestSuite;
  * A sample test case, testing {@link java.util.ArrayList}.
  */
 public class ListTest extends TestCase {
-    private List<Integer> fEmpty;
+    private List<Integer> emptyList;
 
-    private List<Integer> fFull;
+    private List<Integer> fullList;
 
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
 
     @Override
     protected void setUp() {
-        fEmpty = new ArrayList<Integer>();
-        fFull = new ArrayList<Integer>();
-        fFull.add(1);
-        fFull.add(2);
-        fFull.add(3);
+        emptyList = new ArrayList<Integer>();
+        fullList = new ArrayList<Integer>();
+        fullList.add(1);
+        fullList.add(2);
+        fullList.add(3);
     }
 
     public static Test suite() {
@@ -33,24 +30,24 @@ public class ListTest extends TestCase {
     }
 
     public void testCapacity() {
-        int size = fFull.size();
+        int size = fullList.size();
         for (int i = 0; i < 100; i++) {
-            fFull.add(i);
+            fullList.add(i);
         }
-        assertTrue(fFull.size() == 100 + size);
+        assertTrue(fullList.size() == 100 + size);
     }
 
     public void testContains() {
-        assertTrue(fFull.contains(1));
-        assertTrue(!fEmpty.contains(1));
+        assertTrue(fullList.contains(1));
+        assertTrue(!emptyList.contains(1));
     }
 
     public void testElementAt() {
-        int i = fFull.get(0);
+        int i = fullList.get(0);
         assertTrue(i == 1);
 
         try {
-            fFull.get(fFull.size());
+            fullList.get(fullList.size());
         } catch (IndexOutOfBoundsException e) {
             return;
         }
@@ -58,14 +55,14 @@ public class ListTest extends TestCase {
     }
 
     public void testRemoveAll() {
-        fFull.removeAll(fFull);
-        fEmpty.removeAll(fEmpty);
-        assertTrue(fFull.isEmpty());
-        assertTrue(fEmpty.isEmpty());
+        fullList.removeAll(fullList);
+        emptyList.removeAll(emptyList);
+        assertTrue(fullList.isEmpty());
+        assertTrue(emptyList.isEmpty());
     }
 
     public void testRemoveElement() {
-        fFull.remove(3);
-        assertTrue(!fFull.contains(3));
+        fullList.remove(3);
+        assertTrue(!fullList.contains(3));
     }
 }
