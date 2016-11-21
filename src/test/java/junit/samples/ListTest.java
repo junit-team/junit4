@@ -11,8 +11,9 @@ import junit.framework.TestSuite;
  * A sample test case, testing {@link java.util.ArrayList}.
  */
 public class ListTest extends TestCase {
-    protected List<Integer> fEmpty;
-    protected List<Integer> fFull;
+    private List<Integer> fEmpty;
+
+    private List<Integer> fFull;
 
     public static void main(String[] args) {
         junit.textui.TestRunner.run(suite());
@@ -64,7 +65,7 @@ public class ListTest extends TestCase {
     }
 
     public void testRemoveElement() {
-        fFull.remove(new Integer(3));
+        fFull.remove(3);
         assertTrue(!fFull.contains(3));
     }
 }
