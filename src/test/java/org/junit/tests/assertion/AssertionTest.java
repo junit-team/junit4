@@ -849,7 +849,7 @@ public class AssertionTest {
         try {
             expectThrows(IOException.class, throwingRunnable(npe));
         } catch (AssertionError error) {
-            assertEquals("unexpected exception type thrown; expected:<IOException> but was:<NullPointerException>",
+            assertEquals("unexpected exception type thrown; expected:<java.io.IOException> but was:<java.lang.NullPointerException>",
                     error.getMessage());
             assertSame(npe, error.getCause());
             return;

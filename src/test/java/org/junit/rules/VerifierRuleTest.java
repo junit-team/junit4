@@ -162,7 +162,7 @@ public class VerifierRuleTest {
     public void usedErrorCollectorCheckThrowsClassMismatchShouldFail() {
         PrintableResult testResult = testResult(UsesErrorCollectorCheckThrowsClassMismatch.class);
         assertThat(testResult, hasFailureContaining(
-            "expected:<IllegalArgumentException> but was:<NullPointerException>"));
+            "expected:<java.lang.IllegalArgumentException> but was:<java.lang.NullPointerException>"));
     }
 
     public static class UsesErrorCollectorCheckThrowsNothingThrown {

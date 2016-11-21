@@ -997,7 +997,7 @@ public class Assert {
                 return retVal;
             } else {
                 String mismatchMessage = format("unexpected exception type thrown;",
-                        expectedThrowable.getSimpleName(), actualThrown.getClass().getSimpleName());
+                        expectedThrowable.getName(), actualThrown.getClass().getName());
 
                 // The AssertionError(String, Throwable) ctor is only available on JDK7.
                 AssertionError assertionError = new AssertionError(mismatchMessage);
