@@ -131,8 +131,11 @@ public abstract class Request {
     }
 
     /**
-     * Returns a Request that only runs contains tests whose {@link Description}
-     * equals <code>desiredDescription</code>
+     * Returns a Request that only runs tests whose {@link Description}
+     * matches <code>desiredDescription</code>
+     *
+     * Returns an empty Request if <code>desiredDescription</code> is not a single test and filters all but the single
+     * test if <code>desiredDescription</code> is a single test.
      *
      * @param desiredDescription {@link Description} of those tests that should be run
      * @return the filtered Request
