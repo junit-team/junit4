@@ -273,19 +273,13 @@ public class TemporaryFolder extends ExternalResource {
      *         {@code false} otherwise.
      */
     protected boolean tryDelete() {
-        if (folder == null) {
-            return true;
-        }
-        
-        return recursiveDelete(folder);
+        return folder == null ? true : recursiveDelete(folder);
     }
 
     private boolean recursiveDelete(File file) {
         // Try deleting file before assuming file is a directory
         // to prevent following symbolic links.
-        if (file.delete()) {
-            return true;
-        }
+        if (file.delete()) return true;
         boolean result = true;
         File[] files = file.listFiles();
         if (files != null) {
