@@ -131,13 +131,16 @@ public abstract class Request {
     }
 
     /**
-     * Returns a Request that only runs contains tests whose {@link Description}
-     * equals <code>desiredDescription</code>
+     * Returns a Request that only runs tests whose {@link Description}
+     * matches the given description.
      *
-     * @param desiredDescription {@link Description} of those tests that should be run
+     * <p>Returns an empty {@code Request} if {@code desiredDescription} is not a single test and filters all but the single
+     * test if {@code desiredDescription} is a single test.</p>
+     *
+     * @param desiredDescription {@code Description} of those tests that should be run
      * @return the filtered Request
      */
-    public Request filterWith(final Description desiredDescription) {
+    public Request filterWith(Description desiredDescription) {
         return filterWith(Filter.matchMethodDescription(desiredDescription));
     }
 
