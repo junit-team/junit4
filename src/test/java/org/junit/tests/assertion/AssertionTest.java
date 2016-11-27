@@ -806,7 +806,7 @@ public class AssertionTest {
         try {
             expectThrows(Throwable.class, nonThrowingRunnable());
         } catch (AssertionError ex) {
-            assertEquals("expected Throwable to be thrown, but nothing was thrown", ex.getMessage());
+            assertEquals("expected java.lang.Throwable to be thrown, but nothing was thrown", ex.getMessage());
             return;
         }
         fail();
@@ -855,6 +855,58 @@ public class AssertionTest {
             return;
         }
         fail();
+    }
+
+    @Test
+    public void expectThrowsUsesCanonicalNameUponTypeMismatch() {
+        NullPointerException npe = new NullPointerException();
+
+        try {
+            expectThrows(NestedException.class, throwingRunnable(npe));
+        } catch (AssertionError error) {
+            assertEquals(
+                    "unexpected exception type thrown; expected:<org.junit.tests.assertion.AssertionTest.NestedException>"
+                    + " but was:<java.lang.NullPointerException>",
+                    error.getMessage());
+            assertSame(npe, error.getCause());
+            return;
+        }
+        fail();
+    }
+
+    @Test
+    public void expectThrowsUsesNameUponTypeMismatchWithAnonymousClass() {
+        NullPointerException npe = new NullPointerException() {
+        };
+
+        try {
+            expectThrows(IOException.class, throwingRunnable(npe));
+        } catch (AssertionError error) {
+            assertEquals(
+                    "unexpected exception type thrown; expected:<java.io.IOException>"
+                    + " but was:<org.junit.tests.assertion.AssertionTest$1>",
+                    error.getMessage());
+            assertSame(npe, error.getCause());
+            return;
+        }
+        fail();
+    }
+
+    @Test
+    public void expectThrowsUsesCanonicalNameWhenRequiredExceptionNotThrown() {
+        try {
+            expectThrows(NestedException.class, nonThrowingRunnable());
+        } catch (AssertionError error) {
+            assertEquals(
+                    "expected org.junit.tests.assertion.AssertionTest.NestedException to be thrown,"
+                    + " but nothing was thrown", error.getMessage());
+            return;
+        }
+        fail();
+    }
+
+    private static class NestedException extends RuntimeException {
+        private static final long serialVersionUID = 1L;
     }
 
     private static ThrowingRunnable nonThrowingRunnable() {

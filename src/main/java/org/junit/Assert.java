@@ -852,6 +852,11 @@ public class Assert {
         }
     }
 
+    private static String formatClass(Class<?> value) {
+        String className = value.getCanonicalName();
+        return className == null ? value.getName() : className;
+    }
+
     private static String formatClassAndValue(Object value, String valueString) {
         String className = value == null ? "null" : value.getClass().getName();
         return className + "<" + valueString + ">";
@@ -997,7 +1002,7 @@ public class Assert {
                 return retVal;
             } else {
                 String mismatchMessage = format("unexpected exception type thrown;",
-                        expectedThrowable.getName(), actualThrown.getClass().getName());
+                    formatClass(expectedThrowable), formatClass(actualThrown));
 
                 // The AssertionError(String, Throwable) ctor is only available on JDK7.
                 AssertionError assertionError = new AssertionError(mismatchMessage);
@@ -1006,7 +1011,7 @@ public class Assert {
             }
         }
         String message = String.format("expected %s to be thrown, but nothing was thrown",
-                expectedThrowable.getSimpleName());
+                formatClass(expectedThrowable));
         throw new AssertionError(message);
     }
 }
