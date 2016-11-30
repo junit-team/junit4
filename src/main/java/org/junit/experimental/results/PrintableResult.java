@@ -54,6 +54,15 @@ public class PrintableResult {
         return result.getFailures().size();
     }
 
+    /**
+     * Returns the failures in this result.
+     *
+     * @since 4.13
+     */
+    public List<Failure> failures() {
+        return result.getFailures();
+    }
+
     @Override
     public String toString() {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();

@@ -4,6 +4,7 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
+import org.junit.runner.notification.Failure;
 
 /**
  * Matchers on a PrintableResult, to enable JUnit self-tests.
@@ -62,11 +63,31 @@ public class ResultMatchers {
     }
 
     /**
+     * Matches if the result has exactly one failure matching the given matcher.
+     *
+     * @since 4.13
+     */
+    public static Matcher<PrintableResult> hasSingleFailureMatching(final Matcher<Throwable> matcher) {
+        return new TypeSafeMatcher<PrintableResult>() {
+            @Override
+            public boolean matchesSafely(PrintableResult item) {
+                return item.failureCount() == 1 && matcher.matches(item.failures().get(0).getException());
+            }
+
+            public void describeTo(Description description) {
+                description.appendText("has failure with exception matching ");
+                matcher.describeTo(description);
+            }
+        };
+    }
+
+    /**
      * Matches if the result has one or more failures, and at least one of them
      * contains {@code string}
      */
     public static Matcher<PrintableResult> hasFailureContaining(final String string) {
         return new TypeSafeMatcher<PrintableResult>() {
+            @Override
             public boolean matchesSafely(PrintableResult item) {
                 return item.failureCount() > 0 && item.toString().contains(string);
             }
