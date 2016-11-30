@@ -240,7 +240,7 @@ public class ExpectedException implements TestRule {
      * @deprecated use {@code org.hamcrest.junit.ExpectedException.expectCause()}
      */
     @Deprecated
-    public ExpectedException expectCause(Matcher<? extends Throwable> expectedCause) {
+    public ExpectedException expectCause(Matcher<?> expectedCause) {
         expect(hasCause(expectedCause));
         return this;
     }
