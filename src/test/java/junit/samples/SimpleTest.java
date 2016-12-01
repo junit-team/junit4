@@ -52,8 +52,7 @@ public class SimpleTest extends TestCase {
     public int unused;
 
     public void testDivideByZero() {
-        int zero = 0;
-        int result = 8 / zero;
+        int result = 8 / 0;
         unused = result; // avoid warning for not using result
     }
 
