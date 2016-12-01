@@ -9,6 +9,8 @@ import java.util.concurrent.Callable;
 import org.junit.function.ThrowingRunnable;
 
 import org.hamcrest.Matcher;
+import org.junit.internal.AssumptionNotSupportedException;
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.runners.model.MultipleFailureException;
 
 /**
@@ -31,6 +33,9 @@ import org.junit.runners.model.MultipleFailureException;
  * }
  * </pre>
  *
+ * Note that AssumptionViolationException (thrown by <code>org.junit.Assume</code>)
+ * is not supported and causes immediate test fail.
+ *
  * @since 4.7
  */
 public class ErrorCollector extends Verifier {
@@ -45,6 +50,9 @@ public class ErrorCollector extends Verifier {
      * Adds a Throwable to the table.  Execution continues, but the test will fail at the end.
      */
     public void addError(Throwable error) {
+        if (error instanceof AssumptionViolatedException) {
+            throw new AssumptionNotSupportedException("Assumptions are not supported in ErrorCollector", error);
+        }
         errors.add(error);
     }
 
@@ -103,6 +111,8 @@ public class ErrorCollector extends Verifier {
     public void checkThrows(Class<? extends Throwable> expectedThrowable, ThrowingRunnable runnable) {
         try {
             assertThrows(expectedThrowable, runnable);
+        } catch (AssumptionNotSupportedException e) {
+            throw new AssumptionNotSupportedException("Assumptions are not supported in ErrorCollector", e.getCause());
         } catch (AssertionError e) {
             addError(e);
         }

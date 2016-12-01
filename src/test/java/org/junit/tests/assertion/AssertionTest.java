@@ -18,10 +18,12 @@ import java.io.IOException;
 import java.math.BigDecimal;
 
 import org.junit.Assert;
+import org.junit.AssumptionViolatedException;
 import org.junit.ComparisonFailure;
 import org.junit.Test;
 import org.junit.function.ThrowingRunnable;
 import org.junit.internal.ArrayComparisonFailure;
+import org.junit.internal.AssumptionNotSupportedException;
 
 /**
  * Tests for {@link org.junit.Assert}
@@ -837,6 +839,20 @@ public class AssertionTest {
         } catch (AssertionError ex) {
             assertSame(npe, ex.getCause());
             assertEquals("inner-message", ex.getCause().getMessage());
+            return;
+        }
+        fail();
+    }
+
+    @Test
+    public void expectThrowsFailsWithAssumptionViolatedExceptions() {
+        AssumptionViolatedException assumptionViolatedException = new AssumptionViolatedException("some message");
+
+        try {
+            expectThrows(AssumptionViolatedException.class, throwingRunnable(assumptionViolatedException));
+        } catch (AssumptionNotSupportedException ex) {
+            assertSame(assumptionViolatedException, ex.getCause());
+            assertEquals("Assumptions are not supported in expectThrows/assertThrows", ex.getMessage());
             return;
         }
         fail();

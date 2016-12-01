@@ -4,6 +4,7 @@ import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.junit.function.ThrowingRunnable;
 import org.junit.internal.ArrayComparisonFailure;
+import org.junit.internal.AssumptionNotSupportedException;
 import org.junit.internal.ExactComparisonCriteria;
 import org.junit.internal.InexactComparisonCriteria;
 
@@ -973,6 +974,8 @@ public class Assert {
      * mismatch; the exception that was actually thrown can be obtained by calling {@link
      * AssertionError#getCause}.
      *
+     * Note that making assumptions in {@code runnable} is not supported and causes fail.
+     *
      * @param expectedThrowable the expected type of the exception
      * @param runnable       a function that is expected to throw an exception when executed
      * @since 4.13
@@ -988,6 +991,8 @@ public class Assert {
      * AssertionError} is thrown describing the mismatch; the exception that was actually thrown can
      * be obtained by calling {@link AssertionError#getCause}.
      *
+     * Note that making assumptions in {@code runnable} is not supported and causes fail.
+     *
      * @param expectedThrowable the expected type of the exception
      * @param runnable       a function that is expected to throw an exception when executed
      * @return the exception thrown by {@code runnable}
@@ -996,6 +1001,8 @@ public class Assert {
     public static <T extends Throwable> T expectThrows(Class<T> expectedThrowable, ThrowingRunnable runnable) {
         try {
             runnable.run();
+        } catch (AssumptionViolatedException e) {
+            throw new AssumptionNotSupportedException("Assumptions are not supported in expectThrows/assertThrows", e);
         } catch (Throwable actualThrown) {
             if (expectedThrowable.isInstance(actualThrown)) {
                 @SuppressWarnings("unchecked") T retVal = (T) actualThrown;
