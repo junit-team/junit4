@@ -35,9 +35,9 @@ public class ListTest {
     public void setUp() {
         fEmpty = new ArrayList<Integer>();
         fFull = new ArrayList<Integer>();
-        fFull.add(1);
-        fFull.add(2);
-        fFull.add(3);
+        for (int i = 1; i < 4; i++) {
+            fFull.add(i);
+        }
     }
 
     public static junit.framework.Test suite() {
