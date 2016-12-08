@@ -13,7 +13,6 @@ class FakeRuntimeMXBean implements RuntimeMXBean {
    *
    * <p>Always returns an empty list.
    */
-  @Override
   public List<String> getInputArguments() {
     return Collections.emptyList();
   }
