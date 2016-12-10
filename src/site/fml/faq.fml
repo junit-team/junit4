@@ -1737,8 +1737,8 @@ end</pre>
             <question>Where can I find unit testing frameworks
       similar to JUnit for other languages?</question>
             <answer><p>
-      XProgramming.com maintains a complete list of available <a
-      href="http://www.xprogramming.com/software.htm">xUnit testing
+      Wikipedia maintains a list of available <a
+      href="https://en.wikipedia.org/wiki/List_of_unit_testing_frameworks">xUnit testing
       frameworks</a>.
     </p></answer>
         </faq>
