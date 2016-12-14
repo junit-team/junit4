@@ -967,7 +967,7 @@ public class Assert {
     }
 
     /**
-     * Asserts that {@code runnable} throws an exception of type {@code expectedThrowable} when
+     * Checks that {@code runnable} throws an exception of type {@code expectedThrowable} when
      * executed. If it does, the exception object is returned. If it does not throw an exception, an
      * {@link AssertionError} is thrown. If it throws the wrong type of exception, an {@code
      * AssertionError} is thrown describing the mismatch; the exception that was actually thrown can
@@ -978,7 +978,7 @@ public class Assert {
      * @return the exception thrown by {@code runnable}
      * @since 4.13
      */
-    public static <T extends Throwable> T assertThrows(Class<T> expectedThrowable, ThrowingRunnable runnable) {
+    public static <T extends Throwable> T expectThrows(Class<T> expectedThrowable, ThrowingRunnable runnable) {
         try {
             runnable.run();
         } catch (Throwable actualThrown) {

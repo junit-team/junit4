@@ -10,8 +10,8 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.expectThrows;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
@@ -797,14 +797,14 @@ public class AssertionTest {
     }
 
     @Test(expected = AssertionError.class)
-    public void assertThrowsRequiresAnExceptionToBeThrown() {
-        assertThrows(Throwable.class, nonThrowingRunnable());
+    public void expectThrowsRequiresAnExceptionToBeThrown() {
+        expectThrows(Throwable.class, nonThrowingRunnable());
     }
 
     @Test
-    public void assertThrowsIncludesAnInformativeDefaultMessage() {
+    public void expectThrowsIncludesAnInformativeDefaultMessage() {
         try {
-            assertThrows(Throwable.class, nonThrowingRunnable());
+            expectThrows(Throwable.class, nonThrowingRunnable());
         } catch (AssertionError ex) {
             assertEquals("expected java.lang.Throwable to be thrown, but nothing was thrown", ex.getMessage());
             return;
@@ -813,27 +813,27 @@ public class AssertionTest {
     }
 
     @Test
-    public void assertThrowsReturnsTheSameObjectThrown() {
+    public void expectThrowsReturnsTheSameObjectThrown() {
         NullPointerException npe = new NullPointerException();
 
-        Throwable throwable = assertThrows(Throwable.class, throwingRunnable(npe));
+        Throwable throwable = expectThrows(Throwable.class, throwingRunnable(npe));
 
         assertSame(npe, throwable);
     }
 
     @Test(expected = AssertionError.class)
-    public void assertThrowsDetectsTypeMismatchesViaExplicitTypeHint() {
+    public void expectThrowsDetectsTypeMismatchesViaExplicitTypeHint() {
         NullPointerException npe = new NullPointerException();
 
-        assertThrows(IOException.class, throwingRunnable(npe));
+        expectThrows(IOException.class, throwingRunnable(npe));
     }
 
     @Test
-    public void assertThrowsWrapsAndPropagatesUnexpectedExceptions() {
+    public void expectThrowsWrapsAndPropagatesUnexpectedExceptions() {
         NullPointerException npe = new NullPointerException("inner-message");
 
         try {
-            assertThrows(IOException.class, throwingRunnable(npe));
+            expectThrows(IOException.class, throwingRunnable(npe));
         } catch (AssertionError ex) {
             assertSame(npe, ex.getCause());
             assertEquals("inner-message", ex.getCause().getMessage());
@@ -843,11 +843,11 @@ public class AssertionTest {
     }
 
     @Test
-    public void assertThrowsSuppliesACoherentErrorMessageUponTypeMismatch() {
+    public void expectThrowsSuppliesACoherentErrorMessageUponTypeMismatch() {
         NullPointerException npe = new NullPointerException();
 
         try {
-            assertThrows(IOException.class, throwingRunnable(npe));
+            expectThrows(IOException.class, throwingRunnable(npe));
         } catch (AssertionError error) {
             assertEquals("unexpected exception type thrown; expected:<java.io.IOException> but was:<java.lang.NullPointerException>",
                     error.getMessage());
@@ -858,11 +858,11 @@ public class AssertionTest {
     }
 
     @Test
-    public void assertThrowsUsesCanonicalNameUponTypeMismatch() {
+    public void expectThrowsUsesCanonicalNameUponTypeMismatch() {
         NullPointerException npe = new NullPointerException();
 
         try {
-            assertThrows(NestedException.class, throwingRunnable(npe));
+            expectThrows(NestedException.class, throwingRunnable(npe));
         } catch (AssertionError error) {
             assertEquals(
                     "unexpected exception type thrown; expected:<org.junit.tests.assertion.AssertionTest.NestedException>"
@@ -875,12 +875,12 @@ public class AssertionTest {
     }
 
     @Test
-    public void assertThrowsUsesNameUponTypeMismatchWithAnonymousClass() {
+    public void expectThrowsUsesNameUponTypeMismatchWithAnonymousClass() {
         NullPointerException npe = new NullPointerException() {
         };
 
         try {
-            assertThrows(IOException.class, throwingRunnable(npe));
+            expectThrows(IOException.class, throwingRunnable(npe));
         } catch (AssertionError error) {
             assertEquals(
                     "unexpected exception type thrown; expected:<java.io.IOException>"
@@ -893,9 +893,9 @@ public class AssertionTest {
     }
 
     @Test
-    public void assertThrowsUsesCanonicalNameWhenRequiredExceptionNotThrown() {
+    public void expectThrowsUsesCanonicalNameWhenRequiredExceptionNotThrown() {
         try {
-            assertThrows(NestedException.class, nonThrowingRunnable());
+            expectThrows(NestedException.class, nonThrowingRunnable());
         } catch (AssertionError error) {
             assertEquals(
                     "expected org.junit.tests.assertion.AssertionTest.NestedException to be thrown,"
