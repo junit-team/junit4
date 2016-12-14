@@ -1,15 +1,25 @@
 package org.junit.rules;
 
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
+import static org.junit.internal.matchers.ThrowableCauseMatcher.hasCause;
 
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.TestCouldNotBeSkippedException;
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.statements.Fail;
 import org.junit.runner.Description;
 import org.junit.runners.model.MultipleFailureException;
@@ -71,5 +81,50 @@ public class ExternalResourceRuleTest {
                     containsString("simulating resource tear down failure")
             ));
         }
+    }
+
+    @Test
+    public void shouldWrapAssumptionFailuresWhenClosingResourceFails() throws Throwable {
+        // given
+        final AtomicReference<Throwable> externalResourceException = new AtomicReference<Throwable>();
+        ExternalResource resourceRule = new ExternalResource() {
+            @Override
+            protected void after() {
+                RuntimeException runtimeException = new RuntimeException("simulating resource tear down failure");
+                externalResourceException.set(runtimeException);
+                throw runtimeException;
+            }
+        };
+        final AtomicReference<Throwable> assumptionViolatedException = new AtomicReference<Throwable>();
+        Statement skippedTest = new Statement() {
+            @Override
+            public void evaluate() throws Throwable {
+                AssumptionViolatedException assumptionFailure = new AssumptionViolatedException("skip it");
+                assumptionViolatedException.set(assumptionFailure);
+                throw assumptionFailure;
+            }
+        };
+        Description dummyDescription = Description.createTestDescription(
+                "dummy test class name", "dummy test name");
+
+        try {
+            resourceRule.apply(skippedTest, dummyDescription).evaluate();
+            fail("ExternalResource should throw");
+        } catch (MultipleFailureException e) {
+            assertThat(e.getFailures(), hasItems(
+                    instanceOf(TestCouldNotBeSkippedException.class),
+                    sameInstance(externalResourceException.get())
+            ));
+            assertThat(e.getFailures(), hasItems(
+                    hasCause(sameInstance(assumptionViolatedException.get())),
+                    sameInstance(externalResourceException.get())
+            ));
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private Matcher<? super List<Throwable>> hasItems(
+            Matcher<? super Throwable> one, Matcher<? super Throwable> two) {
+        return CoreMatchers.hasItems(one, two);
     }
 }

@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.TestCouldNotBeSkippedException;
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.Throwables;
 
 /**
@@ -28,7 +30,13 @@ public class MultipleFailureException extends Exception {
             throw new IllegalArgumentException(
                     "List of Throwables must not be empty");
         }
-        this.fErrors = new ArrayList<Throwable>(errors);
+        this.fErrors = new ArrayList<Throwable>(errors.size());
+        for (Throwable error : errors) {
+            if (error instanceof AssumptionViolatedException) {
+                error = new TestCouldNotBeSkippedException((AssumptionViolatedException) error);
+            }
+            fErrors.add(error);
+        }
     }
 
     public List<Throwable> getFailures() {

@@ -40,7 +40,6 @@ final class ReflectiveRuntimeMXBean implements RuntimeMXBean {
    * {@inheritDoc}
    */
   @SuppressWarnings("unchecked")
-  @Override
   public List<String> getInputArguments() {
     if (Holder.getInputArgumentsMethod != null) {
       try {

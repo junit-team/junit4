@@ -5,14 +5,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.hasFailureContaining;
+import static org.junit.experimental.results.ResultMatchers.hasSingleFailureMatching;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 
 import java.util.concurrent.Callable;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.results.PrintableResult;
 import org.junit.function.ThrowingRunnable;
+import org.junit.internal.AssumptionViolatedException;
 
 public class VerifierRuleTest {
     public static class UsesErrorCollector {
@@ -28,6 +31,22 @@ public class VerifierRuleTest {
     @Test
     public void usedErrorCollectorShouldFail() {
         assertThat(testResult(UsesErrorCollector.class), hasFailureContaining("message"));
+    }
+
+    public static class PassesAssumptionViolatedExceptionToErrorCollector {
+        @Rule
+        public ErrorCollector collector = new ErrorCollector();
+
+        @Test
+        public void example() {
+            collector.addError(new AssumptionViolatedException("message"));
+        }
+    }
+
+    @Test
+    public void passingAssumptionViolatedExceptionShouldResultInFailure() {
+        assertThat(testResult(PassesAssumptionViolatedExceptionToErrorCollector.class), hasSingleFailureMatching(
+                CoreMatchers.<Throwable>instanceOf(AssertionError.class)));
     }
 
     public static class UsesErrorCollectorTwice {
@@ -102,6 +121,27 @@ public class VerifierRuleTest {
         PrintableResult testResult = testResult(UsesErrorCollectorCheckSucceeds.class);
         assertThat(testResult, hasFailureContaining("first!"));
         assertThat(testResult, hasFailureContaining("second!"));
+    }
+
+    public static class UsesErrorCollectorCheckSucceedsWithAssumptionViolatedException {
+        @Rule
+        public ErrorCollector collector = new ErrorCollector();
+
+        @Test
+        public void example() {
+            collector.checkSucceeds(new Callable<Object>() {
+                public Object call() throws Exception {
+                    throw new AssumptionViolatedException("message");
+                }
+            });
+        }
+    }
+
+    @Test
+    public void usedErrorCollectorCheckSucceedsWithAssumptionViolatedExceptionShouldFail() {
+        PrintableResult testResult = testResult(UsesErrorCollectorCheckSucceedsWithAssumptionViolatedException.class);
+        assertThat(testResult, hasSingleFailureMatching(CoreMatchers.<Throwable>instanceOf(AssertionError.class)));
+        assertThat(testResult, hasFailureContaining("Callable threw AssumptionViolatedException"));
     }
 
     public static class UsesErrorCollectorCheckSucceedsPasses {
