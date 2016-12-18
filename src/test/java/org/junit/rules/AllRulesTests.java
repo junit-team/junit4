@@ -22,7 +22,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestRuleTest.class,
         TestWatcherTest.class,
         TestWatchmanTest.class,
-        // todo TestWatchmanTest.class, - doesn't work and wasn't being run before.
+        TestWatchmanTest.class,
         TimeoutRuleTest.class,
         VerifierRuleTest.class
 })

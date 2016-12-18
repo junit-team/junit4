@@ -5,7 +5,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeTrue;
 import static org.junit.runner.JUnitCore.runClasses;
-
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runners.model.FrameworkMethod;
@@ -13,7 +13,13 @@ import org.junit.runners.model.FrameworkMethod;
 @SuppressWarnings("deprecation")
 public class TestWatchmanTest {
     public static class ViolatedAssumptionTest {
-        static StringBuilder log = new StringBuilder();
+        static StringBuilder log;
+
+        @BeforeClass
+        public static void initLog() {
+            log = new StringBuilder();
+        }
+
         @Rule
         public LoggingTestWatchman watchman = new LoggingTestWatchman(log);
 
@@ -31,7 +37,13 @@ public class TestWatchmanTest {
     }
 
     public static class FailingTest {
-        static StringBuilder log = new StringBuilder();
+        static StringBuilder log;
+
+        @BeforeClass
+        public static void initLog() {
+            log = new StringBuilder();
+        }
+
         @Rule
         public LoggingTestWatchman watchman = new LoggingTestWatchman(log);
 
