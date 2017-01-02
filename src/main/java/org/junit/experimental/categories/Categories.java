@@ -2,6 +2,7 @@ package org.junit.experimental.categories;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -120,7 +121,7 @@ public class Categories extends Suite {
             if (hasNull(categories)) {
                 throw new NullPointerException("has null category");
             }
-            return categoryFilter(matchAny, createSet(categories), true, null);
+            return new CategoryFilter(matchAny, categories, true, null);
         }
 
         public static CategoryFilter include(Class<?> category) {
@@ -135,7 +136,7 @@ public class Categories extends Suite {
             if (hasNull(categories)) {
                 throw new NullPointerException("has null category");
             }
-            return categoryFilter(true, null, matchAny, createSet(categories));
+            return new CategoryFilter(true, null, matchAny, categories);
         }
 
         public static CategoryFilter exclude(Class<?> category) {
@@ -151,12 +152,25 @@ public class Categories extends Suite {
             return new CategoryFilter(matchAnyInclusions, inclusions, matchAnyExclusions, exclusions);
         }
 
+        @Deprecated
+        public CategoryFilter(Class<?> includedCategory, Class<?> excludedCategory) {
+            this(true, createSet(includedCategory), true, createSet(excludedCategory));
+        }
+
         protected CategoryFilter(boolean matchAnyIncludes, Set<Class<?>> includes,
-                               boolean matchAnyExcludes, Set<Class<?>> excludes) {
+                                 boolean matchAnyExcludes, Set<Class<?>> excludes) {
             includedAny = matchAnyIncludes;
             excludedAny = matchAnyExcludes;
             included = copyAndRefine(includes);
             excluded = copyAndRefine(excludes);
+        }
+
+        private CategoryFilter(boolean matchAnyIncludes, Class<?>[] inclusions,
+                               boolean matchAnyExcludes, Class<?>[] exclusions) {
+            includedAny = matchAnyIncludes; 
+            excludedAny = matchAnyExcludes;
+            included = createSet(inclusions);
+            excluded = createSet(exclusions);
         }
 
         /**
@@ -347,10 +361,11 @@ public class Categories extends Suite {
     }
 
     private static Set<Class<?>> createSet(Class<?>... t) {
-        final Set<Class<?>> set= new HashSet<Class<?>>();
-        if (t != null) {
-            Collections.addAll(set, t);
+        if (t == null || t.length == 0) {
+            return Collections.emptySet();
+        } else if (t.length == 1) {
+            return Collections.<Class<?>>singleton(t[0]);
         }
-        return set;
+        return new HashSet<Class<?>>(Arrays.asList(t));
     }
 }
