@@ -3,7 +3,6 @@ package org.junit.runner;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -13,8 +12,6 @@ import java.util.List;
  * @since 4.12
  */
 public abstract class DescriptionBuilder {
-    protected static final Annotation[] ANNOTATIONS_TYPE = new Annotation[0];
-
     protected String displayName;
     protected String uniqueId;
     protected List<Annotation> annotations;
@@ -52,7 +49,7 @@ public abstract class DescriptionBuilder {
      * @return a {@code DescriptionBuilder} for the given {@code displayName}
      */
     public static DescriptionBuilder forName(String displayName) {
-        return new NameBasedDescriptionBuilder(displayName);
+        return new NameBasedDescriptionBuilder(notNull(displayName));
     }
 
     /**
@@ -60,7 +57,10 @@ public abstract class DescriptionBuilder {
      *
      * @param displayName the new display name
      */
-    public DescriptionBuilder withDisplayName(String displayName) {
+    public final DescriptionBuilder withDisplayName(String displayName) {
+        if (displayName.length() == 0) {
+            throw new IllegalArgumentException("The display name must not be empty");
+        }
         this.displayName = displayName;
         return this;
     }
@@ -70,8 +70,8 @@ public abstract class DescriptionBuilder {
      *
      * @param uniqueId the new unique ID
      */
-    public DescriptionBuilder withUniqueId(String uniqueId) {
-        this.uniqueId = uniqueId;
+    public final DescriptionBuilder withUniqueId(String uniqueId) {
+        this.uniqueId = notNull(uniqueId);
         return this;
     }
 
@@ -80,7 +80,7 @@ public abstract class DescriptionBuilder {
      *
      * @param annotations the additional annotations
      */
-    public DescriptionBuilder withAdditionalAnnotations(List<Annotation> annotations) {
+    public final DescriptionBuilder withAdditionalAnnotations(List<Annotation> annotations) {
         if (annotations.contains(null)) {
             throw new NullPointerException("Cannot add a null annotation");
         }
@@ -94,7 +94,7 @@ public abstract class DescriptionBuilder {
      * @param annotation the first additional annotation
      * @param additionalAnnotations more additional annotations
      */
-    public DescriptionBuilder withAdditionalAnnotations(Annotation annotation, Annotation... additionalAnnotations) {
+    public final DescriptionBuilder withAdditionalAnnotations(Annotation annotation, Annotation... additionalAnnotations) {
         List<Annotation> annotations = new ArrayList<Annotation>();
         annotations.add(annotation);
         annotations.addAll(Arrays.asList(additionalAnnotations));
@@ -107,12 +107,25 @@ public abstract class DescriptionBuilder {
      * @param children the children of this suite
      * @return a {@code ImmutableDescription} represented by the {@code DescriptionBuilder}
      */
-    public abstract <T extends ImmutableDescription> ImmutableDescription createSuiteDescription(List<T> children);
+    public final <T extends ImmutableDescription> ImmutableDescription createSuiteDescription(List<T> children) {
+        return new SuiteDescription(this, notNull(children));
+    }
 
     /**
      * Create a {@code ImmutableDescription} representing a test for the current state of the {@code DescriptionBuilder}.
      *
      * @return a {@code ImmutableDescription} represented by the {@code DescriptionBuilder}
      */
-    public abstract ImmutableDescription createTestDescription();
+    public final ImmutableDescription createTestDescription() {
+        return new TestDescription(this);
+    }
+
+    abstract Class<?> getTestClass();
+
+    private static <T> T notNull(T value) {
+        if (value == null) {
+            throw new NullPointerException();
+        }
+        return value;
+    }
 }

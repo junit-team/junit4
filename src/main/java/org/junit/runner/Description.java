@@ -31,6 +31,7 @@ public class Description implements Serializable {
     private static final long serialVersionUID = 1L;
     private static final Pattern METHOD_AND_CLASS_NAME_PATTERN = Pattern
             .compile("([\\s\\S]*)\\((.*)\\)");
+    private static final Annotation[] ANNOTATIONS_TYPE = new Annotation[0];
 
     /**
      * Create a <code>Description</code> named <code>name</code>.
@@ -176,6 +177,13 @@ public class Description implements Serializable {
         fAnnotations = annotations;
     }
 
+    Description(DescriptionBuilder builder) {
+        fTestClass = builder.getTestClass();
+        fDisplayName = builder.displayName;
+        fUniqueId = builder.uniqueId;
+        fAnnotations = builder.annotations.toArray(ANNOTATIONS_TYPE);
+    }
+
     /**
      * @return a user-understandable label
      */
@@ -192,6 +200,7 @@ public class Description implements Serializable {
      * children during initialization.
      * @see DescriptionBuilder#createSuiteDescription(java.util.List)
      */
+    @Deprecated
     public void addChild(Description description) {
         fChildren.add(description);
     }
