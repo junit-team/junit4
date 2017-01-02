@@ -177,7 +177,7 @@ public class Description implements Serializable {
         fAnnotations = annotations;
     }
 
-    Description(DescriptionBuilder builder) {
+    Description(DescriptionBuilder<?> builder) {
         fTestClass = builder.getTestClass();
         fDisplayName = builder.displayName;
         fUniqueId = builder.uniqueId;

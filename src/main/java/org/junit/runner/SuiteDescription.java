@@ -16,7 +16,7 @@ import java.util.List;
 final class SuiteDescription extends ImmutableDescription {
     private static final long serialVersionUID = 1L;
 
-    <T extends ImmutableDescription> SuiteDescription(DescriptionBuilder builder, List<T> children) {
+    <T extends ImmutableDescription> SuiteDescription(DescriptionBuilder<?> builder, List<T> children) {
         super(builder, children);
     }
 

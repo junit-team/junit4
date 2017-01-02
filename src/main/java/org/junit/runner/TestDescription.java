@@ -14,9 +14,14 @@ package org.junit.runner;
  */
 final class TestDescription extends ImmutableDescription {
     private static final long serialVersionUID = 1L;
+    private final String methodName;
 
-   TestDescription(DescriptionBuilder builder) {
-       super(builder);
+    /**
+     * @param methodName method name (can be null)
+     */
+    TestDescription(DescriptionBuilder<?> builder, String methodName) {
+        super(builder);
+        this.methodName = methodName;
     }
 
     @Override
@@ -32,5 +37,10 @@ final class TestDescription extends ImmutableDescription {
     @Override
     public int testCount() {
         return 1;
+    }
+
+    @Override
+    public String getMethodName() {
+        return methodName;
     }
 }

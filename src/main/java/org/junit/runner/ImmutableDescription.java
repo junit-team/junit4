@@ -19,12 +19,12 @@ import java.util.List;
  */
 public abstract class ImmutableDescription extends Description {
 
-    ImmutableDescription(DescriptionBuilder builder) {
+    ImmutableDescription(DescriptionBuilder<?> builder) {
         super(builder);
     }
 
     @SuppressWarnings("deprecation")
-    <T extends ImmutableDescription> ImmutableDescription(DescriptionBuilder builder, List<T> children) {
+    <T extends ImmutableDescription> ImmutableDescription(DescriptionBuilder<?> builder, List<T> children) {
         this(builder);
         for (ImmutableDescription child : children) {
             super.addChild(child);
