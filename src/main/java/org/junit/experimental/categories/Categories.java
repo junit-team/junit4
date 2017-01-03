@@ -5,6 +5,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.junit.runner.Description;
@@ -295,7 +296,7 @@ public class Categories extends Suite {
         }
 
         private static Set<Class<?>> copyAndRefine(Set<Class<?>> classes) {
-            Set<Class<?>> c= new HashSet<Class<?>>();
+            Set<Class<?>> c= new LinkedHashSet<Class<?>>();
             if (classes != null) {
                 c.addAll(classes);
             }
@@ -361,7 +362,7 @@ public class Categories extends Suite {
 
         return classes.length == 1
             ? Collections.<Class<?>>singleton(classes[0])
-            : new HashSet<Class<?>>(Arrays.asList(classes));
+            : new LinkedHashSet<Class<?>>(Arrays.asList(classes));
     }
 
     private static Set<Class<?>> nullableClassToSet(Class<?> nullableClass) {
