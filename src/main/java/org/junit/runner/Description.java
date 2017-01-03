@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -341,6 +342,58 @@ public class Description implements Serializable {
      */
     public Method getMethod() {
         return null;
+    }
+
+    public ImmutableDescription toImmutableDescription() {
+        ImmutableDescription result = internalToImmutableDescription();
+        if (!result.equals(this)) {
+            result.equals(this);
+            return result;
+        }
+        return result;
+    }
+    private ImmutableDescription internalToImmutableDescription() {
+        if (isTest()) {
+            String methodName = getMethodName();
+            if (methodName == null) {
+                return DescriptionBuilder.forName(fDisplayName)
+                        .withAdditionalAnnotations(Arrays.asList(fAnnotations))
+                        .withDisplayName(fDisplayName)
+                        .withUniqueId(fUniqueId)
+                        .createTestDescription();
+            }
+
+            MethodBasedDescriptionBuilder builder;
+            if (fTestClass != null) {
+                builder = DescriptionBuilder.forMethod(fTestClass, methodName);
+            } else {
+                builder = DescriptionBuilder.forMethod(getClassName(), methodName);
+            }
+            return builder
+                        .withAdditionalAnnotations(Arrays.asList(fAnnotations))
+                        .withDisplayName(fDisplayName)
+                        .withUniqueId(fUniqueId)
+                        .createTestDescription();
+        }
+
+        // This is a suite.
+        List<ImmutableDescription> children = new ArrayList<ImmutableDescription>();
+        for (Description child : getChildren()) {
+            children.add(child.toImmutableDescription());
+        }
+        
+        if (fTestClass != null) {
+            return DescriptionBuilder.forClass(fTestClass)
+                    .withAdditionalAnnotations(Arrays.asList(fAnnotations))
+                    .withDisplayName(fDisplayName)
+                    .withUniqueId(fUniqueId)
+                    .createSuiteDescription(children);
+        }
+        return DescriptionBuilder.forName(fDisplayName)
+                .withAdditionalAnnotations(Arrays.asList(fAnnotations))
+                .withDisplayName(fDisplayName)
+                .withUniqueId(fUniqueId)
+                .createSuiteDescription(children);
     }
 
     private String methodAndClassNamePatternGroupOrDefault(int group, String defaultString) {

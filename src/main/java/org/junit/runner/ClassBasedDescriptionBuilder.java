@@ -2,19 +2,16 @@ package org.junit.runner;
 
 import static org.junit.internal.Checks.notNull;
 
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public final class ClassBasedDescriptionBuilder extends DescriptionBuilder<ClassBasedDescriptionBuilder> {
     private final Class<?> testClass;
 
     ClassBasedDescriptionBuilder(final Class<?> testClass) {
-        this.testClass = notNull(testClass, "testClass cannot be null");
+        super(notNull(testClass, "testClass cannot be null").getAnnotations());
+        this.testClass = testClass;
         super.displayName = testClass.getName();
         super.uniqueId = testClass.getCanonicalName();
-        super.annotations = new ArrayList<Annotation>(Arrays.asList(testClass.getAnnotations()));
     }
 
     /**

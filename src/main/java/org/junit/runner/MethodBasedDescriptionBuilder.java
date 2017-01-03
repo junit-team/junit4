@@ -3,10 +3,7 @@ package org.junit.runner;
 import static org.junit.internal.Checks.notEmpty;
 import static org.junit.internal.Checks.notNull;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public final class MethodBasedDescriptionBuilder extends DescriptionBuilder<MethodBasedDescriptionBuilder> {
     private final Class<?> testClass;
@@ -14,8 +11,9 @@ public final class MethodBasedDescriptionBuilder extends DescriptionBuilder<Meth
     private final Method method;
 
     MethodBasedDescriptionBuilder(Class<?> testClass, Method method) {
+        super(notNull(method, "method cannot be null").getAnnotations());
         this.testClass = notNull(testClass, "testClass cannot be null");
-        this.method = notNull(method, "method cannot be null");
+        this.method = method;
         methodName = method.getName();
         if (!method.getDeclaringClass().isAssignableFrom(testClass)) {
             throw new IllegalArgumentException(
@@ -23,25 +21,24 @@ public final class MethodBasedDescriptionBuilder extends DescriptionBuilder<Meth
         }
         super.displayName = formatDisplayName(method.getName(), testClass);
         super.uniqueId = displayName;
-        super.annotations = new ArrayList<Annotation>(Arrays.asList(method.getAnnotations()));
     }
 
     MethodBasedDescriptionBuilder(Class<?> testClass, String methodName) {
+        super(NO_ANNOTATIONS);
         this.testClass = notNull(testClass, "testClass cannot be null");
         this.methodName = notNull(methodName, "methodName cannot be null");
         this.method = null;
         super.displayName = formatDisplayName(methodName, testClass);
         super.uniqueId = displayName;
-        super.annotations = new ArrayList<Annotation>();
     }
 
     MethodBasedDescriptionBuilder(String testClassName, String methodName) {
+        super(NO_ANNOTATIONS);
         notNull(testClassName, "testClassName cannot be null");
         this.methodName = notNull(methodName, "methodName cannot be null");
         this.method = null;
         super.displayName = formatDisplayName(methodName, testClassName);
         super.uniqueId = displayName;
-        super.annotations = new ArrayList<Annotation>();
         this.testClass = null;
     }
 

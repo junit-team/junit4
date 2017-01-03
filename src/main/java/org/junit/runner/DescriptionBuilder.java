@@ -8,6 +8,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
@@ -17,9 +20,19 @@ import java.util.List;
  * @since 4.12
  */
 public abstract class DescriptionBuilder<B extends DescriptionBuilder<B>> {
+    static Collection<Annotation> NO_ANNOTATIONS = Collections.emptyList();
+
     protected String displayName;
     protected Serializable uniqueId;
-    protected List<Annotation> annotations;
+    protected final LinkedHashSet<Annotation> annotations;
+
+    DescriptionBuilder(Collection<Annotation> annotations) {
+        this.annotations = new LinkedHashSet<Annotation>(annotations);
+    }
+
+    DescriptionBuilder(Annotation[] annotations) {
+        this(Arrays.asList(annotations));
+    }
 
     /**
      * Creates a {@code DescriptionBuilder} for {@code testClass}. Additional attributes may be added

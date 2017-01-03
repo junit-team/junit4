@@ -25,6 +25,8 @@ import org.junit.internal.runners.statements.RunBefores;
 import org.junit.rules.RunRules;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
+import org.junit.runner.DescriptionBuilder;
+import org.junit.runner.ImmutableDescription;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
@@ -346,12 +348,21 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
     @Override
     public Description getDescription() {
-        Description description = Description.createSuiteDescription(getName(),
-                getRunnerAnnotations());
+        List<ImmutableDescription> childDescriptions = new ArrayList<ImmutableDescription>();
         for (T child : getFilteredChildren()) {
-            description.addChild(describeChild(child));
+            childDescriptions.add(describeChild(child).toImmutableDescription());
         }
-        return description;
+        String displayName = getName();
+        if (fTestClass != null && fTestClass.getJavaClass() != null) {
+            return DescriptionBuilder.forClass(fTestClass.getJavaClass())
+                    .withDisplayName(displayName)
+                    .withUniqueId(displayName)
+                    .withAdditionalAnnotations(Arrays.asList(getRunnerAnnotations()))
+                    .createSuiteDescription(childDescriptions);
+        }
+        return DescriptionBuilder.forName(displayName)
+                .withAdditionalAnnotations(Arrays.asList(getRunnerAnnotations()))
+                .createSuiteDescription(childDescriptions);
     }
 
     @Override

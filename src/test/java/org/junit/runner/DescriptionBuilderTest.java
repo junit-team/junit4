@@ -85,7 +85,7 @@ public class DescriptionBuilderTest {
         assertThat(classBasedBuilder2.annotations.isEmpty(), is(false));
         assertThat(classBasedBuilder2.annotations.size(), is(1));
         assertThat(
-                classBasedBuilder2.annotations.get(0).annotationType(),
+                classBasedBuilder2.annotations.iterator().next().annotationType(),
                 CoreMatchers.<Class<? extends Annotation>>equalTo(RunWith.class));
     }
 
@@ -106,7 +106,7 @@ public class DescriptionBuilderTest {
         assertThat(methodBasedBuilder.annotations.isEmpty(), is(false));
         assertThat(methodBasedBuilder.annotations.size(), is(1));
         assertThat(
-                methodBasedBuilder.annotations.get(0).annotationType(),
+                methodBasedBuilder.annotations.iterator().next().annotationType(),
                 CoreMatchers.<Class<? extends Annotation>>equalTo(Test.class));
     }
 

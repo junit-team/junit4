@@ -9,9 +9,9 @@ import java.util.List;
 public final class NameBasedDescriptionBuilder extends DescriptionBuilder<NameBasedDescriptionBuilder> {
 
     NameBasedDescriptionBuilder(String displayName) {
+        super(NO_ANNOTATIONS);
         super.displayName = notNull(displayName, "displayName cannot be null");
         super.uniqueId = displayName;
-        super.annotations = new ArrayList<Annotation>();
     }
 
     /**

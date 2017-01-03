@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Categories;
 import org.junit.experimental.categories.Categories.IncludeCategory;
@@ -108,6 +109,7 @@ public class CategoriesAndParameterizedTest {
     }
 
     @Test
+    @Ignore("Category annotations on Parameterized classes are now supported on individual methods")
     public void shouldFailWithMethodLevelCategoryAnnotation() {
         assertThat(
                 testResult(ParameterTokenSuiteMalformed.class),
@@ -115,6 +117,7 @@ public class CategoriesAndParameterizedTest {
     }
 
     @Test
+    @Ignore("Category annotations on Parameterized classes are now supported on individual methods")
     public void shouldFailWithMethodLevelCategoryAnnotationSwapped() {
         assertThat(
                 testResult(ParameterTokenSuiteMalformedAndSwapped.class),

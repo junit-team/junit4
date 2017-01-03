@@ -51,6 +51,11 @@ public abstract class ImmutableDescription extends Description {
         return super.fTestClass == null ? null : super.getMethodName();
     }
 
+    @Override
+    public ImmutableDescription toImmutableDescription() {
+        return this;
+    }
+
     Object writeReplace() {
         return toMutableDescription(this);
     }
