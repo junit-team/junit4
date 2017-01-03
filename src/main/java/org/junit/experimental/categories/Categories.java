@@ -118,9 +118,6 @@ public class Categories extends Suite {
         private final boolean excludedAny;
 
         public static CategoryFilter include(boolean matchAny, Class<?>... categories) {
-            if (hasNull(categories)) {
-                throw new NullPointerException("has null category");
-            }
             return new CategoryFilter(matchAny, categories, true, null);
         }
 
@@ -133,9 +130,6 @@ public class Categories extends Suite {
         }
 
         public static CategoryFilter exclude(boolean matchAny, Class<?>... categories) {
-            if (hasNull(categories)) {
-                throw new NullPointerException("has null category");
-            }
             return new CategoryFilter(true, null, matchAny, categories);
         }
 
@@ -154,7 +148,10 @@ public class Categories extends Suite {
 
         @Deprecated
         public CategoryFilter(Class<?> includedCategory, Class<?> excludedCategory) {
-            this(true, createSet(includedCategory), true, createSet(excludedCategory));
+            includedAny = true;
+            excludedAny = true;
+            included = nullableClassToSet(includedCategory);
+            excluded = nullableClassToSet(excludedCategory);
         }
 
         protected CategoryFilter(boolean matchAnyIncludes, Set<Class<?>> includes,
@@ -305,16 +302,6 @@ public class Categories extends Suite {
             c.remove(null);
             return c;
         }
-
-        private static boolean hasNull(Class<?>... classes) {
-            if (classes == null) return false;
-            for (Class<?> clazz : classes) {
-                if (clazz == null) {
-                    return true;
-                }
-            }
-            return false;
-        }
     }
 
     public Categories(Class<?> klass, RunnerBuilder builder) throws InitializationError {
@@ -360,12 +347,28 @@ public class Categories extends Suite {
         return false;
     }
 
-    private static Set<Class<?>> createSet(Class<?>... t) {
-        if (t == null || t.length == 0) {
+    private static Set<Class<?>> createSet(Class<?>[] classes) {
+        // Not throwing a NPE if t is null is a bad idea, but it's the behavior from JUnit 4.12
+        // for include(boolean, Class<?>...) and exclude(boolean, Class<?>...)
+        if (classes == null || classes.length == 0) {
             return Collections.emptySet();
-        } else if (t.length == 1) {
-            return Collections.<Class<?>>singleton(t[0]);
         }
-        return new HashSet<Class<?>>(Arrays.asList(t));
+        for (Class<?> category : classes) {
+            if (category == null) {
+                throw new NullPointerException("has null category");
+            }
+        }
+
+        return classes.length == 1
+            ? Collections.<Class<?>>singleton(classes[0])
+            : new HashSet<Class<?>>(Arrays.asList(classes));
+    }
+
+    private static Set<Class<?>> nullableClassToSet(Class<?> nullableClass) {
+        // Not throwing a NPE if t is null is a bad idea, but it's the behavior from JUnit 4.11
+        // for CategoryFilter(Class<?> includedCategory, Class<?> excludedCategory)
+        return nullableClass == null
+                ? Collections.<Class<?>>emptySet()
+                : Collections.<Class<?>>singleton(nullableClass);
     }
 }
