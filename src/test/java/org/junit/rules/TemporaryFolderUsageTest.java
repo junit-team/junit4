@@ -84,12 +84,32 @@ public class TemporaryFolderUsageTest {
     }
     
     @Test
-    public void newFolderWithGivenFolderThrowsIOExceptionIfFolderNameConsistsOfMultiplePathComponents()
+    public void newFolderWithPathStartingWithFileSeparatorThrowsIOException()
             throws IOException {
         tempFolder.create();
         thrown.expect(IOException.class);
-        thrown.expectMessage("name cannot consist of multiple path components");
+        thrown.expectMessage("folder name must be a relative path");
+        tempFolder.newFolder(File.separator + "temp1");
+    }
+    
+    @Test
+    public void newFolderWithPathContainingFileSeparaterCreatesDirectories()
+            throws IOException {
+        tempFolder.create();
+        tempFolder.newFolder("temp1" + File.separator + "temp2");
+        File temp1 = new File(tempFolder.getRoot(), "temp1");
+        assertFileIsDirectory(temp1);
+        assertFileIsDirectory(new File(temp1, "temp2"));
+    }
+ 
+    @Test
+    public void newFolderWithPathContainingForwardSlashCreatesDirectories()
+            throws IOException {
+        tempFolder.create();
         tempFolder.newFolder("temp1/temp2");
+        File temp1 = new File(tempFolder.getRoot(), "temp1");
+        assertFileIsDirectory(temp1);
+        assertFileIsDirectory(new File(temp1, "temp2"));
     }
     
     @Test
@@ -114,7 +134,7 @@ public class TemporaryFolderUsageTest {
     @Test
     public void createInitializesRootFolder() throws IOException {
         tempFolder.create();
-        assertFileExists(tempFolder.getRoot());
+        assertFileIsDirectory(tempFolder.getRoot());
     }
 
     @Test
@@ -155,7 +175,7 @@ public class TemporaryFolderUsageTest {
         tempFolder.create();
 
         File f = tempFolder.newFolder();
-        assertFileExists(f);
+        assertFileIsDirectory(f);
         assertFileCreatedUnderRootFolder("Random folder", f);
     }
 
@@ -164,7 +184,7 @@ public class TemporaryFolderUsageTest {
         tempFolder.create();
 
         File f = tempFolder.newFolder("top", "middle", "bottom");
-        assertFileExists(f);
+        assertFileIsDirectory(f);
         assertParentFolderForFileIs(f, new File(tempFolder.getRoot(),
                 "top/middle"));
         assertParentFolderForFileIs(f.getParentFile(),
@@ -200,8 +220,20 @@ public class TemporaryFolderUsageTest {
                 file.exists(), is(exists));
     }
 
+    private void checkFileIsDirectory(String msg, File file, boolean isDirectory) {
+        assertThat("File is null", file, is(notNullValue()));
+        assertThat("File '" + file.getAbsolutePath() + "' " + msg,
+                file.isDirectory(), is(isDirectory));
+    }
+
     private void assertFileExists(File file) {
         checkFileExists("does not exist", file, true);
+        checkFileIsDirectory("is a directory", file, false);
+    }
+
+    private void assertFileIsDirectory(File file) {
+        checkFileExists("does not exist", file, true);
+        checkFileIsDirectory("is not a directory", file, true);
     }
 
     private void assertFileCreatedUnderRootFolder(String msg, File f) {
