@@ -167,16 +167,27 @@ public class TemporaryFolder extends ExternalResource {
     }
 
     /**
-     * Returns a new fresh folder with the given name under the temporary
+     * Returns a new fresh folder with the given path under the temporary
      * folder.
      */
     public File newFolder(String folder) throws IOException {
-        return newFolder(new String[]{folder});
+        if (new File(folder).isAbsolute()) {
+            throw new IOException("folder name must be a relative path");
+        }
+        File file = new File(getRoot(), folder);
+        if (!file.mkdirs()) {
+            throw new IOException(
+                    "a folder with the name \'" + folder + "\' already exists");
+        }
+        return file;
     }
 
     /**
      * Returns a new fresh folder with the given name(s) under the temporary
-     * folder.
+     * folder. For example, if you pass in the strings {@code "parent"} and {@code "child"}
+     * then a directory named {@code "parent"} will be created under the temporary folder
+     * and a directory named {@code "child"} will be created under the newly-created
+     * {@code "parent"} directory.
      */
     public File newFolder(String... folderNames) throws IOException {
         File file = getRoot();
