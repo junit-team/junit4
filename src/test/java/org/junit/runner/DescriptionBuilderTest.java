@@ -6,6 +6,11 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
@@ -202,6 +207,37 @@ public class DescriptionBuilderTest {
         assertThat(suiteDescription.getChildren(), is(notNullValue()));
         assertThat(suiteDescription.getChildren().isEmpty(), is(false));
         assertThat(suiteDescription.getChildren().size(), is(1));
+    }
+
+    @Test
+    public void testDescription_serializesToMutableDescription() throws Exception {
+        assertSerializesToMutableDescription(methodBasedBuilder.createTestDescription());
+    }
+
+    @Test
+    public void suiteDescriptionWithoutChildren_serializesToMutableDescription() throws Exception {
+        assertSerializesToMutableDescription(classBasedBuilder.createSuiteDescription(NO_CHILDREN));
+    }
+
+    @Test
+    public void suiteDescriptionWithChildren_serializesToMutableDescription() throws Exception {
+        ImmutableDescription child = namedBuilder.createTestDescription();
+        ImmutableDescription suiteDescription = namedBuilder.createSuiteDescription(Arrays.asList(child));
+
+        assertSerializesToMutableDescription(suiteDescription);
+    }
+ 
+    private void assertSerializesToMutableDescription(Description description)
+            throws IOException, ClassNotFoundException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        new ObjectOutputStream(byteArrayOutputStream).writeObject(description);
+        byte[] bytes = byteArrayOutputStream.toByteArray();
+        ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(bytes));
+        Object fromStream = objectInputStream.readObject();
+        assertEquals(Description.class, fromStream.getClass());
+        Description result = Description.class.cast(fromStream);
+
+        assertThat(result, is(description));
     }
  
     private static class UniqueId implements Serializable {

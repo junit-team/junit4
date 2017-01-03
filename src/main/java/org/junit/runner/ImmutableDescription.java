@@ -1,7 +1,5 @@
 package org.junit.runner;
 
-import java.io.Serializable;
-import java.lang.annotation.Annotation;
 import java.util.List;
 
 /**
@@ -51,5 +49,17 @@ public abstract class ImmutableDescription extends Description {
     @Override
     public String getMethodName() {
         return super.fTestClass == null ? null : super.getMethodName();
+    }
+
+    Object writeReplace() {
+        return toMutableDescription(this);
+    }
+
+    private static Description toMutableDescription(Description description) {
+        Description result = description.childlessCopy();
+        for (Description child : description.getChildren()) {
+            result.addChild(toMutableDescription(child));
+        }
+        return result;
     }
 }
