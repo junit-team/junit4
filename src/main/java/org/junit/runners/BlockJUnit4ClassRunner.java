@@ -22,6 +22,7 @@ import org.junit.internal.runners.statements.RunBefores;
 import org.junit.rules.RunRules;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
+import org.junit.runner.DescriptionBuilder;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
@@ -91,12 +92,18 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
         Description description = fMethodDescriptions.get(method);
 
         if (description == null) {
-            description = Description.createTestDescription(getTestClass().getJavaClass(),
-                    testName(method), method.getAnnotations());
+            description = DescriptionBuilder.forMethod(getTestClass().getJavaClass(), method.getMethod())
+                    .withDisplayName(formatDisplayName(testName(method)))
+                    .createTestDescription();
             fMethodDescriptions.putIfAbsent(method, description);
         }
 
         return description;
+    }
+
+    private String formatDisplayName(String testName) {
+        String className = getTestClass().getJavaClass().getName();
+        return String.format("%s(%s)", testName, className);
     }
 
     @Override

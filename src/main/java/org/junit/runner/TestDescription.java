@@ -1,5 +1,7 @@
 package org.junit.runner;
 
+import java.lang.reflect.Method;
+
 
 /**
  * The {@code TestDescription} describes a test which is to be run or has been run.
@@ -15,13 +17,15 @@ package org.junit.runner;
 final class TestDescription extends ImmutableDescription {
     private static final long serialVersionUID = 1L;
     private final String methodName;
+    private final Method method;
 
     /**
      * @param methodName method name (can be null)
      */
-    TestDescription(DescriptionBuilder<?> builder, String methodName) {
+    TestDescription(DescriptionBuilder<?> builder, Method method, String methodName) {
         super(builder);
         this.methodName = methodName;
+        this.method = method;
     }
 
     @Override
@@ -42,5 +46,10 @@ final class TestDescription extends ImmutableDescription {
     @Override
     public String getMethodName() {
         return methodName;
+    }
+
+    @Override
+    public Method getMethod() {
+        return method;
     }
 }

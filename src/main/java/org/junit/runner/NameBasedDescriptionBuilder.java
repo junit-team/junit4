@@ -20,7 +20,7 @@ public final class NameBasedDescriptionBuilder extends DescriptionBuilder<NameBa
      * @return a {@code ImmutableDescription} represented by the {@code DescriptionBuilder}
      */
     public ImmutableDescription createTestDescription() {
-        return new TestDescription(this, null);
+        return new TestDescription(this, null, null);
     }
 
     /**

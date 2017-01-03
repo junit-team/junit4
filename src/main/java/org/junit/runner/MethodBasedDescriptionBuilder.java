@@ -11,10 +11,12 @@ import java.util.Arrays;
 public final class MethodBasedDescriptionBuilder extends DescriptionBuilder<MethodBasedDescriptionBuilder> {
     private final Class<?> testClass;
     private final String methodName;
+    private final Method method;
 
     MethodBasedDescriptionBuilder(Class<?> testClass, Method method) {
         this.testClass = notNull(testClass, "testClass cannot be null");
-        methodName = notNull(method, "method cannot be null").getName();
+        this.method = notNull(method, "method cannot be null");
+        methodName = method.getName();
         if (!method.getDeclaringClass().isAssignableFrom(testClass)) {
             throw new IllegalArgumentException(
                     "Method [" + method + "] does not exist in class " + testClass.getCanonicalName());
@@ -27,6 +29,7 @@ public final class MethodBasedDescriptionBuilder extends DescriptionBuilder<Meth
     MethodBasedDescriptionBuilder(Class<?> testClass, String methodName) {
         this.testClass = notNull(testClass, "testClass cannot be null");
         this.methodName = notNull(methodName, "methodName cannot be null");
+        this.method = null;
         super.displayName = formatDisplayName(methodName, testClass);
         super.uniqueId = displayName;
         super.annotations = new ArrayList<Annotation>();
@@ -35,10 +38,16 @@ public final class MethodBasedDescriptionBuilder extends DescriptionBuilder<Meth
     MethodBasedDescriptionBuilder(String testClassName, String methodName) {
         notNull(testClassName, "testClassName cannot be null");
         this.methodName = notNull(methodName, "methodName cannot be null");
+        this.method = null;
         super.displayName = formatDisplayName(methodName, testClassName);
         super.uniqueId = displayName;
         super.annotations = new ArrayList<Annotation>();
         this.testClass = null;
+    }
+
+    public MethodBasedDescriptionBuilder setTestName(String testName) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     /**
@@ -47,7 +56,7 @@ public final class MethodBasedDescriptionBuilder extends DescriptionBuilder<Meth
      * @return a {@code ImmutableDescription} represented by the {@code DescriptionBuilder}
      */
     public ImmutableDescription createTestDescription() {
-        return new TestDescription(this, methodName);
+        return new TestDescription(this, method, methodName);
     }
 
     @Override
