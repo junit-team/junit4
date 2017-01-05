@@ -362,14 +362,6 @@ public class Description implements Serializable {
     }
 
     public ImmutableDescription toImmutableDescription() {
-        ImmutableDescription result = internalToImmutableDescription();
-        if (!result.equals(this)) {
-            result.equals(this);
-            return result;
-        }
-        return result;
-    }
-    private ImmutableDescription internalToImmutableDescription() {
         if (isTest()) {
             String methodName = getMethodName();
             if (methodName == null) {
@@ -398,7 +390,7 @@ public class Description implements Serializable {
         for (Description child : getChildren()) {
             children.add(child.toImmutableDescription());
         }
-        
+
         if (fTestClass != null) {
             return DescriptionBuilder.forClass(fTestClass)
                     .withAdditionalAnnotations(Arrays.asList(fAnnotations))
