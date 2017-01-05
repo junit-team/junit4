@@ -18,6 +18,11 @@ public class ParameterizedAssertionError extends AssertionError {
         return obj instanceof ParameterizedAssertionError && toString().equals(obj.toString());
     }
 
+    @Override
+    public int hashCode() {
+        return toString().hashCode();
+    }
+
     public static String join(String delimiter, Object... params) {
         return join(delimiter, Arrays.asList(params));
     }

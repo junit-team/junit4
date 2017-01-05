@@ -15,18 +15,18 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 
 /**
  * @deprecated Included for backwards compatibility with JUnit 4.4. Will be
- *             removed in the next release. Please use
+ *             removed in the next major release. Please use
  *             {@link BlockJUnit4ClassRunner} in place of {@link JUnit4ClassRunner}.
  */
 @Deprecated
 public class MethodValidator {
 
-    private final List<Throwable> fErrors = new ArrayList<Throwable>();
+    private final List<Throwable> errors = new ArrayList<Throwable>();
 
-    private TestClass fTestClass;
+    private TestClass testClass;
 
     public MethodValidator(TestClass testClass) {
-        fTestClass = testClass;
+        this.testClass = testClass;
     }
 
     public void validateInstanceMethods() {
@@ -34,9 +34,9 @@ public class MethodValidator {
         validateTestMethods(Before.class, false);
         validateTestMethods(Test.class, false);
 
-        List<Method> methods = fTestClass.getAnnotatedMethods(Test.class);
+        List<Method> methods = testClass.getAnnotatedMethods(Test.class);
         if (methods.size() == 0) {
-            fErrors.add(new Exception("No runnable methods"));
+            errors.add(new Exception("No runnable methods"));
         }
     }
 
@@ -49,48 +49,48 @@ public class MethodValidator {
         validateNoArgConstructor();
         validateStaticMethods();
         validateInstanceMethods();
-        return fErrors;
+        return errors;
     }
 
     public void assertValid() throws InitializationError {
-        if (!fErrors.isEmpty()) {
-            throw new InitializationError(fErrors);
+        if (!errors.isEmpty()) {
+            throw new InitializationError(errors);
         }
     }
 
     public void validateNoArgConstructor() {
         try {
-            fTestClass.getConstructor();
+            testClass.getConstructor();
         } catch (Exception e) {
-            fErrors.add(new Exception("Test class should have public zero-argument constructor", e));
+            errors.add(new Exception("Test class should have public zero-argument constructor", e));
         }
     }
 
     private void validateTestMethods(Class<? extends Annotation> annotation,
             boolean isStatic) {
-        List<Method> methods = fTestClass.getAnnotatedMethods(annotation);
+        List<Method> methods = testClass.getAnnotatedMethods(annotation);
 
         for (Method each : methods) {
             if (Modifier.isStatic(each.getModifiers()) != isStatic) {
                 String state = isStatic ? "should" : "should not";
-                fErrors.add(new Exception("Method " + each.getName() + "() "
-                        + state + " be static"));
+                errors.add(new Exception("Method " + each.getName() + "() "
+						+ state + " be static"));
             }
             if (!Modifier.isPublic(each.getDeclaringClass().getModifiers())) {
-                fErrors.add(new Exception("Class " + each.getDeclaringClass().getName()
-                        + " should be public"));
+                errors.add(new Exception("Class " + each.getDeclaringClass().getName()
+						+ " should be public"));
             }
             if (!Modifier.isPublic(each.getModifiers())) {
-                fErrors.add(new Exception("Method " + each.getName()
-                        + " should be public"));
+                errors.add(new Exception("Method " + each.getName()
+						+ " should be public"));
             }
             if (each.getReturnType() != Void.TYPE) {
-                fErrors.add(new Exception("Method " + each.getName()
-                        + " should be void"));
+                errors.add(new Exception("Method " + each.getName()
+						+ "should have a return type of void"));
             }
             if (each.getParameterTypes().length != 0) {
-                fErrors.add(new Exception("Method " + each.getName()
-                        + " should have no parameters"));
+                errors.add(new Exception("Method " + each.getName()
+						+ " should have no parameters"));
             }
         }
     }

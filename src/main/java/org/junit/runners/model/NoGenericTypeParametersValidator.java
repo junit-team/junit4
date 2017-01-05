@@ -9,21 +9,21 @@ import java.lang.reflect.WildcardType;
 import java.util.List;
 
 class NoGenericTypeParametersValidator {
-    private final Method fMethod;
+    private final Method method;
 
     NoGenericTypeParametersValidator(Method method) {
-        this.fMethod = method;
+        this.method = method;
     }
 
     void validate(List<Throwable> errors) {
-        for (Type each : fMethod.getGenericParameterTypes()) {
+        for (Type each : method.getGenericParameterTypes()) {
             validateNoTypeParameterOnType(each, errors);
         }
     }
 
     private void validateNoTypeParameterOnType(Type type, List<Throwable> errors) {
         if (type instanceof TypeVariable<?>) {
-            errors.add(new Exception("Method " + fMethod.getName()
+            errors.add(new Exception("Method " + method.getName()
                     + "() contains unresolved type variable " + type));
         } else if (type instanceof ParameterizedType) {
             validateNoTypeParameterOnParameterizedType((ParameterizedType) type, errors);

@@ -19,7 +19,6 @@ public class ParameterizedNamesTest {
     @RunWith(Parameterized.class)
     public static class ParametrizedWithSpecialCharsInName {
 
-        @SuppressWarnings("unused")
         public ParametrizedWithSpecialCharsInName(String s) {
         }
 

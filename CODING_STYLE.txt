@@ -1,0 +1,9 @@
+JUnit project uses the Google Java Style (https://github.com/google/styleguide) for all new
+code (under org.junit.*). Deviating from this, indentation is 4 spaces instead of 2.
+
+Be sure to set text file encoding to UTF-8 and line delimiters to UNIX style.
+
+Since not all code has been formatted yet, please format only code lines you changed to avoid extraneous changes.
+
+Legacy code (under junit.*) used the legacy guide specified in LEGACY_CODING_STYLE.txt in the
+project root.

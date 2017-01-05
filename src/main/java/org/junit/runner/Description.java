@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
  */
 public class Description implements Serializable {
     private static final long serialVersionUID = 1L;
+
     private static final Pattern METHOD_AND_CLASS_NAME_PATTERN = Pattern
             .compile("([\\s\\S]*)\\((.*)\\)");
     private static final Annotation[] ANNOTATIONS_TYPE = new Annotation[0];
@@ -126,7 +127,7 @@ public class Description implements Serializable {
         return new Description(null, formatDisplayName(name, className), uniqueId);
     }
 
-    protected static String formatDisplayName(String name, String className) {
+    private static String formatDisplayName(String name, String className) {
         return String.format("%s(%s)", name, className);
     }
 
@@ -143,6 +144,17 @@ public class Description implements Serializable {
     }
 
     /**
+     * Create a <code>Description</code> named after <code>testClass</code>
+     *
+     * @param testClass A not null {@link Class} containing tests
+     * @param annotations meta-data about the test, for downstream interpreters
+     * @return a <code>Description</code> of <code>testClass</code>
+     */
+    public static Description createSuiteDescription(Class<?> testClass, Annotation... annotations) {
+        return new Description(testClass, testClass.getName(), annotations);
+    }
+
+    /**
      * Describes a Runner which runs no tests
      */
     public static final Description EMPTY = new Description(null, "No Tests");
@@ -154,17 +166,22 @@ public class Description implements Serializable {
      */
     public static final Description TEST_MECHANISM = new Description(null, "Test mechanism");
 
+    /*
+     * We have to use the f prefix until the next major release to ensure
+     * serialization compatibility.
+     * See https://github.com/junit-team/junit4/issues/976
+     */
     final Collection<Description> fChildren = new ConcurrentLinkedQueue<Description>();
-    final String fDisplayName;
+    private final String fDisplayName;
     final Serializable fUniqueId;
-    final Annotation[] fAnnotations;
+    private final Annotation[] fAnnotations;
     volatile /* write-once */ Class<?> fTestClass;
 
-    Description(Class<?> clazz, String displayName, Annotation... annotations) {
+    private Description(Class<?> clazz, String displayName, Annotation... annotations) {
         this(clazz, displayName, displayName, annotations);
     }
 
-    Description(Class<?> clazz, String displayName, Serializable uniqueId, Annotation... annotations) {
+    Description(Class<?> testClass, String displayName, Serializable uniqueId, Annotation... annotations) {
         if ((displayName == null) || (displayName.length() == 0)) {
             throw new IllegalArgumentException(
                     "The display name must not be empty.");
@@ -173,7 +190,7 @@ public class Description implements Serializable {
             throw new IllegalArgumentException(
                     "The unique id must not be null.");
         }
-        fTestClass = clazz;
+        fTestClass = testClass;
         fDisplayName = displayName;
         fUniqueId = uniqueId;
         fAnnotations = annotations;

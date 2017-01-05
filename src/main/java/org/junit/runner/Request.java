@@ -71,12 +71,11 @@ public abstract class Request {
      */
     public static Request classes(Computer computer, Class<?>... classes) {
         try {
-            AllDefaultPossibilitiesBuilder builder = new AllDefaultPossibilitiesBuilder(true);
+            AllDefaultPossibilitiesBuilder builder = new AllDefaultPossibilitiesBuilder();
             Runner suite = computer.getSuite(builder, classes);
             return runner(suite);
         } catch (InitializationError e) {
-            throw new RuntimeException(
-                    "Bug in saff's brain: Suite constructor, called as above, should always complete");
+            return runner(new ErrorReportingRunner(e, classes));
         }
     }
 
@@ -93,9 +92,9 @@ public abstract class Request {
 
 
     /**
-     * Not used within JUnit.  Clients should simply instantiate ErrorReportingRunner themselves
+     * Creates a {@link Request} that, when processed, will report an error for the given
+     * test class with the given cause.
      */
-    @Deprecated
     public static Request errorReport(Class<?> klass, Throwable cause) {
         return runner(new ErrorReportingRunner(klass, cause));
     }
@@ -132,13 +131,16 @@ public abstract class Request {
     }
 
     /**
-     * Returns a Request that only runs contains tests whose {@link Description}
-     * equals <code>desiredDescription</code>
+     * Returns a Request that only runs tests whose {@link Description}
+     * matches the given description.
      *
-     * @param desiredDescription {@link Description} of those tests that should be run
+     * <p>Returns an empty {@code Request} if {@code desiredDescription} is not a single test and filters all but the single
+     * test if {@code desiredDescription} is a single test.</p>
+     *
+     * @param desiredDescription {@code Description} of those tests that should be run
      * @return the filtered Request
      */
-    public Request filterWith(final Description desiredDescription) {
+    public Request filterWith(Description desiredDescription) {
         return filterWith(Filter.matchMethodDescription(desiredDescription));
     }
 

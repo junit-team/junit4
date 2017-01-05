@@ -22,6 +22,9 @@
   </skin>
 
   <body>
+    <head>
+      <link rel="stylesheet" href="@relativePath@/css/plain-links.css" />
+    </head>
     <breadcrumbs>
       <item name="JUnit" href="http://junit.org/" />
     </breadcrumbs>

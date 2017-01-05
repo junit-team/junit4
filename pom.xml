@@ -1,11 +1,10 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>junit</groupId>
     <artifactId>junit</artifactId>
-    <version>4.12-SNAPSHOT</version>
+    <version>4.13-SNAPSHOT</version>
 
     <name>JUnit</name>
     <description>JUnit is a unit testing framework for Java, created by Erich Gamma and Kent Beck.</description>
@@ -29,13 +28,28 @@
             <name>David Saff</name>
             <email>david@saff.net</email>
         </developer>
+        <developer>
+            <id>kcooney</id>
+            <name>Kevin Cooney</name>
+            <email>kcooney@google.com</email>
+        </developer>
+        <developer>
+            <id>stefanbirkner</id>
+            <name>Stefan Birkner</name>
+            <email>mail@stefan-birkner.de</email>
+        </developer>
+        <developer>
+            <id>marcphilipp</id>
+            <name>Marc Philipp</name>
+            <email>mail@marcphilipp.de</email>
+        </developer>
     </developers>
     <contributors>
         <contributor>
             <name>JUnit contributors</name>
             <organization>JUnit</organization>
             <email>junit@yahoogroups.com</email>
-            <url>https://github.com/junit-team/junit/graphs/contributors</url>
+            <url>https://github.com/junit-team/junit4/graphs/contributors</url>
             <roles>
                 <role>developers</role>
             </roles>
@@ -46,7 +60,7 @@
         <mailingList>
             <name>JUnit Mailing List</name>
             <post>junit@yahoogroups.com</post>
-            <archive>http://tech.groups.yahoo.com/group/junit/</archive>
+            <archive>https://groups.yahoo.com/neo/groups/junit/info</archive>
         </mailingList>
     </mailingLists>
 
@@ -55,20 +69,21 @@
     </prerequisites>
 
     <scm>
-        <connection>scm:git:git://github.com/junit-team/junit.git</connection>
-        <developerConnection>scm:git:git@github.com:junit-team/junit.git</developerConnection>
-        <url>http://github.com/junit-team/junit/tree/master</url>
-    </scm>
+        <connection>scm:git:git://github.com/junit-team/junit4.git</connection>
+        <developerConnection>scm:git:git@github.com:junit-team/junit4.git</developerConnection>
+        <url>http://github.com/junit-team/junit4/tree/master</url>
+      <tag>HEAD</tag>
+  </scm>
     <issueManagement>
         <system>github</system>
-        <url>https://github.com/junit-team/junit/issues</url>
+        <url>https://github.com/junit-team/junit4/issues</url>
     </issueManagement>
     <ciManagement>
         <system>jenkins</system>
         <url>https://junit.ci.cloudbees.com/</url>
     </ciManagement>
     <distributionManagement>
-        <downloadUrl>https://github.com/junit-team/junit/wiki/Download-and-Install</downloadUrl>
+        <downloadUrl>https://github.com/junit-team/junit4/wiki/Download-and-Install</downloadUrl>
         <snapshotRepository>
             <id>junit-snapshot-repo</id>
             <name>Nexus Snapshot Repository</name>
@@ -81,14 +96,16 @@
         </repository>
         <site>
             <id>junit.github.io</id>
-            <url>gitsite:git@github.com/junit-team/junit.git</url>
+            <url>gitsite:git@github.com/junit-team/junit4.git</url>
         </site>
     </distributionManagement>
 
     <properties>
         <jdkVersion>1.5</jdkVersion>
+        <surefireVersion>2.19.1</surefireVersion>
+        <hamcrestVersion>1.3</hamcrestVersion>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
-        <arguments/>
+        <arguments />
         <gpg.keyname>67893CC4</gpg.keyname>
     </properties>
 
@@ -96,7 +113,14 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
-            <version>1.3</version>
+            <version>${hamcrestVersion}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+            <version>${hamcrestVersion}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -108,7 +132,7 @@
             <resource>
                 <directory>${project.basedir}</directory>
                 <includes>
-                    <include>LICENSE.txt</include>
+                    <include>LICENSE-junit.txt</include>
                 </includes>
             </resource>
         </resources>
@@ -131,7 +155,7 @@
                 the project, requires only release versions of dependencies of other artifacts.
                 -->
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>1.3.1</version>
+                <version>1.4</version>
                 <executions>
                     <execution>
                         <id>enforce-versions</id>
@@ -184,8 +208,8 @@
                 </executions>
                 <configuration>
                     <ignoreMissingFile>false</ignoreMissingFile>
-                    <file>src/main/java/junit/runner/Version.java.template</file>
-                    <outputFile>src/main/java/junit/runner/Version.java</outputFile>
+                    <file>${project.build.sourceDirectory}/junit/runner/Version.java.template</file>
+                    <outputFile>${project.build.sourceDirectory}/junit/runner/Version.java</outputFile>
                     <regex>false</regex>
                     <token>@version@</token>
                     <value>${project.version}</value>
@@ -196,7 +220,7 @@
                 java compiler plugin forked in extra process
                 -->
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                <version>3.3</version>
                 <configuration>
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <source>${jdkVersion}</source>
@@ -217,7 +241,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>animal-sniffer-maven-plugin</artifactId>
-                <version>1.11</version>
+                <version>1.14</version>
                 <executions>
                     <execution>
                         <id>signature-check</id>
@@ -241,12 +265,19 @@
                 our junit suite "AllTests" after the sources are compiled.
                 -->
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.17</version>
+                <version>${surefireVersion}</version>
                 <configuration>
                     <test>org/junit/tests/AllTests.java</test>
                     <useSystemClassLoader>true</useSystemClassLoader>
                     <enableAssertions>false</enableAssertions>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-junit47</artifactId>
+                        <version>${surefireVersion}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <!--
@@ -254,7 +285,7 @@
                 in to jar archive. See target/junit-*-sources.jar.
                 -->
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.2.1</version>
+                <version>2.4</version>
             </plugin>
             <plugin>
                 <!--
@@ -263,7 +294,7 @@
                 in jar archive target/junit-*-javadoc.jar.
                 -->
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
+                <version>2.10.3</version>
                 <configuration>
                     <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
                     <show>protected</show>
@@ -272,7 +303,7 @@
                     <detectLinks>false</detectLinks>
                     <linksource>true</linksource>
                     <keywords>true</keywords>
-                    <use>false</use>
+                    <use>true</use>
                     <windowtitle>JUnit API</windowtitle>
                     <encoding>UTF-8</encoding>
                     <locale>en</locale>
@@ -296,7 +327,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.5</version>
+                <version>2.5.2</version>
                 <configuration>
                     <mavenExecutorId>forked-path</mavenExecutorId>
                     <useReleaseProfile>false</useReleaseProfile>
@@ -306,7 +337,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.3</version>
+                <version>3.4</version>
                 <dependencies>
                     <dependency>
                         <groupId>com.github.stephenc.wagon</groupId>
@@ -322,7 +353,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
+                <version>2.6</version>
                 <configuration>
                     <archive>
                         <addMavenDescriptor>false</addMavenDescriptor>
@@ -332,6 +363,22 @@
                     </archive>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.6.1</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.8.2</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.5.2</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.7</version>
+            </plugin>
         </plugins>
     </build>
 
@@ -339,7 +386,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.7</version>
+                <version>2.8</version>
                 <configuration>
                     <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
                     <!-- waiting for MPIR-267 -->
@@ -348,7 +395,6 @@
                     <reportSet>
                         <reports>
                             <report>index</report>
-                            <report>summary</report>
                             <report>dependency-info</report>
                             <report>modules</report>
                             <report>license</report>
@@ -360,29 +406,16 @@
                             <report>dependencies</report>
                             <report>dependency-convergence</report>
                             <report>cim</report>
-                            <report>plugin-management</report>
-                            <report>plugins</report>
                             <report>distribution-management</report>
                         </reports>
                     </reportSet>
                 </reportSets>
             </plugin>
             <plugin>
-                <artifactId>maven-changes-plugin</artifactId>
-                <version>2.10</version>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>changes-report</report>
-                            <report>github-report</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-            <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
+                <version>2.10.1</version>
                 <configuration>
+                    <destDir>javadoc/latest</destDir>
                     <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
                     <show>protected</show>
                     <author>false</author>
@@ -390,7 +423,7 @@
                     <detectLinks>false</detectLinks>
                     <linksource>true</linksource>
                     <keywords>true</keywords>
-                    <use>false</use>
+                    <use>true</use>
                     <windowtitle>JUnit API</windowtitle>
                     <encoding>UTF-8</encoding>
                     <locale>en</locale>
@@ -419,14 +452,6 @@
                     </reportSet>
                 </reportSets>
             </plugin>
-            <plugin>
-                <artifactId>maven-jxr-plugin</artifactId>
-                <version>2.4</version>
-            </plugin>
-            <plugin>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>2.17</version>
-            </plugin>
         </plugins>
     </reporting>
 
@@ -447,7 +472,7 @@
                         (&ndash;&ndash; stands for double dash)
                         -->
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.5</version>
+                        <version>1.6</version>
                         <executions>
                             <execution>
                                 <id>gpg-sign</id>
@@ -501,7 +526,7 @@
             <id>restrict-doclint</id>
             <!-- doclint is only supported by JDK 8 -->
             <activation>
-                <jdk>[1.8,</jdk>
+                <jdk>[1.8,)</jdk>
             </activation>
             <build>
                 <plugins>
@@ -518,6 +543,30 @@
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <configuration>
                             <additionalparam>-Xdoclint:accessibility -Xdoclint:reference</additionalparam>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <additionalparam>-Xdoclint:accessibility -Xdoclint:reference</additionalparam>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </reporting>
+        </profile>
+        <profile>
+            <id>fast-tests</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <parallel>classes</parallel>
+                            <threadCountClasses>2</threadCountClasses>
                         </configuration>
                     </plugin>
                 </plugins>

@@ -7,21 +7,20 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.MultipleFailureException;
 
 public class EachTestNotifier {
-    private final RunNotifier fNotifier;
+    private final RunNotifier notifier;
 
-    private final Description fDescription;
+    private final Description description;
 
     public EachTestNotifier(RunNotifier notifier, Description description) {
-        fNotifier = notifier;
-        fDescription = description;
+        this.notifier = notifier;
+        this.description = description;
     }
 
     public void addFailure(Throwable targetException) {
         if (targetException instanceof MultipleFailureException) {
             addMultipleFailureException((MultipleFailureException) targetException);
         } else {
-            fNotifier
-                    .fireTestFailure(new Failure(fDescription, targetException));
+            notifier.fireTestFailure(new Failure(description, targetException));
         }
     }
 
@@ -32,18 +31,41 @@ public class EachTestNotifier {
     }
 
     public void addFailedAssumption(AssumptionViolatedException e) {
-        fNotifier.fireTestAssumptionFailed(new Failure(fDescription, e));
+        notifier.fireTestAssumptionFailed(new Failure(description, e));
     }
 
     public void fireTestFinished() {
-        fNotifier.fireTestFinished(fDescription);
+        notifier.fireTestFinished(description);
     }
 
     public void fireTestStarted() {
-        fNotifier.fireTestStarted(fDescription);
+        notifier.fireTestStarted(description);
     }
 
     public void fireTestIgnored() {
-        fNotifier.fireTestIgnored(fDescription);
+        notifier.fireTestIgnored(description);
+    }
+
+    /**
+     * Calls {@link RunNotifier#fireTestSuiteStarted(Description)}, passing the
+     * {@link Description} that was passed to the {@code EachTestNotifier} constructor.
+     * This should be called when a test suite is about to be started.
+     * @see RunNotifier#fireTestSuiteStarted(Description)
+     * @since 4.13
+     */
+    public void fireTestSuiteStarted() {
+        notifier.fireTestSuiteStarted(description);
+    }
+
+    /**
+     * Calls {@link RunNotifier#fireTestSuiteFinished(Description)}, passing the
+     * {@link Description} that was passed to the {@code EachTestNotifier} constructor.
+     * This should be called when a test suite has finished, whether the test suite succeeds
+     * or fails.
+     * @see RunNotifier#fireTestSuiteFinished(Description)
+     * @since 4.13
+     */
+    public void fireTestSuiteFinished() {
+        notifier.fireTestSuiteFinished(description);
     }
 }

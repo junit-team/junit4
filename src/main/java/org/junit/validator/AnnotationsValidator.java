@@ -116,5 +116,5 @@ public final class AnnotationsValidator implements TestClassValidator {
                 AnnotationValidator validator, FrameworkField field) {
             return validator.validateAnnotatedField(field);
         }
-    };
+    }
 }

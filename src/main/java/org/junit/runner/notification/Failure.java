@@ -1,9 +1,8 @@
 package org.junit.runner.notification;
 
-import java.io.PrintWriter;
 import java.io.Serializable;
-import java.io.StringWriter;
 
+import org.junit.internal.Throwables;
 import org.junit.runner.Description;
 
 /**
@@ -17,6 +16,12 @@ import org.junit.runner.Description;
  */
 public class Failure implements Serializable {
     private static final long serialVersionUID = 1L;
+
+    /*
+     * We have to use the f prefix until the next major release to ensure
+     * serialization compatibility. 
+     * See https://github.com/junit-team/junit4/issues/976
+     */
     private final Description fDescription;
     private final Throwable fThrownException;
 
@@ -27,8 +32,8 @@ public class Failure implements Serializable {
      * @param thrownException the exception that was thrown while running the test
      */
     public Failure(Description description, Throwable thrownException) {
-        fThrownException = thrownException;
-        fDescription = description;
+        this.fThrownException = thrownException;
+        this.fDescription = description;
     }
 
     /**
@@ -64,10 +69,7 @@ public class Failure implements Serializable {
      * @return the printed form of the exception
      */
     public String getTrace() {
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter writer = new PrintWriter(stringWriter);
-        getException().printStackTrace(writer);
-        return stringWriter.toString();
+        return Throwables.getStacktrace(getException());
     }
 
     /**

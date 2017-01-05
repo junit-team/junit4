@@ -25,17 +25,17 @@ import org.junit.runner.Description;
  * @since 4.7
  */
 public class TestName extends TestWatcher {
-    private String fName;
+    private volatile String name;
 
     @Override
     protected void starting(Description d) {
-        fName = d.getMethodName();
+        name = d.getMethodName();
     }
 
     /**
      * @return the name of the currently-running test method
      */
     public String getMethodName() {
-        return fName;
+        return name;
     }
 }

@@ -4,7 +4,7 @@ import org.junit.runner.Runner;
 import org.junit.runners.model.InitializationError;
 
 /**
- * A {@code ParameterizedRunnerFactory} creates a runner for a single
+ * A {@code ParametersRunnerFactory} creates a runner for a single
  * {@link TestWithParameters}.
  * 
  * @since 4.12

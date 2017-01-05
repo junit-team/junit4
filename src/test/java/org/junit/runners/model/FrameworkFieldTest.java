@@ -1,10 +1,15 @@
 package org.junit.runners.model;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.rules.ExpectedException.none;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -27,8 +32,27 @@ public class FrameworkFieldTest {
         assertTrue(frameworkField.toString().contains("dummyField"));
     }
 
+    @Test
+    public void presentAnnotationIsAvailable() throws Exception {
+        Field field = ClassWithDummyField.class.getField("annotatedField");
+        FrameworkField frameworkField = new FrameworkField(field);
+        Annotation annotation = frameworkField.getAnnotation(Rule.class);
+        assertTrue(Rule.class.isAssignableFrom(annotation.getClass()));
+    }
+
+    @Test
+    public void missingAnnotationIsNotAvailable() throws Exception {
+        Field field = ClassWithDummyField.class.getField("annotatedField");
+        FrameworkField frameworkField = new FrameworkField(field);
+        Annotation annotation = frameworkField.getAnnotation(ClassRule.class);
+        assertThat(annotation, is(nullValue()));
+    }
+
     private static class ClassWithDummyField {
         @SuppressWarnings("unused")
         public final int dummyField = 0;
+
+        @Rule
+        public final int annotatedField = 0;
     }
 }
