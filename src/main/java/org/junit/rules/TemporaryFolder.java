@@ -170,32 +170,36 @@ public class TemporaryFolder extends ExternalResource {
      * Returns a new fresh folder with the given path under the temporary
      * folder.
      */
-    public File newFolder(String folder) throws IOException {
-        if (new File(folder).isAbsolute()) {
-            throw new IOException("folder name must be a relative path");
+    public File newFolder(String path) throws IOException {
+        if (new File(path).isAbsolute()) {
+            throw new IOException("folder path must be a relative path");
         }
-        File file = new File(getRoot(), folder);
+        File file = new File(getRoot(), path);
         if (!file.mkdirs()) {
+            if (file.isDirectory()) {
+                throw new IOException(
+                        "a folder with the path \'" + path + "\' already exists");
+            }
             throw new IOException(
-                    "a folder with the name \'" + folder + "\' already exists");
+                    "could not create a folder with the path \'" + path + "\'");
         }
         return file;
     }
 
     /**
-     * Returns a new fresh folder with the given name(s) under the temporary
+     * Returns a new fresh folder with the given path under the temporary
      * folder. For example, if you pass in the strings {@code "parent"} and {@code "child"}
      * then a directory named {@code "parent"} will be created under the temporary folder
      * and a directory named {@code "child"} will be created under the newly-created
      * {@code "parent"} directory.
      */
-    public File newFolder(String... folderNames) throws IOException {
+    public File newFolder(String... paths) throws IOException {
         File file = getRoot();
-        for (int i = 0; i < folderNames.length; i++) {
-            String folderName = folderNames[i];
+        for (int i = 0; i < paths.length; i++) {
+            String folderName = paths[i];
             validateFolderName(folderName);
             file = new File(file, folderName);
-            if (!file.mkdir() && isLastElementInArray(i, folderNames)) {
+            if (!file.mkdir() && isLastElementInArray(i, paths)) {
                 throw new IOException(
                         "a folder with the name \'" + folderName + "\' already exists");
             }
