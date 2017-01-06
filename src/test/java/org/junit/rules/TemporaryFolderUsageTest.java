@@ -79,7 +79,18 @@ public class TemporaryFolderUsageTest {
         tempFolder.newFolder("level1");
 
         thrown.expect(IOException.class);
-        thrown.expectMessage("a folder with the name 'level1' already exists");
+        thrown.expectMessage("a folder with the path 'level1' already exists");
+        tempFolder.newFolder("level1");
+    }
+
+    @Test
+    public void newFolderWithGivenFolderThrowsIllegalArgumentExceptionIfFileExists() throws IOException {
+        tempFolder.create();
+        File file = new File(tempFolder.getRoot(), "level1");
+        assertTrue("Could not create" + file, file.createNewFile());
+
+        thrown.expect(IOException.class);
+        thrown.expectMessage("could not create a folder with the path 'level1'");
         tempFolder.newFolder("level1");
     }
     
@@ -95,7 +106,7 @@ public class TemporaryFolderUsageTest {
         }
         tempFolder.create();
         thrown.expect(IOException.class);
-        thrown.expectMessage("folder name must be a relative path");
+        thrown.expectMessage("folder path must be a relative path");
         tempFolder.newFolder(fileAtRoot);
     }
     
