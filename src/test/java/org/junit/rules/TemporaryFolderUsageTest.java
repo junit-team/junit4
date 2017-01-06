@@ -106,7 +106,7 @@ public class TemporaryFolderUsageTest {
         }
         tempFolder.create();
         thrown.expect(IOException.class);
-        thrown.expectMessage("folder path must be a relative path");
+        thrown.expectMessage("folder path '/temp1' is not a relative path");
         tempFolder.newFolder(fileAtRoot);
     }
     
@@ -131,22 +131,38 @@ public class TemporaryFolderUsageTest {
     }
     
     @Test
-    public void newFolderWithGivenPathThrowsIllegalArgumentExceptionIfPathExists() throws IOException {
+    public void newFolderWithGivenPathThrowsIllegalArgumentExceptionIfFolderExists() throws IOException {
         tempFolder.create();
         tempFolder.newFolder("level1", "level2", "level3");
 
         thrown.expect(IOException.class);
-        thrown.expectMessage("a folder with the name 'level3' already exists");
+        String path = "level1" + File.separator + "level2" + File.separator + "level3";
+        thrown.expectMessage("a folder with the path '" + path + "' already exists");
         tempFolder.newFolder("level1", "level2", "level3");
     }
 
     @Test
-    public void newFolderWithGivenPathThrowsIOExceptionIfFolderNamesConsistOfMultiplePathComponents()
+    public void newFolderWithPathsContainingForwardSlashCreatesFullPath()
             throws IOException {
         tempFolder.create();
-        thrown.expect(IOException.class);
-        thrown.expectMessage("name cannot consist of multiple path components");
         tempFolder.newFolder("temp1", "temp2", "temp3/temp4");
+
+        File directory = new File(tempFolder.getRoot(), "temp1");
+        assertFileIsDirectory(directory);
+        directory = new File(directory, "temp2/temp3/temp4");
+        assertFileIsDirectory(directory);
+    }
+
+    @Test
+    public void newFolderWithPathsContainingFileSeparatorCreatesFullPath()
+            throws IOException {
+        tempFolder.create();
+        tempFolder.newFolder("temp1", "temp2", "temp3" + File.separator + "temp4");
+
+        File directory = new File(tempFolder.getRoot(), "temp1");
+        assertFileIsDirectory(directory);
+        directory = new File(directory, "temp2/temp3/temp4");
+        assertFileIsDirectory(directory);
     }
     
     @Test

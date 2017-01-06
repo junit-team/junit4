@@ -171,59 +171,44 @@ public class TemporaryFolder extends ExternalResource {
      * folder.
      */
     public File newFolder(String path) throws IOException {
-        if (new File(path).isAbsolute()) {
-            throw new IOException("folder path must be a relative path");
-        }
-        File file = new File(getRoot(), path);
-        if (!file.mkdirs()) {
-            if (file.isDirectory()) {
-                throw new IOException(
-                        "a folder with the path \'" + path + "\' already exists");
-            }
-            throw new IOException(
-                    "could not create a folder with the path \'" + path + "\'");
-        }
-        return file;
+        return newFolder(new String[]{path});
     }
 
     /**
-     * Returns a new fresh folder with the given path under the temporary
+     * Returns a new fresh folder with the given paths under the temporary
      * folder. For example, if you pass in the strings {@code "parent"} and {@code "child"}
      * then a directory named {@code "parent"} will be created under the temporary folder
      * and a directory named {@code "child"} will be created under the newly-created
      * {@code "parent"} directory.
      */
     public File newFolder(String... paths) throws IOException {
-        File file = getRoot();
-        for (int i = 0; i < paths.length; i++) {
-            String folderName = paths[i];
-            validateFolderName(folderName);
-            file = new File(file, folderName);
-            if (!file.mkdir() && isLastElementInArray(i, paths)) {
-                throw new IOException(
-                        "a folder with the name \'" + folderName + "\' already exists");
+        // Before checking the paths, check if create() was ever called, and if it wasn't, throw
+        File root = getRoot();
+
+        for (String path : paths) {
+            if (new File(path).isAbsolute()) {
+                throw new IOException("folder path \'" + path + "\' is not a relative path");
             }
         }
-        return file;
-    }
-    
-    /**
-     * Validates if multiple path components were used while creating a folder.
-     * 
-     * @param folderName
-     *            Name of the folder being created
-     */
-    private void validateFolderName(String folderName) throws IOException {
-        File tempFile = new File(folderName);
-        if (tempFile.getParent() != null) {
-            String errorMsg = "Folder name cannot consist of multiple path components separated by a file separator."
-                    + " Please use newFolder('MyParentFolder','MyFolder') to create hierarchies of folders";
-            throw new IOException(errorMsg);
-        }
-    }
 
-    private boolean isLastElementInArray(int index, String[] array) {
-        return index == array.length - 1;
+        File relativePath = null;
+        File file = root;
+        boolean lastMkdirsCallSuccessful = true;
+        for (int i = 0; i < paths.length; i++) {
+            relativePath = new File(relativePath, paths[i]);
+            file = new File(root, relativePath.getPath());
+
+            lastMkdirsCallSuccessful = file.mkdirs();
+            if (!lastMkdirsCallSuccessful && !file.isDirectory()) {
+                throw new IOException(
+                        "could not create a folder with the path \'" + relativePath.getPath() + "\'");
+            }
+        }
+        if (!lastMkdirsCallSuccessful) {
+            throw new IOException(
+                    "a folder with the path \'" + relativePath.getPath() + "\' already exists");
+        }
+        return file;
     }
 
     /**
