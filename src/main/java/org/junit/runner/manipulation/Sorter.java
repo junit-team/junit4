@@ -37,11 +37,11 @@ public class Sorter extends Ordering implements Comparator<Description> {
     }
 
     /**
-     * Sorts the test in <code>runner</code> using <code>comparator</code>.
+     * Sorts the tests in <code>target</code> using <code>comparator</code>.
      */
-    public void apply(Object runner) {
-        if (runner instanceof Sortable) {
-            Sortable sortable = (Sortable) runner;
+    public void apply(Object target) {
+        if (target instanceof Sortable) {
+            Sortable sortable = (Sortable) target;
             sortable.sort(this);
         }
     }
@@ -54,7 +54,7 @@ public class Sorter extends Ordering implements Comparator<Description> {
          * Orderable extends Sortable). Sorting is more efficient than ordering,
          * so we override the parent behavior so we sort instead.
          */
-        apply(runner);
+        apply(target);
     }
 
     public int compare(Description o1, Description o2) {

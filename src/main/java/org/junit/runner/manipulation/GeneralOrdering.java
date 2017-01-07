@@ -29,8 +29,8 @@ public final class GeneralOrdering extends Ordering {
          * We overwrite apply() to avoid having a GeneralOrdering wrap another
          * GeneralOrdering.
          */
-        if (runner instanceof Orderable) {
-            Orderable orderable = (Orderable) runner;
+        if (target instanceof Orderable) {
+            Orderable orderable = (Orderable) target;
             orderable.order(this, context);
         }
     }

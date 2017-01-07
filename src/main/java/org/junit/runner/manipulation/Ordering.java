@@ -51,7 +51,7 @@ public abstract class Ordering {
     }
 
     /**
-     * Order the tests in <code>runner</code> using this ordering.
+     * Order the tests in <code>target</code> using this ordering.
      *
      * @param runner the runner to apply the ordering to
      * @param context context for the ordering operation
@@ -67,8 +67,8 @@ public abstract class Ordering {
          * GeneralOrdering overrides applyOrdering() to avoid having a GenericOrdering
          * wrap another GenericOrdering.
          */
-        if (runner instanceof Orderable) {
-            Orderable orderable = (Orderable) runner;
+        if (target instanceof Orderable) {
+            Orderable orderable = (Orderable) target;
             orderable.order(new GeneralOrdering(this), context);
         }
     }
