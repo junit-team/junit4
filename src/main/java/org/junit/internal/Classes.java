@@ -6,6 +6,15 @@ import static java.lang.Thread.currentThread;
  * Miscellaneous functions dealing with classes.
  */
 public class Classes {
+
+    /**
+     * Do not instantiate.
+     * @deprecated will be private soon.
+     */
+    @Deprecated
+    public Classes() {
+    }
+
     /**
      * Returns Class.forName for {@code className} using the current thread's class loader.
      *

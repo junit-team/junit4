@@ -52,7 +52,14 @@ public abstract class RunnerBuilder {
     public abstract Runner runnerForClass(Class<?> testClass) throws Throwable;
 
     /**
-     * Always returns a runner, even if it is just one that prints an error instead of running tests.
+     * Always returns a runner for the given test class.
+     *
+     * <p>In case of an exception a runner will be returned that prints an error instead of running
+     * tests.
+     *
+     * <p>Note that some of the internal JUnit implementations of RunnerBuilder will return
+     * {@code null} from this method, but no RunnerBuilder passed to a Runner constructor will
+     * return {@code null} from this method.
      *
      * @param testClass class to be run
      * @return a Runner
@@ -111,7 +118,7 @@ public abstract class RunnerBuilder {
     }
 
     private List<Runner> runners(Class<?>[] children) {
-        ArrayList<Runner> runners = new ArrayList<Runner>();
+        List<Runner> runners = new ArrayList<Runner>();
         for (Class<?> each : children) {
             Runner childRunner = safeRunnerForClass(each);
             if (childRunner != null) {

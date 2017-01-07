@@ -65,7 +65,7 @@ past, and how we can make them easier.
 Two years ago, Joe Walnes built a [new assertion mechanism][walnes] on top of what was 
 then [JMock 1][].  The method name was `assertThat`, and the syntax looked like this:
 
-[walnes]: http://joe.truemesh.com/blog/000511.html
+[walnes]: http://joewalnes.com/2005/05/13/flexible-junit-assertions-with-assertthat/
 [JMock 1]: http://www.jmock.org/download.html
 
 ```java

@@ -85,13 +85,11 @@ class JUnitCommandLineParseResult {
     }
 
     private String[] copyArray(String[] args, int from, int to) {
-        ArrayList<String> result = new ArrayList<String>();
-
+        String[] result = new String[to - from];
         for (int j = from; j != to; ++j) {
-            result.add(args[j]);
+            result[j - from] = args[j];
         }
-
-        return result.toArray(new String[result.size()]);
+        return result;
     }
 
     void parseParameters(String[] args) {

@@ -1,5 +1,7 @@
 package org.junit.tests.validation;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.BeforeClass;
@@ -35,6 +37,6 @@ public class ValidationTest {
     @Test
     public void nonStaticBeforeClass() {
         Result result = JUnitCore.runClasses(NonStaticBeforeClass.class);
-        assertEquals("Method before() should be static", result.getFailures().get(0).getMessage());
+        assertThat(result.getFailures().get(0).getMessage(), containsString("Method before() should be static"));
     }
 }
