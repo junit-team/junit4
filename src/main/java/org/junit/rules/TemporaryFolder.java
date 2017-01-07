@@ -182,9 +182,15 @@ public class TemporaryFolder extends ExternalResource {
      * {@code "parent"} directory.
      */
     public File newFolder(String... paths) throws IOException {
-        // Before checking the paths, check if create() was ever called, and if it wasn't, throw
-        File root = getRoot();
+        if (paths.length == 0) {
+            throw new IllegalArgumentException("must pass at least one path");
+        }
 
+        /*
+         * Before checking if the paths are absolute paths, check if create() was ever called,
+         * and if it wasn't, throw IllegalStateException.
+         */
+        File root = getRoot();
         for (String path : paths) {
             if (new File(path).isAbsolute()) {
                 throw new IOException("folder path \'" + path + "\' is not a relative path");

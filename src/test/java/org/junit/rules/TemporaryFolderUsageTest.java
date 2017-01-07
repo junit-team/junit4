@@ -142,6 +142,15 @@ public class TemporaryFolderUsageTest {
     }
 
     @Test
+    public void newFolderWithGivenEmptyArrayThrowsIllegalArgumentException() throws IOException {
+        tempFolder.create();
+
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("must pass at least one path");
+        tempFolder.newFolder(new String[0]);
+    }
+
+    @Test
     public void newFolderWithPathsContainingForwardSlashCreatesFullPath()
             throws IOException {
         tempFolder.create();
