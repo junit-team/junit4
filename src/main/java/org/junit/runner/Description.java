@@ -174,7 +174,7 @@ public class Description implements Serializable {
     final Collection<Description> fChildren = new ConcurrentLinkedQueue<Description>();
     private final String fDisplayName;
     final Serializable fUniqueId;
-    private final Annotation[] fAnnotations;
+    final Annotation[] fAnnotations;
     volatile /* write-once */ Class<?> fTestClass;
 
     private Description(Class<?> clazz, String displayName, Annotation... annotations) {

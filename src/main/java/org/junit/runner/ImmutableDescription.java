@@ -1,5 +1,9 @@
 package org.junit.runner;
 
+import java.lang.annotation.Annotation;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -49,6 +53,11 @@ public abstract class ImmutableDescription extends Description {
     @Override
     public String getMethodName() {
         return super.fTestClass == null ? null : super.getMethodName();
+    }
+
+    @Override
+    public Collection<Annotation> getAnnotations() {
+        return Collections.unmodifiableList(Arrays.asList(super.fAnnotations));
     }
 
     @Override
