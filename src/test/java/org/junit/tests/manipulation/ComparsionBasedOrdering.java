@@ -20,7 +20,7 @@ class ComparsionBasedOrdering extends Ordering {
     }
 
     @Override
-    public List<Description> order(Ordering.Context context, Collection<Description> descriptions) {
+    protected List<Description> orderItems(Ordering.Context context, Collection<Description> descriptions) {
         List<Description> ordered = new ArrayList<Description>(descriptions);
         Collections.sort(ordered, comparator);
         return ordered;

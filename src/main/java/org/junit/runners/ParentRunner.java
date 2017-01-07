@@ -9,12 +9,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -434,6 +432,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             throws InvalidOrderingException {
         synchronized (childrenLock) {
             List<T> children = getFilteredChildren();
+            // In theory, we could have duplicate Descriptions. De-dup them before ordering,
+            // and add them back at the end.
             Map<Description, List<T>> childMap = new LinkedHashMap<Description, List<T>>(
                     children.size());
             for (T child : children) {
@@ -447,19 +447,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
                 ordering.apply(child, context);
             }
 
-            Set<Description> uniqueDescriptions = childMap.keySet();
             List<Description> inOrder = ordering.order(
                     context, Collections.unmodifiableCollection(childMap.keySet()));
-
-            if (!uniqueDescriptions.containsAll(inOrder)) {
-                throw new InvalidOrderingException("Ordering added items");
-            }
-            Set<Description> resultAsSet = new HashSet<Description>(inOrder);
-            if (resultAsSet.size() != inOrder.size()) {
-                throw new InvalidOrderingException("Ordering duplicated items");
-            } else if (!resultAsSet.containsAll(uniqueDescriptions)) {
-                throw new InvalidOrderingException("Ordering removed items");
-            }
 
             children = new ArrayList<T>(children.size());
             for (Description description : inOrder) {

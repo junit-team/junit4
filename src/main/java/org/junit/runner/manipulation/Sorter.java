@@ -62,7 +62,7 @@ public class Sorter extends Ordering implements Comparator<Description> {
     }
  
     @Override
-    public final List<Description> order(Ordering.Context context, Collection<Description> descriptions) {
+    protected final List<Description> orderItems(Ordering.Context context, Collection<Description> descriptions) {
         /*
          * In practice, we will never get here--Sorters do their work in the
          * compare() method--but the Liskov substitution principle demands that
@@ -72,5 +72,10 @@ public class Sorter extends Ordering implements Comparator<Description> {
         List<Description> sorted = new ArrayList<Description>(descriptions);
         Collections.sort(sorted, this); // Note: it would be incorrect to pass in "comparator"
         return sorted;
+    }
+
+    @Override
+    boolean validateOrderingIsCorrect() {
+        return false;
     }
 }

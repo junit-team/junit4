@@ -3,8 +3,10 @@ package org.junit.runner.manipulation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import org.junit.runner.Description;
 
@@ -26,7 +28,12 @@ public abstract class Ordering {
     public static Ordering shuffledBy(final Random random) {
         return new Ordering() {
             @Override
-            public List<Description> order(Ordering.Context context, Collection<Description> descriptions) {
+            boolean validateOrderingIsCorrect() {
+                return false;
+            }
+
+            @Override
+            protected List<Description> orderItems(Ordering.Context context, Collection<Description> descriptions) {
                 List<Description> shuffled = new ArrayList<Description>(descriptions);
                 Collections.shuffle(shuffled, random);
                 return shuffled;
@@ -73,14 +80,47 @@ public abstract class Ordering {
         }
     }
 
+    boolean validateOrderingIsCorrect() {
+        return true;
+    }
+
     /**
-     * Orders the children of the given {@link Description}.
+     * Orders the descriptions.
      *
      * @param context context for the ordering operation
      * @param descriptions items to sort
      * @return descriptions in order
      */
-    public abstract List<Description> order(Ordering.Context context, Collection<Description> descriptions);
+    public final List<Description> order(Ordering.Context context, Collection<Description> descriptions)
+            throws InvalidOrderingException {
+        List<Description> inOrder = orderItems(
+                context, Collections.unmodifiableCollection(descriptions));
+        if (!validateOrderingIsCorrect()) {
+            return inOrder;
+        }
+
+        Set<Description> uniqueDescriptions = new HashSet<Description>(descriptions);
+        if (!uniqueDescriptions.containsAll(inOrder)) {
+            throw new InvalidOrderingException("Ordering added items");
+        }
+        Set<Description> resultAsSet = new HashSet<Description>(inOrder);
+        if (resultAsSet.size() != inOrder.size()) {
+            throw new InvalidOrderingException("Ordering duplicated items");
+        } else if (!resultAsSet.containsAll(uniqueDescriptions)) {
+            throw new InvalidOrderingException("Ordering removed items");
+        }
+
+        return inOrder;
+    }
+ 
+    /**
+     * Implemented by sub-classes to order the descriptions.
+     *
+     * @param context context for the ordering operation
+     * @param descriptions items to sort
+     * @return descriptions in order
+     */
+    protected abstract List<Description> orderItems(Ordering.Context context, Collection<Description> descriptions);
 
     /** Context about the ordering being applied. */
     public final static class Context {

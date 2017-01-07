@@ -18,8 +18,8 @@ public final class GeneralOrdering extends Ordering {
     }
 
     @Override
-    public  List<Description> order(Ordering.Context context, Collection<Description> descriptions) {
-        return delegate.order(context, descriptions);
+    protected List<Description> orderItems(Ordering.Context context, Collection<Description> descriptions) {
+        return delegate.orderItems(context, descriptions);
     }
 
     @Override
@@ -33,5 +33,10 @@ public final class GeneralOrdering extends Ordering {
             Orderable orderable = (Orderable) target;
             orderable.order(this, context);
         }
+    }
+
+    @Override
+    boolean validateOrderingIsCorrect() {
+        return delegate.validateOrderingIsCorrect();
     }
 }
