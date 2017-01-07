@@ -445,8 +445,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
                 ordering.apply(child);
             }
 
-            List<Description> inOrder = ordering.order(
-                    Collections.unmodifiableCollection(childMap.keySet()));
+            List<Description> inOrder = ordering.order(childMap.keySet());
 
             children = new ArrayList<T>(children.size());
             for (Description description : inOrder) {
