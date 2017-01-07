@@ -35,6 +35,7 @@ import org.junit.runner.manipulation.GeneralOrdering;
 import org.junit.runner.manipulation.InvalidOrderingException;
 import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.manipulation.Orderable;
+import org.junit.runner.manipulation.Ordering;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
@@ -425,11 +426,12 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     }
 
     /**
-     * Implementation of {@link Orderable#order(GeneralOrdering)}.
+     * Implementation of {@link Orderable#order(GeneralOrdering, Ordering.Context)}.
      *
      * @since 4.13
      */
-    public void order(GeneralOrdering ordering) throws InvalidOrderingException {
+    public void order(GeneralOrdering ordering, Ordering.Context context)
+            throws InvalidOrderingException {
         synchronized (childrenLock) {
             List<T> children = getFilteredChildren();
             Map<Description, List<T>> childMap = new LinkedHashMap<Description, List<T>>(
@@ -442,11 +444,12 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
                     childMap.put(description, childrenWithDescription);
                 }
                 childrenWithDescription.add(child);
-                ordering.apply(child);
+                ordering.apply(child, context);
             }
 
             Set<Description> uniqueDescriptions = childMap.keySet();
-            List<Description> inOrder = ordering.orderChildren(getDescription());
+            List<Description> inOrder = ordering.order(
+                    context, Collections.unmodifiableCollection(childMap.keySet()));
 
             if (!uniqueDescriptions.containsAll(inOrder)) {
                 throw new InvalidOrderingException("Ordering added items");

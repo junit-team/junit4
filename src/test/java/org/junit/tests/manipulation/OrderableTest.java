@@ -13,6 +13,7 @@ import org.junit.runner.Runner;
 import org.junit.runner.manipulation.GeneralOrdering;
 import org.junit.runner.manipulation.InvalidOrderingException;
 import org.junit.runner.manipulation.Orderable;
+import org.junit.runner.manipulation.Ordering;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
@@ -138,8 +139,9 @@ public class OrderableTest {
                 return delegate.getDescription();
             }
 
-            public void order(GeneralOrdering ordering) throws InvalidOrderingException {
-                delegate.order(ordering);
+            public void order(GeneralOrdering ordering, Ordering.Context context)
+                    throws InvalidOrderingException {
+                delegate.order(ordering, context);
             }
 
             public void sort(Sorter sorter) {

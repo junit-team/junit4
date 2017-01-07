@@ -19,6 +19,7 @@ import org.junit.runner.manipulation.GeneralOrdering;
 import org.junit.runner.manipulation.InvalidOrderingException;
 import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.manipulation.Orderable;
+import org.junit.runner.manipulation.Ordering;
 import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.Failure;
@@ -174,10 +175,11 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Orderable 
         }
     }
 
-    public void order(GeneralOrdering ordering) throws InvalidOrderingException {
+    public void order(GeneralOrdering ordering, Ordering.Context context)
+            throws InvalidOrderingException {
         if (getTest() instanceof Orderable) {
             Orderable adapter = (Orderable) getTest();
-            adapter.order(ordering);
+            adapter.order(ordering, context);
         }
     }
 

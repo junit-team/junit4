@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.internal.runners.ErrorReportingRunner;
+import org.junit.runner.Description;
 import org.junit.runner.OrderWith;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.InvalidOrderingException;
@@ -77,10 +78,12 @@ public abstract class RunnerBuilder {
     }
 
     private void configureRunner(Runner runner) throws InvalidOrderingException {
-        OrderWith orderWith =  runner.getDescription().getAnnotation(OrderWith.class);
+        Description description = runner.getDescription();
+        OrderWith orderWith =  description.getAnnotation(OrderWith.class);
         if (orderWith != null) {
             Ordering ordering = Ordering.definedBy(orderWith.value());
-            ordering.apply(runner);
+            Ordering.Context context = Ordering.Context.builder().withTarget(description).build();
+            ordering.apply(runner, context);
         }
     }
 

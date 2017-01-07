@@ -1,5 +1,6 @@
 package org.junit.runner.manipulation;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.runner.Description;
@@ -17,19 +18,20 @@ public final class GeneralOrdering extends Ordering {
     }
 
     @Override
-    public List<Description> orderChildren(Description parent) {
-        return delegate.orderChildren(parent);
+    public  List<Description> order(Ordering.Context context, Collection<Description> descriptions) {
+        return delegate.order(context, descriptions);
     }
 
     @Override
-    public void apply(Object runner) throws InvalidOrderingException {
+    public void apply(Object target, Ordering.Context context)
+            throws InvalidOrderingException {
         /*
          * We overwrite apply() to avoid having a GeneralOrdering wrap another
          * GeneralOrdering.
          */
         if (runner instanceof Orderable) {
             Orderable orderable = (Orderable) runner;
-            orderable.order(this);
+            orderable.order(this, context);
         }
     }
 }

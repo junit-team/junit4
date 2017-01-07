@@ -1,6 +1,7 @@
 package org.junit.tests.manipulation;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -19,8 +20,8 @@ class ComparsionBasedOrdering extends Ordering {
     }
 
     @Override
-    public List<Description> orderChildren(Description parent) {
-        List<Description> ordered = new ArrayList<Description>(parent.getChildren());
+    public List<Description> order(Ordering.Context context, Collection<Description> descriptions) {
+        List<Description> ordered = new ArrayList<Description>(descriptions);
         Collections.sort(ordered, comparator);
         return ordered;
     }
