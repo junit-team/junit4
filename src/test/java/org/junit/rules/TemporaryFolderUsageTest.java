@@ -53,7 +53,7 @@ public class TemporaryFolderUsageTest {
     }
 
     @Test
-    public void newFileWithGivenFilenameThrowsIllegalArgumentExceptionIfFileExists() throws IOException {
+    public void newFileWithGivenFilenameThrowsIOExceptionIfFileExists() throws IOException {
         tempFolder.create();
         tempFolder.newFile("MyFile.txt");
 
@@ -74,7 +74,7 @@ public class TemporaryFolderUsageTest {
     }
 
     @Test
-    public void newFolderWithGivenFolderThrowsIllegalArgumentExceptionIfFolderExists() throws IOException {
+    public void newFolderWithGivenFolderThrowsIOExceptionIfFolderExists() throws IOException {
         tempFolder.create();
         tempFolder.newFolder("level1");
 
@@ -84,7 +84,7 @@ public class TemporaryFolderUsageTest {
     }
 
     @Test
-    public void newFolderWithGivenFolderThrowsIllegalArgumentExceptionIfFileExists() throws IOException {
+    public void newFolderWithGivenFolderThrowsIOExceptionIfFileExists() throws IOException {
         tempFolder.create();
         File file = new File(tempFolder.getRoot(), "level1");
         assertTrue("Could not create" + file, file.createNewFile());
@@ -131,7 +131,7 @@ public class TemporaryFolderUsageTest {
     }
     
     @Test
-    public void newFolderWithGivenPathThrowsIllegalArgumentExceptionIfFolderExists() throws IOException {
+    public void newFolderWithGivenPathThrowsIOExceptionIfFolderExists() throws IOException {
         tempFolder.create();
         tempFolder.newFolder("level1", "level2", "level3");
 
