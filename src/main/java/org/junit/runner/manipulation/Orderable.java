@@ -16,5 +16,5 @@ public interface Orderable extends Sortable {
      *
      * @throws InvalidOrderingException if ordering does something invalid (like remove or add children)
      */
-    void order(GenericOrdering ordering) throws InvalidOrderingException;
+    void order(GeneralOrdering ordering) throws InvalidOrderingException;
 }

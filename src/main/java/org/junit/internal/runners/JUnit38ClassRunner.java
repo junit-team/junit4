@@ -15,7 +15,7 @@ import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
-import org.junit.runner.manipulation.GenericOrdering;
+import org.junit.runner.manipulation.GeneralOrdering;
 import org.junit.runner.manipulation.InvalidOrderingException;
 import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.manipulation.Orderable;
@@ -174,7 +174,7 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Orderable 
         }
     }
 
-    public void order(GenericOrdering ordering) throws InvalidOrderingException {
+    public void order(GeneralOrdering ordering) throws InvalidOrderingException {
         if (getTest() instanceof Orderable) {
             Orderable adapter = (Orderable) getTest();
             adapter.order(ordering);

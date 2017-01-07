@@ -10,7 +10,7 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
-import org.junit.runner.manipulation.GenericOrdering;
+import org.junit.runner.manipulation.GeneralOrdering;
 import org.junit.runner.manipulation.InvalidOrderingException;
 import org.junit.runner.manipulation.Orderable;
 import org.junit.runner.manipulation.Sorter;
@@ -138,7 +138,7 @@ public class OrderableTest {
                 return delegate.getDescription();
             }
 
-            public void order(GenericOrdering ordering) throws InvalidOrderingException {
+            public void order(GeneralOrdering ordering) throws InvalidOrderingException {
                 delegate.order(ordering);
             }
 

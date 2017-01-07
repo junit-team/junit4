@@ -9,7 +9,7 @@ import org.junit.runner.Request;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
-import org.junit.runner.manipulation.GenericOrdering;
+import org.junit.runner.manipulation.GeneralOrdering;
 import org.junit.runner.manipulation.InvalidOrderingException;
 import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.manipulation.Orderable;
@@ -86,7 +86,7 @@ public class JUnit4TestAdapter implements Test, Filterable, Orderable, Describab
         sorter.apply(fRunner);
     }
 
-    public void order(GenericOrdering ordering) throws InvalidOrderingException {
+    public void order(GeneralOrdering ordering) throws InvalidOrderingException {
         ordering.apply(fRunner);
     }
 }

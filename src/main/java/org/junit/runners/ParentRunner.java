@@ -31,7 +31,7 @@ import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
-import org.junit.runner.manipulation.GenericOrdering;
+import org.junit.runner.manipulation.GeneralOrdering;
 import org.junit.runner.manipulation.InvalidOrderingException;
 import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.manipulation.Orderable;
@@ -413,11 +413,11 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     }
 
     /**
-     * Implementation of {@link Orderable#order(GenericOrdering)}.
+     * Implementation of {@link Orderable#order(GeneralOrdering)}.
      *
      * @since 4.13
      */
-    public void order(GenericOrdering ordering) throws InvalidOrderingException {
+    public void order(GeneralOrdering ordering) throws InvalidOrderingException {
         synchronized (childrenLock) {
             List<T> children = getFilteredChildren();
             Map<Description, List<T>> childMap = new LinkedHashMap<Description, List<T>>(

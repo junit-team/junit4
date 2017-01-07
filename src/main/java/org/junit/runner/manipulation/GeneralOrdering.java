@@ -9,10 +9,10 @@ import org.junit.runner.Description;
  *
  * @since 4.13
  */
-public final class GenericOrdering extends Ordering {
+public final class GeneralOrdering extends Ordering {
     private final Ordering delegate;
 
-    GenericOrdering(Ordering delegate) {
+    GeneralOrdering(Ordering delegate) {
         this.delegate = delegate;
     }
 
@@ -24,8 +24,8 @@ public final class GenericOrdering extends Ordering {
     @Override
     public void apply(Object runner) throws InvalidOrderingException {
         /*
-         * We overwrite apply() to avoid having a GenericOrdering wrap another
-         * GenericOrdering.
+         * We overwrite apply() to avoid having a GeneralOrdering wrap another
+         * GeneralOrdering.
          */
         if (runner instanceof Orderable) {
             Orderable orderable = (Orderable) runner;

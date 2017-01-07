@@ -56,15 +56,15 @@ public abstract class Ordering {
      */
     public void apply(Object runner) throws InvalidOrderingException {
         /*
-         * If the runner is Sortable but not Orderable and this Ordering is a
-         * Sorter, then the Sorter subclass overrides apply() to apply the sort.
-         * 
-         * Note that GenericOrdering also overrides apply() to avoid having a
-         * GenericOrdering wrap another GenericOrdering.
+         * Note that some subclasses of Ordering override apply(). The Sorter
+         * subclass of Ordering overrides apply() to apply the sort (this is
+         * done because sorting is more efficient than ordering) the
+         * GeneralOrdering overrides apply() to avoid having a GenericOrdering
+         * wrap another GenericOrdering.
          */
         if (runner instanceof Orderable) {
             Orderable orderable = (Orderable) runner;
-            orderable.order(new GenericOrdering(this));
+            orderable.order(new GeneralOrdering(this));
         }
     }
 
