@@ -203,9 +203,7 @@ public abstract class Request {
             public Runner getRunner() {
                 try {
                     Runner runner = delegate.getRunner();
-                    Description description = runner.getDescription();
-                    Ordering.Context context = Ordering.Context.builder().withTarget(description).build();
-                    ordering.apply(runner, context);
+                    ordering.apply(runner);
                     return runner;
                 } catch (InvalidOrderingException e) {
                     return new ErrorReportingRunner(ordering.getClass(), e);

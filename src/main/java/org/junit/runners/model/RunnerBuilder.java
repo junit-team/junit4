@@ -81,9 +81,8 @@ public abstract class RunnerBuilder {
         Description description = runner.getDescription();
         OrderWith orderWith =  description.getAnnotation(OrderWith.class);
         if (orderWith != null) {
-            Ordering ordering = Ordering.definedBy(orderWith.value());
-            Ordering.Context context = Ordering.Context.builder().withTarget(description).build();
-            ordering.apply(runner, context);
+            Ordering ordering = Ordering.definedBy(orderWith.value(), description);
+            ordering.apply(runner);
         }
     }
 

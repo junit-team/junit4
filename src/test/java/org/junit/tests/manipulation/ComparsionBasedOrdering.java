@@ -15,12 +15,12 @@ import org.junit.runner.manipulation.Ordering;
 class ComparsionBasedOrdering extends Ordering {
     private final Comparator<Description> comparator;
 
-    public ComparsionBasedOrdering(Comparator<Description> comparator) {
+    protected ComparsionBasedOrdering(Comparator<Description> comparator) {
         this.comparator = comparator;
     }
 
     @Override
-    protected List<Description> orderItems(Ordering.Context context, Collection<Description> descriptions) {
+    protected List<Description> orderItems(Collection<Description> descriptions) {
         List<Description> ordered = new ArrayList<Description>(descriptions);
         Collections.sort(ordered, comparator);
         return ordered;

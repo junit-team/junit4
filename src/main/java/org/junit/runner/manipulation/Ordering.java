@@ -9,6 +9,7 @@ import java.util.Random;
 import java.util.Set;
 
 import org.junit.runner.Description;
+import org.junit.runner.OrderWith;
 
 /**
  * Reorders tests. An {@code Ordering} can reverse the order of tests, sort the
@@ -33,7 +34,7 @@ public abstract class Ordering {
             }
 
             @Override
-            protected List<Description> orderItems(Ordering.Context context, Collection<Description> descriptions) {
+            protected List<Description> orderItems(Collection<Description> descriptions) {
                 List<Description> shuffled = new ArrayList<Description>(descriptions);
                 Collections.shuffle(shuffled, random);
                 return shuffled;
@@ -42,41 +43,41 @@ public abstract class Ordering {
     }
 
     /**
-     * Creates an {@link Ordering} from the given class. The class must have a public no-argument constructor.
+     * Creates an {@link Ordering} from the given class. The class must have a public constructor
+     * that takes in an {@link Ordering.Context}.
      *
+     * @param orderingClass class to use to create the ordering
+     * @param annotatedTestClass test class that is annotated with {@link OrderWith}.
      * @throws InvalidOrderingException if the instance could not be created
      */
-    public static Ordering definedBy(Class<? extends Ordering> orderingClass)
+    public static Ordering definedBy(
+            Class<? extends Ordering> orderingClass, Description annotatedTestClass)
             throws InvalidOrderingException {
+        Ordering.Context context = new Ordering.Context(annotatedTestClass);
         try {
-            return orderingClass.newInstance();
-        } catch (InstantiationException e) {
-            throw new InvalidOrderingException("Could not create ordering", e);
-        } catch (IllegalAccessException e) {
-            throw new InvalidOrderingException("Could not create ordering", e);
+            return orderingClass.getConstructor(Ordering.Context.class).newInstance(context);
+        } catch (ReflectiveOperationException e) {
+            throw new InvalidOrderingException(
+                    "Could not create ordering for " + annotatedTestClass, e);
         }
     }
 
     /**
      * Order the tests in <code>target</code> using this ordering.
      *
-     * @param runner the runner to apply the ordering to
-     * @param context context for the ordering operation
-     *
      * @throws InvalidOrderingException if ordering does something invalid (like remove or add children)
      */
-    public void apply(Object target, Ordering.Context context)
-            throws InvalidOrderingException {
+    public void apply(Object target) throws InvalidOrderingException {
         /*
-         * Note that some subclasses of Ordering override applyOrdering(). The Sorter
-         * subclass of Ordering overrides applyOrdering() to apply the sort (this is
+         * Note that some subclasses of Ordering override apply(). The Sorter
+         * subclass of Ordering overrides apply() to apply the sort (this is
          * done because sorting is more efficient than ordering) the
-         * GeneralOrdering overrides applyOrdering() to avoid having a GenericOrdering
+         * GeneralOrdering overrides apply() to avoid having a GenericOrdering
          * wrap another GenericOrdering.
          */
         if (target instanceof Orderable) {
             Orderable orderable = (Orderable) target;
-            orderable.order(new GeneralOrdering(this), context);
+            orderable.order(new GeneralOrdering(this));
         }
     }
 
@@ -87,14 +88,10 @@ public abstract class Ordering {
     /**
      * Orders the descriptions.
      *
-     * @param context context for the ordering operation
-     * @param descriptions items to sort
      * @return descriptions in order
      */
-    public final List<Description> order(Ordering.Context context, Collection<Description> descriptions)
-            throws InvalidOrderingException {
-        List<Description> inOrder = orderItems(
-                context, Collections.unmodifiableCollection(descriptions));
+    public final List<Description> order(Collection<Description> descriptions) throws InvalidOrderingException {
+        List<Description> inOrder = orderItems(Collections.unmodifiableCollection(descriptions));
         if (!validateOrderingIsCorrect()) {
             return inOrder;
         }
@@ -116,18 +113,13 @@ public abstract class Ordering {
     /**
      * Implemented by sub-classes to order the descriptions.
      *
-     * @param context context for the ordering operation
-     * @param descriptions items to sort
      * @return descriptions in order
      */
-    protected abstract List<Description> orderItems(Ordering.Context context, Collection<Description> descriptions);
+    protected abstract List<Description> orderItems(Collection<Description> descriptions);
 
     /** Context about the ordering being applied. */
-    public final static class Context {
+    public static class Context {
         private final Description description;
-
-        /** Creates a builder for building this context. */
-        public static Builder builder() { return new Builder(); }
 
         /**
          * Gets the description for the top-level target being ordered.
@@ -136,24 +128,8 @@ public abstract class Ordering {
             return description;
         }
 
-        private Context(Builder builder) {
-            this.description = builder.description;
-        }
-
-        public static final class Builder {
-            private Description description;
-
-            public Builder withTarget(Description description) {
-                this.description = description;
-                return this;
-            }
-
-            public Context build() {
-                if (description == null) {
-                    throw new IllegalStateException("Must call withTarget() first");
-                }
-                return new Context(this);
-            }
+        private Context(Description description) {
+            this.description = description;
         }
     }
 }

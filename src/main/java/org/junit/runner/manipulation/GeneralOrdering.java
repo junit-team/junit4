@@ -18,20 +18,19 @@ public final class GeneralOrdering extends Ordering {
     }
 
     @Override
-    protected List<Description> orderItems(Ordering.Context context, Collection<Description> descriptions) {
-        return delegate.orderItems(context, descriptions);
+    protected List<Description> orderItems(Collection<Description> descriptions) {
+        return delegate.orderItems(descriptions);
     }
 
     @Override
-    public void apply(Object target, Ordering.Context context)
-            throws InvalidOrderingException {
+    public void apply(Object target) throws InvalidOrderingException {
         /*
          * We overwrite apply() to avoid having a GeneralOrdering wrap another
          * GeneralOrdering.
          */
         if (target instanceof Orderable) {
             Orderable orderable = (Orderable) target;
-            orderable.order(this, context);
+            orderable.order(this);
         }
     }
 

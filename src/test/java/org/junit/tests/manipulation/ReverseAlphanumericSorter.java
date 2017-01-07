@@ -1,5 +1,6 @@
 package org.junit.tests.manipulation;
 
+import org.junit.runner.manipulation.Ordering;
 import org.junit.runner.manipulation.Sorter;
 
 /**
@@ -7,7 +8,7 @@ import org.junit.runner.manipulation.Sorter;
  */
 public class ReverseAlphanumericSorter extends Sorter {
 
-    public ReverseAlphanumericSorter() {
+    public ReverseAlphanumericSorter(Ordering.Context context) {
         super(Comparators.reverse(Comparators.alphanumeric()));
     }
 }

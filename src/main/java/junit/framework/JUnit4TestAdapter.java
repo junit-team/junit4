@@ -13,7 +13,6 @@ import org.junit.runner.manipulation.GeneralOrdering;
 import org.junit.runner.manipulation.InvalidOrderingException;
 import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.manipulation.Orderable;
-import org.junit.runner.manipulation.Ordering;
 import org.junit.runner.manipulation.Sorter;
 
 /**
@@ -97,8 +96,7 @@ public class JUnit4TestAdapter implements Test, Filterable, Orderable, Describab
         sorter.apply(fRunner);
     }
 
-    public void order(GeneralOrdering ordering, Ordering.Context context)
-            throws InvalidOrderingException {
-        ordering.apply(fRunner, context);
+    public void order(GeneralOrdering ordering) throws InvalidOrderingException {
+        ordering.apply(fRunner);
     }
 }

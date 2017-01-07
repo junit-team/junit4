@@ -33,7 +33,6 @@ import org.junit.runner.manipulation.GeneralOrdering;
 import org.junit.runner.manipulation.InvalidOrderingException;
 import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.manipulation.Orderable;
-import org.junit.runner.manipulation.Ordering;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
@@ -424,12 +423,11 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     }
 
     /**
-     * Implementation of {@link Orderable#order(GeneralOrdering, Ordering.Context)}.
+     * Implementation of {@link Orderable#order(GeneralOrdering)}.
      *
      * @since 4.13
      */
-    public void order(GeneralOrdering ordering, Ordering.Context context)
-            throws InvalidOrderingException {
+    public void order(GeneralOrdering ordering)   throws InvalidOrderingException {
         synchronized (childrenLock) {
             List<T> children = getFilteredChildren();
             // In theory, we could have duplicate Descriptions. De-dup them before ordering,
@@ -444,11 +442,11 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
                     childMap.put(description, childrenWithDescription);
                 }
                 childrenWithDescription.add(child);
-                ordering.apply(child, context);
+                ordering.apply(child);
             }
 
             List<Description> inOrder = ordering.order(
-                    context, Collections.unmodifiableCollection(childMap.keySet()));
+                    Collections.unmodifiableCollection(childMap.keySet()));
 
             children = new ArrayList<T>(children.size());
             for (Description description : inOrder) {
