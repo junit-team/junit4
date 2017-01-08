@@ -1,5 +1,6 @@
 package org.junit.runner.manipulation;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,6 +22,8 @@ import org.junit.runner.OrderWith;
  * @since 4.13
  */
 public abstract class Ordering {
+    private static final String CONSTRUCTOR_ERROR_FORMAT
+            = "Ordering class %s should have a public constructor with signature %s(Ordering.Context context)";
 
     /**
      * Creates an {@link Ordering} that shuffles the items using the given
@@ -53,13 +56,33 @@ public abstract class Ordering {
     public static Ordering definedBy(
             Class<? extends Ordering> orderingClass, Description annotatedTestClass)
             throws InvalidOrderingException {
+        if (orderingClass == null) {
+            throw new NullPointerException("orderingClass cannot be null");
+        }
+        if (annotatedTestClass == null) {
+            throw new NullPointerException("annotatedTestClass cannot be null");
+        }
+
         Ordering.Context context = new Ordering.Context(annotatedTestClass);
+
         try {
-            return orderingClass.getConstructor(Ordering.Context.class).newInstance(context);
-        } catch (ReflectiveOperationException e) {
+            Constructor<? extends Ordering> constructor = orderingClass.getConstructor(Ordering.Context.class);
+            return constructor.newInstance(context);
+        } catch (NoSuchMethodException e) {
+            throw new InvalidOrderingException(String.format(
+                    CONSTRUCTOR_ERROR_FORMAT, getClassName(orderingClass), orderingClass.getSimpleName()));
+        } catch (Exception e) {
             throw new InvalidOrderingException(
                     "Could not create ordering for " + annotatedTestClass, e);
         }
+    }
+
+    private static String getClassName(Class<?> clazz) {
+        String name = clazz.getCanonicalName();
+        if (name == null) {
+            return clazz.getName();
+        }
+        return name;
     }
 
     /**
