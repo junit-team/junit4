@@ -1,7 +1,6 @@
 package org.junit.tests.running.classes;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -137,6 +136,9 @@ public class ParentRunnerTest {
     static class NonPublicTestClass {
         public NonPublicTestClass() {
         }
+
+        @Test
+        public void alwaysPasses() {}
     }
 
     @Test
