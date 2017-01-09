@@ -86,11 +86,15 @@ public class TemporaryFolderUsageTest {
     @Test
     public void newFolderWithPathStartingWithFileSeparatorThrowsIOException()
             throws IOException {
+        File[] roots = File.listRoots();
+        if (roots == null || roots.length == 0) {
+            return;
+        }
         tempFolder.create();
+        File fileAtRoot = new File(roots[0], "temp1");
         thrown.expect(IOException.class);
         thrown.expectMessage("folder name must be a relative path");
-        String ROOT_PATH = File.listRoots()[0].getAbsolutePath();
-        tempFolder.newFolder(ROOT_PATH + "temp1");
+        tempFolder.newFolder(fileAtRoot.getAbsolutePath());
     }
     
     @Test
