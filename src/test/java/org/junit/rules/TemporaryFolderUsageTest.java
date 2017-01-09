@@ -20,7 +20,6 @@ import org.junit.Test;
  */
 public class TemporaryFolderUsageTest {
 
-    public static final String ROOT_PATH = File.listRoots()[0].getAbsolutePath();
     private TemporaryFolder tempFolder;
 
     @Rule
@@ -90,6 +89,7 @@ public class TemporaryFolderUsageTest {
         tempFolder.create();
         thrown.expect(IOException.class);
         thrown.expectMessage("folder name must be a relative path");
+        String ROOT_PATH = File.listRoots()[0].getAbsolutePath();
         tempFolder.newFolder(ROOT_PATH + "temp1");
     }
     
