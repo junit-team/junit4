@@ -37,7 +37,11 @@ abstract class CategoryFilterFactory implements FilterFactory {
         List<Class<?>> categoryClasses = new ArrayList<Class<?>>();
 
         for (String category : categories.split(",")) {
-            Class<?> categoryClass = Classes.getClass(category);
+            /*
+             * Load the category class using the context class loader.
+             * If there is no context class loader, use the class loader for this class.
+             */
+            Class<?> categoryClass = Classes.getClass(category, getClass());
 
             categoryClasses.add(categoryClass);
         }
