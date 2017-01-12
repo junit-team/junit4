@@ -453,18 +453,6 @@ public class AnnotationTest extends TestCase {
         assertEquals("Before class super Before class sub Before super Before sub Test After sub After super After class sub After class super ", log);
     }
 
-    static public class SuperShadowing {
-        @Before
-        public void before() {
-            log += "Before super ";
-        }
-
-        @After
-        public void after() {
-            log += "After super ";
-        }
-    }
-
     static public class SubShadowing extends SuperShadowing {
         @Override
         @Before
