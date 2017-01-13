@@ -2,7 +2,9 @@ package org.junit.tests.running.methods;
 
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.experimental.results.PrintableResult.testResult;
+import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -13,7 +15,11 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExternalResource;
+import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -453,17 +459,74 @@ public class AnnotationTest extends TestCase {
         assertEquals("Before class super Before class sub Before super Before sub Test After sub After super After class sub After class super ", log);
     }
 
+    static public abstract class SuperShadowing {
+
+        @Rule
+        public TestRule rule() {
+            return new ExternalResource() {
+                @Override
+                protected void before() throws Throwable {
+                    log += "super.rule().before() ";
+                }
+
+                @Override
+                protected void after() {
+                    log += "super.rule().after() ";
+                }
+            };
+        }
+
+        @Before
+        public void before() {
+            log += "super.before() ";
+        }
+
+        @After
+        public void after() {
+            log += "super.after() ";
+        }
+    }
+
     static public class SubShadowing extends SuperShadowing {
+
+        @Override
+        @Rule
+        public TestRule rule() {
+            return new ExternalResource() {
+                @Override
+                protected void before() throws Throwable {
+                    log += "sub.rule().before() ";
+                }
+
+                @Override
+                protected void after() {
+                    log += "sub.rule().after() ";
+                }
+            };
+        }
+
         @Override
         @Before
         public void before() {
-            log += "Before sub ";
+            super.before();
+            log += "sub.before() ";
+        }
+
+        @Before
+        public void anotherBefore() {
+            log += "sub.anotherBefore() ";
         }
 
         @Override
         @After
         public void after() {
-            log += "After sub ";
+            log += "sub.after() ";
+            super.after();
+        }
+
+        @After
+        public void anotherAfter() {
+            log += "sub.anotherAfter() ";
         }
 
         @Test
@@ -474,9 +537,12 @@ public class AnnotationTest extends TestCase {
 
     public void testShadowing() throws Exception {
         log = "";
-        JUnitCore core = new JUnitCore();
-        core.run(SubShadowing.class);
-        assertEquals("Before sub Test After sub ", log);
+        assertThat(testResult(SubShadowing.class), isSuccessful());
+        assertEquals(
+                "sub.rule().before() super.before() sub.before() sub.anotherBefore() "
+                + "Test "
+                + "sub.anotherAfter() sub.after() super.after() sub.rule().after() ",
+                log);
     }
 
     static public class SuperTest {

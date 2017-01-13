@@ -84,8 +84,42 @@ public class TestClass implements Annotatable {
         for (Annotation each : member.getAnnotations()) {
             Class<? extends Annotation> type = each.annotationType();
             List<T> members = getAnnotatedMembers(map, type, true);
-            if (member.isShadowedBy(members)) {
-                return;
+            T shadowingMember = member.removeShadowingMember(members);
+            if (shadowingMember != null) {
+                /*
+                 * A previously-found annotated member ("shadowingMember") is
+                 * shadowing "member". Prior to JUnit 4.13, we would ignore
+                 * "member". So, for example, if these members were methods
+                 * annotated with @Before the method in the sub-class would be
+                 * called after all @Before methods in the superclass (and,
+                 * possibly, after some of the calls to other @Before methods in
+                 * the subclass). One could argue that this behavior is fine; if
+                 * the developer wanted to just replace the implementation of
+                 * the base class's @Before method, they could just override the
+                 * method but not annotate it with @Before. Unfortunately, this
+                 * behavior causes problems with bridge methods.
+                 *
+                 * If a top-level base class is package scope, then it's public
+                 * methods are not accessible. If you extend that class with a
+                 * public class, the compiler will generate bridge methods in
+                 * the subclass. The bridge method overrides the parent
+                 * implementation making the method public, delegating to the
+                 * base class implementation. The compiler may also copy the
+                 * annotations from the base class method to the sub class
+                 * method. The end result is that if you have a package-scope
+                 * base class with @Before methods, and you subclass it, those
+                 *
+                 * @Before methods might be called after @Before methods in the
+                 * sub-class.
+                 *
+                 * In JUnit 4.13, we fix this by "hoisting up" the method to the
+                 * base class. Note we don't want to add "member" to "members",
+                 * because "member" is the base class member, which might not
+                 * pass validation checks (see
+                 * TestMethodTest.dontValidateShadowedMethods() which would fail
+                 * if we commented out the next line).
+                 */
+                member = shadowingMember;
             }
             if (runsTopToBottom(type)) {
                 members.add(0, member);
