@@ -84,13 +84,14 @@ public class TestClass implements Annotatable {
         for (Annotation each : member.getAnnotations()) {
             Class<? extends Annotation> type = each.annotationType();
             List<T> members = getAnnotatedMembers(map, type, true);
-            if (member.isShadowedBy(members)) {
+            T memberToAdd = member.handlePossibleBridgeMethod(members);
+            if (memberToAdd == null) {
                 return;
             }
             if (runsTopToBottom(type)) {
-                members.add(0, member);
+                members.add(0, memberToAdd);
             } else {
-                members.add(member);
+                members.add(memberToAdd);
             }
         }
     }

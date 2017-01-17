@@ -149,6 +149,11 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
     }
 
     @Override
+    boolean isBridgeMethod() {
+        return method.isBridge();
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (!FrameworkMethod.class.isInstance(obj)) {
             return false;
