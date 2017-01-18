@@ -134,6 +134,9 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
 
     @Override
     public boolean isShadowedBy(FrameworkMethod other) {
+        if (isStatic()) {
+            return false;
+        }
         if (!other.getName().equals(getName())) {
             return false;
         }
