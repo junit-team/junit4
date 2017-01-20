@@ -12,13 +12,15 @@ public abstract class FrameworkMember<T extends FrameworkMember<T>> implements
         Annotatable {
     abstract boolean isShadowedBy(T otherMember);
 
-    boolean isShadowedBy(List<T> members) {
-        for (T each : members) {
-            if (isShadowedBy(each)) {
-                return true;
+    T removeShadowingMember(List<T> members) {
+        for (int i = members.size() - 1; i >=0; i--) {
+            T otherMember = members.get(i);
+            if (isShadowedBy(otherMember)) {
+                members.remove(i);
+                return otherMember;
             }
         }
-        return false;
+        return null;
     }
 
     protected abstract int getModifiers();
