@@ -1,12 +1,16 @@
-### Project License:  Eclipse Public License v1.0
+## Project License:  Eclipse Public License v1.0
 
 - You will only Submit Contributions where You have authored 100% of the content.
 - You will only Submit Contributions to which You have the necessary rights. This means that if You are employed You have received the necessary permissions from Your employer to make the Contributions.
 - Whatever content You Contribute will be provided under the Project License(s).
 
----
+## Coding Conventions
 
-### How to submit a pull request
+### Formatting
+
+See [CODING_STYLE.txt](CODING_STYLE.txt) for how we format our code.
+
+## How to submit a pull request
 
 We love pull requests. Here is a quick guide:
 
@@ -25,7 +29,7 @@ Now you are waiting on us. We review your pull request and at least leave some c
 Note that if you are thinking of providing a fix for one of the bugs or feature requests, it's usually
 a good idea to add a comment to the bug to make sure that there's agreement on how we should proceed.
 
-### Limitations
+## Limitations
 
 The JUnit team is not accepting changes to the code under the following paths :
 
