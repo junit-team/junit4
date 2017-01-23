@@ -43,4 +43,4 @@ or the soon-to-be-released JUnit4 APIs.
 The team is also reluctant to accept changes that only update code from one code style to another.
 Generally the code in JUnit was approved by at least one person, so two people agreed that the style was reasonable.
 
-To find other places where you can have an impact, please see the [Issues tagged lowhanging](https://github.com/junit-team/junit4/issues?q=is%3Aissue+is%3Aopen+label%3Alowhanging).
+To find other places where you can have an impact, please see the [Issues tagged "up-for-grabs"](https://github.com/junit-team/junit4/issues?q=is%3Aissue+is%3Aopen+label%3Aup-for-grabs).
