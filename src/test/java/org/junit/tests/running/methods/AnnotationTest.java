@@ -596,6 +596,100 @@ public class AnnotationTest extends TestCase {
                 log);
     }
 
+    static public abstract class SuperFieldShadowing {
+
+        @Rule
+        public final TestRule rule = new ExternalResource() {
+            @Override
+            protected void before() throws Throwable {
+                log += "super.rule.before() ";
+            }
+
+            @Override
+            protected void after() {
+                log += "super.rule.after() ";
+            }
+        };
+    }
+
+    static public class SubFieldShadowing extends SuperFieldShadowing {
+
+        @Rule
+        public final TestRule rule = new ExternalResource() {
+            @Override
+            protected void before() throws Throwable {
+                log += "sub.rule.before() ";
+            }
+
+            @Override
+            protected void after() {
+                log += "sub.rule.after() ";
+            }
+        };
+
+        @Test
+        public void test() {
+            log += "Test ";
+        }
+    }
+
+    public void testFieldsNeverTreatedAsShadowed() throws Exception {
+        log = "";
+        assertThat(testResult(SubFieldShadowing.class), isSuccessful());
+        assertEquals(
+                "super.rule.before() sub.rule.before() "
+                + "Test "
+                + "sub.rule.after() super.rule.after() ",
+                log);
+    }
+
+    static public abstract class SuperStaticFieldShadowing {
+
+        @ClassRule
+        public static TestRule rule = new ExternalResource() {
+            @Override
+            protected void before() throws Throwable {
+                log += "super.rule.before() ";
+            }
+
+            @Override
+            protected void after() {
+                log += "super.rule.after() ";
+            }
+        };
+    }
+
+    static public class SubStaticFieldShadowing extends SuperStaticFieldShadowing {
+
+        @ClassRule
+        public static TestRule rule = new ExternalResource() {
+            @Override
+            protected void before() throws Throwable {
+                log += "sub.rule.before() ";
+            }
+
+            @Override
+            protected void after() {
+                log += "sub.rule.after() ";
+            }
+        };
+
+        @Test
+        public void test() {
+            log += "Test ";
+        }
+    }
+
+    public void testStaticFieldsNeverTreatedAsShadowed() throws Exception {
+        log = "";
+        assertThat(testResult(SubStaticFieldShadowing.class), isSuccessful());
+        assertEquals(
+                "super.rule.before() sub.rule.before() "
+                + "Test "
+                + "sub.rule.after() super.rule.after() ",
+                log);
+    }
+
     static public class SuperTest {
         @Test
         public void one() {

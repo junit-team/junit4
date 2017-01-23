@@ -47,9 +47,9 @@ public class TestClassTest {
     }
 
     @Test
-    public void fieldsOnSubclassesShadowSuperclasses() {
+    public void fieldsOnSubclassesDoNotShadowSuperclasses() {
         assertThat(new TestClass(SubclassWithField.class).getAnnotatedFields(
-                Rule.class).size(), is(1));
+                Rule.class).size(), is(2));
     }
 
     public static class OuterClass {
