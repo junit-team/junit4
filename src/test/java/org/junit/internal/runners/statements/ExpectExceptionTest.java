@@ -17,21 +17,21 @@ public class ExpectExceptionTest {
 
     @Test
     public void whenExpectingAssumptionViolatedExceptionStatementsThrowingItShouldPass() {
-        Statement statementThrowingAssumptionViolatedException = new Fail(new AssumptionViolatedException("expected"));
-        ExpectException expectException = new ExpectException(statementThrowingAssumptionViolatedException, AssumptionViolatedException.class);
+        Statement delegate = new Fail(new AssumptionViolatedException("expected"));
+        ExpectException expectException = new ExpectException(delegate, AssumptionViolatedException.class);
 
         try {
             expectException.evaluate();
-            // then no exception should be thrown
-        } catch (Throwable e) {
+            // then AssumptionViolatedException should not be thrown
+        } catch (Throwable e) { // need to explicitly catch and re-throw as an AssertionError or it might be skipped
             fail("should not throw anything, but was thrown: " + e);
         }
     }
 
     @Test
     public void whenExpectingAssumptionViolatedExceptionStatementsThrowingSubclassShouldPass() {
-        Statement statementThrowingAssumptionViolatedExceptionSubclass = new Fail(new org.junit.AssumptionViolatedException("expected"));
-        ExpectException expectException = new ExpectException(statementThrowingAssumptionViolatedExceptionSubclass, AssumptionViolatedException.class);
+        Statement delegate = new Fail(new AssumptionViolatedExceptionSubclass("expected"));
+        ExpectException expectException = new ExpectException(delegate, AssumptionViolatedException.class);
 
         try {
             expectException.evaluate();
@@ -43,8 +43,8 @@ public class ExpectExceptionTest {
 
     @Test
     public void whenExpectingAssumptionViolatedExceptionStatementsThrowingDifferentExceptionShouldFail() {
-        Statement statementThrowingSomeException = new Fail(new SomeException("not expected"));
-        ExpectException expectException = new ExpectException(statementThrowingSomeException, AssumptionViolatedException.class);
+        Statement delegate = new Fail(new SomeException("not expected"));
+        ExpectException expectException = new ExpectException(delegate, AssumptionViolatedException.class);
 
         try {
             expectException.evaluate();
@@ -61,10 +61,11 @@ public class ExpectExceptionTest {
 
         try {
             expectException.evaluate();
-            fail("ExpectException should throw when the given statement passes");
         } catch (AssertionError e) {
             assertThat(e.getMessage(), containsString("Expected exception: " + AssumptionViolatedException.class.getName()));
+            return;
         }
+        fail("ExpectException should throw when the given statement passes");
     }
 
     private static class PassingStatement extends Statement {
@@ -76,6 +77,12 @@ public class ExpectExceptionTest {
     private static class SomeException extends RuntimeException {
         public SomeException(String message) {
             super(message);
+        }
+    }
+
+    private static class AssumptionViolatedExceptionSubclass extends AssumptionViolatedException {
+        public AssumptionViolatedExceptionSubclass(String assumption) {
+            super(assumption);
         }
     }
 }
