@@ -18,7 +18,8 @@ import org.junit.runners.Suite.SuiteClasses;
         FailOnTimeoutTest.class,
         MethodSorterTest.class,
         StacktracePrintingMatcherTest.class,
-        ThrowableCauseMatcherTest.class
+        ThrowableCauseMatcherTest.class,
+        ArrayComparisonFailureTest.class
 })
 public class AllInternalTests {
 }

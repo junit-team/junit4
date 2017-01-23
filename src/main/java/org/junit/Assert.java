@@ -2,6 +2,7 @@ package org.junit;
 
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
+import org.junit.function.ThrowingRunnable;
 import org.junit.internal.ArrayComparisonFailure;
 import org.junit.internal.ExactComparisonCriteria;
 import org.junit.internal.InexactComparisonCriteria;
@@ -851,6 +852,11 @@ public class Assert {
         }
     }
 
+    private static String formatClass(Class<?> value) {
+        String className = value.getCanonicalName();
+        return className == null ? value.getName() : className;
+    }
+
     private static String formatClassAndValue(Object value, String valueString) {
         String className = value == null ? "null" : value.getClass().getName();
         return className + "<" + valueString + ">";
@@ -961,17 +967,6 @@ public class Assert {
     }
 
     /**
-     * This interface facilitates the use of expectThrows from Java 8. It allows method references
-     * to void methods (that declare checked exceptions) to be passed directly into expectThrows
-     * without wrapping. It is not meant to be implemented directly.
-     *
-     * @since 4.13
-     */
-    public interface ThrowingRunnable {
-        void run() throws Throwable;
-    }
-
-    /**
      * Asserts that {@code runnable} throws an exception of type {@code expectedThrowable} when
      * executed. If it does not throw an exception, an {@link AssertionError} is thrown. If it
      * throws the wrong type of exception, an {@code AssertionError} is thrown describing the
@@ -1006,8 +1001,16 @@ public class Assert {
                 @SuppressWarnings("unchecked") T retVal = (T) actualThrown;
                 return retVal;
             } else {
-                String mismatchMessage = format("unexpected exception type thrown;",
-                        expectedThrowable.getSimpleName(), actualThrown.getClass().getSimpleName());
+                String expected = formatClass(expectedThrowable);
+                Class<? extends Throwable> actualThrowable = actualThrown.getClass();
+                String actual = formatClass(actualThrowable);
+                if (expected.equals(actual)) {
+                    // There must be multiple class loaders. Add the identity hash code so the message
+                    // doesn't say "expected: java.lang.String<my.package.MyException> ..."
+                    expected += "@" + Integer.toHexString(System.identityHashCode(expectedThrowable));
+                    actual += "@" + Integer.toHexString(System.identityHashCode(actualThrowable));
+                }
+                String mismatchMessage = format("unexpected exception type thrown;", expected, actual);
 
                 // The AssertionError(String, Throwable) ctor is only available on JDK7.
                 AssertionError assertionError = new AssertionError(mismatchMessage);
@@ -1016,7 +1019,7 @@ public class Assert {
             }
         }
         String message = String.format("expected %s to be thrown, but nothing was thrown",
-                expectedThrowable.getSimpleName());
+                formatClass(expectedThrowable));
         throw new AssertionError(message);
     }
 }

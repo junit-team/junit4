@@ -125,6 +125,17 @@ public class Description implements Serializable {
     }
 
     /**
+     * Create a <code>Description</code> named after <code>testClass</code>
+     *
+     * @param testClass A not null {@link Class} containing tests
+     * @param annotations meta-data about the test, for downstream interpreters
+     * @return a <code>Description</code> of <code>testClass</code>
+     */
+    public static Description createSuiteDescription(Class<?> testClass, Annotation... annotations) {
+        return new Description(testClass, testClass.getName(), annotations);
+    }
+
+    /**
      * Describes a Runner which runs no tests
      */
     public static final Description EMPTY = new Description(null, "No Tests");

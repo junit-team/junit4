@@ -12,6 +12,7 @@ import org.junit.runners.Suite.SuiteClasses;
         ForwardCompatibilityTest.class,
         InitializationErrorForwardCompatibilityTest.class,
         JUnit38ClassRunnerTest.class,
+        JUnit4TestAdapterTest.class,
         OldTestClassAdaptingListenerTest.class,
         OldTests.class,
         SuiteMethodTest.class

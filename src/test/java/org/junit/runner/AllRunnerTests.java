@@ -11,7 +11,7 @@ import org.junit.runners.Suite.SuiteClasses;
         FilterFactoriesTest.class,
         FilterOptionIntegrationTest.class,
         JUnitCommandLineParseResultTest.class,
-        JUnitCoreTest.class
+        JUnitCoreTest.class, RequestTest.class
 })
 public class AllRunnerTests {
 }

@@ -28,8 +28,8 @@ public class AssumptionViolatedException extends org.junit.internal.AssumptionVi
      * <i>matcher</i> describing the expectation that failed.
      */
     @Deprecated
-    public <T> AssumptionViolatedException(String message, T expected, Matcher<T> matcher) {
-        super(message, expected, matcher);
+    public <T> AssumptionViolatedException(String message, T actual, Matcher<T> matcher) {
+        super(message, actual, matcher);
     }
 
     /**
@@ -42,7 +42,7 @@ public class AssumptionViolatedException extends org.junit.internal.AssumptionVi
     /**
      * An assumption exception with the given message and a cause.
      */
-    public AssumptionViolatedException(String assumption, Throwable t) {
-        super(assumption, t);
+    public AssumptionViolatedException(String message, Throwable t) {
+        super(message, t);
     }
 }

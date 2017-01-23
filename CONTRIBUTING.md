@@ -1,12 +1,16 @@
-### Project License:  Eclipse Public License v1.0
+## Project License:  Eclipse Public License v1.0
 
 - You will only Submit Contributions where You have authored 100% of the content.
 - You will only Submit Contributions to which You have the necessary rights. This means that if You are employed You have received the necessary permissions from Your employer to make the Contributions.
 - Whatever content You Contribute will be provided under the Project License(s).
 
----
+## Coding Conventions
 
-### How to submit a pull request
+### Formatting
+
+See [CODING_STYLE.txt](CODING_STYLE.txt) for how we format our code.
+
+## How to submit a pull request
 
 We love pull requests. Here is a quick guide:
 
@@ -24,3 +28,19 @@ Now you are waiting on us. We review your pull request and at least leave some c
 
 Note that if you are thinking of providing a fix for one of the bugs or feature requests, it's usually
 a good idea to add a comment to the bug to make sure that there's agreement on how we should proceed.
+
+## Limitations
+
+The JUnit team is not accepting changes to the code under the following paths :
+
+* `src/main/java/junit`
+* `test/java/junit/tests/framework`
+* `test/java/junit/tests/extensions`
+
+The reasoning is that the JUnit team feels that our users should focus on using either the JUnit4 APIs
+or the soon-to-be-released JUnit4 APIs.
+
+The team is also reluctant to accept changes that only update code from one code style to another.
+Generally the code in JUnit was approved by at least one person, so two people agreed that the style was reasonable.
+
+To find other places where you can have an impact, please see the [Issues tagged "up-for-grabs"](https://github.com/junit-team/junit4/issues?q=is%3Aissue+is%3Aopen+label%3Aup-for-grabs).
