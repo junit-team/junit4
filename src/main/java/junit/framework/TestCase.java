@@ -3,6 +3,15 @@ package junit.framework;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.fixtures.ClassWrapper;
+import org.junit.fixtures.FixtureManager;
+import org.junit.fixtures.InstanceMethod;
+import org.junit.fixtures.TearDown;
+import org.junit.fixtures.TestFixture;
+import org.junit.runners.model.MultipleFailureException;
 
 /**
  * A test case defines the fixture to run multiple tests. To define a test case<br/>
@@ -80,6 +89,11 @@ public abstract class TestCase extends Assert implements Test {
      */
     private String fName;
 
+    private FixtureManager fixtureManager;
+    private boolean testStarted = false;
+    private final List<TestFixture> testFixtures = new ArrayList<TestFixture>();
+    private Method testMethod;
+
     /**
      * No-arg constructor to enable serialization. This method
      * is not intended to be used by mere mortals without calling setName().
@@ -93,6 +107,47 @@ public abstract class TestCase extends Assert implements Test {
      */
     public TestCase(String name) {
         fName = name;
+    }
+
+    /**
+     * Adds a test fixture to the current test. If {@link #setUp()} has been called
+     * then the fixture will be initialized right away. Otherwise, the fixture will
+     * be initialized before {@code setUp()} is called.
+     *
+     * @param testFixture
+     * @throws Exception exception thrown during {@code TestFixture#initialize(FixtureContext)}
+     */
+    public final void addTestFixture(TestFixture testFixture) throws Throwable {
+        if (testStarted) {
+            getOrCreateFixtureManager().initializeFixture(testFixture);
+        } else {
+            testFixtures.add(testFixture);
+        }
+    }
+
+    /**
+     * Adds a {@link TearDown} to run after the test completes.
+     * Cannot be called before {@link #setUp()} is called.
+     */
+    public final void addTearDown(TearDown tearDown) {
+        if (!testStarted) {
+             throw new IllegalStateException("Cannot call addTeadrDown() before setUp() is called");
+        }
+        getOrCreateFixtureManager().addTearDown(tearDown);
+    }
+
+    /**
+     * Gets or creates the fixture manager.
+     *
+     * @throws AssertionFailedError if the test method doesn't exist
+     */
+    private FixtureManager getOrCreateFixtureManager() {
+        if (fixtureManager == null) {
+            Method testMethod = getTestMethod(); // Can throw AssertionFailedError
+            fixtureManager = FixtureManager.forTestMethod(
+                    new InstanceMethod(new ClassWrapper(getClass()), testMethod, this));
+        }
+        return fixtureManager;
     }
 
     /**
@@ -136,10 +191,19 @@ public abstract class TestCase extends Assert implements Test {
      * @throws Throwable if any exception is thrown
      */
     public void runBare() throws Throwable {
+        initializeTestFixtures();
+        List<Throwable> tearDownErrors = new ArrayList<Throwable>();
+        try {
+            setUp();
+        } catch (Throwable e) {
+            runAllTearDowns(tearDownErrors);
+            throw e;
+        }
+
         Throwable exception = null;
-        setUp();
         try {
             runTest();
+            runAllPostconditions();
         } catch (Throwable running) {
             exception = running;
         } finally {
@@ -148,8 +212,44 @@ public abstract class TestCase extends Assert implements Test {
             } catch (Throwable tearingDown) {
                 if (exception == null) exception = tearingDown;
             }
+            runAllTearDowns(tearDownErrors);
         }
         if (exception != null) throw exception;
+        MultipleFailureException.assertEmpty(tearDownErrors);
+    }
+
+    private void initializeTestFixtures() throws Throwable {
+        testStarted = true;
+
+        if (fixtureManager == null) {
+            if (testFixtures.isEmpty()) {
+                return;
+            }
+            getOrCreateFixtureManager();
+        }
+
+        try {
+            for (TestFixture testFixture : testFixtures) {
+                fixtureManager.initializeFixture(testFixture);
+            }
+        } finally {
+            testFixtures.clear();
+        }
+    }
+
+    private void runAllPostconditions() throws Exception {
+        if (fixtureManager == null) {
+            return;
+        }
+        fixtureManager.runAllPostconditions();
+    }
+
+    private void runAllTearDowns(List<Throwable> tearDownErrors) {
+        if (fixtureManager == null) {
+            return;
+        }
+        fixtureManager.runAllTearDowns(tearDownErrors);
+        fixtureManager.reset();
     }
 
     /**
@@ -158,20 +258,7 @@ public abstract class TestCase extends Assert implements Test {
      * @throws Throwable if any exception is thrown
      */
     protected void runTest() throws Throwable {
-        assertNotNull("TestCase.fName cannot be null", fName); // Some VMs crash when calling getMethod(null,null);
-        Method runMethod = null;
-        try {
-            // use getMethod to get all public inherited
-            // methods. getDeclaredMethods returns all
-            // methods of this class but excludes the
-            // inherited ones.
-            runMethod = getClass().getMethod(fName, (Class[]) null);
-        } catch (NoSuchMethodException e) {
-            fail("Method \"" + fName + "\" not found");
-        }
-        if (!Modifier.isPublic(runMethod.getModifiers())) {
-            fail("Method \"" + fName + "\" should be public");
-        }
+        Method runMethod = getTestMethod();
 
         try {
             runMethod.invoke(this);
@@ -182,6 +269,28 @@ public abstract class TestCase extends Assert implements Test {
             e.fillInStackTrace();
             throw e;
         }
+    }
+
+    private Method getTestMethod() {
+        if (testMethod != null) {
+            return testMethod;
+        }
+        assertNotNull("TestCase.fName cannot be null", fName); // Some VMs crash when calling getMethod(null,null);
+        try {
+            // use getMethod to get all public inherited
+            // methods. getDeclaredMethods returns all
+            // methods of this class but excludes the
+            // inherited ones.
+            Method runMethod = getClass().getMethod(fName, (Class[]) null);
+            if (!Modifier.isPublic(runMethod.getModifiers())) {
+                fail("Method \"" + fName + "\" should be public");
+            }
+            testMethod = runMethod;
+            return testMethod;
+        } catch (NoSuchMethodException e) {
+            fail("Method \"" + fName + "\" not found");
+        }
+        return null; // we never get here
     }
 
     /**
