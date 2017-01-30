@@ -2,7 +2,6 @@ package org.junit.runner.notification;
 
 import java.io.Serializable;
 
-import org.junit.internal.StackTraces;
 import org.junit.internal.Throwables;
 import org.junit.runner.Description;
 
@@ -77,7 +76,7 @@ public class Failure implements Serializable {
      * the test method call.
      */
     public String getTrimmedTrace() {
-        return StackTraces.getTrimmedStackTrace(getException());
+        return Throwables.getTrimmedStackTrace(getException());
     }
 
     /**
