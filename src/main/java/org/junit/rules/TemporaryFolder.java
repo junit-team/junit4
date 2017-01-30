@@ -44,6 +44,9 @@ public class TemporaryFolder extends ExternalResource {
     private final boolean assureDeletion;
     private File folder;
 
+    private static final int TEMP_DIR_ATTEMPTS = 10000;
+    private static final String TMP_PREFIX = "junit";
+
     /**
      * Create a temporary folder which uses system default temporary-file 
      * directory to create temporary resources.
@@ -108,7 +111,7 @@ public class TemporaryFolder extends ExternalResource {
         /**
          * Setting this flag assures that no resources are left undeleted. Failure
          * to fulfill the assurance results in failure of tests with an
-         * {@link IllegalStateException}.
+         * {@link AssertionError}.
          *
          * @return this
          */
@@ -160,52 +163,58 @@ public class TemporaryFolder extends ExternalResource {
      * Returns a new fresh file with a random name under the temporary folder.
      */
     public File newFile() throws IOException {
-        return File.createTempFile("junit", null, getRoot());
+        return File.createTempFile(TMP_PREFIX, null, getRoot());
     }
 
     /**
-     * Returns a new fresh folder with the given name under the temporary
+     * Returns a new fresh folder with the given path under the temporary
      * folder.
      */
-    public File newFolder(String folder) throws IOException {
-        return newFolder(new String[]{folder});
+    public File newFolder(String path) throws IOException {
+        return newFolder(new String[]{path});
     }
 
     /**
-     * Returns a new fresh folder with the given name(s) under the temporary
-     * folder.
+     * Returns a new fresh folder with the given paths under the temporary
+     * folder. For example, if you pass in the strings {@code "parent"} and {@code "child"}
+     * then a directory named {@code "parent"} will be created under the temporary folder
+     * and a directory named {@code "child"} will be created under the newly-created
+     * {@code "parent"} directory.
      */
-    public File newFolder(String... folderNames) throws IOException {
-        File file = getRoot();
-        for (int i = 0; i < folderNames.length; i++) {
-            String folderName = folderNames[i];
-            validateFolderName(folderName);
-            file = new File(file, folderName);
-            if (!file.mkdir() && isLastElementInArray(i, folderNames)) {
-                throw new IOException(
-                        "a folder with the name \'" + folderName + "\' already exists");
+    public File newFolder(String... paths) throws IOException {
+        if (paths.length == 0) {
+            throw new IllegalArgumentException("must pass at least one path");
+        }
+
+        /*
+         * Before checking if the paths are absolute paths, check if create() was ever called,
+         * and if it wasn't, throw IllegalStateException.
+         */
+        File root = getRoot();
+        for (String path : paths) {
+            if (new File(path).isAbsolute()) {
+                throw new IOException("folder path \'" + path + "\' is not a relative path");
             }
         }
-        return file;
-    }
-    
-    /**
-     * Validates if multiple path components were used while creating a folder.
-     * 
-     * @param folderName
-     *            Name of the folder being created
-     */
-    private void validateFolderName(String folderName) throws IOException {
-        File tempFile = new File(folderName);
-        if (tempFile.getParent() != null) {
-            String errorMsg = "Folder name cannot consist of multiple path components separated by a file separator."
-                    + " Please use newFolder('MyParentFolder','MyFolder') to create hierarchies of folders";
-            throw new IOException(errorMsg);
-        }
-    }
 
-    private boolean isLastElementInArray(int index, String[] array) {
-        return index == array.length - 1;
+        File relativePath = null;
+        File file = root;
+        boolean lastMkdirsCallSuccessful = true;
+        for (int i = 0; i < paths.length; i++) {
+            relativePath = new File(relativePath, paths[i]);
+            file = new File(root, relativePath.getPath());
+
+            lastMkdirsCallSuccessful = file.mkdirs();
+            if (!lastMkdirsCallSuccessful && !file.isDirectory()) {
+                throw new IOException(
+                        "could not create a folder with the path \'" + relativePath.getPath() + "\'");
+            }
+        }
+        if (!lastMkdirsCallSuccessful) {
+            throw new IOException(
+                    "a folder with the path \'" + relativePath.getPath() + "\' already exists");
+        }
+        return file;
     }
 
     /**
@@ -216,10 +225,24 @@ public class TemporaryFolder extends ExternalResource {
     }
 
     private File createTemporaryFolderIn(File parentFolder) throws IOException {
-        File createdFolder = File.createTempFile("junit", "", parentFolder);
-        createdFolder.delete();
-        createdFolder.mkdir();
-        return createdFolder;
+        File createdFolder = null;
+        for (int i = 0; i < TEMP_DIR_ATTEMPTS; ++i) {
+            // Use createTempFile to get a suitable folder name.
+            String suffix = ".tmp";
+            File tmpFile = File.createTempFile(TMP_PREFIX, suffix, parentFolder);
+            String tmpName = tmpFile.toString();
+            // Discard .tmp suffix of tmpName.
+            String folderName = tmpName.substring(0, tmpName.length() - suffix.length());
+            createdFolder = new File(folderName);
+            if (createdFolder.mkdir()) {
+                tmpFile.delete();
+                return createdFolder;
+            }
+            tmpFile.delete();
+        }
+        throw new IOException("Unable to create temporary directory in: "
+            + parentFolder.toString() + ". Tried " + TEMP_DIR_ATTEMPTS + " times. "
+            + "Last attempted to create: " + createdFolder.toString());
     }
 
     /**
@@ -237,7 +260,7 @@ public class TemporaryFolder extends ExternalResource {
      * Delete all files and folders under the temporary folder. Usually not
      * called directly, since it is automatically applied by the {@link Rule}.
      *
-     * @throws IllegalStateException if unable to clean up resources
+     * @throws AssertionError if unable to clean up resources
      * and deletion of resources is assured.
      */
     public void delete() {
@@ -262,8 +285,13 @@ public class TemporaryFolder extends ExternalResource {
         
         return recursiveDelete(folder);
     }
-    
+
     private boolean recursiveDelete(File file) {
+        // Try deleting file before assuming file is a directory
+        // to prevent following symbolic links.
+        if (file.delete()) {
+            return true;
+        }
         boolean result = true;
         File[] files = file.listFiles();
         if (files != null) {

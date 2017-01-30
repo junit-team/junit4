@@ -5,6 +5,7 @@ import static org.junit.internal.runners.rules.RuleMemberValidator.RULE_VALIDATO
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
@@ -56,7 +57,7 @@ import org.junit.runners.model.Statement;
  */
 public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 
-    private final ConcurrentHashMap<FrameworkMethod, Description> methodDescriptions = new ConcurrentHashMap<FrameworkMethod, Description>();
+    private final ConcurrentMap<FrameworkMethod, Description> methodDescriptions = new ConcurrentHashMap<FrameworkMethod, Description>();
 
     /**
      * Creates a BlockJUnit4ClassRunner to run {@code testClass}
@@ -189,6 +190,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      * Adds to {@code errors} for each method annotated with {@code @Test},
      * {@code @Before}, or {@code @After} that is not a public, void instance
      * method with no arguments.
+     * @deprecated
      */
     @Deprecated
     protected void validateInstanceMethods(List<Throwable> errors) {
@@ -196,7 +198,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
         validatePublicVoidNoArgMethods(Before.class, false, errors);
         validateTestMethods(errors);
 
-        if (computeTestMethods().size() == 0) {
+        if (computeTestMethods().isEmpty()) {
             errors.add(new Exception("No runnable methods"));
         }
     }
@@ -326,6 +328,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      * Returns a {@link Statement}: if {@code method}'s {@code @Test} annotation
      * has the {@code timeout} attribute, throw an exception if {@code next}
      * takes more than the specified number of milliseconds.
+     * @deprecated
      */
     @Deprecated
     protected Statement withPotentialTimeout(FrameworkMethod method,
@@ -379,12 +382,13 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 
     private Statement withMethodRules(FrameworkMethod method, List<TestRule> testRules,
             Object target, Statement result) {
+        Statement withMethodRules = result;
         for (org.junit.rules.MethodRule each : getMethodRules(target)) {
-            if (!testRules.contains(each)) {
-                result = each.apply(result, method, target);
+            if (!(each instanceof TestRule && testRules.contains(each))) {
+                withMethodRules = each.apply(withMethodRules, method, target);
             }
         }
-        return result;
+        return withMethodRules;
     }
 
     private List<org.junit.rules.MethodRule> getMethodRules(Object target) {

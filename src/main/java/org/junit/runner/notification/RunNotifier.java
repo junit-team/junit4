@@ -65,8 +65,8 @@ public class RunNotifier {
 
         void run() {
             int capacity = currentListeners.size();
-            ArrayList<RunListener> safeListeners = new ArrayList<RunListener>(capacity);
-            ArrayList<Failure> failures = new ArrayList<Failure>(capacity);
+            List<RunListener> safeListeners = new ArrayList<RunListener>(capacity);
+            List<Failure> failures = new ArrayList<Failure>(capacity);
             for (RunListener listener : currentListeners) {
                 try {
                     notifyListener(listener);
@@ -101,6 +101,41 @@ public class RunNotifier {
             @Override
             protected void notifyListener(RunListener each) throws Exception {
                 each.testRunFinished(result);
+            }
+        }.run();
+    }
+
+    /**
+     * Invoke to tell listeners that a test suite is about to start. Runners are strongly
+     * encouraged--but not required--to call this method. If this method is called for
+     * a given {@link Description} then {@link #fireTestSuiteFinished(Description)} MUST
+     * be called for the same {@code Description}.
+     *
+     * @param description the description of the suite test (generally a class name)
+     * @since 4.13
+     */
+    public void fireTestSuiteStarted(final Description description) {
+        new SafeNotifier() {
+            @Override
+            protected void notifyListener(RunListener each) throws Exception {
+                each.testSuiteStarted(description);
+            }
+        }.run();
+    }
+
+    /**
+     * Invoke to tell listeners that a test suite is about to finish. Always invoke
+     * this method if you invoke {@link #fireTestSuiteStarted(Description)}
+     * as listeners are likely to expect them to come in pairs.
+     *
+     * @param description the description of the suite test (generally a class name)
+     * @since 4.13
+     */
+    public void fireTestSuiteFinished(final Description description) {
+        new SafeNotifier() {
+            @Override
+            protected void notifyListener(RunListener each) throws Exception {
+                each.testSuiteFinished(description);
             }
         }.run();
     }

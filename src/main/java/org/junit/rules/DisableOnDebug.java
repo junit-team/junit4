@@ -1,9 +1,9 @@
 package org.junit.rules;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
 import java.util.List;
 
+import org.junit.internal.management.ManagementFactory;
+import org.junit.internal.management.RuntimeMXBean;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 

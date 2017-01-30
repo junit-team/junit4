@@ -86,7 +86,7 @@ public class MethodValidator {
             }
             if (each.getReturnType() != Void.TYPE) {
                 errors.add(new Exception("Method " + each.getName()
-						+ " should be void"));
+						+ "should have a return type of void"));
             }
             if (each.getParameterTypes().length != 0) {
                 errors.add(new Exception("Method " + each.getName()

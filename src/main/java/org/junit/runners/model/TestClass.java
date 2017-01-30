@@ -84,20 +84,21 @@ public class TestClass implements Annotatable {
         for (Annotation each : member.getAnnotations()) {
             Class<? extends Annotation> type = each.annotationType();
             List<T> members = getAnnotatedMembers(map, type, true);
-            if (member.isShadowedBy(members)) {
+            T memberToAdd = member.handlePossibleBridgeMethod(members);
+            if (memberToAdd == null) {
                 return;
             }
             if (runsTopToBottom(type)) {
-                members.add(0, member);
+                members.add(0, memberToAdd);
             } else {
-                members.add(member);
+                members.add(memberToAdd);
             }
         }
     }
 
     private static <T extends FrameworkMember<T>> Map<Class<? extends Annotation>, List<T>>
             makeDeeplyUnmodifiable(Map<Class<? extends Annotation>, List<T>> source) {
-        LinkedHashMap<Class<? extends Annotation>, List<T>> copy =
+        Map<Class<? extends Annotation>, List<T>> copy =
                 new LinkedHashMap<Class<? extends Annotation>, List<T>>();
         for (Map.Entry<Class<? extends Annotation>, List<T>> entry : source.entrySet()) {
             copy.put(entry.getKey(), Collections.unmodifiableList(entry.getValue()));
@@ -168,7 +169,7 @@ public class TestClass implements Annotatable {
     }
 
     private static List<Class<?>> getSuperClasses(Class<?> testClass) {
-        ArrayList<Class<?>> results = new ArrayList<Class<?>>();
+        List<Class<?>> results = new ArrayList<Class<?>>();
         Class<?> current = testClass;
         while (current != null) {
             results.add(current);

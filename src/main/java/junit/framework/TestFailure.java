@@ -1,7 +1,6 @@
 package junit.framework;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import org.junit.internal.Throwables;
 
 
 /**
@@ -49,10 +48,7 @@ public class TestFailure {
      * thrown by TestFailure.
      */
     public String trace() {
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter writer = new PrintWriter(stringWriter);
-        thrownException().printStackTrace(writer);
-        return stringWriter.toString();
+        return Throwables.getStacktrace(thrownException());
     }
 
     /**

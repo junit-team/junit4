@@ -1,0 +1,20 @@
+* text eol=lf
+*.gif binary
+*.GIF binary
+*.jar binary
+*.png binary
+*.svg text eol=lf
+
+# These files do not have unix line endings. Do not normalize them for now.
+# Will fix these right before we cut JUnit 4.13.
+/src/main/java/org/junit/experimental/categories/CategoryFilterFactory.java -text
+/src/main/java/org/junit/experimental/categories/ExcludeCategories.java -text
+/src/main/java/org/junit/experimental/categories/IncludeCategories.java -text
+/src/main/java/org/junit/internal/Classes.java -text
+/src/main/java/org/junit/runner/FilterFactories.java -text
+/src/main/java/org/junit/runner/FilterFactory.java -text
+/src/main/java/org/junit/runner/FilterFactoryParams.java -text
+/src/main/java/org/junit/runner/JUnitCommandLineParseResult.java -text
+/src/test/java/org/junit/experimental/categories/CategoryFilterFactoryTest.java -text
+/src/test/java/org/junit/runner/FilterFactoriesTest.java -text
+/src/test/java/org/junit/runner/JUnitCommandLineParseResultTest.java -text

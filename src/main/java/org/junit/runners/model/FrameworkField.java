@@ -41,6 +41,11 @@ public class FrameworkField extends FrameworkMember<FrameworkField> {
     }
 
     @Override
+    boolean isBridgeMethod() {
+        return false;
+    }
+
+    @Override
     protected int getModifiers() {
         return field.getModifiers();
     }

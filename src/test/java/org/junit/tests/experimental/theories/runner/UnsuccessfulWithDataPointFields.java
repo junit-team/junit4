@@ -2,10 +2,8 @@ package org.junit.tests.experimental.theories.runner;
 
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.experimental.results.PrintableResult.testResult;
-import static org.junit.experimental.results.ResultMatchers.failureCountIs;
 import static org.junit.experimental.results.ResultMatchers.hasFailureContaining;
 import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
 import org.hamcrest.CoreMatchers;
@@ -121,11 +119,8 @@ public class UnsuccessfulWithDataPointFields {
     public void dataPointFieldsMustBeStatic() {
         assertThat(
                 testResult(DataPointFieldsMustBeStatic.class),
-                CoreMatchers.<PrintableResult>both(failureCountIs(2))
-                        .and(
-                                hasFailureContaining("DataPoint field THREE must be static"))
-                        .and(
-                                hasFailureContaining("DataPoint field FOURS must be static")));
+                CoreMatchers.<PrintableResult>both(hasFailureContaining("DataPoint field THREE must be static"))
+                        .and(hasFailureContaining("DataPoint field FOURS must be static")));
     }
     
     @RunWith(Theories.class)
@@ -150,8 +145,7 @@ public class UnsuccessfulWithDataPointFields {
     public void dataPointMethodsMustBeStatic() {
         assertThat(
                 testResult(DataPointMethodsMustBeStatic.class),
-                CoreMatchers.<PrintableResult>both(failureCountIs(2))
-                .and(
+                CoreMatchers.<PrintableResult>both(
                         hasFailureContaining("DataPoint method singleDataPointMethod must be static"))
                 .and(
                         hasFailureContaining("DataPoint method dataPointArrayMethod must be static")));
@@ -186,7 +180,6 @@ public class UnsuccessfulWithDataPointFields {
     @Test
     public void dataPointFieldsMustBePublic() {
         PrintableResult result = testResult(DataPointFieldsMustBePublic.class);        
-        assertEquals(6, result.failureCount());
 
         assertThat(result,
                 allOf(hasFailureContaining("DataPoint field THREE must be public"),
@@ -238,7 +231,6 @@ public class UnsuccessfulWithDataPointFields {
     @Test
     public void dataPointMethodsMustBePublic() {
         PrintableResult result = testResult(DataPointMethodsMustBePublic.class);        
-        assertEquals(6, result.failureCount());
 
         assertThat(result,
                 allOf(hasFailureContaining("DataPoint method three must be public"),

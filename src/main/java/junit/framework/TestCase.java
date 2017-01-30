@@ -103,7 +103,7 @@ public abstract class TestCase extends Assert implements Test {
     }
 
     /**
-     * Creates a default TestResult object
+     * Creates a default TestResult object.
      *
      * @see TestResult
      */
@@ -482,7 +482,7 @@ public abstract class TestCase extends Assert implements Test {
     }
 
     /**
-     * Returns a string representation of the test case
+     * Returns a string representation of the test case.
      */
     @Override
     public String toString() {
@@ -490,7 +490,7 @@ public abstract class TestCase extends Assert implements Test {
     }
 
     /**
-     * Gets the name of a TestCase
+     * Gets the name of a TestCase.
      *
      * @return the name of the TestCase
      */
@@ -499,7 +499,7 @@ public abstract class TestCase extends Assert implements Test {
     }
 
     /**
-     * Sets the name of a TestCase
+     * Sets the name of a TestCase.
      *
      * @param name the name to set
      */

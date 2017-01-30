@@ -138,15 +138,6 @@
     </p>
 </answer>
 </faq>
-  <faq id="overview_6"><question>What's the latest news on JUnit?</question>
-  <answer>
-    <p>
-      The JUnit home page publishes
-      the <a href="http://www.junit.org/news/index.htm">latest JUnit
-      news</a>.
-    </p>
-</answer>
-</faq>
       <faq id="overview_7"><question>How is JUnit licensed?</question>
       <answer>
     <p>
@@ -721,6 +712,12 @@ public void testIndexOutOfBoundsExceptionNotRaised()
       read <a
       href="http://www.onjava.com/pub/a/onjava/2003/11/12/reflection.html">this
       article</a>.
+    </p>
+    <p>
+      If you are using JDK 1.6 or higher and you annotate your tests with @Test,
+      you can use <a href="http://dp4j.com">Dp4j</a> to inject reflection in your
+      test methods. For details on how to use it, see <a href="http://dp4j.com/testscript">
+      this test script</a>.
     </p></answer></faq>
       <faq id="#tests_12"><question>Why does JUnit only report the first
       failure in a single test?</question><answer><p>
@@ -1740,8 +1737,8 @@ end</pre>
             <question>Where can I find unit testing frameworks
       similar to JUnit for other languages?</question>
             <answer><p>
-      XProgramming.com maintains a complete list of available <a
-      href="http://www.xprogramming.com/software.htm">xUnit testing
+      Wikipedia maintains a list of available <a
+      href="https://en.wikipedia.org/wiki/List_of_unit_testing_frameworks">xUnit testing
       frameworks</a>.
     </p></answer>
         </faq>

@@ -47,7 +47,7 @@ public class Assignments {
     }
 
     public boolean isComplete() {
-        return unassigned.size() == 0;
+        return unassigned.isEmpty();
     }
 
     public ParameterSignature nextUnassigned() {
@@ -55,11 +55,10 @@ public class Assignments {
     }
 
     public Assignments assignNext(PotentialAssignment source) {
-        List<PotentialAssignment> assigned = new ArrayList<PotentialAssignment>(
-                this.assigned);
-        assigned.add(source);
+        List<PotentialAssignment> potentialAssignments = new ArrayList<PotentialAssignment>(assigned);
+        potentialAssignments.add(source);
 
-        return new Assignments(assigned, unassigned.subList(1,
+        return new Assignments(potentialAssignments, unassigned.subList(1,
                 unassigned.size()), clazz);
     }
 
@@ -77,7 +76,7 @@ public class Assignments {
         ParameterSignature unassigned = nextUnassigned();
         List<PotentialAssignment> assignments = getSupplier(unassigned).getValueSources(unassigned);
         
-        if (assignments.size() == 0) {
+        if (assignments.isEmpty()) {
             assignments = generateAssignmentsFromTypeAlone(unassigned);
         }
         

@@ -58,7 +58,7 @@ public class TextListener extends RunListener {
 
     protected void printFailures(Result result) {
         List<Failure> failures = result.getFailures();
-        if (failures.size() == 0) {
+        if (failures.isEmpty()) {
             return;
         }
         if (failures.size() == 1) {
