@@ -16,6 +16,7 @@ import org.junit.runners.Suite.SuiteClasses;
         FailOnTimeoutTest.class,
         MethodSorterTest.class,
         StacktracePrintingMatcherTest.class,
+        StackTracesTest.class,
         ThrowableCauseMatcherTest.class,
         ArrayComparisonFailureTest.class
 })
