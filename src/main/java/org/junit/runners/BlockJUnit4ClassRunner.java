@@ -23,9 +23,11 @@ import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
 import org.junit.rules.MethodRule;
 import org.junit.rules.RunRules;
+import org.junit.rules.SortRules;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.MultipleFailureException;
@@ -372,10 +374,10 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 
     private Statement withRules(FrameworkMethod method, Object target,
             Statement statement) {
-        List<TestRule> testRules = getTestRules(target);
+        SortRules testRules = getTestRules(target);
         Statement result = statement;
-        result = withMethodRules(method, testRules, target, result);
-        result = withTestRules(method, testRules, result);
+        result = withMethodRules(method, testRules.listWithAllRules(), target, result);
+        result = withTestRules(method, testRules.listWithAutoconstructedRuleChain(), result);
 
         return result;
     }
@@ -425,16 +427,32 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
     }
 
     /**
+     * Returns a SortRules object holding all TestRules and their priorities.
+     * of @Rule annotation
+     *
      * @param target the test case instance
-     * @return a list of TestRules that should be applied when executing this
-     *         test
+     * @return SortRules object holding all TestRules and their priorities
+     *          that will be used to auto-construct a RuleChain, if necessary,
+     *          before the TestRules should be applied when executing a test.
      */
-    protected List<TestRule> getTestRules(Object target) {
-        List<TestRule> result = getTestClass().getAnnotatedMethodValues(target,
-                Rule.class, TestRule.class);
+    protected SortRules getTestRules(Object target) {
+        List<FrameworkMethod> methods = getTestClass().getAnnotatedMethods(Rule.class);
+        List<FrameworkField> fields = getTestClass().getAnnotatedFields(Rule.class);
+        SortRules result = new SortRules();
 
-        result.addAll(getTestClass().getAnnotatedFieldValues(target,
-                Rule.class, TestRule.class));
+        for (FrameworkMethod method : methods) {
+            TestRule rule = getTestClass().castMethod(target, method, Rule.class, TestRule.class);
+            if (rule != null) {
+                result.add(rule, method.getAnnotation(Rule.class).priority());
+            }
+        }
+
+        for (FrameworkField field : fields) {
+            TestRule rule = getTestClass().castField(target, field, Rule.class, TestRule.class);
+            if (rule != null) {
+                result.add(rule, field.getAnnotation(Rule.class).priority());
+            }
+        }
 
         return result;
     }
