@@ -33,9 +33,12 @@ import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
+import org.junit.runners.model.FieldValueCollector;
+import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.InvalidTestClassError;
+import org.junit.runners.model.MethodValueCollector;
 import org.junit.runners.model.RunnerScheduler;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
@@ -242,9 +245,33 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      *         found, or the base statement
      */
     private Statement withClassRules(Statement statement) {
-        List<TestRule> classRules = classRules();
-        return classRules.isEmpty() ? statement :
-                new RunRules(statement, classRules, getDescription());
+        Statement result = statement;
+
+        List<TestRule> classRules = new ArrayList<TestRule>(classRules());
+
+        List<PrioritizedTestRule> prioritizedClassRules = new ArrayList<PrioritizedTestRule>();
+        PrioritizedRule.extract(classRules, PrioritizedTestRule.class, prioritizedClassRules);
+        Collections.sort(prioritizedClassRules);
+        
+        if (!classRules.isEmpty()) {
+            result = new RunRules(result, classRules, getDescription());
+        }
+        result = withPrioritizedRules(prioritizedClassRules, result);
+
+        return result;
+    }
+
+    private Statement withPrioritizedRules(List<PrioritizedTestRule> prioritizedRules, Statement base) {
+        if (prioritizedRules.isEmpty()) {
+            return base;
+        }
+
+        Description description = getDescription();
+        Statement result = base;
+        for (PrioritizedTestRule prioritizedRule : prioritizedRules) {
+            result = prioritizedRule.apply(result, description);
+        }
+        return result;
     }
 
     /**
@@ -252,10 +279,32 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      *         each method in the tested class.
      */
     protected List<TestRule> classRules() {
-        List<TestRule> result = testClass.getAnnotatedMethodValues(null, ClassRule.class, TestRule.class);
-        result.addAll(testClass.getAnnotatedFieldValues(null, ClassRule.class, TestRule.class));
+        List<TestRule> result = TEST_RULES_FROM_METHODS.getValues(testClass, null, ClassRule.class);
+        result.addAll(TEST_RULES_FROM_FIELDS.getValues(testClass, null, ClassRule.class));
         return result;
     }
+
+    private static MethodValueCollector<TestRule> TEST_RULES_FROM_METHODS = new MethodValueCollector<TestRule>() {
+        @Override
+        protected TestRule processValue(FrameworkMethod method, TestRule rule) {
+            ClassRule annotation = method.getAnnotation(ClassRule.class);
+            if (annotation.priority() >= 0) {
+                rule = new PrioritizedTestRule(rule, annotation.priority());
+            }
+            return rule;
+        }
+    };
+
+    private static FieldValueCollector<TestRule> TEST_RULES_FROM_FIELDS = new FieldValueCollector<TestRule>() {
+        @Override
+        protected TestRule processValue(FrameworkField field, TestRule rule) {
+            ClassRule annotation = field.getAnnotation(ClassRule.class);
+            if (annotation.priority() >= 0) {
+                rule = new PrioritizedTestRule(rule, annotation.priority());
+            }
+            return rule;
+        }
+    };
 
     /**
      * Returns a {@link Statement}: Call {@link #runChild(Object, RunNotifier)}

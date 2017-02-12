@@ -3,6 +3,8 @@ package org.junit.runners;
 import static org.junit.internal.runners.rules.RuleMemberValidator.RULE_METHOD_VALIDATOR;
 import static org.junit.internal.runners.rules.RuleMemberValidator.RULE_VALIDATOR;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -26,10 +28,14 @@ import org.junit.rules.RunRules;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.model.FieldValueCollector;
+import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.MethodValueCollector;
 import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
+import org.junit.runners.model.TestClass;
 
 /**
  * Implements the JUnit 4 standard test case class model, as defined by the
@@ -372,18 +378,42 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 
     private Statement withRules(FrameworkMethod method, Object target,
             Statement statement) {
-        List<TestRule> testRules = getTestRules(target);
         Statement result = statement;
-        result = withMethodRules(method, testRules, target, result);
+
+        List<TestRule> testRules = new ArrayList<TestRule>(getTestRules(target));
+        List<MethodRule> methodRules = new ArrayList<MethodRule>(getMethodRules(target));
+        
+        List<PrioritizedRule> prioritizedRules = new ArrayList<PrioritizedRule>();
+        PrioritizedRule.extract(testRules, PrioritizedRule.class, prioritizedRules);
+        PrioritizedRule.extract(methodRules, PrioritizedRule.class, prioritizedRules);
+        Collections.sort(prioritizedRules);
+
+        result = withMethodRules(method, testRules, methodRules, target, result);
         result = withTestRules(method, testRules, result);
+        result = withPrioritizedRules(method, prioritizedRules, result);
 
         return result;
     }
 
-    private Statement withMethodRules(FrameworkMethod method, List<TestRule> testRules,
+    private Statement withPrioritizedRules(
+            FrameworkMethod method, List<PrioritizedRule> prioritizedRules, Statement base) {
+        if (prioritizedRules.isEmpty()) {
+            return base;
+        }
+
+        Description description = describeChild(method);
+        Statement result = base;
+        for (PrioritizedRule prioritizedRule : prioritizedRules) {
+            result = prioritizedRule.applyAtMethodLevel(result, description, method, result);
+        }
+        return result;
+    }
+
+    private Statement withMethodRules(FrameworkMethod method,
+            List<TestRule> testRules, List<MethodRule> methodRules,
             Object target, Statement result) {
         Statement withMethodRules = result;
-        for (org.junit.rules.MethodRule each : getMethodRules(target)) {
+        for (MethodRule each : methodRules) {
             if (!(each instanceof TestRule && testRules.contains(each))) {
                 withMethodRules = each.apply(withMethodRules, method, target);
             }
@@ -391,7 +421,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
         return withMethodRules;
     }
 
-    private List<org.junit.rules.MethodRule> getMethodRules(Object target) {
+    private List<MethodRule> getMethodRules(Object target) {
         return rules(target);
     }
 
@@ -401,15 +431,44 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      *         test
      */
     protected List<MethodRule> rules(Object target) {
-        List<MethodRule> rules = getTestClass().getAnnotatedMethodValues(target, 
-                Rule.class, MethodRule.class);
-
-        rules.addAll(getTestClass().getAnnotatedFieldValues(target,
-                Rule.class, MethodRule.class));
-
+        TestClass testClass = getTestClass();
+        List<MethodRule> rules = METHOD_RULES_FROM_METHODS.getValues(testClass, target, Rule.class);
+        rules.addAll(METHOD_RULES_FROM_FIELDS.getValues(testClass, target, Rule.class));
         return rules;
     }
 
+    private static MethodValueCollector<MethodRule> METHOD_RULES_FROM_METHODS = new MethodValueCollector<MethodRule>() {
+        @Override
+        protected boolean includeValue(FrameworkMethod method) {
+            return !TestRule.class.isAssignableFrom(method.getReturnType());
+        }
+
+        @Override
+        protected MethodRule processValue(FrameworkMethod method, MethodRule rule) {
+            Rule annotation = method.getAnnotation(Rule.class);
+            if (annotation.priority() >= 0) {
+                return new PrioritizedMethodRule(rule, annotation.priority());
+            }
+            return rule;
+        }
+    };
+
+    private static FieldValueCollector<MethodRule> METHOD_RULES_FROM_FIELDS = new FieldValueCollector<MethodRule>() {
+        @Override
+        protected boolean includeValue(FrameworkField field) {
+            return !TestRule.class.isAssignableFrom(field.getType());
+        }
+
+        @Override
+        protected MethodRule processValue(FrameworkField field, MethodRule rule) {
+            Rule annotation = field.getAnnotation(Rule.class);
+            if (annotation.priority() >= 0) {
+                return new PrioritizedMethodRule(rule, annotation.priority());
+            }
+            return rule;
+        }
+    };
+ 
     /**
      * Returns a {@link Statement}: apply all non-static fields
      * annotated with {@link Rule}.
@@ -430,13 +489,74 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      *         test
      */
     protected List<TestRule> getTestRules(Object target) {
-        List<TestRule> result = getTestClass().getAnnotatedMethodValues(target,
-                Rule.class, TestRule.class);
-
-        result.addAll(getTestClass().getAnnotatedFieldValues(target,
-                Rule.class, TestRule.class));
-
+        TestClass testClass = getTestClass();
+        List<TestRule> result = TEST_RULES_FROM_METHODS.getValues(testClass, target, Rule.class);
+        result.addAll(TEST_RULES_FROM_FIELDS.getValues(testClass, target, Rule.class));
         return result;
+    }
+
+    private static MethodValueCollector<TestRule> TEST_RULES_FROM_METHODS = new MethodValueCollector<TestRule>() {
+        @Override
+        protected TestRule processValue(FrameworkMethod method, TestRule rule) {
+            Rule annotation = method.getAnnotation(Rule.class);
+            if (annotation.priority() >= 0) {
+                rule = asPrioritizedRule(annotation, rule);
+            }
+            return rule;
+        }
+    };
+
+    private static FieldValueCollector<TestRule> TEST_RULES_FROM_FIELDS = new FieldValueCollector<TestRule>() {
+        @Override
+        protected TestRule processValue(FrameworkField field, TestRule rule) {
+            Rule annotation = field.getAnnotation(Rule.class);
+            if (annotation.priority() >= 0) {
+                rule = asPrioritizedRule(annotation, rule);
+            }
+            return rule;
+        }
+    };
+
+    private static TestRule asPrioritizedRule(Rule annotation, TestRule testRule) {
+        if (testRule instanceof MethodRule) {
+            return new PrioritizedTestAndMethodRule(testRule, annotation.priority());
+        }
+        return new PrioritizedTestRule(testRule, annotation.priority());
+    }
+
+    private static class PrioritizedMethodRule extends PrioritizedRule implements MethodRule {
+        protected final MethodRule delegate;
+
+        PrioritizedMethodRule(MethodRule delegate, int priority) {
+            super(priority);
+            this.delegate = delegate;
+        }
+        
+        public Statement apply(Statement base, FrameworkMethod method, Object target) {
+            return delegate.apply(base, method, target);
+        }
+
+        @Override
+        public Statement applyAtMethodLevel(
+                Statement base, Description description, FrameworkMethod method, Object target) {
+            return delegate.apply(base, method, target);
+        }
+
+        @Override
+        Object getDelegate() {
+            return delegate;
+        }
+    }
+
+    private static class PrioritizedTestAndMethodRule extends PrioritizedTestRule implements MethodRule {
+
+        PrioritizedTestAndMethodRule(TestRule delegate, int priority) {
+            super(delegate, priority);
+        }
+
+        public Statement apply(Statement base, FrameworkMethod method, Object target) {
+            return ((MethodRule) delegate).apply(base, method, target);
+        }
     }
 
     private Class<? extends Throwable> getExpectedException(Test annotation) {
