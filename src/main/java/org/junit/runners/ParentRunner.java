@@ -40,7 +40,6 @@ import org.junit.runners.model.RunnerScheduler;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
 import org.junit.validator.AnnotationsValidator;
-import org.junit.validator.PublicClassValidator;
 import org.junit.validator.TestClassValidator;
 
 /**
@@ -58,8 +57,8 @@ import org.junit.validator.TestClassValidator;
  */
 public abstract class ParentRunner<T> extends Runner implements Filterable,
         Sortable {
-    private static final List<TestClassValidator> VALIDATORS = Arrays.asList(
-            new AnnotationsValidator(), new PublicClassValidator());
+    private static final List<TestClassValidator> VALIDATORS = Arrays.<TestClassValidator>asList(
+            new AnnotationsValidator());
 
     private final Object childrenLock = new Object();
     private final TestClass testClass;

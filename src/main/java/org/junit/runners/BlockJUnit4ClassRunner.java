@@ -30,6 +30,8 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
+import org.junit.validator.PublicClassValidator;
+import org.junit.validator.TestClassValidator;
 
 /**
  * Implements the JUnit 4 standard test case class model, as defined by the
@@ -56,6 +58,7 @@ import org.junit.runners.model.Statement;
  * @since 4.5
  */
 public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
+    private static TestClassValidator PUBLIC_CLASS_VALIDATOR = new PublicClassValidator();
 
     private final ConcurrentMap<FrameworkMethod, Description> methodDescriptions = new ConcurrentHashMap<FrameworkMethod, Description>();
 
@@ -133,11 +136,18 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
     protected void collectInitializationErrors(List<Throwable> errors) {
         super.collectInitializationErrors(errors);
 
+        validatePublicConstructor(errors);
         validateNoNonStaticInnerClass(errors);
         validateConstructor(errors);
         validateInstanceMethods(errors);
         validateFields(errors);
         validateMethods(errors);
+    }
+
+    private void validatePublicConstructor(List<Throwable> errors) {
+        if (getTestClass().getJavaClass() != null) {
+            errors.addAll(PUBLIC_CLASS_VALIDATOR.validateTestClass(getTestClass()));
+        }
     }
 
     protected void validateNoNonStaticInnerClass(List<Throwable> errors) {
