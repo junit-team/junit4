@@ -77,8 +77,10 @@ public abstract class ExternalResource implements TestRule {
 
     /**
      * Override to tear down your specific external resource.
+     *
+     * @throws Exception if teardown fails
      */
-    protected void after() {
+    protected void after() throws Exception {
         // do nothing
     }
 }
