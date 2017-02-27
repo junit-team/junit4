@@ -63,6 +63,19 @@ public abstract class Request {
 
     /**
      * Create a <code>Request</code> that, when processed, will run all the tests
+     * in a class. If the class does not set the runner to use, a runner of the given
+     * class will be used by default.
+     *
+     * @param clazz the class containing the tests
+     * @param defaultRunnerClass the class of the runner to use by default
+     * @return a <code>Request</code> that will cause all tests in the class to be run
+     */
+    public static Request classWithDefaultRunner(Class<?> clazz, Class<? extends Runner> defaultRunnerClass) {
+        return new ClassRequest(clazz, true, defaultRunnerClass);
+    }
+
+    /**
+     * Create a <code>Request</code> that, when processed, will run all the tests
      * in a set of classes.
      *
      * @param computer Helps construct Runners from classes

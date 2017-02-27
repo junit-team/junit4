@@ -37,6 +37,8 @@ import org.junit.runner.Runner;
  * @since 4.5
  */
 public abstract class RunnerBuilder {
+    private static final String CONSTRUCTOR_ERROR_FORMAT = "Custom runner class %s should have a public constructor with signature %s(Class testClass)";
+
     private final Set<Class<?>> parents = new HashSet<Class<?>>();
 
     /**
@@ -78,6 +80,22 @@ public abstract class RunnerBuilder {
 
     void removeParent(Class<?> klass) {
         parents.remove(klass);
+    }
+
+    public Runner buildRunner(Class<? extends Runner> runnerClass,
+            Class<?> testClass, RunnerBuilder suiteBuilder) throws Exception {
+        try {
+            return runnerClass.getConstructor(Class.class).newInstance(testClass);
+        } catch (NoSuchMethodException e) {
+            try {
+                return runnerClass.getConstructor(Class.class,
+                        RunnerBuilder.class).newInstance(testClass, suiteBuilder);
+            } catch (NoSuchMethodException e2) {
+                String simpleName = runnerClass.getSimpleName();
+                throw new InitializationError(String.format(
+                        CONSTRUCTOR_ERROR_FORMAT, simpleName, simpleName));
+            }
+        }
     }
 
     /**

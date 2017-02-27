@@ -31,6 +31,7 @@ public class AllDefaultPossibilitiesBuilder extends RunnerBuilder {
                 annotatedBuilder(),
                 suiteMethodBuilder(),
                 junit3Builder(),
+                defaultBuilder(),
                 junit4Builder());
 
         for (RunnerBuilder each : builders) {
@@ -56,6 +57,10 @@ public class AllDefaultPossibilitiesBuilder extends RunnerBuilder {
 
     protected IgnoredBuilder ignoredBuilder() {
         return new IgnoredBuilder();
+    }
+
+    protected RunnerBuilder defaultBuilder() {
+        return new NullBuilder();
     }
 
     protected RunnerBuilder suiteMethodBuilder() {

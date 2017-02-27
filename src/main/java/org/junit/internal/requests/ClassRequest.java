@@ -1,6 +1,7 @@
 package org.junit.internal.requests;
 
 import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
+import org.junit.internal.builders.DefaultBuilder;
 import org.junit.internal.builders.SuiteMethodBuilder;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
@@ -17,10 +18,17 @@ public class ClassRequest extends Request {
     private final Class<?> fTestClass;
     private final boolean canUseSuiteMethod;
     private volatile Runner runner;
+    private Class<? extends Runner> defaultRunnerClass;
 
-    public ClassRequest(Class<?> testClass, boolean canUseSuiteMethod) {
+    public ClassRequest(Class<?> testClass, boolean canUseSuiteMethod,
+                        Class<? extends Runner> defaultRunnerClass) {
         this.fTestClass = testClass;
         this.canUseSuiteMethod = canUseSuiteMethod;
+        this.defaultRunnerClass = defaultRunnerClass;
+    }
+
+    public ClassRequest(Class<?> testClass, boolean canUseSuiteMethod) {
+        this(testClass, canUseSuiteMethod, null);
     }
 
     public ClassRequest(Class<?> testClass) {
@@ -44,6 +52,14 @@ public class ClassRequest extends Request {
         @Override
         protected RunnerBuilder suiteMethodBuilder() {
             return new CustomSuiteMethodBuilder();
+        }
+
+        @Override
+        protected RunnerBuilder defaultBuilder() {
+            if (defaultRunnerClass != null) {
+                return new DefaultBuilder(defaultRunnerClass, this);
+            }
+            return super.defaultBuilder();
         }
     }
 
