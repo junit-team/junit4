@@ -265,8 +265,8 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      * <ul>
      * <li>Invoke {@code method} on the result of {@link #createTest(org.junit.runners.model.FrameworkMethod)}, and
      * throw any exceptions thrown by either operation.
-     * <li>HOWEVER, if {@code method}'s {@code @Test} annotation has the {@code
-     * expecting} attribute, return normally only if the previous step threw an
+     * <li>HOWEVER, if {@code method}'s {@code @Test} annotation has the {@link Test#expected()}
+     * attribute, return normally only if the previous step threw an
      * exception of the correct type, and throw an exception otherwise.
      * <li>HOWEVER, if {@code method}'s {@code @Test} annotation has the {@code
      * timeout} attribute, throw an exception if the previous step takes more
@@ -323,7 +323,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 
     /**
      * Returns a {@link Statement}: if {@code method}'s {@code @Test} annotation
-     * has the {@code expecting} attribute, return normally only if {@code next}
+     * has the {@link Test#expected()} attribute, return normally only if {@code next}
      * throws an exception of the correct type, and throw an exception
      * otherwise.
      */
