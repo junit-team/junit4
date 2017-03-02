@@ -1,7 +1,7 @@
 package org.junit.internal;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -179,4 +179,37 @@ public class MethodSorterTest {
         List<String> actual = getDeclaredMethodNames(DummySortWithNameAsc.class);
         assertEquals(expected, actual);
     }
+    
+    @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+    static class SuperWithSorter {
+    }
+
+    static class SubWithSorterInherited extends SuperWithSorter {
+    	Object alpha(int i, double d, Thread t) {
+            return null;
+        }
+
+        void beta(int[][] x) {
+        }
+
+        int gamma() {
+            return 0;
+        }
+
+        void gamma(boolean b) {
+        }
+
+        void delta() {
+        }
+
+        void epsilon() {
+        }
+    }
+    
+    @Test
+	public void testInheritMethodSorter() throws Exception {
+    	List<String> expected = Arrays.asList(ALPHA, BETA, DELTA, EPSILON, GAMMA_VOID, GAMMA_BOOLEAN);
+        List<String> actual = getDeclaredMethodNames(SubWithSorterInherited.class);
+        assertEquals(expected, actual);
+	}
 }
