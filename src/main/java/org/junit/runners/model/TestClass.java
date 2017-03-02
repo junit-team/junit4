@@ -3,6 +3,7 @@ package org.junit.runners.model;
 import static java.lang.reflect.Modifier.isStatic;
 import static org.junit.internal.MethodSorter.NAME_ASCENDING;
 
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -296,7 +297,7 @@ public class TestClass implements Annotatable {
     /**
      * Compares two fields by its name.
      */
-    private static class FieldComparator implements Comparator<Field> {
+    private static class FieldComparator implements Comparator<Field>, Serializable {
         public int compare(Field left, Field right) {
             return left.getName().compareTo(right.getName());
         }
@@ -305,8 +306,7 @@ public class TestClass implements Annotatable {
     /**
      * Compares two methods by its name.
      */
-    private static class MethodComparator implements
-            Comparator<FrameworkMethod> {
+    private static class MethodComparator implements Comparator<FrameworkMethod>, Serializable {
         public int compare(FrameworkMethod left, FrameworkMethod right) {
             return NAME_ASCENDING.compare(left.getMethod(), right.getMethod());
         }
