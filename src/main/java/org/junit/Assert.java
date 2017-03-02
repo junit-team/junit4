@@ -874,9 +874,7 @@ public class Assert {
      * expected values.
      * @param actuals Object array or array of arrays (multi-dimensional array) with
      * actual values
-     * @deprecated use assertArrayEquals
      */
-    @Deprecated
     public static void assertEquals(String message, Object[] expecteds,
             Object[] actuals) {
         assertArrayEquals(message, expecteds, actuals);
@@ -892,9 +890,7 @@ public class Assert {
      * expected values
      * @param actuals Object array or array of arrays (multi-dimensional array) with
      * actual values
-     * @deprecated use assertArrayEquals
      */
-    @Deprecated
     public static void assertEquals(Object[] expecteds, Object[] actuals) {
         assertArrayEquals(expecteds, actuals);
     }
