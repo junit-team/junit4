@@ -10,3 +10,5 @@ For more information, please visit:
 
 [![Built on DEV@cloud](http://www.cloudbees.com/sites/default/files/Button-Built-on-CB-1.png)](http://www.cloudbees.com/foss/foss-dev.cb)
 
+### Java 8 Compatibility
+<img src="https://java.net/downloads/adoptopenjdk/compat.svg" alt="Compatibility Badge" style="max-width: 100px;" width="100px">
