@@ -106,7 +106,7 @@ public class TemporaryFolderUsageTest {
         }
         tempFolder.create();
         thrown.expect(IOException.class);
-        thrown.expectMessage("folder path '/temp1' is not a relative path");
+        thrown.expectMessage("folder path '" + fileAtRoot + "' is not a relative path");
         tempFolder.newFolder(fileAtRoot);
     }
     
