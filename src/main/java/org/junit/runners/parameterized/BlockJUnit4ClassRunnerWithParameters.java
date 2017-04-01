@@ -2,15 +2,18 @@ package org.junit.runners.parameterized;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
+import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
 
 /**
@@ -134,8 +137,72 @@ public class BlockJUnit4ClassRunnerWithParameters extends
     }
 
     @Override
-    protected Statement classBlock(RunNotifier notifier) {
-        return childrenInvoker(notifier);
+    protected Statement classBlock(final RunNotifier notifier) {
+        Statement statement = childrenInvoker(notifier);
+        statement = withBeforeParams(statement);
+        statement = withAfterParams(statement);
+        return statement;
+    }
+
+    private Statement withBeforeParams(Statement statement) {
+        final List<FrameworkMethod> befores = getTestClass()
+                .getAnnotatedMethods(Parameterized.BeforeParam.class);
+        return befores.isEmpty() ? statement : new RunBeforeParams(statement, befores);
+    }
+
+    private class RunBeforeParams extends Statement {
+        private final Statement next;
+        private final List<FrameworkMethod> befores;
+
+        RunBeforeParams(Statement next, List<FrameworkMethod> befores) {
+            this.next = next;
+            this.befores = befores;
+        }
+
+        @Override
+        public void evaluate() throws Throwable {
+            for (FrameworkMethod before : befores) {
+                final int paramCount = before.getMethod().getParameterTypes().length;
+                before.invokeExplosively(null, paramCount == 0 ? (Object[]) null : parameters);
+            }
+            next.evaluate();
+        }
+    }
+
+    private Statement withAfterParams(Statement statement) {
+        final List<FrameworkMethod> afters = getTestClass()
+                .getAnnotatedMethods(Parameterized.AfterParam.class);
+        return afters.isEmpty() ? statement : new RunAfterParams(statement, afters);
+    }
+
+    private class RunAfterParams extends Statement {
+        private final Statement next;
+        private final List<FrameworkMethod> afters;
+
+        RunAfterParams(Statement next, List<FrameworkMethod> afters) {
+            this.next = next;
+            this.afters = afters;
+        }
+
+        @Override
+        public void evaluate() throws Throwable {
+            final List<Throwable> errors = new ArrayList<Throwable>();
+            try {
+                next.evaluate();
+            } catch (Throwable e) {
+                errors.add(e);
+            } finally {
+                for (FrameworkMethod each : afters) {
+                    try {
+                        final int paramCount = each.getMethod().getParameterTypes().length;
+                        each.invokeExplosively(null, paramCount == 0 ? (Object[]) null : parameters);
+                    } catch (Throwable e) {
+                        errors.add(e);
+                    }
+                }
+            }
+            MultipleFailureException.assertEmpty(errors);
+        }
     }
 
     @Override

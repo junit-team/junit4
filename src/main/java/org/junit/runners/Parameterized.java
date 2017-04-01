@@ -1,5 +1,6 @@
 package org.junit.runners;
 
+import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
@@ -235,10 +236,51 @@ public class Parameterized extends Suite {
     }
 
     /**
+     * Annotation for {@code public static void} methods which should be executed before
+     * evaluating tests with a particular parameter.
+     *
+     * @see org.junit.BeforeClass
+     * @see org.junit.Before
+     * @since 4.13
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface BeforeParam {
+    }
+
+    /**
+     * Annotation for {@code public static void} methods which should be executed after
+     * evaluating tests with a particular parameter.
+     *
+     * @see org.junit.AfterClass
+     * @see org.junit.After
+     * @since 4.13
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface AfterParam {
+    }
+
+    /**
      * Only called reflectively. Do not use programmatically.
      */
     public Parameterized(Class<?> klass) throws Throwable {
         super(klass, RunnersFactory.createRunnersForClass(klass));
+    }
+
+    @Override
+    protected void collectInitializationErrors(List<Throwable> errors) {
+        super.collectInitializationErrors(errors);
+        validatePublicStaticVoidMethods(Parameterized.BeforeParam.class, errors);
+        validatePublicStaticVoidMethods(Parameterized.AfterParam.class, errors);
+    }
+
+    private void validatePublicStaticVoidMethods(Class<? extends Annotation> annotation,
+                                                 List<Throwable> errors) {
+        final List<FrameworkMethod> methods = getTestClass().getAnnotatedMethods(annotation);
+        for (FrameworkMethod eachTestMethod : methods) {
+            eachTestMethod.validatePublicVoid(true, errors);
+        }
     }
 
     private static class RunnersFactory {

@@ -3,8 +3,8 @@ package org.junit.tests.running.classes;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.experimental.results.PrintableResult.testResult;
@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
@@ -24,6 +25,7 @@ import org.junit.runner.Result;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.Failure;
+import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
@@ -257,6 +259,92 @@ public class ParameterizedTestTest {
         fLog = "";
         JUnitCore.runClasses(BeforeAndAfter.class);
         assertEquals("before after ", fLog);
+    }
+
+    @RunWith(Parameterized.class)
+    @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+    public static class BeforeParamAndAfterParam {
+        @BeforeClass
+        public static void before() {
+            fLog += "beforeClass ";
+        }
+
+        @Parameterized.BeforeParam
+        public static void beforeParam(String x) {
+            fLog += "before(" + x + ") ";
+        }
+
+        @Parameterized.AfterParam
+        public static void afterParam() {
+            fLog += "afterParam ";
+        }
+
+        @AfterClass
+        public static void after() {
+            fLog += "afterClass ";
+        }
+
+        private final String x;
+
+        public BeforeParamAndAfterParam(String x) {
+            this.x = x;
+        }
+
+        @Parameters
+        public static Collection<String> data() {
+            return Arrays.asList("A", "B");
+        }
+
+        @Test
+        public void first() {
+            fLog += "first(" + x + ") ";
+        }
+
+        @Test
+        public void second() {
+            fLog += "second(" + x + ") ";
+        }
+    }
+
+    @Test
+    public void beforeParamAndAfterParamAreRun() {
+        fLog = "";
+        final Result result = JUnitCore.runClasses(BeforeParamAndAfterParam.class);
+        assertEquals(0, result.getFailureCount());
+        assertEquals("beforeClass before(A) first(A) second(A) afterParam "
+                + "before(B) first(B) second(B) afterParam afterClass ", fLog);
+    }
+
+    @RunWith(Parameterized.class)
+    public static class BeforeParamAndAfterParamError {
+        @Parameterized.BeforeParam
+        public void beforeParam(String x) {
+        }
+
+        @Parameterized.AfterParam
+        private static void afterParam() {
+        }
+
+        public BeforeParamAndAfterParamError(String x) {
+        }
+
+        @Parameters
+        public static Collection<String> data() {
+            return Arrays.asList("A", "B");
+        }
+
+        @Test
+        public void test() {
+        }
+    }
+
+    @Test
+    public void beforeParamAndAfterParamValidation() {
+        fLog = "";
+        final Result result = JUnitCore.runClasses(BeforeParamAndAfterParamError.class);
+        assertEquals(1, result.getFailureCount());
+        assertThat(result.getFailures().get(0).getMessage(), containsString("beforeParam() should be static"));
+        assertThat(result.getFailures().get(0).getMessage(), containsString("afterParam() should be public"));
     }
 
     @RunWith(Parameterized.class)
