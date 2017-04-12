@@ -812,6 +812,42 @@ public class Assert {
         assertNotSame(null, unexpected, actual);
     }
 
+    /**
+     * Asserts that two {@link CharSequence} are the same. If they are not the same, an {@link AssertionError} is
+     * thrown.
+     *
+     * @param expected the object you expect
+     * @param actual the object to compare to
+     * @see CharSequence
+     * @see AssertionError
+     */
+    public static void assertContentEquals(CharSequence expected, CharSequence actual){
+        assertContentEquals(null,expected,actual);
+    }
+
+    /**
+     * Asserts that two {@link CharSequence} are the same. If they are not the same, an {@link AssertionError} is
+     * thrown with the given message.
+     *
+     * @param message the identifying message for the {@link AssertionError}
+     * @param expected the object you expect
+     * @param actual the object to compare to
+     * @see CharSequence
+     * @see AssertionError
+     */
+    public static void assertContentEquals(String message, CharSequence expected, CharSequence actual){
+        if((expected == null) && (actual == null)){
+            return;
+        }else{
+            if(expected == null || actual == null){
+                failNotEquals(message,expected,actual);
+            }
+        }
+
+        assertEquals(expected.length(),actual.length());
+        assertEquals(expected.toString(),actual.toString());
+    }
+
     private static void failSame(String message) {
         String formatted = "";
         if (message != null) {
