@@ -924,21 +924,21 @@ public class AssertionTest {
     public void assertContentsSingleNull() {
         CharSequence expected = "StringValue";
         CharSequence charSequence = null;
-        assertContentEquals(expected,charSequence);
+        assertContentEquals(expected, charSequence);
     }
 
     @Test(expected = AssertionError.class)
     public void assertContentEqualsNotEqualButSameLength() {
         CharSequence expected = "StringValue";
         CharSequence charSequence = new String("NotTheSame!");
-        assertContentEquals(expected,charSequence);
+        assertContentEquals(expected, charSequence);
     }
 
     @Test(expected = AssertionError.class)
     public void assertContentEqualsNotEqualDifferentLegth() {
         CharSequence expected = "StringValue";
         CharSequence charSequence = new String("NotTheSame");
-        assertContentEquals(expected,charSequence);
+        assertContentEquals(expected, charSequence);
     }
 
     private static class NestedException extends RuntimeException {
