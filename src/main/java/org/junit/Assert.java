@@ -813,39 +813,34 @@ public class Assert {
     }
 
     /**
-     * Asserts that two {@link CharSequence} are the same. If they are not the same, an {@link AssertionError} is
-     * thrown.
+     * Asserts that two {@link CharSequence} instances have the same contentsa.
+     * If they do not, an {@link AssertionError} is thrown.
      *
-     * @param expected the object you expect
+     * @param expected the expected contents
      * @param actual the object to compare to
-     * @see CharSequence
-     * @see AssertionError
      */
-    public static void assertContentEquals(CharSequence expected, CharSequence actual){
-        assertContentEquals(null,expected,actual);
+    public static void assertContentEquals(CharSequence expected, CharSequence actual)  {
+        assertContentEquals(null, expected, actual);
     }
 
     /**
-     * Asserts that two {@link CharSequence} are the same. If they are not the same, an {@link AssertionError} is
-     * thrown with the given message.
+     *Asserts that two {@link CharSequence} instances have the same contentsa.
+     * If they do not, an {@link AssertionError} is thrown with the given message.
      *
      * @param message the identifying message for the {@link AssertionError}
-     * @param expected the object you expect
+     * @param expected the expected contents
      * @param actual the object to compare to
-     * @see CharSequence
-     * @see AssertionError
      */
-    public static void assertContentEquals(String message, CharSequence expected, CharSequence actual){
-        if((expected == null) && (actual == null)){
+    public static void assertContentEquals(String message, CharSequence expected, CharSequence actual) {
+        if (expected == null && actual == null) {
             return;
-        }else{
-            if(expected == null || actual == null){
-                failNotEquals(message,expected,actual);
-            }
+        }
+        if (expected == null || actual == null) {
+            failNotEquals(message, expected, actual);
         }
 
-        assertEquals(expected.length(),actual.length());
-        assertEquals(expected.toString(),actual.toString());
+        assertEquals(expected.length(), actual.length());
+        assertEquals(expected.toString(), actual.toString());
     }
 
     private static void failSame(String message) {
