@@ -908,35 +908,35 @@ public class AssertionTest {
 
     @Test
     public void assertContentEqualsPass() throws Exception {
-        CharSequence expected = "StringValue";
+        String expected = "StringValue";
         CharSequence charSequence = new String("StringValue");
         assertContentEquals(expected,charSequence);
     }
 
     @Test
     public void assertContentEqualsPassBothNull() throws Exception {
-        CharSequence expected = null;
+        String  expected = null;
         CharSequence charSequence = null;
         assertContentEquals(expected,charSequence);
     }
 
     @Test(expected = AssertionError.class)
     public void assertContentsSingleNull() {
-        CharSequence expected = "StringValue";
+        String expected = "StringValue";
         CharSequence charSequence = null;
         assertContentEquals(expected, charSequence);
     }
 
     @Test(expected = AssertionError.class)
     public void assertContentEqualsNotEqualButSameLength() {
-        CharSequence expected = "StringValue";
+        String expected = "StringValue";
         CharSequence charSequence = new String("NotTheSame!");
         assertContentEquals(expected, charSequence);
     }
 
     @Test(expected = AssertionError.class)
     public void assertContentEqualsNotEqualDifferentLegth() {
-        CharSequence expected = "StringValue";
+        String expected = "StringValue";
         CharSequence charSequence = new String("NotTheSame");
         assertContentEquals(expected, charSequence);
     }

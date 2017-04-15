@@ -839,8 +839,8 @@ public class Assert {
             failNotEquals(message, expected, actual);
         }
 
-        assertEquals(expected.length(), actual.length());
-        assertEquals(expected, actual.toString());
+        assertEquals(message, expected.length(), actual.length());
+        assertEquals(message, expected, actual.toString());
     }
 
     private static void failSame(String message) {
