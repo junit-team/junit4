@@ -929,7 +929,9 @@ public class AssertionTest {
         } catch (AssertionError exception) {
             String expectedException = "expected:<StringValue> but was:<null>";
             assertEquals(expectedException, exception.getMessage());
+            return;
         }
+        fail("Expected an AssertionError");
     }
 
     @Test
@@ -941,7 +943,9 @@ public class AssertionTest {
         } catch (AssertionError exception) {
             String expectedException = "expected:<[StringValue]> but was:<[NotTheSame!]>";
            assertEquals(expectedException, exception.getMessage());
+            return;
         }
+        fail("Expected an AssertionError");
     }
 
     @Test
@@ -953,7 +957,9 @@ public class AssertionTest {
         } catch (AssertionError exception) {
             String expectedException = "expected:<11> but was:<10>";
             assertEquals(expectedException, exception.getMessage());
+            return;
         }
+        fail("Expected an AssertionError");
     }
 
     @Test
@@ -979,7 +985,9 @@ public class AssertionTest {
         } catch (AssertionError exception) {
             String expectedException = "My Message expected:<StringValue> but was:<null>";
             assertEquals(expectedException, exception.getMessage());
+            return;
         }
+        fail("Expected an AssertionError");
     }
 
     @Test
@@ -991,7 +999,9 @@ public class AssertionTest {
         } catch (AssertionError exception) {
             String expectedException = "My Message expected:<[StringValue]> but was:<[NotTheSame!]>";
             assertEquals(expectedException, exception.getMessage());
+            return;
         }
+        fail("Expected an AssertionError");
     }
 
     @Test
@@ -1003,7 +1013,9 @@ public class AssertionTest {
         } catch (AssertionError exception) {
             String expectedException = "My Message expected:<11> but was:<10>";
             assertEquals(expectedException, exception.getMessage());
+            return;
         }
+        fail("Expected an AssertionError");
     }
     private static class NestedException extends RuntimeException {
         private static final long serialVersionUID = 1L;
