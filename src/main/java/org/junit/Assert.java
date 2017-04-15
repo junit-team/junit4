@@ -819,7 +819,7 @@ public class Assert {
      * @param expected the expected contents
      * @param actual the object to compare to
      */
-    public static void assertContentEquals(CharSequence expected, CharSequence actual)  {
+    public static void assertContentEquals(String expected, CharSequence actual)  {
         assertContentEquals(null, expected, actual);
     }
 
@@ -831,7 +831,7 @@ public class Assert {
      * @param expected the expected contents
      * @param actual the object to compare to
      */
-    public static void assertContentEquals(String message, CharSequence expected, CharSequence actual) {
+    public static void assertContentEquals(String message, String expected, CharSequence actual) {
         if (expected == null && actual == null) {
             return;
         }
@@ -840,7 +840,7 @@ public class Assert {
         }
 
         assertEquals(expected.length(), actual.length());
-        assertEquals(expected.toString(), actual.toString());
+        assertEquals(expected, actual.toString());
     }
 
     private static void failSame(String message) {
