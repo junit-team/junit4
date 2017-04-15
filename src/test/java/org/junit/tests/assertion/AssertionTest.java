@@ -920,27 +920,91 @@ public class AssertionTest {
         assertContentEquals(expected,charSequence);
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void assertContentsSingleNull() {
         String expected = "StringValue";
         CharSequence charSequence = null;
-        assertContentEquals(expected, charSequence);
+        try {
+            assertContentEquals(expected, charSequence);
+        } catch (AssertionError exception) {
+            String expectedException = "expected:<StringValue> but was:<null>";
+            assertEquals(expectedException, exception.getMessage());
+        }
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void assertContentEqualsNotEqualButSameLength() {
         String expected = "StringValue";
         CharSequence charSequence = new String("NotTheSame!");
-        assertContentEquals(expected, charSequence);
+        try {
+            assertContentEquals(expected, charSequence);
+        } catch (AssertionError exception) {
+            String expectedException = "expected:<[StringValue]> but was:<[NotTheSame!]>";
+           assertEquals(expectedException, exception.getMessage());
+        }
     }
 
-    @Test(expected = AssertionError.class)
-    public void assertContentEqualsNotEqualDifferentLegth() {
+    @Test
+    public void assertContentEqualsNotEqualDifferentLength() {
         String expected = "StringValue";
         CharSequence charSequence = new String("NotTheSame");
-        assertContentEquals(expected, charSequence);
+        try {
+            assertContentEquals(expected, charSequence);
+        } catch (AssertionError exception) {
+            String expectedException = "expected:<11> but was:<10>";
+            assertEquals(expectedException, exception.getMessage());
+        }
     }
 
+    @Test
+    public void assertContentEqualsPassCustomMessage() throws Exception {
+        String expected = "StringValue";
+        CharSequence charSequence = new String("StringValue");
+        assertContentEquals("My Message", expected,charSequence);
+    }
+
+    @Test
+    public void assertContentEqualsPassBothNullCustomMessage() throws Exception {
+        String  expected = null;
+        CharSequence charSequence = null;
+        assertContentEquals("My Message", expected,charSequence);
+    }
+
+    @Test
+    public void assertContentsSingleNullCustomMessage() {
+        String expected = "StringValue";
+        CharSequence charSequence = null;
+        try {
+            assertContentEquals("My Message", expected, charSequence);
+        } catch (AssertionError exception) {
+            String expectedException = "My Message expected:<StringValue> but was:<null>";
+            assertEquals(expectedException, exception.getMessage());
+        }
+    }
+
+    @Test
+    public void assertContentEqualsNotEqualButSameLengthCustomMessage() {
+        String expected = "StringValue";
+        CharSequence charSequence = new String("NotTheSame!");
+        try {
+            assertContentEquals("My Message", expected, charSequence);
+        } catch (AssertionError exception) {
+            String expectedException = "My Message expected:<[StringValue]> but was:<[NotTheSame!]>";
+            assertEquals(expectedException, exception.getMessage());
+        }
+    }
+
+    @Test
+    public void assertContentEqualsNotEqualDifferentLengthCustomMessage() {
+        String expected = "StringValue";
+        CharSequence charSequence = new String("NotTheSame");
+        try {
+            assertContentEquals("My Message", expected, charSequence);
+        } catch (AssertionError exception) {
+            String expectedException = "My Message expected:<11> but was:<10>";
+            assertEquals(expectedException, exception.getMessage());
+        }
+    }
     private static class NestedException extends RuntimeException {
         private static final long serialVersionUID = 1L;
     }
