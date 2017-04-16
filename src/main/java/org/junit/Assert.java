@@ -116,9 +116,9 @@ public class Assert {
             String cleanMessage = message == null ? "" : message;
             throw new ComparisonFailure(cleanMessage, (String) expected,
                     (String) actual);
-        } else {
-            failNotEquals(message, expected, actual);
         }
+        
+        failNotEquals(message, expected, actual);
     }
 
     private static boolean equalsRegardingNull(Object expected, Object actual) {
