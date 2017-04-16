@@ -275,9 +275,9 @@ public class Parameterized extends Suite {
         validatePublicStaticVoidMethods(Parameterized.AfterParam.class, errors);
     }
 
-    private void validatePublicStaticVoidMethods(Class<? extends Annotation> annotation,
-                                                 List<Throwable> errors) {
-        final List<FrameworkMethod> methods = getTestClass().getAnnotatedMethods(annotation);
+    private void validatePublicStaticVoidMethods(
+            Class<? extends Annotation> annotation, List<Throwable> errors) {
+        List<FrameworkMethod> methods = getTestClass().getAnnotatedMethods(annotation);
         for (FrameworkMethod eachTestMethod : methods) {
             eachTestMethod.validatePublicVoid(true, errors);
         }

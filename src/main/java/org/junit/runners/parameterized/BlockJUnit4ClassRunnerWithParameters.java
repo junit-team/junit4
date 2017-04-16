@@ -137,7 +137,7 @@ public class BlockJUnit4ClassRunnerWithParameters extends
     }
 
     @Override
-    protected Statement classBlock(final RunNotifier notifier) {
+    protected Statement classBlock(RunNotifier notifier) {
         Statement statement = childrenInvoker(notifier);
         statement = withBeforeParams(statement);
         statement = withAfterParams(statement);
@@ -145,7 +145,7 @@ public class BlockJUnit4ClassRunnerWithParameters extends
     }
 
     private Statement withBeforeParams(Statement statement) {
-        final List<FrameworkMethod> befores = getTestClass()
+        List<FrameworkMethod> befores = getTestClass()
                 .getAnnotatedMethods(Parameterized.BeforeParam.class);
         return befores.isEmpty() ? statement : new RunBeforeParams(statement, befores);
     }
@@ -162,15 +162,16 @@ public class BlockJUnit4ClassRunnerWithParameters extends
         @Override
         public void evaluate() throws Throwable {
             for (FrameworkMethod before : befores) {
-                final int paramCount = before.getMethod().getParameterTypes().length;
-                before.invokeExplosively(null, paramCount == 0 ? (Object[]) null : parameters);
+                int paramCount = before.getMethod().getParameterTypes().length;
+                before.invokeExplosively(
+                        null, paramCount == 0 ? (Object[]) null : parameters);
             }
             next.evaluate();
         }
     }
 
     private Statement withAfterParams(Statement statement) {
-        final List<FrameworkMethod> afters = getTestClass()
+        List<FrameworkMethod> afters = getTestClass()
                 .getAnnotatedMethods(Parameterized.AfterParam.class);
         return afters.isEmpty() ? statement : new RunAfterParams(statement, afters);
     }
@@ -186,7 +187,7 @@ public class BlockJUnit4ClassRunnerWithParameters extends
 
         @Override
         public void evaluate() throws Throwable {
-            final List<Throwable> errors = new ArrayList<Throwable>();
+            List<Throwable> errors = new ArrayList<Throwable>();
             try {
                 next.evaluate();
             } catch (Throwable e) {
@@ -194,8 +195,9 @@ public class BlockJUnit4ClassRunnerWithParameters extends
             } finally {
                 for (FrameworkMethod each : afters) {
                     try {
-                        final int paramCount = each.getMethod().getParameterTypes().length;
-                        each.invokeExplosively(null, paramCount == 0 ? (Object[]) null : parameters);
+                        int paramCount = each.getMethod().getParameterTypes().length;
+                        each.invokeExplosively(
+                                null, paramCount == 0 ? (Object[]) null : parameters);
                     } catch (Throwable e) {
                         errors.add(e);
                     }

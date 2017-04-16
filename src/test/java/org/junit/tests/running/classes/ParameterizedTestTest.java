@@ -309,7 +309,7 @@ public class ParameterizedTestTest {
     @Test
     public void beforeParamAndAfterParamAreRun() {
         fLog = "";
-        final Result result = JUnitCore.runClasses(BeforeParamAndAfterParam.class);
+        Result result = JUnitCore.runClasses(BeforeParamAndAfterParam.class);
         assertEquals(0, result.getFailureCount());
         assertEquals("beforeClass before(A) first(A) second(A) afterParam "
                 + "before(B) first(B) second(B) afterParam afterClass ", fLog);
@@ -341,7 +341,7 @@ public class ParameterizedTestTest {
     @Test
     public void beforeParamAndAfterParamValidation() {
         fLog = "";
-        final Result result = JUnitCore.runClasses(BeforeParamAndAfterParamError.class);
+        Result result = JUnitCore.runClasses(BeforeParamAndAfterParamError.class);
         assertEquals(1, result.getFailureCount());
         assertThat(result.getFailures().get(0).getMessage(), containsString("beforeParam() should be static"));
         assertThat(result.getFailures().get(0).getMessage(), containsString("afterParam() should be public"));
