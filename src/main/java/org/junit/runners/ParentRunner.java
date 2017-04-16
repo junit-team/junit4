@@ -188,11 +188,14 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      */
     protected Statement classBlock(final RunNotifier notifier) {
         Statement statement = childrenInvoker(notifier);
-        if (!areAllChildrenIgnored()) {
-            statement = withBeforeClasses(statement);
-            statement = withAfterClasses(statement);
-            statement = withClassRules(statement);
+        if (areAllChildrenIgnored()) {
+            return statement;
         }
+
+        statement = withBeforeClasses(statement);
+        statement = withNotificationOfIgnoredChildren(statement, notifier);
+        statement = withAfterClasses(statement);
+        statement = withClassRules(statement);
         return statement;
     }
 
@@ -203,6 +206,29 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             }
         }
         return true;
+    }
+
+    /**
+     * Returns a {@link Statement}: notify all non-overridden {@code @Ignore} methods on this class
+     * and superclasses if the given {@code statement} throws an exception.
+     */
+    protected Statement withNotificationOfIgnoredChildren(final Statement statement,
+            final RunNotifier notifier) {
+        return new Statement() {
+            @Override
+            public void evaluate() throws Throwable {
+                try {
+                    statement.evaluate();
+                } catch (Throwable e) {
+                    runChildren(notifier, new ChildSelector<T>() {
+                        public boolean include(T child) {
+                            return isIgnored(child);
+                        }
+                    });
+                    throw e;
+                }
+            }
+        };
     }
 
     /**
@@ -265,7 +291,11 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         return new Statement() {
             @Override
             public void evaluate() {
-                runChildren(notifier);
+                runChildren(notifier, new ChildSelector<T>() {
+                    public boolean include(T child) {
+                        return true;
+                    }
+                });
             }
         };
     }
@@ -281,15 +311,21 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         return false;
     }
 
-    private void runChildren(final RunNotifier notifier) {
+    private static interface ChildSelector<T> {
+        boolean include(T child);
+    }
+
+    private void runChildren(final RunNotifier notifier, final ChildSelector<T> childSelector) {
         final RunnerScheduler currentScheduler = scheduler;
         try {
             for (final T each : getFilteredChildren()) {
-                currentScheduler.schedule(new Runnable() {
-                    public void run() {
-                        ParentRunner.this.runChild(each, notifier);
-                    }
-                });
+                if (childSelector.include(each)) {
+                    currentScheduler.schedule(new Runnable() {
+                        public void run() {
+                            ParentRunner.this.runChild(each, notifier);
+                        }
+                    });
+                }
             }
         } finally {
             currentScheduler.finished();
