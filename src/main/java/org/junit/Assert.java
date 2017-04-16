@@ -109,7 +109,11 @@ public class Assert {
      */
     public static void assertEquals(String message, Object expected,
             Object actual) {
-        if (equalsRegardingNull(expected, actual)) {
+        if (expected instanceof Double && actual instanceof Double) {
+            assertEquals(message, (Double) expected, (Double) actual, 0.0);
+        } else if (expected instanceof Float && actual instanceof Float) {
+            assertEquals(message, (Float) expected, (Float) actual, 0.0);
+        } else if (equalsRegardingNull(expected, actual)) {
             return;
         }
         if (expected instanceof String && actual instanceof String) {

@@ -401,6 +401,10 @@ public class AssertionTest {
         assertEquals(1l, 1l);
         assertEquals(1.0, 1.0, 0.0);
         assertEquals(1.0d, 1.0d, 0.0d);
+        assertEquals(new Double(0.0), new Double(-0.0), 0.0d);
+        assertEquals(new Double(0.0), new Double(-0.0));
+        assertEquals(new Float(0.0), new Float(-0.0), 0.0);
+        assertEquals(new Float(0.0), new Float(-0.0));
     }
 
     @Test(expected = AssertionError.class)
