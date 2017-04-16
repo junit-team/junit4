@@ -5,6 +5,8 @@ import java.io.StringWriter;
 
 import junit.framework.TestCase;
 import junit.runner.BaseTestRunner;
+import junit.runner.stackfilter.Packages;
+import junit.runner.stackfilter.TraceFilter;
 
 public class StackFilterTest extends TestCase {
     String fFiltered;
@@ -41,6 +43,8 @@ public class StackFilterTest extends TestCase {
     }
 
     public void testFilter() {
+        TraceFilter.setPackages(new Packages(new String[]{"junit", "java.lang.reflect"}));
+        BaseTestRunner.setPreference("filterstack", "true");
         assertEquals(fFiltered, BaseTestRunner.getFilteredTrace(fUnfiltered));
     }
 }
