@@ -955,7 +955,7 @@ public class AssertionTest {
         try {
             assertContentEquals(expected, charSequence);
         } catch (AssertionError exception) {
-            String expectedException = "expected:<11> but was:<10>";
+            String expectedException = "Contents different length expected:<11> but was:<10>";
             assertEquals(expectedException, exception.getMessage());
             return;
         }
@@ -1011,7 +1011,7 @@ public class AssertionTest {
         try {
             assertContentEquals("My Message", expected, charSequence);
         } catch (AssertionError exception) {
-            String expectedException = "My Message expected:<11> but was:<10>";
+            String expectedException = "My Message contents different length expected:<11> but was:<10>";
             assertEquals(expectedException, exception.getMessage());
             return;
         }

@@ -839,8 +839,13 @@ public class Assert {
             failNotEquals(message, expected, actual);
         }
 
-         assertEquals(message, expected.length(), actual.length());
-         assertEquals(message, expected, actual.toString());
+
+        assertEquals(contentsDifferentMessage(message), expected.length(), actual.length());
+        assertEquals(message, expected, actual.toString());
+    }
+
+    private static String contentsDifferentMessage(String message) {
+        return message == null ? "Contents different length" : message + " contents different length";
     }
 
     private static void failSame(String message) {
