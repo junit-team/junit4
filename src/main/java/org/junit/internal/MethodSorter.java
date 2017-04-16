@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import org.junit.FixMethodOrder;
+import org.junit.MethodOrder;
 
 public class MethodSorter {
     /**
@@ -20,6 +21,7 @@ public class MethodSorter {
             return NAME_ASCENDING.compare(m1, m2);
         }
     };
+    
 
     /**
      * Method name ascending lexicographic sort order, with {@link Method#toString()} as a tiebreaker
@@ -33,6 +35,30 @@ public class MethodSorter {
             return m1.toString().compareTo(m2.toString());
         }
     };
+    
+    /**
+     * Sort the test methods in the specified order (add {@link MethodOrder}
+     * annotation for all test methods required)
+     */
+    public static final Comparator<Method> SELECTED_ORDER = new Comparator<Method>() {
+        public int compare(Method firstMethod, Method secondMethod) {
+            if (firstMethod.getAnnotation(MethodOrder.class) == null
+                    || secondMethod.getAnnotation(MethodOrder.class) == null) {
+                return firstMethod.toString()
+                        .compareTo(secondMethod.toString());
+            }
+            int comparison = Integer.valueOf(
+                    firstMethod.getAnnotation(MethodOrder.class).value())
+                    .compareTo(
+                            secondMethod.getAnnotation(MethodOrder.class)
+                                    .value());
+            if (comparison != 0) {
+                return comparison;
+            }
+            return firstMethod.toString().compareTo(secondMethod.toString());
+        }
+    };
+    
 
     /**
      * Gets declared methods of a class in a predictable order, unless @FixMethodOrder(MethodSorters.JVM) is specified.

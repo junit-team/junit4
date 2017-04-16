@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.FixMethodOrder;
+import org.junit.MethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
@@ -177,6 +178,37 @@ public class MethodSorterTest {
     public void testAscendingMethodSorter() {
         List<String> expected = Arrays.asList(ALPHA, BETA, DELTA, EPSILON, GAMMA_VOID, GAMMA_BOOLEAN);
         List<String> actual = getDeclaredMethodNames(DummySortWithNameAsc.class);
+        assertEquals(expected, actual);
+    }
+    
+    @FixMethodOrder(MethodSorters.SELECTED_ORDER)
+    static class DummySortSelectedOrder {
+        @MethodOrder(4)
+        Object alpha(int i, double d, Thread t) {
+            return null;
+        }
+        @MethodOrder(5)
+        void beta(int[][] x) {
+        }
+        @MethodOrder(6)
+        int gamma() {
+            return 0;
+        }
+        @MethodOrder(2)
+        void gamma(boolean b) {
+        }
+        @MethodOrder(3)
+        void delta() {
+        }
+        @MethodOrder(1)
+        void epsilon() {
+        }
+    }
+
+    @Test
+    public void testSelectedOrderMethodSorter() {
+        List<String> expected = Arrays.asList(EPSILON,GAMMA_BOOLEAN, DELTA, ALPHA, BETA,GAMMA_VOID);
+        List<String> actual = getDeclaredMethodNames(DummySortSelectedOrder.class);
         assertEquals(expected, actual);
     }
 }
