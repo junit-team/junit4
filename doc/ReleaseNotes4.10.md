@@ -2,7 +2,7 @@
 
 Thanks to a full cast of contributors of bug fixes and new features.
 
-A full summary of commits between 4.9 and 4.10 is on [github](https://github.com/junit-team/junit4/compare/r4.9...4.10)
+A full summary of commits between 4.9 and 4.10 is on [github](https://github.com/junit-team/junit4/compare/r4.9...r4.10)
 
 ### junit-dep has correct contents ###
 
