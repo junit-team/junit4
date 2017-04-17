@@ -813,7 +813,7 @@ public class Assert {
     }
 
     /**
-     * Asserts that two {@link CharSequence} instances have the same contentsa.
+     * Asserts that two {@link CharSequence} instances have the same contents.
      * If they do not, an {@link AssertionError} is thrown.
      *
      * @param expected the expected contents
@@ -824,7 +824,7 @@ public class Assert {
     }
 
     /**
-     *Asserts that two {@link CharSequence} instances have the same contentsa.
+     * Asserts that two {@link CharSequence} instances have the same contents.
      * If they do not, an {@link AssertionError} is thrown with the given message.
      *
      * @param message the identifying message for the {@link AssertionError}
@@ -838,7 +838,6 @@ public class Assert {
         if (expected == null || actual == null) {
             failNotEquals(message, expected, actual);
         }
-
 
         assertEquals(contentsDifferentMessage(message), expected.length(), actual.length());
         assertEquals(message, expected, actual.toString());
