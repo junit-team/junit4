@@ -370,6 +370,52 @@ public class ParameterizedTestTest {
     }
 
     @RunWith(Parameterized.class)
+    @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+    public static class MultipleParametersBeforeParamAndAfterParam {
+        @Parameterized.BeforeParam
+        public static void before(String x, int y) {
+            fLog += "before(" + x + "," + y + ") ";
+        }
+
+        @Parameterized.AfterParam
+        public static void after(String x, int y) {
+            fLog += "after(" + x + "," + y + ") ";
+        }
+
+        private final String x;
+        private final int y;
+
+        public MultipleParametersBeforeParamAndAfterParam(String x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        @Parameters
+        public static Collection<Object[]> data() {
+            return Arrays.asList(new Object[]{"A", 1}, new Object[]{"B", 2});
+        }
+
+        @Test
+        public void first() {
+            fLog += "first(" + x + "," + y + ") ";
+        }
+
+        @Test
+        public void second() {
+            fLog += "second(" + x + "," + y + ") ";
+        }
+    }
+
+    @Test
+    public void multipleParametersBeforeParamAndAfterParamAreRun() {
+        fLog = "";
+        Result result = JUnitCore.runClasses(MultipleParametersBeforeParamAndAfterParam.class);
+        assertEquals(0, result.getFailureCount());
+        assertEquals("before(A,1) first(A,1) second(A,1) after(A,1) "
+                + "before(B,2) first(B,2) second(B,2) after(B,2) ", fLog);
+    }
+
+    @RunWith(Parameterized.class)
     public static class BeforeParamAndAfterParamError {
         @Parameterized.BeforeParam
         public void beforeParam(String x) {
