@@ -10,10 +10,11 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
-
 import org.junit.runner.Runner;
 import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.InvalidTestClassError;
 import org.junit.runners.model.TestClass;
 import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParametersFactory;
 import org.junit.runners.parameterized.ParametersRunnerFactory;
@@ -265,21 +266,37 @@ public class Parameterized extends Suite {
      * Only called reflectively. Do not use programmatically.
      */
     public Parameterized(Class<?> klass) throws Throwable {
-        super(klass, RunnersFactory.createRunnersForClass(klass));
+        this(klass, new RunnersFactory(klass));
     }
 
-    @Override
-    protected void collectInitializationErrors(List<Throwable> errors) {
-        super.collectInitializationErrors(errors);
-        validatePublicStaticVoidMethods(Parameterized.BeforeParam.class, errors);
-        validatePublicStaticVoidMethods(Parameterized.AfterParam.class, errors);
+    private Parameterized(Class<?> klass, RunnersFactory runnersFactory) throws Throwable {
+        super(klass, runnersFactory.createRunners());
+        validateBeforeParamAndAfterParamMethods(runnersFactory.getParameterCount());
+    }
+
+    private void validateBeforeParamAndAfterParamMethods(Integer parameterCount)
+            throws InvalidTestClassError {
+        List<Throwable> errors = new ArrayList<Throwable>();
+        validatePublicStaticVoidMethods(Parameterized.BeforeParam.class, parameterCount, errors);
+        validatePublicStaticVoidMethods(Parameterized.AfterParam.class, parameterCount, errors);
+        if (!errors.isEmpty()) {
+            throw new InvalidTestClassError(getTestClass().getJavaClass(), errors);
+        }
     }
 
     private void validatePublicStaticVoidMethods(
-            Class<? extends Annotation> annotation, List<Throwable> errors) {
+            Class<? extends Annotation> annotation, Integer parameterCount,
+            List<Throwable> errors) {
         List<FrameworkMethod> methods = getTestClass().getAnnotatedMethods(annotation);
-        for (FrameworkMethod eachTestMethod : methods) {
-            eachTestMethod.validatePublicVoid(true, errors);
+        for (FrameworkMethod fm : methods) {
+            fm.validatePublicVoid(true, errors);
+            if (parameterCount != null) {
+                final int methodParameterCount = fm.getMethod().getParameterTypes().length;
+                if (methodParameterCount != 0 && methodParameterCount != parameterCount) {
+                    errors.add(new Exception("Method " + fm.getName()
+                            + "() should have 0 or " + parameterCount + " parameter(s)"));
+                }
+            }
         }
     }
 
@@ -287,22 +304,35 @@ public class Parameterized extends Suite {
         private static final ParametersRunnerFactory DEFAULT_FACTORY = new BlockJUnit4ClassRunnerWithParametersFactory();
 
         private final TestClass testClass;
-
-        static List<Runner> createRunnersForClass(Class<?> klass)
-                throws Throwable {
-            return new RunnersFactory(klass).createRunners();
-        }
+        private Iterable<Object> allParameters;
 
         private RunnersFactory(Class<?> klass) {
             testClass = new TestClass(klass);
         }
 
+        private void evaluateParameters() throws Throwable {
+            if (allParameters == null) {
+                allParameters = allParameters();
+            }
+        }
+
         private List<Runner> createRunners() throws Throwable {
+            evaluateParameters();
             Parameters parameters = getParametersMethod().getAnnotation(
                     Parameters.class);
             return Collections.unmodifiableList(createRunnersForParameters(
-                    allParameters(), parameters.name(),
+                    allParameters, parameters.name(),
                     getParametersRunnerFactory()));
+        }
+
+        private Integer getParameterCount() throws Throwable {
+            evaluateParameters();
+            Iterator<Object> iterator = allParameters.iterator();
+            if (iterator.hasNext()) {
+                return normalizeParameters(iterator.next()).length;
+            } else {
+                return null;
+            }
         }
 
         private ParametersRunnerFactory getParametersRunnerFactory()
@@ -320,10 +350,14 @@ public class Parameterized extends Suite {
 
         private TestWithParameters createTestWithNotNormalizedParameters(
                 String pattern, int index, Object parametersOrSingleParameter) {
-            Object[] parameters = (parametersOrSingleParameter instanceof Object[]) ? (Object[]) parametersOrSingleParameter
-                    : new Object[] { parametersOrSingleParameter };
             return createTestWithParameters(testClass, pattern, index,
-                    parameters);
+                    normalizeParameters(parametersOrSingleParameter));
+        }
+
+        private static Object[] normalizeParameters(Object parametersOrSingleParameter) {
+            return parametersOrSingleParameter instanceof Object[]
+                    ? (Object[]) parametersOrSingleParameter
+                    : new Object[] { parametersOrSingleParameter };
         }
 
         @SuppressWarnings("unchecked")

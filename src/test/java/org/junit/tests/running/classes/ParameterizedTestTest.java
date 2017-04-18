@@ -448,6 +448,40 @@ public class ParameterizedTestTest {
     }
 
     @RunWith(Parameterized.class)
+    public static class BeforeParamAndAfterParamErrorNumberOfParameters {
+        @Parameterized.BeforeParam
+        public static void beforeParam(String x, String y) {
+        }
+
+        @Parameterized.AfterParam
+        public static void afterParam(String x, String y, String z) {
+        }
+
+        public BeforeParamAndAfterParamErrorNumberOfParameters(String x) {
+        }
+
+        @Parameters
+        public static Collection<String> data() {
+            return Arrays.asList("A", "B");
+        }
+
+        @Test
+        public void test() {
+        }
+    }
+
+    @Test
+    public void beforeParamAndAfterParamValidationNumberOfParameters() {
+        fLog = "";
+        Result result = JUnitCore.runClasses(BeforeParamAndAfterParamErrorNumberOfParameters.class);
+        assertEquals(1, result.getFailureCount());
+        assertThat(result.getFailures().get(0).getMessage(),
+                containsString("Method beforeParam() should have 0 or 1 parameter(s)"));
+        assertThat(result.getFailures().get(0).getMessage(),
+                containsString("Method afterParam() should have 0 or 1 parameter(s)"));
+    }
+
+    @RunWith(Parameterized.class)
     static public class EmptyTest {
         @BeforeClass
         public static void before() {
