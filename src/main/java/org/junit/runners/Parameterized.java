@@ -10,7 +10,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.junit.runner.Runner;
@@ -272,7 +271,7 @@ public class Parameterized extends Suite {
 
     private Parameterized(Class<?> klass, RunnersFactory runnersFactory) throws Throwable {
         super(klass, runnersFactory.createRunners());
-        validateBeforeParamAndAfterParamMethods(runnersFactory.getParameterCount());
+        validateBeforeParamAndAfterParamMethods(runnersFactory.parameterCount);
     }
 
     private void validateBeforeParamAndAfterParamMethods(Integer parameterCount)
@@ -305,35 +304,17 @@ public class Parameterized extends Suite {
         private static final ParametersRunnerFactory DEFAULT_FACTORY = new BlockJUnit4ClassRunnerWithParametersFactory();
 
         private final TestClass testClass;
-        private Iterable<Object> allParameters;
 
         private RunnersFactory(Class<?> klass) {
             testClass = new TestClass(klass);
         }
 
-        private void evaluateParameters() throws Throwable {
-            if (allParameters == null) {
-                allParameters = allParameters();
-            }
-        }
-
         private List<Runner> createRunners() throws Throwable {
-            evaluateParameters();
             Parameters parameters = getParametersMethod().getAnnotation(
                     Parameters.class);
             return Collections.unmodifiableList(createRunnersForParameters(
-                    allParameters, parameters.name(),
+                    allParameters(), parameters.name(),
                     getParametersRunnerFactory()));
-        }
-
-        private Integer getParameterCount() throws Throwable {
-            evaluateParameters();
-            Iterator<Object> iterator = allParameters.iterator();
-            if (iterator.hasNext()) {
-                return normalizeParameters(iterator.next()).length;
-            } else {
-                return null;
-            }
         }
 
         private ParametersRunnerFactory getParametersRunnerFactory()
@@ -349,16 +330,17 @@ public class Parameterized extends Suite {
             }
         }
 
+        private Integer parameterCount;
+
         private TestWithParameters createTestWithNotNormalizedParameters(
                 String pattern, int index, Object parametersOrSingleParameter) {
-            return createTestWithParameters(testClass, pattern, index,
-                    normalizeParameters(parametersOrSingleParameter));
-        }
-
-        private static Object[] normalizeParameters(Object parametersOrSingleParameter) {
-            return parametersOrSingleParameter instanceof Object[]
-                    ? (Object[]) parametersOrSingleParameter
+            final Object[] parameters = (parametersOrSingleParameter instanceof Object[]) ? (Object[]) parametersOrSingleParameter
                     : new Object[] { parametersOrSingleParameter };
+            if (parameterCount == null) {
+                parameterCount = parameters.length;
+            }
+            return createTestWithParameters(testClass, pattern, index,
+                    parameters);
         }
 
         @SuppressWarnings("unchecked")

@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -442,9 +443,10 @@ public class ParameterizedTestTest {
     public void beforeParamAndAfterParamValidation() {
         fLog = "";
         Result result = JUnitCore.runClasses(BeforeParamAndAfterParamError.class);
-        assertEquals(1, result.getFailureCount());
-        assertThat(result.getFailures().get(0).getMessage(), containsString("beforeParam() should be static"));
-        assertThat(result.getFailures().get(0).getMessage(), containsString("afterParam() should be public"));
+        final List<Failure> failures = result.getFailures();
+        assertThat(failures, hasSize(1));
+        assertThat(failures.get(0).getMessage(), containsString("beforeParam() should be static"));
+        assertThat(failures.get(0).getMessage(), containsString("afterParam() should be public"));
     }
 
     @RunWith(Parameterized.class)
@@ -462,7 +464,7 @@ public class ParameterizedTestTest {
 
         @Parameters
         public static Collection<String> data() {
-            return Arrays.asList("A", "B");
+            return Arrays.asList("A", "B", "C", "D");
         }
 
         @Test
@@ -474,10 +476,11 @@ public class ParameterizedTestTest {
     public void beforeParamAndAfterParamValidationNumberOfParameters() {
         fLog = "";
         Result result = JUnitCore.runClasses(BeforeParamAndAfterParamErrorNumberOfParameters.class);
-        assertEquals(1, result.getFailureCount());
-        assertThat(result.getFailures().get(0).getMessage(),
+        final List<Failure> failures = result.getFailures();
+        assertThat(failures, hasSize(1));
+        assertThat(failures.get(0).getMessage(),
                 containsString("Method beforeParam() should have 0 or 1 parameter(s)"));
-        assertThat(result.getFailures().get(0).getMessage(),
+        assertThat(failures.get(0).getMessage(),
                 containsString("Method afterParam() should have 0 or 1 parameter(s)"));
     }
 
