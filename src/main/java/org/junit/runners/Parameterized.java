@@ -334,7 +334,7 @@ public class Parameterized extends Suite {
 
         private TestWithParameters createTestWithNotNormalizedParameters(
                 String pattern, int index, Object parametersOrSingleParameter) {
-            final Object[] parameters = (parametersOrSingleParameter instanceof Object[]) ? (Object[]) parametersOrSingleParameter
+            Object[] parameters = (parametersOrSingleParameter instanceof Object[]) ? (Object[]) parametersOrSingleParameter
                     : new Object[] { parametersOrSingleParameter };
             if (parameterCount == null) {
                 parameterCount = parameters.length;
