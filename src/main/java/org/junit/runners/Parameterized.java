@@ -291,7 +291,7 @@ public class Parameterized extends Suite {
         for (FrameworkMethod fm : methods) {
             fm.validatePublicVoid(true, errors);
             if (parameterCount != null) {
-                final int methodParameterCount = fm.getMethod().getParameterTypes().length;
+                int methodParameterCount = fm.getMethod().getParameterTypes().length;
                 if (methodParameterCount != 0 && methodParameterCount != parameterCount) {
                     errors.add(new Exception("Method " + fm.getName()
                             + "() should have 0 or " + parameterCount + " parameter(s)"));
