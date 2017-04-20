@@ -137,7 +137,7 @@ import org.junit.runners.parameterized.TestWithParameters;
  * }
  * </pre>
  *
- * <h3>Executing code before/after executing tests for a specific parameter</h3>
+ * <h3>Executing code before/after executing tests for specific parameters</h3>
  * <p>
  * If your test needs to perform some preparation or cleanup based on the
  * parameters, this can be done by adding public static methods annotated with
