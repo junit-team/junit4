@@ -156,9 +156,9 @@ public class BlockJUnit4ClassRunnerWithParameters extends
         }
 
         @Override
-        protected void invokeMethod(FrameworkMethod before) throws Throwable {
-            int paramCount = before.getMethod().getParameterTypes().length;
-            before.invokeExplosively(null, paramCount == 0 ? (Object[]) null : parameters);
+        protected void invokeMethod(FrameworkMethod method) throws Throwable {
+            int paramCount = method.getMethod().getParameterTypes().length;
+            method.invokeExplosively(null, paramCount == 0 ? (Object[]) null : parameters);
         }
     }
 

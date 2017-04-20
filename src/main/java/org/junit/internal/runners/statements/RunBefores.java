@@ -26,7 +26,7 @@ public class RunBefores extends Statement {
         next.evaluate();
     }
 
-    protected void invokeMethod(FrameworkMethod before) throws Throwable {
-        before.invokeExplosively(target);
+    protected void invokeMethod(FrameworkMethod method) throws Throwable {
+        method.invokeExplosively(target);
     }
 }
