@@ -12,7 +12,9 @@ import static org.junit.experimental.results.PrintableResult.testResult;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -632,9 +634,14 @@ public class ParameterizedTestTest {
 
     @RunWith(Parameterized.class)
     static public class SingleArgumentTestWithIterable {
+        private static final AtomicBoolean dataCalled = new AtomicBoolean(false);
+
         @Parameters
         public static Iterable<? extends Object> data() {
-            return asList("first test", "second test");
+            if (!dataCalled.compareAndSet(false, true)) {
+                fail("Should not call @Parameters method more than once");
+            }
+            return new OneShotIterable<String>(asList("first test", "second test"));
         }
 
         public SingleArgumentTestWithIterable(Object argument) {
@@ -645,12 +652,51 @@ public class ParameterizedTestTest {
         }
   	}
 
+    private static class OneShotIterable<T> implements Iterable<T> {
+        private final Iterable<T> delegate;
+        private final AtomicBoolean iterated = new AtomicBoolean(false);
+
+        OneShotIterable(Iterable<T> delegate) {
+            this.delegate = delegate;
+        }
+
+        public Iterator<T> iterator() {
+            if (iterated.compareAndSet(false, true)) {
+                return delegate.iterator();
+            }
+            throw new IllegalStateException("Cannot call iterator() more than once");
+        }
+    }
+
     @Test
     public void runsForEverySingleArgumentOfIterable() {
         Result result= JUnitCore
                 .runClasses(SingleArgumentTestWithIterable.class);
         assertEquals(2, result.getRunCount());
     }
+
+    @RunWith(Parameterized.class)
+    static public class SingleArgumentTestWithCollection {
+        @Parameters
+        public static Iterable<? extends Object> data() {
+            return Collections.unmodifiableCollection(asList("first test", "second test"));
+        }
+
+        public SingleArgumentTestWithCollection(Object argument) {
+        }
+
+        @Test
+        public void aTest() {
+        }
+    }
+
+    @Test
+    public void runsForEverySingleArgumentOfCollection() {
+        Result result= JUnitCore
+                .runClasses(SingleArgumentTestWithCollection.class);
+        assertEquals(2, result.getRunCount());
+    }
+
 
     static public class ExceptionThrowingRunnerFactory implements
             ParametersRunnerFactory {
