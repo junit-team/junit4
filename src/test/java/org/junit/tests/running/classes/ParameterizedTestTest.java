@@ -4,7 +4,6 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -443,8 +442,8 @@ public class ParameterizedTestTest {
     public void beforeParamAndAfterParamValidation() {
         fLog = "";
         Result result = JUnitCore.runClasses(BeforeParamAndAfterParamError.class);
-        final List<Failure> failures = result.getFailures();
-        assertThat(failures, hasSize(1));
+        assertEquals(1, result.getFailureCount());
+        List<Failure> failures = result.getFailures();
         assertThat(failures.get(0).getMessage(), containsString("beforeParam() should be static"));
         assertThat(failures.get(0).getMessage(), containsString("afterParam() should be public"));
     }
@@ -476,8 +475,8 @@ public class ParameterizedTestTest {
     public void beforeParamAndAfterParamValidationNumberOfParameters() {
         fLog = "";
         Result result = JUnitCore.runClasses(BeforeParamAndAfterParamErrorNumberOfParameters.class);
-        final List<Failure> failures = result.getFailures();
-        assertThat(failures, hasSize(1));
+        assertEquals(1, result.getFailureCount());
+        List<Failure> failures = result.getFailures();
         assertThat(failures.get(0).getMessage(),
                 containsString("Method beforeParam() should have 0 or 1 parameter(s)"));
         assertThat(failures.get(0).getMessage(),

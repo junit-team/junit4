@@ -9,6 +9,7 @@ import java.lang.annotation.Target;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -269,7 +270,7 @@ public class Parameterized extends Suite {
         this(klass, new RunnersFactory(klass));
     }
 
-    private Parameterized(Class<?> klass, RunnersFactory runnersFactory) throws Throwable {
+    private Parameterized(Class<?> klass, RunnersFactory runnersFactory) throws Exception {
         super(klass, runnersFactory.createRunners());
         validateBeforeParamAndAfterParamMethods(runnersFactory.parameterCount);
     }
@@ -304,16 +305,23 @@ public class Parameterized extends Suite {
         private static final ParametersRunnerFactory DEFAULT_FACTORY = new BlockJUnit4ClassRunnerWithParametersFactory();
 
         private final TestClass testClass;
+        private final FrameworkMethod parametersMethod;
+        private final List<Object> allParameters;
+        private final int parameterCount;
 
-        private RunnersFactory(Class<?> klass) {
+
+        private RunnersFactory(Class<?> klass) throws Throwable {
             testClass = new TestClass(klass);
+            parametersMethod = getParametersMethod(testClass);
+            allParameters = allParameters(testClass, parametersMethod);
+            parameterCount =
+                    allParameters.isEmpty() ? 0 : normalizeParameters(allParameters.get(0)).length;
         }
 
-        private List<Runner> createRunners() throws Throwable {
-            Parameters parameters = getParametersMethod().getAnnotation(
-                    Parameters.class);
+        private List<Runner> createRunners() throws Exception {
+            Parameters parameters = parametersMethod.getAnnotation(Parameters.class);
             return Collections.unmodifiableList(createRunnersForParameters(
-                    allParameters(), parameters.name(),
+                    allParameters, parameters.name(),
                     getParametersRunnerFactory()));
         }
 
@@ -330,32 +338,39 @@ public class Parameterized extends Suite {
             }
         }
 
-        private Integer parameterCount;
-
         private TestWithParameters createTestWithNotNormalizedParameters(
                 String pattern, int index, Object parametersOrSingleParameter) {
-            Object[] parameters = (parametersOrSingleParameter instanceof Object[]) ? (Object[]) parametersOrSingleParameter
+            Object[] parameters = normalizeParameters(parametersOrSingleParameter);
+            return createTestWithParameters(testClass, pattern, index, parameters);
+        }
+
+        private static Object[] normalizeParameters(Object parametersOrSingleParameter) {
+            return (parametersOrSingleParameter instanceof Object[]) ? (Object[]) parametersOrSingleParameter
                     : new Object[] { parametersOrSingleParameter };
-            if (parameterCount == null) {
-                parameterCount = parameters.length;
-            }
-            return createTestWithParameters(testClass, pattern, index,
-                    parameters);
         }
 
         @SuppressWarnings("unchecked")
-        private Iterable<Object> allParameters() throws Throwable {
-            Object parameters = getParametersMethod().invokeExplosively(null);
-            if (parameters instanceof Iterable) {
-                return (Iterable<Object>) parameters;
+        private static List<Object> allParameters(
+                TestClass testClass, FrameworkMethod parametersMethod) throws Throwable {
+            Object parameters = parametersMethod.invokeExplosively(null);
+            if (parameters instanceof List) {
+                return (List<Object>) parameters;
+            } else if (parameters instanceof Collection) {
+                return new ArrayList<Object>((Collection<Object>) parameters);
+            } else if (parameters instanceof Iterable) {
+                List<Object> result = new ArrayList<Object>();
+                for (Object entry : ((Iterable<Object>) parameters)) {
+                    result.add(entry);
+                }
+                return result;
             } else if (parameters instanceof Object[]) {
                 return Arrays.asList((Object[]) parameters);
             } else {
-                throw parametersMethodReturnedWrongType();
+                throw parametersMethodReturnedWrongType(testClass, parametersMethod);
             }
         }
 
-        private FrameworkMethod getParametersMethod() throws Exception {
+        private static FrameworkMethod getParametersMethod(TestClass testClass) throws Exception {
             List<FrameworkMethod> methods = testClass
                     .getAnnotatedMethods(Parameters.class);
             for (FrameworkMethod each : methods) {
@@ -381,7 +396,7 @@ public class Parameterized extends Suite {
                 }
                 return runners;
             } catch (ClassCastException e) {
-                throw parametersMethodReturnedWrongType();
+                throw parametersMethodReturnedWrongType(testClass, parametersMethod);
             }
         }
 
@@ -397,9 +412,10 @@ public class Parameterized extends Suite {
             return children;
         }
 
-        private Exception parametersMethodReturnedWrongType() throws Exception {
+        private static Exception parametersMethodReturnedWrongType(
+                TestClass testClass, FrameworkMethod parametersMethod) throws Exception {
             String className = testClass.getName();
-            String methodName = getParametersMethod().getName();
+            String methodName = parametersMethod.getName();
             String message = MessageFormat.format(
                     "{0}.{1}() must return an Iterable of arrays.", className,
                     methodName);
