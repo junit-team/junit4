@@ -252,7 +252,7 @@ public class Parameterized extends Suite {
 
     /**
      * Annotation for {@code public static void} methods which should be executed before
-     * evaluating tests with a particular parameter.
+     * evaluating tests with particular parameters.
      *
      * @see org.junit.BeforeClass
      * @see org.junit.Before
@@ -265,7 +265,7 @@ public class Parameterized extends Suite {
 
     /**
      * Annotation for {@code public static void} methods which should be executed after
-     * evaluating tests with a particular parameter.
+     * evaluating tests with particular parameters.
      *
      * @see org.junit.AfterClass
      * @see org.junit.After
