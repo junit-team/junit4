@@ -30,12 +30,16 @@ public class RunAfters extends Statement {
         } finally {
             for (FrameworkMethod each : afters) {
                 try {
-                    each.invokeExplosively(target);
+                    invokeMethod(each);
                 } catch (Throwable e) {
                     errors.add(e);
                 }
             }
         }
         MultipleFailureException.assertEmpty(errors);
+    }
+
+    protected void invokeMethod(FrameworkMethod method) throws Throwable {
+        method.invokeExplosively(target);
     }
 }
