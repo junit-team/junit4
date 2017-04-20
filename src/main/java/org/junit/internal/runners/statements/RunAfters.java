@@ -39,6 +39,9 @@ public class RunAfters extends Statement {
         MultipleFailureException.assertEmpty(errors);
     }
 
+    /**
+     * @since 4.13
+     */
     protected void invokeMethod(FrameworkMethod method) throws Throwable {
         method.invokeExplosively(target);
     }
