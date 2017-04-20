@@ -137,6 +137,19 @@ import org.junit.runners.parameterized.TestWithParameters;
  * }
  * </pre>
  *
+ * <h3>Executing code before/after executing tests for a specific parameter</h3>
+ * <p>
+ * If your test needs to perform some preparation or cleanup based on the parameters this can be
+ * done by adding public static methods annotated with &#064;BeforeParam/&#064;AfterParam,
+ * such methods should either have no parameters or have same parameters as the test.
+ * <pre>
+ * &#064;BeforeParam
+ * public static void beforeTestsForParameter(String onlyParameter) {
+ *     System.out.println("Testing " + onlyParameter);
+ * }
+ * </pre>
+ * </p>
+ *
  * <h3>Create different runners</h3>
  * <p>
  * By default the {@code Parameterized} runner creates a slightly modified
