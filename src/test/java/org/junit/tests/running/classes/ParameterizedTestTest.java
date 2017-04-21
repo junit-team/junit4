@@ -3,8 +3,8 @@ package org.junit.tests.running.classes;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.experimental.results.PrintableResult.testResult;
@@ -12,10 +12,13 @@ import static org.junit.experimental.results.PrintableResult.testResult;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
@@ -24,6 +27,7 @@ import org.junit.runner.Result;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.Failure;
+import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
@@ -260,6 +264,228 @@ public class ParameterizedTestTest {
     }
 
     @RunWith(Parameterized.class)
+    @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+    public static class BeforeParamAndAfterParam {
+        @BeforeClass
+        public static void before() {
+            fLog += "beforeClass ";
+        }
+
+        @Parameterized.BeforeParam
+        public static void beforeParam(String x) {
+            fLog += "before(" + x + ") ";
+        }
+
+        @Parameterized.AfterParam
+        public static void afterParam() {
+            fLog += "afterParam ";
+        }
+
+        @AfterClass
+        public static void after() {
+            fLog += "afterClass ";
+        }
+
+        private final String x;
+
+        public BeforeParamAndAfterParam(String x) {
+            this.x = x;
+        }
+
+        @Parameters
+        public static Collection<String> data() {
+            return Arrays.asList("A", "B");
+        }
+
+        @Test
+        public void first() {
+            fLog += "first(" + x + ") ";
+        }
+
+        @Test
+        public void second() {
+            fLog += "second(" + x + ") ";
+        }
+    }
+
+    @Test
+    public void beforeParamAndAfterParamAreRun() {
+        fLog = "";
+        Result result = JUnitCore.runClasses(BeforeParamAndAfterParam.class);
+        assertEquals(0, result.getFailureCount());
+        assertEquals("beforeClass before(A) first(A) second(A) afterParam "
+                + "before(B) first(B) second(B) afterParam afterClass ", fLog);
+    }
+
+    @RunWith(Parameterized.class)
+    @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+    public static class MultipleBeforeParamAndAfterParam {
+        @Parameterized.BeforeParam
+        public static void before1() {
+            fLog += "before1() ";
+        }
+
+        @Parameterized.BeforeParam
+        public static void before2(String x) {
+            fLog += "before2(" + x + ") ";
+        }
+
+        @Parameterized.AfterParam
+        public static void after2() {
+            fLog += "after2() ";
+        }
+
+        @Parameterized.AfterParam
+        public static void after1(String x) {
+            fLog += "after1(" + x + ") ";
+        }
+
+        private final String x;
+
+        public MultipleBeforeParamAndAfterParam(String x) {
+            this.x = x;
+        }
+
+        @Parameters
+        public static Collection<String> data() {
+            return Arrays.asList("A", "B");
+        }
+
+        @Test
+        public void first() {
+            fLog += "first(" + x + ") ";
+        }
+
+        @Test
+        public void second() {
+            fLog += "second(" + x + ") ";
+        }
+    }
+
+    @Test
+    public void multipleBeforeParamAndAfterParamAreRun() {
+        fLog = "";
+        Result result = JUnitCore.runClasses(MultipleBeforeParamAndAfterParam.class);
+        assertEquals(0, result.getFailureCount());
+        assertEquals("before1() before2(A) first(A) second(A) after1(A) after2() "
+                + "before1() before2(B) first(B) second(B) after1(B) after2() ", fLog);
+    }
+
+    @RunWith(Parameterized.class)
+    @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+    public static class MultipleParametersBeforeParamAndAfterParam {
+        @Parameterized.BeforeParam
+        public static void before(String x, int y) {
+            fLog += "before(" + x + "," + y + ") ";
+        }
+
+        @Parameterized.AfterParam
+        public static void after(String x, int y) {
+            fLog += "after(" + x + "," + y + ") ";
+        }
+
+        private final String x;
+        private final int y;
+
+        public MultipleParametersBeforeParamAndAfterParam(String x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        @Parameters
+        public static Collection<Object[]> data() {
+            return Arrays.asList(new Object[]{"A", 1}, new Object[]{"B", 2});
+        }
+
+        @Test
+        public void first() {
+            fLog += "first(" + x + "," + y + ") ";
+        }
+
+        @Test
+        public void second() {
+            fLog += "second(" + x + "," + y + ") ";
+        }
+    }
+
+    @Test
+    public void multipleParametersBeforeParamAndAfterParamAreRun() {
+        fLog = "";
+        Result result = JUnitCore.runClasses(MultipleParametersBeforeParamAndAfterParam.class);
+        assertEquals(0, result.getFailureCount());
+        assertEquals("before(A,1) first(A,1) second(A,1) after(A,1) "
+                + "before(B,2) first(B,2) second(B,2) after(B,2) ", fLog);
+    }
+
+    @RunWith(Parameterized.class)
+    public static class BeforeParamAndAfterParamError {
+        @Parameterized.BeforeParam
+        public void beforeParam(String x) {
+        }
+
+        @Parameterized.AfterParam
+        private static void afterParam() {
+        }
+
+        public BeforeParamAndAfterParamError(String x) {
+        }
+
+        @Parameters
+        public static Collection<String> data() {
+            return Arrays.asList("A", "B");
+        }
+
+        @Test
+        public void test() {
+        }
+    }
+
+    @Test
+    public void beforeParamAndAfterParamValidation() {
+        fLog = "";
+        Result result = JUnitCore.runClasses(BeforeParamAndAfterParamError.class);
+        assertEquals(1, result.getFailureCount());
+        List<Failure> failures = result.getFailures();
+        assertThat(failures.get(0).getMessage(), containsString("beforeParam() should be static"));
+        assertThat(failures.get(0).getMessage(), containsString("afterParam() should be public"));
+    }
+
+    @RunWith(Parameterized.class)
+    public static class BeforeParamAndAfterParamErrorNumberOfParameters {
+        @Parameterized.BeforeParam
+        public static void beforeParam(String x, String y) {
+        }
+
+        @Parameterized.AfterParam
+        public static void afterParam(String x, String y, String z) {
+        }
+
+        public BeforeParamAndAfterParamErrorNumberOfParameters(String x) {
+        }
+
+        @Parameters
+        public static Collection<String> data() {
+            return Arrays.asList("A", "B", "C", "D");
+        }
+
+        @Test
+        public void test() {
+        }
+    }
+
+    @Test
+    public void beforeParamAndAfterParamValidationNumberOfParameters() {
+        fLog = "";
+        Result result = JUnitCore.runClasses(BeforeParamAndAfterParamErrorNumberOfParameters.class);
+        assertEquals(1, result.getFailureCount());
+        List<Failure> failures = result.getFailures();
+        assertThat(failures.get(0).getMessage(),
+                containsString("Method beforeParam() should have 0 or 1 parameter(s)"));
+        assertThat(failures.get(0).getMessage(),
+                containsString("Method afterParam() should have 0 or 1 parameter(s)"));
+    }
+
+    @RunWith(Parameterized.class)
     static public class EmptyTest {
         @BeforeClass
         public static void before() {
@@ -408,9 +634,14 @@ public class ParameterizedTestTest {
 
     @RunWith(Parameterized.class)
     static public class SingleArgumentTestWithIterable {
+        private static final AtomicBoolean dataCalled = new AtomicBoolean(false);
+
         @Parameters
         public static Iterable<? extends Object> data() {
-            return asList("first test", "second test");
+            if (!dataCalled.compareAndSet(false, true)) {
+                fail("Should not call @Parameters method more than once");
+            }
+            return new OneShotIterable<String>(asList("first test", "second test"));
         }
 
         public SingleArgumentTestWithIterable(Object argument) {
@@ -421,12 +652,51 @@ public class ParameterizedTestTest {
         }
   	}
 
+    private static class OneShotIterable<T> implements Iterable<T> {
+        private final Iterable<T> delegate;
+        private final AtomicBoolean iterated = new AtomicBoolean(false);
+
+        OneShotIterable(Iterable<T> delegate) {
+            this.delegate = delegate;
+        }
+
+        public Iterator<T> iterator() {
+            if (iterated.compareAndSet(false, true)) {
+                return delegate.iterator();
+            }
+            throw new IllegalStateException("Cannot call iterator() more than once");
+        }
+    }
+
     @Test
     public void runsForEverySingleArgumentOfIterable() {
         Result result= JUnitCore
                 .runClasses(SingleArgumentTestWithIterable.class);
         assertEquals(2, result.getRunCount());
     }
+
+    @RunWith(Parameterized.class)
+    static public class SingleArgumentTestWithCollection {
+        @Parameters
+        public static Iterable<? extends Object> data() {
+            return Collections.unmodifiableCollection(asList("first test", "second test"));
+        }
+
+        public SingleArgumentTestWithCollection(Object argument) {
+        }
+
+        @Test
+        public void aTest() {
+        }
+    }
+
+    @Test
+    public void runsForEverySingleArgumentOfCollection() {
+        Result result= JUnitCore
+                .runClasses(SingleArgumentTestWithCollection.class);
+        assertEquals(2, result.getRunCount());
+    }
+
 
     static public class ExceptionThrowingRunnerFactory implements
             ParametersRunnerFactory {
