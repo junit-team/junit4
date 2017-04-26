@@ -136,6 +136,7 @@
                 </includes>
             </resource>
         </resources>
+        <pluginManagement>
         <plugins>
             <!--
             Both "org.apache" and "org.codehaus" are default providers of MOJO plugins
@@ -380,6 +381,7 @@
                 <version>2.7</version>
             </plugin>
         </plugins>
+        </pluginManagement>
     </build>
 
     <reporting>
