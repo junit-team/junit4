@@ -245,6 +245,13 @@ public class ExpectedException implements TestRule {
         return this;
     }
 
+    /**
+     * Check if any Exception is expected.
+     */
+    public boolean isAnyExceptionExpected() {
+        return matcherBuilder.expectsThrowable();
+    }
+
     private class ExpectedExceptionStatement extends Statement {
         private final Statement next;
 
@@ -272,10 +279,6 @@ public class ExpectedException implements TestRule {
         } else {
             throw e;
         }
-    }
-
-    private boolean isAnyExceptionExpected() {
-        return matcherBuilder.expectsThrowable();
     }
 
     private void failDueToMissingException() throws AssertionError {
