@@ -247,8 +247,9 @@ public class ExpectedException implements TestRule {
 
     /**
      * Check if any Exception is expected.
+     * @since 4.13
      */
-    public boolean isAnyExceptionExpected() {
+    public final boolean isAnyExceptionExpected() {
         return matcherBuilder.expectsThrowable();
     }
 
