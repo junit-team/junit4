@@ -1,6 +1,7 @@
 package org.junit.runners.parameterized;
 
 import static java.util.Collections.unmodifiableList;
+import static org.junit.internal.Checks.notNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,11 +73,5 @@ public class TestWithParameters {
     public String toString() {
         return testClass.getName() + " '" + name + "' with parameters "
                 + parameters;
-    }
-
-    private static void notNull(Object value, String message) {
-        if (value == null) {
-            throw new NullPointerException(message);
-        }
     }
 }

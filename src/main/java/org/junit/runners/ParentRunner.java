@@ -1,5 +1,6 @@
 package org.junit.runners;
 
+import static org.junit.internal.Checks.notNull;
 import static org.junit.internal.runners.rules.RuleMemberValidator.CLASS_RULE_METHOD_VALIDATOR;
 import static org.junit.internal.runners.rules.RuleMemberValidator.CLASS_RULE_VALIDATOR;
 
@@ -92,7 +93,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     * @since 4.13
     */
     protected ParentRunner(TestClass testClass) throws InitializationError {
-       this.testClass = testClass;
+       this.testClass = notNull(testClass);
        validate();
     }
 
