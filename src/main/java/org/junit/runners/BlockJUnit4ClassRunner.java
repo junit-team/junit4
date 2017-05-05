@@ -30,6 +30,7 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
+import org.junit.runners.model.TestClass;
 import org.junit.validator.PublicClassValidator;
 import org.junit.validator.TestClassValidator;
 
@@ -68,6 +69,16 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      * @throws InitializationError if the test class is malformed.
      */
     public BlockJUnit4ClassRunner(Class<?> testClass) throws InitializationError {
+        super(testClass);
+    }
+
+    /**
+     * Creates a BlockJUnit4ClassRunner to run {@code testClass}.
+     *
+     * @throws InitializationError if the test class is malformed.
+     * @since 4.13
+     */
+    protected BlockJUnit4ClassRunner(TestClass testClass) throws InitializationError {
         super(testClass);
     }
 
