@@ -1,6 +1,7 @@
 package org.junit.runners;
 
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.TestClass;
 
 /**
  * Aliases the current default JUnit 4 class runner, for future-proofing. If
@@ -19,6 +20,6 @@ public final class JUnit4 extends BlockJUnit4ClassRunner {
      * Constructs a new instance of the default runner
      */
     public JUnit4(Class<?> klass) throws InitializationError {
-        super(klass);
+        super(new TestClass(klass));
     }
 }
