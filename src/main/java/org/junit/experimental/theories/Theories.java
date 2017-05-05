@@ -73,6 +73,11 @@ public class Theories extends BlockJUnit4ClassRunner {
         super(klass);
     }
 
+    /** @since 4.13 */
+    protected Theories(TestClass testClass) throws InitializationError {
+        super(testClass);
+    }
+
     @Override
     protected void collectInitializationErrors(List<Throwable> errors) {
         super.collectInitializationErrors(errors);
@@ -215,7 +220,7 @@ public class Theories extends BlockJUnit4ClassRunner {
 
         protected void runWithCompleteAssignment(final Assignments complete)
                 throws Throwable {
-            new BlockJUnit4ClassRunner(getTestClass().getJavaClass()) {
+            new BlockJUnit4ClassRunner(getTestClass()) {
                 @Override
                 protected void collectInitializationErrors(
                         List<Throwable> errors) {
