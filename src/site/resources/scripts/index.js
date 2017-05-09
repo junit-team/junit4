@@ -1,6 +1,6 @@
 $(document).ready(function(){
     $('#main-carousel').carousel({
-        interval:5000
+        interval:10000
     });
 
     $('#main-carousel-prev').on("click", function () {

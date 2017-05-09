@@ -24,6 +24,7 @@
   <body>
     <head>
       <link rel="stylesheet" href="@relativePath@/css/plain-links.css" />
+      <link rel="stylesheet" href="@relativePath@/css/carousel.css" />
     </head>
     <breadcrumbs>
       <item name="JUnit" href="http://junit.org/" />
@@ -33,6 +34,10 @@
       <item name="Introduction" href="index.html"/>
       <item name="Frequently asked questions" href="faq.html"/>
       <item name="Cookbook" href="cookbook.html"/>
+    </menu>
+
+    <menu name="Crowdfunding">
+      <item name="JUnit Lambda" href="junit-lambda.html"/>
     </menu>
 
     <menu ref="reports" inherit="bottom" />
