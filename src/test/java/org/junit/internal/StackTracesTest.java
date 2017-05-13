@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.Callable;
@@ -20,7 +21,6 @@ import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.AfterClass;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -161,7 +161,7 @@ public class StackTracesTest {
 
     @Test
     public void getTrimmedStackWithSuppressedExceptions() {
-        Assume.assumeNotNull("Running on 1.7+", TestWithSuppressedException.addSuppressed != null);
+        assumeTrue("Running on 1.7+", TestWithSuppressedException.addSuppressed != null);
         Result result = runTest(TestWithSuppressedException.class);
         assertEquals("Should run the test", 1, result.getRunCount());
         assertEquals("One test should fail", 1, result.getFailureCount());
