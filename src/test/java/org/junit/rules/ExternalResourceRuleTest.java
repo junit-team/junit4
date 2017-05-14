@@ -84,6 +84,41 @@ public class ExternalResourceRuleTest {
     }
 
     @Test
+    public void shouldThrowMultipleFailureExceptionWhenTestFailsAndClosingResourceFails2()
+            throws Throwable {
+        ExternalResource resourceRule1 = new ExternalResource() {
+            @Override
+            protected void after() {
+                throw new RuntimeException("simulating resource1 tear down failure");
+            }
+        };
+        ExternalResource resourceRule2 = new ExternalResource() {
+            @Override
+            protected void after() {
+                throw new RuntimeException("simulating resource2 tear down failure");
+            }
+        };
+        Statement failingTest = new Fail(new RuntimeException("simulated test failure"));
+        Description dummyDescription = Description.createTestDescription(
+                "dummy test class name", "dummy test name");
+
+        try {
+            Statement statement = resourceRule1.apply(failingTest, dummyDescription);
+            statement = resourceRule2.apply(statement, dummyDescription);
+            statement.evaluate();
+            fail("ExternalResource should throw");
+        } catch (MultipleFailureException e) {
+            assertEquals(3, e.getFailures().size());
+            assertThat(e.getMessage(), allOf(
+                    containsString("There were 3 errors:"),
+                    containsString("simulated test failure"),
+                    containsString("simulating resource1 tear down failure"),
+                    containsString("simulating resource2 tear down failure")
+            ));
+        }
+    }
+
+    @Test
     public void shouldWrapAssumptionFailuresWhenClosingResourceFails() throws Throwable {
         // given
         final AtomicReference<Throwable> externalResourceException = new AtomicReference<Throwable>();

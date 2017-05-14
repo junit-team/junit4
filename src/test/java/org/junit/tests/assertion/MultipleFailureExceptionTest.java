@@ -4,12 +4,14 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.lang.annotation.AnnotationFormatError;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -105,6 +107,23 @@ public class MultipleFailureExceptionTest {
             Throwable cause = ((TestCouldNotBeSkippedException) first).getCause();
             assertThat(cause, instanceOf(AssumptionViolatedException.class));
             assertThat((AssumptionViolatedException) cause, CoreMatchers.sameInstance(assumptionViolatedException));
+        }
+    }
+
+    @Test
+    public void assertNestedMultipleFailureExceptionIsUnwrapped() throws Exception {
+        RuntimeException error1 = new RuntimeException("error1");
+        RuntimeException error2 = new RuntimeException("error2");
+        MultipleFailureException intermediate =
+                new MultipleFailureException(Arrays.<Throwable>asList(error1, error2));
+        RuntimeException error3 = new RuntimeException("error3");
+        try {
+            MultipleFailureException.assertEmpty(Arrays.<Throwable>asList(intermediate, error3));
+            fail();
+        } catch (MultipleFailureException expected) {
+            assertThat(expected.getFailures().size(), equalTo(3));
+            assertArrayEquals(new Object[]{error1, error2, error3},
+                    expected.getFailures().toArray());
         }
     }
 

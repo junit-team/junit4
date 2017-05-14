@@ -33,9 +33,13 @@ public class MultipleFailureException extends Exception {
         this.fErrors = new ArrayList<Throwable>(errors.size());
         for (Throwable error : errors) {
             if (error instanceof AssumptionViolatedException) {
-                error = new TestCouldNotBeSkippedException((AssumptionViolatedException) error);
+                fErrors.add(
+                        new TestCouldNotBeSkippedException((AssumptionViolatedException) error));
+            } else if (error instanceof MultipleFailureException) {
+                fErrors.addAll(((MultipleFailureException) error).fErrors);
+            } else {
+                fErrors.add(error);
             }
-            fErrors.add(error);
         }
     }
 
