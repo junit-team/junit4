@@ -79,7 +79,7 @@ public abstract class RunnerBuilder {
 
     private void configureRunner(Runner runner) throws InvalidOrderingException {
         Description description = runner.getDescription();
-        OrderWith orderWith =  description.getAnnotation(OrderWith.class);
+        OrderWith orderWith = description.getAnnotation(OrderWith.class);
         if (orderWith != null) {
             Ordering ordering = Ordering.definedBy(orderWith.value(), description);
             ordering.apply(runner);

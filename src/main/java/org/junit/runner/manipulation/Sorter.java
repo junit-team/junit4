@@ -10,7 +10,8 @@ import org.junit.runner.Description;
 
 /**
  * A <code>Sorter</code> orders tests. In general you will not need
- * to use a <code>Sorter</code> directly. Instead, use {@link org.junit.runner.Request#sortWith(Comparator)}.
+ * to use a <code>Sorter</code> directly. Instead, use
+ * {@link org.junit.runner.Request#sortWith(Comparator)}.
  *
  * @since 4.0
  */

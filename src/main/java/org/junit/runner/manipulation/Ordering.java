@@ -15,7 +15,7 @@ import org.junit.runner.OrderWith;
 /**
  * Reorders tests. An {@code Ordering} can reverse the order of tests, sort the
  * order or even shuffle the order.
- * 
+ *
  * <p>In general you will not need to use a <code>Ordering</code> directly.
  * Instead, use {@link org.junit.runner.Request#orderWith(Ordering)}.
  *
@@ -23,7 +23,8 @@ import org.junit.runner.OrderWith;
  */
 public abstract class Ordering {
     private static final String CONSTRUCTOR_ERROR_FORMAT
-            = "Ordering class %s should have a public constructor with signature %s(Ordering.Context context)";
+            = "Ordering class %s should have a public constructor with signature "
+                    + "%s(Ordering.Context context)";
 
     /**
      * Creates an {@link Ordering} that shuffles the items using the given
@@ -66,11 +67,14 @@ public abstract class Ordering {
         Ordering.Context context = new Ordering.Context(annotatedTestClass);
 
         try {
-            Constructor<? extends Ordering> constructor = orderingClass.getConstructor(Ordering.Context.class);
+            Constructor<? extends Ordering> constructor = orderingClass.getConstructor(
+                    Ordering.Context.class);
             return constructor.newInstance(context);
         } catch (NoSuchMethodException e) {
             throw new InvalidOrderingException(String.format(
-                    CONSTRUCTOR_ERROR_FORMAT, getClassName(orderingClass), orderingClass.getSimpleName()));
+                    CONSTRUCTOR_ERROR_FORMAT,
+                    getClassName(orderingClass),
+                    orderingClass.getSimpleName()));
         } catch (Exception e) {
             throw new InvalidOrderingException(
                     "Could not create ordering for " + annotatedTestClass, e);
@@ -88,7 +92,8 @@ public abstract class Ordering {
     /**
      * Order the tests in <code>target</code> using this ordering.
      *
-     * @throws InvalidOrderingException if ordering does something invalid (like remove or add children)
+     * @throws InvalidOrderingException if ordering does something invalid (like remove or add
+     * children)
      */
     public void apply(Object target) throws InvalidOrderingException {
         /*
@@ -113,7 +118,8 @@ public abstract class Ordering {
      *
      * @return descriptions in order
      */
-    public final List<Description> order(Collection<Description> descriptions) throws InvalidOrderingException {
+    public final List<Description> order(Collection<Description> descriptions)
+            throws InvalidOrderingException {
         List<Description> inOrder = orderItems(Collections.unmodifiableCollection(descriptions));
         if (!validateOrderingIsCorrect()) {
             return inOrder;

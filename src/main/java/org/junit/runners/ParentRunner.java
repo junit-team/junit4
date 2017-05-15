@@ -269,7 +269,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     protected Statement childrenInvoker(final RunNotifier notifier) {
         return new Statement() {
             @Override
-            public void evaluate() throws Exception {
+            public void evaluate() {
                 runChildren(notifier);
             }
         };
@@ -286,7 +286,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         return false;
     }
 
-    private void runChildren(final RunNotifier notifier) throws Exception {
+    private void runChildren(final RunNotifier notifier) {
         final RunnerScheduler currentScheduler = scheduler;
         try {
             for (final T each : getFilteredChildren()) {
@@ -434,7 +434,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      *
      * @since 4.13
      */
-    public void order(GeneralOrdering ordering)   throws InvalidOrderingException {
+    public void order(GeneralOrdering ordering) throws InvalidOrderingException {
         childrenLock.lock();
         try {
             List<T> children = getFilteredChildren();
@@ -476,14 +476,14 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             throw new InvalidTestClassError(testClass.getJavaClass(), errors);
         }
     }
-  
+
     private List<T> getFilteredChildren() {
         if (filteredChildren == null) {
             childrenLock.lock();
             try {
                 if (filteredChildren == null) {
-                    List<T> children = getChildren();
-                    filteredChildren = Collections.unmodifiableList(children);
+                    filteredChildren = Collections.unmodifiableList(
+                            new ArrayList<T>(getChildren()));
                 }
             } finally {
                 childrenLock.unlock();
