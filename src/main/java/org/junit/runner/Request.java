@@ -1,5 +1,6 @@
 package org.junit.runner;
 
+import java.util.Collection;
 import java.util.Comparator;
 
 import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
@@ -180,8 +181,8 @@ public abstract class Request {
      * <pre>
      * private static Ordering reverse() {
      *   return new Ordering() {
-     *     public List&lt;Description&gt; orderChildren(;Description parent) {
-     *       List&lt;Description&gt; ordered = new ArrayList&lt;&gt;(parent.getChildren());
+     *     public List&lt;Description&gt; orderItems(Collection&lt;Description&gt; descriptions) {
+     *       List&lt;Description&gt; ordered = new ArrayList&lt;&gt;(descriptions);
      *       Collections.reverse(ordered);
      *       return ordered;
      *     }
