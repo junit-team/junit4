@@ -13,6 +13,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -43,7 +45,6 @@ import org.junit.runners.model.RunnerScheduler;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
 import org.junit.validator.AnnotationsValidator;
-import org.junit.validator.PublicClassValidator;
 import org.junit.validator.TestClassValidator;
 
 /**
@@ -61,10 +62,10 @@ import org.junit.validator.TestClassValidator;
  */
 public abstract class ParentRunner<T> extends Runner implements Filterable,
         Orderable {
-    private static final List<TestClassValidator> VALIDATORS = Arrays.asList(
-            new AnnotationsValidator(), new PublicClassValidator());
+    private static final List<TestClassValidator> VALIDATORS = Arrays.<TestClassValidator>asList(
+            new AnnotationsValidator());
 
-    private final Object childrenLock = new Object();
+    private final Lock childrenLock = new ReentrantLock();
     private final TestClass testClass;
 
     // Guarded by childrenLock
@@ -390,7 +391,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     //
 
     public void filter(Filter filter) throws NoTestsRemainException {
-        synchronized (childrenLock) {
+        childrenLock.lock();
+        try {
             List<T> children = new ArrayList<T>(getFilteredChildren());
             for (Iterator<T> iter = children.iterator(); iter.hasNext(); ) {
                 T each = iter.next();
@@ -408,17 +410,22 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             if (filteredChildren.isEmpty()) {
                 throw new NoTestsRemainException();
             }
+        } finally {
+            childrenLock.unlock();
         }
     }
 
     public void sort(Sorter sorter) {
-        synchronized (childrenLock) {
+        childrenLock.lock();
+        try {
             for (T each : getFilteredChildren()) {
                 sorter.apply(each);
             }
             List<T> sortedChildren = new ArrayList<T>(getFilteredChildren());
             Collections.sort(sortedChildren, comparator(sorter));
             filteredChildren = Collections.unmodifiableList(sortedChildren);
+        } finally {
+            childrenLock.unlock();
         }
     }
 
@@ -428,7 +435,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * @since 4.13
      */
     public void order(GeneralOrdering ordering)   throws InvalidOrderingException {
-        synchronized (childrenLock) {
+        childrenLock.lock();
+        try {
             List<T> children = getFilteredChildren();
             // In theory, we could have duplicate Descriptions. De-dup them before ordering,
             // and add them back at the end.
@@ -452,6 +460,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
                 children.addAll(childMap.get(description));
             }
             filteredChildren = Collections.unmodifiableList(children);
+        } finally {
+            childrenLock.unlock();
         }
     }
 
@@ -469,11 +479,14 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
   
     private List<T> getFilteredChildren() {
         if (filteredChildren == null) {
-            synchronized (childrenLock) {
+            childrenLock.lock();
+            try {
                 if (filteredChildren == null) {
                     List<T> children = getChildren();
                     filteredChildren = Collections.unmodifiableList(children);
                 }
+            } finally {
+                childrenLock.unlock();
             }
         }
         return filteredChildren;

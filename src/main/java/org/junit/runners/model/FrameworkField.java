@@ -2,6 +2,7 @@ package org.junit.runners.model;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.List;
 
 import org.junit.runners.BlockJUnit4ClassRunner;
 
@@ -37,7 +38,17 @@ public class FrameworkField extends FrameworkMember<FrameworkField> {
 
     @Override
     public boolean isShadowedBy(FrameworkField otherMember) {
-        return otherMember.getName().equals(getName());
+        return false;
+    }
+
+    @Override
+    FrameworkField handlePossibleBridgeMethod(List<FrameworkField> members) {
+        return this; // fields are never bridge methods
+    }
+
+    @Override
+    boolean isBridgeMethod() {
+        return false;
     }
 
     @Override

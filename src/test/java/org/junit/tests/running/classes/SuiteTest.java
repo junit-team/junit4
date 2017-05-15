@@ -1,5 +1,6 @@
 package org.junit.tests.running.classes;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -41,6 +42,18 @@ public class SuiteTest {
     public static class All {
     }
 
+    @RunWith(Suite.class)
+    @SuiteClasses(TestA.class)
+    static class NonPublicSuite {
+    }
+
+    @RunWith(Suite.class)
+    @SuiteClasses(TestA.class)
+    static class NonPublicSuiteWithBeforeClass {
+        @BeforeClass
+        public static void doesNothing() {}
+    }
+
     public static class InheritsAll extends All {
     }
 
@@ -64,6 +77,19 @@ public class SuiteTest {
     public void suiteTestCountIsCorrect() throws Exception {
         Runner runner = Request.aClass(All.class).getRunner();
         assertEquals(2, runner.testCount());
+    }
+
+    @Test
+    public void suiteClassDoesNotNeedToBePublic() {
+        JUnitCore core = new JUnitCore();
+        Result result = core.run(NonPublicSuite.class);
+        assertEquals(1, result.getRunCount());
+        assertEquals(0, result.getFailureCount());
+    }
+
+    @Test
+    public void nonPublicSuiteClassWithBeforeClassFailsWithoutRunningTests() {
+        assertThat(testResult(NonPublicSuiteWithBeforeClass.class), hasSingleFailureContaining("can not access"));
     }
 
     @Test

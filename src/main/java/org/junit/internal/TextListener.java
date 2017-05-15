@@ -74,7 +74,7 @@ public class TextListener extends RunListener {
 
     protected void printFailure(Failure each, String prefix) {
         getWriter().println(prefix + ") " + each.getTestHeader());
-        getWriter().print(each.getTrace());
+        getWriter().print(each.getTrimmedTrace());
     }
 
     protected void printFooter(Result result) {

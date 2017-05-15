@@ -26,6 +26,7 @@ import org.junit.runners.model.MultipleFailureException;
  * @author kcooney@google.com (Kevin Cooney)
  */
 public class MultipleFailureExceptionTest {
+    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     @Test
     public void assertEmptyDoesNotThrowForEmptyList() throws Exception {
@@ -67,8 +68,8 @@ public class MultipleFailureExceptionTest {
             fail();
         } catch (MultipleFailureException expected) {
             assertThat(expected.getFailures(), equalTo(errors));
-            assertTrue(expected.getMessage().startsWith("There were 2 errors:\n"));
-            assertTrue(expected.getMessage().contains("ExpectedException(basil)\n"));
+            assertTrue(expected.getMessage().startsWith("There were 2 errors:" + LINE_SEPARATOR));
+            assertTrue(expected.getMessage().contains("ExpectedException(basil)" + LINE_SEPARATOR));
             assertTrue(expected.getMessage().contains("RuntimeException(garlic)"));
         }
     }
@@ -96,7 +97,7 @@ public class MultipleFailureExceptionTest {
             fail();
         } catch (MultipleFailureException expected) {
             assertThat(expected.getFailures().size(), equalTo(2));
-            assertTrue(expected.getMessage().startsWith("There were 2 errors:\n"));
+            assertTrue(expected.getMessage().startsWith("There were 2 errors:" + LINE_SEPARATOR));
             assertTrue(expected.getMessage().contains("TestCouldNotBeSkippedException(Test could not be skipped"));
             assertTrue(expected.getMessage().contains("RuntimeException(garlic)"));
             Throwable first = expected.getFailures().get(0);

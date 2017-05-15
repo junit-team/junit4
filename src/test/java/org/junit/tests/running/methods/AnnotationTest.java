@@ -2,7 +2,9 @@ package org.junit.tests.running.methods;
 
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.experimental.results.PrintableResult.testResult;
+import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -13,7 +15,11 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExternalResource;
+import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -453,29 +459,74 @@ public class AnnotationTest extends TestCase {
         assertEquals("Before class super Before class sub Before super Before sub Test After sub After super After class sub After class super ", log);
     }
 
-    static public class SuperShadowing {
+    static public abstract class SuperShadowing {
+
+        @Rule
+        public TestRule rule() {
+            return new ExternalResource() {
+                @Override
+                protected void before() throws Throwable {
+                    log += "super.rule().before() ";
+                }
+
+                @Override
+                protected void after() {
+                    log += "super.rule().after() ";
+                }
+            };
+        }
+
         @Before
         public void before() {
-            log += "Before super ";
+            log += "super.before() ";
         }
 
         @After
         public void after() {
-            log += "After super ";
+            log += "super.after() ";
         }
     }
 
     static public class SubShadowing extends SuperShadowing {
+
+        @Override
+        @Rule
+        public TestRule rule() {
+            return new ExternalResource() {
+                @Override
+                protected void before() throws Throwable {
+                    log += "sub.rule().before() ";
+                }
+
+                @Override
+                protected void after() {
+                    log += "sub.rule().after() ";
+                }
+            };
+        }
+
         @Override
         @Before
         public void before() {
-            log += "Before sub ";
+            super.before();
+            log += "sub.before() ";
+        }
+
+        @Before
+        public void anotherBefore() {
+            log += "sub.anotherBefore() ";
         }
 
         @Override
         @After
         public void after() {
-            log += "After sub ";
+            log += "sub.after() ";
+            super.after();
+        }
+
+        @After
+        public void anotherAfter() {
+            log += "sub.anotherAfter() ";
         }
 
         @Test
@@ -486,9 +537,157 @@ public class AnnotationTest extends TestCase {
 
     public void testShadowing() throws Exception {
         log = "";
-        JUnitCore core = new JUnitCore();
-        core.run(SubShadowing.class);
-        assertEquals("Before sub Test After sub ", log);
+        assertThat(testResult(SubShadowing.class), isSuccessful());
+        assertEquals(
+                "sub.rule().before() sub.anotherBefore() super.before() sub.before() "
+                + "Test "
+                + "sub.anotherAfter() sub.after() super.after() sub.rule().after() ",
+                log);
+    }
+
+    static public abstract class SuperStaticMethodShadowing {
+
+        @ClassRule
+        public static TestRule rule() {
+            return new ExternalResource() {
+                @Override
+                protected void before() throws Throwable {
+                    log += "super.rule().before() ";
+                }
+
+                @Override
+                protected void after() {
+                    log += "super.rule().after() ";
+                }
+            };
+        }
+    }
+
+    static public class SubStaticMethodShadowing extends SuperStaticMethodShadowing {
+
+        @ClassRule
+        public static TestRule rule() {
+            return new ExternalResource() {
+                @Override
+                protected void before() throws Throwable {
+                    log += "sub.rule().before() ";
+                }
+
+                @Override
+                protected void after() {
+                    log += "sub.rule().after() ";
+                }
+            };
+        }
+
+        @Test
+        public void test() {
+            log += "Test ";
+        }
+    }
+
+    public void testStaticMethodsNeverTreatedAsShadowed() throws Exception {
+        log = "";
+        assertThat(testResult(SubStaticMethodShadowing.class), isSuccessful());
+        assertEquals(
+                "super.rule().before() sub.rule().before() "
+                + "Test "
+                + "sub.rule().after() super.rule().after() ",
+                log);
+    }
+
+    static public abstract class SuperFieldShadowing {
+
+        @Rule
+        public final TestRule rule = new ExternalResource() {
+            @Override
+            protected void before() throws Throwable {
+                log += "super.rule.before() ";
+            }
+
+            @Override
+            protected void after() {
+                log += "super.rule.after() ";
+            }
+        };
+    }
+
+    static public class SubFieldShadowing extends SuperFieldShadowing {
+
+        @Rule
+        public final TestRule rule = new ExternalResource() {
+            @Override
+            protected void before() throws Throwable {
+                log += "sub.rule.before() ";
+            }
+
+            @Override
+            protected void after() {
+                log += "sub.rule.after() ";
+            }
+        };
+
+        @Test
+        public void test() {
+            log += "Test ";
+        }
+    }
+
+    public void testFieldsNeverTreatedAsShadowed() throws Exception {
+        log = "";
+        assertThat(testResult(SubFieldShadowing.class), isSuccessful());
+        assertEquals(
+                "super.rule.before() sub.rule.before() "
+                + "Test "
+                + "sub.rule.after() super.rule.after() ",
+                log);
+    }
+
+    static public abstract class SuperStaticFieldShadowing {
+
+        @ClassRule
+        public static TestRule rule = new ExternalResource() {
+            @Override
+            protected void before() throws Throwable {
+                log += "super.rule.before() ";
+            }
+
+            @Override
+            protected void after() {
+                log += "super.rule.after() ";
+            }
+        };
+    }
+
+    static public class SubStaticFieldShadowing extends SuperStaticFieldShadowing {
+
+        @ClassRule
+        public static TestRule rule = new ExternalResource() {
+            @Override
+            protected void before() throws Throwable {
+                log += "sub.rule.before() ";
+            }
+
+            @Override
+            protected void after() {
+                log += "sub.rule.after() ";
+            }
+        };
+
+        @Test
+        public void test() {
+            log += "Test ";
+        }
+    }
+
+    public void testStaticFieldsNeverTreatedAsShadowed() throws Exception {
+        log = "";
+        assertThat(testResult(SubStaticFieldShadowing.class), isSuccessful());
+        assertEquals(
+                "super.rule.before() sub.rule.before() "
+                + "Test "
+                + "sub.rule.after() super.rule.after() ",
+                log);
     }
 
     static public class SuperTest {

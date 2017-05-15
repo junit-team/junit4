@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -66,5 +67,17 @@ public class ExpectedTest {
     @Test
     public void expectsSuperclass() {
         assertTrue(new JUnitCore().run(ExpectSuperclass.class).wasSuccessful());
+    }
+
+    public static class ExpectAssumptionViolatedException {
+        @Test(expected = AssumptionViolatedException.class)
+        public void throwsAssumptionViolatedException() {
+            throw new AssumptionViolatedException("expected");
+        }
+    }
+
+    @Test
+    public void expectsAssumptionViolatedException() {
+        assertTrue(new JUnitCore().run(ExpectAssumptionViolatedException.class).wasSuccessful());
     }
 }

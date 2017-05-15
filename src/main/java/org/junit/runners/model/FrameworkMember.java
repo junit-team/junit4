@@ -12,14 +12,15 @@ public abstract class FrameworkMember<T extends FrameworkMember<T>> implements
         Annotatable {
     abstract boolean isShadowedBy(T otherMember);
 
-    boolean isShadowedBy(List<T> members) {
-        for (T each : members) {
-            if (isShadowedBy(each)) {
-                return true;
-            }
-        }
-        return false;
-    }
+    /**
+     * Check if this member is shadowed by any of the given members. If it
+     * is, the other member is removed.
+     * 
+     * @return member that should be used, or {@code null} if no member should be used.
+     */
+    abstract T handlePossibleBridgeMethod(List<T> members);
+
+    abstract boolean isBridgeMethod();
 
     protected abstract int getModifiers();
 
