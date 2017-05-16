@@ -189,12 +189,14 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * @return {@code Statement}
      */
     protected Statement classBlock(final RunNotifier notifier) {
-        Statement statement = childrenInvoker(notifier);
-        if (!areAllChildrenIgnored()) {
-            statement = withBeforeClasses(statement);
-            statement = withAfterClasses(statement);
-            statement = withClassRules(statement);
+        if (areAllChildrenIgnored()) {
+            return withNotificationOfIgnoredChildren(null, notifier);
         }
+        Statement statement = childrenInvoker(notifier);
+        statement = withBeforeClasses(statement);
+        statement = withNotificationOfIgnoredChildren(statement, notifier);
+        statement = withAfterClasses(statement);
+        statement = withClassRules(statement);
         return statement;
     }
 
@@ -205,6 +207,30 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             }
         }
         return true;
+    }
+
+    /**
+     * Returns a {@link Statement}: notify all non-overridden {@code @Ignore} methods on this class
+     * and superclasses before executing {@code next}.
+     * @param next The next statement, or {@code null}, if there is no next statement.
+     * @param notifier The runner notifier.
+     */
+    protected Statement withNotificationOfIgnoredChildren(final Statement next,
+            final RunNotifier notifier) {
+        return new Statement() {
+            @Override
+            public void evaluate() throws Throwable {
+                for (T each : getFilteredChildren()) {
+                    // only notify methods annotated with @Ignore
+                    if (isIgnored(each)) {
+                        ParentRunner.this.runChild(each, notifier);
+                    }
+                }
+                if (null != next) {
+                    next.evaluate();
+                }
+            }
+        };
     }
 
     /**
@@ -287,11 +313,14 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         final RunnerScheduler currentScheduler = scheduler;
         try {
             for (final T each : getFilteredChildren()) {
-                currentScheduler.schedule(new Runnable() {
-                    public void run() {
-                        ParentRunner.this.runChild(each, notifier);
-                    }
-                });
+                // execute only, if the method is not annotated with @Ignore
+                if (!isIgnored(each)) {
+                    currentScheduler.schedule(new Runnable() {
+                        public void run() {
+                            ParentRunner.this.runChild(each, notifier);
+                        }
+                    });
+                }
             }
         } finally {
             currentScheduler.finished();

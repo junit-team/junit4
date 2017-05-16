@@ -251,5 +251,60 @@ public class TestMethodTest {
         Result result = JUnitCore.runClasses(OnlyTestIsIgnored.class);
         assertEquals(0, result.getFailureCount());
         assertEquals(1, result.getIgnoreCount());
+        assertEquals(0, result.getRunCount());
     }
+
+    public static class OneTestIsIgnoredAndOneIsIncompleteCausedByExceptionInBeforeClass {
+        @BeforeClass
+        public static void throwException() throws Exception {
+            throw new Exception();
+        }
+
+        @Ignore
+        @Test
+        public void ignored() {
+        }
+
+        @Test
+        public void failure() {
+        }
+    }
+
+    @Test
+    public void testOneIgnoredAndOneIncompleteCausedByExceptionInBeforeClass() {
+        Result result = JUnitCore
+                .runClasses(OneTestIsIgnoredAndOneIsIncompleteCausedByExceptionInBeforeClass.class);
+        assertEquals(1, result.getFailureCount());
+        assertEquals(1, result.getIgnoreCount());
+        assertEquals(0, result.getRunCount());
+    }
+
+    public static class OneTestIsIgnoredAndOneIsIncompleteCausedByExceptionInAfterClass {
+        @AfterClass
+        public static void throwException() throws Exception {
+            throw new Exception();
+        }
+
+        @Ignore
+        @Test
+        public void ignored() {
+        }
+
+        @Test
+        public void success1() {
+        }
+
+        @Test
+        public void success2() {
+        }
+    }
+
+    @Test
+    public void testOneIgnoredAndOneIncompleteCausedByExceptionInAfterClass() {
+        Result result = JUnitCore.runClasses(OneTestIsIgnoredAndOneIsIncompleteCausedByExceptionInAfterClass.class);
+        assertEquals(1, result.getFailureCount());
+        assertEquals(1, result.getIgnoreCount());
+        assertEquals(2, result.getRunCount());
+    }
+
 }
