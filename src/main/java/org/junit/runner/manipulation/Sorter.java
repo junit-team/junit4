@@ -57,6 +57,11 @@ public class Sorter extends Ordering implements Comparator<Description> {
         return comparator.compare(o1, o2);
     }
  
+    /**
+     * {@inheritDoc}
+     *
+     * @since 4.13
+     */
     @Override
     protected final List<Description> orderItems(Collection<Description> descriptions) {
         /*
@@ -70,6 +75,11 @@ public class Sorter extends Ordering implements Comparator<Description> {
         return sorted;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @since 4.13
+     */
     @Override
     boolean validateOrderingIsCorrect() {
         return false;

@@ -6,6 +6,8 @@ import org.junit.runner.Description;
 
 /**
  * A sorter that orders tests alphanumerically by test name.
+ *
+ * @since 4.13
  */
 public final class Alphanumeric extends Sorter implements Ordering.Factory {
 

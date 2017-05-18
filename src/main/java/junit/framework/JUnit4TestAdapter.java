@@ -96,6 +96,11 @@ public class JUnit4TestAdapter implements Test, Filterable, Orderable, Describab
         sorter.apply(fRunner);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @since 4.13
+     */
     public void order(GeneralOrdering ordering) throws InvalidOrderingException {
         ordering.apply(fRunner);
     }

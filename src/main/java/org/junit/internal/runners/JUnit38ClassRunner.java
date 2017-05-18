@@ -174,6 +174,11 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Orderable 
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @since 4.13
+     */
     public void order(GeneralOrdering ordering) throws InvalidOrderingException {
         if (getTest() instanceof Orderable) {
             Orderable adapter = (Orderable) getTest();
