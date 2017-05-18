@@ -728,12 +728,14 @@ public class AssertionTest {
     public void nullToString() {
         try {
             assertEquals(new NullToString(), new NullToString());
-            fail();
         } catch (AssertionError e) {
             assertEquals("expected: org.junit.tests.assertion.AssertionTest$NullToString<null> but "
                             + "was: org.junit.tests.assertion.AssertionTest$NullToString<null>",
                     e.getMessage());
+            return;
         }
+
+        fail("Failed on assertion.");
     }
 
     @Test(expected = AssertionError.class)
