@@ -717,6 +717,25 @@ public class AssertionTest {
         assertEquals("null", null);
     }
 
+    private static class NullToString {
+        @Override
+        public String toString() {
+            return null;
+        }
+    }
+
+    @Test
+    public void nullToString() {
+        try {
+            assertEquals(new NullToString(), new NullToString());
+            fail();
+        } catch (AssertionError e) {
+            assertEquals("expected: org.junit.tests.assertion.AssertionTest$NullToString<null> but "
+                            + "was: org.junit.tests.assertion.AssertionTest$NullToString<null>",
+                    e.getMessage());
+        }
+    }
+
     @Test(expected = AssertionError.class)
     public void compareBigDecimalAndInteger() {
         final BigDecimal bigDecimal = new BigDecimal("1.2");

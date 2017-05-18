@@ -842,7 +842,7 @@ public class Assert {
         }
         String expectedString = String.valueOf(expected);
         String actualString = String.valueOf(actual);
-        if (expectedString.equals(actualString)) {
+        if (equalsRegardingNull(expectedString, actualString)) {
             return formatted + "expected: "
                     + formatClassAndValue(expected, expectedString)
                     + " but was: " + formatClassAndValue(actual, actualString);
