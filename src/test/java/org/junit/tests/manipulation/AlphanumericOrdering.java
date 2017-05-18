@@ -5,13 +5,11 @@ import org.junit.runner.manipulation.Ordering;
 /**
  * An ordering that orders tests alphanumerically by test name.
  */
-public class AlphanumericOrdering extends ComparsionBasedOrdering {
+public final class AlphanumericOrdering implements Ordering.Factory {
+    public static final ComparsionBasedOrdering INSTANCE = new ComparsionBasedOrdering(
+            Comparators.alphanumeric());
 
-    public AlphanumericOrdering() {
-        super(Comparators.alphanumeric());
-    }
-
-    public AlphanumericOrdering(Ordering.Context context) {
-        this();
+    public Ordering create(Ordering.Context context) {
+        return INSTANCE;
     }
 }

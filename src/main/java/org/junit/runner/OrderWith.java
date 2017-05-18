@@ -20,7 +20,7 @@ import org.junit.runner.manipulation.Ordering;
 @Inherited
 public @interface OrderWith {
     /**
-     * Gets a class that extends {@link Ordering} (must have a public constructor taking {@link Ordering.Context}).
+     * Gets a class that extends {@link Ordering}. The class must have a public no-arg constructor.
      */
-    Class<? extends Ordering> value();
+    Class<? extends Ordering.Factory> value();
 }

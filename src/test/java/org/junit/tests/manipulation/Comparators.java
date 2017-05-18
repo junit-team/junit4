@@ -3,26 +3,24 @@ package org.junit.tests.manipulation;
 import java.util.Comparator;
 
 import org.junit.runner.Description;
+import org.junit.runner.manipulation.Alphanumeric;
 
 /**
  * Factory and utility metods for creating {@link Comparator} instances for tests.
  */
 class Comparators {
+    private static final Comparator<Description> ALPHANUMERIC  = new Alphanumeric();
 
     private Comparators() {}
  
     public static Comparator<Description> alphanumeric() {
-        return new Comparator<Description>() {
-            public int compare(Description o1, Description o2) {
-                return o1.getDisplayName().compareTo(o2.getDisplayName());
-            }
-        };
+        return ALPHANUMERIC;
     }
  
     public static Comparator<Description> reverse(final Comparator<Description> comparator) {
         return new Comparator<Description>() {
             public int compare(Description o1, Description o2) {
-                return comparator.compare(o2, o1);
+                return ALPHANUMERIC.compare(o2, o1);
             }
         };
     }

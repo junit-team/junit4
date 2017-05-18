@@ -11,6 +11,7 @@ import org.junit.runner.OrderWith;
 import org.junit.runner.Request;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
+import org.junit.runner.manipulation.Alphanumeric;
 import org.junit.runner.notification.RunNotifier;
 
 @RunWith(Enclosed.class)
@@ -152,7 +153,7 @@ public class OrderWithTest {
             log = "";
         }
 
-        @OrderWith(AlphanumericSorter.class)
+        @OrderWith(Alphanumeric.class)
         public static class SortedAlphanumerically extends Unordered {
         }
 
@@ -259,7 +260,8 @@ public class OrderWithTest {
 
         @Test
         public void unOrderablesAreHandledWithoutCrashing() {
-            Request unordered = Request.aClass(UnOrderable.class).orderWith(new AlphanumericOrdering());
+            Request unordered = Request.aClass(UnOrderable.class).orderWith(
+                    AlphanumericOrdering.INSTANCE);
             new JUnitCore().run(unordered);
         }
     }

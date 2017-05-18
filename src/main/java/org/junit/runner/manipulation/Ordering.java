@@ -47,38 +47,57 @@ public abstract class Ordering {
     }
 
     /**
-     * Creates an {@link Ordering} from the given class. The class must have a public constructor
-     * that takes in an {@link Ordering.Context}.
+     * Creates an {@link Ordering} from the given factory class. The class must have a public no-arg
+     * constructor.
      *
-     * @param orderingClass class to use to create the ordering
+     * @param factoryClass class to use to create the ordering
      * @param annotatedTestClass test class that is annotated with {@link OrderWith}.
      * @throws InvalidOrderingException if the instance could not be created
      */
     public static Ordering definedBy(
-            Class<? extends Ordering> orderingClass, Description annotatedTestClass)
+            Class<? extends Ordering.Factory> factoryClass, Description annotatedTestClass)
             throws InvalidOrderingException {
-        if (orderingClass == null) {
-            throw new NullPointerException("orderingClass cannot be null");
+        if (factoryClass == null) {
+            throw new NullPointerException("factoryClass cannot be null");
         }
         if (annotatedTestClass == null) {
             throw new NullPointerException("annotatedTestClass cannot be null");
         }
 
-        Ordering.Context context = new Ordering.Context(annotatedTestClass);
-
+        Ordering.Factory factory;
         try {
-            Constructor<? extends Ordering> constructor = orderingClass.getConstructor(
-                    Ordering.Context.class);
-            return constructor.newInstance(context);
+            Constructor<? extends Ordering.Factory> constructor = factoryClass.getConstructor();
+            factory = constructor.newInstance();
         } catch (NoSuchMethodException e) {
             throw new InvalidOrderingException(String.format(
                     CONSTRUCTOR_ERROR_FORMAT,
-                    getClassName(orderingClass),
-                    orderingClass.getSimpleName()));
+                    getClassName(factoryClass),
+                    factoryClass.getSimpleName()));
         } catch (Exception e) {
             throw new InvalidOrderingException(
                     "Could not create ordering for " + annotatedTestClass, e);
         }
+        return definedBy(factory, annotatedTestClass);
+    }
+
+    /**
+     * Creates an {@link Ordering} from the given factory.
+     *
+     * @param factoryClass class to use to create the ordering
+     * @param annotatedTestClass test class that is annotated with {@link OrderWith}.
+     * @throws InvalidOrderingException if the instance could not be created
+     */
+    public static Ordering definedBy(
+            Ordering.Factory factory, Description annotatedTestClass)
+            throws InvalidOrderingException {
+        if (factory == null) {
+            throw new NullPointerException("factory cannot be null");
+        }
+        if (annotatedTestClass == null) {
+            throw new NullPointerException("annotatedTestClass cannot be null");
+        }
+
+        return factory.create(new Ordering.Context(annotatedTestClass));
     }
 
     private static String getClassName(Class<?> clazz) {
@@ -160,5 +179,20 @@ public abstract class Ordering {
         private Context(Description description) {
             this.description = description;
         }
+    }
+
+    /**
+     * Factory for creating {@link Ordering} instances.
+     *
+     * <p>For a factory to be used with {@code @OrderWith} it needs to have a public no-arg
+     * constructor.
+     */
+    public interface Factory {
+        /**
+         * Creates an Ordering instance using the given context. Implementations
+         * of this method that do not need to use the context can return the
+         * same instance every time.
+         */
+        Ordering create(Context context);
     }
 }

@@ -6,9 +6,9 @@ import org.junit.runner.manipulation.Sorter;
 /**
  * A sorter that orders tests reverse alphanumerically by test name.
  */
-public class ReverseAlphanumericSorter extends Sorter {
+public final class ReverseAlphanumericSorter implements Ordering.Factory {
 
-    public ReverseAlphanumericSorter(Ordering.Context context) {
-        super(Comparators.reverse(Comparators.alphanumeric()));
+    public Ordering create(Ordering.Context context) {
+        return new Sorter(Comparators.reverse(Comparators.alphanumeric()));
     }
 }
