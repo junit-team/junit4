@@ -724,18 +724,19 @@ public class AssertionTest {
         }
     }
 
+    private static class NothingWasThrown extends RuntimeException {
+    }
+
     @Test
     public void nullToString() {
         try {
             assertEquals(new NullToString(), new NullToString());
+            throw new NothingWasThrown();
         } catch (AssertionError e) {
             assertEquals("expected: org.junit.tests.assertion.AssertionTest$NullToString<null> but "
                             + "was: org.junit.tests.assertion.AssertionTest$NullToString<null>",
                     e.getMessage());
-            return;
         }
-
-        fail("Failed on assertion.");
     }
 
     @Test(expected = AssertionError.class)
