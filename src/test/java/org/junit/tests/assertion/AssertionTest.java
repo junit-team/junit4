@@ -34,6 +34,10 @@ public class AssertionTest {
 //      assert false;
 //  }
 
+    private void failAssertionErrorExpected() {
+        throw new AssertionError("AssertionError expected");
+    }
+
     @Test(expected = AssertionError.class)
     public void fails() {
         Assert.fail();
@@ -45,7 +49,9 @@ public class AssertionTest {
             Assert.fail();
         } catch (AssertionError exception) {
             assertEquals("java.lang.AssertionError", exception.toString());
+            return;
         }
+        failAssertionErrorExpected();
     }
 
     @Test
@@ -54,7 +60,9 @@ public class AssertionTest {
             Assert.fail("woops!");
         } catch (AssertionError exception) {
             assertEquals("java.lang.AssertionError: woops!", exception.toString());
+            return;
         }
+        failAssertionErrorExpected();
     }
 
     @Test
@@ -82,7 +90,7 @@ public class AssertionTest {
             assertEquals("not equal: expected array was null", exception.getMessage());
             return;
         }
-        fail("should have thrown an exception");
+        failAssertionErrorExpected();
     }
 
     @Test
@@ -93,7 +101,7 @@ public class AssertionTest {
             assertEquals("not equal: actual array was null", exception.getMessage());
             return;
         }
-        fail("should have thrown an exception");
+        failAssertionErrorExpected();
     }
 
     @Test
@@ -329,7 +337,7 @@ public class AssertionTest {
             assertEquals(expectedMessage, e.getMessage());
             return;
         }
-        fail("should have thrown an exception");
+        failAssertionErrorExpected();
     }
 
     @Test
@@ -341,7 +349,7 @@ public class AssertionTest {
             return;
         }
 
-        fail("Expected AssertionError to be thrown");
+        failAssertionErrorExpected();
     }
 
     @Test
@@ -353,7 +361,7 @@ public class AssertionTest {
             return;
         }
 
-        fail("Expected AssertionError to be thrown");
+        failAssertionErrorExpected();
     }
 
     @Test
@@ -367,9 +375,11 @@ public class AssertionTest {
     public void stringsDifferWithUserMessage() {
         try {
             assertEquals("not equal", "one", "two");
-        } catch (Throwable exception) {
+        } catch (AssertionError exception) {
             assertEquals("not equal expected:<[one]> but was:<[two]>", exception.getMessage());
+            return;
         }
+        failAssertionErrorExpected();
     }
 
     @Test
@@ -418,10 +428,11 @@ public class AssertionTest {
         Object o = new Object();
         try {
             assertEquals("message", null, o);
-            fail();
         } catch (AssertionError e) {
             assertEquals("message expected:<null> but was:<" + o.toString() + ">", e.getMessage());
+            return;
         }
+        failAssertionErrorExpected();
     }
 
     @Test
@@ -429,10 +440,11 @@ public class AssertionTest {
         Object o = new Object();
         try {
             assertEquals("message", o, null);
-            fail();
         } catch (AssertionError e) {
             assertEquals("message expected:<" + o.toString() + "> but was:<null>", e.getMessage());
+            return;
         }
+        failAssertionErrorExpected();
     }
 
     @Test(expected = AssertionError.class)
@@ -516,10 +528,11 @@ public class AssertionTest {
     public void nullNullmessage() {
         try {
             assertNull("junit");
-            fail();
         } catch (AssertionError e) {
             assertEquals("expected null, but was:<junit>", e.getMessage());
+            return;
         }
+        failAssertionErrorExpected();
     }
 
     @SuppressWarnings("unused")
@@ -527,10 +540,11 @@ public class AssertionTest {
     public void nullWithMessage() {
         try {
             assertNull("message", "hello");
-            fail();
         } catch (AssertionError exception) {
             assertEquals("message expected null, but was:<hello>", exception.getMessage());
+            return;
         }
+        failAssertionErrorExpected();
     }
 
     @Test
@@ -561,21 +575,23 @@ public class AssertionTest {
     public void sameWithMessage() {
         try {
             assertSame("not same", "hello", "good-bye");
-            fail();
         } catch (AssertionError exception) {
             assertEquals("not same expected same:<hello> was not:<good-bye>",
                     exception.getMessage());
+            return;
         }
+        failAssertionErrorExpected();
     }
 
     @Test
     public void sameNullMessage() {
         try {
             assertSame("hello", "good-bye");
-            fail();
         } catch (AssertionError exception) {
             assertEquals("expected same:<hello> was not:<good-bye>", exception.getMessage());
+            return;
         }
+        failAssertionErrorExpected();
     }
 
     @Test
@@ -583,10 +599,11 @@ public class AssertionTest {
         Object o = new Object();
         try {
             assertNotSame("message", o, o);
-            fail();
         } catch (AssertionError exception) {
             assertEquals("message expected not same", exception.getMessage());
+            return;
         }
+        failAssertionErrorExpected();
     }
 
     @Test
@@ -594,10 +611,11 @@ public class AssertionTest {
         Object o = new Object();
         try {
             assertNotSame(o, o);
-            fail();
         } catch (AssertionError exception) {
             assertEquals("expected not same", exception.getMessage());
+            return;
         }
+        failAssertionErrorExpected();
     }
 
     @Test
@@ -607,27 +625,31 @@ public class AssertionTest {
         } catch (AssertionError exception) {
             // we used to expect getMessage() to return ""; see failWithNoMessageToString()
             assertNull(exception.getMessage());
+            return;
         }
+        failAssertionErrorExpected();
     }
 
     @Test
     public void nullMessageDisappearsWithStringAssertEquals() {
         try {
             assertEquals(null, "a", "b");
-            fail();
         } catch (ComparisonFailure e) {
             assertEquals("expected:<[a]> but was:<[b]>", e.getMessage());
+            return;
         }
+        failAssertionErrorExpected();
     }
 
     @Test
     public void nullMessageDisappearsWithAssertEquals() {
         try {
             assertEquals(null, 1, 2);
-            fail();
         } catch (AssertionError e) {
             assertEquals("expected:<1> but was:<2>", e.getMessage());
+            return;
         }
+        failAssertionErrorExpected();
     }
 
     @Test(expected = AssertionError.class)
@@ -661,7 +683,9 @@ public class AssertionTest {
             assertEquals("4", new Integer(4));
         } catch (AssertionError e) {
             assertEquals("expected: java.lang.String<4> but was: java.lang.Integer<4>", e.getMessage());
+            return;
         }
+        failAssertionErrorExpected();
     }
 
     @Test
@@ -675,7 +699,9 @@ public class AssertionTest {
             assertThat("identifier", actual, equalTo(expected));
         } catch (AssertionError e) {
             assertEquals(expectedMessage, e.getMessage());
+            return;
         }
+        failAssertionErrorExpected();
     }
 
     @Test
@@ -686,7 +712,9 @@ public class AssertionTest {
             assertThat("identifier", "actual", is(instanceOf(Integer.class)));
         } catch (AssertionError e) {
             assertEquals(expectedMessage, e.getMessage());
+            return;
         }
+        failAssertionErrorExpected();
     }
 
     @Test
@@ -700,7 +728,9 @@ public class AssertionTest {
             assertThat(actual, equalTo(expected));
         } catch (AssertionError e) {
             assertEquals(expectedMessage, e.getMessage());
+            return;
         }
+        failAssertionErrorExpected();
     }
 
     @Test
@@ -709,7 +739,9 @@ public class AssertionTest {
             assertEquals(null, "null");
         } catch (AssertionError e) {
             assertEquals("expected: null<null> but was: java.lang.String<null>", e.getMessage());
+            return;
         }
+        failAssertionErrorExpected();
     }
 
     @Test(expected = AssertionError.class)
@@ -735,7 +767,7 @@ public class AssertionTest {
             return;
         }
 
-        fail("AssertionError expected");
+        failAssertionErrorExpected();
     }
 
     @Test(expected = AssertionError.class)
@@ -769,7 +801,7 @@ public class AssertionTest {
             return;
         }
 
-        fail("Failed on assertion.");
+        failAssertionErrorExpected();
     }
 
     @Test
@@ -784,7 +816,7 @@ public class AssertionTest {
             return;
         }
 
-        fail("Failed on assertion.");
+        failAssertionErrorExpected();
     }
 
     @Test
@@ -830,7 +862,7 @@ public class AssertionTest {
             assertEquals("expected java.lang.Throwable to be thrown, but nothing was thrown", ex.getMessage());
             return;
         }
-        fail();
+        failAssertionErrorExpected();
     }
 
     @Test
@@ -860,7 +892,7 @@ public class AssertionTest {
             assertEquals("inner-message", ex.getCause().getMessage());
             return;
         }
-        fail();
+        failAssertionErrorExpected();
     }
 
     @Test
@@ -875,7 +907,7 @@ public class AssertionTest {
             assertSame(npe, error.getCause());
             return;
         }
-        fail();
+        failAssertionErrorExpected();
     }
 
     @Test
@@ -892,7 +924,7 @@ public class AssertionTest {
             assertSame(npe, error.getCause());
             return;
         }
-        fail();
+        failAssertionErrorExpected();
     }
 
     @Test
@@ -910,7 +942,7 @@ public class AssertionTest {
             assertSame(npe, error.getCause());
             return;
         }
-        fail();
+        failAssertionErrorExpected();
     }
 
     @Test
@@ -923,7 +955,7 @@ public class AssertionTest {
                     + " but nothing was thrown", error.getMessage());
             return;
         }
-        fail();
+        failAssertionErrorExpected();
     }
 
     private static class NestedException extends RuntimeException {
