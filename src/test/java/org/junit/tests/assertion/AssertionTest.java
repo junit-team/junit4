@@ -735,7 +735,7 @@ public class AssertionTest {
             return;
         }
 
-        fail("Failed on assertion.");
+        fail("AssertionError expected");
     }
 
     @Test(expected = AssertionError.class)
