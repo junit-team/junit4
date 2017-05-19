@@ -270,7 +270,7 @@ public class AssumptionTest {
         final List<Failure> failures =
                 runAndGetAssumptionFailures(HasFailingAssumptionWithMessage.class);
 
-        assertEquals(failures.size(), 1);
+        assertEquals(1, failures.size());
         assertTrue(failures.get(0).getMessage().contains(message));
     }
 
