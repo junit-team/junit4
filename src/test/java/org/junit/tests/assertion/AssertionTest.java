@@ -327,7 +327,7 @@ public class AssertionTest {
             assertEquals(expectedMessage, e.getMessage());
             return;
         }
-        fail("should have thrown an exception");
+        failAssertionErrorExpected();
     }
 
     private void assertArrayEqualsFailure(String message, Object[] expecteds, Object[] actuals, String expectedMessage) {
