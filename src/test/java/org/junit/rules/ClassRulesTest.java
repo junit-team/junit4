@@ -1,4 +1,4 @@
-/**
+/*
  * Created Oct 19, 2009
  */
 package org.junit.rules;
@@ -13,10 +13,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.ClassRule;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
+import org.junit.runners.MethodSorters;
 import org.junit.runners.model.Statement;
 
 /**
@@ -247,5 +249,69 @@ public class ClassRulesTest {
     public void testCallMethodOnlyOnceRule() {
         CallMethodOnlyOnceRule.countOfMethodCalls = 0;
         assertTrue(JUnitCore.runClasses(CallMethodOnlyOnceRule.class).wasSuccessful());
+    }
+
+    private static final StringBuilder log = new StringBuilder();
+
+    @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+    public static class ClassRuleOrdering {
+        @ClassRule(order = 1)
+        public static TestRule a() {
+            return new LoggingTestRule(log, "outer");
+        }
+
+        @ClassRule(order = 2)
+        public static TestRule z() {
+            return new LoggingTestRule(log, "inner");
+        }
+
+        @Test
+        public void foo() {
+            log.append(" foo");
+        }
+
+        @Test
+        public void bar() {
+            log.append(" bar");
+        }
+    }
+
+    @Test
+    public void classRuleOrdering() {
+        log.setLength(0);
+        Result result = JUnitCore.runClasses(ClassRuleOrdering.class);
+        assertTrue(result.wasSuccessful());
+        assertEquals(" outer.begin inner.begin bar foo inner.end outer.end", log.toString());
+    }
+
+    @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+    public static class ClassRuleOrderingDefault {
+        @ClassRule
+        public static TestRule a() {
+            return new LoggingTestRule(log, "outer");
+        }
+
+        @ClassRule
+        public static TestRule b() {
+            return new LoggingTestRule(log, "inner");
+        }
+
+        @Test
+        public void foo() {
+            log.append(" foo");
+        }
+
+        @Test
+        public void bar() {
+            log.append(" bar");
+        }
+    }
+
+    @Test
+    public void classRuleOrderingDefault() {
+        log.setLength(0);
+        Result result = JUnitCore.runClasses(ClassRuleOrderingDefault.class);
+        assertTrue(result.wasSuccessful());
+        assertEquals(" inner.begin outer.begin bar foo outer.end inner.end", log.toString());
     }
 }

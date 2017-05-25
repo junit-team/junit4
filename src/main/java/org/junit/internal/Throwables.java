@@ -249,7 +249,7 @@ public final class Throwables {
         "java.lang.reflect.",
         "org.junit.rules.RunRules.<init>(",
         "org.junit.rules.RunRules.applyAll(", // calls TestRules
-        "org.junit.runners.BlockJUnit4ClassRunner.withMethodRules(", // calls MethodRules
+        "org.junit.runners.RuleContainer.apply(", // calls MethodRules & TestRules
         "junit.framework.TestCase.runBare(", // runBare() directly calls setUp() and tearDown()
    };
     

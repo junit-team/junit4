@@ -725,4 +725,71 @@ public class TestRuleTest {
     public void testCallMethodOnlyOnceRule() {
         assertTrue(JUnitCore.runClasses(CallMethodOnlyOnceRule.class).wasSuccessful());
     }
+
+    private static final StringBuilder ruleLog = new StringBuilder();
+
+    public static class TestRuleIsAroundMethodRule {
+        @Rule
+        public final MethodRule z = new LoggingMethodRule(ruleLog, "methodRule");
+
+        @Rule
+        public final TestRule a = new LoggingTestRule(ruleLog, "testRule");
+
+        @Test
+        public void foo() {
+            ruleLog.append(" foo");
+        }
+    }
+
+    @Test
+    public void testRuleIsAroundMethodRule() {
+        ruleLog.setLength(0);
+        Result result = JUnitCore.runClasses(TestRuleIsAroundMethodRule.class);
+        assertTrue(result.wasSuccessful());
+        assertEquals(" testRule.begin methodRule.begin foo methodRule.end testRule.end",
+                ruleLog.toString());
+    }
+
+    public static class TestRuleOrdering {
+        @Rule(order = 1)
+        public final TestRule a = new LoggingTestRule(ruleLog, "outer");
+
+        @Rule(order = 2)
+        public final TestRule z = new LoggingTestRule(ruleLog, "inner");
+
+        @Test
+        public void foo() {
+            ruleLog.append(" foo");
+        }
+    }
+
+    @Test
+    public void testRuleOrdering() {
+        ruleLog.setLength(0);
+        Result result = JUnitCore.runClasses(TestRuleOrdering.class);
+        assertTrue(result.wasSuccessful());
+        assertEquals(" outer.begin inner.begin foo inner.end outer.end", ruleLog.toString());
+    }
+
+    public static class TestRuleOrderingWithMethodRule {
+        @Rule(order = 1)
+        public final MethodRule z = new LoggingMethodRule(ruleLog, "methodRule");
+
+        @Rule(order = 2)
+        public final TestRule a = new LoggingTestRule(ruleLog, "testRule");
+
+        @Test
+        public void foo() {
+            ruleLog.append(" foo");
+        }
+    }
+
+    @Test
+    public void testRuleOrderingWithMethodRule() {
+        ruleLog.setLength(0);
+        Result result = JUnitCore.runClasses(TestRuleOrderingWithMethodRule.class);
+        assertTrue(result.wasSuccessful());
+        assertEquals(" methodRule.begin testRule.begin foo testRule.end methodRule.end",
+                ruleLog.toString());
+    }
 }

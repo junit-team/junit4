@@ -36,9 +36,11 @@ import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
+import org.junit.runners.model.FrameworkMember;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.InvalidTestClassError;
+import org.junit.runners.model.MemberValueConsumer;
 import org.junit.runners.model.RunnerScheduler;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
@@ -269,9 +271,10 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      *         each method in the tested class.
      */
     protected List<TestRule> classRules() {
-        List<TestRule> result = testClass.getAnnotatedMethodValues(null, ClassRule.class, TestRule.class);
-        result.addAll(testClass.getAnnotatedFieldValues(null, ClassRule.class, TestRule.class));
-        return result;
+        ClassRuleCollector collector = new ClassRuleCollector();
+        testClass.collectAnnotatedMethodValues(null, ClassRule.class, TestRule.class, collector);
+        testClass.collectAnnotatedFieldValues(null, ClassRule.class, TestRule.class, collector);
+        return collector.getOrderedRules();
     }
 
     /**
@@ -486,5 +489,27 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      */
     public void setScheduler(RunnerScheduler scheduler) {
         this.scheduler = scheduler;
+    }
+
+    private static class ClassRuleCollector implements MemberValueConsumer<TestRule> {
+        final List<RuleContainer.RuleEntry> entries = new ArrayList<RuleContainer.RuleEntry>();
+
+        public void accept(FrameworkMember member, TestRule value) {
+            ClassRule rule = member.getAnnotation(ClassRule.class);
+            entries.add(new RuleContainer.RuleEntry(value, RuleContainer.RuleEntry.TYPE_TEST_RULE,
+                    rule != null ? rule.order() : null));
+        }
+
+        public List<TestRule> getOrderedRules() {
+            if (entries.isEmpty()) {
+                return Collections.emptyList();
+            }
+            Collections.sort(entries, RuleContainer.ENTRY_COMPARATOR);
+            List<TestRule> result = new ArrayList<TestRule>(entries.size());
+            for (RuleContainer.RuleEntry entry : entries) {
+                result.add((TestRule) entry.rule);
+            }
+            return result;
+        }
     }
 }

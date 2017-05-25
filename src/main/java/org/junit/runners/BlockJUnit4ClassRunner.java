@@ -3,6 +3,7 @@ package org.junit.runners;
 import static org.junit.internal.runners.rules.RuleMemberValidator.RULE_METHOD_VALIDATOR;
 import static org.junit.internal.runners.rules.RuleMemberValidator.RULE_VALIDATOR;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -22,12 +23,13 @@ import org.junit.internal.runners.statements.InvokeMethod;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
 import org.junit.rules.MethodRule;
-import org.junit.rules.RunRules;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.model.FrameworkMember;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.MemberValueConsumer;
 import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
@@ -390,29 +392,23 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
                 target);
     }
 
-    private Statement withRules(FrameworkMethod method, Object target,
-            Statement statement) {
-        List<TestRule> testRules = getTestRules(target);
-        Statement result = statement;
-        result = withMethodRules(method, testRules, target, result);
-        result = withTestRules(method, testRules, result);
-
-        return result;
-    }
-
-    private Statement withMethodRules(FrameworkMethod method, List<TestRule> testRules,
-            Object target, Statement result) {
-        Statement withMethodRules = result;
-        for (org.junit.rules.MethodRule each : getMethodRules(target)) {
-            if (!(each instanceof TestRule && testRules.contains(each))) {
-                withMethodRules = each.apply(withMethodRules, method, target);
+    private Statement withRules(FrameworkMethod method, Object target, Statement statement) {
+        RuleContainer ruleContainer = new RuleContainer();
+        CURRENT_RULE_CONTAINER.set(ruleContainer);
+        try {
+            List<TestRule> testRules = getTestRules(target);
+            for (MethodRule each : rules(target)) {
+                if (!(each instanceof TestRule && testRules.contains(each))) {
+                    ruleContainer.add(each);
+                }
             }
+            for (TestRule rule : testRules) {
+                ruleContainer.add(rule);
+            }
+        } finally {
+            CURRENT_RULE_CONTAINER.remove();
         }
-        return withMethodRules;
-    }
-
-    private List<org.junit.rules.MethodRule> getMethodRules(Object target) {
-        return rules(target);
+        return ruleContainer.apply(method, describeChild(method), target, statement);
     }
 
     /**
@@ -421,27 +417,12 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      *         test
      */
     protected List<MethodRule> rules(Object target) {
-        List<MethodRule> rules = getTestClass().getAnnotatedMethodValues(target, 
-                Rule.class, MethodRule.class);
-
-        rules.addAll(getTestClass().getAnnotatedFieldValues(target,
-                Rule.class, MethodRule.class));
-
-        return rules;
-    }
-
-    /**
-     * Returns a {@link Statement}: apply all non-static fields
-     * annotated with {@link Rule}.
-     *
-     * @param statement The base statement
-     * @return a RunRules statement if any class-level {@link Rule}s are
-     *         found, or the base statement
-     */
-    private Statement withTestRules(FrameworkMethod method, List<TestRule> testRules,
-            Statement statement) {
-        return testRules.isEmpty() ? statement :
-                new RunRules(statement, testRules, describeChild(method));
+        RuleCollector<MethodRule> collector = new RuleCollector<MethodRule>();
+        getTestClass().collectAnnotatedMethodValues(target, Rule.class, MethodRule.class,
+                collector);
+        getTestClass().collectAnnotatedFieldValues(target, Rule.class, MethodRule.class,
+                collector);
+        return collector.result;
     }
 
     /**
@@ -450,13 +431,10 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      *         test
      */
     protected List<TestRule> getTestRules(Object target) {
-        List<TestRule> result = getTestClass().getAnnotatedMethodValues(target,
-                Rule.class, TestRule.class);
-
-        result.addAll(getTestClass().getAnnotatedFieldValues(target,
-                Rule.class, TestRule.class));
-
-        return result;
+        RuleCollector<TestRule> collector = new RuleCollector<TestRule>();
+        getTestClass().collectAnnotatedMethodValues(target, Rule.class, TestRule.class, collector);
+        getTestClass().collectAnnotatedFieldValues(target, Rule.class, TestRule.class, collector);
+        return collector.result;
     }
 
     private Class<? extends Throwable> getExpectedException(Test annotation) {
@@ -472,5 +450,23 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
             return 0;
         }
         return annotation.timeout();
+    }
+
+    private static final ThreadLocal<RuleContainer> CURRENT_RULE_CONTAINER =
+            new ThreadLocal<RuleContainer>();
+
+    private static class RuleCollector<T> implements MemberValueConsumer<T> {
+        final List<T> result = new ArrayList<T>();
+
+        public void accept(FrameworkMember member, T value) {
+            Rule rule = member.getAnnotation(Rule.class);
+            if (rule != null) {
+                RuleContainer container = CURRENT_RULE_CONTAINER.get();
+                if (container != null) {
+                    container.setOrder(value, rule.order());
+                }
+            }
+            result.add(value);
+        }
     }
 }
