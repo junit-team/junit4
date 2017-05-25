@@ -346,22 +346,27 @@ public class Parameterized extends Suite {
 
         private final TestClass testClass;
         private final FrameworkMethod parametersMethod;
-        private final List<Object> allParameters;
+        private List<Object> allParameters;
         private final int parameterCount;
-
+        private Runner runnerOverride;
 
         private RunnersFactory(Class<?> klass) throws Throwable {
             testClass = new TestClass(klass);
             parametersMethod = getParametersMethod(testClass);
-            allParameters = allParameters(testClass, parametersMethod);
+            try {
+                allParameters = allParameters(testClass, parametersMethod);
+            } catch (AssumptionViolatedException e) {
+                allParameters = Collections.emptyList();
+                runnerOverride = new AssumptionViolationRunner(testClass,
+                        parametersMethod.getName(), e);
+            }
             parameterCount =
                     allParameters.isEmpty() ? 0 : normalizeParameters(allParameters.get(0)).length;
         }
 
         private List<Runner> createRunners() throws Exception {
-            if (allParameters.size() == 1 && allParameters
-                    .get(0) instanceof AssumptionViolationRunner) {
-                return Collections.singletonList((Runner) allParameters.get(0));
+            if (runnerOverride != null) {
+                return Collections.singletonList(runnerOverride);
             }
             Parameters parameters = parametersMethod.getAnnotation(Parameters.class);
             return Collections.unmodifiableList(createRunnersForParameters(
@@ -396,13 +401,7 @@ public class Parameterized extends Suite {
         @SuppressWarnings("unchecked")
         private static List<Object> allParameters(
                 TestClass testClass, FrameworkMethod parametersMethod) throws Throwable {
-            Object parameters;
-            try {
-                parameters = parametersMethod.invokeExplosively(null);
-            } catch (AssumptionViolatedException e) {
-                return Collections.<Object>singletonList(
-                        new AssumptionViolationRunner(testClass, parametersMethod.getName(), e));
-            }
+            Object parameters = parametersMethod.invokeExplosively(null);
             if (parameters instanceof List) {
                 return (List<Object>) parameters;
             } else if (parameters instanceof Collection) {
