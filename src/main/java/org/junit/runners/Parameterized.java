@@ -13,7 +13,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.internal.AssumptionViolatedException;
+import org.junit.runner.Description;
 import org.junit.runner.Runner;
+import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InvalidTestClassError;
 import org.junit.runners.model.TestClass;
@@ -314,6 +318,27 @@ public class Parameterized extends Suite {
         }
     }
 
+    private static class AssumptionViolationRunner extends Runner {
+        private final Description description;
+        private final AssumptionViolatedException exception;
+
+        AssumptionViolationRunner(TestClass testClass, String methodName,
+                AssumptionViolatedException exception) {
+            this.description = Description
+                    .createTestDescription(testClass.getJavaClass(),
+                            methodName + "() assumption violation");
+            this.exception = exception;
+        }
+
+        public Description getDescription() {
+            return description;
+        }
+
+        public void run(RunNotifier notifier) {
+            notifier.fireTestAssumptionFailed(new Failure(description, exception));
+        }
+    }
+
     private static class RunnersFactory {
         private static final ParametersRunnerFactory DEFAULT_FACTORY = new BlockJUnit4ClassRunnerWithParametersFactory();
 
@@ -332,6 +357,10 @@ public class Parameterized extends Suite {
         }
 
         private List<Runner> createRunners() throws Exception {
+            if (allParameters.size() == 1 && allParameters
+                    .get(0) instanceof AssumptionViolationRunner) {
+                return Collections.singletonList((Runner) allParameters.get(0));
+            }
             Parameters parameters = parametersMethod.getAnnotation(Parameters.class);
             return Collections.unmodifiableList(createRunnersForParameters(
                     allParameters, parameters.name(),
@@ -365,7 +394,13 @@ public class Parameterized extends Suite {
         @SuppressWarnings("unchecked")
         private static List<Object> allParameters(
                 TestClass testClass, FrameworkMethod parametersMethod) throws Throwable {
-            Object parameters = parametersMethod.invokeExplosively(null);
+            Object parameters;
+            try {
+                parameters = parametersMethod.invokeExplosively(null);
+            } catch (AssumptionViolatedException e) {
+                return Collections.<Object>singletonList(
+                        new AssumptionViolationRunner(testClass, parametersMethod.getName(), e));
+            }
             if (parameters instanceof List) {
                 return (List<Object>) parameters;
             } else if (parameters instanceof Collection) {

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.AfterClass;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -762,5 +763,33 @@ public class ParameterizedTestTest {
         assertTestCreatesSingleFailureWithMessage(
                 UseParameterizedFactoryTest.class,
                 "Called ExceptionThrowingRunnerFactory.");
+    }
+
+    @RunWith(Parameterized.class)
+    public static class ParameterizedAssumtionViolation {
+        @Parameters
+        public static Iterable<String> data() {
+            Assume.assumeTrue(false);
+            return Collections.singletonList("foobar");
+        }
+
+        public ParameterizedAssumtionViolation(String parameter) {
+        }
+
+        @Test
+        public void test1() {
+        }
+
+        @Test
+        public void test2() {
+        }
+    }
+
+    @Test
+    public void assumtionViolationInParameters() {
+        Result result = JUnitCore.runClasses(ParameterizedAssumtionViolation.class);
+        assertTrue(result.wasSuccessful());
+        assertEquals(0, result.getRunCount());
+        assertEquals(0, result.getIgnoreCount());
     }
 }
