@@ -330,10 +330,12 @@ public class Parameterized extends Suite {
             this.exception = exception;
         }
 
+        @Override
         public Description getDescription() {
             return description;
         }
 
+        @Override
         public void run(RunNotifier notifier) {
             notifier.fireTestAssumptionFailed(new Failure(description, exception));
         }
