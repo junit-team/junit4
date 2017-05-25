@@ -111,7 +111,7 @@ public class ExternalResourceRuleTest {
     }
 
     @Test
-    public void shouldThrowMultipleFailureExceptionWhenTestFailsAnd2ClosingResourceFails() {
+    public void shouldThrowMultipleFailureExceptionWhenTestFailsAnd2ClosingResourcesFail() {
         final Result result = JUnitCore.runClasses(TestFailsAnd2ClosingResourcesFail.class);
         assertEquals(3, result.getFailures().size());
         List<String> messages = new ArrayList<String>();
