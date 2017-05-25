@@ -373,7 +373,7 @@ public class AssertionTest {
     public void stringsDifferWithUserMessage() {
         try {
             assertEquals("not equal", "one", "two");
-        } catch (AssertionError exception) {
+        } catch (ComparisonFailure exception) {
             assertEquals("not equal expected:<[one]> but was:<[two]>", exception.getMessage());
             return;
         }
