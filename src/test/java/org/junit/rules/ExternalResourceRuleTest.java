@@ -11,6 +11,7 @@ import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 import static org.junit.internal.matchers.ThrowableCauseMatcher.hasCause;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -22,6 +23,9 @@ import org.junit.TestCouldNotBeSkippedException;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.statements.Fail;
 import org.junit.runner.Description;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
 import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
 
@@ -83,39 +87,42 @@ public class ExternalResourceRuleTest {
         }
     }
 
-    @Test
-    public void shouldThrowMultipleFailureExceptionWhenTestFailsAndClosingResourceFails2()
-            throws Throwable {
-        ExternalResource resourceRule1 = new ExternalResource() {
+    public static class TestFailsAnd2ClosingResourcesFail {
+        @Rule
+        public ExternalResource resourceRule1 = new ExternalResource() {
             @Override
             protected void after() {
                 throw new RuntimeException("simulating resource1 tear down failure");
             }
         };
-        ExternalResource resourceRule2 = new ExternalResource() {
+
+        @Rule
+        public ExternalResource resourceRule2 = new ExternalResource() {
             @Override
             protected void after() {
                 throw new RuntimeException("simulating resource2 tear down failure");
             }
         };
-        Statement failingTest = new Fail(new RuntimeException("simulated test failure"));
-        Description dummyDescription = Description.createTestDescription(
-                "dummy test class name", "dummy test name");
 
-        try {
-            Statement statement = resourceRule1.apply(failingTest, dummyDescription);
-            statement = resourceRule2.apply(statement, dummyDescription);
-            statement.evaluate();
-            fail("ExternalResource should throw");
-        } catch (MultipleFailureException e) {
-            assertEquals(3, e.getFailures().size());
-            assertThat(e.getMessage(), allOf(
-                    containsString("There were 3 errors:"),
-                    containsString("simulated test failure"),
-                    containsString("simulating resource1 tear down failure"),
-                    containsString("simulating resource2 tear down failure")
-            ));
+        @Test
+        public void failingTest() {
+            throw new RuntimeException("simulated test failure");
         }
+    }
+
+    @Test
+    public void shouldThrowMultipleFailureExceptionWhenTestFailsAnd2ClosingResourceFails() {
+        final Result result = JUnitCore.runClasses(TestFailsAnd2ClosingResourcesFail.class);
+        assertEquals(3, result.getFailures().size());
+        List<String> messages = new ArrayList<String>();
+        for (Failure failure : result.getFailures()) {
+            messages.add(failure.getMessage());
+        }
+        assertThat(messages, CoreMatchers.hasItems(
+                "simulated test failure",
+                "simulating resource1 tear down failure",
+                "simulating resource2 tear down failure"
+        ));
     }
 
     @Test
