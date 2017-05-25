@@ -87,7 +87,7 @@ public class ExternalResourceRuleTest {
         }
     }
 
-    public static class TestFailsAnd2ClosingResourcesFail {
+    public static class TestFailsAndTwoClosingResourcesFail {
         @Rule
         public ExternalResource resourceRule1 = new ExternalResource() {
             @Override
@@ -111,8 +111,8 @@ public class ExternalResourceRuleTest {
     }
 
     @Test
-    public void shouldThrowMultipleFailureExceptionWhenTestFailsAnd2ClosingResourcesFail() {
-        final Result result = JUnitCore.runClasses(TestFailsAnd2ClosingResourcesFail.class);
+    public void shouldThrowMultipleFailureExceptionWhenTestFailsAndTwoClosingResourcesFail() {
+        Result result = JUnitCore.runClasses(TestFailsAndTwoClosingResourcesFail.class);
         assertEquals(3, result.getFailures().size());
         List<String> messages = new ArrayList<String>();
         for (Failure failure : result.getFailures()) {
