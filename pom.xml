@@ -558,19 +558,5 @@
                 </plugins>
             </reporting>
         </profile>
-        <profile>
-            <id>fast-tests</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <parallel>classes</parallel>
-                            <threadCountClasses>2</threadCountClasses>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
     </profiles>
 </project>
