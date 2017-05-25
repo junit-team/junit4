@@ -10,7 +10,6 @@ import static org.junit.Assert.fail;
 
 import java.lang.annotation.AnnotationFormatError;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
