@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.experimental.results.PrintableResult.testResult;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,6 +29,7 @@ import org.junit.runner.Result;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.RunListener;
 import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
@@ -787,9 +789,18 @@ public class ParameterizedTestTest {
 
     @Test
     public void assumtionViolationInParameters() {
-        Result result = JUnitCore.runClasses(ParameterizedAssumtionViolation.class);
+        JUnitCore core = new JUnitCore();
+        final List<Failure> assumptionFailures = new ArrayList<Failure>();
+        core.addListener(new RunListener() {
+            @Override
+            public void testAssumptionFailure(Failure failure) {
+                assumptionFailures.add(failure);
+            }
+        });
+        Result result = core.run(ParameterizedAssumtionViolation.class);
         assertTrue(result.wasSuccessful());
         assertEquals(0, result.getRunCount());
         assertEquals(0, result.getIgnoreCount());
+        assertEquals(1, assumptionFailures.size());
     }
 }
