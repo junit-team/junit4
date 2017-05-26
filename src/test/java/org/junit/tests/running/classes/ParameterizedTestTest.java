@@ -769,9 +769,11 @@ public class ParameterizedTestTest {
 
     @RunWith(Parameterized.class)
     public static class ParameterizedAssumtionViolation {
+        static boolean condition;
+
         @Parameters
         public static Iterable<String> data() {
-            assumeTrue(false);
+            assumeTrue(condition);
             return Collections.singletonList("foobar");
         }
 
@@ -789,6 +791,12 @@ public class ParameterizedTestTest {
 
     @Test
     public void assumtionViolationInParameters() {
+        ParameterizedAssumtionViolation.condition = true;
+        Result successResult = JUnitCore.runClasses(ParameterizedAssumtionViolation.class);
+        assertTrue(successResult.wasSuccessful());
+        assertEquals(2, successResult.getRunCount());
+
+        ParameterizedAssumtionViolation.condition = false;
         JUnitCore core = new JUnitCore();
         final List<Failure> assumptionFailures = new ArrayList<Failure>();
         core.addListener(new RunListener() {
@@ -797,10 +805,10 @@ public class ParameterizedTestTest {
                 assumptionFailures.add(failure);
             }
         });
-        Result result = core.run(ParameterizedAssumtionViolation.class);
-        assertTrue(result.wasSuccessful());
-        assertEquals(0, result.getRunCount());
-        assertEquals(0, result.getIgnoreCount());
+        Result failureResult = core.run(ParameterizedAssumtionViolation.class);
+        assertTrue(failureResult.wasSuccessful());
+        assertEquals(0, failureResult.getRunCount());
+        assertEquals(0, failureResult.getIgnoreCount());
         assertEquals(1, assumptionFailures.size());
     }
 }
