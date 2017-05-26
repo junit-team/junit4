@@ -20,6 +20,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TemporaryFolderRuleAssuredDeletionTest.class,
         TemporaryFolderUsageTest.class,
         TestRuleTest.class,
+        TestRuleAdapterTest.class,
         TestWatcherTest.class,
         TestWatchmanTest.class,
         TestWatchmanTest.class,

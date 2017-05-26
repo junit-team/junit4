@@ -1,9 +1,11 @@
 package org.junit.rules;
 
+import java.beans.MethodDescriptor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.Rule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
@@ -82,6 +84,19 @@ public class RuleChain implements TestRule {
         return emptyRuleChain().around(outerRule);
     }
 
+    /**
+     * Returns a {@code RuleChain} with a single {@link MethodRule}. This method
+     * is the usual starting point of a {@code RuleChain}.
+     *
+     * @param outerRule the outer rule of the {@code RuleChain}.
+     * @param testObject instance of the current test class.
+     * @return a {@code RuleChain} with a single {@link TestRule}.
+     * @since 4.12
+     */
+    public static RuleChain outerRule(MethodRule outerRule, Object testObject) {
+        return emptyRuleChain().around(outerRule, testObject);
+    }
+
     private RuleChain(List<TestRule> rules) {
         this.rulesStartingWithInnerMost = rules;
     }
@@ -100,6 +115,26 @@ public class RuleChain implements TestRule {
         }
         List<TestRule> rulesOfNewChain = new ArrayList<TestRule>();
         rulesOfNewChain.add(enclosedRule);
+        rulesOfNewChain.addAll(rulesStartingWithInnerMost);
+        return new RuleChain(rulesOfNewChain);
+    }
+
+    /**
+     * Create a new {@code RuleChain}, which encloses the given {@link MethodRule} with
+     * the rules of the current {@code RuleChain}.
+     *
+     * @param enclosedRule the rule to enclose; must not be {@code null}.
+     * @param testObject instance of the current test class.
+     * @return a new {@code RuleChain}.
+     * @throws NullPointerException if the argument {@code enclosedRule} is {@code null}
+     * @since 4.12
+     */
+    public RuleChain around(MethodRule enclosedRule, Object testObject) {
+        if (enclosedRule == null) {
+            throw new NullPointerException("The enclosed rule must not be null");
+        }
+        List<TestRule> rulesOfNewChain = new ArrayList<TestRule>();
+        rulesOfNewChain.add(new TestRuleAdapter(enclosedRule, testObject));
         rulesOfNewChain.addAll(rulesStartingWithInnerMost);
         return new RuleChain(rulesOfNewChain);
     }

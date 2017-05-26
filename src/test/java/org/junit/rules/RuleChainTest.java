@@ -10,20 +10,42 @@ import static org.junit.Assert.fail;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.rules.RuleChain.outerRule;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.internal.Throwables;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.Statement;
 
 public class RuleChainTest {
     private static final List<String> LOG = new ArrayList<String>();
+
+    private static class LoggingMethodRule implements MethodRule {
+        private final String label;
+
+        public LoggingMethodRule(String label) {
+            this.label = label;
+        }
+
+        public Statement apply(final Statement base,
+                               FrameworkMethod method,
+                               Object target) {
+            return new Statement() {
+                @Override
+                public void evaluate() throws Throwable {
+                    LOG.add("before " + label);
+                    base.evaluate();
+                    LOG.add("after " + label);
+                }
+            };
+        }
+    }
 
     private static class LoggingRule extends TestWatcher {
         private final String label;
@@ -53,6 +75,11 @@ public class RuleChainTest {
         public void example() {
             assertTrue(true);
         }
+    }
+
+    @Before
+    public void clearLog() {
+        LOG.clear();
     }
 
     @Test
@@ -92,5 +119,26 @@ public class RuleChainTest {
         assertThat(result.getFailures().size(), equalTo(1));
         String stacktrace = Throwables.getStacktrace(result.getFailures().get(0).getException());
         assertThat(stacktrace, containsString("\tat org.junit.rules.RuleChainTest$RuleChainWithNullRules.<init>(RuleChainTest.java:"));
+    }
+
+    public static class RuleChainWithMethodRules {
+        @Rule
+        public final RuleChain chain = RuleChain
+                .outerRule(new LoggingMethodRule("outer method rule"), this)
+                .around(new LoggingMethodRule("inner method rule"), this);
+
+        @Test
+        public void example() {
+            assertTrue(true);
+        }
+    }
+
+    @Test
+    public void supportsMethodRules() {
+        testResult(RuleChainWithMethodRules.class);
+        List<String> expectedLog = asList("before outer method rule",
+                "before inner method rule", "after inner method rule",
+                "after outer method rule");
+        assertEquals(expectedLog, LOG);
     }
 }
