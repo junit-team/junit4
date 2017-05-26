@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.lang.reflect.Method;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -104,8 +105,30 @@ public final class Throwables {
         return Collections.emptyList();
     }
 
+    private static final Method getSuppressed = initGetSuppressed();
+
+    private static Method initGetSuppressed() {
+        try {
+            return Throwable.class.getMethod("getSuppressed");
+        } catch (Throwable e) {
+            return null;
+        }
+    }
+
+    private static boolean hasSuppressed(Throwable exception) {
+        if (getSuppressed == null) {
+            return false;
+        }
+        try {
+            Throwable[] suppressed = (Throwable[]) getSuppressed.invoke(exception);
+            return suppressed.length != 0;
+        } catch (Throwable e) {
+            return false;
+        }
+    }
+
     private static List<String> getCauseStackTraceLines(Throwable exception) {
-        if (exception.getCause() != null) {
+        if (exception.getCause() != null || hasSuppressed(exception)) {
             String fullTrace = getFullStackTrace(exception);
             BufferedReader reader = new BufferedReader(
                     new StringReader(fullTrace.substring(exception.toString().length())));
@@ -114,7 +137,7 @@ public final class Throwables {
             try {
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    if (line.startsWith("Caused by: ")) {
+                    if (line.startsWith("Caused by: ") || line.trim().startsWith("Suppressed: ")) {
                         causedByLines.add(line);
                         while ((line = reader.readLine()) != null) {
                             causedByLines.add(line);

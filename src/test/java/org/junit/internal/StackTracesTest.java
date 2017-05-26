@@ -4,7 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
+import java.lang.reflect.Method;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -156,7 +158,24 @@ public class StackTracesTest {
                 at("org.junit.internal.StackTracesTest$ThrowingMethodRule.apply"));
         assertNotEquals(failure.getTrace(), failure.getTrimmedTrace());
     }
-    
+
+    @Test
+    public void getTrimmedStackWithSuppressedExceptions() {
+        assumeTrue("Running on 1.7+", TestWithSuppressedException.addSuppressed != null);
+        Result result = runTest(TestWithSuppressedException.class);
+        assertEquals("Should run the test", 1, result.getRunCount());
+        assertEquals("One test should fail", 1, result.getFailureCount());
+        Failure failure = result.getFailures().get(0);
+
+        assertHasTrimmedTrace(failure,
+                message("java.lang.RuntimeException: error"),
+                at("org.junit.internal.StackTracesTest$TestWithSuppressedException.alwaysThrows"),
+                message("\tSuppressed: java.lang.RuntimeException: suppressed"),
+                at("org.junit.internal.StackTracesTest$TestWithSuppressedException.alwaysThrows"),
+                framesInCommon());
+        assertNotEquals(failure.getTrace(), failure.getTrimmedTrace());
+    }
+
     private abstract static class StringMatcher extends TypeSafeMatcher<String> {
     }
 
@@ -190,7 +209,7 @@ public class StackTracesTest {
      */
     private static class StackTraceLineMatcher extends StringMatcher {
         private static final Pattern PATTERN
-                = Pattern.compile("at ([a-zA-Z0-9.$]+)\\([a-zA-Z0-9]+\\.java:[0-9]+\\)");
+                = Pattern.compile("\t*at ([a-zA-Z0-9.$]+)\\([a-zA-Z0-9]+\\.java:[0-9]+\\)");
 
         private final String method;
 
@@ -228,7 +247,7 @@ public class StackTracesTest {
      */
     private static class FramesRemovedMatcher extends StringMatcher {
         private static final Pattern PATTERN
-                = Pattern.compile("\\.\\.\\. [0-9]+ ([a-z]+)");
+                = Pattern.compile("\t*\\.\\.\\. [0-9]+ ([a-z]+)");
 
         private final String suffix;
 
@@ -407,6 +426,25 @@ public class StackTracesTest {
 
         private void doThrowExceptionWithoutCause() {
             throw new RuntimeException("cause");
+        }
+    }
+
+    public static class TestWithSuppressedException {
+        static final Method addSuppressed = initAddSuppressed();
+
+        static Method initAddSuppressed() {
+            try {
+                return Throwable.class.getMethod("addSuppressed", Throwable.class);
+            } catch (Throwable e) {
+                return null;
+            }
+        }
+
+        @Test
+        public void alwaysThrows() throws Exception {
+            final RuntimeException exception = new RuntimeException("error");
+            addSuppressed.invoke(exception, new RuntimeException("suppressed"));
+            throw exception;
         }
     }
 }
