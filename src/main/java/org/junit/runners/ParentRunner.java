@@ -1,5 +1,6 @@
 package org.junit.runners;
 
+import static org.junit.internal.Checks.notNull;
 import static org.junit.internal.runners.rules.RuleMemberValidator.CLASS_RULE_METHOD_VALIDATOR;
 import static org.junit.internal.runners.rules.RuleMemberValidator.CLASS_RULE_VALIDATOR;
 
@@ -89,6 +90,21 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         validate();
     }
 
+   /**
+    * Constructs a new {@code ParentRunner} that will run the {@code TestClass}.
+    *
+    * @since 4.13
+    */
+    protected ParentRunner(TestClass testClass) throws InitializationError {
+       this.testClass = notNull(testClass);
+       validate();
+    }
+
+    /**
+     * @deprecated Please use {@link #ParentRunner(org.junit.runners.model.TestClass)}.
+     * @since 4.12
+     */
+    @Deprecated
     protected TestClass createTestClass(Class<?> testClass) {
         return new TestClass(testClass);
     }

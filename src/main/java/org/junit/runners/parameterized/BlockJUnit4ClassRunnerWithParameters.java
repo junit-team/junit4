@@ -32,7 +32,7 @@ public class BlockJUnit4ClassRunnerWithParameters extends
 
     public BlockJUnit4ClassRunnerWithParameters(TestWithParameters test)
             throws InitializationError {
-        super(test.getTestClass().getJavaClass());
+        super(test.getTestClass());
         parameters = test.getParameters().toArray(
                 new Object[test.getParameters().size()]);
         name = test.getName();
