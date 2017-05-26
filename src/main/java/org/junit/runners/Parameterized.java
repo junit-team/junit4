@@ -352,8 +352,8 @@ public class Parameterized extends Suite {
 
         private RunnersFactory(Class<?> klass) throws Throwable {
             testClass = new TestClass(klass);
-            List<Object> allParametersResult;
             parametersMethod = getParametersMethod(testClass);
+            List<Object> allParametersResult;
             AssumptionViolationRunner assumptionViolationRunner = null;
             try {
                 allParametersResult = allParameters(testClass, parametersMethod);
