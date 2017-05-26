@@ -7,6 +7,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 import static org.junit.experimental.results.PrintableResult.testResult;
 
 import java.util.ArrayList;
@@ -18,7 +19,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.AfterClass;
-import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -771,7 +771,7 @@ public class ParameterizedTestTest {
     public static class ParameterizedAssumtionViolation {
         @Parameters
         public static Iterable<String> data() {
-            Assume.assumeTrue(false);
+            assumeTrue(false);
             return Collections.singletonList("foobar");
         }
 

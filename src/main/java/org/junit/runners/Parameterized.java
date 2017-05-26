@@ -346,20 +346,24 @@ public class Parameterized extends Suite {
 
         private final TestClass testClass;
         private final FrameworkMethod parametersMethod;
-        private List<Object> allParameters;
+        private final List<Object> allParameters;
         private final int parameterCount;
-        private Runner runnerOverride;
+        private final Runner runnerOverride;
 
         private RunnersFactory(Class<?> klass) throws Throwable {
             testClass = new TestClass(klass);
+            List<Object> allParametersResult = null;
             parametersMethod = getParametersMethod(testClass);
+            AssumptionViolationRunner assumptionViolationRunner = null;
             try {
-                allParameters = allParameters(testClass, parametersMethod);
+                allParametersResult = allParameters(testClass, parametersMethod);
             } catch (AssumptionViolatedException e) {
-                allParameters = Collections.emptyList();
-                runnerOverride = new AssumptionViolationRunner(testClass,
+                allParametersResult = Collections.emptyList();
+                assumptionViolationRunner = new AssumptionViolationRunner(testClass,
                         parametersMethod.getName(), e);
             }
+            allParameters = allParametersResult;
+            runnerOverride = assumptionViolationRunner;
             parameterCount =
                     allParameters.isEmpty() ? 0 : normalizeParameters(allParameters.get(0)).length;
         }
