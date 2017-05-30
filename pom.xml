@@ -122,6 +122,12 @@
             <version>${hamcrestVersion}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
     <build>
