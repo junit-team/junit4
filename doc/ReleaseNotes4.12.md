@@ -162,6 +162,11 @@ in a `Callable<Object>` and it returned `Object`. You can now pass any `Callable
 return type will match the type of the callable.
 
 
+### [Pull request #1359:] (https://github.com/junit-team/junit4/pull/1359) Fixes how `MultipleFailureException` stack traces are printed
+
+Previously, calling `MultipleFailureException.printStackTrace()` only printed the stack trace for the `MultipleFailureException` itself. After this change, the stack trace for each exception caught in the `MultipleFailureException` is printed.
+
+
 # Timeout for Tests
 *See also [Timeout for tests](https://github.com/junit-team/junit4/wiki/Timeout-for-tests)*
 
