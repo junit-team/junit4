@@ -34,6 +34,10 @@ public final class FilterRequest extends Request {
     public Runner getRunner() {
         try {
             Runner runner = request.getRunner();
+            if (runner instanceof ErrorReportingRunner) {
+                // runner is already an ErrorReportingRunner
+                return runner;
+            }
             fFilter.apply(runner);
             return runner;
         } catch (NoTestsRemainException e) {
