@@ -15,13 +15,10 @@ import org.junit.runners.model.Statement;
 /**
  * The {@code ExpectedException} rule allows you to verify that your code
  * throws a specific exception. Note that, starting with Java 8,
- * {@link org.junit.Assert#assertThrows(java.lang.Class, org.junit.function.ThrowingRunnable)
- * Assert.assertThrows}
+ * {@link org.junit.Assert#expectThrows(java.lang.Class, org.junit.function.ThrowingRunnable)
+ * Assert.expectThrows}
  * is often a better choice since it allows you to express exactly where you
- * expect the exception to be thrown. Use
- * {@link org.junit.Assert#expectThrows(java.lang.Class,
- * org.junit.function.ThrowingRunnable) expectThrows}
- * if you need to assert something about the thrown exception.
+ * expect the exception to be thrown.
  *
  * <h3>Usage</h3>
  *

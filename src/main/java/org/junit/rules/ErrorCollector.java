@@ -1,7 +1,7 @@
 package org.junit.rules;
 
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.expectThrows;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -117,7 +117,7 @@ public class ErrorCollector extends Verifier {
      */
     public void checkThrows(Class<? extends Throwable> expectedThrowable, ThrowingRunnable runnable) {
         try {
-            assertThrows(expectedThrowable, runnable);
+            expectThrows(expectedThrowable, runnable);
         } catch (AssertionError e) {
             addError(e);
         }
