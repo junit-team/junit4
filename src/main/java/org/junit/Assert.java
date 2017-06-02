@@ -198,7 +198,7 @@ public class Assert {
      */
     public static void assertNotEquals(String message, long unexpected, long actual) {
         if (unexpected == actual) {
-            failEquals(message, Long.valueOf(actual));
+            failEquals(message, actual);
         }
     }
 
@@ -231,7 +231,7 @@ public class Assert {
     public static void assertNotEquals(String message, double unexpected,
             double actual, double delta) {
         if (!doubleIsDifferent(unexpected, actual, delta)) {
-            failEquals(message, Double.valueOf(actual));
+            failEquals(message, actual);
         }
     }
 
@@ -552,7 +552,7 @@ public class Assert {
     public static void assertEquals(String message, double expected,
             double actual, double delta) {
         if (doubleIsDifferent(expected, actual, delta)) {
-            failNotEquals(message, Double.valueOf(expected), Double.valueOf(actual));
+            failNotEquals(message, expected, actual);
         }
     }
 
@@ -574,7 +574,7 @@ public class Assert {
     public static void assertEquals(String message, float expected,
             float actual, float delta) {
         if (floatIsDifferent(expected, actual, delta)) {
-            failNotEquals(message, Float.valueOf(expected), Float.valueOf(actual));
+            failNotEquals(message, expected, actual);
         }
     }
 
@@ -644,7 +644,7 @@ public class Assert {
      */
     public static void assertEquals(String message, long expected, long actual) {
         if (expected != actual) {
-            failNotEquals(message, Long.valueOf(expected), Long.valueOf(actual));
+            failNotEquals(message, expected, actual);
         }
     }
 
