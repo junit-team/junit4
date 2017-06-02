@@ -122,19 +122,19 @@ public abstract class TestWatcher implements TestRule {
     /**
      * Invoked when a test succeeds
      */
-    protected void succeeded(Description description) {
+    protected void succeeded(Description description) throws Throwable {
     }
 
     /**
      * Invoked when a test fails
      */
-    protected void failed(Throwable e, Description description) {
+    protected void failed(Throwable e, Description description) throws Throwable {
     }
 
     /**
      * Invoked when a test is skipped due to a failed assumption.
      */
-    protected void skipped(AssumptionViolatedException e, Description description) {
+    protected void skipped(AssumptionViolatedException e, Description description) throws Throwable {
         // For backwards compatibility with JUnit 4.11 and earlier, call the legacy version
         org.junit.internal.AssumptionViolatedException asInternalException = e;
         skipped(asInternalException, description);
@@ -153,12 +153,12 @@ public abstract class TestWatcher implements TestRule {
     /**
      * Invoked when a test is about to start
      */
-    protected void starting(Description description) {
+    protected void starting(Description description) throws Throwable {
     }
 
     /**
      * Invoked when a test method finishes (whether passing or failing)
      */
-    protected void finished(Description description) {
+    protected void finished(Description description) throws Throwable {
     }
 }
