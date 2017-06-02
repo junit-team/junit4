@@ -13,6 +13,7 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
+import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 
 @RunWith(Enclosed.class)
@@ -72,6 +73,15 @@ public class SortableTest {
 
             new JUnitCore().run(backward);
             assertEquals("cba", log);
+        }
+        
+        @Test
+        public void sortingForwardWorksOnTestClassRunnerWithCustomSorter() {
+            Sorter sorter = new Sorter(forward());
+            Request forward = Request.aClass(SortMe.class).sortWith(sorter);
+            
+            new JUnitCore().run(forward);
+            assertEquals("abc", log);
         }
 
         @RunWith(Enclosed.class)
