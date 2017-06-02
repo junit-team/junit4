@@ -3,6 +3,7 @@ package org.junit.runners;
 import java.lang.reflect.Method;
 import java.util.Comparator;
 
+import org.junit.Test;
 import org.junit.internal.MethodSorter;
 
 /**
@@ -17,6 +18,11 @@ public enum MethodSorters {
      * with {@link Method#toString()} used as a tiebreaker
      */
     NAME_ASCENDING(MethodSorter.NAME_ASCENDING),
+
+    /**
+     * Sorts the test methods using {@link Test#order()} attributes
+     */
+    METHOD_ORDER(MethodSorter.METHOD_ORDER),
 
     /**
      * Leaves the test methods in the order returned by the JVM.

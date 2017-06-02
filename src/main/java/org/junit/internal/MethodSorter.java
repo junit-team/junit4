@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import org.junit.FixMethodOrder;
+import org.junit.Test;
 
 public class MethodSorter {
     /**
@@ -31,6 +32,17 @@ public class MethodSorter {
                 return comparison;
             }
             return m1.toString().compareTo(m2.toString());
+        }
+    };
+
+    /**
+     * Sort order using {@link Test#order()} attributes
+     */
+    public static Comparator<Method> METHOD_ORDER = new Comparator<Method>() {
+        public int compare(Method m1, Method m2) {
+            final Test t1 = m1.getAnnotation(Test.class);
+            final Test t2 = m2.getAnnotation(Test.class);
+            return (t1 != null ? t1.order() : 0) - (t2 != null ? t2.order() : 0);
         }
     };
 
