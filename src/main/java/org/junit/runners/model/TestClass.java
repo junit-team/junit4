@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -61,7 +62,11 @@ public class TestClass implements Annotatable {
     }
 
     protected void scanAnnotatedMembers(Map<Class<? extends Annotation>, List<FrameworkMethod>> methodsForAnnotations, Map<Class<? extends Annotation>, List<FrameworkField>> fieldsForAnnotations) {
-        for (Class<?> eachClass : getSuperClasses(clazz)) {
+        List<Class<?>> classList = new ArrayList<Class<?>>();
+        getSuperClasses(clazz, classList);
+        getInterfaces(clazz, classList);
+
+        for (Class<?> eachClass : classList) {
             for (Method eachMethod : MethodSorter.getDeclaredMethods(eachClass)) {
                 addToAnnotationLists(new FrameworkMethod(eachMethod), methodsForAnnotations);
             }
@@ -168,14 +173,23 @@ public class TestClass implements Annotatable {
                 || annotation.equals(BeforeClass.class);
     }
 
-    private static List<Class<?>> getSuperClasses(Class<?> testClass) {
-        List<Class<?>> results = new ArrayList<Class<?>>();
+    private static void getSuperClasses(Class<?> testClass, Collection<Class<?>> into) {
         Class<?> current = testClass;
         while (current != null) {
-            results.add(current);
+            into.add(current);
             current = current.getSuperclass();
         }
-        return results;
+    }
+
+    private static void getInterfaces(Class<?> testClass, Collection<Class<?>> into) {
+        if (testClass == null) {
+            return;
+        }
+        Class<?>[] interfaces = testClass.getInterfaces();
+        for (Class<?> iface : interfaces) {
+            into.add(iface);
+            getInterfaces(iface, into);
+        }
     }
 
     /**
