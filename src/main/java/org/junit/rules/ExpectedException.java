@@ -119,6 +119,8 @@ public class ExpectedException implements TestRule {
 
     private final ExpectedExceptionMatcherBuilder matcherBuilder = new ExpectedExceptionMatcherBuilder();
 
+    private Statement postExceptionStatement;
+
     private String missingExceptionMessage= "Expected test to throw %s";
 
     private ExpectedException() {
@@ -211,6 +213,47 @@ public class ExpectedException implements TestRule {
     }
 
     /**
+     * Evaluates the given {@link Statement} after the expected exception is thrown, which
+     * allows making assertions even after the exception is thrown.
+     * <p>This is particularly useful when method under test performs some task in iterations
+     * and one of the iteration throws exception, and verification has to be done for iterations
+     * before the one that caused exception. For example,
+     * <pre>
+     *          public void processOrders(List&lt;Order&gt; orders) {
+     *              for(Order order : orders) {
+     *                  if(order.isNotValid()) {
+     *                      throw new UnsupportedOperationException("Order is not valid");
+     *                  }
+     *                  order.setProcessed(true);
+     *              }
+     *          }
+     *
+     *          &#064;Test
+     *          public shouldProcessValidOrders() {
+     *              ...
+     *              final List&lt;Order&gt; orders = new ArrayList&lt;Order&gt;();
+     *              orders.add(validOrder1, validOrder2, invalidOrder, validOrder3);
+     *              thrown.expect(UnsupportedOperationException.class);
+     *              thrown.evaluatePostException(new Statement() {
+     *                  public void evaluate() {
+     *                      assertTrue(validOrder1.isProcessed());
+     *                      assertTrue(validOrder2.isProcessed());
+     *                      assertFalse(validOrder3.isProcessed());
+     *                  }
+     *              }
+
+     *              processOrders(orders);
+     *          }
+     * </pre>
+     * @param statement statement to be evaluated after the expected exception is thrown.
+     *                  If expected exception is not thrown test will fail and this statement
+     *                  will not be evaluated.
+     */
+    public void evaluatePostException(Statement statement) {
+        postExceptionStatement = statement;
+    }
+
+    /**
      * Verify that your code throws an exception whose message is matched 
      * by a Hamcrest matcher.
      * <pre> &#064;Test
@@ -266,6 +309,9 @@ public class ExpectedException implements TestRule {
                 next.evaluate();
             } catch (Throwable e) {
                 handleException(e);
+                if(postExceptionStatement!=null) {
+                    postExceptionStatement.evaluate();
+                }
                 return;
             }
             if (isAnyExceptionExpected()) {
