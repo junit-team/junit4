@@ -47,11 +47,14 @@ public class TestSuite implements Test {
      * mountains, our intrepid adventurers type...
      */
     static public Test createTest(Class<?> theClass, String name) {
+        StringBuilder warningMessage = new StringBuilder();
         Constructor<?> constructor;
         try {
             constructor = getTestConstructor(theClass);
         } catch (NoSuchMethodException e) {
-            return warning("Class " + theClass.getName() + " has no public constructor TestCase(String name) or TestCase()");
+            warningMessage.append("Class ").append(theClass.getName()).
+                    append(" has no public constructor TestCase(String name) or TestCase()");
+            return warning(warningMessage.toString());
         }
         Object test;
         try {
@@ -64,11 +67,20 @@ public class TestSuite implements Test {
                 test = constructor.newInstance(new Object[]{name});
             }
         } catch (InstantiationException e) {
-            return (warning("Cannot instantiate test case: " + name + " (" + Throwables.getStacktrace(e) + ")"));
+            warningMessage.setLength(0);
+            warningMessage.append("Cannot instantiate test case: ")
+                    .append(name).append(" (").append(Throwables.getStacktrace(e)).append(")");
+            return (warning(warningMessage.toString()));
         } catch (InvocationTargetException e) {
-            return (warning("Exception in constructor: " + name + " (" + Throwables.getStacktrace(e.getTargetException()) + ")"));
+            warningMessage.setLength(0);
+            warningMessage.append("Exception in constructor: ")
+                    .append(name).append(" (").append(Throwables.getStacktrace(e.getTargetException())).append(")");
+            return (warning(warningMessage.toString()));
         } catch (IllegalAccessException e) {
-            return (warning("Cannot access test case: " + name + " (" + Throwables.getStacktrace(e) + ")"));
+            warningMessage.setLength(0);
+            warningMessage.append("Cannot access test case: ")
+                    .append(name).append(" (").append(Throwables.getStacktrace(e)).append(")");
+            return (warning(warningMessage.toString()));
         }
         return (Test) test;
     }
