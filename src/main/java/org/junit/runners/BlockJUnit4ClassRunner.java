@@ -3,6 +3,7 @@ package org.junit.runners;
 import static org.junit.internal.runners.rules.RuleMemberValidator.RULE_METHOD_VALIDATOR;
 import static org.junit.internal.runners.rules.RuleMemberValidator.RULE_VALIDATOR;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -456,8 +457,42 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 
         result.addAll(getTestClass().getAnnotatedFieldValues(target,
                 Rule.class, TestRule.class));
+        result.addAll(getGlobalTestRules());
 
         return result;
+    }
+
+    /**
+     * @return a list of TestRules that could be instantiated from the
+     *          'junit.global.rules' system-property
+     */
+    private List<TestRule> getGlobalTestRules() {
+        List<TestRule> globalTestRules = new ArrayList<TestRule>();
+
+        String rulesArg = System.getProperty("junit.global.rules");
+        if (rulesArg == null || rulesArg.isEmpty()) {
+            return globalTestRules;
+        }
+
+        String[] ruleClassNames = rulesArg.split(",");
+        for (String each : ruleClassNames) {
+            try {
+                Class<?> ruleClass = Class.forName(each);
+                if (TestRule.class.isAssignableFrom(ruleClass)) {
+                    globalTestRules.add((TestRule) ruleClass.newInstance());
+                }
+            }
+            catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            catch (InstantiationException e) {
+                e.printStackTrace();
+            }
+            catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        return globalTestRules;
     }
 
     private Class<? extends Throwable> getExpectedException(Test annotation) {
