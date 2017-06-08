@@ -69,4 +69,10 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.METHOD})
 public @interface Rule {
 
+    /**
+     * Optionally specify <code>around</code>, the name of a TestRule,
+     * to chain the annotated TestRule around the specified TestRule.
+     * See also {@link org.junit.rules.RuleChain RuleChains} for more details.
+     */
+    String around() default "";
 }
