@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
  * public static class HasGlobalLongTimeout {
  *
  *  &#064;Rule
- *  public Timeout globalTimeout = Timeout.millis(20);
+ *  public Timeout globalTimeout = Timeout.millis(20, TimeUnit.MILLISECONDS);
  *
  *  &#064;Test
  *  public void run1() throws InterruptedException {
