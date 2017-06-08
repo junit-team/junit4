@@ -227,42 +227,64 @@ public class TestClass implements Annotatable {
             Class<? extends Annotation> annotationClass, Class<T> valueClass) {
         List<T> results = new ArrayList<T>();
         for (FrameworkField each : getAnnotatedFields(annotationClass)) {
-            try {
-                Object fieldValue = each.get(test);
-                if (valueClass.isInstance(fieldValue)) {
-                    results.add(valueClass.cast(fieldValue));
-                }
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(
-                        "How did getFields return a field we couldn't access?", e);
-            }
+            T result = castField(test, each, annotationClass,valueClass);
+            if (result != null) results.add(result);
         }
         return results;
+    }
+
+    /*
+     * Returns an object of type T that is defined by a FrameworkField and an annotation
+     */
+    public <T> T castField(Object test, FrameworkField field,
+            Class<? extends Annotation> annotationClass, Class<T> valueClass) {
+        T result = null;
+        try {
+            Object fieldValue = field.get(test);
+            if (valueClass.isInstance(fieldValue)) {
+                result = valueClass.cast(fieldValue);
+            }
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(
+                    "How did getFields return a field we couldn't access?", e);
+        }
+        return result;
     }
 
     public <T> List<T> getAnnotatedMethodValues(Object test,
             Class<? extends Annotation> annotationClass, Class<T> valueClass) {
         List<T> results = new ArrayList<T>();
         for (FrameworkMethod each : getAnnotatedMethods(annotationClass)) {
-            try {
-                /*
-                 * A method annotated with @Rule may return a @TestRule or a @MethodRule,
-                 * we cannot call the method to check whether the return type matches our
-                 * expectation i.e. subclass of valueClass. If we do that then the method 
-                 * will be invoked twice and we do not want to do that. So we first check
-                 * whether return type matches our expectation and only then call the method
-                 * to fetch the MethodRule
-                 */
-                if (valueClass.isAssignableFrom(each.getReturnType())) {
-                    Object fieldValue = each.invokeExplosively(test);
-                    results.add(valueClass.cast(fieldValue));
-                }
-            } catch (Throwable e) {
-                throw new RuntimeException(
-                        "Exception in " + each.getName(), e);
-            }
+            T result = castMethod(test, each, annotationClass, valueClass);
+            if (result != null) results.add(result);
         }
         return results;
+    }
+
+    /*
+     * Returns an object of type T that is defined by a FrameworkMethod and an annotation.
+     */
+    public <T> T castMethod(Object test, FrameworkMethod method,
+            Class<? extends Annotation> annotationClass, Class<T> valueClass) {
+        T result = null;
+        try {
+            /*
+             * A method annotated with @Rule may return a @TestRule or a @MethodRule,
+             * we cannot call the method to check whether the return type matches our
+             * expectation i.e. subclass of valueClass. If we do that then the method
+             * will be invoked twice and we do not want to do that. So we first check
+             * whether return type matches our expectation and only then call the method
+             * to fetch the MethodRule
+             */
+            if (valueClass.isAssignableFrom(method.getReturnType())) {
+                Object fieldValue = method.invokeExplosively(test);
+                result = valueClass.cast(fieldValue);
+            }
+        } catch (Throwable e) {
+            throw new RuntimeException(
+                    "Exception in " + method.getName(), e);
+        }
+        return result;
     }
 
     public boolean isPublic() {

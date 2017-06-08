@@ -15,6 +15,7 @@ import org.junit.runners.Suite.SuiteClasses;
         NameRulesTest.class,
         RuleChainTest.class,
         RuleMemberValidatorTest.class,
+        SortRulesTest.class,
         StopwatchTest.class,
         TempFolderRuleTest.class,
         TemporaryFolderRuleAssuredDeletionTest.class,

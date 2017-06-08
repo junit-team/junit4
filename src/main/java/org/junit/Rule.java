@@ -68,5 +68,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})
 public @interface Rule {
+   /**
+    * Optionally specify <code>priority</code> for your TestRule.
+    * TestRules with non-negative priority will be autochained accordingly.
+    * Highest priority will be the most outer Rule.
+    * See also {@link org.junit.rules.RuleChain RuleChains} for more details.
+    */
+   int priority() default -1;
 
 }
