@@ -1,9 +1,19 @@
 package org.junit.tests.assertion;
 
+import org.junit.Assert;
+import org.junit.ComparisonFailure;
+import org.junit.Test;
+import org.junit.function.ThrowingRunnable;
+import org.junit.internal.ArrayComparisonFailure;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertContentEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotSame;
@@ -13,15 +23,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.expectThrows;
 import static org.junit.Assert.fail;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-
-import org.junit.Assert;
-import org.junit.ComparisonFailure;
-import org.junit.Test;
-import org.junit.function.ThrowingRunnable;
-import org.junit.internal.ArrayComparisonFailure;
 
 /**
  * Tests for {@link org.junit.Assert}
@@ -954,6 +955,41 @@ public class AssertionTest {
             return;
         }
         throw new AssertionError(ASSERTION_ERROR_EXPECTED);
+    }
+
+    @Test
+    public void assertContentEqualsPass() throws Exception {
+        CharSequence expected = "StringValue";
+        CharSequence charSequence = new String("StringValue");
+        assertContentEquals(expected,charSequence);
+    }
+
+    @Test
+    public void assertContentEqualsPassBothNull() throws Exception {
+        CharSequence expected = null;
+        CharSequence charSequence = null;
+        assertContentEquals(expected,charSequence);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void assertContentsSingleNull() {
+        CharSequence expected = "StringValue";
+        CharSequence charSequence = null;
+        assertContentEquals(expected, charSequence);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void assertContentEqualsNotEqualButSameLength() {
+        CharSequence expected = "StringValue";
+        CharSequence charSequence = new String("NotTheSame!");
+        assertContentEquals(expected, charSequence);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void assertContentEqualsNotEqualDifferentLegth() {
+        CharSequence expected = "StringValue";
+        CharSequence charSequence = new String("NotTheSame");
+        assertContentEquals(expected, charSequence);
     }
 
     private static class NestedException extends RuntimeException {
