@@ -92,13 +92,12 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
         if (isIgnored(method)) {
             notifier.fireTestIgnored(description);
         } else {
-            Statement statement;
-            try {
-                statement = methodBlock(method);
-            }
-            catch (Throwable ex) {
-                statement = new Fail(ex);
-            }
+            Statement statement = new Statement() {
+                @Override
+                public void evaluate() throws Throwable {
+                    methodBlock(method).evaluate();
+                }
+            };
             runLeaf(statement, description, notifier);
         }
     }
