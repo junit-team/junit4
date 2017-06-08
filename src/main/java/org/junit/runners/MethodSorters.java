@@ -1,9 +1,10 @@
 package org.junit.runners;
 
+import org.junit.internal.MethodSorter;
+
 import java.lang.reflect.Method;
 import java.util.Comparator;
 
-import org.junit.internal.MethodSorter;
 
 /**
  * Sort the methods into a specified execution order.
@@ -23,6 +24,13 @@ public enum MethodSorters {
      * Note that the order from the JVM may vary from run to run
      */
     JVM(null),
+
+    /**
+     * Sorts the test methods in pseudo-random order.
+     * This sort option generates and displays (to stdout) a
+     * seed value for the random number generator.
+     */
+    RANDOM(MethodSorter.DEFAULT),
 
     /**
      * Sorts the test methods in a deterministic, but not predictable, order

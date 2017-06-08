@@ -1,12 +1,24 @@
 package org.junit.internal;
 
+import org.junit.FixMethodOrder;
+import org.junit.Seed;
+import org.junit.runners.MethodSorters;
+
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
-
-import org.junit.FixMethodOrder;
+import java.util.Random;
 
 public class MethodSorter {
+
+    /* 
+     * Used for java.util.Random seed generation.
+     * This is the same magic number used in the Java API
+     * for java.util.Random.
+     */
+    private static volatile long seedUniquifier = 8682522807148012L;
+
     /**
      * DEFAULT sort order
      */
@@ -49,15 +61,29 @@ public class MethodSorter {
      *      (non-)bug #7023180</a>
      */
     public static Method[] getDeclaredMethods(Class<?> clazz) {
-        Comparator<Method> comparator = getSorter(clazz.getAnnotation(FixMethodOrder.class));
+        FixMethodOrder order = clazz.getAnnotation(FixMethodOrder.class);
+        Comparator<Method> comparator = getSorter(order);
 
         Method[] methods = clazz.getDeclaredMethods();
         if (comparator != null) {
             Arrays.sort(methods, comparator);
         }
+        if(order != null && order.value() == MethodSorters.RANDOM) {
+            Seed s = clazz.getAnnotation(Seed.class);
+            long seed = s == null ? generateSeed() : s.value();
+            System.out.printf("Class: %s, Random ordering seed = 0x%xL%n", clazz.getName(), seed);
+            Random r = new Random(seed);
+            Collections.shuffle(Arrays.asList(methods), r);
+        }
 
         return methods;
     }
+
+    // Same seed generation algorithm used in JDK 6
+    private static long generateSeed() {
+        return ++seedUniquifier + System.nanoTime();
+    }
+
 
     private MethodSorter() {
     }

@@ -7,8 +7,11 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.junit.Assert;
+import static org.junit.Assert.assertNotEquals;
 
 import org.junit.FixMethodOrder;
+import org.junit.Seed;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
@@ -179,4 +182,104 @@ public class MethodSorterTest {
         List<String> actual = getDeclaredMethodNames(DummySortWithNameAsc.class);
         assertEquals(expected, actual);
     }
+
+    @FixMethodOrder(MethodSorters.RANDOM)
+    static class DummySortRandom {
+        Object alpha(int i, double d, Thread t) {
+            return null;
+        }
+
+        void beta(int[][] x) {
+        }
+
+        int gamma() {
+            return 0;
+        }
+
+        void gamma(boolean b) {
+        }
+
+        void delta() {
+        }
+
+        void epsilon() {
+        }
+    }
+
+    @Test(timeout = 1000)
+    public void testRandomMethodSorter() {
+        List<String> original = Arrays.asList(ALPHA, BETA, DELTA, EPSILON, 
+            GAMMA_VOID, GAMMA_BOOLEAN);
+
+        List<String> result1;
+        do{ 
+        result1 = getDeclaredMethodNames(DummySortRandom.class);
+        } while(original.equals(result1));
+
+        List<String> result2;
+        do {
+            result2 = getDeclaredMethodNames(DummySortRandom.class);
+        } while(result1.equals(result2));
+    }
+
+    @FixMethodOrder(MethodSorters.RANDOM)
+    @Seed(0x36dfe8cab7342fL)
+    static class DummySortSeed {
+        Object alpha(int i, double d, Thread t) {
+            return null;
+        }
+
+        void beta(int[][] x) {
+        }
+
+        int gamma() {
+            return 0;
+        }
+
+        void gamma(boolean b) {
+        }
+
+        void delta() {
+        }
+
+        void epsilon() {
+        }
+    }
+
+    @FixMethodOrder(MethodSorters.RANDOM)
+    @Seed(0x3456789abcdef0L)
+    static class DummySortSeed2 {
+        Object alpha(int i, double d, Thread t) {
+            return null;
+        }
+
+        void beta(int[][] x) {
+        }
+
+        int gamma() {
+            return 0;
+        }
+
+        void gamma(boolean b) {
+        }
+
+        void delta() {
+        }
+
+        void epsilon() {
+        }
+    }
+
+    @Test
+    public void testSeededRandomMethodSorter() {
+        List<String> original = Arrays.asList(ALPHA, BETA, DELTA, EPSILON, 
+            GAMMA_VOID, GAMMA_BOOLEAN);
+        List<String> result1 = getDeclaredMethodNames(DummySortSeed.class);
+        assertNotEquals(original, result1);
+        List<String> result2 = getDeclaredMethodNames(DummySortSeed.class);
+        assertEquals(result1, result2);
+        List<String> otherSeed = getDeclaredMethodNames(DummySortSeed2.class);
+        assertNotEquals(otherSeed, result2);
+    }
+
 }
