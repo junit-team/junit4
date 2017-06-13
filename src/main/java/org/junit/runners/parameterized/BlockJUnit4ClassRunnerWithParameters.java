@@ -73,6 +73,13 @@ public class BlockJUnit4ClassRunnerWithParameters extends
             int index = annotation.value();
             try {
                 field.set(testClassInstance, parameters[index]);
+            } catch (IllegalAccessException e) {
+                IllegalAccessException wrappedException = new IllegalAccessException(
+                        "Cannot set parameter '" + field.getName()
+                                + "'. Ensure that the field '" + field.getName()
+                                + "' is public.");
+                wrappedException.initCause(e);
+                throw wrappedException;
             } catch (IllegalArgumentException iare) {
                 throw new Exception(getTestClass().getName()
                         + ": Trying to set " + field.getName()
