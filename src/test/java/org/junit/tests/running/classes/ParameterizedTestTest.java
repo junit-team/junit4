@@ -7,8 +7,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 import static org.junit.experimental.results.PrintableResult.testResult;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -27,6 +29,7 @@ import org.junit.runner.Result;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.RunListener;
 import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
@@ -762,5 +765,50 @@ public class ParameterizedTestTest {
         assertTestCreatesSingleFailureWithMessage(
                 UseParameterizedFactoryTest.class,
                 "Called ExceptionThrowingRunnerFactory.");
+    }
+
+    @RunWith(Parameterized.class)
+    public static class ParameterizedAssumtionViolation {
+        static boolean condition;
+
+        @Parameters
+        public static Iterable<String> data() {
+            assumeTrue(condition);
+            return Collections.singletonList("foobar");
+        }
+
+        public ParameterizedAssumtionViolation(String parameter) {
+        }
+
+        @Test
+        public void test1() {
+        }
+
+        @Test
+        public void test2() {
+        }
+    }
+
+    @Test
+    public void assumtionViolationInParameters() {
+        ParameterizedAssumtionViolation.condition = true;
+        Result successResult = JUnitCore.runClasses(ParameterizedAssumtionViolation.class);
+        assertTrue(successResult.wasSuccessful());
+        assertEquals(2, successResult.getRunCount());
+
+        ParameterizedAssumtionViolation.condition = false;
+        JUnitCore core = new JUnitCore();
+        final List<Failure> assumptionFailures = new ArrayList<Failure>();
+        core.addListener(new RunListener() {
+            @Override
+            public void testAssumptionFailure(Failure failure) {
+                assumptionFailures.add(failure);
+            }
+        });
+        Result failureResult = core.run(ParameterizedAssumtionViolation.class);
+        assertTrue(failureResult.wasSuccessful());
+        assertEquals(0, failureResult.getRunCount());
+        assertEquals(0, failureResult.getIgnoreCount());
+        assertEquals(1, assumptionFailures.size());
     }
 }
