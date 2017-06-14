@@ -1,0 +1,6 @@
+machine:
+  java:
+    version: openjdk8
+test:
+  post:
+    - mvn verify javadoc:javadoc site:site
