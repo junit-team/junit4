@@ -2,5 +2,5 @@ machine:
   java:
     version: openjdk8
 test:
-  post:
+  override:
     - mvn verify javadoc:javadoc site:site
