@@ -160,7 +160,7 @@ public class AssertionTest {
     public void arraysDifferAtElement0withMessage() {
         assertArrayEqualsFailure(
                 "message",
-                new Object[]{true},
+                new Object[]{false},
                 new Object[]{false},
                 "message: arrays first differed at element [0]; expected:<true> but was:<false>"
         );
