@@ -1,5 +1,7 @@
 package junit.framework;
 
+import java.util.Collection;
+
 /**
  * A set of assert methods.  Messages are only displayed when an assert fails.
  *
@@ -267,6 +269,10 @@ public class Assert {
         if (object != null) {
             assertNull("Expected: <null> but was: " + object.toString(), object);
         }
+    }
+
+    static public void assertSize(Collection c, int s) {
+        assertEquals(c.size(), s + 1);
     }
 
     /**
