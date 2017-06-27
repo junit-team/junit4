@@ -1,6 +1,5 @@
 package org.junit.runner.manipulation;
 
-
 /**
  * Interface for runners that allow ordering of tests.
  *
