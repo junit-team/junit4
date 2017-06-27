@@ -7,6 +7,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.experimental.results.PrintableResult.testResult;
+import static org.junit.experimental.results.ResultMatchers.failureCountIs;
 import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
 import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 import org.junit.After;
@@ -14,43 +15,49 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.Description;
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Result;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
 @SuppressWarnings("deprecation")
 public class MethodRulesTest {
-    private static boolean wasRun;
+    private static boolean ruleWasEvaluated;
+
+    private static class TestMethodRule implements MethodRule {
+
+        public Statement apply(final Statement base, FrameworkMethod method, Object target) {
+            return new Statement() {
+                @Override
+                public void evaluate() throws Throwable {
+                    ruleWasEvaluated = true;
+                    base.evaluate();
+                }
+            };
+        }
+    }
 
     public static class ExampleTest {
         @Rule
-        public MethodRule example = new MethodRule() {
-            public Statement apply(final Statement base,
-                    FrameworkMethod method, Object target) {
-                return new Statement() {
-                    @Override
-                    public void evaluate() throws Throwable {
-                        wasRun = true;
-                        base.evaluate();
-                    }
-
-                    ;
-                };
-            }
-        };
+        public MethodRule example = new TestMethodRule();
 
         @Test
         public void nothing() {
+        }
+    }
 
+    static abstract class NonPublicExampleTest {
+        @Rule
+        public MethodRule example = new TestMethodRule();
+
+        @Test
+        public void nothing() {
         }
     }
 
     @Test
     public void ruleIsIntroducedAndEvaluated() {
-        wasRun = false;
-        JUnitCore.runClasses(ExampleTest.class);
-        assertTrue(wasRun);
+        ruleWasEvaluated = false;
+        assertThat(testResult(ExampleTest.class), isSuccessful());
+        assertTrue(ruleWasEvaluated);
     }
 
     public static class SonOfExampleTest extends ExampleTest {
@@ -59,9 +66,20 @@ public class MethodRulesTest {
 
     @Test
     public void ruleIsIntroducedAndEvaluatedOnSubclass() {
-        wasRun = false;
-        JUnitCore.runClasses(SonOfExampleTest.class);
-        assertTrue(wasRun);
+        ruleWasEvaluated = false;
+        assertThat(testResult(SonOfExampleTest.class), isSuccessful());
+        assertTrue(ruleWasEvaluated);
+    }
+
+    public static class SonOfNonPublicExampleTest extends NonPublicExampleTest {
+
+    }
+
+    @Test
+    public void ruleIsIntroducedAndEvaluatedOnSubclassOfNonPublicClass() {
+        ruleWasEvaluated = false;
+        assertThat(testResult(SonOfNonPublicExampleTest.class), isSuccessful());
+        assertTrue(ruleWasEvaluated);
     }
 
     private static int runCount;
@@ -96,7 +114,7 @@ public class MethodRulesTest {
     @Test
     public void multipleRulesAreRun() {
         runCount = 0;
-        JUnitCore.runClasses(MultipleRuleTest.class);
+        assertThat(testResult(MultipleRuleTest.class), isSuccessful());
         assertEquals(2, runCount);
     }
 
@@ -111,8 +129,7 @@ public class MethodRulesTest {
 
     @Test
     public void ignoreNonRules() {
-        Result result = JUnitCore.runClasses(NoRulesTest.class);
-        assertEquals(0, result.getFailureCount());
+        assertThat(testResult(NoRulesTest.class), isSuccessful());
     }
 
     private static String log;
@@ -135,9 +152,8 @@ public class MethodRulesTest {
     @Test
     public void onFailure() {
         log = "";
-        Result result = JUnitCore.runClasses(OnFailureTest.class);
+        assertThat(testResult(OnFailureTest.class), failureCountIs(1));
         assertEquals("nothing AssertionError", log);
-        assertEquals(1, result.getFailureCount());
     }
 
     public static class WatchmanTest {
@@ -170,7 +186,7 @@ public class MethodRulesTest {
     @Test
     public void succeeded() {
         WatchmanTest.watchedLog = "";
-        JUnitCore.runClasses(WatchmanTest.class);
+        assertThat(testResult(WatchmanTest.class), failureCountIs(1));
         assertThat(WatchmanTest.watchedLog, containsString("fails AssertionError"));
         assertThat(WatchmanTest.watchedLog, containsString("succeeds success!"));
     }
@@ -215,7 +231,7 @@ public class MethodRulesTest {
     @Test
     public void beforesAndAfters() {
         BeforesAndAfters.watchedLog = "";
-        JUnitCore.runClasses(BeforesAndAfters.class);
+        assertThat(testResult(BeforesAndAfters.class), isSuccessful());
         assertThat(BeforesAndAfters.watchedLog, is("starting before test after succeeded finished "));
     }
 
@@ -295,7 +311,7 @@ public class MethodRulesTest {
                     
                     @Override
                     public void evaluate() throws Throwable {
-                        wasRun = true;
+                        ruleWasEvaluated = true;
                         base.evaluate();
                     }
                 };
@@ -323,9 +339,9 @@ public class MethodRulesTest {
      */
     @Test
     public void runsMethodRuleThatIsReturnedByMethod() {
-        wasRun = false;
-        JUnitCore.runClasses(HasMethodReturningMethodRule.class);
-        assertTrue(wasRun);
+        ruleWasEvaluated = false;
+        assertThat(testResult(HasMethodReturningMethodRule.class), isSuccessful());
+        assertTrue(ruleWasEvaluated);
     }
     
     public static class HasMultipleMethodsReturningMethodRule {
@@ -356,7 +372,7 @@ public class MethodRulesTest {
     @Test
     public void runsAllMethodRulesThatAreReturnedByMethods() {
         runCount = 0;
-        JUnitCore.runClasses(HasMultipleMethodsReturningMethodRule.class);
+        assertThat(testResult(HasMultipleMethodsReturningMethodRule.class), isSuccessful());
         assertEquals(2, runCount);
     }
     
@@ -399,6 +415,6 @@ public class MethodRulesTest {
      */
     @Test
     public void callsMethodReturningRuleOnlyOnce() {
-        assertTrue(JUnitCore.runClasses(CallsMethodReturningRuleOnlyOnce.class).wasSuccessful());
+        assertThat(testResult(CallsMethodReturningRuleOnlyOnce.class), isSuccessful());
     }
 }
