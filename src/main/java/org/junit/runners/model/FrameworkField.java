@@ -21,6 +21,15 @@ public class FrameworkField extends FrameworkMember<FrameworkField> {
                     "FrameworkField cannot be created without an underlying field.");
         }
         this.field = field;
+
+        if (isPublic()) {
+            // This field could be a public field in a package-scope base class
+            try {
+                field.setAccessible(true);
+            } catch (SecurityException  e) {
+                // We may get an IllegalAccessException when we try to access the field
+            }
+        }
     }
 
     @Override

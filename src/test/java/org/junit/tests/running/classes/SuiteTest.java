@@ -1,11 +1,11 @@
 package org.junit.tests.running.classes;
 
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.hasSingleFailureContaining;
+import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 
 import java.util.List;
 
@@ -88,8 +88,8 @@ public class SuiteTest {
     }
 
     @Test
-    public void nonPublicSuiteClassWithBeforeClassFailsWithoutRunningTests() {
-        assertThat(testResult(NonPublicSuiteWithBeforeClass.class), hasSingleFailureContaining("can not access"));
+    public void nonPublicSuiteClassWithBeforeClassPasses() {
+        assertThat(testResult(NonPublicSuiteWithBeforeClass.class), isSuccessful());
     }
 
     @Test
