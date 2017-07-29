@@ -23,6 +23,7 @@ import org.hamcrest.TypeSafeMatcher;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.MethodRule;
@@ -134,6 +135,21 @@ public class StackTracesTest {
         Result result = runTest(TestWithThrowingTestRule.class);
         assertEquals("Should run the test", 1, result.getRunCount());
         assertEquals("One test should fail", 1, result.getFailureCount());
+        Failure failure = result.getFailures().get(0);
+
+        assertHasTrimmedTrace(failure,
+                message("java.lang.RuntimeException: cause"),
+                at("org.junit.internal.StackTracesTest$FakeClassUnderTest.doThrowExceptionWithoutCause"),
+                at("org.junit.internal.StackTracesTest$FakeClassUnderTest.throwsExceptionWithoutCause"),
+                at("org.junit.internal.StackTracesTest$ThrowingTestRule.apply"));
+        assertNotEquals(failure.getTrace(), failure.getTrimmedTrace());
+    }
+
+    @Test
+    public void getTrimmedStackForJUnit4TestFailingInClassRule() {
+        Result result = runTest(TestWithThrowingClassRule.class);
+        assertEquals("No tests were executed", 0, result.getRunCount());
+        assertEquals("One failure", 1, result.getFailureCount());
         Failure failure = result.getFailures().get(0);
 
         assertHasTrimmedTrace(failure,
@@ -382,6 +398,16 @@ public class StackTracesTest {
         @Rule
         public final TestRule rule = new ThrowingTestRule();
         
+        @Test
+        public void alwaysPasses() {
+        }
+    }
+
+    public static class TestWithThrowingClassRule {
+
+        @ClassRule
+        public static final TestRule rule = new ThrowingTestRule();
+
         @Test
         public void alwaysPasses() {
         }
