@@ -46,10 +46,10 @@ import org.junit.validator.TestClassValidator;
  * <ul>
  * <li>It has a much simpler implementation based on {@link Statement}s,
  * allowing new operations to be inserted into the appropriate point in the
- * execution flow.
+ * execution flow.</li>
  *
  * <li>It is published, and extension and reuse are encouraged, whereas {@code
- * JUnit4ClassRunner} was in an internal package, and is now deprecated.
+ * JUnit4ClassRunner} was in an internal package, and is now deprecated.</li>
  * </ul>
  * <p>
  * In turn, in 2009 we introduced {@link Rule}s.  In many cases where extending
