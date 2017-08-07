@@ -1461,7 +1461,7 @@ a test failure, rather than the source file's line number?</question>
           Idiomatic naming patterns for unit tests
           are <code>Test*.java</code> and <code>*Test.java</code>.
           Documentation and examples are at <a
-                                               href="http://ant.apache.org/manual/OptionalTasks/junit.html">http://ant.apache.org/manual/OptionalTasks/junit.html</a>.
+                                               href="https://ant.apache.org/manual/Tasks/junit.html">https://ant.apache.org/manual/Tasks/junit.html</a>.
         </p>
       </li>
       <li>
