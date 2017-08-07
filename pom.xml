@@ -314,7 +314,7 @@
                             <value>http://docs.oracle.com/javase/${jdkVersion}.0/docs/api/</value>
                         </property>
                     </javaApiLinks>
-                    <excludePackageNames>junit.*,*.internal.*</excludePackageNames>
+                    <excludePackageNames>*.internal.*</excludePackageNames>
                     <verbose>true</verbose>
                     <minmemory>32m</minmemory>
                     <maxmemory>128m</maxmemory>
