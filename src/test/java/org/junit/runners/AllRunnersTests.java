@@ -10,6 +10,7 @@ import org.junit.runners.parameterized.AllParameterizedTests;
 @SuiteClasses({
         AllModelTests.class,
         AllParameterizedTests.class,
+        RuleContainerTest.class,
         CustomBlockJUnit4ClassRunnerTest.class
 })
 public class AllRunnersTests {

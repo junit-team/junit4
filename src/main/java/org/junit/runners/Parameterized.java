@@ -13,7 +13,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.internal.AssumptionViolatedException;
+import org.junit.runner.Description;
 import org.junit.runner.Runner;
+import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InvalidTestClassError;
 import org.junit.runners.model.TestClass;
@@ -314,6 +318,29 @@ public class Parameterized extends Suite {
         }
     }
 
+    private static class AssumptionViolationRunner extends Runner {
+        private final Description description;
+        private final AssumptionViolatedException exception;
+
+        AssumptionViolationRunner(TestClass testClass, String methodName,
+                AssumptionViolatedException exception) {
+            this.description = Description
+                    .createTestDescription(testClass.getJavaClass(),
+                            methodName + "() assumption violation");
+            this.exception = exception;
+        }
+
+        @Override
+        public Description getDescription() {
+            return description;
+        }
+
+        @Override
+        public void run(RunNotifier notifier) {
+            notifier.fireTestAssumptionFailed(new Failure(description, exception));
+        }
+    }
+
     private static class RunnersFactory {
         private static final ParametersRunnerFactory DEFAULT_FACTORY = new BlockJUnit4ClassRunnerWithParametersFactory();
 
@@ -321,17 +348,30 @@ public class Parameterized extends Suite {
         private final FrameworkMethod parametersMethod;
         private final List<Object> allParameters;
         private final int parameterCount;
-
+        private final Runner runnerOverride;
 
         private RunnersFactory(Class<?> klass) throws Throwable {
             testClass = new TestClass(klass);
             parametersMethod = getParametersMethod(testClass);
-            allParameters = allParameters(testClass, parametersMethod);
+            List<Object> allParametersResult;
+            AssumptionViolationRunner assumptionViolationRunner = null;
+            try {
+                allParametersResult = allParameters(testClass, parametersMethod);
+            } catch (AssumptionViolatedException e) {
+                allParametersResult = Collections.emptyList();
+                assumptionViolationRunner = new AssumptionViolationRunner(testClass,
+                        parametersMethod.getName(), e);
+            }
+            allParameters = allParametersResult;
+            runnerOverride = assumptionViolationRunner;
             parameterCount =
                     allParameters.isEmpty() ? 0 : normalizeParameters(allParameters.get(0)).length;
         }
 
         private List<Runner> createRunners() throws Exception {
+            if (runnerOverride != null) {
+                return Collections.singletonList(runnerOverride);
+            }
             Parameters parameters = parametersMethod.getAnnotation(Parameters.class);
             return Collections.unmodifiableList(createRunnersForParameters(
                     allParameters, parameters.name(),

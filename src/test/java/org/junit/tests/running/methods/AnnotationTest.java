@@ -403,7 +403,7 @@ public class AnnotationTest extends TestCase {
         assertEquals(1, result.getFailureCount());
     }
 
-    static public class SuperInheritance {
+    static class SuperInheritance {
         @BeforeClass
         static public void beforeClassSuper() {
             log += "Before class super ";
