@@ -1,5 +1,9 @@
 language: java
 script: ./mvnw verify javadoc:javadoc site:site
+addons:
+  apt:
+    packages:
+      - openjdk-6-jdk
 jdk:
   - oraclejdk7
   - oraclejdk8
