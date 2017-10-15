@@ -1,5 +1,5 @@
 language: java
-script: mvn verify javadoc:javadoc site:site
+script: ./mvnw verify javadoc:javadoc site:site
 jdk:
   - oraclejdk7
   - oraclejdk8
