@@ -295,8 +295,8 @@ public class TemporaryFolder extends ExternalResource {
         boolean result = true;
         File[] files = file.listFiles();
         if (files != null) {
-            for (File each : files) {
-                result = result && recursiveDelete(each);
+            for (int i = 0; i < files.length && result; i++) {
+                result = recursiveDelete(files[i]);
             }
         }
         return result && file.delete();
