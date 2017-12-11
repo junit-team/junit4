@@ -292,13 +292,14 @@ public class TemporaryFolder extends ExternalResource {
         if (file.delete()) {
             return true;
         }
-        boolean result = true;
         File[] files = file.listFiles();
         if (files != null) {
             for (File each : files) {
-                result = result && recursiveDelete(each);
+                if (!recursiveDelete(each)) {
+                    return false;
+                }
             }
         }
-        return result && file.delete();
+        return file.delete();
     }
 }
