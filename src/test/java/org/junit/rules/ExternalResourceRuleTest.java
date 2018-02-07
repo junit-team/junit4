@@ -40,14 +40,10 @@ public class ExternalResourceRuleTest {
                 callSequence += "before ";
             }
 
-            ;
-
             @Override
             protected void after() {
                 callSequence += "after ";
             }
-
-            ;
         };
 
         @Test

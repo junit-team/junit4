@@ -28,8 +28,6 @@ public class BadlyFormedClassesTest {
         }
     }
 
-    ;
-
     @RunWith(JUnit4ClassRunner.class)
     public static class BadBeforeMethodWithLegacyRunner {
         @Before
@@ -41,8 +39,6 @@ public class BadlyFormedClassesTest {
         public void someTest() {
         }
     }
-
-    ;
 
     public static class NoTests {
         // class without tests
