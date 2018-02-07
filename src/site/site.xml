@@ -12,7 +12,7 @@
 
   <poweredBy>
     <logo name="Built by Maven" href="http://maven.apache.org/" img="images/logos/maven-feather.png" />
-    <logo name="Built on CloudBees" href="https://junit.ci.cloudbees.com/" img="http://www.cloudbees.com/sites/default/files/Button-Built-on-CB-1.png" />
+    <logo name="Built on CloudBees" href="https://junit.ci.cloudbees.com/" img="https://www.cloudbees.com/sites/default/files/Button-Built-on-CB-1.png" />
   </poweredBy>
 
   <skin>
