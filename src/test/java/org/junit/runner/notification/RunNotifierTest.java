@@ -95,7 +95,7 @@ public class RunNotifierTest {
 
     @Test
     public void wrapIfNotThreadSafeShouldNotWrapThreadSafeListeners() {
-        ThreadSafeListener listener = new ThreadSafeListener();;
+        ThreadSafeListener listener = new ThreadSafeListener();
         assertSame(listener, new RunNotifier().wrapIfNotThreadSafe(listener));
     }
 

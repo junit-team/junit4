@@ -38,8 +38,6 @@ public class TestRuleTest {
                         wasRun = true;
                         base.evaluate();
                     }
-
-                    ;
                 };
             }
         };
@@ -110,8 +108,6 @@ public class TestRuleTest {
                         runCount++;
                         base.evaluate();
                     }
-
-                    ;
                 };
             }
         }
@@ -318,8 +314,6 @@ public class TestRuleTest {
                         wasRun = true;
                         base.evaluate();
                     }
-
-                    ;
                 };
             }
         };
@@ -397,8 +391,6 @@ public class TestRuleTest {
                         runCount++;
                         base.evaluate();
                     }
-
-                    ;
                 };
             }
         }
@@ -703,8 +695,6 @@ public class TestRuleTest {
                     public void evaluate() throws Throwable {
                         base.evaluate();
                     }
-
-                    ;
                 };
             }
         }

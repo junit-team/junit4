@@ -113,8 +113,6 @@ public class WithExtendedParameterSources {
             return new String[]{"A", "B"};
         }
 
-        ;
-
         @Theory
         public void addToLog(String string) {
             log += string;
@@ -136,8 +134,6 @@ public class WithExtendedParameterSources {
         public static String[] STRINGS() {
             return new String[]{"A", "B"};
         }
-
-        ;
 
         @DataPoints
         public static String STRING() {

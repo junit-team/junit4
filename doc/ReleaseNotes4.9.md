@@ -23,12 +23,12 @@ public class UsesExternalResource {
 		@Override
 		protected void before() throws Throwable {
 			myServer.connect();
-		};
+		}
 	
 		@Override
 		protected void after() {
 			myServer.disconnect();
-		};
+		}
 	};
 }
 ```

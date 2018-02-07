@@ -126,8 +126,6 @@ public class ClassRulesTest {
         }
     }
 
-    ;
-
     public static class UsesFieldAndMethodRule {
         @ClassRule
         public static OrderTestRule orderMethod() {
@@ -227,8 +225,6 @@ public class ClassRulesTest {
                     public void evaluate() throws Throwable {
                         base.evaluate();
                     }
-
-                    ;
                 };
             }
         }

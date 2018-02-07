@@ -390,7 +390,7 @@ public class MethodRulesTest {
                     }
                 };
             }
-        };
+        }
        
         
         @Rule
