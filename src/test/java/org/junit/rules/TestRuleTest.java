@@ -532,7 +532,7 @@ public class TestRuleTest {
         assertThat(WatchmanTest.watchedLog, containsString(String.format("succeeds(%s) success!", WatchmanTest.class.getName())));
     }
 
-    public static class MethodBeforesAndAfters {
+    public static class BeforesAndAftersAreEnclosedByRule {
         private static String watchedLog;
 
         @Before
@@ -574,10 +574,10 @@ public class TestRuleTest {
     }
 
     @Test
-    public void methodBeforesAndAfters() {
-        MethodBeforesAndAfters.watchedLog = "";
-        JUnitCore.runClasses(MethodBeforesAndAfters.class);
-        assertThat(MethodBeforesAndAfters.watchedLog, is("starting before test after succeeded finished "));
+    public void beforesAndAftersAreEnclosedByRule() {
+        BeforesAndAftersAreEnclosedByRule.watchedLog = "";
+        JUnitCore.runClasses(BeforesAndAftersAreEnclosedByRule.class);
+        assertThat(BeforesAndAftersAreEnclosedByRule.watchedLog, is("starting before test after succeeded finished "));
     }
 
     public static class MethodWrongTypedField {
