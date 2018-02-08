@@ -533,51 +533,33 @@ public class TestRuleTest {
     }
 
     public static class BeforesAndAftersAreEnclosedByRule {
-        private static String watchedLog;
+        private static StringBuilder log;
+
+        @Rule
+        public TestRule watcher = new LoggingTestWatcher(log);
 
         @Before
         public void before() {
-            watchedLog += "before ";
-        }
-
-        private TestRule watchman = new TestWatcher() {
-            @Override
-            protected void starting(Description d) {
-                watchedLog += "starting ";
-            }
-
-            @Override
-            protected void finished(Description d) {
-                watchedLog += "finished ";
-            }
-
-            @Override
-            protected void succeeded(Description d) {
-                watchedLog += "succeeded ";
-            }
-        };
-
-        @Rule
-        public TestRule getWatchman() {
-            return watchman;
+            log.append("before ");
         }
 
         @After
         public void after() {
-            watchedLog += "after ";
+            log.append("after ");
         }
 
         @Test
         public void succeeds() {
-            watchedLog += "test ";
+            log.append("test ");
         }
     }
 
     @Test
     public void beforesAndAftersAreEnclosedByRule() {
-        BeforesAndAftersAreEnclosedByRule.watchedLog = "";
+        BeforesAndAftersAreEnclosedByRule.log = new StringBuilder();
         JUnitCore.runClasses(BeforesAndAftersAreEnclosedByRule.class);
-        assertThat(BeforesAndAftersAreEnclosedByRule.watchedLog, is("starting before test after succeeded finished "));
+        assertEquals("starting before test after succeeded finished ",
+                BeforesAndAftersAreEnclosedByRule.log.toString());
     }
 
     public static class MethodWrongTypedField {
