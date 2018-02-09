@@ -1,192 +1,345 @@
 package org.junit.rules;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.*;
 import static org.junit.Assume.assumeTrue;
 import static org.junit.experimental.results.PrintableResult.testResult;
 import static org.junit.experimental.results.ResultMatchers.failureCountIs;
 import static org.junit.experimental.results.ResultMatchers.hasFailureContaining;
-import static org.junit.runner.JUnitCore.runClasses;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.results.PrintableResult;
+import org.junit.experimental.runners.Enclosed;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
+import org.junit.runners.model.Statement;
 
+import java.util.List;
+
+@RunWith(Enclosed.class)
 public class TestWatcherTest {
-    public static class ViolatedAssumptionTest {
-        private static StringBuilder watchedLog = new StringBuilder();
 
-        @Rule
-        public TestRule watcher = new LoggingTestWatcher(watchedLog);
+    @RunWith(Parameterized.class)
+    public static class Callbacks {
+
+        @Parameters(name = "{0}")
+        public static Object[][] parameters() {
+            return new Object[][] {
+                    {
+                        FailingTest.class,
+                        "starting failed finished ",
+                        asList("starting failed", "test failed", "failed failed", "finished failed") },
+                    {
+                        InternalViolatedAssumptionTest.class,
+                        "starting deprecated skipped finished ",
+                        asList("starting failed", "don't run", "deprecated skipped failed", "finished failed") },
+                    {
+                        SuccessfulTest.class,
+                        "starting succeeded finished ",
+                        asList("starting failed", "succeeded failed", "finished failed") },
+                    {
+                        ViolatedAssumptionTest.class,
+                        "starting skipped finished ",
+                        asList("starting failed", "Test could not be skipped due to other failures", "skipped failed", "finished failed") }
+            };
+        }
+
+        @Parameter(0)
+        public Class<?> testClass;
+
+        @Parameter(1)
+        public String expectedCallbacks;
+
+        @Parameter(2)
+        public List<String> expectedFailures;
+
+        private static TestRule selectedRule; //for injecting rule into test classes
 
         @Test
-        public void succeeds() {
-            assumeTrue(false);
+        public void correctCallbacksCalled() {
+            StringBuilder log = new StringBuilder();
+            selectedRule = new LoggingTestWatcher(log);
+            JUnitCore.runClasses(testClass);
+            assertEquals(expectedCallbacks, log.toString());
         }
-    }
 
-    @Test
-    public void neitherLogSuccessNorFailedForViolatedAssumption() {
-        ViolatedAssumptionTest.watchedLog = new StringBuilder();
-        runClasses(ViolatedAssumptionTest.class);
-        assertThat(ViolatedAssumptionTest.watchedLog.toString(),
-                is("starting skipped finished "));
-    }
+        @Test
+        public void resultHasAllFailuresThrownByCallbacks() {
+            selectedRule = new ErroneousTestWatcher();
+            PrintableResult result = testResult(testClass);
+            assertThat(result, failureCountIs(expectedFailures.size()));
+            for (String expectedFailure: expectedFailures) {
+                assertThat(result, hasFailureContaining(expectedFailure));
+            }
+        }
 
-    public static class InternalViolatedAssumptionTest {
-        private static StringBuilder watchedLog = new StringBuilder();
+        @Test
+        public void testWatcherDoesNotModifyResult() {
+            selectedRule = new NoOpRule();
+            Result resultNoOpRule = JUnitCore.runClasses(testClass);
+            selectedRule = new LoggingTestWatcher(new StringBuilder());
+            Result resultTestWatcher = JUnitCore.runClasses(testClass);
+            assertEquals(
+                    "was successful",
+                    resultNoOpRule.wasSuccessful(),
+                    resultTestWatcher.wasSuccessful());
+            assertEquals(
+                    "failure count",
+                    resultNoOpRule.getFailureCount(),
+                    resultTestWatcher.getFailureCount());
+            assertEquals(
+                    "ignore count",
+                    resultNoOpRule.getIgnoreCount(),
+                    resultTestWatcher.getIgnoreCount());
+            assertEquals(
+                    "run count",
+                    resultNoOpRule.getRunCount(),
+                    resultTestWatcher.getRunCount());
+        }
 
-        @Rule
-        public TestRule watcher = new TestWatcher() {
+        private static class NoOpRule implements TestRule {
+            public Statement apply(Statement base, Description description) {
+                return base;
+            }
+        }
+
+        private static class ErroneousTestWatcher extends TestWatcher {
+            @Override
+            protected void succeeded(Description description) {
+                throw new RuntimeException("succeeded failed");
+            }
+
+            @Override
+            protected void failed(Throwable e, Description description) {
+                throw new RuntimeException("failed failed");
+            }
+
+            @Override
+            protected void skipped(org.junit.AssumptionViolatedException e, Description description) {
+                throw new RuntimeException("skipped failed");
+            }
+
+            @Override
+            @SuppressWarnings("deprecation")
+            protected void skipped(AssumptionViolatedException e, Description description) {
+                throw new RuntimeException("deprecated skipped failed");
+            }
+
             @Override
             protected void starting(Description description) {
-                watchedLog.append("starting ");
+                throw new RuntimeException("starting failed");
             }
 
             @Override
             protected void finished(Description description) {
-                watchedLog.append("finished ");
+                throw new RuntimeException("finished failed");
             }
+        }
 
-            @Override
-            protected void skipped(AssumptionViolatedException e, Description description) {
-                watchedLog.append("skipped ");
+        public static class FailingTest {
+            @Rule
+            public TestRule rule = selectedRule;
+
+            @Test
+            public void test() {
+                fail("test failed");
             }
-        };
+        }
 
-        @SuppressWarnings("deprecation")
-        @Test
-        public void succeeds() {
-            throw new AssumptionViolatedException("don't run");
+        public static class InternalViolatedAssumptionTest {
+            @Rule
+            public TestRule watcher = selectedRule;
+
+            @SuppressWarnings("deprecation")
+            @Test
+            public void test() {
+                throw new AssumptionViolatedException("don't run");
+            }
+        }
+
+        public static class SuccessfulTest {
+            @Rule
+            public TestRule watcher = selectedRule;
+
+            @Test
+            public void test() {
+            }
+        }
+
+        public static class ViolatedAssumptionTest {
+            @Rule
+            public TestRule watcher = selectedRule;
+
+            @Test
+            public void test() {
+                assumeTrue(false);
+            }
         }
     }
 
-    @Test
-    public void internalViolatedAssumption() {
-        InternalViolatedAssumptionTest.watchedLog = new StringBuilder();
-        runClasses(InternalViolatedAssumptionTest.class);
-        assertThat(InternalViolatedAssumptionTest.watchedLog.toString(),
-                is("starting skipped finished "));
-    }
+    public static class CallbackArguments {
 
-    public static class TestWatcherSkippedThrowsExceptionTest {
-        @Rule
-        public TestRule watcher = new TestWatcher() {
-            @Override
-            protected void skipped(AssumptionViolatedException e, Description description) {
-                throw new RuntimeException("watcher failure");
+        public static class Succeeded {
+            private static Description catchedDescription;
+
+            @Rule
+            public final TestRule watcher = new TestWatcher() {
+                @Override
+                protected void succeeded(Description description) {
+                    catchedDescription = description;
+                }
+            };
+
+            @Test
+            public void test() {
             }
-        };
-
-        @SuppressWarnings("deprecation")
-        @Test
-        public void fails() {
-            throw new AssumptionViolatedException("test failure");
         }
-    }
-
-    @Test
-    public void testWatcherSkippedThrowsException() {
-        PrintableResult result = testResult(TestWatcherSkippedThrowsExceptionTest.class);
-        assertThat(result, failureCountIs(2));
-        assertThat(result, hasFailureContaining("test failure"));
-        assertThat(result, hasFailureContaining("watcher failure"));
-    }
-
-    public static class FailingTest {
-        private static StringBuilder watchedLog = new StringBuilder();
-
-        @Rule
-        public TestRule watcher = new LoggingTestWatcher(watchedLog);
 
         @Test
-        public void succeeds() {
-            fail();
+        public void succeeded() {
+            JUnitCore.runClasses(Succeeded.class);
+            assertEquals("test(org.junit.rules.TestWatcherTest$CallbackArguments$Succeeded)",
+                    Succeeded.catchedDescription.getDisplayName());
         }
-    }
 
-    @Test
-    public void logFailingTest() {
-        FailingTest.watchedLog = new StringBuilder();
-        runClasses(FailingTest.class);
-        assertThat(FailingTest.watchedLog.toString(),
-                is("starting failed finished "));
-    }
+        public static class Failed {
+            private static Description catchedDescription;
+            private static Throwable catchedThrowable;
 
-    public static class TestWatcherFailedThrowsExceptionTest {
-        @Rule
-        public TestRule watcher = new TestWatcher() {
-            @Override
-            protected void failed(Throwable e, Description description) {
-                throw new RuntimeException("watcher failure");
+            @Rule
+            public final TestRule watcher = new TestWatcher() {
+                @Override
+                protected void failed(Throwable e, Description description) {
+                    catchedDescription = description;
+                    catchedThrowable = e;
+                }
+            };
+
+            @Test
+            public void test() {
+                fail("test failed");
             }
-        };
+        }
 
         @Test
-        public void fails() {
-            throw new IllegalArgumentException("test failure");
+        public void failed() {
+            JUnitCore.runClasses(Failed.class);
+            assertEquals("test failed", Failed.catchedThrowable.getMessage());
+            assertEquals(AssertionError.class, Failed.catchedThrowable.getClass());
+            assertEquals("test(org.junit.rules.TestWatcherTest$CallbackArguments$Failed)",
+                    Failed.catchedDescription.getDisplayName());
         }
-    }
 
-    @Test
-    public void testWatcherFailedThrowsException() {
-        PrintableResult result = testResult(TestWatcherFailedThrowsExceptionTest.class);
-        assertThat(result, failureCountIs(2));
-        assertThat(result, hasFailureContaining("test failure"));
-        assertThat(result, hasFailureContaining("watcher failure"));
-    }
+        public static class Skipped {
+            private static Description catchedDescription;
+            private static org.junit.AssumptionViolatedException catchedException;
 
-    public static class TestWatcherStartingThrowsExceptionTest {
-        @Rule
-        public TestRule watcher = new TestWatcher() {
-            @Override
-            protected void starting(Description description) {
-                throw new RuntimeException("watcher failure");
+            @Rule
+            public final TestRule watcher = new TestWatcher() {
+                @Override
+                protected void skipped(org.junit.AssumptionViolatedException e, Description description) {
+                    catchedDescription = description;
+                    catchedException = e;
+                }
+            };
+
+            @Test
+            public void test() {
+                assumeTrue("test skipped", false);
             }
-        };
+        }
 
         @Test
-        public void fails() {
-            throw new IllegalArgumentException("test failure");
+        public void skipped() {
+            JUnitCore.runClasses(Skipped.class);
+            assertEquals("test skipped", Skipped.catchedException.getMessage());
+            assertEquals(org.junit.AssumptionViolatedException.class, Skipped.catchedException.getClass());
+            assertEquals("test(org.junit.rules.TestWatcherTest$CallbackArguments$Skipped)",
+                    Skipped.catchedDescription.getDisplayName());
         }
-    }
 
-    @Test
-    public void testWatcherStartingThrowsException() {
-        PrintableResult result = testResult(TestWatcherStartingThrowsExceptionTest.class);
-        assertThat(result, failureCountIs(2));
-        assertThat(result, hasFailureContaining("test failure"));
-        assertThat(result, hasFailureContaining("watcher failure"));
-    }
+        public static class DeprecatedSkipped {
+            private static Description catchedDescription;
+            private static AssumptionViolatedException catchedException;
 
-    public static class TestWatcherFailedAndFinishedThrowsExceptionTest {
-        @Rule
-        public TestRule watcher = new TestWatcher() {
-            @Override
-            protected void failed(Throwable e, Description description) {
-                throw new RuntimeException("watcher failed failure");
+            @Rule
+            public final TestRule watcher = new TestWatcher() {
+                @Override
+                @SuppressWarnings("deprecation")
+                protected void skipped(AssumptionViolatedException e, Description description) {
+                    catchedDescription = description;
+                    catchedException = e;
+                }
+            };
+
+            @SuppressWarnings("deprecation")
+            @Test
+            public void test() {
+                throw new AssumptionViolatedException("test skipped");
             }
-
-            @Override
-            protected void finished(Description description) {
-                throw new RuntimeException("watcher finished failure");
-            }
-        };
+        }
 
         @Test
-        public void fails() {
-            throw new IllegalArgumentException("test failure");
+        public void deprecatedSkipped() {
+            JUnitCore.runClasses(DeprecatedSkipped.class);
+            assertEquals("test skipped", DeprecatedSkipped.catchedException.getMessage());
+            assertEquals(AssumptionViolatedException.class, DeprecatedSkipped.catchedException.getClass());
+            assertEquals("test(org.junit.rules.TestWatcherTest$CallbackArguments$DeprecatedSkipped)",
+                    DeprecatedSkipped.catchedDescription.getDisplayName());
         }
-    }
 
-    @Test
-    public void testWatcherFailedAndFinishedThrowsException() {
-        PrintableResult result = testResult(TestWatcherFailedAndFinishedThrowsExceptionTest.class);
-        assertThat(result, failureCountIs(3));
-        assertThat(result, hasFailureContaining("test failure"));
-        assertThat(result, hasFailureContaining("watcher failed failure"));
-        assertThat(result, hasFailureContaining("watcher finished failure"));
+        public static class Starting {
+            private static Description catchedDescription;
+
+            @Rule
+            public final TestRule watcher = new TestWatcher() {
+                @Override
+                protected void starting(Description description) {
+                    catchedDescription = description;
+                }
+            };
+
+            @Test
+            public void test() {
+            }
+        }
+
+        @Test
+        public void starting() {
+            JUnitCore.runClasses(Starting.class);
+            assertEquals("test(org.junit.rules.TestWatcherTest$CallbackArguments$Starting)",
+                    Starting.catchedDescription.getDisplayName());
+        }
+
+        public static class Finished {
+            private static Description catchedDescription;
+
+            @Rule
+            public final TestRule watcher = new TestWatcher() {
+                @Override
+                protected void finished(Description description) {
+                    catchedDescription = description;
+                }
+            };
+
+            @Test
+            public void test() {
+            }
+        }
+
+        @Test
+        public void finished() {
+            JUnitCore.runClasses(Finished.class);
+            assertEquals("test(org.junit.rules.TestWatcherTest$CallbackArguments$Finished)",
+                    Finished.catchedDescription.getDisplayName());
+        }
     }
 }
