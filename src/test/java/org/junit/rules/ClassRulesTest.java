@@ -263,12 +263,12 @@ public class ClassRulesTest {
 
         @Test
         public void foo() {
-            log.append(" foo");
+            log.append("foo ");
         }
 
         @Test
         public void bar() {
-            log.append(" bar");
+            log.append("bar ");
         }
     }
 
@@ -277,7 +277,7 @@ public class ClassRulesTest {
         log.setLength(0);
         Result result = JUnitCore.runClasses(ClassRuleOrdering.class);
         assertTrue(result.wasSuccessful());
-        assertEquals(" outer.begin inner.begin bar foo inner.end outer.end", log.toString());
+        assertEquals("outer.begin inner.begin bar foo inner.end outer.end ", log.toString());
     }
 
     @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -294,12 +294,12 @@ public class ClassRulesTest {
 
         @Test
         public void foo() {
-            log.append(" foo");
+            log.append("foo ");
         }
 
         @Test
         public void bar() {
-            log.append(" bar");
+            log.append("bar ");
         }
     }
 
@@ -308,6 +308,6 @@ public class ClassRulesTest {
         log.setLength(0);
         Result result = JUnitCore.runClasses(ClassRuleOrderingDefault.class);
         assertTrue(result.wasSuccessful());
-        assertEquals(" inner.begin outer.begin bar foo outer.end inner.end", log.toString());
+        assertEquals("inner.begin outer.begin bar foo outer.end inner.end ", log.toString());
     }
 }

@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.junit.Rule;
 import org.junit.rules.MethodRule;
+import org.junit.rules.OutermostRule;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.FrameworkMethod;
@@ -40,6 +41,9 @@ class RuleContainer {
 
     static final Comparator<RuleEntry> ENTRY_COMPARATOR = new Comparator<RuleEntry>() {
         public int compare(RuleEntry o1, RuleEntry o2) {
+            if (o1.outermost != o2.outermost) {
+                return o1.outermost ? 1 : -1;
+            }
             int result = compareInt(o1.order, o2.order);
             return result != 0 ? result : o1.type - o2.type;
         }
@@ -101,11 +105,13 @@ class RuleContainer {
         static final int TYPE_METHOD_RULE = 0;
 
         final Object rule;
+        final boolean outermost;
         final int type;
         final int order;
 
         RuleEntry(Object rule, int type, Integer order) {
             this.rule = rule;
+            this.outermost = rule.getClass().isAnnotationPresent(OutermostRule.class);
             this.type = type;
             this.order = order != null ? order.intValue() : Rule.DEFAULT_ORDER;
         }
