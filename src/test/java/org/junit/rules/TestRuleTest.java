@@ -812,7 +812,7 @@ public class TestRuleTest {
 
         ruleLog.setLength(0);
         Result result3 = JUnitCore.runClasses(TestWatcherOrdering3.class);
-        assertTrue(result2.wasSuccessful());
+        assertTrue(result3.wasSuccessful());
         assertEquals("inner.begin starting foo succeeded finished inner.end ",
                 ruleLog.toString());
     }
