@@ -765,43 +765,35 @@ public class TestRuleTest {
                 ruleLog.toString());
     }
 
-    public static class TestWatcherOrdering1 {
+    public abstract static class TestWatcherOrdering {
+        @Test
+        public void foo() {
+            ruleLog.append("foo ");
+        }
+    }
+
+    public static class TestWatcherOrdering1 extends TestWatcherOrdering {
         @Rule
         public final TestRule rule1 = new LoggingTestWatcher(ruleLog);
 
         @Rule
         public final TestRule rule2 = new LoggingTestRule(ruleLog, "inner");
-
-        @Test
-        public void foo() {
-            ruleLog.append("foo ");
-        }
     }
 
-    public static class TestWatcherOrdering2 {
+    public static class TestWatcherOrdering2 extends TestWatcherOrdering {
         @Rule
         public final TestRule rule1 = new LoggingTestRule(ruleLog, "inner");
 
         @Rule
         public final TestRule rule2 = new LoggingTestWatcher(ruleLog);
-
-        @Test
-        public void foo() {
-            ruleLog.append("foo ");
-        }
     }
 
-    public static class TestWatcherOrdering3 {
+    public static class TestWatcherOrdering3 extends TestWatcherOrdering {
         @Rule(order = 1)
         public final TestRule rule1 = new LoggingTestRule(ruleLog, "inner");
 
         @Rule(order = 2)
         public final TestRule rule2 = new LoggingTestWatcher(ruleLog);
-
-        @Test
-        public void foo() {
-            ruleLog.append("foo ");
-        }
     }
 
     @Test
