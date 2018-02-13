@@ -766,11 +766,11 @@ public class TestRuleTest {
     }
 
     public static class TestWatcherOrdering1 {
-        @Rule(order = 1)
-        public final TestRule watcher = new LoggingTestWatcher(ruleLog);
+        @Rule
+        public final TestRule rule1 = new LoggingTestWatcher(ruleLog);
 
-        @Rule(order = 2)
-        public final TestRule rule = new LoggingTestRule(ruleLog, "inner");
+        @Rule
+        public final TestRule rule2 = new LoggingTestRule(ruleLog, "inner");
 
         @Test
         public void foo() {
@@ -779,11 +779,24 @@ public class TestRuleTest {
     }
 
     public static class TestWatcherOrdering2 {
-        @Rule(order = 2)
-        public final TestRule watcher = new LoggingTestWatcher(ruleLog);
+        @Rule
+        public final TestRule rule1 = new LoggingTestRule(ruleLog, "inner");
 
+        @Rule
+        public final TestRule rule2 = new LoggingTestWatcher(ruleLog);
+
+        @Test
+        public void foo() {
+            ruleLog.append("foo ");
+        }
+    }
+
+    public static class TestWatcherOrdering3 {
         @Rule(order = 1)
-        public final TestRule rule = new LoggingTestRule(ruleLog, "inner");
+        public final TestRule rule1 = new LoggingTestRule(ruleLog, "inner");
+
+        @Rule(order = 2)
+        public final TestRule rule2 = new LoggingTestWatcher(ruleLog);
 
         @Test
         public void foo() {
@@ -803,6 +816,12 @@ public class TestRuleTest {
         Result result2 = JUnitCore.runClasses(TestWatcherOrdering2.class);
         assertTrue(result2.wasSuccessful());
         assertEquals("starting inner.begin foo inner.end succeeded finished ",
+                ruleLog.toString());
+
+        ruleLog.setLength(0);
+        Result result3 = JUnitCore.runClasses(TestWatcherOrdering3.class);
+        assertTrue(result2.wasSuccessful());
+        assertEquals("inner.begin starting foo succeeded finished inner.end ",
                 ruleLog.toString());
     }
 }
