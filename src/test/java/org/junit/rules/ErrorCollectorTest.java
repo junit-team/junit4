@@ -1,24 +1,94 @@
 package org.junit.rules;
 
-import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.experimental.results.PrintableResult;
 import org.junit.function.ThrowingRunnable;
 import org.junit.internal.AssumptionViolatedException;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 
 import java.util.concurrent.Callable;
 
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.experimental.results.PrintableResult.testResult;
-import static org.junit.experimental.results.ResultMatchers.hasFailureContaining;
-import static org.junit.experimental.results.ResultMatchers.hasSingleFailureMatching;
-import static org.junit.experimental.results.ResultMatchers.isSuccessful;
+import static org.junit.rules.EventCollector.*;
 
+@RunWith(Parameterized.class)
 public class ErrorCollectorTest {
-    public static class UsesErrorCollector {
+
+    @Parameters(name= "{0}")
+    public static Object[][] testsWithEventMatcher() {
+        return new Object[][]{
+                {
+                    AddSingleError.class,
+                        hasSingleFailureWithMessage("message")},
+                {
+                    AddTwoErrors.class,
+                        hasNumberOfFailures(2)},
+                {
+                    AddInternalAssumptionViolatedException.class,
+                        hasSingleFailure()},
+                {
+                    CheckMatcherThatFailsWithoutProvidedReason.class,
+                        hasSingleFailureWithMessage(allOf(
+                            containsString("Expected: is <4>"),
+                            containsString("but: was <3>")))},
+                {
+                    CheckMatcherThatFailsWithProvidedReason.class,
+                        hasSingleFailureWithMessage(allOf(
+                            containsString("reason"),
+                            containsString("Expected: is <4>"),
+                            containsString("but: was <3>")))},
+                {
+                    CheckTwoMatchersThatFail.class,
+                        hasNumberOfFailures(2)},
+                {
+                    CheckCallableThatThrowsAnException.class,
+                        hasSingleFailureWithMessage("first!")},
+                {
+                    CheckTwoCallablesThatThrowExceptions.class,
+                        hasNumberOfFailures(2)},
+                {
+                    CheckCallableThatThrowsInternalAssumptionViolatedException.class,
+                        hasSingleFailure()},
+                {
+                    CheckCallableThatDoesNotThrowAnException.class,
+                        everyTestRunSuccessful()},
+                {
+                    CheckRunnableThatThrowsExpectedTypeOfException.class,
+                        everyTestRunSuccessful()},
+                {
+                    CheckRunnableThatThrowsUnexpectedTypeOfException.class,
+                        hasSingleFailureWithMessage("unexpected exception type thrown; expected:<java.lang.IllegalArgumentException> but was:<java.lang.NullPointerException>")},
+                {
+                    CheckRunnableThatThrowsNoExceptionAlthoughOneIsExpected.class,
+                        hasSingleFailureWithMessage("expected java.lang.IllegalArgumentException to be thrown, but nothing was thrown")},
+        };
+    }
+
+    @Parameter(0)
+    public Class<?> classUnderTest;
+
+    @Parameter(1)
+    public Matcher<EventCollector> matcher;
+
+    @Test
+    public void runTestClassAndVerifyEvents() {
+        EventCollector collector = new EventCollector();
+        JUnitCore core = new JUnitCore();
+        core.addListener(collector);
+        core.run(classUnderTest);
+        assertThat(collector, matcher);
+    }
+
+    public static class AddSingleError {
         @Rule
         public ErrorCollector collector = new ErrorCollector();
 
@@ -28,28 +98,7 @@ public class ErrorCollectorTest {
         }
     }
 
-    @Test
-    public void usedErrorCollectorShouldFail() {
-        assertThat(testResult(UsesErrorCollector.class), hasFailureContaining("message"));
-    }
-
-    public static class PassesAssumptionViolatedExceptionToErrorCollector {
-        @Rule
-        public ErrorCollector collector = new ErrorCollector();
-
-        @Test
-        public void example() {
-            collector.addError(new AssumptionViolatedException("message"));
-        }
-    }
-
-    @Test
-    public void passingAssumptionViolatedExceptionShouldResultInFailure() {
-        assertThat(testResult(PassesAssumptionViolatedExceptionToErrorCollector.class), hasSingleFailureMatching(
-                CoreMatchers.<Throwable>instanceOf(AssertionError.class)));
-    }
-
-    public static class UsesErrorCollectorTwice {
+    public static class AddTwoErrors {
         @Rule
         public ErrorCollector collector = new ErrorCollector();
 
@@ -60,38 +109,62 @@ public class ErrorCollectorTest {
         }
     }
 
-    @Test
-    public void usedErrorCollectorTwiceShouldFail() {
-        PrintableResult testResult = testResult(UsesErrorCollectorTwice.class);
-        assertThat(testResult, hasFailureContaining("first thing went wrong"));
-        assertThat(testResult, hasFailureContaining("second thing went wrong"));
+    public static class AddInternalAssumptionViolatedException {
+        @Rule
+        public ErrorCollector collector = new ErrorCollector();
+
+        @Test
+        public void example() {
+            collector.addError(new AssumptionViolatedException("message"));
+        }
     }
 
-    public static class UsesErrorCollectorCheckThat {
+    public static class CheckMatcherThatFailsWithoutProvidedReason {
         @Rule
         public ErrorCollector collector = new ErrorCollector();
 
         @Test
         public void example() {
             collector.checkThat(3, is(4));
-            collector.checkThat(5, is(6));
-            collector.checkThat("reason 1", 7, is(8));
-            collector.checkThat("reason 2", 9, is(16));
         }
     }
 
-    @Test
-    public void usedErrorCollectorCheckThatShouldFail() {
-        PrintableResult testResult = testResult(UsesErrorCollectorCheckThat.class);
-        assertThat(testResult, hasFailureContaining("was <3>"));
-        assertThat(testResult, hasFailureContaining("was <5>"));
-        assertThat(testResult, hasFailureContaining("reason 1"));
-        assertThat(testResult, hasFailureContaining("was <7>"));
-        assertThat(testResult, hasFailureContaining("reason 2"));
-        assertThat(testResult, hasFailureContaining("was <9>"));
+    public static class CheckMatcherThatFailsWithProvidedReason {
+        @Rule
+        public ErrorCollector collector = new ErrorCollector();
+
+        @Test
+        public void example() {
+            collector.checkThat("reason", 3, is(4));
+        }
     }
 
-    public static class UsesErrorCollectorCheckSucceeds {
+    public static class CheckTwoMatchersThatFail {
+        @Rule
+        public ErrorCollector collector = new ErrorCollector();
+
+        @Test
+        public void example() {
+            collector.checkThat(3, is(4));
+            collector.checkThat("reason", 7, is(8));
+        }
+    }
+
+    public static class CheckCallableThatThrowsAnException {
+        @Rule
+        public ErrorCollector collector = new ErrorCollector();
+
+        @Test
+        public void example() {
+            collector.checkSucceeds(new Callable<Object>() {
+                public Object call() throws Exception {
+                    throw new RuntimeException("first!");
+                }
+            });
+        }
+    }
+
+    public static class CheckTwoCallablesThatThrowExceptions {
         @Rule
         public ErrorCollector collector = new ErrorCollector();
 
@@ -107,23 +180,10 @@ public class ErrorCollectorTest {
                     throw new RuntimeException("second!");
                 }
             });
-            Integer result = collector.checkSucceeds(new Callable<Integer>() {
-                public Integer call() throws Exception {
-                    return 1;
-                }
-            });
-            assertEquals(Integer.valueOf(1), result);
         }
     }
 
-    @Test
-    public void usedErrorCollectorCheckSucceedsShouldFail() {
-        PrintableResult testResult = testResult(UsesErrorCollectorCheckSucceeds.class);
-        assertThat(testResult, hasFailureContaining("first!"));
-        assertThat(testResult, hasFailureContaining("second!"));
-    }
-
-    public static class UsesErrorCollectorCheckSucceedsWithAssumptionViolatedException {
+    public static class CheckCallableThatThrowsInternalAssumptionViolatedException {
         @Rule
         public ErrorCollector collector = new ErrorCollector();
 
@@ -137,34 +197,22 @@ public class ErrorCollectorTest {
         }
     }
 
-    @Test
-    public void usedErrorCollectorCheckSucceedsWithAssumptionViolatedExceptionShouldFail() {
-        PrintableResult testResult = testResult(UsesErrorCollectorCheckSucceedsWithAssumptionViolatedException.class);
-        assertThat(testResult, hasSingleFailureMatching(CoreMatchers.<Throwable>instanceOf(AssertionError.class)));
-        assertThat(testResult, hasFailureContaining("Callable threw AssumptionViolatedException"));
-    }
-
-    public static class UsesErrorCollectorCheckSucceedsPasses {
+    public static class CheckCallableThatDoesNotThrowAnException {
         @Rule
         public ErrorCollector collector = new ErrorCollector();
 
         @Test
         public void example() {
-            assertEquals(3, collector.checkSucceeds(new Callable<Object>() {
+            Object result = collector.checkSucceeds(new Callable<Object>() {
                 public Object call() throws Exception {
                     return 3;
                 }
-            }));
+            });
+            assertEquals(3, result);
         }
     }
 
-    @Test
-    public void usedErrorCollectorCheckSucceedsShouldPass() {
-        PrintableResult testResult = testResult(UsesErrorCollectorCheckSucceedsPasses.class);
-        assertThat(testResult, isSuccessful());
-    }
-
-    public static class UsesErrorCollectorCheckThrowsMatchingClass {
+    public static class CheckRunnableThatThrowsExpectedTypeOfException {
         @Rule
         public ErrorCollector collector = new ErrorCollector();
 
@@ -178,13 +226,7 @@ public class ErrorCollectorTest {
         }
     }
 
-    @Test
-    public void usedErrorCollectorCheckThrowsMatchingClassShouldPass() {
-        PrintableResult testResult = testResult(UsesErrorCollectorCheckThrowsMatchingClass.class);
-        assertThat(testResult, isSuccessful());
-    }
-
-    public static class UsesErrorCollectorCheckThrowsClassMismatch {
+    public static class CheckRunnableThatThrowsUnexpectedTypeOfException {
         @Rule
         public ErrorCollector collector = new ErrorCollector();
 
@@ -198,14 +240,7 @@ public class ErrorCollectorTest {
         }
     }
 
-    @Test
-    public void usedErrorCollectorCheckThrowsClassMismatchShouldFail() {
-        PrintableResult testResult = testResult(UsesErrorCollectorCheckThrowsClassMismatch.class);
-        assertThat(testResult, hasFailureContaining(
-                "expected:<java.lang.IllegalArgumentException> but was:<java.lang.NullPointerException>"));
-    }
-
-    public static class UsesErrorCollectorCheckThrowsNothingThrown {
+    public static class CheckRunnableThatThrowsNoExceptionAlthoughOneIsExpected {
         @Rule
         public ErrorCollector collector = new ErrorCollector();
 
@@ -216,11 +251,5 @@ public class ErrorCollectorTest {
                 }
             });
         }
-    }
-
-    @Test
-    public void usedErrorCollectorCheckThrowsNothingThrownShouldFail() {
-        PrintableResult testResult = testResult(UsesErrorCollectorCheckThrowsNothingThrown.class);
-        assertThat(testResult, hasFailureContaining("but nothing was thrown"));
     }
 }
