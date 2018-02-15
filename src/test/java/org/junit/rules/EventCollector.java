@@ -18,7 +18,7 @@ class EventCollector extends RunListener {
         return allOf(hasNoFailure(), hasNoAssumptionFailure());
     }
 
-    private static Matcher<EventCollector> hasNumberOfFailures(
+    static Matcher<EventCollector> hasNumberOfFailures(
             final int numberOfFailures) {
         return new TypeSafeMatcher<EventCollector>() {
             @Override
