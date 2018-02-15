@@ -18,6 +18,8 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 import static org.junit.rules.EventCollector.*;
 
 @RunWith(Parameterized.class)
@@ -35,6 +37,12 @@ public class ErrorCollectorTest {
                 {
                     AddInternalAssumptionViolatedException.class,
                         hasSingleFailure()},
+                {
+                    CheckMatcherThatDoesNotFailWithoutProvidedReason.class,
+                        everyTestRunSuccessful()},
+                {
+                    CheckMatcherThatDoesNotFailWithProvidedReason.class,
+                        everyTestRunSuccessful()},
                 {
                     CheckMatcherThatFailsWithoutProvidedReason.class,
                         hasSingleFailureWithMessage(allOf(
@@ -59,6 +67,9 @@ public class ErrorCollectorTest {
                     CheckCallableThatThrowsInternalAssumptionViolatedException.class,
                         hasSingleFailure()},
                 {
+                    CheckCallableWithFailingAssumption.class,
+                        hasSingleFailure()},
+                {
                     CheckCallableThatDoesNotThrowAnException.class,
                         everyTestRunSuccessful()},
                 {
@@ -70,6 +81,12 @@ public class ErrorCollectorTest {
                 {
                     CheckRunnableThatThrowsNoExceptionAlthoughOneIsExpected.class,
                         hasSingleFailureWithMessage("expected java.lang.IllegalArgumentException to be thrown, but nothing was thrown")},
+                {
+                    ErrorCollectorNotCalledBySuccessfulTest.class,
+                        everyTestRunSuccessful()},
+                {
+                    ErrorCollectorNotCalledByFailingTest.class,
+                        hasSingleFailure()},
         };
     }
 
@@ -116,6 +133,26 @@ public class ErrorCollectorTest {
         @Test
         public void example() {
             collector.addError(new AssumptionViolatedException("message"));
+        }
+    }
+
+    public static class CheckMatcherThatDoesNotFailWithProvidedReason {
+        @Rule
+        public ErrorCollector collector = new ErrorCollector();
+
+        @Test
+        public void example() {
+            collector.checkThat("dummy reason", 3, is(3));
+        }
+    }
+
+    public static class CheckMatcherThatDoesNotFailWithoutProvidedReason {
+        @Rule
+        public ErrorCollector collector = new ErrorCollector();
+
+        @Test
+        public void example() {
+            collector.checkThat(3, is(3));
         }
     }
 
@@ -197,6 +234,21 @@ public class ErrorCollectorTest {
         }
     }
 
+    public static class CheckCallableWithFailingAssumption {
+        @Rule
+        public ErrorCollector collector = new ErrorCollector();
+
+        @Test
+        public void example() {
+            collector.checkSucceeds(new Callable<Object>() {
+                public Object call() throws Exception {
+                    assumeTrue(false);
+                    return null;
+                }
+            });
+        }
+    }
+
     public static class CheckCallableThatDoesNotThrowAnException {
         @Rule
         public ErrorCollector collector = new ErrorCollector();
@@ -250,6 +302,25 @@ public class ErrorCollectorTest {
                 public void run() throws Throwable {
                 }
             });
+        }
+    }
+
+    public static class ErrorCollectorNotCalledBySuccessfulTest {
+        @Rule
+        public ErrorCollector collector = new ErrorCollector();
+
+        @Test
+        public void example() {
+        }
+    }
+
+    public static class ErrorCollectorNotCalledByFailingTest {
+        @Rule
+        public ErrorCollector collector = new ErrorCollector();
+
+        @Test
+        public void example() {
+            fail();
         }
     }
 }
