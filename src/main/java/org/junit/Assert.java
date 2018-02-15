@@ -968,21 +968,6 @@ public class Assert {
 
     /**
      * Asserts that {@code runnable} throws an exception of type {@code expectedThrowable} when
-     * executed. If it does not throw an exception, an {@link AssertionError} is thrown. If it
-     * throws the wrong type of exception, an {@code AssertionError} is thrown describing the
-     * mismatch; the exception that was actually thrown can be obtained by calling {@link
-     * AssertionError#getCause}.
-     *
-     * @param expectedThrowable the expected type of the exception
-     * @param runnable       a function that is expected to throw an exception when executed
-     * @since 4.13
-     */
-    public static void assertThrows(Class<? extends Throwable> expectedThrowable, ThrowingRunnable runnable) {
-        expectThrows(expectedThrowable, runnable);
-    }
-
-    /**
-     * Asserts that {@code runnable} throws an exception of type {@code expectedThrowable} when
      * executed. If it does, the exception object is returned. If it does not throw an exception, an
      * {@link AssertionError} is thrown. If it throws the wrong type of exception, an {@code
      * AssertionError} is thrown describing the mismatch; the exception that was actually thrown can
@@ -993,7 +978,27 @@ public class Assert {
      * @return the exception thrown by {@code runnable}
      * @since 4.13
      */
-    public static <T extends Throwable> T expectThrows(Class<T> expectedThrowable, ThrowingRunnable runnable) {
+    public static <T extends Throwable> T assertThrows(Class<T> expectedThrowable,
+            ThrowingRunnable runnable) {
+        return assertThrows(null, expectedThrowable, runnable);
+    }
+
+    /**
+     * Asserts that {@code runnable} throws an exception of type {@code expectedThrowable} when
+     * executed. If it does, the exception object is returned. If it does not throw an exception, an
+     * {@link AssertionError} is thrown. If it throws the wrong type of exception, an {@code
+     * AssertionError} is thrown describing the mismatch; the exception that was actually thrown can
+     * be obtained by calling {@link AssertionError#getCause}.
+     *
+     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
+     * okay)
+     * @param expectedThrowable the expected type of the exception
+     * @param runnable a function that is expected to throw an exception when executed
+     * @return the exception thrown by {@code runnable}
+     * @since 4.13
+     */
+    public static <T extends Throwable> T assertThrows(String message, Class<T> expectedThrowable,
+            ThrowingRunnable runnable) {
         try {
             runnable.run();
         } catch (Throwable actualThrown) {
@@ -1010,7 +1015,8 @@ public class Assert {
                     expected += "@" + Integer.toHexString(System.identityHashCode(expectedThrowable));
                     actual += "@" + Integer.toHexString(System.identityHashCode(actualThrowable));
                 }
-                String mismatchMessage = format("unexpected exception type thrown;", expected, actual);
+                String mismatchMessage = buildPrefix(message)
+                        + format("unexpected exception type thrown;", expected, actual);
 
                 // The AssertionError(String, Throwable) ctor is only available on JDK7.
                 AssertionError assertionError = new AssertionError(mismatchMessage);
@@ -1018,8 +1024,13 @@ public class Assert {
                 throw assertionError;
             }
         }
-        String message = String.format("expected %s to be thrown, but nothing was thrown",
-                formatClass(expectedThrowable));
-        throw new AssertionError(message);
+        String notThrownMessage = buildPrefix(message) + String
+                .format("expected %s to be thrown, but nothing was thrown",
+                        formatClass(expectedThrowable));
+        throw new AssertionError(notThrownMessage);
+    }
+
+    private static String buildPrefix(String message) {
+        return message != null && message.length() != 0 ? message + ": " : "";
     }
 }

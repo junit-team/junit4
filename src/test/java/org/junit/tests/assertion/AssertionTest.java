@@ -11,7 +11,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.expectThrows;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
@@ -848,14 +848,14 @@ public class AssertionTest {
     }
 
     @Test(expected = AssertionError.class)
-    public void expectThrowsRequiresAnExceptionToBeThrown() {
-        expectThrows(Throwable.class, nonThrowingRunnable());
+    public void assertThrowsRequiresAnExceptionToBeThrown() {
+        assertThrows(Throwable.class, nonThrowingRunnable());
     }
 
     @Test
-    public void expectThrowsIncludesAnInformativeDefaultMessage() {
+    public void assertThrowsIncludesAnInformativeDefaultMessage() {
         try {
-            expectThrows(Throwable.class, nonThrowingRunnable());
+            assertThrows(Throwable.class, nonThrowingRunnable());
         } catch (AssertionError ex) {
             assertEquals("expected java.lang.Throwable to be thrown, but nothing was thrown", ex.getMessage());
             return;
@@ -864,27 +864,40 @@ public class AssertionTest {
     }
 
     @Test
-    public void expectThrowsReturnsTheSameObjectThrown() {
+    public void assertThrowsIncludesTheSpecifiedMessage() {
+        try {
+            assertThrows("Foobar", Throwable.class, nonThrowingRunnable());
+        } catch (AssertionError ex) {
+            assertEquals(
+                    "Foobar: expected java.lang.Throwable to be thrown, but nothing was thrown",
+                    ex.getMessage());
+            return;
+        }
+        throw new AssertionError(ASSERTION_ERROR_EXPECTED);
+    }
+
+    @Test
+    public void assertThrowsReturnsTheSameObjectThrown() {
         NullPointerException npe = new NullPointerException();
 
-        Throwable throwable = expectThrows(Throwable.class, throwingRunnable(npe));
+        Throwable throwable = assertThrows(Throwable.class, throwingRunnable(npe));
 
         assertSame(npe, throwable);
     }
 
     @Test(expected = AssertionError.class)
-    public void expectThrowsDetectsTypeMismatchesViaExplicitTypeHint() {
+    public void assertThrowsDetectsTypeMismatchesViaExplicitTypeHint() {
         NullPointerException npe = new NullPointerException();
 
-        expectThrows(IOException.class, throwingRunnable(npe));
+        assertThrows(IOException.class, throwingRunnable(npe));
     }
 
     @Test
-    public void expectThrowsWrapsAndPropagatesUnexpectedExceptions() {
+    public void assertThrowsWrapsAndPropagatesUnexpectedExceptions() {
         NullPointerException npe = new NullPointerException("inner-message");
 
         try {
-            expectThrows(IOException.class, throwingRunnable(npe));
+            assertThrows(IOException.class, throwingRunnable(npe));
         } catch (AssertionError ex) {
             assertSame(npe, ex.getCause());
             assertEquals("inner-message", ex.getCause().getMessage());
@@ -894,11 +907,11 @@ public class AssertionTest {
     }
 
     @Test
-    public void expectThrowsSuppliesACoherentErrorMessageUponTypeMismatch() {
+    public void assertThrowsSuppliesACoherentErrorMessageUponTypeMismatch() {
         NullPointerException npe = new NullPointerException();
 
         try {
-            expectThrows(IOException.class, throwingRunnable(npe));
+            assertThrows(IOException.class, throwingRunnable(npe));
         } catch (AssertionError error) {
             assertEquals("unexpected exception type thrown; expected:<java.io.IOException> but was:<java.lang.NullPointerException>",
                     error.getMessage());
@@ -909,11 +922,26 @@ public class AssertionTest {
     }
 
     @Test
-    public void expectThrowsUsesCanonicalNameUponTypeMismatch() {
+    public void assertThrowsSuppliesTheSpecifiedMessageUponTypeMismatch() {
         NullPointerException npe = new NullPointerException();
 
         try {
-            expectThrows(NestedException.class, throwingRunnable(npe));
+            assertThrows("Foobar", IOException.class, throwingRunnable(npe));
+        } catch (AssertionError error) {
+            assertEquals("Foobar: unexpected exception type thrown; expected:<java.io.IOException> but was:<java.lang.NullPointerException>",
+                    error.getMessage());
+            assertSame(npe, error.getCause());
+            return;
+        }
+        throw new AssertionError(ASSERTION_ERROR_EXPECTED);
+    }
+
+    @Test
+    public void assertThrowsUsesCanonicalNameUponTypeMismatch() {
+        NullPointerException npe = new NullPointerException();
+
+        try {
+            assertThrows(NestedException.class, throwingRunnable(npe));
         } catch (AssertionError error) {
             assertEquals(
                     "unexpected exception type thrown; expected:<org.junit.tests.assertion.AssertionTest.NestedException>"
@@ -926,12 +954,12 @@ public class AssertionTest {
     }
 
     @Test
-    public void expectThrowsUsesNameUponTypeMismatchWithAnonymousClass() {
+    public void assertThrowsUsesNameUponTypeMismatchWithAnonymousClass() {
         NullPointerException npe = new NullPointerException() {
         };
 
         try {
-            expectThrows(IOException.class, throwingRunnable(npe));
+            assertThrows(IOException.class, throwingRunnable(npe));
         } catch (AssertionError error) {
             assertEquals(
                     "unexpected exception type thrown; expected:<java.io.IOException>"
@@ -944,9 +972,9 @@ public class AssertionTest {
     }
 
     @Test
-    public void expectThrowsUsesCanonicalNameWhenRequiredExceptionNotThrown() {
+    public void assertThrowsUsesCanonicalNameWhenRequiredExceptionNotThrown() {
         try {
-            expectThrows(NestedException.class, nonThrowingRunnable());
+            assertThrows(NestedException.class, nonThrowingRunnable());
         } catch (AssertionError error) {
             assertEquals(
                     "expected org.junit.tests.assertion.AssertionTest.NestedException to be thrown,"
