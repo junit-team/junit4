@@ -558,5 +558,15 @@
                 </plugins>
             </reporting>
         </profile>
+        <profile>
+            <id>java9</id>
+            <activation>
+                <jdk>[1.9,)</jdk>
+            </activation>
+            <properties>
+                <!-- JDK 9 minimal source and target versions are 1.6 -->
+                <jdkVersion>1.6</jdkVersion>
+            </properties>
+        </profile>
     </profiles>
 </project>
