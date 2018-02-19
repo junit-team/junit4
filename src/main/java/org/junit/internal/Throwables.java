@@ -247,6 +247,7 @@ public final class Throwables {
     private static final String[] REFLECTION_METHOD_NAME_PREFIXES = {
         "sun.reflect.",
         "java.lang.reflect.",
+        "jdk.internal.reflect.",
         "org.junit.rules.RunRules.<init>(",
         "org.junit.rules.RunRules.applyAll(", // calls TestRules
         "org.junit.runners.RuleContainer.apply(", // calls MethodRules & TestRules
