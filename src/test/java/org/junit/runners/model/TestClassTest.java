@@ -142,8 +142,9 @@ public class TestClassTest {
     public void providesAnnotatedMethodsSortedByName() {
         TestClass tc = new TestClass(MethodsAnnotated.class);
         List<FrameworkMethod> annotatedMethods = tc.getAnnotatedMethods();
-        assertThat("First annotated method is wrong.", annotatedMethods
-            .iterator().next().getName(), is("methodA"));
+        List<String> methodNames = extractNames(annotatedMethods);
+        assertThat(methodNames.indexOf("methodA"),
+            lessThan(methodNames.indexOf("methodB")));
     }
 
     @Test
