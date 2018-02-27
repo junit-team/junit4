@@ -586,13 +586,13 @@ public class AnnotationTest extends TestCase {
         }
     }
 
-    public void testStaticMethodsNeverTreatedAsShadowed() throws Exception {
+    public void testStaticMethodsCanBeTreatedAsShadowed() throws Exception {
         log = "";
         assertThat(testResult(SubStaticMethodShadowing.class), isSuccessful());
         assertEquals(
-                "super.rule().before() sub.rule().before() "
+                "sub.rule().before() "
                 + "Test "
-                + "sub.rule().after() super.rule().after() ",
+                + "sub.rule().after() ",
                 log);
     }
 
@@ -680,13 +680,13 @@ public class AnnotationTest extends TestCase {
         }
     }
 
-    public void testStaticFieldsNeverTreatedAsShadowed() throws Exception {
+    public void testStaticFieldsCanBeTreatedAsShadowed() throws Exception {
         log = "";
         assertThat(testResult(SubStaticFieldShadowing.class), isSuccessful());
         assertEquals(
-                "super.rule.before() sub.rule.before() "
+                "sub.rule.before() "
                 + "Test "
-                + "sub.rule.after() super.rule.after() ",
+                + "sub.rule.after() ",
                 log);
     }
 

@@ -142,32 +142,7 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
     }
 
     @Override
-    FrameworkMethod handlePossibleBridgeMethod(List<FrameworkMethod> methods) {
-        for (int i = methods.size() - 1; i >=0; i--) {
-            FrameworkMethod otherMethod = methods.get(i);
-            if (isShadowedBy(otherMethod)) {
-                if (otherMethod.isBridgeMethod()) {
-                    /*
-                     *  We need to return the previously-encountered bridge method
-                     *  because JUnit won't be able to call the parent method,
-                     *  because the parent class isn't public.
-                     */
-                    methods.remove(i);
-                    return otherMethod;
-                }
-                // We found a shadowed member that isn't a bridge method. Ignore it.
-                return null;
-            }
-        }
-        // No shadow or bridge method found. The caller should add *this* member.
-        return this;
-    }
-
-    @Override
     public boolean isShadowedBy(FrameworkMethod other) {
-        if (isStatic()) {
-            return false;
-        }
         if (!other.getName().equals(getName())) {
             return false;
         }
