@@ -48,8 +48,8 @@ import org.junit.validator.TestClassValidator;
  * must implement finding the children of the node, describing each child, and
  * running each child. ParentRunner will filter and sort children, handle
  * {@code @BeforeClass} and {@code @AfterClass} methods,
- * handle annotated {@link ClassRule}s, create a composite
- * {@link Description}, and run children sequentially.
+ * handle annotated {@link ClassRule}s, handle provided global {@link TestRule}s,
+ * create a composite {@link Description}, and run children sequentially.
  *
  * @since 4.5
  */
@@ -187,7 +187,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * construct a statement that will:
      * <ol>
      * <li>Apply all {@code ClassRule}s on the test-class and superclasses.</li>
-     * <li>Apply all {@code GlobalRule}s on the test-class and superclasses.</li>
+     * <li>Apply all global {@code TestRule}s on the test-class and superclasses.</li>
      * <li>Run all non-overridden {@code @BeforeClass} methods on the test-class
      * and superclasses; if any throws an Exception, stop execution and pass the
      * exception on.</li>

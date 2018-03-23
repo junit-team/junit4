@@ -8,6 +8,7 @@ import org.junit.internal.requests.FilterRequest;
 import org.junit.internal.requests.GlobalRuleRequest;
 import org.junit.internal.requests.SortingRequest;
 import org.junit.internal.runners.ErrorReportingRunner;
+import org.junit.rules.TestRule;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.GlobalRuleRunner;
 import org.junit.runners.model.InitializationError;
@@ -172,6 +173,13 @@ public abstract class Request {
         return new SortingRequest(this, comparator);
     }
 
+    /**
+     * Returns a Request with global {@link TestRule}s that are applied
+     * to every test being run with this Request
+     *
+     * @param ruleRunner The {@link GlobalRuleRunner} to apply to this Request
+     * @return a Request with applied global {@link TestRule}s
+     */
     public Request withGlobalRules(GlobalRuleRunner ruleRunner) {
         return new GlobalRuleRequest(this, ruleRunner);
     }
