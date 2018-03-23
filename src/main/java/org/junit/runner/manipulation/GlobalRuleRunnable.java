@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface GlobalRuleRunnable {
 
-    void setGlobalRules(List<Class<?>> rules);
+    void setGlobalRules(List<Class<?>> rules) throws Exception;
 
 }

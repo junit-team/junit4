@@ -1,5 +1,6 @@
 package org.junit.internal.requests;
 
+import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.Request;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.GlobalRuleRunner;
@@ -25,8 +26,12 @@ public final class GlobalRuleRequest extends Request {
 
     @Override
     public Runner getRunner() {
-        Runner runner = request.getRunner();
-        ruleRunner.apply(runner);
-        return runner;
+        try {
+            Runner runner = request.getRunner();
+            ruleRunner.apply(runner);
+            return runner;
+        } catch (Exception e) {
+            return new ErrorReportingRunner(GlobalRuleRunner.class, e);
+        }
     }
 }
