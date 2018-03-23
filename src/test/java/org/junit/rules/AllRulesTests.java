@@ -8,6 +8,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
         BlockJUnit4ClassRunnerOverrideTest.class,
         ClassRulesTest.class,
+        GlobalRulesTest.class,
         DisableOnDebugTest.class,
         ErrorCollectorTest.class,
         ExpectedExceptionTest.class,

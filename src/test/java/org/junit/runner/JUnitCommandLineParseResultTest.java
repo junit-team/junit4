@@ -11,7 +11,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.IncludeCategories;
 import org.junit.rules.ExpectedException;
+import org.junit.rules.TestRule;
 import org.junit.runner.manipulation.Filter;
+import org.junit.runners.model.Statement;
 
 public class JUnitCommandLineParseResultTest {
     @Rule
@@ -40,6 +42,16 @@ public class JUnitCommandLineParseResultTest {
     @Test
     public void shouldCreateFailureUponBaldFilterOptionNotFollowedByValue() {
         jUnitCommandLineParseResult.parseOptions("--filter");
+
+        Runner runner = jUnitCommandLineParseResult.createRequest(new Computer()).getRunner();
+        Description description = runner.getDescription().getChildren().get(0);
+
+        assertThat(description.toString(), containsString("initializationError"));
+    }
+
+    @Test
+    public void shouldCreateFailureUponBaldGlobalRuleOptionNotFollowedByValue() {
+        jUnitCommandLineParseResult.parseOptions("--global-rule");
 
         Runner runner = jUnitCommandLineParseResult.createRequest(new Computer()).getRunner();
         Description description = runner.getDescription().getChildren().get(0);
@@ -117,10 +129,50 @@ public class JUnitCommandLineParseResultTest {
     }
 
     @Test
+    public void shouldAddToGlobalRules() {
+        jUnitCommandLineParseResult.parseOptions(new String[]{
+                "--global-rule",
+                DummyRule.class.getName()
+        });
+
+        List<Class<?>> classes = jUnitCommandLineParseResult.getGlobalRules();
+        Class<?> ruleClass = classes.get(0);
+
+        assertThat(ruleClass.getName(), is(DummyRule.class.getName()));
+    }
+
+    @Test
     public void shouldCreateFailureUponUnknownTestClass() throws Exception {
         String unknownTestClass = "UnknownTestClass";
         jUnitCommandLineParseResult.parseParameters(new String[]{
                 unknownTestClass
+        });
+
+        Runner runner = jUnitCommandLineParseResult.createRequest(new Computer()).getRunner();
+        Description description = runner.getDescription().getChildren().get(0);
+
+        assertThat(description.toString(), containsString("initializationError"));
+    }
+
+    @Test
+    public void shouldCreateFailureUponUnknownGlobalRule() throws Exception {
+        String unknownRuleClass = "UnknownRuleClass";
+        jUnitCommandLineParseResult.parseOptions(new String[]{
+                "--global-rule",
+                unknownRuleClass
+        });
+
+        Runner runner = jUnitCommandLineParseResult.createRequest(new Computer()).getRunner();
+        Description description = runner.getDescription().getChildren().get(0);
+
+        assertThat(description.toString(), containsString("initializationError"));
+    }
+
+    @Test
+    public void shouldCreateFailureUponNonAssignableToTestRuleGlobalRule() throws Exception {
+        jUnitCommandLineParseResult.parseOptions(new String[]{
+                "--global-rule",
+                DummyTest.class.getName()
         });
 
         Runner runner = jUnitCommandLineParseResult.createRequest(new Computer()).getRunner();
@@ -141,6 +193,12 @@ public class JUnitCommandLineParseResultTest {
     public static class DummyTest {
         @Test
         public void dummyTest() {
+        }
+    }
+
+    public static class DummyRule implements TestRule {
+        public Statement apply(Statement base, Description description) {
+            return base;
         }
     }
 }
