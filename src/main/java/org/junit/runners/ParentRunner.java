@@ -456,21 +456,26 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         }
     }
 
-    public void setGlobalRules(List<Class<?>> rules) throws Exception {
-        if (!globalRules.isEmpty()) {
-            globalRules.clear();
-        }
-        for (Class<?> clazz : rules) {
-            Constructor<?>[] constructors = clazz.getConstructors();
-            if (constructors.length > 1) {
-                throw new IllegalArgumentException("Global TestRule can only have one constructor");
+    public void setGlobalRules(GlobalRuleRunner rules) throws Exception {
+        childrenLock.lock();
+        try {
+            for (T each : getFilteredChildren()) {
+                rules.apply(each);
             }
-            Assert.assertEquals(1, constructors.length);
-            Constructor<?> constructor = clazz.getConstructors()[0];
-            if (constructor.getParameterTypes().length > 0) {
-                throw new IllegalArgumentException("Global TestRule constructor cannot have parameters");
+            for (Class<?> clazz : rules.getRules()) {
+                Constructor<?>[] constructors = clazz.getConstructors();
+                if (constructors.length > 1) {
+                    throw new IllegalArgumentException("Global TestRule can only have one constructor");
+                }
+                Assert.assertEquals(1, constructors.length);
+                Constructor<?> constructor = clazz.getConstructors()[0];
+                if (constructor.getParameterTypes().length > 0) {
+                    throw new IllegalArgumentException("Global TestRule constructor cannot have parameters");
+                }
+                globalRules.add(TestRule.class.cast(constructor.newInstance()));
             }
-            globalRules.add(TestRule.class.cast(constructor.newInstance()));
+        } finally {
+            childrenLock.unlock();
         }
     }
 

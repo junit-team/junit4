@@ -28,34 +28,33 @@ public class GlobalRulesTest {
     public static class ExampleTest {
         @Test
         public void firstTest() {
-            assertEquals(1, count);
+            assertEquals(2, count);
         }
 
         @Test
         public void secondTest() {
-            assertEquals(1, count);
+            assertEquals(2, count);
         }
     }
 
     public static class SecondExampleTest {
         @Test
         public void firstTest() {
-            assertEquals(2, count);
+            assertEquals(3, count);
         }
 
         @Test
         public void secondTest() {
-            assertEquals(2, count);
+            assertEquals(3, count);
         }
     }
 
     @Test
     public void rulesAreAppliedOnEveryTest() {
-        count = 0;
         List<Class<?>> rules = new ArrayList<Class<?>>();
         rules.add(Counter.class);
         new JUnitCore().run(Request.classes(ExampleTest.class, SecondExampleTest.class)
                 .withGlobalRules(new GlobalRuleRunner(rules)));
-        assertEquals(2, count);
+        assertEquals(3, count);
     }
 }
