@@ -5,14 +5,17 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.internal.Classes;
+import org.junit.rules.TestRule;
 import org.junit.runner.FilterFactory.FilterNotCreatedException;
 import org.junit.runner.manipulation.Filter;
+import org.junit.runner.manipulation.GlobalRuleRunner;
 import org.junit.runners.model.InitializationError;
 
 class JUnitCommandLineParseResult {
     private final List<String> filterSpecs = new ArrayList<String>();
     private final List<Class<?>> classes = new ArrayList<Class<?>>();
     private final List<Throwable> parserErrors = new ArrayList<Throwable>();
+    private final List<Class<?>> globalRules = new ArrayList<Class<?>>();
 
     /**
      * Do not use. Testing purposes only.
@@ -31,6 +34,13 @@ class JUnitCommandLineParseResult {
      */
     public List<Class<?>> getClasses() {
         return Collections.unmodifiableList(classes);
+    }
+
+    /**
+     * Returns global rules classes parsed from command line.
+     */
+    public List<Class<?>> getGlobalRules() {
+        return Collections.unmodifiableList(globalRules);
     }
 
     /**
@@ -73,6 +83,27 @@ class JUnitCommandLineParseResult {
                     }
 
                     filterSpecs.add(filterSpec);
+                } else if (arg.equals("--global-rule")) {
+                    ++i;
+
+                    if (i < args.length) {
+                        try {
+                            Class<?> clazz = Classes.getClass(args[i]);
+
+                            if (TestRule.class.isAssignableFrom(clazz)) {
+                                globalRules.add(clazz);
+                            } else {
+                                parserErrors.add(new CommandLineParserError(args[i] + " does not implement TestRule"));
+                                break;
+                            }
+                        } catch (ClassNotFoundException e) {
+                            parserErrors.add(new CommandLineParserError(args[i] + " is not a valid value for global rule"));
+                            break;
+                        }
+                    } else {
+                        parserErrors.add(new CommandLineParserError(arg + " value not specified"));
+                        break;
+                    }
                 } else {
                     parserErrors.add(new CommandLineParserError("JUnit knows nothing about the " + arg + " option"));
                 }
@@ -115,9 +146,17 @@ class JUnitCommandLineParseResult {
         if (parserErrors.isEmpty()) {
             Request request = Request.classes(
                     computer, classes.toArray(new Class<?>[classes.size()]));
-            return applyFilterSpecs(request);
+            return applyFilterSpecs(applyGlobalRules(request));
         } else {
             return errorReport(new InitializationError(parserErrors));
+        }
+    }
+
+    private Request applyGlobalRules(Request request) {
+        if (!globalRules.isEmpty()) {
+            return request.withGlobalRules(new GlobalRuleRunner(globalRules));
+        } else {
+            return request;
         }
     }
 

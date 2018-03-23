@@ -29,11 +29,7 @@ import org.junit.rules.RunRules;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
-import org.junit.runner.manipulation.Filter;
-import org.junit.runner.manipulation.Filterable;
-import org.junit.runner.manipulation.NoTestsRemainException;
-import org.junit.runner.manipulation.Sortable;
-import org.junit.runner.manipulation.Sorter;
+import org.junit.runner.manipulation.*;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
 import org.junit.runners.model.FrameworkMember;
@@ -61,7 +57,7 @@ import org.junit.validator.TestClassValidator;
  * @since 4.5
  */
 public abstract class ParentRunner<T> extends Runner implements Filterable,
-        Sortable {
+        Sortable, GlobalRuleRunnable {
     private static final List<TestClassValidator> VALIDATORS = Arrays.<TestClassValidator>asList(
             new AnnotationsValidator());
 
@@ -70,6 +66,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
     // Guarded by childrenLock
     private volatile Collection<T> filteredChildren = null;
+
+    private List<TestRule> globalRules = new ArrayList<TestRule>();
 
     private volatile RunnerScheduler scheduler = new RunnerScheduler() {
         public void schedule(Runnable childStatement) {
@@ -403,7 +401,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     }
 
     //
-    // Implementation of Filterable and Sortable
+    // Implementation of Filterable, Sortable and GlobalRuleRunnable
     //
 
     public void filter(Filter filter) throws NoTestsRemainException {
@@ -442,6 +440,15 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             filteredChildren = Collections.unmodifiableCollection(sortedChildren);
         } finally {
             childrenLock.unlock();
+        }
+    }
+
+    public void setGlobalRules(List<Class<?>> rules) {
+        if (!globalRules.isEmpty()) {
+            globalRules.clear();
+        }
+        for (Class<?> clazz : rules) {
+
         }
     }
 
