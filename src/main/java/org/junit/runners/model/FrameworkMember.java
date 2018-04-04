@@ -18,7 +18,31 @@ public abstract class FrameworkMember<T extends FrameworkMember<T>> implements
      * 
      * @return member that should be used, or {@code null} if no member should be used.
      */
-    abstract T handlePossibleBridgeMethod(List<T> members);
+    final T handlePossibleShadowedMember(List<T> members) {
+        for (int i = members.size() - 1; i >=0; i--) {
+            T otherMember = members.get(i);
+            if (isShadowedBy(otherMember)) {
+                if (otherMember.isBridgeMethod()) {
+                    /*
+                     *  We need to return the previously-encountered bridge method
+                     *  because JUnit won't be able to call the parent method,
+                     *  because the parent class isn't public.
+                     */
+                    members.remove(i);
+                    return otherMember;
+                }
+                // We found a shadowed member that isn't a bridge method. Ignore it.
+                return null;
+            }
+        }
+        // No shadow or bridge method found. The caller should add *this* member.
+        return self();
+    }
+
+    @SuppressWarnings("unchecked")
+    private T self() {
+        return (T) this;
+    }
 
     abstract boolean isBridgeMethod();
 

@@ -47,12 +47,7 @@ public class FrameworkField extends FrameworkMember<FrameworkField> {
 
     @Override
     public boolean isShadowedBy(FrameworkField otherMember) {
-        return false;
-    }
-
-    @Override
-    FrameworkField handlePossibleBridgeMethod(List<FrameworkField> members) {
-        return this; // fields are never bridge methods
+        return isStatic() && otherMember.getName().equals(getName());
     }
 
     @Override
