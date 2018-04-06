@@ -68,6 +68,13 @@ import org.junit.runners.model.Statement;
  *     throw new NullPointerException(&quot;What happened?&quot;);
  * }</pre>
  *
+ * <p>It is recommended to set the {@link org.junit.Rule#order() order} of the
+ * {@code ExpectedException} to {@code Integer.MAX_VALUE} if it is used together
+ * with another rule that handles exceptions, e.g. {@link ErrorCollector}.
+ * Otherwise failing tests may be successful.
+ * <pre> &#064;Rule(order = Integer.MAX_VALUE)
+ * public ExpectedException thrown = ExpectedException.none();</pre>
+ *
  * <h3>AssumptionViolatedExceptions</h3>
  * <p>JUnit uses {@link AssumptionViolatedException}s for indicating that a test
  * provides no useful information. (See {@link org.junit.Assume} for more

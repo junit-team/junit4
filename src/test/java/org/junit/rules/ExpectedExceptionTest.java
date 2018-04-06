@@ -86,7 +86,10 @@ public class ExpectedExceptionTest {
                 {
                         UseCustomMessageWithPlaceHolder.class,
                         hasSingleFailureWithMessage(ARBITRARY_MESSAGE
-                                + " - an instance of java.lang.IllegalArgumentException") }
+                                + " - an instance of java.lang.IllegalArgumentException") },
+                {
+                        ErrorCollectorShouldFailAlthoughExpectedExceptionDoesNot.class,
+                        hasSingleFailureWithMessage(ARBITRARY_MESSAGE) }
         });
     }
 
@@ -362,6 +365,22 @@ public class ExpectedExceptionTest {
         public void noThrow() {
             thrown.expect(IllegalArgumentException.class);
             thrown.reportMissingExceptionWithMessage(ARBITRARY_MESSAGE);
+        }
+    }
+
+    public static class ErrorCollectorShouldFailAlthoughExpectedExceptionDoesNot {
+
+        @Rule
+        public ErrorCollector collector = new ErrorCollector();
+
+        @Rule(order = Integer.MAX_VALUE)
+        public ExpectedException thrown = ExpectedException.none();
+
+        @Test
+        public void test() {
+            collector.addError(new AssertionError(ARBITRARY_MESSAGE));
+            thrown.expect(Exception.class);
+            throw new RuntimeException();
         }
     }
 }
