@@ -122,12 +122,22 @@ public class FailOnTimeout extends Statement {
         FutureTask<Throwable> task = new FutureTask<Throwable>(callable);
         ThreadGroup threadGroup = new ThreadGroup("FailOnTimeoutGroup");
         Thread thread = new Thread(threadGroup, task, "Time-limited test");
-        thread.setDaemon(true);
-        thread.start();
-        callable.awaitStarted();
-        Throwable throwable = getResult(task, thread);
-        if (throwable != null) {
-            throw throwable;
+        try {
+            thread.setDaemon(true);
+            thread.start();
+            callable.awaitStarted();
+            Throwable throwable = getResult(task, thread);
+            if (throwable != null) {
+                throw throwable;
+            }
+        } finally {
+            thread.join(100);
+            try {
+                threadGroup.destroy();
+            } catch (IllegalThreadStateException e) {
+                // If a thread from the group is still alive, the ThreadGroup cannot be destroyed.
+                // Swallow the exception to keep the same behavior prior to this change.
+            }
         }
     }
 

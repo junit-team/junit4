@@ -3,6 +3,7 @@ package org.junit.internal.runners.statements;
 import static java.lang.Long.MAX_VALUE;
 import static java.lang.Math.atan;
 import static java.lang.System.currentTimeMillis;
+import static java.lang.Thread.currentThread;
 import static java.lang.Thread.sleep;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.hamcrest.core.Is.is;
@@ -12,6 +13,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.internal.runners.statements.FailOnTimeout.builder;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Rule;
@@ -192,4 +195,25 @@ public class FailOnTimeoutTest {
             }
         }
     }
+
+    @Test
+    public void threadGroupNotLeaked()
+            throws Throwable {
+
+        Set<ThreadGroup> groupsBeforeSet = new HashSet<ThreadGroup>();
+        ThreadGroup[] groupsBefore = new ThreadGroup[256];
+        for (int i = 0; i < currentThread().getThreadGroup().enumerate(groupsBefore); ++i) {
+            groupsBeforeSet.add(groupsBefore[i]);
+        }
+
+        evaluateWithWaitDuration(0);
+        
+        ThreadGroup[] groups = new ThreadGroup[256];
+        for (int i = 0; i < currentThread().getThreadGroup().enumerate(groups); ++i) {
+            if(!groupsBeforeSet.contains(groups[i]) && "FailOnTimeoutGroup".equals(groups[i].getName())) {
+                fail("A 'FailOnTimeoutGroup' thread group remains referenced after the test execution.");
+            }
+        }
+    }
+    
 }
