@@ -61,7 +61,8 @@ public class ListTest extends TestCase {
     }
 
     public void testRemoveElement() {
-        fullList.remove(3);
+        int i = fullList.remove(2);
+        assertEquals(i, 3);
         assertTrue(!fullList.contains(3));
     }
 }
