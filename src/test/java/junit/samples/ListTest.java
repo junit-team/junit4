@@ -38,7 +38,7 @@ public class ListTest extends TestCase {
 
     public void testContains() {
         assertTrue(fullList.contains(1));
-        assertTrue(!emptyList.contains(1));
+        assertFalse(emptyList.contains(1));
     }
 
     public void testElementAt() {
@@ -61,7 +61,7 @@ public class ListTest extends TestCase {
     }
 
     public void testRemoveElement() {
-        fullList.remove(Integer.valueOf(3));
-        assertTrue(!fullList.contains((Integer) 3));
+        fullList.remove(2);
+        assertFalse(fullList.contains(3));
     }
 }
