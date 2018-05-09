@@ -13,6 +13,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.internal.runners.statements.FailOnTimeout.builder;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -197,23 +199,21 @@ public class FailOnTimeoutTest {
     }
 
     @Test
-    public void threadGroupNotLeaked()
-            throws Throwable {
-
-        Set<ThreadGroup> groupsBeforeSet = new HashSet<ThreadGroup>();
-        ThreadGroup[] groupsBefore = new ThreadGroup[256];
-        for (int i = 0; i < currentThread().getThreadGroup().enumerate(groupsBefore); ++i) {
-            groupsBeforeSet.add(groupsBefore[i]);
-        }
-
+    public void threadGroupNotLeaked() throws Throwable {
+        Collection<ThreadGroup> groupsBeforeSet = subGroupsOfCurrentThread();
+        
         evaluateWithWaitDuration(0);
         
-        ThreadGroup[] groups = new ThreadGroup[256];
-        for (int i = 0; i < currentThread().getThreadGroup().enumerate(groups); ++i) {
-            if(!groupsBeforeSet.contains(groups[i]) && "FailOnTimeoutGroup".equals(groups[i].getName())) {
+        for (ThreadGroup group: subGroupsOfCurrentThread()) {
+            if(!groupsBeforeSet.contains(group) && "FailOnTimeoutGroup".equals(group.getName())) {
                 fail("A 'FailOnTimeoutGroup' thread group remains referenced after the test execution.");
             }
         }
     }
     
+    private Collection<ThreadGroup> subGroupsOfCurrentThread() {
+        ThreadGroup[] subGroups = new ThreadGroup[256];
+        int numGroups = currentThread().getThreadGroup().enumerate(subGroups);
+        return Arrays.asList(subGroups).subList(0, numGroups);
+    }
 }
