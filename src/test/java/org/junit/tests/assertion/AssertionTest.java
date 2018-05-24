@@ -605,10 +605,271 @@ public class AssertionTest {
     }
 
     @Test
-    public void notSameNullMessage() {
-        Object o = new Object();
+    public void sameBoolean() {
+        boolean b = true;
+        assertSame(b, b);
+    }
+
+    @Test
+    public void sameByte() {
+        byte b = 123;
+        assertSame(b, b);
+    }
+
+    @Test
+    public void sameChar() {
+        char c = '\u0123';
+        assertSame(c, c);
+    }
+
+    @Test
+    public void sameShort() {
+        short n = 1234;
+        assertSame(n, n);
+    }
+
+    @Test
+    public void sameIntSmall() {
+        int i = 123;
+        assertSame(i, i);
+    }
+
+    @Test
+    public void sameIntLarge() {
+        int i = 123456;
+        assertSame(i, i);
+    }
+
+    @Test
+    public void sameIntFloat() {
+        int i = 123456;
+        float f = 123456;
+        assertSame(i, f);
+    }
+
+    @Test
+    public void sameFloatInt() {
+        int i = 123456;
+        float f = 123456;
+        assertSame(i, f);
+    }
+
+    public void sameIntLong() {
+        int i = 123456;
+        long l = 123456;
+        assertSame(i, l);
+    }
+
+    @Test
+    public void sameLongInt() {
+        long l = 123456;
+        int i = 123456;
+        assertSame(l, i);
+    }
+
+    @Test
+    public void sameFloat() {
+        float f = 123.456f;
+        assertSame(f, f);
+    }
+
+    @Test
+    public void sameDouble() {
+        double d = 123.456E129;
+        assertSame(d, d);
+    }
+
+    @Test
+    public void notSameBoolean() {
+        boolean b1 = true;
+        boolean b2 = false;
+        assertNotSame(b1, b2);
+    }
+
+    @Test
+    public void notSameByte() {
+        byte b1 = 123;
+        byte b2 = 124;
+        assertNotSame(b1, b2);
+    }
+
+    @Test
+    public void notSameChar() {
+        char c1 = '\u0123';
+        char c2 = '\u0124';
+        assertNotSame(c1, c2);
+    }
+
+    @Test
+    public void notSameShort() {
+        short a = 1234;
+        short b = 1235;
+        assertNotSame(a, b);
+    }
+
+    @Test
+    public void notSameIntSmall() {
+        int i1 = 111;
+        int i2 = 112;
+        assertNotSame(i1, i2);
+    }
+
+    @Test
+    public void notSameIntLarge() {
+        int i1 = 1111111111;
+        int i2 = 1111111112;
+        assertNotSame(i1, i2);
+    }
+
+    @Test
+    public void notSameLong() {
+        long l1 = 11111111111L;
+        long l2 = 11111111112L;
+        assertNotSame(l1, l2);
+    }
+
+    @Test
+    public void notSameFloat() {
+        float f1 = 1111111.1f;
+        float f2 = 1111111.2f;
+        assertNotSame(f1, f2);
+    }
+
+    @Test
+    public void notSameDouble() {
+        double d1 = 1.111E129;
+        double d2 = 1.112E129;
+        assertNotSame(d1, d2);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void sameBooleanFail() {
+        assertSame(true, false);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void sameByteFail() {
+        assertSame((byte)111, (byte)112);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void sameShortFail() {
+        assertSame((short)1234, (short)1235);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void sameIntSmallFail() {
+        assertSame(111, 112);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void sameIntLargeFail() {
+        assertSame(111111, 111112);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void sameLongFail() {
+        assertSame(11111111111L, 11111111112L);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void sameFloatFail() {
+        assertSame(1111111.1f, 1111111.2f);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void sameDoubleFail() {
+        assertSame(1.111E129, 1.112E129);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void notSameBooleanFail() {
+        boolean b = true;
+        assertNotSame(b, b);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void notSameByteFail() {
+        byte b = 123;
+        assertNotSame(b, b);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void notSameShortFail() {
+        short a = 1234;
+        assertNotSame(a, a);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void notSameIntSmallFail() {
+        int i = 123;
+        assertNotSame(i, i);
+    }
+    
+    @Test(expected = AssertionError.class)
+    public void notSameIntLargeFail() {
+        int i = 111111;
+        assertNotSame(i, i);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void notSameLongFail() {
+        long l = 11111111111L;
+        assertNotSame(l, l);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void notSameFloatFail() {
+        float f = 1111111.1f;
+        assertNotSame(f, f);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void notSameDoubleFail() {
+        double d =  1.111E129;
+        assertNotSame(d, d);
+    }
+
+    @Test
+    public void sameIntWithMessage() {
         try {
-            assertNotSame(o, o);
+            assertSame("not same", 111111, 111112);
+        } catch (AssertionError exception) {
+            assertEquals("not same expected same:<111111> was not:<111112>",
+                    exception.getMessage());
+            return;
+        }
+        throw new AssertionError(ASSERTION_ERROR_EXPECTED);
+    }
+
+    @Test
+    public void sameIntNullMessage() {
+        try {
+            assertSame(111111, 111112);
+        } catch (AssertionError exception) {
+            assertEquals("expected same:<111111> was not:<111112>", exception.getMessage());
+            return;
+        }
+        throw new AssertionError(ASSERTION_ERROR_EXPECTED);
+    }
+
+    @Test
+    public void notSameIntWithMessage() {
+        int i = 111111;
+        try {
+            assertNotSame("message", i, i);
+        } catch (AssertionError exception) {
+            assertEquals("message expected not same", exception.getMessage());
+            return;
+        }
+        throw new AssertionError(ASSERTION_ERROR_EXPECTED);
+    }
+
+    @Test
+    public void notSameIntNullMessage() {
+        int i = 111111;
+        try {
+            assertNotSame(i, i);
         } catch (AssertionError exception) {
             assertEquals("expected not same", exception.getMessage());
             return;

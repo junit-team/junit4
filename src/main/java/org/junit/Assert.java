@@ -773,6 +773,54 @@ public class Assert {
     }
 
     /**
+     * Asserts that two boolean values are the same. If they are not, an
+     * {@link AssertionError} is thrown with the given message.
+     *
+     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
+     * okay)
+     * @param expected the expected object
+     * @param actual the value to compare to <code>expected</code>
+     */
+    public static void assertSame(String message, boolean expected, boolean actual) {
+        if (expected == actual) {
+            return;
+        }
+        failNotSame(message, expected, actual);
+    }
+
+    /**
+     * Asserts that two long values are the same. If they are not, an
+     * {@link AssertionError} is thrown with the given message.
+     *
+     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
+     * okay)
+     * @param expected the expected object
+     * @param actual the value to compare to <code>expected</code>
+     */
+    public static void assertSame(String message, long expected, long actual) {
+        if (expected == actual) {
+            return;
+        }
+        failNotSame(message, expected, actual);
+    }
+
+    /**
+     * Asserts that two double values are the same. If they are not, an
+     * {@link AssertionError} is thrown with the given message.
+     *
+     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
+     * okay)
+     * @param expected the expected object
+     * @param actual the value to compare to <code>expected</code>
+     */
+    public static void assertSame(String message, double expected, double actual) {
+        if (expected == actual) {
+            return;
+        }
+        failNotSame(message, expected, actual);
+    }
+
+    /**
      * Asserts that two objects refer to the same object. If they are not the
      * same, an {@link AssertionError} without a message is thrown.
      *
@@ -781,6 +829,87 @@ public class Assert {
      */
     public static void assertSame(Object expected, Object actual) {
         assertSame(null, expected, actual);
+    }
+
+    /**
+     * Asserts that two boolean values are the same. If they are not the
+     * same, an {@link AssertionError} without a message is thrown.
+     *
+     * @param expected the expected value
+     * @param actual the value to compare to <code>expected</code>
+     */
+    public static void assertSame(boolean expected, boolean actual) {
+        assertSame(null, expected, actual);
+    }
+
+    /**
+     * Asserts that two long values are the same. If they are not the
+     * same, an {@link AssertionError} without a message is thrown.
+     *
+     * @param expected the expected value
+     * @param actual the value to compare to <code>expected</code>
+     */
+    public static void assertSame(long expected, long actual) {
+        assertSame(null, expected, actual);
+    }
+
+    /**
+     * Asserts that two double values are the same. If they are not the
+     * same, an {@link AssertionError} without a message is thrown.
+     *
+     * @param expected the expected value
+     * @param actual the value to compare to <code>expected</code>
+     */
+    public static void assertSame(double expected, double actual) {
+        assertSame(null, expected, actual);
+    }
+
+    /**
+     * Asserts that two boolean values are not the same. If they are the same value,
+     * an {@link AssertionError} is thrown with the given message.
+     *
+     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
+     * okay)
+     * @param unexpected the value you don't expect
+     * @param actual the value to compare to <code>unexpected</code>
+     */
+    public static void assertNotSame(String message, boolean unexpected,
+            boolean actual) {
+        if (unexpected == actual) {
+            failSame(message);
+        }
+    }
+
+    /**
+     * Asserts that two long values are not the same. If they are the same value,
+     * an {@link AssertionError} is thrown with the given message.
+     *
+     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
+     * okay)
+     * @param unexpected the value you don't expect
+     * @param actual the value to compare to <code>unexpected</code>
+     */
+    public static void assertNotSame(String message, long unexpected,
+            long actual) {
+        if (unexpected == actual) {
+            failSame(message);
+        }
+    }
+
+    /**
+     * Asserts that two double values are not the same. If they are the same value,
+     * an {@link AssertionError} is thrown with the given message.
+     *
+     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
+     * okay)
+     * @param unexpected the value you don't expect
+     * @param actual the value to compare to <code>unexpected</code>
+     */
+    public static void assertNotSame(String message, double unexpected,
+            double actual) {
+        if (unexpected == actual) {
+            failSame(message);
+        }
     }
 
     /**
@@ -798,6 +927,42 @@ public class Assert {
         if (unexpected == actual) {
             failSame(message);
         }
+    }
+
+    /**
+     * Asserts that two boolean values are not the same value. If they are
+     * the same, an {@link AssertionError} without a message is
+     * thrown.
+     *
+     * @param unexpected the value you don't expect
+     * @param actual the value to compare to <code>unexpected</code>
+     */
+    public static void assertNotSame(boolean unexpected, boolean actual) {
+        assertNotSame(null, unexpected, actual);
+    }
+
+    /**
+     * Asserts that two long values are not the same value. If they are
+     * the same, an {@link AssertionError} without a message is
+     * thrown.
+     *
+     * @param unexpected the value you don't expect
+     * @param actual the value to compare to <code>unexpected</code>
+     */
+    public static void assertNotSame(long unexpected, long actual) {
+        assertNotSame(null, unexpected, actual);
+    }
+
+    /**
+     * Asserts that two double values are not the same value. If they are
+     * the same, an {@link AssertionError} without a message is
+     * thrown.
+     *
+     * @param unexpected the value you don't expect
+     * @param actual the value to compare to <code>unexpected</code>
+     */
+    public static void assertNotSame(double unexpected, double actual) {
+        assertNotSame(null, unexpected, actual);
     }
 
     /**
