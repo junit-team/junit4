@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 public class MethodSorter {
     /**
@@ -31,6 +33,23 @@ public class MethodSorter {
                 return comparison;
             }
             return m1.toString().compareTo(m2.toString());
+        }
+    };
+
+    /**
+     * SPECIFIED_PRIORITY sort order. The method will run as the <code>priority</code> ascending order.
+     * If <code>priority</code> have the same value, it will run as {@link #DEFAULT} order.
+     */
+    public static final Comparator<Method> SPECIFIED_PRIORITY = new Comparator<Method>() {
+        public int compare(Method m1, Method m2) {
+            Test a1 = m1.getAnnotation(Test.class);
+            Test a2 = m2.getAnnotation(Test.class);
+            int p1 = a1 == null ? 0 : a1.priority();
+            int p2 = a2 == null ? 0 : a2.priority();
+            if (p1 != p2) {
+                return p1 < p2 ? -1 : 1;
+            }
+            return NAME_ASCENDING.compare(m1, m2);
         }
     };
 

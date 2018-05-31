@@ -95,4 +95,16 @@ public @interface Test {
      * </p>
      */
     long timeout() default 0L;
+
+    /**
+     * Optionally specify <code>priority</code>, a int value, to let the methods run as <code>priority</code> ascending order,
+     * <p>
+     * <b>NOTE:</b>
+     * <br/>
+     * If you want it works, you must use <code>@FixMethodOrder(MethodSorters.SPECIFIED_PRIORITY)</code> in your test class.
+     * <br/>
+     * If two methods have the same priority, they will run as the {@link org.junit.internal.MethodSorter#DEFAULT} order.
+     * </p>
+     */
+    int priority() default 0;
 }
