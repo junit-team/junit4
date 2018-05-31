@@ -41,7 +41,6 @@ public class MethodSorter {
      * If <code>priority</code> have the same value, it will run as {@link #DEFAULT} order.
      */
     public static final Comparator<Method> SPECIFIED_PRIORITY = new Comparator<Method>() {
-        @Override
         public int compare(Method m1, Method m2) {
             Test a1 = m1.getAnnotation(Test.class);
             Test a2 = m2.getAnnotation(Test.class);

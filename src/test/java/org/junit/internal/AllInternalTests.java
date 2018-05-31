@@ -17,6 +17,7 @@ import org.junit.runners.Suite.SuiteClasses;
         ErrorReportingRunnerTest.class,
         ExpectExceptionTest.class,
         FailOnTimeoutTest.class,
+        MethodSorterPriorityTest.class,
         MethodSorterTest.class,
         StacktracePrintingMatcherTest.class,
         StackTracesTest.class,
