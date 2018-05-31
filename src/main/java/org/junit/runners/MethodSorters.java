@@ -17,7 +17,7 @@ public enum MethodSorters {
     /**
      * Sorts the test methods by the specified priority order.
      *
-     * @see {@link Test#priority()}
+     * @see Test#priority()
      */
     SPECIFIED_PRIORITY(MethodSorter.SPECIFIED_PRIORITY),
 
