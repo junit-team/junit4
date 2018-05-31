@@ -808,7 +808,7 @@ public class ParameterizedTestTest {
         Result failureResult = core.run(ParameterizedAssumtionViolation.class);
         assertTrue(failureResult.wasSuccessful());
         assertEquals(0, failureResult.getRunCount());
-        assertEquals(0, failureResult.getIgnoreCount());
+        assertEquals(1, failureResult.getIgnoreCount());
         assertEquals(1, assumptionFailures.size());
     }
 }

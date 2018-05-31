@@ -42,6 +42,11 @@ public class TextListener extends RunListener {
     public void testIgnored(Description description) {
         writer.append('I');
     }
+    
+    @Override
+    public void testAssumptionFailure(Failure failure) {
+        writer.append('I');
+    }
 
     /*
       * Internal methods
