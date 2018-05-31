@@ -3,6 +3,7 @@ package org.junit.runners;
 import java.lang.reflect.Method;
 import java.util.Comparator;
 
+import org.junit.Test;
 import org.junit.internal.MethodSorter;
 
 /**
@@ -12,6 +13,14 @@ import org.junit.internal.MethodSorter;
  * @since 4.11
  */
 public enum MethodSorters {
+
+    /**
+     * Sorts the test methods by the specified priority order.
+     *
+     * @see {@link Test#priority()}
+     */
+    SPECIFIED_PRIORITY(MethodSorter.SPECIFIED_PRIORITY),
+
     /**
      * Sorts the test methods by the method name, in lexicographic order,
      * with {@link Method#toString()} used as a tiebreaker
