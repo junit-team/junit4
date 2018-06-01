@@ -137,7 +137,7 @@ public class Result implements Serializable {
 
         @Override
         public void testAssumptionFailure(Failure failure) {
-            ignoreCount.getAndIncrement();
+            // do nothing: same as passing (for 4.5; may change in 4.6)
         }
     }
 
