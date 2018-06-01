@@ -4,10 +4,8 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 import org.junit.runner.Description;
 import org.junit.runner.OrderWith;
@@ -118,46 +116,22 @@ public abstract class Ordering {
         /*
          * Note that some subclasses of Ordering override apply(). The Sorter
          * subclass of Ordering overrides apply() to apply the sort (this is
-         * done because sorting is more efficient than ordering) the
-         * GeneralOrdering overrides apply() to avoid having a GenericOrdering
-         * wrap another GenericOrdering.
+         * done because sorting is more efficient than ordering).
          */
         if (target instanceof Orderable) {
             Orderable orderable = (Orderable) target;
-            orderable.order(new GeneralOrdering(this));
+            orderable.order(new Orderer(this));
         }
     }
 
+    /**
+     * Returns {@code true} if this ordering could produce invalid results (i.e.
+     * if it could add or remove values).
+     */
     boolean validateOrderingIsCorrect() {
         return true;
     }
 
-    /**
-     * Orders the descriptions.
-     *
-     * @return descriptions in order
-     */
-    public final List<Description> order(Collection<Description> descriptions)
-            throws InvalidOrderingException {
-        List<Description> inOrder = orderItems(Collections.unmodifiableCollection(descriptions));
-        if (!validateOrderingIsCorrect()) {
-            return inOrder;
-        }
-
-        Set<Description> uniqueDescriptions = new HashSet<Description>(descriptions);
-        if (!uniqueDescriptions.containsAll(inOrder)) {
-            throw new InvalidOrderingException("Ordering added items");
-        }
-        Set<Description> resultAsSet = new HashSet<Description>(inOrder);
-        if (resultAsSet.size() != inOrder.size()) {
-            throw new InvalidOrderingException("Ordering duplicated items");
-        } else if (!resultAsSet.containsAll(uniqueDescriptions)) {
-            throw new InvalidOrderingException("Ordering removed items");
-        }
-
-        return inOrder;
-    }
- 
     /**
      * Implemented by sub-classes to order the descriptions.
      *

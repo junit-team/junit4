@@ -32,7 +32,7 @@ import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
-import org.junit.runner.manipulation.GeneralOrdering;
+import org.junit.runner.manipulation.Orderer;
 import org.junit.runner.manipulation.InvalidOrderingException;
 import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.manipulation.Orderable;
@@ -449,11 +449,11 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     }
 
     /**
-     * Implementation of {@link Orderable#order(GeneralOrdering)}.
+     * Implementation of {@link Orderable#order(Orderer)}.
      *
      * @since 4.13
      */
-    public void order(GeneralOrdering ordering) throws InvalidOrderingException {
+    public void order(Orderer orderer) throws InvalidOrderingException {
         childrenLock.lock();
         try {
             List<T> children = getFilteredChildren();
@@ -469,10 +469,10 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
                     childMap.put(description, childrenWithDescription);
                 }
                 childrenWithDescription.add(child);
-                ordering.apply(child);
+                orderer.apply(child);
             }
 
-            List<Description> inOrder = ordering.order(childMap.keySet());
+            List<Description> inOrder = orderer.order(childMap.keySet());
 
             children = new ArrayList<T>(children.size());
             for (Description description : inOrder) {

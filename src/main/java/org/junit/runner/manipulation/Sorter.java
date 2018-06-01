@@ -32,6 +32,7 @@ public class Sorter extends Ordering implements Comparator<Description> {
      * to sort tests
      *
      * @param comparator the {@link Comparator} to use when sorting tests
+     * @since 4.0
      */
     public Sorter(Comparator<Description> comparator) {
         this.comparator = comparator;
@@ -39,6 +40,8 @@ public class Sorter extends Ordering implements Comparator<Description> {
 
     /**
      * Sorts the tests in <code>target</code> using <code>comparator</code>.
+     *
+     * @since 4.0
      */
     @Override
     public void apply(Object target) {
