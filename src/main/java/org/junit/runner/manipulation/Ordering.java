@@ -83,7 +83,7 @@ public abstract class Ordering {
     /**
      * Creates an {@link Ordering} from the given factory.
      *
-     * @param factoryClass class to use to create the ordering
+     * @param factory factory to use to create the ordering
      * @param annotatedTestClass test class that is annotated with {@link OrderWith}.
      * @throws InvalidOrderingException if the instance could not be created
      */

@@ -5,7 +5,7 @@ import org.junit.runner.manipulation.Ordering;
 /**
  * An ordering that orders tests reverse alphanumerically by test name.
  */
-public final class ReverseAlphanumericOrdering extends ComparsionBasedOrdering
+public final class ReverseAlphanumericOrdering extends ComparatorBasedOrdering
         implements Ordering.Factory {
 
     public ReverseAlphanumericOrdering() {

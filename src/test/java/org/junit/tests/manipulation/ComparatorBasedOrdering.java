@@ -12,10 +12,10 @@ import org.junit.runner.manipulation.Ordering;
 /**
  * An ordering that internally uses a {@link Comparator}.
  */
-class ComparsionBasedOrdering extends Ordering {
+class ComparatorBasedOrdering extends Ordering {
     private final Comparator<Description> comparator;
 
-    protected ComparsionBasedOrdering(Comparator<Description> comparator) {
+    protected ComparatorBasedOrdering(Comparator<Description> comparator) {
         this.comparator = comparator;
     }
 
