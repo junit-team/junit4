@@ -1,17 +1,11 @@
 package org.junit.internal.requests;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
 import org.junit.internal.builders.SuiteMethodBuilder;
-import org.junit.runner.Request;
 import org.junit.runner.Runner;
 import org.junit.runners.model.RunnerBuilder;
 
-public class ClassRequest extends Request {
-    private final Lock runnerLock = new ReentrantLock();
-
+public class ClassRequest extends MemoizingRequest {
     /*
      * We have to use the f prefix, because IntelliJ's JUnit4IdeaTestRunner uses
      * reflection to access this field. See
@@ -19,7 +13,6 @@ public class ClassRequest extends Request {
      */
     private final Class<?> fTestClass;
     private final boolean canUseSuiteMethod;
-    private volatile Runner runner;
 
     public ClassRequest(Class<?> testClass, boolean canUseSuiteMethod) {
         this.fTestClass = testClass;
@@ -31,18 +24,8 @@ public class ClassRequest extends Request {
     }
 
     @Override
-    public Runner getRunner() {
-        if (runner == null) {
-            runnerLock.lock();
-            try {
-                if (runner == null) {
-                    runner = new CustomAllDefaultPossibilitiesBuilder().safeRunnerForClass(fTestClass);
-                }
-            } finally {
-                runnerLock.unlock();
-            }
-        }
-        return runner;
+    protected Runner createRunner() {
+        return new CustomAllDefaultPossibilitiesBuilder().safeRunnerForClass(fTestClass);
     }
 
     private class CustomAllDefaultPossibilitiesBuilder extends AllDefaultPossibilitiesBuilder {
