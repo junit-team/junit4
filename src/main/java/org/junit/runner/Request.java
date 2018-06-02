@@ -1,15 +1,14 @@
 package org.junit.runner;
 
-import java.util.Collection;
 import java.util.Comparator;
 
 import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
 import org.junit.internal.requests.ClassRequest;
 import org.junit.internal.requests.FilterRequest;
+import org.junit.internal.requests.OrderingRequest;
 import org.junit.internal.requests.SortingRequest;
 import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.manipulation.Filter;
-import org.junit.runner.manipulation.InvalidOrderingException;
 import org.junit.runner.manipulation.Ordering;
 import org.junit.runners.model.InitializationError;
 
@@ -197,19 +196,7 @@ public abstract class Request {
      * @return a Request with ordered Tests
      * @since 4.13
      */
-    public Request orderWith(final Ordering ordering) {
-        final Request delegate = this;
-        return new Request() {
-            @Override
-            public Runner getRunner() {
-                try {
-                    Runner runner = delegate.getRunner();
-                    ordering.apply(runner);
-                    return runner;
-                } catch (InvalidOrderingException e) {
-                    return new ErrorReportingRunner(ordering.getClass(), e);
-                }
-            }
-        };
+    public Request orderWith(Ordering ordering) {
+        return new OrderingRequest(this, ordering);
     }
 }
