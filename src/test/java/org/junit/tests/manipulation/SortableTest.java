@@ -1,5 +1,6 @@
 package org.junit.tests.manipulation;
 
+import static java.util.Collections.reverseOrder;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Comparator;
@@ -26,7 +27,7 @@ public class SortableTest {
     }
 
     private static Comparator<Description> backward() {
-        return Comparators.reverse(Comparators.alphanumeric());
+        return reverseOrder(Comparators.alphanumeric());
     }
 
     public static class TestClassRunnerIsSortable {

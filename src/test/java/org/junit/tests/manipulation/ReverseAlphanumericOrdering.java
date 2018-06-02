@@ -1,5 +1,7 @@
 package org.junit.tests.manipulation;
 
+import static java.util.Collections.reverseOrder;
+
 import org.junit.runner.manipulation.Ordering;
 
 /**
@@ -9,7 +11,7 @@ public final class ReverseAlphanumericOrdering extends ComparatorBasedOrdering
         implements Ordering.Factory {
 
     public ReverseAlphanumericOrdering() {
-        super(Comparators.reverse(Comparators.alphanumeric()));
+        super(reverseOrder(Comparators.alphanumeric()));
     }
 
     public Ordering create(Context context) {

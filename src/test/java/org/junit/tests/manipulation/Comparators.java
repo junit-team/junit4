@@ -16,12 +16,4 @@ class Comparators {
     public static Comparator<Description> alphanumeric() {
         return ALPHANUMERIC;
     }
- 
-    public static Comparator<Description> reverse(final Comparator<Description> comparator) {
-        return new Comparator<Description>() {
-            public int compare(Description o1, Description o2) {
-                return ALPHANUMERIC.compare(o2, o1);
-            }
-        };
-    }
 }
