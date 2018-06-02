@@ -8,10 +8,10 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
         FilterableTest.class,
         FilterTest.class,
-        SingleMethodTest.class,
-        SortableTest.class,
         OrderableTest.class,
-        OrderWithTest.class
+        OrderWithTest.class,
+        SingleMethodTest.class,
+        SortableTest.class
 })
 public class AllManipulationTests {
 }
