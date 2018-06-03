@@ -205,7 +205,7 @@ public class FailOnTimeoutTest {
         evaluateWithWaitDuration(0);
         
         for (ThreadGroup group: subGroupsOfCurrentThread()) {
-            if(!groupsBeforeSet.contains(group) && "FailOnTimeoutGroup".equals(group.getName())) {
+            if (!groupsBeforeSet.contains(group) && "FailOnTimeoutGroup".equals(group.getName())) {
                 fail("A 'FailOnTimeoutGroup' thread group remains referenced after the test execution.");
             }
         }
