@@ -131,7 +131,11 @@ public class FailOnTimeout extends Statement {
                 throw throwable;
             }
         } finally {
-            thread.join(100);
+            try {
+                thread.join(1);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
             try {
                 threadGroup.destroy();
             } catch (IllegalThreadStateException e) {
