@@ -2,6 +2,8 @@ package junit.tests.runner;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -10,6 +12,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 import junit.tests.framework.Success;
+import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -17,16 +20,59 @@ import org.junit.tests.running.methods.AnnotationTest;
 
 public class ResultTest extends TestCase {
 
+    private Result fromStream;
+
     public void testRunFailureResultCanBeSerialised() throws Exception {
         JUnitCore runner = new JUnitCore();
         Result result = runner.run(AnnotationTest.FailureTest.class);
         assertResultSerializable(result);
     }
 
+    public void testRunFailureResultCanBeReserialised_v4_12() throws Exception {
+        JUnitCore runner = new JUnitCore();
+        Result result = runner.run(AnnotationTest.FailureTest.class);
+        assertResultReserializable(result, SerializationFormat.V4_12);
+    }
+
+    public void testRunAssumptionFailedResultCanBeSerialised() throws Exception {
+        JUnitCore runner = new JUnitCore();
+        Result result = runner.run(AssumptionFailedTest.class);
+        assertResultSerializable(result);
+    }
+
+    public void testRunAssumptionFailedResultCanBeReserialised_v4_12() throws Exception {
+        JUnitCore runner = new JUnitCore();
+        Result result = runner.run(AssumptionFailedTest.class);
+        assertResultReserializable(result, SerializationFormat.V4_12);
+    }
+
+    public void testRunAssumptionFailedResultCanBeReserialised_v4_13() throws Exception {
+        JUnitCore runner = new JUnitCore();
+        Result result = runner.run(AssumptionFailedTest.class);
+        assertResultReserializable(result, SerializationFormat.V4_13);
+    }
+
     public void testRunSuccessResultCanBeSerialised() throws Exception {
         JUnitCore runner = new JUnitCore();
         Result result = runner.run(Success.class);
         assertResultSerializable(result);
+    }
+
+    public void testRunSuccessResultCanBeReserialised_v4_12() throws Exception {
+        JUnitCore runner = new JUnitCore();
+        Result result = runner.run(Success.class);
+        assertResultReserializable(result, SerializationFormat.V4_12);
+    }
+
+    public void testRunSuccessResultCanBeReserialised_v4_13() throws Exception {
+        JUnitCore runner = new JUnitCore();
+        Result result = runner.run(Success.class);
+        assertResultReserializable(result, SerializationFormat.V4_13);
+    }
+
+    private enum SerializationFormat {
+        V4_12,
+        V4_13
     }
 
     private void assertResultSerializable(Result result) throws IOException, ClassNotFoundException {
@@ -37,14 +83,26 @@ public class ResultTest extends TestCase {
         byte[] bytes = byteArrayOutputStream.toByteArray();
         ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(bytes));
         Result fromStream = (Result) objectInputStream.readObject();
-        assertSerializedCorrectly(result, fromStream);
-
-        InputStream resource = getClass().getResourceAsStream(getName());
-        assertNotNull("Could not read resource " + getName(), resource);
-        objectInputStream = new ObjectInputStream(resource);
+        assertSerializedCorrectly(result, fromStream, SerializationFormat.V4_13);
+    }
+ 
+    private void assertResultReserializable(Result result, SerializationFormat resourceSerializationFormat)
+            throws IOException, ClassNotFoundException {
+        String resourceName = getName();
+        InputStream resource = getClass().getResourceAsStream(resourceName);
+        assertNotNull("Could not read resource " + resourceName, resource);
+        ObjectInputStream objectInputStream = new ObjectInputStream(resource);
         fromStream = (Result) objectInputStream.readObject();
-        
-        assertSerializedCorrectly(new ResultWithFixedRunTime(result), fromStream);
+
+        assertSerializedCorrectly(new ResultWithFixedRunTime(result),
+                fromStream, resourceSerializationFormat);
+    }
+
+    static public class AssumptionFailedTest {
+        @Test
+        public void assumptionFailed() throws Exception {
+            org.junit.Assume.assumeTrue(false);
+        }
     }
 
     /**
@@ -85,14 +143,35 @@ public class ResultTest extends TestCase {
         public int getIgnoreCount() {
             return delegate.getIgnoreCount();
         }
+
+        @Override
+        public int getAssumptionFailureCount() {
+            return delegate.getAssumptionFailureCount();
+        }
     }
 
-    private void assertSerializedCorrectly(Result result, Result fromStream) {
+    private void assertSerializedCorrectly(
+            Result result, Result fromStream, SerializationFormat serializationFormat) {
         assertNotNull(fromStream);
 
         // Exceptions don't implement equals() so we need to compare field by field
         assertEquals("failureCount", result.getFailureCount(), fromStream.getFailureCount());
         assertEquals("ignoreCount", result.getIgnoreCount(), fromStream.getIgnoreCount());
+
+        if (serializationFormat == SerializationFormat.V4_13) {
+            // assumption failures are serialized
+            assertEquals("assumptionFailureCount",
+                    result.getAssumptionFailureCount(),
+                    fromStream.getAssumptionFailureCount());
+        } else {
+            // assumption failures were not serialized
+            try {
+                fromStream.getAssumptionFailureCount();
+                fail("UnsupportedOperationException expected");
+            } catch (UnsupportedOperationException expected) {
+            }
+        }
+
         assertEquals("runTime", result.getRunTime(), fromStream.getRunTime());
         assertEquals("failures", result.getFailures().size(), fromStream.getFailures().size());
         int index = 0;

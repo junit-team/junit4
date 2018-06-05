@@ -55,28 +55,28 @@ public class Result implements Serializable {
     }
 
     /**
-     * @return the number of tests run
+     * Returns the number of tests run
      */
     public int getRunCount() {
         return count.get();
     }
 
     /**
-     * @return the number of tests that failed during the run
+     * Returns the number of tests that failed during the run
      */
     public int getFailureCount() {
         return failures.size();
     }
 
     /**
-     * @return the number of milliseconds it took to run the entire suite to run
+     * Returns the number of milliseconds it took to run the entire suite to run
      */
     public long getRunTime() {
         return runTime.get();
     }
 
     /**
-     * @return the {@link Failure}s describing tests that failed and the problems they encountered
+     * Returns the {@link Failure}s describing tests that failed and the problems they encountered
      */
     public List<Failure> getFailures() {
         return failures;
@@ -90,9 +90,16 @@ public class Result implements Serializable {
     }
 
     /**
-     * @return the number of tests skipped because of an assumption failure
+     * Returns the number of tests skipped because of an assumption failure
+     *
+     * @throws UnsupportedOperationException if the result was serialized in a version before JUnit 4.13
+     * @since 4.13
      */
     public int getAssumptionFailureCount() {
+        if (assumptionFailureCount == null) {
+            throw new UnsupportedOperationException(
+                    "Result was serialized from a version of JUnit that doesn't support this method");
+        }
         return assumptionFailureCount.get();
     }
 
@@ -197,6 +204,7 @@ public class Result implements Serializable {
             fields.put("fFailures", fFailures);
             fields.put("fRunTime", fRunTime);
             fields.put("fStartTime", fStartTime);
+            fields.put("assumptionFailureCount", assumptionFailureCount);
             s.writeFields();
         }
 
