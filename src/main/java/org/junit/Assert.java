@@ -649,6 +649,36 @@ public class Assert {
     }
 
     /**
+     * Asserts that two CharSequence instances are equal. If they are not, an
+     * {@link AssertionError} is thrown with the given message.
+     *
+     * @param message  the identifying message for the {@link AssertionError} (<code>null</code>
+     *                 okay)
+     * @param expected CharSequence expected value.
+     * @param actual   CharSequence actual value
+     */
+    public static void assertEquals(String message, CharSequence expected, CharSequence actual) {
+        boolean isContentEqual = actual.length() == expected.length()
+                && expected.toString().equals(actual.toString());
+        if (isContentEqual) {
+            return;
+        } else {
+            failNotEquals(message, expected, actual);
+        }
+    }
+
+    /**
+     * Asserts that two CharSequence instances are equal. If they are not, an
+     * {@link AssertionError} is thrown with the given message.
+     *
+     * @param expected CharSequence expected value.
+     * @param actual   CharSequence actual value
+     */
+    public static void assertEquals(CharSequence expected, CharSequence actual) {
+        assertEquals(null, expected, actual);
+    }
+
+    /**
      * @deprecated Use
      *             <code>assertEquals(double expected, double actual, double delta)</code>
      *             instead
