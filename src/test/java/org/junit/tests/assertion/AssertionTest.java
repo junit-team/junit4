@@ -397,6 +397,56 @@ public class AssertionTest {
     }
 
     @Test
+    public void StringContentShouldBeEqualsCharSeqContent() {
+        String content = "abc";
+        CharSequence seqContent = "abc";
+        Assert.assertEquals(content, seqContent);
+    }
+
+    @Test
+    public void StringBuilderContentShouldBeEqualsCharSeqContent() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("abc");
+        CharSequence seqContent = "abc";
+        Assert.assertEquals(builder, seqContent);
+    }
+
+    @Test
+    public void StringContentShouldBeEqualsStringBuilderContent() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("abc");
+        String content = "abc";
+        String contentObj = new String("abc");
+        Assert.assertEquals(builder, content);
+        Assert.assertEquals(builder, contentObj);
+    }
+
+    @Test
+    public void StringContentShouldNotBeEqualsCharSeqContent() {
+        String content = "abc";
+        CharSequence seqContent = "abc1";
+        Assert.assertNotEquals(content, seqContent);
+    }
+
+    @Test
+    public void StringContentShouldNotBeEqualsStringBuilderContent() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("abc1");
+        String content = "abc";
+        String contentObj = new String("abc");
+        Assert.assertNotEquals(builder, content);
+        Assert.assertNotEquals(builder, contentObj);
+    }
+
+    @Test
+    public void CharSequenceObjEqualWithMessage() {
+        String content = "abc";
+        CharSequence seqContent = "abc";
+        Assert.assertEquals("equal", content, seqContent);
+    }
+
+
+    @Test
     public void equals() {
         Object o = new Object();
         assertEquals(o, o);
