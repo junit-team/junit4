@@ -213,9 +213,18 @@ public class AssumptionTest {
         assertThat(testResult(AssumptionFailureInConstructor.class), isSuccessful());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void assumeWithExpectedException() {
-        assumeTrue(false);
+    public static class TestClassWithAssumptionFailure {
+
+        @Test(expected = IllegalArgumentException.class)
+        public void assumeWithExpectedException() {
+            assumeTrue(false);
+        }
+    }
+
+    @Test
+    public void assumeWithExpectedExceptionShouldThrowAssumptionViolatedException() {
+        Result result = JUnitCore.runClasses(TestClassWithAssumptionFailure.class);
+        assertThat(result.getAssumptionFailureCount(), is(1));
     }
 
     final static String message = "Some random message string.";

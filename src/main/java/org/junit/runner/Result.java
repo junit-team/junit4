@@ -28,6 +28,7 @@ public class Result implements Serializable {
             ObjectStreamClass.lookup(SerializedForm.class).getFields();
     private final AtomicInteger count;
     private final AtomicInteger ignoreCount;
+    private final AtomicInteger assumptionFailureCount;
     private final CopyOnWriteArrayList<Failure> failures;
     private final AtomicLong runTime;
     private final AtomicLong startTime;
@@ -38,6 +39,7 @@ public class Result implements Serializable {
     public Result() {
         count = new AtomicInteger();
         ignoreCount = new AtomicInteger();
+        assumptionFailureCount = new AtomicInteger();
         failures = new CopyOnWriteArrayList<Failure>();
         runTime = new AtomicLong();
         startTime = new AtomicLong();
@@ -46,34 +48,35 @@ public class Result implements Serializable {
     private Result(SerializedForm serializedForm) {
         count = serializedForm.fCount;
         ignoreCount = serializedForm.fIgnoreCount;
+        assumptionFailureCount = serializedForm.assumptionFailureCount;
         failures = new CopyOnWriteArrayList<Failure>(serializedForm.fFailures);
         runTime = new AtomicLong(serializedForm.fRunTime);
         startTime = new AtomicLong(serializedForm.fStartTime);
     }
 
     /**
-     * @return the number of tests run
+     * Returns the number of tests run
      */
     public int getRunCount() {
         return count.get();
     }
 
     /**
-     * @return the number of tests that failed during the run
+     * Returns the number of tests that failed during the run
      */
     public int getFailureCount() {
         return failures.size();
     }
 
     /**
-     * @return the number of milliseconds it took to run the entire suite to run
+     * Returns the number of milliseconds it took to run the entire suite to run
      */
     public long getRunTime() {
         return runTime.get();
     }
 
     /**
-     * @return the {@link Failure}s describing tests that failed and the problems they encountered
+     * Returns the {@link Failure}s describing tests that failed and the problems they encountered
      */
     public List<Failure> getFailures() {
         return failures;
@@ -84,6 +87,20 @@ public class Result implements Serializable {
      */
     public int getIgnoreCount() {
         return ignoreCount.get();
+    }
+
+    /**
+     * Returns the number of tests skipped because of an assumption failure
+     *
+     * @throws UnsupportedOperationException if the result was serialized in a version before JUnit 4.13
+     * @since 4.13
+     */
+    public int getAssumptionFailureCount() {
+        if (assumptionFailureCount == null) {
+            throw new UnsupportedOperationException(
+                    "Result was serialized from a version of JUnit that doesn't support this method");
+        }
+        return assumptionFailureCount.get();
     }
 
     /**
@@ -137,7 +154,7 @@ public class Result implements Serializable {
 
         @Override
         public void testAssumptionFailure(Failure failure) {
-            // do nothing: same as passing (for 4.5; may change in 4.6)
+            assumptionFailureCount.getAndIncrement();
         }
     }
 
@@ -156,6 +173,7 @@ public class Result implements Serializable {
         private static final long serialVersionUID = 1L;
         private final AtomicInteger fCount;
         private final AtomicInteger fIgnoreCount;
+        private final AtomicInteger assumptionFailureCount;
         private final List<Failure> fFailures;
         private final long fRunTime;
         private final long fStartTime;
@@ -163,6 +181,7 @@ public class Result implements Serializable {
         public SerializedForm(Result result) {
             fCount = result.count;
             fIgnoreCount = result.ignoreCount;
+            assumptionFailureCount = result.assumptionFailureCount;
             fFailures = Collections.synchronizedList(new ArrayList<Failure>(result.failures));
             fRunTime = result.runTime.longValue();
             fStartTime = result.startTime.longValue();
@@ -172,6 +191,7 @@ public class Result implements Serializable {
         private SerializedForm(ObjectInputStream.GetField fields) throws IOException {
             fCount = (AtomicInteger) fields.get("fCount", null);
             fIgnoreCount = (AtomicInteger) fields.get("fIgnoreCount", null);
+            assumptionFailureCount = (AtomicInteger) fields.get("assumptionFailureCount", null);
             fFailures = (List<Failure>) fields.get("fFailures", null);
             fRunTime = fields.get("fRunTime", 0L);
             fStartTime = fields.get("fStartTime", 0L);
@@ -184,6 +204,7 @@ public class Result implements Serializable {
             fields.put("fFailures", fFailures);
             fields.put("fRunTime", fRunTime);
             fields.put("fStartTime", fStartTime);
+            fields.put("assumptionFailureCount", assumptionFailureCount);
             s.writeFields();
         }
 
