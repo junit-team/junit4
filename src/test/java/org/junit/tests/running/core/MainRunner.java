@@ -22,7 +22,7 @@ public class MainRunner {
 
     /**
      * A {@code NoExitSecurityManager} throws a {@link ExitException} exception
-     * whenever {@link #checkExit(int)} is called all other permissions are allowed.
+     * whenever {@link #checkExit(int)} is called; all other permissions are allowed.
      */
     public class NoExitSecurityManager extends SecurityManager {
 
