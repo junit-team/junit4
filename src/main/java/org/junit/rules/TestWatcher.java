@@ -49,6 +49,7 @@ import org.junit.runners.model.Statement;
  *
  * @since 4.9
  */
+@DefaultOrder(Integer.MIN_VALUE)
 public abstract class TestWatcher implements TestRule {
     public Statement apply(final Statement base, final Description description) {
         return new Statement() {

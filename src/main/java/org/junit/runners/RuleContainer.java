@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.junit.Rule;
 import org.junit.rules.MethodRule;
+import org.junit.rules.DefaultOrder;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.FrameworkMethod;
@@ -107,7 +108,14 @@ class RuleContainer {
         RuleEntry(Object rule, int type, Integer order) {
             this.rule = rule;
             this.type = type;
-            this.order = order != null ? order.intValue() : Rule.DEFAULT_ORDER;
+            int orderValue = order != null ? order.intValue() : Rule.DEFAULT_ORDER;
+            if (orderValue == Rule.DEFAULT_ORDER) {
+                DefaultOrder defaultOrder = rule.getClass().getAnnotation(DefaultOrder.class);
+                if (defaultOrder != null) {
+                    orderValue = defaultOrder.value();
+                }
+            }
+            this.order = orderValue;
         }
     }
 }

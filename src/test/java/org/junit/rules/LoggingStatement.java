@@ -14,11 +14,11 @@ class LoggingStatement extends Statement {
     }
 
     public void evaluate() throws Throwable {
-        log.append(" ").append(name).append(".begin");
+        log.append(name).append(".begin ");
         try {
             base.evaluate();
         } finally {
-            log.append(" ").append(name).append(".end");
+            log.append(name).append(".end ");
         }
     }
 }
