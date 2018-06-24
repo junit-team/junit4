@@ -1,4 +1,16 @@
 language: java
+install:
+  # Download dependencies with JDK 8 because Mave Central supports
+  # TLS 1.2 only but OpenJDK 6 does not.
+  - export ORIGINAL_JAVA_HOME=$JAVA_HOME
+  - jdk_switcher use oraclejdk8
+  - ./mvnw test -DskipTests
+  # Delete all files created with JDK 8
+  - ./mvnw clean
+  # Restore desired JDK
+  - export JAVA_HOME=$ORIGINAL_JAVA_HOME
+  # Run original install command but without GPG signing
+  - ./mvnw install -DskipTests
 script: ./mvnw verify javadoc:javadoc site:site
 addons:
   apt:
