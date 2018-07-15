@@ -125,7 +125,7 @@
 <li>
 <a href="http://stefanbirkner.github.io/system-rules">System Rules</a> – A collection of JUnit rules for testing code that uses java.lang.System.</li>
 <li>
-<a href="https://junit-toolbox.googlecode.com/">JUnit Toolbox</a> - Provides runners for parallel testing, a <code>PoolingWait</code> class to ease asynchronous testing, and a <code>WildcardPatternSuite</code> which allow you to specify wildcard patterns instead of explicitly listing all classes when you create a suite class.</li>
+<a href="https://github.com/MichaelTamm/junit-toolbox">JUnit Toolbox</a> - Provides runners for parallel testing, a <code>PoolingWait</code> class to ease asynchronous testing, and a <code>WildcardPatternSuite</code> which allow you to specify wildcard patterns instead of explicitly listing all classes when you create a suite class.</li>
 <li>
 <a href="https://github.com/pholser/junit-quickcheck">junit-quickcheck</a> - QuickCheck-style parameter suppliers for JUnit theories. Uses <a href="https://github.com/junit-team/junit.contrib/tree/master/theories">junit.contrib's version of the theories machinery</a>, which respects generics on theory parameters.</li>          </ul>
         </div>
