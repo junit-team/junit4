@@ -3,6 +3,7 @@ package org.junit;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.junit.function.ThrowingRunnable;
+import org.junit.function.ThrowingSupplier;
 import org.junit.internal.ArrayComparisonFailure;
 import org.junit.internal.ExactComparisonCriteria;
 import org.junit.internal.InexactComparisonCriteria;
@@ -984,6 +985,24 @@ public class Assert {
     }
 
     /**
+     * Asserts that {@code supplier} throws an exception of type {@code expectedThrowable} when
+     * executed. If it does, the exception object is returned. If the given {@code supplier} returns
+     * a result instead of throwing an exception, the result will be included in the failure message.
+     * If it throws the wrong type of exception, an {@code AssertionError} is thrown describing the
+     * mismatch; the exception that was actually thrown can be obtained by calling
+     * {@link AssertionError#getCause}.
+     *
+     * @param expectedThrowable the expected type of the exception
+     * @param supplier       a function that is expected to throw an exception when executed
+     * @return the exception thrown by {@code supplier}
+     * @since 4.13
+     */
+    public static <T extends Throwable> T assertThrows(Class<T> expectedThrowable,
+            ThrowingSupplier<?> supplier) {
+        return assertThrows(null, expectedThrowable, supplier);
+    }
+
+    /**
      * Asserts that {@code runnable} throws an exception of type {@code expectedThrowable} when
      * executed. If it does, the exception object is returned. If it does not throw an exception, an
      * {@link AssertionError} is thrown. If it throws the wrong type of exception, an {@code
@@ -999,8 +1018,29 @@ public class Assert {
      */
     public static <T extends Throwable> T assertThrows(String message, Class<T> expectedThrowable,
             ThrowingRunnable runnable) {
+        return assertThrows(message, expectedThrowable, new ThrowingSupplierAdapter(runnable));
+    }
+
+    /**
+     * Asserts that {@code supplier} throws an exception of type {@code expectedThrowable} when
+     * executed. If it does, the exception object is returned. If the given {@code supplier} returns
+     * a result instead of throwing an exception, the result will be included in the failure message.
+     * If it throws the wrong type of exception, an {@code AssertionError} is thrown describing the
+     * mismatch; the exception that was actually thrown can be obtained by calling
+     * {@link AssertionError#getCause}.
+     *
+     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
+     * okay)
+     * @param expectedThrowable the expected type of the exception
+     * @param supplier a function that is expected to throw an exception when executed
+     * @return the exception thrown by {@code supplier}
+     * @since 4.13
+     */
+    public static <T extends Throwable> T assertThrows(String message, Class<T> expectedThrowable,
+            ThrowingSupplier<?> supplier) {
+        Object result;
         try {
-            runnable.run();
+            result = supplier.get();
         } catch (Throwable actualThrown) {
             if (expectedThrowable.isInstance(actualThrown)) {
                 @SuppressWarnings("unchecked") T retVal = (T) actualThrown;
@@ -1024,13 +1064,27 @@ public class Assert {
                 throw assertionError;
             }
         }
-        String notThrownMessage = buildPrefix(message) + String
-                .format("expected %s to be thrown, but nothing was thrown",
-                        formatClass(expectedThrowable));
+        String notThrownMessage = buildPrefix(message)
+                + String.format("expected %s to be thrown, but nothing was thrown", formatClass(expectedThrowable))
+                + (result == ThrowingSupplierAdapter.NO_VALUE ? "" : String.format(" (returned %s)", result));
         throw new AssertionError(notThrownMessage);
     }
 
     private static String buildPrefix(String message) {
         return message != null && message.length() != 0 ? message + ": " : "";
+    }
+
+    private static class ThrowingSupplierAdapter implements ThrowingSupplier<Object> {
+        private static final Object NO_VALUE = new Object();
+        private final ThrowingRunnable runnable;
+
+        ThrowingSupplierAdapter(ThrowingRunnable runnable) {
+            this.runnable = runnable;
+        }
+
+        public Object get() throws Throwable {
+            runnable.run();
+            return NO_VALUE;
+        }
     }
 }

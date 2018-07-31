@@ -21,6 +21,7 @@ import org.junit.Assert;
 import org.junit.ComparisonFailure;
 import org.junit.Test;
 import org.junit.function.ThrowingRunnable;
+import org.junit.function.ThrowingSupplier;
 import org.junit.internal.ArrayComparisonFailure;
 
 /**
@@ -853,7 +854,7 @@ public class AssertionTest {
     }
 
     @Test
-    public void assertThrowsIncludesAnInformativeDefaultMessage() {
+    public void assertThrowsIncludesAnInformativeDefaultMessageForRunnable() {
         try {
             assertThrows(Throwable.class, nonThrowingRunnable());
         } catch (AssertionError ex) {
@@ -864,7 +865,19 @@ public class AssertionTest {
     }
 
     @Test
-    public void assertThrowsIncludesTheSpecifiedMessage() {
+    public void assertThrowsIncludesAnInformativeDefaultMessageForSupplier() {
+        try {
+            assertThrows(Throwable.class, nonThrowingSupplier("foo"));
+        } catch (AssertionError ex) {
+            assertEquals("expected java.lang.Throwable to be thrown, but nothing was thrown (returned foo)",
+                    ex.getMessage());
+            return;
+        }
+        throw new AssertionError(ASSERTION_ERROR_EXPECTED);
+    }
+
+    @Test
+    public void assertThrowsIncludesTheSpecifiedMessageForRunnable() {
         try {
             assertThrows("Foobar", Throwable.class, nonThrowingRunnable());
         } catch (AssertionError ex) {
@@ -877,10 +890,32 @@ public class AssertionTest {
     }
 
     @Test
-    public void assertThrowsReturnsTheSameObjectThrown() {
+    public void assertThrowsIncludesTheSpecifiedMessageForSupplier() {
+        try {
+            assertThrows("Foobar", Throwable.class, nonThrowingSupplier("bar"));
+        } catch (AssertionError ex) {
+            assertEquals(
+                    "Foobar: expected java.lang.Throwable to be thrown, but nothing was thrown (returned bar)",
+                    ex.getMessage());
+            return;
+        }
+        throw new AssertionError(ASSERTION_ERROR_EXPECTED);
+    }
+
+    @Test
+    public void assertThrowsReturnsTheSameObjectThrownForRunnable() {
         NullPointerException npe = new NullPointerException();
 
         Throwable throwable = assertThrows(Throwable.class, throwingRunnable(npe));
+
+        assertSame(npe, throwable);
+    }
+
+    @Test
+    public void assertThrowsReturnsTheSameObjectThrownForSupplier() {
+        NullPointerException npe = new NullPointerException();
+
+        Throwable throwable = assertThrows(Throwable.class, throwingSupplier(npe));
 
         assertSame(npe, throwable);
     }
@@ -990,7 +1025,15 @@ public class AssertionTest {
 
     private static ThrowingRunnable nonThrowingRunnable() {
         return new ThrowingRunnable() {
-            public void run() throws Throwable {
+            public void run() {
+            }
+        };
+    }
+
+    private static <T> ThrowingSupplier<T> nonThrowingSupplier(final T value) {
+        return new ThrowingSupplier<T>() {
+            public T get() {
+                return value;
             }
         };
     }
@@ -998,6 +1041,14 @@ public class AssertionTest {
     private static ThrowingRunnable throwingRunnable(final Throwable t) {
         return new ThrowingRunnable() {
             public void run() throws Throwable {
+                throw t;
+            }
+        };
+    }
+
+    private static ThrowingSupplier<?> throwingSupplier(final Throwable t) {
+        return new ThrowingSupplier<Void>() {
+            public Void get() throws Throwable {
                 throw t;
             }
         };
