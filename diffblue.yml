@@ -1,0 +1,32 @@
+cbmcArguments:
+phases:
+-
+  timeout: 60
+  cbmcArguments:
+    unwind: 1
+    depth: false
+    java-external-code-action: mock-non-jdk
+    java-test-input-factory: bmc
+    lazy-methods-extra-entry-point: [ '(?!javax?).*<init>.*', '(?!javax?).*\.set[A-Z]\w*' ]
+    java-assume-inputs-non-null: true
+    string-max-input-length: 20
+-
+  timeout: 120
+  cbmcArguments:
+    unwind: 2
+    depth: false
+    java-external-code-action: mock-non-jdk
+    java-test-input-factory: bmc
+    lazy-methods-extra-entry-point: [ '(?!javax?).*<init>.*', '(?!javax?).*\.set[A-Z]\w*' ]
+    java-assume-inputs-non-null: true
+    string-max-input-length: 20
+-
+  timeout: 300
+  cbmcArguments:
+    unwind: 3
+    depth: false
+    java-external-code-action: mock-non-jdk
+    java-test-input-factory: bmc
+    lazy-methods-extra-entry-point: [ '(?!javax?).*<init>.*', '(?!javax?).*\.set[A-Z]\w*' ]
+    java-throw-runtime-exceptions: true
+    string-max-input-length: 20
