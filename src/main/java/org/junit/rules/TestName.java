@@ -38,4 +38,12 @@ public class TestName extends TestWatcher {
     public String getMethodName() {
         return name;
     }
+
+    /**
+     * @return the name of the currently-running test method
+     */
+    @Override
+    public String toString() {
+        return getMethodName();
+    }
 }
