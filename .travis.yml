@@ -1,4 +1,10 @@
 language: java
+
+addons:
+  apt:
+    packages:
+      - openjdk-6-jdk
+
 install:
   # Download dependencies with JDK 8 because Mave Central supports
   # TLS 1.2 only but OpenJDK 6 does not.
@@ -11,13 +17,28 @@ install:
   - export JAVA_HOME=$ORIGINAL_JAVA_HOME
   # Run original install command but without GPG signing
   - ./mvnw install -DskipTests
-script: ./mvnw verify javadoc:javadoc site:site
-addons:
-  apt:
-    packages:
-      - openjdk-6-jdk
+
 jdk:
-  - oraclejdk9
-  - oraclejdk8
-  - openjdk7
   - openjdk6
+  - openjdk7
+  - oraclejdk8
+  - oraclejdk9
+  - openjdk10
+
+script: ./mvnw verify javadoc:javadoc site:site
+
+stages:
+  - test
+  - name: deploy
+    if: (branch = master) AND (NOT type IN (pull_request))
+
+jobs:
+  include:
+    - stage: deploy
+      name: "Publish snapshot artifacts"
+      env:
+        # OSSRH_USERNAME
+        - secure: griGZYDtqDMRUaYex/uAnpkWIQ/yodM6IOn4G8izWKpyGLeCxyXBG0FDcVo81xRq/9mMevj2idyW/xNP/HAQ45G4pyJUk/vTSMkNslzVjr7OBEtQQCN8XahSaOO0l0CJ5lzA6LdwWg7uDaf9znqZ0slt81u0S1NJmUZyYeUEim0=
+        # OSSRH_PASSWORD
+        - secure: EM7Z2M09HvLJXYJaeD/YmeF5A6tqavG2tBBeDcFZ7C6k0AI/wApe882pEMMoUG06xufKfSlt7WFJxoyU3M+fPOpeK5qZpJQxsHWnNJwbcbKzqMpM9mDsgIL9rtAvm9MuIIbIY2spiT0Cx3sHdh5qofaJHPL/u8Or5L9tE8FV1ew=
+      script: ./mvnw deploy --batch-mode --activate-profiles generate-docs --settings .travis.settings.xml

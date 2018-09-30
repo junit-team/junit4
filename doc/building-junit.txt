@@ -5,7 +5,7 @@ Steps to build junit:
 - Not too tedious:
   - Push to github (junit-team)
   - Run the ./mvnw clean install
-  - If not done, update src/main/config/settings.xml in /private/.../settings.xml on CloudBees' webdav share.
+  - If not done, update $M2_HOME/settings.xml
   - If not done, copy GnuPG keys in to ${gpg.homedir}. See settings.xml.
   - Perform Maven deployment of a snapshot or release version in Jenkins
     Remember that the version specified in the pom.xml indicates the version

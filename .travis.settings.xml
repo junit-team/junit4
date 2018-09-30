@@ -1,0 +1,14 @@
+<settings>
+    <servers>
+        <server>
+            <id>junit-snapshot-repo</id>
+            <username>${env.OSSRH_USERNAME}</username>
+            <password>${env.OSSRH_PASSWORD}</password>
+        </server>
+        <server>
+            <id>junit-releases-repo</id>
+            <username>${env.OSSRH_USERNAME}</username>
+            <password>${env.OSSRH_PASSWORD}</password>
+        </server>
+    </servers>
+</settings>
