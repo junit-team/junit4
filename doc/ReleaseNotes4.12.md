@@ -252,6 +252,8 @@ Each test is run in a new _daemon_ thread. If the specified timeout elapses befo
 
 ### [Pull request #876:](https://github.com/junit-team/junit4/pull/876) The timeout rule never times out if you pass in a timeout of zero.
 
+A specified timeout of 0 will be interpreted as not set, however tests still launch from separate threads. This can be useful for disabling timeouts in environments where they are dynamically set based on some property.
+
 
 # Parameterized Tests
 
