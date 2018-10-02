@@ -111,7 +111,7 @@ public class TemporaryFolderUsageTest {
     }
     
     @Test
-    public void newFolderWithPathContainingFileSeparaterCreatesDirectories()
+    public void newFolderWithPathContainingFileSeparatorCreatesDirectories()
             throws IOException {
         tempFolder.create();
         tempFolder.newFolder("temp1" + File.separator + "temp2");
