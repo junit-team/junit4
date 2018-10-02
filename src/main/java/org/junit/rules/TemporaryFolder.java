@@ -278,7 +278,7 @@ public class TemporaryFolder extends ExternalResource {
      * @return {@code true} if all resources are deleted successfully,
      *         {@code false} otherwise.
      */
-    protected boolean tryDelete() {
+    private boolean tryDelete() {
         if (folder == null) {
             return true;
         }
