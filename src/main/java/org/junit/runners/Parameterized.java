@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.runner.Description;
+import org.junit.runner.Result;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
@@ -184,6 +185,21 @@ import org.junit.runners.parameterized.TestWithParameters;
  * }
  * </pre>
  *
+ * <h3>Avoid creating parameters</h3>
+ * <p>With {@link org.junit.Assume assumptions} you can dynamically skip tests.
+ * Assumptions are also supported by the <code>&#064;Parameters</code> method.
+ * Creating parameters is stopped when the assumption fails and none of the
+ * tests in the test class is executed. JUnit reports a
+ * {@link Result#getAssumptionFailureCount() single assumption failure} for the
+ * whole test class in this case.
+ * <pre>
+ * &#064;Parameters
+ * public static Iterable&lt;? extends Object&gt; data() {
+ * 	String os = System.getProperty("os.name").toLowerCase()
+ * 	Assume.assumeTrue(os.contains("win"));
+ * 	return Arrays.asList(&quot;first test&quot;, &quot;second test&quot;);
+ * }
+ * </pre>
  * @since 4.0
  */
 public class Parameterized extends Suite {
