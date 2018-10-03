@@ -65,7 +65,7 @@ import org.junit.validator.TestClassValidator;
  */
 public abstract class ParentRunner<T> extends Runner implements Filterable,
         Orderable {
-    private static final List<TestClassValidator> VALIDATORS = Arrays.<TestClassValidator>asList(
+    private static final List<TestClassValidator> VALIDATORS = Collections.<TestClassValidator>singletonList(
             new AnnotationsValidator());
 
     private final Lock childrenLock = new ReentrantLock();
