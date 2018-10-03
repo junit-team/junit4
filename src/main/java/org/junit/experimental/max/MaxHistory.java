@@ -75,10 +75,15 @@ public class MaxHistory implements Serializable {
     }
 
     private void save() throws IOException {
-        ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(
-                fHistoryStore));
-        stream.writeObject(this);
-        stream.close();
+        ObjectOutputStream stream = null;
+        try {
+            stream = new ObjectOutputStream(new FileOutputStream(fHistoryStore));
+            stream.writeObject(this);
+        } finally {
+            if (stream != null) {
+                stream.close();
+            }
+        }
     }
 
     Long getFailureTimestamp(Description key) {
