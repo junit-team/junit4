@@ -94,7 +94,7 @@ public class TestClass {
         return results;
     }
 
-    public Constructor<?> getConstructor() throws SecurityException, NoSuchMethodException {
+    public Constructor getConstructor() throws SecurityException, NoSuchMethodException {
         return klass.getConstructor();
     }
 
