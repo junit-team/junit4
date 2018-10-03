@@ -47,7 +47,7 @@ public class TestSuite implements Test {
      * mountains, our intrepid adventurers type...
      */
     static public Test createTest(Class<?> theClass, String name) {
-        Constructor<?> constructor;
+        Constructor constructor;
         try {
             constructor = getTestConstructor(theClass);
         } catch (NoSuchMethodException e) {
@@ -77,7 +77,7 @@ public class TestSuite implements Test {
      * Gets a constructor which takes a single String as
      * its argument or a no arg constructor.
      */
-    public static Constructor<?> getTestConstructor(Class<?> theClass) throws NoSuchMethodException {
+    public static Constructor getTestConstructor(Class<?> theClass) throws NoSuchMethodException {
         try {
             return theClass.getConstructor(String.class);
         } catch (NoSuchMethodException e) {

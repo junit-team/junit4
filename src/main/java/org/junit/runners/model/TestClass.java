@@ -200,7 +200,7 @@ public class TestClass implements Annotatable {
      * AssertionError} if there are more or less than one.
      */
 
-    public Constructor<?> getOnlyConstructor() {
+    public Constructor getOnlyConstructor() {
         Constructor<?>[] constructors = clazz.getConstructors();
         Assert.assertEquals(1, constructors.length);
         return constructors[0];
