@@ -200,8 +200,8 @@ public class TemporaryFolder extends ExternalResource {
         File relativePath = null;
         File file = root;
         boolean lastMkdirsCallSuccessful = true;
-        for (int i = 0; i < paths.length; i++) {
-            relativePath = new File(relativePath, paths[i]);
+        for (String path : paths) {
+            relativePath = new File(relativePath, path);
             file = new File(root, relativePath.getPath());
 
             lastMkdirsCallSuccessful = file.mkdirs();
