@@ -2,7 +2,7 @@ package org.junit.tests.experimental.theories.runner;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.tests.experimental.theories.TheoryTestUtils.potentialAssignments;
 
 import java.util.List;
