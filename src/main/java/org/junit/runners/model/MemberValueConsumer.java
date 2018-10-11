@@ -11,7 +11,7 @@ public interface MemberValueConsumer<T> {
     /**
      * Receives the next value and its declaring member.
      *
-     * @param member declaring member ({@link FrameworkMethod or {@link FrameworkField}}
+     * @param member declaring member ({@link FrameworkMethod} or {@link FrameworkField})
      * @param value the value of the next member
      */
     void accept(FrameworkMember member, T value);
