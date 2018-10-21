@@ -5,13 +5,13 @@ import java.util.List;
 /**
  * The {@code SuiteDescription} describes a suite of tests which are to be run or have been run.
  *
- * <p>Until version 4.11 {@code Description} instances were mutable objects. With 4.12 the DescriptionBuilder was
+ * <p>Before version 4.13 {@code Description} instances were mutable objects. With 4.13 the DescriptionBuilder was
  * introduced that guarantees that all generated descriptions are immutable objects.
  *
  * @see org.junit.runner.Description
  * @see org.junit.runner.ImmutableDescription
  * @see org.junit.runner.DescriptionBuilder
- * @since 4.12
+ * @since 4.13
  */
 final class SuiteDescription extends ImmutableDescription {
     private static final long serialVersionUID = 1L;

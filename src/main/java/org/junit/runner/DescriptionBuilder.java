@@ -17,7 +17,7 @@ import java.util.List;
  * Builder for {@link ImmutableDescription} instances.
  *
  * @see {@code Description}
- * @since 4.12
+ * @since 4.13
  */
 public abstract class DescriptionBuilder<B extends DescriptionBuilder<B>> {
     static Collection<Annotation> NO_ANNOTATIONS = Collections.emptyList();
