@@ -232,7 +232,10 @@ public final class Throwables {
         "org.junit.runners.",
         "org.junit.experimental.runners.",
         "org.junit.internal.",
-        "junit.",
+        "junit.extensions",
+        "junit.framework",
+        "junit.runner",
+        "junit.textui",
     };
 
     private static final String[] TEST_FRAMEWORK_TEST_METHOD_NAME_PREFIXES = {
