@@ -25,8 +25,6 @@ import org.junit.internal.runners.statements.RunBefores;
 import org.junit.rules.RunRules;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
-import org.junit.runner.DescriptionBuilder;
-import org.junit.runner.ImmutableDescription;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
@@ -349,28 +347,20 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
     @Override
     public Description getDescription() {
-        List<ImmutableDescription> childDescriptions = new ArrayList<ImmutableDescription>();
-        for (T child : getFilteredChildren()) {
-            childDescriptions.add(describeChild(child).toImmutableDescription());
-        }
-
+        Class<?> clazz = getTestClass().getJavaClass();
+        Description description;
         // if subclass overrides `getName()` then we should use it
         // to maintain backwards compatibility with JUnit 4.12
-        String displayName = getName();
-        Class<?> clazz = getTestClass().getJavaClass();
-        if (clazz == null || !clazz.getName().equals(displayName)) {
-            clazz = Description.createSuiteDescription(displayName).getTestClass();
+        if (clazz == null || !clazz.getName().equals(getName())) {
+            description = Description.createSuiteDescription(getName(), getRunnerAnnotations());
+        } else {
+            description = Description.createSuiteDescription(clazz, getRunnerAnnotations());
         }
-        if (clazz != null) {
-            return DescriptionBuilder.forClass(clazz)
-                    .withDisplayName(displayName)
-                    .withUniqueId(displayName)
-                    .withAdditionalAnnotations(Arrays.asList(getRunnerAnnotations()))
-                    .createSuiteDescription(childDescriptions);
+
+        for (T child : getFilteredChildren()) {
+            description.addChild(describeChild(child));
         }
-        return DescriptionBuilder.forName(displayName)
-                .withAdditionalAnnotations(Arrays.asList(getRunnerAnnotations()))
-                .createSuiteDescription(childDescriptions);
+        return description;
     }
 
     @Override
