@@ -4,6 +4,7 @@ import static org.junit.internal.Checks.notEmpty;
 import static org.junit.internal.Checks.notNull;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 public final class MethodBasedDescriptionBuilder extends DescriptionBuilder<MethodBasedDescriptionBuilder> {
     private final Class<?> testClass;
@@ -42,11 +43,6 @@ public final class MethodBasedDescriptionBuilder extends DescriptionBuilder<Meth
         this.testClass = null;
     }
 
-    public MethodBasedDescriptionBuilder setTestName(String testName) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     /**
      * Create a {@code ImmutableDescription} representing a test for the current state of the {@code DescriptionBuilder}.
      *
@@ -54,6 +50,16 @@ public final class MethodBasedDescriptionBuilder extends DescriptionBuilder<Meth
      */
     public ImmutableDescription createTestDescription() {
         return new TestDescription(this, method, methodName);
+    }
+
+    /**
+     * Create a {@code ImmutableDescription} representing a suite for the current state of the {@code DescriptionBuilder}.
+     *
+     * @param children the children of this suite. These usually would have the same class name.
+     * @return a {@code ImmutableDescription} represented by the {@code DescriptionBuilder}
+     */
+    public <T extends ImmutableDescription> ImmutableDescription createSuiteDescription(List<T> children) {
+        return new SuiteDescription(this, notNull(children));
     }
 
     @Override

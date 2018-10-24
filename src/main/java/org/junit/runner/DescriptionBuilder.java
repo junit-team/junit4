@@ -101,7 +101,7 @@ public abstract class DescriptionBuilder<B extends DescriptionBuilder<B>> {
      *     <li>Annotations: none</li>
      * </ul>
      *
-     * @param testClass A {@link Class} containing tests
+     * @param testClassName Name for the test class
      * @param method A {@link Method} in {@code testClass}
      * @return a {@code DescriptionBuilder} for {@code testClass}
      */

@@ -19,6 +19,7 @@ import java.util.List;
  * @see org.junit.runner.DescriptionBuilder
  * @since 4.13
  */
+@SuppressWarnings("serial") // subclasses have serialVersionUID fields
 public abstract class ImmutableDescription extends Description {
 
     ImmutableDescription(DescriptionBuilder<?> builder) {
@@ -61,10 +62,16 @@ public abstract class ImmutableDescription extends Description {
     }
 
     @Override
-    public ImmutableDescription toImmutableDescription() {
+    public final ImmutableDescription toImmutableDescription() {
         return this;
     }
 
+    /**
+     * Serializes ImmutableDescription instances to Description instances.
+     * 
+     * <p>This prevents breaking tools that read serialized Description values
+     * that don't (yet) know about ImmutableDescription.
+     */
     Object writeReplace() {
         return toMutableDescription(this);
     }

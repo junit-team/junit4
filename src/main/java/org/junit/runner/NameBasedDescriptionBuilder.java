@@ -2,8 +2,6 @@ package org.junit.runner;
 
 import static org.junit.internal.Checks.notNull;
 
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.List;
 
 public final class NameBasedDescriptionBuilder extends DescriptionBuilder<NameBasedDescriptionBuilder> {
