@@ -206,8 +206,13 @@ public class TemporaryFolder extends ExternalResource {
 
             lastMkdirsCallSuccessful = file.mkdirs();
             if (!lastMkdirsCallSuccessful && !file.isDirectory()) {
-                throw new IOException(
-                        "could not create a folder with the path \'" + relativePath.getPath() + "\'");
+                if (file.exists()) {
+                    throw new IOException(
+                            "a file with the path \'" + relativePath.getPath() + "\' exists");
+                } else {
+                    throw new IOException(
+                            "could not create a folder with the path \'" + relativePath.getPath() + "\'");
+                }
             }
         }
         if (!lastMkdirsCallSuccessful) {

@@ -90,7 +90,7 @@ public class TemporaryFolderUsageTest {
         assertTrue("Could not create" + file, file.createNewFile());
 
         thrown.expect(IOException.class);
-        thrown.expectMessage("could not create a folder with the path 'level1'");
+        thrown.expectMessage("a file with the path 'level1' exists");
         tempFolder.newFolder("level1");
     }
 
