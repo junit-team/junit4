@@ -93,6 +93,17 @@ public class TemporaryFolderUsageTest {
         thrown.expectMessage("could not create a folder with the path 'level1'");
         tempFolder.newFolder("level1");
     }
+
+    @Test
+    public void newFolderWithGivenFolderThrowsIOExceptionWhenFolderCannotBeCreated() throws IOException {
+        tempFolder.create();
+        assertTrue("Could not make folder " + tempFolder.getRoot() + " read only.",
+                tempFolder.getRoot().setReadOnly());
+
+        thrown.expect(IOException.class);
+        thrown.expectMessage("could not create a folder with the path 'level1'");
+        tempFolder.newFolder("level1");
+    }
     
     @Test
     public void newFolderWithPathStartingWithFileSeparatorThrowsIOException()
