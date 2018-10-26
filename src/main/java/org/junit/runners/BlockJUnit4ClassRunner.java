@@ -319,6 +319,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
         statement = withBefores(method, test, statement);
         statement = withAfters(method, test, statement);
         statement = withRules(method, test, statement);
+        statement = withInterruptIsolation(statement);
         return statement;
     }
 

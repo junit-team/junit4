@@ -17,7 +17,8 @@ import org.junit.tests.running.classes.parent.ParentRunnerClassLoaderTest;
         ParentRunnerClassLoaderTest.class,
         RunWithTest.class,
         SuiteTest.class,
-        UseSuiteAsASuperclassTest.class
+        UseSuiteAsASuperclassTest.class,
+        ThreadsTest.class
 })
 public class AllClassesTests {
 }
