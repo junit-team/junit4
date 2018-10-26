@@ -214,6 +214,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             statement = withBeforeClasses(statement);
             statement = withAfterClasses(statement);
             statement = withClassRules(statement);
+            statement = withInterruptIsolation(statement);
         }
         return statement;
     }
@@ -289,6 +290,22 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             @Override
             public void evaluate() {
                 runChildren(notifier);
+            }
+        };
+    }
+
+    /**
+     * @return a {@link Statement}: clears interrupt status of current thread after execution of statement
+     */
+    protected final Statement withInterruptIsolation(final Statement statement) {
+        return new Statement() {
+            @Override
+            public void evaluate() throws Throwable {
+                try {
+                    statement.evaluate();
+                } finally {
+                    Thread.interrupted(); // clearing thread interrupted status for isolation
+                }
             }
         };
     }
