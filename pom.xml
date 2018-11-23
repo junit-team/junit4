@@ -360,6 +360,9 @@
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
+                        <manifestEntries>
+                            <Automatic-Module-Name>junit</Automatic-Module-Name>
+                        </manifestEntries>                        
                     </archive>
                 </configuration>
             </plugin>
