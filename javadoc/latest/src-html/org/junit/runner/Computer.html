@@ -33,16 +33,26 @@
 <FONT color="green">030</FONT>                public Runner runnerForClass(Class&lt;?&gt; testClass) throws Throwable {<a name="line.30"></a>
 <FONT color="green">031</FONT>                    return getRunner(builder, testClass);<a name="line.31"></a>
 <FONT color="green">032</FONT>                }<a name="line.32"></a>
-<FONT color="green">033</FONT>            }, classes);<a name="line.33"></a>
-<FONT color="green">034</FONT>        }<a name="line.34"></a>
-<FONT color="green">035</FONT>    <a name="line.35"></a>
-<FONT color="green">036</FONT>        /**<a name="line.36"></a>
-<FONT color="green">037</FONT>         * Create a single-class runner for {@code testClass}, using {@code builder}<a name="line.37"></a>
-<FONT color="green">038</FONT>         */<a name="line.38"></a>
-<FONT color="green">039</FONT>        protected Runner getRunner(RunnerBuilder builder, Class&lt;?&gt; testClass) throws Throwable {<a name="line.39"></a>
-<FONT color="green">040</FONT>            return builder.runnerForClass(testClass);<a name="line.40"></a>
-<FONT color="green">041</FONT>        }<a name="line.41"></a>
-<FONT color="green">042</FONT>    }<a name="line.42"></a>
+<FONT color="green">033</FONT>            }, classes) {<a name="line.33"></a>
+<FONT color="green">034</FONT>                @Override<a name="line.34"></a>
+<FONT color="green">035</FONT>                protected String getName() {<a name="line.35"></a>
+<FONT color="green">036</FONT>                    /*<a name="line.36"></a>
+<FONT color="green">037</FONT>                     * #1320 The generated suite is not based on a real class so<a name="line.37"></a>
+<FONT color="green">038</FONT>                     * only a 'null' description can be generated from it. This name<a name="line.38"></a>
+<FONT color="green">039</FONT>                     * will be overridden here.<a name="line.39"></a>
+<FONT color="green">040</FONT>                     */<a name="line.40"></a>
+<FONT color="green">041</FONT>                    return "classes";<a name="line.41"></a>
+<FONT color="green">042</FONT>                }<a name="line.42"></a>
+<FONT color="green">043</FONT>            };<a name="line.43"></a>
+<FONT color="green">044</FONT>        }<a name="line.44"></a>
+<FONT color="green">045</FONT>    <a name="line.45"></a>
+<FONT color="green">046</FONT>        /**<a name="line.46"></a>
+<FONT color="green">047</FONT>         * Create a single-class runner for {@code testClass}, using {@code builder}<a name="line.47"></a>
+<FONT color="green">048</FONT>         */<a name="line.48"></a>
+<FONT color="green">049</FONT>        protected Runner getRunner(RunnerBuilder builder, Class&lt;?&gt; testClass) throws Throwable {<a name="line.49"></a>
+<FONT color="green">050</FONT>            return builder.runnerForClass(testClass);<a name="line.50"></a>
+<FONT color="green">051</FONT>        }<a name="line.51"></a>
+<FONT color="green">052</FONT>    }<a name="line.52"></a>
 
 
 
