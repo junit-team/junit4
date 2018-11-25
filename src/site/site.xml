@@ -46,7 +46,7 @@
       <sideBarEnabled>false</sideBarEnabled>
       <sourceLineNumbersEnabled>true</sourceLineNumbersEnabled>
       <gitHub>
-        <projectId>junit-team/junit</projectId>
+        <projectId>junit-team/junit4</projectId>
         <ribbonOrientation>right</ribbonOrientation>
       </gitHub>
     </fluidoSkin>

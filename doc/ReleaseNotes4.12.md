@@ -155,7 +155,7 @@ thrown.reportMissingExceptionWithMessage("FAIL: Expected exception to be thrown"
 If a custom failure message is not provided, a default message is used.
 
 
-### [Pull request #1013:](https://github.com/junit-team/junit/pull/1013) Make ErrorCollector#checkSucceeds generic
+### [Pull request #1013:](https://github.com/junit-team/junit4/pull/1013) Make ErrorCollector#checkSucceeds generic
 
 The method `ErrorCollector.checkSucceeds()` is now generic. Previously, you could only pass
 in a `Callable<Object>` and it returned `Object`. You can now pass any `Callable` and the
