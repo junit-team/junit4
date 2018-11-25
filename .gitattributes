@@ -3,6 +3,7 @@
 *.GIF binary
 *.jar binary
 *.png binary
+*.jpg binary
 *.svg text eol=lf
 
 # These files do not have unix line endings. Do not normalize them for now.

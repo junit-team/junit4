@@ -14,8 +14,17 @@
      <div id="carousel-main">
         <div id="main-carousel" class="carousel slide">
           <div class="carousel-inner">
-            <div class="item active">
-              <div style="height:20em" >
+	          <div class="item active">
+	            <div class="carousel-content" id="junit-lambda-teaser">
+								<p><a href="http://junit.org/junit5/"><img src="images/junit5-banner.png" alt="JUnit 5" style="height:120px; margin-top:20px" /></a></p>
+	            </div>
+	            <div class="carousel-caption">
+	              <p><strong><a href="http://junit.org/junit5/">JUnit 5 is released:</a></strong></p>
+	              <p><a href="http://junit.org/junit5/">Explore the new release!</a></p>
+	            </div>
+	          </div>
+            <div class="item">
+              <div class="carousel-content">
               <pre class="prettyprint">
     @Test
     public void newArrayListsHaveNoElements() {
@@ -38,12 +47,12 @@
               </div>
             </div>
             <div class="item">
-              <div style="height:20em">
+              <div class="carousel-content">
               <pre class="prettyprint lang-java">
     @Test
     public void lookupEmailAddresses() {
         assertThat(new CartoonCharacterEmailLookupService().getResults("looney"), allOf(
-            not(empty()), 
+            not(empty()),
             containsInAnyOrder(
                 allOf(instanceOf(Map.class), hasEntry("id", "56"), hasEntry("email", "roadrunner@fast.org")),
                 allOf(instanceOf(Map.class), hasEntry("id", "76"), hasEntry("email", "wiley@acme.com"))

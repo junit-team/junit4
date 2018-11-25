@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/DECORATION/1.1.0 http://maven.apache.org/xsd/decoration-1.1.0.xsd">
   <bannerLeft>
     <name>${project.name}</name>
-    <src>http://junit.org/images/junit-logo.png</src>
+    <src>./images/junit-logo.png</src>
     <href>http://junit.org/</href>
   </bannerLeft>
 
@@ -23,18 +23,20 @@
   <body>
     <head>
       <link rel="stylesheet" href="@relativePath@/css/plain-links.css" />
+      <link rel="stylesheet" href="@relativePath@/css/carousel.css" />
+      <link rel="stylesheet" href="@relativePath@/css/junit-lambda.css" />
     </head>
     <breadcrumbs>
-      <item name="JUnit" href="http://junit.org/" />
+      <item name="JUnit 4" href="http://junit.org/" />
     </breadcrumbs>
 
-    <menu name="Overview">
+    <menu name="JUnit 4">
       <item name="Introduction" href="index.html"/>
       <item name="Frequently asked questions" href="faq.html"/>
       <item name="Cookbook" href="cookbook.html"/>
     </menu>
 
-    <menu ref="reports" inherit="bottom" />
+    <menu name="Project Documentation" ref="reports" inherit="bottom" />
 
   </body>
 
