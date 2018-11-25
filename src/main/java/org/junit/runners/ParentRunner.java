@@ -542,7 +542,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
 
         public List<TestRule> getOrderedRules() {
             if (entries.isEmpty()) {
-                return Collections.emptyList();
+                return new ArrayList<TestRule>();
             }
             Collections.sort(entries, RuleContainer.ENTRY_COMPARATOR);
             List<TestRule> result = new ArrayList<TestRule>(entries.size());
