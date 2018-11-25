@@ -50,7 +50,7 @@
 <FONT color="green">047</FONT>            /**<a name="line.47"></a>
 <FONT color="green">048</FONT>             * @return the classes to be run<a name="line.48"></a>
 <FONT color="green">049</FONT>             */<a name="line.49"></a>
-<FONT color="green">050</FONT>            Class&lt;?&gt;[] value();<a name="line.50"></a>
+<FONT color="green">050</FONT>            public Class&lt;?&gt;[] value();<a name="line.50"></a>
 <FONT color="green">051</FONT>        }<a name="line.51"></a>
 <FONT color="green">052</FONT>    <a name="line.52"></a>
 <FONT color="green">053</FONT>        private static Class&lt;?&gt;[] getAnnotatedClasses(Class&lt;?&gt; klass) throws InitializationError {<a name="line.53"></a>
@@ -91,7 +91,7 @@
 <FONT color="green">088</FONT>         * @param suiteClasses the classes in the suite<a name="line.88"></a>
 <FONT color="green">089</FONT>         */<a name="line.89"></a>
 <FONT color="green">090</FONT>        protected Suite(Class&lt;?&gt; klass, Class&lt;?&gt;[] suiteClasses) throws InitializationError {<a name="line.90"></a>
-<FONT color="green">091</FONT>            this(new AllDefaultPossibilitiesBuilder(), klass, suiteClasses);<a name="line.91"></a>
+<FONT color="green">091</FONT>            this(new AllDefaultPossibilitiesBuilder(true), klass, suiteClasses);<a name="line.91"></a>
 <FONT color="green">092</FONT>        }<a name="line.92"></a>
 <FONT color="green">093</FONT>    <a name="line.93"></a>
 <FONT color="green">094</FONT>        /**<a name="line.94"></a>

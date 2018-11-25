@@ -30,16 +30,19 @@
 <FONT color="green">027</FONT>            }<a name="line.27"></a>
 <FONT color="green">028</FONT>    <a name="line.28"></a>
 <FONT color="green">029</FONT>            Class&lt;? extends AnnotationValidator&gt; clazz = validateWithAnnotation.value();<a name="line.29"></a>
-<FONT color="green">030</FONT>            try {<a name="line.30"></a>
-<FONT color="green">031</FONT>                AnnotationValidator annotationValidator = clazz.newInstance();<a name="line.31"></a>
-<FONT color="green">032</FONT>                VALIDATORS_FOR_ANNOTATION_TYPES.putIfAbsent(validateWithAnnotation, annotationValidator);<a name="line.32"></a>
-<FONT color="green">033</FONT>                return VALIDATORS_FOR_ANNOTATION_TYPES.get(validateWithAnnotation);<a name="line.33"></a>
-<FONT color="green">034</FONT>            } catch (Exception e) {<a name="line.34"></a>
-<FONT color="green">035</FONT>                throw new RuntimeException("Exception received when creating AnnotationValidator class " + clazz.getName(), e);<a name="line.35"></a>
-<FONT color="green">036</FONT>            }<a name="line.36"></a>
-<FONT color="green">037</FONT>        }<a name="line.37"></a>
-<FONT color="green">038</FONT>    <a name="line.38"></a>
-<FONT color="green">039</FONT>    }<a name="line.39"></a>
+<FONT color="green">030</FONT>            if (clazz == null) {<a name="line.30"></a>
+<FONT color="green">031</FONT>                throw new IllegalArgumentException("Can't create validator, value is null in annotation " + validateWithAnnotation.getClass().getName());<a name="line.31"></a>
+<FONT color="green">032</FONT>            }<a name="line.32"></a>
+<FONT color="green">033</FONT>            try {<a name="line.33"></a>
+<FONT color="green">034</FONT>                AnnotationValidator annotationValidator = clazz.newInstance();<a name="line.34"></a>
+<FONT color="green">035</FONT>                VALIDATORS_FOR_ANNOTATION_TYPES.putIfAbsent(validateWithAnnotation, annotationValidator);<a name="line.35"></a>
+<FONT color="green">036</FONT>                return VALIDATORS_FOR_ANNOTATION_TYPES.get(validateWithAnnotation);<a name="line.36"></a>
+<FONT color="green">037</FONT>            } catch (Exception e) {<a name="line.37"></a>
+<FONT color="green">038</FONT>                throw new RuntimeException("Exception received when creating AnnotationValidator class " + clazz.getName(), e);<a name="line.38"></a>
+<FONT color="green">039</FONT>            }<a name="line.39"></a>
+<FONT color="green">040</FONT>        }<a name="line.40"></a>
+<FONT color="green">041</FONT>    <a name="line.41"></a>
+<FONT color="green">042</FONT>    }<a name="line.42"></a>
 
 
 

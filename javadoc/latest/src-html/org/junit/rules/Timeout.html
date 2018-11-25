@@ -15,7 +15,7 @@
 <FONT color="green">012</FONT>     * public static class HasGlobalLongTimeout {<a name="line.12"></a>
 <FONT color="green">013</FONT>     *<a name="line.13"></a>
 <FONT color="green">014</FONT>     *  &amp;#064;Rule<a name="line.14"></a>
-<FONT color="green">015</FONT>     *  public Timeout globalTimeout = Timeout.millis(20);<a name="line.15"></a>
+<FONT color="green">015</FONT>     *  public Timeout globalTimeout= new Timeout(20);<a name="line.15"></a>
 <FONT color="green">016</FONT>     *<a name="line.16"></a>
 <FONT color="green">017</FONT>     *  &amp;#064;Test<a name="line.17"></a>
 <FONT color="green">018</FONT>     *  public void run1() throws InterruptedException {<a name="line.18"></a>
@@ -87,7 +87,7 @@
 <FONT color="green">084</FONT>        }<a name="line.84"></a>
 <FONT color="green">085</FONT>    <a name="line.85"></a>
 <FONT color="green">086</FONT>        /**<a name="line.86"></a>
-<FONT color="green">087</FONT>         * Create a {@code Timeout} instance initialized with values from<a name="line.87"></a>
+<FONT color="green">087</FONT>         * Create a {@code Timeout} instance initialized with values form<a name="line.87"></a>
 <FONT color="green">088</FONT>         * a builder.<a name="line.88"></a>
 <FONT color="green">089</FONT>         *<a name="line.89"></a>
 <FONT color="green">090</FONT>         * @since 4.12<a name="line.90"></a>
