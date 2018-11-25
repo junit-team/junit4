@@ -1,0 +1,85 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.junit;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    /**<a name="line.3"></a>
+<FONT color="green">004</FONT>     * Indicates that a test that indicated that it should be skipped could not be skipped.<a name="line.4"></a>
+<FONT color="green">005</FONT>     * This can be thrown if a test uses the methods in {@link Assume} to indicate that<a name="line.5"></a>
+<FONT color="green">006</FONT>     * it should be skipped, but before processing of the test was completed, other failures<a name="line.6"></a>
+<FONT color="green">007</FONT>     * occured.<a name="line.7"></a>
+<FONT color="green">008</FONT>     *<a name="line.8"></a>
+<FONT color="green">009</FONT>     * @see org.junit.Assume<a name="line.9"></a>
+<FONT color="green">010</FONT>     * @since 4.13<a name="line.10"></a>
+<FONT color="green">011</FONT>     */<a name="line.11"></a>
+<FONT color="green">012</FONT>    public class TestCouldNotBeSkippedException extends RuntimeException {<a name="line.12"></a>
+<FONT color="green">013</FONT>        private static final long serialVersionUID = 1L;<a name="line.13"></a>
+<FONT color="green">014</FONT>    <a name="line.14"></a>
+<FONT color="green">015</FONT>        /** Creates an instance using the given assumption failure. */<a name="line.15"></a>
+<FONT color="green">016</FONT>        public TestCouldNotBeSkippedException(org.junit.internal.AssumptionViolatedException cause) {<a name="line.16"></a>
+<FONT color="green">017</FONT>            super("Test could not be skipped due to other failures", cause);<a name="line.17"></a>
+<FONT color="green">018</FONT>        }<a name="line.18"></a>
+<FONT color="green">019</FONT>    }<a name="line.19"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>
