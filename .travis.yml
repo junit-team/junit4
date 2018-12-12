@@ -1,10 +1,5 @@
 language: java
 
-addons:
-  apt:
-    packages:
-      - openjdk-6-jdk
-
 install:
   # Download dependencies with JDK 8 because Mave Central supports
   # TLS 1.2 only but OpenJDK 6 does not.
@@ -19,7 +14,6 @@ install:
   - ./mvnw install -DskipTests
 
 jdk:
-  - openjdk6
   - openjdk7
   - oraclejdk8
   - oraclejdk9
