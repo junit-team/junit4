@@ -1,25 +1,9 @@
 language: java
 
-install:
-  # Download dependencies with JDK 8 because Mave Central supports
-  # TLS 1.2 only but OpenJDK 6 does not.
-  - export ORIGINAL_JAVA_HOME=$JAVA_HOME
-  - jdk_switcher use oraclejdk8
-  - ./mvnw test -DskipTests
-  # Delete all files created with JDK 8
-  - ./mvnw clean
-  # Restore desired JDK
-  - export JAVA_HOME=$ORIGINAL_JAVA_HOME
-  # Run original install command but without GPG signing
-  - ./mvnw install -DskipTests
-
-jdk:
-  - openjdk7
-  - oraclejdk8
-  - oraclejdk9
-  - openjdk10
-
 script: ./mvnw verify javadoc:javadoc site:site
+
+install:
+- ./mvnw --version
 
 stages:
   - test
@@ -28,9 +12,54 @@ stages:
 
 jobs:
   include:
+    - name: Java 6
+      env: JDK=openjdk6
+      addons:
+        apt:
+          packages:
+            - openjdk-6-jdk
+      install:
+        # Download dependencies with JDK 8 because Mave Central supports
+        # TLS 1.2 only but OpenJDK 6 does not.
+        - export ORIGINAL_JAVA_HOME=$JAVA_HOME
+        - jdk_switcher use oraclejdk8
+        - ./mvnw test -DskipTests
+        # Delete all files created with JDK 8
+        - ./mvnw clean
+        # Restore desired JDK
+        - export JAVA_HOME=$ORIGINAL_JAVA_HOME
+        - jdk_switcher use openjdk6
+        - ./mvnw --version
+    - name: Java 7
+      jdk: openjdk7
+    - name: Java 8
+      jdk: oraclejdk8
+    - name: Java 9
+      jdk: oraclejdk9
+    - name: Java 10
+      jdk: openjdk10
+    - name: Java 11
+      jdk: openjdk11
     - stage: deploy
       name: "Publish snapshot artifacts"
+      addons:
+        apt:
+          packages:
+            - openjdk-6-jdk
+      install:
+        # Download dependencies with JDK 8 because Mave Central supports
+        # TLS 1.2 only but OpenJDK 6 does not.
+        - export ORIGINAL_JAVA_HOME=$JAVA_HOME
+        - jdk_switcher use oraclejdk8
+        - ./mvnw test -DskipTests
+        # Delete all files created with JDK 8
+        - ./mvnw clean
+        # Restore desired JDK
+        - export JAVA_HOME=$ORIGINAL_JAVA_HOME
+        - jdk_switcher use openjdk6
+        - ./mvnw --version
       env:
+        - JDK=openjdk6
         # OSSRH_USERNAME
         - secure: griGZYDtqDMRUaYex/uAnpkWIQ/yodM6IOn4G8izWKpyGLeCxyXBG0FDcVo81xRq/9mMevj2idyW/xNP/HAQ45G4pyJUk/vTSMkNslzVjr7OBEtQQCN8XahSaOO0l0CJ5lzA6LdwWg7uDaf9znqZ0slt81u0S1NJmUZyYeUEim0=
         # OSSRH_PASSWORD
