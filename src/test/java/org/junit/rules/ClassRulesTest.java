@@ -18,7 +18,10 @@ import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
+import org.junit.runner.RunWith;
+import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.MethodSorters;
+import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
 /**
@@ -309,5 +312,55 @@ public class ClassRulesTest {
         Result result = JUnitCore.runClasses(ClassRuleOrderingDefault.class);
         assertTrue(result.wasSuccessful());
         assertEquals(" inner.begin outer.begin bar foo outer.end inner.end", log.toString());
+    }
+
+    public static class RunnerWithClassRuleAddedProgrammatically extends BlockJUnit4ClassRunner {
+        public RunnerWithClassRuleAddedProgrammatically(Class testClass) throws InitializationError {
+            super(testClass);
+        }
+
+        @Override
+        protected List<TestRule> classRules() {
+            final List<TestRule> rules = super.classRules();
+            rules.add(new LoggingTestRule(log, "fromCode"));
+            return rules;
+        }
+    }
+
+    @RunWith(RunnerWithClassRuleAddedProgrammatically.class)
+    public static class ClassRulesModifiableListEmpty {
+        @Test
+        public void test() {
+            log.append(" test");
+        }
+    }
+
+    @Test
+    public void classRulesModifiableListEmpty() {
+        log.setLength(0);
+        Result result = JUnitCore.runClasses(ClassRulesModifiableListEmpty.class);
+        assertTrue(result.wasSuccessful());
+        assertEquals(" fromCode.begin test fromCode.end", log.toString());
+    }
+
+    @RunWith(RunnerWithClassRuleAddedProgrammatically.class)
+    public static class ClassRulesModifiableList {
+        @ClassRule
+        public static TestRule classRule() {
+            return new LoggingTestRule(log, "classRule");
+        }
+
+        @Test
+        public void test() {
+            log.append(" test");
+        }
+    }
+
+    @Test
+    public void classRulesModifiableList() {
+        log.setLength(0);
+        Result result = JUnitCore.runClasses(ClassRulesModifiableList.class);
+        assertTrue(result.wasSuccessful());
+        assertEquals(" fromCode.begin classRule.begin test classRule.end fromCode.end", log.toString());
     }
 }

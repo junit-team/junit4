@@ -7,7 +7,6 @@ import static org.junit.internal.runners.rules.RuleMemberValidator.CLASS_RULE_VA
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -541,9 +540,6 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         }
 
         public List<TestRule> getOrderedRules() {
-            if (entries.isEmpty()) {
-                return Collections.emptyList();
-            }
             Collections.sort(entries, RuleContainer.ENTRY_COMPARATOR);
             List<TestRule> result = new ArrayList<TestRule>(entries.size());
             for (RuleContainer.RuleEntry entry : entries) {
