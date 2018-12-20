@@ -282,55 +282,6 @@
             </plugin>
             <plugin>
                 <!--
-                A plugin that launches the JUnit Platform using the Vintage
-                engine to start our junit suite "AllTests".
-                -->
-                <groupId>de.sormuras.junit</groupId>
-                <artifactId>junit-platform-maven-plugin</artifactId>
-                <version>${junitPlatformPluginVersion}</version>
-                <!--
-                Add this plugin's "launch" goal to test phase executions and
-                clear all executions of Surefire...
-                -->
-                <!--<extensions>true</extensions>-->
-                <!--
-                ...or add this plugin manually without touching Surefire.
-                -->
-                <executions>
-                    <execution>
-                        <id>launch-junit-platform</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>launch</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <!--
-                    Separate main dependencies from test assets.
-                    -->
-                    <isolation>ALMOST</isolation>
-                    <selectors>
-                        <classes>
-                            <class>org.junit.tests.AllTests</class>
-                        </classes>
-                    </selectors>
-                    <tweaks>
-                        <platformClassLoader>true</platformClassLoader>
-                        <defaultAssertionStatus>false</defaultAssertionStatus>
-                        <!--
-                        Add JUnit Vintage Engine manually - the auto-resolve feature
-                        uses "junit:junit:?" as an indicator to kick in, which is not
-                        present while building it at the moment...
-                        -->
-                        <additionalLauncherDependencies>
-                            <vintage>org.junit.vintage:junit-vintage-engine:5.3.2</vintage>
-                        </additionalLauncherDependencies >
-                    </tweaks>
-                </configuration>
-            </plugin>
-            <plugin>
-                <!--
                 This plugin can package the main artifact's sources (src/main/java)
                 in to jar archive. See target/junit-*-sources.jar.
                 -->
@@ -611,6 +562,67 @@
                 </plugins>
             </reporting>
         </profile>
+        <profile>
+            <id>java8+</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <!--
+                        A plugin that launches the JUnit Platform using the Vintage
+                        engine to start our junit suite "AllTests".
+                        -->
+                        <groupId>de.sormuras.junit</groupId>
+                        <artifactId>junit-platform-maven-plugin</artifactId>
+                        <version>${junitPlatformPluginVersion}</version>
+                        <!--
+                        Add this plugin's "launch" goal to test phase executions and
+                        clear all executions of Surefire...
+                        -->
+                        <!--<extensions>true</extensions>-->
+                        <!--
+                        ...or add this plugin manually without touching Surefire.
+                        -->
+                        <executions>
+                            <execution>
+                                <id>launch-junit-platform</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>launch</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <!--
+                            Separate main dependencies from test assets.
+                            -->
+                            <isolation>ALMOST</isolation>
+                            <selectors>
+                                <classes>
+                                    <class>org.junit.tests.AllTests</class>
+                                </classes>
+                            </selectors>
+                            <tweaks>
+                                <platformClassLoader>true</platformClassLoader>
+                                <defaultAssertionStatus>false</defaultAssertionStatus>
+                                <!--
+                                Add JUnit Vintage Engine manually - the auto-resolve feature
+                                uses "junit:junit:?" as an indicator to kick in, which is not
+                                present while building it at the moment...
+                                -->
+                                <additionalLauncherDependencies>
+                                    <vintage>org.junit.vintage:junit-vintage-engine:5.3.2</vintage>
+                                </additionalLauncherDependencies >
+                            </tweaks>
+                        </configuration>
+                    </plugin>
+
+                </plugins>
+            </build>
+        </profile>
+
         <profile>
             <id>java9</id>
             <activation>
