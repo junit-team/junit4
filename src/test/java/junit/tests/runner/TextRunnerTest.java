@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.Arrays;
 
 import junit.framework.TestCase;
 import junit.framework.TestResult;
@@ -27,13 +28,15 @@ public class TextRunnerTest extends TestCase {
     void execTest(String testClass, boolean success) throws Exception {
         String java = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
         String cp = System.getProperty("java.class.path");
+        cp += File.pathSeparator + "target/classes";
+        cp += File.pathSeparator + "target/test-classes";
         //use -classpath for JDK 1.1.7 compatibility
         String[] cmd = {java, "-classpath", cp, "junit.textui.TestRunner", testClass};
         Process p = Runtime.getRuntime().exec(cmd);
         InputStream i = p.getInputStream();
         while ((i.read()) != -1)
             ; //System.out.write(b);
-        assertTrue((p.waitFor() == 0) == success);
+        assertTrue("cmd=" + Arrays.asList(cmd),(p.waitFor() == 0) == success);
         if (success) {
             assertTrue(p.exitValue() == 0);
         } else {

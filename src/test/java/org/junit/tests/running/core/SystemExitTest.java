@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import org.junit.Test;
 
@@ -21,11 +22,12 @@ public class SystemExitTest {
     @Test
     public void failureCausesExitCodeOf1() throws Exception {
         String java = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
-        String classPath = getClass().getClassLoader().getResource(".").getFile() + File.pathSeparator + System.getProperty("java.class.path");
+        String classPath = new File(getClass().getClassLoader().getResource(".").toURI()).toString();
+        classPath += File.pathSeparator + "target/test-classes";
         String[] cmd = {java, "-cp", classPath, getClass().getName() + "$Exit"};
         Process process = Runtime.getRuntime().exec(cmd);
         InputStream input = process.getInputStream();
         while ((input.read()) != -1) ;
-        assertEquals(EXIT_CODE, process.waitFor());
+        assertEquals("cmd=" + Arrays.asList(cmd), EXIT_CODE, process.waitFor());
     }
 }
