@@ -25,9 +25,11 @@ jobs:
       install:
         # Download dependencies with JDK 8 because Maven Central supports
         # TLS 1.2 only but OpenJDK 6 does not.
+        # Also download Maven version configured by the Wrapper here.
         - export ORIGINAL_JAVA_HOME=$JAVA_HOME
         - jdk_switcher use oraclejdk8
         - mvn test -DskipTests
+        - ./mvnw --version
         # Delete all files created with JDK 8
         - mvn clean
         # Restore desired JDK
@@ -76,4 +78,5 @@ jobs:
 
 matrix:
   allow_failures:
-    - jdk: openjdk11
+    - env: MVN=mvn
+      jdk: openjdk11
