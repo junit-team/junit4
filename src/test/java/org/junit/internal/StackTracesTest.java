@@ -225,7 +225,7 @@ public class StackTracesTest {
      */
     private static class StackTraceLineMatcher extends StringMatcher {
         private static final Pattern PATTERN
-                = Pattern.compile("\t*at ([a-zA-Z0-9.$]+)\\([a-zA-Z0-9]+\\.java:[0-9]+\\)");
+                = Pattern.compile("\t*at (?:.+//)?([a-zA-Z0-9.$]+)\\([a-zA-Z0-9]+\\.java:[0-9]+\\)");
 
         private final String method;
 

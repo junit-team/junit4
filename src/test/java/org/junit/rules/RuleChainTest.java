@@ -91,6 +91,6 @@ public class RuleChainTest {
 
         assertThat(result.getFailures().size(), equalTo(1));
         String stacktrace = Throwables.getStacktrace(result.getFailures().get(0).getException());
-        assertThat(stacktrace, containsString("\tat org.junit.rules.RuleChainTest$RuleChainWithNullRules.<init>(RuleChainTest.java:"));
+        assertThat(stacktrace, containsString("org.junit.rules.RuleChainTest$RuleChainWithNullRules.<init>(RuleChainTest.java:"));
     }
 }
