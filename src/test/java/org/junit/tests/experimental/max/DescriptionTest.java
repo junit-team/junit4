@@ -76,7 +76,7 @@ public class DescriptionTest {
     public void usesPassedInClassObject() throws Exception {
         class URLClassLoader2 extends URLClassLoader {
             URLClassLoader2(URL... urls) {
-                super(urls);
+                super(urls, Thread.currentThread().getContextClassLoader());
             }
 
             @Override // just making public
