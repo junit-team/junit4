@@ -1,9 +1,11 @@
 language: java
 
-script: ./mvnw verify javadoc:javadoc site:site
+script: ${MVN} verify javadoc:javadoc site:site
 
 install:
+- echo "MVN=${MVN}"
 - ./mvnw --version
+- mvn --version
 
 stages:
   - test
@@ -13,7 +15,9 @@ stages:
 jobs:
   include:
     - name: Java 6
-      env: JDK=openjdk6
+      env:
+        - JDK=openjdk6
+        - MVN=./mvnw
       addons:
         apt:
           packages:
@@ -32,14 +36,19 @@ jobs:
         - ./mvnw --version
     - name: Java 7
       jdk: openjdk7
+      env: MVN=./mvnw
     - name: Java 8
       jdk: oraclejdk8
+      env: MVN=mvn
     - name: Java 9
       jdk: oraclejdk9
+      env: MVN=mvn
     - name: Java 10
       jdk: openjdk10
+      env: MVN=mvn
     - name: Java 11
       jdk: openjdk11
+      env: MVN=mvn
     - stage: deploy
       name: "Publish snapshot artifacts"
       addons:
