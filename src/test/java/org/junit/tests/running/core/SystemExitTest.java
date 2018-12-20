@@ -22,7 +22,7 @@ public class SystemExitTest {
     @Test
     public void failureCausesExitCodeOf1() throws Exception {
         String java = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
-        String classPath = new File(getClass().getClassLoader().getResource(".").toURI()).toString();
+        String classPath = new File(getClass().getClassLoader().getResource(".").toExternalForm()).toString();
         classPath += File.pathSeparator + "target/test-classes";
         String[] cmd = {java, "-cp", classPath, getClass().getName() + "$Exit"};
         Process process = Runtime.getRuntime().exec(cmd);
