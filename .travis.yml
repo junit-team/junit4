@@ -23,17 +23,16 @@ jobs:
           packages:
             - openjdk-6-jdk
       install:
-        # Download dependencies with JDK 8 because Mave Central supports
+        # Download dependencies with JDK 8 because Maven Central supports
         # TLS 1.2 only but OpenJDK 6 does not.
         - export ORIGINAL_JAVA_HOME=$JAVA_HOME
         - jdk_switcher use oraclejdk8
-        - ./mvnw test -DskipTests
+        - mvn test -DskipTests
         # Delete all files created with JDK 8
-        - ./mvnw clean
+        - mvn clean
         # Restore desired JDK
         - export JAVA_HOME=$ORIGINAL_JAVA_HOME
         - jdk_switcher use openjdk6
-        - ./mvnw --version
     - name: Java 7
       jdk: openjdk7
       env: MVN=./mvnw
@@ -74,3 +73,7 @@ jobs:
         # OSSRH_PASSWORD
         - secure: EM7Z2M09HvLJXYJaeD/YmeF5A6tqavG2tBBeDcFZ7C6k0AI/wApe882pEMMoUG06xufKfSlt7WFJxoyU3M+fPOpeK5qZpJQxsHWnNJwbcbKzqMpM9mDsgIL9rtAvm9MuIIbIY2spiT0Cx3sHdh5qofaJHPL/u8Or5L9tE8FV1ew=
       script: ./mvnw deploy --batch-mode --activate-profiles generate-docs --settings .travis.settings.xml
+
+matrix:
+  allow_failures:
+    - jdk: openjdk11
