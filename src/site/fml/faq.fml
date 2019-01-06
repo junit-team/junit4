@@ -1472,7 +1472,7 @@ a test failure, rather than the source file's line number?</question>
         </p>
 <pre class="prettyprint linenums">DirectorySuiteBuilder builder = new DirectorySuiteBuilder();
 builder.setSuffix("Test");
-Test suite = builer.suite("/home/project/myproject/tests");</pre>
+Test suite = builder.suite("/home/project/myproject/tests");</pre>
         <p>
           Documentation and examples are at <a
                                                href="http://junit-addons.sourceforge.net/">http://junit-addons.sourceforge.net</a>.
