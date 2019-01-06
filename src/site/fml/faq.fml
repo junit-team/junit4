@@ -1375,7 +1375,7 @@ excluded.8=net.jini.*</pre>
       now you can have the reverse problem where the JUnit loader will
       load a host of <code>org.w3c.dom</code>/<code>org.xml.sax</code>
       classes, and then the system loader violates the loader
-      contraints at some point when it tries to do exactly what I
+      constraints at some point when it tries to do exactly what I
       described above with JAXP because it doesn't ever delegate to
       its logical child (the JUnit loader). Inevitably, if your test
       cases use many JAXP and related XML classes, one or the other
