@@ -188,7 +188,7 @@ code. In other words, we would like to have a common fixture for running
 the tests. With JUnit you can do so by storing the fixture's objects in
 instance variables of your
 <a href="../../javadoc/junit/framework/TestCase.html">TestCase</a>
-subclass and initialize them by overridding
+subclass and initialize them by overriding
 the setUp method. The symmetric operation to setUp is tearDown which you
 can override to clean up the test fixture at the end of a test. Each test
 runs in its own fixture and JUnit calls setUp and tearDown for each test
