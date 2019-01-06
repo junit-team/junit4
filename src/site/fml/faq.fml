@@ -1252,7 +1252,7 @@ oneTimeTearDown()</pre>
     </p>
     <pre class="prettyprint">-DparameterName=parameterValue</pre>
     <p>
-      If the number of parameters on the command line gets unweildy,
+      If the number of parameters on the command line gets unwieldy,
       pass in the location of a property file that defines a set of
       parameters. Alternatively, the <a
       href="http://junit-addons.sf.net">JUnit-addons package</a>
