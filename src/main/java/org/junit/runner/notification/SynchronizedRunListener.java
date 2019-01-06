@@ -10,7 +10,7 @@ import org.junit.runner.Result;
  * <p>This class synchronizes all listener calls on a RunNotifier instance. This is done because
  * prior to JUnit 4.12, all listeners were called in a synchronized block in RunNotifier,
  * so no two listeners were ever called concurrently. If we instead made the methods here
- * sychronized, clients that added multiple listeners that called common code might see
+ * synchronized, clients that added multiple listeners that called common code might see
  * issues due to the reduced synchronization.
  *
  * @author Tibor Digana (tibor17)
