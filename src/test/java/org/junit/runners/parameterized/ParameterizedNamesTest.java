@@ -17,9 +17,9 @@ import static org.junit.Assert.assertEquals;
  */
 public class ParameterizedNamesTest {
     @RunWith(Parameterized.class)
-    public static class ParametrizedWithSpecialCharsInName {
+    public static class ParameterizedWithSpecialCharsInName {
 
-        public ParametrizedWithSpecialCharsInName(String s) {
+        public ParameterizedWithSpecialCharsInName(String s) {
         }
 
         @Parameterized.Parameters(name = "{0}")
@@ -41,7 +41,7 @@ public class ParameterizedNamesTest {
 
     @Test
     public void parameterizedTestsWithSpecialCharsInName() {
-        Request request = Request.aClass(ParametrizedWithSpecialCharsInName.class);
+        Request request = Request.aClass(ParameterizedWithSpecialCharsInName.class);
         for (Description parent : request.getRunner().getDescription().getChildren()) {
             for (Description description : parent.getChildren()) {
                 assertEquals("test" + parent.getDisplayName(), description.getMethodName());
