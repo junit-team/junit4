@@ -1060,7 +1060,7 @@ oneTimeTearDown()</pre>
       <i>(Submitted by: Eric Armstrong)</i>
     </p>
     <p>
-      To run your JUnit tests, you'll need the following elemements in
+      To run your JUnit tests, you'll need the following elements in
       your CLASSPATH:
     </p>
     <ul>
