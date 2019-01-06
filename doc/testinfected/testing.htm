@@ -435,7 +435,7 @@ these methods in Money and MoneyBag. This is the implementation in Money.
 public IMoney addMoneyBag(MoneyBag s) {
 &nbsp;&nbsp;&nbsp; return s.addMoney(this);
 }</tt></pre>
-Here is the implemenation in MoneyBag which assumes additional constructors
+Here is the implementation in MoneyBag which assumes additional constructors
 to create a MoneyBag from a Money and a MoneyBag and from two MoneyBags.
 <pre><tt>public IMoney addMoney(Money m) {
 &nbsp;&nbsp;&nbsp; return new MoneyBag(m, this);
