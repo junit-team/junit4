@@ -31,7 +31,7 @@ a good idea to add a comment to the bug to make sure that there's agreement on h
 
 ## Limitations
 
-The JUnit team is not accepting changes to the code under the following paths :
+The JUnit team is not accepting changes to the code under the following paths:
 
 * `src/main/java/junit`
 * `test/java/junit/tests/framework`
