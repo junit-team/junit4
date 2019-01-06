@@ -95,9 +95,9 @@ public class ParentRunnerFilteringTest {
         fail("Expected 'NoTestsRemainException' due to complete filtering");
     }
 
-    public static class SuiteWithUnmodifyableChildList extends Suite {
+    public static class SuiteWithUnmodifiableChildList extends Suite {
 
-        public SuiteWithUnmodifyableChildList(
+        public SuiteWithUnmodifiableChildList(
                 Class<?> klass, RunnerBuilder builder)
                 throws InitializationError {
             super(klass, builder);
@@ -109,14 +109,14 @@ public class ParentRunnerFilteringTest {
         }
     }
 
-    @RunWith(SuiteWithUnmodifyableChildList.class)
+    @RunWith(SuiteWithUnmodifiableChildList.class)
     @SuiteClasses({ExampleTest.class})
-    public static class ExampleSuiteWithUnmodifyableChildList {
+    public static class ExampleSuiteWithUnmodifiableChildList {
     }
 
     @Test
-    public void testSuiteFilteringWithUnmodifyableChildList() throws Exception {
-        Runner runner = Request.aClass(ExampleSuiteWithUnmodifyableChildList.class)
+    public void testSuiteFilteringWithUnmodifiableChildList() throws Exception {
+        Runner runner = Request.aClass(ExampleSuiteWithUnmodifiableChildList.class)
                 .getRunner();
         Filter filter = notThisMethodName("test1");
         try {
