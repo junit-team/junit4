@@ -76,7 +76,7 @@ public class RunListener {
      *
      * <p>Note that not all runners will call this method, so runners should
      * be prepared to handle {@link #testStarted(Description)} calls for tests
-     * where there was no cooresponding {@code testSuiteStarted()} call for
+     * where there was no corresponding {@code testSuiteStarted()} call for
      * the parent {@code Description}.
      *
      * @param description the description of the test suite that is about to be run
