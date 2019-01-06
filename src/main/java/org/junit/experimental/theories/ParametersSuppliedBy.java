@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
  * 
  * In addition, annotations themselves can be annotated with
  * &#064;ParametersSuppliedBy, and then used similarly. ParameterSuppliedBy
- * annotations on parameters are detected by searching up this heirarchy such
+ * annotations on parameters are detected by searching up this hierarchy such
  * that these act as syntactic sugar, making:
  * 
  * <pre>
