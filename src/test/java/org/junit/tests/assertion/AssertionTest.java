@@ -782,7 +782,7 @@ public class AssertionTest {
     }
 
     @Test
-    public void objectsWithDiferentReferencesAreNotEqual() {
+    public void objectsWithDifferentReferencesAreNotEqual() {
         assertNotEquals(new Object(), new Object());
     }
 
