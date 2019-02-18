@@ -34,12 +34,10 @@ jobs:
       jdk: openjdk7
     - name: Java 8
       jdk: oraclejdk8
-    - name: Java 9
-      jdk: oraclejdk9
-    - name: Java 10
-      jdk: openjdk10
     - name: Java 11
       jdk: openjdk11
+    - name: Java 12
+      jdk: openjdk12
     - stage: deploy
       name: "Publish snapshot artifacts"
       addons:
