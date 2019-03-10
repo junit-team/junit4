@@ -30,6 +30,8 @@ import java.lang.annotation.Target;
  * undefined, in general. However, Rules defined by fields will always be applied
  * after Rules defined by methods, i.e. the Statements returned by the former will
  * be executed around those returned by the latter.
+ *
+ * <h3>Usage</h3>
  * <p>
  * For example, here is a test suite that connects to a server once before
  * all the test classes run, and disconnects after they are finished:
@@ -79,6 +81,26 @@ import java.lang.annotation.Target;
  * </pre>
  * <p>
  * For more information and more examples, see {@link org.junit.rules.TestRule}.
+ *
+ * <h3>Ordering</h3>
+ * <p>
+ * You can use {@link #order()} if you want to have control over the order in
+ * which the Rules are applied.
+ *
+ * <pre>
+ * public class ThreeClassRules {
+ *     &#064;ClassRule(order = 0)
+ *     public static LoggingRule outer = new LoggingRule("outer rule");
+ *
+ *     &#064;ClassRule(order = 1)
+ *     public static LoggingRule middle = new LoggingRule("middle rule");
+ *
+ *     &#064;ClassRule(order = 2)
+ *     public static LoggingRule inner = new LoggingRule("inner rule");
+ *
+ *     // ...
+ * }
+ * </pre>
  *
  * @since 4.9
  */

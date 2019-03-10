@@ -21,9 +21,9 @@ import java.lang.annotation.Target;
  * that depends on your JVM's implementation of the reflection API, which is
  * undefined, in general. Rules defined by fields will always be applied
  * after Rules defined by methods, i.e. the Statements returned by the former will
- * be executed around those returned by the latter. You can use a {@link org.junit.rules.RuleChain} 
- * if you want to have control over the order in which the Rules are applied.
+ * be executed around those returned by the latter.
  *
+ * <h3>Usage</h3>
  * <p>
  * For example, here is a test class that creates a temporary folder before
  * each test method, and deletes it after each:
@@ -62,6 +62,26 @@ import java.lang.annotation.Target;
  * <p>
  * For more information and more examples, see
  * {@link org.junit.rules.TestRule}.
+ *
+ * <h3>Ordering</h3>
+ * <p>
+ * You can use {@link #order()} if you want to have control over the order in
+ * which the Rules are applied.
+ *
+ * <pre>
+ * public class ThreeRules {
+ *     &#064;Rule(order = 0)
+ *     public LoggingRule outer = new LoggingRule("outer rule");
+ *
+ *     &#064;Rule(order = 1)
+ *     public LoggingRule middle = new LoggingRule("middle rule");
+ *
+ *     &#064;Rule(order = 2)
+ *     public LoggingRule inner = new LoggingRule("inner rule");
+ *
+ *     // ...
+ * }
+ * </pre>
  *
  * @since 4.7
  */
