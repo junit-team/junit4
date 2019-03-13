@@ -112,6 +112,7 @@ import org.junit.runners.model.Statement;
  * exception.
  * @since 4.7
  */
+@Deprecated
 public class ExpectedException implements TestRule {
     /**
      * Returns a {@linkplain TestRule rule} that expects no exception to
