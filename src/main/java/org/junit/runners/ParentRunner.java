@@ -550,7 +550,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     private static class ClassRuleCollector implements MemberValueConsumer<TestRule> {
         final List<RuleContainer.RuleEntry> entries = new ArrayList<RuleContainer.RuleEntry>();
 
-        public void accept(FrameworkMember member, TestRule value) {
+        public void accept(FrameworkMember<?> member, TestRule value) {
             ClassRule rule = member.getAnnotation(ClassRule.class);
             entries.add(new RuleContainer.RuleEntry(value, RuleContainer.RuleEntry.TYPE_TEST_RULE,
                     rule != null ? rule.order() : null));
