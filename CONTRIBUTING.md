@@ -37,8 +37,7 @@ The JUnit team is not accepting changes to the code under the following paths:
 * `test/java/junit/tests/framework`
 * `test/java/junit/tests/extensions`
 
-The reasoning is that the JUnit team feels that our users should focus on using either the JUnit4 APIs
-or the soon-to-be-released JUnit4 APIs.
+The reasoning is that the JUnit team feels that our users should focus on using either the JUnit4 or JUnit5 APIs.
 
 The team is also reluctant to accept changes that only update code from one code style to another.
 Generally the code in JUnit was approved by at least one person, so two people agreed that the style was reasonable.
