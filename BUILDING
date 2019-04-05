@@ -2,7 +2,7 @@ BUILDING FROM GITHUB:
 =====================
 
 git clone https://github.com/junit-team/junit4.git
-cd junit
+cd junit4
 mvn install
 
 BUILDING FROM JARS OR ZIPS:
