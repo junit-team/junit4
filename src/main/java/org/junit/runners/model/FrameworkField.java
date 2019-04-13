@@ -47,7 +47,7 @@ public class FrameworkField extends FrameworkMember<FrameworkField> {
 
     @Override
     public boolean isShadowedBy(FrameworkField otherMember) {
-        return isStatic() && otherMember.getName().equals(getName());
+        return otherMember.getName().equals(getName());
     }
 
     @Override

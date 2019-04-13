@@ -12,13 +12,7 @@ public abstract class FrameworkMember<T extends FrameworkMember<T>> implements
         Annotatable {
     abstract boolean isShadowedBy(T otherMember);
 
-    /**
-     * Check if this member is shadowed by any of the given members. If it
-     * is, the other member is removed.
-     * 
-     * @return member that should be used, or {@code null} if no member should be used.
-     */
-    final T handlePossibleShadowedMember(List<T> members) {
+    T handlePossibleBridgeMethod(List<T> members) {
         for (int i = members.size() - 1; i >=0; i--) {
             T otherMember = members.get(i);
             if (isShadowedBy(otherMember)) {
@@ -36,11 +30,6 @@ public abstract class FrameworkMember<T extends FrameworkMember<T>> implements
             }
         }
         // No shadow or bridge method found. The caller should add *this* member.
-        return self();
-    }
-
-    @SuppressWarnings("unchecked")
-    private T self() {
         return (T) this;
     }
 
