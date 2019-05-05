@@ -924,7 +924,7 @@ public class Assert {
      * values
      * @see org.hamcrest.CoreMatchers
      * @see org.hamcrest.MatcherAssert
-     * @deprecated use {@code org.hamcrest.junit.MatcherAssert.assertThat()}
+     * @deprecated use {@code org.hamcrest.MatcherAssert.assertThat()}
      */
     @Deprecated
     public static <T> void assertThat(T actual, Matcher<? super T> matcher) {
@@ -958,7 +958,7 @@ public class Assert {
      * values
      * @see org.hamcrest.CoreMatchers
      * @see org.hamcrest.MatcherAssert
-     * @deprecated use {@code org.hamcrest.junit.MatcherAssert.assertThat()}
+     * @deprecated use {@code org.hamcrest.MatcherAssert.assertThat()}
      */
     @Deprecated
     public static <T> void assertThat(String reason, T actual,
