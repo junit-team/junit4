@@ -62,11 +62,9 @@ public final class AnnotationsValidator implements TestClassValidator {
             for (Annotation annotation : annotatable.getAnnotations()) {
                 Class<? extends Annotation> annotationType = annotation
                         .annotationType();
-                ValidateWith validateWith = annotationType
-                        .getAnnotation(ValidateWith.class);
-                if (validateWith != null) {
+                if (annotationType.isAssignableFrom(ValidateWith.class)) {
                     AnnotationValidator annotationValidator = ANNOTATION_VALIDATOR_FACTORY
-                            .createAnnotationValidator(validateWith);
+                            .createAnnotationValidator((ValidateWith) annotation);
                     List<Exception> errors= validateAnnotatable(
                             annotationValidator, annotatable);
                     validationErrors.addAll(errors);
