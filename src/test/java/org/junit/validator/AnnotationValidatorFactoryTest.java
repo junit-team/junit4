@@ -20,7 +20,7 @@ public class AnnotationValidatorFactoryTest {
     }
 
     @ValidateWith(value = Validator.class)
-    public static class SampleTestWithValidator {
+    public @interface SampleTestWithValidator {
     }
 
     public static class Validator extends AnnotationValidator {
@@ -36,7 +36,7 @@ public class AnnotationValidatorFactoryTest {
     }
 
     @ValidateWith(value = ValidatorThatThrowsException.class)
-    public static class SampleTestWithValidatorThatThrowsException {
+    public @interface SampleTestWithValidatorThatThrowsException {
     }
 
     public static class ValidatorThatThrowsException extends AnnotationValidator {
