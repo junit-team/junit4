@@ -53,12 +53,13 @@ import org.junit.runners.model.Statement;
  *                          .around(new LoggingRule("inner rule"));
  * </pre>
  *
- * @deprecated Since 4.13 ordering of rules can be naturally specified with an annotation attribute.
+ * In tests consider specifying the order of rules with the order attribute in the {@code Rule} and
+ * {@code ClassRule} annotations instead of using {@code RuleChain}.
+ *
  * @see org.junit.Rule#order()
  * @see org.junit.ClassRule#order()
  * @since 4.10
  */
-@Deprecated
 public class RuleChain implements TestRule {
     private static final RuleChain EMPTY_CHAIN = new RuleChain(
             Collections.<TestRule>emptyList());
