@@ -159,7 +159,17 @@ public class AssumptionTest {
             Assume.assumeTrue(false);
             fail("should throw AssumptionViolatedException");
         } catch (AssumptionViolatedException e) {
-            // expected
+            assertEquals("got: <false>, expected: is <true>", e.getMessage());
+        }
+    }
+
+    @Test
+    public void assumeFalseWorks() {
+        try {
+            Assume.assumeFalse(true);
+            fail("should throw AssumptionViolatedException");
+        } catch (AssumptionViolatedException e) {
+            assertEquals("got: <true>, expected: is <false>", e.getMessage());
         }
     }
 
