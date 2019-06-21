@@ -7,7 +7,7 @@ update documentation...
     but the same component tests, to co-exist
 
 * update the build process
-    * update site for plug-in version?
+    * update site for plug-in version????
 * Ant
 	* Basic task
 * support testing run once initialization code e.g. class Foo {{...}}
