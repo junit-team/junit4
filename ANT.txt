@@ -1,7 +1,3 @@
-<<<<<<< .merge_file_a03768
 It is a build software
 
 
-=======
-It is a build software ,
->>>>>>> .merge_file_a11144
