@@ -1,6 +1,5 @@
 * update documentation
 	* new cook's tour
-	new cook's tourr
 	* update Test Infected
 * Should there be a "prefix" annotation for Suites?
   * This would allow two Suites with different BeforeClass/AfterClass behaviors,
