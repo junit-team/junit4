@@ -1,4 +1,2 @@
-ANT called Another Neat tool is a build software which is widely used in IT industries...
-
-
+(ANT) is a build software which is vastly used in the IT fieldsss
 
