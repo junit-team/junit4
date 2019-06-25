@@ -2,4 +2,3 @@
    ==  Notices and attributions required by libraries that the project depends on   ==
    ===================================================================================
 
- The JUnit depends on Java  (http://hamcrest.org/JavaHamcrest/).
