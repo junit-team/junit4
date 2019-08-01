@@ -1,5 +1,6 @@
 package org.junit;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.junit.function.ThrowingRunnable;
@@ -107,8 +108,8 @@ public class Assert {
      * @param expected expected value
      * @param actual actual value
      */
-    public static void assertEquals(String message, Object expected,
-            Object actual) {
+    public static void assertEquals(String message, @Nullable Object expected,
+            @Nullable Object actual) {
         if (equalsRegardingNull(expected, actual)) {
             return;
         }
@@ -121,7 +122,7 @@ public class Assert {
         }
     }
 
-    private static boolean equalsRegardingNull(Object expected, Object actual) {
+    private static boolean equalsRegardingNull(@Nullable Object expected, @Nullable Object actual) {
         if (expected == null) {
             return actual == null;
         }
@@ -709,7 +710,7 @@ public class Assert {
      * okay)
      * @param object Object to check or <code>null</code>
      */
-    public static void assertNotNull(String message, Object object) {
+    public static void assertNotNull(String message, @Nullable Object object) {
         assertTrue(message, object != null);
     }
 
@@ -731,7 +732,7 @@ public class Assert {
      * okay)
      * @param object Object to check or <code>null</code>
      */
-    public static void assertNull(String message, Object object) {
+    public static void assertNull(String message, @Nullable Object object) {
         if (object == null) {
             return;
         }
@@ -857,7 +858,7 @@ public class Assert {
         return className == null ? value.getName() : className;
     }
 
-    private static String formatClassAndValue(Object value, String valueString) {
+    private static String formatClassAndValue(@Nullable Object value, String valueString) {
         String className = value == null ? "null" : value.getClass().getName();
         return className + "<" + valueString + ">";
     }

@@ -1,5 +1,6 @@
 package org.junit.runners.parameterized;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import static java.util.Collections.unmodifiableList;
 import static org.junit.internal.Checks.notNull;
 
@@ -53,7 +54,7 @@ public class TestWithParameters {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
         if (this == obj) {
             return true;
         }

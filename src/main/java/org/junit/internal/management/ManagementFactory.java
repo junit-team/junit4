@@ -1,5 +1,6 @@
 package org.junit.internal.management;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.internal.Classes;
 
 import java.lang.reflect.InvocationTargetException;
@@ -9,14 +10,14 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class ManagementFactory {
   private static final class FactoryHolder {
-    private static final Class<?> MANAGEMENT_FACTORY_CLASS;
+    private static final @Nullable Class<?> MANAGEMENT_FACTORY_CLASS;
 
     static {
       Class<?> managementFactoryClass = null;
       try {
         managementFactoryClass = Classes.getClass("java.lang.management.ManagementFactory");
       } catch (ClassNotFoundException e) {
-        // do nothing, managementFactoryClass will be none on failure
+        // do nothing, managementFactoryClass will be null on failure
       }
       MANAGEMENT_FACTORY_CLASS = managementFactoryClass;
     }

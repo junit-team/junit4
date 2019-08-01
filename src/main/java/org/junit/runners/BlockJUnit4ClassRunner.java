@@ -1,5 +1,6 @@
 package org.junit.runners;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import static org.junit.internal.runners.rules.RuleMemberValidator.RULE_METHOD_VALIDATOR;
 import static org.junit.internal.runners.rules.RuleMemberValidator.RULE_VALIDATOR;
 
@@ -438,7 +439,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
         return collector.result;
     }
 
-    private Class<? extends Throwable> getExpectedException(Test annotation) {
+    private Class<? extends Throwable> getExpectedException(@Nullable Test annotation) {
         if (annotation == null || annotation.expected() == None.class) {
             return null;
         } else {
@@ -446,7 +447,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
         }
     }
 
-    private long getTimeout(Test annotation) {
+    private long getTimeout(@Nullable Test annotation) {
         if (annotation == null) {
             return 0;
         }

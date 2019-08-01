@@ -1,5 +1,6 @@
 package org.junit.experimental.theories;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -63,7 +64,7 @@ public class ParameterSignature {
         this.annotations = annotations;
     }
 
-    public boolean canAcceptValue(Object candidate) {
+    public boolean canAcceptValue(@Nullable Object candidate) {
         return (candidate == null) ? !type.isPrimitive() : canAcceptType(candidate.getClass());
     }
 

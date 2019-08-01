@@ -1,5 +1,6 @@
 package org.junit.experimental.categories;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Arrays;
@@ -286,7 +287,7 @@ public class Categories extends Suite {
             return testClass == null ? null : Description.createSuiteDescription(testClass);
         }
 
-        private static Class<?>[] directCategories(Description description) {
+        private static Class<?>[] directCategories(@Nullable Description description) {
             if (description == null) {
                 return new Class<?>[0];
             }
@@ -348,7 +349,7 @@ public class Categories extends Suite {
         return false;
     }
 
-    private static Set<Class<?>> createSet(Class<?>[] classes) {
+    private static Set<Class<?>> createSet(Class<?> @Nullable [] classes) {
         // Not throwing a NPE if t is null is a bad idea, but it's the behavior from JUnit 4.12
         // for include(boolean, Class<?>...) and exclude(boolean, Class<?>...)
         if (classes == null || classes.length == 0) {
@@ -365,7 +366,7 @@ public class Categories extends Suite {
             : new LinkedHashSet<Class<?>>(Arrays.asList(classes));
     }
 
-    private static Set<Class<?>> nullableClassToSet(Class<?> nullableClass) {
+    private static Set<Class<?>> nullableClassToSet(@Nullable Class<?> nullableClass) {
         // Not throwing a NPE if t is null is a bad idea, but it's the behavior from JUnit 4.11
         // for CategoryFilter(Class<?> includedCategory, Class<?> excludedCategory)
         return nullableClass == null

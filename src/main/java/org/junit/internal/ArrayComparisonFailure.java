@@ -1,5 +1,6 @@
 package org.junit.internal;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class ArrayComparisonFailure extends AssertionError {
      * See https://github.com/junit-team/junit4/issues/976
      */
     private final List<Integer> fIndices = new ArrayList<Integer>();
-    private final String fMessage;
+    private final @Nullable String fMessage;
     private final AssertionError fCause;
 
     /**

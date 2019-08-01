@@ -1,5 +1,6 @@
 package org.junit.runners.model;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import static java.lang.reflect.Modifier.isStatic;
 import static org.junit.internal.MethodSorter.NAME_ASCENDING;
 
@@ -32,7 +33,7 @@ public class TestClass implements Annotatable {
     private static final FieldComparator FIELD_COMPARATOR = new FieldComparator();
     private static final MethodComparator METHOD_COMPARATOR = new MethodComparator();
 
-    private final Class<?> clazz;
+    private final @Nullable Class<?> clazz;
     private final Map<Class<? extends Annotation>, List<FrameworkMethod>> methodsForAnnotations;
     private final Map<Class<? extends Annotation>, List<FrameworkField>> fieldsForAnnotations;
 

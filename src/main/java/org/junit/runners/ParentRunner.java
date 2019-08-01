@@ -1,5 +1,6 @@
 package org.junit.runners;
 
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import static org.junit.internal.Checks.notNull;
 import static org.junit.internal.runners.rules.RuleMemberValidator.CLASS_RULE_METHOD_VALIDATOR;
 import static org.junit.internal.runners.rules.RuleMemberValidator.CLASS_RULE_VALIDATOR;
@@ -71,7 +72,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     private final TestClass testClass;
 
     // Guarded by childrenLock
-    private volatile List<T> filteredChildren = null;
+    private volatile @MonotonicNonNull List<T> filteredChildren = null;
 
     private volatile RunnerScheduler scheduler = new RunnerScheduler() {
         public void schedule(Runnable childStatement) {

@@ -1,5 +1,6 @@
 package org.junit.runners;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -319,7 +320,7 @@ public class Parameterized extends Suite {
     }
 
     private void validatePublicStaticVoidMethods(
-            Class<? extends Annotation> annotation, Integer parameterCount,
+            Class<? extends Annotation> annotation, @Nullable Integer parameterCount,
             List<Throwable> errors) {
         List<FrameworkMethod> methods = getTestClass().getAnnotatedMethods(annotation);
         for (FrameworkMethod fm : methods) {

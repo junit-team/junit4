@@ -1,5 +1,7 @@
 package junit.framework;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 /**
  * A set of assert methods.  Messages are only displayed when an assert fails.
  *
@@ -68,7 +70,7 @@ public class Assert {
      * Asserts that two objects are equal. If they are not
      * an AssertionFailedError is thrown with the given message.
      */
-    static public void assertEquals(String message, Object expected, Object actual) {
+    static public void assertEquals(String message, @Nullable Object expected, @Nullable Object actual) {
         if (expected == null && actual == null) {
             return;
         }
@@ -89,7 +91,7 @@ public class Assert {
     /**
      * Asserts that two Strings are equal.
      */
-    static public void assertEquals(String message, String expected, String actual) {
+    static public void assertEquals(String message, @Nullable String expected, @Nullable String actual) {
         if (expected == null && actual == null) {
             return;
         }
@@ -103,7 +105,7 @@ public class Assert {
     /**
      * Asserts that two Strings are equal.
      */
-    static public void assertEquals(String expected, String actual) {
+    static public void assertEquals(@Nullable String expected, @Nullable String actual) {
         assertEquals(null, expected, actual);
     }
 
@@ -263,7 +265,7 @@ public class Assert {
      *
      * @param object Object to check or <code>null</code>
      */
-    static public void assertNull(Object object) {
+    static public void assertNull(@Nullable Object object) {
         if (object != null) {
             assertNull("Expected: <null> but was: " + object.toString(), object);
         }
@@ -273,7 +275,7 @@ public class Assert {
      * Asserts that an object is null.  If it is not
      * an AssertionFailedError is thrown with the given message.
      */
-    static public void assertNull(String message, Object object) {
+    static public void assertNull(String message, @Nullable Object object) {
         assertTrue(message, object == null);
     }
 
@@ -315,7 +317,7 @@ public class Assert {
         assertNotSame(null, expected, actual);
     }
 
-    static public void failSame(String message) {
+    static public void failSame(@Nullable String message) {
         String formatted = (message != null) ? message + " " : "";
         fail(formatted + "expected not same");
     }

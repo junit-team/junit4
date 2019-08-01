@@ -1,5 +1,6 @@
 package org.junit.experimental.theories;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import static java.lang.String.format;
 
 public abstract class PotentialAssignment {
@@ -14,7 +15,7 @@ public abstract class PotentialAssignment {
         }
     }
 
-    public static PotentialAssignment forValue(final String name, final Object value) {
+    public static PotentialAssignment forValue(final String name, final @Nullable Object value) {
         return new PotentialAssignment() {
             @Override
             public Object getValue() {

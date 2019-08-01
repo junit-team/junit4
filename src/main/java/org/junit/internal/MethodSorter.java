@@ -1,5 +1,6 @@
 package org.junit.internal;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -62,7 +63,7 @@ public class MethodSorter {
     private MethodSorter() {
     }
 
-    private static Comparator<Method> getSorter(FixMethodOrder fixMethodOrder) {
+    private static Comparator<Method> getSorter(@Nullable FixMethodOrder fixMethodOrder) {
         if (fixMethodOrder == null) {
             return DEFAULT;
         }
