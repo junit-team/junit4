@@ -242,7 +242,7 @@
                     <target>${jdkVersion}</target>
                     <testSource>${jdkVersion}</testSource>
                     <testTarget>${jdkVersion}</testTarget>
-                    <compilerVersion>1.5</compilerVersion>
+                    <compilerVersion>1.8</compilerVersion>
                     <showDeprecation>true</showDeprecation>
                     <showWarnings>true</showWarnings>
                     <debug>true</debug>
@@ -577,7 +577,8 @@
             <id>restrict-doclint</id>
             <!-- doclint is only supported by JDK 8 -->
             <activation>
-                <jdk>[1.8,)</jdk>
+	        <!-- disable doclint because it causes build failures -->
+                <jdk>[999,)</jdk>
             </activation>
             <build>
                 <plugins>
