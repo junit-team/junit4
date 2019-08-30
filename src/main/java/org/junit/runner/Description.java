@@ -110,6 +110,18 @@ public class Description implements Serializable {
         return new Description(null, formatDisplayName(name, className), uniqueId);
     }
 
+    /**
+     * Create a <code>Description</code> of a single test named <code>name</code> in the class <code>clazz</code>.
+     * Generally, this will be a leaf <code>Description</code>.
+     *
+     * @param name the name of the test (a method name for test annotated with {@link org.junit.Test})
+     * @return a <code>Description</code> named <code>name</code>
+     */
+    public static Description createTestDescription(String className, String name, Serializable uniqueId,
+                                                    Annotation... annotations) {
+        return new Description(null, formatDisplayName(name, className), uniqueId, annotations);
+    }
+
     private static String formatDisplayName(String name, String className) {
         return String.format("%s(%s)", name, className);
     }

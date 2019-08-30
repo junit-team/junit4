@@ -2,9 +2,9 @@ package org.junit.tests.experimental.max;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
 
 import java.lang.annotation.Annotation;
 import java.net.URL;
@@ -67,9 +67,27 @@ public class DescriptionTest {
     }
 
     @Test
+    public void parseClassNameAndMethodUniqueIdWithAnnotations() {
+        Description description = Description.createTestDescription("not a class name", "aTestMethod", 123,
+            DescriptionTest.class.getAnnotations());
+
+        assertThat(description.getClassName(), equalTo("not a class name"));
+        assertThat(description.getMethodName(), equalTo("aTestMethod"));
+        assertThat(description.getAnnotations().size(), equalTo(0));
+    }
+
+    @Test
     public void sameNamesButDifferentUniqueIdAreNotEqual() throws Exception {
         assertThat(Description.createTestDescription("not a class name", "aTestMethod", 1),
                 not(equalTo(Description.createTestDescription("not a class name", "aTestMethod", 2))));
+    }
+
+    @Test
+    public void sameNamesButDifferentUniqueIdAreNotEqualWithAnnotations() {
+        assertThat(Description.createTestDescription("not a class name", "aTestMethod", 1,
+            DescriptionTest.class.getAnnotations()),
+            not(equalTo(Description.createTestDescription("not a class name", "aTestMethod", 2,
+                DescriptionTest.class.getAnnotations()))));
     }
 
     @Test
