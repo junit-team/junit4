@@ -69,7 +69,7 @@ public class DescriptionTest {
     @Test
     public void parseClassNameAndMethodUniqueIdWithAnnotations() {
         Description description = Description.createTestDescription("not a class name", "aTestMethod", 123,
-            DescriptionTest.class.getAnnotations());
+            this.getClass().getAnnotations());
 
         assertThat(description.getClassName(), equalTo("not a class name"));
         assertThat(description.getMethodName(), equalTo("aTestMethod"));
@@ -85,7 +85,7 @@ public class DescriptionTest {
     @Test
     public void sameNamesButDifferentUniqueIdAreNotEqualWithAnnotations() {
         assertThat(Description.createTestDescription("not a class name", "aTestMethod", 1,
-            DescriptionTest.class.getAnnotations()),
+            this.getClass().getAnnotations()),
             not(equalTo(Description.createTestDescription("not a class name", "aTestMethod", 2,
                 DescriptionTest.class.getAnnotations()))));
     }
