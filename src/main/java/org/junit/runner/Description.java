@@ -114,7 +114,10 @@ public class Description implements Serializable {
      * Create a <code>Description</code> of a single test named <code>name</code> in the class <code>clazz</code>.
      * Generally, this will be a leaf <code>Description</code>.
      *
+     * @param className the class name of the test
      * @param name the name of the test (a method name for test annotated with {@link org.junit.Test})
+     * @param uniqueId an arbitrary object used to define uniqueness (in {@link #equals(Object)}
+     * @param annotations meta-data about the test, for downstream interpreters
      * @return a <code>Description</code> named <code>name</code>
      */
     public static Description createTestDescription(String className, String name, Serializable uniqueId,
