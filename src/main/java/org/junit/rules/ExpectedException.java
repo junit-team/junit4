@@ -178,10 +178,7 @@ public class ExpectedException implements TestRule {
      *     thrown.expect(is(e));
      *     throw e;
      * }</pre>
-     *
-     * @deprecated use {@code org.hamcrest.junit.ExpectedException.expect()}
      */
-    @Deprecated
     public void expect(Matcher<?> matcher) {
         matcherBuilder.add(matcher);
     }
@@ -220,10 +217,7 @@ public class ExpectedException implements TestRule {
      *     thrown.expectMessage(startsWith(&quot;What&quot;));
      *     throw new NullPointerException(&quot;What happened?&quot;);
      * }</pre>
-     *
-     * @deprecated use {@code org.hamcrest.junit.ExpectedException.expectMessage()}
      */
-    @Deprecated
     public void expectMessage(Matcher<String> matcher) {
         expect(hasMessage(matcher));
     }
@@ -237,10 +231,7 @@ public class ExpectedException implements TestRule {
      *     thrown.expectCause(is(expectedCause));
      *     throw new IllegalArgumentException(&quot;What happened?&quot;, cause);
      * }</pre>
-     *
-     * @deprecated use {@code org.hamcrest.junit.ExpectedException.expectCause()}
      */
-    @Deprecated
     public void expectCause(Matcher<?> expectedCause) {
         expect(hasCause(expectedCause));
     }

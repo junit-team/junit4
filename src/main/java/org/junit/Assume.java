@@ -100,9 +100,7 @@ public class Assume {
      * @param matcher an expression, built of {@link Matcher}s, specifying allowed values
      * @see org.hamcrest.CoreMatchers
      * @see org.junit.matchers.JUnitMatchers
-     * @deprecated use {@code org.hamcrest.junit.MatcherAssume.assumeThat()}
      */
-    @Deprecated
     public static <T> void assumeThat(T actual, Matcher<T> matcher) {
         if (!matcher.matches(actual)) {
             throw new AssumptionViolatedException(actual, matcher);
@@ -125,9 +123,7 @@ public class Assume {
      * @param matcher an expression, built of {@link Matcher}s, specifying allowed values
      * @see org.hamcrest.CoreMatchers
      * @see org.junit.matchers.JUnitMatchers
-     * @deprecated use {@code org.hamcrest.junit.MatcherAssume.assumeThat()}
      */
-    @Deprecated
     public static <T> void assumeThat(String message, T actual, Matcher<T> matcher) {
         if (!matcher.matches(actual)) {
             throw new AssumptionViolatedException(message, actual, matcher);
