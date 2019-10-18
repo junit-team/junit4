@@ -106,18 +106,19 @@ import org.junit.runners.model.Statement;
  * exception. E.g. "Test doesn't throw %s." will fail with the error message
  * "Test doesn't throw an instance of foo.".
  *
- * @deprecated Since 4.13
- * {@link org.junit.Assert#assertThrows(Class, org.junit.function.ThrowingRunnable)
- * Assert.assertThrows} can be used to verify that your code throws a specific
- * exception.
  * @since 4.7
  */
-@Deprecated
 public class ExpectedException implements TestRule {
     /**
      * Returns a {@linkplain TestRule rule} that expects no exception to
      * be thrown (identical to behavior without this rule).
+     *
+     * @deprecated Since 4.13
+     * {@link org.junit.Assert#assertThrows(Class, org.junit.function.ThrowingRunnable)
+     * Assert.assertThrows} can be used to verify that your code throws a specific
+     * exception.
      */
+    @Deprecated
     public static ExpectedException none() {
         return new ExpectedException();
     }
