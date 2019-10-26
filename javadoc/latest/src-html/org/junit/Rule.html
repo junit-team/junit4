@@ -24,9 +24,9 @@
 <FONT color="green">021</FONT>     * that depends on your JVM's implementation of the reflection API, which is<a name="line.21"></a>
 <FONT color="green">022</FONT>     * undefined, in general. Rules defined by fields will always be applied<a name="line.22"></a>
 <FONT color="green">023</FONT>     * after Rules defined by methods, i.e. the Statements returned by the former will<a name="line.23"></a>
-<FONT color="green">024</FONT>     * be executed around those returned by the latter. You can use a {@link org.junit.rules.RuleChain} <a name="line.24"></a>
-<FONT color="green">025</FONT>     * if you want to have control over the order in which the Rules are applied.<a name="line.25"></a>
-<FONT color="green">026</FONT>     *<a name="line.26"></a>
+<FONT color="green">024</FONT>     * be executed around those returned by the latter.<a name="line.24"></a>
+<FONT color="green">025</FONT>     *<a name="line.25"></a>
+<FONT color="green">026</FONT>     * &lt;h3&gt;Usage&lt;/h3&gt;<a name="line.26"></a>
 <FONT color="green">027</FONT>     * &lt;p&gt;<a name="line.27"></a>
 <FONT color="green">028</FONT>     * For example, here is a test class that creates a temporary folder before<a name="line.28"></a>
 <FONT color="green">029</FONT>     * each test method, and deletes it after each:<a name="line.29"></a>
@@ -66,22 +66,42 @@
 <FONT color="green">063</FONT>     * For more information and more examples, see<a name="line.63"></a>
 <FONT color="green">064</FONT>     * {@link org.junit.rules.TestRule}.<a name="line.64"></a>
 <FONT color="green">065</FONT>     *<a name="line.65"></a>
-<FONT color="green">066</FONT>     * @since 4.7<a name="line.66"></a>
-<FONT color="green">067</FONT>     */<a name="line.67"></a>
-<FONT color="green">068</FONT>    @Retention(RetentionPolicy.RUNTIME)<a name="line.68"></a>
-<FONT color="green">069</FONT>    @Target({ElementType.FIELD, ElementType.METHOD})<a name="line.69"></a>
-<FONT color="green">070</FONT>    public @interface Rule {<a name="line.70"></a>
-<FONT color="green">071</FONT>    <a name="line.71"></a>
-<FONT color="green">072</FONT>        int DEFAULT_ORDER = -1;<a name="line.72"></a>
-<FONT color="green">073</FONT>    <a name="line.73"></a>
-<FONT color="green">074</FONT>        /**<a name="line.74"></a>
-<FONT color="green">075</FONT>         * Specifies the order in which rules are applied. The rules with a higher value are inner.<a name="line.75"></a>
-<FONT color="green">076</FONT>         *<a name="line.76"></a>
-<FONT color="green">077</FONT>         * @since 4.13<a name="line.77"></a>
-<FONT color="green">078</FONT>         */<a name="line.78"></a>
-<FONT color="green">079</FONT>        int order() default DEFAULT_ORDER;<a name="line.79"></a>
-<FONT color="green">080</FONT>    <a name="line.80"></a>
-<FONT color="green">081</FONT>    }<a name="line.81"></a>
+<FONT color="green">066</FONT>     * &lt;h3&gt;Ordering&lt;/h3&gt;<a name="line.66"></a>
+<FONT color="green">067</FONT>     * &lt;p&gt;<a name="line.67"></a>
+<FONT color="green">068</FONT>     * You can use {@link #order()} if you want to have control over the order in<a name="line.68"></a>
+<FONT color="green">069</FONT>     * which the Rules are applied.<a name="line.69"></a>
+<FONT color="green">070</FONT>     *<a name="line.70"></a>
+<FONT color="green">071</FONT>     * &lt;pre&gt;<a name="line.71"></a>
+<FONT color="green">072</FONT>     * public class ThreeRules {<a name="line.72"></a>
+<FONT color="green">073</FONT>     *     &amp;#064;Rule(order = 0)<a name="line.73"></a>
+<FONT color="green">074</FONT>     *     public LoggingRule outer = new LoggingRule("outer rule");<a name="line.74"></a>
+<FONT color="green">075</FONT>     *<a name="line.75"></a>
+<FONT color="green">076</FONT>     *     &amp;#064;Rule(order = 1)<a name="line.76"></a>
+<FONT color="green">077</FONT>     *     public LoggingRule middle = new LoggingRule("middle rule");<a name="line.77"></a>
+<FONT color="green">078</FONT>     *<a name="line.78"></a>
+<FONT color="green">079</FONT>     *     &amp;#064;Rule(order = 2)<a name="line.79"></a>
+<FONT color="green">080</FONT>     *     public LoggingRule inner = new LoggingRule("inner rule");<a name="line.80"></a>
+<FONT color="green">081</FONT>     *<a name="line.81"></a>
+<FONT color="green">082</FONT>     *     // ...<a name="line.82"></a>
+<FONT color="green">083</FONT>     * }<a name="line.83"></a>
+<FONT color="green">084</FONT>     * &lt;/pre&gt;<a name="line.84"></a>
+<FONT color="green">085</FONT>     *<a name="line.85"></a>
+<FONT color="green">086</FONT>     * @since 4.7<a name="line.86"></a>
+<FONT color="green">087</FONT>     */<a name="line.87"></a>
+<FONT color="green">088</FONT>    @Retention(RetentionPolicy.RUNTIME)<a name="line.88"></a>
+<FONT color="green">089</FONT>    @Target({ElementType.FIELD, ElementType.METHOD})<a name="line.89"></a>
+<FONT color="green">090</FONT>    public @interface Rule {<a name="line.90"></a>
+<FONT color="green">091</FONT>    <a name="line.91"></a>
+<FONT color="green">092</FONT>        int DEFAULT_ORDER = -1;<a name="line.92"></a>
+<FONT color="green">093</FONT>    <a name="line.93"></a>
+<FONT color="green">094</FONT>        /**<a name="line.94"></a>
+<FONT color="green">095</FONT>         * Specifies the order in which rules are applied. The rules with a higher value are inner.<a name="line.95"></a>
+<FONT color="green">096</FONT>         *<a name="line.96"></a>
+<FONT color="green">097</FONT>         * @since 4.13<a name="line.97"></a>
+<FONT color="green">098</FONT>         */<a name="line.98"></a>
+<FONT color="green">099</FONT>        int order() default DEFAULT_ORDER;<a name="line.99"></a>
+<FONT color="green">100</FONT>    <a name="line.100"></a>
+<FONT color="green">101</FONT>    }<a name="line.101"></a>
 
 
 

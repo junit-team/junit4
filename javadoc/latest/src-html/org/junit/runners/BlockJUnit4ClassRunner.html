@@ -322,157 +322,158 @@
 <FONT color="green">319</FONT>            statement = withBefores(method, test, statement);<a name="line.319"></a>
 <FONT color="green">320</FONT>            statement = withAfters(method, test, statement);<a name="line.320"></a>
 <FONT color="green">321</FONT>            statement = withRules(method, test, statement);<a name="line.321"></a>
-<FONT color="green">322</FONT>            return statement;<a name="line.322"></a>
-<FONT color="green">323</FONT>        }<a name="line.323"></a>
-<FONT color="green">324</FONT>    <a name="line.324"></a>
-<FONT color="green">325</FONT>        //<a name="line.325"></a>
-<FONT color="green">326</FONT>        // Statement builders<a name="line.326"></a>
-<FONT color="green">327</FONT>        //<a name="line.327"></a>
-<FONT color="green">328</FONT>    <a name="line.328"></a>
-<FONT color="green">329</FONT>        /**<a name="line.329"></a>
-<FONT color="green">330</FONT>         * Returns a {@link Statement} that invokes {@code method} on {@code test}<a name="line.330"></a>
-<FONT color="green">331</FONT>         */<a name="line.331"></a>
-<FONT color="green">332</FONT>        protected Statement methodInvoker(FrameworkMethod method, Object test) {<a name="line.332"></a>
-<FONT color="green">333</FONT>            return new InvokeMethod(method, test);<a name="line.333"></a>
-<FONT color="green">334</FONT>        }<a name="line.334"></a>
-<FONT color="green">335</FONT>    <a name="line.335"></a>
-<FONT color="green">336</FONT>        /**<a name="line.336"></a>
-<FONT color="green">337</FONT>         * Returns a {@link Statement}: if {@code method}'s {@code @Test} annotation<a name="line.337"></a>
-<FONT color="green">338</FONT>         * has the {@link Test#expected()} attribute, return normally only if {@code next}<a name="line.338"></a>
-<FONT color="green">339</FONT>         * throws an exception of the correct type, and throw an exception<a name="line.339"></a>
-<FONT color="green">340</FONT>         * otherwise.<a name="line.340"></a>
-<FONT color="green">341</FONT>         */<a name="line.341"></a>
-<FONT color="green">342</FONT>        protected Statement possiblyExpectingExceptions(FrameworkMethod method,<a name="line.342"></a>
-<FONT color="green">343</FONT>                Object test, Statement next) {<a name="line.343"></a>
-<FONT color="green">344</FONT>            Test annotation = method.getAnnotation(Test.class);<a name="line.344"></a>
-<FONT color="green">345</FONT>            Class&lt;? extends Throwable&gt; expectedExceptionClass = getExpectedException(annotation);<a name="line.345"></a>
-<FONT color="green">346</FONT>            return expectedExceptionClass != null ? new ExpectException(next, expectedExceptionClass) : next;<a name="line.346"></a>
-<FONT color="green">347</FONT>        }<a name="line.347"></a>
-<FONT color="green">348</FONT>    <a name="line.348"></a>
-<FONT color="green">349</FONT>        /**<a name="line.349"></a>
-<FONT color="green">350</FONT>         * Returns a {@link Statement}: if {@code method}'s {@code @Test} annotation<a name="line.350"></a>
-<FONT color="green">351</FONT>         * has the {@code timeout} attribute, throw an exception if {@code next}<a name="line.351"></a>
-<FONT color="green">352</FONT>         * takes more than the specified number of milliseconds.<a name="line.352"></a>
-<FONT color="green">353</FONT>         * @deprecated<a name="line.353"></a>
-<FONT color="green">354</FONT>         */<a name="line.354"></a>
-<FONT color="green">355</FONT>        @Deprecated<a name="line.355"></a>
-<FONT color="green">356</FONT>        protected Statement withPotentialTimeout(FrameworkMethod method,<a name="line.356"></a>
-<FONT color="green">357</FONT>                Object test, Statement next) {<a name="line.357"></a>
-<FONT color="green">358</FONT>            long timeout = getTimeout(method.getAnnotation(Test.class));<a name="line.358"></a>
-<FONT color="green">359</FONT>            if (timeout &lt;= 0) {<a name="line.359"></a>
-<FONT color="green">360</FONT>                return next;<a name="line.360"></a>
-<FONT color="green">361</FONT>            }<a name="line.361"></a>
-<FONT color="green">362</FONT>            return FailOnTimeout.builder()<a name="line.362"></a>
-<FONT color="green">363</FONT>                   .withTimeout(timeout, TimeUnit.MILLISECONDS)<a name="line.363"></a>
-<FONT color="green">364</FONT>                   .build(next);<a name="line.364"></a>
-<FONT color="green">365</FONT>        }<a name="line.365"></a>
-<FONT color="green">366</FONT>    <a name="line.366"></a>
-<FONT color="green">367</FONT>        /**<a name="line.367"></a>
-<FONT color="green">368</FONT>         * Returns a {@link Statement}: run all non-overridden {@code @Before}<a name="line.368"></a>
-<FONT color="green">369</FONT>         * methods on this class and superclasses before running {@code next}; if<a name="line.369"></a>
-<FONT color="green">370</FONT>         * any throws an Exception, stop execution and pass the exception on.<a name="line.370"></a>
-<FONT color="green">371</FONT>         */<a name="line.371"></a>
-<FONT color="green">372</FONT>        protected Statement withBefores(FrameworkMethod method, Object target,<a name="line.372"></a>
-<FONT color="green">373</FONT>                Statement statement) {<a name="line.373"></a>
-<FONT color="green">374</FONT>            List&lt;FrameworkMethod&gt; befores = getTestClass().getAnnotatedMethods(<a name="line.374"></a>
-<FONT color="green">375</FONT>                    Before.class);<a name="line.375"></a>
-<FONT color="green">376</FONT>            return befores.isEmpty() ? statement : new RunBefores(statement,<a name="line.376"></a>
-<FONT color="green">377</FONT>                    befores, target);<a name="line.377"></a>
-<FONT color="green">378</FONT>        }<a name="line.378"></a>
-<FONT color="green">379</FONT>    <a name="line.379"></a>
-<FONT color="green">380</FONT>        /**<a name="line.380"></a>
-<FONT color="green">381</FONT>         * Returns a {@link Statement}: run all non-overridden {@code @After}<a name="line.381"></a>
-<FONT color="green">382</FONT>         * methods on this class and superclasses before running {@code next}; all<a name="line.382"></a>
-<FONT color="green">383</FONT>         * After methods are always executed: exceptions thrown by previous steps<a name="line.383"></a>
-<FONT color="green">384</FONT>         * are combined, if necessary, with exceptions from After methods into a<a name="line.384"></a>
-<FONT color="green">385</FONT>         * {@link MultipleFailureException}.<a name="line.385"></a>
-<FONT color="green">386</FONT>         */<a name="line.386"></a>
-<FONT color="green">387</FONT>        protected Statement withAfters(FrameworkMethod method, Object target,<a name="line.387"></a>
-<FONT color="green">388</FONT>                Statement statement) {<a name="line.388"></a>
-<FONT color="green">389</FONT>            List&lt;FrameworkMethod&gt; afters = getTestClass().getAnnotatedMethods(<a name="line.389"></a>
-<FONT color="green">390</FONT>                    After.class);<a name="line.390"></a>
-<FONT color="green">391</FONT>            return afters.isEmpty() ? statement : new RunAfters(statement, afters,<a name="line.391"></a>
-<FONT color="green">392</FONT>                    target);<a name="line.392"></a>
-<FONT color="green">393</FONT>        }<a name="line.393"></a>
-<FONT color="green">394</FONT>    <a name="line.394"></a>
-<FONT color="green">395</FONT>        private Statement withRules(FrameworkMethod method, Object target, Statement statement) {<a name="line.395"></a>
-<FONT color="green">396</FONT>            RuleContainer ruleContainer = new RuleContainer();<a name="line.396"></a>
-<FONT color="green">397</FONT>            CURRENT_RULE_CONTAINER.set(ruleContainer);<a name="line.397"></a>
-<FONT color="green">398</FONT>            try {<a name="line.398"></a>
-<FONT color="green">399</FONT>                List&lt;TestRule&gt; testRules = getTestRules(target);<a name="line.399"></a>
-<FONT color="green">400</FONT>                for (MethodRule each : rules(target)) {<a name="line.400"></a>
-<FONT color="green">401</FONT>                    if (!(each instanceof TestRule &amp;&amp; testRules.contains(each))) {<a name="line.401"></a>
-<FONT color="green">402</FONT>                        ruleContainer.add(each);<a name="line.402"></a>
-<FONT color="green">403</FONT>                    }<a name="line.403"></a>
-<FONT color="green">404</FONT>                }<a name="line.404"></a>
-<FONT color="green">405</FONT>                for (TestRule rule : testRules) {<a name="line.405"></a>
-<FONT color="green">406</FONT>                    ruleContainer.add(rule);<a name="line.406"></a>
-<FONT color="green">407</FONT>                }<a name="line.407"></a>
-<FONT color="green">408</FONT>            } finally {<a name="line.408"></a>
-<FONT color="green">409</FONT>                CURRENT_RULE_CONTAINER.remove();<a name="line.409"></a>
-<FONT color="green">410</FONT>            }<a name="line.410"></a>
-<FONT color="green">411</FONT>            return ruleContainer.apply(method, describeChild(method), target, statement);<a name="line.411"></a>
-<FONT color="green">412</FONT>        }<a name="line.412"></a>
-<FONT color="green">413</FONT>    <a name="line.413"></a>
-<FONT color="green">414</FONT>        /**<a name="line.414"></a>
-<FONT color="green">415</FONT>         * @param target the test case instance<a name="line.415"></a>
-<FONT color="green">416</FONT>         * @return a list of MethodRules that should be applied when executing this<a name="line.416"></a>
-<FONT color="green">417</FONT>         *         test<a name="line.417"></a>
-<FONT color="green">418</FONT>         */<a name="line.418"></a>
-<FONT color="green">419</FONT>        protected List&lt;MethodRule&gt; rules(Object target) {<a name="line.419"></a>
-<FONT color="green">420</FONT>            RuleCollector&lt;MethodRule&gt; collector = new RuleCollector&lt;MethodRule&gt;();<a name="line.420"></a>
-<FONT color="green">421</FONT>            getTestClass().collectAnnotatedMethodValues(target, Rule.class, MethodRule.class,<a name="line.421"></a>
-<FONT color="green">422</FONT>                    collector);<a name="line.422"></a>
-<FONT color="green">423</FONT>            getTestClass().collectAnnotatedFieldValues(target, Rule.class, MethodRule.class,<a name="line.423"></a>
-<FONT color="green">424</FONT>                    collector);<a name="line.424"></a>
-<FONT color="green">425</FONT>            return collector.result;<a name="line.425"></a>
-<FONT color="green">426</FONT>        }<a name="line.426"></a>
-<FONT color="green">427</FONT>    <a name="line.427"></a>
-<FONT color="green">428</FONT>        /**<a name="line.428"></a>
-<FONT color="green">429</FONT>         * @param target the test case instance<a name="line.429"></a>
-<FONT color="green">430</FONT>         * @return a list of TestRules that should be applied when executing this<a name="line.430"></a>
-<FONT color="green">431</FONT>         *         test<a name="line.431"></a>
-<FONT color="green">432</FONT>         */<a name="line.432"></a>
-<FONT color="green">433</FONT>        protected List&lt;TestRule&gt; getTestRules(Object target) {<a name="line.433"></a>
-<FONT color="green">434</FONT>            RuleCollector&lt;TestRule&gt; collector = new RuleCollector&lt;TestRule&gt;();<a name="line.434"></a>
-<FONT color="green">435</FONT>            getTestClass().collectAnnotatedMethodValues(target, Rule.class, TestRule.class, collector);<a name="line.435"></a>
-<FONT color="green">436</FONT>            getTestClass().collectAnnotatedFieldValues(target, Rule.class, TestRule.class, collector);<a name="line.436"></a>
-<FONT color="green">437</FONT>            return collector.result;<a name="line.437"></a>
-<FONT color="green">438</FONT>        }<a name="line.438"></a>
-<FONT color="green">439</FONT>    <a name="line.439"></a>
-<FONT color="green">440</FONT>        private Class&lt;? extends Throwable&gt; getExpectedException(Test annotation) {<a name="line.440"></a>
-<FONT color="green">441</FONT>            if (annotation == null || annotation.expected() == None.class) {<a name="line.441"></a>
-<FONT color="green">442</FONT>                return null;<a name="line.442"></a>
-<FONT color="green">443</FONT>            } else {<a name="line.443"></a>
-<FONT color="green">444</FONT>                return annotation.expected();<a name="line.444"></a>
-<FONT color="green">445</FONT>            }<a name="line.445"></a>
-<FONT color="green">446</FONT>        }<a name="line.446"></a>
-<FONT color="green">447</FONT>    <a name="line.447"></a>
-<FONT color="green">448</FONT>        private long getTimeout(Test annotation) {<a name="line.448"></a>
-<FONT color="green">449</FONT>            if (annotation == null) {<a name="line.449"></a>
-<FONT color="green">450</FONT>                return 0;<a name="line.450"></a>
-<FONT color="green">451</FONT>            }<a name="line.451"></a>
-<FONT color="green">452</FONT>            return annotation.timeout();<a name="line.452"></a>
-<FONT color="green">453</FONT>        }<a name="line.453"></a>
-<FONT color="green">454</FONT>    <a name="line.454"></a>
-<FONT color="green">455</FONT>        private static final ThreadLocal&lt;RuleContainer&gt; CURRENT_RULE_CONTAINER =<a name="line.455"></a>
-<FONT color="green">456</FONT>                new ThreadLocal&lt;RuleContainer&gt;();<a name="line.456"></a>
-<FONT color="green">457</FONT>    <a name="line.457"></a>
-<FONT color="green">458</FONT>        private static class RuleCollector&lt;T&gt; implements MemberValueConsumer&lt;T&gt; {<a name="line.458"></a>
-<FONT color="green">459</FONT>            final List&lt;T&gt; result = new ArrayList&lt;T&gt;();<a name="line.459"></a>
-<FONT color="green">460</FONT>    <a name="line.460"></a>
-<FONT color="green">461</FONT>            public void accept(FrameworkMember member, T value) {<a name="line.461"></a>
-<FONT color="green">462</FONT>                Rule rule = member.getAnnotation(Rule.class);<a name="line.462"></a>
-<FONT color="green">463</FONT>                if (rule != null) {<a name="line.463"></a>
-<FONT color="green">464</FONT>                    RuleContainer container = CURRENT_RULE_CONTAINER.get();<a name="line.464"></a>
-<FONT color="green">465</FONT>                    if (container != null) {<a name="line.465"></a>
-<FONT color="green">466</FONT>                        container.setOrder(value, rule.order());<a name="line.466"></a>
-<FONT color="green">467</FONT>                    }<a name="line.467"></a>
-<FONT color="green">468</FONT>                }<a name="line.468"></a>
-<FONT color="green">469</FONT>                result.add(value);<a name="line.469"></a>
-<FONT color="green">470</FONT>            }<a name="line.470"></a>
-<FONT color="green">471</FONT>        }<a name="line.471"></a>
-<FONT color="green">472</FONT>    }<a name="line.472"></a>
+<FONT color="green">322</FONT>            statement = withInterruptIsolation(statement);<a name="line.322"></a>
+<FONT color="green">323</FONT>            return statement;<a name="line.323"></a>
+<FONT color="green">324</FONT>        }<a name="line.324"></a>
+<FONT color="green">325</FONT>    <a name="line.325"></a>
+<FONT color="green">326</FONT>        //<a name="line.326"></a>
+<FONT color="green">327</FONT>        // Statement builders<a name="line.327"></a>
+<FONT color="green">328</FONT>        //<a name="line.328"></a>
+<FONT color="green">329</FONT>    <a name="line.329"></a>
+<FONT color="green">330</FONT>        /**<a name="line.330"></a>
+<FONT color="green">331</FONT>         * Returns a {@link Statement} that invokes {@code method} on {@code test}<a name="line.331"></a>
+<FONT color="green">332</FONT>         */<a name="line.332"></a>
+<FONT color="green">333</FONT>        protected Statement methodInvoker(FrameworkMethod method, Object test) {<a name="line.333"></a>
+<FONT color="green">334</FONT>            return new InvokeMethod(method, test);<a name="line.334"></a>
+<FONT color="green">335</FONT>        }<a name="line.335"></a>
+<FONT color="green">336</FONT>    <a name="line.336"></a>
+<FONT color="green">337</FONT>        /**<a name="line.337"></a>
+<FONT color="green">338</FONT>         * Returns a {@link Statement}: if {@code method}'s {@code @Test} annotation<a name="line.338"></a>
+<FONT color="green">339</FONT>         * has the {@link Test#expected()} attribute, return normally only if {@code next}<a name="line.339"></a>
+<FONT color="green">340</FONT>         * throws an exception of the correct type, and throw an exception<a name="line.340"></a>
+<FONT color="green">341</FONT>         * otherwise.<a name="line.341"></a>
+<FONT color="green">342</FONT>         */<a name="line.342"></a>
+<FONT color="green">343</FONT>        protected Statement possiblyExpectingExceptions(FrameworkMethod method,<a name="line.343"></a>
+<FONT color="green">344</FONT>                Object test, Statement next) {<a name="line.344"></a>
+<FONT color="green">345</FONT>            Test annotation = method.getAnnotation(Test.class);<a name="line.345"></a>
+<FONT color="green">346</FONT>            Class&lt;? extends Throwable&gt; expectedExceptionClass = getExpectedException(annotation);<a name="line.346"></a>
+<FONT color="green">347</FONT>            return expectedExceptionClass != null ? new ExpectException(next, expectedExceptionClass) : next;<a name="line.347"></a>
+<FONT color="green">348</FONT>        }<a name="line.348"></a>
+<FONT color="green">349</FONT>    <a name="line.349"></a>
+<FONT color="green">350</FONT>        /**<a name="line.350"></a>
+<FONT color="green">351</FONT>         * Returns a {@link Statement}: if {@code method}'s {@code @Test} annotation<a name="line.351"></a>
+<FONT color="green">352</FONT>         * has the {@code timeout} attribute, throw an exception if {@code next}<a name="line.352"></a>
+<FONT color="green">353</FONT>         * takes more than the specified number of milliseconds.<a name="line.353"></a>
+<FONT color="green">354</FONT>         * @deprecated<a name="line.354"></a>
+<FONT color="green">355</FONT>         */<a name="line.355"></a>
+<FONT color="green">356</FONT>        @Deprecated<a name="line.356"></a>
+<FONT color="green">357</FONT>        protected Statement withPotentialTimeout(FrameworkMethod method,<a name="line.357"></a>
+<FONT color="green">358</FONT>                Object test, Statement next) {<a name="line.358"></a>
+<FONT color="green">359</FONT>            long timeout = getTimeout(method.getAnnotation(Test.class));<a name="line.359"></a>
+<FONT color="green">360</FONT>            if (timeout &lt;= 0) {<a name="line.360"></a>
+<FONT color="green">361</FONT>                return next;<a name="line.361"></a>
+<FONT color="green">362</FONT>            }<a name="line.362"></a>
+<FONT color="green">363</FONT>            return FailOnTimeout.builder()<a name="line.363"></a>
+<FONT color="green">364</FONT>                   .withTimeout(timeout, TimeUnit.MILLISECONDS)<a name="line.364"></a>
+<FONT color="green">365</FONT>                   .build(next);<a name="line.365"></a>
+<FONT color="green">366</FONT>        }<a name="line.366"></a>
+<FONT color="green">367</FONT>    <a name="line.367"></a>
+<FONT color="green">368</FONT>        /**<a name="line.368"></a>
+<FONT color="green">369</FONT>         * Returns a {@link Statement}: run all non-overridden {@code @Before}<a name="line.369"></a>
+<FONT color="green">370</FONT>         * methods on this class and superclasses before running {@code next}; if<a name="line.370"></a>
+<FONT color="green">371</FONT>         * any throws an Exception, stop execution and pass the exception on.<a name="line.371"></a>
+<FONT color="green">372</FONT>         */<a name="line.372"></a>
+<FONT color="green">373</FONT>        protected Statement withBefores(FrameworkMethod method, Object target,<a name="line.373"></a>
+<FONT color="green">374</FONT>                Statement statement) {<a name="line.374"></a>
+<FONT color="green">375</FONT>            List&lt;FrameworkMethod&gt; befores = getTestClass().getAnnotatedMethods(<a name="line.375"></a>
+<FONT color="green">376</FONT>                    Before.class);<a name="line.376"></a>
+<FONT color="green">377</FONT>            return befores.isEmpty() ? statement : new RunBefores(statement,<a name="line.377"></a>
+<FONT color="green">378</FONT>                    befores, target);<a name="line.378"></a>
+<FONT color="green">379</FONT>        }<a name="line.379"></a>
+<FONT color="green">380</FONT>    <a name="line.380"></a>
+<FONT color="green">381</FONT>        /**<a name="line.381"></a>
+<FONT color="green">382</FONT>         * Returns a {@link Statement}: run all non-overridden {@code @After}<a name="line.382"></a>
+<FONT color="green">383</FONT>         * methods on this class and superclasses before running {@code next}; all<a name="line.383"></a>
+<FONT color="green">384</FONT>         * After methods are always executed: exceptions thrown by previous steps<a name="line.384"></a>
+<FONT color="green">385</FONT>         * are combined, if necessary, with exceptions from After methods into a<a name="line.385"></a>
+<FONT color="green">386</FONT>         * {@link MultipleFailureException}.<a name="line.386"></a>
+<FONT color="green">387</FONT>         */<a name="line.387"></a>
+<FONT color="green">388</FONT>        protected Statement withAfters(FrameworkMethod method, Object target,<a name="line.388"></a>
+<FONT color="green">389</FONT>                Statement statement) {<a name="line.389"></a>
+<FONT color="green">390</FONT>            List&lt;FrameworkMethod&gt; afters = getTestClass().getAnnotatedMethods(<a name="line.390"></a>
+<FONT color="green">391</FONT>                    After.class);<a name="line.391"></a>
+<FONT color="green">392</FONT>            return afters.isEmpty() ? statement : new RunAfters(statement, afters,<a name="line.392"></a>
+<FONT color="green">393</FONT>                    target);<a name="line.393"></a>
+<FONT color="green">394</FONT>        }<a name="line.394"></a>
+<FONT color="green">395</FONT>    <a name="line.395"></a>
+<FONT color="green">396</FONT>        private Statement withRules(FrameworkMethod method, Object target, Statement statement) {<a name="line.396"></a>
+<FONT color="green">397</FONT>            RuleContainer ruleContainer = new RuleContainer();<a name="line.397"></a>
+<FONT color="green">398</FONT>            CURRENT_RULE_CONTAINER.set(ruleContainer);<a name="line.398"></a>
+<FONT color="green">399</FONT>            try {<a name="line.399"></a>
+<FONT color="green">400</FONT>                List&lt;TestRule&gt; testRules = getTestRules(target);<a name="line.400"></a>
+<FONT color="green">401</FONT>                for (MethodRule each : rules(target)) {<a name="line.401"></a>
+<FONT color="green">402</FONT>                    if (!(each instanceof TestRule &amp;&amp; testRules.contains(each))) {<a name="line.402"></a>
+<FONT color="green">403</FONT>                        ruleContainer.add(each);<a name="line.403"></a>
+<FONT color="green">404</FONT>                    }<a name="line.404"></a>
+<FONT color="green">405</FONT>                }<a name="line.405"></a>
+<FONT color="green">406</FONT>                for (TestRule rule : testRules) {<a name="line.406"></a>
+<FONT color="green">407</FONT>                    ruleContainer.add(rule);<a name="line.407"></a>
+<FONT color="green">408</FONT>                }<a name="line.408"></a>
+<FONT color="green">409</FONT>            } finally {<a name="line.409"></a>
+<FONT color="green">410</FONT>                CURRENT_RULE_CONTAINER.remove();<a name="line.410"></a>
+<FONT color="green">411</FONT>            }<a name="line.411"></a>
+<FONT color="green">412</FONT>            return ruleContainer.apply(method, describeChild(method), target, statement);<a name="line.412"></a>
+<FONT color="green">413</FONT>        }<a name="line.413"></a>
+<FONT color="green">414</FONT>    <a name="line.414"></a>
+<FONT color="green">415</FONT>        /**<a name="line.415"></a>
+<FONT color="green">416</FONT>         * @param target the test case instance<a name="line.416"></a>
+<FONT color="green">417</FONT>         * @return a list of MethodRules that should be applied when executing this<a name="line.417"></a>
+<FONT color="green">418</FONT>         *         test<a name="line.418"></a>
+<FONT color="green">419</FONT>         */<a name="line.419"></a>
+<FONT color="green">420</FONT>        protected List&lt;MethodRule&gt; rules(Object target) {<a name="line.420"></a>
+<FONT color="green">421</FONT>            RuleCollector&lt;MethodRule&gt; collector = new RuleCollector&lt;MethodRule&gt;();<a name="line.421"></a>
+<FONT color="green">422</FONT>            getTestClass().collectAnnotatedMethodValues(target, Rule.class, MethodRule.class,<a name="line.422"></a>
+<FONT color="green">423</FONT>                    collector);<a name="line.423"></a>
+<FONT color="green">424</FONT>            getTestClass().collectAnnotatedFieldValues(target, Rule.class, MethodRule.class,<a name="line.424"></a>
+<FONT color="green">425</FONT>                    collector);<a name="line.425"></a>
+<FONT color="green">426</FONT>            return collector.result;<a name="line.426"></a>
+<FONT color="green">427</FONT>        }<a name="line.427"></a>
+<FONT color="green">428</FONT>    <a name="line.428"></a>
+<FONT color="green">429</FONT>        /**<a name="line.429"></a>
+<FONT color="green">430</FONT>         * @param target the test case instance<a name="line.430"></a>
+<FONT color="green">431</FONT>         * @return a list of TestRules that should be applied when executing this<a name="line.431"></a>
+<FONT color="green">432</FONT>         *         test<a name="line.432"></a>
+<FONT color="green">433</FONT>         */<a name="line.433"></a>
+<FONT color="green">434</FONT>        protected List&lt;TestRule&gt; getTestRules(Object target) {<a name="line.434"></a>
+<FONT color="green">435</FONT>            RuleCollector&lt;TestRule&gt; collector = new RuleCollector&lt;TestRule&gt;();<a name="line.435"></a>
+<FONT color="green">436</FONT>            getTestClass().collectAnnotatedMethodValues(target, Rule.class, TestRule.class, collector);<a name="line.436"></a>
+<FONT color="green">437</FONT>            getTestClass().collectAnnotatedFieldValues(target, Rule.class, TestRule.class, collector);<a name="line.437"></a>
+<FONT color="green">438</FONT>            return collector.result;<a name="line.438"></a>
+<FONT color="green">439</FONT>        }<a name="line.439"></a>
+<FONT color="green">440</FONT>    <a name="line.440"></a>
+<FONT color="green">441</FONT>        private Class&lt;? extends Throwable&gt; getExpectedException(Test annotation) {<a name="line.441"></a>
+<FONT color="green">442</FONT>            if (annotation == null || annotation.expected() == None.class) {<a name="line.442"></a>
+<FONT color="green">443</FONT>                return null;<a name="line.443"></a>
+<FONT color="green">444</FONT>            } else {<a name="line.444"></a>
+<FONT color="green">445</FONT>                return annotation.expected();<a name="line.445"></a>
+<FONT color="green">446</FONT>            }<a name="line.446"></a>
+<FONT color="green">447</FONT>        }<a name="line.447"></a>
+<FONT color="green">448</FONT>    <a name="line.448"></a>
+<FONT color="green">449</FONT>        private long getTimeout(Test annotation) {<a name="line.449"></a>
+<FONT color="green">450</FONT>            if (annotation == null) {<a name="line.450"></a>
+<FONT color="green">451</FONT>                return 0;<a name="line.451"></a>
+<FONT color="green">452</FONT>            }<a name="line.452"></a>
+<FONT color="green">453</FONT>            return annotation.timeout();<a name="line.453"></a>
+<FONT color="green">454</FONT>        }<a name="line.454"></a>
+<FONT color="green">455</FONT>    <a name="line.455"></a>
+<FONT color="green">456</FONT>        private static final ThreadLocal&lt;RuleContainer&gt; CURRENT_RULE_CONTAINER =<a name="line.456"></a>
+<FONT color="green">457</FONT>                new ThreadLocal&lt;RuleContainer&gt;();<a name="line.457"></a>
+<FONT color="green">458</FONT>    <a name="line.458"></a>
+<FONT color="green">459</FONT>        private static class RuleCollector&lt;T&gt; implements MemberValueConsumer&lt;T&gt; {<a name="line.459"></a>
+<FONT color="green">460</FONT>            final List&lt;T&gt; result = new ArrayList&lt;T&gt;();<a name="line.460"></a>
+<FONT color="green">461</FONT>    <a name="line.461"></a>
+<FONT color="green">462</FONT>            public void accept(FrameworkMember&lt;?&gt; member, T value) {<a name="line.462"></a>
+<FONT color="green">463</FONT>                Rule rule = member.getAnnotation(Rule.class);<a name="line.463"></a>
+<FONT color="green">464</FONT>                if (rule != null) {<a name="line.464"></a>
+<FONT color="green">465</FONT>                    RuleContainer container = CURRENT_RULE_CONTAINER.get();<a name="line.465"></a>
+<FONT color="green">466</FONT>                    if (container != null) {<a name="line.466"></a>
+<FONT color="green">467</FONT>                        container.setOrder(value, rule.order());<a name="line.467"></a>
+<FONT color="green">468</FONT>                    }<a name="line.468"></a>
+<FONT color="green">469</FONT>                }<a name="line.469"></a>
+<FONT color="green">470</FONT>                result.add(value);<a name="line.470"></a>
+<FONT color="green">471</FONT>            }<a name="line.471"></a>
+<FONT color="green">472</FONT>        }<a name="line.472"></a>
+<FONT color="green">473</FONT>    }<a name="line.473"></a>
 
 
 
