@@ -48,21 +48,13 @@
         <contributor>
             <name>JUnit contributors</name>
             <organization>JUnit</organization>
-            <email>junit@yahoogroups.com</email>
+            <email>team@junit.org</email>
             <url>https://github.com/junit-team/junit4/graphs/contributors</url>
             <roles>
                 <role>developers</role>
             </roles>
         </contributor>
     </contributors>
-
-    <mailingLists>
-        <mailingList>
-            <name>JUnit Mailing List</name>
-            <post>junit@yahoogroups.com</post>
-            <archive>https://groups.yahoo.com/neo/groups/junit/info</archive>
-        </mailingList>
-    </mailingLists>
 
     <prerequisites>
         <maven>3.0.4</maven>
