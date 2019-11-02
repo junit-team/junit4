@@ -129,15 +129,6 @@
     </ul>
 </answer>
 </faq>
-<faq id="overview_5"><question>Where can I find articles on
-      JUnit?</question><answer>
-    <p>
-      The JUnit home page maintains a list
-      of <a href="http://www.junit.org/news/article/index.htm">JUnit
-      articles</a>.
-    </p>
-</answer>
-</faq>
       <faq id="overview_7"><question>How is JUnit licensed?</question>
       <answer>
     <p>
@@ -1708,14 +1699,6 @@ end</pre>
    </part>
     <part id="misc">
         <title>Miscellaneous</title>
-        <faq id="misc_1">
-            <question>How do I integrate JUnit with my IDE?</question>
-            <answer><p>
-      The JUnit home page maintains a list of <a
-      href="http://www.junit.org/news/ide/index.htm">IDE integration
-      instructions</a>.
-    </p></answer>
-        </faq>
         <faq id="misc_2">
             <question>How do I launch a debugger when a test fails?</question>
             <answer>    <p>
