@@ -7,6 +7,7 @@ import java.util.Comparator;
 
 import junit.framework.JUnit4TestAdapter;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.Description;
@@ -19,6 +20,7 @@ import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
+import org.junit.runners.MethodSorters;
 
 @RunWith(Enclosed.class)
 public class SortableTest {
@@ -34,6 +36,24 @@ public class SortableTest {
         private static String log = "";
 
         public static class SortMe {
+            @Test
+            public void a() {
+                log += "a";
+            }
+
+            @Test
+            public void b() {
+                log += "b";
+            }
+
+            @Test
+            public void c() {
+                log += "c";
+            }
+        }
+
+        @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+        public static class DoNotSortMe {
             @Test
             public void a() {
                 log += "a";
@@ -69,6 +89,14 @@ public class SortableTest {
 
             new JUnitCore().run(backward);
             assertEquals("cba", log);
+        }
+
+        @Test
+        public void sortingBackwardDoesNothingOnTestClassRunnerWithFixMethodOrder() {
+            Request backward = Request.aClass(DoNotSortMe.class).sortWith(backward());
+
+            new JUnitCore().run(backward);
+            assertEquals("abc", log);
         }
 
         @RunWith(Enclosed.class)
