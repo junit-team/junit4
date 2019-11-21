@@ -7,6 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.junit.runner.manipulation.Ordering;
+import org.junit.validator.ValidateWith;
 
 /**
  * When a test class is annotated with <code>&#064;OrderWith</code> or extends a class annotated
@@ -18,6 +19,7 @@ import org.junit.runner.manipulation.Ordering;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Inherited
+@ValidateWith(OrderWithValidator.class)
 public @interface OrderWith {
     /**
      * Gets a class that extends {@link Ordering}. The class must have a public no-arg constructor.
