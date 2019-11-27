@@ -32,7 +32,7 @@ public class TextRunnerTest extends TestCase {
         Process p = Runtime.getRuntime().exec(cmd);
         InputStream i = p.getInputStream();
         while ((i.read()) != -1)
-            ; //System.out.write(b);
+            ;
         assertTrue((p.waitFor() == 0) == success);
         if (success) {
             assertTrue(p.exitValue() == 0);
