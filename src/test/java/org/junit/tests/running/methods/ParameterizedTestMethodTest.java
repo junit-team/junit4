@@ -136,19 +136,19 @@ public class ParameterizedTestMethodTest {
     private Class<?> fClass;
     private int fErrorCount;
 
-    static public class SuperWrong {
+    public static class SuperWrong {
         @Test
         void notPublic() {
         }
     }
 
-    static public class SubWrong extends SuperWrong {
+    public static class SubWrong extends SuperWrong {
         @Test
         public void justFine() {
         }
     }
 
-    static public class SubShadows extends SuperWrong {
+    public static class SubShadows extends SuperWrong {
         @Override
         @Test
         public void notPublic() {

@@ -49,7 +49,7 @@ public class StopwatchTest {
         }
     }
 
-    public static abstract class AbstractStopwatchTest {
+    public abstract static class AbstractStopwatchTest {
 
         /**
          * Fake implementation of {@link Stopwatch.Clock} that increments the time

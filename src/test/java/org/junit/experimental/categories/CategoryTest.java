@@ -411,7 +411,7 @@ public class CategoryTest {
     }
 
     @Category(SlowTests.class)
-    public static abstract class Ancestor{}
+    public abstract static class Ancestor{}
 
     public static class Inherited extends Ancestor {
         @Test

@@ -18,7 +18,7 @@ import org.junit.runner.Result;
 public class SuiteMethodTest {
     public static boolean wasRun;
 
-    static public class OldTest extends TestCase {
+    public static class OldTest extends TestCase {
         public OldTest(String name) {
             super(name);
         }
@@ -41,7 +41,7 @@ public class SuiteMethodTest {
         assertTrue(wasRun);
     }
 
-    static public class NewTest {
+    public static class NewTest {
         @Test
         public void sample() {
             wasRun = true;
@@ -81,7 +81,7 @@ public class SuiteMethodTest {
         assertEquals(0, description.getChildren().size());
     }
 
-    static public class NewTestSuiteFails {
+    public static class NewTestSuiteFails {
         @Test
         public void sample() {
             wasRun = true;
@@ -101,7 +101,7 @@ public class SuiteMethodTest {
         assertFalse(wasRun);
     }
 
-    static public class NewTestSuiteNotUsed {
+    public static class NewTestSuiteNotUsed {
         private static boolean wasIgnoredRun;
 
         @Test

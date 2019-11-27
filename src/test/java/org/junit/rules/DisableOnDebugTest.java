@@ -48,7 +48,7 @@ public class DisableOnDebugTest {
 
     }
 
-    public static abstract class AbstractDisableOnDebugTest {
+    public abstract static class AbstractDisableOnDebugTest {
 
         @Rule
         public TestRule failOnExecution;

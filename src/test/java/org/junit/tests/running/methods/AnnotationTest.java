@@ -34,7 +34,7 @@ public class AnnotationTest extends TestCase {
         run = false;
     }
 
-    static public class SimpleTest {
+    public static class SimpleTest {
         @Test
         public void success() {
             run = true;
@@ -48,7 +48,7 @@ public class AnnotationTest extends TestCase {
     }
 
     @RunWith(JUnit4.class)
-    static public class SimpleTestWithFutureProofExplicitRunner {
+    public static class SimpleTestWithFutureProofExplicitRunner {
         @Test
         public void success() {
             run = true;
@@ -61,7 +61,7 @@ public class AnnotationTest extends TestCase {
         assertTrue(run);
     }
 
-    static public class SetupTest {
+    public static class SetupTest {
         @Before
         public void before() {
             run = true;
@@ -78,7 +78,7 @@ public class AnnotationTest extends TestCase {
         assertTrue(run);
     }
 
-    static public class TeardownTest {
+    public static class TeardownTest {
         @After
         public void after() {
             run = true;
@@ -95,7 +95,7 @@ public class AnnotationTest extends TestCase {
         assertTrue(run);
     }
 
-    static public class FailureTest {
+    public static class FailureTest {
         @Test
         public void error() throws Exception {
             org.junit.Assert.fail();
@@ -110,7 +110,7 @@ public class AnnotationTest extends TestCase {
         assertEquals(AssertionError.class, result.getFailures().get(0).getException().getClass());
     }
 
-    static public class SetupFailureTest {
+    public static class SetupFailureTest {
         @Before
         public void before() {
             throw new Error();
@@ -131,7 +131,7 @@ public class AnnotationTest extends TestCase {
         assertFalse(run);
     }
 
-    static public class TeardownFailureTest {
+    public static class TeardownFailureTest {
         @After
         public void after() {
             throw new Error();
@@ -150,7 +150,7 @@ public class AnnotationTest extends TestCase {
         assertEquals(Error.class, runner.getFailures().get(0).getException().getClass());
     }
 
-    static public class TestAndTeardownFailureTest {
+    public static class TestAndTeardownFailureTest {
         @After
         public void after() {
             throw new Error("hereAfter");
@@ -170,7 +170,7 @@ public class AnnotationTest extends TestCase {
         assertThat(runner.getFailures().toString(), allOf(containsString("hereAfter"), containsString("inTest")));
     }
 
-    static public class TeardownAfterFailureTest {
+    public static class TeardownAfterFailureTest {
         @After
         public void after() {
             run = true;
@@ -191,7 +191,7 @@ public class AnnotationTest extends TestCase {
     static int count;
     static Collection<Object> tests;
 
-    static public class TwoTests {
+    public static class TwoTests {
         @Test
         public void one() {
             count++;
@@ -214,7 +214,7 @@ public class AnnotationTest extends TestCase {
         assertEquals(2, tests.size());
     }
 
-    static public class OldTest extends TestCase {
+    public static class OldTest extends TestCase {
         public void test() {
             run = true;
         }
@@ -226,7 +226,7 @@ public class AnnotationTest extends TestCase {
         assertTrue(run);
     }
 
-    static public class OldSuiteTest extends TestCase {
+    public static class OldSuiteTest extends TestCase {
         public void testOne() {
             run = true;
         }
@@ -239,7 +239,7 @@ public class AnnotationTest extends TestCase {
         assertTrue(run);
     }
 
-    static public class ExceptionTest {
+    public static class ExceptionTest {
         @Test(expected = Error.class)
         public void expectedException() {
             throw new Error();
@@ -252,7 +252,7 @@ public class AnnotationTest extends TestCase {
         assertEquals(0, result.getFailureCount());
     }
 
-    static public class NoExceptionTest {
+    public static class NoExceptionTest {
         @Test(expected = Error.class)
         public void expectedException() {
         }
@@ -265,7 +265,7 @@ public class AnnotationTest extends TestCase {
         assertEquals("Expected exception: java.lang.Error", result.getFailures().get(0).getMessage());
     }
 
-    static public class OneTimeSetup {
+    public static class OneTimeSetup {
         @BeforeClass
         public static void once() {
             count++;
@@ -287,7 +287,7 @@ public class AnnotationTest extends TestCase {
         assertEquals(1, count);
     }
 
-    static public class OneTimeTeardown {
+    public static class OneTimeTeardown {
         @AfterClass
         public static void once() {
             count++;
@@ -345,7 +345,7 @@ public class AnnotationTest extends TestCase {
         assertEquals("beforeClass before test after afterClass ", log);
     }
 
-    static public class NonStaticOneTimeSetup {
+    public static class NonStaticOneTimeSetup {
         @BeforeClass
         public void once() {
         }
@@ -361,7 +361,7 @@ public class AnnotationTest extends TestCase {
         assertEquals(1, result.getFailureCount());
     }
 
-    static public class ErrorInBeforeClass {
+    public static class ErrorInBeforeClass {
         @BeforeClass
         public static void before() throws Exception {
             throw new Exception();
@@ -383,7 +383,7 @@ public class AnnotationTest extends TestCase {
         assertEquals(ErrorInBeforeClass.class.getName(), description.getDisplayName());
     }
 
-    static public class ErrorInAfterClass {
+    public static class ErrorInAfterClass {
         @Test
         public void test() {
             run = true;
@@ -405,12 +405,12 @@ public class AnnotationTest extends TestCase {
 
     static class SuperInheritance {
         @BeforeClass
-        static public void beforeClassSuper() {
+        public static void beforeClassSuper() {
             log += "Before class super ";
         }
 
         @AfterClass
-        static public void afterClassSuper() {
+        public static void afterClassSuper() {
             log += "After class super ";
         }
 
@@ -425,14 +425,14 @@ public class AnnotationTest extends TestCase {
         }
     }
 
-    static public class SubInheritance extends SuperInheritance {
+    public static class SubInheritance extends SuperInheritance {
         @BeforeClass
-        static public void beforeClassSub() {
+        public static void beforeClassSub() {
             log += "Before class sub ";
         }
 
         @AfterClass
-        static public void afterClassSub() {
+        public static void afterClassSub() {
             log += "After class sub ";
         }
 
@@ -459,7 +459,7 @@ public class AnnotationTest extends TestCase {
         assertEquals("Before class super Before class sub Before super Before sub Test After sub After super After class sub After class super ", log);
     }
 
-    static public abstract class SuperShadowing {
+    public abstract static class SuperShadowing {
 
         @Rule
         public TestRule rule() {
@@ -487,7 +487,7 @@ public class AnnotationTest extends TestCase {
         }
     }
 
-    static public class SubShadowing extends SuperShadowing {
+    public static class SubShadowing extends SuperShadowing {
 
         @Override
         @Rule
@@ -545,7 +545,7 @@ public class AnnotationTest extends TestCase {
                 log);
     }
 
-    static public abstract class SuperStaticMethodShadowing {
+    public abstract static class SuperStaticMethodShadowing {
 
         @ClassRule
         public static TestRule rule() {
@@ -563,7 +563,7 @@ public class AnnotationTest extends TestCase {
         }
     }
 
-    static public class SubStaticMethodShadowing extends SuperStaticMethodShadowing {
+    public static class SubStaticMethodShadowing extends SuperStaticMethodShadowing {
 
         @ClassRule
         public static TestRule rule() {
@@ -596,7 +596,7 @@ public class AnnotationTest extends TestCase {
                 log);
     }
 
-    static public abstract class SuperFieldShadowing {
+    public abstract static class SuperFieldShadowing {
 
         @Rule
         public final TestRule rule = new ExternalResource() {
@@ -612,7 +612,7 @@ public class AnnotationTest extends TestCase {
         };
     }
 
-    static public class SubFieldShadowing extends SuperFieldShadowing {
+    public static class SubFieldShadowing extends SuperFieldShadowing {
 
         @Rule
         public final TestRule rule = new ExternalResource() {
@@ -643,7 +643,7 @@ public class AnnotationTest extends TestCase {
                 log);
     }
 
-    static public abstract class SuperStaticFieldShadowing {
+    public abstract static class SuperStaticFieldShadowing {
 
         @ClassRule
         public static TestRule rule = new ExternalResource() {
@@ -659,7 +659,7 @@ public class AnnotationTest extends TestCase {
         };
     }
 
-    static public class SubStaticFieldShadowing extends SuperStaticFieldShadowing {
+    public static class SubStaticFieldShadowing extends SuperStaticFieldShadowing {
 
         @ClassRule
         public static TestRule rule = new ExternalResource() {
@@ -690,7 +690,7 @@ public class AnnotationTest extends TestCase {
                 log);
     }
 
-    static public class SuperTest {
+    public static class SuperTest {
         @Test
         public void one() {
             log += "Super";
@@ -702,7 +702,7 @@ public class AnnotationTest extends TestCase {
         }
     }
 
-    static public class SubTest extends SuperTest {
+    public static class SubTest extends SuperTest {
         @Override
         @Test
         public void one() {
@@ -720,7 +720,7 @@ public class AnnotationTest extends TestCase {
         assertFalse(log.contains("Super"));
     }
 
-    static public class RunAllAfters {
+    public static class RunAllAfters {
         @Before
         public void good() {
         }
@@ -753,7 +753,7 @@ public class AnnotationTest extends TestCase {
         assertTrue(log.contains("two"));
     }
 
-    static public class RunAllAftersRegardless {
+    public static class RunAllAftersRegardless {
         @Test
         public void empty() {
         }
@@ -780,7 +780,7 @@ public class AnnotationTest extends TestCase {
         assertEquals(2, result.getFailureCount());
     }
 
-    static public class RunAllAfterClasses {
+    public static class RunAllAfterClasses {
         @Before
         public void good() {
         }
@@ -813,19 +813,19 @@ public class AnnotationTest extends TestCase {
         assertTrue(log.contains("two"));
     }
 
-    static public class RunAllAfterClassesRegardless {
+    public static class RunAllAfterClassesRegardless {
         @Test
         public void empty() {
         }
 
         @AfterClass
-        static public void one() {
+        public static void one() {
             log += "one";
             throw new Error();
         }
 
         @AfterClass
-        static public void two() {
+        public static void two() {
             log += "two";
             throw new Error();
         }

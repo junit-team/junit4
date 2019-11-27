@@ -31,7 +31,7 @@ public class AssumingInTheoriesTest {
     public static class TheoryWithNoUnassumedParameters {
 
         @DataPoint
-        public final static boolean FALSE = false;
+        public static final boolean FALSE = false;
 
         @Theory
         public void theoryWithNoUnassumedParameters(boolean value) {
