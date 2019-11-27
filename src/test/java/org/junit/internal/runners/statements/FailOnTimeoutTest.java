@@ -16,8 +16,6 @@ import static org.junit.internal.runners.statements.FailOnTimeout.builder;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;

@@ -6,9 +6,7 @@ import java.util.Arrays;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.experimental.categories.Categories;
 import org.junit.experimental.categories.Categories.IncludeCategory;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.RunWith;

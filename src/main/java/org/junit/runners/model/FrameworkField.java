@@ -2,7 +2,6 @@ package org.junit.runners.model;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.List;
 
 import org.junit.runners.BlockJUnit4ClassRunner;
 

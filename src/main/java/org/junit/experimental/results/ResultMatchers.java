@@ -4,7 +4,6 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import org.junit.runner.notification.Failure;
 
 /**
  * Matchers on a PrintableResult, to enable JUnit self-tests.

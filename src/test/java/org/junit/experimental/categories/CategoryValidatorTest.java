@@ -10,8 +10,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.experimental.categories.CategoryValidator;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
 

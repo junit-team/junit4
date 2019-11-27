@@ -17,7 +17,6 @@ import java.util.Arrays;
 import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 public class TempFolderRuleTest {
     private static File[] createdFiles = new File[20];
