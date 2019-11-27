@@ -195,7 +195,7 @@ public class SuccessfulWithDataPointFields {
     }
 
     @RunWith(Theories.class)
-    static public class StaticPublicNonDataPoints {
+    public static class StaticPublicNonDataPoints {
         // DataPoint which passes the test
         @DataPoint
         public static int ZERO = 0;

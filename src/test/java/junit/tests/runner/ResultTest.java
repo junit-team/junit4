@@ -96,7 +96,7 @@ public class ResultTest extends TestCase {
                 fromStream, resourceSerializationFormat);
     }
 
-    static public class AssumptionFailedTest {
+    public static class AssumptionFailedTest {
         @Test
         public void assumptionFailed() throws Exception {
             org.junit.Assume.assumeTrue(false);

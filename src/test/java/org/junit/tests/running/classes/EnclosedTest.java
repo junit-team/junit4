@@ -30,7 +30,7 @@ public class EnclosedTest {
             @Test
             public void c() {}
         }
-        abstract public static class C {
+        public abstract static class C {
             @Test public void a() {}
         }
     }

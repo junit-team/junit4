@@ -53,7 +53,7 @@ public class JUnit38ClassRunnerTest {
 
     static int count;
 
-    static public class OneTest extends TestCase {
+    public static class OneTest extends TestCase {
         public void testOne() {
         }
     }

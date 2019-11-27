@@ -44,7 +44,7 @@ public class MethodRulesTest {
         }
     }
 
-    static abstract class NonPublicExampleTest {
+    abstract static class NonPublicExampleTest {
         @Rule
         public MethodRule example = new TestMethodRule();
 

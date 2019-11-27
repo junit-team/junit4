@@ -24,7 +24,7 @@ public class AllTestsTest {
 
     @RunWith(AllTests.class)
     public static class All {
-        static public junit.framework.Test suite() {
+        public static junit.framework.Test suite() {
             TestSuite suite = new TestSuite();
             suite.addTestSuite(OneTest.class);
             return suite;
@@ -60,7 +60,7 @@ public class AllTestsTest {
 
     @RunWith(AllTests.class)
     public static class AllJUnit4 {
-        static public junit.framework.Test suite() {
+        public static junit.framework.Test suite() {
             TestSuite suite = new TestSuite();
             suite.addTest(new JUnit4TestAdapter(JUnit4Test.class));
             return suite;
