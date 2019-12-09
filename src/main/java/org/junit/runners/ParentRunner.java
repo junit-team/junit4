@@ -148,7 +148,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         validatePublicVoidNoArgMethods(BeforeClass.class, true, errors);
         validatePublicVoidNoArgMethods(AfterClass.class, true, errors);
         validateClassRules(errors);
-        applyValidators(errors);//FAKE//FAKE//FAKE//FAKE
+        applyValidators(errors);//FAKE//FAKE//FAKE//FAKE//FAKE
     }
 
     private void applyValidators(List<Throwable> errors) {
