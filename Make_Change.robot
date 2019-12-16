@@ -3,5 +3,5 @@ Library  Process
 
 *** Test Cases ***
 CREATE CHANGE AND PUSH CHANGES TO PR
-    LOG  Run and create change
+    LOG  ./make_fakechange.sh
     Run Process  ./make_fakechange.sh
