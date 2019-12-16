@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot rpa="false" generated="20191210 03:32:16.090" generator="Robot 3.1.2 (Python 2.7.15+ on linux2)">
+<suite source="/home/nhht77/Desktop/SG/softagram-automation-robot/Tests/Create_Pull_Request/junit4/Make_Change.robot" id="s1" name="Make Change">
+<test id="s1-t1" name="CREATE CHANGE AND PUSH CHANGES TO PR">
+<kw name="Run Process" library="Process">
+<doc>Runs a process and waits for it to complete.</doc>
+<arguments>
+<arg>./make_fakechange.sh</arg>
+</arguments>
+<msg timestamp="20191210 03:32:16.127" level="INFO">Starting process:
+./make_fakechange.sh</msg>
+<msg timestamp="20191210 03:32:16.136" level="INFO">Waiting for process to complete.</msg>
+<msg timestamp="20191210 03:32:28.377" level="INFO">Process completed.</msg>
+<status status="PASS" endtime="20191210 03:32:28.378" starttime="20191210 03:32:16.127"></status>
+</kw>
+<status status="PASS" endtime="20191210 03:32:28.378" critical="yes" starttime="20191210 03:32:16.126"></status>
+</test>
+<status status="PASS" endtime="20191210 03:32:28.379" starttime="20191210 03:32:16.093"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="0" pass="1">Critical Tests</stat>
+<stat fail="0" pass="1">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat fail="0" id="s1" name="Make Change" pass="1">Make Change</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
