@@ -32,7 +32,8 @@ import java.lang.annotation.Target;
  * an exception. If it doesn't throw an exception or if it throws a different exception
  * than the one declared, the test fails. For example, the following test succeeds:
  * <pre>
- *    &#064;Test(<b>expected=IndexOutOfBoundsException.class</b>) public void outOfBounds() {
+ *    &#064;Test(<b>expected=IndexOutOfBoundsException.class</b>)
+ *    public void outOfBounds() {
  *       new ArrayList&lt;Object&gt;().get(1);
  *    }
  * </pre>
@@ -46,7 +47,8 @@ import java.lang.annotation.Target;
  * The parameter <code>timeout</code> causes a test to fail if it takes
  * longer than a specified amount of clock time (measured in milliseconds). The following test fails:
  * <pre>
- *    &#064;Test(<b>timeout=100</b>) public void infinity() {
+ *    &#064;Test(<b>timeout=100</b>)
+ *    public void infinity() {
  *       while(true);
  *    }
  * </pre>
@@ -55,7 +57,8 @@ import java.lang.annotation.Target;
  * following test may or may not fail depending on how the operating system
  * schedules threads:
  * <pre>
- *    &#064;Test(<b>timeout=100</b>) public void sleep100() {
+ *    &#064;Test(<b>timeout=100</b>)
+ *    public void sleep100() {
  *       Thread.sleep(100);
  *    }
  * </pre>
