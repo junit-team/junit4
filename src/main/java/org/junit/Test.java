@@ -1,5 +1,7 @@
 package org.junit;
 
+import org.junit.function.ThrowingRunnable;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -37,8 +39,16 @@ import java.lang.annotation.Target;
  *       new ArrayList&lt;Object&gt;().get(1);
  *    }
  * </pre>
- * If the exception's message or one of its properties should be verified, the
- * {@link org.junit.rules.ExpectedException ExpectedException} rule can be used. Further
+ *
+ * Using the parameter <code>expected</code> for exception testing comes with
+ * some limitations: only the exception's type can be checked and it is not
+ * possible to precisely specify the code that throws the exception. Therefore
+ * JUnit 4 has improved its support for exception testing with
+ * {@link Assert#assertThrows(Class, ThrowingRunnable)} and the
+ * {@link org.junit.rules.ExpectedException ExpectedException} rule.
+ * With <code>assertThrows</code> the code that throws the exception can be
+ * precisely specified. If the exception's message or one of its properties
+ * should be verified, the <code>ExpectedException</code> rule can be used. Further
  * information about exception testing can be found at the
  * <a href="https://github.com/junit-team/junit4/wiki/Exception-testing">JUnit Wiki</a>.
  *
