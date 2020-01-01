@@ -23,8 +23,12 @@ import java.lang.annotation.Target;
  * }
  * </pre>
  * <p>
- * The <code>Test</code> annotation supports two optional parameters.
- * The first, <code>expected</code>, declares that a test method should throw
+ * The <code>Test</code> annotation supports two optional parameters for
+ * exception testing and for limiting test execution time.
+ *
+ * <h3>Exception Testing</h3>
+ * <p>
+ * The parameter <code>expected</code> declares that a test method should throw
  * an exception. If it doesn't throw an exception or if it throws a different exception
  * than the one declared, the test fails. For example, the following test succeeds:
  * <pre>
@@ -36,8 +40,10 @@ import java.lang.annotation.Target;
  * {@link org.junit.rules.ExpectedException ExpectedException} rule can be used. Further
  * information about exception testing can be found at the
  * <a href="https://github.com/junit-team/junit4/wiki/Exception-testing">JUnit Wiki</a>.
+ *
+ * <h3>Timeout</h3>
  * <p>
- * The second optional parameter, <code>timeout</code>, causes a test to fail if it takes
+ * The parameter <code>timeout</code> causes a test to fail if it takes
  * longer than a specified amount of clock time (measured in milliseconds). The following test fails:
  * <pre>
  *    &#064;Test(<b>timeout=100</b>) public void infinity() {
