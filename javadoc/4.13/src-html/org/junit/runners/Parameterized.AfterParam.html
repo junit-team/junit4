@@ -1,0 +1,570 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.junit.runners;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import java.lang.annotation.Annotation;<a name="line.3"></a>
+<FONT color="green">004</FONT>    import java.lang.annotation.ElementType;<a name="line.4"></a>
+<FONT color="green">005</FONT>    import java.lang.annotation.Inherited;<a name="line.5"></a>
+<FONT color="green">006</FONT>    import java.lang.annotation.Retention;<a name="line.6"></a>
+<FONT color="green">007</FONT>    import java.lang.annotation.RetentionPolicy;<a name="line.7"></a>
+<FONT color="green">008</FONT>    import java.lang.annotation.Target;<a name="line.8"></a>
+<FONT color="green">009</FONT>    import java.text.MessageFormat;<a name="line.9"></a>
+<FONT color="green">010</FONT>    import java.util.ArrayList;<a name="line.10"></a>
+<FONT color="green">011</FONT>    import java.util.Arrays;<a name="line.11"></a>
+<FONT color="green">012</FONT>    import java.util.Collection;<a name="line.12"></a>
+<FONT color="green">013</FONT>    import java.util.Collections;<a name="line.13"></a>
+<FONT color="green">014</FONT>    import java.util.List;<a name="line.14"></a>
+<FONT color="green">015</FONT>    <a name="line.15"></a>
+<FONT color="green">016</FONT>    import org.junit.internal.AssumptionViolatedException;<a name="line.16"></a>
+<FONT color="green">017</FONT>    import org.junit.runner.Description;<a name="line.17"></a>
+<FONT color="green">018</FONT>    import org.junit.runner.Result;<a name="line.18"></a>
+<FONT color="green">019</FONT>    import org.junit.runner.Runner;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import org.junit.runner.notification.Failure;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import org.junit.runner.notification.RunNotifier;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import org.junit.runners.model.FrameworkMethod;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import org.junit.runners.model.InvalidTestClassError;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import org.junit.runners.model.TestClass;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParametersFactory;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import org.junit.runners.parameterized.ParametersRunnerFactory;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import org.junit.runners.parameterized.TestWithParameters;<a name="line.27"></a>
+<FONT color="green">028</FONT>    <a name="line.28"></a>
+<FONT color="green">029</FONT>    /**<a name="line.29"></a>
+<FONT color="green">030</FONT>     * The custom runner &lt;code&gt;Parameterized&lt;/code&gt; implements parameterized tests.<a name="line.30"></a>
+<FONT color="green">031</FONT>     * When running a parameterized test class, instances are created for the<a name="line.31"></a>
+<FONT color="green">032</FONT>     * cross-product of the test methods and the test data elements.<a name="line.32"></a>
+<FONT color="green">033</FONT>     * &lt;p&gt;<a name="line.33"></a>
+<FONT color="green">034</FONT>     * For example, to test the &lt;code&gt;+&lt;/code&gt; operator, write:<a name="line.34"></a>
+<FONT color="green">035</FONT>     * &lt;pre&gt;<a name="line.35"></a>
+<FONT color="green">036</FONT>     * &amp;#064;RunWith(Parameterized.class)<a name="line.36"></a>
+<FONT color="green">037</FONT>     * public class AdditionTest {<a name="line.37"></a>
+<FONT color="green">038</FONT>     *     &amp;#064;Parameters(name = &amp;quot;{index}: {0} + {1} = {2}&amp;quot;)<a name="line.38"></a>
+<FONT color="green">039</FONT>     *     public static Iterable&amp;lt;Object[]&amp;gt; data() {<a name="line.39"></a>
+<FONT color="green">040</FONT>     *         return Arrays.asList(new Object[][] { { 0, 0, 0 }, { 1, 1, 2 },<a name="line.40"></a>
+<FONT color="green">041</FONT>     *                 { 3, 2, 5 }, { 4, 3, 7 } });<a name="line.41"></a>
+<FONT color="green">042</FONT>     *     }<a name="line.42"></a>
+<FONT color="green">043</FONT>     *<a name="line.43"></a>
+<FONT color="green">044</FONT>     *     private int firstSummand;<a name="line.44"></a>
+<FONT color="green">045</FONT>     *<a name="line.45"></a>
+<FONT color="green">046</FONT>     *     private int secondSummand;<a name="line.46"></a>
+<FONT color="green">047</FONT>     *<a name="line.47"></a>
+<FONT color="green">048</FONT>     *     private int sum;<a name="line.48"></a>
+<FONT color="green">049</FONT>     *<a name="line.49"></a>
+<FONT color="green">050</FONT>     *     public AdditionTest(int firstSummand, int secondSummand, int sum) {<a name="line.50"></a>
+<FONT color="green">051</FONT>     *         this.firstSummand = firstSummand;<a name="line.51"></a>
+<FONT color="green">052</FONT>     *         this.secondSummand = secondSummand;<a name="line.52"></a>
+<FONT color="green">053</FONT>     *         this.sum = sum;<a name="line.53"></a>
+<FONT color="green">054</FONT>     *     }<a name="line.54"></a>
+<FONT color="green">055</FONT>     *<a name="line.55"></a>
+<FONT color="green">056</FONT>     *     &amp;#064;Test<a name="line.56"></a>
+<FONT color="green">057</FONT>     *     public void test() {<a name="line.57"></a>
+<FONT color="green">058</FONT>     *         assertEquals(sum, firstSummand + secondSummand);<a name="line.58"></a>
+<FONT color="green">059</FONT>     *     }<a name="line.59"></a>
+<FONT color="green">060</FONT>     * }<a name="line.60"></a>
+<FONT color="green">061</FONT>     * &lt;/pre&gt;<a name="line.61"></a>
+<FONT color="green">062</FONT>     * &lt;p&gt;<a name="line.62"></a>
+<FONT color="green">063</FONT>     * Each instance of &lt;code&gt;AdditionTest&lt;/code&gt; will be constructed using the<a name="line.63"></a>
+<FONT color="green">064</FONT>     * three-argument constructor and the data values in the<a name="line.64"></a>
+<FONT color="green">065</FONT>     * &lt;code&gt;&amp;#064;Parameters&lt;/code&gt; method.<a name="line.65"></a>
+<FONT color="green">066</FONT>     * &lt;p&gt;<a name="line.66"></a>
+<FONT color="green">067</FONT>     * In order that you can easily identify the individual tests, you may provide a<a name="line.67"></a>
+<FONT color="green">068</FONT>     * name for the &lt;code&gt;&amp;#064;Parameters&lt;/code&gt; annotation. This name is allowed<a name="line.68"></a>
+<FONT color="green">069</FONT>     * to contain placeholders, which are replaced at runtime. The placeholders are<a name="line.69"></a>
+<FONT color="green">070</FONT>     * &lt;dl&gt;<a name="line.70"></a>
+<FONT color="green">071</FONT>     * &lt;dt&gt;{index}&lt;/dt&gt;<a name="line.71"></a>
+<FONT color="green">072</FONT>     * &lt;dd&gt;the current parameter index&lt;/dd&gt;<a name="line.72"></a>
+<FONT color="green">073</FONT>     * &lt;dt&gt;{0}&lt;/dt&gt;<a name="line.73"></a>
+<FONT color="green">074</FONT>     * &lt;dd&gt;the first parameter value&lt;/dd&gt;<a name="line.74"></a>
+<FONT color="green">075</FONT>     * &lt;dt&gt;{1}&lt;/dt&gt;<a name="line.75"></a>
+<FONT color="green">076</FONT>     * &lt;dd&gt;the second parameter value&lt;/dd&gt;<a name="line.76"></a>
+<FONT color="green">077</FONT>     * &lt;dt&gt;...&lt;/dt&gt;<a name="line.77"></a>
+<FONT color="green">078</FONT>     * &lt;dd&gt;...&lt;/dd&gt;<a name="line.78"></a>
+<FONT color="green">079</FONT>     * &lt;/dl&gt;<a name="line.79"></a>
+<FONT color="green">080</FONT>     * &lt;p&gt;<a name="line.80"></a>
+<FONT color="green">081</FONT>     * In the example given above, the &lt;code&gt;Parameterized&lt;/code&gt; runner creates<a name="line.81"></a>
+<FONT color="green">082</FONT>     * names like &lt;code&gt;[2: 3 + 2 = 5]&lt;/code&gt;. If you don't use the name parameter,<a name="line.82"></a>
+<FONT color="green">083</FONT>     * then the current parameter index is used as name.<a name="line.83"></a>
+<FONT color="green">084</FONT>     * &lt;p&gt;<a name="line.84"></a>
+<FONT color="green">085</FONT>     * You can also write:<a name="line.85"></a>
+<FONT color="green">086</FONT>     * &lt;pre&gt;<a name="line.86"></a>
+<FONT color="green">087</FONT>     * &amp;#064;RunWith(Parameterized.class)<a name="line.87"></a>
+<FONT color="green">088</FONT>     * public class AdditionTest {<a name="line.88"></a>
+<FONT color="green">089</FONT>     *     &amp;#064;Parameters(name = &amp;quot;{index}: {0} + {1} = {2}&amp;quot;)<a name="line.89"></a>
+<FONT color="green">090</FONT>     *     public static Iterable&amp;lt;Object[]&amp;gt; data() {<a name="line.90"></a>
+<FONT color="green">091</FONT>     *         return Arrays.asList(new Object[][] { { 0, 0, 0 }, { 1, 1, 2 },<a name="line.91"></a>
+<FONT color="green">092</FONT>     *                 { 3, 2, 5 }, { 4, 3, 7 } });<a name="line.92"></a>
+<FONT color="green">093</FONT>     *     }<a name="line.93"></a>
+<FONT color="green">094</FONT>     *<a name="line.94"></a>
+<FONT color="green">095</FONT>     *     &amp;#064;Parameter(0)<a name="line.95"></a>
+<FONT color="green">096</FONT>     *     public int firstSummand;<a name="line.96"></a>
+<FONT color="green">097</FONT>     *<a name="line.97"></a>
+<FONT color="green">098</FONT>     *     &amp;#064;Parameter(1)<a name="line.98"></a>
+<FONT color="green">099</FONT>     *     public int secondSummand;<a name="line.99"></a>
+<FONT color="green">100</FONT>     *<a name="line.100"></a>
+<FONT color="green">101</FONT>     *     &amp;#064;Parameter(2)<a name="line.101"></a>
+<FONT color="green">102</FONT>     *     public int sum;<a name="line.102"></a>
+<FONT color="green">103</FONT>     *<a name="line.103"></a>
+<FONT color="green">104</FONT>     *     &amp;#064;Test<a name="line.104"></a>
+<FONT color="green">105</FONT>     *     public void test() {<a name="line.105"></a>
+<FONT color="green">106</FONT>     *         assertEquals(sum, firstSummand + secondSummand);<a name="line.106"></a>
+<FONT color="green">107</FONT>     *     }<a name="line.107"></a>
+<FONT color="green">108</FONT>     * }<a name="line.108"></a>
+<FONT color="green">109</FONT>     * &lt;/pre&gt;<a name="line.109"></a>
+<FONT color="green">110</FONT>     * &lt;p&gt;<a name="line.110"></a>
+<FONT color="green">111</FONT>     * Each instance of &lt;code&gt;AdditionTest&lt;/code&gt; will be constructed with the default constructor<a name="line.111"></a>
+<FONT color="green">112</FONT>     * and fields annotated by &lt;code&gt;&amp;#064;Parameter&lt;/code&gt;  will be initialized<a name="line.112"></a>
+<FONT color="green">113</FONT>     * with the data values in the &lt;code&gt;&amp;#064;Parameters&lt;/code&gt; method.<a name="line.113"></a>
+<FONT color="green">114</FONT>     *<a name="line.114"></a>
+<FONT color="green">115</FONT>     * &lt;p&gt;<a name="line.115"></a>
+<FONT color="green">116</FONT>     * The parameters can be provided as an array, too:<a name="line.116"></a>
+<FONT color="green">117</FONT>     * <a name="line.117"></a>
+<FONT color="green">118</FONT>     * &lt;pre&gt;<a name="line.118"></a>
+<FONT color="green">119</FONT>     * &amp;#064;Parameters<a name="line.119"></a>
+<FONT color="green">120</FONT>     * public static Object[][] data() {<a name="line.120"></a>
+<FONT color="green">121</FONT>     *      return new Object[][] { { 0, 0, 0 }, { 1, 1, 2 }, { 3, 2, 5 }, { 4, 3, 7 } } };<a name="line.121"></a>
+<FONT color="green">122</FONT>     * }<a name="line.122"></a>
+<FONT color="green">123</FONT>     * &lt;/pre&gt;<a name="line.123"></a>
+<FONT color="green">124</FONT>     * <a name="line.124"></a>
+<FONT color="green">125</FONT>     * &lt;h3&gt;Tests with single parameter&lt;/h3&gt;<a name="line.125"></a>
+<FONT color="green">126</FONT>     * &lt;p&gt;<a name="line.126"></a>
+<FONT color="green">127</FONT>     * If your test needs a single parameter only, you don't have to wrap it with an<a name="line.127"></a>
+<FONT color="green">128</FONT>     * array. Instead you can provide an &lt;code&gt;Iterable&lt;/code&gt; or an array of<a name="line.128"></a>
+<FONT color="green">129</FONT>     * objects.<a name="line.129"></a>
+<FONT color="green">130</FONT>     * &lt;pre&gt;<a name="line.130"></a>
+<FONT color="green">131</FONT>     * &amp;#064;Parameters<a name="line.131"></a>
+<FONT color="green">132</FONT>     * public static Iterable&amp;lt;? extends Object&amp;gt; data() {<a name="line.132"></a>
+<FONT color="green">133</FONT>     *      return Arrays.asList(&amp;quot;first test&amp;quot;, &amp;quot;second test&amp;quot;);<a name="line.133"></a>
+<FONT color="green">134</FONT>     * }<a name="line.134"></a>
+<FONT color="green">135</FONT>     * &lt;/pre&gt;<a name="line.135"></a>
+<FONT color="green">136</FONT>     * &lt;p&gt;<a name="line.136"></a>
+<FONT color="green">137</FONT>     * or<a name="line.137"></a>
+<FONT color="green">138</FONT>     * &lt;pre&gt;<a name="line.138"></a>
+<FONT color="green">139</FONT>     * &amp;#064;Parameters<a name="line.139"></a>
+<FONT color="green">140</FONT>     * public static Object[] data() {<a name="line.140"></a>
+<FONT color="green">141</FONT>     *      return new Object[] { &amp;quot;first test&amp;quot;, &amp;quot;second test&amp;quot; };<a name="line.141"></a>
+<FONT color="green">142</FONT>     * }<a name="line.142"></a>
+<FONT color="green">143</FONT>     * &lt;/pre&gt;<a name="line.143"></a>
+<FONT color="green">144</FONT>     *<a name="line.144"></a>
+<FONT color="green">145</FONT>     * &lt;h3&gt;Executing code before/after executing tests for specific parameters&lt;/h3&gt;<a name="line.145"></a>
+<FONT color="green">146</FONT>     * &lt;p&gt;<a name="line.146"></a>
+<FONT color="green">147</FONT>     * If your test needs to perform some preparation or cleanup based on the<a name="line.147"></a>
+<FONT color="green">148</FONT>     * parameters, this can be done by adding public static methods annotated with<a name="line.148"></a>
+<FONT color="green">149</FONT>     * {@code @BeforeParam}/{@code @AfterParam}. Such methods should either have no<a name="line.149"></a>
+<FONT color="green">150</FONT>     * parameters or the same parameters as the test.<a name="line.150"></a>
+<FONT color="green">151</FONT>     * &lt;pre&gt;<a name="line.151"></a>
+<FONT color="green">152</FONT>     * &amp;#064;BeforeParam<a name="line.152"></a>
+<FONT color="green">153</FONT>     * public static void beforeTestsForParameter(String onlyParameter) {<a name="line.153"></a>
+<FONT color="green">154</FONT>     *     System.out.println("Testing " + onlyParameter);<a name="line.154"></a>
+<FONT color="green">155</FONT>     * }<a name="line.155"></a>
+<FONT color="green">156</FONT>     * &lt;/pre&gt;<a name="line.156"></a>
+<FONT color="green">157</FONT>     *<a name="line.157"></a>
+<FONT color="green">158</FONT>     * &lt;h3&gt;Create different runners&lt;/h3&gt;<a name="line.158"></a>
+<FONT color="green">159</FONT>     * &lt;p&gt;<a name="line.159"></a>
+<FONT color="green">160</FONT>     * By default the {@code Parameterized} runner creates a slightly modified<a name="line.160"></a>
+<FONT color="green">161</FONT>     * {@link BlockJUnit4ClassRunner} for each set of parameters. You can build an<a name="line.161"></a>
+<FONT color="green">162</FONT>     * own {@code Parameterized} runner that creates another runner for each set of<a name="line.162"></a>
+<FONT color="green">163</FONT>     * parameters. Therefore you have to build a {@link ParametersRunnerFactory}<a name="line.163"></a>
+<FONT color="green">164</FONT>     * that creates a runner for each {@link TestWithParameters}. (<a name="line.164"></a>
+<FONT color="green">165</FONT>     * {@code TestWithParameters} are bundling the parameters and the test name.)<a name="line.165"></a>
+<FONT color="green">166</FONT>     * The factory must have a public zero-arg constructor.<a name="line.166"></a>
+<FONT color="green">167</FONT>     *<a name="line.167"></a>
+<FONT color="green">168</FONT>     * &lt;pre&gt;<a name="line.168"></a>
+<FONT color="green">169</FONT>     * public class YourRunnerFactory implements ParametersRunnerFactory {<a name="line.169"></a>
+<FONT color="green">170</FONT>     *     public Runner createRunnerForTestWithParameters(TestWithParameters test)<a name="line.170"></a>
+<FONT color="green">171</FONT>     *             throws InitializationError {<a name="line.171"></a>
+<FONT color="green">172</FONT>     *         return YourRunner(test);<a name="line.172"></a>
+<FONT color="green">173</FONT>     *     }<a name="line.173"></a>
+<FONT color="green">174</FONT>     * }<a name="line.174"></a>
+<FONT color="green">175</FONT>     * &lt;/pre&gt;<a name="line.175"></a>
+<FONT color="green">176</FONT>     * &lt;p&gt;<a name="line.176"></a>
+<FONT color="green">177</FONT>     * Use the {@link UseParametersRunnerFactory} to tell the {@code Parameterized}<a name="line.177"></a>
+<FONT color="green">178</FONT>     * runner that it should use your factory.<a name="line.178"></a>
+<FONT color="green">179</FONT>     *<a name="line.179"></a>
+<FONT color="green">180</FONT>     * &lt;pre&gt;<a name="line.180"></a>
+<FONT color="green">181</FONT>     * &amp;#064;RunWith(Parameterized.class)<a name="line.181"></a>
+<FONT color="green">182</FONT>     * &amp;#064;UseParametersRunnerFactory(YourRunnerFactory.class)<a name="line.182"></a>
+<FONT color="green">183</FONT>     * public class YourTest {<a name="line.183"></a>
+<FONT color="green">184</FONT>     *     ...<a name="line.184"></a>
+<FONT color="green">185</FONT>     * }<a name="line.185"></a>
+<FONT color="green">186</FONT>     * &lt;/pre&gt;<a name="line.186"></a>
+<FONT color="green">187</FONT>     *<a name="line.187"></a>
+<FONT color="green">188</FONT>     * &lt;h3&gt;Avoid creating parameters&lt;/h3&gt;<a name="line.188"></a>
+<FONT color="green">189</FONT>     * &lt;p&gt;With {@link org.junit.Assume assumptions} you can dynamically skip tests.<a name="line.189"></a>
+<FONT color="green">190</FONT>     * Assumptions are also supported by the &lt;code&gt;&amp;#064;Parameters&lt;/code&gt; method.<a name="line.190"></a>
+<FONT color="green">191</FONT>     * Creating parameters is stopped when the assumption fails and none of the<a name="line.191"></a>
+<FONT color="green">192</FONT>     * tests in the test class is executed. JUnit reports a<a name="line.192"></a>
+<FONT color="green">193</FONT>     * {@link Result#getAssumptionFailureCount() single assumption failure} for the<a name="line.193"></a>
+<FONT color="green">194</FONT>     * whole test class in this case.<a name="line.194"></a>
+<FONT color="green">195</FONT>     * &lt;pre&gt;<a name="line.195"></a>
+<FONT color="green">196</FONT>     * &amp;#064;Parameters<a name="line.196"></a>
+<FONT color="green">197</FONT>     * public static Iterable&amp;lt;? extends Object&amp;gt; data() {<a name="line.197"></a>
+<FONT color="green">198</FONT>     *      String os = System.getProperty("os.name").toLowerCase()<a name="line.198"></a>
+<FONT color="green">199</FONT>     *      Assume.assumeTrue(os.contains("win"));<a name="line.199"></a>
+<FONT color="green">200</FONT>     *      return Arrays.asList(&amp;quot;first test&amp;quot;, &amp;quot;second test&amp;quot;);<a name="line.200"></a>
+<FONT color="green">201</FONT>     * }<a name="line.201"></a>
+<FONT color="green">202</FONT>     * &lt;/pre&gt;<a name="line.202"></a>
+<FONT color="green">203</FONT>     * @since 4.0<a name="line.203"></a>
+<FONT color="green">204</FONT>     */<a name="line.204"></a>
+<FONT color="green">205</FONT>    public class Parameterized extends Suite {<a name="line.205"></a>
+<FONT color="green">206</FONT>        /**<a name="line.206"></a>
+<FONT color="green">207</FONT>         * Annotation for a method which provides parameters to be injected into the<a name="line.207"></a>
+<FONT color="green">208</FONT>         * test class constructor by &lt;code&gt;Parameterized&lt;/code&gt;. The method has to<a name="line.208"></a>
+<FONT color="green">209</FONT>         * be public and static.<a name="line.209"></a>
+<FONT color="green">210</FONT>         */<a name="line.210"></a>
+<FONT color="green">211</FONT>        @Retention(RetentionPolicy.RUNTIME)<a name="line.211"></a>
+<FONT color="green">212</FONT>        @Target(ElementType.METHOD)<a name="line.212"></a>
+<FONT color="green">213</FONT>        public @interface Parameters {<a name="line.213"></a>
+<FONT color="green">214</FONT>            /**<a name="line.214"></a>
+<FONT color="green">215</FONT>             * Optional pattern to derive the test's name from the parameters. Use<a name="line.215"></a>
+<FONT color="green">216</FONT>             * numbers in braces to refer to the parameters or the additional data<a name="line.216"></a>
+<FONT color="green">217</FONT>             * as follows:<a name="line.217"></a>
+<FONT color="green">218</FONT>             * &lt;pre&gt;<a name="line.218"></a>
+<FONT color="green">219</FONT>             * {index} - the current parameter index<a name="line.219"></a>
+<FONT color="green">220</FONT>             * {0} - the first parameter value<a name="line.220"></a>
+<FONT color="green">221</FONT>             * {1} - the second parameter value<a name="line.221"></a>
+<FONT color="green">222</FONT>             * etc...<a name="line.222"></a>
+<FONT color="green">223</FONT>             * &lt;/pre&gt;<a name="line.223"></a>
+<FONT color="green">224</FONT>             * &lt;p&gt;<a name="line.224"></a>
+<FONT color="green">225</FONT>             * Default value is "{index}" for compatibility with previous JUnit<a name="line.225"></a>
+<FONT color="green">226</FONT>             * versions.<a name="line.226"></a>
+<FONT color="green">227</FONT>             *<a name="line.227"></a>
+<FONT color="green">228</FONT>             * @return {@link MessageFormat} pattern string, except the index<a name="line.228"></a>
+<FONT color="green">229</FONT>             *         placeholder.<a name="line.229"></a>
+<FONT color="green">230</FONT>             * @see MessageFormat<a name="line.230"></a>
+<FONT color="green">231</FONT>             */<a name="line.231"></a>
+<FONT color="green">232</FONT>            String name() default "{index}";<a name="line.232"></a>
+<FONT color="green">233</FONT>        }<a name="line.233"></a>
+<FONT color="green">234</FONT>    <a name="line.234"></a>
+<FONT color="green">235</FONT>        /**<a name="line.235"></a>
+<FONT color="green">236</FONT>         * Annotation for fields of the test class which will be initialized by the<a name="line.236"></a>
+<FONT color="green">237</FONT>         * method annotated by &lt;code&gt;Parameters&lt;/code&gt;.<a name="line.237"></a>
+<FONT color="green">238</FONT>         * By using directly this annotation, the test class constructor isn't needed.<a name="line.238"></a>
+<FONT color="green">239</FONT>         * Index range must start at 0.<a name="line.239"></a>
+<FONT color="green">240</FONT>         * Default value is 0.<a name="line.240"></a>
+<FONT color="green">241</FONT>         */<a name="line.241"></a>
+<FONT color="green">242</FONT>        @Retention(RetentionPolicy.RUNTIME)<a name="line.242"></a>
+<FONT color="green">243</FONT>        @Target(ElementType.FIELD)<a name="line.243"></a>
+<FONT color="green">244</FONT>        public @interface Parameter {<a name="line.244"></a>
+<FONT color="green">245</FONT>            /**<a name="line.245"></a>
+<FONT color="green">246</FONT>             * Method that returns the index of the parameter in the array<a name="line.246"></a>
+<FONT color="green">247</FONT>             * returned by the method annotated by &lt;code&gt;Parameters&lt;/code&gt;.<a name="line.247"></a>
+<FONT color="green">248</FONT>             * Index range must start at 0.<a name="line.248"></a>
+<FONT color="green">249</FONT>             * Default value is 0.<a name="line.249"></a>
+<FONT color="green">250</FONT>             *<a name="line.250"></a>
+<FONT color="green">251</FONT>             * @return the index of the parameter.<a name="line.251"></a>
+<FONT color="green">252</FONT>             */<a name="line.252"></a>
+<FONT color="green">253</FONT>            int value() default 0;<a name="line.253"></a>
+<FONT color="green">254</FONT>        }<a name="line.254"></a>
+<FONT color="green">255</FONT>    <a name="line.255"></a>
+<FONT color="green">256</FONT>        /**<a name="line.256"></a>
+<FONT color="green">257</FONT>         * Add this annotation to your test class if you want to generate a special<a name="line.257"></a>
+<FONT color="green">258</FONT>         * runner. You have to specify a {@link ParametersRunnerFactory} class that<a name="line.258"></a>
+<FONT color="green">259</FONT>         * creates such runners. The factory must have a public zero-arg<a name="line.259"></a>
+<FONT color="green">260</FONT>         * constructor.<a name="line.260"></a>
+<FONT color="green">261</FONT>         */<a name="line.261"></a>
+<FONT color="green">262</FONT>        @Retention(RetentionPolicy.RUNTIME)<a name="line.262"></a>
+<FONT color="green">263</FONT>        @Inherited<a name="line.263"></a>
+<FONT color="green">264</FONT>        @Target(ElementType.TYPE)<a name="line.264"></a>
+<FONT color="green">265</FONT>        public @interface UseParametersRunnerFactory {<a name="line.265"></a>
+<FONT color="green">266</FONT>            /**<a name="line.266"></a>
+<FONT color="green">267</FONT>             * @return a {@link ParametersRunnerFactory} class (must have a default<a name="line.267"></a>
+<FONT color="green">268</FONT>             *         constructor)<a name="line.268"></a>
+<FONT color="green">269</FONT>             */<a name="line.269"></a>
+<FONT color="green">270</FONT>            Class&lt;? extends ParametersRunnerFactory&gt; value() default BlockJUnit4ClassRunnerWithParametersFactory.class;<a name="line.270"></a>
+<FONT color="green">271</FONT>        }<a name="line.271"></a>
+<FONT color="green">272</FONT>    <a name="line.272"></a>
+<FONT color="green">273</FONT>        /**<a name="line.273"></a>
+<FONT color="green">274</FONT>         * Annotation for {@code public static void} methods which should be executed before<a name="line.274"></a>
+<FONT color="green">275</FONT>         * evaluating tests with particular parameters.<a name="line.275"></a>
+<FONT color="green">276</FONT>         *<a name="line.276"></a>
+<FONT color="green">277</FONT>         * @see org.junit.BeforeClass<a name="line.277"></a>
+<FONT color="green">278</FONT>         * @see org.junit.Before<a name="line.278"></a>
+<FONT color="green">279</FONT>         * @since 4.13<a name="line.279"></a>
+<FONT color="green">280</FONT>         */<a name="line.280"></a>
+<FONT color="green">281</FONT>        @Retention(RetentionPolicy.RUNTIME)<a name="line.281"></a>
+<FONT color="green">282</FONT>        @Target(ElementType.METHOD)<a name="line.282"></a>
+<FONT color="green">283</FONT>        public @interface BeforeParam {<a name="line.283"></a>
+<FONT color="green">284</FONT>        }<a name="line.284"></a>
+<FONT color="green">285</FONT>    <a name="line.285"></a>
+<FONT color="green">286</FONT>        /**<a name="line.286"></a>
+<FONT color="green">287</FONT>         * Annotation for {@code public static void} methods which should be executed after<a name="line.287"></a>
+<FONT color="green">288</FONT>         * evaluating tests with particular parameters.<a name="line.288"></a>
+<FONT color="green">289</FONT>         *<a name="line.289"></a>
+<FONT color="green">290</FONT>         * @see org.junit.AfterClass<a name="line.290"></a>
+<FONT color="green">291</FONT>         * @see org.junit.After<a name="line.291"></a>
+<FONT color="green">292</FONT>         * @since 4.13<a name="line.292"></a>
+<FONT color="green">293</FONT>         */<a name="line.293"></a>
+<FONT color="green">294</FONT>        @Retention(RetentionPolicy.RUNTIME)<a name="line.294"></a>
+<FONT color="green">295</FONT>        @Target(ElementType.METHOD)<a name="line.295"></a>
+<FONT color="green">296</FONT>        public @interface AfterParam {<a name="line.296"></a>
+<FONT color="green">297</FONT>        }<a name="line.297"></a>
+<FONT color="green">298</FONT>    <a name="line.298"></a>
+<FONT color="green">299</FONT>        /**<a name="line.299"></a>
+<FONT color="green">300</FONT>         * Only called reflectively. Do not use programmatically.<a name="line.300"></a>
+<FONT color="green">301</FONT>         */<a name="line.301"></a>
+<FONT color="green">302</FONT>        public Parameterized(Class&lt;?&gt; klass) throws Throwable {<a name="line.302"></a>
+<FONT color="green">303</FONT>            this(klass, new RunnersFactory(klass));<a name="line.303"></a>
+<FONT color="green">304</FONT>        }<a name="line.304"></a>
+<FONT color="green">305</FONT>    <a name="line.305"></a>
+<FONT color="green">306</FONT>        private Parameterized(Class&lt;?&gt; klass, RunnersFactory runnersFactory) throws Exception {<a name="line.306"></a>
+<FONT color="green">307</FONT>            super(klass, runnersFactory.createRunners());<a name="line.307"></a>
+<FONT color="green">308</FONT>            validateBeforeParamAndAfterParamMethods(runnersFactory.parameterCount);<a name="line.308"></a>
+<FONT color="green">309</FONT>        }<a name="line.309"></a>
+<FONT color="green">310</FONT>    <a name="line.310"></a>
+<FONT color="green">311</FONT>        private void validateBeforeParamAndAfterParamMethods(Integer parameterCount)<a name="line.311"></a>
+<FONT color="green">312</FONT>                throws InvalidTestClassError {<a name="line.312"></a>
+<FONT color="green">313</FONT>            List&lt;Throwable&gt; errors = new ArrayList&lt;Throwable&gt;();<a name="line.313"></a>
+<FONT color="green">314</FONT>            validatePublicStaticVoidMethods(Parameterized.BeforeParam.class, parameterCount, errors);<a name="line.314"></a>
+<FONT color="green">315</FONT>            validatePublicStaticVoidMethods(Parameterized.AfterParam.class, parameterCount, errors);<a name="line.315"></a>
+<FONT color="green">316</FONT>            if (!errors.isEmpty()) {<a name="line.316"></a>
+<FONT color="green">317</FONT>                throw new InvalidTestClassError(getTestClass().getJavaClass(), errors);<a name="line.317"></a>
+<FONT color="green">318</FONT>            }<a name="line.318"></a>
+<FONT color="green">319</FONT>        }<a name="line.319"></a>
+<FONT color="green">320</FONT>    <a name="line.320"></a>
+<FONT color="green">321</FONT>        private void validatePublicStaticVoidMethods(<a name="line.321"></a>
+<FONT color="green">322</FONT>                Class&lt;? extends Annotation&gt; annotation, Integer parameterCount,<a name="line.322"></a>
+<FONT color="green">323</FONT>                List&lt;Throwable&gt; errors) {<a name="line.323"></a>
+<FONT color="green">324</FONT>            List&lt;FrameworkMethod&gt; methods = getTestClass().getAnnotatedMethods(annotation);<a name="line.324"></a>
+<FONT color="green">325</FONT>            for (FrameworkMethod fm : methods) {<a name="line.325"></a>
+<FONT color="green">326</FONT>                fm.validatePublicVoid(true, errors);<a name="line.326"></a>
+<FONT color="green">327</FONT>                if (parameterCount != null) {<a name="line.327"></a>
+<FONT color="green">328</FONT>                    int methodParameterCount = fm.getMethod().getParameterTypes().length;<a name="line.328"></a>
+<FONT color="green">329</FONT>                    if (methodParameterCount != 0 &amp;&amp; methodParameterCount != parameterCount) {<a name="line.329"></a>
+<FONT color="green">330</FONT>                        errors.add(new Exception("Method " + fm.getName()<a name="line.330"></a>
+<FONT color="green">331</FONT>                                + "() should have 0 or " + parameterCount + " parameter(s)"));<a name="line.331"></a>
+<FONT color="green">332</FONT>                    }<a name="line.332"></a>
+<FONT color="green">333</FONT>                }<a name="line.333"></a>
+<FONT color="green">334</FONT>            }<a name="line.334"></a>
+<FONT color="green">335</FONT>        }<a name="line.335"></a>
+<FONT color="green">336</FONT>    <a name="line.336"></a>
+<FONT color="green">337</FONT>        private static class AssumptionViolationRunner extends Runner {<a name="line.337"></a>
+<FONT color="green">338</FONT>            private final Description description;<a name="line.338"></a>
+<FONT color="green">339</FONT>            private final AssumptionViolatedException exception;<a name="line.339"></a>
+<FONT color="green">340</FONT>    <a name="line.340"></a>
+<FONT color="green">341</FONT>            AssumptionViolationRunner(TestClass testClass, String methodName,<a name="line.341"></a>
+<FONT color="green">342</FONT>                    AssumptionViolatedException exception) {<a name="line.342"></a>
+<FONT color="green">343</FONT>                this.description = Description<a name="line.343"></a>
+<FONT color="green">344</FONT>                        .createTestDescription(testClass.getJavaClass(),<a name="line.344"></a>
+<FONT color="green">345</FONT>                                methodName + "() assumption violation");<a name="line.345"></a>
+<FONT color="green">346</FONT>                this.exception = exception;<a name="line.346"></a>
+<FONT color="green">347</FONT>            }<a name="line.347"></a>
+<FONT color="green">348</FONT>    <a name="line.348"></a>
+<FONT color="green">349</FONT>            @Override<a name="line.349"></a>
+<FONT color="green">350</FONT>            public Description getDescription() {<a name="line.350"></a>
+<FONT color="green">351</FONT>                return description;<a name="line.351"></a>
+<FONT color="green">352</FONT>            }<a name="line.352"></a>
+<FONT color="green">353</FONT>    <a name="line.353"></a>
+<FONT color="green">354</FONT>            @Override<a name="line.354"></a>
+<FONT color="green">355</FONT>            public void run(RunNotifier notifier) {<a name="line.355"></a>
+<FONT color="green">356</FONT>                notifier.fireTestAssumptionFailed(new Failure(description, exception));<a name="line.356"></a>
+<FONT color="green">357</FONT>            }<a name="line.357"></a>
+<FONT color="green">358</FONT>        }<a name="line.358"></a>
+<FONT color="green">359</FONT>    <a name="line.359"></a>
+<FONT color="green">360</FONT>        private static class RunnersFactory {<a name="line.360"></a>
+<FONT color="green">361</FONT>            private static final ParametersRunnerFactory DEFAULT_FACTORY = new BlockJUnit4ClassRunnerWithParametersFactory();<a name="line.361"></a>
+<FONT color="green">362</FONT>    <a name="line.362"></a>
+<FONT color="green">363</FONT>            private final TestClass testClass;<a name="line.363"></a>
+<FONT color="green">364</FONT>            private final FrameworkMethod parametersMethod;<a name="line.364"></a>
+<FONT color="green">365</FONT>            private final List&lt;Object&gt; allParameters;<a name="line.365"></a>
+<FONT color="green">366</FONT>            private final int parameterCount;<a name="line.366"></a>
+<FONT color="green">367</FONT>            private final Runner runnerOverride;<a name="line.367"></a>
+<FONT color="green">368</FONT>    <a name="line.368"></a>
+<FONT color="green">369</FONT>            private RunnersFactory(Class&lt;?&gt; klass) throws Throwable {<a name="line.369"></a>
+<FONT color="green">370</FONT>                testClass = new TestClass(klass);<a name="line.370"></a>
+<FONT color="green">371</FONT>                parametersMethod = getParametersMethod(testClass);<a name="line.371"></a>
+<FONT color="green">372</FONT>                List&lt;Object&gt; allParametersResult;<a name="line.372"></a>
+<FONT color="green">373</FONT>                AssumptionViolationRunner assumptionViolationRunner = null;<a name="line.373"></a>
+<FONT color="green">374</FONT>                try {<a name="line.374"></a>
+<FONT color="green">375</FONT>                    allParametersResult = allParameters(testClass, parametersMethod);<a name="line.375"></a>
+<FONT color="green">376</FONT>                } catch (AssumptionViolatedException e) {<a name="line.376"></a>
+<FONT color="green">377</FONT>                    allParametersResult = Collections.emptyList();<a name="line.377"></a>
+<FONT color="green">378</FONT>                    assumptionViolationRunner = new AssumptionViolationRunner(testClass,<a name="line.378"></a>
+<FONT color="green">379</FONT>                            parametersMethod.getName(), e);<a name="line.379"></a>
+<FONT color="green">380</FONT>                }<a name="line.380"></a>
+<FONT color="green">381</FONT>                allParameters = allParametersResult;<a name="line.381"></a>
+<FONT color="green">382</FONT>                runnerOverride = assumptionViolationRunner;<a name="line.382"></a>
+<FONT color="green">383</FONT>                parameterCount =<a name="line.383"></a>
+<FONT color="green">384</FONT>                        allParameters.isEmpty() ? 0 : normalizeParameters(allParameters.get(0)).length;<a name="line.384"></a>
+<FONT color="green">385</FONT>            }<a name="line.385"></a>
+<FONT color="green">386</FONT>    <a name="line.386"></a>
+<FONT color="green">387</FONT>            private List&lt;Runner&gt; createRunners() throws Exception {<a name="line.387"></a>
+<FONT color="green">388</FONT>                if (runnerOverride != null) {<a name="line.388"></a>
+<FONT color="green">389</FONT>                    return Collections.singletonList(runnerOverride);<a name="line.389"></a>
+<FONT color="green">390</FONT>                }<a name="line.390"></a>
+<FONT color="green">391</FONT>                Parameters parameters = parametersMethod.getAnnotation(Parameters.class);<a name="line.391"></a>
+<FONT color="green">392</FONT>                return Collections.unmodifiableList(createRunnersForParameters(<a name="line.392"></a>
+<FONT color="green">393</FONT>                        allParameters, parameters.name(),<a name="line.393"></a>
+<FONT color="green">394</FONT>                        getParametersRunnerFactory()));<a name="line.394"></a>
+<FONT color="green">395</FONT>            }<a name="line.395"></a>
+<FONT color="green">396</FONT>    <a name="line.396"></a>
+<FONT color="green">397</FONT>            private ParametersRunnerFactory getParametersRunnerFactory()<a name="line.397"></a>
+<FONT color="green">398</FONT>                    throws InstantiationException, IllegalAccessException {<a name="line.398"></a>
+<FONT color="green">399</FONT>                UseParametersRunnerFactory annotation = testClass<a name="line.399"></a>
+<FONT color="green">400</FONT>                        .getAnnotation(UseParametersRunnerFactory.class);<a name="line.400"></a>
+<FONT color="green">401</FONT>                if (annotation == null) {<a name="line.401"></a>
+<FONT color="green">402</FONT>                    return DEFAULT_FACTORY;<a name="line.402"></a>
+<FONT color="green">403</FONT>                } else {<a name="line.403"></a>
+<FONT color="green">404</FONT>                    Class&lt;? extends ParametersRunnerFactory&gt; factoryClass = annotation<a name="line.404"></a>
+<FONT color="green">405</FONT>                            .value();<a name="line.405"></a>
+<FONT color="green">406</FONT>                    return factoryClass.newInstance();<a name="line.406"></a>
+<FONT color="green">407</FONT>                }<a name="line.407"></a>
+<FONT color="green">408</FONT>            }<a name="line.408"></a>
+<FONT color="green">409</FONT>    <a name="line.409"></a>
+<FONT color="green">410</FONT>            private TestWithParameters createTestWithNotNormalizedParameters(<a name="line.410"></a>
+<FONT color="green">411</FONT>                    String pattern, int index, Object parametersOrSingleParameter) {<a name="line.411"></a>
+<FONT color="green">412</FONT>                Object[] parameters = normalizeParameters(parametersOrSingleParameter);<a name="line.412"></a>
+<FONT color="green">413</FONT>                return createTestWithParameters(testClass, pattern, index, parameters);<a name="line.413"></a>
+<FONT color="green">414</FONT>            }<a name="line.414"></a>
+<FONT color="green">415</FONT>    <a name="line.415"></a>
+<FONT color="green">416</FONT>            private static Object[] normalizeParameters(Object parametersOrSingleParameter) {<a name="line.416"></a>
+<FONT color="green">417</FONT>                return (parametersOrSingleParameter instanceof Object[]) ? (Object[]) parametersOrSingleParameter<a name="line.417"></a>
+<FONT color="green">418</FONT>                        : new Object[] { parametersOrSingleParameter };<a name="line.418"></a>
+<FONT color="green">419</FONT>            }<a name="line.419"></a>
+<FONT color="green">420</FONT>    <a name="line.420"></a>
+<FONT color="green">421</FONT>            @SuppressWarnings("unchecked")<a name="line.421"></a>
+<FONT color="green">422</FONT>            private static List&lt;Object&gt; allParameters(<a name="line.422"></a>
+<FONT color="green">423</FONT>                    TestClass testClass, FrameworkMethod parametersMethod) throws Throwable {<a name="line.423"></a>
+<FONT color="green">424</FONT>                Object parameters = parametersMethod.invokeExplosively(null);<a name="line.424"></a>
+<FONT color="green">425</FONT>                if (parameters instanceof List) {<a name="line.425"></a>
+<FONT color="green">426</FONT>                    return (List&lt;Object&gt;) parameters;<a name="line.426"></a>
+<FONT color="green">427</FONT>                } else if (parameters instanceof Collection) {<a name="line.427"></a>
+<FONT color="green">428</FONT>                    return new ArrayList&lt;Object&gt;((Collection&lt;Object&gt;) parameters);<a name="line.428"></a>
+<FONT color="green">429</FONT>                } else if (parameters instanceof Iterable) {<a name="line.429"></a>
+<FONT color="green">430</FONT>                    List&lt;Object&gt; result = new ArrayList&lt;Object&gt;();<a name="line.430"></a>
+<FONT color="green">431</FONT>                    for (Object entry : ((Iterable&lt;Object&gt;) parameters)) {<a name="line.431"></a>
+<FONT color="green">432</FONT>                        result.add(entry);<a name="line.432"></a>
+<FONT color="green">433</FONT>                    }<a name="line.433"></a>
+<FONT color="green">434</FONT>                    return result;<a name="line.434"></a>
+<FONT color="green">435</FONT>                } else if (parameters instanceof Object[]) {<a name="line.435"></a>
+<FONT color="green">436</FONT>                    return Arrays.asList((Object[]) parameters);<a name="line.436"></a>
+<FONT color="green">437</FONT>                } else {<a name="line.437"></a>
+<FONT color="green">438</FONT>                    throw parametersMethodReturnedWrongType(testClass, parametersMethod);<a name="line.438"></a>
+<FONT color="green">439</FONT>                }<a name="line.439"></a>
+<FONT color="green">440</FONT>            }<a name="line.440"></a>
+<FONT color="green">441</FONT>    <a name="line.441"></a>
+<FONT color="green">442</FONT>            private static FrameworkMethod getParametersMethod(TestClass testClass) throws Exception {<a name="line.442"></a>
+<FONT color="green">443</FONT>                List&lt;FrameworkMethod&gt; methods = testClass<a name="line.443"></a>
+<FONT color="green">444</FONT>                        .getAnnotatedMethods(Parameters.class);<a name="line.444"></a>
+<FONT color="green">445</FONT>                for (FrameworkMethod each : methods) {<a name="line.445"></a>
+<FONT color="green">446</FONT>                    if (each.isStatic() &amp;&amp; each.isPublic()) {<a name="line.446"></a>
+<FONT color="green">447</FONT>                        return each;<a name="line.447"></a>
+<FONT color="green">448</FONT>                    }<a name="line.448"></a>
+<FONT color="green">449</FONT>                }<a name="line.449"></a>
+<FONT color="green">450</FONT>    <a name="line.450"></a>
+<FONT color="green">451</FONT>                throw new Exception("No public static parameters method on class "<a name="line.451"></a>
+<FONT color="green">452</FONT>                        + testClass.getName());<a name="line.452"></a>
+<FONT color="green">453</FONT>            }<a name="line.453"></a>
+<FONT color="green">454</FONT>    <a name="line.454"></a>
+<FONT color="green">455</FONT>            private List&lt;Runner&gt; createRunnersForParameters(<a name="line.455"></a>
+<FONT color="green">456</FONT>                    Iterable&lt;Object&gt; allParameters, String namePattern,<a name="line.456"></a>
+<FONT color="green">457</FONT>                    ParametersRunnerFactory runnerFactory) throws Exception {<a name="line.457"></a>
+<FONT color="green">458</FONT>                try {<a name="line.458"></a>
+<FONT color="green">459</FONT>                    List&lt;TestWithParameters&gt; tests = createTestsForParameters(<a name="line.459"></a>
+<FONT color="green">460</FONT>                            allParameters, namePattern);<a name="line.460"></a>
+<FONT color="green">461</FONT>                    List&lt;Runner&gt; runners = new ArrayList&lt;Runner&gt;();<a name="line.461"></a>
+<FONT color="green">462</FONT>                    for (TestWithParameters test : tests) {<a name="line.462"></a>
+<FONT color="green">463</FONT>                        runners.add(runnerFactory<a name="line.463"></a>
+<FONT color="green">464</FONT>                                .createRunnerForTestWithParameters(test));<a name="line.464"></a>
+<FONT color="green">465</FONT>                    }<a name="line.465"></a>
+<FONT color="green">466</FONT>                    return runners;<a name="line.466"></a>
+<FONT color="green">467</FONT>                } catch (ClassCastException e) {<a name="line.467"></a>
+<FONT color="green">468</FONT>                    throw parametersMethodReturnedWrongType(testClass, parametersMethod);<a name="line.468"></a>
+<FONT color="green">469</FONT>                }<a name="line.469"></a>
+<FONT color="green">470</FONT>            }<a name="line.470"></a>
+<FONT color="green">471</FONT>    <a name="line.471"></a>
+<FONT color="green">472</FONT>            private List&lt;TestWithParameters&gt; createTestsForParameters(<a name="line.472"></a>
+<FONT color="green">473</FONT>                    Iterable&lt;Object&gt; allParameters, String namePattern)<a name="line.473"></a>
+<FONT color="green">474</FONT>                    throws Exception {<a name="line.474"></a>
+<FONT color="green">475</FONT>                int i = 0;<a name="line.475"></a>
+<FONT color="green">476</FONT>                List&lt;TestWithParameters&gt; children = new ArrayList&lt;TestWithParameters&gt;();<a name="line.476"></a>
+<FONT color="green">477</FONT>                for (Object parametersOfSingleTest : allParameters) {<a name="line.477"></a>
+<FONT color="green">478</FONT>                    children.add(createTestWithNotNormalizedParameters(namePattern,<a name="line.478"></a>
+<FONT color="green">479</FONT>                            i++, parametersOfSingleTest));<a name="line.479"></a>
+<FONT color="green">480</FONT>                }<a name="line.480"></a>
+<FONT color="green">481</FONT>                return children;<a name="line.481"></a>
+<FONT color="green">482</FONT>            }<a name="line.482"></a>
+<FONT color="green">483</FONT>    <a name="line.483"></a>
+<FONT color="green">484</FONT>            private static Exception parametersMethodReturnedWrongType(<a name="line.484"></a>
+<FONT color="green">485</FONT>                    TestClass testClass, FrameworkMethod parametersMethod) throws Exception {<a name="line.485"></a>
+<FONT color="green">486</FONT>                String className = testClass.getName();<a name="line.486"></a>
+<FONT color="green">487</FONT>                String methodName = parametersMethod.getName();<a name="line.487"></a>
+<FONT color="green">488</FONT>                String message = MessageFormat.format(<a name="line.488"></a>
+<FONT color="green">489</FONT>                        "{0}.{1}() must return an Iterable of arrays.", className,<a name="line.489"></a>
+<FONT color="green">490</FONT>                        methodName);<a name="line.490"></a>
+<FONT color="green">491</FONT>                return new Exception(message);<a name="line.491"></a>
+<FONT color="green">492</FONT>            }<a name="line.492"></a>
+<FONT color="green">493</FONT>    <a name="line.493"></a>
+<FONT color="green">494</FONT>            private TestWithParameters createTestWithParameters(<a name="line.494"></a>
+<FONT color="green">495</FONT>                    TestClass testClass, String pattern, int index,<a name="line.495"></a>
+<FONT color="green">496</FONT>                    Object[] parameters) {<a name="line.496"></a>
+<FONT color="green">497</FONT>                String finalPattern = pattern.replaceAll("\\{index\\}",<a name="line.497"></a>
+<FONT color="green">498</FONT>                        Integer.toString(index));<a name="line.498"></a>
+<FONT color="green">499</FONT>                String name = MessageFormat.format(finalPattern, parameters);<a name="line.499"></a>
+<FONT color="green">500</FONT>                return new TestWithParameters("[" + name + "]", testClass,<a name="line.500"></a>
+<FONT color="green">501</FONT>                        Arrays.asList(parameters));<a name="line.501"></a>
+<FONT color="green">502</FONT>            }<a name="line.502"></a>
+<FONT color="green">503</FONT>        }<a name="line.503"></a>
+<FONT color="green">504</FONT>    }<a name="line.504"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

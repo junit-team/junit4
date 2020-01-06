@@ -1,0 +1,107 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.junit;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import java.lang.annotation.ElementType;<a name="line.3"></a>
+<FONT color="green">004</FONT>    import java.lang.annotation.Retention;<a name="line.4"></a>
+<FONT color="green">005</FONT>    import java.lang.annotation.RetentionPolicy;<a name="line.5"></a>
+<FONT color="green">006</FONT>    import java.lang.annotation.Target;<a name="line.6"></a>
+<FONT color="green">007</FONT>    <a name="line.7"></a>
+<FONT color="green">008</FONT>    import org.junit.runners.MethodSorters;<a name="line.8"></a>
+<FONT color="green">009</FONT>    <a name="line.9"></a>
+<FONT color="green">010</FONT>    /**<a name="line.10"></a>
+<FONT color="green">011</FONT>     * This class allows the user to choose the order of execution of the methods within a test class.<a name="line.11"></a>
+<FONT color="green">012</FONT>     *<a name="line.12"></a>
+<FONT color="green">013</FONT>     * &lt;p&gt;The default order of execution of JUnit tests within a class is deterministic but not predictable.<a name="line.13"></a>
+<FONT color="green">014</FONT>     * The order of execution is not guaranteed for Java 7 (and some previous versions), and can even change<a name="line.14"></a>
+<FONT color="green">015</FONT>     * from run to run, so the order of execution was changed to be deterministic (in JUnit 4.11)<a name="line.15"></a>
+<FONT color="green">016</FONT>     *<a name="line.16"></a>
+<FONT color="green">017</FONT>     * &lt;p&gt;It is recommended that test methods be written so that they are independent of the order that they are executed.<a name="line.17"></a>
+<FONT color="green">018</FONT>     * However, there may be a number of dependent tests either through error or by design.<a name="line.18"></a>
+<FONT color="green">019</FONT>     * This class allows the user to specify the order of execution of test methods.<a name="line.19"></a>
+<FONT color="green">020</FONT>     *<a name="line.20"></a>
+<FONT color="green">021</FONT>     * &lt;p&gt;For possibilities, see {@link MethodSorters}<a name="line.21"></a>
+<FONT color="green">022</FONT>     *<a name="line.22"></a>
+<FONT color="green">023</FONT>     * Here is an example:<a name="line.23"></a>
+<FONT color="green">024</FONT>     *<a name="line.24"></a>
+<FONT color="green">025</FONT>     * &lt;pre&gt;<a name="line.25"></a>
+<FONT color="green">026</FONT>     * &amp;#064;FixMethodOrder(MethodSorters.NAME_ASCENDING)<a name="line.26"></a>
+<FONT color="green">027</FONT>     * public class MyTest {<a name="line.27"></a>
+<FONT color="green">028</FONT>     * }<a name="line.28"></a>
+<FONT color="green">029</FONT>     * &lt;/pre&gt;<a name="line.29"></a>
+<FONT color="green">030</FONT>     *<a name="line.30"></a>
+<FONT color="green">031</FONT>     * @see org.junit.runners.MethodSorters<a name="line.31"></a>
+<FONT color="green">032</FONT>     * @since 4.11<a name="line.32"></a>
+<FONT color="green">033</FONT>     */<a name="line.33"></a>
+<FONT color="green">034</FONT>    @Retention(RetentionPolicy.RUNTIME)<a name="line.34"></a>
+<FONT color="green">035</FONT>    @Target({ElementType.TYPE})<a name="line.35"></a>
+<FONT color="green">036</FONT>    public @interface FixMethodOrder {<a name="line.36"></a>
+<FONT color="green">037</FONT>        /**<a name="line.37"></a>
+<FONT color="green">038</FONT>         * Optionally specify &lt;code&gt;value&lt;/code&gt; to have the methods executed in a particular order<a name="line.38"></a>
+<FONT color="green">039</FONT>         */<a name="line.39"></a>
+<FONT color="green">040</FONT>        MethodSorters value() default MethodSorters.DEFAULT;<a name="line.40"></a>
+<FONT color="green">041</FONT>    }<a name="line.41"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>
