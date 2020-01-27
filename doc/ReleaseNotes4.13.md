@@ -26,6 +26,10 @@ To ensure serializability of further changes in `ArrayAssertionFailure` (until e
 
 <a name="1315-f2">[2]</a> [Case](https://github.com/junit-team/junit4/pull/1315#issuecomment-222905229) if the test class is compiled with <= v4.11, where only `fCause` is initialized and not `Throwable#cause`, it can now fallback to the field, `fCause`, when building the message.
 
+### [Pull request #1150:](https://github.com/junit-team/junit4/pull/1150) Deprecate `Assert#assertThat`
+
+The method `assertThat` is used for writing assertions with Hamcrest. Hamcrest is an independent assertion library and contains an own `assertThat` method in the class `org.hamcrest.MatcherAssert`. It is available both in the old Hamcrest 1.3 release and in the current Hamcrest 2.1. Therefore the JUnit team recommends to use Hamcrest's own `assertThat` directly.
+
 # Test Runners
 
 ### [Pull request #1037:](https://github.com/junit-team/junit/pull/1037) `BlockJUnit4ClassRunner#createTest` now accepts `FrameworkMethod`
