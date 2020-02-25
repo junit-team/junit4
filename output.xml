@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 3.1.2 (Python 3.6.9 on linux)" generated="20200210 13:40:21.662" rpa="false">
+<suite id="s1" name="Make Change" source="/home/trung/Desktop/project/junit4/Make_Change.robot">
+<test id="s1-t1" name="CREATE CHANGE AND PUSH CHANGES TO PR">
+<kw name="Log" library="BuiltIn">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>./make_fakechange.sh</arg>
+</arguments>
+<msg timestamp="20200210 13:40:21.690" level="INFO">./make_fakechange.sh</msg>
+<status status="PASS" starttime="20200210 13:40:21.689" endtime="20200210 13:40:21.691"></status>
+</kw>
+<kw name="Run Process" library="Process">
+<doc>Runs a process and waits for it to complete.</doc>
+<arguments>
+<arg>./make_fakechange.sh</arg>
+</arguments>
+<msg timestamp="20200210 13:40:21.692" level="INFO">Starting process:
+./make_fakechange.sh</msg>
+<msg timestamp="20200210 13:40:21.695" level="FAIL">FileNotFoundError: [Errno 2] No such file or directory: './make_fakechange.sh': './make_fakechange.sh'</msg>
+<status status="FAIL" starttime="20200210 13:40:21.691" endtime="20200210 13:40:21.695"></status>
+</kw>
+<status status="FAIL" starttime="20200210 13:40:21.689" endtime="20200210 13:40:21.696" critical="yes">FileNotFoundError: [Errno 2] No such file or directory: './make_fakechange.sh': './make_fakechange.sh'</status>
+</test>
+<status status="FAIL" starttime="20200210 13:40:21.663" endtime="20200210 13:40:21.696"></status>
+</suite>
+<statistics>
+<total>
+<stat pass="0" fail="1">Critical Tests</stat>
+<stat pass="0" fail="1">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="0" fail="1" id="s1" name="Make Change">Make Change</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
