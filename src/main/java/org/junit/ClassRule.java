@@ -11,7 +11,9 @@ import java.lang.annotation.Target;
  * a subtype of {@link org.junit.rules.TestRule}.
  * <p>
  * The {@link org.junit.runners.model.Statement} passed
- * to the {@link org.junit.rules.TestRule} will run any {@link BeforeClass} methods,
+ * to the {@link org.junit.rules.TestRule} will run 
+ * the overridable method {@link org.junit.rules.TestRule.apply},
+ * any {@link BeforeClass} methods,
  * then the entire body of the test class (all contained methods, if it is
  * a standard JUnit test class, or all contained classes, if it is a
  * {@link org.junit.runners.Suite}), and finally any {@link AfterClass} methods.
