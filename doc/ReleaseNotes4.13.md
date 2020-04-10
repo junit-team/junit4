@@ -320,3 +320,8 @@ Add method `getAssumptionFailureCount()` to `Result` which returns the number of
 ### [Pull request #1557:](https://github.com/junit-team/junit4/pull/1380) MaxCore always closes stream of history file
 
 MaxCore didn't close the output stream of the history file when write failed. Now it does.
+
+### Signing
+
+The 4.13 release is signed with a new key (id 5EC61B51):
+https://github.com/junit-team/junit5/blob/ade90ad07fdf72d9c57158adfeebfe0a0b392525/KEYS
