@@ -1,0 +1,69 @@
+ul.inline {
+    margin-left: 0;
+    list-style: none;
+}
+.inline li {
+  display: inline-block;
+	margin-right: 10px;
+	margin-bottom: 10px;
+}
+
+.sponsors li {
+	border: 1px solid #e3e3e3;
+	-webkit-border-radius: 4px;
+	   -moz-border-radius: 4px;
+	        border-radius: 4px;
+}
+.sponsors li:hover {
+	border-color: #c5c5c5;
+}
+.sponsors li {
+	text-align: center;
+	padding: 0;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+	   -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+	        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+.sponsors li a {
+	display: block;
+	padding: 0 10px !important;
+}
+
+.sponsors-small li a img {
+  max-height: 100px;
+  max-width: 200px;
+}
+
+.sponsors-small li a {
+	width: 200px;
+	height: 120px;
+	line-height: 120px;
+}
+.sponsors-medium li a {
+	width: 278px;
+	height: 141px;
+	line-height: 141px;
+}
+.sponsors-large li a {
+	width: 435px;
+	height: 237px;
+	line-height: 237px;
+}
+
+ul.people {
+	margin-left: 7px;
+	margin-right: 7px;
+}
+.people li {
+	display: block;
+	width: 170px;
+	margin: 0;
+	padding: 0 15px 0 0;
+	float: left;
+	text-align: center;
+}
+.people img.avatar {
+	display: block;
+	width: 100%;
+	margin: 0 0 10px 0;
+}

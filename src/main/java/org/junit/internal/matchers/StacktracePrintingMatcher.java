@@ -9,11 +9,7 @@ import org.junit.internal.Throwables;
 /**
  * A matcher that delegates to throwableMatcher and in addition appends the
  * stacktrace of the actual Throwable in case of a mismatch.
- *
- * @deprecated use {@code org.hamcrest.junit.JunitMatchers.isThrowable()}
- * or {@code org.hamcrest.junit.JunitMatchers.isException()}
  */
-@Deprecated
 public class StacktracePrintingMatcher<T extends Throwable> extends
         org.hamcrest.TypeSafeMatcher<T> {
 

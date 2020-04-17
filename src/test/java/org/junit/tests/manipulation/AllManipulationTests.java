@@ -8,6 +8,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
         FilterableTest.class,
         FilterTest.class,
+        OrderableTest.class,
+        OrderWithTest.class,
         SingleMethodTest.class,
         SortableTest.class
 })

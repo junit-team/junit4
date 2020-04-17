@@ -4,7 +4,7 @@
 
     <groupId>junit</groupId>
     <artifactId>junit</artifactId>
-    <version>4.13-SNAPSHOT</version>
+    <version>4.14-SNAPSHOT</version>
 
     <name>JUnit</name>
     <description>JUnit is a unit testing framework for Java, created by Erich Gamma and Kent Beck.</description>
@@ -48,21 +48,13 @@
         <contributor>
             <name>JUnit contributors</name>
             <organization>JUnit</organization>
-            <email>junit@yahoogroups.com</email>
+            <email>team@junit.org</email>
             <url>https://github.com/junit-team/junit4/graphs/contributors</url>
             <roles>
                 <role>developers</role>
             </roles>
         </contributor>
     </contributors>
-
-    <mailingLists>
-        <mailingList>
-            <name>JUnit Mailing List</name>
-            <post>junit@yahoogroups.com</post>
-            <archive>https://groups.yahoo.com/neo/groups/junit/info</archive>
-        </mailingList>
-    </mailingLists>
 
     <prerequisites>
         <maven>3.0.4</maven>
@@ -79,8 +71,8 @@
         <url>https://github.com/junit-team/junit4/issues</url>
     </issueManagement>
     <ciManagement>
-        <system>jenkins</system>
-        <url>https://junit.ci.cloudbees.com/</url>
+        <system>travis</system>
+        <url>https://travis-ci.org/junit-team/junit4</url>
     </ciManagement>
     <distributionManagement>
         <downloadUrl>https://github.com/junit-team/junit4/wiki/Download-and-Install</downloadUrl>
@@ -360,6 +352,9 @@
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
+                        <manifestEntries>
+                            <Automatic-Module-Name>junit</Automatic-Module-Name>
+                        </manifestEntries>                        
                     </archive>
                 </configuration>
             </plugin>
@@ -413,7 +408,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.1</version>
+                <version>2.10.3</version>
                 <configuration>
                     <destDir>javadoc/latest</destDir>
                     <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
@@ -567,6 +562,26 @@
                 <!-- JDK 9 minimal source and target versions are 1.6 -->
                 <jdkVersion>1.6</jdkVersion>
             </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <source>1.6</source>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <source>1.6</source>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </reporting>
         </profile>
     </profiles>
 </project>

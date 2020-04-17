@@ -319,6 +319,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
         statement = withBefores(method, test, statement);
         statement = withAfters(method, test, statement);
         statement = withRules(method, test, statement);
+        statement = withInterruptIsolation(statement);
         return statement;
     }
 
@@ -458,7 +459,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
     private static class RuleCollector<T> implements MemberValueConsumer<T> {
         final List<T> result = new ArrayList<T>();
 
-        public void accept(FrameworkMember member, T value) {
+        public void accept(FrameworkMember<?> member, T value) {
             Rule rule = member.getAnnotation(Rule.class);
             if (rule != null) {
                 RuleContainer container = CURRENT_RULE_CONTAINER.get();

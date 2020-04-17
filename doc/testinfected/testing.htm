@@ -181,14 +181,14 @@ differ. This lets us immediately see why a test failed in a JUnit test
 result report. The value a string representation created by
 the toString converter method.
 There are <a href="../../javadoc/junit/framework/Assert.html">
-other asertXXXX variants</a> not discussed here.
+other assertXXXX variants</a> not discussed here.
 <p>Now that we have implemented two test cases we notice some code duplication
 for setting-up the tests. It would be nice to reuse some of this test set-up
 code. In other words, we would like to have a common fixture for running
 the tests. With JUnit you can do so by storing the fixture's objects in
 instance variables of your
 <a href="../../javadoc/junit/framework/TestCase.html">TestCase</a>
-subclass and initialize them by overridding
+subclass and initialize them by overriding
 the setUp method. The symmetric operation to setUp is tearDown which you
 can override to clean up the test fixture at the end of a test. Each test
 runs in its own fixture and JUnit calls setUp and tearDown for each test
@@ -435,7 +435,7 @@ these methods in Money and MoneyBag. This is the implementation in Money.
 public IMoney addMoneyBag(MoneyBag s) {
 &nbsp;&nbsp;&nbsp; return s.addMoney(this);
 }</tt></pre>
-Here is the implemenation in MoneyBag which assumes additional constructors
+Here is the implementation in MoneyBag which assumes additional constructors
 to create a MoneyBag from a Money and a MoneyBag and from two MoneyBags.
 <pre><tt>public IMoney addMoney(Money m) {
 &nbsp;&nbsp;&nbsp; return new MoneyBag(m, this);

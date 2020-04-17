@@ -3,8 +3,9 @@ package org.junit.rules;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -90,6 +91,17 @@ public class TemporaryFolderUsageTest {
         assertTrue("Could not create" + file, file.createNewFile());
 
         thrown.expect(IOException.class);
+        thrown.expectMessage("a file with the path 'level1' exists");
+        tempFolder.newFolder("level1");
+    }
+
+    @Test
+    public void newFolderWithGivenFolderThrowsIOExceptionWhenFolderCannotBeCreated() throws IOException {
+        tempFolder.create();
+        assumeTrue("Could not make folder " + tempFolder.getRoot() + " read only.",
+                tempFolder.getRoot().setReadOnly());
+
+        thrown.expect(IOException.class);
         thrown.expectMessage("could not create a folder with the path 'level1'");
         tempFolder.newFolder("level1");
     }
@@ -111,7 +123,7 @@ public class TemporaryFolderUsageTest {
     }
     
     @Test
-    public void newFolderWithPathContainingFileSeparaterCreatesDirectories()
+    public void newFolderWithPathContainingFileSeparatorCreatesDirectories()
             throws IOException {
         tempFolder.create();
         tempFolder.newFolder("temp1" + File.separator + "temp2");

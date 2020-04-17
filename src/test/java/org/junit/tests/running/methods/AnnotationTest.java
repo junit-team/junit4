@@ -633,13 +633,13 @@ public class AnnotationTest extends TestCase {
         }
     }
 
-    public void testFieldsNeverTreatedAsShadowed() throws Exception {
+    public void testFieldsShadowFieldsFromParent() throws Exception {
         log = "";
         assertThat(testResult(SubFieldShadowing.class), isSuccessful());
         assertEquals(
-                "super.rule.before() sub.rule.before() "
+                "sub.rule.before() "
                 + "Test "
-                + "sub.rule.after() super.rule.after() ",
+                + "sub.rule.after() ",
                 log);
     }
 

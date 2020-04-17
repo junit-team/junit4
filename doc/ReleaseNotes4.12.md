@@ -155,7 +155,7 @@ thrown.reportMissingExceptionWithMessage("FAIL: Expected exception to be thrown"
 If a custom failure message is not provided, a default message is used.
 
 
-### [Pull request #1013:](https://github.com/junit-team/junit/pull/1013) Make ErrorCollector#checkSucceeds generic
+### [Pull request #1013:](https://github.com/junit-team/junit4/pull/1013) Make ErrorCollector#checkSucceeds generic
 
 The method `ErrorCollector.checkSucceeds()` is now generic. Previously, you could only pass
 in a `Callable<Object>` and it returned `Object`. You can now pass any `Callable` and the
@@ -251,6 +251,8 @@ public class HasGlobalTimeout {
 Each test is run in a new _daemon_ thread. If the specified timeout elapses before the test completes, its execution is interrupted via `Thread#interrupt()`. This happens in interruptable I/O (operations throwing `java.io.InterruptedIOException` and `java.nio.channels.ClosedByInterruptException`), locks (package `java.util.concurrent`) and methods in `java.lang.Object` and `java.lang.Thread` throwing `java.lang.InterruptedException`.
 
 ### [Pull request #876:](https://github.com/junit-team/junit4/pull/876) The timeout rule never times out if you pass in a timeout of zero.
+
+A specified timeout of 0 will be interpreted as not set, however tests still launch from separate threads. This can be useful for disabling timeouts in environments where they are dynamically set based on some property.
 
 
 # Parameterized Tests

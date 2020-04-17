@@ -7,18 +7,19 @@ import static org.junit.internal.runners.rules.RuleMemberValidator.CLASS_RULE_VA
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.internal.AssumptionViolatedException;
@@ -31,8 +32,10 @@ import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
+import org.junit.runner.manipulation.Orderer;
+import org.junit.runner.manipulation.InvalidOrderingException;
 import org.junit.runner.manipulation.NoTestsRemainException;
-import org.junit.runner.manipulation.Sortable;
+import org.junit.runner.manipulation.Orderable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
@@ -61,15 +64,15 @@ import org.junit.validator.TestClassValidator;
  * @since 4.5
  */
 public abstract class ParentRunner<T> extends Runner implements Filterable,
-        Sortable {
-    private static final List<TestClassValidator> VALIDATORS = Arrays.<TestClassValidator>asList(
+        Orderable {
+    private static final List<TestClassValidator> VALIDATORS = Collections.<TestClassValidator>singletonList(
             new AnnotationsValidator());
 
     private final Lock childrenLock = new ReentrantLock();
     private final TestClass testClass;
 
     // Guarded by childrenLock
-    private volatile Collection<T> filteredChildren = null;
+    private volatile List<T> filteredChildren = null;
 
     private volatile RunnerScheduler scheduler = new RunnerScheduler() {
         public void schedule(Runnable childStatement) {
@@ -212,6 +215,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             statement = withBeforeClasses(statement);
             statement = withAfterClasses(statement);
             statement = withClassRules(statement);
+            statement = withInterruptIsolation(statement);
         }
         return statement;
     }
@@ -287,6 +291,22 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             @Override
             public void evaluate() {
                 runChildren(notifier);
+            }
+        };
+    }
+
+    /**
+     * @return a {@link Statement}: clears interrupt status of current thread after execution of statement
+     */
+    protected final Statement withInterruptIsolation(final Statement statement) {
+        return new Statement() {
+            @Override
+            public void evaluate() throws Throwable {
+                try {
+                    statement.evaluate();
+                } finally {
+                    Thread.interrupted(); // clearing thread interrupted status for isolation
+                }
             }
         };
     }
@@ -422,7 +442,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
                     iter.remove();
                 }
             }
-            filteredChildren = Collections.unmodifiableCollection(children);
+            filteredChildren = Collections.unmodifiableList(children);
             if (filteredChildren.isEmpty()) {
                 throw new NoTestsRemainException();
             }
@@ -432,6 +452,10 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     }
 
     public void sort(Sorter sorter) {
+        if (shouldNotReorder()) {
+            return;
+        }
+
         childrenLock.lock();
         try {
             for (T each : getFilteredChildren()) {
@@ -439,7 +463,47 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             }
             List<T> sortedChildren = new ArrayList<T>(getFilteredChildren());
             Collections.sort(sortedChildren, comparator(sorter));
-            filteredChildren = Collections.unmodifiableCollection(sortedChildren);
+            filteredChildren = Collections.unmodifiableList(sortedChildren);
+        } finally {
+            childrenLock.unlock();
+        }
+    }
+
+    /**
+     * Implementation of {@link Orderable#order(Orderer)}.
+     *
+     * @since 4.13
+     */
+    public void order(Orderer orderer) throws InvalidOrderingException {
+        if (shouldNotReorder()) {
+            return;
+        }
+
+        childrenLock.lock();
+        try {
+            List<T> children = getFilteredChildren();
+            // In theory, we could have duplicate Descriptions. De-dup them before ordering,
+            // and add them back at the end.
+            Map<Description, List<T>> childMap = new LinkedHashMap<Description, List<T>>(
+                    children.size());
+            for (T child : children) {
+                Description description = describeChild(child);
+                List<T> childrenWithDescription = childMap.get(description);
+                if (childrenWithDescription == null) {
+                    childrenWithDescription = new ArrayList<T>(1);
+                    childMap.put(description, childrenWithDescription);
+                }
+                childrenWithDescription.add(child);
+                orderer.apply(child);
+            }
+
+            List<Description> inOrder = orderer.order(childMap.keySet());
+
+            children = new ArrayList<T>(children.size());
+            for (Description description : inOrder) {
+                children.addAll(childMap.get(description));
+            }
+            filteredChildren = Collections.unmodifiableList(children);
         } finally {
             childrenLock.unlock();
         }
@@ -449,6 +513,11 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     // Private implementation
     //
 
+    private boolean shouldNotReorder() {
+        // If the test specifies a specific order, do not reorder.
+        return getDescription().getAnnotation(FixMethodOrder.class) != null;
+    }
+
     private void validate() throws InitializationError {
         List<Throwable> errors = new ArrayList<Throwable>();
         collectInitializationErrors(errors);
@@ -457,12 +526,13 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         }
     }
 
-    private Collection<T> getFilteredChildren() {
+    private List<T> getFilteredChildren() {
         if (filteredChildren == null) {
             childrenLock.lock();
             try {
                 if (filteredChildren == null) {
-                    filteredChildren = Collections.unmodifiableCollection(getChildren());
+                    filteredChildren = Collections.unmodifiableList(
+                            new ArrayList<T>(getChildren()));
                 }
             } finally {
                 childrenLock.unlock();
@@ -494,16 +564,13 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     private static class ClassRuleCollector implements MemberValueConsumer<TestRule> {
         final List<RuleContainer.RuleEntry> entries = new ArrayList<RuleContainer.RuleEntry>();
 
-        public void accept(FrameworkMember member, TestRule value) {
+        public void accept(FrameworkMember<?> member, TestRule value) {
             ClassRule rule = member.getAnnotation(ClassRule.class);
             entries.add(new RuleContainer.RuleEntry(value, RuleContainer.RuleEntry.TYPE_TEST_RULE,
                     rule != null ? rule.order() : null));
         }
 
         public List<TestRule> getOrderedRules() {
-            if (entries.isEmpty()) {
-                return Collections.emptyList();
-            }
             Collections.sort(entries, RuleContainer.ENTRY_COMPARATOR);
             List<TestRule> result = new ArrayList<TestRule>(entries.size());
             for (RuleContainer.RuleEntry entry : entries) {

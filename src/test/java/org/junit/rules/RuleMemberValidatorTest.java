@@ -76,7 +76,7 @@ public class RuleMemberValidatorTest {
      * <a href="https://github.com/junit-team/junit4/issues/1019">Issue #1019</a>
      */
     @Test
-    public void rejectClassRuleThatIsImplemetationOfMethodRule() {
+    public void rejectClassRuleThatIsImplementationOfMethodRule() {
         TestClass target = new TestClass(TestWithClassRuleIsImplementationOfMethodRule.class);
         CLASS_RULE_VALIDATOR.validate(target, errors);
         assertOneErrorWithMessage("The @ClassRule 'classRule' must implement TestRule.");

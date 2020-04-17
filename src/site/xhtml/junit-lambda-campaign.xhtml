@@ -1,0 +1,67 @@
+<html>
+  <head>
+    <title>JUnit Lambda Crowdfunding Campaign</title>
+  </head>
+  <body>
+		<h1>Crowdfunding JUnit Lambda <small>#fundJUnit</small></h1>
+		<div>
+		<iframe style="display:block; margin: 0 auto;" width="940" height="529" src="https://www.youtube-nocookie.com/embed/Ai6M5G90Mlg?rel=0" frameborder="0" allowfullscreen="true"></iframe>
+		</div>
+    <hr />
+    <h2 align="center" class="muted">The crowdfunding campaign has successfully ended.<br/> Thank you all!</h2>
+    <p align="center" style="font-size:150%">
+			<a class="btn btn-large btn-success" href="https://www.indiegogo.com/projects/junit-lambda" role="button" style="font-size:100%">Campaign page on Indiegogo</a>
+			<a class="btn btn-large btn-default" href="junit-lambda-contributors.html" role="button" style="font-size:100%">Campaign Contributors</a>
+			<a class="btn btn-large btn-default" href="http://twitter.com/junitteam" role="button" style="font-size:100%">Follow @junitteam on Twitter</a>
+		</p>
+		<hr />
+		<h2>Main Sponsors</h2>
+		<p>Each of these companies will fund a developer for 6 weeks. They will not receive any money collected through the campaign.</p>
+		<ul class="inline sponsors sponsors-large">
+			<li><a href="http://www.andrena.de" title="andrena objects ag, Germany"><img src="images/junit-lambda/sponsors/andrena.png" /></a></li>
+			<li><a href="http://www.heidelberg-mobil.com" title="Heidelberg Mobil International GmbH, Germany"><img src="images/junit-lambda/sponsors/heidelberg-mobil.png" /></a></li>
+			<li><a href="http://www.namics.com" title="Namics (Deutschland) GmbH, Germany"><img src="images/junit-lambda/sponsors/namics.png" /></a></li>
+			<li><a href="http://pivotal.io/" title="Pivotal Software, Inc., U.S.A."><img src="images/junit-lambda/sponsors/pivotal.png" /></a></li>
+		</ul>
+		<h2>Main Campaign Sponsor</h2>
+		<p>This company will fund JUnit Lambda through the Main Sponsor campaign perk.</p>
+		<ul class="inline sponsors sponsors-large">
+			<li><a href="http://www.americanexpress.com/" title="American Express Company"><img src="images/junit-lambda/sponsors/amex.png" /></a></li>
+		</ul>
+		<h2>Campaign Contributors</h2>
+		<p>Thank you to all other people, companies, and organizations that have contributed already! Please check out our <a href="junit-lambda-contributors.html">contributors page</a>.</p>
+    <hr />
+    <h2>Why JUnit needs your support</h2>
+		<p>With 43 million downloads from Maven Central in 2014 <strong>JUnit</strong> still is the default testing library for Java. Millions of projects rely on it being both stable and allowing to test the latest features of the latest JDK. Moreover, many other testing libraries hook into JUnit as a way to enable IDE and build tool integration. Keeping JUnit in shape is a major task for those maintaining and evolving the library.</p>
+		<p>As of today, none of the active JUnit maintainers are payed by their employer to do this work. Not surprisingly many unresolved issues have piled up and, what’s worse, there is no hope to get JUnit to support and make use of all the features in Java 8 any time soon. Since <i>Lambdas</i> are the most prominent of those features, we borrowed their name for the campaign.</p>
+		<p>This campaign will allow a team of long-time JUnit committers, backed by a few experienced Java developers, to focus on getting JUnit ready for the years—and JDKs—to come.</p>
+		<h2>Obstacles for evolving JUnit</h2>
+		<p>A major design goal of JUnit has always been simplicity. JUnit 4 was released 10 years ago and has served its purpose very well. Since then many things have changed: Java got a couple of new versions and many new testing frameworks and ideas about testing have popped up.</p>
+		<p>The basic design of JUnit, however, has remained the same since 2005. Some constructs like Rules were added, but at the same time backwards compatibility has always been and will continue to be the major goal of evolving JUnit. A number of issues have increasingly slowed down its evolution:</p>
+		<ul>
+			<li>
+				<p><i>Runners</i> have found a widespread use and become a crucial concept to extend JUnit. Writing a custom runner is a very powerful way to customize how a test class is instantiated, how its children are collected, how they are run, reported, and so on. However, you can only have a single runner for each test class. For example, combining <i>SpringJUnit4ClassRunner</i> and <i>Parameterized</i> is not possible at the moment. We want to separate the different concerns, for which the runner is currently responsible, into separated interfaces.</p>
+			</li>
+			<li>
+				<p>The current execution model requires all test cases to be known a-priori. This prevents the dynamic creation of test cases as response to observed behaviour during test execution. This also means that you cannot use Streams (Java 8), e.g. in combination with <i>@Parameters</i>, to create your test data.</p>
+			</li>
+			<li>
+				<p>All IDEs and build tools include support for JUnit. While that makes it really easy to execute JUnit tests, on the flip side the IDEs and build tools are tightly coupled to JUnit internals. Some IDEs and build tools use internal JUnit classes or even reflection to circumvent the absence of a JUnit API that does what they want. For example, there is no extensible way to link to a test location in case it is not a Java method. Those “tricks” complicate the evolution of JUnit tremendously, and even render some changes virtually impossible. Therefore, we want to closely work with IDE and build tool developers to add features their users need in an extensible way.</p>
+			</li>
+		</ul>
+    <h2>The Vision</h2>
+		<p>We’ve identified two main areas to focus on during the upcoming JUnit overhaul:</p>
+		<ul>
+			<li>
+				<p><strong>Decouple test execution and reporting from test definition and provisioning</strong>: This will greatly simplify further evolution of JUnit and allow users to mix test specifications from different test libraries—like JUnit, Spock, ScalaTest and so on—more easily. Other testing libraries should only depend on the test execution/reporting API of JUnit, not on the test definition API (e.g. Runner).</p>
+			</li>
+			<li>
+				<p><strong>Rethinking the JUnit’s extensibility story</strong>: Runners, Rules, subclassing and other techniques will be revamped into a cohesive set of constructs to enhance JUnit and to allow—if possible—the seamless combination of individual extensions.</p>
+			</li>
+			<li>
+				<p><strong>Making use of Java 8 features (Lambdas, Streams, Interface default methods) for better assertions, generating test cases, formulating test hierarchies, testing asynchronous code and other stuff</strong>: We will provide those extensions in additional libraries to keep the JUnit core compatible with older JDKs.</p>
+			</li>
+		</ul>
+		<p>All development will happen openly on <a href="https://github.com/junit-team/junit5">GitHub</a> in order to foster early feedback and detect problems as soon as possible.</p>
+  </body>
+</html>

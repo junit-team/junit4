@@ -200,14 +200,19 @@ public class TemporaryFolder extends ExternalResource {
         File relativePath = null;
         File file = root;
         boolean lastMkdirsCallSuccessful = true;
-        for (int i = 0; i < paths.length; i++) {
-            relativePath = new File(relativePath, paths[i]);
+        for (String path : paths) {
+            relativePath = new File(relativePath, path);
             file = new File(root, relativePath.getPath());
 
             lastMkdirsCallSuccessful = file.mkdirs();
             if (!lastMkdirsCallSuccessful && !file.isDirectory()) {
-                throw new IOException(
-                        "could not create a folder with the path \'" + relativePath.getPath() + "\'");
+                if (file.exists()) {
+                    throw new IOException(
+                            "a file with the path \'" + relativePath.getPath() + "\' exists");
+                } else {
+                    throw new IOException(
+                            "could not create a folder with the path \'" + relativePath.getPath() + "\'");
+                }
             }
         }
         if (!lastMkdirsCallSuccessful) {
@@ -278,7 +283,7 @@ public class TemporaryFolder extends ExternalResource {
      * @return {@code true} if all resources are deleted successfully,
      *         {@code false} otherwise.
      */
-    protected boolean tryDelete() {
+    private boolean tryDelete() {
         if (folder == null) {
             return true;
         }

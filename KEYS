@@ -1,0 +1,70 @@
+This file contains the PGP key that is used to sign releases.
+
+Importing: `pgp < KEYS` or `gpg --import KEYS`
+
+Adding a key:
+`pgp -kxa <your name> >> KEYS`,
+or `(pgpk -ll <your name> && pgpk -xa <your name>) >> KEYS`,
+or `(gpg --list-sigs <your name> && gpg --armor --export <your name>) >> KEYS`
+
+================================
+
+pub   rsa4096 2018-04-08 [SC]
+      FF6E2C001948C5F2F38B0CC385911F425EC61B51
+uid           [ unknown] Open Source Development <mail@marcphilipp.de>
+sig 3        85911F425EC61B51 2018-04-08  Open Source Development <mail@marcphilipp.de>
+sub   rsa4096 2018-04-08 [E]
+sig          85911F425EC61B51 2018-04-08  Open Source Development <mail@marcphilipp.de>
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+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
+mdzS2PJko7mm
+=l0XA
+-----END PGP PUBLIC KEY BLOCK-----

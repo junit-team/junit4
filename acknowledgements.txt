@@ -160,4 +160,4 @@
 
 == NOTE: as of September 2011, we have stopped recording contributions here.
    For a full list of everyone who has contributed great bug reports and code, please see
-   http://github.com/junit-team/junit
+   http://github.com/junit-team/junit4
