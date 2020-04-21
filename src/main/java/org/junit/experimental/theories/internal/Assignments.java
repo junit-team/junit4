@@ -94,7 +94,9 @@ public class Assignments {
                 return new BooleanSupplier().getValueSources(unassigned);
             }
         }
-        return emptyList();
+        } else {
+            return emptyList();
+        }
     }
 
     private ParameterSupplier getSupplier(ParameterSignature unassigned)
