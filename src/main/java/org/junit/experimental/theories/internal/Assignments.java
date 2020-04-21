@@ -93,7 +93,6 @@ public class Assignments {
             } else if (paramType.equals(Boolean.class) || paramType.equals(boolean.class)) {
                 return new BooleanSupplier().getValueSources(unassigned);
             }
-        }
         } else {
             return emptyList();
         }
