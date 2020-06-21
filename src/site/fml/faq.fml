@@ -35,11 +35,11 @@
             <question>Where do I get the latest version of this
       FAQ?</question>
             <answer>
-                <p>The master copy of this FAQ is available
+                <p>The latest copy of this FAQ is available
       at 
                     
-                    <a href="http://junit.sourceforge.net/doc/faq/faq.htm">
-                        http://junit.sourceforge.net/doc/faq/faq.htm</a>.</p>
+                    <a href="https://junit.org/junit4/faq.html">
+                        https://junit.org/junit4/faq.html</a>.</p>
                 <p>The JUnit distribution also includes this FAQ in
       the 
                     

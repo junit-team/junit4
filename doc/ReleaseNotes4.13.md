@@ -215,7 +215,7 @@ then it throws an `IllegalArgumentException` instead of returning an already exi
 ### [Pull request #1335](https://github.com/junit-team/junit4/pull/1335): Fix ExternalResource: the test failure could be lost
 When both the test failed and closing the resource failed, only the exception coming from the `after()` method was propagated, as per semantics of the try-finally (see also http://docs.oracle.com/javase/specs/jls/se8/html/jls-14.html#jls-14.20.2).
 
-The new behavior is compatible with @After method semantics, as implemented in [RunAfters](https://github.com/junit-team/junit4/blob/master/src/main/java/org/junit/internal/runners/statements/RunAfters.java).
+The new behavior is compatible with @After method semantics, as implemented in [RunAfters](https://github.com/junit-team/junit4/blob/HEAD/src/main/java/org/junit/internal/runners/statements/RunAfters.java).
 
 ### [Pull request #1435](https://github.com/junit-team/junit4/pull/1435): @BeforeParam/@AfterParam method annotations for Parameterized tests.
 This allows having preparation and/or cleanup in tests for specific parameter values.
