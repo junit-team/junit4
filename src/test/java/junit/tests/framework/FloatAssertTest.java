@@ -57,12 +57,7 @@ public class FloatAssertTest extends TestCase {
     }
 
     public void testAllInfinities() {
-        try {
-            assertEquals(Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY);
-        } catch (AssertionFailedError e) {
-            return;
-        }
-        fail();
+        assertEquals(Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY);
     }
 
 }
