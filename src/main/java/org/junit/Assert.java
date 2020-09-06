@@ -596,7 +596,7 @@ public class Assert {
     public static void assertNotEquals(String message, float unexpected,
             float actual, float delta) {
         if (!floatIsDifferent(unexpected, actual, delta)) {
-            failEquals(message, actual);
+            failEquals(message, Float.valueOf(actual));
         }
     }
 
