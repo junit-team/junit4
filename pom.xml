@@ -4,7 +4,7 @@
 
     <groupId>junit</groupId>
     <artifactId>junit</artifactId>
-    <version>4.13.1-SNAPSHOT</version>
+    <version>4.13.1</version>
 
     <name>JUnit</name>
     <description>JUnit is a unit testing framework for Java, created by Erich Gamma and Kent Beck.</description>
@@ -64,7 +64,7 @@
         <connection>scm:git:git://github.com/junit-team/junit4.git</connection>
         <developerConnection>scm:git:git@github.com:junit-team/junit4.git</developerConnection>
         <url>https://github.com/junit-team/junit4</url>
-      <tag>HEAD</tag>
+      <tag>r4.13.1</tag>
   </scm>
     <issueManagement>
         <system>github</system>
