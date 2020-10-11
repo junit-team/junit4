@@ -18,7 +18,7 @@ public class FrameworkField extends FrameworkMember<FrameworkField> {
     /**
      * Returns a new {@code FrameworkField} for {@code field}.
      *
-     * <p>Access relaxed to {@code public} since version 4.14.
+     * <p>Access relaxed to {@code public} since version 4.13.1.
      */
     public FrameworkField(Field field) {
         if (field == null) {
