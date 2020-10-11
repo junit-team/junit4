@@ -599,7 +599,7 @@
 <FONT color="green">596</FONT>        public static void assertNotEquals(String message, float unexpected,<a name="line.596"></a>
 <FONT color="green">597</FONT>                float actual, float delta) {<a name="line.597"></a>
 <FONT color="green">598</FONT>            if (!floatIsDifferent(unexpected, actual, delta)) {<a name="line.598"></a>
-<FONT color="green">599</FONT>                failEquals(message, actual);<a name="line.599"></a>
+<FONT color="green">599</FONT>                failEquals(message, Float.valueOf(actual));<a name="line.599"></a>
 <FONT color="green">600</FONT>            }<a name="line.600"></a>
 <FONT color="green">601</FONT>        }<a name="line.601"></a>
 <FONT color="green">602</FONT>    <a name="line.602"></a>
