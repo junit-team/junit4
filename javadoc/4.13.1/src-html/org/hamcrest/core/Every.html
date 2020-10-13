@@ -1,0 +1,113 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.hamcrest.core;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import org.hamcrest.Description;<a name="line.3"></a>
+<FONT color="green">004</FONT>    import org.hamcrest.Factory;<a name="line.4"></a>
+<FONT color="green">005</FONT>    import org.hamcrest.Matcher;<a name="line.5"></a>
+<FONT color="green">006</FONT>    import org.hamcrest.TypeSafeDiagnosingMatcher;<a name="line.6"></a>
+<FONT color="green">007</FONT>    <a name="line.7"></a>
+<FONT color="green">008</FONT>    public class Every&lt;T&gt; extends TypeSafeDiagnosingMatcher&lt;Iterable&lt;T&gt;&gt; {<a name="line.8"></a>
+<FONT color="green">009</FONT>        private final Matcher&lt;? super T&gt; matcher;<a name="line.9"></a>
+<FONT color="green">010</FONT>    <a name="line.10"></a>
+<FONT color="green">011</FONT>        public Every(Matcher&lt;? super T&gt; matcher) {<a name="line.11"></a>
+<FONT color="green">012</FONT>            this.matcher= matcher;<a name="line.12"></a>
+<FONT color="green">013</FONT>        }<a name="line.13"></a>
+<FONT color="green">014</FONT>    <a name="line.14"></a>
+<FONT color="green">015</FONT>        @Override<a name="line.15"></a>
+<FONT color="green">016</FONT>        public boolean matchesSafely(Iterable&lt;T&gt; collection, Description mismatchDescription) {<a name="line.16"></a>
+<FONT color="green">017</FONT>            for (T t : collection) {<a name="line.17"></a>
+<FONT color="green">018</FONT>                if (!matcher.matches(t)) {<a name="line.18"></a>
+<FONT color="green">019</FONT>                    mismatchDescription.appendText("an item ");<a name="line.19"></a>
+<FONT color="green">020</FONT>                    matcher.describeMismatch(t, mismatchDescription);<a name="line.20"></a>
+<FONT color="green">021</FONT>                    return false;<a name="line.21"></a>
+<FONT color="green">022</FONT>                }<a name="line.22"></a>
+<FONT color="green">023</FONT>            }<a name="line.23"></a>
+<FONT color="green">024</FONT>            return true;<a name="line.24"></a>
+<FONT color="green">025</FONT>        }<a name="line.25"></a>
+<FONT color="green">026</FONT>    <a name="line.26"></a>
+<FONT color="green">027</FONT>        @Override<a name="line.27"></a>
+<FONT color="green">028</FONT>        public void describeTo(Description description) {<a name="line.28"></a>
+<FONT color="green">029</FONT>            description.appendText("every item is ").appendDescriptionOf(matcher);<a name="line.29"></a>
+<FONT color="green">030</FONT>        }<a name="line.30"></a>
+<FONT color="green">031</FONT>    <a name="line.31"></a>
+<FONT color="green">032</FONT>        /**<a name="line.32"></a>
+<FONT color="green">033</FONT>         * Creates a matcher for {@link Iterable}s that only matches when a single pass over the<a name="line.33"></a>
+<FONT color="green">034</FONT>         * examined {@link Iterable} yields items that are all matched by the specified<a name="line.34"></a>
+<FONT color="green">035</FONT>         * &lt;code&gt;itemMatcher&lt;/code&gt;.<a name="line.35"></a>
+<FONT color="green">036</FONT>         * &lt;p/&gt;<a name="line.36"></a>
+<FONT color="green">037</FONT>         * For example:<a name="line.37"></a>
+<FONT color="green">038</FONT>         * &lt;pre&gt;assertThat(Arrays.asList("bar", "baz"), everyItem(startsWith("ba")))&lt;/pre&gt;<a name="line.38"></a>
+<FONT color="green">039</FONT>         * <a name="line.39"></a>
+<FONT color="green">040</FONT>         * @param itemMatcher<a name="line.40"></a>
+<FONT color="green">041</FONT>         *     the matcher to apply to every item provided by the examined {@link Iterable}<a name="line.41"></a>
+<FONT color="green">042</FONT>         */<a name="line.42"></a>
+<FONT color="green">043</FONT>        @Factory<a name="line.43"></a>
+<FONT color="green">044</FONT>        public static &lt;U&gt; Matcher&lt;Iterable&lt;U&gt;&gt; everyItem(final Matcher&lt;U&gt; itemMatcher) {<a name="line.44"></a>
+<FONT color="green">045</FONT>            return new Every&lt;U&gt;(itemMatcher);<a name="line.45"></a>
+<FONT color="green">046</FONT>        }<a name="line.46"></a>
+<FONT color="green">047</FONT>    }<a name="line.47"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

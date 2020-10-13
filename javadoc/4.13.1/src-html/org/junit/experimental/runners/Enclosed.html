@@ -1,0 +1,111 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.junit.experimental.runners;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import java.lang.reflect.Modifier;<a name="line.3"></a>
+<FONT color="green">004</FONT>    import java.util.ArrayList;<a name="line.4"></a>
+<FONT color="green">005</FONT>    import java.util.List;<a name="line.5"></a>
+<FONT color="green">006</FONT>    <a name="line.6"></a>
+<FONT color="green">007</FONT>    import org.junit.runners.Suite;<a name="line.7"></a>
+<FONT color="green">008</FONT>    import org.junit.runners.model.RunnerBuilder;<a name="line.8"></a>
+<FONT color="green">009</FONT>    <a name="line.9"></a>
+<FONT color="green">010</FONT>    /**<a name="line.10"></a>
+<FONT color="green">011</FONT>     * If you put tests in inner classes, Ant, for example, won't find them. By running the outer class<a name="line.11"></a>
+<FONT color="green">012</FONT>     * with Enclosed, the tests in the inner classes will be run. You might put tests in inner classes<a name="line.12"></a>
+<FONT color="green">013</FONT>     * to group them for convenience or to share constants. Abstract inner classes are ignored.<a name="line.13"></a>
+<FONT color="green">014</FONT>     * &lt;p&gt;<a name="line.14"></a>
+<FONT color="green">015</FONT>     * So, for example:<a name="line.15"></a>
+<FONT color="green">016</FONT>     * &lt;pre&gt;<a name="line.16"></a>
+<FONT color="green">017</FONT>     * &amp;#064;RunWith(Enclosed.class)<a name="line.17"></a>
+<FONT color="green">018</FONT>     * public class ListTests {<a name="line.18"></a>
+<FONT color="green">019</FONT>     *     ...useful shared stuff...<a name="line.19"></a>
+<FONT color="green">020</FONT>     *     public static class OneKindOfListTest {...}<a name="line.20"></a>
+<FONT color="green">021</FONT>     *     public static class AnotherKind {...}<a name="line.21"></a>
+<FONT color="green">022</FONT>     *     abstract public static class Ignored {...}<a name="line.22"></a>
+<FONT color="green">023</FONT>     * }<a name="line.23"></a>
+<FONT color="green">024</FONT>     * &lt;/pre&gt;<a name="line.24"></a>
+<FONT color="green">025</FONT>     */<a name="line.25"></a>
+<FONT color="green">026</FONT>    public class Enclosed extends Suite {<a name="line.26"></a>
+<FONT color="green">027</FONT>        /**<a name="line.27"></a>
+<FONT color="green">028</FONT>         * Only called reflectively. Do not use programmatically.<a name="line.28"></a>
+<FONT color="green">029</FONT>         */<a name="line.29"></a>
+<FONT color="green">030</FONT>        public Enclosed(Class&lt;?&gt; klass, RunnerBuilder builder) throws Throwable {<a name="line.30"></a>
+<FONT color="green">031</FONT>            super(builder, klass, filterAbstractClasses(klass.getClasses()));<a name="line.31"></a>
+<FONT color="green">032</FONT>        }<a name="line.32"></a>
+<FONT color="green">033</FONT>        <a name="line.33"></a>
+<FONT color="green">034</FONT>        private static Class&lt;?&gt;[] filterAbstractClasses(final Class&lt;?&gt;[] classes) {     <a name="line.34"></a>
+<FONT color="green">035</FONT>            final List&lt;Class&lt;?&gt;&gt; filteredList= new ArrayList&lt;Class&lt;?&gt;&gt;(classes.length);<a name="line.35"></a>
+<FONT color="green">036</FONT>    <a name="line.36"></a>
+<FONT color="green">037</FONT>            for (final Class&lt;?&gt; clazz : classes) {<a name="line.37"></a>
+<FONT color="green">038</FONT>                if (!Modifier.isAbstract(clazz.getModifiers())) {<a name="line.38"></a>
+<FONT color="green">039</FONT>                    filteredList.add(clazz);<a name="line.39"></a>
+<FONT color="green">040</FONT>                }<a name="line.40"></a>
+<FONT color="green">041</FONT>            }<a name="line.41"></a>
+<FONT color="green">042</FONT>            <a name="line.42"></a>
+<FONT color="green">043</FONT>            return filteredList.toArray(new Class&lt;?&gt;[filteredList.size()]);<a name="line.43"></a>
+<FONT color="green">044</FONT>        }   <a name="line.44"></a>
+<FONT color="green">045</FONT>    }<a name="line.45"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

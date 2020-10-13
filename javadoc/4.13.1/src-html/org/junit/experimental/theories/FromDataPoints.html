@@ -1,0 +1,120 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.junit.experimental.theories;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import java.lang.annotation.ElementType;<a name="line.3"></a>
+<FONT color="green">004</FONT>    import java.lang.annotation.Retention;<a name="line.4"></a>
+<FONT color="green">005</FONT>    import java.lang.annotation.RetentionPolicy;<a name="line.5"></a>
+<FONT color="green">006</FONT>    import java.lang.annotation.Target;<a name="line.6"></a>
+<FONT color="green">007</FONT>    <a name="line.7"></a>
+<FONT color="green">008</FONT>    import org.junit.experimental.theories.internal.SpecificDataPointsSupplier;<a name="line.8"></a>
+<FONT color="green">009</FONT>    <a name="line.9"></a>
+<FONT color="green">010</FONT>    /**<a name="line.10"></a>
+<FONT color="green">011</FONT>     * Annotating a parameter of a {@link org.junit.experimental.theories.Theory<a name="line.11"></a>
+<FONT color="green">012</FONT>     * &amp;#064;Theory} method with &lt;code&gt;&amp;#064;FromDataPoints&lt;/code&gt; will limit the<a name="line.12"></a>
+<FONT color="green">013</FONT>     * datapoints considered as potential values for that parameter to just the<a name="line.13"></a>
+<FONT color="green">014</FONT>     * {@link org.junit.experimental.theories.DataPoints DataPoints} with the given<a name="line.14"></a>
+<FONT color="green">015</FONT>     * name. DataPoint names can be given as the value parameter of the<a name="line.15"></a>
+<FONT color="green">016</FONT>     * &amp;#064;DataPoints annotation.<a name="line.16"></a>
+<FONT color="green">017</FONT>     * &lt;p&gt;<a name="line.17"></a>
+<FONT color="green">018</FONT>     * DataPoints without names will not be considered as values for any parameters<a name="line.18"></a>
+<FONT color="green">019</FONT>     * annotated with &amp;#064;FromDataPoints.<a name="line.19"></a>
+<FONT color="green">020</FONT>     * &lt;pre&gt;<a name="line.20"></a>
+<FONT color="green">021</FONT>     * &amp;#064;DataPoints<a name="line.21"></a>
+<FONT color="green">022</FONT>     * public static String[] unnamed = new String[] { ... };<a name="line.22"></a>
+<FONT color="green">023</FONT>     * <a name="line.23"></a>
+<FONT color="green">024</FONT>     * &amp;#064;DataPoints("regexes")<a name="line.24"></a>
+<FONT color="green">025</FONT>     * public static String[] regexStrings = new String[] { ... };<a name="line.25"></a>
+<FONT color="green">026</FONT>     * <a name="line.26"></a>
+<FONT color="green">027</FONT>     * &amp;#064;DataPoints({"forMatching", "alphanumeric"})<a name="line.27"></a>
+<FONT color="green">028</FONT>     * public static String[] testStrings = new String[] { ... }; <a name="line.28"></a>
+<FONT color="green">029</FONT>     * <a name="line.29"></a>
+<FONT color="green">030</FONT>     * &amp;#064;Theory<a name="line.30"></a>
+<FONT color="green">031</FONT>     * public void stringTheory(String param) {<a name="line.31"></a>
+<FONT color="green">032</FONT>     *     // This will be called with every value in 'regexStrings',<a name="line.32"></a>
+<FONT color="green">033</FONT>     *     // 'testStrings' and 'unnamed'.<a name="line.33"></a>
+<FONT color="green">034</FONT>     * }<a name="line.34"></a>
+<FONT color="green">035</FONT>     * <a name="line.35"></a>
+<FONT color="green">036</FONT>     * &amp;#064;Theory<a name="line.36"></a>
+<FONT color="green">037</FONT>     * public void regexTheory(&amp;#064;FromDataPoints("regexes") String regex,<a name="line.37"></a>
+<FONT color="green">038</FONT>     *                         &amp;#064;FromDataPoints("forMatching") String value) {<a name="line.38"></a>
+<FONT color="green">039</FONT>     *     // This will be called with only the values in 'regexStrings' as <a name="line.39"></a>
+<FONT color="green">040</FONT>     *     // regex, only the values in 'testStrings' as value, and none <a name="line.40"></a>
+<FONT color="green">041</FONT>     *     // of the values in 'unnamed'.<a name="line.41"></a>
+<FONT color="green">042</FONT>     * }<a name="line.42"></a>
+<FONT color="green">043</FONT>     * &lt;/pre&gt;<a name="line.43"></a>
+<FONT color="green">044</FONT>     * <a name="line.44"></a>
+<FONT color="green">045</FONT>     * @see org.junit.experimental.theories.Theory<a name="line.45"></a>
+<FONT color="green">046</FONT>     * @see org.junit.experimental.theories.DataPoint<a name="line.46"></a>
+<FONT color="green">047</FONT>     * @see org.junit.experimental.theories.DataPoints<a name="line.47"></a>
+<FONT color="green">048</FONT>     */<a name="line.48"></a>
+<FONT color="green">049</FONT>    @Retention(RetentionPolicy.RUNTIME)<a name="line.49"></a>
+<FONT color="green">050</FONT>    @Target(ElementType.PARAMETER)<a name="line.50"></a>
+<FONT color="green">051</FONT>    @ParametersSuppliedBy(SpecificDataPointsSupplier.class)<a name="line.51"></a>
+<FONT color="green">052</FONT>    public @interface FromDataPoints {<a name="line.52"></a>
+<FONT color="green">053</FONT>        String value();<a name="line.53"></a>
+<FONT color="green">054</FONT>    }<a name="line.54"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

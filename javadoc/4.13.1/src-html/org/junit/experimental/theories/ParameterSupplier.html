@@ -1,0 +1,109 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.junit.experimental.theories;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import java.util.List;<a name="line.3"></a>
+<FONT color="green">004</FONT>    <a name="line.4"></a>
+<FONT color="green">005</FONT>    /**<a name="line.5"></a>
+<FONT color="green">006</FONT>     * Abstract parent class for suppliers of input data points for theories. Extend this class to customize how {@link<a name="line.6"></a>
+<FONT color="green">007</FONT>     * org.junit.experimental.theories.Theories Theories} runner<a name="line.7"></a>
+<FONT color="green">008</FONT>     * finds accepted data points. Then use your class together with &lt;b&gt;&amp;#064;ParametersSuppliedBy&lt;/b&gt; on input<a name="line.8"></a>
+<FONT color="green">009</FONT>     * parameters for theories.<a name="line.9"></a>
+<FONT color="green">010</FONT>     *<a name="line.10"></a>
+<FONT color="green">011</FONT>     * &lt;p&gt;<a name="line.11"></a>
+<FONT color="green">012</FONT>     * For example, here is a supplier for values between two integers, and an annotation that references it:<a name="line.12"></a>
+<FONT color="green">013</FONT>     *<a name="line.13"></a>
+<FONT color="green">014</FONT>     * &lt;pre&gt;<a name="line.14"></a>
+<FONT color="green">015</FONT>     *     &amp;#064;Retention(RetentionPolicy.RUNTIME)<a name="line.15"></a>
+<FONT color="green">016</FONT>     *     &lt;b&gt;&amp;#064;ParametersSuppliedBy&lt;/b&gt;(BetweenSupplier.class)<a name="line.16"></a>
+<FONT color="green">017</FONT>     *     public @interface Between {<a name="line.17"></a>
+<FONT color="green">018</FONT>     *         int first();<a name="line.18"></a>
+<FONT color="green">019</FONT>     *<a name="line.19"></a>
+<FONT color="green">020</FONT>     *         int last();<a name="line.20"></a>
+<FONT color="green">021</FONT>     *     }<a name="line.21"></a>
+<FONT color="green">022</FONT>     *<a name="line.22"></a>
+<FONT color="green">023</FONT>     *     public static class BetweenSupplier extends &lt;b&gt;ParameterSupplier&lt;/b&gt; {<a name="line.23"></a>
+<FONT color="green">024</FONT>     *         &amp;#064;Override<a name="line.24"></a>
+<FONT color="green">025</FONT>     *         public List&amp;lt;&lt;b&gt;PotentialAssignment&lt;/b&gt;&amp;gt; getValueSources(&lt;b&gt;ParameterSignature&lt;/b&gt; sig) {<a name="line.25"></a>
+<FONT color="green">026</FONT>     *             List&amp;lt;&lt;b&gt;PotentialAssignment&lt;/b&gt;&amp;gt; list = new ArrayList&amp;lt;PotentialAssignment&amp;gt;();<a name="line.26"></a>
+<FONT color="green">027</FONT>     *             Between annotation = (Between) sig.getSupplierAnnotation();<a name="line.27"></a>
+<FONT color="green">028</FONT>     *<a name="line.28"></a>
+<FONT color="green">029</FONT>     *             for (int i = annotation.first(); i &amp;lt;= annotation.last(); i++)<a name="line.29"></a>
+<FONT color="green">030</FONT>     *                 list.add(&lt;b&gt;PotentialAssignment&lt;/b&gt;.forValue("ints", i));<a name="line.30"></a>
+<FONT color="green">031</FONT>     *             return list;<a name="line.31"></a>
+<FONT color="green">032</FONT>     *         }<a name="line.32"></a>
+<FONT color="green">033</FONT>     *     }<a name="line.33"></a>
+<FONT color="green">034</FONT>     * &lt;/pre&gt;<a name="line.34"></a>
+<FONT color="green">035</FONT>     * &lt;/p&gt;<a name="line.35"></a>
+<FONT color="green">036</FONT>     *<a name="line.36"></a>
+<FONT color="green">037</FONT>     * @see org.junit.experimental.theories.ParametersSuppliedBy<a name="line.37"></a>
+<FONT color="green">038</FONT>     * @see org.junit.experimental.theories.Theories<a name="line.38"></a>
+<FONT color="green">039</FONT>     * @see org.junit.experimental.theories.FromDataPoints<a name="line.39"></a>
+<FONT color="green">040</FONT>     */<a name="line.40"></a>
+<FONT color="green">041</FONT>    public abstract class ParameterSupplier {<a name="line.41"></a>
+<FONT color="green">042</FONT>        public abstract List&lt;PotentialAssignment&gt; getValueSources(ParameterSignature sig) throws Throwable;<a name="line.42"></a>
+<FONT color="green">043</FONT>    }<a name="line.43"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>
