@@ -230,6 +230,8 @@ public class FailOnTimeoutTest {
 
         assertTrue("the Statement was never run", innerThread.get() != null);
         assertTrue("the 'FailOnTimeoutGroup' thread group should be a daemon thread group", innerThreadGroup.get().isDaemon());
+        innerThread.get().join();
         assertFalse("the inner thread should not be alive", innerThread.get().isAlive());
+        assertTrue("the 'FailOnTimeoutGroup' thread group should be destroyed after running the test", innerThreadGroup.get().isDestroyed());
     }
 }
