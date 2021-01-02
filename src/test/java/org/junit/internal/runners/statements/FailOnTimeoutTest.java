@@ -14,16 +14,15 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.internal.runners.statements.FailOnTimeout.builder;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.Test;
 import org.junit.function.ThrowingRunnable;
+import org.junit.internal.runners.statements.Fail;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestTimedOutException;
+
 
 /**
  * @author Asaf Ary, Stefan Birkner
@@ -91,20 +90,24 @@ public class FailOnTimeoutTest {
         assertEquals(TimeUnit.MILLISECONDS, e.getTimeUnit());
     }
 
-    private ThrowingRunnable evaluateWithException(final Exception exception) {
+    private ThrowingRunnable evaluateWithDelegate(final Statement delegate) {
         return new ThrowingRunnable() {
             public void run() throws Throwable {
-                statement.nextException = exception;
+                statement.nextStatement = delegate;
                 statement.waitDuration = 0;
                 failOnTimeout.evaluate();
             }
         };
     }
 
+    private ThrowingRunnable evaluateWithException(Exception exception) {
+        return evaluateWithDelegate(new Fail(exception));
+    }
+
     private ThrowingRunnable evaluateWithWaitDuration(final long waitDuration) {
         return new ThrowingRunnable() {
             public void run() throws Throwable {
-                statement.nextException = null;
+                statement.nextStatement = null;
                 statement.waitDuration = waitDuration;
                 failOnTimeout.evaluate();
             }
@@ -114,13 +117,13 @@ public class FailOnTimeoutTest {
     private static final class TestStatement extends Statement {
         long waitDuration;
 
-        Exception nextException;
+        Statement nextStatement;
 
         @Override
         public void evaluate() throws Throwable {
             sleep(waitDuration);
-            if (nextException != null) {
-                throw nextException;
+            if (nextStatement != null) {
+                nextStatement.evaluate();
             }
         }
     }
@@ -210,20 +213,22 @@ public class FailOnTimeoutTest {
 
     @Test
     public void threadGroupNotLeaked() throws Throwable {
-        Collection<ThreadGroup> groupsBeforeSet = subGroupsOfCurrentThread();
-        
-        evaluateWithWaitDuration(0);
-        
-        for (ThreadGroup group: subGroupsOfCurrentThread()) {
-            if (!groupsBeforeSet.contains(group) && "FailOnTimeoutGroup".equals(group.getName())) {
-                fail("A 'FailOnTimeoutGroup' thread group remains referenced after the test execution.");
+        final AtomicReference<ThreadGroup> innerThreadGroup = new AtomicReference<ThreadGroup>();
+        final AtomicReference<Thread> innerThread = new AtomicReference<Thread>();
+        ThrowingRunnable runnable = evaluateWithDelegate(new Statement() {
+            @Override
+            public void evaluate() {
+                innerThread.set(currentThread());
+                ThreadGroup group = currentThread().getThreadGroup();
+                innerThreadGroup.set(group);
+                assertTrue("the 'FailOnTimeoutGroup' thread group should be a daemon thread group", group.isDaemon());
             }
-        }
-    }
-    
-    private Collection<ThreadGroup> subGroupsOfCurrentThread() {
-        ThreadGroup[] subGroups = new ThreadGroup[256];
-        int numGroups = currentThread().getThreadGroup().enumerate(subGroups);
-        return Arrays.asList(subGroups).subList(0, numGroups);
+        });
+
+        runnable.run();
+
+        assertTrue("the Statement was never run", innerThread.get() != null);
+        innerThread.get().join();
+        assertTrue("the 'FailOnTimeoutGroup' thread group should be destroyed after running the test", innerThreadGroup.get().isDestroyed());
     }
 }
