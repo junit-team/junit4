@@ -96,6 +96,9 @@
         <jdkVersion>1.5</jdkVersion>
         <surefireVersion>2.19.1</surefireVersion>
         <hamcrestVersion>1.3</hamcrestVersion>
+        <enforcerPluginVersion>1.4</enforcerPluginVersion>
+        <jarPluginVersion>2.6</jarPluginVersion>
+        <javadocPluginVersion>2.10.3</javadocPluginVersion>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
         <arguments />
         <gpg.keyname>67893CC4</gpg.keyname>
@@ -147,7 +150,7 @@
                 the project, requires only release versions of dependencies of other artifacts.
                 -->
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>1.4</version>
+                <version>${enforcerPluginVersion}</version>
                 <executions>
                     <execution>
                         <id>enforce-versions</id>
@@ -286,7 +289,7 @@
                 in jar archive target/junit-*-javadoc.jar.
                 -->
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.3</version>
+                <version>${javadocPluginVersion}</version>
                 <configuration>
                     <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
                     <show>protected</show>
@@ -345,7 +348,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.6</version>
+                <version>${jarPluginVersion}</version>
                 <configuration>
                     <archive>
                         <addMavenDescriptor>false</addMavenDescriptor>
@@ -408,7 +411,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.3</version>
+                <version>${javadocPluginVersion}</version>
                 <configuration>
                     <destDir>javadoc/latest</destDir>
                     <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
@@ -556,7 +559,7 @@
         <profile>
             <id>java9</id>
             <activation>
-                <jdk>[1.9,)</jdk>
+                <jdk>[1.9,12)</jdk>
             </activation>
             <properties>
                 <!-- JDK 9 minimal source and target versions are 1.6 -->
@@ -578,6 +581,49 @@
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <configuration>
                             <source>1.6</source>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </reporting>
+        </profile>
+        <profile>
+            <id>java12</id>
+            <activation>
+                <jdk>[12,)</jdk>
+            </activation>
+            <properties>
+                <!-- JDK 12 minimal source and target versions are 1.7 -->
+                <jdkVersion>1.7</jdkVersion>
+                <enforcerPluginVersion>3.0.0-M3</enforcerPluginVersion>
+                <jarPluginVersion>3.2.0</jarPluginVersion>
+                <javadocPluginVersion>3.2.0</javadocPluginVersion>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <source>1.7</source>
+                            <failOnError>false</failOnError>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <compilerArgs>
+                                <arg>-Xdoclint:none</arg>
+                            </compilerArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <source>1.7</source>
+                            <failOnError>false</failOnError>
                         </configuration>
                     </plugin>
                 </plugins>
