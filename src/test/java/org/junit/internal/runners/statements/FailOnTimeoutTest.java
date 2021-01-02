@@ -15,6 +15,7 @@ import static org.junit.Assert.fail;
 import static org.junit.internal.runners.statements.FailOnTimeout.builder;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.Test;
 import org.junit.function.ThrowingRunnable;
@@ -212,15 +213,20 @@ public class FailOnTimeoutTest {
 
     @Test
     public void threadGroupIsDaemon() throws Throwable {
+        final AtomicReference<ThreadGroup> threadGroup = new AtomicReference<ThreadGroup>();
         ThrowingRunnable runnable = evaluateWithDelegate(new Statement() {
             @Override
             public void evaluate() {
                 ThreadGroup group = currentThread().getThreadGroup();
+                threadGroup.set(group);
                 assertEquals("FailOnTimeoutGroup", group.getName());
-                assertTrue("The 'FailOnTimeoutGroup' thread group should be a daemon thread group.", group.isDaemon());
+                assertTrue("the 'FailOnTimeoutGroup' thread group should be a daemon thread group", group.isDaemon());
             }
         });
 
         runnable.run();
+
+        assertTrue("the Statement was never run", threadGroup.get() != null);
+        assertTrue("the 'FailOnTimeoutGroup' thread group should be destroyed after running the test", threadGroup.get().isDestroyed());
     }
 }
