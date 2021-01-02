@@ -125,7 +125,7 @@ public class FailOnTimeout extends Statement {
             try {
                 threadGroup.setDaemon(true);
             } catch (SecurityException e) {
-                // Swallow the exception to keep the same behavior prior to this change.
+                // Swallow the exception to keep the same behavior as in JUnit 4.12.
             }
         }
         Thread thread = new Thread(threadGroup, task, "Time-limited test");
