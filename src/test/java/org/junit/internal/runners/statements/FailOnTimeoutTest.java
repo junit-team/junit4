@@ -212,7 +212,7 @@ public class FailOnTimeoutTest {
     public void threadGroupNotLeaked() throws Throwable {
         Collection<ThreadGroup> groupsBeforeSet = subGroupsOfCurrentThread();
         
-        evaluateWithWaitDuration(0);
+        evaluateWithWaitDuration(0).run();
         
         for (ThreadGroup group: subGroupsOfCurrentThread()) {
             if (!groupsBeforeSet.contains(group) && "FailOnTimeoutGroup".equals(group.getName())) {
