@@ -212,7 +212,7 @@ public class FailOnTimeoutTest {
     }
 
     @Test
-    public void threadGroupIsDaemon() throws Throwable {
+    public void threadGroupNotLeaked() throws Throwable {
         final AtomicReference<ThreadGroup> innerThreadGroup = new AtomicReference<ThreadGroup>();
         final AtomicReference<Thread> innerThread = new AtomicReference<Thread>();
         ThrowingRunnable runnable = evaluateWithDelegate(new Statement() {
@@ -221,7 +221,6 @@ public class FailOnTimeoutTest {
                 innerThread.set(currentThread());
                 ThreadGroup group = currentThread().getThreadGroup();
                 innerThreadGroup.set(group);
-                assertEquals("FailOnTimeoutGroup", group.getName());
                 assertTrue("the 'FailOnTimeoutGroup' thread group should be a daemon thread group", group.isDaemon());
             }
         });
@@ -229,9 +228,7 @@ public class FailOnTimeoutTest {
         runnable.run();
 
         assertTrue("the Statement was never run", innerThread.get() != null);
-        assertTrue("the 'FailOnTimeoutGroup' thread group should be a daemon thread group", innerThreadGroup.get().isDaemon());
         innerThread.get().join();
-        assertFalse("the inner thread should not be alive", innerThread.get().isAlive());
         assertTrue("the 'FailOnTimeoutGroup' thread group should be destroyed after running the test", innerThreadGroup.get().isDestroyed());
     }
 }
