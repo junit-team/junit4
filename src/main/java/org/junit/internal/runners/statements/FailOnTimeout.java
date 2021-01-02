@@ -121,6 +121,12 @@ public class FailOnTimeout extends Statement {
         CallableStatement callable = new CallableStatement();
         FutureTask<Throwable> task = new FutureTask<Throwable>(callable);
         ThreadGroup threadGroup = new ThreadGroup("FailOnTimeoutGroup");
+        // The thread group must be a daemon thread group so that it is
+        // destroyed when the time-limiting thread finishes. Only when the
+        // thread group is destroyed its parent thread group can be destroyed,
+        // too. This is necessary because data may be stored in the parent
+        // thread group's ThreadGroupContext and this data remains until the
+        // parent thread group is destroyed.
         if (!threadGroup.isDaemon()) {
             try {
                 threadGroup.setDaemon(true);
