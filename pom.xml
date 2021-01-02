@@ -71,8 +71,8 @@
         <url>https://github.com/junit-team/junit4/issues</url>
     </issueManagement>
     <ciManagement>
-        <system>travis</system>
-        <url>https://travis-ci.org/junit-team/junit4</url>
+        <system>github</system>
+        <url>https://github.com/junit-team/junit4/actions</url>
     </ciManagement>
     <distributionManagement>
         <downloadUrl>https://github.com/junit-team/junit4/wiki/Download-and-Install</downloadUrl>
