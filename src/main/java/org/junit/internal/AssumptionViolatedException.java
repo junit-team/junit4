@@ -120,8 +120,7 @@ public class AssumptionViolatedException extends RuntimeException implements Sel
      * @param objectOutputStream The outputStream to write our representation to
      * @throws IOException When serialization fails
      */
-    private void writeObject(ObjectOutputStream objectOutputStream) throws IOException
-    {
+    private void writeObject(ObjectOutputStream objectOutputStream) throws IOException {
         ObjectOutputStream.PutField putField = objectOutputStream.putFields();
         putField.put("fAssumption", fAssumption);
         putField.put("fValueMatcher", fValueMatcher);
