@@ -1,9 +1,6 @@
 package junit.extensions;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestResult;
-import junit.framework.TestSuite;
+import junit.framework.*;
 
 /**
  * A TestSuite for active Tests. It runs each
@@ -43,6 +40,7 @@ public class ActiveTestSuite extends TestSuite {
             public void run() {
                 try {
                     // inlined due to limitation in VA/Java
+                    // ActiveTestSuite.super.runTest(test, result);
                     test.run(result);
                 } finally {
                     ActiveTestSuite.this.runFinished();
