@@ -120,13 +120,24 @@ public class FailOnTimeout extends Statement {
     public void evaluate() throws Throwable {
         CallableStatement callable = new CallableStatement();
         FutureTask<Throwable> task = new FutureTask<Throwable>(callable);
-        ThreadGroup threadGroup = new ThreadGroup("FailOnTimeoutGroup");
-        if (!threadGroup.isDaemon()) {
-            try {
-                threadGroup.setDaemon(true);
-            } catch (SecurityException e) {
-                // Swallow the exception to keep the same behavior as in JUnit 4.12.
-            }
+
+        ThreadGroup threadGroup = null;
+        if (lookForStuckThread) {
+          // Create the thread in a new ThreadGroup, so if the time-limited thread
+          // becomes stuck, getStuckThread() can find the thread likely to be the
+          // culprit.
+          threadGroup = new ThreadGroup("FailOnTimeoutGroup");
+          if (!threadGroup.isDaemon()) {
+              // Mark the new ThreadGroup as a daemon thread group, so it will be
+              // destroyed after the time-limited thread completes. By ensuring the
+              // ThreadGroup is destroyed, any data associated with the ThreadGroup
+              // (ex: via java.beans.ThreadGroupContext) is destroyed.
+              try {
+                  threadGroup.setDaemon(true);
+              } catch (SecurityException e) {
+                  // Swallow the exception to keep the same behavior as in JUnit 4.12.
+              }
+          }
         }
         Thread thread = new Thread(threadGroup, task, "Time-limited test");
         thread.setDaemon(true);
