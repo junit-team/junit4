@@ -8,18 +8,23 @@ import static java.lang.Thread.sleep;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.junit.internal.runners.statements.FailOnTimeout.builder;
+import static org.junit.Assume.assumeFalse;
+import static org.junit.Assume.assumeTrue;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.Test;
 import org.junit.function.ThrowingRunnable;
 import org.junit.internal.runners.statements.Fail;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestTimedOutException;
 
@@ -27,13 +32,29 @@ import org.junit.runners.model.TestTimedOutException;
 /**
  * @author Asaf Ary, Stefan Birkner
  */
+@RunWith(Parameterized.class)
 public class FailOnTimeoutTest {
     private static final long TIMEOUT = 100;
     private static final long DURATION_THAT_EXCEEDS_TIMEOUT = 60 * 60 * 1000; //1 hour
 
     private final TestStatement statement = new TestStatement();
 
-    private final FailOnTimeout failOnTimeout = builder().withTimeout(TIMEOUT, MILLISECONDS).build(statement);
+    private final boolean lookingForStuckThread;
+    private final FailOnTimeout failOnTimeout;
+
+    @Parameterized.Parameters(name = "lookingForStuckThread = {0}")
+    public static Iterable<Boolean> getParameters() {
+        return Arrays.asList(Boolean.TRUE, Boolean.FALSE);
+    }
+
+    public FailOnTimeoutTest(Boolean lookingForStuckThread) {
+        this.lookingForStuckThread = lookingForStuckThread;
+        this.failOnTimeout = builder().withTimeout(TIMEOUT, MILLISECONDS).build(statement);
+    }
+
+    private FailOnTimeout.Builder builder() {
+        return FailOnTimeout.builder().withLookingForStuckThread(lookingForStuckThread);
+    }
 
     @Test
     public void throwsTestTimedOutException() {
@@ -212,14 +233,17 @@ public class FailOnTimeoutTest {
     }
 
     @Test
-    public void threadGroupNotLeaked() throws Throwable {
+    public void lookingForStuckThread_threadGroupNotLeaked() throws Throwable {
+        assumeTrue(lookingForStuckThread);
         final AtomicReference<ThreadGroup> innerThreadGroup = new AtomicReference<ThreadGroup>();
         final AtomicReference<Thread> innerThread = new AtomicReference<Thread>();
+        final ThreadGroup outerThreadGroup = currentThread().getThreadGroup();
         ThrowingRunnable runnable = evaluateWithDelegate(new Statement() {
             @Override
             public void evaluate() {
                 innerThread.set(currentThread());
                 ThreadGroup group = currentThread().getThreadGroup();
+                assertNotSame("inner thread should use a different thread group", outerThreadGroup, group);
                 innerThreadGroup.set(group);
                 assertTrue("the 'FailOnTimeoutGroup' thread group should be a daemon thread group", group.isDaemon());
             }
@@ -230,5 +254,20 @@ public class FailOnTimeoutTest {
         assertTrue("the Statement was never run", innerThread.get() != null);
         innerThread.get().join();
         assertTrue("the 'FailOnTimeoutGroup' thread group should be destroyed after running the test", innerThreadGroup.get().isDestroyed());
+    }
+
+    @Test
+    public void notLookingForStuckThread_usesSameThreadGroup() throws Throwable {
+        assumeFalse(lookingForStuckThread);
+        final ThreadGroup outerThreadGroup = currentThread().getThreadGroup();
+        ThrowingRunnable runnable = evaluateWithDelegate(new Statement() {
+            @Override
+            public void evaluate() {
+                ThreadGroup group = currentThread().getThreadGroup();
+                assertSame("inner thread should use the same thread group", outerThreadGroup, group);
+            }
+        });
+
+        runnable.run();
     }
 }
