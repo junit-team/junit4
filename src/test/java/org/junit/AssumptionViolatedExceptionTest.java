@@ -151,7 +151,7 @@ public class AssumptionViolatedExceptionTest {
         assertAssumptionViolatedExceptionCanBeSerialized(exception);
     }
 
-    private void assertAssumptionViolatedExceptionCanBeSerialized(AssumptionViolatedException exception)
+    private void assertCanBeSerialized(AssumptionViolatedException exception)
             throws IOException, ClassNotFoundException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);
@@ -164,7 +164,7 @@ public class AssumptionViolatedExceptionTest {
         assertSerializedCorrectly(exception, fromStream);
     }
 
-    private void assertExceptionReserializable(AssumptionViolatedException expected)
+    private void assertReserializable(AssumptionViolatedException expected)
             throws IOException, ClassNotFoundException {
         String resourceName = name.getMethodName();
         InputStream resource = getClass().getResourceAsStream(resourceName);
