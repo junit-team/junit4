@@ -1,5 +1,8 @@
 package org.junit.internal;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.SelfDescribing;
@@ -107,5 +110,30 @@ public class AssumptionViolatedException extends RuntimeException implements Sel
                 description.appendDescriptionOf(fMatcher);
             }
         }
+    }
+
+    /**
+     * Override default Java object serialization to correctly deal with potentially unserializable matchers or values.
+     * By not implementing readObject, we assure ourselves of backwards compatibility and compatibility with the
+     * standard way of Java serialization.
+     *
+     * @param objectOutputStream The outputStream to write our representation to
+     * @throws IOException When serialization fails
+     */
+    private void writeObject(ObjectOutputStream objectOutputStream) throws IOException {
+        ObjectOutputStream.PutField putField = objectOutputStream.putFields();
+        putField.put("fAssumption", fAssumption);
+        putField.put("fValueMatcher", fValueMatcher);
+
+        // We have to wrap the matcher into a serializable form.
+        putField.put("fMatcher", SerializableMatcherDescription.asSerializableMatcher(fMatcher));
+
+        // We have to wrap the value inside a non-String class (instead of serializing the String value directly) as
+        // A Description will handle a String and non-String object differently (1st is surrounded by '"' while the
+        // latter will be surrounded by '<' '>'. Wrapping it makes sure that the description of a serialized and
+        // non-serialized instance produce the exact same description
+        putField.put("fValue", SerializableValueDescription.asSerializableValue(fValue));
+
+        objectOutputStream.writeFields();
     }
 }
