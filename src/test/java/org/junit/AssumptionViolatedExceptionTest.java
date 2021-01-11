@@ -119,13 +119,13 @@ public class AssumptionViolatedExceptionTest {
     @Test
     public void assumptionViolatedExceptionWithoutValueAndMatcherCanBeReserialized_v4_13()
             throws IOException, ClassNotFoundException {
-        assertExceptionReserializable(new AssumptionViolatedException(MESSAGE));
+        assertReserializable(new AssumptionViolatedException(MESSAGE));
     }
 
     @Test
     public void assumptionViolatedExceptionWithValueAndMatcherCanBeReserialized_v4_13()
             throws IOException, ClassNotFoundException {
-        assertExceptionReserializable(new AssumptionViolatedException(MESSAGE, TWO, SERIALIZABLE_IS_THREE));
+        assertReserializable(new AssumptionViolatedException(MESSAGE, TWO, SERIALIZABLE_IS_THREE));
     }
 
     @Test
@@ -133,14 +133,14 @@ public class AssumptionViolatedExceptionTest {
         AssumptionViolatedException exception = new AssumptionViolatedException(MESSAGE,
                 UNSERIALIZABLE_VALUE, UNSERIALIZABLE_MATCHER);
 
-        assertAssumptionViolatedExceptionCanBeSerialized(exception);
+        assertCanBeSerialized(exception);
     }
 
     @Test
     public void nullValueAndMatcherCanBeSerialized() throws IOException, ClassNotFoundException {
         AssumptionViolatedException exception = new AssumptionViolatedException(MESSAGE);
 
-        assertAssumptionViolatedExceptionCanBeSerialized(exception);
+        assertCanBeSerialized(exception);
     }
 
     @Test
@@ -148,7 +148,7 @@ public class AssumptionViolatedExceptionTest {
         AssumptionViolatedException exception = new AssumptionViolatedException(MESSAGE,
                 TWO, SERIALIZABLE_IS_THREE);
 
-        assertAssumptionViolatedExceptionCanBeSerialized(exception);
+        assertCanBeSerialized(exception);
     }
 
     private void assertCanBeSerialized(AssumptionViolatedException exception)
