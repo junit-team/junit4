@@ -28,3 +28,11 @@ behave as they did in JUnit 4.11 (and more similar to tests that do not have a t
 unfortunately could result in visible changes of tests written or updated since the 4.12
 release. If this change adversely affects your tests, you can create the `Timeout` rule via the
 builder and call `Timeout.Builder.lookForStuckThread(true)`.
+
+# Exceptions
+
+### [Pull request #1654:](https://github.com/junit-team/junit/pull/1654) Fix for issue #1192: NotSerializableException with AssumptionViolatedException
+
+This change fixes an issue where `AssumptionViolatedException` instances could not be serialized
+if they were created with a constructor that takes in an `org.hamcrest.Matcher` instance (these
+constructors are used if you use one of the `assumeThat()` methods in `org.junit.Assume`).
