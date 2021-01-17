@@ -120,7 +120,9 @@ public class FailOnTimeoutTest {
     }
 
     @Test
-    public void stopEndlessStatement() throws Throwable {
+    public void statementThatCanBeInterruptedIsStoppedAfterTimeout() throws Throwable {
+        // RunForASecond can be interrupted because it uses Thread.sleep which
+        // can be interrupted.
         RunForASecond runForASecond = new RunForASecond();
         assertThrows(
                 TestTimedOutException.class,
