@@ -58,14 +58,14 @@ public class FailOnTimeoutTest {
     public void throwsTestTimedOutException() {
         assertThrows(
                 TestTimedOutException.class,
-                run(failAfter50Ms(new InfiniteLoop())));
+                run(failAfter50Ms(new RunForASecond())));
     }
 
     @Test
     public void throwExceptionWithNiceMessageOnTimeout() {
         Exception e = assertThrows(
                 Exception.class,
-                run(failAfter50Ms(new InfiniteLoop())));
+                run(failAfter50Ms(new RunForASecond())));
         assertEquals("test timed out after 50 milliseconds", e.getMessage());
     }
 
@@ -87,7 +87,7 @@ public class FailOnTimeoutTest {
         statement.delegate = new FastStatement();
         failOnTimeout.evaluate();
 
-        statement.delegate = new InfiniteLoop();
+        statement.delegate = new RunForASecond();
         assertThrows(
                 TestTimedOutException.class,
                 run(failOnTimeout));
@@ -104,7 +104,7 @@ public class FailOnTimeoutTest {
                 run(failOnTimeout)
         );
 
-        statement.delegate = new InfiniteLoop();
+        statement.delegate = new RunForASecond();
         assertThrows(
                 TestTimedOutException.class,
                 run(failOnTimeout));
@@ -114,24 +114,24 @@ public class FailOnTimeoutTest {
     public void throwsExceptionWithTimeoutValueAndTimeUnitSet() {
         TestTimedOutException e = assertThrows(
                 TestTimedOutException.class,
-                run(failAfter50Ms(new InfiniteLoop())));
+                run(failAfter50Ms(new RunForASecond())));
         assertEquals(50, e.getTimeout());
         assertEquals(MILLISECONDS, e.getTimeUnit());
     }
 
     @Test
     public void stopEndlessStatement() throws Throwable {
-        InfiniteLoop infiniteLoop = new InfiniteLoop();
+        RunForASecond runForASecond = new RunForASecond();
         assertThrows(
                 TestTimedOutException.class,
-                run(failAfter50Ms(infiniteLoop)));
+                run(failAfter50Ms(runForASecond)));
 
         sleep(20); // time to interrupt the thread
-        infiniteLoop.stillExecuting.set(false);
+        runForASecond.stillExecuting.set(false);
         sleep(20); // time to increment the count
         assertFalse(
                 "Thread has not been stopped.",
-                infiniteLoop.stillExecuting.get());
+                runForASecond.stillExecuting.get());
     }
 
     @Test
@@ -262,12 +262,13 @@ public class FailOnTimeoutTest {
         }
     }
 
-    private static final class InfiniteLoop extends Statement {
+    private static final class RunForASecond extends Statement {
         final AtomicBoolean stillExecuting = new AtomicBoolean();
 
         @Override
         public void evaluate() throws Throwable {
-            while (true) {
+            long timeout = currentTimeMillis() + 1000L;
+            while (currentTimeMillis() < timeout) {
                 sleep(10); // sleep in order to enable interrupting thread
                 stillExecuting.set(true);
             }
