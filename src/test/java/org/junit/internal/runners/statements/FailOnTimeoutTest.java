@@ -4,6 +4,7 @@ import static java.lang.Long.MAX_VALUE;
 import static java.lang.Math.atan;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.currentThread;
+import static java.lang.Thread.interrupted;
 import static java.lang.Thread.sleep;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.junit.Assert.assertEquals;
@@ -17,6 +18,7 @@ import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
 
 import java.util.Arrays;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -114,19 +116,17 @@ public class FailOnTimeoutTest {
 
     @Test
     public void statementThatCanBeInterruptedIsStoppedAfterTimeout() throws Throwable {
-        // RunForASecond can be interrupted because it uses Thread.sleep which
-        // can be interrupted.
+        // RunForASecond can be interrupted because it checks the Thread's
+        // interrupted flag.
         RunForASecond runForASecond = new RunForASecond();
         assertThrows(
                 TestTimedOutException.class,
                 run(failAfter50Ms(runForASecond)));
 
-        sleep(20); // time to interrupt the thread
-        runForASecond.stillExecuting.set(false);
-        sleep(20); // time to increment the count
-        assertFalse(
-                "Thread has not been stopped.",
-                runForASecond.stillExecuting.get());
+        // Thread is explicitly stopped if it finishes faster than its
+        // pre-defined execution time of one second.
+        boolean stopped = runForASecond.finished.await(50, MILLISECONDS);
+        assertTrue("Thread has not been stopped.", stopped);
     }
 
     @Test
@@ -243,7 +243,7 @@ public class FailOnTimeoutTest {
     }
 
     private static class DelegatingStatement extends Statement {
-        Statement delegate;
+        volatile Statement delegate;
 
         @Override
         public void evaluate() throws Throwable {
@@ -258,15 +258,14 @@ public class FailOnTimeoutTest {
     }
 
     private static final class RunForASecond extends Statement {
-        final AtomicBoolean stillExecuting = new AtomicBoolean();
+        final CountDownLatch finished = new CountDownLatch(1);
 
         @Override
         public void evaluate() throws Throwable {
             long timeout = currentTimeMillis() + 1000L;
-            while (currentTimeMillis() < timeout) {
-                sleep(10); // sleep in order to enable interrupting thread
-                stillExecuting.set(true);
+            while (!interrupted() && currentTimeMillis() < timeout) {
             }
+            finished.countDown();
         }
     }
 }
