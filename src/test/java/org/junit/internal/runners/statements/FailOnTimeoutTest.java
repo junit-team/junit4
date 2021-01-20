@@ -55,16 +55,9 @@ public class FailOnTimeoutTest {
     }
 
     @Test
-    public void throwsTestTimedOutException() {
-        assertThrows(
-                TestTimedOutException.class,
-                run(failAfter50Ms(new RunForASecond())));
-    }
-
-    @Test
-    public void throwExceptionWithNiceMessageOnTimeout() {
+    public void throwsTestTimedOutExceptionWithMeaningfulMessage() {
         Exception e = assertThrows(
-                Exception.class,
+                TestTimedOutException.class,
                 run(failAfter50Ms(new RunForASecond())));
         assertEquals("test timed out after 50 milliseconds", e.getMessage());
     }
