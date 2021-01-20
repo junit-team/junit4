@@ -81,7 +81,7 @@ public class FailOnTimeoutTest {
     @Test
     public void throwExceptionIfTheSecondCallToEvaluateNeedsTooMuchTime()
             throws Throwable {
-        DelegateStatement statement = new DelegateStatement();
+        DelegatingStatement statement = new DelegatingStatement();
         FailOnTimeout failOnTimeout = failAfter50Ms(statement);
 
         statement.delegate = new FastStatement();
@@ -95,7 +95,7 @@ public class FailOnTimeoutTest {
 
     @Test
     public void throwTimeoutExceptionOnSecondCallAlthoughFirstCallThrowsException() {
-        DelegateStatement statement = new DelegateStatement();
+        DelegatingStatement statement = new DelegatingStatement();
         FailOnTimeout failOnTimeout = failAfter50Ms(statement);
 
         statement.delegate = new Fail(new AssertionError("first execution failed"));
@@ -249,7 +249,7 @@ public class FailOnTimeoutTest {
         };
     }
 
-    private static class DelegateStatement extends Statement {
+    private static class DelegatingStatement extends Statement {
         Statement delegate;
 
         @Override
