@@ -1,0 +1,109 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.junit.runner;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import org.junit.runner.notification.RunNotifier;<a name="line.3"></a>
+<FONT color="green">004</FONT>    <a name="line.4"></a>
+<FONT color="green">005</FONT>    /**<a name="line.5"></a>
+<FONT color="green">006</FONT>     * A &lt;code&gt;Runner&lt;/code&gt; runs tests and notifies a {@link org.junit.runner.notification.RunNotifier}<a name="line.6"></a>
+<FONT color="green">007</FONT>     * of significant events as it does so. You will need to subclass &lt;code&gt;Runner&lt;/code&gt;<a name="line.7"></a>
+<FONT color="green">008</FONT>     * when using {@link org.junit.runner.RunWith} to invoke a custom runner. When creating<a name="line.8"></a>
+<FONT color="green">009</FONT>     * a custom runner, in addition to implementing the abstract methods here you must<a name="line.9"></a>
+<FONT color="green">010</FONT>     * also provide a constructor that takes as an argument the {@link Class} containing<a name="line.10"></a>
+<FONT color="green">011</FONT>     * the tests.<a name="line.11"></a>
+<FONT color="green">012</FONT>     *<a name="line.12"></a>
+<FONT color="green">013</FONT>     * &lt;p&gt;The default runner implementation guarantees that the instances of the test case<a name="line.13"></a>
+<FONT color="green">014</FONT>     * class will be constructed immediately before running the test and that the runner<a name="line.14"></a>
+<FONT color="green">015</FONT>     * will retain no reference to the test case instances, generally making them<a name="line.15"></a>
+<FONT color="green">016</FONT>     * available for garbage collection.<a name="line.16"></a>
+<FONT color="green">017</FONT>     *<a name="line.17"></a>
+<FONT color="green">018</FONT>     * @see org.junit.runner.Description<a name="line.18"></a>
+<FONT color="green">019</FONT>     * @see org.junit.runner.RunWith<a name="line.19"></a>
+<FONT color="green">020</FONT>     * @since 4.0<a name="line.20"></a>
+<FONT color="green">021</FONT>     */<a name="line.21"></a>
+<FONT color="green">022</FONT>    public abstract class Runner implements Describable {<a name="line.22"></a>
+<FONT color="green">023</FONT>        /*<a name="line.23"></a>
+<FONT color="green">024</FONT>         * (non-Javadoc)<a name="line.24"></a>
+<FONT color="green">025</FONT>         * @see org.junit.runner.Describable#getDescription()<a name="line.25"></a>
+<FONT color="green">026</FONT>         */<a name="line.26"></a>
+<FONT color="green">027</FONT>        public abstract Description getDescription();<a name="line.27"></a>
+<FONT color="green">028</FONT>    <a name="line.28"></a>
+<FONT color="green">029</FONT>        /**<a name="line.29"></a>
+<FONT color="green">030</FONT>         * Run the tests for this runner.<a name="line.30"></a>
+<FONT color="green">031</FONT>         *<a name="line.31"></a>
+<FONT color="green">032</FONT>         * @param notifier will be notified of events while tests are being run--tests being<a name="line.32"></a>
+<FONT color="green">033</FONT>         * started, finishing, and failing<a name="line.33"></a>
+<FONT color="green">034</FONT>         */<a name="line.34"></a>
+<FONT color="green">035</FONT>        public abstract void run(RunNotifier notifier);<a name="line.35"></a>
+<FONT color="green">036</FONT>    <a name="line.36"></a>
+<FONT color="green">037</FONT>        /**<a name="line.37"></a>
+<FONT color="green">038</FONT>         * @return the number of tests to be run by the receiver<a name="line.38"></a>
+<FONT color="green">039</FONT>         */<a name="line.39"></a>
+<FONT color="green">040</FONT>        public int testCount() {<a name="line.40"></a>
+<FONT color="green">041</FONT>            return getDescription().testCount();<a name="line.41"></a>
+<FONT color="green">042</FONT>        }<a name="line.42"></a>
+<FONT color="green">043</FONT>    }<a name="line.43"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

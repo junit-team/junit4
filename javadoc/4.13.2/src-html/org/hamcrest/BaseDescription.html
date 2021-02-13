@@ -1,0 +1,210 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package org.hamcrest;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import static java.lang.String.valueOf;<a name="line.3"></a>
+<FONT color="green">004</FONT>    <a name="line.4"></a>
+<FONT color="green">005</FONT>    import java.util.Arrays;<a name="line.5"></a>
+<FONT color="green">006</FONT>    import java.util.Iterator;<a name="line.6"></a>
+<FONT color="green">007</FONT>    <a name="line.7"></a>
+<FONT color="green">008</FONT>    import org.hamcrest.internal.ArrayIterator;<a name="line.8"></a>
+<FONT color="green">009</FONT>    import org.hamcrest.internal.SelfDescribingValueIterator;<a name="line.9"></a>
+<FONT color="green">010</FONT>    <a name="line.10"></a>
+<FONT color="green">011</FONT>    /**<a name="line.11"></a>
+<FONT color="green">012</FONT>     * A {@link Description} that is stored as a string.<a name="line.12"></a>
+<FONT color="green">013</FONT>     */<a name="line.13"></a>
+<FONT color="green">014</FONT>    public abstract class BaseDescription implements Description {<a name="line.14"></a>
+<FONT color="green">015</FONT>    <a name="line.15"></a>
+<FONT color="green">016</FONT>        @Override<a name="line.16"></a>
+<FONT color="green">017</FONT>        public Description appendText(String text) {<a name="line.17"></a>
+<FONT color="green">018</FONT>            append(text);<a name="line.18"></a>
+<FONT color="green">019</FONT>            return this;<a name="line.19"></a>
+<FONT color="green">020</FONT>        }<a name="line.20"></a>
+<FONT color="green">021</FONT>        <a name="line.21"></a>
+<FONT color="green">022</FONT>        @Override<a name="line.22"></a>
+<FONT color="green">023</FONT>        public Description appendDescriptionOf(SelfDescribing value) {<a name="line.23"></a>
+<FONT color="green">024</FONT>            value.describeTo(this);<a name="line.24"></a>
+<FONT color="green">025</FONT>            return this;<a name="line.25"></a>
+<FONT color="green">026</FONT>        }<a name="line.26"></a>
+<FONT color="green">027</FONT>        <a name="line.27"></a>
+<FONT color="green">028</FONT>        @Override<a name="line.28"></a>
+<FONT color="green">029</FONT>        public Description appendValue(Object value) {<a name="line.29"></a>
+<FONT color="green">030</FONT>            if (value == null) {<a name="line.30"></a>
+<FONT color="green">031</FONT>                append("null");<a name="line.31"></a>
+<FONT color="green">032</FONT>            } else if (value instanceof String) {<a name="line.32"></a>
+<FONT color="green">033</FONT>                toJavaSyntax((String) value);<a name="line.33"></a>
+<FONT color="green">034</FONT>            } else if (value instanceof Character) {<a name="line.34"></a>
+<FONT color="green">035</FONT>                append('"');<a name="line.35"></a>
+<FONT color="green">036</FONT>                toJavaSyntax((Character) value);<a name="line.36"></a>
+<FONT color="green">037</FONT>                append('"');<a name="line.37"></a>
+<FONT color="green">038</FONT>            } else if (value instanceof Short) {<a name="line.38"></a>
+<FONT color="green">039</FONT>                append('&lt;');<a name="line.39"></a>
+<FONT color="green">040</FONT>                append(descriptionOf(value));<a name="line.40"></a>
+<FONT color="green">041</FONT>                append("s&gt;");<a name="line.41"></a>
+<FONT color="green">042</FONT>            } else if (value instanceof Long) {<a name="line.42"></a>
+<FONT color="green">043</FONT>                append('&lt;');<a name="line.43"></a>
+<FONT color="green">044</FONT>                append(descriptionOf(value));<a name="line.44"></a>
+<FONT color="green">045</FONT>                append("L&gt;");<a name="line.45"></a>
+<FONT color="green">046</FONT>            } else if (value instanceof Float) {<a name="line.46"></a>
+<FONT color="green">047</FONT>                append('&lt;');<a name="line.47"></a>
+<FONT color="green">048</FONT>                append(descriptionOf(value));<a name="line.48"></a>
+<FONT color="green">049</FONT>                append("F&gt;");<a name="line.49"></a>
+<FONT color="green">050</FONT>            } else if (value.getClass().isArray()) {<a name="line.50"></a>
+<FONT color="green">051</FONT>                appendValueList("[",", ","]", new ArrayIterator(value));<a name="line.51"></a>
+<FONT color="green">052</FONT>            } else {<a name="line.52"></a>
+<FONT color="green">053</FONT>                append('&lt;');<a name="line.53"></a>
+<FONT color="green">054</FONT>                append(descriptionOf(value));<a name="line.54"></a>
+<FONT color="green">055</FONT>                append('&gt;');<a name="line.55"></a>
+<FONT color="green">056</FONT>            }<a name="line.56"></a>
+<FONT color="green">057</FONT>            return this;<a name="line.57"></a>
+<FONT color="green">058</FONT>        }<a name="line.58"></a>
+<FONT color="green">059</FONT>    <a name="line.59"></a>
+<FONT color="green">060</FONT>        private String descriptionOf(Object value) {<a name="line.60"></a>
+<FONT color="green">061</FONT>            try {<a name="line.61"></a>
+<FONT color="green">062</FONT>                return valueOf(value);<a name="line.62"></a>
+<FONT color="green">063</FONT>            }<a name="line.63"></a>
+<FONT color="green">064</FONT>            catch (Exception e) {<a name="line.64"></a>
+<FONT color="green">065</FONT>                return value.getClass().getName() + "@" + Integer.toHexString(value.hashCode());<a name="line.65"></a>
+<FONT color="green">066</FONT>            }<a name="line.66"></a>
+<FONT color="green">067</FONT>        }<a name="line.67"></a>
+<FONT color="green">068</FONT>    <a name="line.68"></a>
+<FONT color="green">069</FONT>        @Override<a name="line.69"></a>
+<FONT color="green">070</FONT>        public &lt;T&gt; Description appendValueList(String start, String separator, String end, T... values) {<a name="line.70"></a>
+<FONT color="green">071</FONT>            return appendValueList(start, separator, end, Arrays.asList(values));<a name="line.71"></a>
+<FONT color="green">072</FONT>        }<a name="line.72"></a>
+<FONT color="green">073</FONT>        <a name="line.73"></a>
+<FONT color="green">074</FONT>        @Override<a name="line.74"></a>
+<FONT color="green">075</FONT>        public &lt;T&gt; Description appendValueList(String start, String separator, String end, Iterable&lt;T&gt; values) {<a name="line.75"></a>
+<FONT color="green">076</FONT>            return appendValueList(start, separator, end, values.iterator());<a name="line.76"></a>
+<FONT color="green">077</FONT>        }<a name="line.77"></a>
+<FONT color="green">078</FONT>        <a name="line.78"></a>
+<FONT color="green">079</FONT>        private &lt;T&gt; Description appendValueList(String start, String separator, String end, Iterator&lt;T&gt; values) {<a name="line.79"></a>
+<FONT color="green">080</FONT>            return appendList(start, separator, end, new SelfDescribingValueIterator&lt;T&gt;(values));<a name="line.80"></a>
+<FONT color="green">081</FONT>        }<a name="line.81"></a>
+<FONT color="green">082</FONT>        <a name="line.82"></a>
+<FONT color="green">083</FONT>        @Override<a name="line.83"></a>
+<FONT color="green">084</FONT>        public Description appendList(String start, String separator, String end, Iterable&lt;? extends SelfDescribing&gt; values) {<a name="line.84"></a>
+<FONT color="green">085</FONT>            return appendList(start, separator, end, values.iterator());<a name="line.85"></a>
+<FONT color="green">086</FONT>        }<a name="line.86"></a>
+<FONT color="green">087</FONT>    <a name="line.87"></a>
+<FONT color="green">088</FONT>        private Description appendList(String start, String separator, String end, Iterator&lt;? extends SelfDescribing&gt; i) {<a name="line.88"></a>
+<FONT color="green">089</FONT>            boolean separate = false;<a name="line.89"></a>
+<FONT color="green">090</FONT>            <a name="line.90"></a>
+<FONT color="green">091</FONT>            append(start);<a name="line.91"></a>
+<FONT color="green">092</FONT>            while (i.hasNext()) {<a name="line.92"></a>
+<FONT color="green">093</FONT>                if (separate) append(separator);<a name="line.93"></a>
+<FONT color="green">094</FONT>                appendDescriptionOf(i.next());<a name="line.94"></a>
+<FONT color="green">095</FONT>                separate = true;<a name="line.95"></a>
+<FONT color="green">096</FONT>            }<a name="line.96"></a>
+<FONT color="green">097</FONT>            append(end);<a name="line.97"></a>
+<FONT color="green">098</FONT>            <a name="line.98"></a>
+<FONT color="green">099</FONT>            return this;<a name="line.99"></a>
+<FONT color="green">100</FONT>        }<a name="line.100"></a>
+<FONT color="green">101</FONT>    <a name="line.101"></a>
+<FONT color="green">102</FONT>        /**<a name="line.102"></a>
+<FONT color="green">103</FONT>         * Append the String &lt;var&gt;str&lt;/var&gt; to the description.  <a name="line.103"></a>
+<FONT color="green">104</FONT>         * The default implementation passes every character to {@link #append(char)}.  <a name="line.104"></a>
+<FONT color="green">105</FONT>         * Override in subclasses to provide an efficient implementation.<a name="line.105"></a>
+<FONT color="green">106</FONT>         */<a name="line.106"></a>
+<FONT color="green">107</FONT>        protected void append(String str) {<a name="line.107"></a>
+<FONT color="green">108</FONT>            for (int i = 0; i &lt; str.length(); i++) {<a name="line.108"></a>
+<FONT color="green">109</FONT>                append(str.charAt(i));<a name="line.109"></a>
+<FONT color="green">110</FONT>            }<a name="line.110"></a>
+<FONT color="green">111</FONT>        }<a name="line.111"></a>
+<FONT color="green">112</FONT>        <a name="line.112"></a>
+<FONT color="green">113</FONT>        /**<a name="line.113"></a>
+<FONT color="green">114</FONT>         * Append the char &lt;var&gt;c&lt;/var&gt; to the description.  <a name="line.114"></a>
+<FONT color="green">115</FONT>         */<a name="line.115"></a>
+<FONT color="green">116</FONT>        protected abstract void append(char c);<a name="line.116"></a>
+<FONT color="green">117</FONT>    <a name="line.117"></a>
+<FONT color="green">118</FONT>        private void toJavaSyntax(String unformatted) {<a name="line.118"></a>
+<FONT color="green">119</FONT>            append('"');<a name="line.119"></a>
+<FONT color="green">120</FONT>            for (int i = 0; i &lt; unformatted.length(); i++) {<a name="line.120"></a>
+<FONT color="green">121</FONT>                toJavaSyntax(unformatted.charAt(i));<a name="line.121"></a>
+<FONT color="green">122</FONT>            }<a name="line.122"></a>
+<FONT color="green">123</FONT>            append('"');<a name="line.123"></a>
+<FONT color="green">124</FONT>        }<a name="line.124"></a>
+<FONT color="green">125</FONT>    <a name="line.125"></a>
+<FONT color="green">126</FONT>        private void toJavaSyntax(char ch) {<a name="line.126"></a>
+<FONT color="green">127</FONT>            switch (ch) {<a name="line.127"></a>
+<FONT color="green">128</FONT>                case '"':<a name="line.128"></a>
+<FONT color="green">129</FONT>                    append("\\\"");<a name="line.129"></a>
+<FONT color="green">130</FONT>                    break;<a name="line.130"></a>
+<FONT color="green">131</FONT>                case '\n':<a name="line.131"></a>
+<FONT color="green">132</FONT>                    append("\\n");<a name="line.132"></a>
+<FONT color="green">133</FONT>                    break;<a name="line.133"></a>
+<FONT color="green">134</FONT>                case '\r':<a name="line.134"></a>
+<FONT color="green">135</FONT>                    append("\\r");<a name="line.135"></a>
+<FONT color="green">136</FONT>                    break;<a name="line.136"></a>
+<FONT color="green">137</FONT>                case '\t':<a name="line.137"></a>
+<FONT color="green">138</FONT>                    append("\\t");<a name="line.138"></a>
+<FONT color="green">139</FONT>                    break;<a name="line.139"></a>
+<FONT color="green">140</FONT>                default:<a name="line.140"></a>
+<FONT color="green">141</FONT>                    append(ch);<a name="line.141"></a>
+<FONT color="green">142</FONT>            }<a name="line.142"></a>
+<FONT color="green">143</FONT>        }<a name="line.143"></a>
+<FONT color="green">144</FONT>    }<a name="line.144"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>
