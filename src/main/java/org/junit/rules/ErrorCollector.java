@@ -43,19 +43,15 @@ public class ErrorCollector extends Verifier {
     }
 
     /**
-     * Adds a Throwable to the table.  Execution continues, but the test will fail at the end.
+     * Adds a {@code Throwable} to the table.  Execution continues, but the {@code Throwable(s)}
+     * will be re-thrown at the end, as a {@link MultipleFailureException} if there is more
+     * than one.
      */
     public void addError(Throwable error) {
         if (error == null) {
             throw new NullPointerException("Error cannot be null");
         }
-        if (error instanceof AssumptionViolatedException) {
-            AssertionError e = new AssertionError(error.getMessage());
-            e.initCause(error);
-            errors.add(e);
-        } else {
-            errors.add(error);
-        }
+        errors.add(error);
     }
 
     /**

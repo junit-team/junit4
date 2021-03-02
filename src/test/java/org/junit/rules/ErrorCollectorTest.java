@@ -37,7 +37,7 @@ public class ErrorCollectorTest {
                         hasNumberOfFailures(2)},
                 {
                     AddInternalAssumptionViolatedException.class,
-                        allOf(hasSingleFailure(), hasNoAssumptionFailure())},
+                        hasSingleAssumptionFailure()},
                 {
                     CheckMatcherThatDoesNotFailWithoutProvidedReason.class,
                         everyTestRunSuccessful()},
