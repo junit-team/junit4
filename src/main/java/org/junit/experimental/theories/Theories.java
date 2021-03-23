@@ -149,7 +149,7 @@ public class Theories extends BlockJUnit4ClassRunner {
                                  " must have only one constructor (either empty or taking only a TestClass)"));
         } else {
             Class<?>[] paramTypes = constructors[0].getParameterTypes();
-            if (!(paramTypes.length == 0) && !paramTypes[0].equals(TestClass.class)) {
+            if ((paramTypes.length != 0) && !paramTypes[0].equals(TestClass.class)) {
                 errors.add(new Error("ParameterSupplier " + supplierClass.getName() + 
                                      " constructor must take either nothing or a single TestClass instance"));
             }
