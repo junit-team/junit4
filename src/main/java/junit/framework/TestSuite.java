@@ -140,7 +140,7 @@ public class TestSuite implements Test {
             }
             superClass = superClass.getSuperclass();
         }
-        if (fTests.size() == 0) {
+        if (fTests.isEmpty()) {
             addTest(warning("No tests found in " + theClass.getName()));
         }
     }

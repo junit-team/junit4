@@ -603,23 +603,17 @@ public class Assert {
     private static boolean doubleIsDifferent(double d1, double d2, double delta) {
         if (Double.compare(d1, d2) == 0) {
             return false;
+        }else{
+            return  Math.abs(d1 - d2) > delta;
         }
-        if ((Math.abs(d1 - d2) <= delta)) {
-            return false;
-        }
-
-        return true;
     }
 
     private static boolean floatIsDifferent(float f1, float f2, float delta) {
         if (Float.compare(f1, f2) == 0) {
             return false;
+        }else {
+            return  Math.abs(f1 - f2) > delta;
         }
-        if ((Math.abs(f1 - f2) <= delta)) {
-            return false;
-        }
-
-        return true;
     }
 
     /**
