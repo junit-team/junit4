@@ -72,7 +72,7 @@ public class JUnit38ClassRunner extends Runner implements Filterable, Orderable 
         }
     }
 
-    private volatile Test test;
+    private  Test test;
 
     public JUnit38ClassRunner(Class<?> klass) {
         this(new TestSuite(klass.asSubclass(TestCase.class)));

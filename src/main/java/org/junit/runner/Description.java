@@ -156,7 +156,7 @@ public class Description implements Serializable {
     private final String fDisplayName;
     private final Serializable fUniqueId;
     private final Annotation[] fAnnotations;
-    private volatile /* write-once */ Class<?> fTestClass;
+    private  /* write-once */ Class<?> fTestClass;
 
     private Description(Class<?> clazz, String displayName, Annotation... annotations) {
         this(clazz, displayName, displayName, annotations);

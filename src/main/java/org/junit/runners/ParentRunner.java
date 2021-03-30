@@ -72,9 +72,9 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     private final TestClass testClass;
 
     // Guarded by childrenLock
-    private volatile List<T> filteredChildren = null;
+    private  List<T> filteredChildren = null;
 
-    private volatile RunnerScheduler scheduler = new RunnerScheduler() {
+    private  RunnerScheduler scheduler = new RunnerScheduler() {
         public void schedule(Runnable childStatement) {
             childStatement.run();
         }
