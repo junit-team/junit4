@@ -45,7 +45,10 @@ class RuleContainer {
         }
 
         private int compareInt(int a, int b) {
-            return (a < b) ? 1 : (a == b ? 0 : -1);
+            if(a < b) {
+                return  1;
+            }
+            return  a == b ? 0 : -1;
         }
     };
 
