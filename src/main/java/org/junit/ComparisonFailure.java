@@ -23,8 +23,8 @@ public class ComparisonFailure extends AssertionError {
      * serialization compatibility. 
      * See https://github.com/junit-team/junit4/issues/976
      */
-    private String fExpected;
-    private String fActual;
+    private final  String fExpected;
+    private final String fActual;
 
     /**
      * Constructs a comparison failure.
@@ -105,28 +105,7 @@ public class ComparisonFailure extends AssertionError {
             }
         }
 
-        private String sharedPrefix() {
-            int end = Math.min(expected.length(), actual.length());
-            for (int i = 0; i < end; i++) {
-                if (expected.charAt(i) != actual.charAt(i)) {
-                    return expected.substring(0, i);
-                }
-            }
-            return expected.substring(0, end);
-        }
 
-        private String sharedSuffix(String prefix) {
-            int suffixLength = 0;
-            int maxSuffixLength = Math.min(expected.length() - prefix.length(),
-                    actual.length() - prefix.length()) - 1;
-            for (; suffixLength <= maxSuffixLength; suffixLength++) {
-                if (expected.charAt(expected.length() - 1 - suffixLength)
-                        != actual.charAt(actual.length() - 1 - suffixLength)) {
-                    break;
-                }
-            }
-            return expected.substring(expected.length() - suffixLength);
-        }
 
         private class DiffExtractor {
             private final String sharedPrefix;
@@ -138,6 +117,29 @@ public class ComparisonFailure extends AssertionError {
             private DiffExtractor() {
                 sharedPrefix = sharedPrefix();
                 sharedSuffix = sharedSuffix(sharedPrefix);
+            }
+
+            private String sharedPrefix() {
+                int end = Math.min(expected.length(), actual.length());
+                for (int i = 0; i < end; i++) {
+                    if (expected.charAt(i) != actual.charAt(i)) {
+                        return expected.substring(0, i);
+                    }
+                }
+                return expected.substring(0, end);
+            }
+
+            private String sharedSuffix(String prefix) {
+                int suffixLength = 0;
+                int maxSuffixLength = Math.min(expected.length() - prefix.length(),
+                        actual.length() - prefix.length()) - 1;
+                for (; suffixLength <= maxSuffixLength; suffixLength++) {
+                    if (expected.charAt(expected.length() - 1 - suffixLength)
+                            != actual.charAt(actual.length() - 1 - suffixLength)) {
+                        break;
+                    }
+                }
+                return expected.substring(expected.length() - suffixLength);
             }
 
             public String expectedDiff() {
