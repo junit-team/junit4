@@ -154,7 +154,8 @@ public abstract class BaseTestRunner implements TestListener {
      */
     protected String processArguments(String[] args) {
         String suiteName = null;
-        for (int i = 0; i < args.length; i++) {
+        int i = 0;
+        while( i < args.length) {
             if (args[i].equals("-noloading")) {
                 setLoading(false);
             } else if (args[i].equals("-nofilterstack")) {
@@ -169,6 +170,7 @@ public abstract class BaseTestRunner implements TestListener {
             } else {
                 suiteName = args[i];
             }
+            i++;
         }
         return suiteName;
     }
@@ -297,7 +299,7 @@ public abstract class BaseTestRunner implements TestListener {
     }
 
     protected static boolean showStackRaw() {
-        return !getPreference("filterstack").equals("true") || fgFilterStack == false;
+        return !getPreference("filterstack").equals("true") || !fgFilterStack ;
     }
 
     static boolean filterLine(String line) {

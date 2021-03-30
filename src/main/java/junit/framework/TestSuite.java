@@ -46,7 +46,7 @@ public class TestSuite implements Test {
      * ...as the moon sets over the early morning Merlin, Oregon
      * mountains, our intrepid adventurers type...
      */
-    static public Test createTest(Class<?> theClass, String name) {
+    public static Test createTest(Class<?> theClass, String name) {
         Constructor<?> constructor;
         try {
             constructor = getTestConstructor(theClass);
