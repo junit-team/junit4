@@ -51,7 +51,8 @@ class JUnitCommandLineParseResult {
     }
 
     String[] parseOptions(String... args) {
-        for (int i = 0; i != args.length; ++i) {
+        int i = 0;
+        while(i != args.length) {
             String arg = args[i];
 
             if (arg.equals("--")) {
@@ -79,6 +80,7 @@ class JUnitCommandLineParseResult {
             } else {
                 return copyArray(args, i, args.length);
             }
+            i++;
         }
 
         return new String[]{};
