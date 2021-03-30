@@ -72,7 +72,7 @@ public class TestRunner extends BaseTestRunner {
      * }
      * </pre>
      */
-    static public TestResult run(Test test) {
+    public static TestResult run(Test test) {
         TestRunner runner = new TestRunner();
         return runner.doRun(test);
     }
@@ -81,7 +81,7 @@ public class TestRunner extends BaseTestRunner {
      * Runs a single test and waits until the user
      * types RETURN.
      */
-    static public void runAndWait(Test suite) {
+    public static void runAndWait(Test suite) {
         TestRunner aTestRunner = new TestRunner();
         aTestRunner.doRun(suite, true);
     }
@@ -153,8 +153,9 @@ public class TestRunner extends BaseTestRunner {
         String testCase = "";
         String method = "";
         boolean wait = false;
+        int i = 0;
 
-        for (int i = 0; i < args.length; i++) {
+        while ( i < args.length) {
             if (args[i].equals("-wait")) {
                 wait = true;
             } else if (args[i].equals("-c")) {
@@ -169,6 +170,7 @@ public class TestRunner extends BaseTestRunner {
             } else {
                 testCase = args[i];
             }
+            i++;
         }
 
         if (testCase.equals("")) {
