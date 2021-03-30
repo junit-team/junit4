@@ -152,7 +152,7 @@ public final class Throwables {
 
         return Collections.emptyList();
     }
-    
+
 
     private static void appendStackTraceLines(
             List<String> stackTraceLines, StringBuilder destBuilder) {

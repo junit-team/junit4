@@ -310,10 +310,8 @@ public class TemporaryFolder extends ExternalResource {
      * and deletion of resources is assured.
      */
     public void delete() {
-        if (!tryDelete()) {
-            if (assureDeletion) {
+        if (!tryDelete() && assureDeletion) {
                 fail("Unable to clean up temporary folder " + folder);
-            }
         }
     }
 
