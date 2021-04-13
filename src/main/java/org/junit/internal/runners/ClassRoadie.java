@@ -48,16 +48,20 @@ public class ClassRoadie {
         }
     }
 
+    private void help_runBefores() throws FailedBefore {
+      try {
+          List<Method> befores = testClass.getBefores();
+          for (Method before : befores) {
+              before.invoke(null);
+          }
+      } catch (InvocationTargetException e) {
+          throw e.getTargetException();
+      }
+    }
+
     private void runBefores() throws FailedBefore {
         try {
-            try {
-                List<Method> befores = testClass.getBefores();
-                for (Method before : befores) {
-                    before.invoke(null);
-                }
-            } catch (InvocationTargetException e) {
-                throw e.getTargetException();
-            }
+            help_runBefores();
         } catch (AssumptionViolatedException e) {
             throw new FailedBefore();
         } catch (Throwable e) {

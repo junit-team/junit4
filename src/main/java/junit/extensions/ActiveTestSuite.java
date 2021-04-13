@@ -42,8 +42,6 @@ public class ActiveTestSuite extends TestSuite {
             @Override
             public void run() {
                 try {
-                    // inlined due to limitation in VA/Java
-                    //ActiveTestSuite.super.runTest(test, result);
                     test.run(result);
                 } finally {
                     ActiveTestSuite.this.runFinished();

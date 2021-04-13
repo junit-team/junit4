@@ -84,14 +84,14 @@ public abstract class TestCase extends Assert implements Test {
      * No-arg constructor to enable serialization. This method
      * is not intended to be used by mere mortals without calling setName().
      */
-    public TestCase() {
+    protected TestCase() {
         fName = null;
     }
 
     /**
      * Constructs a test case with the given name.
      */
-    public TestCase(String name) {
+    protected TestCase(String name) {
         fName = name;
     }
 

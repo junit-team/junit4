@@ -42,16 +42,17 @@ import org.junit.internal.Throwables;
  */
 public class TestSuite implements Test {
 
+  private static final String CLASS = "Class ";
     /**
      * ...as the moon sets over the early morning Merlin, Oregon
      * mountains, our intrepid adventurers type...
      */
-    static public Test createTest(Class<?> theClass, String name) {
+    public static Test createTest(Class<?> theClass, String name) {
         Constructor<?> constructor;
         try {
             constructor = getTestConstructor(theClass);
         } catch (NoSuchMethodException e) {
-            return warning("Class " + theClass.getName() + " has no public constructor TestCase(String name) or TestCase()");
+            return warning(CLASS + theClass.getName() + " has no public constructor TestCase(String name) or TestCase()");
         }
         Object test;
         try {
@@ -123,12 +124,12 @@ public class TestSuite implements Test {
         try {
             getTestConstructor(theClass); // Avoid generating multiple error messages
         } catch (NoSuchMethodException e) {
-            addTest(warning("Class " + theClass.getName() + " has no public constructor TestCase(String name) or TestCase()"));
+            addTest(warning(CLASS + theClass.getName() + " has no public constructor TestCase(String name) or TestCase()"));
             return;
         }
 
         if (!Modifier.isPublic(theClass.getModifiers())) {
-            addTest(warning("Class " + theClass.getName() + " is not public"));
+            addTest(warning(CLASS + theClass.getName() + " is not public"));
             return;
         }
 
@@ -140,7 +141,7 @@ public class TestSuite implements Test {
             }
             superClass = superClass.getSuperclass();
         }
-        if (fTests.size() == 0) {
+        if (fTests.isEmpty()) {
             addTest(warning("No tests found in " + theClass.getName()));
         }
     }

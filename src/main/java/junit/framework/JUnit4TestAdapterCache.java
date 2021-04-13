@@ -41,7 +41,7 @@ public class JUnit4TestAdapterCache extends HashMap<Description, Test> {
         }
     }
 
-    public RunNotifier getNotifier(final TestResult result, final JUnit4TestAdapter adapter) {
+    public RunNotifier getNotifier(final TestResult result) {
         RunNotifier notifier = new RunNotifier();
         notifier.addListener(new RunListener() {
             @Override

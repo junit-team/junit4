@@ -21,6 +21,7 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 @Deprecated
 public class MethodValidator {
 
+    private static final String METHOD = "Method ";
     private final List<Throwable> errors = new ArrayList<Throwable>();
 
     private TestClass testClass;
@@ -35,7 +36,7 @@ public class MethodValidator {
         validateTestMethods(Test.class, false);
 
         List<Method> methods = testClass.getAnnotatedMethods(Test.class);
-        if (methods.size() == 0) {
+        if (methods.isEmpty()) {
             errors.add(new Exception("No runnable methods"));
         }
     }
@@ -73,7 +74,7 @@ public class MethodValidator {
         for (Method each : methods) {
             if (Modifier.isStatic(each.getModifiers()) != isStatic) {
                 String state = isStatic ? "should" : "should not";
-                errors.add(new Exception("Method " + each.getName() + "() "
+                errors.add(new Exception(METHOD + each.getName() + "() "
 						+ state + " be static"));
             }
             if (!Modifier.isPublic(each.getDeclaringClass().getModifiers())) {
@@ -81,15 +82,15 @@ public class MethodValidator {
 						+ " should be public"));
             }
             if (!Modifier.isPublic(each.getModifiers())) {
-                errors.add(new Exception("Method " + each.getName()
+                errors.add(new Exception(METHOD + each.getName()
 						+ " should be public"));
             }
             if (each.getReturnType() != Void.TYPE) {
-                errors.add(new Exception("Method " + each.getName()
+                errors.add(new Exception(METHOD + each.getName()
 						+ "should have a return type of void"));
             }
             if (each.getParameterTypes().length != 0) {
-                errors.add(new Exception("Method " + each.getName()
+                errors.add(new Exception(METHOD + each.getName()
 						+ " should have no parameters"));
             }
         }

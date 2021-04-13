@@ -3,7 +3,7 @@ package org.junit.internal;
 import org.junit.Assert;
 
 public class InexactComparisonCriteria extends ComparisonCriteria {
-    public Object fDelta;
+    private Object fDelta;
 
     public InexactComparisonCriteria(double delta) {
         fDelta = delta;

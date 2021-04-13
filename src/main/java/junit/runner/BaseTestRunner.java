@@ -21,12 +21,15 @@ import junit.framework.TestListener;
 import junit.framework.TestSuite;
 
 import org.junit.internal.Throwables;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 /**
  * Base class for all test runners.
  * This class was born live on stage in Sardinia during XP2000.
  */
 public abstract class BaseTestRunner implements TestListener {
+    Logger logger = Logger.getLogger("logg");
     public static final String SUITE_METHODNAME = "suite";
 
     private static Properties fPreferences;
@@ -163,7 +166,7 @@ public abstract class BaseTestRunner implements TestListener {
                 if (args.length > i + 1) {
                     suiteName = extractClassName(args[i + 1]);
                 } else {
-                    System.out.println("Missing Test class name");
+                    logger.log(Level.WARNING,"Missing Test class name");
                 }
                 i++;
             } else {
@@ -235,13 +238,16 @@ public abstract class BaseTestRunner implements TestListener {
             setPreferences(new Properties(getPreferences()));
             getPreferences().load(is);
         } catch (IOException ignored) {
+          System.out.println("error ignored");
         } catch (SecurityException ignored) {
+            System.out.println("error ignored");
         } finally {
             try {
                 if (is != null) {
                     is.close();
                 }
             } catch (IOException e1) {
+              System.out.println("error ignored");
             }
         }
     }
@@ -259,6 +265,7 @@ public abstract class BaseTestRunner implements TestListener {
         try {
             intValue = Integer.parseInt(value);
         } catch (NumberFormatException ne) {
+            System.out.println("NumberFormatException");
         }
         return intValue;
     }
@@ -290,14 +297,14 @@ public abstract class BaseTestRunner implements TestListener {
                     pw.println(line);
                 }
             }
-        } catch (Exception IOException) {
+        } catch (IOException e) {
             return stack; // return the stack unfiltered
         }
         return sw.toString();
     }
 
     protected static boolean showStackRaw() {
-        return !getPreference("filterstack").equals("true") || fgFilterStack == false;
+        return !getPreference("filterstack").equals("true") || ( !fgFilterStack );
     }
 
     static boolean filterLine(String line) {
@@ -312,7 +319,7 @@ public abstract class BaseTestRunner implements TestListener {
                 "java.lang.reflect.Method.invoke("
         };
         for (int i = 0; i < patterns.length; i++) {
-            if (line.indexOf(patterns[i]) > 0) {
+            if (line.indexOf(patterns[i]) >= 0) {
                 return true;
             }
         }

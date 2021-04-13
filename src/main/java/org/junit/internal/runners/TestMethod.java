@@ -35,8 +35,7 @@ public class TestMethod {
         if (annotation == null) {
             return 0;
         }
-        long timeout = annotation.timeout();
-        return timeout;
+        return annotation.timeout();
     }
 
     protected Class<? extends Throwable> getExpectedException() {

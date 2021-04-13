@@ -120,7 +120,9 @@ public class ResultPrinter implements TestListener {
     /**
      * @see junit.framework.TestListener#endTest(Test)
      */
+    @Override
     public void endTest(Test test) {
+        // to know that we are reaching the end of the test
     }
 
     /**

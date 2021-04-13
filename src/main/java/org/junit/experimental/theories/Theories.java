@@ -103,7 +103,7 @@ public class Theories extends BlockJUnit4ClassRunner {
 
     private void validateDataPointMethods(List<Throwable> errors) {
         Method[] methods = getTestClass().getJavaClass().getDeclaredMethods();
-        
+
         for (Method method : methods) {
             if (method.getAnnotation(DataPoint.class) == null && method.getAnnotation(DataPoints.class) == null) {
                 continue;
@@ -131,7 +131,7 @@ public class Theories extends BlockJUnit4ClassRunner {
             } else {
                 each.validatePublicVoidNoArg(false, errors);
             }
-            
+
             for (ParameterSignature signature : ParameterSignature.signatures(each.getMethod())) {
                 ParametersSuppliedBy annotation = signature.findDeepAnnotation(ParametersSuppliedBy.class);
                 if (annotation != null) {
@@ -143,14 +143,14 @@ public class Theories extends BlockJUnit4ClassRunner {
 
     private void validateParameterSupplier(Class<? extends ParameterSupplier> supplierClass, List<Throwable> errors) {
         Constructor<?>[] constructors = supplierClass.getConstructors();
-        
+
         if (constructors.length != 1) {
-            errors.add(new Error("ParameterSupplier " + supplierClass.getName() + 
+            errors.add(new Error("ParameterSupplier " + supplierClass.getName() +
                                  " must have only one constructor (either empty or taking only a TestClass)"));
         } else {
             Class<?>[] paramTypes = constructors[0].getParameterTypes();
-            if (!(paramTypes.length == 0) && !paramTypes[0].equals(TestClass.class)) {
-                errors.add(new Error("ParameterSupplier " + supplierClass.getName() + 
+            if ((paramTypes.length != 0) && !paramTypes[0].equals(TestClass.class)) {
+                errors.add(new Error("ParameterSupplier " + supplierClass.getName() +
                                      " constructor must take either nothing or a single TestClass instance"));
             }
         }
@@ -191,7 +191,7 @@ public class Theories extends BlockJUnit4ClassRunner {
         public void evaluate() throws Throwable {
             runWithAssignment(Assignments.allUnassigned(
                     testMethod.getMethod(), getTestClass()));
-            
+
             //if this test method is not annotated with Theory, then no successes is a valid case
             boolean hasTheoryAnnotation = testMethod.getAnnotation(Theory.class) != null;
             if (successes == 0 && hasTheoryAnnotation) {
@@ -255,11 +255,11 @@ public class Theories extends BlockJUnit4ClassRunner {
                 @Override
                 public Object createTest() throws Exception {
                     Object[] params = complete.getConstructorArguments();
-                    
+
                     if (!nullsOk()) {
                         Assume.assumeNotNull(params);
                     }
-                    
+
                     return getTestClass().getOnlyConstructor().newInstance(params);
                 }
             }.methodBlock(testMethod).evaluate();
@@ -271,11 +271,11 @@ public class Theories extends BlockJUnit4ClassRunner {
                 @Override
                 public void evaluate() throws Throwable {
                     final Object[] values = complete.getMethodArguments();
-                    
+
                     if (!nullsOk()) {
                         Assume.assumeNotNull(values);
                     }
-                    
+
                     method.invokeExplosively(freshInstance, values);
                 }
             };

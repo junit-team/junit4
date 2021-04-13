@@ -9,7 +9,8 @@ import junit.framework.TestResult;
 import junit.framework.TestSuite;
 import junit.runner.BaseTestRunner;
 import junit.runner.Version;
-
+import java.util.logging.Logger;
+import java.util.logging.Level;
 /**
  * A command line based tool to run tests.
  * <pre>
@@ -33,6 +34,7 @@ public class TestRunner extends BaseTestRunner {
     public static final int SUCCESS_EXIT = 0;
     public static final int FAILURE_EXIT = 1;
     public static final int EXCEPTION_EXIT = 2;
+    Logger logger = Logger.getLogger("logg");
 
     /**
      * Constructs a TestRunner.
@@ -58,7 +60,7 @@ public class TestRunner extends BaseTestRunner {
     /**
      * Runs a suite extracted from a TestCase subclass.
      */
-    static public void run(Class<? extends TestCase> testClass) {
+    public static void run(Class<? extends TestCase> testClass) {
         run(new TestSuite(testClass));
     }
 
@@ -72,7 +74,7 @@ public class TestRunner extends BaseTestRunner {
      * }
      * </pre>
      */
-    static public TestResult run(Test test) {
+    public static TestResult run(Test test) {
         TestRunner runner = new TestRunner();
         return runner.doRun(test);
     }
@@ -81,7 +83,7 @@ public class TestRunner extends BaseTestRunner {
      * Runs a single test and waits until the user
      * types RETURN.
      */
-    static public void runAndWait(Test suite) {
+    public static void runAndWait(Test suite) {
         TestRunner aTestRunner = new TestRunner();
         aTestRunner.doRun(suite, true);
     }
@@ -128,6 +130,7 @@ public class TestRunner extends BaseTestRunner {
         try {
             System.in.read();
         } catch (Exception e) {
+          logger.log(Level.INFO,e.getMessage());
         }
     }
 
@@ -140,7 +143,7 @@ public class TestRunner extends BaseTestRunner {
             }
             System.exit(SUCCESS_EXIT);
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            logger.log(Level.INFO,e.getMessage());
             System.exit(EXCEPTION_EXIT);
         }
     }
@@ -165,7 +168,7 @@ public class TestRunner extends BaseTestRunner {
                 testCase = arg.substring(0, lastIndex);
                 method = arg.substring(lastIndex + 1);
             } else if (args[i].equals("-v")) {
-                System.err.println("JUnit " + Version.id() + " by Kent Beck and Erich Gamma");
+                logger.log(Level.WARNING,"JUnit " + Version.id() + " by Kent Beck and Erich Gamma");
             } else {
                 testCase = args[i];
             }

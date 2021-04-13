@@ -41,7 +41,7 @@ public class AllMembersSupplier extends ParameterSupplier {
             } catch (Throwable throwable) {
                 DataPoint annotation = method.getAnnotation(DataPoint.class);
                 Assume.assumeTrue(annotation == null || !isAssignableToAnyOf(annotation.ignoredExceptions(), throwable));
-                
+
                 throw new CouldNotGenerateValueException(throwable);
             }
         }
@@ -51,7 +51,7 @@ public class AllMembersSupplier extends ParameterSupplier {
             return method.getName();
         }
     }
-    
+
     private final TestClass clazz;
 
     /**
@@ -76,11 +76,11 @@ public class AllMembersSupplier extends ParameterSupplier {
     private void addMultiPointMethods(ParameterSignature sig, List<PotentialAssignment> list) throws Throwable {
         for (FrameworkMethod dataPointsMethod : getDataPointsMethods(sig)) {
             Class<?> returnType = dataPointsMethod.getReturnType();
-            
+
             if ((returnType.isArray() && sig.canPotentiallyAcceptType(returnType.getComponentType())) ||
                     Iterable.class.isAssignableFrom(returnType)) {
                 try {
-                    addDataPointsValues(returnType, sig, dataPointsMethod.getName(), list, 
+                    addDataPointsValues(returnType, sig, dataPointsMethod.getName(), list,
                             dataPointsMethod.invokeExplosively(null));
                 } catch (Throwable throwable) {
                     DataPoints annotation = dataPointsMethod.getAnnotation(DataPoints.class);
@@ -101,7 +101,7 @@ public class AllMembersSupplier extends ParameterSupplier {
             }
         }
     }
-    
+
     private void addMultiPointFields(ParameterSignature sig, List<PotentialAssignment> list) {
         for (final Field field : getDataPointsFields(sig)) {
             Class<?> type = field.getType();
@@ -112,14 +112,14 @@ public class AllMembersSupplier extends ParameterSupplier {
     private void addSinglePointFields(ParameterSignature sig, List<PotentialAssignment> list) {
         for (final Field field : getSingleDataPointFields(sig)) {
             Object value = getStaticFieldValue(field);
-            
+
             if (sig.canAcceptValue(value)) {
                 list.add(PotentialAssignment.forValue(field.getName(), value));
             }
         }
     }
-    
-    private void addDataPointsValues(Class<?> type, ParameterSignature sig, String name, 
+
+    private void addDataPointsValues(Class<?> type, ParameterSignature sig, String name,
             List<PotentialAssignment> list, Object value) {
         if (type.isArray()) {
             addArrayValues(sig, name, list, value);
@@ -137,7 +137,7 @@ public class AllMembersSupplier extends ParameterSupplier {
             }
         }
     }
-    
+
     private void addIterableValues(ParameterSignature sig, String name, List<PotentialAssignment> list, Iterable<?> iterable) {
         Iterator<?> iterator = iterable.iterator();
         int i = 0;
@@ -161,7 +161,7 @@ public class AllMembersSupplier extends ParameterSupplier {
                     "unexpected: getFields returned an inaccessible field");
         }
     }
-    
+
     private static boolean isAssignableToAnyOf(Class<?>[] typeArray, Object target) {
         for (Class<?> type : typeArray) {
             if (type.isAssignableFrom(target.getClass())) {
@@ -174,7 +174,7 @@ public class AllMembersSupplier extends ParameterSupplier {
     protected Collection<FrameworkMethod> getDataPointsMethods(ParameterSignature sig) {
         return clazz.getAnnotatedMethods(DataPoints.class);
     }
-    
+
     protected Collection<Field> getSingleDataPointFields(ParameterSignature sig) {
         List<FrameworkField> fields = clazz.getAnnotatedFields(DataPoint.class);
         Collection<Field> validFields = new ArrayList<Field>();
@@ -185,7 +185,7 @@ public class AllMembersSupplier extends ParameterSupplier {
 
         return validFields;
     }
-    
+
     protected Collection<Field> getDataPointsFields(ParameterSignature sig) {
         List<FrameworkField> fields = clazz.getAnnotatedFields(DataPoints.class);
         Collection<Field> validFields = new ArrayList<Field>();
@@ -196,7 +196,7 @@ public class AllMembersSupplier extends ParameterSupplier {
 
         return validFields;
     }
-    
+
     protected Collection<FrameworkMethod> getSingleDataPointMethods(ParameterSignature sig) {
         return clazz.getAnnotatedMethods(DataPoint.class);
     }

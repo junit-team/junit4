@@ -62,7 +62,7 @@ public class Assignments {
                 unassigned.size()), clazz);
     }
 
-    public Object[] getActualValues(int start, int stop) 
+    public Object[] getActualValues(int start, int stop)
             throws CouldNotGenerateValueException {
         Object[] values = new Object[stop - start];
         for (int i = start; i < stop; i++) {
@@ -73,21 +73,21 @@ public class Assignments {
 
     public List<PotentialAssignment> potentialsForNextUnassigned()
             throws Throwable {
-        ParameterSignature unassigned = nextUnassigned();
-        List<PotentialAssignment> assignments = getSupplier(unassigned).getValueSources(unassigned);
-        
+        ParameterSignature unsigned = nextUnassigned();
+        List<PotentialAssignment> assignments = getSupplier(unsigned).getValueSources(unsigned);
+
         if (assignments.isEmpty()) {
-            assignments = generateAssignmentsFromTypeAlone(unassigned);
+            assignments = generateAssignmentsFromTypeAlone(unsigned);
         }
-        
+
         return assignments;
     }
 
     private List<PotentialAssignment> generateAssignmentsFromTypeAlone(ParameterSignature unassigned) {
         Class<?> paramType = unassigned.getType();
-        
+
         if (paramType.isEnum()) {
-            return new EnumSupplier(paramType).getValueSources(unassigned);  
+            return new EnumSupplier(paramType).getValueSources(unassigned);
         } else if (paramType.equals(Boolean.class) || paramType.equals(boolean.class)) {
             return new BooleanSupplier().getValueSources(unassigned);
         } else {
@@ -99,7 +99,7 @@ public class Assignments {
             throws Exception {
         ParametersSuppliedBy annotation = unassigned
                 .findDeepAnnotation(ParametersSuppliedBy.class);
-        
+
         if (annotation != null) {
             return buildParameterSupplierFromClass(annotation.value());
         } else {
@@ -138,11 +138,10 @@ public class Assignments {
     private int getConstructorParameterCount() {
         List<ParameterSignature> signatures = ParameterSignature
                 .signatures(clazz.getOnlyConstructor());
-        int constructorParameterCount = signatures.size();
-        return constructorParameterCount;
+        return signatures.size();
     }
 
-    public Object[] getArgumentStrings(boolean nullsOk)
+    public Object[] getArgumentStrings()
             throws CouldNotGenerateValueException {
         Object[] values = new Object[assigned.size()];
         for (int i = 0; i < values.length; i++) {

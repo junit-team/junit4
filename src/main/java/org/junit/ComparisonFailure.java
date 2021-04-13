@@ -20,11 +20,11 @@ public class ComparisonFailure extends AssertionError {
 
     /*
      * We have to use the f prefix until the next major release to ensure
-     * serialization compatibility. 
+     * serialization compatibility.
      * See https://github.com/junit-team/junit4/issues/976
      */
-    private String fExpected;
-    private String fActual;
+    private final String fExpected;
+    private final String fActual;
 
     /**
      * Constructs a comparison failure.
