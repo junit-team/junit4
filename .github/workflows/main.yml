@@ -16,15 +16,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [6, 8, 11, 15, 17-ea]
+        java: ['6', '8', '11', '15', '17-ea']
     steps:
       - uses: actions/checkout@v2
       - name: Download Maven # Download with default JDK because OpenJDK 6 does not support TLS 1.2
         run: ./mvnw --version
-      - name: Set up JDK
+      - name: Set up JDK 6
+        if: ${{ matrix.java == '6'}}
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
+      - name: Set up JDK
+        if: ${{ matrix.java != '6'}}
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: temurin
+          cache: maven
       - name: Build and verify
         run: ./mvnw verify javadoc:javadoc site:site --batch-mode --errors --settings .github/workflows/settings.xml
 
