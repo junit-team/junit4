@@ -22,6 +22,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.internal.MethodSorter;
+import org.junit.rules.MethodRule;
+import org.junit.rules.TestRule;
 
 /**
  * Wraps a class to be run, providing method validation and annotation searching
@@ -249,6 +251,10 @@ public class TestClass implements Annotatable {
                 Object fieldValue = each.get(test);
                 if (valueClass.isInstance(fieldValue)) {
                     consumer.accept(each, valueClass.cast(fieldValue));
+                } else if (fieldValue != null && (valueClass == TestRule.class || valueClass == MethodRule.class)
+                        && !(fieldValue instanceof TestRule) && !(fieldValue instanceof MethodRule)) {
+                    throw new IllegalArgumentException(each + " must implement MethodRule or TestRule." +
+                            " Actual type is " + fieldValue.getClass());
                 }
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(

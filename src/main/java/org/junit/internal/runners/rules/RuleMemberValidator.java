@@ -230,6 +230,11 @@ public class RuleMemberValidator {
      */
     private static final class FieldMustBeARule implements RuleValidator {
         public void validate(FrameworkMember<?> member, Class<? extends Annotation> annotation, List<Throwable> errors) {
+            if (true) {
+                // Field type is not validated as field value can still implement the interface
+                // even in case field type does not.
+                return;
+            }
             if (!isRuleType(member)) {
                 errors.add(new ValidationError(member, annotation,
                         "must implement MethodRule or TestRule."));
@@ -270,6 +275,11 @@ public class RuleMemberValidator {
 
         public void validate(FrameworkMember<?> member,
                 Class<? extends Annotation> annotation, List<Throwable> errors) {
+            if (true) {
+                // Field type is not validated as field value can still implement the interface
+                // even in case field type does not.
+                return;
+            }
             if (!isTestRule(member)) {
                 errors.add(new ValidationError(member, annotation,
                         "must implement TestRule."));
