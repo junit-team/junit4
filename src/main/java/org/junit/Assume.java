@@ -80,8 +80,17 @@ public class Assume {
      * the test will halt and be ignored.
      */
     public static void assumeNotNull(Object... objects) {
-        assumeThat(objects, notNullValue());
-        assumeThat(asList(objects), everyItem(notNullValue()));
+        assumeNotNull(null, objects);
+    }
+
+    /**
+     * If called with a {@code null} array or one or more {@code null} elements in {@code objects},
+     * the test will halt and be ignored.
+     * @param message A message to pass to {@link AssumptionViolatedException}.
+     */
+    public static void assumeNotNull(String message, Object... objects) {
+        assumeThat(message, objects, notNullValue());
+        assumeThat(message, asList(objects), everyItem(notNullValue()));
     }
 
     /**

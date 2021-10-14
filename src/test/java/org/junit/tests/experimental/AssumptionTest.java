@@ -248,6 +248,12 @@ public class AssumptionTest {
         public void testMethod() {
             assumeTrue(message, false);
         }
+
+        @Test
+        public void testAssumeNotNull() {
+            Object[] objects = {1, 2, null};
+            assumeNotNull(message,objects);
+        }
     }
 
     @Test
@@ -255,7 +261,9 @@ public class AssumptionTest {
         final List<Failure> failures =
                 runAndGetAssumptionFailures(HasAssumeWithMessage.class);
 
-        assertTrue(failures.get(0).getMessage().contains(message));
+        for (Failure failure : failures) {
+            assertTrue(failure.getMessage().contains(message));
+        }
     }
 
     /**
