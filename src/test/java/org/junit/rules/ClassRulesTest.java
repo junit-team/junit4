@@ -109,6 +109,51 @@ public class ClassRulesTest {
         assertEquals(1, ExampleTestWithCustomClassRule.counter.count);
     }
 
+    public static class ExampleTestWithCustomClassRuleDeclaredAsObject {
+        @ClassRule
+        public static final Object counter = new CustomCounter();
+
+        @Test
+        public void firstTest() {
+            assertEquals(1, ((CustomCounter) counter).count);
+        }
+
+        @Test
+        public void secondTest() {
+            assertEquals(1, ((CustomCounter) counter).count);
+        }
+    }
+
+    @Test
+    public void classRuleFieldCanBeDeclaredWithOtherType() {
+        ((CustomCounter) ExampleTestWithCustomClassRuleDeclaredAsObject.counter).count = 0;
+        Result result = JUnitCore.runClasses(ExampleTestWithCustomClassRuleDeclaredAsObject.class);
+        assertTrue("wasSuccessful", result.wasSuccessful());
+        assertEquals(1,
+                ((CustomCounter) ExampleTestWithCustomClassRuleDeclaredAsObject.counter).count);
+    }
+
+    public static class ExampleTestWithMismatchedClassRuleType {
+        @ClassRule
+        public static final String example1 = "Example";
+        @ClassRule
+        public static final String example2 = "Example";
+
+        @Test
+        public void firstTest() {
+        }
+
+        @Test
+        public void secondTest() {
+        }
+    }
+
+    @Test
+    public void classRuleFieldMismatchedType() {
+        Result result = JUnitCore.runClasses(ExampleTestWithMismatchedClassRuleType.class);
+        assertEquals(2, result.getFailureCount());
+    }
+
     private static final List<String> orderList = new LinkedList<String>();
 
     private static class OrderTestRule implements TestRule {

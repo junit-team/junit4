@@ -3,14 +3,20 @@ package org.junit.runners;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Rule;
+import org.junit.internal.runners.rules.ValidationError;
+import org.junit.internal.runners.statements.Fail;
 import org.junit.rules.MethodRule;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
+import org.junit.runners.model.FrameworkMember;
 import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
 
 /**
@@ -22,6 +28,8 @@ class RuleContainer {
     private final IdentityHashMap<Object, Integer> orderValues = new IdentityHashMap<Object, Integer>();
     private final List<TestRule> testRules = new ArrayList<TestRule>();
     private final List<MethodRule> methodRules = new ArrayList<MethodRule>();
+    private final Map<FrameworkMember<?>, Object> mismatchedTypeRules =
+            new HashMap<FrameworkMember<?>, Object>();
 
     /**
      * Sets order value for the specified rule.
@@ -36,6 +44,12 @@ class RuleContainer {
 
     public void add(TestRule testRule) {
         testRules.add(testRule);
+    }
+
+    public void addMismatchedTypeValue(FrameworkMember<?> member, Object value) {
+        if (!mismatchedTypeRules.containsKey(member)) {
+            mismatchedTypeRules.put(member, value);
+        }
     }
 
     static final Comparator<RuleEntry> ENTRY_COMPARATOR = new Comparator<RuleEntry>() {
@@ -70,6 +84,14 @@ class RuleContainer {
      */
     public Statement apply(FrameworkMethod method, Description description, Object target,
             Statement statement) {
+        if (!mismatchedTypeRules.isEmpty()) {
+            List<Throwable> errors = new ArrayList<Throwable>();
+            for (Map.Entry<FrameworkMember<?>, Object> entry : mismatchedTypeRules.entrySet()) {
+                errors.add(new ValidationError(entry.getKey(), Rule.class,
+                        "must implement MethodRule or TestRule."));
+            }
+            return new Fail(errors.size() == 1 ? errors.get(0) : new MultipleFailureException(errors));
+        }
         if (methodRules.isEmpty() && testRules.isEmpty()) {
             return statement;
         }

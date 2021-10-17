@@ -249,6 +249,8 @@ public class TestClass implements Annotatable {
                 Object fieldValue = each.get(test);
                 if (valueClass.isInstance(fieldValue)) {
                     consumer.accept(each, valueClass.cast(fieldValue));
+                } else if (consumer instanceof MemberValueConsumerExtension) {
+                    ((MemberValueConsumerExtension) consumer).acceptMismatchedTypeValue(each, fieldValue);
                 }
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(
