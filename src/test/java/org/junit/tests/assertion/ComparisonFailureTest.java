@@ -1,15 +1,16 @@
 package org.junit.tests.assertion;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Arrays;
 import java.util.Collection;
 
 import org.junit.ComparisonFailure;
 import org.junit.Test;
+import org.junit.function.ThrowingRunnable;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+
+import static org.junit.Assert.*;
 
 @RunWith(Parameterized.class)
 public class ComparisonFailureTest {
@@ -73,6 +74,22 @@ public class ComparisonFailureTest {
 	public void compactFailureMessage() {
 		ComparisonFailure failure = new ComparisonFailure("", expected, actual);
 		assertEquals(message, failure.getMessage());
+	}
+
+	@Test
+	public void testAssertStringEqualsPlatformIndependent() {
+		final String expected = "first line\r\n"
+				+ "second line\n";
+		final String actual = "first line\r\n"
+				+ "second line\r\n";
+		ThrowingRunnable runnable = new ThrowingRunnable() {
+			@Override
+			public void run() throws Throwable {
+				assertEquals(expected, actual);
+			}
+		};
+		assertThrows(ComparisonFailure.class, runnable);
+		assertEqualsPlatformIndependent(expected, actual);
 	}
 	
 }

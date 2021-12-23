@@ -121,6 +121,13 @@ public class Assert {
         }
     }
 
+    private static Object toPlatformIndependent(Object in) {
+        if (in instanceof String) {
+            return ((String)in).replaceAll("\\n|\\r\\n", System.getProperty("line.separator"));
+        }
+        return in;
+    }
+
     private static boolean equalsRegardingNull(Object expected, Object actual) {
         if (expected == null) {
             return actual == null;
@@ -144,6 +151,19 @@ public class Assert {
      */
     public static void assertEquals(Object expected, Object actual) {
         assertEquals(null, expected, actual);
+    }
+
+    /**
+     * Asserts that two objects are equal ignoring platform difference. If
+     * they are not, a {@link AssertionError} without a message is thrown. If
+     * <code>expected</code> and <code>actual</code> are <code>null</code>,
+     * they are considered equal.
+     *
+     * @param expected expected value
+     * @param actual the value to check against <code>expected</code>
+     */
+    public static void assertEqualsPlatformIndependent(Object expected, Object actual) {
+        assertEquals(null, toPlatformIndependent(expected), toPlatformIndependent(actual));
     }
 
     /**
