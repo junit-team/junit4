@@ -1,6 +1,5 @@
 package org.junit.rules;
 
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import java.util.ArrayList;
@@ -10,6 +9,7 @@ import java.util.concurrent.Callable;
 import org.junit.function.ThrowingRunnable;
 import org.junit.internal.AssumptionViolatedException;
 import org.hamcrest.Matcher;
+import org.hamcrest.MatcherAssert;
 import org.junit.runners.model.MultipleFailureException;
 
 /**
@@ -74,7 +74,7 @@ public class ErrorCollector extends Verifier {
     public <T> void checkThat(final String reason, final T value, final Matcher<T> matcher) {
         checkSucceeds(new Callable<Object>() {
             public Object call() throws Exception {
-                assertThat(reason, value, matcher);
+                MatcherAssert.assertThat(reason, value, matcher);
                 return value;
             }
         });

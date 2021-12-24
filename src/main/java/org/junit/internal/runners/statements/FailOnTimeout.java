@@ -106,7 +106,7 @@ public class FailOnTimeout extends Statement {
          * Builds a {@link FailOnTimeout} instance using the values in this builder,
          * wrapping the given statement.
          *
-         * @param statement
+         * @param statement statement to build
          */
         public FailOnTimeout build(Statement statement) {
             if (statement == null) {
