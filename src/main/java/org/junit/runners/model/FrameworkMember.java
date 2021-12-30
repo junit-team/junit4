@@ -12,6 +12,7 @@ public abstract class FrameworkMember<T extends FrameworkMember<T>> implements
         Annotatable {
     abstract boolean isShadowedBy(T otherMember);
 
+    @SuppressWarnings("unchecked")
     T handlePossibleBridgeMethod(List<T> members) {
         for (int i = members.size() - 1; i >=0; i--) {
             T otherMember = members.get(i);
