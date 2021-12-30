@@ -63,7 +63,7 @@ public class JUnitCore {
     }
 
     /**
-     * @param system
+     * @param system system to run with
      * @param args from main()
      */
     Result runMain(JUnitSystem system, String... args) {
