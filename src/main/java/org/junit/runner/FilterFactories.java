@@ -16,7 +16,6 @@ class FilterFactories {
      *
      * @param request the request that will be filtered
      * @param filterSpec the filter specification
-     * @throws org.junit.runner.FilterFactory.FilterNotCreatedException
      */
     public static Filter createFilterFromFilterSpec(Request request, String filterSpec)
             throws FilterFactory.FilterNotCreatedException {

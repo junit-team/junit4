@@ -21,7 +21,6 @@ public class Classes {
      * {@link Classes}.
      *
      * @param className Name of the class.
-     * @throws ClassNotFoundException
      */
     public static Class<?> getClass(String className) throws ClassNotFoundException {
         return getClass(className, Classes.class);
@@ -34,7 +33,6 @@ public class Classes {
      *
      * @param className Name of the class.
      * @param callingClass Class that is requesting a the class
-     * @throws ClassNotFoundException
      * @since 4.13
      */
     public static Class<?> getClass(String className, Class<?> callingClass) throws ClassNotFoundException {
