@@ -30,7 +30,11 @@ public abstract class FrameworkMember<T extends FrameworkMember<T>> implements
             }
         }
         // No shadow or bridge method found. The caller should add *this* member.
-        return (T) this;
+        FrameworkMember<? extends T> thisMember = this;
+        @SuppressWarnings("unchecked")
+        T result = (T) thisMember;
+
+        return result;
     }
 
     abstract boolean isBridgeMethod();
