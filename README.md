@@ -7,3 +7,5 @@ For more information, please visit:
 * [Getting Started](https://github.com/junit-team/junit4/wiki/Getting-started)
 
 [![CI Status](https://github.com/junit-team/junit4/workflows/CI/badge.svg)](https://github.com/junit-team/junit4/actions)
+
+[![Maintainability](https://cloud.quality-gate.com/dashboard/api/badge?projectName=junit-team_junit4&branchName=master)](https://cloud.quality-gate.com/dashboard/branches/77095#overview)
