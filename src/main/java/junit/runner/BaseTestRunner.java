@@ -92,11 +92,7 @@ public abstract class BaseTestRunner implements TestListener {
      * Returns the Test corresponding to the given suite. This is
      * a template method, subclasses override runFailed(), clearStatus().
      */
-    public Test getTest(String suiteClassName) {
-        if (suiteClassName.length() <= 0) {
-            clearStatus();
-            return null;
-        }
+    public Class<?> getTestClass(String suiteClassName){
         Class<?> testClass = null;
         try {
             testClass = loadSuiteClass(suiteClassName);
@@ -111,18 +107,10 @@ public abstract class BaseTestRunner implements TestListener {
             runFailed("Error: " + e.toString());
             return null;
         }
-        Method suiteMethod = null;
-        try {
-            suiteMethod = testClass.getMethod(SUITE_METHODNAME);
-        } catch (Exception e) {
-            // try to extract a test suite automatically
-            clearStatus();
-            return new TestSuite(testClass);
-        }
-        if (!Modifier.isStatic(suiteMethod.getModifiers())) {
-            runFailed("Suite() method must be static");
-            return null;
-        }
+        return testClass;
+    }
+
+    public Test getTester(Method suiteMethod){
         Test test = null;
         try {
             test = (Test) suiteMethod.invoke(null); // static method
@@ -136,6 +124,30 @@ public abstract class BaseTestRunner implements TestListener {
             runFailed("Failed to invoke suite():" + e.toString());
             return null;
         }
+        return test;
+    }
+
+    public Test getTest(String suiteClassName) {
+        if (suiteClassName.length() <= 0) {
+            clearStatus();
+            return null;
+        }
+        Class<?> testClass = getTestClass(suiteClassName);
+
+        Method suiteMethod = null;
+        try {
+            suiteMethod = testClass.getMethod(SUITE_METHODNAME);
+        } catch (Exception e) {
+            // try to extract a test suite automatically
+            clearStatus();
+            return new TestSuite(testClass);
+        }
+        if (!Modifier.isStatic(suiteMethod.getModifiers())) {
+            runFailed("Suite() method must be static");
+            return null;
+        }
+
+        Test test = getTester(suiteMethod);
 
         clearStatus();
         return test;
