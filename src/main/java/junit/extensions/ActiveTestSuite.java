@@ -38,7 +38,7 @@ public class ActiveTestSuite extends TestSuite {
 
     @Override
     public void runTest(final Test test, final TestResult result) {
-        Thread t = new Thread() {
+        Thread methodThread = new Thread() {
             @Override
             public void run() {
                 try {
@@ -50,7 +50,7 @@ public class ActiveTestSuite extends TestSuite {
                 }
             }
         };
-        t.start();
+        methodThread.start();
     }
 
     synchronized void waitUntilFinished() {

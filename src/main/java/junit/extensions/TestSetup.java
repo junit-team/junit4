@@ -17,14 +17,14 @@ public class TestSetup extends TestDecorator {
 
     @Override
     public void run(final TestResult result) {
-        Protectable p = new Protectable() {
+        Protectable protector = new Protectable() {
             public void protect() throws Exception {
                 setUp();
                 basicRun(result);
                 tearDown();
             }
         };
-        result.runProtected(this, p);
+        result.runProtected(this, protector);
     }
 
     /**
