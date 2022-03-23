@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
+import java.util.Iterator;
 
 import org.junit.internal.MethodSorter;
 import org.junit.internal.Throwables;
@@ -40,7 +41,7 @@ import org.junit.internal.Throwables;
  *
  * @see Test
  */
-public class TestSuite implements Test {
+public class TestSuite implements Test,IntermediateTest {
 
     /**
      * ...as the moon sets over the early morning Merlin, Oregon
@@ -194,6 +195,13 @@ public class TestSuite implements Test {
     /**
      * Adds a test to the suite.
      */
+    public void basicRun(TestResult result){
+        Iterator<Test> currentTests = fTests.iterator();
+        while(currentTests.hasNext()){
+            currentTests.next().run(result);
+        }
+    }
+
     public void addTest(Test test) {
         fTests.add(test);
     }
