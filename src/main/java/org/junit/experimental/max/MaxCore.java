@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import junit.framework.TestSuite;
 import org.junit.internal.requests.SortingRequest;
@@ -120,22 +122,63 @@ public class MaxCore {
         };
     }
 
+    //method moved from Description
+    private String methodAndClassNamePatternGroupOrDefault(int group, String defaultString, Description each) {
+        Pattern METHOD_AND_CLASS_NAME_PATTERN = Pattern.compile("([\\s\\S]*)\\((.*)\\)");
+        Matcher matcher = METHOD_AND_CLASS_NAME_PATTERN.matcher(StringConverter(each));
+        return matcher.matches() ? matcher.group(group) : defaultString;
+    }
+
+    //method moved from Description
+    public String getMethodName(Description each){
+        return methodAndClassNamePatternGroupOrDefault(1, null, each);
+    }
+
+    //method moved from Description
+    public Class<?> getTestClass(Description each) {
+        Class<?> fTestClass = each.getfTestClass();
+        if (fTestClass != null) {
+            return fTestClass;
+        }
+        String name = getClassName(each);
+        if (name == null) {
+            return null;
+        }
+        try {
+            fTestClass = Class.forName(name, false, getClass().getClassLoader());
+            return fTestClass;
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
+    }
+
+    //method moved from Description
+    public String getClassName(Description each) {
+        Class<?> fTestClass = each.getfTestClass();
+        return fTestClass != null ? fTestClass.getName() : methodAndClassNamePatternGroupOrDefault(2, StringConverter(each), each);
+    }
+
+    //moved method "toString" from Description class to MaxCore and changed the Name to StringConverter
+    String StringConverter(Description each){
+        return each.getDisplayName();
+    }
+
     private Runner buildRunner(Description each) {
-        if (each.toString().equals("TestSuite with 0 tests")) {
+        if (StringConverter(each).equals("TestSuite with 0 tests")) {
             return Suite.emptySuite();
         }
-        if (each.toString().startsWith(MALFORMED_JUNIT_3_TEST_CLASS_PREFIX)) {
+        if (StringConverter(each).startsWith(MALFORMED_JUNIT_3_TEST_CLASS_PREFIX)) {
             // This is cheating, because it runs the whole class
             // to get the warning for this method, but we can't do better,
             // because JUnit 3.8's
             // thrown away which method the warning is for.
             return new JUnit38ClassRunner(new TestSuite(getMalformedTestClass(each)));
         }
-        Class<?> type = each.getTestClass();
+        Class<?> type = getTestClass(each);
         if (type == null) {
             throw new RuntimeException("Can't build a runner from description [" + each + "]");
         }
-        String methodName = each.getMethodName();
+        String methodName = getMethodName(each);
         if (methodName == null) {
             return Request.aClass(type).getRunner();
         }
@@ -167,7 +210,7 @@ public class MaxCore {
 
     private void findLeaves(Description parent, Description description, List<Description> results) {
         if (description.getChildren().isEmpty()) {
-            if (description.toString().equals("warning(junit.framework.TestSuite$1)")) {
+            if (StringConverter(description).equals("warning(junit.framework.TestSuite$1)")) {
                 results.add(Description.createSuiteDescription(MALFORMED_JUNIT_3_TEST_CLASS_PREFIX + parent));
             } else {
                 results.add(description);

@@ -287,6 +287,11 @@ public class Description implements Serializable {
      * @return If this describes a method invocation,
      *         the class of the test instance.
      */
+
+    public Class<?> getfTestClass(){
+        return this.fTestClass;
+    }
+
     public Class<?> getTestClass() {
         if (fTestClass != null) {
             return fTestClass;
