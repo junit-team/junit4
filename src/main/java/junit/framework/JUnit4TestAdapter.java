@@ -1,6 +1,7 @@
 package junit.framework;
 
 import java.util.List;
+import junit.framework.DescriptionEditor;
 
 import org.junit.Ignore;
 import org.junit.runner.Describable;
@@ -32,6 +33,8 @@ public class JUnit4TestAdapter implements Test, Filterable, Orderable, Describab
 
     private final JUnit4TestAdapterCache fCache;
 
+    private final DescriptionEditor editor = new DescriptionEditor();
+
     public JUnit4TestAdapter(Class<?> newTestClass) {
         this(newTestClass, JUnit4TestAdapterCache.getDefault());
     }
@@ -62,25 +65,7 @@ public class JUnit4TestAdapter implements Test, Filterable, Orderable, Describab
 
     public Description getDescription() {
         Description description = fRunner.getDescription();
-        return removeIgnored(description);
-    }
-
-    private Description removeIgnored(Description description) {
-        if (isIgnored(description)) {
-            return Description.EMPTY;
-        }
-        Description result = description.childlessCopy();
-        for (Description each : description.getChildren()) {
-            Description child = removeIgnored(each);
-            if (!child.isEmpty()) {
-                result.addChild(child);
-            }
-        }
-        return result;
-    }
-
-    private boolean isIgnored(Description description) {
-        return description.getAnnotation(Ignore.class) != null;
+        return editor.removeIgnored(description);
     }
 
     @Override
