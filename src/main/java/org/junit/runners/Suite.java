@@ -98,7 +98,7 @@ public class Suite extends ParentRunner<Runner> {
      * @param klass the root of the suite
      * @param suiteClasses the classes in the suite
      */
-    protected Suite(RunnerBuilder builder, Class<?> klass, Class<?>[] suiteClasses) throws InitializationError {
+    public Suite(RunnerBuilder builder, Class<?> klass, Class<?>[] suiteClasses) throws InitializationError {
         this(klass, builder.runners(klass, suiteClasses));
     }
 
