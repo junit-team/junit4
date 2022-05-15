@@ -262,7 +262,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefireVersion}</version>
                 <configuration>
-                    <test>org/junit/tests/AllTests.java</test>
+                    <includes>
+                        <include>org/junit/tests/AllTests.java</include>
+                    </includes>
                     <useSystemClassLoader>true</useSystemClassLoader>
                     <enableAssertions>false</enableAssertions>
                 </configuration>
