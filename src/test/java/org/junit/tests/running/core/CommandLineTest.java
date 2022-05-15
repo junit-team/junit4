@@ -10,6 +10,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
+import org.junit.runner.MainRunner;
 
 public class CommandLineTest {
     private ByteArrayOutputStream results;
@@ -38,11 +39,7 @@ public class CommandLineTest {
     @Test
     public void runATest() {
         testWasRun = false;
-        new MainRunner().runWithCheckForSystemExit(new Runnable() {
-            public void run() {
-                JUnitCore.main("org.junit.tests.running.core.CommandLineTest$Example");
-            }
-        });
+        MainRunner.runMain(Example.class.getName());
         assertTrue(testWasRun);
     }
 
