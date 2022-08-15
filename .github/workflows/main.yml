@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+
+  build-and-verify:
+    name: Build and verify (JDK ${{ matrix.java }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [6, 8, 11, 15, 17-ea]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download Maven # Download with default JDK because OpenJDK 6 does not support TLS 1.2
+        run: ./mvnw --version
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - name: Build and verify
+        run: ./mvnw verify javadoc:javadoc site:site --batch-mode --errors --settings .github/workflows/settings.xml
+
+  publish-snapshots:
+    name: Publish snapshot artifacts
+    if: github.event_name == 'push' && github.repository == 'junit-team/junit4' && github.ref == 'refs/heads/main'
+    needs: build-and-verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download Maven # Download with default JDK because OpenJDK 6 does not support TLS 1.2
+        run: ./mvnw --version
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 6
+      - name: Publish snapshot artifacts
+        env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+        run: ./mvnw deploy --batch-mode --errors --activate-profiles generate-docs --settings .github/workflows/settings.xml

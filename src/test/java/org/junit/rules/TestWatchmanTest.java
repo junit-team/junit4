@@ -2,7 +2,7 @@ package org.junit.rules;
 
 import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assume.assumeTrue;
 import static org.junit.runner.JUnitCore.runClasses;
 import org.junit.BeforeClass;

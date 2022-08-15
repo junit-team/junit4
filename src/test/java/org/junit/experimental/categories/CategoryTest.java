@@ -1,28 +1,27 @@
 package org.junit.experimental.categories;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.experimental.results.PrintableResult.testResult;
-import static org.junit.experimental.results.ResultMatchers.isSuccessful;
-import static org.junit.experimental.results.ResultMatchers.failureCountIs;
+import static java.lang.String.format;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static java.lang.String.format;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.junit.experimental.results.PrintableResult.testResult;
+import static org.junit.experimental.results.ResultMatchers.failureCountIs;
+import static org.junit.experimental.results.ResultMatchers.isSuccessful;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.experimental.categories.Categories;
 import org.junit.experimental.categories.Categories.CategoryFilter;
 import org.junit.experimental.categories.Categories.ExcludeCategory;
 import org.junit.experimental.categories.Categories.IncludeCategory;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.Result;
@@ -412,7 +411,7 @@ public class CategoryTest {
     }
 
     @Category(SlowTests.class)
-    public static abstract class Ancestor{}
+    public abstract static class Ancestor{}
 
     public static class Inherited extends Ancestor {
         @Test

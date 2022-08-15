@@ -1,5 +1,7 @@
 package org.junit;
 
+import org.junit.function.ThrowingRunnable;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -23,24 +25,40 @@ import java.lang.annotation.Target;
  * }
  * </pre>
  * <p>
- * The <code>Test</code> annotation supports two optional parameters.
- * The first, <code>expected</code>, declares that a test method should throw
+ * The <code>Test</code> annotation supports two optional parameters for
+ * exception testing and for limiting test execution time.
+ *
+ * <h3>Exception Testing</h3>
+ * <p>
+ * The parameter <code>expected</code> declares that a test method should throw
  * an exception. If it doesn't throw an exception or if it throws a different exception
  * than the one declared, the test fails. For example, the following test succeeds:
  * <pre>
- *    &#064;Test(<b>expected=IndexOutOfBoundsException.class</b>) public void outOfBounds() {
+ *    &#064;Test(<b>expected=IndexOutOfBoundsException.class</b>)
+ *    public void outOfBounds() {
  *       new ArrayList&lt;Object&gt;().get(1);
  *    }
  * </pre>
- * If the exception's message or one of its properties should be verified, the
- * {@link org.junit.rules.ExpectedException ExpectedException} rule can be used. Further
+ *
+ * Using the parameter <code>expected</code> for exception testing comes with
+ * some limitations: only the exception's type can be checked and it is not
+ * possible to precisely specify the code that throws the exception. Therefore
+ * JUnit 4 has improved its support for exception testing with
+ * {@link Assert#assertThrows(Class, ThrowingRunnable)} and the
+ * {@link org.junit.rules.ExpectedException ExpectedException} rule.
+ * With <code>assertThrows</code> the code that throws the exception can be
+ * precisely specified. If the exception's message or one of its properties
+ * should be verified, the <code>ExpectedException</code> rule can be used. Further
  * information about exception testing can be found at the
  * <a href="https://github.com/junit-team/junit4/wiki/Exception-testing">JUnit Wiki</a>.
+ *
+ * <h3>Timeout</h3>
  * <p>
- * The second optional parameter, <code>timeout</code>, causes a test to fail if it takes
+ * The parameter <code>timeout</code> causes a test to fail if it takes
  * longer than a specified amount of clock time (measured in milliseconds). The following test fails:
  * <pre>
- *    &#064;Test(<b>timeout=100</b>) public void infinity() {
+ *    &#064;Test(<b>timeout=100</b>)
+ *    public void infinity() {
  *       while(true);
  *    }
  * </pre>
@@ -49,7 +67,8 @@ import java.lang.annotation.Target;
  * following test may or may not fail depending on how the operating system
  * schedules threads:
  * <pre>
- *    &#064;Test(<b>timeout=100</b>) public void sleep100() {
+ *    &#064;Test(<b>timeout=100</b>)
+ *    public void sleep100() {
  *       Thread.sleep(100);
  *    }
  * </pre>

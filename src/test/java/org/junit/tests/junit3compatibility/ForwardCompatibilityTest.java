@@ -19,7 +19,7 @@ import org.junit.runner.notification.RunNotifier;
 public class ForwardCompatibilityTest extends TestCase {
     static String fLog;
 
-    static public class NewTest {
+    public static class NewTest {
         @Before
         public void before() {
             fLog += "before ";

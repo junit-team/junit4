@@ -2,8 +2,8 @@ package org.junit.rules;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
@@ -49,7 +49,7 @@ public class StopwatchTest {
         }
     }
 
-    public static abstract class AbstractStopwatchTest {
+    public abstract static class AbstractStopwatchTest {
 
         /**
          * Fake implementation of {@link Stopwatch.Clock} that increments the time

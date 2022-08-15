@@ -1,7 +1,7 @@
 package org.junit.experimental.categories;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.List;
 
@@ -10,8 +10,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.experimental.categories.CategoryValidator;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
 

@@ -28,7 +28,7 @@ public class CommandLineTest {
         System.setOut(oldOut);
     }
 
-    static public class Example {
+    public static class Example {
         @Test
         public void test() {
             testWasRun = true;
@@ -55,7 +55,7 @@ public class CommandLineTest {
 
     private static int fCount;
 
-    static public class Count {
+    public static class Count {
         @Test
         public void increment() {
             fCount++;

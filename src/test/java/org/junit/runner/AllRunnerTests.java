@@ -10,6 +10,7 @@ import org.junit.runners.Suite.SuiteClasses;
         AllNotificationTests.class,
         FilterFactoriesTest.class,
         FilterOptionIntegrationTest.class,
+        OrderWithValidatorTest.class,
         JUnitCommandLineParseResultTest.class,
         JUnitCoreTest.class, RequestTest.class
 })

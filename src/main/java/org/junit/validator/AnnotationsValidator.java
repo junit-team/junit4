@@ -40,7 +40,7 @@ public final class AnnotationsValidator implements TestClassValidator {
         return validationErrors;
     }
 
-    private static abstract class AnnotatableValidator<T extends Annotatable> {
+    private abstract static class AnnotatableValidator<T extends Annotatable> {
         private static final AnnotationValidatorFactory ANNOTATION_VALIDATOR_FACTORY = new AnnotationValidatorFactory();
 
         abstract Iterable<T> getAnnotatablesForTestClass(TestClass testClass);

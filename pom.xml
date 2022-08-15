@@ -4,7 +4,7 @@
 
     <groupId>junit</groupId>
     <artifactId>junit</artifactId>
-    <version>4.13-SNAPSHOT</version>
+    <version>4.13.3-SNAPSHOT</version>
 
     <name>JUnit</name>
     <description>JUnit is a unit testing framework for Java, created by Erich Gamma and Kent Beck.</description>
@@ -48,21 +48,13 @@
         <contributor>
             <name>JUnit contributors</name>
             <organization>JUnit</organization>
-            <email>junit@yahoogroups.com</email>
+            <email>team@junit.org</email>
             <url>https://github.com/junit-team/junit4/graphs/contributors</url>
             <roles>
                 <role>developers</role>
             </roles>
         </contributor>
     </contributors>
-
-    <mailingLists>
-        <mailingList>
-            <name>JUnit Mailing List</name>
-            <post>junit@yahoogroups.com</post>
-            <archive>https://groups.yahoo.com/neo/groups/junit/info</archive>
-        </mailingList>
-    </mailingLists>
 
     <prerequisites>
         <maven>3.0.4</maven>
@@ -71,7 +63,7 @@
     <scm>
         <connection>scm:git:git://github.com/junit-team/junit4.git</connection>
         <developerConnection>scm:git:git@github.com:junit-team/junit4.git</developerConnection>
-        <url>http://github.com/junit-team/junit4/tree/master</url>
+        <url>https://github.com/junit-team/junit4</url>
       <tag>HEAD</tag>
   </scm>
     <issueManagement>
@@ -79,8 +71,8 @@
         <url>https://github.com/junit-team/junit4/issues</url>
     </issueManagement>
     <ciManagement>
-        <system>travis</system>
-        <url>https://travis-ci.org/junit-team/junit4</url>
+        <system>github</system>
+        <url>https://github.com/junit-team/junit4/actions</url>
     </ciManagement>
     <distributionManagement>
         <downloadUrl>https://github.com/junit-team/junit4/wiki/Download-and-Install</downloadUrl>
@@ -104,6 +96,9 @@
         <jdkVersion>1.8</jdkVersion>
         <surefireVersion>2.19.1</surefireVersion>
         <hamcrestVersion>1.3</hamcrestVersion>
+        <enforcerPluginVersion>1.4</enforcerPluginVersion>
+        <jarPluginVersion>2.6</jarPluginVersion>
+        <javadocPluginVersion>2.10.3</javadocPluginVersion>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
         <arguments />
         <gpg.keyname>67893CC4</gpg.keyname>
@@ -170,7 +165,7 @@
                 the project, requires only release versions of dependencies of other artifacts.
                 -->
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>1.4</version>
+                <version>${enforcerPluginVersion}</version>
                 <executions>
                     <execution>
                         <id>enforce-versions</id>
@@ -330,7 +325,7 @@
                 in jar archive target/junit-*-javadoc.jar.
                 -->
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.3</version>
+                <version>${javadocPluginVersion}</version>
                 <configuration>
                     <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
                     <show>protected</show>
@@ -389,7 +384,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.6</version>
+                <version>${jarPluginVersion}</version>
                 <configuration>
                     <archive>
                         <addMavenDescriptor>false</addMavenDescriptor>
@@ -464,7 +459,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.3</version>
+                <version>${javadocPluginVersion}</version>
                 <configuration>
                     <destDir>javadoc/latest</destDir>
                     <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
@@ -613,7 +608,7 @@
         <profile>
             <id>java9</id>
             <activation>
-                <jdk>[1.9,)</jdk>
+                <jdk>[1.9,12)</jdk>
             </activation>
             <properties>
                 <!-- JDK 9 minimal source and target versions are 1.6 -->
@@ -635,6 +630,49 @@
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <configuration>
                             <source>1.6</source>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </reporting>
+        </profile>
+        <profile>
+            <id>java12</id>
+            <activation>
+                <jdk>[12,)</jdk>
+            </activation>
+            <properties>
+                <!-- JDK 12 minimal source and target versions are 1.7 -->
+                <jdkVersion>1.7</jdkVersion>
+                <enforcerPluginVersion>3.0.0-M3</enforcerPluginVersion>
+                <jarPluginVersion>3.2.0</jarPluginVersion>
+                <javadocPluginVersion>3.2.0</javadocPluginVersion>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <source>1.7</source>
+                            <failOnError>false</failOnError>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <compilerArgs>
+                                <arg>-Xdoclint:none</arg>
+                            </compilerArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <source>1.7</source>
+                            <failOnError>false</failOnError>
                         </configuration>
                     </plugin>
                 </plugins>

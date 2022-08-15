@@ -1,8 +1,8 @@
 package org.junit.tests.manipulation;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +27,7 @@ import org.junit.runners.Suite.SuiteClasses;
 public class SingleMethodTest {
     public static int count;
 
-    static public class OneTimeSetup {
+    public static class OneTimeSetup {
         @BeforeClass
         public static void once() {
             count++;
@@ -53,7 +53,7 @@ public class SingleMethodTest {
     }
 
     @RunWith(Parameterized.class)
-    static public class ParameterizedOneTimeSetup {
+    public static class ParameterizedOneTimeSetup {
         @Parameters
         public static List<Object[]> params() {
             return Arrays.asList(new Object[]{1}, new Object[]{2});
@@ -78,7 +78,7 @@ public class SingleMethodTest {
     }
 
     @RunWith(Parameterized.class)
-    static public class ParameterizedOneTimeBeforeClass {
+    public static class ParameterizedOneTimeBeforeClass {
         @Parameters
         public static List<Object[]> params() {
             return Arrays.asList(new Object[]{1}, new Object[]{2});

@@ -63,7 +63,7 @@ public class ActiveTestSuite extends TestSuite {
         }
     }
 
-    synchronized public void runFinished() {
+    public synchronized void runFinished() {
         fActiveTestDeathCount++;
         notifyAll();
     }

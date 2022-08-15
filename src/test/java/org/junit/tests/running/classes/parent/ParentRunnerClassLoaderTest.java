@@ -1,5 +1,10 @@
 package org.junit.tests.running.classes.parent;
 
+import static org.junit.Assert.assertEquals;
+
+import java.lang.reflect.Field;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 import org.junit.Test;
 import org.junit.runner.Description;
@@ -8,13 +13,6 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
-
-import java.lang.reflect.Field;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 public class ParentRunnerClassLoaderTest {
     @Test

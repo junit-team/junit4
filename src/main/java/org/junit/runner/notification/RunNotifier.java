@@ -78,7 +78,7 @@ public class RunNotifier {
             fireTestFailures(safeListeners, failures);
         }
 
-        abstract protected void notifyListener(RunListener each) throws Exception;
+        protected abstract void notifyListener(RunListener each) throws Exception;
     }
 
     /**

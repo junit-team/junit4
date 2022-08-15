@@ -20,6 +20,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.internal.AssumptionViolatedException;
@@ -452,6 +453,10 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     }
 
     public void sort(Sorter sorter) {
+        if (shouldNotReorder()) {
+            return;
+        }
+
         childrenLock.lock();
         try {
             for (T each : getFilteredChildren()) {
@@ -471,6 +476,10 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * @since 4.13
      */
     public void order(Orderer orderer) throws InvalidOrderingException {
+        if (shouldNotReorder()) {
+            return;
+        }
+
         childrenLock.lock();
         try {
             List<T> children = getFilteredChildren();
@@ -504,6 +513,11 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     //
     // Private implementation
     //
+
+    private boolean shouldNotReorder() {
+        // If the test specifies a specific order, do not reorder.
+        return getDescription().getAnnotation(FixMethodOrder.class) != null;
+    }
 
     private void validate() throws InitializationError {
         List<Throwable> errors = new ArrayList<Throwable>();

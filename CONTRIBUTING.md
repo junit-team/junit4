@@ -16,7 +16,7 @@ We love pull requests. Here is a quick guide:
 
 1. You need to have Maven and a JDK (at least version 1.5) installed.
 2. [Fork the repo](https://help.github.com/articles/fork-a-repo).
-3. [Create a new branch](https://help.github.com/articles/creating-and-deleting-branches-within-your-repository/) from master.
+3. [Create a new branch](https://help.github.com/articles/creating-and-deleting-branches-within-your-repository/) from `main`.
 4. Ensure that you have a clean state by running `./mvnw verify`.
 5. Add your change together with a test (tests are not needed for refactorings and documentation changes).
 6. Format your code: Import the JUnit project in Eclipse and use its formatter or apply the rules in the `CODING_STYLE` file manually. Only format the code you've changed; reformatting unrelated code makes it harder for us to review your changes.

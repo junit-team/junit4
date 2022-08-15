@@ -168,7 +168,7 @@ public class ParameterizedTestTest {
     }
 
     @RunWith(Parameterized.class)
-    static public class BadIndexForAnnotatedFieldTest {
+    public static class BadIndexForAnnotatedFieldTest {
         @Parameters
         public static Collection<Object[]> data() {
             return Arrays.asList(new Object[][]{{0}});
@@ -200,7 +200,7 @@ public class ParameterizedTestTest {
     }
 
     @RunWith(Parameterized.class)
-    static public class BadNumberOfAnnotatedFieldTest {
+    public static class BadNumberOfAnnotatedFieldTest {
         @Parameters
         public static Collection<Object[]> data() {
             return Arrays.asList(new Object[][]{{0, 0}});
@@ -232,7 +232,7 @@ public class ParameterizedTestTest {
     private static String fLog;
 
     @RunWith(Parameterized.class)
-    static public class BeforeAndAfter {
+    public static class BeforeAndAfter {
         @BeforeClass
         public static void before() {
             fLog += "before ";
@@ -487,7 +487,7 @@ public class ParameterizedTestTest {
     }
 
     @RunWith(Parameterized.class)
-    static public class EmptyTest {
+    public static class EmptyTest {
         @BeforeClass
         public static void before() {
             fLog += "before ";
@@ -506,7 +506,7 @@ public class ParameterizedTestTest {
     }
 
     @RunWith(Parameterized.class)
-    static public class IncorrectTest {
+    public static class IncorrectTest {
         @Test
         public int test() {
             return 0;
@@ -525,7 +525,7 @@ public class ParameterizedTestTest {
     }
 
     @RunWith(Parameterized.class)
-    static public class ProtectedParametersTest {
+    public static class ProtectedParametersTest {
         @Parameters
         protected static Collection<Object[]> data() {
             return Collections.emptyList();
@@ -544,7 +544,7 @@ public class ParameterizedTestTest {
     }
 
     @RunWith(Parameterized.class)
-    static public class ParametersNotIterable {
+    public static class ParametersNotIterable {
         @Parameters
         public static String data() {
             return "foo";
@@ -563,7 +563,7 @@ public class ParameterizedTestTest {
     }
 
     @RunWith(Parameterized.class)
-    static public class PrivateConstructor {
+    public static class PrivateConstructor {
         private PrivateConstructor(int x) {
 
         }
@@ -613,7 +613,7 @@ public class ParameterizedTestTest {
     }
 
     @RunWith(Parameterized.class)
-    static public class SingleArgumentTestWithArray {
+    public static class SingleArgumentTestWithArray {
         @Parameters
         public static Object[] data() {
             return new Object[] { "first test", "second test" };
@@ -634,7 +634,7 @@ public class ParameterizedTestTest {
     }
 
     @RunWith(Parameterized.class)
-    static public class SingleArgumentTestWithIterable {
+    public static class SingleArgumentTestWithIterable {
         private static final AtomicBoolean dataCalled = new AtomicBoolean(false);
 
         @Parameters
@@ -677,7 +677,7 @@ public class ParameterizedTestTest {
     }
 
     @RunWith(Parameterized.class)
-    static public class SingleArgumentTestWithCollection {
+    public static class SingleArgumentTestWithCollection {
         @Parameters
         public static Iterable<? extends Object> data() {
             return Collections.unmodifiableCollection(asList("first test", "second test"));
@@ -699,7 +699,7 @@ public class ParameterizedTestTest {
     }
 
 
-    static public class ExceptionThrowingRunnerFactory implements
+    public static class ExceptionThrowingRunnerFactory implements
             ParametersRunnerFactory {
         public Runner createRunnerForTestWithParameters(TestWithParameters test)
                 throws InitializationError {
@@ -710,7 +710,7 @@ public class ParameterizedTestTest {
 
     @RunWith(Parameterized.class)
     @UseParametersRunnerFactory(ExceptionThrowingRunnerFactory.class)
-    static public class TestWithUseParametersRunnerFactoryAnnotation {
+    public static class TestWithUseParametersRunnerFactoryAnnotation {
         @Parameters
         public static Iterable<? extends Object> data() {
             return asList("single test");
@@ -739,7 +739,7 @@ public class ParameterizedTestTest {
     
     @RunWith(Parameterized.class)
     @UseParametersRunnerFactory(ExceptionThrowingRunnerFactory.class)
-    public static abstract class UseParameterizedFactoryAbstractTest {
+    public abstract static class UseParameterizedFactoryAbstractTest {
         @Parameters
         public static Iterable<? extends Object> data() {
             return asList("single test");
