@@ -4,7 +4,7 @@
 
     <groupId>junit</groupId>
     <artifactId>junit</artifactId>
-    <version>4.13.3-SNAPSHOT</version>
+    <version>4.13.2-Daikon</version>
 
     <name>JUnit</name>
     <description>JUnit is a unit testing framework for Java, created by Erich Gamma and Kent Beck.</description>
@@ -64,7 +64,7 @@
         <connection>scm:git:git://github.com/junit-team/junit4.git</connection>
         <developerConnection>scm:git:git@github.com:junit-team/junit4.git</developerConnection>
         <url>https://github.com/junit-team/junit4</url>
-      <tag>HEAD</tag>
+      <tag>r4.13.2</tag>
   </scm>
     <issueManagement>
         <system>github</system>
@@ -94,6 +94,7 @@
 
     <properties>
         <jdkVersion>1.8</jdkVersion>
+        <checkerFrameworkVersion>3.24.0</checkerFrameworkVersion>
         <surefireVersion>2.19.1</surefireVersion>
         <hamcrestVersion>1.3</hamcrestVersion>
         <enforcerPluginVersion>1.4</enforcerPluginVersion>
@@ -124,13 +125,15 @@
 	<dependency>
 	  <groupId>org.checkerframework</groupId>
 	  <artifactId>checker-qual</artifactId>
-	  <version>2.10.0</version>
+	  <version>${checkerFrameworkVersion}</version>
 	</dependency>
-	<dependency>
+	<!-- Checker bug or out of date annotated jdk
+    <dependency>
 	  <groupId>org.checkerframework</groupId>
 	  <artifactId>jdk8</artifactId>
 	  <version>2.10.0</version>
 	</dependency>
+    -->
 
     </dependencies>
 
@@ -246,27 +249,28 @@
                         <arg>-Xlint:unchecked</arg>
                     </compilerArgs>
                     <maxmem>128m</maxmem>
-		    <compilerArguments>
-		      <Xmaxerrs>10000</Xmaxerrs>
-		      <Xmaxwarns>10000</Xmaxwarns>
-		    </compilerArguments>
-		    <annotationProcessorPaths>
-		      <path>
-			<groupId>org.checkerframework</groupId>
-			<artifactId>checker</artifactId>
-			<version>2.10.0</version>
-		      </path>
-		    </annotationProcessorPaths>
-		    <annotationProcessors>
-		      <!-- Add all the checkers you want to enable here -->
-		      <annotationProcessor>org.checkerframework.checker.nullness.NullnessChecker</annotationProcessor>
-		    </annotationProcessors>
-		    <compilerArgs>
-		      <!-- location of the annotated JDK, which comes from a Maven dependency -->
-		      <arg>-Xbootclasspath/p:${annotatedJdk}</arg>
-		      <!-- -Awarns turns type-checking warnings into errors. -->
-		      <!-- <arg>-Awarns</arg> -->
-		    </compilerArgs>
+                    <compilerArguments>
+                      <Xmaxerrs>10000</Xmaxerrs>
+                      <Xmaxwarns>10000</Xmaxwarns>
+                    </compilerArguments>
+                    <annotationProcessorPaths>
+                      <path>
+                        <groupId>org.checkerframework</groupId>
+                        <artifactId>checker</artifactId>
+                        <version>${checkerFrameworkVersion}</version>
+                      </path>
+                    </annotationProcessorPaths>
+                    <annotationProcessors>
+                      <!-- Add all the checkers you want to enable here -->
+                      <annotationProcessor>org.checkerframework.checker.nullness.NullnessChecker</annotationProcessor>
+                    </annotationProcessors>
+                    <compilerArgs>
+                      <!-- location of the annotated JDK, which comes from a Maven dependency -->
+                      <arg>-Xbootclasspath/p:${annotatedJdk}</arg>
+                      <!-- -Awarns turns type-checking errors into warnings. -->
+                      <arg>-Awarns</arg>
+                      <arg>-AshowSuppressWarningsStrings</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
@@ -612,7 +616,8 @@
             </activation>
             <properties>
                 <!-- JDK 9 minimal source and target versions are 1.6 -->
-                <jdkVersion>1.6</jdkVersion>
+                <!-- We need 1.8 to use annotations -->
+                <jdkVersion>1.8</jdkVersion>
             </properties>
             <build>
                 <plugins>
@@ -642,7 +647,8 @@
             </activation>
             <properties>
                 <!-- JDK 12 minimal source and target versions are 1.7 -->
-                <jdkVersion>1.7</jdkVersion>
+                <!-- We need 1.8 to use annotations -->
+                <jdkVersion>1.8</jdkVersion>
                 <enforcerPluginVersion>3.0.0-M3</enforcerPluginVersion>
                 <jarPluginVersion>3.2.0</jarPluginVersion>
                 <javadocPluginVersion>3.2.0</javadocPluginVersion>
