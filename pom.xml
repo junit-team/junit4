@@ -121,19 +121,12 @@
             <scope>test</scope>
         </dependency>
 
-	<!-- Annotations from the Checker Framework: nullness, interning, locking, ... -->
-	<dependency>
-	  <groupId>org.checkerframework</groupId>
-	  <artifactId>checker-qual</artifactId>
-	  <version>${checkerFrameworkVersion}</version>
-	</dependency>
-	<!-- Checker bug or out of date annotated jdk
-    <dependency>
-	  <groupId>org.checkerframework</groupId>
-	  <artifactId>jdk8</artifactId>
-	  <version>2.10.0</version>
-	</dependency>
-    -->
+        <!-- Annotations from the Checker Framework: nullness, interning, locking, ... -->
+        <dependency>
+          <groupId>org.checkerframework</groupId>
+          <artifactId>checker-qual</artifactId>
+          <version>${checkerFrameworkVersion}</version>
+        </dependency>
 
     </dependencies>
 
@@ -576,7 +569,7 @@
             <id>restrict-doclint</id>
             <!-- doclint is only supported by JDK 8 -->
             <activation>
-	        <!-- disable doclint because it causes build failures -->
+                <!-- disable doclint because it causes build failures -->
                 <jdk>[999,)</jdk>
             </activation>
             <build>
