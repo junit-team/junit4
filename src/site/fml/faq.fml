@@ -1171,7 +1171,7 @@ oneTimeTearDown()</pre>
     </ol>
     <p>
       Refer to the <a
-      href="http://jakarta.apache.org/ant/manual/OptionalTasks/junit.html">JUnit
+      href="https://ant.apache.org/manual/Tasks/junit.html">JUnit
       Ant Task</a> for more information.
     </p></answer>
         </faq>
@@ -1231,7 +1231,7 @@ oneTimeTearDown()</pre>
     </ol>
     <p>
       Refer to the 
-      <a href="http://jakarta.apache.org/ant/manual/OptionalTasks/junit.html">JUnit Ant Task</a>
+      <a href="https://ant.apache.org/manual/Tasks/junit.html">JUnit Ant Task</a>
       for more information.
     </p></answer>
         </faq>

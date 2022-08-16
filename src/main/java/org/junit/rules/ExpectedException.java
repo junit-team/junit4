@@ -3,11 +3,11 @@ package org.junit.rules;
 import static java.lang.String.format;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.internal.matchers.ThrowableCauseMatcher.hasCause;
 import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
 import org.hamcrest.Matcher;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.StringDescription;
 import org.junit.AssumptionViolatedException;
 import org.junit.runners.model.Statement;
@@ -268,7 +268,7 @@ public class ExpectedException implements TestRule {
 
     private void handleException(Throwable e) throws Throwable {
         if (isAnyExceptionExpected()) {
-            assertThat(e, matcherBuilder.build());
+            MatcherAssert.assertThat(e, matcherBuilder.build());
         } else {
             throw e;
         }
