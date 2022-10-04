@@ -9,6 +9,7 @@ import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import org.junit.After;
 import org.junit.Before;
@@ -259,9 +260,7 @@ public class TemporaryFolderUsageTest {
     }
 
     private File createTemporaryFolder() throws IOException {
-        File tempDir = File.createTempFile("junit", "tempFolder");
-        assertTrue("Unable to delete temporary file", tempDir.delete());
-        assertTrue("Unable to create temp directory", tempDir.mkdir());
+        File tempDir = Files.createTempDirectory("junit" + "tempFolder").toFile();
         return tempDir;
     }
 
