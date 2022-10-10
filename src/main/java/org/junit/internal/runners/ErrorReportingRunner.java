@@ -37,6 +37,10 @@ public class ErrorReportingRunner extends Runner {
     @Override
     public Description getDescription() {
         Description description = Description.createSuiteDescription(classNames);
+        /*
+         * Use an indexed loop instead of a foreach: That avoids declaring a variable that some
+         * tools will see as "unused."
+         */
         for (int i = 0; i < causes.size(); i++) {
             description.addChild(describeCause());
         }
