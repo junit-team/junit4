@@ -188,7 +188,7 @@ public class Result implements Serializable {
         }
 
         @SuppressWarnings("unchecked")
-        private SerializedForm(ObjectInputStream.GetField fields) throws IOException {
+        private SerializedForm(ObjectInputStream.GetField fields) throws IOException, ClassNotFoundException {
             fCount = (AtomicInteger) fields.get("fCount", null);
             fIgnoreCount = (AtomicInteger) fields.get("fIgnoreCount", null);
             assumptionFailureCount = (AtomicInteger) fields.get("assumptionFailureCount", null);
