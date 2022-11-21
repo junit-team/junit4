@@ -82,7 +82,7 @@ public class AssertTest extends TestCase {
             assertEquals("foo", null);
             fail();
         } catch (ComparisonFailure e) {
-            e.getMessage(); // why no assertion?
+            assertNotNull(e.getMessage());
         }
     }
 
@@ -90,7 +90,7 @@ public class AssertTest extends TestCase {
         try {
             assertEquals(null, new Object());
         } catch (AssertionFailedError e) {
-            e.getMessage(); // why no assertion?
+            assertNotNull(e.getMessage());
             return;
         }
         fail();
