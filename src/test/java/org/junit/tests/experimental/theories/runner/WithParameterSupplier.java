@@ -159,7 +159,7 @@ public class WithParameterSupplier {
     
     @Test
     public void shouldAcceptSuppliersWithTestClassConstructor() throws Exception {
-        new Theories(TestClassUsingSupplierWithTestClassConstructor.class);
+        Theories unused = new Theories(TestClassUsingSupplierWithTestClassConstructor.class);
     }
 
 }
