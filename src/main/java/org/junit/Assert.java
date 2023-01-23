@@ -29,6 +29,38 @@ public class Assert {
     protected Assert() {
     }
 
+    // fixes issue #1432
+    /**
+     * Asserts that charSequence has the same string of chars. If the sequence is not the same, throws a
+     * {@link AssertionError} with the given message.
+     *
+     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
+     * okay)
+     * @param expected the sequence to check against
+     * @param actual the sequence that is being checked
+     */
+    public static void assertContentsEqual(String message, CharSequence expected,
+            CharSequence actual) {
+        if (expected.length() != actual.length()) {
+            failNotEquals(message, expected, actual);
+        }
+        for (int i = 0; i < expected.length(); i++) {
+            if (expected.charAt(i) != actual.charAt(i))
+                failNotEquals(message, expected, actual);
+        }
+    }
+    
+    /**
+     * Asserts that charSequence has the same string of chars. If the sequence is not the same, throws a
+     * {@link AssertionError} with the given message.
+     *
+     * @param expected the sequence to check against
+     * @param actual the sequence that is being checked
+     */
+    public static void assertContentsEqual(CharSequence expected, CharSequence actual) {
+        assertContentsEqual(null, expected, actual);
+    }
+    
     /**
      * Asserts that a condition is true. If it isn't it throws an
      * {@link AssertionError} with the given message.
