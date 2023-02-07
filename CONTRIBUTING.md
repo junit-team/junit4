@@ -4,6 +4,18 @@
 - You will only Submit Contributions to which You have the necessary rights. This means that if You are employed You have received the necessary permissions from Your employer to make the Contributions.
 - Whatever content You Contribute will be provided under the Project License(s).
 
+## Building
+
+### Command line
+
+You need to have Maven and a JDK (at least version 1.5) installed.
+
+Run `./mvnw verify` to build the code and run the tests
+
+### Eclipse
+
+Maven can generate project files for Eclipse. See [these instructions](https://mkyong.com/maven/how-to-convert-maven-java-project-to-support-eclipse-ide/) for details.
+
 ## Coding Conventions
 
 ### Formatting
