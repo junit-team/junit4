@@ -34,7 +34,7 @@ jobs:
           distribution: temurin
           cache: maven
       - name: Build and verify
-        run: ./mvnw verify javadoc:javadoc site:site --batch-mode --errors --settings .github/workflows/settings.xml
+        run: ./mvnw verify javadoc:javadoc site:site --batch-mode --errors --settings .github/workflows/settings.xml -DdisableXmlReport=true
 
   publish-snapshots:
     name: Publish snapshot artifacts
