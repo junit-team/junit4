@@ -1,5 +1,7 @@
 package junit.framework;
 
+import junit.utils.StringUtils;
+
 public class ComparisonCompactor {
 
     private static final String ELLIPSIS = "...";
@@ -26,8 +28,8 @@ public class ComparisonCompactor {
 
         findCommonPrefix();
         findCommonSuffix();
-        String expected = compactString(fExpected);
-        String actual = compactString(fActual);
+        String expected = StringUtils.compactString(fPrefix, fSuffix, fContextLength, fExpected, fActual,true);
+        String actual = StringUtils.compactString(fPrefix, fSuffix, fContextLength,fExpected, fActual,false);
         return Assert.format(message, expected, actual);
     }
 
