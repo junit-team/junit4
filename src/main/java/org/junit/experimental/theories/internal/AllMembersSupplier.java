@@ -72,13 +72,25 @@ public class AllMembersSupplier extends ParameterSupplier {
 
         return list;
     }
+    private boolean isMultiPointData(FrameworkMethod dataPointsMethod, ParameterSignature sig) {
+        Class<?> returnType = dataPointsMethod.getReturnType();
+
+        if (returnType.isArray() && sig.canPotentiallyAcceptType(returnType.getComponentType())) {
+            return true;
+        }
+
+        if (Iterable.class.isAssignableFrom(returnType)) {
+            return true;
+        }
+
+        return false;
+    }
 
     private void addMultiPointMethods(ParameterSignature sig, List<PotentialAssignment> list) throws Throwable {
         for (FrameworkMethod dataPointsMethod : getDataPointsMethods(sig)) {
             Class<?> returnType = dataPointsMethod.getReturnType();
-            
-            if ((returnType.isArray() && sig.canPotentiallyAcceptType(returnType.getComponentType())) ||
-                    Iterable.class.isAssignableFrom(returnType)) {
+
+            if (isMultiPointData(dataPointsMethod, sig)) {
                 try {
                     addDataPointsValues(returnType, sig, dataPointsMethod.getName(), list, 
                             dataPointsMethod.invokeExplosively(null));

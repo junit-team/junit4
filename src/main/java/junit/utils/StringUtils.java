@@ -13,13 +13,7 @@ public class StringUtils {
         }else{
             result = DELTA_START + fActual.substring(fPrefix, fActual.length() - fSuffix + 1) + DELTA_END;
         }
-//        if (!fExpected.isEmpty()) {
-//             result = DELTA_START + fExpected.substring(fPrefix, fExpected.length() - fSuffix + 1) + DELTA_END;
-//
-//        } else if (!fActual.isEmpty()) {
-//             result = DELTA_START + fActual.substring(fPrefix, fActual.length() - fSuffix + 1) + DELTA_END;
-//
-//        }
+
         if (fPrefix > 0) {
             result = computeCommonPrefix(fPrefix, fContextLength, fExpected) + result;
         }
