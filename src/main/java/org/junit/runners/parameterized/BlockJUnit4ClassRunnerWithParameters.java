@@ -4,6 +4,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.List;
 
+import junit.textui.abstracts.ConstructorTestCreator;
+import junit.textui.abstracts.FieldTestCreator;
+import junit.textui.abstracts.TestCreator;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
 import org.junit.runner.RunWith;
@@ -38,19 +41,39 @@ public class BlockJUnit4ClassRunnerWithParameters extends
         name = test.getName();
     }
 
+//    @Override
+//    public Object createTest() throws Exception {
+//        InjectionType injectionType = getInjectionType();
+//        switch (injectionType) {
+//            case CONSTRUCTOR:
+//                return createTestUsingConstructorInjection();
+//            case FIELD:
+//                return createTestUsingFieldInjection();
+//            default:
+//                throw new IllegalStateException("The injection type "
+//                        + injectionType + " is not supported.");
+//        }
+//    }
+
     @Override
     public Object createTest() throws Exception {
         InjectionType injectionType = getInjectionType();
+        TestCreator creator;
         switch (injectionType) {
             case CONSTRUCTOR:
-                return createTestUsingConstructorInjection();
+                creator = new ConstructorTestCreator(parameters, getTestClass());
+                break;
             case FIELD:
-                return createTestUsingFieldInjection();
+                creator = new FieldTestCreator(parameters, getTestClass());
+                break;
             default:
                 throw new IllegalStateException("The injection type "
                         + injectionType + " is not supported.");
         }
+
+        return (Object) creator.createTest();
     }
+
 
     private Object createTestUsingConstructorInjection() throws Exception {
         return getTestClass().getOnlyConstructor().newInstance(parameters);
@@ -192,7 +215,7 @@ public class BlockJUnit4ClassRunnerWithParameters extends
         Annotation[] allAnnotations = super.getRunnerAnnotations();
         Annotation[] annotationsWithoutRunWith = new Annotation[allAnnotations.length - 1];
         int i = 0;
-        for (Annotation annotation: allAnnotations) {
+        for (Annotation annotation : allAnnotations) {
             if (!annotation.annotationType().equals(RunWith.class)) {
                 annotationsWithoutRunWith[i] = annotation;
                 ++i;
