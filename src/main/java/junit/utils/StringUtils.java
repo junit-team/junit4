@@ -31,4 +31,32 @@ public class StringUtils {
         int end = Math.min(fExpected.length() - fSuffix + 1 + fContextLength, fExpected.length());
         return fExpected.substring(fExpected.length() - fSuffix + 1, end) + (fExpected.length() - fSuffix + 1 < fExpected.length() - fContextLength ? ELLIPSIS : "");
     }
+
+    public static boolean areStringsEqual(String fExpected,String fActual) {
+        return fExpected.equals(fActual);
+    }
+
+    public static int findCommonPrefix(String fExpected,String fActual, int fPrefix) {
+        fPrefix = 0;
+        int end = Math.min(fExpected.length(), fActual.length());
+        for (; fPrefix < end; fPrefix++) {
+            if (fExpected.charAt(fPrefix) != fActual.charAt(fPrefix)) {
+                break;
+            }
+        }
+        return fPrefix;
+    }
+
+    public static int findCommonSuffix(String fExpected,String fActual, int fPrefix,int fSuffix) {
+        int expectedSuffix = fExpected.length() - 1;
+        int actualSuffix = fActual.length() - 1;
+        for (; actualSuffix >= fPrefix && expectedSuffix >= fPrefix; actualSuffix--, expectedSuffix--) {
+            if (fExpected.charAt(expectedSuffix) != fActual.charAt(actualSuffix)) {
+                break;
+            }
+        }
+        fSuffix = fExpected.length() - expectedSuffix;
+        return fSuffix;
+    }
+
 }
