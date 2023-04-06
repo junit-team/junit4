@@ -30,16 +30,22 @@ import org.junit.runner.RunWith;
 @RunWith(Theories.class)
 public class AssumptionViolatedExceptionTest {
     @DataPoint
-    public static Integer TWO = 2;
+//    public static Integer TWO = 2;
+    public static Integer INTEGER_TWO = 2;
 
     @DataPoint
-    public static Matcher<Integer> IS_THREE = is(3);
+//    public static Matcher<Integer> IS_THREE = is(3);
+
+    public static Matcher<Integer> MATCHER_FOR_THREE = is(3);
 
     @DataPoint
-    public static Matcher<Integer> NULL = null;
+//    public static Matcher<Integer> NULL = null;
+    public static Matcher<Integer> MATCHER_FOR_NULL = null;
+
 
     @Rule
-    public TestName name = new TestName();
+//    public TestName name = new TestName();
+    public TestName test_name = new TestName();
 
     private static final String MESSAGE = "Assumption message";
     private static Matcher<Integer> SERIALIZABLE_IS_THREE = new SerializableIsThreeMatcher<Integer>();
@@ -125,7 +131,7 @@ public class AssumptionViolatedExceptionTest {
     @Test
     public void assumptionViolatedExceptionWithValueAndMatcherCanBeReserialized_v4_13()
             throws IOException, ClassNotFoundException {
-        assertReserializable(new AssumptionViolatedException(MESSAGE, TWO, SERIALIZABLE_IS_THREE));
+        assertReserializable(new AssumptionViolatedException(MESSAGE, INTEGER_TWO, SERIALIZABLE_IS_THREE));
     }
 
     @Test
@@ -146,7 +152,7 @@ public class AssumptionViolatedExceptionTest {
     @Test
     public void serializableValueAndMatcherCanBeSerialized() throws IOException, ClassNotFoundException {
         AssumptionViolatedException exception = new AssumptionViolatedException(MESSAGE,
-                TWO, SERIALIZABLE_IS_THREE);
+                INTEGER_TWO, SERIALIZABLE_IS_THREE);
 
         assertCanBeSerialized(exception);
     }
@@ -166,7 +172,7 @@ public class AssumptionViolatedExceptionTest {
 
     private void assertReserializable(AssumptionViolatedException expected)
             throws IOException, ClassNotFoundException {
-        String resourceName = name.getMethodName();
+        String resourceName = test_name.getMethodName();
         InputStream resource = getClass().getResourceAsStream(resourceName);
         assertNotNull("Could not read resource " + resourceName, resource);
         ObjectInputStream objectInputStream = new ObjectInputStream(resource);
@@ -190,11 +196,11 @@ public class AssumptionViolatedExceptionTest {
     private static class SerializableIsThreeMatcher<T> extends BaseMatcher<T> implements Serializable {
 
         public boolean matches(Object item) {
-            return IS_THREE.matches(item);
+            return MATCHER_FOR_THREE.matches(item);
         }
 
         public void describeTo(Description description) {
-            IS_THREE.describeTo(description);
+            MATCHER_FOR_THREE.describeTo(description);
         }
     }
 

@@ -33,8 +33,8 @@ public class Assert {
      * Asserts that a condition is true. If it isn't it throws an
      * {@link AssertionError} with the given message.
      *
-     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     * okay)
+     * @param message   the identifying message for the {@link AssertionError} (<code>null</code>
+     *                  okay)
      * @param condition condition to be checked
      */
     public static void assertTrue(String message, boolean condition) {
@@ -57,8 +57,8 @@ public class Assert {
      * Asserts that a condition is false. If it isn't it throws an
      * {@link AssertionError} with the given message.
      *
-     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     * okay)
+     * @param message   the identifying message for the {@link AssertionError} (<code>null</code>
+     *                  okay)
      * @param condition condition to be checked
      */
     public static void assertFalse(String message, boolean condition) {
@@ -79,7 +79,7 @@ public class Assert {
      * Fails a test with the given message.
      *
      * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     * okay)
+     *                okay)
      * @see AssertionError
      */
     public static void fail(String message) {
@@ -102,13 +102,13 @@ public class Assert {
      * <code>expected</code> and <code>actual</code> are <code>null</code>,
      * they are considered equal.
      *
-     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     * okay)
+     * @param message  the identifying message for the {@link AssertionError} (<code>null</code>
+     *                 okay)
      * @param expected expected value
-     * @param actual actual value
+     * @param actual   actual value
      */
     public static void assertEquals(String message, Object expected,
-            Object actual) {
+                                    Object actual) {
         if (equalsRegardingNull(expected, actual)) {
             return;
         }
@@ -140,7 +140,7 @@ public class Assert {
      * they are considered equal.
      *
      * @param expected expected value
-     * @param actual the value to check against <code>expected</code>
+     * @param actual   the value to check against <code>expected</code>
      */
     public static void assertEquals(Object expected, Object actual) {
         assertEquals(null, expected, actual);
@@ -152,13 +152,13 @@ public class Assert {
      * <code>unexpected</code> and <code>actual</code> are <code>null</code>,
      * they are considered equal.
      *
-     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     * okay)
+     * @param message    the identifying message for the {@link AssertionError} (<code>null</code>
+     *                   okay)
      * @param unexpected unexpected value to check
-     * @param actual the value to check against <code>unexpected</code>
+     * @param actual     the value to check against <code>unexpected</code>
      */
     public static void assertNotEquals(String message, Object unexpected,
-            Object actual) {
+                                       Object actual) {
         if (equalsRegardingNull(unexpected, actual)) {
             failEquals(message, actual);
         }
@@ -171,7 +171,7 @@ public class Assert {
      * they are considered equal.
      *
      * @param unexpected unexpected value to check
-     * @param actual the value to check against <code>unexpected</code>
+     * @param actual     the value to check against <code>unexpected</code>
      */
     public static void assertNotEquals(Object unexpected, Object actual) {
         assertNotEquals(null, unexpected, actual);
@@ -191,10 +191,10 @@ public class Assert {
      * Asserts that two longs are <b>not</b> equals. If they are, an
      * {@link AssertionError} is thrown with the given message.
      *
-     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     * okay)
+     * @param message    the identifying message for the {@link AssertionError} (<code>null</code>
+     *                   okay)
      * @param unexpected unexpected value to check
-     * @param actual the value to check against <code>unexpected</code>
+     * @param actual     the value to check against <code>unexpected</code>
      */
     public static void assertNotEquals(String message, long unexpected, long actual) {
         if (unexpected == actual) {
@@ -207,7 +207,7 @@ public class Assert {
      * {@link AssertionError} without a message is thrown.
      *
      * @param unexpected unexpected value to check
-     * @param actual the value to check against <code>unexpected</code>
+     * @param actual     the value to check against <code>unexpected</code>
      */
     public static void assertNotEquals(long unexpected, long actual) {
         assertNotEquals(null, unexpected, actual);
@@ -220,16 +220,16 @@ public class Assert {
      * ignored. NaNs are considered equal:
      * <code>assertNotEquals(Double.NaN, Double.NaN, *)</code> fails
      *
-     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     * okay)
+     * @param message    the identifying message for the {@link AssertionError} (<code>null</code>
+     *                   okay)
      * @param unexpected unexpected value
-     * @param actual the value to check against <code>unexpected</code>
-     * @param delta the maximum delta between <code>unexpected</code> and
-     * <code>actual</code> for which both numbers are still
-     * considered equal.
+     * @param actual     the value to check against <code>unexpected</code>
+     * @param delta      the maximum delta between <code>unexpected</code> and
+     *                   <code>actual</code> for which both numbers are still
+     *                   considered equal.
      */
     public static void assertNotEquals(String message, double unexpected,
-            double actual, double delta) {
+                                       double actual, double delta) {
         if (!doubleIsDifferent(unexpected, actual, delta)) {
             failEquals(message, Double.valueOf(actual));
         }
@@ -242,10 +242,10 @@ public class Assert {
      * equal: <code>assertNotEquals(Double.NaN, Double.NaN, *)</code> fails
      *
      * @param unexpected unexpected value
-     * @param actual the value to check against <code>unexpected</code>
-     * @param delta the maximum delta between <code>unexpected</code> and
-     * <code>actual</code> for which both numbers are still
-     * considered equal.
+     * @param actual     the value to check against <code>unexpected</code>
+     * @param delta      the maximum delta between <code>unexpected</code> and
+     *                   <code>actual</code> for which both numbers are still
+     *                   considered equal.
      */
     public static void assertNotEquals(double unexpected, double actual, double delta) {
         assertNotEquals(null, unexpected, actual, delta);
@@ -258,10 +258,10 @@ public class Assert {
      * equal: <code>assertNotEquals(Float.NaN, Float.NaN, *)</code> fails
      *
      * @param unexpected unexpected value
-     * @param actual the value to check against <code>unexpected</code>
-     * @param delta the maximum delta between <code>unexpected</code> and
-     * <code>actual</code> for which both numbers are still
-     * considered equal.
+     * @param actual     the value to check against <code>unexpected</code>
+     * @param delta      the maximum delta between <code>unexpected</code> and
+     *                   <code>actual</code> for which both numbers are still
+     *                   considered equal.
      */
     public static void assertNotEquals(float unexpected, float actual, float delta) {
         assertNotEquals(null, unexpected, actual, delta);
@@ -273,15 +273,15 @@ public class Assert {
      * <code>expecteds</code> and <code>actuals</code> are <code>null</code>,
      * they are considered equal.
      *
-     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     * okay)
+     * @param message   the identifying message for the {@link AssertionError} (<code>null</code>
+     *                  okay)
      * @param expecteds Object array or array of arrays (multi-dimensional array) with
-     * expected values.
-     * @param actuals Object array or array of arrays (multi-dimensional array) with
-     * actual values
+     *                  expected values.
+     * @param actuals   Object array or array of arrays (multi-dimensional array) with
+     *                  actual values
      */
     public static void assertArrayEquals(String message, Object[] expecteds,
-            Object[] actuals) throws ArrayComparisonFailure {
+                                         Object[] actuals) throws ArrayComparisonFailure {
         internalArrayEquals(message, expecteds, actuals);
     }
 
@@ -292,9 +292,9 @@ public class Assert {
      * equal.
      *
      * @param expecteds Object array or array of arrays (multi-dimensional array) with
-     * expected values
-     * @param actuals Object array or array of arrays (multi-dimensional array) with
-     * actual values
+     *                  expected values
+     * @param actuals   Object array or array of arrays (multi-dimensional array) with
+     *                  actual values
      */
     public static void assertArrayEquals(Object[] expecteds, Object[] actuals) {
         assertArrayEquals(null, expecteds, actuals);
@@ -306,13 +306,13 @@ public class Assert {
      * <code>expecteds</code> and <code>actuals</code> are <code>null</code>,
      * they are considered equal.
      *
-     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     * okay)
+     * @param message   the identifying message for the {@link AssertionError} (<code>null</code>
+     *                  okay)
      * @param expecteds boolean array with expected values.
-     * @param actuals boolean array with expected values.
+     * @param actuals   boolean array with expected values.
      */
     public static void assertArrayEquals(String message, boolean[] expecteds,
-            boolean[] actuals) throws ArrayComparisonFailure {
+                                         boolean[] actuals) throws ArrayComparisonFailure {
         internalArrayEquals(message, expecteds, actuals);
     }
 
@@ -323,7 +323,7 @@ public class Assert {
      * equal.
      *
      * @param expecteds boolean array with expected values.
-     * @param actuals boolean array with expected values.
+     * @param actuals   boolean array with expected values.
      */
     public static void assertArrayEquals(boolean[] expecteds, boolean[] actuals) {
         assertArrayEquals(null, expecteds, actuals);
@@ -333,13 +333,13 @@ public class Assert {
      * Asserts that two byte arrays are equal. If they are not, an
      * {@link AssertionError} is thrown with the given message.
      *
-     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     * okay)
+     * @param message   the identifying message for the {@link AssertionError} (<code>null</code>
+     *                  okay)
      * @param expecteds byte array with expected values.
-     * @param actuals byte array with actual values
+     * @param actuals   byte array with actual values
      */
     public static void assertArrayEquals(String message, byte[] expecteds,
-            byte[] actuals) throws ArrayComparisonFailure {
+                                         byte[] actuals) throws ArrayComparisonFailure {
         internalArrayEquals(message, expecteds, actuals);
     }
 
@@ -348,7 +348,7 @@ public class Assert {
      * {@link AssertionError} is thrown.
      *
      * @param expecteds byte array with expected values.
-     * @param actuals byte array with actual values
+     * @param actuals   byte array with actual values
      */
     public static void assertArrayEquals(byte[] expecteds, byte[] actuals) {
         assertArrayEquals(null, expecteds, actuals);
@@ -358,13 +358,13 @@ public class Assert {
      * Asserts that two char arrays are equal. If they are not, an
      * {@link AssertionError} is thrown with the given message.
      *
-     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     * okay)
+     * @param message   the identifying message for the {@link AssertionError} (<code>null</code>
+     *                  okay)
      * @param expecteds char array with expected values.
-     * @param actuals char array with actual values
+     * @param actuals   char array with actual values
      */
     public static void assertArrayEquals(String message, char[] expecteds,
-            char[] actuals) throws ArrayComparisonFailure {
+                                         char[] actuals) throws ArrayComparisonFailure {
         internalArrayEquals(message, expecteds, actuals);
     }
 
@@ -373,7 +373,7 @@ public class Assert {
      * {@link AssertionError} is thrown.
      *
      * @param expecteds char array with expected values.
-     * @param actuals char array with actual values
+     * @param actuals   char array with actual values
      */
     public static void assertArrayEquals(char[] expecteds, char[] actuals) {
         assertArrayEquals(null, expecteds, actuals);
@@ -383,13 +383,13 @@ public class Assert {
      * Asserts that two short arrays are equal. If they are not, an
      * {@link AssertionError} is thrown with the given message.
      *
-     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     * okay)
+     * @param message   the identifying message for the {@link AssertionError} (<code>null</code>
+     *                  okay)
      * @param expecteds short array with expected values.
-     * @param actuals short array with actual values
+     * @param actuals   short array with actual values
      */
     public static void assertArrayEquals(String message, short[] expecteds,
-            short[] actuals) throws ArrayComparisonFailure {
+                                         short[] actuals) throws ArrayComparisonFailure {
         internalArrayEquals(message, expecteds, actuals);
     }
 
@@ -398,7 +398,7 @@ public class Assert {
      * {@link AssertionError} is thrown.
      *
      * @param expecteds short array with expected values.
-     * @param actuals short array with actual values
+     * @param actuals   short array with actual values
      */
     public static void assertArrayEquals(short[] expecteds, short[] actuals) {
         assertArrayEquals(null, expecteds, actuals);
@@ -408,13 +408,13 @@ public class Assert {
      * Asserts that two int arrays are equal. If they are not, an
      * {@link AssertionError} is thrown with the given message.
      *
-     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     * okay)
+     * @param message   the identifying message for the {@link AssertionError} (<code>null</code>
+     *                  okay)
      * @param expecteds int array with expected values.
-     * @param actuals int array with actual values
+     * @param actuals   int array with actual values
      */
     public static void assertArrayEquals(String message, int[] expecteds,
-            int[] actuals) throws ArrayComparisonFailure {
+                                         int[] actuals) throws ArrayComparisonFailure {
         internalArrayEquals(message, expecteds, actuals);
     }
 
@@ -423,7 +423,7 @@ public class Assert {
      * {@link AssertionError} is thrown.
      *
      * @param expecteds int array with expected values.
-     * @param actuals int array with actual values
+     * @param actuals   int array with actual values
      */
     public static void assertArrayEquals(int[] expecteds, int[] actuals) {
         assertArrayEquals(null, expecteds, actuals);
@@ -433,13 +433,13 @@ public class Assert {
      * Asserts that two long arrays are equal. If they are not, an
      * {@link AssertionError} is thrown with the given message.
      *
-     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     * okay)
+     * @param message   the identifying message for the {@link AssertionError} (<code>null</code>
+     *                  okay)
      * @param expecteds long array with expected values.
-     * @param actuals long array with actual values
+     * @param actuals   long array with actual values
      */
     public static void assertArrayEquals(String message, long[] expecteds,
-            long[] actuals) throws ArrayComparisonFailure {
+                                         long[] actuals) throws ArrayComparisonFailure {
         internalArrayEquals(message, expecteds, actuals);
     }
 
@@ -448,7 +448,7 @@ public class Assert {
      * {@link AssertionError} is thrown.
      *
      * @param expecteds long array with expected values.
-     * @param actuals long array with actual values
+     * @param actuals   long array with actual values
      */
     public static void assertArrayEquals(long[] expecteds, long[] actuals) {
         assertArrayEquals(null, expecteds, actuals);
@@ -458,16 +458,16 @@ public class Assert {
      * Asserts that two double arrays are equal. If they are not, an
      * {@link AssertionError} is thrown with the given message.
      *
-     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     * okay)
+     * @param message   the identifying message for the {@link AssertionError} (<code>null</code>
+     *                  okay)
      * @param expecteds double array with expected values.
-     * @param actuals double array with actual values
-     * @param delta the maximum delta between <code>expecteds[i]</code> and
-     * <code>actuals[i]</code> for which both numbers are still
-     * considered equal.
+     * @param actuals   double array with actual values
+     * @param delta     the maximum delta between <code>expecteds[i]</code> and
+     *                  <code>actuals[i]</code> for which both numbers are still
+     *                  considered equal.
      */
     public static void assertArrayEquals(String message, double[] expecteds,
-            double[] actuals, double delta) throws ArrayComparisonFailure {
+                                         double[] actuals, double delta) throws ArrayComparisonFailure {
         new InexactComparisonCriteria(delta).arrayEquals(message, expecteds, actuals);
     }
 
@@ -476,10 +476,10 @@ public class Assert {
      * {@link AssertionError} is thrown.
      *
      * @param expecteds double array with expected values.
-     * @param actuals double array with actual values
-     * @param delta the maximum delta between <code>expecteds[i]</code> and
-     * <code>actuals[i]</code> for which both numbers are still
-     * considered equal.
+     * @param actuals   double array with actual values
+     * @param delta     the maximum delta between <code>expecteds[i]</code> and
+     *                  <code>actuals[i]</code> for which both numbers are still
+     *                  considered equal.
      */
     public static void assertArrayEquals(double[] expecteds, double[] actuals, double delta) {
         assertArrayEquals(null, expecteds, actuals, delta);
@@ -489,16 +489,16 @@ public class Assert {
      * Asserts that two float arrays are equal. If they are not, an
      * {@link AssertionError} is thrown with the given message.
      *
-     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     * okay)
+     * @param message   the identifying message for the {@link AssertionError} (<code>null</code>
+     *                  okay)
      * @param expecteds float array with expected values.
-     * @param actuals float array with actual values
-     * @param delta the maximum delta between <code>expecteds[i]</code> and
-     * <code>actuals[i]</code> for which both numbers are still
-     * considered equal.
+     * @param actuals   float array with actual values
+     * @param delta     the maximum delta between <code>expecteds[i]</code> and
+     *                  <code>actuals[i]</code> for which both numbers are still
+     *                  considered equal.
      */
     public static void assertArrayEquals(String message, float[] expecteds,
-            float[] actuals, float delta) throws ArrayComparisonFailure {
+                                         float[] actuals, float delta) throws ArrayComparisonFailure {
         new InexactComparisonCriteria(delta).arrayEquals(message, expecteds, actuals);
     }
 
@@ -507,10 +507,10 @@ public class Assert {
      * {@link AssertionError} is thrown.
      *
      * @param expecteds float array with expected values.
-     * @param actuals float array with actual values
-     * @param delta the maximum delta between <code>expecteds[i]</code> and
-     * <code>actuals[i]</code> for which both numbers are still
-     * considered equal.
+     * @param actuals   float array with actual values
+     * @param delta     the maximum delta between <code>expecteds[i]</code> and
+     *                  <code>actuals[i]</code> for which both numbers are still
+     *                  considered equal.
      */
     public static void assertArrayEquals(float[] expecteds, float[] actuals, float delta) {
         assertArrayEquals(null, expecteds, actuals, delta);
@@ -522,15 +522,15 @@ public class Assert {
      * <code>expecteds</code> and <code>actuals</code> are <code>null</code>,
      * they are considered equal.
      *
-     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     * okay)
+     * @param message   the identifying message for the {@link AssertionError} (<code>null</code>
+     *                  okay)
      * @param expecteds Object array or array of arrays (multi-dimensional array) with
-     * expected values.
-     * @param actuals Object array or array of arrays (multi-dimensional array) with
-     * actual values
+     *                  expected values.
+     * @param actuals   Object array or array of arrays (multi-dimensional array) with
+     *                  actual values
      */
     private static void internalArrayEquals(String message, Object expecteds,
-            Object actuals) throws ArrayComparisonFailure {
+                                            Object actuals) throws ArrayComparisonFailure {
         new ExactComparisonCriteria().arrayEquals(message, expecteds, actuals);
     }
 
@@ -541,16 +541,16 @@ public class Assert {
      * ignored. NaNs are considered equal:
      * <code>assertEquals(Double.NaN, Double.NaN, *)</code> passes
      *
-     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     * okay)
+     * @param message  the identifying message for the {@link AssertionError} (<code>null</code>
+     *                 okay)
      * @param expected expected value
-     * @param actual the value to check against <code>expected</code>
-     * @param delta the maximum delta between <code>expected</code> and
-     * <code>actual</code> for which both numbers are still
-     * considered equal.
+     * @param actual   the value to check against <code>expected</code>
+     * @param delta    the maximum delta between <code>expected</code> and
+     *                 <code>actual</code> for which both numbers are still
+     *                 considered equal.
      */
     public static void assertEquals(String message, double expected,
-            double actual, double delta) {
+                                    double actual, double delta) {
         if (doubleIsDifferent(expected, actual, delta)) {
             failNotEquals(message, Double.valueOf(expected), Double.valueOf(actual));
         }
@@ -563,16 +563,16 @@ public class Assert {
      * ignored. NaNs are considered equal:
      * <code>assertEquals(Float.NaN, Float.NaN, *)</code> passes
      *
-     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     * okay)
+     * @param message  the identifying message for the {@link AssertionError} (<code>null</code>
+     *                 okay)
      * @param expected expected value
-     * @param actual the value to check against <code>expected</code>
-     * @param delta the maximum delta between <code>expected</code> and
-     * <code>actual</code> for which both numbers are still
-     * considered equal.
+     * @param actual   the value to check against <code>expected</code>
+     * @param delta    the maximum delta between <code>expected</code> and
+     *                 <code>actual</code> for which both numbers are still
+     *                 considered equal.
      */
     public static void assertEquals(String message, float expected,
-            float actual, float delta) {
+                                    float actual, float delta) {
         if (floatIsDifferent(expected, actual, delta)) {
             failNotEquals(message, Float.valueOf(expected), Float.valueOf(actual));
         }
@@ -585,16 +585,16 @@ public class Assert {
      * ignored. NaNs are considered equal:
      * <code>assertNotEquals(Float.NaN, Float.NaN, *)</code> fails
      *
-     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     * okay)
+     * @param message    the identifying message for the {@link AssertionError} (<code>null</code>
+     *                   okay)
      * @param unexpected unexpected value
-     * @param actual the value to check against <code>unexpected</code>
-     * @param delta the maximum delta between <code>unexpected</code> and
-     * <code>actual</code> for which both numbers are still
-     * considered equal.
+     * @param actual     the value to check against <code>unexpected</code>
+     * @param delta      the maximum delta between <code>unexpected</code> and
+     *                   <code>actual</code> for which both numbers are still
+     *                   considered equal.
      */
     public static void assertNotEquals(String message, float unexpected,
-            float actual, float delta) {
+                                       float actual, float delta) {
         if (!floatIsDifferent(unexpected, actual, delta)) {
             failEquals(message, Float.valueOf(actual));
         }
@@ -627,7 +627,7 @@ public class Assert {
      * {@link AssertionError} is thrown.
      *
      * @param expected expected long value.
-     * @param actual actual long value
+     * @param actual   actual long value
      */
     public static void assertEquals(long expected, long actual) {
         assertEquals(null, expected, actual);
@@ -637,10 +637,10 @@ public class Assert {
      * Asserts that two longs are equal. If they are not, an
      * {@link AssertionError} is thrown with the given message.
      *
-     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     * okay)
+     * @param message  the identifying message for the {@link AssertionError} (<code>null</code>
+     *                 okay)
      * @param expected long expected value.
-     * @param actual long actual value
+     * @param actual   long actual value
      */
     public static void assertEquals(String message, long expected, long actual) {
         if (expected != actual) {
@@ -650,8 +650,8 @@ public class Assert {
 
     /**
      * @deprecated Use
-     *             <code>assertEquals(double expected, double actual, double delta)</code>
-     *             instead
+     * <code>assertEquals(double expected, double actual, double delta)</code>
+     * instead
      */
     @Deprecated
     public static void assertEquals(double expected, double actual) {
@@ -660,12 +660,12 @@ public class Assert {
 
     /**
      * @deprecated Use
-     *             <code>assertEquals(String message, double expected, double actual, double delta)</code>
-     *             instead
+     * <code>assertEquals(String message, double expected, double actual, double delta)</code>
+     * instead
      */
     @Deprecated
     public static void assertEquals(String message, double expected,
-            double actual) {
+                                    double actual) {
         fail("Use assertEquals(expected, actual, delta) to compare floating-point numbers");
     }
 
@@ -676,10 +676,10 @@ public class Assert {
      * equal: <code>assertEquals(Double.NaN, Double.NaN, *)</code> passes
      *
      * @param expected expected value
-     * @param actual the value to check against <code>expected</code>
-     * @param delta the maximum delta between <code>expected</code> and
-     * <code>actual</code> for which both numbers are still
-     * considered equal.
+     * @param actual   the value to check against <code>expected</code>
+     * @param delta    the maximum delta between <code>expected</code> and
+     *                 <code>actual</code> for which both numbers are still
+     *                 considered equal.
      */
     public static void assertEquals(double expected, double actual, double delta) {
         assertEquals(null, expected, actual, delta);
@@ -692,10 +692,10 @@ public class Assert {
      * equal: <code>assertEquals(Float.NaN, Float.NaN, *)</code> passes
      *
      * @param expected expected value
-     * @param actual the value to check against <code>expected</code>
-     * @param delta the maximum delta between <code>expected</code> and
-     * <code>actual</code> for which both numbers are still
-     * considered equal.
+     * @param actual   the value to check against <code>expected</code>
+     * @param delta    the maximum delta between <code>expected</code> and
+     *                 <code>actual</code> for which both numbers are still
+     *                 considered equal.
      */
     public static void assertEquals(float expected, float actual, float delta) {
         assertEquals(null, expected, actual, delta);
@@ -706,8 +706,8 @@ public class Assert {
      * thrown with the given message.
      *
      * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     * okay)
-     * @param object Object to check or <code>null</code>
+     *                okay)
+     * @param object  Object to check or <code>null</code>
      */
     public static void assertNotNull(String message, Object object) {
         assertTrue(message, object != null);
@@ -728,8 +728,8 @@ public class Assert {
      * is thrown with the given message.
      *
      * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     * okay)
-     * @param object Object to check or <code>null</code>
+     *                okay)
+     * @param object  Object to check or <code>null</code>
      */
     public static void assertNull(String message, Object object) {
         if (object == null) {
@@ -760,10 +760,10 @@ public class Assert {
      * Asserts that two objects refer to the same object. If they are not, an
      * {@link AssertionError} is thrown with the given message.
      *
-     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     * okay)
+     * @param message  the identifying message for the {@link AssertionError} (<code>null</code>
+     *                 okay)
      * @param expected the expected object
-     * @param actual the object to compare to <code>expected</code>
+     * @param actual   the object to compare to <code>expected</code>
      */
     public static void assertSame(String message, Object expected, Object actual) {
         if (expected == actual) {
@@ -777,7 +777,7 @@ public class Assert {
      * same, an {@link AssertionError} without a message is thrown.
      *
      * @param expected the expected object
-     * @param actual the object to compare to <code>expected</code>
+     * @param actual   the object to compare to <code>expected</code>
      */
     public static void assertSame(Object expected, Object actual) {
         assertSame(null, expected, actual);
@@ -788,13 +788,13 @@ public class Assert {
      * refer to the same object, an {@link AssertionError} is thrown with the
      * given message.
      *
-     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     * okay)
+     * @param message    the identifying message for the {@link AssertionError} (<code>null</code>
+     *                   okay)
      * @param unexpected the object you don't expect
-     * @param actual the object to compare to <code>unexpected</code>
+     * @param actual     the object to compare to <code>unexpected</code>
      */
     public static void assertNotSame(String message, Object unexpected,
-            Object actual) {
+                                     Object actual) {
         if (unexpected == actual) {
             failSame(message);
         }
@@ -806,7 +806,7 @@ public class Assert {
      * thrown.
      *
      * @param unexpected the object you don't expect
-     * @param actual the object to compare to <code>unexpected</code>
+     * @param actual     the object to compare to <code>unexpected</code>
      */
     public static void assertNotSame(Object unexpected, Object actual) {
         assertNotSame(null, unexpected, actual);
@@ -821,7 +821,7 @@ public class Assert {
     }
 
     private static void failNotSame(String message, Object expected,
-            Object actual) {
+                                    Object actual) {
         String formatted = "";
         if (message != null) {
             formatted = message + " ";
@@ -831,7 +831,7 @@ public class Assert {
     }
 
     private static void failNotEquals(String message, Object expected,
-            Object actual) {
+                                      Object actual) {
         fail(format(message, expected, actual));
     }
 
@@ -842,13 +842,20 @@ public class Assert {
         }
         String expectedString = String.valueOf(expected);
         String actualString = String.valueOf(actual);
-        if (equalsRegardingNull(expectedString, actualString)) {
-            return formatted + "expected: "
-                    + formatClassAndValue(expected, expectedString)
+        //adding new boolean variable
+        boolean valuesAreEqual = equalsRegardingNull(expectedString, actualString);
+        if (valuesAreEqual) {
+//            return formatted + "expected: "
+//                    + formatClassAndValue(expected, expectedString)
+//                    + " but was: " + formatClassAndValue(actual, actualString);
+            String expectedAndActual = "expected: " + formatClassAndValue(expected, expectedString)
                     + " but was: " + formatClassAndValue(actual, actualString);
+            return formatted + expectedAndActual;
         } else {
-            return formatted + "expected:<" + expectedString + "> but was:<"
-                    + actualString + ">";
+//            return formatted + "expected:<" + expectedString + "> but was:<"
+//                    + actualString + ">";
+            String expectedAndActual = "expected:<" + expectedString + "> but was:<" + actualString + ">";
+            return formatted + expectedAndActual;
         }
     }
 
@@ -868,17 +875,17 @@ public class Assert {
      * <code>expecteds</code> and <code>actuals</code> are <code>null</code>,
      * they are considered equal.
      *
-     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     * okay)
+     * @param message   the identifying message for the {@link AssertionError} (<code>null</code>
+     *                  okay)
      * @param expecteds Object array or array of arrays (multi-dimensional array) with
-     * expected values.
-     * @param actuals Object array or array of arrays (multi-dimensional array) with
-     * actual values
+     *                  expected values.
+     * @param actuals   Object array or array of arrays (multi-dimensional array) with
+     *                  actual values
      * @deprecated use assertArrayEquals
      */
     @Deprecated
     public static void assertEquals(String message, Object[] expecteds,
-            Object[] actuals) {
+                                    Object[] actuals) {
         assertArrayEquals(message, expecteds, actuals);
     }
 
@@ -889,9 +896,9 @@ public class Assert {
      * equal.
      *
      * @param expecteds Object array or array of arrays (multi-dimensional array) with
-     * expected values
-     * @param actuals Object array or array of arrays (multi-dimensional array) with
-     * actual values
+     *                  expected values
+     * @param actuals   Object array or array of arrays (multi-dimensional array) with
+     *                  actual values
      * @deprecated use assertArrayEquals
      */
     @Deprecated
@@ -917,11 +924,11 @@ public class Assert {
      * typed as <code>Matcher&lt;T&gt;</code> can be meaningfully applied only
      * to values that could be assigned to a variable of type <code>T</code>.
      *
-     * @param <T> the static type accepted by the matcher (this can flag obvious
-     * compile-time problems such as {@code assertThat(1, is("a"))}
-     * @param actual the computed value being compared
+     * @param <T>     the static type accepted by the matcher (this can flag obvious
+     *                compile-time problems such as {@code assertThat(1, is("a"))}
+     * @param actual  the computed value being compared
      * @param matcher an expression, built of {@link Matcher}s, specifying allowed
-     * values
+     *                values
      * @see org.hamcrest.CoreMatchers
      * @deprecated use {@code org.hamcrest.MatcherAssert.assertThat()}
      */
@@ -949,18 +956,18 @@ public class Assert {
      * typed as <code>Matcher&lt;T&gt;</code> can be meaningfully applied only
      * to values that could be assigned to a variable of type <code>T</code>.
      *
-     * @param reason additional information about the error
-     * @param <T> the static type accepted by the matcher (this can flag obvious
-     * compile-time problems such as {@code assertThat(1, is("a"))}
-     * @param actual the computed value being compared
+     * @param reason  additional information about the error
+     * @param <T>     the static type accepted by the matcher (this can flag obvious
+     *                compile-time problems such as {@code assertThat(1, is("a"))}
+     * @param actual  the computed value being compared
      * @param matcher an expression, built of {@link Matcher}s, specifying allowed
-     * values
+     *                values
      * @see org.hamcrest.CoreMatchers
      * @deprecated use {@code org.hamcrest.MatcherAssert.assertThat()}
      */
     @Deprecated
     public static <T> void assertThat(String reason, T actual,
-            Matcher<? super T> matcher) {
+                                      Matcher<? super T> matcher) {
         MatcherAssert.assertThat(reason, actual, matcher);
     }
 
@@ -972,12 +979,12 @@ public class Assert {
      * be obtained by calling {@link AssertionError#getCause}.
      *
      * @param expectedThrowable the expected type of the exception
-     * @param runnable       a function that is expected to throw an exception when executed
+     * @param runnable          a function that is expected to throw an exception when executed
      * @return the exception thrown by {@code runnable}
      * @since 4.13
      */
     public static <T extends Throwable> T assertThrows(Class<T> expectedThrowable,
-            ThrowingRunnable runnable) {
+                                                       ThrowingRunnable runnable) {
         return assertThrows(null, expectedThrowable, runnable);
     }
 
@@ -988,15 +995,15 @@ public class Assert {
      * AssertionError} is thrown describing the mismatch; the exception that was actually thrown can
      * be obtained by calling {@link AssertionError#getCause}.
      *
-     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     * okay)
+     * @param message           the identifying message for the {@link AssertionError} (<code>null</code>
+     *                          okay)
      * @param expectedThrowable the expected type of the exception
-     * @param runnable a function that is expected to throw an exception when executed
+     * @param runnable          a function that is expected to throw an exception when executed
      * @return the exception thrown by {@code runnable}
      * @since 4.13
      */
     public static <T extends Throwable> T assertThrows(String message, Class<T> expectedThrowable,
-            ThrowingRunnable runnable) {
+                                                       ThrowingRunnable runnable) {
         try {
             runnable.run();
         } catch (Throwable actualThrown) {
