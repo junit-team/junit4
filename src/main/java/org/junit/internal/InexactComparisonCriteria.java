@@ -21,4 +21,10 @@ public class InexactComparisonCriteria extends ComparisonCriteria {
             Assert.assertEquals((Float) expected, (Float) actual, (Float) fDelta);
         }
     }
+//push down to sub class
+    public boolean isArray(Object expected) {
+        Class<?> clazz = expected != null ? expected.getClass() : null;
+        return clazz != null && clazz.getComponentType() != null;
+    }
+
 }
