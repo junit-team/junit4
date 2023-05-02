@@ -208,9 +208,9 @@ public class TemporaryFolderUsageTest {
     public void newRandomFileIsCreatedUnderRootFolder() throws IOException {
         tempFolder.create();
 
-        File f = tempFolder.newFile();
-        assertFileExists(f);
-        assertFileCreatedUnderRootFolder("Random file", f);
+        File file = tempFolder.newFile();
+        assertFileExists(file);
+        assertFileCreatedUnderRootFolder("Random file", file);
     }
 
     @Test
@@ -218,33 +218,33 @@ public class TemporaryFolderUsageTest {
         final String fileName = "SampleFile.txt";
         tempFolder.create();
 
-        File f = tempFolder.newFile(fileName);
+        File file = tempFolder.newFile(fileName);
 
-        assertFileExists(f);
-        assertFileCreatedUnderRootFolder("Named file", f);
-        assertThat("file name", f.getName(), equalTo(fileName));
+        assertFileExists(file);
+        assertFileCreatedUnderRootFolder("Named file", file);
+        assertThat("file name", file.getName(), equalTo(fileName));
     }
 
     @Test
     public void newRandomFolderIsCreatedUnderRootFolder() throws IOException {
         tempFolder.create();
 
-        File f = tempFolder.newFolder();
-        assertFileIsDirectory(f);
-        assertFileCreatedUnderRootFolder("Random folder", f);
+        File file = tempFolder.newFolder();
+        assertFileIsDirectory(file);
+        assertFileCreatedUnderRootFolder("Random folder", file);
     }
 
     @Test
     public void newNestedFoldersCreatedUnderRootFolder() throws IOException {
         tempFolder.create();
 
-        File f = tempFolder.newFolder("top", "middle", "bottom");
-        assertFileIsDirectory(f);
-        assertParentFolderForFileIs(f, new File(tempFolder.getRoot(),
+        File file = tempFolder.newFolder("top", "middle", "bottom");
+        assertFileIsDirectory(file);
+        assertParentFolderForFileIs(file, new File(tempFolder.getRoot(),
                 "top/middle"));
-        assertParentFolderForFileIs(f.getParentFile(),
+        assertParentFolderForFileIs(file.getParentFile(),
                 new File(tempFolder.getRoot(), "top"));
-        assertFileCreatedUnderRootFolder("top", f.getParentFile()
+        assertFileCreatedUnderRootFolder("top", file.getParentFile()
                 .getParentFile());
     }
 
@@ -269,15 +269,15 @@ public class TemporaryFolderUsageTest {
         checkFileExists("exists", file, false);
     }
 
-    private void checkFileExists(String msg, File file, boolean exists) {
+    private void checkFileExists(String message, File file, boolean exists) {
         assertThat("File is null", file, is(notNullValue()));
-        assertThat("File '" + file.getAbsolutePath() + "' " + msg,
+        assertThat("File '" + file.getAbsolutePath() + "' " + message,
                 file.exists(), is(exists));
     }
 
-    private void checkFileIsDirectory(String msg, File file, boolean isDirectory) {
+    private void checkFileIsDirectory(String message, File file, boolean isDirectory) {
         assertThat("File is null", file, is(notNullValue()));
-        assertThat("File '" + file.getAbsolutePath() + "' " + msg,
+        assertThat("File '" + file.getAbsolutePath() + "' " + message,
                 file.isDirectory(), is(isDirectory));
     }
 
@@ -291,12 +291,12 @@ public class TemporaryFolderUsageTest {
         checkFileIsDirectory("is not a directory", file, true);
     }
 
-    private void assertFileCreatedUnderRootFolder(String msg, File f) {
-        assertParentFolderForFileIs(f, tempFolder.getRoot());
+    private void assertFileCreatedUnderRootFolder(String message, File file) {
+        assertParentFolderForFileIs(file, tempFolder.getRoot());
     }
 
-    private void assertParentFolderForFileIs(File f, File parentFolder) {
-        assertThat("'" + f.getAbsolutePath() + "': not under root",
-                f.getParentFile(), is(parentFolder));
+    private void assertParentFolderForFileIs(File file, File parentFolder) {
+        assertThat("'" + file.getAbsolutePath() + "': not under root",
+                file.getParentFile(), is(parentFolder));
     }
 }
