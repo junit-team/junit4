@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertContentEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotSame;
@@ -982,6 +983,90 @@ public class AssertionTest {
             return;
         }
         throw new AssertionError(ASSERTION_ERROR_EXPECTED);
+    }
+
+    @Test
+    public void assertContentEqualsPass() throws Exception {
+        String expected = "StringValue";
+        CharSequence charSequence = new String("StringValue");
+        assertContentEquals(expected, charSequence);
+    }
+
+    @Test
+    public void assertContentEqualsPassBothNull() throws Exception {
+        String expected = null;
+        CharSequence charSequence = null;
+        assertContentEquals(expected, charSequence);
+    }
+
+    @Test
+    public void assertContentsActualNull() {
+        String expected = "StringValue";
+        CharSequence charSequence = null;
+        try {
+            assertContentEquals(expected, charSequence);
+        } catch (AssertionError exception) {
+            String expectedException = "expected:<StringValue> but was:<null>";
+            assertEquals(expectedException, exception.getMessage());
+            return;
+        }
+        fail("Expected an AssertionError");
+    }
+
+    @Test
+    public void assertContentsExpectedNull() {
+        String expected = null;
+        CharSequence charSequence = new String("StringValue");
+        try {
+            assertContentEquals(expected, charSequence);
+        } catch (AssertionError exception) {
+            String expectedException = "expected:<null> but was:<StringValue>";
+            assertEquals(expectedException, exception.getMessage());
+            return;
+        }
+        fail("Expected an AssertionError");
+    }
+
+    @Test
+    public void assertContentEqualsNotEqualButSameLength() {
+        String expected = "StringValue";
+        CharSequence charSequence = new String("NotTheSame!");
+        try {
+            assertContentEquals(expected, charSequence);
+        } catch (AssertionError exception) {
+            String expectedException = "expected:<[StringValue]> but was:<[NotTheSame!]>";
+            assertEquals(expectedException, exception.getMessage());
+            return;
+        }
+        fail("Expected an AssertionError");
+    }
+
+    @Test
+    public void assertContentEqualsNotEqualDifferentLength() {
+        String expected = "StringValue";
+        CharSequence charSequence = new String("NotTheSame");
+        try {
+            assertContentEquals(expected, charSequence);
+        } catch (AssertionError exception) {
+            String expectedException = "expected:<[StringValu]e> but was:<[NotTheSam]e>";
+            assertEquals(expectedException, exception.getMessage());
+            return;
+        }
+        fail("Expected an AssertionError");
+    }
+
+    @Test
+    public void assertContentEqualsPassCustomMessage() throws Exception {
+        String expected = "StringValue";
+        CharSequence charSequence = new String("StringValue");
+        assertContentEquals("My Message", expected, charSequence);
+    }
+
+    @Test
+    public void assertContentEqualsPassBothNullCustomMessage() throws Exception {
+        String expected = null;
+        CharSequence charSequence = null;
+        assertContentEquals("My Message", expected, charSequence);
     }
 
     private static class NestedException extends RuntimeException {
