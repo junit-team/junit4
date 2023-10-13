@@ -6,7 +6,7 @@ import static org.junit.Assert.assertArrayEquals;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.junit.FixMethodOrder;
@@ -146,9 +146,24 @@ public class MethodSorterTest {
 
     @Test
     public void testJvmMethodSorter() {
-        // Method[] fromJvmWithSynthetics = DummySortJvm.class.getDeclaredMethods();
+        Method[] fromJvmWithSynthetics = DummySortJvm.class.getDeclaredMethods();
         Method[] sorted = MethodSorter.getDeclaredMethods(DummySortJvm.class);
-        assertArrayEquals(sorted, sorted);
+
+        Comparator<Method> methodComparator = new Comparator<Method>() {
+            @Override
+            public int compare(Method m1, Method m2) {
+                int nameComparison = m1.getName().compareTo(m2.getName());
+                if (nameComparison != 0) {
+                    return nameComparison;
+                }
+                return m1.toString().compareTo(m2.toString());
+            }
+        };
+        
+        Arrays.sort(fromJvmWithSynthetics, methodComparator);
+        Arrays.sort(sorted, methodComparator);
+        
+        assertArrayEquals(fromJvmWithSynthetics, sorted);
     }
 
     @FixMethodOrder(MethodSorters.NAME_ASCENDING)
