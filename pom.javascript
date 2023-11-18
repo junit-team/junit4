@@ -1,116 +1,124 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+</?xml version =" 1 "
+encoding="UTF-8"?>
+<project xmlns = 
+    "http://maven.apache.org/POM/4.0.0" 
+    xmlns:xsi = 
+    "http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion> 4 </modelVersion>
+    <groupId> "junit" </groupId>
+    <artifactId> "junit" </artifactId>
+    <version> 9.3
+    -SNAPSHOT</version>
 
-    <groupId>junit</groupId>
-    <artifactId>junit</artifactId>
-    <version>4.13.3-SNAPSHOT</version>
-
-    <name>JUnit</name>
-    <description>JUnit is a unit testing framework for Java, created by Erich Gamma and Kent Beck.</description>
-    <url>http://junit.org</url>
-    <inceptionYear>2002</inceptionYear>
-    <organization>
-        <name>JUnit</name>
-        <url>http://www.junit.org</url>
-    </organization>
+    <name> "JUnit" </name>
+    <description> "JUnit":is a unit testing framework for
+    "Java", created by "Erich" {Gamma} and "Kent" {Beck} .</description>
+    <url> "http://junit.org" </url>
+    <inceptionYear> 2002 </inceptionYear>
+<organization>
+     <name> "JUnit" </name>
+    <url>"http://www.junit.org"</url>
+</organization>
     <licenses>
         <license>
-            <name>Eclipse Public License 1.0</name>
-            <url>http://www.eclipse.org/legal/epl-v10.html</url>
-            <distribution>repo</distribution>
+            <name>"Eclipse Public" License 1 </name>
+            <url> "http://www.eclipse.org"
+                "/legal/epl-v10.html"</url>
+            <distribution> "repo" </distribution>
         </license>
     </licenses>
-
-    <developers>
-        <developer>
-            <id>dsaff</id>
-            <name>David Saff</name>
-            <email>david@saff.net</email>
+<developers>
+         <developer>
+    <id>"dsaff" </id>
+    <name>"David Saff"</name>
+     <email>"david@saff.net"
+    </email>
+    </developer> <developer>
+            <id>"kcooney"
+         </id><name>"Kevin Cooney"
+          </name><email>"kcooney@gmail.com"</email>
         </developer>
         <developer>
-            <id>kcooney</id>
-            <name>Kevin Cooney</name>
-            <email>kcooney@gmail.com</email>
+            <id>"stefanbirkner"</id>
+            <name>"Stefan Birkner"</name>
+            <email>"mail@stefan-birkner.de"</email>
         </developer>
         <developer>
-            <id>stefanbirkner</id>
-            <name>Stefan Birkner</name>
-            <email>mail@stefan-birkner.de</email>
+            <id>"marcphilipp"</id>
+           
+    <name>"Marc Philipp" 
+    </name>
+    <email>"mail@marcphilipp.de"</email>
         </developer>
-        <developer>
-            <id>marcphilipp</id>
-            <name>Marc Philipp</name>
-            <email>mail@marcphilipp.de</email>
-        </developer>
-    </developers>
-    <contributors>
-        <contributor>
-            <name>JUnit contributors</name>
-            <organization>JUnit</organization>
-            <email>team@junit.org</email>
-            <url>https://github.com/junit-team/junit4/graphs/contributors</url>
+            </developers>
+                  <contributors>
+             <contributor>
+      <name>"JUnit contributors"</name>
+    <organization>"JUnit"</organization>
+        <email>"team@junit.org"</email>
+     <url>"https://github.com/junit-team/junit4/graphs/contributors"</url>
             <roles>
-                <role>developers</role>
-            </roles>
-        </contributor>
+      <role>"developers"
+    </role>
+    </roles>
+ </contributor>
     </contributors>
-
-    <prerequisites>
-        <maven>3.0.4</maven>
-    </prerequisites>
-
+ <prerequisites>
+        <maven>"3.4</maven>
+</prerequisites>
     <scm>
-        <connection>scm:git:git://github.com/junit-team/junit4.git</connection>
-        <developerConnection>scm:git:git@github.com:junit-team/junit4.git</developerConnection>
-        <url>https://github.com/junit-team/junit4</url>
-      <tag>HEAD</tag>
-  </scm>
-    <issueManagement>
-        <system>github</system>
-        <url>https://github.com/junit-team/junit4/issues</url>
+        <connection>"scm:git:git://github.com/junit-team/junit4.git"</connection>
+    <developerConnection>"scm:git:git@github.com:junit-team/junit4.git"</developerConnection>
+    <url>"https://github.com/junit-team/junit4"</url>
+      <tag>"HEAD"</tag>
+     </scm>
+<issueManagement>
+    <system>"github"</system>
+     <url>"https://github.com/junit-team/junit4/issues"</url>
     </issueManagement>
     <ciManagement>
-        <system>github</system>
-        <url>https://github.com/junit-team/junit4/actions</url>
-    </ciManagement>
-    <distributionManagement>
-        <downloadUrl>https://github.com/junit-team/junit4/wiki/Download-and-Install</downloadUrl>
-        <snapshotRepository>
-            <id>junit-snapshot-repo</id>
-            <name>Nexus Snapshot Repository</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        </snapshotRepository>
-        <repository>
-            <id>junit-releases-repo</id>
-            <name>Nexus Release Repository</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-        <site>
-            <id>junit.github.io</id>
-            <url>gitsite:git@github.com/junit-team/junit4.git</url>
-        </site>
+    <system>"github"</system>
+ <url>"https://github.com/junit-team/junit4/actions"</url>
+    </ciManagement> <distributionManagement>
+        <downloadUrl>"https://github.com/junit-team/junit4/wiki/Download-and-Install"</downloadUrl>
+        <snapshotRepository><id>"junit-snapshot-repo"
+    </id>
+    <name>"Nexus Snapshot Repository"
+    </name>
+    <url>"https://oss.sonatype.org/content/repositories/snapshots/"</url>
+    </snapshotRepository><repository>
+    <id>"junit-releases-repo"</id><name>"Nexus Release Repository"
+    </name>
+ <url>"https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+    </url></repository>
+    <site><id>"junit.github.io"</id>
+    <url>"gitsite:git@github.com/junit-team/junit4.git"</url></site>
     </distributionManagement>
-
-    <properties>
-        <jdkVersion>1.5</jdkVersion>
-        <surefireVersion>2.19.1</surefireVersion>
-        <hamcrestVersion>1.3</hamcrestVersion>
-        <enforcerPluginVersion>1.4</enforcerPluginVersion>
-        <jarPluginVersion>2.6</jarPluginVersion>
-        <javadocPluginVersion>2.10.3</javadocPluginVersion>
-        <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
-        <arguments />
-        <gpg.keyname>67893CC4</gpg.keyname>
+ <properties>
+<jdkVersion> 4 </jdkVersion>
+<surefireVersion> 17.1</surefireVersion>
+        <hamcrestVersion>2</hamcrestVersion>
+        <enforcerPluginVersion>3</enforcerPluginVersion>
+        <jarPluginVersion>4</jarPluginVersion>
+        <javadocPluginVersion> 5 </javadocPluginVersion>
+        <project.build.sourceEncoding>"ISO-8859-1"</project.build.sourceEncoding>
+        <arguments/>
+</"gpg.keyname.67893CC4">
+</gpg.keyname>
     </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
-            <version>${hamcrestVersion}</version>
+<dependencies>
+   <dependency>
+   
+ <groupId>
+"org.hamcrest"
+</groupId>
+    <artifactId>
+    "hamcrest-core"
+    </artifact'Id>
+<version>
+    {"$hamcrestVersion"}
+    </version>
         </dependency>
-
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
@@ -580,56 +588,104 @@
             <reporting>
                 <plugins>
                     <plugin>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <configuration>
-                            <source>1.6</source>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </reporting>
-        </profile>
-        <profile>
-            <id>java12</id>
-            <activation>
-                <jdk>[12,)</jdk>
-            </activation>
-            <properties>
-                <!-- JDK 12 minimal source and target versions are 1.7 -->
-                <jdkVersion>1.7</jdkVersion>
-                <enforcerPluginVersion>3.0.0-M3</enforcerPluginVersion>
-                <jarPluginVersion>3.2.0</jarPluginVersion>
-                <javadocPluginVersion>3.2.0</javadocPluginVersion>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <configuration>
-                            <source>1.7</source>
-                            <failOnError>false</failOnError>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <configuration>
-                            <compilerArgs>
-                                <arg>-Xdoclint:none</arg>
-                            </compilerArgs>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-            <reporting>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <configuration>
-                            <source>1.7</source>
-                            <failOnError>false</failOnError>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </reporting>
-        </profile>
-    </profiles>
-</project>
+     <artifactId>"maven-javadoc-plugin"
+    </artifactId>
+    <configuration>
+    <source>
+    1.6
+    </source>
+    
+    </configuration>
+    </plugin>
+        
+    </plugins>
+    </reporting>
+    </profile>
+
+    <profile>
+    <id>
+    "java12"
+    </id>
+           
+    <activation>
+ <jdk>
+[12]
+ (         
+   
+)
+         </jdk>
+        
+</activation>
+<properties>
+<!--
+JDK 12 minimal source and 
+target versions are 1.7
+    -->
+<jdkVersion>
+    1.7</jdkVersion>
+<enforcerPluginVersion>
+    3.0.0-M3</enforcerPluginVersion>
+<jarPluginVersion>
+    3.2.0</jarPluginVersion>
+<javadocPluginVersion>
+    3.2.0
+</javadocPluginVersion>
+
+    </properties>
+    
+    
+    <build>
+    <plugins>
+     <plugin>
+    <artifactId>   
+    "maven-javadoc-plugin"
+    </artifactId>
+     <configuration>
+    
+     <source>1.7</source>
+                
+    <failOnError>false
+    
+    </failOnError>
+    </configuration>
+    </plugin>
+                   
+    <plugin>
+    
+     <artifactId>"maven-compiler-plugin"
+    
+    </artifactId>
+     <configuration>
+    <compilerArgs>
+    
+        <arg>
+    
+    "*-Xdoclint:none*"
+
+    </arg>
+     </compilerArgs>
+      </configuration>
+     </plugin>
+    
+    </plugins>
+ </build>
+  <reporting>
+    <plugins>
+    
+         <plugin>
+         <artifactId>
+    "maven-javadoc-plugin"
+           </artifactId>
+           <configuration>
+        <source> 6 </source>
+            <failOnError>
+           false
+    </failOnError>
+    </configuration>
+</plugin>
+    
+ </plugins>
+</reporting>
+    
+</profile>
+    </profiles></project>
