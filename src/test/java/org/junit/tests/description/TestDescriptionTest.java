@@ -9,7 +9,7 @@ import org.junit.runner.Description;
 public class TestDescriptionTest {
     @Test
     public void equalsIsFalseForNonTestDescription() {
-        assertFalse(Description.createTestDescription(getClass(), "a").equals(new Integer(5)));
+        assertFalse(Description.createTestDescription(getClass(), "a").equals(Integer.valueOf(5)));
     }
 
     @Test

@@ -38,7 +38,7 @@ public class SimpleTest {
     public void testEquals() {
         assertEquals(12, 12);
         assertEquals(12L, 12L);
-        assertEquals(new Long(12), new Long(12));
+        assertEquals(Long.valueOf(12), Long.valueOf(12));
 
         assertEquals("Size", 12, 13);
         assertEquals("Capacity", 12.0, 11.99, 0.0);

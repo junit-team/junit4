@@ -140,7 +140,7 @@ public class AssertTest extends TestCase {
         Object o = new Object();
         assertSame(o, o);
         try {
-            assertSame(new Integer(1), new Integer(1));
+            assertSame(new MyInt(1), new MyInt(1));
         } catch (AssertionFailedError e) {
             return;
         }
@@ -148,11 +148,11 @@ public class AssertTest extends TestCase {
     }
 
     public void testAssertNotSame() {
-        assertNotSame(new Integer(1), null);
-        assertNotSame(null, new Integer(1));
-        assertNotSame(new Integer(1), new Integer(1));
+        assertNotSame(new MyInt(1), null);
+        assertNotSame(null, new MyInt(1));
+        assertNotSame(new MyInt(1), new MyInt(1));
         try {
-            Integer obj = new Integer(1);
+            MyInt obj = new MyInt(1);
             assertNotSame(obj, obj);
         } catch (AssertionFailedError e) {
             return;
@@ -167,5 +167,28 @@ public class AssertTest extends TestCase {
             return;
         }
         fail();
+    }
+
+    private static final class MyInt {
+        private final int value;
+
+        MyInt(int value) {
+            this.value = value;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof MyInt && value == ((MyInt) obj).value;
+        }
+
+        @Override
+        public int hashCode() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return Integer.toString(value);
+        }
     }
 }
