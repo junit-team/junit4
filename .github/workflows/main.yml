@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: ['6', '8', '11', '17', '18']
+        java: ['6', '8', '11', '21']
     steps:
       - uses: actions/checkout@v2
       - name: Download Maven # Download with default JDK because OpenJDK 6 does not support TLS 1.2
