@@ -307,11 +307,20 @@ public class Categories extends Suite {
 
     public Categories(Class<?> klass, RunnerBuilder builder) throws InitializationError {
         super(klass, builder);
+        initialize(klass);
+    }
+
+    protected Categories(RunnerBuilder builder, Class<?> klass, Class<?>[] suiteClasses) throws InitializationError {
+        super(builder, klass, suiteClasses);
+        initialize(klass);
+    }
+
+    private void initialize(Class<?> klass) throws InitializationError {
         try {
-            Set<Class<?>> included= getIncludedCategory(klass);
-            Set<Class<?>> excluded= getExcludedCategory(klass);
-            boolean isAnyIncluded= isAnyIncluded(klass);
-            boolean isAnyExcluded= isAnyExcluded(klass);
+            Set<Class<?>> included = getIncludedCategory(klass);
+            Set<Class<?>> excluded = getExcludedCategory(klass);
+            boolean isAnyIncluded = isAnyIncluded(klass);
+            boolean isAnyExcluded = isAnyExcluded(klass);
 
             filter(CategoryFilter.categoryFilter(isAnyIncluded, included, isAnyExcluded, excluded));
         } catch (NoTestsRemainException e) {
