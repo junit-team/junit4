@@ -102,6 +102,7 @@
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
         <arguments />
         <gpg.keyname>67893CC4</gpg.keyname>
+        <checkstyle.config.location>google_checks.xml</checkstyle.config.location>
     </properties>
 
     <dependencies>
@@ -379,6 +380,31 @@
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.7</version>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.17</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <violationSeverity>error</violationSeverity> <!-- change to 'warning' to enforce strictly -->
+                    <violationIgnore>indentation</violationIgnore>
+                </configuration>
+            </plugin>
+            <plugin>
+                <!--
+                To apply: mvn googleformatter:format
+                To repair indentation (BSD/Mac sed): git status -s | sed -En 's/^ M (src.*\.java)$/\1/p' | xargs sed -Ei '' 's/^( *)/\1\1/'
+                -->
+                <groupId>com.theoryinpractise</groupId>
+                <artifactId>googleformatter-maven-plugin</artifactId>
+                <version>1.0.6</version>
+            </plugin>
         </plugins>
     </build>
 
@@ -451,6 +477,11 @@
                         </reports>
                     </reportSet>
                 </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.17</version>
             </plugin>
         </plugins>
     </reporting>
