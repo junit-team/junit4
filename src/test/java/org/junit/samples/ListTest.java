@@ -85,7 +85,7 @@ public class ListTest {
 
     @Test
     public void removeElement() {
-        fFull.remove(new Integer(3));
+        fFull.remove(Integer.valueOf(3));
         assertTrue(!fFull.contains(3));
     }
 }

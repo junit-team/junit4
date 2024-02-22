@@ -106,7 +106,7 @@ public class TestWithParametersTest {
     public void isNotEqualToObjectWithDifferentClass() {
         TestWithParameters test = new TestWithParameters(DUMMY_NAME,
                 DUMMY_TEST_CLASS, DUMMY_PARAMETERS);
-        assertNotEquals(test, new Integer(3));
+        assertNotEquals(test, Integer.valueOf(3));
     }
 
     @Test
