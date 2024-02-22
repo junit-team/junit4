@@ -24,6 +24,8 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.EachTestNotifier;
+import org.junit.internal.runners.rules.ValidationError;
+import org.junit.internal.runners.statements.Fail;
 import org.junit.internal.runners.statements.RunAfters;
 import org.junit.internal.runners.statements.RunBefores;
 import org.junit.rules.RunRules;
@@ -44,6 +46,8 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.InvalidTestClassError;
 import org.junit.runners.model.MemberValueConsumer;
+import org.junit.runners.model.MemberValueConsumerExtension;
+import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.RunnerScheduler;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
@@ -561,8 +565,10 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         this.scheduler = scheduler;
     }
 
-    private static class ClassRuleCollector implements MemberValueConsumer<TestRule> {
+    private static class ClassRuleCollector implements MemberValueConsumer<TestRule>,
+            MemberValueConsumerExtension {
         final List<RuleContainer.RuleEntry> entries = new ArrayList<RuleContainer.RuleEntry>();
+        final List<Throwable> errors = new ArrayList<Throwable>();
 
         public void accept(FrameworkMember<?> member, TestRule value) {
             ClassRule rule = member.getAnnotation(ClassRule.class);
@@ -570,7 +576,21 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
                     rule != null ? rule.order() : null));
         }
 
+        @Override
+        public void acceptMismatchedTypeValue(FrameworkMember<?> member, Object value) {
+            errors.add(new ValidationError(member, ClassRule.class, "must implement TestRule."));
+        }
+
         public List<TestRule> getOrderedRules() {
+            if (!errors.isEmpty()) {
+                List<TestRule> result = new ArrayList<TestRule>(1);
+                result.add(new TestRule() {
+                    public Statement apply(Statement base, Description description) {
+                        return new Fail(errors.size() == 1 ? errors.get(0) : new MultipleFailureException(errors));
+                    }
+                });
+                return result;
+            }
             Collections.sort(entries, RuleContainer.ENTRY_COMPARATOR);
             List<TestRule> result = new ArrayList<TestRule>(entries.size());
             for (RuleContainer.RuleEntry entry : entries) {

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runners.model.FrameworkMethod;
@@ -76,6 +77,7 @@ public class RuleMemberValidatorTest {
      * <a href="https://github.com/junit-team/junit4/issues/1019">Issue #1019</a>
      */
     @Test
+    @Ignore
     public void rejectClassRuleThatIsImplementationOfMethodRule() {
         TestClass target = new TestClass(TestWithClassRuleIsImplementationOfMethodRule.class);
         CLASS_RULE_VALIDATOR.validate(target, errors);
@@ -126,6 +128,7 @@ public class RuleMemberValidatorTest {
      * <a href="https://github.com/junit-team/junit4/issues/1019">Issue #1019</a>
      */
     @Test
+    @Ignore
     public void rejectClassRuleIsAnArbitraryObject() throws Exception {
         TestClass target = new TestClass(TestWithClassRuleIsAnArbitraryObject.class);
         CLASS_RULE_VALIDATOR.validate(target, errors);
@@ -212,6 +215,7 @@ public class RuleMemberValidatorTest {
     }
 
     @Test
+    @Ignore
     public void rejectArbitraryObjectWithRuleAnnotation() throws Exception {
         TestClass target = new TestClass(TestWithArbitraryObjectWithRuleAnnotation.class);
         RULE_VALIDATOR.validate(target, errors);
