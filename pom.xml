@@ -591,7 +591,7 @@
         <profile>
             <id>java12</id>
             <activation>
-                <jdk>[12,)</jdk>
+                <jdk>[12,20)</jdk>
             </activation>
             <properties>
                 <!-- JDK 12 minimal source and target versions are 1.7 -->
@@ -625,6 +625,46 @@
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <configuration>
                             <source>1.7</source>
+                            <failOnError>false</failOnError>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </reporting>
+        </profile>
+        <profile>
+            <id>java20</id>
+            <activation>
+                <jdk>[20,)</jdk>
+            </activation>
+            <properties>
+                <!-- JDK 20 minimal source and target versions are 1.8 -->
+                <jdkVersion>1.8</jdkVersion>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <source>1.8</source>
+                            <failOnError>false</failOnError>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <compilerArgs>
+                                <arg>-Xdoclint:none</arg>
+                            </compilerArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <source>1.8</source>
                             <failOnError>false</failOnError>
                         </configuration>
                     </plugin>
