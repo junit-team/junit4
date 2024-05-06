@@ -184,6 +184,8 @@ public class FailOnTimeoutTest {
     @Test
     public void lookingForStuckThread_threadGroupNotLeaked() throws Throwable {
         assumeTrue(lookingForStuckThread);
+        assumeTrue("Thread groups can no longer be destroyed on JDK 16 and later", System.getProperty("java.vm.specification.version").compareTo("16") < 0);
+
         final AtomicReference<ThreadGroup> innerThreadGroup = new AtomicReference<ThreadGroup>();
         final AtomicReference<Thread> innerThread = new AtomicReference<Thread>();
         final ThreadGroup outerThreadGroup = currentThread().getThreadGroup();
