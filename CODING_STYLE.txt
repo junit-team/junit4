@@ -7,3 +7,53 @@ Since not all code has been formatted yet, please format only code lines you cha
 
 Legacy code (under junit.*) used the legacy guide specified in LEGACY_CODING_STYLE.txt in the
 project root.
+
+
+
+
+
+##### This is the updates version of code look into it ######
+
+import org.junit.Assume;
+import org.junit.experimental.theories.DataPoints;
+import org.junit.experimental.theories.FromDataPoints;
+import org.junit.experimental.theories.Theory;
+import org.junit.runner.RunWith;
+import org.junit.experimental.theories.Theories;
+
+import com.google.common.collect.ImmutableSet;
+
+@RunWith(Theories.class)
+public class NonExistentTheory {
+  @DataPoints("foo")
+  public static final ImmutableSet<MetaSyntacticVariable> FOOS =
+      ImmutableSet.of(MetaSyntacticVariable.FOO);
+
+  @DataPoints("bar")
+  public static final MetaSyntacticVariable[] BARS = MetaSyntacticVariable.values();
+  
+  @DataPoints("barBoolean")
+  public static final boolean[] BOOLEANS = { true, false };
+
+  @Theory
+  public void doWithTheFoo(@FromDataPoints("foo") MetaSyntacticVariable whatever) {
+    Assume.assumeTrue(FOOS.contains(whatever));
+    System.err.println(whatever);
+  }
+
+  @Theory
+  public void doWithTheBar(@FromDataPoints("bar") MetaSyntacticVariable whatever) {
+    Assume.assumeTrue(ImmutableSet.copyOf(BARS).contains(whatever));
+    System.err.println(whatever);
+  }
+
+  @Theory
+  public void doWithTheBoolean(@FromDataPoints("barBoolean") boolean whatever) {
+    Assume.assumeTrue(ImmutableSet.copyOf(BOOLEANS).contains(whatever));
+    System.err.println(whatever);
+  }
+
+  enum MetaSyntacticVariable {
+    FOO, BAR, BAZ
+  }
+}
