@@ -15,13 +15,7 @@ import java.lang.annotation.Target;
  * The {@link org.junit.runners.model.Statement} passed
  * to the {@link org.junit.rules.TestRule} will run any {@link Before} methods,
  * then the {@link Test} method, and finally any {@link After} methods,
- * throwing an exception if any of these fail.  If there are multiple
- * annotated {@link Rule}s on a class, they will be applied in order of methods first, then fields.
- * However, if there are multiple fields (or methods) they will be applied in an order
- * that depends on your JVM's implementation of the reflection API, which is
- * undefined, in general. Rules defined by fields will always be applied
- * after Rules defined by methods, i.e. the Statements returned by the former will
- * be executed around those returned by the latter.
+ * throwing an exception if any of these fail.
  *
  * <h3>Usage</h3>
  * <p>
@@ -65,8 +59,11 @@ import java.lang.annotation.Target;
  *
  * <h3>Ordering</h3>
  * <p>
- * You can use {@link #order()} if you want to have control over the order in
- * which the Rules are applied.
+ * You can use {@link #order()} (default = -1) if you want control over the order in which the
+ * Rules are applied. Rules with the lowest {@link #order()} value will be applied first. If
+ * multiple rules have the same {@link #order()} then those implemented as methods will be applied
+ * before those implemented as fields, with the ordering within those groups dependant on your JVM's
+ * implementation of the reflection API (generally undefined).
  *
  * <pre>
  * public class ThreeRules {
