@@ -70,12 +70,7 @@ Steps to build junit:
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
     <servers>
         <server>
-            <id>junit-snapshot-repo</id>
-            <username><!--a username registered with Sonatype for deployment--></username>
-            <password><!--corresponding password--></password>
-        </server>
-        <server>
-            <id>junit-releases-repo</id>
+            <id>central-portal</id>
             <username><!--a username registered with Sonatype for deployment--></username>
             <password><!--corresponding password--></password>
         </server>
