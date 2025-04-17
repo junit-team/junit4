@@ -76,16 +76,6 @@
     </ciManagement>
     <distributionManagement>
         <downloadUrl>https://github.com/junit-team/junit4/wiki/Download-and-Install</downloadUrl>
-        <snapshotRepository>
-            <id>junit-snapshot-repo</id>
-            <name>Nexus Snapshot Repository</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        </snapshotRepository>
-        <repository>
-            <id>junit-releases-repo</id>
-            <name>Nexus Release Repository</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
         <site>
             <id>junit.github.io</id>
             <url>gitsite:git@github.com/junit-team/junit4.git</url>
@@ -101,7 +91,7 @@
         <javadocPluginVersion>2.10.3</javadocPluginVersion>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
         <arguments />
-        <gpg.keyname>67893CC4</gpg.keyname>
+        <gpg.keyname>FF6E2C001948C5F2F38B0CC385911F425EC61B51</gpg.keyname>
     </properties>
 
     <dependencies>
@@ -378,6 +368,17 @@
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.7</version>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.7.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central-portal</publishingServerId>
+                    <waitUntil>validated</waitUntil>
+                    <deploymentName>junit-${project.version}</deploymentName>
+                </configuration>
             </plugin>
         </plugins>
     </build>
