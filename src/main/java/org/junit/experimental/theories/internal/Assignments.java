@@ -6,7 +6,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-
+import org.junit.experimental.theories.FromDataPoints;
 import org.junit.experimental.theories.ParameterSignature;
 import org.junit.experimental.theories.ParameterSupplier;
 import org.junit.experimental.theories.ParametersSuppliedBy;
@@ -85,11 +85,14 @@ public class Assignments {
 
     private List<PotentialAssignment> generateAssignmentsFromTypeAlone(ParameterSignature unassigned) {
         Class<?> paramType = unassigned.getType();
-        
-        if (paramType.isEnum()) {
-            return new EnumSupplier(paramType).getValueSources(unassigned);  
-        } else if (paramType.equals(Boolean.class) || paramType.equals(boolean.class)) {
-            return new BooleanSupplier().getValueSources(unassigned);
+
+        FromDataPoints fromDataPoints = unassigned.getAnnotation(FromDataPoints.class);
+        if (fromDataPoints == null) {
+            if (paramType.isEnum()) {
+                return new EnumSupplier(paramType).getValueSources(unassigned);
+            } else if (paramType.equals(Boolean.class) || paramType.equals(boolean.class)) {
+                return new BooleanSupplier().getValueSources(unassigned);
+            }
         } else {
             return emptyList();
         }
