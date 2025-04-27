@@ -222,11 +222,11 @@ public class Description implements Serializable {
         if (isTest()) {
             return 1;
         }
-        int result = 0;
+        int conut = 0;
         for (Description child : fChildren) {
-            result += child.testCount();
+            conut += child.testCount();
         }
-        return result;
+        return conut;
     }
 
     @Override
