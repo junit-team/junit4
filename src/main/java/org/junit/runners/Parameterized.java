@@ -254,6 +254,27 @@ public class Parameterized extends Suite {
     }
 
     /**
+     * Annotation for fields of the test class which will be initialized by the
+     * method annotated by <code>StaticParameter</code>.
+     * It can be used to initialize static fields.
+     * Index range must start at 0.
+     * Default value is 0.
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.FIELD)
+    public static @interface StaticParameter {
+        /**
+         * Method that returns the index of the parameter in the array
+         * returned by the method annotated by <code>StaticParameter</code>.
+         * Index range must start at 0.
+         * Default value is 0.
+         *
+         * @return the index of the parameter.
+         */
+        int value() default 0;
+    }
+
+    /**
      * Add this annotation to your test class if you want to generate a special
      * runner. You have to specify a {@link ParametersRunnerFactory} class that
      * creates such runners. The factory must have a public zero-arg

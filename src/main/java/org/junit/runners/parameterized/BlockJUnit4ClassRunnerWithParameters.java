@@ -2,6 +2,8 @@ package org.junit.runners.parameterized;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.internal.runners.statements.RunAfters;
@@ -11,6 +13,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.StaticParameter;
 import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
@@ -58,7 +61,9 @@ public class BlockJUnit4ClassRunnerWithParameters extends
 
     private Object createTestUsingFieldInjection() throws Exception {
         List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter();
-        if (annotatedFieldsByParameter.size() != parameters.length) {
+        List<FrameworkField> annotatedFieldsByStaticParameter = getAnnotatedFieldsByStaticParameter();
+
+        if (annotatedFieldsByParameter.size() + annotatedFieldsByStaticParameter.size() != parameters.length) {
             throw new Exception(
                     "Wrong number of parameters and @Parameter fields."
                             + " @Parameter fields counted: "
@@ -66,6 +71,26 @@ public class BlockJUnit4ClassRunnerWithParameters extends
                             + ", available parameters: " + parameters.length
                             + ".");
         }
+
+        // Static parameters
+        for (FrameworkField each : annotatedFieldsByStaticParameter) {
+            Field field = each.getField();
+            StaticParameter annotation = field.getAnnotation(StaticParameter.class);
+            int index = annotation.value();
+            try {
+                field.set(null, parameters[index]);
+            } catch (IllegalArgumentException iare) {
+                throw new Exception(getTestClass().getName()
+                        + ": Trying to set " + field.getName()
+                        + " with the value " + parameters[index]
+                        + " that is not the right type ("
+                        + parameters[index].getClass().getSimpleName()
+                        + " instead of " + field.getType().getSimpleName()
+                        + ").", iare);
+            }
+        }
+
+        // Non-static parameters
         Object testClassInstance = getTestClass().getJavaClass().newInstance();
         for (FrameworkField each : annotatedFieldsByParameter) {
             Field field = each.getField();
@@ -115,17 +140,38 @@ public class BlockJUnit4ClassRunnerWithParameters extends
     protected void validateFields(List<Throwable> errors) {
         super.validateFields(errors);
         if (getInjectionType() == InjectionType.FIELD) {
-            List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter();
-            int[] usedIndices = new int[annotatedFieldsByParameter.size()];
-            for (FrameworkField each : annotatedFieldsByParameter) {
-                int index = each.getField().getAnnotation(Parameter.class)
-                        .value();
-                if (index < 0 || index > annotatedFieldsByParameter.size() - 1) {
-                    errors.add(new Exception("Invalid @Parameter value: "
-                            + index + ". @Parameter fields counted: "
-                            + annotatedFieldsByParameter.size()
+            List<FrameworkField> parametricFields = new ArrayList<FrameworkField>();
+            parametricFields.addAll(getAnnotatedFieldsByParameter());
+            parametricFields.addAll(getAnnotatedFieldsByStaticParameter());
+
+            int[] usedIndices = new int[parametricFields.size()];
+            for (FrameworkField each : parametricFields) {
+                int index = -1;
+                Field annotatedField = each.getField();
+                if (Modifier.isStatic(annotatedField.getModifiers())) {
+                    StaticParameter staticParam = annotatedField.getAnnotation(StaticParameter.class);
+                    if (staticParam == null) {
+                        errors.add(new Exception("Invalid @Parameter annotation on the static field: "
+                                + annotatedField.getName() + ". It should be @StaticParameter."));
+                    } else {
+                        index = staticParam.value();
+                    }
+
+                } else {
+                    Parameter param = annotatedField.getAnnotation(Parameter.class);
+                    if (param == null) {
+                        errors.add(new Exception("Invalid @StaticParameter annotation on the field: "
+                                + annotatedField.getName() + ". It should be @Parameter."));
+                    } else {
+                        index = param.value();
+                    }
+                }
+                if (index < 0 || index > parametricFields.size() - 1) {
+                    errors.add(new Exception("Invalid @Parameter or @StaticParameter value: "
+                            + index + ". parametric fields counted: "
+                            + parametricFields.size()
                             + ". Please use an index between 0 and "
-                            + (annotatedFieldsByParameter.size() - 1) + "."));
+                            + (parametricFields.size() - 1) + "."));
                 } else {
                     usedIndices[index]++;
                 }
@@ -133,11 +179,11 @@ public class BlockJUnit4ClassRunnerWithParameters extends
             for (int index = 0; index < usedIndices.length; index++) {
                 int numberOfUse = usedIndices[index];
                 if (numberOfUse == 0) {
-                    errors.add(new Exception("@Parameter(" + index
-                            + ") is never used."));
+                    errors.add(new Exception("Parameter " + index
+                            + " is never used."));
                 } else if (numberOfUse > 1) {
-                    errors.add(new Exception("@Parameter(" + index
-                            + ") is used more than once (" + numberOfUse + ")."));
+                    errors.add(new Exception("Parameter " + index
+                            + " is used more than once (" + numberOfUse + ")."));
                 }
             }
         }
@@ -201,6 +247,10 @@ public class BlockJUnit4ClassRunnerWithParameters extends
         return annotationsWithoutRunWith;
     }
 
+    private List<FrameworkField> getAnnotatedFieldsByStaticParameter() {
+        return getTestClass().getAnnotatedFields(StaticParameter.class);
+    }
+
     private List<FrameworkField> getAnnotatedFieldsByParameter() {
         return getTestClass().getAnnotatedFields(Parameter.class);
     }
@@ -214,6 +264,6 @@ public class BlockJUnit4ClassRunnerWithParameters extends
     }
 
     private boolean fieldsAreAnnotated() {
-        return !getAnnotatedFieldsByParameter().isEmpty();
+        return !getAnnotatedFieldsByParameter().isEmpty() || !getAnnotatedFieldsByStaticParameter().isEmpty();
     }
 }
