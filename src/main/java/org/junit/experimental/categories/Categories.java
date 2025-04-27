@@ -278,11 +278,20 @@ public class Categories extends Suite {
             Set<Class<?>> categories= new HashSet<Class<?>>();
             Collections.addAll(categories, directCategories(description));
             Collections.addAll(categories, directCategories(parentDescription(description)));
+            Collections.addAll(categories, directCategories(declaringDescription(description)));
             return categories;
         }
 
         private static Description parentDescription(Description description) {
             Class<?> testClass= description.getTestClass();
+            return testClass == null ? null : Description.createSuiteDescription(testClass);
+        }
+
+        private static Description declaringDescription(Description description) {
+            Class<?> testClass = description.getTestClass();
+            if (testClass != null) {
+                testClass = testClass.getDeclaringClass();
+            }
             return testClass == null ? null : Description.createSuiteDescription(testClass);
         }
 
