@@ -30,6 +30,7 @@ import org.junit.runners.model.FrameworkMember;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.MemberValueConsumer;
+import org.junit.runners.model.MemberValueConsumerExtension;
 import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
@@ -456,7 +457,8 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
     private static final ThreadLocal<RuleContainer> CURRENT_RULE_CONTAINER =
             new ThreadLocal<RuleContainer>();
 
-    private static class RuleCollector<T> implements MemberValueConsumer<T> {
+    private static class RuleCollector<T> implements MemberValueConsumer<T>,
+            MemberValueConsumerExtension {
         final List<T> result = new ArrayList<T>();
 
         public void accept(FrameworkMember<?> member, T value) {
@@ -468,6 +470,16 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
                 }
             }
             result.add(value);
+        }
+
+        @Override
+        public void acceptMismatchedTypeValue(FrameworkMember<?> member, Object value) {
+            RuleContainer container = CURRENT_RULE_CONTAINER.get();
+            if (container != null
+                    && !(value instanceof TestRule)
+                    && !(value instanceof MethodRule)) {
+                container.addMismatchedTypeValue(member, value);
+            }
         }
     }
 }

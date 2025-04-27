@@ -24,22 +24,51 @@ import org.junit.runners.model.Statement;
 public class TestRuleTest {
     private static boolean wasRun;
 
+    private static class ExampleRule implements TestRule {
+        public Statement apply(final Statement base, Description description) {
+            return new Statement() {
+                @Override
+                public void evaluate() throws Throwable {
+                    wasRun = true;
+                    base.evaluate();
+                }
+            };
+        }
+    }
+
     public static class ExampleTest {
         @Rule
-        public TestRule example = new TestRule() {
-            public Statement apply(final Statement base, Description description) {
-                return new Statement() {
-                    @Override
-                    public void evaluate() throws Throwable {
-                        wasRun = true;
-                        base.evaluate();
-                    }
-                };
-            }
-        };
+        public TestRule example = new ExampleRule();
 
         @Test
         public void nothing() {
+
+        }
+    }
+
+    public static class ExampleTestForTestingFieldValueType {
+        @Rule
+        public Object example = new ExampleRule();
+
+        @Test
+        public void nothing() {
+
+        }
+    }
+
+    public static class ExampleTestForTestingInvalidRuleType {
+        @Rule
+        public Object example1 = "Example";
+        @Rule
+        public Object example2 = "Example";
+
+        @Test
+        public void first() {
+
+        }
+
+        @Test
+        public void second() {
 
         }
     }
@@ -49,6 +78,19 @@ public class TestRuleTest {
         wasRun = false;
         JUnitCore.runClasses(ExampleTest.class);
         assertTrue(wasRun);
+    }
+
+    @Test
+    public void ruleIsIntroducedAndEvaluatedUsingValueType() {
+        wasRun = false;
+        JUnitCore.runClasses(ExampleTestForTestingFieldValueType.class);
+        assertTrue(wasRun);
+    }
+
+    @Test
+    public void ruleOfInvalidTypeIsReported() {
+        Result result = JUnitCore.runClasses(ExampleTestForTestingInvalidRuleType.class);
+        assertEquals(4, result.getFailureCount());
     }
 
     public static class BothKindsOfRule implements TestRule, org.junit.rules.MethodRule {

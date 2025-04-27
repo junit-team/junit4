@@ -34,7 +34,6 @@ public class RuleMemberValidator {
             .withValidator(new DeclaringClassMustBePublic())
             .withValidator(new MemberMustBeStatic())
             .withValidator(new MemberMustBePublic())
-            .withValidator(new FieldMustBeATestRule())
             .build();
     /**
      * Validates fields with a {@link Rule} annotation.
@@ -43,7 +42,6 @@ public class RuleMemberValidator {
             testRuleValidatorBuilder()
             .withValidator(new MemberMustBeNonStaticOrAlsoClassRule())
             .withValidator(new MemberMustBePublic())
-            .withValidator(new FieldMustBeARule())
             .build();
     /**
      * Validates methods with a {@link ClassRule} annotation.
