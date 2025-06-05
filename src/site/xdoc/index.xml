@@ -11,6 +11,12 @@
        <p>
         JUnit is a simple framework to write repeatable tests. It is an instance of the xUnit architecture for unit testing frameworks.
       </p>
+      <p style="background-color: #FFFAA0; padding: 10px;">
+        <strong>JUnit 4 is in maintenance mode.</strong><br/>
+        At this point, only critical bugs and security issues will be fixed.<br/>
+        All other issues and PRs will therefore be declined.<br/>
+        For ongoing development, please check out <a href="https://junit.org/junit5/">JUnit 5</a>.
+      </p>
      <div id="carousel-main">
         <div id="main-carousel" class="carousel slide">
           <div class="carousel-inner">
