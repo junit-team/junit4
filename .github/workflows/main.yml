@@ -51,6 +51,7 @@ jobs:
         with:
           java-version: 8
           distribution: temurin
+          cache: maven
       - name: Publish snapshot artifacts
         env:
           MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
