@@ -26,14 +26,7 @@ jobs:
           persist-credentials: false
       - name: Download Maven # Download with default JDK because OpenJDK 6 does not support TLS 1.2
         run: ./mvnw --version
-      - name: Set up JDK 6
-        if: ${{ matrix.java == '6'}}
-        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
-        with:
-          java-version: ${{ matrix.java }}
-          distribution: temurin
       - name: Set up JDK
-        if: ${{ matrix.java != '6'}}
         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
           java-version: ${{ matrix.java }}
