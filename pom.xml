@@ -76,10 +76,6 @@
     </ciManagement>
     <distributionManagement>
         <downloadUrl>https://github.com/junit-team/junit4/wiki/Download-and-Install</downloadUrl>
-        <site>
-            <id>junit.github.io</id>
-            <url>gitsite:git@github.com/junit-team/junit4.git</url>
-        </site>
     </distributionManagement>
 
     <properties>
