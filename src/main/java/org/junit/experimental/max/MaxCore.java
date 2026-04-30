@@ -44,6 +44,11 @@ public class MaxCore {
 
     /**
      * Create a new MaxCore from a serialized file stored at storedResults
+     * <p>
+     * <strong>WARNING</strong>: If the supplied file exists, it is read using
+     * <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/serialization/">Java Object Serialization</a>.
+     * Deserialization of untrusted data is inherently dangerous and should be
+     * avoided. Care should be taken to ensure the supplied file is trusted.
      */
     public static MaxCore storedLocally(File storedResults) {
         return new MaxCore(storedResults);

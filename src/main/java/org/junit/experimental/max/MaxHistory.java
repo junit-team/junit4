@@ -29,6 +29,11 @@ public class MaxHistory implements Serializable {
     /**
      * Loads a {@link MaxHistory} from {@code file}, or generates a new one that
      * will be saved to {@code file}.
+     * <p>
+     * <strong>WARNING</strong>: If the supplied file exists, it is read using
+     * <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/serialization/">Java Object Serialization</a>.
+     * Deserialization of untrusted data is inherently dangerous and should be
+     * avoided. Care should be taken to ensure the supplied file is trusted.
      */
     public static MaxHistory forFolder(File file) {
         if (file.exists()) {
