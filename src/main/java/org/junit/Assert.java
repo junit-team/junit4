@@ -749,11 +749,7 @@ public class Assert {
     }
 
     private static void failNotNull(String message, Object actual) {
-        String formatted = "";
-        if (message != null) {
-            formatted = message + " ";
-        }
-        fail(formatted + "expected null, but was:<" + actual + ">");
+        fail(formatMessage(message) + "expected null, but was:<" + actual + ">");
     }
 
     /**
@@ -813,21 +809,12 @@ public class Assert {
     }
 
     private static void failSame(String message) {
-        String formatted = "";
-        if (message != null) {
-            formatted = message + " ";
-        }
-        fail(formatted + "expected not same");
+        fail(formatMessage(message) + "expected not same");
     }
 
-    private static void failNotSame(String message, Object expected,
-            Object actual) {
-        String formatted = "";
-        if (message != null) {
-            formatted = message + " ";
-        }
-        fail(formatted + "expected same:<" + expected + "> was not:<" + actual
-                + ">");
+    private static void failNotSame(String message, Object expected, Object actual) {
+        fail(formatMessage(message) + "expected same:<" + expected + "> was not:<"
+                + actual + ">");
     }
 
     private static void failNotEquals(String message, Object expected,
@@ -1030,5 +1017,8 @@ public class Assert {
 
     private static String buildPrefix(String message) {
         return message != null && message.length() != 0 ? message + ": " : "";
+    }
+    private static String formatMessage(String message) {
+        return message != null ? message + " " : "";
     }
 }
