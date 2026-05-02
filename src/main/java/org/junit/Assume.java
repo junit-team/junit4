@@ -54,7 +54,7 @@ public class Assume {
      * The inverse of {@link #assumeTrue(boolean)}.
      */
     public static void assumeFalse(boolean b) {
-        assumeThat(b, is(false));
+        assumeTrue(!b);
     }
 
     /**
@@ -65,6 +65,7 @@ public class Assume {
      * @param message A message to pass to {@link AssumptionViolatedException}.
      */
     public static void assumeTrue(String message, boolean b) {
+
         if (!b) throw new AssumptionViolatedException(message);
     }
 
@@ -72,6 +73,7 @@ public class Assume {
      * The inverse of {@link #assumeTrue(String, boolean)}.
      */
     public static void assumeFalse(String message, boolean b) {
+
         assumeTrue(message, !b);
     }
 
