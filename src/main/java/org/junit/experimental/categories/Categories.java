@@ -217,35 +217,35 @@ public class Categories extends Suite {
         }
 
         private boolean hasCorrectCategoryAnnotation(Description description) {
-            final Set<Class<?>> childCategories= categories(description);
+            final Set<Class<?>> childCategories = categories(description);
 
-            // If a child has no categories, immediately return.
             if (childCategories.isEmpty()) {
                 return included.isEmpty();
             }
 
-            if (!excluded.isEmpty()) {
-                if (excludedAny) {
-                    if (matchesAnyParentCategories(childCategories, excluded)) {
-                        return false;
-                    }
-                } else {
-                    if (matchesAllParentCategories(childCategories, excluded)) {
-                        return false;
-                    }
-                }
+            if (isExcluded(childCategories)) {
+                return false;
             }
 
-            if (included.isEmpty()) {
-                // Couldn't be excluded, and with no suite's included categories treated as should run.
-                return true;
-            } else {
-                if (includedAny) {
-                    return matchesAnyParentCategories(childCategories, included);
-                } else {
-                    return matchesAllParentCategories(childCategories, included);
-                }
+            return isIncluded(childCategories);
+        }
+
+        private boolean isExcluded(Set<Class<?>> childCategories) {
+            if (excluded.isEmpty()) {
+                return false;
             }
+            return excludedAny
+                    ? matchesAnyParentCategories(childCategories, excluded)
+                    : matchesAllParentCategories(childCategories, excluded);
+        }
+
+        private boolean isIncluded(Set<Class<?>> childCategories) {
+            if (included.isEmpty()) {
+                return true;
+            }
+            return includedAny
+                    ? matchesAnyParentCategories(childCategories, included)
+                    : matchesAllParentCategories(childCategories, included);
         }
 
         /**
