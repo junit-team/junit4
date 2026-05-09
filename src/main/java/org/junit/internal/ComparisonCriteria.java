@@ -25,10 +25,10 @@ public abstract class ComparisonCriteria {
      */
     public void arrayEquals(String message, Object expecteds, Object actuals)
             throws ArrayComparisonFailure {
-        arrayEquals(message, expecteds, actuals, true);
+        arrayEqualsWhat(message, expecteds, actuals, true);
     }
 
-    private void arrayEquals(String message, Object expecteds, Object actuals, boolean outer)
+    private void arrayEqualsWhat(String message, Object expecteds, Object actuals, boolean outer)
             throws ArrayComparisonFailure {
         if (expecteds == actuals
             || Arrays.deepEquals(new Object[] {expecteds}, new Object[] {actuals})) {
@@ -63,7 +63,7 @@ public abstract class ComparisonCriteria {
 
             if (isArray(expected) && isArray(actual)) {
                 try {
-                    arrayEquals(message, expected, actual, false);
+                    arrayEqualsWhat(message, expected, actual, false);
                 } catch (ArrayComparisonFailure e) {
                     e.addDimension(i);
                     throw e;
