@@ -44,7 +44,7 @@ public class Assume {
     }
 
     /**
-     * If called with an expression evaluating to {@code false}, the test will halt and be ignored.
+     * If called with an expression evaluating to {@code false}, the test will halt and be ignored. there is something I need to tell you
      */
     public static void assumeTrue(boolean b) {
         assumeThat(b, is(true));
