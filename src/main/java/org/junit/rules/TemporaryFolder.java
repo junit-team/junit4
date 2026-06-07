@@ -154,7 +154,12 @@ public class TemporaryFolder extends ExternalResource {
      * Returns a new fresh file with the given name under the temporary folder.
      */
     public File newFile(String fileName) throws IOException {
-        File file = new File(getRoot(), fileName);
+        File root = getRoot();
+        File file = new File(root, fileName);
+        if (new File(fileName).isAbsolute() || !isPathInFolder(root, file)) {
+            throw new IOException(
+                    "file name \"" + fileName + "\" is not a relative path");
+        }
         if (!file.createNewFile()) {
             throw new IOException(
                     "a file with the name \'" + fileName + "\' already exists in the test folder");
@@ -206,6 +211,10 @@ public class TemporaryFolder extends ExternalResource {
         for (String path : paths) {
             relativePath = new File(relativePath, path);
             file = new File(root, relativePath.getPath());
+            if (!isPathInFolder(root, file)) {
+                throw new IOException(
+                        "folder path \'" + relativePath.getPath() + "\' is not a relative path");
+            }
 
             lastMkdirsCallSuccessful = file.mkdirs();
             if (!lastMkdirsCallSuccessful && !file.isDirectory()) {
@@ -223,6 +232,18 @@ public class TemporaryFolder extends ExternalResource {
                     "a folder with the path \'" + relativePath.getPath() + "\' already exists");
         }
         return file;
+    }
+
+    private static boolean isPathInFolder(File folder, File file) throws IOException {
+        File canonicalFolder = folder.getCanonicalFile();
+        File canonicalFile = file.getCanonicalFile();
+        while (canonicalFile != null) {
+            if (canonicalFolder.equals(canonicalFile)) {
+                return true;
+            }
+            canonicalFile = canonicalFile.getParentFile();
+        }
+        return false;
     }
 
     /**

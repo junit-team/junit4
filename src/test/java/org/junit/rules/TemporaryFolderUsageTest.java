@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
@@ -120,6 +121,50 @@ public class TemporaryFolderUsageTest {
         thrown.expect(IOException.class);
         thrown.expectMessage("folder path '" + fileAtRoot + "' is not a relative path");
         tempFolder.newFolder(fileAtRoot);
+    }
+
+    @Test
+    public void newFileWithParentTraversalPathThrowsIOException()
+            throws IOException {
+        tempFolder.create();
+        File fileOutsideRoot = new File(tempFolder.getRoot().getParentFile(),
+                "junit-outside-" + System.currentTimeMillis() + ".txt");
+        String fileName = ".." + File.separator + fileOutsideRoot.getName();
+
+        try {
+            try {
+                tempFolder.newFile(fileName);
+                fail("Expected IOException");
+            } catch (IOException e) {
+                assertThat(e.getMessage(),
+                        is("file name \"" + fileName + "\" is not a relative path"));
+            }
+            assertFileDoesNotExist(fileOutsideRoot);
+        } finally {
+            fileOutsideRoot.delete();
+        }
+    }
+
+    @Test
+    public void newFolderWithParentTraversalPathThrowsIOException()
+            throws IOException {
+        tempFolder.create();
+        File folderOutsideRoot = new File(tempFolder.getRoot().getParentFile(),
+                "junit-outside-" + System.currentTimeMillis());
+        String path = ".." + File.separator + folderOutsideRoot.getName();
+
+        try {
+            try {
+                tempFolder.newFolder(path);
+                fail("Expected IOException");
+            } catch (IOException e) {
+                assertThat(e.getMessage(),
+                        is("folder path '" + path + "' is not a relative path"));
+            }
+            assertFileDoesNotExist(folderOutsideRoot);
+        } finally {
+            folderOutsideRoot.delete();
+        }
     }
     
     @Test
