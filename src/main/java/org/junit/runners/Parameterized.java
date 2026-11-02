@@ -25,7 +25,7 @@ import org.junit.runners.model.TestClass;
 import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParametersFactory;
 import org.junit.runners.parameterized.ParametersRunnerFactory;
 import org.junit.runners.parameterized.TestWithParameters;
-
+import org.checkerframework.checker.index.qual.NonNegative;
 /**
  * The custom runner <code>Parameterized</code> implements parameterized tests.
  * When running a parameterized test class, instances are created for the
@@ -250,7 +250,7 @@ public class Parameterized extends Suite {
          *
          * @return the index of the parameter.
          */
-        int value() default 0;
+        @NonNegative int value() default 0;
     }
 
     /**

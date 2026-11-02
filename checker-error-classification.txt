@@ -1,0 +1,60 @@
+Index Checker errors in JUnit 4 (src/main): classification of the 40 errors
+left after annotations #1-#4 (Checker Framework 4.2.3, JDK 21).
+
+Categories:
+  1 FP-imprecision   False positive: code is safe and the needed fact is in the code,
+                     but the checker's analysis does not derive it.
+  2 Project bug      A realistic input makes the code throw; needs a code fix.
+  3 FP-beyond-types  False positive: code is safe, but the reason (JDK contract,
+                     cross-object relation, earlier phase) cannot be expressed with
+                     index annotations.
+  4 Latent bug       Safe under normal use, but the public API allows inputs that throw;
+                     undocumented precondition.
+
+Line numbers are from checker-errors.txt of the 48-error run (before annotations #1-#4).
+Adding import lines shifts them by 1-2 in later runs. File paths are under src/main/java/.
+
+#   File                                                                       Line:col  Error key                          Category           Reason
+--  -------------------------------------------------------------------------  --------  ---------------------------------  -----------------  ------
+1   junit/framework/ComparisonCompactor.java                                   39:55     argument                           3 FP-beyond-types  substring(fPrefix,..) on parameter `source`; checker cannot link `source` to fExpected/fActual
+2   junit/framework/ComparisonCompactor.java                                   39:90     argument                           3 FP-beyond-types  source.length()-fSuffix+1 >= 0 needs the findCommonSuffix loop invariant on fSuffix
+3   junit/framework/ComparisonCompactor.java                                   39:90     argument                           3 FP-beyond-types  same endIndex <= source.length(); fSuffix bound + parameter `source` not expressible
+4   junit/framework/ComparisonCompactor.java                                   71:88     argument                           1 FP-imprecision   Math.max(0, fPrefix - fContextLength): each operand passes alone, bound lost when merged
+5   junit/framework/ComparisonCompactor.java                                   76:64     argument                           3 FP-beyond-types  length()-fSuffix+1 >= 0 needs the fSuffix loop invariant (annotations on fSuffix rejected)
+6   junit/framework/ComparisonCompactor.java                                   76:64     argument                           3 FP-beyond-types  length()-fSuffix+1 <= length() needs fSuffix >= 1 from the same loop invariant
+7   junit/framework/ComparisonCompactor.java                                   76:69     argument                           3 FP-beyond-types  end = Math.min(...) depends on the same fSuffix invariant
+8   junit/runner/BaseTestRunner.java                                           326:42    assignment                         2 Project bug      maxmessage from junit.properties is unvalidated; maxmessage=-5 makes truncate() throw
+9   junit/textui/TestRunner.java                                               162:49    array.access.unsafe.high           2 Project bug      `TestRunner -c` as last argument reads past the end of args
+10  junit/textui/TestRunner.java                                               164:34    array.access.unsafe.high           2 Project bug      `TestRunner -m` as last argument reads past the end of args
+11  junit/textui/TestRunner.java                                               165:60    assignment                         2 Project bug      lastIndexOf('.') returns -1 for `-m foo`; substring(0, -1) throws
+12  org/junit/ComparisonFailure.java                                           127:58    argument                           1 FP-imprecision   verified suffixLength < length, but length-1-suffixLength >= 0 not derived
+13  org/junit/ComparisonFailure.java                                           128:61    argument                           1 FP-imprecision   same as 127:58 for `actual`
+14  org/junit/ComparisonFailure.java                                           132:56    argument                           1 FP-imprecision   verified suffixLength <= length, but length-suffixLength >= 0 not derived
+15  org/junit/ComparisonFailure.java                                           159:79    argument                           1 FP-imprecision   early return gives length > contextLength; length-contextLength >= 0 not derived
+16  org/junit/ComparisonFailure.java                                           170:72    argument                           3 FP-beyond-types  parameter `source` is expected or actual; prefix relation not expressible
+17  org/junit/ComparisonFailure.java                                           170:92    argument                           3 FP-beyond-types  needs `sharedSuffix is a suffix of source`; string relation not expressible
+18  org/junit/runners/model/TestClass.java                                     206:28    array.access.unsafe.high.constant  3 FP-beyond-types  guarded by Assert.assertEquals(1, length) throwing; no annotation describes that
+19  org/junit/runners/model/FrameworkMethod.java                               153:73    array.access.unsafe.high           1 FP-imprecision   equal-length check on getParameterTypes() forgotten at the next call
+20  org/junit/experimental/theories/ParameterSignature.java                    52:41     array.access.unsafe.high           3 FP-beyond-types  relies on JDK getParameterTypes()/getParameterAnnotations() having equal length
+21  org/junit/experimental/theories/internal/Assignments.java                  67:42     array.length.negative              3 FP-beyond-types  start <= stop holds only because callers run after all constructor args are assigned
+22  org/junit/experimental/theories/internal/Assignments.java                  69:21     array.access.unsafe.low            1 FP-imprecision   i starts at `start`, so i-start >= 0; loop-start relation not tracked
+23  org/junit/internal/Throwables.java                                         93:81     argument                           1 FP-imprecision   counter decremented once per for-each step over a same-size list; iterations not counted
+24  org/junit/internal/Throwables.java                                         134:84    argument                           3 FP-beyond-types  printStackTrace output starts with toString(); JDK format contract
+25  org/junit/internal/matchers/TypeSafeMatcher.java                           34:54     array.access.unsafe.high.constant  1 FP-imprecision   length == 1 checked in another method on another getParameterTypes() call
+26  org/junit/internal/runners/TestClass.java                                  80:84     array.access.unsafe.high           1 FP-imprecision   equal-length check on Method.getParameterTypes() forgotten at the next call
+27  org/junit/rules/TemporaryFolder.java                                       281:70    argument                           3 FP-beyond-types  createTempFile names end with the given suffix; JDK contract
+28  org/junit/runner/FilterFactories.java                                      31:89     array.access.unsafe.high.constant  3 FP-beyond-types  split("=", 2) on a string containing '=' gives 2 elements; string-content fact
+29  org/junit/runner/JUnitCommandLineParseResult.java                          55:30     array.access.unsafe.high           1 FP-imprecision   loop uses `i != args.length`; checker gets no upper bound from !=
+30  org/junit/runner/JUnitCommandLineParseResult.java                          88:40     array.length.negative              3 FP-beyond-types  from <= to depends on caller's loop state (i or i+1 <= args.length)
+31  org/junit/runner/JUnitCommandLineParseResult.java                          90:21     array.access.unsafe.low            1 FP-imprecision   j starts at `from`, so j-from >= 0; loop-start relation not tracked
+32  org/junit/runner/JUnitCommandLineParseResult.java                          90:21     array.access.unsafe.high           1 FP-imprecision   j-from < to-from from `j != to` loop; != gives no upper bound
+33  org/junit/runner/JUnitCommandLineParseResult.java                          90:36     array.access.unsafe.low            1 FP-imprecision   j >= from >= 0; loop-start relation not tracked
+34  org/junit/runner/JUnitCommandLineParseResult.java                          90:36     array.access.unsafe.high           1 FP-imprecision   j < to <= args.length from `j != to`; != gives no upper bound
+35  org/junit/runners/parameterized/BlockJUnit4ClassRunnerWithParameters.java  75:56     array.access.unsafe.high           3 FP-beyond-types  index < parameters.length guaranteed by validateFields in an earlier phase
+36  org/junit/runners/parameterized/BlockJUnit4ClassRunnerWithParameters.java  86:58     array.access.unsafe.high           3 FP-beyond-types  same as 75:56
+37  org/junit/runners/parameterized/BlockJUnit4ClassRunnerWithParameters.java  88:37     array.access.unsafe.high           3 FP-beyond-types  same as 75:56
+38  org/junit/runners/parameterized/BlockJUnit4ClassRunnerWithParameters.java  130:32    array.access.unsafe.high.range     1 FP-imprecision   usedIndices and the check use separate size() calls; equality forgotten
+39  org/junit/runners/parameterized/BlockJUnit4ClassRunnerWithParameters.java  193:86    array.length.negative              4 Latent bug       test class with no annotations (e.g. new Parameterized(Foo.class)) -> NegativeArraySizeException
+40  org/junit/runners/parameterized/BlockJUnit4ClassRunnerWithParameters.java  197:42    array.access.unsafe.high           4 Latent bug       test class with one non-@RunWith annotation and no @RunWith -> index out of bounds
+
+Totals: 1 FP-imprecision = 16, 2 Project bug = 4, 3 FP-beyond-types = 18, 4 Latent bug = 2, all = 40

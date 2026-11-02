@@ -1,0 +1,368 @@
+CHECKER FRAMEWORK SETUP MANUAL FOR JUNIT 4
+==========================================
+
+This manual explains how the Checker Framework's Index Checker was set up on
+this JUnit 4 repository (branch CFIndexCheckerStudy), and how to run it on
+another computer.
+
+Contents
+  1. Requirements
+  2. Changes made to the repository
+  3. Running the checker
+  4. Running on a different computer (environment variables)
+  5. Output files
+  6. Troubleshooting
+
+
+1. REQUIREMENTS
+---------------
+
+  - JDK 17 or newer. JDK 21 is recommended and is what the results were
+    produced with. The Checker Framework 4.x is compiled for Java 17 (class
+    file version 61), so it cannot run on JDK 11 or older.
+  - Apache Maven 3.6 or newer (3.9.x was used).
+  - Internet access on the first run, so Maven can download the Checker
+    Framework from Maven Central. Not needed if you point the script at a local
+    Checker Framework installation (section 4.3).
+  - A Unix shell (bash). macOS and Linux work as is; on Windows use WSL or
+    Git Bash.
+
+The JDK used to run the checker does not need to be the default JDK on your
+system. The script picks its own (section 4.1).
+
+
+2. CHANGES MADE TO THE REPOSITORY
+---------------------------------
+
+2.1 pom.xml: new "checkerframework" profile
+
+A Maven profile with the id "checkerframework" was added at the end of the
+<profiles> section of pom.xml. It is only active when you pass
+"-P checkerframework", so the normal JUnit build settings are unchanged.
+
+    <profile>
+        <id>checkerframework</id>
+        <properties>
+            <checkerframework.version>4.2.3</checkerframework.version>
+        </properties>
+        <dependencies>
+            <dependency>
+                <groupId>org.checkerframework</groupId>
+                <artifactId>checker-qual</artifactId>
+                <version>${checkerframework.version}</version>
+                <scope>provided</scope>
+            </dependency>
+        </dependencies>
+        <build>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.13.0</version>
+                    <executions>
+                        <execution>
+                            <id>default-compile</id>
+                            <configuration>
+                                <compilerVersion>1.8</compilerVersion>
+                                <maxmem>3g</maxmem>
+                                <annotationProcessorPaths>
+                                    <path>
+                                        <groupId>org.checkerframework</groupId>
+                                        <artifactId>checker</artifactId>
+                                        <version>${checkerframework.version}</version>
+                                    </path>
+                                </annotationProcessorPaths>
+                                <annotationProcessors>
+                                    <annotationProcessor>org.checkerframework.checker.index.IndexChecker</annotationProcessor>
+                                </annotationProcessors>
+                                <compilerArgs combine.children="append">
+                                    <arg>-Xmaxerrs</arg><arg>10000</arg>
+                                    <arg>-Xmaxwarns</arg><arg>10000</arg>
+                                    <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
+                                    ... (one -J--add-exports line each for code, file,
+                                         main, model, parser, processing, tree, util)
+                                    <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
+                                </compilerArgs>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </build>
+    </profile>
+
+What each part does and why it is needed:
+
+  checkerframework.version
+      The Checker Framework version (4.2.3). The script can override it with
+      -Dcheckerframework.version=... (section 4.2).
+
+  checker-qual dependency, scope "provided"
+      Provides the annotation types (@NonNegative, @LTLengthOf, @IndexFor, ...)
+      used in the source code. "provided" means the published JUnit jar does
+      not get a new runtime dependency.
+
+  maven-compiler-plugin 3.13.0
+      The version used by the rest of the pom (3.3) is too old:
+      <annotationProcessorPaths> needs 3.5 or newer.
+
+  <execution> id "default-compile"
+      Limits the checker to src/main. The tests (src/test) are compiled
+      without it.
+
+  <compilerVersion>1.8</compilerVersion>
+      The main build sets compilerVersion to 1.5. With that value the compiler
+      plugin treats javac as pre-Java 6 and silently drops the -processor
+      options, so the checker would never run.
+
+  <maxmem>3g</maxmem>
+      The main build forks javac (fork=true) with a 128 MB default heap, which
+      is far too small for the checker.
+
+  <annotationProcessorPaths> and <annotationProcessors>
+      Put the checker on javac's processor path and select the Index Checker.
+
+  -Xmaxerrs / -Xmaxwarns 10000
+      javac stops reporting after 100 errors by default.
+
+  -J--add-exports / -J--add-opens
+      The Checker Framework uses javac's internal APIs. On JDK 9+ these
+      packages must be opened explicitly. The "-J" prefix passes them to the
+      forked javac JVM.
+
+2.2 Source level: existing JDK profiles
+
+No change was needed, but this matters for correct results. The pom's
+existing profiles choose the -source/-target level from the JDK running Maven:
+
+    JDK 12-19 (profile java12)  ->  source/target 1.7
+    JDK 20+   (profile java20)  ->  source/target 1.8
+
+Type annotations such as "@NonNegative int x" need source 1.8. With source 1.7
+javac prints "-source 7 does not support type annotations" and ignores them,
+so the checker reports errors as if the annotations were not there. That is why
+JDK 21 is recommended over JDK 17.
+
+2.3 Annotations in the source code
+
+Index annotations were added to several files under src/main/java
+(TestSuite, ComparisonCompactor, ComparisonFailure, BaseTestRunner,
+TestRunner, Description, Throwables, ComparisonCriteria, Parameterized).
+Each file needs its own imports, for example:
+
+    import org.checkerframework.checker.index.qual.NonNegative;
+    import org.checkerframework.checker.index.qual.LTEqLengthOf;
+
+Use the org.checkerframework.* annotations. javax.annotation.Nonnegative
+(JSR-305) has a similar name but is not on the classpath and is not
+understood by the Index Checker.
+
+2.4 Known issue: the plain build no longer compiles
+
+Because checker-qual is declared only inside the profile, a plain
+"mvn compile" (without -P checkerframework) now fails with:
+
+    package org.checkerframework.checker.index.qual does not exist
+
+Fix, if the normal build must keep working: move the checker-qual
+<dependency> block (keeping <scope>provided</scope> and a fixed version such
+as 4.2.3) out of the profile into the main <dependencies> section of pom.xml.
+Leave everything else in the profile. This has not been done yet.
+
+2.5 Helper script: run-checker.sh
+
+A script in the repository root that runs the profile, saves the full Maven
+output and extracts the checker's errors. See sections 3 to 5.
+
+
+3. RUNNING THE CHECKER
+----------------------
+
+From the repository root (or any directory, using the script's path):
+
+    ./run-checker.sh
+
+If the script is not executable on your machine (for example after a fresh
+clone on some systems):
+
+    chmod +x run-checker.sh
+
+Example output:
+
+    Running Checker Framework version from pom.xml with JDK 21 (/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home) ...
+    40 errors written to checker-errors.txt
+
+The script exits with Maven's exit code: 0 when the checker reports no
+errors, 1 otherwise.
+
+Equivalent manual command (macOS, JDK 21):
+
+    JAVA_HOME=$(/usr/libexec/java_home -v 21) mvn -P checkerframework clean compile
+
+
+4. RUNNING ON A DIFFERENT COMPUTER (ENVIRONMENT VARIABLES)
+----------------------------------------------------------
+
+The script needs no changes on another computer. Its paths and versions are
+controlled by these optional environment variables:
+
+  Variable          Meaning                                        Default
+  ----------------  ---------------------------------------------  ------------------------------------------
+  CF_JAVA_HOME      JDK used to run Maven and javac (17+).         macOS: JDK 21 from /usr/libexec/java_home;
+                                                                   otherwise the JDK of `java` on PATH
+  CF_VERSION        Checker Framework version to download          The version in pom.xml (4.2.3)
+                    from Maven Central.
+  CHECKERFRAMEWORK  Path to a local Checker Framework install       (not set: download from Maven Central)
+                    (the directory that contains
+                    checker/dist/checker.jar).
+  CF_MVN            Maven command or full path to mvn.             mvn
+
+Set a variable for a single run by putting it in front of the command, or
+export it for the whole shell session:
+
+    CF_JAVA_HOME=/opt/jdk-21 ./run-checker.sh          # one run
+
+    export CF_JAVA_HOME=/opt/jdk-21                    # every run in this shell
+    ./run-checker.sh
+
+To make a setting permanent, add the "export" line to your shell's start-up
+file (~/.zshrc for zsh, ~/.bashrc for bash), then open a new terminal.
+
+4.1 CF_JAVA_HOME: choosing the JDK
+
+The script deliberately ignores your normal JAVA_HOME, because that often
+points at an older JDK (JDK 11 on the original machine). To choose the JDK,
+set CF_JAVA_HOME to the JDK's home directory, the one containing bin/javac.
+
+    Linux:    CF_JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64 ./run-checker.sh
+    macOS:    CF_JAVA_HOME=$(/usr/libexec/java_home -v 21) ./run-checker.sh
+    Windows (WSL / Git Bash):
+              CF_JAVA_HOME="/c/Program Files/Eclipse Adoptium/jdk-21" ./run-checker.sh
+
+To find installed JDKs:
+
+    macOS:    /usr/libexec/java_home -V
+    Linux:    ls /usr/lib/jvm/    (or: update-alternatives --list java)
+
+The script stops with a clear message if the directory is not a JDK or the
+JDK is older than 17.
+
+4.2 CF_VERSION: a different Checker Framework release
+
+    CF_VERSION=4.2.3 ./run-checker.sh
+
+This is passed to Maven as -Dcheckerframework.version=..., which overrides
+the version in pom.xml for that run only. Results in this study were produced
+with 4.2.3; other versions may report different errors.
+
+4.3 CHECKERFRAMEWORK: a local Checker Framework installation
+
+Use this when the computer has no internet access, or to test a Checker
+Framework you built or downloaded yourself.
+
+  1. Download a release zip (checker-framework-<version>.zip) from
+     https://checkerframework.org/ or its GitHub releases page, and unzip it,
+     for example to ~/checker-framework-4.2.3. You can also build one from
+     source.
+  2. Check that these two files exist:
+         ~/checker-framework-4.2.3/checker/dist/checker.jar
+         ~/checker-framework-4.2.3/checker/dist/checker-qual.jar
+  3. Run:
+         CHECKERFRAMEWORK=~/checker-framework-4.2.3 ./run-checker.sh
+
+  The variable name CHECKERFRAMEWORK is the one the Checker Framework's own
+  documentation uses, so it may already be set on machines that have it
+  installed.
+
+  How it works: Maven can only load the checker by its coordinates, not by
+  file path. The script therefore installs the two jars into your local Maven
+  repository (~/.m2/repository/org/checkerframework/) under the version
+  "local-dist", then runs with -Dcheckerframework.version=local-dist. The
+  version name cannot clash with a real release. Each run re-installs the
+  jars, so changes to your local copy are picked up. To remove them later:
+
+      rm -rf ~/.m2/repository/org/checkerframework/checker/local-dist \
+             ~/.m2/repository/org/checkerframework/checker-qual/local-dist
+
+  If CHECKERFRAMEWORK is set, CF_VERSION is ignored.
+
+4.4 CF_MVN: Maven not on PATH
+
+    CF_MVN=/opt/apache-maven-3.9.9/bin/mvn ./run-checker.sh
+
+4.5 Combined example (Linux, local Checker Framework, custom Maven)
+
+    export CF_JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+    export CHECKERFRAMEWORK=$HOME/checker-framework-4.2.3
+    export CF_MVN=$HOME/apache-maven-3.9.9/bin/mvn
+    ./run-checker.sh
+
+
+5. OUTPUT FILES
+---------------
+
+All are written to the repository root and overwritten on each run.
+
+  build.log           Full Maven output of the last run.
+  checker-errors.txt  Only the compiler errors: one "[ERROR] file:[line,col]
+                      error: [key] message" line per error, followed by its
+                      "found"/"required" lines, and a final "[INFO] N errors"
+                      line.
+
+These files are not tracked by git. Add them to .gitignore, or leave them out
+of commits.
+
+To list one line per error without the found/required details:
+
+    grep 'error: \[' checker-errors.txt
+
+
+6. TROUBLESHOOTING
+------------------
+
+  "UnsupportedClassVersionError: org/checkerframework/checker/index/IndexChecker
+   has been compiled by a more recent version of the Java Runtime (class file
+   version 61.0)"
+      Maven ran on JDK 11 or older. Use JDK 17+ (set CF_JAVA_HOME). If you run
+      mvn by hand, set JAVA_HOME instead.
+
+  "-source 7 does not support type annotations" in build.log
+      Maven ran on JDK 12-19, so the source level is 1.7 and annotations are
+      ignored. Use JDK 20+ (section 2.2).
+
+  "cannot find symbol ... class NonNegative" (or another annotation)
+      The import is missing from that file (section 2.3).
+
+  "package javax.annotation does not exist"
+      The wrong annotation was imported (javax.annotation.Nonnegative). Use
+      org.checkerframework.checker.index.qual.NonNegative.
+
+  The error count suddenly drops to a handful (e.g. "3 errors")
+      Usually a syntax or symbol error in an edited file. javac stops before
+      the checker runs, so the other findings are not reported. Read the
+      errors in checker-errors.txt, fix them, and run again.
+
+  "package org.checkerframework.checker.index.qual does not exist" in a plain
+  "mvn compile"
+      Expected; see section 2.4.
+
+  "Build failed before compilation; see build.log"
+      Maven failed before javac ran, for example because a dependency could
+      not be downloaded (no internet access). Check build.log, or use a local
+      installation (section 4.3).
+
+  "CHECKERFRAMEWORK is set but .../checker/dist/checker.jar does not exist"
+      CHECKERFRAMEWORK must point at the top-level directory of the unzipped
+      release, the one that contains the "checker" folder.
+
+  NoClassDefFoundError: org/checkerframework/dataflow/qual/...
+      The annotation classes are missing from the processor path. With
+      CHECKERFRAMEWORK, make sure checker/dist/checker-qual.jar exists.
+
+  OutOfMemoryError during compilation
+      Increase <maxmem> in the profile (section 2.1), for example to 4g.
+
+  Seeing the errors as warnings, without the build failing
+      Add <arg>-Awarns</arg> to the profile's <compilerArgs>. The build then
+      succeeds, and the errors appear as warnings in build.log. Note that
+      checker-errors.txt will be empty in that mode, because the script
+      extracts the "COMPILATION ERROR" block.

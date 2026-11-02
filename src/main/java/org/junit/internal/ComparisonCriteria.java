@@ -4,6 +4,8 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 
 import org.junit.Assert;
+import org.checkerframework.checker.index.qual.LengthOf;
+import org.checkerframework.checker.index.qual.NonNegative;
 
 /**
  * Defines criteria for finding two items "equal enough". Concrete subclasses
@@ -93,7 +95,7 @@ public abstract class ComparisonCriteria {
 
     private static final Object END_OF_ARRAY_SENTINEL = objectWithToString("end of array");
 
-    private Object getToStringableArrayElement(Object array, int length, int index) {
+    private Object getToStringableArrayElement(Object array, @LengthOf("#1") int length,@NonNegative int index) {
         if (index < length) {
             Object element = Array.get(array, index);
             if (isArray(element)) {

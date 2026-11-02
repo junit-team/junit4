@@ -1,0 +1,297 @@
+diff --git a/pom.xml b/pom.xml
+index 05b554249..de09e4f0a 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -668,5 +668,68 @@
+                 </plugins>
+             </reporting>
+         </profile>
++        <profile>
++    <id>checkerframework</id>
++    <properties>
++        <checkerframework.version>4.2.3</checkerframework.version>
++    </properties>
++    <dependencies>
++        <!-- Index annotations (@IndexFor, @NonNegative, @MinLen, ...).
++             Use "provided" so the published junit jar gets no new runtime dependency. -->
++        <dependency>
++            <groupId>org.checkerframework</groupId>
++            <artifactId>checker-qual</artifactId>
++            <version>${checkerframework.version}</version>
++            <scope>provided</scope>
++        </dependency>
++    </dependencies>
++    <build>
++        <plugins>
++            <plugin>
++                <artifactId>maven-compiler-plugin</artifactId>
++                <!-- 3.3 is too old: annotationProcessorPaths needs 3.5+ -->
++                <version>3.13.0</version>
++                <executions>
++                    <!-- Check only src/main, not the tests -->
++                    <execution>
++                        <id>default-compile</id>
++                        <configuration>
++                            <!-- With "1.5", plexus-compiler treats javac as pre-Java-6
++                                 and silently drops the -processor flags -->
++                            <compilerVersion>1.8</compilerVersion>
++                            <!-- The default 128m is far too small for the checker -->
++                            <maxmem>3g</maxmem>
++                            <annotationProcessorPaths>
++                                <path>
++                                    <groupId>org.checkerframework</groupId>
++                                    <artifactId>checker</artifactId>
++                                    <version>${checkerframework.version}</version>
++                                </path>
++                            </annotationProcessorPaths>
++                            <annotationProcessors>
++                                <annotationProcessor>org.checkerframework.checker.index.IndexChecker</annotationProcessor>
++                            </annotationProcessors>
++                            <compilerArgs combine.children="append">
++                                <arg>-Xmaxerrs</arg><arg>10000</arg>
++                                <arg>-Xmaxwarns</arg><arg>10000</arg>
++                                <!-- The forked javac (fork=true) needs these on JDK 9+ -->
++                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
++                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
++                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED</arg>
++                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</arg>
++                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED</arg>
++                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED</arg>
++                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg>
++                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
++                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
++                                <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
++                            </compilerArgs>
++                        </configuration>
++                    </execution>
++                </executions>
++            </plugin>
++        </plugins>
++    </build>
++</profile>
+     </profiles>
+ </project>
+diff --git a/src/main/java/junit/framework/ComparisonCompactor.java b/src/main/java/junit/framework/ComparisonCompactor.java
+index 81ddd5bda..42fc89e8f 100644
+--- a/src/main/java/junit/framework/ComparisonCompactor.java
++++ b/src/main/java/junit/framework/ComparisonCompactor.java
+@@ -1,5 +1,9 @@
+ package junit.framework;
+ 
++import org.checkerframework.checker.index.qual.NonNegative;
++import org.checkerframework.checker.index.qual.LTEqLengthOf;
++
++
+ public class ComparisonCompactor {
+ 
+     private static final String ELLIPSIS = "...";
+@@ -9,10 +13,10 @@ public class ComparisonCompactor {
+     private int fContextLength;
+     private String fExpected;
+     private String fActual;
+-    private int fPrefix;
++    private @LTEqLengthOf({"fExpected", "fActual"}) @NonNegative int fPrefix;
+     private int fSuffix;
+ 
+-    public ComparisonCompactor(int contextLength, String expected, String actual) {
++    public ComparisonCompactor(@NonNegative int contextLength, String expected, String actual) {
+         fContextLength = contextLength;
+         fExpected = expected;
+         fActual = actual;
+diff --git a/src/main/java/junit/framework/TestSuite.java b/src/main/java/junit/framework/TestSuite.java
+index 50cd5f8d1..d0d1dcf10 100644
+--- a/src/main/java/junit/framework/TestSuite.java
++++ b/src/main/java/junit/framework/TestSuite.java
+@@ -9,6 +9,8 @@ import java.util.Enumeration;
+ import java.util.List;
+ import java.util.Vector;
+ 
++import org.checkerframework.checker.index.qual.NonNegative;
++
+ import org.junit.internal.MethodSorter;
+ import org.junit.internal.Throwables;
+ 
+@@ -253,7 +255,7 @@ public class TestSuite implements Test {
+     /**
+      * Returns the test at the given index.
+      */
+-    public Test testAt(int index) {
++    public Test testAt(@NonNegative int index) {
+         return fTests.get(index);
+     }
+ 
+diff --git a/src/main/java/junit/runner/BaseTestRunner.java b/src/main/java/junit/runner/BaseTestRunner.java
+index d63fae7ac..c85fdc5fe 100644
+--- a/src/main/java/junit/runner/BaseTestRunner.java
++++ b/src/main/java/junit/runner/BaseTestRunner.java
+@@ -21,6 +21,9 @@ import junit.framework.TestListener;
+ import junit.framework.TestSuite;
+ 
+ import org.junit.internal.Throwables;
++import org.checkerframework.checker.index.qual.NonNegative;
++import org.checkerframework.checker.index.qual.GTENegativeOne;
++
+ 
+ /**
+  * Base class for all test runners.
+@@ -30,7 +33,7 @@ public abstract class BaseTestRunner implements TestListener {
+     public static final String SUITE_METHODNAME = "suite";
+ 
+     private static Properties fPreferences;
+-    static int fgMaxMessageLength = 500;
++    static @GTENegativeOne int fgMaxMessageLength = 500;
+     static boolean fgFilterStack = true;
+     boolean fLoading = true;
+ 
+diff --git a/src/main/java/junit/textui/TestRunner.java b/src/main/java/junit/textui/TestRunner.java
+index 913020af6..aa99335a1 100644
+--- a/src/main/java/junit/textui/TestRunner.java
++++ b/src/main/java/junit/textui/TestRunner.java
+@@ -9,6 +9,7 @@ import junit.framework.TestResult;
+ import junit.framework.TestSuite;
+ import junit.runner.BaseTestRunner;
+ import junit.runner.Version;
++import org.checkerframework.checker.index.qual.NonNegative;
+ 
+ /**
+  * A command line based tool to run tests.
+@@ -161,7 +162,7 @@ public class TestRunner extends BaseTestRunner {
+                 testCase = extractClassName(args[++i]);
+             } else if (args[i].equals("-m")) {
+                 String arg = args[++i];
+-                int lastIndex = arg.lastIndexOf('.');
++                @NonNegative int lastIndex = arg.lastIndexOf('.');
+                 testCase = arg.substring(0, lastIndex);
+                 method = arg.substring(lastIndex + 1);
+             } else if (args[i].equals("-v")) {
+diff --git a/src/main/java/org/junit/ComparisonFailure.java b/src/main/java/org/junit/ComparisonFailure.java
+index d1daa863c..279f56d19 100644
+--- a/src/main/java/org/junit/ComparisonFailure.java
++++ b/src/main/java/org/junit/ComparisonFailure.java
+@@ -1,5 +1,9 @@
+ package org.junit;
+ 
++import org.checkerframework.checker.index.qual.LTEqLengthOf;
++import org.checkerframework.checker.index.qual.LTLengthOf;
++import org.checkerframework.checker.index.qual.NonNegative;
++
+ /**
+  * Thrown when an {@link org.junit.Assert#assertEquals(Object, Object) assertEquals(String, String)} fails.
+  * Create and throw a <code>ComparisonFailure</code> manually if you want to show users the
+@@ -76,7 +80,7 @@ public class ComparisonFailure extends AssertionError {
+          * The maximum length for <code>expected</code> and <code>actual</code> strings to show. When
+          * <code>contextLength</code> is exceeded, the Strings are shortened.
+          */
+-        private final int contextLength;
++        private final @NonNegative int contextLength;
+         private final String expected;
+         private final String actual;
+ 
+@@ -86,7 +90,7 @@ public class ComparisonFailure extends AssertionError {
+          * @param expected the expected string value
+          * @param actual the actual string value
+          */
+-        public ComparisonCompactor(int contextLength, String expected, String actual) {
++        public ComparisonCompactor(@NonNegative int contextLength, String expected, String actual) {
+             this.contextLength = contextLength;
+             this.expected = expected;
+             this.actual = actual;
+@@ -116,8 +120,8 @@ public class ComparisonFailure extends AssertionError {
+         }
+ 
+         private String sharedSuffix(String prefix) {
+-            int suffixLength = 0;
+-            int maxSuffixLength = Math.min(expected.length() - prefix.length(),
++            @NonNegative @LTEqLengthOf({"expected", "actual"}) int suffixLength = 0;
++            @LTLengthOf({"expected", "actual"}) int maxSuffixLength = Math.min(expected.length() - prefix.length(),
+                     actual.length() - prefix.length()) - 1;
+             for (; suffixLength <= maxSuffixLength; suffixLength++) {
+                 if (expected.charAt(expected.length() - 1 - suffixLength)
+diff --git a/src/main/java/org/junit/internal/ComparisonCriteria.java b/src/main/java/org/junit/internal/ComparisonCriteria.java
+index ed1c67490..ba89baceb 100644
+--- a/src/main/java/org/junit/internal/ComparisonCriteria.java
++++ b/src/main/java/org/junit/internal/ComparisonCriteria.java
+@@ -4,6 +4,8 @@ import java.lang.reflect.Array;
+ import java.util.Arrays;
+ 
+ import org.junit.Assert;
++import org.checkerframework.checker.index.qual.LengthOf;
++import org.checkerframework.checker.index.qual.NonNegative;
+ 
+ /**
+  * Defines criteria for finding two items "equal enough". Concrete subclasses
+@@ -93,7 +95,7 @@ public abstract class ComparisonCriteria {
+ 
+     private static final Object END_OF_ARRAY_SENTINEL = objectWithToString("end of array");
+ 
+-    private Object getToStringableArrayElement(Object array, int length, int index) {
++    private Object getToStringableArrayElement(Object array, @LengthOf("#1") int length,@NonNegative int index) {
+         if (index < length) {
+             Object element = Array.get(array, index);
+             if (isArray(element)) {
+diff --git a/src/main/java/org/junit/internal/Throwables.java b/src/main/java/org/junit/internal/Throwables.java
+index 3f0f7a33b..a7b0a4754 100644
+--- a/src/main/java/org/junit/internal/Throwables.java
++++ b/src/main/java/org/junit/internal/Throwables.java
+@@ -11,7 +11,7 @@ import java.util.ArrayList;
+ import java.util.Arrays;
+ import java.util.Collections;
+ import java.util.List;
+-
++import org.checkerframework.checker.index.qual.NonNegative;
+ /**
+  * Miscellaneous functions dealing with {@code Throwable}.
+  *
+@@ -176,7 +176,7 @@ public final class Throwables {
+             }
+ 
+             @Override
+-            public int size() {
++            public @NonNegative int size() {
+                 return list.size();
+             }
+         };
+diff --git a/src/main/java/org/junit/runner/Description.java b/src/main/java/org/junit/runner/Description.java
+index 0846a1e9d..15a4c622f 100644
+--- a/src/main/java/org/junit/runner/Description.java
++++ b/src/main/java/org/junit/runner/Description.java
+@@ -8,6 +8,8 @@ import java.util.Collection;
+ import java.util.concurrent.ConcurrentLinkedQueue;
+ import java.util.regex.Matcher;
+ import java.util.regex.Pattern;
++import org.checkerframework.checker.index.qual.NonNegative;
++
+ 
+ /**
+  * A <code>Description</code> describes a test which is to be run or has been run. <code>Descriptions</code>
+@@ -319,7 +321,7 @@ public class Description implements Serializable {
+         return methodAndClassNamePatternGroupOrDefault(1, null);
+     }
+ 
+-    private String methodAndClassNamePatternGroupOrDefault(int group,
++    private String methodAndClassNamePatternGroupOrDefault(@NonNegative int group,
+             String defaultString) {
+         Matcher matcher = METHOD_AND_CLASS_NAME_PATTERN.matcher(toString());
+         return matcher.matches() ? matcher.group(group) : defaultString;
+diff --git a/src/main/java/org/junit/runners/Parameterized.java b/src/main/java/org/junit/runners/Parameterized.java
+index d11b66a2d..be0c94d9a 100644
+--- a/src/main/java/org/junit/runners/Parameterized.java
++++ b/src/main/java/org/junit/runners/Parameterized.java
+@@ -25,7 +25,7 @@ import org.junit.runners.model.TestClass;
+ import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParametersFactory;
+ import org.junit.runners.parameterized.ParametersRunnerFactory;
+ import org.junit.runners.parameterized.TestWithParameters;
+-
++import org.checkerframework.checker.index.qual.NonNegative;
+ /**
+  * The custom runner <code>Parameterized</code> implements parameterized tests.
+  * When running a parameterized test class, instances are created for the
+@@ -250,7 +250,7 @@ public class Parameterized extends Suite {
+          *
+          * @return the index of the parameter.
+          */
+-        int value() default 0;
++        @NonNegative int value() default 0;
+     }
+ 
+     /**

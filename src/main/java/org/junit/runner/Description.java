@@ -8,6 +8,8 @@ import java.util.Collection;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.index.qual.NonNegative;
+
 
 /**
  * A <code>Description</code> describes a test which is to be run or has been run. <code>Descriptions</code>
@@ -319,7 +321,7 @@ public class Description implements Serializable {
         return methodAndClassNamePatternGroupOrDefault(1, null);
     }
 
-    private String methodAndClassNamePatternGroupOrDefault(int group,
+    private String methodAndClassNamePatternGroupOrDefault(@NonNegative int group,
             String defaultString) {
         Matcher matcher = METHOD_AND_CLASS_NAME_PATTERN.matcher(toString());
         return matcher.matches() ? matcher.group(group) : defaultString;

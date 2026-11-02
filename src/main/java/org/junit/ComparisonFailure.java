@@ -1,5 +1,9 @@
 package org.junit;
 
+import org.checkerframework.checker.index.qual.LTEqLengthOf;
+import org.checkerframework.checker.index.qual.LTLengthOf;
+import org.checkerframework.checker.index.qual.NonNegative;
+
 /**
  * Thrown when an {@link org.junit.Assert#assertEquals(Object, Object) assertEquals(String, String)} fails.
  * Create and throw a <code>ComparisonFailure</code> manually if you want to show users the
@@ -76,7 +80,7 @@ public class ComparisonFailure extends AssertionError {
          * The maximum length for <code>expected</code> and <code>actual</code> strings to show. When
          * <code>contextLength</code> is exceeded, the Strings are shortened.
          */
-        private final int contextLength;
+        private final @NonNegative int contextLength;
         private final String expected;
         private final String actual;
 
@@ -86,7 +90,7 @@ public class ComparisonFailure extends AssertionError {
          * @param expected the expected string value
          * @param actual the actual string value
          */
-        public ComparisonCompactor(int contextLength, String expected, String actual) {
+        public ComparisonCompactor(@NonNegative int contextLength, String expected, String actual) {
             this.contextLength = contextLength;
             this.expected = expected;
             this.actual = actual;
@@ -116,8 +120,8 @@ public class ComparisonFailure extends AssertionError {
         }
 
         private String sharedSuffix(String prefix) {
-            int suffixLength = 0;
-            int maxSuffixLength = Math.min(expected.length() - prefix.length(),
+            @NonNegative @LTEqLengthOf({"expected", "actual"}) int suffixLength = 0;
+            @LTLengthOf({"expected", "actual"}) int maxSuffixLength = Math.min(expected.length() - prefix.length(),
                     actual.length() - prefix.length()) - 1;
             for (; suffixLength <= maxSuffixLength; suffixLength++) {
                 if (expected.charAt(expected.length() - 1 - suffixLength)

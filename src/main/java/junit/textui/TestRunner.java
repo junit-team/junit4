@@ -9,6 +9,7 @@ import junit.framework.TestResult;
 import junit.framework.TestSuite;
 import junit.runner.BaseTestRunner;
 import junit.runner.Version;
+import org.checkerframework.checker.index.qual.NonNegative;
 
 /**
  * A command line based tool to run tests.
@@ -161,7 +162,7 @@ public class TestRunner extends BaseTestRunner {
                 testCase = extractClassName(args[++i]);
             } else if (args[i].equals("-m")) {
                 String arg = args[++i];
-                int lastIndex = arg.lastIndexOf('.');
+                @NonNegative int lastIndex = arg.lastIndexOf('.');
                 testCase = arg.substring(0, lastIndex);
                 method = arg.substring(lastIndex + 1);
             } else if (args[i].equals("-v")) {

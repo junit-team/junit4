@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
+import org.checkerframework.checker.index.qual.NonNegative;
 /**
  * Miscellaneous functions dealing with {@code Throwable}.
  *
@@ -176,7 +176,7 @@ public final class Throwables {
             }
 
             @Override
-            public int size() {
+            public @NonNegative int size() {
                 return list.size();
             }
         };

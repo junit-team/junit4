@@ -668,5 +668,68 @@
                 </plugins>
             </reporting>
         </profile>
+        <profile>
+    <id>checkerframework</id>
+    <properties>
+        <checkerframework.version>4.2.3</checkerframework.version>
+    </properties>
+    <dependencies>
+        <!-- Index annotations (@IndexFor, @NonNegative, @MinLen, ...).
+             Use "provided" so the published junit jar gets no new runtime dependency. -->
+        <dependency>
+            <groupId>org.checkerframework</groupId>
+            <artifactId>checker-qual</artifactId>
+            <version>${checkerframework.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <!-- 3.3 is too old: annotationProcessorPaths needs 3.5+ -->
+                <version>3.13.0</version>
+                <executions>
+                    <!-- Check only src/main, not the tests -->
+                    <execution>
+                        <id>default-compile</id>
+                        <configuration>
+                            <!-- With "1.5", plexus-compiler treats javac as pre-Java-6
+                                 and silently drops the -processor flags -->
+                            <compilerVersion>1.8</compilerVersion>
+                            <!-- The default 128m is far too small for the checker -->
+                            <maxmem>3g</maxmem>
+                            <annotationProcessorPaths>
+                                <path>
+                                    <groupId>org.checkerframework</groupId>
+                                    <artifactId>checker</artifactId>
+                                    <version>${checkerframework.version}</version>
+                                </path>
+                            </annotationProcessorPaths>
+                            <annotationProcessors>
+                                <annotationProcessor>org.checkerframework.checker.index.IndexChecker</annotationProcessor>
+                            </annotationProcessors>
+                            <compilerArgs combine.children="append">
+                                <arg>-Xmaxerrs</arg><arg>10000</arg>
+                                <arg>-Xmaxwarns</arg><arg>10000</arg>
+                                <!-- The forked javac (fork=true) needs these on JDK 9+ -->
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
+                                <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
+                            </compilerArgs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</profile>
     </profiles>
 </project>

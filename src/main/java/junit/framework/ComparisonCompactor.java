@@ -1,5 +1,9 @@
 package junit.framework;
 
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.index.qual.LTEqLengthOf;
+
+
 public class ComparisonCompactor {
 
     private static final String ELLIPSIS = "...";
@@ -9,10 +13,10 @@ public class ComparisonCompactor {
     private int fContextLength;
     private String fExpected;
     private String fActual;
-    private int fPrefix;
+    private @LTEqLengthOf({"fExpected", "fActual"}) @NonNegative int fPrefix;
     private int fSuffix;
 
-    public ComparisonCompactor(int contextLength, String expected, String actual) {
+    public ComparisonCompactor(@NonNegative int contextLength, String expected, String actual) {
         fContextLength = contextLength;
         fExpected = expected;
         fActual = actual;

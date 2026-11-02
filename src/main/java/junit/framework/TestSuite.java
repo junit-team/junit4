@@ -9,6 +9,8 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 
+import org.checkerframework.checker.index.qual.NonNegative;
+
 import org.junit.internal.MethodSorter;
 import org.junit.internal.Throwables;
 
@@ -253,7 +255,7 @@ public class TestSuite implements Test {
     /**
      * Returns the test at the given index.
      */
-    public Test testAt(int index) {
+    public Test testAt(@NonNegative int index) {
         return fTests.get(index);
     }
 
