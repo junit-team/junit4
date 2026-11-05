@@ -146,11 +146,13 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
         if (!other.getName().equals(getName())) {
             return false;
         }
-        if (other.getParameterTypes().length != getParameterTypes().length) {
+        Class<?>[] otherTypes = other.getParameterTypes();
+        Class<?>[] types = getParameterTypes();
+        if (otherTypes.length != types.length) {
             return false;
         }
-        for (int i = 0; i < other.getParameterTypes().length; i++) {
-            if (!other.getParameterTypes()[i].equals(getParameterTypes()[i])) {
+        for (int i = 0; i < otherTypes.length; i++) {
+            if (!otherTypes[i].equals(types[i])) {
                 return false;
             }
         }

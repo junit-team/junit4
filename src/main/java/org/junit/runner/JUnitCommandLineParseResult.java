@@ -1,6 +1,7 @@
 package org.junit.runner;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -8,6 +9,8 @@ import org.junit.internal.Classes;
 import org.junit.runner.FilterFactory.FilterNotCreatedException;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runners.model.InitializationError;
+import org.checkerframework.checker.index.qual.IndexOrHigh;
+
 
 class JUnitCommandLineParseResult {
     private final List<String> filterSpecs = new ArrayList<String>();
@@ -51,7 +54,7 @@ class JUnitCommandLineParseResult {
     }
 
     String[] parseOptions(String... args) {
-        for (int i = 0; i != args.length; ++i) {
+        for (int i = 0; i < args.length; ++i) {
             String arg = args[i];
 
             if (arg.equals("--")) {
@@ -83,14 +86,11 @@ class JUnitCommandLineParseResult {
 
         return new String[]{};
     }
-
-    private String[] copyArray(String[] args, int from, int to) {
-        String[] result = new String[to - from];
-        for (int j = from; j != to; ++j) {
-            result[j - from] = args[j];
-        }
-        return result;
+    
+    private String[] copyArray(String[] args, @IndexOrHigh("#1") int from, int to) {
+        return Arrays.copyOfRange(args, from, to);
     }
+
 
     void parseParameters(String[] args) {
         for (String arg : args) {

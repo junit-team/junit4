@@ -2,6 +2,7 @@ package org.junit.runners.parameterized;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.internal.runners.statements.RunAfters;
@@ -71,6 +72,10 @@ public class BlockJUnit4ClassRunnerWithParameters extends
             Field field = each.getField();
             Parameter annotation = field.getAnnotation(Parameter.class);
             int index = annotation.value();
+            if (index >= parameters.length) {
+                throw new Exception("Invalid @Parameter value: " + index
+                        + ". Available parameters: " + parameters.length + ".");
+            }
             try {
                 field.set(testClassInstance, parameters[index]);
             } catch (IllegalAccessException e) {
@@ -120,7 +125,7 @@ public class BlockJUnit4ClassRunnerWithParameters extends
             for (FrameworkField each : annotatedFieldsByParameter) {
                 int index = each.getField().getAnnotation(Parameter.class)
                         .value();
-                if (index < 0 || index > annotatedFieldsByParameter.size() - 1) {
+                if (index < 0 || index > usedIndices.length - 1) {
                     errors.add(new Exception("Invalid @Parameter value: "
                             + index + ". @Parameter fields counted: "
                             + annotatedFieldsByParameter.size()
@@ -189,16 +194,15 @@ public class BlockJUnit4ClassRunnerWithParameters extends
 
     @Override
     protected Annotation[] getRunnerAnnotations() {
+        // true positive
         Annotation[] allAnnotations = super.getRunnerAnnotations();
-        Annotation[] annotationsWithoutRunWith = new Annotation[allAnnotations.length - 1];
-        int i = 0;
+        List<Annotation> annotationsWithoutRunWith = new ArrayList<Annotation>(allAnnotations.length);
         for (Annotation annotation: allAnnotations) {
             if (!annotation.annotationType().equals(RunWith.class)) {
-                annotationsWithoutRunWith[i] = annotation;
-                ++i;
+                annotationsWithoutRunWith.add(annotation);
             }
         }
-        return annotationsWithoutRunWith;
+        return annotationsWithoutRunWith.toArray(new Annotation[0]);
     }
 
     private List<FrameworkField> getAnnotatedFieldsByParameter() {

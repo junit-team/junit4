@@ -47,6 +47,10 @@ public class ParameterSignature {
     private static ArrayList<ParameterSignature> signatures(
             Class<?>[] parameterTypes, Annotation[][] parameterAnnotations) {
         ArrayList<ParameterSignature> sigs = new ArrayList<ParameterSignature>();
+        if (parameterAnnotations.length != parameterTypes.length) {
+            throw new IllegalArgumentException("Expected " + parameterTypes.length
+                    + " parameter annotation arrays, found " + parameterAnnotations.length);
+        }
         for (int i = 0; i < parameterTypes.length; i++) {
             sigs.add(new ParameterSignature(parameterTypes[i],
                     parameterAnnotations[i]));

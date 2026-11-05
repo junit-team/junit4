@@ -28,7 +28,7 @@ class FilterFactories {
             tuple = new String[]{ filterSpec, "" };
         }
 
-        return createFilter(tuple[0], new FilterFactoryParams(topLevelDescription, tuple[1]));
+        return createFilter(tuple[0], new FilterFactoryParams(topLevelDescription, tuple.length > 1 ? tuple[1] : ""));
     }
 
     /**

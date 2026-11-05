@@ -73,11 +73,14 @@ public class TestClass {
         if (!previous.getName().equals(current.getName())) {
             return false;
         }
-        if (previous.getParameterTypes().length != current.getParameterTypes().length) {
+
+        Class<?>[] previousTypes = previous.getParameterTypes();
+        Class<?>[] currentTypes = current.getParameterTypes();
+        if (previousTypes.length != currentTypes.length) {
             return false;
         }
-        for (int i = 0; i < previous.getParameterTypes().length; i++) {
-            if (!previous.getParameterTypes()[i].equals(current.getParameterTypes()[i])) {
+        for (int i = 0; i < previousTypes.length; i++) {
+            if (!previousTypes[i].equals(currentTypes[i])) {
                 return false;
             }
         }

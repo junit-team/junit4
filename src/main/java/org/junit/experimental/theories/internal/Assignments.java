@@ -64,9 +64,13 @@ public class Assignments {
 
     public Object[] getActualValues(int start, int stop) 
             throws CouldNotGenerateValueException {
-        Object[] values = new Object[stop - start];
-        for (int i = start; i < stop; i++) {
-            values[i - start] = assigned.get(i).getValue();
+        int length = stop - start;
+        if (length < 0) {
+            throw new NegativeArraySizeException(String.valueOf(length));
+        }
+        Object[] values = new Object[length];
+        for (int j = 0; j < length; j++) {
+            values[j] = assigned.get(start + j).getValue();
         }
         return values;
     }

@@ -323,7 +323,7 @@ public abstract class BaseTestRunner implements TestListener {
     }
 
     static {
-        fgMaxMessageLength = getPreference("maxmessage", fgMaxMessageLength);
+        fgMaxMessageLength = Math.max(-1, getPreference("maxmessage", fgMaxMessageLength));
     }
 
 }

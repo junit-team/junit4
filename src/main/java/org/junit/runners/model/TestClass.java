@@ -203,6 +203,9 @@ public class TestClass implements Annotatable {
     public Constructor<?> getOnlyConstructor() {
         Constructor<?>[] constructors = clazz.getConstructors();
         Assert.assertEquals(1, constructors.length);
+        if (constructors.length != 1) {
+            throw new AssertionError("expected:<1> but was:<" + constructors.length + ">");
+        }
         return constructors[0];
     }
 

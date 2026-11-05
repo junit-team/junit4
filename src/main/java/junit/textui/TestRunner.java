@@ -159,11 +159,20 @@ public class TestRunner extends BaseTestRunner {
             if (args[i].equals("-wait")) {
                 wait = true;
             } else if (args[i].equals("-c")) {
-                testCase = extractClassName(args[++i]);
+                if (i + 1 >= args.length) {
+                    throw new Exception("Usage: TestRunner -c testCaseName");
+                }
+                testCase = extractClassName(args[++i]); // true positive
             } else if (args[i].equals("-m")) {
-                String arg = args[++i];
-                @NonNegative int lastIndex = arg.lastIndexOf('.');
-                testCase = arg.substring(0, lastIndex);
+                if (i + 1 >= args.length) {
+                    throw new Exception("Usage: TestRunner -m className.methodName");
+                }
+                String arg = args[++i]; // true positive
+                int lastIndex = arg.lastIndexOf('.');
+                if (lastIndex < 0) {
+                    throw new Exception("Usage: TestRunner -m className.methodName");
+                }
+                testCase = arg.substring(0, lastIndex); // true positive
                 method = arg.substring(lastIndex + 1);
             } else if (args[i].equals("-v")) {
                 System.err.println("JUnit " + Version.id() + " by Kent Beck and Erich Gamma");

@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 
 import org.hamcrest.BaseMatcher;
 import org.junit.internal.MethodSorter;
-
+import org.checkerframework.common.value.qual.EnsuresMinLenIf;
 /**
  * Convenient base class for Matchers that require a non-null value of a specific type.
  * This simply implements the null check, checks the type and then casts.
@@ -30,8 +30,9 @@ public abstract class TypeSafeMatcher<T> extends BaseMatcher<T> {
     private static Class<?> findExpectedType(Class<?> fromClass) {
         for (Class<?> c = fromClass; c != Object.class; c = c.getSuperclass()) {
             for (Method method : MethodSorter.getDeclaredMethods(c)) {
-                if (isMatchesSafelyMethod(method)) {
-                    return method.getParameterTypes()[0];
+                Class<?>[] parameterTypes = method.getParameterTypes();
+                if (isMatchesSafelyMethod(method, parameterTypes)) {
+                    return parameterTypes[0];
                 }
             }
         }
@@ -42,6 +43,13 @@ public abstract class TypeSafeMatcher<T> extends BaseMatcher<T> {
     private static boolean isMatchesSafelyMethod(Method method) {
         return "matchesSafely".equals(method.getName())
                 && method.getParameterTypes().length == 1
+                && !method.isSynthetic();
+    }
+
+    @EnsuresMinLenIf(expression = "#2", result = true, targetValue = 1)
+    private static boolean isMatchesSafelyMethod(Method method, Class<?>[] parameterTypes) {
+        return "matchesSafely".equals(method.getName())
+                && parameterTypes.length == 1
                 && !method.isSynthetic();
     }
 

@@ -10,7 +10,7 @@ public class ComparisonCompactor {
     private static final String DELTA_END = "]";
     private static final String DELTA_START = "[";
 
-    private int fContextLength;
+    private @NonNegative int fContextLength;
     private String fExpected;
     private String fActual;
     private @LTEqLengthOf({"fExpected", "fActual"}) @NonNegative int fPrefix;
@@ -36,7 +36,16 @@ public class ComparisonCompactor {
     }
 
     private String compactString(String source) {
-        String result = DELTA_START + source.substring(fPrefix, source.length() - fSuffix + 1) + DELTA_END;
+        int begin = Math.min(fPrefix, source.length());
+        int end = source.length() - fSuffix + 1;
+        if (end > source.length()) {
+            end = source.length();
+        }
+        if (end < begin) {
+            end = begin;
+        }
+        String result = DELTA_START + source.substring(begin, end) + DELTA_END;
+        
         if (fPrefix > 0) {
             result = computeCommonPrefix() + result;
         }
@@ -68,12 +77,23 @@ public class ComparisonCompactor {
     }
 
     private String computeCommonPrefix() {
-        return (fPrefix > fContextLength ? ELLIPSIS : "") + fExpected.substring(Math.max(0, fPrefix - fContextLength), fPrefix);
+    int begin = Math.max(0, fPrefix - fContextLength);
+    if (begin > fPrefix) {
+        begin = fPrefix;
+    }
+    return (fPrefix > fContextLength ? ELLIPSIS : "") + fExpected.substring(begin, fPrefix);
     }
 
     private String computeCommonSuffix() {
-        int end = Math.min(fExpected.length() - fSuffix + 1 + fContextLength, fExpected.length());
-        return fExpected.substring(fExpected.length() - fSuffix + 1, end) + (fExpected.length() - fSuffix + 1 < fExpected.length() - fContextLength ? ELLIPSIS : "");
+        int start = fExpected.length() - fSuffix + 1;
+        if (start < 0) {
+            start = 0;
+        }
+        if (start > fExpected.length()) {
+            start = fExpected.length();
+        }
+        int end = Math.min(start + fContextLength, fExpected.length());
+        return fExpected.substring(start, end) + (start < fExpected.length() - fContextLength ? ELLIPSIS : "");
     }
 
     private boolean areStringsEqual() {

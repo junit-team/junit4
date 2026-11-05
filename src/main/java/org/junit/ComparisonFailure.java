@@ -120,16 +120,14 @@ public class ComparisonFailure extends AssertionError {
         }
 
         private String sharedSuffix(String prefix) {
-            @NonNegative @LTEqLengthOf({"expected", "actual"}) int suffixLength = 0;
-            @LTLengthOf({"expected", "actual"}) int maxSuffixLength = Math.min(expected.length() - prefix.length(),
-                    actual.length() - prefix.length()) - 1;
-            for (; suffixLength <= maxSuffixLength; suffixLength++) {
-                if (expected.charAt(expected.length() - 1 - suffixLength)
-                        != actual.charAt(actual.length() - 1 - suffixLength)) {
-                    break;
-                }
+            int expectedIndex = expected.length() - 1;
+            int actualIndex = actual.length() - 1;
+            while (expectedIndex >= prefix.length() && actualIndex >= prefix.length()
+                    && expected.charAt(expectedIndex) == actual.charAt(actualIndex)) {
+                expectedIndex--;
+                actualIndex--;
             }
-            return expected.substring(expected.length() - suffixLength);
+            return expected.substring(expectedIndex + 1);
         }
 
         private class DiffExtractor {
@@ -153,10 +151,11 @@ public class ComparisonFailure extends AssertionError {
             }
 
             public String compactPrefix() {
-                if (sharedPrefix.length() <= contextLength) {
+                int begin = sharedPrefix.length() - contextLength;
+                if (begin <= 0) {
                     return sharedPrefix;
                 }
-                return ELLIPSIS + sharedPrefix.substring(sharedPrefix.length() - contextLength);
+                return ELLIPSIS + sharedPrefix.substring(begin);
             }
 
             public String compactSuffix() {
@@ -167,8 +166,12 @@ public class ComparisonFailure extends AssertionError {
             }
 
             private String extractDiff(String source) {
-                return DIFF_START + source.substring(sharedPrefix.length(), source.length() - sharedSuffix.length())
-                        + DIFF_END;
+                int begin = sharedPrefix.length();
+                int end = source.length() - sharedSuffix.length();
+                if (end < begin) {
+                    throw new IllegalStateException("prefix and suffix overlap");
+                }
+                return DIFF_START + source.substring(begin, end) + DIFF_END;
             }
         }
     }
