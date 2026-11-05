@@ -1,8 +1,0 @@
-[ERROR] /Users/mushfiqurrahmanchowdhury/Documents/junit4/src/main/java/org/junit/experimental/theories/internal/Assignments.java:[129,31] error: [argument] incompatible argument for parameter start of Assignments.getActualValues.
-  found   : int
-  required: @LessThan("this.getConstructorParameterCount() + 1") int
-[ERROR] /Users/mushfiqurrahmanchowdhury/Documents/junit4/src/main/java/org/junit/experimental/theories/internal/Assignments.java:[133,59] error: [argument] incompatible argument for parameter start of Assignments.getActualValues.
-  found   : int
-  required: @LessThan("this.assigned.size() + 1") int
-[ERROR] /Users/mushfiqurrahmanchowdhury/Documents/junit4/src/main/java/org/junit/experimental/theories/internal/Assignments.java:[137,31] error: [argument] incompatible argument for parameter start of Assignments.getActualValues.
-  found   : int
